@@ -314,15 +314,15 @@ class loadData(object):
     print('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))
 
 
-  def loadSupplierItems(self):
-    print('Importing supplier items...')
+  def loadItemSuppliers(self):
+    print('Importing item suppliers...')
     cnt = 0
     starttime = time()
     self.cursor.execute('''
       SELECT
         supplier_id, item_id, location_id, sizeminimum, sizemultiple,
         cost, priority, effective_start, effective_end, source
-      FROM supplieritem %s
+      FROM itemsupplier %s
       ORDER BY supplier_id, item_id, priority desc, location_id
       ''' % self.filter_where)
     cursuppliername = None
@@ -336,24 +336,24 @@ class loadData(object):
         if i[1] != curitemname:
           curitemname = i[1]
           curitem = frepple.item(name=curitemname)
-        cursupplieritem = frepple.supplieritem(supplier=cursupplier, item=curitem, source=i[9])
+        curitemsupplier = frepple.itemsupplier(supplier=cursupplier, item=curitem, source=i[9])
         if i[2]:
-          cursupplieritem.location = frepple.location(name=i[2])
+          curitemsupplier.location = frepple.location(name=i[2])
         if i[3]:
-          cursupplieritem.size_minimum = i[3]
+          curitemsupplier.size_minimum = i[3]
         if i[4]:
-          cursupplieritem.size_multiple = i[4]
+          curitemsupplier.size_multiple = i[4]
         if i[5]:
-          cursupplieritem.cost = i[5]
+          curitemsupplier.cost = i[5]
         if i[6]:
-          cursupplieritem.priority = i[6]
+          curitemsupplier.priority = i[6]
         if i[7]:
-          cursupplieritem.effective_start = i[7]
+          curitemsupplier.effective_start = i[7]
         if i[8]:
-          cursupplieritem.effective_end = i[8]
+          curitemsupplier.effective_end = i[8]
       except Exception as e:
         print("Error:", e)
-    print('Loaded %d supplier items in %.2f seconds' % (cnt, time() - starttime))
+    print('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
 
 
   def loadBuffers(self):
@@ -767,7 +767,7 @@ class loadData(object):
     self.loadOperations()
     self.loadSuboperations()
     self.loadItems()
-    self.loadSupplierItems()
+    self.loadItemSuppliers()
     self.loadBuffers()
     self.loadSetupMatrices()
     self.loadResources()

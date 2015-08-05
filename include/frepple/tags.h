@@ -89,6 +89,8 @@ class Tags
     static DECLARE_EXPORT const Keyword id;
     static DECLARE_EXPORT const Keyword item;
     static DECLARE_EXPORT const Keyword items;
+    static DECLARE_EXPORT const Keyword itemsupplier;
+    static DECLARE_EXPORT const Keyword itemsuppliers;
     static DECLARE_EXPORT const Keyword leadtime;
     static DECLARE_EXPORT const Keyword level;
     static DECLARE_EXPORT const Keyword load;
@@ -167,8 +169,6 @@ class Tags
     static DECLARE_EXPORT const Keyword suboperations;
     static DECLARE_EXPORT const Keyword supplier;
     static DECLARE_EXPORT const Keyword suppliers;
-    static DECLARE_EXPORT const Keyword supplieritem;
-    static DECLARE_EXPORT const Keyword supplieritems;
     static DECLARE_EXPORT const Keyword supply;
     static DECLARE_EXPORT const Keyword tool;
     static DECLARE_EXPORT const Keyword tosetup;

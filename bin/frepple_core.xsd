@@ -209,7 +209,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="supplieritems" type="supplieritemlist" />
+      <xsd:element name="itemsuppliers" type="itemsupplierlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
   </xsd:complexType>
@@ -368,7 +368,7 @@
       </xsd:element>
       <xsd:element name="operation" type="operation" />
       <xsd:element name="price" type="positiveDouble" />
-      <xsd:element name="supplieritems" type="supplieritemlist" />
+      <xsd:element name="itemsuppliers" type="itemsupplierlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="price" type="positiveDouble" />
@@ -380,11 +380,11 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <!-- SUPPLIERITEM -->
-  <xsd:complexType name="supplieritem">
+  <!-- ITEMSUPPLIER -->
+  <xsd:complexType name="itemsupplier">
     <xsd:annotation>
       <xsd:documentation>
-        A supplieritem specifies an item than can be procured from a supplier.
+        A itemsupplier specifies an item than can be procured from a supplier.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -413,9 +413,9 @@
     <xsd:attribute name="action" type="action" />
   </xsd:complexType>
 
-  <xsd:complexType name="supplieritemlist">
+  <xsd:complexType name="itemsupplierlist">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="supplieritem" type="supplieritem" />
+      <xsd:element name="itemsupplier" type="itemsupplier" />
     </xsd:choice>
   </xsd:complexType>
 

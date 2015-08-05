@@ -3,7 +3,7 @@
 	<name>Test model for suppliers</name>
 	<description>
   In this test we verify the creation of procurements, triggered by
-  supplieritem definitions.
+  item supplier definitions.
   </description>
 	<current>2015-01-01T00:00:00</current>
 	<suppliers>
@@ -26,15 +26,15 @@
 			<operation>
 				<name>Delivery A</name>
 			</operation>
-			<supplieritems>
-				<supplieritem>
+			<itemsuppliers>
+				<itemsupplier>
 					<supplier>
 						<name>Supplier of component A</name>
 					</supplier>
 					<leadtime>P7D</leadtime>
 					<priority>2</priority>
-				</supplieritem>
-			</supplieritems>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>Component B</name>
@@ -42,14 +42,14 @@
 			<operation>
 				<name>Delivery B</name>
 			</operation>
-			<supplieritems>
-				<supplieritem>
+			<itemsuppliers>
+				<itemsupplier>
 					<supplier>
 						<name>Supplier of component B</name>
 					</supplier>
 					<leadtime>P14D</leadtime>
-				</supplieritem>
-			</supplieritems>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>Component C</name>
@@ -57,16 +57,16 @@
 			<operation>
 				<name>Delivery C</name>
 			</operation>
-			<supplieritems>
-				<supplieritem>
+			<itemsuppliers>
+				<itemsupplier>
 					<supplier>
 						<name>Supplier of component C</name>
 					</supplier>
 					<leadtime>P21D</leadtime>
 					<size_minimum>125</size_minimum>
 					<size_multiple>100</size_multiple>
-				</supplieritem>
-			</supplieritems>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>Component D</name>
@@ -78,14 +78,14 @@
 		<item>
 			<name>Component group A and B</name>
 			<price>1</price>
-			<supplieritems>
-				<supplieritem>
+			<itemsuppliers>
+				<itemsupplier>
 					<supplier>
 						<name>Supplier of components A and B</name>
 					</supplier>
 					<leadtime>P14D</leadtime>
-				</supplieritem>
-			</supplieritems>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 	</items>
 	<buffers>

@@ -24,36 +24,36 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* SupplierItem::metacategory;
-DECLARE_EXPORT const MetaClass* SupplierItem::metadata;
-DECLARE_EXPORT const MetaClass* OperationSupplierItem::metadata;
+DECLARE_EXPORT const MetaCategory* ItemSupplier::metacategory;
+DECLARE_EXPORT const MetaClass* ItemSupplier::metadata;
+DECLARE_EXPORT const MetaClass* OperationItemSupplier::metadata;
 
 
-int SupplierItem::initialize()
+int ItemSupplier::initialize()
 {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<SupplierItem>(
-	  "supplieritem", "supplieritems", MetaCategory::ControllerDefault
+  metacategory = MetaCategory::registerCategory<ItemSupplier>(
+	  "itemsupplier", "itemsuppliers", MetaCategory::ControllerDefault
 	  );
-  metadata = MetaClass::registerClass<SupplierItem>(
-    "supplieritem", "supplieritem", Object::create<SupplierItem>, true
+  metadata = MetaClass::registerClass<ItemSupplier>(
+    "itemsupplier", "itemsupplier", Object::create<ItemSupplier>, true
   );
-  registerFields<SupplierItem>(const_cast<MetaClass*>(metadata));
+  registerFields<ItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<SupplierItem>::getPythonType();
-  x.setName("supplieritem");
-  x.setDoc("frePPLe supplieritem");
+  PythonType& x = FreppleCategory<ItemSupplier>::getPythonType();
+  x.setName("itemsupplier");
+  x.setDoc("frePPLe itemsupplier");
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaClass*>(SupplierItem::metadata)->pythonClass = x.type_object();
+  const_cast<MetaClass*>(ItemSupplier::metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
 
-DECLARE_EXPORT SupplierItem::~SupplierItem()
+DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 {
   // Delete the association from the related objects
   if (getSupplier())
@@ -67,7 +67,7 @@ DECLARE_EXPORT SupplierItem::~SupplierItem()
 }
 
 
-DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
+DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
   : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
@@ -77,7 +77,7 @@ DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u)
 }
 
 
-DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange e)
+DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
   : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   setSupplier(s);
@@ -89,19 +89,19 @@ DECLARE_EXPORT SupplierItem::SupplierItem(Supplier* s, Item* r, int u, DateRange
 
 
 /** @todo this method implementation is not generic enough and not extendible by subclasses. */
-PyObject* SupplierItem::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {
     // Pick up the supplier
     PyObject* sup = PyDict_GetItemString(kwds,"supplier");
     if (!PyObject_TypeCheck(sup, Supplier::metadata->pythonClass))
-      throw DataException("supplieritem supplier must be of type supplier");
+      throw DataException("ItemSupplier supplier must be of type supplier");
 
     // Pick up the item
     PyObject* it = PyDict_GetItemString(kwds,"item");
     if (!PyObject_TypeCheck(it, Item::metadata->pythonClass))
-      throw DataException("supplieritem item must be of type item");
+      throw DataException("ItemSupplier item must be of type item");
 
     // Pick up the priority
     PyObject* q1 = PyDict_GetItemString(kwds,"priority");
@@ -122,8 +122,8 @@ PyObject* SupplierItem::create(PyTypeObject* pytype, PyObject* args, PyObject* k
       eff.setEnd(d.getDate());
     }
 
-    // Create the supplieritem
-    SupplierItem *l = new SupplierItem(
+    // Create the ItemSupplier
+    ItemSupplier *l = new ItemSupplier(
       static_cast<Supplier*>(sup),
       static_cast<Item*>(it),
       q2, eff
@@ -173,7 +173,7 @@ PyObject* SupplierItem::create(PyTypeObject* pytype, PyObject* args, PyObject* k
 }
 
 
-DECLARE_EXPORT void SupplierItem::validate(Action action)
+DECLARE_EXPORT void ItemSupplier::validate(Action action)
 {
   // Catch null supplier and item pointers
   Supplier *sup = getSupplier();
@@ -181,18 +181,18 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
   Location *loc = getLocation();
   if (!sup || !it)
   {
-    // Invalid supplieritem model
+    // Invalid ItemSupplier model
     if (!sup && !it)
-      throw DataException("Missing supplier and item on a supplieritem");
+      throw DataException("Missing supplier and item on a ItemSupplier");
     else if (!sup)
-      throw DataException("Missing supplier on a supplieritem on item '"
+      throw DataException("Missing supplier on a ItemSupplier on item '"
           + it->getName() + "'");
     else if (!it)
-      throw DataException("Missing item on a supplieritem on supplier '"
+      throw DataException("Missing item on a ItemSupplier on supplier '"
           + sup->getName() + "'");
   }
 
-  // Check if a supplieritem with 1) identical supplier, 2) identical item
+  // Check if a ItemSupplier with 1) identical supplier, 2) identical item
   // 3) identical location, and 4) overlapping effectivity dates already exists
   Supplier::itemlist::const_iterator i = sup->getItems().begin();
   for (; i != sup->getItems().end(); ++i)
@@ -208,22 +208,22 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
     case ADD:
       if (i != sup->getItems().end())
       {
-        throw DataException("Supplieritem of '" + sup->getName() + "' and '"
+        throw DataException("ItemSupplier of '" + sup->getName() + "' and '"
             + it->getName() + "' already exists");
       }
       break;
     case CHANGE:
-      throw DataException("Can't update a supplieritem");
+      throw DataException("Can't update a ItemSupplier");
     case ADD_CHANGE:
       // ADD is handled in the code after the switch statement
       if (i == sup->getItems().end()) break;
-      throw DataException("Can't update a supplieritem");
+      throw DataException("Can't update a ItemSupplier");
     case REMOVE:
-      // This supplieritem was only used temporarily during the reading process
+      // This ItemSupplier was only used temporarily during the reading process
       delete this;
       if (i == sup->getItems().end())
         // Nothing to delete
-        throw DataException("Can't remove nonexistent supplieritem of '"
+        throw DataException("Can't remove nonexistent ItemSupplier of '"
             + sup->getName() + "' and '" + it->getName() + "'");
       delete &*i;
       return;
@@ -231,39 +231,39 @@ DECLARE_EXPORT void SupplierItem::validate(Action action)
 }
 
 
-DECLARE_EXPORT void SupplierItem::deleteOperationPlans(bool b)
+DECLARE_EXPORT void ItemSupplier::deleteOperationPlans(bool b)
 {
-  for (OperationSupplierItem* i = firstOperation; i; i = i->nextOperation)
+  for (OperationItemSupplier* i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
 }
 
 
-int OperationSupplierItem::initialize()
+int OperationItemSupplier::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<OperationSupplierItem>(
-    "operation", "operation_supplieritem"
+  metadata = MetaClass::registerClass<OperationItemSupplier>(
+    "operation", "operation_ItemSupplier"
     );
-  registerFields<OperationSupplierItem>(const_cast<MetaClass*>(metadata));
+  registerFields<OperationItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
   PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
-  x.setName("operation_supplieritem");
-  x.setDoc("frePPLe operation_supplieritem");
+  x.setName("operation_ItemSupplier");
+  x.setDoc("frePPLe operation_ItemSupplier");
   x.supportgetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
 
-DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
-  SupplierItem* i, Buffer *b
+DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
+  ItemSupplier* i, Buffer *b
   ) : supitem(i)
 {
   if (!i || !b || !i->getSupplier())
     throw LogicException(
-      "An OperationSupplierItem always needs to point to "
-      "a supplieritem and a buffer"
+      "An OperationItemSupplier always needs to point to "
+      "a ItemSupplier and a buffer"
       );
   stringstream o;
   o << "Purchase '" << b->getName() << "' from '" << i->getSupplier()->getName() << "' (*)";
@@ -278,7 +278,7 @@ DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
   FlowEnd* fl = new FlowEnd(this, b, 1);
   initType(metadata);
 
-  // Insert in the list of supplieritem operations.
+  // Insert in the list of ItemSupplier operations.
   // We keep the list sorted by the name of the buffers.
   if (!i->firstOperation || b->getName() < i->firstOperation->getName())
   {
@@ -289,7 +289,7 @@ DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
   else
   {
     // Insert in the middle or at the tail
-    OperationSupplierItem* o = i->firstOperation;
+    OperationItemSupplier* o = i->firstOperation;
     while (o->nextOperation)
     {
       // There should always be a single flow on these operations.
@@ -304,7 +304,7 @@ DECLARE_EXPORT OperationSupplierItem::OperationSupplierItem(
 }
 
 
-OperationSupplierItem::~OperationSupplierItem()
+OperationItemSupplier::~OperationItemSupplier()
 {
   // Remove from the list of operations of this supplier item
   if (supitem->firstOperation == this)
@@ -315,11 +315,11 @@ OperationSupplierItem::~OperationSupplierItem()
   else
   {
     // We were in the middle
-    OperationSupplierItem* i = supitem->firstOperation;
+    OperationItemSupplier* i = supitem->firstOperation;
     while (i->nextOperation != this && i->nextOperation)
       i = i->nextOperation;
     if (!i)
-      throw LogicException("SupplierItem operation list corrupted");
+      throw LogicException("ItemSupplier operation list corrupted");
     else
       i->nextOperation = nextOperation;
   }

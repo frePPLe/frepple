@@ -12,4 +12,4 @@ libmodel_la_SOURCES = buffer.cpp flow.cpp flowplan.cpp pegging.cpp \
    problems_operationplan.cpp resource.cpp leveled.cpp actions.cpp library.cpp \
    customer.cpp problems_resource.cpp problems_buffer.cpp solver.cpp \
    setupmatrix.cpp skill.cpp resourceskill.cpp suboperation.cpp \
-   supplier.cpp supplieritem.cpp
+   supplier.cpp itemsupplier.cpp

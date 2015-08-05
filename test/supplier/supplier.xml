@@ -3,7 +3,7 @@
   <name>Test model for suppliers</name>
   <description>
   In this test we verify the creation of procurements, triggered by
-  supplieritem definitions.
+  item supplier definitions.
   </description>
   <current>2015-01-01T00:00:00</current>
   <suppliers>
@@ -12,49 +12,49 @@
     at the group level below.
     -->
     <supplier name="Supplier of component A">
-	    <supplieritems>
-	      <supplieritem>
+	    <itemsuppliers>
+	      <itemsupplier>
           <item name="Component A"/>
           <leadtime>P7D</leadtime>
           <priority>2</priority>
-        </supplieritem>
-	    </supplieritems>
+        </itemsupplier>
+	    </itemsuppliers>
 	  </supplier>
   </suppliers>
   <items>
     <item name="Component group A and B" price="1">
-	    <supplieritems>
-	      <supplieritem>
+	    <itemsuppliers>
+	      <itemsupplier>
           <supplier name="Supplier of components A and B" />
           <leadtime>P14D</leadtime>
           <priority>1</priority>
-        </supplieritem>
-	    </supplieritems>
+        </itemsupplier>
+	    </itemsuppliers>
     </item>
     <!--
     Item B has 2 suppliers: one defined at the item level, and one
     at the group level.
     -->
     <item name="Component B" price="1">
-	    <supplieritems>
-	      <supplieritem>
+	    <itemsuppliers>
+	      <itemsupplier>
           <supplier name="Supplier of component B" />
           <leadtime>P14D</leadtime>
           <priority>1</priority>
-        </supplieritem>
-	    </supplieritems>
+        </itemsupplier>
+	    </itemsuppliers>
 	  </item>
     <!-- Item C has a single supplier. -->
     <item name="Component C" price="1">
-	    <supplieritems>
-	      <supplieritem>
+	    <itemsuppliers>
+	      <itemsupplier>
           <supplier name="Supplier of component C" />
           <leadtime>P21D</leadtime>
           <priority>1</priority>
           <size_multiple>100</size_multiple>
           <size_minimum>125</size_minimum>
-        </supplieritem>
-	    </supplieritems>
+        </itemsupplier>
+	    </itemsuppliers>
     </item>
     <!-- Item D has no supplier. -->
     <item name="Component D" price="1"/>
@@ -169,15 +169,15 @@ frepple.saveplan("output.3.xml")
 print("TESTING PYTHON API")
 s = frepple.supplier(name="X")
 r = frepple.item(name='Y')
-frepple.supplieritem(supplier=s, item=r)
+frepple.itemsupplier(supplier=s, item=r)
 with open("output.4.xml","wt") as output:
   for i in frepple.suppliers():
     print("Supplier", i.name, ":", file=output)
-    for j in i.supplieritems:
+    for j in i.itemsuppliers:
       print("     ", j.item.name, file=output)
   for i in frepple.items():
     print("Item", i.name, ":", file=output)
-    for j in i.supplieritems:
+    for j in i.itemsuppliers:
       print("     ", j.supplier.name, file=output)
 
 print("ERASE PLAN DATA")

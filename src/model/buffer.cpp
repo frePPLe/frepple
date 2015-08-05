@@ -598,13 +598,13 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   {
     // Loop over all suppliers of this item+location combination
     Item::supplierlist::const_iterator supitem_iter = item->getSupplierIterator();
-    while (SupplierItem *supitem = supitem_iter.next())
+    while (ItemSupplier *supitem = supitem_iter.next())
     {
-      // Verify whether the supplieritem is applicable to the buffer location
+      // Verify whether the ItemSupplier is applicable to the buffer location
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is not a member of the
-      //     supplieritem location
-      //   - buffer location is null, and the supplieritem location isn't
+      //     ItemSupplier location
+      //   - buffer location is null, and the ItemSupplier location isn't
       if (supitem->getLocation())
       {
         if ((getLocation() && !getLocation()->isMemberOf(supitem->getLocation()))
@@ -612,13 +612,13 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           continue;
       }
 
-      // Check if there is already a producing operation referencing this supplieritem
+      // Check if there is already a producing operation referencing this ItemSupplier
       if (producing_operation && producing_operation != unitializedProducing)
       {
-        if (producing_operation->getType() == *OperationSupplierItem::metadata)
+        if (producing_operation->getType() == *OperationItemSupplier::metadata)
         {
-          OperationSupplierItem* o = static_cast<OperationSupplierItem*>(producing_operation);
-          if (o->getSupplierItem() == supitem)
+          OperationItemSupplier* o = static_cast<OperationItemSupplier*>(producing_operation);
+          if (o->getItemSupplier() == supitem)
             // Already exists
             continue;
         }
@@ -626,10 +626,10 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         {
           SubOperation::iterator subiter(producing_operation->getSubOperations());
           while (SubOperation *o = subiter.next())
-            if (o->getOperation()->getType() == *OperationSupplierItem::metadata)
+            if (o->getOperation()->getType() == *OperationItemSupplier::metadata)
             {
-              OperationSupplierItem* s = static_cast<OperationSupplierItem*>(o->getOperation());
-              if (s->getSupplierItem() == supitem)
+              OperationItemSupplier* s = static_cast<OperationItemSupplier*>(o->getOperation());
+              if (s->getItemSupplier() == supitem)
                 // Already exists
                 continue;
             }
@@ -637,7 +637,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       }
 
       // New operation needs to be created
-      OperationSupplierItem *oper = new OperationSupplierItem(supitem, this);
+      OperationItemSupplier *oper = new OperationItemSupplier(supitem, this);
       if (producing_operation && producing_operation != unitializedProducing)
       {
         // We're not the first
@@ -668,7 +668,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       }
       else
       {
-        // We are the first: only create an operationsupplieritem instance
+        // We are the first: only create an operationItemSupplier instance
         if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
         {
           // Already create an alternate now

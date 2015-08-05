@@ -487,20 +487,20 @@ class exportStaticModel(object):
       print('Exported suppliers in %.2f seconds' % (time() - starttime))
 
 
-  def exportSupplierItems(self, cursor):
+  def exportItemSuppliers(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
 
-      def supplieritems():
+      def itemsuppliers():
         for o in frepple.suppliers():
-          for i in o.supplieritems:
+          for i in o.itemsuppliers:
             yield i
 
-      print("Exporting supplier items...")
+      print("Exporting item suppliers...")
       starttime = time()
-      cursor.execute("SELECT supplier_id, item_id, location_id FROM supplieritem") # TODO this combination isn't necesarily unique
+      cursor.execute("SELECT supplier_id, item_id, location_id FROM itemsupplier") # TODO this combination isn't necesarily unique
       primary_keys = set([ i for i in cursor.fetchall() ])
       cursor.executemany(
-        "insert into supplieritem \
+        "insert into itemsupplier \
         (supplier_id,item_id,location_id,leadtime,sizeminimum,sizemultiple, \
          cost,priority,effective_start,effective_end,source,lastmodified) \
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
@@ -508,11 +508,11 @@ class exportStaticModel(object):
           (i.supplier.name, i.item.name, i.location.name if i.location else None,
            i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
            i.effective_start, i.effective_end, i.source, self.timestamp)
-          for i in supplieritems()
+          for i in itemsuppliers()
           if (i.supplier.name, i.item.name, i.location.name if i.location else None) not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        "update supplieritem \
+        "update itemsupplier \
          set leadtime=%s, sizeminimum=%s, sizemultiple=%s, \
          cost=%s, priority=%s, effective_start=%s, effective_end=%s, \
          source=%s, lastmodified=%s \
@@ -521,10 +521,10 @@ class exportStaticModel(object):
           (i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
            i.effective_start, i.effective_end, i.source, self.timestamp,
            i.supplier.name, i.item.name, i.location.name if i.location else None)
-          for i in supplieritems()
+          for i in itemsuppliers()
           if (i.supplier.name, i.item.name, i.location.name if i.location else None) in primary_keys and (not self.source or self.source == i.source)
         ])
-      print('Exported supplier items in %.2f seconds' % (time() - starttime))
+      print('Exported item suppliers in %.2f seconds' % (time() - starttime))
 
 
   def exportDemands(self, cursor):
@@ -888,7 +888,7 @@ class exportStaticModel(object):
           self.exportLoads(cursor)
           self.exportCustomers(cursor)
           self.exportSuppliers(cursor)
-          self.exportSupplierItems(cursor)
+          self.exportItemSuppliers(cursor)
           self.exportDemands(cursor)
         except:
           traceback.print_exc()
@@ -904,7 +904,7 @@ class exportStaticModel(object):
           self.exportItems(cursor)
           tasks = (
             DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-            DatabaseTask(self, self.exportBuffers, self.exportFlows, self.exportSuppliers, self.exportSupplierItems),
+            DatabaseTask(self, self.exportBuffers, self.exportFlows, self.exportSuppliers, self.exportItemSuppliers),
             DatabaseTask(self, self.exportSetupMatrices, self.exportSetupMatricesRules, self.exportResources, self.exportSkills, self.exportResourceSkills, self.exportLoads),
             DatabaseTask(self, self.exportCustomers, self.exportDemands),
             )
@@ -922,7 +922,7 @@ class exportStaticModel(object):
         cursor.execute("delete from flow where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from demand where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from supplieritem where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute("delete from itemsupplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from item where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operationplan where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))

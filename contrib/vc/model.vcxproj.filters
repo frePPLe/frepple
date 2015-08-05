@@ -104,10 +104,10 @@
     <ClCompile Include="..\..\src\model\supplier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\model\supplieritem.cpp">
+    <ClCompile Include="..\..\src\model\suboperation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\model\suboperation.cpp">
+    <ClCompile Include="..\..\src\model\itemsupplier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

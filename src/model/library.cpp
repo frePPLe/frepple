@@ -47,7 +47,7 @@ void LibraryModel::initialize()
   nok += LocationDefault::initialize();
   nok += Customer::initialize();
   nok += CustomerDefault::initialize();
-  nok += SupplierItem::initialize();
+  nok += ItemSupplier::initialize();
   nok += Supplier::initialize();
   nok += SupplierDefault::initialize();
   nok += CalendarBucket::initialize();
@@ -68,7 +68,7 @@ void LibraryModel::initialize()
   nok += OperationFixedTime::initialize();
   nok += OperationTimePer::initialize();
   nok += OperationRouting::initialize();
-  nok += OperationSupplierItem::initialize();
+  nok += OperationItemSupplier::initialize();
   nok += OperationSetup::initialize();
   nok += Item::initialize();
   nok += ItemDefault::initialize();

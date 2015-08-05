@@ -34,7 +34,7 @@ int SubOperation::initialize()
   metacategory = MetaCategory::registerCategory<SubOperation>(
 	  "suboperation", "suboperations", MetaCategory::ControllerDefault  // TODO Need controller to find suboperations. Currently can only add
 	  );
-  metadata = MetaClass::registerClass<SupplierItem>(
+  metadata = MetaClass::registerClass<SubOperation>(
     "suboperation", "suboperation", Object::create<SubOperation>, true
   );
   registerFields<SubOperation>(const_cast<MetaCategory*>(metacategory));

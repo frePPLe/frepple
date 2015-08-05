@@ -238,7 +238,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
         rr != OperationPlan::end(); ++rr)
     {
       if (rr->getOperation()->getHidden()
-        && rr->getOperation()->getType() != *OperationSupplierItem::metadata)
+        && rr->getOperation()->getType() != *OperationItemSupplier::metadata)
           continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
           << rr->getDates().getStart() << '\t'
@@ -510,7 +510,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     total += memsize;
 
     // Suppliers and supplier items
-    size_t countSupplierItems(0), memSupplierItems(0);
+    size_t countItemSuppliers(0), memItemSuppliers(0);
     memsize = 0;
     for (Supplier::iterator c = Supplier::begin(); c != Supplier::end(); ++c)
     {
@@ -518,12 +518,12 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
       for (Supplier::itemlist::const_iterator rs = c->getItems().begin();
           rs != c->getItems().end(); ++rs)
       {
-        ++countSupplierItems;
-        memSupplierItems += rs->getSize();
+        ++countItemSuppliers;
+        memItemSuppliers += rs->getSize();
       }
     }
     logger << "Supplier          \t" << Supplier::size() << "\t" << memsize << endl;
-    logger << "Supplier items    \t" << countSupplierItems << "\t" << memSupplierItems << endl;
+    logger << "Supplier items    \t" << countItemSuppliers << "\t" << memItemSuppliers << endl;
     total += memsize;
 
     // Buffers

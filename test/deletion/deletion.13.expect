@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<name>Deletion test model</name>
-	<description>
-    This model tests how static and dynamic entities can be deleted from the
-    model. The tests loads a model, plans it, and then runs a number of delete
-    commands. After each delete command, the model is replanned and saved. Since
-    planning and saving a model requires going over all objects in memory, any
-    dangling pointers likely to surface soon and crash the application. Ha...
-  </description>
 	<current>2009-01-01T00:00:00</current>
-	<operations>
-	</operations>
 </plan>

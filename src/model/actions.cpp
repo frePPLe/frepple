@@ -438,6 +438,8 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       Calendar::clear();
       Supplier::clear();
       Item::clear();
+      Plan::instance().setName("");
+      Plan::instance().setDescription("");
       // The setup operation is a static singleton and should always be around
       OperationSetup::setupoperation = new OperationSetup();
       OperationSetup::setupoperation->setName("setup operation");

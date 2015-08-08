@@ -2170,7 +2170,7 @@ class OperationPlan
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       // Default of -999 to enforce serializing the value if it is 0
-      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, NULL, -999);
+      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, NULL, -999, PLAN + DETAIL);
       m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE);
       m->addBoolField<Cls>(Tags::consume_material, &Cls::getConsumeMaterial, &Cls::setConsumeMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::produce_material, &Cls::getProduceMaterial, &Cls::setProduceMaterial, BOOL_TRUE);
@@ -7176,7 +7176,7 @@ class Plan : public Plannable, public Object
       m->addList3Field<Plan, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier);
       m->addList3Field<Plan, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans);
-      m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems);
+      m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems, PLAN + DETAIL);
     }
 };
 

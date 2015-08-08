@@ -188,27 +188,4 @@
 			</resourceskills>
 		</skill>
 	</skills>
-	<problems>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;1. order&apos; is not planned</description>
-			<start>2013-03-06T00:00:00</start>
-			<end>2013-03-06T00:00:00</end>
-			<weight>20</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;2. order&apos; is not planned</description>
-			<start>2013-03-06T00:00:00</start>
-			<end>2013-03-06T00:00:00</end>
-			<weight>100</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;3. order&apos; is not planned</description>
-			<start>2013-03-06T00:00:00</start>
-			<end>2013-03-06T00:00:00</end>
-			<weight>40</weight>
-		</problem>
-	</problems>
 </plan>

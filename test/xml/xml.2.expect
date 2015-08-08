@@ -114,7 +114,6 @@
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>3</id>
@@ -124,7 +123,6 @@
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-20T00:00:00</end>
 			<quantity>12</quantity>
-			<criticality>0</criticality>
 			<owner>
 				<id>2</id>
 			</owner>
@@ -137,31 +135,9 @@
 			<start>2009-01-20T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
-			<criticality>0</criticality>
 			<owner>
 				<id>2</id>
 			</owner>
 		</operationplan>
 	</operationplans>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;STCK1&apos; has material excess of 100</description>
-			<weight>100</weight>
-		</problem>
-		<problem>
-			<name>overload</name>
-			<description>Resource &apos;resource 1&apos; has capacity shortage of 1</description>
-			<start>2009-01-13T00:00:00</start>
-			<end>2009-01-20T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>excess</name>
-			<description>Demand &apos; แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่&apos; planned 2 units excess</description>
-			<start>2009-01-27T00:00:00</start>
-			<end>2009-01-27T00:00:00</end>
-			<weight>2</weight>
-		</problem>
-	</problems>
 </plan>

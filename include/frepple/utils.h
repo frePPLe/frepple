@@ -4362,7 +4362,7 @@ class Tree : public NonCopyable
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
-    void rename(TreeNode* obj, const string& newname, TreeNode* hint = NULL)
+    DECLARE_EXPORT void rename(TreeNode* obj, const string& newname, TreeNode* hint = NULL)
     {
       if (obj->nm == newname)
         return;

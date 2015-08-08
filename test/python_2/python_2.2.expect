@@ -218,7 +218,6 @@
 			<start>2009-01-03T08:00:00</start>
 			<end>2009-01-04T08:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>3</id>
@@ -231,7 +230,6 @@
 			<start>2009-01-03T09:00:00</start>
 			<end>2009-01-04T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>4</id>
@@ -241,7 +239,6 @@
 			<start>2009-01-01T09:00:00</start>
 			<end>2009-01-02T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0.958333</criticality>
 		</operationplan>
 		<operationplan>
 			<id>5</id>
@@ -251,23 +248,6 @@
 			<start>2009-01-02T09:00:00</start>
 			<end>2009-01-03T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 	</operationplans>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;end item&apos; has material excess of 10</description>
-			<start>2009-01-02T09:00:00</start>
-			<end>2009-01-03T08:00:00</end>
-			<weight>10</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 3&apos; is not planned</description>
-			<start>2009-01-04T08:00:00</start>
-			<end>2009-01-04T08:00:00</end>
-			<weight>10</weight>
-		</problem>
-	</problems>
 </plan>

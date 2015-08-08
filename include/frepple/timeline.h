@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#pragma once
 #ifndef TIMELINE
 #define TIMELINE
 
@@ -29,6 +30,10 @@ namespace frepple
 {
 namespace utils
 {
+
+
+DECLARE_EXPORT extern PythonType* EventPythonType;
+
 
 /** @brief This class implements a "sorted list" data structure, sorting
   * "events" based on a date.
@@ -50,9 +55,7 @@ template <class type> class TimeLine
   public:
     class iterator;
     class const_iterator;
-    /** @brief Base class for nodes in the timeline.
-      * TODO all event types (except changeonhand) don't have a python type set
-      */
+    /** @brief Base class for nodes in the timeline. */
     class Event : public NonCopyable, public Object
     {
         friend class TimeLine<type>;
@@ -190,6 +193,7 @@ template <class type> class TimeLine
         EventSetOnhand(Date d, double q=0.0) : Event(2), new_oh(q), prevSet(NULL)
         {
           this->dt = d;
+          this->initType(EventPythonType->type_object());
         }
     };
 
@@ -215,6 +219,7 @@ template <class type> class TimeLine
           : Event(3), newMin(f), tmline(t), prevMin(NULL)
         {
           this->dt = d;
+          this->initType(EventPythonType->type_object());
         }
 
         void setMin(double f)
@@ -254,6 +259,7 @@ template <class type> class TimeLine
           : Event(4), newMax(f), tmline(t), prevMax(NULL)
         {
           this->dt = d;
+          this->initType(EventPythonType->type_object());
         }
 
         void setMax(double f)

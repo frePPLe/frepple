@@ -45,6 +45,9 @@ DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
 DECLARE_EXPORT const MetaCategory* Object::metadata = NULL;
 
+// Generic Python type for timeline events
+DECLARE_EXPORT PythonType* EventPythonType = NULL;
+
 // Repository of loaded modules
 DECLARE_EXPORT set<string> Environment::moduleRegistry;
 

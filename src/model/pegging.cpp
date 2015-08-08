@@ -44,12 +44,12 @@ int PeggingIterator::initialize()
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(Demand* d)
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
   : downstream(false), firstIteration(true), first(false)
 {
   initType(metadata);
-  const Demand::OperationPlan_list &deli = d->getDelivery();
-  for (Demand::OperationPlan_list::const_iterator opplaniter = deli.begin();
+  const Demand::OperationPlanList &deli = d->getDelivery();
+  for (Demand::OperationPlanList::const_iterator opplaniter = deli.begin();
       opplaniter != deli.end(); ++opplaniter)
   {
     OperationPlan *t = (*opplaniter)->getTopOwner();
@@ -58,7 +58,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(Demand* d)
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(OperationPlan* opplan, bool b)
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
   : downstream(b), firstIteration(true), first(false)
 {
   initType(metadata);
@@ -191,7 +191,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
 }
 
 
-DECLARE_EXPORT PyObject* PeggingIterator::iternext()
+DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
 {
   if (firstIteration)
     firstIteration = false;
@@ -199,14 +199,15 @@ DECLARE_EXPORT PyObject* PeggingIterator::iternext()
     ++*this;
   else
     --*this;
-  if (!operator bool()) return NULL;
-  Py_INCREF(this);
-  return static_cast<PyObject*>(this);
+  if (!operator bool())
+    return NULL;
+  else
+    return this;
 }
 
 
 DECLARE_EXPORT void PeggingIterator::updateStack
-(OperationPlan* op, double qty, double o, short lvl)
+(const OperationPlan* op, double qty, double o, short lvl)
 {
   // Avoid very small pegging quantities
   if (qty < ROUNDING_ERROR) return;

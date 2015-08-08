@@ -57,6 +57,7 @@ void LibraryModel::initialize()
   nok += ResourceSkill::initialize();
   nok += LoadPlan::initialize();
   nok += FlowPlan::initialize();
+  nok += PeggingIterator::initialize();
   nok += OperationPlan::initialize();
   nok += Load::initialize();
   nok += LoadPlanIterator::initialize();
@@ -78,7 +79,6 @@ void LibraryModel::initialize()
   nok += BufferDefault::initialize();
   nok += BufferInfinite::initialize();
   nok += BufferProcure::initialize();
-  nok += PeggingIterator::initialize();
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
   nok += SetupMatrixRule::initialize();
@@ -92,6 +92,11 @@ void LibraryModel::initialize()
   nok += Resource::PlanIterator::initialize();
   nok += ResourceBuckets::initialize();
   nok += Plan::initialize();
+
+  EventPythonType = Object::registerPythonType(
+    sizeof(TimeLine<Flow>::EventMaxQuantity),
+    &typeid(TimeLine<Flow>::EventMaxQuantity)
+    );
 
   // Exit if errors were found
   if (nok)

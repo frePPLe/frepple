@@ -161,8 +161,8 @@ DECLARE_EXPORT void OperatorDelete::solve(const Demand* d, void* v)
   {
     // Find a candidate operationplan to delete
     OperationPlan *candidate = NULL;
-    const Demand::OperationPlan_list& deli = d->getDelivery();
-    for (Demand::OperationPlan_list::const_iterator i = deli.begin(); i != deli.end(); ++i)
+    const Demand::OperationPlanList& deli = d->getDelivery();
+    for (Demand::OperationPlanList::const_iterator i = deli.begin(); i != deli.end(); ++i)
       if (!(*i)->getLocked())
       {
         candidate = *i;

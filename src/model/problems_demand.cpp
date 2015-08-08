@@ -50,7 +50,7 @@ DECLARE_EXPORT void Demand::updateProblems()
   else
   {
     // Loop through the deliveries
-    for (OperationPlan_list::iterator i = deli.begin(); i!=deli.end(); ++i)
+    for (OperationPlanList::iterator i = deli.begin(); i!=deli.end(); ++i)
     {
       // Check for ProblemLate problem
       long d(getDue() - (*i)->getDates().getEnd());

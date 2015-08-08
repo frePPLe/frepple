@@ -1688,6 +1688,7 @@ class OperationPlan
     // Forward declarations
     class iterator;
     class FlowPlanIterator;
+    class LoadPlanIterator;
 
     // Type definitions
     typedef TimeLine<FlowPlan> flowplanlist;
@@ -1703,8 +1704,6 @@ class OperationPlan
 
     /** Returns how many flowplans are created on an operationplan. */
     int sizeFlowPlans() const;
-
-    class LoadPlanIterator;
 
     /** Returns an iterator pointing to the first loadplan. */
     LoadPlanIterator beginLoadPlans() const;
@@ -2181,6 +2180,8 @@ class OperationPlan
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, DONT_SERIALIZE);
       m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
+      m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       /* TODO XXX
       from endelement:
         else if (pAttr.isA(Tags::owner) && !pIn.isObjectEnd())
@@ -2195,12 +2196,6 @@ class OperationPlan
       // Initialization failed and the operationplan is deleted
       pIn.invalidateCurrentObject();
   }
-
-      from getattr:
-        if (attr.isA(Tags::pegging_downstream))
-          return new PeggingIterator(this, true);
-        if (attr.isA(Tags::pegging_upstream))
-          return new PeggingIterator(this, false);
       */
     }
 
@@ -6273,7 +6268,29 @@ class Demand
   : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
   public:
-    typedef slist<OperationPlan*> OperationPlan_list;
+    typedef slist<OperationPlan*> OperationPlanList;
+
+    class DeliveryIterator
+    {
+      private:
+        OperationPlanList::const_iterator cur;
+        OperationPlanList::const_iterator end;
+
+      public:
+        /** Constructor. */
+        DeliveryIterator(const Demand* d)
+          : cur(d->getDelivery().begin()), end(d->getDelivery().end()) {}
+
+        /** Return current value and advance the iterator. */
+        OperationPlan* next()
+        {
+          if (cur == end)
+            return NULL;
+          OperationPlan* tmp = *cur;
+          ++cur;
+          return tmp;
+        }
+    };
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Demand() :
@@ -6360,7 +6377,12 @@ class Demand
     }
 
     /** Returns the delivery operationplan list. */
-    DECLARE_EXPORT const OperationPlan_list& getDelivery() const;
+    DECLARE_EXPORT const OperationPlanList& getDelivery() const;
+
+    DeliveryIterator getOperationPlans() const
+    {
+      return DeliveryIterator(this);
+    }
 
     /** Returns the latest delivery operationplan. */
     DECLARE_EXPORT OperationPlan* getLatestDelivery() const;
@@ -6504,7 +6526,8 @@ class Demand
       m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
-      m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::operationplans, Tags::operationplan, &Cls::getOperationplans, PLAN + WRITE_FULL);
+      m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_FULL);
+      m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
     }
 
@@ -6540,7 +6563,7 @@ class Demand
     bool hidden;
 
     /** A list of operation plans to deliver this demand. */
-    OperationPlan_list deli;
+    OperationPlanList deli;
 
     /** A list of constraints preventing this demand from being planned in
       * full and on time. */
@@ -8286,7 +8309,7 @@ class PeggingIterator : public Object
     DECLARE_EXPORT PeggingIterator(const Demand*);
 
     /** Constructor. */
-    DECLARE_EXPORT PeggingIterator(OperationPlan*, bool=true);
+    DECLARE_EXPORT PeggingIterator(const OperationPlan*, bool=true);
 
     /** Constructor. */
     DECLARE_EXPORT PeggingIterator(FlowPlan*, bool=true);
@@ -8297,7 +8320,7 @@ class PeggingIterator : public Object
     /** Return the operationplan. */
     OperationPlan* getOperationPlan() const
     {
-      return states.back().opplan;
+      return const_cast<OperationPlan*>(states.back().opplan);
     }
 
     /** Destructor. */
@@ -8339,7 +8362,7 @@ class PeggingIterator : public Object
     DECLARE_EXPORT PeggingIterator* next();
 
     /** Add an entry on the stack. */
-    DECLARE_EXPORT void updateStack(OperationPlan*, double, double, short);
+    DECLARE_EXPORT void updateStack(const OperationPlan*, double, double, short);
 
     /** Initialize the class. */
     static int initialize();
@@ -8360,13 +8383,13 @@ class PeggingIterator : public Object
       * iteration. */
     struct state
     {
-      OperationPlan* opplan;
+      const OperationPlan* opplan;
       double quantity;
       double offset;
       short level;
 
       // Constructor
-      state(OperationPlan* op, double q, double o, short l)
+      state(const OperationPlan* op, double q, double o, short l)
         : opplan(op), quantity(q), offset(o), level(l) {};
 
       // Copy constructor

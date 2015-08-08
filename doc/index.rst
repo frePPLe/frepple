@@ -26,6 +26,7 @@ To get started we suggest the following **introduction trail**:
 #. | Visit to the community forum https://groups.google.com/forum/#!forum/frepple-users
    | You're invited to post questions, suggestions and issues to the group.
 
+**Table of contents**
 
 .. toctree::
    :maxdepth: 4

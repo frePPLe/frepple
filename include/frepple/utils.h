@@ -2225,12 +2225,6 @@ class MetaCategory : public MetaClass
       return findFunction ? findFunction(key) : NULL;
     }
 
-    /** This method takes care of the persistence of all categories. It loops
-      * through all registered categories (in the order of their registration)
-      * and calls the persistance handler.
-      */
-    static DECLARE_EXPORT void persist(Serializer*);
-
     /** A control function for reading objects of a category.
       * The controller function manages the creation and destruction of
       * objects in this category.
@@ -3819,10 +3813,10 @@ class Object : public PyObject
     // TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()
     static DECLARE_EXPORT const MetaCategory* metadata;
 
+    DECLARE_EXPORT static PythonType* registerPythonType(int, const type_info*);
+
   protected:
     static vector<PythonType*> table;
-
-    DECLARE_EXPORT static PythonType* registerPythonType(int, const type_info*);
 
   private:
     PyObject* dict;
@@ -4107,6 +4101,7 @@ class ScopeMutexLock: public NonCopyable
   *
   * Currently Pthreads and Windows threads are supported as the implementation
   * of the multithreading.
+  * TODO Replace with C++11 threads when these are available in mainstream gcc
   */
 class ThreadGroup : public NonCopyable
 {

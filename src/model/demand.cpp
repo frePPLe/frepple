@@ -28,12 +28,16 @@ template<class Demand> DECLARE_EXPORT Tree utils::HasName<Demand>::st;
 DECLARE_EXPORT const MetaCategory* Demand::metadata;
 DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 
+DECLARE_EXPORT OperationFixedTime *Demand::uninitializedDelivery = NULL;
+
 
 int Demand::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Demand>("demand", "demands", reader, finder);
   registerFields<Demand>(const_cast<MetaCategory*>(metadata));
+
+  uninitializedDelivery = new OperationFixedTime();
 
   // Initialize the Python class
   return FreppleCategory<Demand>::initialize();
@@ -219,11 +223,84 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 
 DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
 {
-  // Operation can be specified on the demand itself,
-  if (oper) return oper;
-  // ... or on the item,
-  if (it) return it->getOperation();
-  // ... or it doesn't exist at all
+  // Case 1: Operation specified on the demand itself,
+  // or the delivery operation was computed earlier.
+  if (oper && oper != uninitializedDelivery)
+    return oper;
+
+  // Case 2: Operation specified on the item.
+  // Note that we don't accept a delivery operation at the parent level
+  // as a valid operation to plan the demand.
+  if (it && it->getOperation())
+    return it->getOperation();
+
+  // Case 3: Create a delivery operation automatically
+  Location *l = getLocation();
+  if (!l)
+  {
+    // Single location only?
+    Location::iterator l_iter = Location::begin();
+    if (l_iter != Location::end())
+    {
+      l = &*l_iter;
+      if (++l_iter != Location::end())
+        // No, multiple locations
+        l = NULL;
+    }
+  }
+  if (l)
+  {
+    // Search for buffers for the requested item and location.
+    bool ok = true;
+    Buffer* buf = NULL;
+    for (Buffer::iterator buf_iter = Buffer::begin();
+      buf_iter != Buffer::end(); ++buf_iter)
+    {
+      if (buf_iter->getItem() == getItem() && buf_iter->getLocation() == l)
+      {
+        if (buf)
+        {
+          // Second buffer found. We don't know which one to pick - abort.
+          ok = false;
+          break;
+        }
+        else
+          buf = &*buf_iter;
+      }
+    }
+
+    if (ok)
+    {
+      if (!buf)
+      {
+        // Create a new buffer
+        buf = new BufferDefault();
+        buf->setItem(getItem());
+        buf->setLocation(l);
+        stringstream o;
+        o << getItem() << " @ " << l;
+        buf->setName(o.str());
+      }
+
+      // Find an existing operation consuming from this buffer
+      stringstream o;
+      o << "Ship " << buf;
+      const_cast<Demand*>(this)->oper = Operation::find(o.str());
+      if (!oper)
+      {
+        const_cast<Demand*>(this)->oper = new OperationFixedTime();
+        oper->setName(o.str());
+        oper->setHidden(true);
+        FlowStart* fl = new FlowStart(oper, buf, -1);
+      }
+
+      // Success!
+      return oper;
+    }
+  }
+
+  // Case 4: Tough luck. Not possible to ship this demand.
+  const_cast<Demand*>(this)->oper = NULL;
   return NULL;
 }
 

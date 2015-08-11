@@ -954,6 +954,9 @@ class Demand(AuditModel, HierarchyModel):
   item = models.ForeignKey(
     Item, verbose_name=_('item'), null=True, blank=True, db_index=True
     )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), null=True, blank=True, db_index=True
+    )
   due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
   status = models.CharField(
     _('status'), max_length=10, null=True, blank=True,

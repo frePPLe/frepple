@@ -38,7 +38,7 @@ DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
                *BufferProcure::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
-DECLARE_EXPORT OperationFixedTime *Buffer::unitializedProducing = NULL;
+DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = NULL;
 
 
 int Buffer::initialize()
@@ -47,7 +47,7 @@ int Buffer::initialize()
   metadata = MetaCategory::registerCategory<Buffer>("buffer", "buffers", reader, finder);
   registerFields<Buffer>(const_cast<MetaCategory*>(metadata));
 
-  unitializedProducing = new OperationFixedTime();
+  uninitializedProducing = new OperationFixedTime();
 
   // Initialize the Python class
   return FreppleCategory<Buffer>::initialize();
@@ -587,7 +587,7 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 DECLARE_EXPORT void Buffer::buildProducingOperation()
 {
   if (producing_operation
-    && producing_operation != unitializedProducing
+    && producing_operation != uninitializedProducing
     && !producing_operation->getHidden())
     // Leave manually specified producing operations alone
     return;
@@ -613,7 +613,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       }
 
       // Check if there is already a producing operation referencing this ItemSupplier
-      if (producing_operation && producing_operation != unitializedProducing)
+      if (producing_operation && producing_operation != uninitializedProducing)
       {
         if (producing_operation->getType() == *OperationItemSupplier::metadata)
         {
@@ -637,10 +637,10 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       }
 
       // New operation needs to be created
-      OperationItemSupplier *oper = new OperationItemSupplier(supitem, this);
+      OperationItemSupplier *oper = OperationItemSupplier::findOrCreate(supitem, this);
 
       // Merge the new operation in an alternate operation if required
-      if (producing_operation && producing_operation != unitializedProducing)
+      if (producing_operation && producing_operation != uninitializedProducing)
       {
         // We're not the first
         SubOperation* subop = new SubOperation();
@@ -652,7 +652,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           // We are the second: create an alternate and add 2 suboperations
           OperationAlternate *superop = new OperationAlternate();
           stringstream o;
-          o << "Replenish '" << getName() << "' (*)";
+          o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
           superop->setSearch("PRIORITY");
@@ -677,7 +677,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           OperationAlternate *superop = new OperationAlternate();
           producing_operation = superop;
           stringstream o;
-          o << "Replenish '" << getName() << "' (*)";
+          o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
           superop->setSearch("PRIORITY");
@@ -711,7 +711,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       }
 
       // Check if there is already a producing operation referencing this ItemDistribution
-      if (producing_operation && producing_operation != unitializedProducing)
+      if (producing_operation && producing_operation != uninitializedProducing)
       {
         if (producing_operation->getType() == *OperationItemDistribution::metadata)
         {
@@ -739,12 +739,12 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       {
         // Skip unqualified locations
         if (itemdist->getOrigin() && !loc->isMemberOf(itemdist->getOrigin()))
-          continue; 
-      
+          continue;
+
         // Find or create the source buffer
         Buffer* originbuf = NULL;
         for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-          if (buf->getLocation() == &*loc && buf->getItem() == item)
+          if (buf->getLocation() == &*loc && buf->getItem() == getItem())
           {
             originbuf = &*buf;
             break;
@@ -752,10 +752,12 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         if (!originbuf)
         {
           originbuf = new BufferDefault();
-          originbuf->setItem(item);
+          originbuf->setItem(getItem());
           originbuf->setLocation(&*loc);
           stringstream o;
-          o << item->getName() << " @ " << loc->getName();
+          o << getItem() << " @ " << loc->getName();
+          // We assume there is no buffer with that name yet. If there is,
+          // we'll get an error here.
           originbuf->setName(o.str());
         }
 
@@ -763,7 +765,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         OperationItemDistribution *oper = new OperationItemDistribution(itemdist, originbuf, this);
 
         // Merge the new operation in an alternate operation if required
-        if (producing_operation && producing_operation != unitializedProducing)
+        if (producing_operation && producing_operation != uninitializedProducing)
         {
           // We're not the first
           SubOperation* subop = new SubOperation();
@@ -775,7 +777,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
             // We are the second: create an alternate and add 2 suboperations
             OperationAlternate *superop = new OperationAlternate();
             stringstream o;
-            o << "Replenish '" << getName() << "' (*)";
+            o << "Replenish " << getName();
             superop->setName(o.str());
             superop->setHidden(true);
             superop->setSearch("PRIORITY");
@@ -800,7 +802,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
             OperationAlternate *superop = new OperationAlternate();
             producing_operation = superop;
             stringstream o;
-            o << "Replenish '" << getName() << "' (*)";
+            o << "Replenish " << getName();
             superop->setName(o.str());
             superop->setHidden(true);
             superop->setSearch("PRIORITY");
@@ -823,7 +825,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
     item = item->getOwner();
   }
 
-  if (producing_operation == unitializedProducing)
+  if (producing_operation == uninitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.
     new ProblemInvalidData(this, "no replenishment defined", "buffer",

@@ -55,11 +55,13 @@ DECLARE_EXPORT Item::~Item()
 {
   // Remove references from the buffers
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if (buf->getItem() == this) buf->setItem(NULL);
+    if (buf->getItem() == this)
+      buf->setItem(NULL);
 
   // Remove references from the demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getItem() == this) l->setItem(NULL);
+    if (l->getItem() == this)
+      l->setItem(NULL);
 
   // Remove all item distributions referencing this item
   while (firstItemDistribution)

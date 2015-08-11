@@ -64,6 +64,9 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
   // Delete all owned purchase operations
   while (firstOperation)
     delete firstOperation;
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -71,6 +74,9 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier() : loc(NULL),
   size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
 {
   initType(metadata);
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -81,6 +87,9 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
   setItem(r);
   setPriority(u);
   initType(metadata);
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -92,6 +101,9 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange
   setPriority(u);
   setEffective(e);
   initType(metadata);
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -263,6 +275,32 @@ int OperationItemSupplier::initialize()
 }
 
 
+DECLARE_EXPORT OperationItemSupplier* OperationItemSupplier::findOrCreate(
+  ItemSupplier* i, Buffer *b
+  )
+{
+  if (!i || !b || !i->getSupplier())
+    throw LogicException(
+      "An OperationItemSupplier always needs to point to "
+      "a itemsupplier and a buffer"
+      );
+  stringstream o;
+  o << "Purchase " << b->getName() << " from " << i->getSupplier()->getName();
+  Operation *oper = Operation::find(o.str());
+  if (oper)
+  {
+    // Reuse existing operation
+    if (oper->getType() == *OperationItemSupplier::metadata)
+      return static_cast<OperationItemSupplier*>(oper);
+    else
+      throw DataException("Unexpected operation type for item supplier operation");
+  }
+  else
+    // Create new operation
+    return new OperationItemSupplier(i, b);
+}
+
+
 DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
   ItemSupplier* i, Buffer *b
   ) : supitem(i)
@@ -273,7 +311,7 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
       "a itemsupplier and a buffer"
       );
   stringstream o;
-  o << "Purchase '" << b->getName() << "' from '" << i->getSupplier()->getName() << "' (*)";
+  o << "Purchase " << b->getName() << " from " << i->getSupplier()->getName();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());

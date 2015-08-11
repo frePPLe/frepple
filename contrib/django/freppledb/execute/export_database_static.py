@@ -535,13 +535,14 @@ class exportStaticModel(object):
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
         '''insert into demand
-        (name,due,quantity,priority,item_id,operation_id,customer_id,
+        (name,due,quantity,priority,item_id,location_id,operation_id,customer_id,
          minshipment,maxlateness,category,subcategory,source,lastmodified)
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
             i.name, str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority, i.item.name,
-            i.operation and i.operation.name or None, i.customer and i.customer.name or None,
+            i.location.name if i.location else None, i.operation.name if i.operation else None,
+            i.customer.name if i.customer else None,
             round(i.minshipment, settings.DECIMAL_PLACES), round(i.maxlateness, settings.DECIMAL_PLACES),
             i.category, i.subcategory, i.source, self.timestamp
           )
@@ -556,8 +557,9 @@ class exportStaticModel(object):
         [
           (
             str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority,
-            i.item.name, i.operation and i.operation.name or None,
-            i.customer and i.customer.name or None,
+            i.item.name, i.location.name if i.location else None,
+            i.operation.name if i.operation else None,
+            i.customer.name if i.customer else None,
             round(i.minshipment, settings.DECIMAL_PLACES),
             round(i.maxlateness, settings.DECIMAL_PLACES),
             i.category, i.subcategory, i.source, self.timestamp, i.name

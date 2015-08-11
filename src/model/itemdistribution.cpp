@@ -58,6 +58,9 @@ DECLARE_EXPORT ItemDistribution::ItemDistribution() : it(NULL),
   next(NULL)
 {
   initType(metadata);
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -91,6 +94,9 @@ DECLARE_EXPORT ItemDistribution::~ItemDistribution()
         throw LogicException("Corrupted ItemDistribution list");
     }
   }
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -125,6 +131,9 @@ DECLARE_EXPORT void ItemDistribution::setItem(Item* i)
     next = it->firstItemDistribution;
     it->firstItemDistribution = this;
   }
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -287,7 +296,7 @@ DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
       "a ItemDistribution, a source buffer and a destination buffer"
       );
   stringstream o;
-  o << "Ship '" << dest->getItem()->getName() << "' from '" << src->getName() << "' to '" << dest->getName() << "' (*)";
+  o << "Ship " << dest->getItem()->getName() << " from " << src->getName() << " to " << dest->getName();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());

@@ -1235,7 +1235,7 @@ class HasLevel
     }
 
     /** Default constructor. The initial level is -1 and basically indicates
-      * that this HasHierarchy (either Operation, Buffer or Resource) is not
+      * that this object (either Operation, Buffer or Resource) is not
       * being used at all...
       */
     HasLevel() : lvl(0), cluster(0) {}
@@ -3505,12 +3505,14 @@ class ItemDistribution : public Object,
     void setOrigin(Location* s)
     {
       if (s) setPtrA(s, s->getDistributionOrigins());
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Updates the destination location. This method can only be called once on each instance. */
     void setDestination(Location* i)
     {
       if (i) setPtrB(i, i->getDistributionDestinations());
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Return the purchasing leadtime. */
@@ -3697,7 +3699,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
       public:
         /** Constructor. */
-        distributionIterator(const Item *c) 
+        distributionIterator(const Item *c)
         {
           cur = c ? c->firstItemDistribution : NULL;
         }
@@ -3733,7 +3735,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
-      m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);      
+      m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
     }
 
   private:
@@ -3808,12 +3810,14 @@ class ItemSupplier : public Object,
     void setSupplier(Supplier* s)
     {
       if (s) setPtrA(s, s->getItems());
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Updates the item. This method can only be called on an instance. */
     void setItem(Item* i)
     {
       if (i) setPtrB(i, i->getSuppliers());
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Sets the minimum size for procurements.<br>
@@ -4004,6 +4008,8 @@ class OperationItemSupplier : public OperationFixedTime
       return supitem;
     }
 
+    static DECLARE_EXPORT OperationItemSupplier* findOrCreate(ItemSupplier*, Buffer*);
+
     /** Constructor. */
     explicit DECLARE_EXPORT OperationItemSupplier(ItemSupplier*, Buffer*);
 
@@ -4039,7 +4045,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Buffer() :
-      hidden(false), producing_operation(unitializedProducing), loc(NULL), it(NULL),
+      hidden(false), producing_operation(uninitializedProducing), loc(NULL), it(NULL),
       min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
       min_interval(-1), carrying_cost(0.0), tool(false) {}
 
@@ -4062,7 +4068,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * buffer. */
     Operation* getProducingOperation() const
     {
-      if (producing_operation == unitializedProducing)
+      if (producing_operation == uninitializedProducing)
         const_cast<Buffer*>(this)->buildProducingOperation();
       return producing_operation;
     }
@@ -4323,10 +4329,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       HasLevel::registerFields<Cls>(m);
     }
 
-  public:
     /** A dummy producing operation to mark uninitialized ones. */
-    static DECLARE_EXPORT OperationFixedTime *unitializedProducing;
+    static DECLARE_EXPORT OperationFixedTime *uninitializedProducing;
 
+  private:
     /** A constant defining the default max inventory target.\\
       * Theoretically we should set this to DBL_MAX, but then the results
       * are not portable across platforms.
@@ -6294,8 +6300,8 @@ class Demand
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Demand() :
-      it(NULL), oper(NULL), cust(NULL), qty(0.0), prio(0),
-      maxLateness(Duration::MAX), minShipment(1), hidden(false)
+      it(NULL), loc(NULL), oper(uninitializedDelivery), cust(NULL), qty(0.0),
+      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false)
       {}
 
     /** Destructor.
@@ -6340,7 +6346,31 @@ class Demand
     /** Updates the item/product being requested. */
     virtual void setItem(Item *i)
     {
+      if (it == i)
+        return;
       it=i;
+      if (oper && oper->getHidden())
+        oper = uninitializedDelivery;
+      setChanged();
+    }
+
+    /** Returns the location where the demand is shipped from. */
+    Location* getLocation() const
+    {
+      return loc;
+    }
+
+    /** Update the location where the demand is shipped from. */
+    void setLocation(Location* l)
+    {
+      if (loc == l)
+        return;
+      if (oper && oper->getHidden())
+      {
+        oper = uninitializedDelivery;
+        HasLevel::triggerLazyRecomputation();
+      }
+      loc = l;
       setChanged();
     }
 
@@ -6351,21 +6381,37 @@ class Demand
       */
     Operation* getOperation() const
     {
-      return oper;
+      if (oper == uninitializedDelivery)
+        return NULL;
+      else
+        return oper;
     }
 
     /** Updates the operation being used to plan the demand. */
     virtual void setOperation(Operation* o)
     {
+      if (oper == o)
+        return;
       oper=o;
       setChanged();
     }
 
     /** This function returns the operation that is to be used to satisfy this
       * demand. In sequence of priority this goes as follows:
-      *   1) If the "operation" field on the demand is set, use it.
-      *   2) Otherwise, use the "delivery" field of the requested item.
-      *   3) Else, return NULL. This demand can't be satisfied!
+      *   1) If the "operation" field on the demand is explicitly set, use it.
+      *   2) Otherwise, use the "delivery" field of the requested item, if
+      *      that field is explicitly set.
+      *   3) Otherwise, we try creating a new delivery.
+      *      a) Location specified
+      *         Search a buffer for the requested item and location. If found
+      *         create a delivery operation consuming from it.
+      *         If not found create a new buffer.
+      *      b) No location specified.
+      *         If only a single location exists in the model, use that
+      *         to use the same logic as in case a.
+      *         If multiple locations exist, we can't resolve the case.
+      *   4) If the previous step fails, return NULL.
+      *      This demand can't be satisfied!
       */
     DECLARE_EXPORT Operation* getDeliveryOperation() const;
 
@@ -6516,11 +6562,12 @@ class Demand
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
-      m->addPointerField<Cls, Customer>(Tags::customer, &Cls::getCustomer, &Cls::setCustomer);
-      Plannable::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
+      m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
+      m->addPointerField<Cls, Customer>(Tags::customer, &Cls::getCustomer, &Cls::setCustomer);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
+      Plannable::registerFields<Cls>(m);
       m->addDateField<Cls>(Tags::due, &Cls::getDue, &Cls::setDue);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
       m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
@@ -6532,8 +6579,13 @@ class Demand
     }
 
   private:
+    static DECLARE_EXPORT OperationFixedTime *uninitializedDelivery;
+
     /** Requested item. */
     Item *it;
+
+    /** Location. */
+    Location * loc;
 
     /** Delivery Operation. Can be left NULL, in which case the delivery
       * operation can be specified on the requested item. */

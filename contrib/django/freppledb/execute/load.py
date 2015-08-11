@@ -713,7 +713,7 @@ class loadData(object):
       SELECT
         name, due, quantity, priority, item_id,
         operation_id, customer_id, owner_id, minshipment, maxlateness,
-        category, subcategory, source
+        category, subcategory, source, location_id
       FROM demand
       WHERE (status IS NULL OR status ='open' OR status = 'quote') %s
       ''' % self.filter_and)
@@ -734,6 +734,8 @@ class loadData(object):
           x.minshipment = i[8]
         if i[9] is not None:
           x.maxlateness = i[9]
+        if i[13]:
+          x.location = frepple.location(name=i[13])
       except Exception as e:
         print("Error:", e)
     print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))

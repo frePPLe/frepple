@@ -237,8 +237,10 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
     for (OperationPlan::iterator rr = OperationPlan::begin();
         rr != OperationPlan::end(); ++rr)
     {
+      // TODO if-condition here isn't very clean and generic
       if (rr->getOperation()->getHidden()
-        && rr->getOperation()->getType() != *OperationItemSupplier::metadata)
+        && rr->getOperation()->getType() != *OperationItemSupplier::metadata
+        && rr->getOperation()->getType() != *OperationItemDistribution::metadata)
           continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
           << rr->getDates().getStart() << '\t'

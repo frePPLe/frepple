@@ -598,6 +598,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='demand',
+            name='location',
+            field=models.ForeignKey(to='input.Location', null=True, verbose_name='location', blank=True),
+        ),
+        migrations.AddField(
+            model_name='demand',
             name='operation',
             field=models.ForeignKey(to='input.Operation', related_name='used_demand', null=True, verbose_name='delivery operation', help_text='Operation used to satisfy this demand', blank=True),
         ),

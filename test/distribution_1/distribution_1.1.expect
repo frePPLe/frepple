@@ -127,9 +127,6 @@
 				<name>All products</name>
 			</owner>
 			<price>2</price>
-			<operation>
-				<name>Delivery A</name>
-			</operation>
 		</item>
 	</items>
 	<buffers>
@@ -143,74 +140,7 @@
 			</location>
 			<onhand>10</onhand>
 		</buffer>
-		<buffer>
-			<name>product A @ Local DC 1a</name>
-			<item>
-				<name>product A</name>
-			</item>
-			<location>
-				<name>Local DC 1a</name>
-			</location>
-		</buffer>
-		<buffer>
-			<name>product A @ Local DC 1b</name>
-			<item>
-				<name>product A</name>
-			</item>
-			<location>
-				<name>Local DC 1b</name>
-			</location>
-		</buffer>
-		<buffer>
-			<name>product A @ Local DC 2a</name>
-			<item>
-				<name>product A</name>
-			</item>
-			<location>
-				<name>Local DC 2a</name>
-			</location>
-		</buffer>
-		<buffer>
-			<name>product A @ Local DC 2b</name>
-			<item>
-				<name>product A</name>
-			</item>
-			<location>
-				<name>Local DC 2b</name>
-			</location>
-		</buffer>
 	</buffers>
-	<operations>
-		<operation>
-			<name>Delivery A</name>
-			<flows>
-				<flow>
-					<buffer>
-						<name>product A @ Local DC 1a</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-				<flow>
-					<buffer>
-						<name>product A @ Local DC 1b</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-				<flow>
-					<buffer>
-						<name>product A @ Local DC 2a</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-				<flow>
-					<buffer>
-						<name>product A @ Local DC 2b</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
-		</operation>
-	</operations>
 	<demands>
 		<demand>
 			<name>order 1 for product A</name>
@@ -218,6 +148,9 @@
 			<item>
 				<name>product A</name>
 			</item>
+			<location>
+				<name>Local DC 1a</name>
+			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -227,6 +160,9 @@
 			<item>
 				<name>product A</name>
 			</item>
+			<location>
+				<name>Local DC 1b</name>
+			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -236,6 +172,9 @@
 			<item>
 				<name>product A</name>
 			</item>
+			<location>
+				<name>Local DC 2a</name>
+			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -245,43 +184,11 @@
 			<item>
 				<name>product A</name>
 			</item>
+			<location>
+				<name>Local DC 2b</name>
+			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;product A @ Central WH&apos; has material excess of 10</description>
-			<weight>10</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 1 for product A&apos; is not planned</description>
-			<start>2015-01-01T00:00:00</start>
-			<end>2015-01-01T00:00:00</end>
-			<weight>100</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 2 for product A&apos; is not planned</description>
-			<start>2015-01-01T00:00:00</start>
-			<end>2015-01-01T00:00:00</end>
-			<weight>100</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 3 for product A&apos; is not planned</description>
-			<start>2015-01-01T00:00:00</start>
-			<end>2015-01-01T00:00:00</end>
-			<weight>100</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 4 for product A&apos; is not planned</description>
-			<start>2015-01-01T00:00:00</start>
-			<end>2015-01-01T00:00:00</end>
-			<weight>100</weight>
-		</problem>
-	</problems>
 </plan>

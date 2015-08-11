@@ -22,6 +22,10 @@ members        list of demand    | Demands are organized in a hierarchical tree.
                                  | This field defines a list of child demand.
 quantity       double            Requested quantity.
 item           item              Requested item.
+location       location          | Requested shipping location.
+                                 | This field can be left blank if there is only a single
+                                   location in the model, or if a delivery operation is
+                                   specified on the demand or the item.
 due            dateTime          Due date of the demand.
 priority       integer           | Priority of the demand relative to the other demands.
                                  | A lower number indicates higher priority.
@@ -29,6 +33,10 @@ priority       integer           | Priority of the demand relative to the other 
 operation      operation         | Operation to be used to satisfy the demand.
                                  | If left unspecified the operation on the item will be
                                    used.
+                                 | New in version 3.0: If no operation is specified on the
+                                   demand or the item, frePPLe will automatically try to create
+                                   a delivery operation for the requested item and location.
+                                   A data error is created when we this isn't possible.
 customer       customer          Customer placing the demand.
 detectproblems boolean           | Set this field to false to supress problem detection on
                                    this demand.

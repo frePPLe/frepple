@@ -89,73 +89,29 @@
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="product A">
-        <operation name="Delivery A">
-          <flows>
-            <flow>
-              <buffer name="product A @ Local DC 1a">
-                <item name="product A"/>
-                <location name="Local DC 1a"/>
-              </buffer>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="product A"/>
+      <location name="Local DC 1a"/>
     </demand>
     <demand name="order 2 for product A">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="product A">
-        <operation name="Delivery A">
-          <flows>
-            <flow>
-              <buffer name="product A @ Local DC 1b">
-                <item name="product A"/>
-                <location name="Local DC 1b"/>
-              </buffer>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="product A"/>
+      <location name="Local DC 1b"/>
     </demand>
     <demand name="order 3 for product A">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="product A">
-        <operation name="Delivery A">
-          <flows>
-            <flow>
-              <buffer name="product A @ Local DC 2a">
-                <item name="product A"/>
-                <location name="Local DC 2a"/>
-              </buffer>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="product A"/>
+      <location name="Local DC 2a"/>
     </demand>
     <demand name="order 4 for product A">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="product A">
-        <operation name="Delivery A">
-          <flows>
-            <flow>
-              <buffer name="product A @ Local DC 2b">
-                <item name="product A"/>
-                <location name="Local DC 2b"/>
-              </buffer>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="product A"/>
+      <location name="Local DC 2b"/>
     </demand>
   </demands>
 
@@ -191,6 +147,9 @@ print("ERASE PLAN DATA")
 frepple.erase(False)
 
 print("ERASE ALL DATA")
+# This delete erases all frePPLe objects. Some of these objects
+# are still referenced in the above Python. This will give some
+# errors in the output, which we can ignore in this case.
 frepple.erase(True)
 ?>
 

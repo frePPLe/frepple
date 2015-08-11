@@ -270,8 +270,13 @@ class Demand_admin(MultiDBModelAdmin):
   model = Demand
   raw_id_fields = ('customer', 'item', 'operation', 'owner',)
   fieldsets = (
-    (None, {'fields': ('name', 'item', 'customer', 'description', 'category', 'subcategory', 'due', 'quantity', 'priority', 'status', 'owner')}),
-    (_('Planning parameters'), {'fields': ('operation', 'minshipment', 'maxlateness'), 'classes': ('collapse')}),
+    (None, {'fields': (
+      'name', 'item', 'location', 'customer', 'description', 'category',
+      'subcategory', 'due', 'quantity', 'priority', 'status', 'owner'
+      )}),
+    (_('Planning parameters'), {'fields': (
+      'operation', 'minshipment', 'maxlateness'
+      ), 'classes': ('collapse') }),
     )
   save_on_top = True
 data_site.register(Demand, Demand_admin)

@@ -658,6 +658,7 @@ class DemandList(GridReport):
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter='demand'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),

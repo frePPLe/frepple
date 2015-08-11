@@ -23,9 +23,9 @@ Start populating the entities at the top of the list and work your way down.
 |        :doc:`Sub operation <operation>` (references operation)
 |        :doc:`operationplan` (references operation)
 |          :doc:`item` (references operation and itself)
-|            :doc:`item-supplier` (references supplier and item)
+|            :doc:`item-supplier` (references supplier, item and location)
 |            :doc:`item-distribution` (references location and item)
-|            :doc:`demand` (references item, customer, operation and itself)
+|            :doc:`demand` (references item, customer, operation, location and itself)
 |            :doc:`buffer` (references item, operation, location, calendar and itself)
 |              :doc:`flow` (references buffer and operation)
 

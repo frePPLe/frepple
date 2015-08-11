@@ -54,12 +54,31 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     // In that case, the while loop will be rerun.
     recomputeLevels = false;
 
-    // Reset current levels on buffers, resources and operations
-    for (Buffer::iterator gbuf = Buffer::begin();
-        gbuf != Buffer::end(); ++gbuf)
+    // Force creation of all delivery operations f
+    for (Demand::iterator gdem = Demand::begin();
+        gdem != Demand::end(); ++gdem)
+        gdem->getDeliveryOperation();
+
+    // Reset current levels on buffers, resources and operations.
+    // Also force the creation of all producing operations on the buffers.
+    size_t numbufs = Buffer::size();
+    // Creating the producing operations of the buffers can cause new buffers
+    // to be created. We repeat this loop until no new buffers are being added.
+    // This isn't the most efficient loop, but it remains cheap and fast...
+    while (true)
     {
-      gbuf->cluster = 0;
-      gbuf->lvl = -1;
+      for (Buffer::iterator gbuf = Buffer::begin();
+          gbuf != Buffer::end(); ++gbuf)
+      {
+        gbuf->cluster = 0;
+        gbuf->lvl = -1;
+        gbuf->getProducingOperation();
+      }
+      size_t numbufs_after = Buffer::size();
+      if (numbufs == numbufs_after)
+        break;
+      else
+        numbufs = numbufs_after;
     }
     for (Resource::iterator gres = Resource::begin();
         gres != Resource::end(); ++gres)
@@ -112,7 +131,6 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       logger << "Investigating operation '" << &*g
           << "' - current cluster " << g->cluster << endl;
 #endif
-
 
       // Do we need to activate the level search?
       // Criterion are:

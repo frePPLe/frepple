@@ -189,14 +189,14 @@
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>100</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="1002">
       <operation name="supply 1"/>
 	    <start>2009-01-17T00:00:00</start>
 	    <end>2009-01-17T00:00:00</end>
 	    <quantity>200</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 2 -->
@@ -213,14 +213,14 @@
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>100</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="2002">
       <operation name="supply 2"/>
 	    <start>2009-01-17T00:00:00</start>
 	    <end>2009-01-17T00:00:00</end>
 	    <quantity>50</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 3 -->
@@ -237,7 +237,7 @@
 	    <start>2009-01-15T00:00:00</start>
 	    <end>2009-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 4 -->
@@ -259,7 +259,7 @@
 	    <start>2009-01-15T00:00:00</start>
 	    <end>2009-01-15T00:00:00</end>
 	    <quantity>1000</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 

@@ -171,49 +171,49 @@
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="1002">
       <operation name="supply item B"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="1003">
       <operation name="supply item C"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="1004">
       <operation name="supply item D"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="1005">
       <operation name="supply item E"/>
 	    <start>2009-01-10T00:00:00</start>
 	    <end>2009-01-10T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
     <operationplan id="1006">
       <operation name="supply item F"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>10</quantity>
-      <locked>true</locked>
+      <status>confirmed</status>
     </operationplan>
     <operationplan id="1007">
       <operation name="supply item G"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>50</quantity>
-      <locked>true</locked>
+      <status>confirmed</status>
     </operationplan>
 	</operationplans>
   <demands>

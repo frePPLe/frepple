@@ -147,7 +147,7 @@
       <start>2009-02-12T00:00:00</start>
       <end>2009-02-12T00:00:00</end>
       <quantity>25</quantity>
-      <locked>true</locked>
+      <status>confirmed</status>
     </operationplan>
   </operationplans>
   <items>

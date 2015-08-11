@@ -795,7 +795,7 @@ class OperationPlanList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
-    GridFieldBool('locked', title=_('locked')),
+    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus),
     GridFieldInteger('owner', title=_('owner'), extra="formatoptions:{defaultValue:''}"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

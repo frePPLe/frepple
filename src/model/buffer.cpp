@@ -128,15 +128,15 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
         fabs(f), Date::infinitePast, Date::infinitePast);
-    opplan->setLocked(true);
+    opplan->setConfirmed(true);
     opplan->activate();
   }
   else
   {
     // Update the existing operationplan
-    i->setLocked(false);
+    i->setConfirmed(false);
     i->setQuantity(fabs(f));
-    i->setLocked(true);
+    i->setConfirmed(true);
   }
   setChanged();
 }

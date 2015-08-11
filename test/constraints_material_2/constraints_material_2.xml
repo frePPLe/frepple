@@ -353,7 +353,7 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>25</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 2 -->
@@ -371,7 +371,7 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>25</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 3 -->
@@ -389,28 +389,28 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>25</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="3002">
 	    <operation name="supply 3b"/>
       <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>2</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="3003">
       <operation name="supply 3b"/>
 	    <start>2009-01-20T00:00:00</start>
 	    <end>2009-01-20T00:00:00</end>
 	    <quantity>2</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="3004">
       <operation name="supply 3c"/>
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>30</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 4 -->
@@ -428,42 +428,42 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>50</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="4002">
       <operation name="supply 4b"/>
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>2</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="4003">
       <operation name="supply 4b"/>
 	    <start>2009-01-20T00:00:00</start>
 	    <end>2009-01-20T00:00:00</end>
 	    <quantity>8</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="4004">
       <operation name="supply 4b"/>
 	    <start>2009-01-22T00:00:00</start>
 	    <end>2009-01-22T00:00:00</end>
 	    <quantity>2</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="4005">
       <operation name="supply 4c"/>
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>12</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="4006">
       <operation name="supply 4c"/>
 	    <start>2009-01-21T00:00:00</start>
 	    <end>2009-01-21T00:00:00</end>
 	    <quantity>21</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 5 -->
@@ -481,14 +481,14 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>10</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	  <operationplan id="5002">
       <operation name="supply 5b"/>
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>20</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 	<!-- DYNAMIC data CASE 6 -->
@@ -506,7 +506,7 @@
 	    <start>2009-01-01T00:00:00</start>
 	    <end>2009-01-01T00:00:00</end>
 	    <quantity>50</quantity>
-	    <locked>true</locked>
+	    <status>confirmed</status>
 	  </operationplan>
 	</operationplans>
 

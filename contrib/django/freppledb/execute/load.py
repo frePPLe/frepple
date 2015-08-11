@@ -675,7 +675,7 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT
-        operation_id, id, quantity, startdate, enddate, locked, source
+        operation_id, id, quantity, startdate, enddate, status, source
       FROM operationplan
       WHERE owner_id IS NULL and quantity >= 0 %s
       ORDER BY id ASC
@@ -685,11 +685,11 @@ class loadData(object):
       frepple.operationplan(
         operation=frepple.operation(name=i[0]),
         id=i[1], quantity=i[2], start=i[3], end=i[4],
-        locked=i[5], source=i[6]
+        status=i[5], source=i[6]
         ).quantity = i[2]
     self.cursor.execute('''
       SELECT
-        operation_id, id, quantity, startdate, enddate, locked, owner_id, source
+        operation_id, id, quantity, startdate, enddate, status, owner_id, source
       FROM operationplan
       WHERE owner_id IS NOT NULL and quantity >= 0 %s
       ORDER BY id ASC
@@ -699,7 +699,7 @@ class loadData(object):
       frepple.operationplan(
         operation=frepple.operation(name=i[0]),
         id=i[1], start=i[3], end=i[4], quantity=i[2],
-        locked=i[5], source=i[7],
+        status=i[5], source=i[7],
         owner=frepple.operationplan(id=i[6])
         ).quantity = i[2]
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))

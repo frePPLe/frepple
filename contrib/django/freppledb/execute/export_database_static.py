@@ -589,24 +589,24 @@ class exportStaticModel(object):
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
         '''insert into operationplan
-        (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified)
+        (id,operation_id,quantity,startdate,enddate,status,source,lastmodified)
         values(%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
          (
            i.id, i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
-           str(i.start), str(i.end), i.locked, i.source, self.timestamp
+           str(i.start), str(i.end), i.status, i.source, self.timestamp
          )
          for i in frepple.operationplans()
          if i.locked and not i.operation.hidden and i.id not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
         '''update operationplan
-         set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, locked=%s, source=%s, lastmodified=%s
+         set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, status=%s, source=%s, lastmodified=%s
          where id=%s''',
         [
          (
            i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
-           str(i.start), str(i.end), i.locked, i.source, self.timestamp, i.id
+           str(i.start), str(i.end), i.status, i.source, self.timestamp, i.id
          )
          for i in frepple.operationplans()
          if i.locked and not i.operation.hidden and i.id in primary_keys and (not self.source or self.source == i.source)

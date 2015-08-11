@@ -573,7 +573,7 @@ class Calendar : public HasName<Calendar>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
       m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, BASE + WRITE_FULL);
@@ -745,12 +745,12 @@ class Problem : public NonCopyable, public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, MANDATORY + COMPUTED);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, MANDATORY + COMPUTED);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, "", MANDATORY + COMPUTED);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, "", MANDATORY + COMPUTED);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, NULL, Date::infinitePast, MANDATORY);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, NULL, Date::infiniteFuture, MANDATORY);
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, NULL, 0.0, MANDATORY);
-      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, "", DONT_SERIALIZE);
       m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, NULL, DONT_SERIALIZE);
     }
   protected:
@@ -1789,12 +1789,38 @@ class OperationPlan
       */
     DECLARE_EXPORT Duration getUnavailable() const;
 
-    /** Returns whether the operationplan is locked. A locked operationplan
-      * is never changed.
+    /** Return the status of the operationplan.
+      * The status string is one of the following:
+      *   - proposed
+      *   - approved
+      *   - confirmed
+      */
+    DECLARE_EXPORT string getStatus() const;
+
+    /** Return the status of the operationplan. */
+    DECLARE_EXPORT void setStatus(const string&);
+
+    /** Returns whether the operationplan is locked, ie the status is APPROVED
+      * or confirmed. A locked operationplan is never changed.
       */
     bool getLocked() const
     {
-      return flags & IS_LOCKED;
+      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) != 0;
+    }
+
+    bool getConfirmed() const
+    {
+      return (flags & STATUS_CONFIRMED) != 0;
+    }
+
+    bool getApproved() const
+    {
+      return (flags & STATUS_APPROVED) != 0;
+    }
+
+    bool getProposed() const
+    {
+      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) == 0;
     }
 
     /** Returns true is this operationplan is allowed to consume material.
@@ -1826,10 +1852,20 @@ class OperationPlan
       */
     static DECLARE_EXPORT void deleteOperationPlans(Operation* o, bool deleteLocked=false);
 
-    /** Locks/unlocks an operationplan. A locked operationplan is never
-      * changed.
-      */
-    virtual DECLARE_EXPORT void setLocked(bool b);
+    /** Deprecated method. Use the setStatus method instead. */
+    inline void setLocked(bool b)
+    {
+      setConfirmed(b);
+    }
+
+    /** Update the status to CONFIRMED, or back to PROPOSED. */
+    virtual DECLARE_EXPORT void setConfirmed(bool b);
+
+    /** Update the status to APPROVED, or back to PROPOSED. */
+    virtual DECLARE_EXPORT void setApproved(bool b);
+
+    /** Update the status to PROPOSED, or back to APPROVED. */
+    virtual DECLARE_EXPORT void setProposed(bool b);
 
     /** Update flag which allow/disallows material consumption. */
     void setConsumeMaterial(bool b)
@@ -2170,7 +2206,11 @@ class OperationPlan
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, NULL, -999, PLAN + DETAIL);
-      m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE);
+      m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
+      m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::proposed, &Cls::getProposed, &Cls::setProposed, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::confirmed, &Cls::getConfirmed, &Cls::setConfirmed, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::consume_material, &Cls::getConsumeMaterial, &Cls::setConsumeMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::produce_material, &Cls::getProduceMaterial, &Cls::setProduceMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::consume_capacity, &Cls::getConsumeCapacity, &Cls::setConsumeCapacity, BOOL_TRUE);
@@ -2247,12 +2287,13 @@ class OperationPlan
     }
 
   private:
-    static const short IS_LOCKED = 1;    // 0: no, 1: yes
-    static const short IS_SETUP = 2;     // 0: no, 1: yes
-    static const short HAS_SETUP = 4;    // 0: no, 1: yes
-    static const short CONSUME_MATERIAL = 8;  // 0: yes, 1: no
-    static const short PRODUCE_MATERIAL = 16; // 0: yes, 1: no
-    static const short CONSUME_CAPACITY = 32; // 0: yes, 1: no
+    static const short STATUS_APPROVED = 1;
+    static const short STATUS_CONFIRMED = 2;
+    static const short IS_SETUP = 4;
+    static const short HAS_SETUP = 8;
+    static const short CONSUME_MATERIAL = 16;
+    static const short PRODUCE_MATERIAL = 32;
+    static const short CONSUME_CAPACITY = 64;
 
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner;
@@ -2701,7 +2742,7 @@ class Operation : public HasName<Operation>,
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       HasDescription::registerFields<Cls>(m);
       Plannable::registerFields<Cls>(m);
       m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime, &Cls::setPostTime);
@@ -4889,7 +4930,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     	// Not very nice: all flow subclasses appear to Python as instance of a
 	    // single Python class. We use this method to distinguish them.
-      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, NULL, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, NULL, "", DONT_SERIALIZE);
     }
 
   protected:
@@ -5407,7 +5448,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(Tags::rules, Tags::rule, &Cls::getRules, BASE + WRITE_FULL);
     }
@@ -5508,7 +5549,7 @@ class Skill : public HasName<Skill>, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       m->addIteratorField<Cls, resourcelist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources);
       HasSource::registerFields<Cls>(m);
     }
@@ -6784,7 +6825,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, "", DONT_SERIALIZE);
     }
 
   private:
@@ -7232,7 +7273,7 @@ class Plan : public Plannable, public Object
       m->addStringField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
       m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
       m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
-      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, DONT_SERIALIZE);
+      m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, "", DONT_SERIALIZE);
       Plannable::registerFields<Plan>(m);
       m->addIteratorField<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations);
       m->addIteratorField<Plan, Customer::iterator, Customer>(Tags::customers, Tags::customer, &Plan::getCustomers);

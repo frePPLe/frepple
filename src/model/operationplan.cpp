@@ -28,7 +28,6 @@ DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
 DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
 DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
 
-
 int OperationPlan::initialize()
 {
   // Initialize the metadata
@@ -864,15 +863,90 @@ DECLARE_EXPORT Object* OperationPlan::finder(const string& key)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setLocked(bool b)
+DECLARE_EXPORT void OperationPlan::setConfirmed(bool b)
 {
   if (b)
-    flags |= IS_LOCKED;
+  {
+    flags |= STATUS_CONFIRMED;
+    flags &= ~STATUS_APPROVED;
+  }
   else
-    flags &= ~IS_LOCKED;
+  {
+    flags &= ~STATUS_CONFIRMED;
+    flags |= STATUS_APPROVED;
+  }
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setLocked(b);
+    x->setConfirmed(b);
   update();
+}
+
+
+DECLARE_EXPORT void OperationPlan::setApproved(bool b)
+{
+  if (b)
+  {
+    flags |= STATUS_CONFIRMED;
+    flags &= ~STATUS_APPROVED;
+  }
+  else
+  {
+    flags &= ~STATUS_CONFIRMED;
+    flags |= STATUS_APPROVED;
+  }
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setApproved(b);
+  update();
+}
+
+
+DECLARE_EXPORT void OperationPlan::setProposed(bool b)
+{
+  if (b)
+  {
+    flags &= ~STATUS_CONFIRMED;
+    flags &= ~STATUS_APPROVED;
+  }
+  else
+  {
+    flags &= ~STATUS_CONFIRMED;
+    flags |= STATUS_APPROVED;
+  }
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setProposed(b);
+  update();
+}
+
+
+DECLARE_EXPORT string OperationPlan::getStatus() const
+{
+  if (flags & STATUS_APPROVED)
+    return "approved";
+  else if (flags & STATUS_CONFIRMED)
+    return "confirmed";
+  else
+    return "proposed";
+}
+
+
+DECLARE_EXPORT void OperationPlan::setStatus(const string& s)
+{
+  if (s == "approved")
+  {
+    flags |= STATUS_APPROVED;
+    flags &= ~STATUS_CONFIRMED;
+  }
+  else if (s == "confirmed")
+  {
+    flags |= STATUS_CONFIRMED;
+    flags &= ~STATUS_APPROVED;
+  }
+  else if (s == "proposed")
+  {
+    flags &= ~STATUS_APPROVED;
+    flags &= ~STATUS_CONFIRMED;
+  }
+  else
+    throw DataException("invalid operationplan status:" + s);
 }
 
 

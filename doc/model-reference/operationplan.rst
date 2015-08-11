@@ -42,8 +42,31 @@ quantity         double            | Quantity being planned.
                                      to the respect the min, max and multiple constraints set
                                      on the operation.
                                    | Locked operationplans don't need to respect these limits.
-locked           boolean           A locked operation plan is not allowed to be changed by any
-                                   solver algorithm.
+locked           boolean           | A locked operation plan is not allowed to be changed by any
+                                     solver algorithm.
+                                   | This field is deprecated. Please use the status field instead.
+status           string            | Status of the operationplan.
+                                   | The valid choices are:
+
+                                   * | proposed:
+                                     | An operationplan in this state is a draft one. When regenerating
+                                       the plan operationplans in this state can be changed and even
+                                       deleted by the planning algorithm.
+                                     | This is the default.
+
+                                   * | approved:
+                                     | An operationplan in this state is reviewed by the user and ready
+                                       for exporting to your ERP system. Once exported the status will
+                                       become confirmed.
+                                     | The planning algorithm will not change or create operationplans
+                                       in this state.
+
+                                   * | confirmed:
+                                     | Confirmed operationplans are ongoing transactions read as input
+                                       from your ERP system.
+                                     | The planning algorithm will not change or create operationplans
+                                       in this state.
+
 consume_material boolean           | Controls whether this operationplan should consume material
                                      or not.
                                    | Only locked operationplans respect this flag.

@@ -1924,10 +1924,11 @@ class MetaClass : public NonCopyable
       const Keyword& k,
       string (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(const string&) = NULL,
+      string dflt = "",
       unsigned int c = BASE
       )
 		{
-      fields.push_back( new MetaFieldString<Cls>(k, getfunc, setfunc, c) );  // TODO use a block allocator to keep all metadata compact
+      fields.push_back( new MetaFieldString<Cls>(k, getfunc, setfunc, dflt, c) );  // TODO use a block allocator to keep all metadata compact
 		}
 
     template <class Cls> inline void addIntField(
@@ -5623,7 +5624,7 @@ template <class T> class HasHierarchy : public HasName<T>
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, MANDATORY);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner, BASE + PARENT);
       m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL);
     }
@@ -6275,8 +6276,9 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
     MetaFieldString(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = NULL,
+        string dflt = "",
         unsigned int c = BASE
-        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
+        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt)
     {
       if (getfunc == NULL)
         throw DataException("Getter function can't be NULL");
@@ -6302,7 +6304,9 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
     {
       if (getFlag(DONT_SERIALIZE))
         return;
-      output.writeElement(getName(), (static_cast<Cls*>(output.getCurrentObject())->*getf)());
+      string tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+      if (tmp != def)
+        output.writeElement(getName(), tmp);
     }
 
     virtual size_t getSize(const Object* o) const
@@ -6316,6 +6320,9 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
 
     /** Set function. */
     setFunction setf;
+
+    /** Default value */
+    string def;
 };
 
 

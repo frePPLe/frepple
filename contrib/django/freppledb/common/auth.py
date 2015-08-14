@@ -35,7 +35,10 @@ class EmailBackend(ModelBackend):
       if user.check_password(password):
         return user
     except User.DoesNotExist:
-      return None
+      # Run the default password hasher once to reduce the timing
+      # difference between an existing and a non-existing user.
+      # See django ticket #20760
+      User().set_password(password)
     except ValidationError:
       # The user name isn't an email address
       try:
@@ -43,7 +46,10 @@ class EmailBackend(ModelBackend):
         if user.check_password(password):
           return user
       except User.DoesNotExist:
-        return None
+        # Run the default password hasher once to reduce the timing
+        # difference between an existing and a non-existing user.
+        # See django ticket #20760
+        User().set_password(password)
 
 
     def get_user(self, user_id):

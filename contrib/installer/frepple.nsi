@@ -467,7 +467,7 @@ Section -Post
 
   ; Create the database schema
   DetailPrint "Creating database schema"
-  nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" syncdb --noinput'
+  nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" migrate --noinput'
   Pop $0
   ${If} $0 == "0"
     DetailPrint "Loading demo data"
@@ -478,7 +478,7 @@ Section -Post
     DetailPrint "x $0 x"
     DetailPrint "ERROR CREATING DATABASE SCHEMA!!!"
     DetailPrint " "
-    DetailPrint "Review the file 'bin\\custom\\djangosettings.py' and run 'frepplectl syncdb'"
+    DetailPrint "Review the file 'bin\\custom\\djangosettings.py' and run 'frepplectl migrate'"
     DetailPrint " "
   ${EndIf}
 

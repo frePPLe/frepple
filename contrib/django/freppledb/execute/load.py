@@ -323,7 +323,7 @@ class loadData(object):
         supplier_id, item_id, location_id, sizeminimum, sizemultiple,
         cost, priority, effective_start, effective_end, source
       FROM itemsupplier %s
-      ORDER BY supplier_id, item_id, priority desc, location_id
+      ORDER BY supplier_id, item_id, location_id, priority desc
       ''' % self.filter_where)
     cursuppliername = None
     curitemname = None
@@ -354,6 +354,48 @@ class loadData(object):
       except Exception as e:
         print("Error:", e)
     print('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
+
+
+  def loadItemDistributions(self):
+    print('Importing item distributions...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        origin_id, item_id, location_id, sizeminimum, sizemultiple,
+        cost, priority, effective_start, effective_end, source
+      FROM itemdistribution %s
+      ORDER BY origin_id, item_id, location_id, priority desc
+      ''' % self.filter_where)
+    curoriginname = None
+    curitemname = None
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        if i[0] != curoriginname:
+          curoriginname = i[0]
+          curorigin = frepple.supplier(name=curoriginname)
+        if i[1] != curitemname:
+          curitemname = i[1]
+          curitem = frepple.item(name=curitemname)
+        curitemdistribution = frepple.itemdistribution(origin=curorigin, item=curitem, source=i[9])
+        if i[2]:
+          curitemdistribution.origin = frepple.location(name=i[2])
+        if i[3]:
+          curitemdistribution.size_minimum = i[3]
+        if i[4]:
+          curitemdistribution.size_multiple = i[4]
+        if i[5]:
+          curitemdistribution.cost = i[5]
+        if i[6]:
+          curitemdistribution.priority = i[6]
+        if i[7]:
+          curitemdistribution.effective_start = i[7]
+        if i[8]:
+          curitemdistribution.effective_end = i[8]
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d item itemdistributions in %.2f seconds' % (cnt, time() - starttime))
 
 
   def loadBuffers(self):
@@ -770,6 +812,7 @@ class loadData(object):
     self.loadSuboperations()
     self.loadItems()
     self.loadItemSuppliers()
+    self.loadItemDistributions()
     self.loadBuffers()
     self.loadSetupMatrices()
     self.loadResources()

@@ -178,17 +178,17 @@ class ItemSupplier(AuditModel):
 
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  supplier = models.ForeignKey(
-    Supplier, verbose_name=_('supplier'),
-    db_index=True, related_name='suppliers'
-    )
   item = models.ForeignKey(
     Item, verbose_name=_('item'),
-    db_index=True, related_name='items'
+    db_index=True, related_name='itemsuppliers'
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), null=True, blank=True,
     db_index=True, related_name='itemsuppliers'
+    )
+  supplier = models.ForeignKey(
+    Supplier, verbose_name=_('supplier'),
+    db_index=True, related_name='suppliers'
     )
   leadtime = DurationField(
     _('lead time'), null=True, blank=True,
@@ -212,7 +212,7 @@ class ItemSupplier(AuditModel):
     )
   priority = models.IntegerField(
     _('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority of this flow in a group of alternates')
+    help_text=_('Priority among all alternates')
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
@@ -232,9 +232,72 @@ class ItemSupplier(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'itemsupplier'
-    unique_together = (('supplier', 'item', 'location'),)  # TODO also include effectivity in this
+    unique_together = (('item', 'location', 'supplier', 'effective_start'),)
     verbose_name = _('item supplier')
     verbose_name_plural = _('item suppliers')
+
+
+class ItemDistribution(AuditModel):
+
+  # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'),
+    db_index=True, related_name='distributions'
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), null=True, blank=True,
+    db_index=True, related_name='itemdistributions_destination'
+    )
+  origin = models.ForeignKey(
+    Location, verbose_name=_('origin'),
+    db_index=True, related_name='itemdistributions_origin'
+    )
+  leadtime = DurationField(
+    _('lead time'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_('Shipping lead time')
+    )
+  sizeminimum = models.DecimalField(
+    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    null=True, blank=True, default='1.0',
+    help_text=_("A minimum shipping quantity")
+    )
+  sizemultiple = models.DecimalField(
+    _('size multiple'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("A multiple shipping quantity")
+    )
+  cost = models.DecimalField(
+    _('cost'), null=True, blank=True,
+    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    help_text=_("Shipping cost per unit")
+    )
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority among all alternates')
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )
+
+  def __str__(self):
+    return '%s - %s - %s' % (
+      self.location.name if self.location else 'Any destination',
+      self.item.name if self.item else 'No item',
+      self.origin.name if self.origin else 'No origin'
+      )
+
+  class Meta(AuditModel.Meta):
+    db_table = 'itemdistribution'
+    unique_together = (('item', 'location', 'origin', 'effective_start'),)
+    verbose_name = _('item distribution')
+    verbose_name_plural = _('item distributions')
 
 
 class Operation(AuditModel):

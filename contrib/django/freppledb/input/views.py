@@ -31,7 +31,7 @@ from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Buffer, Customer, Demand, Item, Load, Flow, Skill
 from freppledb.input.models import Calendar, CalendarBucket, OperationPlan, SubOperation
 from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
-from freppledb.input.models import DistributionOrder, PurchaseOrder
+from freppledb.input.models import ItemDistribution, DistributionOrder, PurchaseOrder
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
@@ -512,9 +512,36 @@ class ItemSupplierList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='itemsupplier'),
-    GridFieldText('supplier', title=_('supplier'), formatter='supplier'),
     GridFieldText('item', title=_('item'), formatter='item'),
     GridFieldText('location', title=_('location'), formatter='location'),
+    GridFieldText('supplier', title=_('supplier'), formatter='supplier'),
+    GridFieldDuration('leadtime', title=_('lead time')),
+    GridFieldNumber('sizeminimum', title=_('size minimum')),
+    GridFieldNumber('sizemultiple', title=_('size multiple')),
+    GridFieldCurrency('cost', title=_('cost')),
+    GridFieldNumber('priority', title=_('priority')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class ItemDistributionList(GridReport):
+  '''
+  A list report to show item distribution.
+  '''
+  template = 'input/itemdistributionlist.html'
+  title = _("Item Distribution List")
+  basequeryset = ItemDistribution.objects.all()
+  model = ItemDistribution
+  frozenColumns = 1
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='itemdistribution'),
+    GridFieldText('item', title=_('item'), formatter='item'),
+    GridFieldText('location', title=_('location'), formatter='location'),
+    GridFieldText('origin', title=_('origin'), formatter='location'),
     GridFieldDuration('leadtime', title=_('lead time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),

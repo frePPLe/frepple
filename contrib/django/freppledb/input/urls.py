@@ -46,6 +46,7 @@ urlpatterns = patterns(
   (r'^data/input/resourceskill/$', freppledb.input.views.ResourceSkillList.as_view()),
   (r'^data/input/supplier/$', freppledb.input.views.SupplierList.as_view()),
   (r'^data/input/itemsupplier/$', freppledb.input.views.ItemSupplierList.as_view()),
+  (r'^data/input/itemdistribution/$', freppledb.input.views.ItemDistributionList.as_view()),
 
   # Special reports
   (r'^data/input/calendar/location/(.+)/$', freppledb.input.views.location_calendar),

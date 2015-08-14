@@ -321,7 +321,7 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         supplier_id, item_id, location_id, sizeminimum, sizemultiple,
-        cost, priority, effective_start, effective_end, source
+        cost, priority, effective_start, effective_end, source, leadtime
       FROM itemsupplier %s
       ORDER BY supplier_id, item_id, location_id, priority desc
       ''' % self.filter_where)
@@ -336,7 +336,7 @@ class loadData(object):
         if i[1] != curitemname:
           curitemname = i[1]
           curitem = frepple.item(name=curitemname)
-        curitemsupplier = frepple.itemsupplier(supplier=cursupplier, item=curitem, source=i[9])
+        curitemsupplier = frepple.itemsupplier(supplier=cursupplier, item=curitem, source=i[9], leadtime=i[10] or 0)
         if i[2]:
           curitemsupplier.location = frepple.location(name=i[2])
         if i[3]:
@@ -363,7 +363,7 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         origin_id, item_id, location_id, sizeminimum, sizemultiple,
-        cost, priority, effective_start, effective_end, source
+        cost, priority, effective_start, effective_end, source, leadtime
       FROM itemdistribution %s
       ORDER BY origin_id, item_id, location_id, priority desc
       ''' % self.filter_where)
@@ -374,13 +374,13 @@ class loadData(object):
       try:
         if i[0] != curoriginname:
           curoriginname = i[0]
-          curorigin = frepple.supplier(name=curoriginname)
+          curorigin = frepple.location(name=curoriginname)
         if i[1] != curitemname:
           curitemname = i[1]
           curitem = frepple.item(name=curitemname)
-        curitemdistribution = frepple.itemdistribution(origin=curorigin, item=curitem, source=i[9])
+        curitemdistribution = frepple.itemdistribution(origin=curorigin, item=curitem, source=i[9], leadtime=i[10] or 0)
         if i[2]:
-          curitemdistribution.origin = frepple.location(name=i[2])
+          curitemdistribution.destination = frepple.location(name=i[2])
         if i[3]:
           curitemdistribution.size_minimum = i[3]
         if i[4]:

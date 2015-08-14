@@ -280,6 +280,11 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='itemsupplier'></span>";
   },
+  itemdistribution : function(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (options['colModel']['popup']) return cellvalue;
+    return cellvalue + "<span class='context fa fa-caret-right' role='itemdistribution'></span>";
+  },
   load : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue ==='') return '';
     if (options['colModel']['popup']) return cellvalue;
@@ -382,6 +387,9 @@ jQuery.extend($.fn.fmatter.resourceskill, {
   unformat : linkunformat
 });
 jQuery.extend($.fn.fmatter.itemsupplier, {
+  unformat : linkunformat
+});
+jQuery.extend($.fn.fmatter.itemdistribution, {
   unformat : linkunformat
 });
 

@@ -44,89 +44,89 @@ encoding = 'UTF8'
 def truncate(process):
   print("Emptying database plan tables...")
   starttime = time()
-  process.stdin.write('truncate table out_demandpegging;\n')
-  process.stdin.write('truncate table out_problem, out_resourceplan, out_constraint;\n')
-  process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n')
-  process.stdin.write('truncate table out_demand;\n')
+  process.stdin.write('truncate table out_demandpegging;\n'.encode(encoding))
+  process.stdin.write('truncate table out_problem, out_resourceplan, out_constraint;\n'.encode(encoding))
+  process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n'.encode(encoding))
+  process.stdin.write('truncate table out_demand;\n'.encode(encoding))
   print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
 def exportProblems(process):
   print("Exporting problems...")
   starttime = time()
-  process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n')
+  process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n'.encode(encoding))
   for i in frepple.problems():
-    process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-       i.entity.encode(encoding), i.name.encode(encoding),
-       isinstance(i.owner, frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
-       i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
+    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+       i.entity, i.name,
+       isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
+       i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
        round(i.weight, settings.DECIMAL_PLACES)
-    ))
-  process.stdin.write('\\.\n')
+    )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported problems in %.2f seconds' % (time() - starttime))
 
 
 def exportConstraints(process):
   print("Exporting constraints...")
   starttime = time()
-  process.stdin.write('COPY out_constraint (demand,entity,name,owner,description,startdate,enddate,weight) FROM STDIN;\n')
+  process.stdin.write('COPY out_constraint (demand,entity,name,owner,description,startdate,enddate,weight) FROM STDIN;\n'.encode(encoding))
   for d in frepple.demands():
     for i in d.constraints:
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         d.name.encode(encoding), i.entity.encode(encoding), i.name.encode(encoding),
-         isinstance(i.owner, frepple.operationplan) and i.owner.operation.name.encode(encoding) or i.owner.name.encode(encoding),
-         i.description.encode(encoding)[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+         d.name, i.entity, i.name,
+         isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
+         i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
          round(i.weight, settings.DECIMAL_PLACES)
-       ))
-  process.stdin.write('\\.\n')
+       )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported constraints in %.2f seconds' % (time() - starttime))
 
 
 def exportOperationplans(process):
   print("Exporting operationplans...")
   starttime = time()
-  process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) FROM STDIN;\n')
+  process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) FROM STDIN;\n'.encode(encoding))
   for i in frepple.operations():
     for j in i.operationplans:
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        j.id, i.name[0:settings.NAMESIZE].encode(encoding),
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+        j.id, i.name[0:settings.NAMESIZE],
         round(j.quantity, settings.DECIMAL_PLACES), str(j.start), str(j.end),
         round(j.criticality, settings.DECIMAL_PLACES), j.locked, j.unavailable,
         j.owner and j.owner.id or "\\N"
-        ))
-  process.stdin.write('\\.\n')
+        )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
 def exportFlowplans(process):
   print("Exporting flowplans...")
   starttime = time()
-  process.stdin.write('COPY out_flowplan (operationplan_id, thebuffer, quantity, flowdate, onhand) FROM STDIN;\n')
+  process.stdin.write('COPY out_flowplan (operationplan_id, thebuffer, quantity, flowdate, onhand) FROM STDIN;\n'.encode(encoding))
   for i in frepple.buffers():
     for j in i.flowplans:
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\n" % (
-         j.operationplan.id, j.buffer.name.encode(encoding),
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\n" % (
+         j.operationplan.id, j.buffer.name,
          round(j.quantity, settings.DECIMAL_PLACES),
          str(j.date), round(j.onhand, settings.DECIMAL_PLACES)
-         ))
-  process.stdin.write('\\.\n')
+         )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported flowplans in %.2f seconds' % (time() - starttime))
 
 
 def exportLoadplans(process):
   print("Exporting loadplans...")
   starttime = time()
-  process.stdin.write('COPY out_loadplan (operationplan_id, theresource, quantity, startdate, enddate, setup) FROM STDIN;\n')
+  process.stdin.write('COPY out_loadplan (operationplan_id, theresource, quantity, startdate, enddate, setup) FROM STDIN;\n'.encode(encoding))
   for i in frepple.resources():
     for j in i.loadplans:
       if j.quantity < 0:
-        process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (
-          j.operationplan.id, j.resource.name.encode(encoding),
+        process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\n" % (
+          j.operationplan.id, j.resource.name,
           round(-j.quantity, settings.DECIMAL_PLACES),
           str(j.startdate), str(j.enddate),
-          j.setup and j.setup.encode(encoding) or "\\N"
-          ))
-  process.stdin.write('\\.\n')
+          j.setup and j.setup or "\\N"
+          )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported loadplans in %.2f seconds' % (time() - starttime))
 
 
@@ -164,18 +164,18 @@ def exportResourceplans(process):
     startdate += timedelta(days=1)
 
   # Loop over all reporting buckets of all resources
-  process.stdin.write('COPY out_resourceplan (theresource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n')
+  process.stdin.write('COPY out_resourceplan (theresource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n'.encode(encoding))
   for i in frepple.resources():
     for j in i.plan(buckets):
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-       i.name.encode(encoding), str(j['start']),
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+       i.name, str(j['start']),
        round(j['available'], settings.DECIMAL_PLACES),
        round(j['unavailable'], settings.DECIMAL_PLACES),
        round(j['setup'], settings.DECIMAL_PLACES),
        round(j['load'], settings.DECIMAL_PLACES),
        round(j['free'], settings.DECIMAL_PLACES)
-       ))
-  process.stdin.write('\\.\n')
+       )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported resourceplans in %.2f seconds' % (time() - starttime))
 
 
@@ -192,34 +192,34 @@ def exportDemand(process):
         if cur < 0:
           cur = 0
       yield (
-        d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
+        d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
         round(cur, settings.DECIMAL_PLACES), str(i.end),
         round(i.quantity, settings.DECIMAL_PLACES), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        d.name.encode(encoding), d.item.name.encode(encoding), d.customer and d.customer.name.encode(encoding) or "\\N", str(d.due),
+        d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
         round(d.quantity - cumplanned, settings.DECIMAL_PLACES), "\\N",
         "\\N", "\\N"
         )
 
   print("Exporting demand plans...")
   starttime = time()
-  process.stdin.write('COPY out_demand (demand,item,customer,due,quantity,plandate,planquantity,operationplan) FROM STDIN;\n')
+  process.stdin.write('COPY out_demand (demand,item,customer,due,quantity,plandate,planquantity,operationplan) FROM STDIN;\n'.encode(encoding))
   for i in frepple.demands():
     if i.quantity == 0:
       continue
     for j in deliveries(i):
-      process.stdin.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % j)
-  process.stdin.write('\\.\n')
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % j).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported demand plans in %.2f seconds' % (time() - starttime))
 
 
 def exportPegging(process):
   print("Exporting pegging...")
   starttime = time()
-  process.stdin.write('COPY out_demandpegging (demand,level,operationplan,quantity) FROM STDIN;\n')
+  process.stdin.write('COPY out_demandpegging (demand,level,operationplan,quantity) FROM STDIN;\n'.encode(encoding))
   for i in frepple.demands():
     # Find non-hidden demand owner
     n = i
@@ -228,11 +228,11 @@ def exportPegging(process):
     n = n and n.name or 'unspecified'
     # Export pegging
     for j in i.pegging:
-      process.stdin.write("%s\t%s\t%s\t%s\n" % (
-        n.encode(encoding), str(j.level),
+      process.stdin.write(("%s\t%s\t%s\t%s\n" % (
+        n, str(j.level),
         j.operationplan.id, round(j.quantity, settings.DECIMAL_PLACES)
-        ))
-  process.stdin.write('\\.\n')
+        )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
   print('Exported pegging in %.2f seconds' % (time() - starttime))
 
 
@@ -249,18 +249,18 @@ class DatabasePipe(Thread):
     test = 'FREPPLE_TEST' in os.environ
 
     # Start a PSQL process
-    # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-    os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+    my_env = os.environ
+    my_env['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
     process = Popen("psql -q -w -U%s %s%s%s" % (
         settings.DATABASES[database]['USER'],
        settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
        settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
        test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
-     ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
+     ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
     if process.returncode is None:
       # PSQL session is still running
-      process.stdin.write("SET statement_timeout = 0;\n")
-      process.stdin.write("SET client_encoding = 'UTF8';\n")
+      process.stdin.write("SET statement_timeout = 0;\n".encode(encoding))
+      process.stdin.write("SET client_encoding = 'UTF8';\n".encode(encoding))
 
     # Run the functions sequentially
     try:
@@ -271,7 +271,7 @@ class DatabasePipe(Thread):
       # Close the pipe and PSQL process
       if process.returncode is None:
         # PSQL session is still running.
-        process.stdin.write('\\q\n')
+        process.stdin.write('\\q\n'.encode(encoding))
       process.stdin.close()
 
 
@@ -322,18 +322,18 @@ def exportfrepple_sequential():
   test = 'FREPPLE_TEST' in os.environ
 
   # Start a PSQL process
-  # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-  os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+  my_env = os.environ
+  my_env['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
   process = Popen("psql -q -w -U%s %s%s%s" % (
       settings.DATABASES[database]['USER'],
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST']['NAME'] or settings.DATABASES[database]['NAME'],
-   ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, universal_newlines=True)
+   ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
   if process.returncode is None:
     # PSQL session is still running
-    process.stdin.write("SET statement_timeout = 0;\n")
-    process.stdin.write("SET client_encoding = 'UTF8';\n")
+    process.stdin.write("SET statement_timeout = 0;\n".encode(encoding))
+    process.stdin.write("SET client_encoding = 'UTF8';\n".encode(encoding))
 
   # Send all output to the PSQL process through a pipe
   try:
@@ -352,7 +352,7 @@ def exportfrepple_sequential():
     # Close the pipe and PSQL process
     if process.returncode is None:
       # PSQL session is still running.
-      process.stdin.write('\\q\n')
+      process.stdin.write('\\q\n'.encode(encoding))
     process.stdin.close()
 
   cursor = connections[database].cursor()

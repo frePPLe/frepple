@@ -1,5 +1,5 @@
 [
-{"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2013-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
+{"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "\u2190\u2191\u2192\u2193\u2194\u2195", "model": "input.customer", "fields": {"description": "Arrows"}},
 {"pk": "< > \" ' & ` # = ;", "model": "input.operation", "fields": {"type": "fixed_time"}},
 {"pk": "\u20ac \u00a5 $ \u00a3", "model": "input.location", "fields": {"description": "currencies"}},
@@ -22,7 +22,7 @@
 {"pk": "D\u0110 d\u0111 H\u0126 h\u0127 L\u0141 l\u0142 O\u00d8 o\u00f8 ", "model": "input.item", "fields": {"description": "Letters with stroke "}},
 {"pk": "O\u0150 o\u0151 U\u0170 u\u0171 ", "model": "input.item", "fields": {"description": "Letters with double acute "}},
 {"pk": "\u00df \u017f", "model": "input.item", "fields": {"description": "German sharp s & long s", "operation": "< > \" ' & ` # = ;"}},
-{"pk": "\u00ac\u00af\u00b0\u00b1\u00b5\u00b7\u00f7\u2030\u2126\u00d7\u0192\u2020\u2021\u2026\u220f\u2211\u221a\u221e\u2229\u222b\u2264", "model": "input.demand", "fields": {"customer": "\u2190\u2191\u2192\u2193\u2194\u2195", "description": "Mathematical symbols", "due": "2013-07-01 00:00:00", "priority": 2, "item": "\u00df \u017f", "quantity": "1"}},
+{"pk": "\u00ac\u00af\u00b0\u00b1\u00b5\u00b7\u00f7\u2030\u2126\u00d7\u0192\u2020\u2021\u2026\u220f\u2211\u221a\u221e\u2229\u222b\u2264", "model": "input.demand", "fields": {"customer": "\u2190\u2191\u2192\u2193\u2194\u2195", "description": "Mathematical symbols", "due": "2014-07-01 00:00:00", "priority": 2, "item": "\u00df \u017f", "quantity": "1"}},
 {"pk": "\u0391 \u0392 \u0393 \u0394 \u0395 \u0396 \u0397 \u0398 \u0399 \u039a \u039b \u039c \u039d \u039e \u039f \u03a0 \u03a1 \u03a3 \u03a4 \u03a5 \u03a6 \u03a7 \u03a8 \u03a9", "model": "input.buffer", "fields": {"description": "Greek", "item": "\u00df \u017f", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},
 {"pk": "\u0410 \u0411 \u0412 \u0413 \u0414 \u0415 \u0401 \u0416 \u0417 \u0418 \u0419 \u041a \u041b \u041c \u041d \u041e \u041f \u0420 \u0421 \u0422 \u0423 \u0424 \u0425 \u0426 \u0427 \u0428 \u0429 \u042a \u042b \u042c ", "model": "input.buffer", "fields": {"description": "Russian", "item": "\u00df \u017f", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},
 {"pk": "\u05d0 \u05d1 \u05d2 \u05d3 \u05d4 \u05d5 \u05d6 \u05d7 \u05d8 \u05d9 \u05db\u05da \u05dc \u05de\u05dd \u05e0\u05df \u05e1 \u05e2 \u05e4\u05e3 \u05e6\u05e5 \u05e7 \u05e8 \u05e9 ( \u05e9\u05c1 \u05e9\u05c2 ) \u05ea", "model": "input.buffer", "fields": {"description": "Hebrew", "item": "\u00df \u017f", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},

@@ -780,12 +780,10 @@ class GridReport(View):
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
-              pass
             except Exception as e:
               ok = False
               resp.write(escape(e))
               resp.write('<br/>')
-              pass
         elif 'copy' in rec:
           # Copying records
           for key in rec['copy']:
@@ -813,12 +811,10 @@ class GridReport(View):
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
-              pass
             except Exception as e:
               ok = False
               resp.write(escape(e))
               resp.write('<br/>')
-              pass
         else:
           # Editing records
           try:

@@ -16,13 +16,14 @@
 #
 
 import os
+import sys
 from datetime import datetime
 from importlib import import_module
 from optparse import make_option
 import subprocess
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 
 from freppledb.common.models import User
@@ -163,7 +164,7 @@ class Command(BaseCommand):
           subprocess.Popen(['frepple', cmd], creationflags=0x08000000)
         else:
           # Execute as background process on Linux
-          subprocess.Popen(['frepple', cmd]).pid
+          subprocess.Popen(['frepple', cmd])
       else:
         # Execute in foreground
         ret = subprocess.call(['frepple', cmd])

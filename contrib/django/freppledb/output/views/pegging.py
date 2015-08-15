@@ -169,7 +169,6 @@ class ReportByDemand(GridReport):
         # New operation
         prevrec = {
           'current': str(current),
-          'due': str(rec[0]),
           'operation': rec[1],
           'depth': rec[2],
           'quantity': str(rec[3]),

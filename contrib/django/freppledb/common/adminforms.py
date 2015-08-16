@@ -18,14 +18,15 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib import admin
+from django.contrib.admin.options import get_content_type_for_model
 from django.contrib import messages
+from django.contrib.admin.exceptions import DisallowedModelAdminToField
 from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.admin.utils import unquote, get_deleted_objects
+from django.contrib.admin.utils import quote, unquote, get_deleted_objects
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
@@ -71,21 +72,26 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         obj.pk = old_pk
     return obj
 
+
   def save_model(self, request, obj, form, change):
     # Tell Django to save objects to the 'other' database.
     obj.save(using=request.database)
+
 
   def get_queryset(self, request):
     # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).get_queryset(request).using(request.database)
 
+
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
     # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
 
+
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     # Tell Django to get objects from the 'other' database.
     return super(MultiDBModelAdmin, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
+
 
   def log_addition(self, request, obj):
     """
@@ -99,6 +105,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       object_repr=force_text(obj)[:200],
       action_flag=ADDITION
     ).save(using=request.database)
+
 
   def log_change(self, request, obj, message):
     """
@@ -134,6 +141,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       change_message=message
     ).save(using=request.database)
 
+
   def log_deletion(self, request, obj, object_repr):
     """
         Log that an object will be deleted. Note that this method is called
@@ -148,38 +156,50 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       action_flag=DELETION
     ).save(using=request.database)
 
+
   def history_view(self, request, object_id, extra_context=None):
     "The 'history' admin view for this model."
     # First check if the object exists and the user can see its history.
     model = self.model
-    obj = get_object_or_404(model.objects.using(request.database), pk=unquote(object_id))
+    obj = self.get_object(request, unquote(object_id))
+    if obj is None:
+      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {
+        'name': force_text(model._meta.verbose_name),
+        'key': escape(object_id),
+      })
+
     if not self.has_change_permission(request, obj):
-        raise PermissionDenied
+      raise PermissionDenied
 
     # Then get the history for this object.
     opts = model._meta
     app_label = opts.app_label
     action_list = LogEntry.objects.using(request.database).filter(
       object_id=unquote(object_id),
-      content_type__id__exact=ContentType.objects.get_for_model(model).id
+      content_type=get_content_type_for_model(model)
     ).select_related().order_by('action_time')
-    context = {
-      'title': capfirst(force_text(opts.verbose_name) + " " + unquote(object_id)),
-      'action_list': action_list,
-      'module_name': capfirst(force_text(opts.verbose_name_plural)),
-      'object': obj,
-      'app_label': app_label,
-      'opts': opts,
-      'active_tab': 'history',
-      'object_id': object_id,
-      'model': ContentType.objects.get_for_model(model).model,
-    }
+
+    context = dict(self.admin_site.each_context(request),
+      title=capfirst(force_text(opts.verbose_name) + " " + unquote(object_id)),
+      action_list=action_list,
+      module_name=capfirst(force_text(opts.verbose_name_plural)),
+      object=obj,
+      app_label=app_label,
+      opts=opts,
+      active_tab='history',
+      object_id=object_id,
+      model=ContentType.objects.get_for_model(model).model,
+      )
     context.update(extra_context or {})
+
+    request.current_app = self.admin_site.name
+
     return TemplateResponse(request, self.object_history_template or [
       "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
       "admin/%s/object_history.html" % app_label,
       "admin/object_history.html"
-      ], context, current_app=self.admin_site.name)
+      ], context)
+
 
   def response_add(self, request, obj, post_url_continue=None):
     """
@@ -192,10 +212,17 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
     # Here, we distinguish between different save types by checking for
     # the presence of keys in request.POST.
-    if "_popup" in request.POST:
-        return SimpleTemplateResponse('admin/popup_response.html', {
-            'pk_value': escape(pk_value),
-            'obj': escapejs(obj)
+    if '_popup' in request.POST:
+      to_field = request.POST.get('_to_field')
+      if to_field:
+        attr = str(to_field)
+      else:
+        attr = obj._meta.pk.attname
+      value = obj.serializable_value(attr)
+      return SimpleTemplateResponse('admin/popup_response.html', {
+        'pk_value': escape(pk_value),  # for possible backwards-compatibility
+        'value': escape(value),
+        'obj': escapejs(obj)
         })
 
     elif "_continue" in request.POST:
@@ -204,10 +231,13 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       if post_url_continue is None:
         post_url_continue = request.prefix + reverse(
           'admin:%s_%s_change' % (opts.app_label, opts.model_name),
-          args=(pk_value,),
+          args=(quote(pk_value),),
           current_app=self.admin_site.name
           )
-      post_url_continue = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url_continue)
+      post_url_continue = add_preserved_filters(
+        {'preserved_filters': preserved_filters, 'opts': opts},
+        post_url_continue
+        )
       return HttpResponseRedirect(post_url_continue)
 
     elif "_addanother" in request.POST:
@@ -228,6 +258,19 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     """
     Determines the HttpResponse for the change_view stage.
     """
+    if '_popup' in request.POST:
+      to_field = request.POST.get('_to_field')
+      attr = str(to_field) if to_field else obj._meta.pk.attname
+      # Retrieve the `object_id` from the resolved pattern arguments.
+      value = request.resolver_match.args[0]
+      new_value = obj.serializable_value(attr)
+      return SimpleTemplateResponse('admin/popup_response.html', {
+        'action': 'change',
+        'value': escape(value),
+        'obj': escapejs(obj),
+        'new_value': escape(new_value),
+      })
+
     opts = self.model._meta
     pk_value = obj._get_pk_val()
     preserved_filters = self.get_preserved_filters(request)
@@ -276,12 +319,44 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context)
 
 
+  def response_delete(self, request, obj_display, obj_id):
+    """
+    Determines the HttpResponse for the delete_view stage.
+    """
+
+    opts = self.model._meta
+
+    if '_popup' in request.POST:
+      return SimpleTemplateResponse('admin/popup_response.html', {
+        'action': 'delete',
+        'value': escape(obj_id),
+      })
+
+    self.message_user(request,
+      _('The %(name)s "%(obj)s" was deleted successfully.') % {
+          'name': force_text(opts.verbose_name),
+          'obj': force_text(obj_display),
+      }, messages.SUCCESS)
+
+    # Delete this entity page from the crumbs
+    del request.session['crumbs'][request.prefix][-1]
+
+    # Redirect to previous url
+    return HttpResponseRedirect("%s%s" % (request.prefix, request.session['crumbs'][request.prefix][-1][2]))
+
+
   @csrf_protect_m
   @transaction.atomic
   def delete_view(self, request, object_id, extra_context=None):
-    "The 'delete' admin view for this model."
+    """
+    The 'delete' admin view for this model.
+    """
     opts = self.model._meta
     app_label = opts.app_label
+
+    to_field = request.POST.get('_to_field', request.GET.get('_to_field'))
+    if to_field and not self.to_field_allowed(request, to_field):
+        raise DisallowedModelAdminToField("The field %s cannot be referenced." % to_field)
 
     obj = self.get_object(request, unquote(object_id))
 
@@ -296,10 +371,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     # Populate deleted_objects, a data structure of all related objects that
     # will also be deleted.
-    (deleted_objects, perms_needed, protected) = get_deleted_objects(
-       [obj], opts, request.user, self.admin_site, using)
+    (deleted_objects, model_count, perms_needed, protected) = get_deleted_objects(
+      [obj], opts, request.user, self.admin_site, using
+      )
 
-    # Update the links to the related objects. A bit of a hack...
+    # Update the links to the related objects.  frePPLe specific.
     if request.prefix:
       def replace_url(a):
         if isinstance(a, list):
@@ -313,41 +389,34 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       if perms_needed:
         raise PermissionDenied
       obj_display = force_text(obj)
+      attr = str(to_field) if to_field else opts.pk.attname
+      obj_id = obj.serializable_value(attr)
       self.log_deletion(request, obj, obj_display)
       self.delete_model(request, obj)
 
-      self.message_user(request, _('The %(name)s "%(obj)s" was deleted successfully.') % {'name': force_text(opts.verbose_name), 'obj': force_text(obj_display)})
-
-      # Delete this entity page from the crumbs
-      del request.session['crumbs'][request.prefix][-1]
-
-      # Redirect to previous url
-      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['crumbs'][request.prefix][-1][2]))
+      return self.response_delete(request, obj_display, obj_id)
 
     object_name = force_text(opts.verbose_name)
 
-    context = {
-        "title": capfirst(object_name + ' ' + unquote(object_id)),
-        "object_name": object_name,
-        "object": obj,
-        "deleted_objects": deleted_objects,
-        "perms_lacking": perms_needed,
-        "protected": protected,
-        "opts": opts,
-        "app_label": app_label,
-    }
+    context = dict(
+      self.admin_site.each_context(request),
+      title=capfirst(object_name + ' ' + unquote(object_id)),
+      object_name=object_name,
+      object=obj,
+      deleted_objects=deleted_objects,
+      model_count=dict(model_count).items(),
+      perms_lacking=perms_needed,
+      protected=protected,
+      opts=opts,
+      app_label=app_label,
+      preserved_filters=self.get_preserved_filters(request),
+      is_popup=('_popup' in request.POST or
+                '_popup' in request.GET),
+      to_field=to_field,
+      )
     context.update(extra_context or {})
 
-    return TemplateResponse(request, self.delete_confirmation_template or [
-      "admin/%s/%s/delete_confirmation.html" % (app_label, opts.model_name),
-      "admin/%s/delete_confirmation.html" % app_label,
-      "admin/delete_confirmation.html"
-      ], context, current_app=self.admin_site.name)
-
-  # TODO: allow permissions per schema
-  # def has_add_permission(self, request):
-  # def has_change_permission(self, request, obj=None):
-  # def has_delete_permission(self, request, obj=None):
+    return self.render_delete_form(request, context)
 
 
 class MultiDBTabularInline(admin.TabularInline):

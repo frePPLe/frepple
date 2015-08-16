@@ -120,10 +120,10 @@ index 5661bdc..6e9c9b7 100644
  
              function_name = (name or
 diff --git django/utils/autoreload.py django/utils/autoreload.py
-index 12f6ba2..4f765a2 100644
+index 5cb7fd0..ff83dd9 100644
 --- django/utils/autoreload.py
 +++ django/utils/autoreload.py
-@@ -272,7 +272,22 @@ def reloader_thread():
+@@ -274,7 +274,22 @@ def reloader_thread():
  
  def restart_with_reloader():
      while True:

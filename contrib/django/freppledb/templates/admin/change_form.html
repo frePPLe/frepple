@@ -10,15 +10,16 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
 {{block.super}}{% endblock %}
 
-{% block bodyclass %}change-form{% endblock %}
+{% block coltype %}change-form{% endblock %}
 
 {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left; color:#333">{{title|escape}}: {% trans "Edit"|escape %}</h1>{% endif %}
 {% if object_id %}{% tabs opts.object_name.lower %}{% endif %}{% endblock %}
 
 {% block content %}<div id="content-main">
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{form_url}}" method="post" id="{{opts.model_name}}_form">{% csrf_token %}{% block form_top %}{% endblock %}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
-{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+{% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
+{% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
 {% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
 {% if errors %}
     <p class="errornote">
@@ -45,9 +46,25 @@
 
 {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
 
-{% if adminform.first_field and add %}
-   <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
-{% endif %}
+{% block admin_change_form_document_ready %}
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function() {
+                $('.add-another').click(function(e) {
+                    e.preventDefault();
+                    showAddAnotherPopup(this);
+                });
+                $('.related-lookup').click(function(e) {
+                    e.preventDefault();
+                    showRelatedObjectLookupPopup(this);
+                });
+            {% if adminform and add %}
+                $('form#{{ opts.model_name }}_form :input:visible:enabled:first').focus()
+            {% endif %}
+            });
+        })(django.jQuery);
+    </script>
+{% endblock %}
 
 {# JavaScript for prepopulated fields #}
 {% prepopulated_fields_js %}

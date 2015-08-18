@@ -23,14 +23,12 @@ uninstall-local:
 	-rm -rf $(DESTDIR)$(datadir)/frepple/static
 
 clean-local:
-	-rm -rf `find . -name '*.pyc'`
-	-rm -rf `find . -name '*.pyo'`
+	-rm -rf `find . -name '__pycache__'`
 	-rm -rf build dist doc static *.log
 
 # Avoid packaging python bytecode files from the subdirectories
 dist-hook:
-	-rm -rf `find $(distdir) -name '*.pyc'`
-	-rm -rf `find $(distdir) -name '*.pyo'`
+	-rm -rf `find $(distdir) -name '__pycache__'`
 
 create:
 	./frepplectl.py syncdb

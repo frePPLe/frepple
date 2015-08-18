@@ -49,23 +49,23 @@ status           string            | Status of the operationplan.
                                    | The valid choices are:
 
                                    * | proposed:
-                                     | An operationplan in this state is a draft one. When regenerating
-                                       the plan operationplans in this state can be changed and even
-                                       deleted by the planning algorithm.
+                                     | An operationplan in this state is a draft one. When 
+                                       regenerating the plan operationplans in this state can be
+                                       changed and even deleted by the planning algorithm.
                                      | This is the default.
 
                                    * | approved:
-                                     | An operationplan in this state is reviewed by the user and ready
-                                       for exporting to your ERP system. Once exported the status will
-                                       become confirmed.
-                                     | The planning algorithm will not change or create operationplans
-                                       in this state.
+                                     | An operationplan in this state is reviewed by the user 
+                                       and ready for exporting to your ERP system. Once exported
+                                       the status will become confirmed.
+                                     | The planning algorithm will not change or create 
+                                       operationplans in this state.
 
                                    * | confirmed:
-                                     | Confirmed operationplans are ongoing transactions read as input
-                                       from your ERP system.
-                                     | The planning algorithm will not change or create operationplans
-                                       in this state.
+                                     | Confirmed operationplans are ongoing transactions read 
+                                       as input from your ERP system.
+                                     | The planning algorithm will not change or create 
+                                       operationplans in this state.
 
 consume_material boolean           | Controls whether this operationplan should consume material
                                      or not.

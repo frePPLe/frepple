@@ -79,17 +79,18 @@ mininterval      duration          | Replenishment batching window.
                                      larger replenishment.
                                    | The default value of the batching window is -1, which keeps
                                      the batching logic deactivated.
-producing        operation         | This operation will be instantiated by the solver to replenish
-                                     the buffer with additional material.
+producing        operation         | This operation will be instantiated by the solver to
+                                     replenish the buffer with additional material.
                                    | You can specify this operation explicitly.
                                    | Or, you can leave this field blank and let the system
                                      automatically create an operation. The generated operation
                                      is using the ItemSupplier and ItemDistribution models as
                                      input.
-                                   | In versions before 3.0 the only way was the explicit construction
-                                     of the operation to populate this field. From version 3.0
-                                     we recommend to use the auto-generated operations, unless you
-                                     have some very specific modeling requirements.
+                                   | In versions before 3.0 the only way was the explicit
+                                     construction of the operation to populate this field. From 
+                                     version 3.0 onwards we recommend to use the auto-generated 
+                                     operations, unless you have some very specific modeling 
+                                     requirements.
 detectproblems   boolean           | Set this field to false to supress problem detection on this
                                      buffer.
                                    | Default is true.

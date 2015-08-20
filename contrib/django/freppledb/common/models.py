@@ -192,6 +192,55 @@ class Parameter(AuditModel):
       return default
 
 
+class Scenario(models.Model):
+  scenarioStatus = (
+    ('free', _('Free')),
+    ('in use', _('In use')),
+    ('busy', _('Busy')),
+  )
+
+  # Database fields
+  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  status = models.CharField(
+    _('status'), max_length=10,
+    null=False, blank=False, choices=scenarioStatus
+    )
+  lastrefresh = models.DateTimeField(_('last refreshed'), null=True, editable=False)
+
+  def __str__(self):
+    return self.name
+
+  @staticmethod
+  def syncWithSettings():
+    try:
+      # Bring the scenario table in sync with settings.databases
+      with transaction.atomic(savepoint=False):
+        dbs = [ i for i, j in settings.DATABASES.items() if j['NAME'] ]
+        for sc in Scenario.objects.all():
+          if sc.name not in dbs:
+            sc.delete()
+        scs = [sc.name for sc in Scenario.objects.all()]
+        for db in dbs:
+          if db not in scs:
+            if db == DEFAULT_DB_ALIAS:
+              Scenario(name=db, status="In use", description='Production database').save()
+            else:
+              Scenario(name=db, status="Free").save()
+    except Exception as e:
+      logger.error("Error synchronizing the scenario table with the settings: %s" % e)
+
+  class Meta:
+    db_table = "common_scenario"
+    permissions = (
+        ("copy_scenario", "Can copy a scenario"),
+        ("release_scenario", "Can release a scenario"),
+       )
+    verbose_name_plural = _('scenarios')
+    verbose_name = _('scenario')
+    ordering = ['name']
+
+
 class User(AbstractUser):
   languageList = tuple( [ ('auto', _('Detect automatically')), ] + list(settings.LANGUAGES) )
   language = models.CharField(
@@ -216,6 +265,82 @@ class User(AbstractUser):
     _('last modified'), auto_now=True, null=True, blank=True,
     editable=False, db_index=True
     )
+
+
+  def save(self, force_insert=False, force_update=False, using=DEFAULT_DB_ALIAS, update_fields=None):
+    '''
+    Every change to a user model is saved to all active scenarios.
+
+    The is_superuser and is_active fields can be different in each scenario.
+    All other fields are expected to be identical in each database.
+
+    Because of the logic in this method creating users directly in the
+    database tables is NOT a good idea!
+    '''
+    # We want to automatically give access to the django admin to all users
+    self.is_staff = True
+
+    scenarios = [ i['name'] for i in Scenario.objects.filter(status='In use').values('name') ]
+
+    # The same id of a new user MUST be identical in all databases.
+    # We manipulate the sequences, and correct if required.
+    newuser = False
+    tmp_is_active = self.is_active
+    tmp_is_superuser = self.is_superuser
+    if not self.id:
+      newuser = True
+      self.id = 0
+      cur_seq = {}
+      for db in scenarios:
+        cursor = connections[db].cursor()
+        cursor.execute("select nextval('common_user_id_seq')")
+        cur_seq[db] = cursor.fetchone()[0]
+        if cur_seq[db] > self.id:
+          self.id = cur_seq[db]
+      for db in scenarios:
+        if cur_seq[db] != self.id:
+          cursor = connections[db].cursor()
+          cursor.execute("select setval('common_user_id_seq', %s)", [self.id - 1])
+      self.is_active = False
+      self.is_superuser = False
+
+    # Save only specific fields which we want to have identical across
+    # all scenario databases.
+    if not update_fields:
+      update_fields2=[
+        'username', 'password', 'last_login', 'first_name', 'last_name',
+        'email', 'date_joined', 'language', 'theme', 'pagesize',
+        'horizonbuckets', 'horizonstart', 'horizonend', 'horizonunit',
+        'lastmodified', 'is_staff'
+        ]
+    else:
+      # Important is NOT to save the is_active and is_superuser fields.
+      update_fields2 = update_fields[:]  # Copy!
+      if 'is_active' in update_fields2:
+        update_fields2.remove('is_active')
+      if 'is_superuser' in update_fields:
+        update_fields2.remove('is_superuser')
+    if update_fields2 or newuser:
+      for db in scenarios:
+        with transaction.atomic(using=db, savepoint=False):
+          if db == using:
+            continue
+          super(User, self).save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=db,
+            update_fields=update_fields2 if not newuser else None
+            )
+
+    # Continue with the regular save, as if nothing happened.
+    self.is_active = tmp_is_active
+    self.is_superuser = tmp_is_superuser
+    return super(User, self).save(
+      force_insert=force_insert,
+      force_update=force_update,
+      using=using,
+      update_fields=update_fields
+      )
 
 
   def joined_age(self):

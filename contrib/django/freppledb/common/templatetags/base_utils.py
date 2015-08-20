@@ -28,7 +28,7 @@ from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape
 
-from freppledb.execute.models import Scenario, User
+from freppledb.common.models import User
 from freppledb import VERSION
 
 MAX_CRUMBS = 10
@@ -220,12 +220,10 @@ class SelectDatabaseNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
-    scenarios = Scenario.objects.filter(status='In use').values('name')
-    if len(scenarios) <= 1:
+    if len(req.user.scenarios) <= 1:
       return ''
     s = ['<select id="database" name="%s" onchange="selectDatabase()">' % req.database ]
-    for i in scenarios:
-      i = i['name']
+    for i in req.user.scenarios:
       if i == req.database:
         s.append('<option value="%s" selected="selected">%s</option>' % (i, i))
       else:
@@ -263,7 +261,10 @@ version.is_safe = True
 
 @register.assignment_tag
 def checkPassword(usr, pwd):
-  return User.objects.get(username=usr).check_password(pwd)
+  try:
+    return User.objects.get(username=usr).check_password(pwd)
+  except:
+    return False
 
 
 #

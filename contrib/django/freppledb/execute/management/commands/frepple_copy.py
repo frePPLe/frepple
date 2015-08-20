@@ -16,15 +16,14 @@
 #
 
 import os
-import shutil
 from optparse import make_option
 from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-from freppledb.execute.models import Task, Scenario
-from freppledb.common.models import User
+from freppledb.execute.models import Task
+from freppledb.common.models import User, Scenario
 from freppledb import VERSION
 
 
@@ -157,6 +156,14 @@ class Command(BaseCommand):
       else:
         destinationscenario.description = "Copied from scenario '%s'" % source
       destinationscenario.save()
+
+      # Give access to the destination scenario to:
+      #  a) the user doing the copy
+      #  b) all superusers from the source schema
+      User.objects.using(destination).filter(is_superuser=True).update(is_active=True)
+      User.objects.using(destination).filter(is_superuser=False).update(is_active=False)
+      if user:
+        User.objects.using(destination).filter(username=user.username).update(is_active=True)
 
       # Logging message
       task.status = 'Done'

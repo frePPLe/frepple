@@ -140,12 +140,8 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # Uncomment for external authentication.
-    # The authentication backend RemoteUserBackend also needs to be activated.
-    #'django.contrib.auth.middleware.RemoteUserMiddleware',
+    'freppledb.common.middleware.MultiDBMiddleware',
     'freppledb.common.middleware.LocaleMiddleware',
-    'freppledb.common.middleware.DatabaseSelectionMiddleware',
     'django.middleware.common.CommonMiddleware',
 )
 
@@ -240,12 +236,10 @@ LOGGING = {
     }
 }
 
-# To use a customized authentication backend.
+# Backends for user authentication and authorization.
+# FrePPLe currently supports only this custom one.
 AUTHENTICATION_BACKENDS = (
-    # Uncomment for external authentication.
-    # The middleware RemoteUserMiddleware also needs to be activated.
-    #"django.contrib.auth.backends.RemoteUserBackend",
-    "freppledb.common.auth.EmailBackend",
+    "freppledb.common.auth.MultiDBBackend",
 )
 
 # IP address of the machine you are browsing from. When logging in from this

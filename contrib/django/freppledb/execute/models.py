@@ -14,11 +14,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from django.db import models, transaction, DEFAULT_DB_ALIAS
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 
 from freppledb.common.models import User
 
@@ -60,63 +57,3 @@ class Task(models.Model):
     # Add record to the database
     # Check if a worker is present. If not launch one.
     return 1
-
-
-class Scenario(models.Model):
-  scenarioStatus = (
-    ('free', _('Free')),
-    ('in use', _('In use')),
-    ('busy', _('Busy')),
-  )
-
-  # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  status = models.CharField(
-    _('status'), max_length=10,
-    null=False, blank=False, choices=scenarioStatus
-    )
-  lastrefresh = models.DateTimeField(_('last refreshed'), null=True, editable=False)
-
-  def __str__(self):
-    return self.name
-
-  @staticmethod
-  def syncWithSettings():
-    try:
-      # Bring the scenario table in sync with settings.databases
-      with transaction.atomic(savepoint=False):
-        dbs = [ i for i, j in settings.DATABASES.items() if j['NAME'] ]
-        for sc in Scenario.objects.all():
-          if sc.name not in dbs:
-            sc.delete()
-        scs = [sc.name for sc in Scenario.objects.all()]
-        for db in dbs:
-          if db not in scs:
-            if db == DEFAULT_DB_ALIAS:
-              Scenario(name=db, status="In use", description='Production database').save()
-            else:
-              Scenario(name=db, status="Free").save()
-    except Exception as e:
-      logger.error("Error synchronizing the scenario table with the settings: %s" % e)
-
-  class Meta:
-    db_table = "execute_scenario"
-    permissions = (
-        ("copy_scenario", "Can copy a scenario"),
-        ("release_scenario", "Can release a scenario"),
-       )
-    verbose_name_plural = _('scenarios')
-    verbose_name = _('scenario')
-    ordering = ['name']
-
-
-@receiver(post_save, sender=User)
-def sync_handler(sender, **kwargs):
-  if not kwargs.get('created', False) or kwargs.get('using', DEFAULT_DB_ALIAS) != DEFAULT_DB_ALIAS:
-    return
-  # A new user is created in the default database.
-  # We create the same user in all scenarios that are in use. Otherwise the user can't create
-  # comments or edit objects in these what-if scenarios.
-  for sc in Scenario.objects.all().filter(status='In use'):
-    kwargs['instance'].save(using=sc.name)

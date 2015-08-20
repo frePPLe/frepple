@@ -17,10 +17,9 @@
 
 from datetime import datetime
 
-from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,28 +28,35 @@ from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import admin_site
 
 
-# Registering the User admin for our custom model.
-# See http://stackoverflow.com/questions/16953302/django-custom-user-model-in-admin-relation-auth-user-does-not-exists
-# to understand the need for this extra customization.
-class MyUserCreationForm(UserCreationForm):
-  def clean_username(self):
-    username = self.cleaned_data["username"]
-    try:
-      User.objects.get(username=username)
-    except User.DoesNotExist:
-      return username
-    raise forms.ValidationError(self.error_messages['duplicate_username'])
+class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
+  '''
+  This class is a frePPLe specific override of its standard
+  Django base class.
+  '''
+  save_on_top = True
 
-  class Meta(UserCreationForm.Meta):
-    model = User
+  change_user_password_template = 'auth/change_password.html'
 
+  fieldsets = (
+    (None, {'fields': ('username', 'password')}),
+    (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+    (_('Permissions in this scenario'), {'fields': ('is_active', 'is_superuser',
+                                   'groups', 'user_permissions')}),
+    (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+  )
 
-class MyUserAdmin(UserAdmin):
-    save_on_top = True
-    add_form = MyUserCreationForm
+  def get_readonly_fields(self, request, obj=None):
+    if obj:
+      return self.readonly_fields + ('last_login', 'date_joined')
+    return self.readonly_fields
 
-admin_site.register(Group, GroupAdmin)
 admin_site.register(User, MyUserAdmin)
+
+
+class MyGroupAdmin(MultiDBModelAdmin):
+  pass
+
+admin_site.register(Group, MyGroupAdmin)
 
 
 class ParameterForm(forms.ModelForm):

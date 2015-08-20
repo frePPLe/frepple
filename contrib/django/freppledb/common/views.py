@@ -202,7 +202,7 @@ class UserList(GridReport):
   basequeryset = User.objects.all()
   model = User
   adminsite = 'admin'
-  frozenColumns = 1
+  frozenColumns = 2
   multiselect = False
 
   rows = (
@@ -211,8 +211,10 @@ class UserList(GridReport):
     GridFieldText('email', title=_('email address'), formatter='email', width=200),
     GridFieldText('first_name', title=_('first name')),
     GridFieldText('last_name', title=_('last name')),
-    GridFieldDateTime('date_joined', title=_('date joined')),
-    GridFieldBool('is_staff', title=_('staff status')),
+    GridFieldBool('is_active', title=_('active')),
+    GridFieldBool('is_superuser', title=_('superuser status'), width=120),
+    GridFieldDateTime('date_joined', title=_('date joined'), editable=False),
+    GridFieldDateTime('last_login', title=_('last login'), editable=False)
     )
 
 
@@ -269,7 +271,6 @@ def Comments(request, app, model, object_id):
   if request.method == 'POST':
     comment = request.POST['comment']
     if comment:
-      request.user._state.db = request.database  # Need to lie a bit
       Comment(
            content_object=modelinstance,
            user=request.user,
@@ -289,7 +290,7 @@ def Comments(request, app, model, object_id):
 
 class CommentList(GridReport):
   '''
-  A list report to review the history of actions.
+  A list report to display all comments.
   '''
   template = 'common/commentlist.html'
   title = _('Comments')

@@ -68,8 +68,8 @@ The following steps are required to configure a multi-model setup.
 
     * One of the schemas MUST be called ‘default’.
 
-      All information on user logins, user permissions and user preferences
-      and browser sessions are stored in this default schema.
+      All information on user logins, user preferences and browser sessions
+      are stored in this default schema.
 
     * Use short and unambiguous names for the additional schemas.
 
@@ -80,14 +80,6 @@ The following steps are required to configure a multi-model setup.
 
       Bad examples: ‘admin’, ‘buffer’, ‘scenario/1′, names with
       non-ASCII characters, names with spaces...
-
-    * For whatif scenario modelling the schemas all MUST use the same engine.
-
-      It is not possible to mix SQLite and PostgreSQL schemas.
-
-      If the command frepple_copy isn’t used different database engines could
-      in theory be used, but for simplicity, consistency and maintainability
-      reasons that’s probably not a good idea.
 
     * The databases can be located on different database servers or database
       instances, but this is not required.
@@ -123,3 +115,12 @@ The following steps are required to configure a multi-model setup.
 * **Restart the web server**
 
   After a change in the djangosettings.py file, the web server needs to be restarted.
+
+* **Review user access and permissions**
+
+  Access rights are controlled for each scenario separately.
+
+  After running the command frepple_copy only 1) the user executing the command
+  and 2) superusers in the source scenario are marked active in the new scenario.
+  Other users can be granted access by marking them active in the new scenario, and
+  by assigning them appropriate privileges in it.

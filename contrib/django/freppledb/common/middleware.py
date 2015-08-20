@@ -18,6 +18,7 @@
 import re
 import threading
 
+from django.contrib import auth
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -25,7 +26,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.http import Http404
 from django.conf import settings
 
-from freppledb.execute.models import Scenario
+from freppledb.common.models import Scenario
 
 
 # A local thread variable to make the current request visible everywhere
@@ -71,15 +72,23 @@ for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
 
-class DatabaseSelectionMiddleware(object):
+class MultiDBMiddleware(object):
   """
   This middleware examines the URL of the incoming request, and determines the
   name of database to use.
   URLs starting with the name of a configured database will be executed on that
   database. Extra fields are set on the request to set the selected database.
   This prefix is then stripped from the path while processing the view.
+
+  If the request has a user, the database of that user is also updated to
+  point to the selected database.
+  We update the fields:
+    - _state.db: a bit of a hack for the django internal stuff
+    - is_active
+    - is_superuser
   """
   def process_request(self, request):
+    request.user = auth.get_user(request)
     for i in Scenario.objects.all().only('name', 'status'):
       try:
         if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
@@ -89,8 +98,22 @@ class DatabaseSelectionMiddleware(object):
           request.path_info = request.path_info[len(request.prefix):]
           request.path = request.path[len(request.prefix):]
           request.database = i.name
+          if request.user and not request.user.is_anonymous():
+            superuser = request.user.scenarios.get(i.name)
+            if superuser != None:
+              request.user._state.db = i.name
+              request.user.is_superuser = superuser
+            else:
+              raise Http404('Access to this scenario is not allowed')
           return
       except:
         pass
-    request.database = DEFAULT_DB_ALIAS
     request.prefix = ''
+    request.database = DEFAULT_DB_ALIAS
+    if request.user and not request.user.is_anonymous():
+      superuser = request.user.scenarios.get(DEFAULT_DB_ALIAS)
+      if superuser != None:
+        request.user._state.db = DEFAULT_DB_ALIAS
+        request.user.is_superuser = superuser
+      else:
+        raise Http404('Access to this scenario is not allowed')

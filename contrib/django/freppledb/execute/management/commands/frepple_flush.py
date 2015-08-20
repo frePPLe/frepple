@@ -139,7 +139,7 @@ class Command(BaseCommand):
       tables.discard('django_admin_log')
       tables.discard('django_content_type')
       tables.discard('execute_log')
-      tables.discard('execute_scenario')
+      tables.discard('common_scenario')
 
       # Delete all records from the tables.
       with transaction.atomic(using=database, savepoint=False):

@@ -27,6 +27,9 @@ id               unsigned long     | Unique identifier of the operationplan.
                                    | If left unspecified an identifier will be automatically
                                      generated.
                                    | This field is required when updating existing instances.
+reference        string            | Identifier or reference of this operationplan in 
+                                     external system.
+                                   | We don't impose a restriction for its uniqueness.                                   
 start            dateTime          | Start date.
                                    | If left unspecified (or set to 1971-01-01), this field
                                      will be computed based on the end date.

@@ -849,6 +849,7 @@ class DistributionOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldBool('consume_material', title=_('consume material')),
     GridFieldNumber('criticality', title=_('criticality')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

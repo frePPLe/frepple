@@ -747,6 +747,60 @@ class loadData(object):
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 
+  def loadPurchaseOrders(self):
+    print('Importing purchase orders...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        location_id, id, reference, item_id, supplier_id, quantity, startdate, enddate, status, source
+      FROM purchase_order %s
+      ORDER BY location_id, id ASC
+      ''' % self.filter_where)
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        frepple.operation_itemsupplier.createOrder(
+          location=frepple.location(name=i[0]),
+          id=i[1], reference=i[2],
+          item=frepple.item(name=i[3]) if i[3] else None,
+          supplier=frepple.supplier(name=i[4]) if i[4] else None,
+          quantity=i[5], start=i[6], end=i[7],
+          status=i[8], source=i[9]
+          )
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d purchase orders in %.2f seconds' % (cnt, time() - starttime))
+
+
+  def loadDistributionOrders(self):
+    print('Importing distribution orders...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        destination_id, id, reference, item_id, origin_id, quantity, startdate,
+        enddate, consume_material, status, source
+      FROM distribution_order %s
+      ORDER BY destination_id, id ASC
+      ''' % self.filter_where)
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        frepple.operation_itemdistribution.createOrder(
+          destination=frepple.location(name=i[0]),
+          id=i[1], reference=i[2],
+          item=frepple.item(name=i[3]) if i[3] else None,
+          origin=frepple.location(name=i[4]) if i[4] else None,
+          quantity=i[5], start=i[6], end=i[7],
+          consume_material=i[8] if i[8] != None else True,
+          status=i[9], source=i[10]
+          )
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d distribution orders in %.2f seconds' % (cnt, time() - starttime))
+
+
   def loadDemand(self):
     print('Importing demands...')
     cnt = 0
@@ -820,6 +874,8 @@ class loadData(object):
     self.loadFlows()
     self.loadLoads()
     self.loadOperationPlans()
+    self.loadPurchaseOrders()
+    self.loadDistributionOrders()
     self.loadDemand()
 
     # Close the database connection

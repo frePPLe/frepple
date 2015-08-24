@@ -661,7 +661,9 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
   if (src.owner)
     throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
 
-  // Identifier can't be inherited, but a new one will be generated when we activate the operationplan
+  // Identifier and reference aren't inherited.
+  // A new identifier will be generated when we activate the operationplan.
+  // The reference remains blank.
   id = 0;
 
   // Copy the fields

@@ -2034,6 +2034,18 @@ class OperationPlan
       return id;
     }
 
+    /** Return the external identifier. */
+    string getReference() const
+    {
+      return ref;
+    }
+
+    /** Update the external identifier. */
+    DECLARE_EXPORT void setReference(const string& s)
+    {
+      ref = s;
+    }
+
     /** Return the end date. */
     Date getEnd() const
     {
@@ -2199,6 +2211,7 @@ class OperationPlan
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
+      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
@@ -2328,6 +2341,9 @@ class OperationPlan
       * method getIdentifier() is called.
       */
     unsigned long id;
+
+    /** External identifier for this operationplan. */
+    string ref;
 
     /** Start and end date. */
     DateRange dates;
@@ -3498,6 +3514,22 @@ class ItemDistribution : public Object,
   friend class OperationItemDistribution;
   friend class Item;
   public:
+    class OperationIterator
+    {
+      private:
+        OperationItemDistribution* curOper;
+
+      public:
+        /** Constructor. */
+        OperationIterator(const ItemDistribution* i)
+        {
+          curOper = i ? i->firstOperation : NULL;
+        }
+
+        /** Return current value and advance the iterator. */
+        inline OperationItemDistribution* next();
+    };
+
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
@@ -3620,6 +3652,11 @@ class ItemDistribution : public Object,
         throw DataException("ItemDistribution cost must be positive");
     }
 
+    OperationIterator getOperations() const
+    {
+      return OperationIterator(this);
+    }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
@@ -3632,6 +3669,7 @@ class ItemDistribution : public Object,
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+      m->addIteratorField<Cls, OperationIterator, OperationItemDistribution>(Tags::operations, Tags::operation, &Cls::getOperations, DONT_SERIALIZE);
       HasSource::registerFields<Cls>(m);
     }
 
@@ -4027,7 +4065,24 @@ class OperationItemDistribution : public OperationFixedTime
     {
       m->addPointerField<Cls, ItemDistribution>(Tags::itemdistribution, &Cls::getItemDistribution, NULL);
     }
+
+    /** Create a new transfer operationplan.
+      * This method will link the operationplan to the correct ItemDistribution
+      * model and its operation.
+      * If none can be found, an ItemDistribution model is created
+      * automatically and a data problem is also generated.
+      */
+    static PyObject* createOrder(PyObject*, PyObject*, PyObject*);
 };
+
+
+OperationItemDistribution* ItemDistribution::OperationIterator::next()
+{
+  OperationItemDistribution* tmp = curOper;
+  if (curOper)
+    curOper = curOper->nextOperation;
+  return tmp;
+}
 
 
 /** @brief An internally generated operation that supplies procured material
@@ -4068,6 +4123,14 @@ class OperationItemSupplier : public OperationFixedTime
     {
       m->addPointerField<Cls, ItemSupplier>(Tags::itemsupplier, &Cls::getItemSupplier, NULL);
     }
+
+    /** Create a new purchase operationplan.
+      * This method will link the operationplan to the correct ItemSupplier
+      * model and its operation.
+      * If none can be found, an ItemSupplier model is created automatically
+      * and a data problem is also generated.
+      */
+    static PyObject* createOrder(PyObject*, PyObject*, PyObject*);
 };
 
 

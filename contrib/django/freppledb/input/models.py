@@ -914,6 +914,9 @@ class DistributionOrder(AuditModel):
     )
   startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
+  consume_material = models.BooleanField(_('consume material'), blank=True, default=True,
+    help_text=_('Consume material at origin location')
+    )
   criticality = models.DecimalField(
     _('criticality'), max_digits=settings.MAX_DIGITS,
     decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,

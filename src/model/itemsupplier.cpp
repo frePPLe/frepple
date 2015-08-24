@@ -269,6 +269,9 @@ int OperationItemSupplier::initialize()
   PythonType& x = FreppleCategory<OperationItemSupplier>::getPythonType();
   x.setName("operation_itemsupplier");
   x.setDoc("frePPLe operation_itemsupplier");
+  x.addMethod("createOrder", createOrder,
+    METH_STATIC | METH_VARARGS | METH_KEYWORDS,
+    "Create an operationplan representing a purchase order");
   x.supportgetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -350,23 +353,177 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
 OperationItemSupplier::~OperationItemSupplier()
 {
   // Remove from the list of operations of this supplier item
-  if (supitem->firstOperation == this)
+  if (supitem)
   {
-    // We were at the head
-    supitem->firstOperation = nextOperation;
-  }
-  else
-  {
-    // We were in the middle
-    OperationItemSupplier* i = supitem->firstOperation;
-    while (i->nextOperation != this && i->nextOperation)
-      i = i->nextOperation;
-    if (!i)
-      throw LogicException("ItemSupplier operation list corrupted");
+    if (supitem->firstOperation == this)
+    {
+      // We were at the head
+      supitem->firstOperation = nextOperation;
+    }
     else
-      i->nextOperation = nextOperation;
+    {
+      // We were in the middle
+      OperationItemSupplier* i = supitem->firstOperation;
+      while (i->nextOperation != this && i->nextOperation)
+        i = i->nextOperation;
+      if (!i)
+        throw LogicException("ItemSupplier operation list corrupted");
+      else
+        i->nextOperation = nextOperation;
+    }
   }
 }
 
+
+extern "C" PyObject* OperationItemSupplier::createOrder(
+  PyObject *self, PyObject *args, PyObject *kwdict
+  )
+{
+  // Parse the Python arguments
+  PyObject* pylocation = NULL;
+  unsigned long id = 0;
+  const char* ref = NULL;
+  PyObject* pyitem = NULL;
+  PyObject* pysupplier = NULL;
+  double qty = 0;
+  PyObject* pystart = NULL;
+  PyObject* pyend = NULL;
+  const char* status = NULL;
+  const char* source = NULL;
+  static const char *kwlist[] = {
+    "location", "id", "reference", "item", "supplier", "quantity", "start",
+    "end", "status", "source", NULL
+    };
+  int ok = PyArg_ParseTupleAndKeywords(
+    args, kwdict, "|OkzOOdOOzz:createOrder", const_cast<char**>(kwlist),
+    &pylocation, &id, &ref, &pyitem, &pysupplier, &qty, &pystart,
+    &pyend, &status, &source
+    );
+  if (!ok)
+    return NULL;
+  Date start = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
+  Date end = pyend ? PythonData(pyend).getDate() : Date::infinitePast;
+
+  // Validate all arguments
+  if (!pylocation || !pyitem)
+  {
+    PyErr_SetString(PythonDataException, "item and location arguments are mandatory");
+    return NULL;
+  }
+  PythonData location_tmp(pylocation);
+  if (!location_tmp.check(Location::metadata))
+  {
+    PyErr_SetString(PythonDataException, "location argument must be of type location");
+    return NULL;
+  }
+  PythonData item_tmp(pyitem);
+  if (!item_tmp.check(Item::metadata))
+  {
+    PyErr_SetString(PythonDataException, "item argument must be of type item");
+    return NULL;
+  }
+  PythonData supplier_tmp(pysupplier);
+  if (pysupplier && !supplier_tmp.check(Supplier::metadata))
+  {
+    PyErr_SetString(PythonDataException, "supplier argument must be of type supplier");
+    return NULL;
+  }
+  Item *item = static_cast<Item*>(item_tmp.getObject());
+  Location *location = static_cast<Location*>(location_tmp.getObject());
+  Supplier *supplier = pysupplier ? static_cast<Supplier*>(supplier_tmp.getObject()) : NULL;
+
+  // Find or create the destination buffer.
+  Buffer* destbuffer = NULL;
+  for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
+  {
+    if (bufiter->getLocation() == location && bufiter->getItem() == item)
+    {
+      if (destbuffer)
+      {
+        stringstream o;
+        o << "Multiple buffers found for item '" << item << "'' and location'" << location << "'";
+        throw DataException(o.str());
+      }
+      destbuffer = &*bufiter;
+    }
+  }
+  if (!destbuffer)
+  {
+    // Create the destination buffer
+    destbuffer = new BufferDefault();
+    stringstream o;
+    o << item << " @ " << location;
+    destbuffer->setName(o.str());
+    destbuffer->setItem(item);
+    destbuffer->setLocation(location);
+  }
+
+  // Look for a matching matching supplying operation on this buffer.
+  // Here we also trigger the creation of its producing operation, which
+  // contains the logic to build possible transfer operations.
+  Operation *oper = NULL;
+  Operation* prodOper = destbuffer->getProducingOperation();
+  if (prodOper && prodOper->getType() == *OperationItemSupplier::metadata)
+  {
+    if (supplier)
+    {
+      if (supplier->isMemberOf(static_cast<OperationItemSupplier*>(prodOper)->getItemSupplier()->getSupplier()))
+        oper = prodOper;
+    }
+    else
+      oper = prodOper;
+  }
+  else if (prodOper && prodOper->getType() == *OperationAlternate::metadata)
+  {
+    SubOperation::iterator soperiter = prodOper->getSubOperationIterator();
+    while (SubOperation *soper = soperiter.next())
+    {
+      if (soper->getType() == *OperationItemSupplier::metadata)
+      {
+        if (supplier)
+        {
+          if (supplier->isMemberOf(static_cast<OperationItemSupplier*>(prodOper)->getItemSupplier()->getSupplier()))
+          {
+            oper = soper->getOperation();
+            break;
+          }
+        }
+        else
+        {
+          oper = prodOper;
+          break;
+        }
+      }
+    }
+  }
+
+  // No matching operation is found.
+  if (!oper)
+  {
+    // We'll create one now, but that requires that we have a supplier defined.
+    if (!supplier)
+      throw DataException("Supplier is needed on this purchase order");
+    // Note: We know that we need to create a new one. An existing one would
+    // have created an operation on the buffer already.
+    ItemSupplier *itemsupplier = new ItemSupplier();
+    itemsupplier->setSupplier(supplier);
+    itemsupplier->setItem(item);
+    itemsupplier->setLocation(location);
+    oper = new OperationItemSupplier(itemsupplier, destbuffer);
+    new ProblemInvalidData(oper, "Purchase orders on unauthorized supplier", "operation",
+      Date::infinitePast, Date::infiniteFuture, 1);
+  }
+
+  // Finally, create the operationplan
+  OperationPlan *opplan = oper->createOperationPlan(qty, start, end);
+  if (status)
+    opplan->setStatus(status);
+  if (ref)
+    opplan->setReference(ref);
+
+  // Return result
+  Py_INCREF(opplan);
+  return opplan;
+}
 
 }

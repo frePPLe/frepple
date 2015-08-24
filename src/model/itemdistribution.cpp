@@ -148,7 +148,7 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
     if (!PyObject_TypeCheck(it, Item::metadata->pythonClass))
       throw DataException("ItemDistribution item must be of type item");
 
-    /*
+    /* XXX
     // Pick up the priority
     PyObject* q1 = PyDict_GetItemString(kwds,"priority");
     int q2 = q1 ? PythonData(q1).getInt() : 1;
@@ -220,7 +220,7 @@ DECLARE_EXPORT void ItemDistribution::validate(Action action)
   if (!it)
     throw DataException("Missing item on a ItemDistribution");
 
-  /* YYY
+  /* XXX
   // Check if an ItemDistribution with 1) identical item, 2) identical origin
   // 3) identical destination, and 4) overlapping effectivity dates already exists
   Location::distributionoriginlist::const_iterator i = sup->getItems().begin();
@@ -280,6 +280,9 @@ int OperationItemDistribution::initialize()
   PythonType& x = FreppleCategory<OperationItemDistribution>::getPythonType();
   x.setName("operation_itemdistribution");
   x.setDoc("frePPLe operation_itemdistribution");
+  x.addMethod("createOrder", createOrder,
+    METH_STATIC | METH_VARARGS | METH_KEYWORDS,
+    "Create an operationplan representing a transfer order");
   x.supportgetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -335,23 +338,217 @@ DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
 
 OperationItemDistribution::~OperationItemDistribution()
 {
-  // Remove from the list of operations of this supplier item
-  if (itemdist->firstOperation == this)
+  // Remove from the list of operations of this item distribution
+  if (itemdist)
   {
-    // We were at the head
-    itemdist->firstOperation = nextOperation;
-  }
-  else
-  {
-    // We were in the middle
-    OperationItemDistribution* i = itemdist->firstOperation;
-    while (i->nextOperation != this && i->nextOperation)
-      i = i->nextOperation;
-    if (!i)
-      throw LogicException("ItemDistribution operation list corrupted");
+    if (itemdist->firstOperation == this)
+    {
+      // We were at the head
+      itemdist->firstOperation = nextOperation;
+    }
     else
-      i->nextOperation = nextOperation;
+    {
+      // We were in the middle
+      OperationItemDistribution* i = itemdist->firstOperation;
+      while (i->nextOperation != this && i->nextOperation)
+        i = i->nextOperation;
+      if (!i)
+        throw LogicException("ItemDistribution operation list corrupted");
+      else
+        i->nextOperation = nextOperation;
+    }
   }
+}
+
+
+extern "C" PyObject* OperationItemDistribution::createOrder(
+  PyObject *self, PyObject *args, PyObject *kwdict
+  )
+{
+  // Parse the Python arguments
+  PyObject* pydest = NULL;
+  unsigned long id = 0;
+  const char* ref = NULL;
+  PyObject* pyitem = NULL;
+  PyObject* pyorigin = NULL;
+  double qty = 0;
+  PyObject* pystart = NULL;
+  PyObject* pyend = NULL;
+  int consume = 1;
+  const char* status = NULL;
+  const char* source = NULL;
+  static const char *kwlist[] = {
+    "destination", "id", "reference", "item", "origin", "quantity", "start",
+    "end", "consume_material", "status", "source", NULL
+    };
+  int ok = PyArg_ParseTupleAndKeywords(
+    args, kwdict, "|OkzOOdOOpzz:createOrder", const_cast<char**>(kwlist),
+    &pydest, &id, &ref, &pyitem, &pyorigin, &qty, &pystart, &pyend,
+    &consume, &status, &source
+    );
+  if (!ok)
+    return NULL;
+  Date start = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
+  Date end = pyend ? PythonData(pyend).getDate() : Date::infinitePast;
+
+  // Validate all arguments
+  if (!pydest || !pyitem)
+  {
+    PyErr_SetString(PythonDataException, "item and destination arguments are mandatory");
+    return NULL;
+  }
+  PythonData dest_tmp(pydest);
+  if (!dest_tmp.check(Location::metadata))
+  {
+    PyErr_SetString(PythonDataException, "destination argument must be of type location");
+    return NULL;
+  }
+  PythonData item_tmp(pyitem);
+  if (!item_tmp.check(Item::metadata))
+  {
+    PyErr_SetString(PythonDataException, "item argument must be of type item");
+    return NULL;
+  }
+  PythonData origin_tmp(pyorigin);
+  if (pyorigin && !origin_tmp.check(Location::metadata))
+  {
+    PyErr_SetString(PythonDataException, "origin argument must be of type location");
+    return NULL;
+  }
+  Item *item = static_cast<Item*>(item_tmp.getObject());
+  Location *dest = static_cast<Location*>(dest_tmp.getObject());
+  Location *origin = pyorigin ? static_cast<Location*>(origin_tmp.getObject()) : NULL;
+
+  // Find or create the destination buffer.
+  Buffer* destbuffer = NULL;
+  for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
+  {
+    if (bufiter->getLocation() == dest && bufiter->getItem() == item)
+    {
+      if (destbuffer)
+      {
+        stringstream o;
+        o << "Multiple buffers found for item '" << item << "'' and location'" << dest << "'";
+        throw DataException(o.str());
+      }
+      destbuffer = &*bufiter;
+    }
+  }
+  if (!destbuffer)
+  {
+    // Create the destination buffer
+    destbuffer = new BufferDefault();
+    stringstream o;
+    o << item << " @ " << dest;
+    destbuffer->setName(o.str());
+    destbuffer->setItem(item);
+    destbuffer->setLocation(dest);
+  }
+
+  // Look for a matching matching supplying operation on this buffer.
+  // Here we also trigger the creation of its producing operation, which
+  // contains the logic to build possible transfer operations.
+  Operation *oper = NULL;
+  Operation* prodOper = destbuffer->getProducingOperation();
+  if (prodOper && prodOper->getType() == *OperationItemDistribution::metadata)
+  {
+    if (origin)
+    {
+      // Only one transfer is allowed. Check whether the source location of the
+      // operation is matching this transfer.
+      for (Operation::flowlist::const_iterator fl = prodOper->getFlows().begin();
+          fl != prodOper->getFlows().end() && ok; ++ fl)
+      {
+        if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(origin))
+          oper = prodOper;
+      }
+    }
+    else
+      oper = prodOper;
+  }
+  else if (prodOper && prodOper->getType() == *OperationAlternate::metadata)
+  {
+    SubOperation::iterator soperiter = prodOper->getSubOperationIterator();
+    while (SubOperation *soper = soperiter.next())
+    {
+      if (soper->getType() == *OperationItemDistribution::metadata)
+      {
+        if (origin)
+        {
+          // Only one transfer is allowed. Check whether the source location of the
+          // operation is matching this transfer.
+          for (Operation::flowlist::const_iterator fl = prodOper->getFlows().begin();
+              fl != prodOper->getFlows().end() && ok; ++ fl)
+          {
+            if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(origin))
+              oper = prodOper;
+          }
+          if (oper)
+            break;
+        }
+        else
+        {
+          oper = prodOper;
+          break;
+        }
+      }
+    }
+  }
+
+  // No matching operation is found.
+  if (!oper)
+  {
+    // We'll create one now, but that requires that we have an origin defined.
+    if (!origin)
+      throw DataException("Origin location is needed on this distribution order");
+    Buffer* originbuffer = NULL;
+    for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
+    {
+      if (bufiter->getLocation() == origin && bufiter->getItem() == item)
+      {
+        if (originbuffer)
+        {
+          stringstream o;
+          o << "Multiple buffers found for item '" << item << "'' and location'" << dest << "'";
+          throw DataException(o.str());
+        }
+        originbuffer = &*bufiter;
+      }
+    }
+    if (!originbuffer)
+    {
+      // Create the origin buffer
+      originbuffer = new BufferDefault();
+      stringstream o;
+      o << item << " @ " << origin;
+      originbuffer->setName(o.str());
+      originbuffer->setItem(item);
+      originbuffer->setLocation(origin);
+    }
+    // Note: We know that we need to create a new one. An existing one would
+    // have created an operation on the buffer already.
+    ItemDistribution *itemdist = new ItemDistribution();
+    itemdist->setOrigin(origin);
+    itemdist->setItem(item);
+    itemdist->setDestination(dest);
+    oper = new OperationItemDistribution(itemdist, originbuffer, destbuffer);
+    new ProblemInvalidData(oper, "Distribution orders on unauthorized lanes", "operation",
+      Date::infinitePast, Date::infiniteFuture, 1);
+  }
+
+  // Finally, create the operationplan
+  OperationPlan *opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
+  if (status)
+    opplan->setStatus(status);
+  if (ref)
+    opplan->setReference(ref);
+  if (!consume)
+    opplan->setConsumeMaterial(false);
+  opplan->createFlowLoads();
+
+  // Return result
+  Py_INCREF(opplan);
+  return opplan;
 }
 
 

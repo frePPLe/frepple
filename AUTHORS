@@ -66,3 +66,8 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright Dave Gandy
     Licensed under SIL Open Font License 1.1 (http://scripts.sil.org/OFL) and MIT License
     See http://fontawesome.io
+
+* contrib\django\freppledb\common\static\fonts\opensans*
+    Redistributed Open Sans Webfont
+    Copyright Steve Matteson
+    Licensed under Apache License, Version 2.0, January 2004

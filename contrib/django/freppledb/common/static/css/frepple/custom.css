@@ -1,6 +1,7 @@
 /*
  * This file contains extra frePPLe styles that vary by theme.
  */
+@import url("../opensans.css");
 
 body, input, textarea, select, .form-row p {
   font-size: 13px;  /* Copy from Jquery UI style ".ui-widget" */

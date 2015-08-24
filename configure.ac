@@ -285,4 +285,7 @@ echo "Run the following commands to compile and install:"
 echo "  make "
 echo "  make install"
 echo
+echo "Note that this only compiles and installs the core planning engine."
+echo "It does NOT install or configure the web server for the user interface."
+echo
 echo "--------------------------------------------------------"

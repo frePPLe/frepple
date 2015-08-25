@@ -119,7 +119,7 @@ The connector doesn’t cover all possible configurations of Openbravo and
 frePPLe. The connector is very likely to require some customization to fit
 the particular setup of the ERP and the planning requirements in frePPLe.
 
-:download:`Download mapping documentation as pdf <_images/openbravo-integration.pdf>`
+:download:`Download mapping documentation as SVG <_images/openbravo-integration.svg>`
 
-.. image:: _images/openbravo-integration.jpg
+.. image:: _images/openbravo-integration.svg
    :alt: openbravo mapping details

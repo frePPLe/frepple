@@ -375,6 +375,12 @@ OperationItemSupplier::~OperationItemSupplier()
 }
 
 
+DECLARE_EXPORT Buffer* OperationItemSupplier::getBuffer() const
+{
+  return getFlows().begin()->getBuffer();
+}
+
+
 extern "C" PyObject* OperationItemSupplier::createOrder(
   PyObject *self, PyObject *args, PyObject *kwdict
   )

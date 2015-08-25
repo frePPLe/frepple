@@ -361,6 +361,24 @@ OperationItemDistribution::~OperationItemDistribution()
 }
 
 
+DECLARE_EXPORT Buffer* OperationItemDistribution::getOrigin() const
+{
+  for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
+    if (i->getQuantity() < 0.0)
+      return i->getBuffer();
+  throw LogicException("Transfer operation doesn't consume material");
+}
+
+
+DECLARE_EXPORT Buffer* OperationItemDistribution::getDestination() const
+{
+  for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
+    if (i->getQuantity() > 0.0)
+      return i->getBuffer();
+  throw LogicException("Transfer operation doesn't produce material");
+}
+
+
 extern "C" PyObject* OperationItemDistribution::createOrder(
   PyObject *self, PyObject *args, PyObject *kwdict
   )

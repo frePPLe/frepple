@@ -4048,6 +4048,10 @@ class OperationItemDistribution : public OperationFixedTime
       return itemdist;
     }
 
+    DECLARE_EXPORT Buffer* getOrigin() const;
+
+    DECLARE_EXPORT Buffer* getDestination() const;
+
     /** Constructor. */
     explicit DECLARE_EXPORT OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
 
@@ -4064,6 +4068,8 @@ class OperationItemDistribution : public OperationFixedTime
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addPointerField<Cls, ItemDistribution>(Tags::itemdistribution, &Cls::getItemDistribution, NULL);
+      m->addPointerField<Cls, Buffer>(Tags::origin, &Cls::getOrigin, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, Buffer>(Tags::destination, &Cls::getDestination, NULL, DONT_SERIALIZE);
     }
 
     /** Create a new transfer operationplan.
@@ -4104,6 +4110,8 @@ class OperationItemSupplier : public OperationFixedTime
       return supitem;
     }
 
+    DECLARE_EXPORT Buffer* getBuffer() const;
+
     static DECLARE_EXPORT OperationItemSupplier* findOrCreate(ItemSupplier*, Buffer*);
 
     /** Constructor. */
@@ -4122,6 +4130,7 @@ class OperationItemSupplier : public OperationFixedTime
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addPointerField<Cls, ItemSupplier>(Tags::itemsupplier, &Cls::getItemSupplier, NULL);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
     }
 
     /** Create a new purchase operationplan.

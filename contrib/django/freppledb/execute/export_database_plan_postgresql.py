@@ -28,7 +28,7 @@ from subprocess import Popen, PIPE
 from time import time
 from threading import Thread
 
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 
 import frepple
@@ -48,6 +48,8 @@ def truncate(process):
   process.stdin.write('truncate table out_problem, out_resourceplan, out_constraint;\n'.encode(encoding))
   process.stdin.write('truncate table out_loadplan, out_flowplan, out_operationplan;\n'.encode(encoding))
   process.stdin.write('truncate table out_demand;\n'.encode(encoding))
+  process.stdin.write("delete from purchase_order where status='proposed' or status is null;\n".encode(encoding))
+  process.stdin.write("delete from distribution_order where status='proposed' or status is null;\n".encode(encoding))
   print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
@@ -87,6 +89,9 @@ def exportOperationplans(process):
   starttime = time()
   process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) FROM STDIN;\n'.encode(encoding))
   for i in frepple.operations():
+    #if isinstance(i, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)):
+    #  # TODO Purchase orders and distribution orders are exported separately
+    #  continue
     for j in i.operationplans:
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
         j.id, i.name[0:settings.NAMESIZE],
@@ -236,6 +241,76 @@ def exportPegging(process):
   print('Exported pegging in %.2f seconds' % (time() - starttime))
 
 
+def exportPurchaseOrders(process):
+
+  def getPOs(flag):
+    for i in frepple.operations():
+      if not isinstance(i, frepple.operation_itemsupplier):
+        continue
+      for j in i.operationplans:
+        if (flag and j.status == 'proposed') or (not flag and j.status != 'proposed'):
+          yield j
+
+  print("Exporting purchase orders...")
+  starttime = time()
+  process.stdin.write('COPY purchase_order (id,reference,item_id,location_id,supplier_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
+  for p in getPOs(True):
+    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
+      p.id, p.reference or "\\N",
+      p.operation.buffer.item.name[0:settings.NAMESIZE],
+      p.operation.buffer.location.name[0:settings.NAMESIZE],
+      p.operation.itemsupplier.supplier.name[0:settings.NAMESIZE],
+      round(p.quantity, settings.DECIMAL_PLACES), str(p.start), str(p.end),
+      round(p.criticality, settings.DECIMAL_PLACES),
+      p.source or "\\N"
+      )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
+
+  with transaction.atomic(using=database, savepoint=False):
+    cursor = connections[database].cursor()
+    cursor.executemany(
+      "update purchase_order set criticality=%s where id=%s",
+      [ (round(j.criticality, settings.DECIMAL_PLACES), j.id) for j in getPOs(False) ]
+      )
+
+  print('Exported purchase orders in %.2f seconds' % (time() - starttime))
+
+
+def exportDistributionOrders(process):
+
+  def getDOs(flag):
+    for i in frepple.operations():
+      if not isinstance(i, frepple.operation_itemdistribution):
+        continue
+      for j in i.operationplans:
+        if (flag and j.status == 'proposed') or (not flag and j.status != 'proposed'):
+          yield j
+
+  print("Exporting distribution orders...")
+  starttime = time()
+  process.stdin.write('COPY distribution_order (id,reference,item_id,origin_id,destination_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
+  for p in getDOs(True):
+    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
+      p.id, p.reference or "\\N",
+      p.operation.destination.item.name[0:settings.NAMESIZE],
+      p.operation.origin.location.name[0:settings.NAMESIZE],
+      p.operation.destination.location.name[0:settings.NAMESIZE],
+      round(p.quantity, settings.DECIMAL_PLACES), str(p.start), str(p.end),
+      round(p.criticality, settings.DECIMAL_PLACES),
+      p.source or "\\N"
+      )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
+
+  with transaction.atomic(using=database, savepoint=False):
+    cursor = connections[database].cursor()
+    cursor.executemany(
+      "update distribution_order set criticality=%s where id=%s",
+      [ (round(j.criticality, settings.DECIMAL_PLACES), j.id) for j in getDOs(False) ]
+      )
+
+  print('Exported distribution orders in %.2f seconds' % (time() - starttime))
+
+
 class DatabasePipe(Thread):
   '''
   An auxiliary class that allows us to run a function with its own
@@ -288,7 +363,7 @@ def exportfrepple():
   # Export process
   tasks = (
     DatabasePipe(exportResourceplans, exportDemand, exportProblems, exportConstraints),
-    DatabasePipe(exportOperationplans, exportFlowplans, exportLoadplans, exportPegging)
+    DatabasePipe(exportPurchaseOrders, exportDistributionOrders, exportOperationplans, exportFlowplans, exportLoadplans, exportPegging)
     )
   # Start all threads
   for i in tasks:
@@ -308,6 +383,8 @@ def exportfrepple():
     union select 'out_resourceplan', count(*) from out_resourceplan
     union select 'out_demandpegging', count(*) from out_demandpegging
     union select 'out_demand', count(*) from out_demand
+    union select 'purchase_order', count(*) from purchase_order
+    union select 'distribution_order', count(*) from distribution_order
     order by 1
     ''')
   for table, recs in cursor.fetchall():
@@ -341,6 +418,8 @@ def exportfrepple_sequential():
     exportProblems(process)
     exportConstraints(process)
     exportOperationplans(process)
+    exportPurchaseOrders(process)
+    exportDistributionOrders(process)
     exportFlowplans(process)
     exportLoadplans(process)
     exportResourceplans(process)
@@ -365,7 +444,9 @@ def exportfrepple_sequential():
     union select 'out_resourceplan', count(*) from out_resourceplan
     union select 'out_demandpegging', count(*) from out_demandpegging
     union select 'out_demand', count(*) from out_demand
+    union select 'purchase_order', count(*) from purchase_order
+    union select 'distribution_order', count(*) from distribution_order
     order by 1
     ''')
   for table, recs in cursor.fetchall():
-    print("Table %s: %d records" % (table, recs))
+    print("Table %s: %d records" % (table, recs or 0))

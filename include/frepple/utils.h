@@ -213,8 +213,6 @@ template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
 template<class T> class MetaFieldPythonFunction;
 template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator;
-template<class T, class U, class V> class MetaFieldList;
-template<class T, class U> class MetaFieldList3;
 template<class T> class MetaFieldInt;
 template<class T> class MetaFieldShort;
 
@@ -2016,28 +2014,6 @@ class MetaClass : public NonCopyable
     {
       PythonIterator<Iter, Ptr>::initialize();
       fields.push_back( new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
-      if (c & PARENT)
-        parent = true;
-    }
-
-    template <class Cls, class Ptr, class Ptr2> inline void addListField(
-      const Keyword& k1, const Keyword& k2,
-      const Ptr& (Cls::*getfunc)(void) const,
-      unsigned int c = BASE
-      )
-    {
-      fields.push_back( new MetaFieldList<Cls, Ptr, Ptr2>(k1, k2, getfunc, c) );
-      if (c & PARENT)
-        parent = true;
-    }
-
-    template <class Cls, class Ptr> inline void addList3Field(
-      const Keyword& k1, const Keyword& k2,
-      const Ptr& (Cls::*getfunc)(void) const = NULL,
-      unsigned int c = BASE
-      )
-    {
-      fields.push_back( new MetaFieldList3<Cls, Ptr>(k1, k2, getfunc, c) );
       if (c & PARENT)
         parent = true;
     }
@@ -7106,50 +7082,6 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
     /** Get function. */
     getFunction getf;
 
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Ptr> class MetaFieldList3 : public MetaFieldBase
-{
-  public:
-    MetaFieldList3(const Keyword& g,
-        const Keyword& n,
-        const Ptr& (Cls::*getfunc)(void) const,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), singleKeyword(n)
-    {};
-
-    virtual void setField(Object* me, const DataValue& el) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for list3 fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      if (getFlag(DONT_SERIALIZE))
-        return;
-      // XXX TODO writeField not implemented for list3 fields
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr::metadata;
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-  protected:
     const Keyword& singleKeyword;
 };
 

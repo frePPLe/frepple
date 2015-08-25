@@ -37,11 +37,11 @@ OPERATION	Delivery C	2015-01-01T00:00:00	2015-01-01T00:00:00	10
 OPERATION	Delivery C	2015-01-22T00:00:00	2015-01-22T00:00:00	90
 OPERATION	Delivery C	2015-02-01T00:00:00	2015-02-01T00:00:00	100
 OPERATION	Delivery D	2015-01-01T00:00:00	2015-01-01T00:00:00	10
-OPERATION	Purchase 'A @ warehouse' from 'Supplier of component A' (*)	2015-01-01T00:00:00	2015-01-08T00:00:00	90
-OPERATION	Purchase 'A @ warehouse' from 'Supplier of component A' (*)	2015-01-25T00:00:00	2015-02-01T00:00:00	100
-OPERATION	Purchase 'B @ warehouse' from 'Supplier of component B' (*)	2015-01-01T00:00:00	2015-01-15T00:00:00	90
-OPERATION	Purchase 'B @ warehouse' from 'Supplier of component B' (*)	2015-01-18T00:00:00	2015-02-01T00:00:00	100
-OPERATION	Purchase 'C @ warehouse' from 'Supplier of component C' (*)	2015-01-01T00:00:00	2015-01-22T00:00:00	200
+OPERATION	Purchase A @ warehouse from Supplier of component A	2015-01-01T00:00:00	2015-01-08T00:00:00	90
+OPERATION	Purchase A @ warehouse from Supplier of component A	2015-01-25T00:00:00	2015-02-01T00:00:00	100
+OPERATION	Purchase B @ warehouse from Supplier of component B	2015-01-01T00:00:00	2015-01-15T00:00:00	90
+OPERATION	Purchase B @ warehouse from Supplier of component B	2015-01-18T00:00:00	2015-02-01T00:00:00	100
+OPERATION	Purchase C @ warehouse from Supplier of component C	2015-01-01T00:00:00	2015-01-22T00:00:00	200
 PROBLEM	material excess	Buffer 'A @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'B @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
@@ -52,8 +52,8 @@ PROBLEM	late	Demand 'order 1 for item B' planned P14D after its due date	2015-01
 PROBLEM	late	Demand 'order 1 for item C' planned P21D after its due date	2015-01-01T00:00:00 / 2015-01-22T00:00:00
 PROBLEM	short	Demand 'order 1 for item D' planned 90 units short	2015-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	unplanned	Demand 'order 2 for item D' is not planned	2015-02-01T00:00:00 / 2015-02-01T00:00:00
-DEMAND CONSTRAINT	order 1 for item A	Operation 'Purchase 'A @ warehouse' from 'Supplier of component A' (*)' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item B	Operation 'Purchase 'B @ warehouse' from 'Supplier of component B' (*)' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item C	Operation 'Purchase 'C @ warehouse' from 'Supplier of component C' (*)' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 for item A	Operation 'Purchase A @ warehouse from Supplier of component A' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 for item B	Operation 'Purchase B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 for item C	Operation 'Purchase C @ warehouse from Supplier of component C' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00	
 DEMAND CONSTRAINT	order 1 for item D	Buffer 'D @ warehouse' has material shortage of 90	2015-01-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 2 for item D	Buffer 'D @ warehouse' has material shortage of 100	2015-02-01T00:00:00 / 2030-12-31T00:00:00	

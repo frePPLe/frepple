@@ -174,13 +174,13 @@
 	<demands>
 		<demand>
 			<name>order 1</name>
-			<customer>
-				<name>Customer</name>
-			</customer>
 			<quantity>10</quantity>
 			<item>
 				<name>end item</name>
 			</item>
+			<customer>
+				<name>Customer</name>
+			</customer>
 			<due>2009-01-04T09:00:00</due>
 			<priority>1</priority>
 			<maxlateness>P0D</maxlateness>

@@ -91,37 +91,37 @@
 	<demands>
 		<demand>
 			<name>1. order</name>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
 			<quantity>20</quantity>
 			<item>
 				<name>1. end item</name>
 			</item>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
 			<name>2. order</name>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
 			<quantity>100</quantity>
 			<item>
 				<name>1. end item</name>
 			</item>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
 			<name>3. order</name>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
 			<quantity>40</quantity>
 			<item>
 				<name>1. end item</name>
 			</item>
+			<operation>
+				<name>1. delivery end item</name>
+			</operation>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>

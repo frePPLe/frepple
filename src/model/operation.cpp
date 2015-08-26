@@ -557,23 +557,41 @@ DECLARE_EXPORT OperationPlanState OperationFixedTime::setOperationPlanParameters
   if (opplan->getLocked())
     return OperationPlanState(opplan);
 
-  // All quantities are valid, as long as they are above the minimum size and
-  // below the maximum size
-  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
-  if (q > getSizeMaximum()) q = getSizeMaximum();
-  if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
-    q = opplan->setQuantity(q, false, false, execute);
-
-  // Set the start and end date.
+  // Compute the start and end date.
   DateRange x;
   Duration actualduration;
   if (e && s)
   {
-    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
-    else x = calculateOperationTime(s, duration, true, &actualduration);
+    if (preferEnd)
+      x = calculateOperationTime(e, duration, false, &actualduration);
+    else
+      x = calculateOperationTime(s, duration, true, &actualduration);
   }
-  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
-  else x = calculateOperationTime(e, duration, false, &actualduration);
+  else if (s)
+    x = calculateOperationTime(s, duration, true, &actualduration);
+  else
+    x = calculateOperationTime(e, duration, false, &actualduration);
+
+  // All quantities are valid, as long as they are above the minimum size and
+  // below the maximum size
+  if (q > 0)
+  {
+    if (getSizeMinimumCalendar())
+    {
+      // Minimum size varies over time
+      double curmin = getSizeMinimumCalendar()->getValue(x.getStart());
+      if (q < curmin)
+        q = curmin;
+    }
+    else if (q < getSizeMinimum())
+      // Minimum size is constant over time
+      q = getSizeMinimum();
+  }
+  if (q > getSizeMaximum())
+    q = getSizeMaximum();
+  if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
+    q = opplan->setQuantity(q, false, false, execute, x.getStart());
+
   if (!execute)
     // Simulation only
     return OperationPlanState(x, actualduration == duration ? q : 0);
@@ -680,8 +698,26 @@ OperationTimePer::setOperationPlanParameters
     return OperationPlanState(opplan);
 
   // Respect minimum and maximum size
-  if (q > 0 && q < getSizeMinimum()) q = getSizeMinimum();
-  if (q > getSizeMaximum()) q = getSizeMaximum();
+  if (q > 0)
+  {
+    if (getSizeMinimumCalendar())
+    {
+      // Minimum varies over time.
+      // This configuration is not really supported: when the size changes
+      // a different minimum size could be effective. The planning results
+      // in a constrained plan can be not optimal or incorrect.
+      Duration tmp1;
+      DateRange tmp2 = calculateOperationTime(s, e, &tmp1);
+      double curmin = getSizeMinimumCalendar()->getValue(tmp2.getStart());
+      if (q < curmin)
+        q = curmin;
+    }
+    else if (q < getSizeMinimum())
+      // Minimum is constant over time
+      q = getSizeMinimum();
+  }
+  if (q > getSizeMaximum())
+    q = getSizeMaximum();
 
   // The logic depends on which dates are being passed along
   DateRange x;
@@ -695,8 +731,9 @@ OperationTimePer::setOperationPlanParameters
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration. This is infeasible.
-      if (!execute) return OperationPlanState(x,0);
-      opplan->setQuantity(0,true,false,execute);
+      if (!execute)
+        return OperationPlanState(x, 0);
+      opplan->setQuantity(0, true, false, execute);
       opplan->setEnd(e);
     }
     else
@@ -711,8 +748,9 @@ OperationTimePer::setOperationPlanParameters
         else
           // Calculate the maximum operationplan that will fit in the window
           q = opplan->setQuantity(
-              static_cast<double>(actual - duration) / duration_per,
-              true, false, execute);
+                static_cast<double>(actual - duration) / duration_per,
+                true, false, execute
+                );
       }
       else
         // No duration_per field given, so any quantity will go
@@ -724,10 +762,13 @@ OperationTimePer::setOperationPlanParameters
       Duration wanted(
         duration + static_cast<long>(duration_per * q + 0.5)
       );
-      if (preferEnd) x = calculateOperationTime(e, wanted, false, &actual);
-      else x = calculateOperationTime(s, wanted, true, &actual);
-      if (!execute) return OperationPlanState(x,q);
-      opplan->setStartAndEnd(x.getStart(),x.getEnd());
+      if (preferEnd)
+        x = calculateOperationTime(e, wanted, false, &actual);
+      else
+        x = calculateOperationTime(s, wanted, true, &actual);
+      if (!execute)
+        return OperationPlanState(x, q);
+      opplan->setStartAndEnd(x.getStart(), x.getEnd());
     }
   }
   else if (e || !s)
@@ -736,7 +777,7 @@ OperationTimePer::setOperationPlanParameters
     // compute the start date
     // Case 4: No date was given at all. Respect the quantity and the
     // existing end date of the operationplan.
-    q = opplan->setQuantity(q,true,false,execute);
+    q = opplan->setQuantity(q, true, false, execute);
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
@@ -745,13 +786,15 @@ OperationTimePer::setOperationPlanParameters
     if (actual == wanted)
     {
       // Size is as desired
-      if (!execute) return OperationPlanState(x, q);
+      if (!execute)
+        return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
-      if (!execute) return OperationPlanState(x, 0);
+      if (!execute)
+        return OperationPlanState(x, 0);
       opplan->setQuantity(0,true,false);
       opplan->setStartAndEnd(e,e);
     }
@@ -766,15 +809,16 @@ OperationTimePer::setOperationPlanParameters
       // second to get a rounded value.
       wanted = duration + static_cast<long>(duration_per * q + 0.5);
       x = calculateOperationTime(e, wanted, false, &actual);
-      if (!execute) return OperationPlanState(x, q);
-      opplan->setStartAndEnd(x.getStart(),x.getEnd());
+      if (!execute)
+        return OperationPlanState(x, q);
+      opplan->setStartAndEnd(x.getStart(), x.getEnd());
     }
   }
   else
   {
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
-    q = opplan->setQuantity(q,true,false,execute);
+    q = opplan->setQuantity(q, true, false, execute);
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
@@ -786,13 +830,15 @@ OperationTimePer::setOperationPlanParameters
     if (actual == wanted)
     {
       // Size is as desired
-      if (!execute) return OperationPlanState(x, q);
+      if (!execute)
+        return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
     else if (actual < duration)
     {
       // Not feasible
-      if (!execute) return OperationPlanState(x, 0);
+      if (!execute)
+        return OperationPlanState(x, 0);
       opplan->setQuantity(0,true,false);
       opplan->setStartAndEnd(s,s);
     }
@@ -807,7 +853,8 @@ OperationTimePer::setOperationPlanParameters
       // second to get a rounded value.
       wanted = duration + static_cast<long>(duration_per * q + 0.5);
       x = calculateOperationTime(e, wanted, false, &actual);
-      if (!execute) return OperationPlanState(x, q);
+      if (!execute)
+        return OperationPlanState(x, q);
       opplan->setStartAndEnd(x.getStart(),x.getEnd());
     }
   }
@@ -831,9 +878,12 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
     q = opplan->setQuantity(q,false,false,execute);
-    if (!s && e) s = e;
-    if (s && !e) e = s;
-    if (!execute) return OperationPlanState(s, e, q);
+    if (!s && e)
+      s = e;
+    if (s && !e)
+      e = s;
+    if (!execute)
+      return OperationPlanState(s, e, q);
     opplan->setStartAndEnd(s,e);
     return OperationPlanState(opplan);
   }
@@ -850,7 +900,9 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
-      x = i->getOperation()->setOperationPlanParameters(i,q,Date::infinitePast,e,preferEnd,execute);
+      x = i->getOperation()->setOperationPlanParameters(
+        i, q, Date::infinitePast, e, preferEnd, execute
+        );
       e = x.start;
       if (realfirst)
       {
@@ -866,7 +918,9 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
-      x = i->getOperation()->setOperationPlanParameters(i,q,s,Date::infinitePast,preferEnd,execute);
+      x = i->getOperation()->setOperationPlanParameters(
+        i, q, s, Date::infinitePast, preferEnd, execute
+        );
       s = x.end;
       if (realfirst)
       {
@@ -956,17 +1010,20 @@ OperationAlternate::setOperationPlanParameters
     // Blindly accept the parameters if there is no suboperationplan
     if (execute)
     {
-      opplan->setQuantity(q,false,false);
+      opplan->setQuantity(q, false, false);
       opplan->setStartAndEnd(s, e);
       return OperationPlanState(opplan);
     }
     else
-      return OperationPlanState(s, e, opplan->setQuantity(q,false,false,false));
+      return OperationPlanState(
+        s, e, opplan->setQuantity(q, false, false, false)
+        );
   }
   else
     // Pass the call to the sub-operation
-    return x->getOperation()
-        ->setOperationPlanParameters(x,q,s,e,preferEnd, execute);
+    return x->getOperation()->setOperationPlanParameters(
+      x, q, s, e, preferEnd, execute
+      );
 }
 
 
@@ -1464,7 +1521,7 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
 
 
 DECLARE_EXPORT double Operation::setOperationPlanQuantity
-  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
+  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute, Date start) const
 {
   assert(oplan);
 
@@ -1488,7 +1545,7 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
   // sub-operations is respected.
   if (oplan->owner && oplan->owner->getOperation()->getType() != *OperationAlternate::metadata
     && oplan->owner->getOperation()->getType() != *OperationSplit::metadata)
-    return oplan->owner->setQuantity(f,roundDown,upd,execute);
+    return oplan->owner->setQuantity(f, roundDown, upd, execute, start);
 
   // Compute the correct size for the operationplan
   if (oplan->getOperation()->getType() == *OperationSplit::metadata)
@@ -1497,43 +1554,54 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
     if (execute)
     {
       oplan->quantity = f;
-      if (upd) oplan->update();
+      if (upd)
+        oplan->update();
     }
     return f;
   }
   else
   {
     // All others respect constraints
-    if (f!=0.0 && getSizeMinimum()>0.0 && f < getSizeMinimum())
+    double curmin;
+    if (getSizeMinimumCalendar())
+      // Minimum varies over time
+      curmin = getSizeMinimumCalendar()->getValue(start ? start : oplan->getDates().getStart());
+    else
+      // Minimum is constant
+      curmin = getSizeMinimum();
+    if (f != 0.0 && curmin > 0.0 && f < curmin)
     {
       if (roundDown)
       {
         // Smaller than the minimum quantity, rounding down means... nothing
-        if (!execute) return 0.0;
+        if (!execute)
+          return 0.0;
         oplan->quantity = 0.0;
         // Update the flow and loadplans, and mark for problem detection
-        if (upd) oplan->update();
+        if (upd)
+          oplan->update();
         // Update the parent of an alternate operationplan
         if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
         {
           oplan->owner->quantity = 0.0;
-          if (upd) oplan->owner->resizeFlowLoadPlans();
+          if (upd)
+            oplan->owner->resizeFlowLoadPlans();
         }
         return 0.0;
       }
-      f = getSizeMinimum();
+      f = curmin;
     }
     if (f != 0.0 && f >= getSizeMaximum())
     {
       roundDown = true; // force rounddown to stay below the limit
       f = getSizeMaximum();
     }
-    if (f!=0.0 && getSizeMultiple()>0.0)
+    if (f != 0.0 && getSizeMultiple() > 0.0)
     {
       int mult = static_cast<int> (f / getSizeMultiple()
           + (roundDown ? 0.0 : 0.99999999));
       double q = mult * getSizeMultiple();
-      if (q < getSizeMinimum())
+      if (q < curmin)
       {
         q += getSizeMultiple();
         if (q > getSizeMaximum())
@@ -1542,15 +1610,17 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
       else if (q > getSizeMaximum())
       {
         q -= getSizeMultiple();
-        if (q < getSizeMinimum())
+        if (q < curmin)
           throw DataException("Invalid sizing parameters for operation " + getName());
       }
-      if (!execute) return q;
+      if (!execute)
+        return q;
       oplan->quantity = q;
     }
     else
     {
-      if (!execute) return f;
+      if (!execute)
+        return f;
       oplan->quantity = f;
     }
   }
@@ -1560,7 +1630,8 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
       && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
   {
     oplan->owner->quantity = oplan->quantity;
-    if (upd) oplan->owner->resizeFlowLoadPlans();
+    if (upd)
+      oplan->owner->resizeFlowLoadPlans();
   }
 
   // Apply the same size also to its unlocked children
@@ -1569,7 +1640,8 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
       if (i->getOperation() != OperationSetup::setupoperation && !i->getLocked())
       {
         i->quantity = oplan->quantity;
-        if (upd) i->resizeFlowLoadPlans();
+        if (upd)
+          i->resizeFlowLoadPlans();
       }
 
   // Update the flow and loadplans, and mark for problem detection
@@ -1580,12 +1652,13 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
 
 
 DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
-  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const
+  (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute, Date start) const
 {
   assert(oplan);
   // Call the default logic, implemented on the Operation class
-  double newqty = Operation::setOperationPlanQuantity(oplan, f, roundDown, false, execute);
-  if (!execute) return newqty;
+  double newqty = Operation::setOperationPlanQuantity(oplan, f, roundDown, false, execute, start);
+  if (!execute)
+    return newqty;
 
   // Update all routing sub operationplans
   for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)

@@ -2,8 +2,10 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for effective operations</name>
   <description>
-    This test checks the code for alternate operations where date effectivity
-    is involved.
+    This test checks date effective fields on operations.
+
+    The first part of this test verifies alternate operations with date
+    effective suboperations.
     The end product in this test can be produced in 2 locations.
     In a first part of the horizon location A is the only allowed source,
     while in the last part of the horizon only sourcing from location B
@@ -13,8 +15,13 @@
             it spans into the second part of the horizon.
     Case 3: A demand due in the second part of the horizon requires capacity in
             the first part of the effectivity horizon.
+
+    A second part of this test verifies the behavior of date effective minimum size
+    on operations.
+    Case 4: The minimum size of the replenishing operation increases over time.
+    Case 5: The minimum size of the replenishing operation decreases over time.
   </description>
-  <current>2009-01-01T00:00:00</current>
+  <current>2015-01-01T00:00:00</current>
   <locations>
     <location name="location A" />
     <location name="location B" />
@@ -40,8 +47,8 @@
             <resource name="1. capacity in A">
               <maximum_calendar name="1. capacity A">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00" value="2"/>
-                  <bucket start="2009-01-15T00:00:00" value="3"/>
+                  <bucket start="2015-01-01T00:00:00" value="2"/>
+                  <bucket start="2015-01-15T00:00:00" value="3"/>
                 </buckets>
               </maximum_calendar>
             </resource>
@@ -67,7 +74,7 @@
             <resource name="1. capacity in B">
               <maximum_calendar name="1. capacity B">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00">
+                  <bucket start="2015-01-01T00:00:00">
                     <value>1</value>
                   </bucket>
                 </buckets>
@@ -92,7 +99,7 @@
               </flows>
           </operation>
           <priority>1</priority>
-          <effective_end>2009-02-01T00:00:00</effective_end>
+          <effective_end>2015-02-01T00:00:00</effective_end>
         </suboperation>
         <suboperation>
           <operation name="1. sourcing from location B"
@@ -105,7 +112,7 @@
               </flows>
           </operation>
           <priority>2</priority>
-          <effective_start>2009-02-01T00:00:00</effective_start>
+          <effective_start>2015-02-01T00:00:00</effective_start>
         </suboperation>
       </suboperations>
     </operation>
@@ -119,7 +126,7 @@
     <demand name="1. order 1">
       <description>Planned completely on A.</description>
       <quantity>5</quantity>
-      <due>2009-01-14T00:00:00</due>
+      <due>2015-01-14T00:00:00</due>
       <priority>11</priority>
       <item name="1. end item" />
     </demand>
@@ -128,14 +135,14 @@
       The operation starts in the effective dates of alternate A, but
       ends in the effectivity range of B.</description>
       <quantity>5</quantity>
-      <due>2009-02-03T12:00:00</due>
+      <due>2015-02-03T12:00:00</due>
       <priority>12</priority>
       <item name="1. end item" />
     </demand>
     <demand name="1. order 3">
       <description>Planned completely on B.</description>
       <quantity>5</quantity>
-      <due>2009-02-14T00:00:00</due>
+      <due>2015-02-14T00:00:00</due>
       <priority>13</priority>
       <item name="1. end item" />
     </demand>
@@ -161,8 +168,8 @@
             <resource name="2. capacity in A">
               <maximum_calendar name="2. capacity A">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00" value="2"/>
-                  <bucket start="2009-01-15T00:00:00" value="3"/>
+                  <bucket start="2015-01-01T00:00:00" value="2"/>
+                  <bucket start="2015-01-15T00:00:00" value="3"/>
                 </buckets>
               </maximum_calendar>
             </resource>
@@ -188,7 +195,7 @@
             <resource name="2. capacity in B">
               <maximum_calendar name="2. capacity B">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00">
+                  <bucket start="2015-01-01T00:00:00">
                     <value>1</value>
                   </bucket>
                 </buckets>
@@ -213,7 +220,7 @@
               </flows>
           </operation>
           <priority>1</priority>
-          <effective_end>2009-02-01T00:00:00</effective_end>
+          <effective_end>2015-02-01T00:00:00</effective_end>
         </suboperation>
         <suboperation>
           <operation name="2. sourcing from location B"
@@ -226,7 +233,7 @@
               </flows>
           </operation>
           <priority>2</priority>
-          <effective_start>2009-02-01T00:00:00</effective_start>
+          <effective_start>2015-02-01T00:00:00</effective_start>
         </suboperation>
       </suboperations>
     </operation>
@@ -241,7 +248,7 @@
       <description>This order consumes all capacity on A, and then
       searches capacity on B.</description>
       <quantity>140</quantity>
-      <due>2009-01-14T00:00:00</due>
+      <due>2015-01-14T00:00:00</due>
       <priority>11</priority>
       <item name="2. end item" />
     </demand>
@@ -267,8 +274,8 @@
             <resource name="3. capacity in A">
               <maximum_calendar name="3. capacity A">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00" value="2"/>
-                  <bucket start="2009-01-15T00:00:00" value="3"/>
+                  <bucket start="2015-01-01T00:00:00" value="2"/>
+                  <bucket start="2015-01-15T00:00:00" value="3"/>
                 </buckets>
               </maximum_calendar>
             </resource>
@@ -294,7 +301,7 @@
             <resource name="3. capacity in B">
               <maximum_calendar name="3. capacity B">
                 <buckets>
-                  <bucket start="2009-01-01T00:00:00">
+                  <bucket start="2015-01-01T00:00:00">
                     <value>1</value>
                   </bucket>
                 </buckets>
@@ -307,8 +314,8 @@
   </buffers>
   <operations>
     <operation name="3. Source end item" xsi:type="operation_alternate">
-      <alternates>
-        <alternate>
+      <suboperations>
+        <suboperation>
           <operation name="3. sourcing from location A"
             xsi:type="operation_fixed_time" duration="P1D">
               <flows>
@@ -319,9 +326,9 @@
               </flows>
           </operation>
           <priority>1</priority>
-          <effective_end>2009-02-01T00:00:00</effective_end>
-        </alternate>
-        <alternate>
+          <effective_end>2015-02-01T00:00:00</effective_end>
+        </suboperation>
+        <suboperation>
           <operation name="3. sourcing from location B"
             xsi:type="operation_fixed_time" duration="P2D">
               <flows>
@@ -332,9 +339,9 @@
               </flows>
           </operation>
           <priority>2</priority>
-          <effective_start>2009-02-01T00:00:00</effective_start>
-        </alternate>
-      </alternates>
+          <effective_start>2015-02-01T00:00:00</effective_start>
+        </suboperation>
+      </suboperations>
     </operation>
   </operations>
   <items>
@@ -352,19 +359,454 @@
       the requested quantity is the same.
       </description>
       <quantity>140</quantity>
-      <due>2009-02-14T00:00:00</due>
+      <due>2015-02-14T00:00:00</due>
       <priority>11</priority>
       <item name="3. end item" />
     </demand>
   </demands>
 
-<?python
+  <!--
+    Case 4
+  -->
+  <buffers>
+    <buffer name="4. end item">
+      <item name="4. end item" />
+      <producing name="4. make end item">
+        <duration>P7D</duration>
+        <size_multiple>1</size_multiple>
+        <size_minimum>100</size_minimum>  <!-- Ignored because there is a calendar! -->
+        <size_minimum_calendar name="4. ROQ calendar">
+          <default>10</default>
+          <buckets>
+            <bucket start="2015-01-07T00:00:00" value="20" priority="100"/>
+            <bucket start="2015-01-14T00:00:00" value="30" priority="99"/>
+            <bucket start="2015-01-21T00:00:00" value="40" priority="98"/>
+            <bucket start="2015-01-28T00:00:00" value="50" priority="97"/>
+          </buckets>
+        </size_minimum_calendar>
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="4. end item" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="4. end item">
+      <operation name="4. ship end item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="4. end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="4. order 1">
+      <quantity>5</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 2">
+      <quantity>5</quantity>
+      <due>2015-01-02T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 3">
+      <quantity>5</quantity>
+      <due>2015-01-03T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 4">
+      <quantity>5</quantity>
+      <due>2015-01-04T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 5">
+      <quantity>5</quantity>
+      <due>2015-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 6">
+      <quantity>5</quantity>
+      <due>2015-01-06T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 7">
+      <quantity>5</quantity>
+      <due>2015-01-07T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 8">
+      <quantity>5</quantity>
+      <due>2015-01-08T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 9">
+      <quantity>5</quantity>
+      <due>2015-01-09T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 10">
+      <quantity>5</quantity>
+      <due>2015-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 11">
+      <quantity>5</quantity>
+      <due>2015-01-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 12">
+      <quantity>5</quantity>
+      <due>2015-01-12T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 13">
+      <quantity>5</quantity>
+      <due>2015-01-13T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 14">
+      <quantity>5</quantity>
+      <due>2015-01-14T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 15">
+      <quantity>5</quantity>
+      <due>2015-01-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 16">
+      <quantity>5</quantity>
+      <due>2015-01-16T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 17">
+      <quantity>5</quantity>
+      <due>2015-01-17T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 18">
+      <quantity>5</quantity>
+      <due>2015-01-18T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 19">
+      <quantity>5</quantity>
+      <due>2015-01-19T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 20">
+      <quantity>5</quantity>
+      <due>2015-01-20T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 21">
+      <quantity>5</quantity>
+      <due>2015-01-21T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+    <demand name="4. order 22">
+      <quantity>5</quantity>
+      <due>2015-01-22T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 23">
+      <quantity>5</quantity>
+      <due>2015-01-23T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 24">
+      <quantity>5</quantity>
+      <due>2015-01-24T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 25">
+      <quantity>5</quantity>
+      <due>2015-01-25T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 26">
+      <quantity>5</quantity>
+      <due>2015-01-26T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 27">
+      <quantity>5</quantity>
+      <due>2015-01-27T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 28">
+      <quantity>5</quantity>
+      <due>2015-01-28T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+      <demand name="4. order 29">
+      <quantity>5</quantity>
+      <due>2015-01-29T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+    </demand>
+  </demands>
+
+
+  <!--
+    Case 5
+  -->
+  <buffers>
+    <buffer name="5. end item">
+      <item name="5. end item" />
+      <producing name="5. make end item">
+        <duration>P7D</duration>
+        <size_multiple>1</size_multiple>
+        <size_minimum>100</size_minimum>  <!-- Ignored because there is a calendar! -->
+        <size_minimum_calendar name="5. ROQ calendar">
+          <default>50</default>
+          <buckets>
+            <bucket start="2015-01-07T00:00:00" value="40" priority="100"/>
+            <bucket start="2015-01-14T00:00:00" value="30" priority="99"/>
+            <bucket start="2015-01-21T00:00:00" value="20" priority="98"/>
+            <bucket start="2015-01-28T00:00:00" value="10" priority="97"/>
+          </buckets>
+        </size_minimum_calendar>
+        <flows>
+          <flow xsi:type="flow_end">
+            <buffer name="5. end item" />
+            <quantity>1</quantity>
+          </flow>
+        </flows>
+      </producing>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="5. end item">
+      <operation name="5. ship end item">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="5. end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>
+    </item>
+  </items>
+  <demands>
+    <demand name="5. order 1">
+      <quantity>5</quantity>
+      <due>2015-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 2">
+      <quantity>5</quantity>
+      <due>2015-01-02T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 3">
+      <quantity>5</quantity>
+      <due>2015-01-03T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 4">
+      <quantity>5</quantity>
+      <due>2015-01-04T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 5">
+      <quantity>5</quantity>
+      <due>2015-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 6">
+      <quantity>5</quantity>
+      <due>2015-01-06T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 7">
+      <quantity>5</quantity>
+      <due>2015-01-07T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 8">
+      <quantity>5</quantity>
+      <due>2015-01-08T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 9">
+      <quantity>5</quantity>
+      <due>2015-01-09T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 10">
+      <quantity>5</quantity>
+      <due>2015-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 11">
+      <quantity>5</quantity>
+      <due>2015-01-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 12">
+      <quantity>5</quantity>
+      <due>2015-01-12T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 13">
+      <quantity>5</quantity>
+      <due>2015-01-13T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 14">
+      <quantity>5</quantity>
+      <due>2015-01-14T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 15">
+      <quantity>5</quantity>
+      <due>2015-01-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 16">
+      <quantity>5</quantity>
+      <due>2015-01-16T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 17">
+      <quantity>5</quantity>
+      <due>2015-01-17T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 18">
+      <quantity>5</quantity>
+      <due>2015-01-18T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 19">
+      <quantity>5</quantity>
+      <due>2015-01-19T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 20">
+      <quantity>5</quantity>
+      <due>2015-01-20T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 21">
+      <quantity>5</quantity>
+      <due>2015-01-21T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+    <demand name="5. order 22">
+      <quantity>5</quantity>
+      <due>2015-01-22T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 23">
+      <quantity>5</quantity>
+      <due>2015-01-23T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 24">
+      <quantity>5</quantity>
+      <due>2015-01-24T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 25">
+      <quantity>5</quantity>
+      <due>2015-01-25T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 26">
+      <quantity>5</quantity>
+      <due>2015-01-26T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 27">
+      <quantity>5</quantity>
+      <due>2015-01-27T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 28">
+      <quantity>5</quantity>
+      <due>2015-01-28T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+      <demand name="5. order 29">
+      <quantity>5</quantity>
+      <due>2015-01-29T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+    </demand>
+  </demands>
+  <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
+frepple.saveXMLfile("ooo.xml")
 ?>
 
 </plan>

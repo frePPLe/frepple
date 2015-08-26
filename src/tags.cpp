@@ -158,6 +158,7 @@ DECLARE_EXPORT const Keyword Tags::setupmatrices("setupmatrices");
 DECLARE_EXPORT const Keyword Tags::setupmatrix("setupmatrix");
 DECLARE_EXPORT const Keyword Tags::size_maximum("size_maximum");
 DECLARE_EXPORT const Keyword Tags::size_minimum("size_minimum");
+DECLARE_EXPORT const Keyword Tags::size_minimum_calendar("size_minimum_calendar");
 DECLARE_EXPORT const Keyword Tags::size_multiple("size_multiple");
 DECLARE_EXPORT const Keyword Tags::skill("skill");
 DECLARE_EXPORT const Keyword Tags::skills("skills");

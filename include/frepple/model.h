@@ -1767,7 +1767,7 @@ class OperationPlan
       * plans should pass on a call to the parent operationplan.
       */
     inline double setQuantity(double f, bool roundDown,
-      bool update = true, bool execute = true);
+      bool update = true, bool execute = true, Date start = Date::infinitePast);
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
@@ -2397,8 +2397,9 @@ class Operation : public HasName<Operation>,
   public:
     /** Default constructor. */
     explicit DECLARE_EXPORT Operation() :
-      loc(NULL), size_minimum(1.0), size_multiple(0.0), size_maximum(DBL_MAX),
-      cost(0.0), hidden(false), first_opplan(NULL), last_opplan(NULL)
+      loc(NULL), size_minimum(1.0), size_minimum_calendar(NULL),
+      size_multiple(0.0), size_maximum(DBL_MAX), cost(0.0), hidden(false),
+      first_opplan(NULL), last_opplan(NULL)
       {}
 
     /** Destructor. */
@@ -2544,8 +2545,10 @@ class Operation : public HasName<Operation>,
       * This method considers the lot size constraints and also propagates
       * the new quantity to child operationplans.
       */
-    virtual DECLARE_EXPORT double setOperationPlanQuantity
-      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
+    virtual DECLARE_EXPORT double setOperationPlanQuantity(
+      OperationPlan* oplan, double f, bool roundDown, bool upd,
+      bool execute, Date start
+      ) const;
 
     /** Returns the location of the operation, which is used to model the
       * working hours and holidays. */
@@ -2627,12 +2630,25 @@ class Operation : public HasName<Operation>,
       return size_minimum;
     }
 
+    /** Returns the calendar defining the minimum size of operationplans. */
+    Calendar* getSizeMinimumCalendar() const
+    {
+      return size_minimum_calendar;
+    }
+
     /** Sets the multiple size of operationplans. */
     void setSizeMultiple(double f)
     {
       if (f<0)
         throw DataException("Operation can't have a negative multiple size");
       size_multiple = f;
+      setChanged();
+    }
+
+    /** Sets a calendar to defining the minimum size of operationplans. */
+    virtual void setSizeMinimumCalendar(Calendar *c)
+    {
+      size_minimum_calendar = c;
       setChanged();
     }
 
@@ -2750,6 +2766,7 @@ class Operation : public HasName<Operation>,
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1);
+      m->addPointerField<Cls>(Tags::size_minimum_calendar, &Cls::getSizeMinimumCalendar, &Cls::setSizeMinimumCalendar);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
@@ -2800,6 +2817,11 @@ class Operation : public HasName<Operation>,
       */
     double size_minimum;
 
+    /** Minimum size for operationplans when this size varies over time.
+      * If this field is specified, the size_minimum field is ignored.
+      */
+    Calendar *size_minimum_calendar;
+
     /** Multiple size for operationplans. */
     double size_multiple;
 
@@ -2829,10 +2851,10 @@ class Operation : public HasName<Operation>,
 
 
 inline double OperationPlan::setQuantity(double f, bool roundDown,
-  bool update, bool execute)
+  bool update, bool execute, Date start)
 {
   return oper ?
-    oper->setOperationPlanQuantity(this, f, roundDown, update, execute) :
+    oper->setOperationPlanQuantity(this, f, roundDown, update, execute, start) :
     f;
 }
 
@@ -3127,7 +3149,7 @@ class OperationSetup : public Operation
 
 
 /** @brief Models an operation whose duration is the sum of a constant time,
-  * plus a cetain time per unit.
+  * plus a certain time per unit.
   */
 class OperationTimePer : public Operation
 {
@@ -3161,9 +3183,21 @@ class OperationTimePer : public Operation
     /** Sets the time per unit of the operation time. */
     void setDurationPer(double t)
     {
-      if(t<0.0)
+      if(t < 0.0)
         throw DataException("TimePer operation can't have a negative duration-per");
       duration_per = t;
+    }
+
+    /** Sets a calendar to defining the minimum size of operationplans.
+      * It overrides the method defined at the base class by printing an
+      * additional warning.
+      */
+    virtual void setSizeMinimumCalendar(Calendar *c)
+    {
+      logger << "Warning: using a minimum size calendar on an operation of "
+         << "type timeper is tricky. Planning results can be incorrect "
+         << "around changes of the minimum size." << endl;
+      Operation::setSizeMinimumCalendar(c);
     }
 
     /** A operation of this type enforces the following rules on its
@@ -3178,6 +3212,10 @@ class OperationTimePer : public Operation
       *     compute an end date based on the quantity.
       *   - If no date is specified, we respect the quantity and the end
       *     date of the operation. A new start date is being computed.
+      *
+      * Tricky situations can arise when the minimum size is varying over
+      * time, ie min_size_calendar field is used.
+      *
       * @see Operation::setOperationPlanParameters
       */
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
@@ -3247,8 +3285,10 @@ class OperationRouting : public Operation
     DECLARE_EXPORT OperationPlanState setOperationPlanParameters
     (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
 
-    DECLARE_EXPORT double setOperationPlanQuantity
-      (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute) const;
+    DECLARE_EXPORT double setOperationPlanQuantity(
+      OperationPlan* oplan, double f, bool roundDown, bool upd,
+      bool execute, Date start
+      ) const;
 
     /** Add a new child operationplan.
       * A routing operationplan has a series of suboperationplans:

@@ -237,6 +237,7 @@
       <xsd:element name="posttime" type="xsd:duration" />
       <xsd:element name="fence" type="xsd:duration" />
       <xsd:element name="size_minimum" type="positiveDouble" />
+      <xsd:element name="size_minimum_calendar" type="calendar" />
       <xsd:element name="size_multiple" type="positiveDouble" />
       <xsd:element name="size_maximum" type="positiveDouble" />
       <xsd:element name="cost" type="positiveDouble" />

@@ -530,7 +530,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
       ROUNDING_ERROR :
       // Minimum operation size multiplied with load size
       (data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
-        data->state->q_operationplan, 0.01, false, false, false
+        data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
         ) * data->state->q_loadplan->getLoad()->getQuantity());
 
   // Loop for a valid location by using EARLIER capacity

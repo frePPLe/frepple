@@ -161,6 +161,7 @@ class Tags
     static DECLARE_EXPORT const Keyword setupmatrix;
     static DECLARE_EXPORT const Keyword size_maximum;
     static DECLARE_EXPORT const Keyword size_minimum;
+    static DECLARE_EXPORT const Keyword size_minimum_calendar;
     static DECLARE_EXPORT const Keyword size_multiple;
     static DECLARE_EXPORT const Keyword skill;
     static DECLARE_EXPORT const Keyword skills;

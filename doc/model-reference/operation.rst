@@ -57,6 +57,11 @@ fence            duration          | Time window from the current date of the pl
 size_minimum     positive double   | A minimum quantity for operationplans.
                                    | The default value is 1.
                                    | A request for a lower, non-zero quantity will be rounded up.
+size_minimum_    calendar          | A calendar to define the minimum size of operationplans
+ calendar                            when this value varies over time. The start date of the
+                                     operationplan determines we date we use as lookup in the
+                                     calendar.
+                                   | If this field is used, the size_minimum field is ignored.
 size_multiple    positive double   A lotsize quantity for operationplans.
 size_maximum     positive double   | The maximum quantity for operationplans.
                                    | Note that this value limits the size of individual

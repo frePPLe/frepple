@@ -4185,7 +4185,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     explicit DECLARE_EXPORT Buffer() :
       hidden(false), producing_operation(uninitializedProducing), loc(NULL), it(NULL),
       min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
-      min_interval(-1), carrying_cost(0.0), tool(false) {}
+      min_interval(-1), tool(false) {}
 
     /** Builds a producing operation for a buffer.
       * The logic used is based on the following:
@@ -4295,28 +4295,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Updates the minimum inventory target for the buffer. */
     DECLARE_EXPORT void setMaximumCalendar(CalendarDefault*);
-
-    /** Return the carrying cost.<br>
-      * The cost of carrying inventory in this buffer. The value is a
-      * percentage of the item sales price, per year and per unit.
-      */
-    double getCarryingCost() const
-    {
-      return carrying_cost;
-    }
-
-    /** Return the carrying cost.<br>
-      * The cost of carrying inventory in this buffer. The value is a
-      * percentage of the item sales price, per year and per unit.<br>
-      * The default value is 0.0.
-      */
-    void setCarryingCost(const double c)
-    {
-      if (c >= 0)
-        carrying_cost = c;
-      else
-        throw DataException("Buffer carrying_cost must be positive");
-    }
 
     /** Initialize the class. */
     static int initialize();
@@ -4457,7 +4435,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addPointerField<Cls, CalendarDefault>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, default_max);
       m->addPointerField<Cls, CalendarDefault>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
-      m->addDoubleField<Cls>(Tags::carrying_cost, &Cls::getCarryingCost, &Cls::setCarryingCost);
       m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
@@ -4530,12 +4507,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Maximum time interval between purchasing operations. */
     Duration max_interval;
-
-    /** Carrying cost.<br>
-      * The cost of carrying inventory in this buffer. The value is a
-      * percentage of the item sales price, per year and per unit.
-      */
-    double carrying_cost;
 
     /** A flag that marks whether this buffer represents a tool or not. */
     bool tool;

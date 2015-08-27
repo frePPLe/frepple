@@ -40,7 +40,6 @@ DECLARE_EXPORT const Keyword Tags::buffer("buffer");
 DECLARE_EXPORT const Keyword Tags::buffers("buffers");
 DECLARE_EXPORT const Keyword Tags::calendar("calendar");
 DECLARE_EXPORT const Keyword Tags::calendars("calendars");
-DECLARE_EXPORT const Keyword Tags::carrying_cost("carrying_cost");
 DECLARE_EXPORT const Keyword Tags::category("category");
 DECLARE_EXPORT const Keyword Tags::cluster("cluster");
 DECLARE_EXPORT const Keyword Tags::confirmed("confirmed");

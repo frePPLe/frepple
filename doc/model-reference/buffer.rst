@@ -45,9 +45,6 @@ item             item              | Item being stored in the buffer.
                                    | Default is null.
 onhand           double            | Inventory level at the start of the time horizon.
                                    | Default is 0.
-carrying_cost    double            | The cost of carrying inventory in this buffer.
-                                   | The value is an annual percentage of the item sales price.
-                                   | The default value is 0.0.
 minimum          double            | Desired minimum inventory, aka safety stock.
                                    | Use this field if the safety stock doesn't change over
                                      time.

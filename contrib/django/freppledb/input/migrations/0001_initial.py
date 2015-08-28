@@ -180,6 +180,7 @@ class Migration(migrations.Migration):
                 ('startdate', models.DateTimeField(blank=True, verbose_name='start date', null=True, help_text='start date')),
                 ('enddate', models.DateTimeField(blank=True, verbose_name='end date', null=True, help_text='end date')),
                 ('criticality', models.DecimalField(blank=True, verbose_name='criticality', max_digits=15, null=True, decimal_places=4)),
+                ('consume_material', models.BooleanField(default=True, verbose_name='consume material', help_text='Consume material at origin location')),
             ],
             options={
                 'db_table': 'distribution_order',

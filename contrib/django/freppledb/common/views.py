@@ -324,6 +324,7 @@ class BucketList(GridReport):
   rows = (
     GridFieldText('name', title=_('name'), key=True, formatter="bucket"),
     GridFieldText('description', title=_('description')),
+    GridFieldInteger('level', title=_('level')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

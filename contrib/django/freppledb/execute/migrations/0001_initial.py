@@ -27,22 +27,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Scenario',
-            fields=[
-                ('name', models.CharField(max_length=settings.NAMESIZE, primary_key=True, verbose_name='name', serialize=False)),
-                ('description', models.CharField(null=True, blank=True, max_length=settings.DESCRIPTIONSIZE, verbose_name='description')),
-                ('status', models.CharField(choices=[('free', 'Free'), ('in use', 'In use'), ('busy', 'Busy')], max_length=10, verbose_name='status')),
-                ('lastrefresh', models.DateTimeField(null=True, verbose_name='last refreshed', editable=False)),
-            ],
-            options={
-                'ordering': ['name'],
-                'db_table': 'execute_scenario',
-                'verbose_name': 'scenario',
-                'verbose_name_plural': 'scenarios',
-                'permissions': (('copy_scenario', 'Can copy a scenario'), ('release_scenario', 'Can release a scenario')),
-            },
-        ),
-        migrations.CreateModel(
             name='Task',
             fields=[
                 ('id', models.AutoField(verbose_name='identifier', primary_key=True, editable=False, serialize=False)),

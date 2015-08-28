@@ -314,6 +314,10 @@ class GridReport(View):
   # Include time bucket support in the report
   hasTimeBuckets = False
 
+  # Specify a minimum level for the time buckets available in the report.
+  # Higher values (ie more granular) buckets can then not be selected.
+  maxBucketLevel = None
+
   # Show a select box in front to allow selection of records
   multiselect = True
 
@@ -681,7 +685,10 @@ class GridReport(View):
     # Pick up the list of time buckets
     if reportclass.hasTimeBuckets:
       reportclass.getBuckets(request, args, kwargs)
-      bucketnames = Bucket.objects.order_by('name').values_list('name', flat=True)
+      if reportclass.maxBucketLevel:
+        bucketnames = Bucket.objects.order_by('-level').filter(level__lte=reportclass.maxBucketLevel).values_list('name', flat=True)
+      else:
+        bucketnames = Bucket.objects.order_by('-level').values_list('name', flat=True)
     else:
       bucketnames = None
     fmt = request.GET.get('format', None)
@@ -863,7 +870,7 @@ class GridReport(View):
 
   @staticmethod
   def dependent_models(m, found):
-    ''' An auxilary method that constructs a set of all dependent models''' 
+    ''' An auxilary method that constructs a set of all dependent models'''
     for f in m._meta.get_fields():
       if f.is_relation and f.auto_created and f.related_model != m and not f.related_model in found:
         found.update([f.related_model])
@@ -1077,7 +1084,7 @@ class GridReport(View):
     # Check permissions
     if not reportclass.model:
       yield force_text(_('Invalid upload request')) + '\n '
-      return      
+      return
     permname = get_permission_codename('add', reportclass.model._meta)
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
       yield force_text(_('Permission denied')) + '\n '

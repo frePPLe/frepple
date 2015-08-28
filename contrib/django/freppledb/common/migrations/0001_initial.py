@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField(help_text='Designates whether the user can log into this admin site.', default=False, verbose_name='staff status')),
                 ('is_active', models.BooleanField(help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', default=True, verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('language', models.CharField(max_length=10, choices=[('auto', 'Detect automatically'), ('en', 'English'), ('fr', 'French'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], default='auto', verbose_name='language')),
+                ('language', models.CharField(max_length=10, choices=[('auto', 'Detect automatically'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], default='auto', verbose_name='language')),
                 ('theme', models.CharField(max_length=settings.CATEGORYSIZE, choices=[('black-tie', 'black-tie'), ('blitzer', 'blitzer'), ('cupertino', 'cupertino'), ('dark-hive', 'dark-hive'), ('dot-luv', 'dot-luv'), ('eggplant', 'eggplant'), ('excite-bike', 'excite-bike'), ('flick', 'flick'), ('frepple', 'frepple'), ('hot-sneaks', 'hot-sneaks'), ('humanity', 'humanity'), ('le-frog', 'le-frog'), ('mint-choc', 'mint-choc'), ('overcast', 'overcast'), ('pepper-grinder', 'pepper-grinder'), ('redmond', 'redmond'), ('smoothness', 'smoothness'), ('south-street', 'south-street'), ('start', 'start'), ('sunny', 'sunny'), ('swanky-purse', 'swanky-purse'), ('trontastic', 'trontastic'), ('ui-darkness', 'ui-darkness'), ('ui-lightness', 'ui-lightness'), ('vader', 'vader')], default='frepple', verbose_name='theme')),
                 ('pagesize', models.PositiveIntegerField(default=100, verbose_name='page size')),
                 ('horizonbuckets', models.CharField(null=True, max_length=settings.NAMESIZE, blank=True)),
@@ -67,12 +67,29 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Scenario',
+            fields=[
+                ('name', models.CharField(max_length=settings.NAMESIZE, primary_key=True, verbose_name='name', serialize=False)),
+                ('description', models.CharField(null=True, blank=True, max_length=settings.DESCRIPTIONSIZE, verbose_name='description')),
+                ('status', models.CharField(choices=[('free', 'Free'), ('in use', 'In use'), ('busy', 'Busy')], max_length=10, verbose_name='status')),
+                ('lastrefresh', models.DateTimeField(null=True, verbose_name='last refreshed', editable=False)),
+            ],
+            options={
+                'ordering': ['name'],
+                'db_table': 'common_scenario',
+                'verbose_name': 'scenario',
+                'verbose_name_plural': 'scenarios',
+                'permissions': (('copy_scenario', 'Can copy a scenario'), ('release_scenario', 'Can release a scenario')),
+            },
+        ),
+        migrations.CreateModel(
             name='Bucket',
             fields=[
                 ('source', models.CharField(db_index=True, null=True, max_length=settings.CATEGORYSIZE, blank=True, verbose_name='source')),
                 ('lastmodified', models.DateTimeField(db_index=True, editable=False, default=django.utils.timezone.now, verbose_name='last modified')),
                 ('name', models.CharField(serialize=False, max_length=settings.NAMESIZE, primary_key=True, verbose_name='name')),
                 ('description', models.CharField(null=True, max_length=settings.DESCRIPTIONSIZE, blank=True, verbose_name='description')),
+                ('level', models.IntegerField(default=1, verbose_name='level', help_text='Higher values indicate more granular time buckets')),
             ],
             options={
                 'verbose_name_plural': 'buckets',

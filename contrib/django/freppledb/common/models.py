@@ -287,7 +287,7 @@ class User(AbstractUser):
     newuser = False
     tmp_is_active = self.is_active
     tmp_is_superuser = self.is_superuser
-    if not self.id:
+    if self.id is None:
       newuser = True
       self.id = 0
       cur_seq = {}

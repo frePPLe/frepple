@@ -378,7 +378,7 @@ class GridReport(View):
       bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
     except:
       try:
-        bucket = Bucket.objects.using(request.database).order_by('name')[0].name
+        bucket = Bucket.objects.using(request.database).order_by('-level')[0].name
       except:
         bucket = None
 
@@ -417,7 +417,13 @@ class GridReport(View):
           start = datetime.now()
           start = start.replace(microsecond=0)
       end = pref.horizonend
-      if not end:
+      if end:
+        if end < start:
+          # Swap start and end to assure the start is before the end
+          tmp = start
+          start = end
+          end = tmp
+      else:
         if pref.horizonunit == 'day':
           end = start + timedelta(days=pref.horizonlength or 60)
         elif pref.horizonunit == 'week':

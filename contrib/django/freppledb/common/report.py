@@ -687,6 +687,11 @@ class GridReport(View):
       reportclass.getBuckets(request, args, kwargs)
       if reportclass.maxBucketLevel:
         bucketnames = Bucket.objects.order_by('-level').filter(level__lte=reportclass.maxBucketLevel).values_list('name', flat=True)
+        if request.report_bucket not in bucketnames:
+          # Current preference is set to a higher granularity than allowed.
+          # We adjust to the highest supported level.
+          request.user.horizonbuckets = bucketnames[0]
+          reportclass.getBuckets(request, args, kwargs)
       else:
         bucketnames = Bucket.objects.order_by('-level').values_list('name', flat=True)
     else:

@@ -52,10 +52,6 @@ Here are the steps to get a fully working environment.
        default_transaction_isolation: 'read committed',
        timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
 
-   For the user that will run the user interface application (normally
-   'www-data' on debian and 'apache' on rhel) you need to create a file .pgpass
-   in their home directory. This allows them to connect without entering a password.
-
    See the Django documentation at http://docs.djangoproject.com/en/dev/ref/databases/
    for more details.
 
@@ -71,7 +67,7 @@ Here are the steps to get a fully working environment.
    A database needs to be created for the default database, and one for each of
    the what-if scenarios you want to configure.
 
-   A single user is normally used as the owner of these databases.
+   The same user is normally used as the owner of these databases.
 
    The typical SQL statements are shown below. Replace USR, PWD, DB with the suitable
    values.
@@ -113,7 +109,7 @@ Here are the steps to get a fully working environment.
    is best to install it from PyPi using pip.
    ::
 
-     pip install openpyxl
+     pip3 install openpyxl
 
    Most linux distributions don't install pip by default, so you'll need to install
    that first. See below for the commands for this on Ubuntu and RHEL.
@@ -209,6 +205,7 @@ Here are the steps to get a fully working environment.
 
 .. tip::
    For security reasons it is recommended to change the password of the admin user.
+   Until it is changed, a message is displayed on the login page.
 
 **************************
 Debian installation script
@@ -222,23 +219,24 @@ inspiration for your own deployments.
 
 ::
 
-  # Bring the server up to date with the latest and greatest
+  # Bring the server up to date
   sudo apt-get -y -q update
   sudo apt-get -y -q upgrade
 
   # Install PostgreSQL
-  sudo apt-get -y install postgresql-9.1 python-psycopg2
+  sudo apt-get -y install postgresql python3-psycopg2
   sudo su - postgres
   psql template1 -c "create user frepple with password 'frepple'"
   psql template1 -c "create database frepple encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario3 encoding 'utf-8' owner frepple"
-  sed -i 's/peer$/md5/g' /etc/postgresql/9.1/main/pg_hba.conf
+  sed -i 's/peer$/md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   service postgresql restart
   exit
 
   # Install Django
+  export DJANGORELEASE=1.8
   wget -q -O Django-$DJANGORELEASE.tar.gz https://www.djangoproject.com/download/$DJANGORELEASE/tarball/
   tar xfz Django-$DJANGORELEASE.tar.gz
   cd ~/Django-$DJANGORELEASE
@@ -246,8 +244,8 @@ inspiration for your own deployments.
   sudo python setup.py install
 
   # Install openpyxl
-  sudo apt-get -y install python-pip
-  sudo pip install openpyxl
+  sudo apt-get -y install python3-pip
+  sudo pip3 install openpyxl
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev debian package files.
@@ -267,14 +265,6 @@ inspiration for your own deployments.
   # Create frepple database schema
   frepplectl migrate --noinput
 
-  # Make postgresql accessible for apache user without password
-  sudo sh -c 'echo "localhost:5432:frepple:frepple:frepple" > ~www-data/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario1:frepple:frepple" >> ~www-data/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario2:frepple:frepple" >> ~www-data/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario3:frepple:frepple" >> ~www-data/.pgpass'
-  sudo chown www-data:www-data ~www-data/.pgpass
-  sudo chmod 0600 ~www-data/.pgpass
-
 ***************************
 Red Hat installation script
 ***************************
@@ -291,7 +281,7 @@ inspiration for your own deployments.
   sudo -S -n yum -y update
 
   # Install the PostgreSQL database
-  sudo yum install postgresql postgresql-server python-psycopg2
+  sudo yum install postgresql postgresql-server python3-psycopg2
   sudo service postgresql initdb
   sudo service postgresql start
   sudo su - postgres
@@ -301,8 +291,10 @@ inspiration for your own deployments.
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
   sed -i 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf
+  sudo service postgresql restart
 
   # Install django
+  export DJANGORELEASE=1.8
   wget -q -O Django-$DJANGORELEASE.tar.gz https://www.djangoproject.com/download/$DJANGORELEASE/tarball/
   tar xfz Django-$DJANGORELEASE.tar.gz
   cd ~/Django-$DJANGORELEASE
@@ -319,11 +311,3 @@ inspiration for your own deployments.
 
   # Build frepple RPM
   yum --nogpgcheck localinstall  *.rpm
-
-  # Make PostgreSQL accessible for apache user
-  sudo sh -c 'echo "localhost:5432:frepple:frepple:frepple" > ~apache/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario1:frepple:frepple" >> ~apache/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario2:frepple:frepple" >> ~apache/.pgpass'
-  sudo sh -c 'echo "localhost:5432:scenario3:frepple:frepple" >> ~apache/.pgpass'
-  sudo chown apache:apache ~apache/.pgpass
-  sudo chmod 0600 ~apache/.pgpass

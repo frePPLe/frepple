@@ -10,7 +10,7 @@ This page describes 3 different methods:
 * | `Compiling from the github source code repository`_
   | Extra instructions when you compile from the latest source code.
 
-* | `Compiling from a debian source package`_
+* | `Compiling from a Debian source package`_
   | This is the **recommended method for all Debian based distributions**.
   | The Debian package not only compiles the software, but also configures the
     Apache web server, user permissions, configuration files and log directories.
@@ -181,7 +181,7 @@ The steps to work with such packages are standard:
    tree, and a .spec file in the SPECS directory.
    ::
 
-     rpm -i frepple-2.0-1.src.rpm
+     rpm -i frepple-*.src.rpm
 
 #. Build the RPM:
 

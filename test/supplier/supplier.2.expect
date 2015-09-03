@@ -15,6 +15,7 @@ BUFFER	C @ warehouse	2015-01-01T00:00:00	-10	0
 BUFFER	C @ warehouse	2015-01-22T00:00:00	200	200
 BUFFER	C @ warehouse	2015-01-22T00:00:00	-90	110
 BUFFER	C @ warehouse	2015-02-01T00:00:00	-100	10
+BUFFER	C @ warehouse	2015-06-06T00:00:00	200	210
 BUFFER	D @ warehouse	1971-01-01T00:00:00	10	10
 BUFFER	D @ warehouse	2015-01-01T00:00:00	-10	0
 DEMAND	order 1 for item A	2015-01-08T00:00:00	90
@@ -42,10 +43,11 @@ OPERATION	Purchase A @ warehouse from Supplier of component A	2015-01-25T00:00:0
 OPERATION	Purchase B @ warehouse from Supplier of component B	2015-01-01T00:00:00	2015-01-15T00:00:00	90
 OPERATION	Purchase B @ warehouse from Supplier of component B	2015-01-18T00:00:00	2015-02-01T00:00:00	100
 OPERATION	Purchase C @ warehouse from Supplier of component C	2015-01-01T00:00:00	2015-01-22T00:00:00	200
+OPERATION	Purchase C @ warehouse from Supplier of component C	2015-05-16T00:00:00	2015-06-06T00:00:00	200	locked
 PROBLEM	material excess	Buffer 'A @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'B @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 110	2015-01-22T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 210	2015-01-22T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'D @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	late	Demand 'order 1 for item A' planned P7D after its due date	2015-01-01T00:00:00 / 2015-01-08T00:00:00
 PROBLEM	late	Demand 'order 1 for item B' planned P14D after its due date	2015-01-01T00:00:00 / 2015-01-15T00:00:00

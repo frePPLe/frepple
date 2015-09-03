@@ -12,6 +12,7 @@ BUFFER	C @ warehouse	1971-01-01T00:00:00	10	10
 BUFFER	C @ warehouse	2015-01-01T00:00:00	200	210
 BUFFER	C @ warehouse	2015-01-01T00:00:00	-100	110
 BUFFER	C @ warehouse	2015-02-01T00:00:00	-100	10
+BUFFER	C @ warehouse	2015-06-06T00:00:00	200	210
 BUFFER	D @ warehouse	1971-01-01T00:00:00	10	10
 BUFFER	D @ warehouse	2015-01-01T00:00:00	-100	-90
 BUFFER	D @ warehouse	2015-02-01T00:00:00	-100	-190
@@ -36,11 +37,12 @@ OPERATION	Purchase A @ warehouse from Supplier of component A	2015-01-25T00:00:0
 OPERATION	Purchase B @ warehouse from Supplier of component B	2014-12-18T00:00:00	2015-01-01T00:00:00	90
 OPERATION	Purchase B @ warehouse from Supplier of component B	2015-01-18T00:00:00	2015-02-01T00:00:00	100
 OPERATION	Purchase C @ warehouse from Supplier of component C	2014-12-11T00:00:00	2015-01-01T00:00:00	200
+OPERATION	Purchase C @ warehouse from Supplier of component C	2015-05-16T00:00:00	2015-06-06T00:00:00	200	locked
 PROBLEM	material excess	Buffer 'A @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'B @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 110	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'C @ warehouse' has material excess of 210	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'D @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material shortage	Buffer 'D @ warehouse' has material shortage of 190	2015-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase A @ warehouse from Supplier of component A' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish B @ warehouse' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish C @ warehouse' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase C @ warehouse from Supplier of component C' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Replenish A @ warehouse' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00

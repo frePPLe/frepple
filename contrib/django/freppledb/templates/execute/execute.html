@@ -278,7 +278,7 @@ and export results.<br/>
 {% getMenu as menu %}
 <input class="chck_all" type="checkbox" name="all" value="1" checked><br/>
 {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
-<label for="chbx_{{ item.1.model | model_name }}"><input class="chck_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="chbx_{{ item.1.model | model_name }}">{{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
+<label for="chbx_{{ item.1.model | model_name }}"><input class="chck_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked id="chbx_{{ item.1.model | model_name }}">{{ group.0 }} - {{ item.0 }}</label><br/>{% endif %}{% endfor %}{% endfor %}
 </td></tr></form>
 </table></div>
 

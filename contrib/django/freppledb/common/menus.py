@@ -32,7 +32,8 @@ logger = logging.getLogger(__name__)
 class MenuItem:
 
   def __init__(self, name, model=None, report=None, url=None, javascript=None,
-               label=None, index=None, prefix=True, window=False):
+               label=None, index=None, prefix=True, window=False,
+               separator=False):
     self.name = name
     self.url = url
     self.javascript = javascript
@@ -49,12 +50,15 @@ class MenuItem:
     self.index = index
     self.prefix = prefix
     self.window = window
+    self.separator = separator
     self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
 
   def __str__(self):
     return self.name
 
   def has_permission(self, user):
+    if self.separator:
+      return True
     if self.report:
       # The menu item is a report class
       for perm in self.report.permissions:
@@ -118,7 +122,9 @@ class Menu:
     # No action required when the group isn't found
 
 
-  def addItem(self, group, name, admin=None, report=None, url=None, javascript=None, label=None, index=None, prefix=True, window=False):
+  def addItem(self, group, name, separator=False, admin=None, report=None,
+              url=None, javascript=None, label=None, index=None,
+              prefix=True, window=False, model=None):
     for i in range(len(self._groups)):
       if self._groups[i][0] == group:
         # Found the group
@@ -138,6 +144,8 @@ class Menu:
               it['label'] = label
             it['prefix'] = prefix
             it['window'] = window
+            it['separator'] = separator
+            it['model'] = model
             return
         # Create a new item
         if admin:
@@ -152,8 +160,9 @@ class Menu:
         else:
           # Add a single item
           self._groups[i][3].append( MenuItem(
-            name, report=report, url=url, javascript=javascript,
-            label=label, index=index, prefix=prefix, window=window
+            name, report=report, url=url, javascript=javascript, label=label,
+            index=index, prefix=prefix, window=window, separator=separator,
+            model=model
             ) )
         return
     # Couldn't locate the group

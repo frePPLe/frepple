@@ -3,7 +3,7 @@
 {% block nav-global %}
 {% getMenu as menu %}<nav><ul>
 {% for group in menu %}<li><a href="#">{{ group.0 }}</a><ul class="xui-menu xui-widget xui-widget-content xui-corner-all">
-{% for item in group.1 %}<li><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %} href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></li>
+{% for item in group.1 %}<li>{% if item.1.separator %}<a></a>{% else %}<a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %} href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a>{% endif %}</li>
 {% endfor %}</ul></li>
 {% endfor %}
 <li><input type="search" id="search" class="ui-corner-all" size="35" placeholder="{% trans 'search'|capfirst %}"/></li></ul></nav>

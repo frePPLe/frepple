@@ -253,6 +253,8 @@ def exportPurchaseOrders(process):
 
   print("Exporting purchase orders...")
   starttime = time()
+
+  # Export new proposed orders
   process.stdin.write('COPY purchase_order (id,reference,item_id,location_id,supplier_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
   for p in getPOs(True):
     process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
@@ -266,6 +268,7 @@ def exportPurchaseOrders(process):
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
 
+  # Export existing orders
   with transaction.atomic(using=database, savepoint=False):
     cursor = connections[database].cursor()
     cursor.executemany(
@@ -288,6 +291,8 @@ def exportDistributionOrders(process):
 
   print("Exporting distribution orders...")
   starttime = time()
+
+  # Export new proposed orders
   process.stdin.write('COPY distribution_order (id,reference,item_id,origin_id,destination_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
   for p in getDOs(True):
     process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
@@ -301,6 +306,7 @@ def exportDistributionOrders(process):
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
 
+  # Update existing orders
   with transaction.atomic(using=database, savepoint=False):
     cursor = connections[database].cursor()
     cursor.executemany(

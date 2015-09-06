@@ -16,11 +16,12 @@
 #
 
 import os
+import sys
 from datetime import datetime
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 
 from freppledb.execute.models import Task
@@ -57,7 +58,7 @@ class Command(BaseCommand):
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
       database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES:
+    if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
       try:
@@ -101,7 +102,7 @@ class Command(BaseCommand):
         # For the py2exe executable
         os.environ['PYTHONPATH'] = os.path.join(
           os.environ['FREPPLE_HOME'],
-          'python%d%d.zip' %(sys.version_info[0], sys.version_info[1])
+          'python%d%d.zip' % (sys.version_info[0], sys.version_info[1])
           ) + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
       else:
         # Other executables

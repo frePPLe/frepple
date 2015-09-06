@@ -70,7 +70,7 @@ class Command(BaseCommand):
       self.database = options['database'] or DEFAULT_DB_ALIAS
     else:
       self.database = DEFAULT_DB_ALIAS
-    if not self.database in settings.DATABASES.keys():
+    if self.database not in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
     if 'delta' in options:
       self.delta = float(options['delta'] or '3650')
@@ -185,7 +185,7 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=self.database)
-
+      settings.DEBUG = tmp_debug
 
   def get_data(self, url, callback):
     firstResult = 0
@@ -500,7 +500,7 @@ class Command(BaseCommand):
         self.locations[objectid] = unique_name
         unused_keys.pop(unique_name, None)
         if organization in self.organization_location:
-          print (
+          print(
             "Warning: Organization '%s' is already associated with '%s'. Ignoring association with '%s'"
             % (organization, self.organization_location[organization], unique_name)
             )
@@ -1335,7 +1335,7 @@ class Command(BaseCommand):
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         product = self.items.get(elem.find("product").get("id"), None)
         bomproduct = self.items.get(elem.find("bOMProduct").get("id"), None)
-        if not product or not organization or not bomproduct or not product in frepple_buffers:
+        if not product or not organization or not bomproduct or product not in frepple_buffers:
           # Rejecting uninteresting records
           root.clear()
           continue
@@ -1343,7 +1343,7 @@ class Command(BaseCommand):
           operation = "Product BOM %s @ %s" % (product, loc)
           buf = "%s @ %s" % (bomproduct, loc)
           operations.add( (operation, loc, name) )
-          if not buf in frepple_keys:
+          if buf not in frepple_keys:
             buffers.add( (buf, bomproduct, loc) )
           flows[ (operation, name, 'end') ] = 1
           t = (operation, buf, 'start')
@@ -1445,7 +1445,7 @@ class Command(BaseCommand):
           continue
         records += 1
         product = self.items.get(elem.get('id'), None)
-        if not product or not product in frepple_buffers:
+        if not product or product not in frepple_buffers:
           # TODO A produced item which appears in a BOM but has no sales orders, purchase orders or onhand will not show up.
           # If WIP exists on a routing, it could thus happen that the operation was not created.
           # A buffer in the middle of a BOM may thus be missing.
@@ -1481,7 +1481,7 @@ class Command(BaseCommand):
                 objectid = pp_operation.get('id')
                 sequenceNumber = int(pp_operation.find('sequenceNumber').text)
                 if sequenceNumber in steps:
-                  print ("Warning: duplicate sequence number %s in processplan %s" % (sequenceNumber, routing_name))
+                  print("Warning: duplicate sequence number %s in processplan %s" % (sequenceNumber, routing_name))
                   while sequenceNumber in steps:
                     sequenceNumber += 1
                 steps.add(sequenceNumber)
@@ -1507,7 +1507,7 @@ class Command(BaseCommand):
                     if not opbuffer:
                       opbuffer = "%s @ %s" % (opproduct, loc)
                       buffers_create.append( (opbuffer, opproduct, loc) )
-                      if not opproduct in frepple_buffers:
+                      if opproduct not in frepple_buffers:
                         frepple_buffers[opproduct] = [ (opbuffer, loc) ]
                       else:
                         frepple_buffers[opproduct].append( (opbuffer, loc) )

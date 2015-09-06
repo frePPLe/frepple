@@ -307,7 +307,7 @@ class User(AbstractUser):
     # Save only specific fields which we want to have identical across
     # all scenario databases.
     if not update_fields:
-      update_fields2=[
+      update_fields2 = [
         'username', 'password', 'last_login', 'first_name', 'last_name',
         'email', 'date_joined', 'language', 'theme', 'pagesize',
         'horizonbuckets', 'horizonstart', 'horizonend', 'horizonunit',

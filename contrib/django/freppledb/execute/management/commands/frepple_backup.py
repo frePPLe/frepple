@@ -18,13 +18,12 @@
 import os
 import re
 import subprocess
-import shutil
 from datetime import datetime
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS, transaction
+from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -70,7 +69,7 @@ class Command(BaseCommand):
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
       database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES:
+    if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
       try:

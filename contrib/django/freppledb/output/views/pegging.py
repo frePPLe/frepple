@@ -23,9 +23,7 @@ from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Demand
-from freppledb.output.models import FlowPlan, LoadPlan, OperationPlan
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber
-from freppledb.common.report import GridFieldInteger, GridFieldDateTime
 from freppledb.common.models import Parameter
 
 
@@ -174,10 +172,10 @@ class ReportByDemand(GridReport):
           'quantity': str(rec[3]),
           'due': round((rec[0] - request.report_startdate).total_seconds() / horizon, 3),
           'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
-          'parent': rec[2] and parents[rec[2]-1] or None,
+          'parent': rec[2] and parents[rec[2] - 1] or None,
           'leaf': 'true',
           'expanded': 'true',
-          'resource': rec[9] and [rec[9],] or [],
+          'resource': rec[9] and [rec[9], ] or [],
           'operationplans': [{
              'operation': rec[1],
              'quantity': str(rec[7]),

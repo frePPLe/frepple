@@ -49,7 +49,7 @@ void OperationPlan::updateProblems()
   //  - opplans of hidden operations
   if (!getLocked() && getOperation()->getDetectProblems())
   {
-    if (!getOwner() || getOperation() == OperationSetup::setupoperation)
+    if (!firstsubopplan || getOperation() == OperationSetup::setupoperation)
     {
       // Avoid duplicating problems on child and owner operationplans
       // Check if a BeforeCurrent problem is required.

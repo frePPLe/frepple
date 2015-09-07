@@ -28,6 +28,9 @@
 	<items>
 		<item>
 			<name>Component A</name>
+			<owner>
+				<name>Component group A and B</name>
+			</owner>
 			<operation>
 				<name>Delivery A</name>
 			</operation>
@@ -43,6 +46,9 @@
 		</item>
 		<item>
 			<name>Component B</name>
+			<owner>
+				<name>Component group A and B</name>
+			</owner>
 			<price>1</price>
 			<operation>
 				<name>Delivery B</name>

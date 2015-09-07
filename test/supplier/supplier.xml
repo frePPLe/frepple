@@ -10,6 +10,9 @@
     <!--
     Item A has 2 suppliers: one defined at the supplier level, and one
     at the group level below.
+    We purchase from the vendor of priority 1 which has a lead time of 14
+    days. If we need material faster we purchase from the supplier with
+    priority 2 which has a lead time of 7 days.
     -->
     <supplier name="Supplier of component A">
 	    <itemsuppliers>
@@ -30,12 +33,17 @@
           <priority>1</priority>
         </itemsupplier>
 	    </itemsuppliers>
+      <members>
+         <item name="Component A" />
+         <item name="Component B" />
+      </members>
     </item>
     <!--
     Item B has 2 suppliers: one defined at the item level, and one
     at the group level.
     -->
     <item name="Component B" price="1">
+      <owner name="Component group A and B"/>
 	    <itemsuppliers>
 	      <itemsupplier>
           <supplier name="Supplier of component B" />
@@ -46,7 +54,7 @@
 	  </item>
     <!-- Item C has a single supplier. -->
     <item name="Component C" price="1">
-	    <itemsuppliers>
+      <itemsuppliers>
 	      <itemsupplier>
           <supplier name="Supplier of component C" />
           <leadtime>P21D</leadtime>
@@ -89,7 +97,7 @@
           <flows>
             <flow>
               <buffer name="A @ warehouse"/>
-              <quantity> -1</quantity>
+              <quantity>-1</quantity>
             </flow>
           </flows>
         </operation>

@@ -1,46 +1,50 @@
 BUFFER	product A @ Central WH	1971-01-01T00:00:00	10	10
-BUFFER	product A @ Central WH	2014-12-19T00:00:00	100	110
-BUFFER	product A @ Central WH	2014-12-19T00:00:00	90	200
-BUFFER	product A @ Central WH	2014-12-19T00:00:00	-100	100
+BUFFER	product A @ Central WH	2014-12-17T00:00:00	90	100
+BUFFER	product A @ Central WH	2014-12-17T00:00:00	-100	0
+BUFFER	product A @ Central WH	2014-12-19T00:00:00	100	100
 BUFFER	product A @ Central WH	2014-12-19T00:00:00	-100	0
+BUFFER	product A @ Central WH	2015-02-14T00:00:00	100	100
+BUFFER	product A @ Central WH	2015-02-14T00:00:00	-100	0
+BUFFER	product A @ Central WH	2015-02-16T00:00:00	100	100
+BUFFER	product A @ Central WH	2015-02-16T00:00:00	-100	0
 BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	100	100
-BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-100	0
-BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	100	100
-BUFFER	product A @ Local DC 1b	2015-01-01T00:00:00	-100	0
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-50	50
+BUFFER	product A @ Local DC 1a	2015-01-01T00:00:00	-50	0
+BUFFER	product A @ Local DC 1b	2015-03-01T00:00:00	100	100
+BUFFER	product A @ Local DC 1b	2015-03-01T00:00:00	-100	0
 BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	100	100
 BUFFER	product A @ Local DC 2a	2015-01-01T00:00:00	-100	0
-BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	100	100
-BUFFER	product A @ Local DC 2b	2015-01-01T00:00:00	-100	0
+BUFFER	product A @ Local DC 2b	2015-03-01T00:00:00	100	100
+BUFFER	product A @ Local DC 2b	2015-03-01T00:00:00	-100	0
 BUFFER	product A @ Regional DC 1	2014-12-29T00:00:00	100	100
-BUFFER	product A @ Regional DC 1	2014-12-29T00:00:00	100	200
-BUFFER	product A @ Regional DC 1	2014-12-29T00:00:00	-100	100
 BUFFER	product A @ Regional DC 1	2014-12-29T00:00:00	-100	0
+BUFFER	product A @ Regional DC 1	2015-02-26T00:00:00	100	100
+BUFFER	product A @ Regional DC 1	2015-02-26T00:00:00	-100	0
 BUFFER	product A @ Regional DC 2	2014-12-29T00:00:00	100	100
-BUFFER	product A @ Regional DC 2	2014-12-29T00:00:00	100	200
-BUFFER	product A @ Regional DC 2	2014-12-29T00:00:00	-100	100
 BUFFER	product A @ Regional DC 2	2014-12-29T00:00:00	-100	0
-DEMAND	order 1 for product A	2015-01-01T00:00:00	100
-DEMAND	order 2 for product A	2015-01-01T00:00:00	100
+BUFFER	product A @ Regional DC 2	2015-02-26T00:00:00	100	100
+BUFFER	product A @ Regional DC 2	2015-02-26T00:00:00	-100	0
+DEMAND	order 1a for product A	2015-01-01T00:00:00	50
+DEMAND	order 1b for product A	2015-01-01T00:00:00	50
+DEMAND	order 2 for product A	2015-03-01T00:00:00	100
 DEMAND	order 3 for product A	2015-01-01T00:00:00	100
-DEMAND	order 4 for product A	2015-01-01T00:00:00	100
+DEMAND	order 4 for product A	2015-03-01T00:00:00	100
+OPERATION	Purchase product A @ Central WH from Supplier 1	2014-12-10T00:00:00	2014-12-17T00:00:00	90
 OPERATION	Purchase product A @ Central WH from Supplier 1	2014-12-12T00:00:00	2014-12-19T00:00:00	100
-OPERATION	Purchase product A @ Central WH from Supplier 1	2014-12-12T00:00:00	2014-12-19T00:00:00	90
-OPERATION	Purchase product A @ Regional DC 2 from Supplier 1	2014-12-15T00:00:00	2014-12-29T00:00:00	100
-OPERATION	Purchase product A @ Regional DC 2 from Supplier 1	2014-12-15T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Purchase product A @ Central WH from Supplier 1	2015-02-07T00:00:00	2015-02-14T00:00:00	100
+OPERATION	Purchase product A @ Central WH from Supplier 1	2015-02-09T00:00:00	2015-02-16T00:00:00	100
 OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 1	2014-12-19T00:00:00	2014-12-29T00:00:00	100
-OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 1	2014-12-19T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 1	2015-02-16T00:00:00	2015-02-26T00:00:00	100
+OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 2	2014-12-17T00:00:00	2014-12-29T00:00:00	100
+OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 2	2015-02-14T00:00:00	2015-02-26T00:00:00	100
 OPERATION	Ship product A from product A @ Regional DC 1 to product A @ Local DC 1a	2014-12-29T00:00:00	2015-01-01T00:00:00	100
-OPERATION	Ship product A from product A @ Regional DC 1 to product A @ Local DC 1b	2014-12-29T00:00:00	2015-01-01T00:00:00	100
+OPERATION	Ship product A from product A @ Regional DC 1 to product A @ Local DC 1b	2015-02-26T00:00:00	2015-03-01T00:00:00	100
 OPERATION	Ship product A from product A @ Regional DC 2 to product A @ Local DC 2a	2014-12-29T00:00:00	2015-01-01T00:00:00	100
-OPERATION	Ship product A from product A @ Regional DC 2 to product A @ Local DC 2b	2014-12-29T00:00:00	2015-01-01T00:00:00	100
-PROBLEM	material excess	Buffer 'product A @ Central WH' has material excess of 10	1971-01-01T00:00:00 / 2014-12-19T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Central WH' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Central WH' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Local DC 1a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Local DC 1b' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Local DC 2a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Local DC 2b' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Regional DC 1' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Regional DC 1' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Regional DC 2' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
-PROBLEM	before current	Operation 'Replenish product A @ Regional DC 2' planned in the past	2014-12-15T00:00:00 / 2014-12-29T00:00:00
+OPERATION	Ship product A from product A @ Regional DC 2 to product A @ Local DC 2b	2015-02-26T00:00:00	2015-03-01T00:00:00	100
+PROBLEM	material excess	Buffer 'product A @ Central WH' has material excess of 10	1971-01-01T00:00:00 / 2014-12-17T00:00:00
+PROBLEM	before current	Operation 'Purchase product A @ Central WH from Supplier 1' planned in the past	2014-12-10T00:00:00 / 2014-12-17T00:00:00
+PROBLEM	before current	Operation 'Purchase product A @ Central WH from Supplier 1' planned in the past	2014-12-12T00:00:00 / 2014-12-19T00:00:00
+PROBLEM	before current	Operation 'Ship product A from product A @ Central WH to product A @ Regional DC 1' planned in the past	2014-12-19T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Ship product A from product A @ Central WH to product A @ Regional DC 2' planned in the past	2014-12-17T00:00:00 / 2014-12-29T00:00:00
+PROBLEM	before current	Operation 'Ship product A from product A @ Regional DC 1 to product A @ Local DC 1a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00
+PROBLEM	before current	Operation 'Ship product A from product A @ Regional DC 2 to product A @ Local DC 2a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00

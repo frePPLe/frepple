@@ -78,7 +78,7 @@
 					<location>
 						<name>Regional DC 2</name>
 					</location>
-					<leadtime>P14D</leadtime>
+					<leadtime>P7D</leadtime>
 					<priority>2</priority>
 				</itemsupplier>
 			</itemsuppliers>
@@ -143,8 +143,20 @@
 	</buffers>
 	<demands>
 		<demand>
-			<name>order 1 for product A</name>
-			<quantity>100</quantity>
+			<name>order 1a for product A</name>
+			<quantity>50</quantity>
+			<item>
+				<name>product A</name>
+			</item>
+			<location>
+				<name>Local DC 1a</name>
+			</location>
+			<due>2015-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 1b for product A</name>
+			<quantity>50</quantity>
 			<item>
 				<name>product A</name>
 			</item>
@@ -163,7 +175,7 @@
 			<location>
 				<name>Local DC 1b</name>
 			</location>
-			<due>2015-01-01T00:00:00</due>
+			<due>2015-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
@@ -187,7 +199,7 @@
 			<location>
 				<name>Local DC 2b</name>
 			</location>
-			<due>2015-01-01T00:00:00</due>
+			<due>2015-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>

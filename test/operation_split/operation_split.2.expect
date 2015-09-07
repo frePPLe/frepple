@@ -179,6 +179,12 @@ PROBLEM	before current	Operation 'buy component 4 for option C' planned in the p
 PROBLEM	before current	Operation 'delivery 1' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
 PROBLEM	before current	Operation 'delivery 2' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
 PROBLEM	before current	Operation 'delivery 4' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 2' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 4' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 1 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
+PROBLEM	before current	Operation 'make item 1 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 1 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 2 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
+PROBLEM	before current	Operation 'make item 2 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 2 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 4 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
+PROBLEM	before current	Operation 'make item 4 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
+PROBLEM	before current	Operation 'make item 4 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00

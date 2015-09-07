@@ -464,43 +464,24 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     destbuffer->setLocation(location);
   }
 
-  // Look for a matching matching supplying operation on this buffer.
-  // Here we also trigger the creation of its producing operation, which
-  // contains the logic to build possible transfer operations.
+  // Build the producing operation for this buffer.
+  destbuffer->getProducingOperation();
+
+  // Look for a matching operation replenishing this buffer.
   Operation *oper = NULL;
-  Operation* prodOper = destbuffer->getProducingOperation();
-  if (prodOper && prodOper->getType() == *OperationItemSupplier::metadata)
+  for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
+    flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
   {
+    if (flowiter->getOperation()->getType() != *OperationItemSupplier::metadata)
+      continue;
+    OperationItemSupplier* opitemsupplier = static_cast<OperationItemSupplier*>(flowiter->getOperation());
     if (supplier)
     {
-      if (supplier->isMemberOf(static_cast<OperationItemSupplier*>(prodOper)->getItemSupplier()->getSupplier()))
-        oper = prodOper;
+      if (supplier->isMemberOf(opitemsupplier->getItemSupplier()->getSupplier()))
+        oper = opitemsupplier;
     }
     else
-      oper = prodOper;
-  }
-  else if (prodOper && prodOper->getType() == *OperationAlternate::metadata)
-  {
-    SubOperation::iterator soperiter = prodOper->getSubOperationIterator();
-    while (SubOperation *soper = soperiter.next())
-    {
-      if (soper->getType() == *OperationItemSupplier::metadata)
-      {
-        if (supplier)
-        {
-          if (supplier->isMemberOf(static_cast<OperationItemSupplier*>(prodOper)->getItemSupplier()->getSupplier()))
-          {
-            oper = soper->getOperation();
-            break;
-          }
-        }
-        else
-        {
-          oper = prodOper;
-          break;
-        }
-      }
-    }
+      oper = opitemsupplier;
   }
 
   // No matching operation is found.
@@ -526,6 +507,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     opplan->setStatus(status);
   if (ref)
     opplan->setReference(ref);
+  opplan->activate();
 
   // Return result
   Py_INCREF(opplan);

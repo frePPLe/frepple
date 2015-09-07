@@ -276,10 +276,10 @@ class loadData(object):
           curopername = i[0]
           curoper = frepple.operation(name=curopername)
         sub = frepple.suboperation(
-                owner = curoper,
-                operation = frepple.operation(name=i[1]),
-                priority = i[2]
-                )
+          owner=curoper,
+          operation=frepple.operation(name=i[1]),
+          priority=i[2]
+          )
         if i[3]:
           sub.effective_start = i[3]
         if i[4]:

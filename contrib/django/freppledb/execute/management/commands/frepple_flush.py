@@ -69,7 +69,7 @@ class Command(BaseCommand):
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
       database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES:
+    if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
       try:
@@ -116,7 +116,7 @@ class Command(BaseCommand):
             if x in EXCLUDE_FROM_BULK_OPERATIONS:
               continue
             x = x._meta.db_table
-            if not x in tables:
+            if x not in tables:
               raise
             models2tables.add(x)
           except Exception as e:

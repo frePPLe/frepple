@@ -41,7 +41,7 @@
         </itemsupplier>
         <itemsupplier>
           <supplier name="Supplier 1" />
-          <leadtime>P14D</leadtime>
+          <leadtime>P7D</leadtime>
           <location name="Regional DC 2"/>
           <priority>2</priority>
         </itemsupplier>
@@ -85,20 +85,39 @@
   </buffers>
 
   <demands>
-    <demand name="order 1 for product A">
-      <quantity>100</quantity>
+    <!-- 
+    Generates a material flow: Supplier 1 -> Central WH -> Regional DC 1 -> Local DC 1a 
+    Partial shipment of the inventory in the Central WH, followed with a late delivery.    
+    -->
+    <demand name="order 1a for product A">
+      <quantity>50</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
       <item name="product A"/>
       <location name="Local DC 1a"/>
     </demand>
-    <demand name="order 2 for product A">
-      <quantity>100</quantity>
+    <demand name="order 1b for product A">
+      <quantity>50</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
       <item name="product A"/>
-      <location name="Local DC 1b"/>
+      <location name="Local DC 1a"/>
     </demand>
+        <!-- 
+    Generates a material flow: Supplier 1 -> Central WH -> Regional DC 1 -> Local DC 1a 
+    Unconstrained case.
+    -->
+    <demand name="order 2 for product A">
+      <quantity>100</quantity>
+      <due>2015-03-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="product A"/>
+      <location name="Local DC 1b"/>
+    </demand>  
+    <!-- 
+    Generates a material flow: Supplier 1 -> Regional DC 2 -> Local DC 2a 
+    The supplier ships directly to the regional DC2 to reduce the lateness. 
+    -->
     <demand name="order 3 for product A">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
@@ -106,9 +125,13 @@
       <item name="product A"/>
       <location name="Local DC 2a"/>
     </demand>
+    <!-- 
+    Generates a material flow: Supplier 1 -> Central WH -> Regional DC 1 -> Local DC 1a 
+    Unconstrained case.
+    -->
     <demand name="order 4 for product A">
       <quantity>100</quantity>
-      <due>2015-01-01T00:00:00</due>
+      <due>2015-03-01T00:00:00</due>
       <priority>1</priority>
       <item name="product A"/>
       <location name="Local DC 2b"/>

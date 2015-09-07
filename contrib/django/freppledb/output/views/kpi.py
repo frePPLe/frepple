@@ -17,7 +17,6 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import connections
-from django.conf import settings
 
 from freppledb.common.db import sql_datediff
 from freppledb.common.models import Parameter

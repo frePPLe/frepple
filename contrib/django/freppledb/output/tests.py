@@ -27,7 +27,7 @@ class OutputTest(TestCase):
 
   def setUp(self):
     # Login
-    login = self.client.login(username='admin', password='admin')
+    self.client.login(username='admin', password='admin')
 
   # Buffer
   def test_output_buffer(self):

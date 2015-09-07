@@ -672,6 +672,10 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       {
         // We are the first: only create an operationItemSupplier instance
         if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
+          // Use a single operation. If an alternate is required
+          // later on, we know it has the default priority and effectivity.
+          producing_operation = oper;
+        else
         {
           // Already create an alternate now
           OperationAlternate *superop = new OperationAlternate();
@@ -687,10 +691,6 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           subop->setEffective(supitem->getEffective());
           subop->setOwner(superop);
         }
-        else
-          // Use a single operation. If an alternate is required
-          // later on, we know it has the default priority and effectivity.
-          producing_operation = oper;
       }
     } // End loop over itemsuppliers
 
@@ -797,6 +797,10 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         {
           // We are the first: only create an operationItemSupplier instance
           if (itemdist->getEffective() == DateRange() && itemdist->getPriority() == 1)
+            // Use a single operation. If an alternate is required
+            // later on, we know it has the default priority and effectivity.
+            producing_operation = oper;
+          else
           {
             // Already create an alternate now
             OperationAlternate *superop = new OperationAlternate();
@@ -812,10 +816,6 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
             subop->setEffective(itemdist->getEffective());
             subop->setOwner(superop);
           }
-          else
-            // Use a single operation. If an alternate is required
-            // later on, we know it has the default priority and effectivity.
-            producing_operation = oper;
         }
       } // End loop over origin locations
 

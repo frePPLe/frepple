@@ -94,12 +94,12 @@ class GridField(object):
       setattr(self, key, value)
     if 'key' in kwargs:
       self.editable = False
-    if not 'title' in kwargs and not self.title:
+    if 'title' not in kwargs and not self.title:
       self.title = self.name and _(self.name) or ''
     if not self.name:
       self.sortable = False
       self.search = False
-    if not 'field_name' in kwargs:
+    if 'field_name' not in kwargs:
       self.field_name = self.name
 
   def __str__(self):
@@ -883,7 +883,7 @@ class GridReport(View):
   def dependent_models(m, found):
     ''' An auxilary method that constructs a set of all dependent models'''
     for f in m._meta.get_fields():
-      if f.is_relation and f.auto_created and f.related_model != m and not f.related_model in found:
+      if f.is_relation and f.auto_created and f.related_model != m and f.related_model not in found:
         found.update([f.related_model])
         GridReport.dependent_models(f.related_model, found)
 

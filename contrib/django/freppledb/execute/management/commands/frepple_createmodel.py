@@ -186,7 +186,7 @@ class Command(BaseCommand):
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
       database = DEFAULT_DB_ALIAS
-    if not database in settings.DATABASES:
+    if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     if 'user' in options and options['user']:
       try:
@@ -481,19 +481,19 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
   settings.DEBUG = False
   try:
     with transaction.atomic(using=database, savepoint=False):
-      
+
       # Delete previous contents
       connections[database].cursor().execute(
         "delete from common_bucketdetail where bucket_id = 'telescope'"
         )
-  
+
       # Create bucket
       try:
         b = Bucket.objects.using(database).get(name='telescope')
       except Bucket.DoesNotExist:
         b = Bucket(name='telescope', description='Time buckets with decreasing granularity')
       b.save(using=database)
-  
+
       # Create bucket for all dates in the past
       startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
       curdate = startdate
@@ -503,7 +503,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
         startdate=datetime(2000, 1, 1),
         enddate=curdate,
         ).save(using=database)
-  
+
       # Create daily buckets
       limit = curdate + timedelta(min_day_horizon)
       while curdate < limit or curdate.strftime("%w") != '0':
@@ -514,7 +514,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
           enddate=curdate + timedelta(1)
           ).save(using=database)
         curdate = curdate + timedelta(1)
-  
+
       # Create weekly buckets
       limit = startdate + timedelta(min_week_horizon)
       stop = False
@@ -530,7 +530,7 @@ def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=7
           enddate=enddate
           ).save(using=database)
         curdate = enddate
-  
+
       # Create monthly buckets
       limit = startdate + timedelta(min_month_horizon)
       while curdate < limit:

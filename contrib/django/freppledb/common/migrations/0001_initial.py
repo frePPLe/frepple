@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 ('lastmodified', models.DateTimeField(db_index=True, editable=False, default=django.utils.timezone.now, verbose_name='last modified')),
                 ('name', models.CharField(serialize=False, max_length=settings.NAMESIZE, primary_key=True, verbose_name='name')),
                 ('description', models.CharField(null=True, max_length=settings.DESCRIPTIONSIZE, blank=True, verbose_name='description')),
-                ('level', models.IntegerField(default=1, verbose_name='level', help_text='Higher values indicate more granular time buckets')),
+                ('level', models.IntegerField(verbose_name='level', help_text='Higher values indicate more granular time buckets')),
             ],
             options={
                 'verbose_name_plural': 'buckets',

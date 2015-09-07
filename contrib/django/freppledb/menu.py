@@ -27,11 +27,20 @@ from freppledb.common.menus import Menu
 menu = Menu()
 
 # Add our default topics.
-menu.addGroup("input", label=_("Input"), index=100)
-menu.addGroup("reports", label=_("Reports"), index=200)
-menu.addGroup("admin", label=_("Admin"), index=300)
-menu.addGroup("user", label=_("User"), index=400)
-menu.addGroup("help", label=_("Help"), index=500)
+menu.addGroup("sales", label=_("Sales"), index=100)
+menu.addGroup("inventory", label=_("Inventory"), index=200)
+menu.addGroup("capacity", label=_("Capacity"), index=300)
+menu.addGroup("purchasing", label=_("Purchasing"), index=400)
+menu.addGroup("distribution", label=_("Distribution"), index=500)
+menu.addGroup("manufacturing", label=_("Manufacturing"), index=600)
+menu.addGroup("admin", label=_("Admin"), index=700)
+menu.addGroup("help", label=_("Help"), index=800)
+menu.addItem("sales", "data", separator=True, index=1000)
+menu.addItem("inventory", "data", separator=True, index=1000)
+menu.addItem("capacity", "data", separator=True, index=1000)
+menu.addItem("purchasing", "data", separator=True, index=1000)
+menu.addItem("distribution", "data", separator=True, index=1000)
+menu.addItem("manufacturing", "data", separator=True, index=1000)
 
 # Adding the menu modules of each installed application.
 # Note that the menus of the apps are processed in reverse order.

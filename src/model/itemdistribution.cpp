@@ -463,54 +463,30 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     destbuffer->setLocation(dest);
   }
 
-  // Look for a matching matching supplying operation on this buffer.
-  // Here we also trigger the creation of its producing operation, which
-  // contains the logic to build possible transfer operations.
+  // Build the producing operation for this buffer.
+  destbuffer->getProducingOperation();
+
+  // Look for a matching operation replenishing this buffer.
   Operation *oper = NULL;
-  Operation* prodOper = destbuffer->getProducingOperation();
-  if (prodOper && prodOper->getType() == *OperationItemDistribution::metadata)
+  for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
+    flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
   {
+    if (flowiter->getOperation()->getType() != *OperationItemDistribution::metadata
+      || flowiter->getQuantity() <= 0)
+        continue;
+    OperationItemDistribution* opitemdist = static_cast<OperationItemDistribution*>(flowiter->getOperation());
     if (origin)
     {
-      // Only one transfer is allowed. Check whether the source location of the
-      // operation is matching this transfer.
-      for (Operation::flowlist::const_iterator fl = prodOper->getFlows().begin();
-          fl != prodOper->getFlows().end() && ok; ++ fl)
+      // Origin must match as well
+      for (Operation::flowlist::const_iterator fl = opitemdist->getFlows().begin();
+          fl != opitemdist->getFlows().end(); ++ fl)
       {
         if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(origin))
-          oper = prodOper;
+          oper = opitemdist;
       }
     }
     else
-      oper = prodOper;
-  }
-  else if (prodOper && prodOper->getType() == *OperationAlternate::metadata)
-  {
-    SubOperation::iterator soperiter = prodOper->getSubOperationIterator();
-    while (SubOperation *soper = soperiter.next())
-    {
-      if (soper->getType() == *OperationItemDistribution::metadata)
-      {
-        if (origin)
-        {
-          // Only one transfer is allowed. Check whether the source location of the
-          // operation is matching this transfer.
-          for (Operation::flowlist::const_iterator fl = prodOper->getFlows().begin();
-              fl != prodOper->getFlows().end() && ok; ++ fl)
-          {
-            if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(origin))
-              oper = prodOper;
-          }
-          if (oper)
-            break;
-        }
-        else
-        {
-          oper = prodOper;
-          break;
-        }
-      }
-    }
+      oper = opitemdist;
   }
 
   // No matching operation is found.
@@ -562,7 +538,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     opplan->setReference(ref);
   if (!consume)
     opplan->setConsumeMaterial(false);
-  opplan->createFlowLoads();
+  opplan->activate();
 
   // Return result
   Py_INCREF(opplan);

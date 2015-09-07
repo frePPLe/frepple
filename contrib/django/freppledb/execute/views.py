@@ -16,7 +16,6 @@
 #
 
 import os
-import signal
 import os.path
 import sys
 from datetime import datetime

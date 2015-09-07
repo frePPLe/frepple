@@ -51,6 +51,7 @@ a {
 }
 
 a:link, a:visited {
+  color: #333333;
   text-decoration: none;
 }
 
@@ -79,6 +80,19 @@ hr {
 }
 
 /* FORM DEFAULTS */
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    border: 1px solid #d3d3d3;
+    background: #ebebeb;
+    font-weight: normal;
+    color: #555;
+    float: right;
+}
+button:hover {
+        border: 1px solid #999;
+        background: #dadada;
+        color: #212121;
+}
 
 form {
   margin: 0;
@@ -382,7 +396,6 @@ nav ul {
   position: relative;
   display: inline-table;
   line-height: 40px;
-  height: 40px;
 }
 
 nav ul li input {
@@ -399,6 +412,7 @@ nav ul li:hover > ul {
 
 nav ul li {
   float: left;
+  padding: 0;
 }
 
 nav ul li a {
@@ -475,6 +489,11 @@ table thead th {
   border: 0;
   vertical-align: top;
   background: #e0e0e0;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    color: #666;
+    background: #e0e0e0;
 }
 
 table thead th.sorted {

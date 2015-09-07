@@ -20,7 +20,7 @@ div.breadcrumbs .fa {
 }
 
 /* Background color to display alternate rows in a table. */
-.altRow {
+.altRow, .row1 {
   background-color: #EEEEEE;
 }
 

@@ -426,7 +426,7 @@ class InventoryByLocationWidget(Widget):
       if (l > invmax) invmax = l;
       });
     var x_width = ($("#invByLoc").width()-margin) / data.length;
-    var y = d3.scale.linear().domain([0, invmax]).range([$("#invByLoc").height() - 5, 0]);
+    var y = d3.scale.linear().domain([0, invmax]).range([$("#invByLoc").height() - 20, 0]);
     var y_zero = y(0);
 
     // Draw the chart
@@ -438,7 +438,7 @@ class InventoryByLocationWidget(Widget):
      .attr("transform", function(d, i) { return "translate(" + (i * x_width + margin) + ",0)"; });
 
     bar.append("rect")
-      .attr("y", function(d) {return y(d[1]);})
+      .attr("y", function(d) {return y(d[1]) + 10;})
       .attr("height", function(d) {return y_zero - y(d[1]);})
       .attr("rx","3")
       .attr("width", x_width - 2)
@@ -457,7 +457,7 @@ class InventoryByLocationWidget(Widget):
       .orient("left");
     d3.select("#invByLoc")
       .append("g")
-      .attr("transform", "translate(" + margin + ",0)")
+      .attr("transform", "translate(" + margin + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
     '''
@@ -515,7 +515,7 @@ class InventoryByItemWidget(Widget):
       if (l > invmax) invmax = l;
       });
     var x_width = ($("#invByItem").width()-margin) / data.length;
-    var y = d3.scale.linear().domain([0, invmax]).range([$("#invByItem").height() - 5, 0]);
+    var y = d3.scale.linear().domain([0, invmax]).range([$("#invByItem").height() - 20, 0]);
     var y_zero = y(0);
 
     // Draw the chart
@@ -527,7 +527,7 @@ class InventoryByItemWidget(Widget):
      .attr("transform", function(d, i) { return "translate(" + (i * x_width + margin) + ",0)"; });
 
     bar.append("rect")
-      .attr("y", function(d) {return y(d[1]);})
+      .attr("y", function(d) {return y(d[1]) + 10;})
       .attr("height", function(d) {return y_zero - y(d[1]);})
       .attr("rx","3")
       .attr("width", x_width - 2)
@@ -546,7 +546,7 @@ class InventoryByItemWidget(Widget):
       .orient("left");
     d3.select("#invByItem")
       .append("g")
-      .attr("transform", "translate(" + margin + ",0)")
+      .attr("transform", "translate(" + margin + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
     '''

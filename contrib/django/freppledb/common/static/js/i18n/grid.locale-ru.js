@@ -1,25 +1,30 @@
-;(function($){
 /**
- * jqGrid Russian Translation v1.0 02.07.2009 (based on translation by Alexey Kanaev v1.1 21.01.2009, http://softcore.com.ru)
+ * jqGrid Russian Translation v1.0 02.07.2009 based on translation by Alexey Kanaev, v1.1 21.01.2009 (http://softcore.com.ru) and 07.01.2015 (http://smartcore.ru)
  * Sergey Dyagovchenko
  * http://d.sumy.ua
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "Просмотр {0} - {1} из {2}",
 		emptyrecords: "Нет записей для просмотра",
 		loadtext: "Загрузка...",
 		pgtext : "Стр. {0} из {1}",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		pgfirst : "Первая стр.",
+		pglast : "Последняя стр.",
+		pgnext : "След. стр.",
+		pgprev : "Пред. стр.",
+		pgrecs : "Записей на стр.",
+		showhide: "Показать/скрыть таблицу",
+		savetext: "Сохранение..."
 	},
 	search : {
 		caption: "Поиск...",
@@ -27,8 +32,8 @@ $.extend($.jgrid,{
 		Reset: "Сброс",
 		odata: [{ oper:'eq', text:"равно"},{ oper:'ne', text:"не равно"},{ oper:'lt', text:"меньше"},{ oper:'le', text:"меньше или равно"},{ oper:'gt', text:"больше"},{ oper:'ge', text:"больше или равно"},{ oper:'bw', text:"начинается с"},{ oper:'bn', text:"не начинается с"},{ oper:'in', text:"находится в"},{ oper:'ni', text:"не находится в"},{ oper:'ew', text:"заканчивается на"},{ oper:'en', text:"не заканчивается на"},{ oper:'cn', text:"содержит"},{ oper:'nc', text:"не содержит"},{ oper:'nu', text:"равно NULL"},{ oper:'nn', text:"не равно NULL"}],
 		groupOps: [	{ op: "AND", text: "все" }, { op: "OR", text: "любой" }],
-		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value"
+		operandTitle : "Выбрать операцию поиска",
+		resetTitle : "Сбросить"
 	},
 	edit : {
 		addCaption: "Добавить запись",
@@ -66,13 +71,13 @@ $.extend($.jgrid,{
 		bCancel: "Отмена"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 		edittitle: "Редактировать выбранную запись",
-		addtext:" ",
+		addtext: "",
 		addtitle: "Добавить новую запись",
-		deltext: " ",
+		deltext: "",
 		deltitle: "Удалить выбранную запись",
-		searchtext: " ",
+		searchtext: "",
 		searchtitle: "Найти записи",
 		refreshtext: "",
 		refreshtitle: "Обновить таблицу",
@@ -106,31 +111,34 @@ $.extend($.jgrid,{
 				"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
 			],
 			AmPm : ["am","pm","AM","PM"],
-			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th';},
+			S: function () {return "";},
 			srcformat: 'Y-m-d',
 			newformat: 'd.m.Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long:"Y-m-d H:i:s",
-				ISO8601Short:"Y-m-d",
 				ShortDate: "n.j.Y",
 				LongDate: "l, F d, Y",
 				FullDateTime: "l, F d, Y G:i:s",
 				MonthDay: "F d",
 				ShortTime: "G:i",
 				LongTime: "G:i:s",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "ru"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		ru: $.extend({}, locInfo, { name: "русский", nameEnglish: "Russian" }),
+		"ru-RU": $.extend({}, locInfo, { name: "русский (Россия)", nameEnglish: "Russian (Russia)" })
 	}
 });
-})(jQuery);
+}(jQuery));

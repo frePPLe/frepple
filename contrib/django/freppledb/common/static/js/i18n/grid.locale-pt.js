@@ -1,13 +1,17 @@
-;(function($){
 /**
  * jqGrid Portuguese Translation
-* Tradu��o da jqGrid em Portugues por Frederico Carvalho, http://www.eyeviewdesign.pt
+ * Tradução da jqGrid em Portugues por Frederico Carvalho, http://www.eyeviewdesign.pt
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "View {0} - {1} of {2}",
 	    emptyrecords: "No records to view",
@@ -18,7 +22,8 @@ $.extend($.jgrid,{
 		pgnext : "Next Page",
 		pgprev : "Previous Page",
 		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		showhide: "Toggle Expand Collapse Grid",
+		savetext: "A guardar..."
 	},
 	search : {
 	    caption: "Busca...",
@@ -40,11 +45,11 @@ $.extend($.jgrid,{
 		bNo : "No",
 		bExit : "Cancel",
 	    msg: {
-	        required:"Campo obrigat�rio",
+	        required:"Campo obrigatório",
 	        number:"Por favor, introduza um numero",
 	        minValue:"O valor deve ser maior ou igual que",
 	        maxValue:"O valor deve ser menor ou igual a",
-	        email: "N�o � um endere�o de email v�lido",
+	        email: "Não é um endereço de email válido",
 	        integer: "Por favor, introduza um numero inteiro",
 			url: "is not a valid URL. Prefix required ('http://' or 'https://')",
 			nodefined : " is not defined!",
@@ -64,13 +69,13 @@ $.extend($.jgrid,{
 	    bCancel: "Cancelar"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 	    edittitle: "Modificar registo seleccionado",
-		addtext:" ",
+		addtext: "",
 	    addtitle: "Adicionar novo registo",
-	    deltext: " ",
+	    deltext: "",
 	    deltitle: "Eliminar registo seleccionado",
-	    searchtext: " ",
+	    searchtext: "",
 	    searchtitle: "Procurar",
 	    refreshtext: "",
 	    refreshtitle: "Actualizar",
@@ -86,8 +91,8 @@ $.extend($.jgrid,{
 	},
 	errors : {
 		errcap : "Erro",
-		nourl : "N�o especificou um url",
-		norecords: "N�o existem dados para processar",
+		nourl : "Não especificou um url",
+		norecords: "Não existem dados para processar",
 	    model : "Tamanho do colNames <> colModel!"
 	},
 	formatter : {
@@ -96,39 +101,42 @@ $.extend($.jgrid,{
 		currency : {decimalSeparator:".", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0.00'},
 		date : {
 			dayNames:   [
-				"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab",
-				"Domingo", "Segunda-Feira", "Ter�a-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "S�bado"
+				"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb",
+				"Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"
 			],
 			monthNames: [
 				"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez",
-				"Janeiro", "Fevereiro", "Mar�o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+				"Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
 			],
 			AmPm : ["am","pm","AM","PM"],
-			S: function (j) {return j < 11 || j > 13 ? ['�', '�', '�', '�'][Math.min((j - 1) % 10, 3)] : '�'},
+			S: function (j) {return j < 11 || j > 13 ? ['º', 'º', 'º', 'º'][Math.min((j - 1) % 10, 3)] : 'º';},
 			srcformat: 'Y-m-d',
 			newformat: 'd/m/Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-	            ISO8601Long:"Y-m-d H:i:s",
-	            ISO8601Short:"Y-m-d",
 	            ShortDate: "n/j/Y",
 	            LongDate: "l, F d, Y",
 	            FullDateTime: "l, F d, Y g:i:s A",
 	            MonthDay: "F d",
 	            ShortTime: "g:i A",
 	            LongTime: "g:i:s A",
-	            SortableDateTime: "Y-m-d\\TH:i:s",
-	            UniversalSortableDateTime: "Y-m-d H:i:sO",
 	            YearMonth: "F, Y"
-	        },
-	        reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-	    target: '',
-	    checkbox : {disabled:true},
-		idName : 'id'
+	        }
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "pt"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		pt: $.extend({}, locInfo, { name: "Português", nameEnglish: "Portuguese" }),
+		"pt-PT": $.extend({}, locInfo, { name: "português (Portugal)", nameEnglish: "Portuguese (Portugal)" })
 	}
 });
-})(jQuery);
+}(jQuery));

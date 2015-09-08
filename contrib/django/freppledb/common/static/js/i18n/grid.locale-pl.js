@@ -1,4 +1,3 @@
-;(function($){
 /**
  * jqGrid Polish Translation
  * Łukasz Schab lukasz@freetree.pl
@@ -12,8 +11,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "Pokaż {0} - {1} z {2}",
 		emptyrecords: "Brak rekordów do pokazania",
@@ -24,7 +28,8 @@ $.extend($.jgrid,{
 		pgnext : "Next Page",
 		pgprev : "Previous Page",
 		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		showhide: "Toggle Expand Collapse Grid",
+		savetext: "Trwa zapisywanie..."
 	},
 	search : {
 		caption: "Wyszukiwanie...",
@@ -111,31 +116,34 @@ $.extend($.jgrid,{
 				"styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"
 				],
 			AmPm : ["","","",""],
-			S: function (j) {return '';},
+			S: function () {return '';},
 			srcformat: 'Y-m-d',
 			newformat: 'd.m.Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long: "Y-m-d H:i:s",
-				ISO8601Short: "Y-m-d",
 				ShortDate: "d.m.y",
 				LongDate: "l, j F Y",
 				FullDateTime: "l, j F Y H:i:s",
 				MonthDay: "j F",
 				ShortTime: "H:i",
 				LongTime: "H:i:s",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "pl"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		pl: $.extend({}, locInfo, { name: "polski", nameEnglish: "Polish" }),
+		"pl-PL": $.extend({}, locInfo, { name: "polski (Polska)", nameEnglish: "Polish (Poland)" })
 	}
 });
-})(jQuery);
+}(jQuery));

@@ -1,34 +1,39 @@
-;(function($){
 /**
  * jqGrid French Translation
- * Tony Tomov tony@trirand.com
+ * Tony Tomov tony@trirand.com with changes by Laurent Rajchenbach.
  * http://trirand.com/blog/ 
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "Enregistrements {0} - {1} sur {2}",
 		emptyrecords: "Aucun enregistrement à afficher",
 		loadtext: "Chargement...",
 		pgtext : "Page {0} sur {1}",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		pgfirst : "Première Page",
+		pglast : "Dernière Page",
+		pgnext : "Page Suivante",
+		pgprev : "Page Précédente",
+		pgrecs : "Enregistrements par page",
+		showhide: "Afficher/Masquer le tableau",
+		savetext: "Enregistrement..."
 	},
 	search : {
 		caption: "Recherche...",
 		Find: "Chercher",
 		Reset: "Réinitialiser",
-		odata: [{ oper:'eq', text:"égal"},{ oper:'ne', text:"différent"},{ oper:'lt', text:"inférieur"},{ oper:'le', text:"inférieur ou égal"},{ oper:'gt', text:"supérieur"},{ oper:'ge', text:"supérieur ou égal"},{ oper:'bw', text:"commence par"},{ oper:'bn', text:"ne commence pas par"},{ oper:'in', text:"est dans"},{ oper:'ni', text:"n'est pas dans"},{ oper:'ew', text:"finit par"},{ oper:'en', text:"ne finit pas par"},{ oper:'cn', text:"contient"},{ oper:'nc', text:"ne contient pas"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
+		odata: [{ oper:'eq', text:"égal"},{ oper:'ne', text:"différent"},{ oper:'lt', text:"inférieur"},{ oper:'le', text:"inférieur ou égal"},{ oper:'gt', text:"supérieur"},{ oper:'ge', text:"supérieur ou égal"},{ oper:'bw', text:"commence par"},{ oper:'bn', text:"ne commence pas par"},{ oper:'in', text:"est dans"},{ oper:'ni', text:"n'est pas dans"},{ oper:'ew', text:"finit par"},{ oper:'en', text:"ne finit pas par"},{ oper:'cn', text:"contient"},{ oper:'nc', text:"ne contient pas"},{ oper:'nu', text:"est null"},{ oper:'nn', text:"n'est pas null"}],
 		groupOps: [	{ op: "AND", text: "tous" },	{ op: "OR",  text: "au moins un" }	],
-		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value"
+		operandTitle : "Cliquer pour sélectionner l'opérateur de recherche.",
+		resetTitle : "Vider la valeur de recherche"
 	},
 	edit : {
 		addCaption: "Ajouter",
@@ -65,13 +70,13 @@ $.extend($.jgrid,{
 		bCancel: "Annuler"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 		edittitle: "Editer la ligne sélectionnée",
-		addtext:" ",
+		addtext: "",
 		addtitle: "Ajouter une ligne",
-		deltext: " ",
+		deltext: "",
 		deltitle: "Supprimer la ligne sélectionnée",
-		searchtext: " ",
+		searchtext: "",
 		searchtitle: "Chercher un enregistrement",
 		refreshtext: "",
 		refreshtitle: "Recharger le tableau",
@@ -105,31 +110,36 @@ $.extend($.jgrid,{
 				"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"
 			],
 			AmPm : ["am","pm","AM","PM"],
-			S: function (j) {return j == 1 ? 'er' : 'e';},
+			S: function (j) {
+				return j === 1 ? 'er' : 'e';
+			},
 			srcformat: 'Y-m-d',
 			newformat: 'd/m/Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long:"Y-m-d H:i:s",
-				ISO8601Short:"Y-m-d",
-				ShortDate: "n/j/Y",
-				LongDate: "l, F d, Y",
-				FullDateTime: "l, F d, Y g:i:s A",
-				MonthDay: "F d",
-				ShortTime: "g:i A",
-				LongTime: "g:i:s A",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
-				YearMonth: "F, Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+				ShortDate: "j/n/Y",
+				LongDate: "l j n F Y",
+				FullDateTime: "l j n F Y H:i:s",
+				MonthDay: "j F",
+				ShortTime: "H:i",
+				LongTime: "H:i:s",
+				YearMonth: "F Y"
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "fr-FR"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		fr: $.extend({}, locInfo, { name: "français", nameEnglish: "French" }),
+		"fr-FR": $.extend({}, locInfo, { name: "français (France)", nameEnglish: "French (France)" })
 	}
 });
-})(jQuery);
+}(jQuery));

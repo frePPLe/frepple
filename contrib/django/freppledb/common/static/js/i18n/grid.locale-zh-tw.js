@@ -1,4 +1,3 @@
-;(function($){
 /**
  * jqGrid Chinese (Taiwan) Translation for v4.2
  * linquize
@@ -8,8 +7,13 @@
  * http://www.gnu.org/licenses/gpl.html
  * 
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "{0} - {1} 共 {2} 條",
 		emptyrecords: "沒有記錄",
@@ -20,7 +24,8 @@ $.extend($.jgrid,{
 		pgnext : "Next Page",
 		pgprev : "Previous Page",
 		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		showhide: "Toggle Expand Collapse Grid",
+		savetext: "正在儲存..."
 	},
 	search : {
 		caption: "搜尋...",
@@ -111,28 +116,31 @@ $.extend($.jgrid,{
 			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th';},
 			srcformat: 'Y-m-d',
 			newformat: 'm-d-Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long:"Y-m-d H:i:s",
-				ISO8601Short:"Y-m-d",
 				ShortDate: "Y/j/n",
 				LongDate: "l, F d, Y",
 				FullDateTime: "l, F d, Y g:i:s A",
 				MonthDay: "F d",
 				ShortTime: "g:i A",
 				LongTime: "g:i:s A",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "tw"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		tw: $.extend({}, locInfo, { name: "中文(台灣)", nameEnglish: "Chinese (Traditional, Taiwan)" }),
+		"zh-TW": $.extend({}, locInfo, { name: "中文(台灣)", nameEnglish: "Chinese (Traditional, Taiwan)" })
 	}
 });
-})(jQuery);
+}(jQuery));

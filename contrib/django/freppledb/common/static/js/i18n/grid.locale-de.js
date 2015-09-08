@@ -1,4 +1,3 @@
-;(function($){
 /**
  * jqGrid German Translation
  * Version 1.0.0 (developed for jQuery Grid 3.3.1)
@@ -9,7 +8,7 @@
  * Andreas Flack
  * http://www.contentcontrol-berlin.de
  *
- * Updated for jQuery 4.4
+ * Updated for jQuery 4.4 and for 4.8 by
  * Oleg Kiriljuk oleg.kiriljuk@ok-soft-gmbh.com
  * the format corresponds now the format from
  * https://github.com/jquery/globalize/blob/master/lib/cultures/globalize.culture.de.js
@@ -18,19 +17,25 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "Zeige {0} - {1} von {2}",
 		emptyrecords: "Keine Datensätze vorhanden",
-		loadtext: "Lädt...",
+		loadtext: "Ladevorgang...",
 		pgtext : "Seite {0} von {1}",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		pgfirst : "Erste Seite",
+		pglast : "Letzte Seite",
+		pgnext : "Nächste Seite",
+		pgprev : "Vorherige Seite",
+		pgrecs : "Datensätze pro Seite",
+		showhide: "Tabelle auf- oder zuklappen",
+		savetext: "Wird gespeichert..."
 	},
 	search : {
 		caption: "Suche...",
@@ -38,8 +43,8 @@ $.extend($.jgrid,{
 		Reset: "Zurücksetzen",
 		odata: [{ oper:'eq', text:"gleich"},{ oper:'ne', text:"ungleich"},{ oper:'lt', text:"kleiner"},{ oper:'le', text:"kleiner gleich"},{ oper:'gt', text:"größer"},{ oper:'ge', text:"größer gleich"},{ oper:'bw', text:"beginnt mit"},{ oper:'bn', text:"beginnt nicht mit"},{ oper:'in', text:"ist in"},{ oper:'ni', text:"ist nicht in"},{ oper:'ew', text:"endet mit"},{ oper:'en', text:"endet nicht mit"},{ oper:'cn', text:"enthält"},{ oper:'nc', text:"enthält nicht"}, { oper:'nu', text:"ist Null" }, { oper:'nn', text:"ist nicht Null" }],
 		groupOps: [{ op: "AND", text: "alle" },{ op: "OR", text: "mindestens eine" }],
-		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value"
+		operandTitle : "Klicken Sie, um die Suchoperation zu wählen.",
+		resetTitle : "Suchwert zurücksetzen"
 	},
 	edit : {
 		addCaption: "Datensatz hinzufügen",
@@ -77,13 +82,13 @@ $.extend($.jgrid,{
 		bCancel: "Abbrechen"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 		edittitle: "Ausgewählte Zeile editieren",
-		addtext:" ",
+		addtext: "",
 		addtitle: "Neue Zeile einfügen",
-		deltext: " ",
+		deltext: "",
 		deltitle: "Ausgewählte Zeile löschen",
-		searchtext: " ",
+		searchtext: "",
 		searchtitle: "Datensatz suchen",
 		refreshtext: "",
 		refreshtitle: "Tabelle neu laden",
@@ -120,13 +125,10 @@ $.extend($.jgrid,{
 			S: function () {return '.';}, // one can also use 'er' instead of '.' but one have to use additional word like 'der' or 'den' before
 			srcformat: 'Y-m-d',
 			newformat: 'd.m.Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
 				// see http://php.net/manual/en/function.date.php for PHP format used in jqGrid
 				// and see http://docs.jquery.com/UI/Datepicker/formatDate
 				// and https://github.com/jquery/globalize#dates for alternative formats used frequently
-				ISO8601Long: "Y-m-d H:i:s",
-				ISO8601Short: "Y-m-d",
 				// short date:
 				//    d - Day of the month, 2 digits with leading zeros
 				//    m - Numeric representation of a month, with leading zeros
@@ -160,21 +162,27 @@ $.extend($.jgrid,{
 				//    i - Minutes with leading zeros
 				//    s - Seconds, with leading zeros
 				LongTime: "H:i:s", // in jQuery UI Datepicker: "HH:mm:ss"
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				// month with year
 				//    F - A full textual representation of a month
 				//    Y - A full numeric representation of a year, 4 digits
 				YearMonth: "F Y" // in jQuery UI Datepicker: "MMMM yyyy"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "de-DE"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		de: $.extend({}, locInfo, { name: "Deutsch", nameEnglish: "German" }),
+		"de-DE": $.extend({}, locInfo, { name: "Deutsch (Deutschland)", nameEnglish: "German (Germany)" })
 	}
 });
-})(jQuery);
+}(jQuery));

@@ -1,4 +1,3 @@
-;(function($){
 /**
  * jqGrid Arabic Translation
  * 
@@ -7,8 +6,15 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	name: "العربية",
+	nameEnglish: "Arabic",
+	isRTL: true,
 	defaults : {
 		recordtext: "تسجيل {0} - {1} على {2}",
 		emptyrecords: "لا يوجد تسجيل",
@@ -19,7 +25,8 @@ $.extend($.jgrid,{
 		pgnext : "Next Page",
 		pgprev : "Previous Page",
 		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid"
+		showhide: "Toggle Expand Collapse Grid",
+		savetext: "يتم الآن الحفظ..."
 	},
 	search : {
 		caption: "بحث...",
@@ -29,7 +36,7 @@ $.extend($.jgrid,{
 		groupOps: [	{ op: "مع", text: "الكل" },	{ op: "أو",  text: "لا أحد" }],
 		operandTitle : "Click to select search operation.",
 		resetTitle : "Reset Search Value"
-},
+	},
 	edit : {
 		addCaption: "اضافة",
 		editCaption: "تحديث",
@@ -65,13 +72,13 @@ $.extend($.jgrid,{
 		bCancel: "إلغاء"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 		edittitle: "تغيير التسجيل المختار",
-		addtext:" ",
+		addtext: "",
 		addtitle: "إضافة تسجيل",
-		deltext: " ",
+		deltext: "",
 		deltitle: "حذف التسجيل المختار",
-		searchtext: " ",
+		searchtext: "",
 		searchtitle: "بحث عن تسجيل",
 		refreshtext: "",
 		refreshtitle: "تحديث الجدول",
@@ -105,31 +112,33 @@ $.extend($.jgrid,{
 				"جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
 			],
 			AmPm : ["صباحا","مساءا","صباحا","مساءا"],
-			S: function (j) {return j == 1 ? 'er' : 'e';},
+			S: function (j) {return j === 1 ? 'er' : 'e';},
 			srcformat: 'Y-m-d',
 			newformat: 'd/m/Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long:"Y-m-d H:i:s",
-				ISO8601Short:"Y-m-d",
 				ShortDate: "n/j/Y",
 				LongDate: "l, F d, Y",
 				FullDateTime: "l, F d, Y g:i:s A",
 				MonthDay: "F d",
 				ShortTime: "g:i A",
 				LongTime: "g:i:s A",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "ar"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		ar: locInfo
 	}
 });
-})(jQuery);
+}(jQuery));

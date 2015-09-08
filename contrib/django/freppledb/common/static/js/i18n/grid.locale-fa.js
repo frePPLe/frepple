@@ -1,29 +1,34 @@
-;(function ($) {
 /**
  * jqGrid Persian Translation
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-	$.jgrid = $.jgrid || {};
-	$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function ($) {
+    "use strict";
+    var locInfo = {
+        isRTL: true,
         defaults: {
             recordtext: "نمابش {0} - {1} از {2}",
             emptyrecords: "رکوردی یافت نشد",
             loadtext: "بارگزاري...",
             pgtext: "صفحه {0} از {1}",
-			pgfirst : "First Page",
-			pglast : "Last Page",
-			pgnext : "Next Page",
-			pgprev : "Previous Page",
-			pgrecs : "Records per Page",
-			showhide: "Toggle Expand Collapse Grid"
+            pgfirst : "صفحه اول",
+            pglast : "صفحه آخر",
+            pgnext : "صفحه بعد",
+            pgprev : "صفحه قبل",
+            pgrecs : "رکورد در صفحه",
+            showhide: "Toggle Expand Collapse Grid",
+            savetext: "در حال ذخیره..."
         },
         search: {
             caption: "جستجو...",
             Find: "يافته ها",
             Reset: "از نو",
-            odata: [{ oper:'eq', text:"برابر"},{ oper:'ne', text:"نا برابر"},{ oper:'lt', text:"به"},{ oper:'le', text:"کوچکتر"},{ oper:'gt', text:"از"},{ oper:'ge', text:"بزرگتر"},{ oper:'bw', text:"شروع با"},{ oper:'bn', text:"شروع نشود با"},{ oper:'in', text:"نباشد"},{ oper:'ni', text:"عضو این نباشد"},{ oper:'ew', text:"اتمام با"},{ oper:'en', text:"تمام نشود با"},{ oper:'cn', text:"حاوی"},{ oper:'nc', text:"نباشد حاوی"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
+            odata: [{ oper: 'eq', text: "برابر" }, { oper: 'ne', text: "نا برابر" }, { oper: 'lt', text: "کوچکتر" }, { oper: 'le', text: "کوچکتر يا مساوي" }, { oper: 'gt', text: "بزرگتر" }, { oper: 'ge', text: "بزرگتر يا مساوي" }, { oper: 'bw', text: "شروع با" }, { oper: 'bn', text: "شروع نشود با" }, { oper: 'in', text: "عضو باشد" }, { oper: 'ni', text: "عضو این نباشد" }, { oper: 'ew', text: "اتمام با" }, { oper: 'en', text: "تمام نشود با" }, { oper: 'cn', text: "حاوی" }, { oper: 'nc', text: "نباشد حاوی" }, { oper: 'nu', text: 'تهی' }, { oper: 'nn', text: 'تهي نباشد' }],
             groupOps: [{
                 op: "AND",
                 text: "کل"
@@ -32,8 +37,8 @@
                 op: "OR",
                 text: "مجموع"
             }],
-			operandTitle : "Click to select search operation.",
-			resetTitle : "Reset Search Value"
+            operandTitle : "Click to select search operation.",
+            resetTitle: "تنظیم مجدد مقدار جستجو"
         },
         edit: {
             addCaption: "اضافه کردن رکورد",
@@ -41,13 +46,13 @@
             bSubmit: "ثبت",
             bCancel: "انصراف",
             bClose: "بستن",
-            saveData: "دیتا تعییر کرد! ذخیره شود؟",
+            saveData: "دیتا تغییر کرد! ذخیره شود؟",
             bYes: "بله",
             bNo: "خیر",
             bExit: "انصراف",
             msg: {
-                required: "فيلدها بايد ختما پر شوند",
-                number: "لطفا عدد وعتبر وارد کنيد",
+                required: "فيلدها بايد حتما پر شوند",
+                number: "لطفا عدد معتبر وارد کنيد",
                 minValue: "مقدار وارد شده بايد بزرگتر يا مساوي با",
                 maxValue: "مقدار وارد شده بايد کوچکتر يا مساوي",
                 email: "پست الکترونيک وارد شده معتبر نيست",
@@ -57,7 +62,7 @@
                 nodefined: " تعریف نشده!",
                 novalue: " مقدار برگشتی اجباری است!",
                 customarray: "تابع شما باید مقدار آرایه داشته باشد!",
-                customfcheck: "برای داشتن متد دلخواه شما باید سطون با چکینگ دلخواه داشته باشید!"
+                customfcheck: "برای داشتن متد دلخواه شما باید ستون با چکینگ دلخواه داشته باشید!"
             }
         },
         view: {
@@ -71,13 +76,13 @@
             bCancel: "ابطال"
         },
         nav: {
-            edittext: " ",
+            edittext: "",
             edittitle: "ويرايش رديف هاي انتخاب شده",
-            addtext: " ",
+            addtext: "",
             addtitle: "افزودن رديف جديد",
-            deltext: " ",
-            deltitle: "حذف ردبف هاي انتیاب شده",
-            searchtext: " ",
+            deltext: "",
+            deltitle: "حذف ردیف هاي انتخاب شده",
+            searchtext: "",
             searchtitle: "جستجوي رديف",
             refreshtext: "",
             refreshtitle: "بازيابي مجدد صفحه",
@@ -95,7 +100,7 @@
             errcap: "خطا",
             nourl: "هيچ آدرسي تنظيم نشده است",
             norecords: "هيچ رکوردي براي پردازش موجود نيست",
-            model: "طول نام ستون ها محالف ستون هاي مدل مي باشد!"
+            model: "طول نام ستون ها مخالف ستون هاي مدل مي باشد!"
         },
         formatter: {
             integer: {
@@ -121,34 +126,35 @@
                 monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "ژانويه", "فوريه", "مارس", "آوريل", "مه", "ژوئن", "ژوئيه", "اوت", "سپتامبر", "اکتبر", "نوامبر", "December"],
                 AmPm: ["ب.ظ", "ب.ظ", "ق.ظ", "ق.ظ"],
                 S: function (b) {
-                    return b < 11 || b > 13 ? ["st", "nd", "rd", "th"][Math.min((b - 1) % 10, 3)] : "th"
+                    return b < 11 || b > 13 ? ["st", "nd", "rd", "th"][Math.min((b - 1) % 10, 3)] : "th";
                 },
                 srcformat: "Y-m-d",
                 newformat: "d/m/Y",
-				parseRe : /[#%\\\/:_;.,\t\s-]/,
                 masks: {
-                    ISO8601Long: "Y-m-d H:i:s",
-                    ISO8601Short: "Y-m-d",
                     ShortDate: "n/j/Y",
                     LongDate: "l, F d, Y",
                     FullDateTime: "l, F d, Y g:i:s A",
                     MonthDay: "F d",
                     ShortTime: "g:i A",
                     LongTime: "g:i:s A",
-                    SortableDateTime: "Y-m-d\\TH:i:s",
-                    UniversalSortableDateTime: "Y-m-d H:i:sO",
                     YearMonth: "F, Y"
-                },
-                reformatAfterEdit: false,
-				userLocalTime : false
-            },
-            baseLinkUrl: "",
-            showAction: "نمايش",
-            target: "",
-            checkbox: {
-                disabled: true
-            },
-            idName: "id"
+                }
+            }
+        }
+    };
+    $.jgrid = $.jgrid || {};
+    $.extend(true, $.jgrid, {
+        defaults: {
+            locale: "fa"
+        },
+        locales: {
+            // In general the property name is free, but it's recommended to use the names based on
+            // http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+            // http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+            // One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+            // if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+            fa: $.extend({}, locInfo, { name: "فارسى", nameEnglish: "Persian" }),
+            "fa-IR": $.extend({}, locInfo, { name: "فارسى (ایران)", nameEnglish: "Persian (Iran)" })
         }
     });
-})(jQuery);
+}(jQuery));

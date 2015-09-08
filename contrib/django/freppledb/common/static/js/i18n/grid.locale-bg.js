@@ -1,4 +1,3 @@
-;(function($){
 /**
  * jqGrid Bulgarian Translation 
  * Tony Tomov tony@trirand.com
@@ -7,8 +6,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = $.jgrid || {};
-$.extend($.jgrid,{
+
+/*jslint white: true */
+/*global jQuery */
+(function($){
+"use strict";
+var locInfo = {
+	isRTL: false,
 	defaults : {
 		recordtext: "{0} - {1} от {2}",
 		emptyrecords: "Няма запис(и)",
@@ -19,15 +23,15 @@ $.extend($.jgrid,{
 		pgnext : "Следваща Стр.",
 		pgprev : "Предишна Стр.",
 		pgrecs : "Брой записи на Стр.",
-		showhide: "Свиване/Разтягане на таблицата"
-
+		showhide: "Свиване/Разтягане на таблицата",
+		savetext: "Записване..."
 	},
 	search : {
 		caption: "Търсене...",
 		Find: "Намери",
 		Reset: "Изчисти",
 		odata: [{ oper:'eq', text:"равно"},{ oper:'ne', text:"различно"},{ oper:'lt', text:"по-малко"},{ oper:'le', text:"по-малко или="},{ oper:'gt', text:"по-голямо"},{ oper:'ge', text:"по-голямо или ="},{ oper:'bw', text:"започва с"},{ oper:'bn', text:"не започва с"},{ oper:'in', text:"се намира в"},{ oper:'ni', text:"не се намира в"},{ oper:'ew', text:"завършва с"},{ oper:'en', text:"не завършава с"},{ oper:'cn', text:"съдържа"},{ oper:'nc', text:"не съдържа"},{ oper:'nu', text:'е NULL'},{ oper:'nn', text:'не е NULL'}],
-	    groupOps: [	{ op: "AND", text: "&nbsp;И " },	{ op: "OR",  text: "ИЛИ" }	],
+		groupOps: [ { op: "AND", text: "&nbsp;И " }, { op: "OR", text: "ИЛИ" } ],
 		operandTitle : "Натисни за избор на операнд.",
 		resetTitle : "Изчисти стойността"
 	},
@@ -67,13 +71,13 @@ $.extend($.jgrid,{
 		bCancel: "Отказ"
 	},
 	nav : {
-		edittext: " ",
+		edittext: "",
 		edittitle: "Редакция избран запис",
-		addtext:" ",
+		addtext: "",
 		addtitle: "Добавяне нов запис",
-		deltext: " ",
+		deltext: "",
 		deltitle: "Изтриване избран запис",
-		searchtext: " ",
+		searchtext: "",
 		searchtitle: "Търсене запис(и)",
 		refreshtext: "",
 		refreshtitle: "Обнови таблица",
@@ -108,35 +112,38 @@ $.extend($.jgrid,{
 			],
 			AmPm : ["","","",""],
 			S: function (j) {
-				if(j==7 || j==8 || j== 27 || j== 28) {
+				if(j === 7 || j === 8 || j === 27 || j === 28) {
 					return 'ми';
 				}
 				return ['ви', 'ри', 'ти'][Math.min((j - 1) % 10, 2)];
 			},
 			srcformat: 'Y-m-d',
 			newformat: 'd/m/Y',
-			parseRe : /[#%\\\/:_;.,\t\s-]/,
 			masks : {
-				ISO8601Long:"Y-m-d H:i:s",
-				ISO8601Short:"Y-m-d",
 				ShortDate: "n/j/Y",
 				LongDate: "l, F d, Y",
 				FullDateTime: "l, F d, Y g:i:s A",
 				MonthDay: "F d",
 				ShortTime: "g:i A",
 				LongTime: "g:i:s A",
-				SortableDateTime: "Y-m-d\\TH:i:s",
-				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
-			},
-			reformatAfterEdit : false,
-			userLocalTime : false
-		},
-		baseLinkUrl: '',
-		showAction: '',
-		target: '',
-		checkbox : {disabled:true},
-		idName : 'id'
+			}
+		}
+	}
+};
+$.jgrid = $.jgrid || {};
+$.extend(true, $.jgrid, {
+	defaults: {
+		locale: "bg"
+	},
+	locales: {
+		// In general the property name is free, but it's recommended to use the names based on
+		// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+		// http://rishida.net/utils/subtags/ and RFC 5646. See Appendix A of RFC 5646 for examples.
+		// One can use the lang attribute to specify language tags in HTML, and the xml:lang attribute for XML
+		// if it exists. See http://www.w3.org/International/articles/language-tags/#extlang
+		bg: $.extend({}, locInfo, { name: "български", nameEnglish: "Bulgarian" }),
+		"bg-BG": $.extend({}, locInfo, { name: "български (България)", nameEnglish: "Bulgarian (Bulgaria)" })
 	}
 });
-})(jQuery);
+}(jQuery));

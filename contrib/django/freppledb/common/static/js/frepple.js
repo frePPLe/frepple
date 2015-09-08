@@ -418,13 +418,13 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (i in cross)
+    for (i in cross_idx)
     {
       if (result != '') result += '<br/>';
-      if (cross[i]['editable'])
-        result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
+      if (cross[cross_idx[i]]['editable'])
+        result += '<span class="editablepivotcol">' + cross[cross_idx[i]]['name'] + '</span>';
       else
-        result += cross[i]['name'];
+        result += cross[cross_idx[i]]['name'];
     }
     return result;
   },
@@ -702,15 +702,93 @@ var grid = {
       overlay: 0,
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
-        var s = jQuery("#fbox_grid").jqFilter('toSQLString');
-        if (s) $('#curfilter').html(gettext("Filtered where") + " " + s);
-        else $('#curfilter').html("");
+        var s = grid.getFilterGroup(jQuery("#fbox_grid").jqFilter('filterData'), true);
+        $('#curfilter').html( s ? gettext("Filtered where") + " " + s : "" );
         },
       onReset : function() {
-        if (initialfilter != '') $('#curfilter').html(gettext("Filtered where") + " " + jQuery("#fbox_grid").jqFilter('toSQLString'));
-        else $('#curfilter').html("");
+        if (typeof initialfilter !== 'undefined' )
+        {
+          $("#grid").jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
+          $('#curfilter').html(gettext("Filtered where") + " " + grid.getFilterGroup(initialfilter, true) );
+        }
+        else
+          $('#curfilter').html("");
+        return true;
         }
       });
+  },
+
+  getFilterRule: function (rule)
+  {
+    // Find the column
+    var val, i, col, oper;
+    var columns = jQuery("#grid").jqGrid ('getGridParam', 'colModel');
+    for (i = 0; i < columns.length; i++)
+    {
+      if(columns[i].name === rule.field)
+      {
+        col = columns[i];
+        break;
+      }
+    }
+    if (col == undefined) return "";
+
+    // Find operator
+    for (var firstKey in $.jgrid.locales)
+      var operands = $.jgrid.locales[firstKey].search.odata;
+    for (i = 0; i < operands.length; i++)
+      if (operands[i].oper == rule.op)
+      {
+        oper = operands[i].text;
+        break;
+      }
+    if (oper == undefined) oper = rule.op;
+
+    // Final result
+    return col.label + ' ' + oper + ' "' + rule.data + '"';
+  },
+
+  getFilterGroup: function(group, first)
+  {
+    var s = "", index;
+
+    if (!first) s = "(";
+
+    if (group.groups !== undefined)
+    {
+      for (index = 0; index < group.groups.length; index++)
+      {
+        if (s.length > 1)
+        {
+          if (group.groupOp === "OR")
+            s += " || ";
+          else
+            s += " && ";
+        }
+        s += grid.getFilterGroup(group.groups[index], false);
+      }
+    }
+
+    if (group.rules !== undefined)
+    {
+      for (index = 0; index < group.rules.length; index++)
+      {
+        if (s.length > 1)
+        {
+          if (group.groupOp === "OR")
+            s += " || ";
+          else
+            s += " && ";
+        }
+        s += grid.getFilterRule(group.rules[index]);
+      }
+    }
+
+    if (!first) s += ")";
+
+    if (s === "()")
+      return ""; // ignore groups that don't have rules
+    return s;
   },
 
   markSelectedRow: function(id)

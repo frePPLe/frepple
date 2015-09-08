@@ -41,10 +41,10 @@ FrePPLe redistributes parts of the following third party software components:
 * contrib\django\freppledb\common\static\js\jquery.jqgid*.js
   contrib\django\freppledb\common\static\js\i18n\grid.locale-*.js
   contrib\django\freppledb\common\static\css\ui.jqgrid.css
-    Redistributed from jqGrid - jQuery Grid
-    Copyright (c) 2008, Tony Tomov, tony@trirand.com
-    Dual licensed under the MIT and GPL licenses
-    See http://www.trirand.com/blog/
+    Redistributed from free-jqGrid - jQuery Grid
+    Copyright (c) 2015, Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
+    Dual licensed under the MIT and GPL Version 2 licenses
+    See https://github.com/free-jqgrid/jqGrid
 
 * contrib\django\freppledb\common\static\js\jquery.uix.multiselect.*js
   contrib\django\freppledb\common\static\css\uix.multiselect.css

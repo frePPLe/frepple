@@ -91,21 +91,21 @@ menu.addItem(
   )
 menu.addItem(
   "manufacturing", "calendarbucket", url="/data/input/calendarbucket/",
-  report=freppledb.input.views.CalendarBucketList, index=1100, model=CalendarBucket
+  report=freppledb.input.views.CalendarBucketList, index=1300, model=CalendarBucket
   )
 menu.addItem(
   "manufacturing", "operations", url="/data/input/operation/",
-  report=freppledb.input.views.OperationList, index=1100, model=OperationPlan
+  report=freppledb.input.views.OperationList, index=1400, model=OperationPlan
   )
 menu.addItem(
   "manufacturing", "flows", url="/data/input/flow/",
-  report=freppledb.input.views.FlowList, index=1200, model=Flow
+  report=freppledb.input.views.FlowList, index=1500, model=Flow
   )
 menu.addItem(
   "manufacturing", "loads", url="/data/input/load/",
-  report=freppledb.input.views.LoadList, index=1300, model=Load
+  report=freppledb.input.views.LoadList, index=1600, model=Load
   )
 menu.addItem(
   "manufacturing", "suboperations", url="/data/input/suboperation/",
-  report=freppledb.input.views.SubOperationList, index=1100, model=SubOperation
+  report=freppledb.input.views.SubOperationList, index=1700, model=SubOperation
   )

@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
-{% block title %}{% if title %}{{title}} - {% endif %}frePPLe{% endblock %}
+{% block title %}{% if title %}{{title|capfirst}} - {% endif %}frePPLe{% endblock %}
 {% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 {% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/{{request.theme}}/jquery-ui.min.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/font-awesome.min.css" />

@@ -27,6 +27,7 @@ from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape
+from django.utils.text import capfirst
 
 from freppledb.common.models import User
 from freppledb import VERSION
@@ -105,7 +106,7 @@ class CrumbsNode(Node):
             '<span>%s<a href="%s%s%s">%s</a></span>' % (
               self.separator, req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-              str(escape(title))
+              str(escape(capfirst(title)))
               ),
             req.path
             ))

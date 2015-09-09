@@ -31,7 +31,7 @@
 
 <!-- Content -->
 <div id="content"><span style="display:block; padding-top:7px"/>
-    {% block content_title %}<div>{% if title %}<h1 style="float: left">{{title|escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div>{% endblock %}
+    {% block content_title %}<div>{% if title %}<h1 style="float: left">{{title|capfirst|escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div>{% endblock %}
     {% block content %}
     {% block object-tools %}{% endblock %}
     {{content}}

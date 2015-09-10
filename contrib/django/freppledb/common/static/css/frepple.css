@@ -438,7 +438,10 @@ nav ul ul li {
 }
 
 nav ul ul li a {
-  padding: 0 20px;
+  padding-top: 0px;
+  padding-right: 5px;
+  padding-bottom: 0px;
+  padding-left: 5px;
   font-size: 13px;
   line-height: 2em;
   height: 2em;

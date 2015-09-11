@@ -871,6 +871,7 @@ class PurchaseOrderList(GridReport):
     GridFieldText('reference', title=_('reference')),
     GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldText('supplier', title=_('supplier'), field_name='supplier__name', formatter='supplier'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),

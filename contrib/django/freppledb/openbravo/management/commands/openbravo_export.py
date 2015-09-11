@@ -72,7 +72,11 @@ class Command(BaseCommand):
 
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
-    self.openbravo_password = Parameter.getValue("openbravo.password", self.database)
+    # Passwords in djangosettings file are preferably used
+    if settings.OPENBRAVO_PASSWORDS.get(db) == '':
+        self.openbravo_password = Parameter.getValue("openbravo.password", self.database)
+    else:
+        self.openbravo_password = settings.OPENBRAVO_PASSWORDS.get(db)
     self.openbravo_host = Parameter.getValue("openbravo.host", self.database)
     self.openbravo_organization = Parameter.getValue("openbravo.organization", self.database)
     if not self.openbravo_user:

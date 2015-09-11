@@ -43,7 +43,12 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
   as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
   '''
   odoo_user = Parameter.getValue("odoo.user", db)
-  odoo_password = Parameter.getValue("odoo.password", db)
+
+  if settings.OODO_PASSWORDS.get(db) == '':
+    odoo_password = Parameter.getValue("odoo.password", db)
+  else:
+    odoo_password = settings.OODO_PASSWORDS.get(db)
+  
   odoo_db = Parameter.getValue("odoo.db", db)
   odoo_url = Parameter.getValue("odoo.url", db)
   odoo_company = Parameter.getValue("odoo.company", db)

@@ -36,6 +36,7 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
 # FrePPLe only supports the 'postgresql_psycopg2' database.
 # Create additional entries in this dictionary to define scenario schemas.
+
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -81,6 +82,22 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
+
+# If passwords are set in this file they will be used instead of the ones set in the database parameters table
+OODO_PASSWORDS = {
+  'default': '',
+  'scenario1': '',
+  'scenario2': '',
+  'scenario3': ''
+  }
+
+# If passwords are set in this file they will be used instead of the ones set in the database parameters table
+OPENBRAVO_PASSWORDS = {
+  'default': '',
+  'scenario1': '',
+  'scenario2': '',
+  'scenario3': ''
+  }
 
 # Keep each database connection alive for 10 minutes.
 CONN_MAX_AGE = 600

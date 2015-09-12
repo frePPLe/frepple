@@ -123,7 +123,10 @@ The connector has 2 components:
 
   * odoo.user: Odoo user for the connection
 
-  * odoo.password: Password for the connection
+  * | odoo.password: Password for the connection
+    | For improved security it is recommended to specify this password in the
+      setting ODOO_PASSWORDS in the djangosettings.py file rather then this
+      parameter.
 
   * | odoo.language: Language for the connection.
     | If translated names of products, items, locations, etc they will be used.

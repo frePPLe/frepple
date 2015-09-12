@@ -69,7 +69,10 @@ The connector provides the following functionality:
 
   * openbravo.user: Openbravo user used to for the connection
 
-  * openbravo.password: Password for the connection
+  * | openbravo.password: Password for the connection
+    | For improved security it is recommended to specify this password in the
+      setting OPENBRAVO_PASSWORDS in the djangosettings.py file rather then this
+      parameter.
 
 **Importing data from Openbravo to frePPLe**
 

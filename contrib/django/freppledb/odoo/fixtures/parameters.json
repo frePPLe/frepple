@@ -1,6 +1,6 @@
 [
 {"pk": "odoo.user", "model": "common.parameter", "fields": {"value": "admin", "description": "Odoo connector: User for the connection"}},
-{"pk": "odoo.password", "model": "common.parameter", "fields": {"value": "admin", "description": "Odoo connector: Password for the connection"}},
+{"pk": "odoo.password", "model": "common.parameter", "fields": {"value": "admin", "description": "Odoo connector: Password for the connection. For improved security we recommend specifying this password in the djangosettings.py file instead of this parameter."}},
 {"pk": "odoo.db", "model": "common.parameter", "fields": {"value": "odoo", "description": "Odoo connector: Database to connect to"}},
 {"pk": "odoo.url", "model": "common.parameter", "fields": {"value": "http://localhost:8069/", "description": "Odoo connector: URL for the XML-RPC server"}},
 {"pk": "odoo.language", "model": "common.parameter", "fields": {"value": "en_US", "description": "Odoo connector: Language to use during the connection"}},

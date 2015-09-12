@@ -23,12 +23,12 @@ from django.conf import settings
 class OperationPlan(models.Model):
   # Database fields
   id = models.IntegerField(_('identifier'), primary_key=True)
-  operation = models.CharField(_('operation'), max_length=settings.NAMESIZE, db_index=True, null=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='1.00')
-  unavailable = models.DecimalField(_('unavailable'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  operation = models.CharField(_('operation'), max_length=300, db_index=True, null=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
+  unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=4, default='0.00')
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
-  criticality = models.DecimalField(_('criticality'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
+  criticality = models.DecimalField(_('criticality'), max_digits=15, decimal_places=4, null=True)
   locked = models.BooleanField(_('locked'), default=True)
   owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
 
@@ -44,12 +44,12 @@ class OperationPlan(models.Model):
 class Problem(models.Model):
   # Database fields
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
-  owner = models.CharField(_('owner'), max_length=settings.NAMESIZE, db_index=True)
+  owner = models.CharField(_('owner'), max_length=300, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
-  description = models.CharField(_('description'), max_length=settings.NAMESIZE + 20)
+  description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)
   enddate = models.DateTimeField(_('end date'), db_index=True)
-  weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
 
   def __str__(self):
     return str(self.description)
@@ -63,14 +63,14 @@ class Problem(models.Model):
 
 class Constraint(models.Model):
   # Database fields
-  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True)
+  demand = models.CharField(_('demand'), max_length=300, db_index=True)
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
-  owner = models.CharField(_('owner'), max_length=settings.NAMESIZE, db_index=True)
+  owner = models.CharField(_('owner'), max_length=300, db_index=True)
   name = models.CharField(_('name'), max_length=20, db_index=True)
-  description = models.CharField(_('description'), max_length=settings.NAMESIZE + 20)
+  description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)
   enddate = models.DateTimeField(_('end date'), db_index=True)
-  weight = models.DecimalField(_('weight'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
 
   def __str__(self):
     return str(self.demand) + ' ' + str(self.description)
@@ -83,13 +83,13 @@ class Constraint(models.Model):
 
 
 class ResourceSummary(models.Model):
-  theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE)
+  theresource = models.CharField(_('resource'), max_length=300)
   startdate = models.DateTimeField(_('startdate'))
-  available = models.DecimalField(_('available'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
-  unavailable = models.DecimalField(_('unavailable'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
-  setup = models.DecimalField(_('setup'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
-  load = models.DecimalField(_('load'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
-  free = models.DecimalField(_('free'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True)
+  available = models.DecimalField(_('available'), max_digits=15, decimal_places=4, null=True)
+  unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=4, null=True)
+  setup = models.DecimalField(_('setup'), max_digits=15, decimal_places=4, null=True)
+  load = models.DecimalField(_('load'), max_digits=15, decimal_places=4, null=True)
+  free = models.DecimalField(_('free'), max_digits=15, decimal_places=4, null=True)
 
   class Meta:
     db_table = 'out_resourceplan'
@@ -101,12 +101,12 @@ class ResourceSummary(models.Model):
 
 class LoadPlan(models.Model):
   # Database fields
-  theresource = models.CharField(_('resource'), max_length=settings.NAMESIZE, db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+  theresource = models.CharField(_('resource'), max_length=300, db_index=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='loadplans')
-  setup = models.CharField(_('setup'), max_length=settings.NAMESIZE, null=True)
+  setup = models.CharField(_('setup'), max_length=300, null=True)
 
   def __str__(self):
       return self.theresource + ' ' + str(self.startdate) + ' ' + str(self.enddate)
@@ -120,11 +120,11 @@ class LoadPlan(models.Model):
 
 class FlowPlan(models.Model):
   # Database fields
-  thebuffer = models.CharField(_('buffer'), max_length=settings.NAMESIZE, db_index=True)
+  thebuffer = models.CharField(_('buffer'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='flowplans')
-  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
   flowdate = models.DateTimeField(_('date'), db_index=True)
-  onhand = models.DecimalField(_('onhand'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES)
+  onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
 
   def __str__(self):
     return self.thebuffer.name + str(self.flowdate)
@@ -138,12 +138,12 @@ class FlowPlan(models.Model):
 
 class Demand(models.Model):
   # Database fields
-  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True, null=True)
-  item = models.CharField(_('item'), max_length=settings.NAMESIZE, db_index=True, null=True)
-  customer = models.CharField(_('customer'), max_length=settings.NAMESIZE, db_index=True, null=True)
+  demand = models.CharField(_('demand'), max_length=300, db_index=True, null=True)
+  item = models.CharField(_('item'), max_length=300, db_index=True, null=True)
+  customer = models.CharField(_('customer'), max_length=300, db_index=True, null=True)
   due = models.DateTimeField(_('due'), db_index=True)
-  quantity = models.DecimalField(_('demand quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
-  planquantity = models.DecimalField(_('planned quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True)
+  quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
+  planquantity = models.DecimalField(_('planned quantity'), max_digits=15, decimal_places=4, default='0.00', null=True)
   plandate = models.DateTimeField(_('planned date'), null=True, db_index=True)
   operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
@@ -159,10 +159,10 @@ class Demand(models.Model):
 
 class DemandPegging(models.Model):
   # Database fields
-  demand = models.CharField(_('demand'), max_length=settings.NAMESIZE, db_index=True)
+  demand = models.CharField(_('demand'), max_length=300, db_index=True)
   level = models.IntegerField(_('level'))
   operationplan = models.IntegerField(_('operationplan'), db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, default='0.00')
+  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='0.00')
 
   def __str__(self):
     return self.demand \

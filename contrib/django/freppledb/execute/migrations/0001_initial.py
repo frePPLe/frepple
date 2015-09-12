@@ -22,22 +22,21 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('common', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Task',
             fields=[
-                ('id', models.AutoField(verbose_name='identifier', primary_key=True, editable=False, serialize=False)),
-                ('name', models.CharField(max_length=20, db_index=True, verbose_name='name', editable=False)),
-                ('submitted', models.DateTimeField(verbose_name='submitted', editable=False)),
-                ('started', models.DateTimeField(null=True, blank=True, verbose_name='started', editable=False)),
-                ('finished', models.DateTimeField(null=True, blank=True, verbose_name='submitted', editable=False)),
-                ('arguments', models.TextField(null=True, max_length=200, verbose_name='arguments', editable=False)),
-                ('status', models.CharField(max_length=20, verbose_name='status', editable=False)),
-                ('message', models.TextField(null=True, max_length=200, verbose_name='message', editable=False)),
-                ('user', models.ForeignKey(blank=True, verbose_name='user', editable=False, null=True, to=settings.AUTH_USER_MODEL)),
+                ('id', models.AutoField(editable=False, primary_key=True, verbose_name='identifier', serialize=False)),
+                ('name', models.CharField(editable=False, verbose_name='name', db_index=True, max_length=20)),
+                ('submitted', models.DateTimeField(editable=False, verbose_name='submitted')),
+                ('started', models.DateTimeField(null=True, editable=False, verbose_name='started', blank=True)),
+                ('finished', models.DateTimeField(null=True, editable=False, verbose_name='submitted', blank=True)),
+                ('arguments', models.TextField(null=True, editable=False, verbose_name='arguments', max_length=200)),
+                ('status', models.CharField(editable=False, verbose_name='status', max_length=20)),
+                ('message', models.TextField(null=True, editable=False, verbose_name='message', max_length=200)),
+                ('user', models.ForeignKey(verbose_name='user', null=True, editable=False, blank=True, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'execute_log',

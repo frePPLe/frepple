@@ -298,7 +298,7 @@ class Command(BaseCommand):
         unique_name = u'%s %s' % (searchkey, name)
         objectid = elem.get('id')
         description = elem.find("description").text
-        if description: description = description[0:settings.DESCRIPTIONSIZE]
+        if description: description = description[0:500]
         self.customers[objectid] = unique_name
         if unique_name in frepple_keys:
           update.append( (description, objectid, unique_name) )
@@ -397,7 +397,7 @@ class Command(BaseCommand):
         # description = name
         unique_name = u'%s %s' % (searchkey, name)
         description = elem.find("description").text
-        if description: description = description[0:settings.DESCRIPTIONSIZE]
+        if description: description = description[0:500]
         objectid = elem.get('id')
         self.items[objectid] = unique_name
         unused_keys.pop(unique_name, None)
@@ -495,7 +495,7 @@ class Command(BaseCommand):
         # A product name which consists of the searchkey field is the default.
         # If you want a longer more descriptive item name, use the following lines instead
         # unique_name = u'%s %s' % (searchkey, name)
-        # description = elem.find("description").text[0:settings.DESCRIPTIONSIZE]
+        # description = elem.find("description").text[0:500]
         unique_name = searchkey
         description = name
         objectid = elem.get('id')
@@ -963,7 +963,7 @@ class Command(BaseCommand):
           print("Warning: Multiple approved vendors for a part are not supported. Skipping record")
           continue
         prevproduct = product
-        businessPartner = elem.find('businessPartner').get('identifier')[:settings.CATEGORYSIZE]
+        businessPartner = elem.find('businessPartner').get('identifier')[:300]
         purchasingLeadTime = elem.find("purchasingLeadTime").text
         minimumOrderQty = elem.find("minimumOrderQty").text
         quantityPerPackage = elem.find("quantityPerPackage").text

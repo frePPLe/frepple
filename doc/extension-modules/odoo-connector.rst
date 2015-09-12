@@ -95,25 +95,9 @@ The connector has 2 components:
 * | **Edit the frePPLe configuration file djangosettings.py**
   | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
     (Windows).
-  | The following settings need updating:
-
-  * INSTALLED_APPS: Assure the freppledb.odoo is in the list of applications.
-    By default it is enabled.
-
-  * NAMESIZE: Increase the value from the default value to at least 130. The
-    long names are required because the connector often concatenates the name
-    of 2 Odoo entities to generate a unique name of an object in frePPLe.
-    Names in Odoo can be up to 60 characters.
-
-* | **Regenerate the frePPLe database schema**
-  | The edits in the previous step impact the size of a lot of database fields.
-  | You need to recreate the frePPLe database schema with the following
-    command. Erase any frePPLe tables that might already exist in your database
-    before running the command.
-
-  ::
-
-      frepplectl migrate
+  | Assure that the freppledb.odoo is included in the setting
+    INSTALLED_APPS which defines the enabled extensions. By default
+    it is enabled.
 
 * **Configure the frePPLe parameters**:
 

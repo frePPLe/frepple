@@ -38,28 +38,9 @@ The connector provides the following functionality:
 * | **Edit the configuration file djangosettings.py**
   | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
     (Windows).
-  | The following settings need updating:
-
-  * INSTALLED_APPS: Add or uncomment freppledb.openbravo in the list of
-    applications.
-
-  * NAMESIZE: Increase the value from the default value to at least 120. The
-    long names are required because the connector often concatenates the name
-    of 2 Openbravo entities to generate a unique name of an object in frePPLe.
-    Names in Openbravo can be up to 60 characters.
-
-  * CATEGORYSIZE: Increase the value to at least 32. This is required since
-    Openbravo uses UUIDs of 32 characters.
-
-* | **Regenerate the frePPLe database schema**
-  | The edits impact the size of a lot of database fields.
-  | You can create the database tables with the following command. Erase any
-    frePPLe tables that might already exist in your database before running
-    the command.
-
-  ::
-
-     frepplectl migrate
+  | Assure that the freppledb.openbravo is included in the setting
+    INSTALLED_APPS which defines the enabled extensions. By default
+    it is enabled.
 
 * | **Configure the following parameters**
   | In the frePPLe user interface, the menu item “admin/parameters” opens a

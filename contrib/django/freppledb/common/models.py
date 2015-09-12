@@ -35,7 +35,7 @@ class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index=True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
   lvl = models.PositiveIntegerField(null=True, editable=False, blank=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True,
+  name = models.CharField(_('name'), max_length=300, primary_key=True,
                           help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
                             related_name='xchildren', help_text=_('Hierarchical parent'))
@@ -154,7 +154,7 @@ class AuditModel(models.Model):
     - a string intended to describe the source system that supplied the record
   '''
   # Database fields
-  source = models.CharField(_('source'), db_index=True, max_length=settings.CATEGORYSIZE, null=True, blank=True)
+  source = models.CharField(_('source'), db_index=True, max_length=300, null=True, blank=True)
   lastmodified = models.DateTimeField(_('last modified'), editable=False, db_index=True, default=timezone.now)
 
   objects = MultiDBManager()  # The default manager.
@@ -172,9 +172,9 @@ class AuditModel(models.Model):
 
 class Parameter(AuditModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  value = models.CharField(_('value'), max_length=settings.NAMESIZE, null=True, blank=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  name = models.CharField(_('name'), max_length=60, primary_key=True)
+  value = models.CharField(_('value'), max_length=1000, null=True, blank=True)
+  description = models.CharField(_('description'), max_length=1000, null=True, blank=True)
 
   def __str__(self):
     return self.name
@@ -200,8 +200,8 @@ class Scenario(models.Model):
   )
 
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   status = models.CharField(
     _('status'), max_length=10,
     null=False, blank=False, choices=scenarioStatus
@@ -252,7 +252,7 @@ class User(AbstractUser):
     choices=settings.THEMES
     )
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
-  horizonbuckets = models.CharField(max_length=settings.NAMESIZE, blank=True, null=True)
+  horizonbuckets = models.CharField(max_length=300, blank=True, null=True)
   horizonstart = models.DateTimeField(blank=True, null=True)
   horizonend = models.DateTimeField(blank=True, null=True)
   horizontype = models.BooleanField(blank=True, default=True)
@@ -369,7 +369,7 @@ class Comment(models.Model):
     )
   object_pk = models.TextField(_('object ID'))
   content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-  comment = models.TextField(_('comment'), max_length=settings.COMMENT_MAX_LENGTH)
+  comment = models.TextField(_('comment'), max_length=3000)
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
   lastmodified = models.DateTimeField(_('last modified'), default=timezone.now, editable=False)
 
@@ -404,8 +404,8 @@ class Bucket(AuditModel):
   extra_strings = ( _('day'), _('week'), _('month'), _('quarter'), _('year') )
 
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   level = models.IntegerField(_('level'), help_text=_('Higher values indicate more granular time buckets'))
 
   def __str__(self):
@@ -421,7 +421,7 @@ class BucketDetail(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, db_index=True)
+  name = models.CharField(_('name'), max_length=300, db_index=True)
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
 

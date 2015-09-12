@@ -125,8 +125,8 @@ ALLOWED_HOSTS = [ '*' ]
 # system time zone.
 TIME_ZONE = 'Europe/Brussels'
 
-# A boolean that specifies if datetimes will be timezone-aware by default or not. 
-# If this is set to True, we will use timezone-aware datetimes internally. 
+# A boolean that specifies if datetimes will be timezone-aware by default or not.
+# If this is set to True, we will use timezone-aware datetimes internally.
 # Otherwise, we use naive datetimes in local time.
 USE_TZ = False     # TODO Test with this parameter set to True
 
@@ -160,6 +160,8 @@ MIDDLEWARE_CLASSES = (
     'freppledb.common.middleware.MultiDBMiddleware',
     'freppledb.common.middleware.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 CURRENCY=("","$")    # Prefix and suffix for currency strings
@@ -313,24 +315,6 @@ DEFAULT_DASHBOARD = [
     ("inventory_by_item",{"limit":10}),
   ]},
   ]
-
-# The size of the "name" key field of the database models
-NAMESIZE = 60
-
-# The size of the "description" field of the database models
-DESCRIPTIONSIZE = 200
-
-# The size of the "category", "subcategory" and "source" fields of the database models
-CATEGORYSIZE = 20
-
-# The number of digits for a number in the database models
-MAX_DIGITS = 15
-
-# The number of decimal places for a number in the database models
-DECIMAL_PLACES = 4
-
-# The maximum allowed length of a comment
-COMMENT_MAX_LENGTH = 3000
 
 # Port number for the CherryPy web server
 PORT = 8000

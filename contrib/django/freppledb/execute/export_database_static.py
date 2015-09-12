@@ -100,7 +100,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s)",
         [
           (
-            i.name, round(i.default, settings.DECIMAL_PLACES), i.source,
+            i.name, round(i.default, 4), i.source,
             self.timestamp
           )
           for i in frepple.calendars()
@@ -112,7 +112,7 @@ class exportStaticModel(object):
          where name=%s",
         [
           (
-            round(i.default, settings.DECIMAL_PLACES), i.source, self.timestamp,
+            round(i.default, 4), i.source, self.timestamp,
             i.name
           )
           for i in frepple.calendars()
@@ -160,7 +160,7 @@ class exportStaticModel(object):
         [
           (
             i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
-            round(i[0].value, settings.DECIMAL_PLACES),
+            round(i[0].value, 4),
             (i[0].days & 1) and True or False, (i[0].days & 2) and True or False,
             (i[0].days & 4) and True or False, (i[0].days & 8) and True or False,
             (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
@@ -186,13 +186,13 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
-            i.name, i.fence, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
-            round(i.size_multiple, settings.DECIMAL_PLACES),
-            i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+            i.name, i.fence, i.posttime, round(i.size_minimum, 4),
+            round(i.size_multiple, 4),
+            i.size_maximum < 9999999999999 and round(i.size_maximum, 4) or None,
             i.__class__.__name__[10:],
             isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
-            i.location and i.location.name or None, round(i.cost, settings.DECIMAL_PLACES),
+            i.location and i.location.name or None, round(i.cost, 4),
             isinstance(i, frepple.operation_alternate) and i.search or None,
             i.description, i.category, i.subcategory, i.source, self.timestamp
           )
@@ -207,13 +207,13 @@ class exportStaticModel(object):
          where name=%s''',
         [
           (
-            i.fence, i.posttime, round(i.size_minimum, settings.DECIMAL_PLACES),
-            round(i.size_multiple, settings.DECIMAL_PLACES),
-            i.size_maximum < 9999999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+            i.fence, i.posttime, round(i.size_minimum, 4),
+            round(i.size_multiple, 4),
+            i.size_maximum < 9999999999999 and round(i.size_maximum, 4) or None,
             i.__class__.__name__[10:],
             isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
-            i.location and i.location.name or None, round(i.cost, settings.DECIMAL_PLACES),
+            i.location and i.location.name or None, round(i.cost, 4),
             isinstance(i, frepple.operation_alternate) and i.search or None,
             i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
           )
@@ -276,7 +276,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
-            i.operation.name, i.buffer.name, round(i.quantity, settings.DECIMAL_PLACES),
+            i.operation.name, i.buffer.name, round(i.quantity, 4),
             i.type[5:], str(i.effective_start), str(i.effective_end),
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source, self.timestamp
           )
@@ -290,7 +290,7 @@ class exportStaticModel(object):
          where operation_id=%s and thebuffer_id=%s''',
         [
           (
-            round(i.quantity, settings.DECIMAL_PLACES),
+            round(i.quantity, 4),
             i.type[5:], str(i.effective_start), str(i.effective_end),
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
             self.timestamp, i.operation.name, i.buffer.name,
@@ -320,7 +320,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
-            i.operation.name, i.resource.name, round(i.quantity, settings.DECIMAL_PLACES),
+            i.operation.name, i.resource.name, round(i.quantity, 4),
             i.setup, str(i.effective_start), str(i.effective_end),
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp
@@ -335,7 +335,7 @@ class exportStaticModel(object):
          where operation_id=%s and resource_id=%s''',
         [
           (
-            round(i.quantity, settings.DECIMAL_PLACES),
+            round(i.quantity, 4),
             i.setup, str(i.effective_start), str(i.effective_end),
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp, i.operation.name, i.resource.name,
@@ -364,18 +364,18 @@ class exportStaticModel(object):
           (
             i.name, i.description, i.location and i.location.name or None,
             i.item and i.item.name or None,
-            round(i.onhand, settings.DECIMAL_PLACES), round(i.minimum, settings.DECIMAL_PLACES),
+            round(i.onhand, 4), round(i.minimum, 4),
             i.minimum_calendar and i.minimum_calendar.name or None,
             (not isinstance(i, frepple.buffer_procure) and i.producing) and i.producing.name or None,
             i.__class__.__name__[7:],
             isinstance(i, frepple.buffer_procure) and i.leadtime or None,
-            isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.mininventory, 4) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, 4) or None,
             i.mininterval,
             i.maxinterval < 99999999999 and i.maxinterval or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, 4) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
+            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.fence or None,
             round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
             i.source, self.timestamp
@@ -393,18 +393,18 @@ class exportStaticModel(object):
         [
           (
             i.description, i.location and i.location.name or None, i.item and i.item.name or None,
-            round(i.onhand, settings.DECIMAL_PLACES), round(i.minimum, settings.DECIMAL_PLACES),
+            round(i.onhand, 4), round(i.minimum, 4),
             i.minimum_calendar and i.minimum_calendar.name or None,
             (not isinstance(i, frepple.buffer_procure) and i.producing) and i.producing.name or None,
             i.__class__.__name__[7:],
             isinstance(i, frepple.buffer_procure) and i.leadtime or None,
-            isinstance(i, frepple.buffer_procure) and round(i.mininventory, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, settings.DECIMAL_PLACES) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.mininventory, 4) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, 4) or None,
             (i.mininterval!=-1) and i.mininterval or None,
             i.maxinterval < 99999999999 and i.maxinterval or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, settings.DECIMAL_PLACES) or None,
-            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, settings.DECIMAL_PLACES) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, 4) or None,
+            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
+            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.fence or None,
             round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
             i.source, self.timestamp, i.name
@@ -623,10 +623,10 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
-            i.name, str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority, i.item.name,
+            i.name, str(i.due), round(i.quantity, 4), i.priority, i.item.name,
             i.location.name if i.location else None, i.operation.name if i.operation else None,
             i.customer.name if i.customer else None,
-            round(i.minshipment, settings.DECIMAL_PLACES), round(i.maxlateness, settings.DECIMAL_PLACES),
+            round(i.minshipment, 4), round(i.maxlateness, 4),
             i.category, i.subcategory, i.source, self.timestamp
           )
           for i in frepple.demands()
@@ -640,12 +640,12 @@ class exportStaticModel(object):
          where name=%s''',
         [
           (
-            str(i.due), round(i.quantity, settings.DECIMAL_PLACES), i.priority,
+            str(i.due), round(i.quantity, 4), i.priority,
             i.item.name, i.location.name if i.location else None,
             i.operation.name if i.operation else None,
             i.customer.name if i.customer else None,
-            round(i.minshipment, settings.DECIMAL_PLACES),
-            round(i.maxlateness, settings.DECIMAL_PLACES),
+            round(i.minshipment, 4),
+            round(i.maxlateness, 4),
             i.category, i.subcategory, i.source, self.timestamp, i.name
           )
           for i in frepple.demands()
@@ -677,7 +677,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
          (
-           i.id, i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
+           i.id, i.operation.name, round(i.quantity, 4),
            str(i.start), str(i.end), i.status, i.source, self.timestamp
          )
          for i in frepple.operationplans()
@@ -689,7 +689,7 @@ class exportStaticModel(object):
          where id=%s''',
         [
          (
-           i.operation.name, round(i.quantity, settings.DECIMAL_PLACES),
+           i.operation.name, round(i.quantity, 4),
            str(i.start), str(i.end), i.status, i.source, self.timestamp, i.id
          )
          for i in frepple.operationplans()
@@ -720,7 +720,7 @@ class exportStaticModel(object):
           (
             i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, settings.DECIMAL_PLACES), round(i.maxearly, settings.DECIMAL_PLACES),
+            round(i.cost, 4), round(i.maxearly, 4),
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
             i.category, i.subcategory, i.source, self.timestamp
           )
@@ -738,8 +738,8 @@ class exportStaticModel(object):
             i.description, i.maximum,
             i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, settings.DECIMAL_PLACES),
-            round(i.maxearly, settings.DECIMAL_PLACES),
+            round(i.cost, 4),
+            round(i.maxearly, 4),
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
             i.category, i.subcategory, i.source, self.timestamp, i.name
           )
@@ -856,7 +856,7 @@ class exportStaticModel(object):
         [
          (
            i[0].name, i[1].priority, i[1].fromsetup, i[1].tosetup, i[1].duration,
-           round(i[1].cost, settings.DECIMAL_PLACES),
+           round(i[1].cost, 4),
            i.source, self.timestamp
          )
          for i in matrixrules()
@@ -868,7 +868,7 @@ class exportStaticModel(object):
          where setupmatrix_id=%s and priority=%s",
         [
           (
-            i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost, settings.DECIMAL_PLACES),
+            i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost, 4),
             i.source, self.timestamp, i[0].name, i[1].priority
           )
           for i[1] in matrixrules()
@@ -890,7 +890,7 @@ class exportStaticModel(object):
         [
           (
             i.name, i.description, i.operation and i.operation.name or None,
-            round(i.price, settings.DECIMAL_PLACES), i.category, i.subcategory,
+            round(i.price, 4), i.category, i.subcategory,
             i.source, self.timestamp
           )
           for i in frepple.items()
@@ -903,7 +903,7 @@ class exportStaticModel(object):
         [
           (
             i.description, i.operation and i.operation.name or None,
-            round(i.price, settings.DECIMAL_PLACES), i.category, i.subcategory,
+            round(i.price, 4), i.category, i.subcategory,
             i.source, self.timestamp, i.name
           )
           for i in frepple.items()

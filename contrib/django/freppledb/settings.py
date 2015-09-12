@@ -200,24 +200,6 @@ DEFAULT_THEME = 'sunny'
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100
 
-# The size of the "name" key field of the database models
-NAMESIZE = 60
-
-# The size of the "description" field of the database models
-DESCRIPTIONSIZE = 200
-
-# The size of the "category" and "subcategory" fields of the database models
-CATEGORYSIZE = 20
-
-# The number of digits for a number in the database models
-MAX_DIGITS = 15
-
-# The number of decimal places for a number in the database models
-DECIMAL_PLACES = 4
-
-# The maximum allowed length of a comment
-COMMENT_MAX_LENGTH = 3000
-
 # Port number for the CherryPy web server
 PORT = 8000
 

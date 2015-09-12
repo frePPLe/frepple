@@ -68,8 +68,8 @@ class DurationFormField(fields.RegexField):
   regex = re.compile(r'[0-9]*$')
 
   def __init__(self, *args, **kwargs):
-    self.max_digits = kwargs.pop('decimal_places', settings.DECIMAL_PLACES)
-    self.decimal_places = kwargs.pop('max_digits', settings.MAX_DIGITS)
+    self.max_digits = kwargs.pop('decimal_places', 4)
+    self.decimal_places = kwargs.pop('max_digits', 15)
     kwargs.update({
       'regex': self.regex,
       'error_message': _('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"')

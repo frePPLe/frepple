@@ -35,22 +35,22 @@ searchmode = (
 
 class Calendar(AuditModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
   description = models.CharField(
-    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True,
+    _('description'), max_length=500, null=True,
     blank=True
     )
   category = models.CharField(
-    _('category'), max_length=settings.CATEGORYSIZE, null=True,
+    _('category'), max_length=300, null=True,
     blank=True, db_index=True
     )
   subcategory = models.CharField(
-    _('subcategory'), max_length=settings.CATEGORYSIZE,
+    _('subcategory'), max_length=300,
     null=True, blank=True, db_index=True
     )
   defaultvalue = models.DecimalField(
-    _('default value'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='0.00', null=True, blank=True,
+    _('default value'), max_digits=15,
+    decimal_places=4, default='0.00', null=True, blank=True,
     help_text=_('Value to be used when no entry is effective')
     )
 
@@ -73,7 +73,7 @@ class CalendarBucket(AuditModel):
   enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030, 12, 31))
   value = models.DecimalField(
     _('value'), default='0.00', blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    max_digits=15, decimal_places=4
     )
   priority = models.IntegerField(_('priority'), default=0, blank=True, null=True)
   monday = models.BooleanField(_('Monday'), blank=True, default=True)
@@ -98,9 +98,9 @@ class CalendarBucket(AuditModel):
 
 class Location(AuditModel, HierarchyModel):
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
     null=True, blank=True,
@@ -119,9 +119,9 @@ class Location(AuditModel, HierarchyModel):
 
 class Customer(AuditModel, HierarchyModel):
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
 
   def __str__(self):
     return self.name
@@ -135,16 +135,16 @@ class Customer(AuditModel, HierarchyModel):
 
 class Item(AuditModel, HierarchyModel):
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   operation = models.ForeignKey(
     'Operation', verbose_name=_('delivery operation'), null=True, blank=True,
     help_text=_("Default operation used to ship a demand for this item")
     )
   price = models.DecimalField(
     _('price'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Selling price of the item")
     )
 
@@ -160,9 +160,9 @@ class Item(AuditModel, HierarchyModel):
 
 class Supplier(AuditModel, HierarchyModel):
   # Database fields
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
 
   def __str__(self):
     return self.name
@@ -192,22 +192,22 @@ class ItemSupplier(AuditModel):
     )
   leadtime = DurationField(
     _('lead time'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Purchasing lead time')
     )
   sizeminimum = models.DecimalField(
-    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    _('size minimum'), max_digits=15, decimal_places=4,
     null=True, blank=True, default='1.0',
     help_text=_("A minimum purchasing quantity")
     )
   sizemultiple = models.DecimalField(
     _('size multiple'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A multiple purchasing quantity")
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Purchasing cost per unit")
     )
   priority = models.IntegerField(
@@ -255,22 +255,22 @@ class ItemDistribution(AuditModel):
     )
   leadtime = DurationField(
     _('lead time'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Shipping lead time')
     )
   sizeminimum = models.DecimalField(
-    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    _('size minimum'), max_digits=15, decimal_places=4,
     null=True, blank=True, default='1.0',
     help_text=_("A minimum shipping quantity")
     )
   sizemultiple = models.DecimalField(
     _('size multiple'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A multiple shipping quantity")
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Shipping cost per unit")
     )
   priority = models.IntegerField(
@@ -311,51 +311,51 @@ class Operation(AuditModel):
   )
 
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='fixed_time')
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   location = models.ForeignKey(
     Location, verbose_name=_('location'),
     null=True, blank=True, db_index=True
     )
   fence = DurationField(
-    _('release fence'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('release fence'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP")
     )
   posttime = DurationField(
-    _('post-op time'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('post-op time'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("A delay time to be respected as a soft constraint after ending the operation")
     )
   sizeminimum = models.DecimalField(
-    _('size minimum'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    _('size minimum'), max_digits=15, decimal_places=4,
     null=True, blank=True, default='1.0',
     help_text=_("A minimum quantity for operationplans")
     )
   sizemultiple = models.DecimalField(
     _('size multiple'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A multiple quantity for operationplans")
     )
   sizemaximum = models.DecimalField(
     _('size maximum'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A maximum quantity for operationplans")
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Cost per operationplan unit")
     )
   duration = DurationField(
     _('duration'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A fixed duration for the operation")
     )
   duration_per = DurationField(
     _('duration per unit'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("A variable duration for the operation")
     )
   search = models.CharField(
@@ -431,9 +431,9 @@ class Buffer(AuditModel, HierarchyModel):
   )
 
   # Fields common to all buffer types
-  description = models.CharField(_('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True)
-  category = models.CharField(_('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
-  subcategory = models.CharField(_('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True)
+  description = models.CharField(_('description'), max_length=500, null=True, blank=True)
+  category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
+  subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
   location = models.ForeignKey(
     Location, verbose_name=_('location'), null=True,
@@ -442,12 +442,12 @@ class Buffer(AuditModel, HierarchyModel):
   item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
   onhand = models.DecimalField(
     _('onhand'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     default="0.00", help_text=_('current inventory')
     )
   minimum = models.DecimalField(
     _('minimum'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     default="0.00", help_text=_('Safety stock')
     )
   minimum_calendar = models.ForeignKey(
@@ -468,47 +468,47 @@ class Buffer(AuditModel, HierarchyModel):
   # Extra fields for procurement buffers
   leadtime = DurationField(
     _('leadtime'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Leadtime for supplier of a procure buffer')
     )
   fence = DurationField(
     _('fence'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Frozen fence for creating new procurements')
     )
   min_inventory = models.DecimalField(
     _('min_inventory'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Inventory level that triggers replenishment of a procure buffer')
     )
   max_inventory = models.DecimalField(
     _('max_inventory'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Inventory level to which a procure buffer is replenished')
     )
   min_interval = DurationField(
     _('min_interval'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Minimum time interval between replenishments of a procure buffer')
     )
   max_interval = DurationField(
     _('max_interval'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Maximum time interval between replenishments of a procure buffer')
     )
   size_minimum = models.DecimalField(
     _('size_minimum'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Minimum size of replenishments of a procure buffer')
     )
   size_multiple = models.DecimalField(
     _('size_multiple'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Replenishments of a procure buffer are a multiple of this quantity')
     )
   size_maximum = models.DecimalField(
     _('size_maximum'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Maximum size of replenishments of a procure buffer')
     )
 
@@ -539,7 +539,7 @@ class Buffer(AuditModel, HierarchyModel):
 
 class SetupMatrix(AuditModel):
   # Database fields
-  name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
 
   # Methods
   def __str__(self):
@@ -562,19 +562,19 @@ class SetupRule(AuditModel):
     )
   priority = models.IntegerField(_('priority'))
   fromsetup = models.CharField(
-    _('from setup'), max_length=settings.NAMESIZE, blank=True, null=True,
+    _('from setup'), max_length=300, blank=True, null=True,
     help_text=_("Name of the old setup (wildcard characters are supported)")
     )
   tosetup = models.CharField(
-    _('to setup'), max_length=settings.NAMESIZE, blank=True, null=True,
+    _('to setup'), max_length=300, blank=True, null=True,
     help_text=_("Name of the new setup (wildcard characters are supported)")
     )
   duration = DurationField(
-    _('duration'), max_digits=settings.MAX_DIGITS, decimal_places=0, null=True, blank=True,
+    _('duration'), max_digits=15, decimal_places=0, null=True, blank=True,
     help_text=_("Duration of the changeover")
     )
   cost = models.DecimalField(
-    _('cost'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('cost'), max_digits=15, decimal_places=4, null=True, blank=True,
     help_text=_("Cost of the conversion")
     )
 
@@ -599,20 +599,20 @@ class Resource(AuditModel, HierarchyModel):
 
   # Database fields
   description = models.CharField(
-    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True
+    _('description'), max_length=500, null=True, blank=True
     )
   category = models.CharField(
-    _('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    _('category'), max_length=300, null=True, blank=True, db_index=True
     )
   subcategory = models.CharField(
-    _('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    _('subcategory'), max_length=300, null=True, blank=True, db_index=True
     )
   type = models.CharField(
     _('type'), max_length=20, null=True, blank=True, choices=types, default='default'
     )
   maximum = models.DecimalField(
     _('maximum'), default="1.00", null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Size of the resource')
     )
   maximum_calendar = models.ForeignKey(
@@ -626,10 +626,10 @@ class Resource(AuditModel, HierarchyModel):
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Cost for using 1 unit of the resource for 1 hour"))
   maxearly = DurationField(
-    _('max early'), max_digits=settings.MAX_DIGITS, decimal_places=0,
+    _('max early'), max_digits=15, decimal_places=0,
     null=True, blank=True,
     help_text=_('Time window before the ask date where we look for available capacity')
     )
@@ -639,7 +639,7 @@ class Resource(AuditModel, HierarchyModel):
     help_text=_('Setup matrix defining the conversion time and cost')
     )
   setup = models.CharField(
-    _('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('setup'), max_length=300, null=True, blank=True,
     help_text=_('Setup of the resource at the start of the plan')
     )
 
@@ -666,7 +666,7 @@ class Resource(AuditModel, HierarchyModel):
 class Skill(AuditModel):
   # Database fields
   name = models.CharField(
-    _('name'), max_length=settings.NAMESIZE, primary_key=True,
+    _('name'), max_length=300, primary_key=True,
     help_text=_('Unique identifier')
     )
 
@@ -732,7 +732,7 @@ class Flow(AuditModel):
     )
   quantity = models.DecimalField(
     _('quantity'), default='1.00',
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Quantity to consume or produce per operationplan unit')
     )
   type = models.CharField(
@@ -748,11 +748,11 @@ class Flow(AuditModel):
     help_text=_('Validity end date')
     )
   name = models.CharField(
-    _('name'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('name'), max_length=300, null=True, blank=True,
     help_text=_('Optional name of this flow')
     )
   alternate = models.CharField(
-    _('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('alternate'), max_length=300, null=True, blank=True,
     help_text=_('Puts the flow in a group of alternate flows')
     )
   priority = models.IntegerField(
@@ -783,7 +783,7 @@ class Load(AuditModel):
   skill = models.ForeignKey(Skill, verbose_name=_('skill'), null=True, blank=True, db_index=True, related_name='loads')
   quantity = models.DecimalField(
     _('quantity'), default='1.00',
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    max_digits=15, decimal_places=4
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
@@ -794,11 +794,11 @@ class Load(AuditModel):
     help_text=_('Validity end date')
     )
   name = models.CharField(
-    _('name'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('name'), max_length=300, null=True, blank=True,
     help_text=_('Optional name of this load')
     )
   alternate = models.CharField(
-    _('alternate'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('alternate'), max_length=300, null=True, blank=True,
     help_text=_('Puts the load in a group of alternate loads')
     )
   priority = models.IntegerField(
@@ -806,7 +806,7 @@ class Load(AuditModel):
     help_text=_('Priority of this load in a group of alternates')
     )
   setup = models.CharField(
-    _('setup'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('setup'), max_length=300, null=True, blank=True,
     help_text=_('Setup required on the resource for this operation')
     )
   search = models.CharField(
@@ -843,7 +843,7 @@ class OperationPlan(AuditModel):
     help_text=_('Status of the order')
     )
   reference = models.CharField(
-    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('reference'), max_length=300, null=True, blank=True,
     help_text=_('External reference of this order')
     )
   operation = models.ForeignKey(
@@ -851,14 +851,14 @@ class OperationPlan(AuditModel):
     db_index=True
     )
   quantity = models.DecimalField(
-    _('quantity'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    _('quantity'), max_digits=15,
+    decimal_places=4, default='1.00'
     )
   startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
   criticality = models.DecimalField(
-    _('criticality'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('criticality'), max_digits=15,
+    decimal_places=4, null=True, blank=True,
     )
   owner = models.ForeignKey(
     'self', verbose_name=_('owner'), null=True, blank=True,
@@ -889,7 +889,7 @@ class DistributionOrder(AuditModel):
     help_text=_('Unique identifier')
     )
   reference = models.CharField(
-    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('reference'), max_length=300, null=True, blank=True,
     help_text=_('External reference of this order')
     )
   status = models.CharField(
@@ -909,8 +909,8 @@ class DistributionOrder(AuditModel):
     related_name='destinations', db_index=True
     )
   quantity = models.DecimalField(
-    _('quantity'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    _('quantity'), max_digits=15,
+    decimal_places=4, default='1.00'
     )
   startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
@@ -918,8 +918,8 @@ class DistributionOrder(AuditModel):
     help_text=_('Consume material at origin location')
     )
   criticality = models.DecimalField(
-    _('criticality'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('criticality'), max_digits=15,
+    decimal_places=4, null=True, blank=True,
     )
 
   def __str__(self):
@@ -946,7 +946,7 @@ class PurchaseOrder(AuditModel):
     help_text=_('Unique identifier')
     )
   reference = models.CharField(
-    _('reference'), max_length=settings.NAMESIZE, null=True, blank=True,
+    _('reference'), max_length=300, null=True, blank=True,
     help_text=_('External reference of this order')
     )
   status = models.CharField(
@@ -966,14 +966,14 @@ class PurchaseOrder(AuditModel):
     db_index=True
     )
   quantity = models.DecimalField(
-    _('quantity'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, default='1.00'
+    _('quantity'), max_digits=15,
+    decimal_places=4, default='1.00'
     )
   startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
   criticality = models.DecimalField(
-    _('criticality'), max_digits=settings.MAX_DIGITS,
-    decimal_places=settings.DECIMAL_PLACES, null=True, blank=True,
+    _('criticality'), max_digits=15,
+    decimal_places=4, null=True, blank=True,
     )
 
   def __str__(self):
@@ -1006,13 +1006,13 @@ class Demand(AuditModel, HierarchyModel):
 
   # Database fields
   description = models.CharField(
-    _('description'), max_length=settings.DESCRIPTIONSIZE, null=True, blank=True
+    _('description'), max_length=500, null=True, blank=True
     )
   category = models.CharField(
-    _('category'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    _('category'), max_length=300, null=True, blank=True, db_index=True
     )
   subcategory = models.CharField(
-    _('subcategory'), max_length=settings.CATEGORYSIZE, null=True, blank=True, db_index=True
+    _('subcategory'), max_length=300, null=True, blank=True, db_index=True
     )
   customer = models.ForeignKey(
     Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True
@@ -1036,7 +1036,7 @@ class Demand(AuditModel, HierarchyModel):
     help_text=_('Operation used to satisfy this demand')
     )
   quantity = models.DecimalField(
-    _('quantity'), max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES
+    _('quantity'), max_digits=15, decimal_places=4
     )
   priority = models.PositiveIntegerField(
     _('priority'), default=10, choices=demandpriorities,
@@ -1044,12 +1044,12 @@ class Demand(AuditModel, HierarchyModel):
     )
   minshipment = models.DecimalField(
     _('minimum shipment'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_('Minimum shipment quantity when planning this demand')
     )
   maxlateness = DurationField(
     _('maximum lateness'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
+    max_digits=15, decimal_places=4,
     help_text=_("Maximum lateness allowed when planning this demand")
     )
 

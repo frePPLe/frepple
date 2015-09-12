@@ -61,8 +61,8 @@ def exportProblems(process):
     process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.entity, i.name,
        isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
-       i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-       round(i.weight, settings.DECIMAL_PLACES)
+       i.description, str(i.start), str(i.end),
+       round(i.weight, 4)
     )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported problems in %.2f seconds' % (time() - starttime))
@@ -77,8 +77,8 @@ def exportConstraints(process):
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          d.name, i.entity, i.name,
          isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
-         i.description[0:settings.NAMESIZE + 20], str(i.start), str(i.end),
-         round(i.weight, settings.DECIMAL_PLACES)
+         i.description, str(i.start), str(i.end),
+         round(i.weight, 4)
        )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported constraints in %.2f seconds' % (time() - starttime))
@@ -94,9 +94,9 @@ def exportOperationplans(process):
     #  continue
     for j in i.operationplans:
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        j.id, i.name[0:settings.NAMESIZE],
-        round(j.quantity, settings.DECIMAL_PLACES), str(j.start), str(j.end),
-        round(j.criticality, settings.DECIMAL_PLACES), j.locked, j.unavailable,
+        j.id, i.name[0:300],
+        round(j.quantity, 4), str(j.start), str(j.end),
+        round(j.criticality, 4), j.locked, j.unavailable,
         j.owner and j.owner.id or "\\N"
         )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
@@ -111,8 +111,8 @@ def exportFlowplans(process):
     for j in i.flowplans:
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\n" % (
          j.operationplan.id, j.buffer.name,
-         round(j.quantity, settings.DECIMAL_PLACES),
-         str(j.date), round(j.onhand, settings.DECIMAL_PLACES)
+         round(j.quantity, 4),
+         str(j.date), round(j.onhand, 4)
          )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported flowplans in %.2f seconds' % (time() - starttime))
@@ -127,7 +127,7 @@ def exportLoadplans(process):
       if j.quantity < 0:
         process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\n" % (
           j.operationplan.id, j.resource.name,
-          round(-j.quantity, settings.DECIMAL_PLACES),
+          round(-j.quantity, 4),
           str(j.startdate), str(j.enddate),
           j.setup and j.setup or "\\N"
           )).encode(encoding))
@@ -174,11 +174,11 @@ def exportResourceplans(process):
     for j in i.plan(buckets):
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
        i.name, str(j['start']),
-       round(j['available'], settings.DECIMAL_PLACES),
-       round(j['unavailable'], settings.DECIMAL_PLACES),
-       round(j['setup'], settings.DECIMAL_PLACES),
-       round(j['load'], settings.DECIMAL_PLACES),
-       round(j['free'], settings.DECIMAL_PLACES)
+       round(j['available'], 4),
+       round(j['unavailable'], 4),
+       round(j['setup'], 4),
+       round(j['load'], 4),
+       round(j['free'], 4)
        )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported resourceplans in %.2f seconds' % (time() - starttime))
@@ -198,14 +198,14 @@ def exportDemand(process):
           cur = 0
       yield (
         d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
-        round(cur, settings.DECIMAL_PLACES), str(i.end),
-        round(i.quantity, settings.DECIMAL_PLACES), i.id
+        round(cur, 4), str(i.end),
+        round(i.quantity, 4), i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
         d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
-        round(d.quantity - cumplanned, settings.DECIMAL_PLACES), "\\N",
+        round(d.quantity - cumplanned, 4), "\\N",
         "\\N", "\\N"
         )
 
@@ -235,7 +235,7 @@ def exportPegging(process):
     for j in i.pegging:
       process.stdin.write(("%s\t%s\t%s\t%s\n" % (
         n, str(j.level),
-        j.operationplan.id, round(j.quantity, settings.DECIMAL_PLACES)
+        j.operationplan.id, round(j.quantity, 4)
         )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported pegging in %.2f seconds' % (time() - starttime))
@@ -259,11 +259,11 @@ def exportPurchaseOrders(process):
   for p in getPOs(True):
     process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
       p.id, p.reference or "\\N",
-      p.operation.buffer.item.name[0:settings.NAMESIZE],
-      p.operation.buffer.location.name[0:settings.NAMESIZE],
-      p.operation.itemsupplier.supplier.name[0:settings.NAMESIZE],
-      round(p.quantity, settings.DECIMAL_PLACES), str(p.start), str(p.end),
-      round(p.criticality, settings.DECIMAL_PLACES),
+      p.operation.buffer.item.name[0:300],
+      p.operation.buffer.location.name[0:300],
+      p.operation.itemsupplier.supplier.name[0:300],
+      round(p.quantity, 4), str(p.start), str(p.end),
+      round(p.criticality, 4),
       p.source or "\\N"
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
@@ -273,7 +273,7 @@ def exportPurchaseOrders(process):
     cursor = connections[database].cursor()
     cursor.executemany(
       "update purchase_order set criticality=%s where id=%s",
-      [ (round(j.criticality, settings.DECIMAL_PLACES), j.id) for j in getPOs(False) ]
+      [ (round(j.criticality, 4), j.id) for j in getPOs(False) ]
       )
 
   print('Exported purchase orders in %.2f seconds' % (time() - starttime))
@@ -297,11 +297,11 @@ def exportDistributionOrders(process):
   for p in getDOs(True):
     process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
       p.id, p.reference or "\\N",
-      p.operation.destination.item.name[0:settings.NAMESIZE],
-      p.operation.origin.location.name[0:settings.NAMESIZE],
-      p.operation.destination.location.name[0:settings.NAMESIZE],
-      round(p.quantity, settings.DECIMAL_PLACES), str(p.start), str(p.end),
-      round(p.criticality, settings.DECIMAL_PLACES),
+      p.operation.destination.item.name[0:300],
+      p.operation.origin.location.name[0:300],
+      p.operation.destination.location.name[0:300],
+      round(p.quantity, 4), str(p.start), str(p.end),
+      round(p.criticality, 4),
       p.source or "\\N"
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
@@ -311,7 +311,7 @@ def exportDistributionOrders(process):
     cursor = connections[database].cursor()
     cursor.executemany(
       "update distribution_order set criticality=%s where id=%s",
-      [ (round(j.criticality, settings.DECIMAL_PLACES), j.id) for j in getDOs(False) ]
+      [ (round(j.criticality, 4), j.id) for j in getDOs(False) ]
       )
 
   print('Exported distribution orders in %.2f seconds' % (time() - starttime))

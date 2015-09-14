@@ -1,6 +1,20 @@
 /*
  * This file contains extra frePPLe styles that vary by theme.
  */
+ 
+ /*
+  * Frepple Colors (838D11 F47A00 D21800)
+  * black       black
+  * gray1       #eeeeee
+  * gray2       #dadada
+  * gray3       #8F8F8F
+  * green1      #C1C688
+  * green2      #9CA441
+  * green3      #838d11
+  * oranje1     #f49410
+  * red1        #ff3b3b
+  */
+  
 @import url("../opensans.css");
 
 body, input, textarea, select, .form-row p {
@@ -10,9 +24,15 @@ body, input, textarea, select, .form-row p {
 
 /* Style for the separator between breadcrumbs. */
 div.breadcrumbs .fa {
-  color: #838d11;
+  color: black; //Color black
   font-size: 16px;
 }
+
+div.breadcrumbs {
+border-top: 1px solid #8F8F8F; //Color gray3
+border-bottom: 1px solid #8F8F8F; //Color gray3
+}
+
 
 /* Style for edited cells in a table. */
 .ui-jqgrid tr.jqgrow td.dirty-cell, input.dirty-cell {
@@ -21,7 +41,7 @@ div.breadcrumbs .fa {
 
 /* Background color to display alternate rows in a table. */
 .altRow, .row1 {
-  background-color: #EEEEEE;
+  background-color: #EEEEEE; //Color gray1
 }
 
 /* Menu bar styles. */
@@ -32,18 +52,32 @@ nav ul ul {
   outline: none;
 }
 
-nav ul li:hover a, nav ul ul, .ui-autocomplete {
-  background: #ebebeb;   /* Copy from the Jquery UI style ".ui-widget-header". */
+#headerbar, div.breadcrumbs {
+  background-color: #C1C688; //Color green1
+  font-weight: 600;
+  //color: white;
 }
 
-nav ul ul li a:hover {
-  background: #dadada;  /* Copy from the Jquery UI style ".ui-state-hover". */
+nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
+  //color: white;
+}
+
+nav ul li:hover a, nav ul ul, .ui-autocomplete {/* Copy from the Jquery UI style ".ui-widget-header". */
+  background: #9CA441; //Color green2  
+  font-weight: 600;
+  //color: white;
+}
+
+nav ul ul li a:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
+  background: #838D11; //Color green3
+  font-weight: 600;
+  //color: white;
 }
 
 /* Style to mark the active tab. */
 .frepple-tabs-active {
   font-weight: bold;
-  border-top: 2px solid #838d11;
+  border-top: 2px solid #838d11; //Color green3
 }
 
 nav ul ul li.separator {
@@ -54,5 +88,5 @@ nav ul ul li.separator {
     margin-right: auto;
     border-style: inset;
     border-width: 1px;
-} 
+}
 

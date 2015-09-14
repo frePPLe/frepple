@@ -6,7 +6,7 @@
   * Frepple Colors (838D11 F47A00 D21800)
   * black       black
   * gray1       #eeeeee
-  * gray2       #dadada
+  * gray2       #b3b3b3
   * gray3       #8F8F8F
   * green1      #C1C688
   * green2      #9CA441
@@ -16,6 +16,15 @@
   */
   
 @import url("../opensans.css");
+
+.red {
+  color: #ff3b3b;
+}
+
+.white {
+    color: white;
+}
+
 
 body, input, textarea, select, .form-row p {
   font-size: 13px;  /* Copy from Jquery UI style ".ui-widget" */

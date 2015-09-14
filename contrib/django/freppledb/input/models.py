@@ -460,11 +460,6 @@ class Buffer(AuditModel, HierarchyModel):
     null=True, blank=True, related_name='used_producing',
     help_text=_('Operation to replenish the buffer')
     )
-  carrying_cost = models.DecimalField(
-    _('carrying cost'), null=True, blank=True,
-    max_digits=settings.MAX_DIGITS, decimal_places=settings.DECIMAL_PLACES,
-    help_text=_("Cost of holding inventory in this buffer, expressed as an annual percentage of the item price.")
-    )
   # Extra fields for procurement buffers
   leadtime = DurationField(
     _('leadtime'), null=True, blank=True,

@@ -20,4 +20,5 @@ OPERATION	make item 1 with routing A step 1	2008-12-14T00:00:00	2008-12-17T00:00
 OPERATION	make item 1 with routing A step 2	2008-12-17T00:00:00	2009-01-01T00:00:00	10
 OPERATION	make item 1 with routing B	2009-01-01T00:00:00	2009-01-10T00:00:00	4
 PROBLEM	overload	Resource 'Resource 1 A' has capacity shortage of 1	2008-12-17T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'alternatives for making item 1' planned in the past	2008-12-14T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 1 with routing A step 1' planned in the past	2008-12-14T00:00:00 / 2008-12-17T00:00:00
+PROBLEM	before current	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00

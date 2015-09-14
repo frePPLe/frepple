@@ -299,7 +299,6 @@
   </demands>
 
 <?python
-#
 actual_to_expected = {}
 expected_to_actual = {}
 output = open("output.1.xml","wt")
@@ -327,7 +326,7 @@ def verifyOne(i):
   if i.cluster in actual_to_expected:
     if expectedcluster != actual_to_expected[i.cluster]:
       # Exists and is different!
-      print("%s: incorrect cluster. Expected %d, got %d" % (name, expected_to_actual[expectedcluster], i.cluster), file=output)
+      print("%s: incorrect cluster. Expected %s, got %d" % (name, expected_to_actual.get(expectedcluster), i.cluster), file=output)
       ok = False
   else:
     if expectedcluster in expected_to_actual:
@@ -342,16 +341,15 @@ def verifyOne(i):
   # Result
   print("%s: %s" % (name, ok and "OK" or "NOK"), file=output)
 
-
-def verifyAll():
-  for i in frepple.operations(): verifyOne(i)
-  for i in frepple.resources(): verifyOne(i)
-  for i in frepple.buffers(): verifyOne(i)
-  output.flush()
-
 # Commands
 frepple.solver_mrp(constraints=0).solve()
-verifyAll()
+for i in frepple.operations():
+  verifyOne(i)
+for i in frepple.resources():
+  verifyOne(i)
+for i in frepple.buffers():
+  verifyOne(i)
+output.flush()
 
 ?>
 </plan>

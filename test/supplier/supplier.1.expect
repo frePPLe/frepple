@@ -76,7 +76,6 @@
 					<leadtime>P21D</leadtime>
 					<size_minimum>125</size_minimum>
 					<size_multiple>100</size_multiple>
-					<<<<<
 				</itemsupplier>
 			</itemsuppliers>
 		</item>

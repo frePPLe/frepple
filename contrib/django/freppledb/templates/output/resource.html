@@ -5,6 +5,13 @@
 {% if mode == "graph" and not args.0 %}<script type="text/javascript">
 $(function(){ graph.header(); })
 </script>{% endif %}
+<style type="text/css">
+.highutil
+{
+  color: red;
+  font-weight: bold;
+}
+</style>
 {% endblock %}
 
 {% block contextmenus %}

@@ -88,6 +88,20 @@ hr {
     color: #555;
     float: right;
 }
+
+.ui-state-disabled {
+    background-image: none;
+    opacity: 1;
+    border: none;
+    background-color: #ebebeb;
+    background-image: none;
+    color: #555;
+}
+
+.ui-corner-all {
+    border: none;
+}
+
 button:hover {
         border: 1px solid #999;
         background: #dadada;
@@ -293,6 +307,10 @@ div.system-message p.system-message-title {
 
 .red {
   color: red;
+}
+
+.white {
+    color: white;
 }
 
 

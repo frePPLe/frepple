@@ -75,16 +75,16 @@ Echoing operations:
   Operation: delivery end item None None None
     Flow: end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make item None None None
-    Step: make item - step 1
-    Step: make item - step 2
+    Suboperation: make item - step 1 1 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Suboperation: make item - step 2 1 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make item - step 1 None None None
     Load: Resource 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make item - step 2 None None None
     Load: Resource 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make or buy item None None None
     Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Alternate: make item 1 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Alternate: buy item 2 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Suboperation: make item 1 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Suboperation: buy item 2 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: setup operation None None None
 
 Echoing demands:

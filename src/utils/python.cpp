@@ -716,6 +716,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     // The next call assumes the self argument is an instance of the Object
     // base class. We don't need to check this explicitly since we expose
     // this method only on subclasses.
+    x.pushCurrentObject(static_cast<Object*>(self));
     static_cast<Object*>(self)->writeElement
     (&x, *(static_cast<Object*>(self)->getType().category->typetag));
     // Write the output...

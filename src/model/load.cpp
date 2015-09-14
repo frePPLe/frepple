@@ -129,8 +129,10 @@ DECLARE_EXPORT Load::~Load()
   }
 
   // Delete the load from the operation and resource
-  if (getOperation()) getOperation()->loaddata.erase(this);
-  if (getResource()) getResource()->loads.erase(this);
+  if (getOperation())
+    getOperation()->loaddata.erase(this);
+  if (getResource())
+    getResource()->loads.erase(this);
 
   // Clean up alternate loads
   if (hasAlts)

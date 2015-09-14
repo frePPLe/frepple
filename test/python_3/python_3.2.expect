@@ -19,85 +19,60 @@
 	<calendars>
 		<calendar>
 			<name>Cal1</name>
+			<default>4.56</default>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
 					<priority>-1</priority>
 					<value>1</value>
 				</bucket>
-				<bucket id="3" start="2009-02-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket>
+					<id>3</id>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
 					<priority>-3</priority>
 					<value>3</value>
 				</bucket>
-				<bucket id="2" start="2009-02-01T00:00:00" end="2009-05-01T00:00:00">
+				<bucket>
+					<id>2</id>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-05-01T00:00:00</end>
 					<priority>-2</priority>
 					<value>2</value>
 				</bucket>
 			</buckets>
-			<default>4.56</default>
 		</calendar>
 		<calendar>
 			<name>Cal2</name>
 			<default>1.23</default>
-			<buckets>
-			</buckets>
 		</calendar>
 		<calendar>
 			<name>Capacity</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation>
-			<name>Purchase buffer1</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>locA</name>
-			</location>
-		</operation>
-		<operation>
-			<name>buy item</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation>
-			<name>delivery end item</name>
-			<duration>P1D</duration>
-		</operation>
-		<operation xsi:type="operation_routing">
-			<name>make item</name>
-			<steps>
-				<operation>
-					<name>make item - step 1</name>
-				</operation>
-				<operation>
-					<name>make item - step 2</name>
-				</operation>
-			</steps>
-		</operation>
-		<operation>
-			<name>make item - step 1</name>
-			<duration>P4D</duration>
-		</operation>
-		<operation>
-			<name>make item - step 2</name>
-			<duration>P3D</duration>
-		</operation>
-		<operation name="make or buy item" xsi:type="operation_alternate">
-			<alternates>
-				<alternate>
-					<operation name="make item" xsi:type="operation_routing"/>
-					<priority>1</priority>
-				</alternate>
-				<alternate>
-					<operation name="buy item" xsi:type="operation_fixed_time"/>
-					<priority>2</priority>
-				</alternate>
-			</alternates>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>Resource</name>
+			<maximum_calendar>
+				<name>Capacity</name>
+			</maximum_calendar>
+		</resource>
+		<resource>
+			<name>machine</name>
+			<maximum_calendar>
+				<name>Cal2</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>end item</name>
@@ -141,11 +116,12 @@
 			<name>buffer1</name>
 			<category>My category</category>
 			<description>My description</description>
-			<members>
-				<buffer name="buffer2"/>
-			</members>
-			<item name="item 1"/>
-			<location name="locA"/>
+			<item>
+				<name>item 1</name>
+			</item>
+			<location>
+				<name>locA</name>
+			</location>
 			<stringproperty name="myfield" value="my custom field"/>
 		</buffer>
 		<buffer>
@@ -164,108 +140,142 @@
 			</item>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>Purchase buffer1</name>
+			<size_minimum>0</size_minimum>
+			<location>
+				<name>locA</name>
+			</location>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer xsi:type="buffer_procure">
+						<name>buffer1</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>buy item</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>delivery end item</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>end item</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_routing">
+			<name>make item</name>
+			<suboperations>
+				<suboperation>
+				<operation>
+						<name>make item - step 2</name>
+				</operation>
+				</suboperation>
+				<suboperation>
+				<operation>
+						<name>make item - step 1</name>
+				</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>make item - step 1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<duration>P4D</duration>
+		</operation>
+		<operation>
+			<name>make item - step 2</name>
+			<loads>
+				<load>
+					<resource>
+						<name>Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<duration>P3D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>make or buy item</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>end item</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<suboperations>
+				<suboperation>
+					<operation xsi:type="operation_routing">
+						<name>make item</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>buy item</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+	</operations>
 	<demands>
 		<demand>
 			<name>order 1</name>
-			<customer>
-				<name>client</name>
-			</customer>
 			<quantity>10</quantity>
 			<item>
 				<name>end item</name>
 			</item>
+			<customer>
+				<name>client</name>
+			</customer>
 			<due>2009-03-02T09:00:00</due>
 			<priority>1</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
 		<demand>
 			<name>order 2</name>
-			<customer>
-				<name>client</name>
-			</customer>
 			<quantity>10</quantity>
 			<item>
 				<name>end item</name>
 			</item>
+			<customer>
+				<name>client</name>
+			</customer>
 			<due>2009-03-02T08:30:00</due>
 			<priority>2</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
 		<demand>
 			<name>order 3</name>
-			<customer>
-				<name>client</name>
-			</customer>
 			<quantity>10</quantity>
 			<item>
 				<name>end item</name>
 			</item>
+			<customer>
+				<name>client</name>
+			</customer>
 			<due>2009-03-02T20:00:00</due>
 			<priority>3</priority>
 			<maxlateness>P0D</maxlateness>
 		</demand>
 	</demands>
-	<resources>
-		<resource>
-			<name>Resource</name>
-			<maximum_calendar>
-				<name>Capacity</name>
-			</maximum_calendar>
-		</resource>
-		<resource>
-			<name>machine</name>
-			<maximum_calendar>
-				<name>Cal2</name>
-			</maximum_calendar>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation>
-				<name>make item - step 1</name>
-			</operation>
-			<resource>
-				<name>Resource</name>
-			</resource>
-		</load>
-		<load>
-			<operation>
-				<name>make item - step 2</name>
-			</operation>
-			<resource>
-				<name>Resource</name>
-			</resource>
-		</load>
-	</loads>
-	<flows>
-		<flow xsi:type="flow_end">
-			<operation>
-				<name>Purchase buffer1</name>
-			</operation>
-			<buffer xsi:type="buffer_procure">
-				<name>buffer1</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-		<flow>
-			<operation>
-				<name>delivery end item</name>
-			</operation>
-			<buffer>
-				<name>end item</name>
-			</buffer>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation xsi:type="operation_alternate">
-				<name>make or buy item</name>
-			</operation>
-			<buffer>
-				<name>end item</name>
-			</buffer>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
 		<operationplan>
 			<id>12</id>
@@ -278,7 +288,6 @@
 			<start>2009-03-01T08:30:00</start>
 			<end>2009-03-02T08:30:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>14</id>
@@ -291,7 +300,6 @@
 			<start>2009-03-01T09:00:00</start>
 			<end>2009-03-02T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>15</id>
@@ -304,7 +312,6 @@
 			<start>2009-03-01T20:00:00</start>
 			<end>2009-03-02T20:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
 		<operationplan>
 			<id>16</id>
@@ -314,7 +321,6 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>13.9792</criticality>
 			<owner>
 				<id>10</id>
 			</owner>
@@ -327,7 +333,6 @@
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>7</criticality>
 			<owner>
 				<id>11</id>
 			</owner>
@@ -340,7 +345,6 @@
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0.458333</criticality>
 			<owner>
 				<id>13</id>
 			</owner>
@@ -353,7 +357,6 @@
 			<start>2010-12-25T00:00:00</start>
 			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
-			<criticality>999</criticality>
 			<locked>true</locked>
 		</operationplan>
 		<operationplan>
@@ -364,7 +367,6 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-12T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>13.9792</criticality>
 			<owner>
 				<id>16</id>
 			</owner>
@@ -390,7 +392,6 @@
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-02-26T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0.458333</criticality>
 			<owner>
 				<id>18</id>
 			</owner>
@@ -403,7 +404,6 @@
 			<start>2010-12-25T00:00:00</start>
 			<end>2010-12-29T00:00:00</end>
 			<quantity>9</quantity>
-			<criticality>999</criticality>
 			<locked>true</locked>
 			<owner>
 				<id>19</id>
@@ -430,7 +430,6 @@
 			<start>2009-02-19T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>7</criticality>
 			<owner>
 				<id>17</id>
 			</owner>
@@ -443,7 +442,6 @@
 			<start>2009-02-26T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0.458333</criticality>
 			<owner>
 				<id>18</id>
 			</owner>
@@ -456,7 +454,6 @@
 			<start>2010-12-29T00:00:00</start>
 			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
-			<criticality>999</criticality>
 			<locked>true</locked>
 			<owner>
 				<id>19</id>
@@ -470,7 +467,6 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>13.9792</criticality>
 		</operationplan>
 		<operationplan>
 			<id>11</id>
@@ -480,7 +476,6 @@
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>7</criticality>
 		</operationplan>
 		<operationplan>
 			<id>13</id>
@@ -490,16 +485,6 @@
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0.458333</criticality>
 		</operationplan>
 	</operationplans>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;end item&apos; has material excess of 20</description>
-			<start>2009-02-15T09:00:00</start>
-			<end>2009-03-01T20:00:00</end>
-			<weight>20</weight>
-		</problem>
-	</problems>
 </plan>

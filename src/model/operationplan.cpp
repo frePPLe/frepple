@@ -34,8 +34,8 @@ int OperationPlan::initialize()
   metacategory = MetaCategory::registerCategory<OperationPlan>(
     "operationplan", "operationplans", createOperationPlan, OperationPlan::finder
     );
-  registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
   OperationPlan::metadata = MetaClass::registerClass<OperationPlan>("operationplan", "operationplan", true);
+  registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<OperationPlan>::getPythonType();

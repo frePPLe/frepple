@@ -166,11 +166,13 @@ choice = frepple.operation_alternate(name="make or buy item")
 makeoper = frepple.operation_routing(name="make item")
 frepple.suboperation(
   owner = makeoper,
-  operation = frepple.operation_fixed_time(name="make item - step 1", duration=4*86400)
+  operation = frepple.operation_fixed_time(name="make item - step 1", duration=4*86400),
+  priority = 2
   )
 frepple.suboperation(
   owner = makeoper,
-  operation = frepple.operation_fixed_time(name="make item - step 2", duration=3*86400)
+  operation = frepple.operation_fixed_time(name="make item - step 2", duration=3*86400),
+  priority = 1
   )
 buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
 frepple.suboperation(
@@ -353,15 +355,15 @@ for i in frepple.problems():
 ###
 print("\nPrinting some models in XML format to a file")
 with open("output.3.xml","wt") as output:
-  mycustomer.toXML('P',output)
-  locA.toXML('P',output)
-  opplan.toXML('P',output)
-  item.toXML('P',output)
-  order1.toXML('P',output)
-  buf1.toXML('P',output)
-  makeoper.toXML('P',output)
+  mycustomer.toXML('P', output)
+  locA.toXML('P', output)
+  opplan.toXML('P', output)
+  item.toXML('P', output)
+  order1.toXML('P', output)
+  buf1.toXML('P', output)
+  makeoper.toXML('P', output)
   for i in frepple.problems():
-    i.toXML('P',output)
+    i.toXML('P', output)
 
 ###
 print("\nDocumenting all available Python entities defined by frePPLe:")

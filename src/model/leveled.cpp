@@ -54,7 +54,7 @@ DECLARE_EXPORT void HasLevel::computeLevels()
     // In that case, the while loop will be rerun.
     recomputeLevels = false;
 
-    // Force creation of all delivery operations f
+    // Force creation of all delivery operations
     for (Demand::iterator gdem = Demand::begin();
         gdem != Demand::end(); ++gdem)
         gdem->getDeliveryOperation();
@@ -161,7 +161,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
       }
 
       // If both the level and the cluster are de-activated, then we can move on
-      if (!search_level && g->cluster) continue;
+      if (!search_level && g->cluster)
+        continue;
 
       // Start recursing
       // Note that as soon as push an operation on the stack we set its

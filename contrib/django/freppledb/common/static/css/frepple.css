@@ -93,13 +93,37 @@ hr {
     background-image: none;
     opacity: 1;
     border: none;
-    background-color: #ebebeb;
     background-image: none;
     color: #555;
 }
 
 .ui-corner-all {
     border: none;
+}
+
+.save_undo_button_active {
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    border: 1px solid #d3d3d3;
+    background: red;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+.save_undo_button_inactive {
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    border: 1px solid #d3d3d3;
+    background-color: #ebebeb;
+    background-image: none;
+    font-size: 10px;
+    font-weight: bold;
+    color: #b3b3b3;
 }
 
 button:hover {
@@ -304,15 +328,6 @@ div.system-message p.system-message-title {
   display: inline-block;
   vertical-align: middle;
 }
-
-.red {
-  color: red;
-}
-
-.white {
-    color: white;
-}
-
 
 /* Style for the context menu. */
 div.ContextMenu {
@@ -576,12 +591,6 @@ div.calendarbox
 .ui-autocomplete-categoryz {
   font-weight:bold;
   list-style-type: none;
-}
-
-.highutil
-{
-  color: red;
-  font-weight: bold;
 }
 
 .float_right {

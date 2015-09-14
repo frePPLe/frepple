@@ -67,18 +67,27 @@ $(window).bind('resize', function() {
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div id="toolicons">{% block actions %}{% if reportclass.filterable %}
+{% block before_table %}{% endblock %}
+
+
+    <div id="toolicons">{% block actions %}{% if reportclass.filterable %}
 <span id="filter" onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>{% endif %}
-{% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
-<span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
-<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp;
-{% endif %}
+
 {% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
 {% if not is_popup %}<span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="ui-state-disabled fa fa-copy fa-lg"></span>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span>
 {% endif %}{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span>
 {% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'Import CSV or Excel file'|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
 {% endif %}<span onclick="grid.showExport(true)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
+
+{% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
+<!-- <span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
+<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp; -->
+<div id="save_undo" style="float:left">
+&nbsp;&nbsp;<input type="submit" value="SAVE" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'Undo changes'|escape %}">
+&nbsp;&nbsp;<input type="submit" value="UNDO" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}">
+</div>{% endif %}
+
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>
 <div id="gridpager"></div>

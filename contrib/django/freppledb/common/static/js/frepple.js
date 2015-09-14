@@ -43,10 +43,10 @@ var upload = {
 
   undo : function ()
   {
-    if ($('#undo').hasClass("ui-state-disabled")) return;
+    if ($('#undo').hasClass("save_undo_button_inactive")) return;
     $("#grid").trigger("reloadGrid");
-    $('#save').addClass("ui-state-disabled").removeClass("bold red");
-    $('#undo').addClass("ui-state-disabled").removeClass("bold red");
+    $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
+    $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#filter').removeClass("ui-state-disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -55,15 +55,15 @@ var upload = {
   {
     $('#filter').addClass("ui-state-disabled");
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#save').removeClass("ui-state-disabled").addClass("bold red");
-    $('#undo').removeClass("ui-state-disabled").addClass("bold red");
+    $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
+    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
 
   save : function()
   {
-    if ($('#save').hasClass("ui-state-disabled")) return;
+    if ($('#save').hasClass("save_undo_button_inactive")) return;
 
     // Pick up all changed cells. If a function "getData" is defined on the
     // page we use that, otherwise we use the standard functionality of jqgrid.

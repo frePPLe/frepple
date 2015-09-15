@@ -70,7 +70,7 @@ $(window).bind('resize', function() {
 {% block before_table %}{% endblock %}
 
 
-    <div id="toolicons">{% block actions %}{% if reportclass.filterable %}
+<div id="toolicons">{% block actions %}{% if reportclass.filterable %}
 <span id="filter" onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>{% endif %}
 
 {% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
@@ -80,11 +80,13 @@ $(window).bind('resize', function() {
 {% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'Import CSV or Excel file'|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
 {% endif %}<span onclick="grid.showExport(true)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
 
+{% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
 <div id="save_undo" style="float:left">
 &nbsp;&nbsp;<input type="submit" value="SAVE" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'Undo changes'|escape %}">
 &nbsp;&nbsp;<input type="submit" value="UNDO" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}">
 </div>{% endif %}
+{% endblock save_undo_buttons %}
 
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid"></table>

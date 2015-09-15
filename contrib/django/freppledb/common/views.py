@@ -81,6 +81,7 @@ class PreferencesForm(forms.Form):
     min_value=25,
     help_text=_('Number of records to display in a single page'),
     )
+  
   theme = forms.ChoiceField(
     label=_('Theme'),
     required=False,
@@ -105,7 +106,12 @@ class PreferencesForm(forms.Form):
     help_text = _('New password confirmation'),
     widget = forms.PasswordInput()
     )
-
+  
+  def __init__(self, *args, **kwargs):
+    super(PreferencesForm, self).__init__(*args, **kwargs) 
+    if len(settings.THEMES) == 1:  #If there is only one theme make this choice unavailable
+      self.fields.pop('theme')
+    
   def clean(self):
     newdata = super(PreferencesForm, self).clean()
     if newdata['cur_password']:

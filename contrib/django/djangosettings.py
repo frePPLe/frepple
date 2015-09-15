@@ -276,7 +276,7 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
 THEMES = [ (i,i) for i in (
-  'frepple', 'ppp'
+  'frepple',
   )]
 
 # The default user interface theme

@@ -96,7 +96,7 @@ nav ul ul li.separator {
     margin-bottom: 0.5em;
     margin-left: auto;
     margin-right: auto;
-    border-style: inset;
+    border-style: none;
     border-width: 1px;
 }
 

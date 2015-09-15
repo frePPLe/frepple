@@ -67,7 +67,15 @@ a:link, a:visited {
     font-size: 75%;
 }
 
-hr {
+.separator::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 80%;
+    margin: 10px;
+    background: #D21800;
+}
+/* hr {
     clear: both;
     color: #eee;
     background-color: #eee;
@@ -77,7 +85,7 @@ hr {
     padding: 0;
     font-size: 1px;
     line-height: 1px;
-}
+} */
 
 /* FORM DEFAULTS */
 

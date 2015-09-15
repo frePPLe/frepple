@@ -275,6 +275,10 @@ DEFAULT_CHARSET = 'utf-8'
 CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
+# If multiple themes are configured in this list, the user's can change their
+# preferences among the ones listed here.
+# If the list contains only a single value, the preferences screen will not
+# display users an option to choose the theme.
 THEMES = [ (i,i) for i in (
   'frepple',
   )]

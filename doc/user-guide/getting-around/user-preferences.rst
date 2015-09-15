@@ -17,8 +17,12 @@ For each user frePPle stores a number of personal settings and preferences.
 
 * | **Theme**:
   | Theme for the user interface.
-  | The available themes can be previewed on the `Jquery UI ThemeRoller website <http://jqueryui.com/themeroller/>`_.
-  | Customized themes can be designed on that page as well.
+  | If your system administrator has configured the system to support only
+    a single theme (by editing the THEMES setting in the djangosettings.py
+    file), this option will not be available to the users.
+
+* | **Password**:
+  | To change the password enter the current one and twice the new value.
 
 .. image:: ../_images/user-preferences.png
    :alt: User preferences

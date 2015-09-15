@@ -99,7 +99,7 @@ var upload = {
   validateSort: function(event)
   {
     if ($(this).attr('id') == 'grid_cb') return;
-    if ($('#save').hasClass("ui-state-disabled"))
+    if ($('#save').hasClass("save_undo_button_inactive"))
       jQuery("#grid").jqGrid('resetSelection');
     else
     {

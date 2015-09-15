@@ -275,13 +275,8 @@ DEFAULT_CHARSET = 'utf-8'
 CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
-# The current selection is nothing but the pack of standard themes of JQuery UI.
-# Check out http://jqueryui.com/themeroller/ to roll your own theme.
 THEMES = [ (i,i) for i in (
-  'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
-  'excite-bike', 'flick', 'frepple', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
-  'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
-  'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'
+  'frepple', 'ppp'
   )]
 
 # The default user interface theme

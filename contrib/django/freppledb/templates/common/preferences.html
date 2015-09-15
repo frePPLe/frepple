@@ -12,11 +12,6 @@
 <script type="text/javascript">
   $(function() {
     $("input:submit").button();
-    $("#id_theme").after('&nbsp;&nbsp;<span class="fa fa-exclamation-triangle"></span>');
-    $( document ).tooltip({
-      items: ".fa-exclamation-triangle",
-      content: "Only the theme 'frepple' will look nice.<br/><br/>The other themes are copied from the gallery at http://jqueryui.com/themeroller/, where you can also create your own customised theme."
-      });
   });
 </script>
 {% endblock %}

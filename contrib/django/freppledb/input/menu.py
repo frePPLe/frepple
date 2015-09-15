@@ -78,7 +78,7 @@ menu.addItem(
   report=freppledb.input.views.ItemDistributionList, index=1100, model=ItemDistribution
   )
 menu.addItem(
-  "manufacturing", "manufacturing orders", url="/data/input/Operationplans/",
+  "manufacturing", "manufacturing orders", url="/data/input/operationplan/",
   report=freppledb.input.views.OperationPlanList, index=100, model=OperationPlan
   )
 menu.addItem(

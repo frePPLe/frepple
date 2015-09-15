@@ -97,10 +97,6 @@ hr {
     color: #555;
 }
 
-.ui-corner-all {
-    border: none;
-}
-
 .save_undo_button_active {
     padding-bottom: 4px;
     padding-left: 6px;

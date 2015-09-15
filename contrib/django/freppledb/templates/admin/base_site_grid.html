@@ -81,8 +81,6 @@ $(window).bind('resize', function() {
 {% endif %}<span onclick="grid.showExport(true)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
 
 {% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
-<!-- <span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
-<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp; -->
 <div id="save_undo" style="float:left">
 &nbsp;&nbsp;<input type="submit" value="SAVE" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'Undo changes'|escape %}">
 &nbsp;&nbsp;<input type="submit" value="UNDO" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}">

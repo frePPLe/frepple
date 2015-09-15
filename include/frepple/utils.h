@@ -3614,7 +3614,21 @@ class Object : public PyObject
       *   3: double
       *   4: string
       */
-    DECLARE_EXPORT void setProperty(const string& name, const DataValue& value, short type);
+    DECLARE_EXPORT void setProperty(
+      const string& name, const DataValue& value, short type
+      );
+
+    /** Retrieve a boolean property. */
+    DECLARE_EXPORT bool getBoolProperty(const string&, bool=true) const;
+
+    /** Retrieve a date property. */
+    DECLARE_EXPORT Date getDateProperty(const string&, Date=Date::infinitePast) const;
+
+    /** Retrieve a double property. */
+    DECLARE_EXPORT double getDoubleProperty(const string&, double=0.0) const;
+
+    /** Retrieve a string property. */
+    DECLARE_EXPORT string getStringProperty(const string&, const string& = "") const;
 
     /** Method to write custom properties to a serializer. */
     DECLARE_EXPORT void writeProperties(Serializer&) const;
@@ -3785,18 +3799,6 @@ class Object : public PyObject
     {
       PyErr_SetString(PythonLogicException, "Missing method 'str'");
       return NULL;
-    }
-
-    /** Return the Python dictionary as a constant. */
-    PyObject* const* getDict() const
-    {
-      return &dict;
-    }
-
-    /** Return the Python dictionary. */
-    PyObject** getDict()
-    {
-      return &dict;
     }
 
     // TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()

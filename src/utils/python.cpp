@@ -638,6 +638,74 @@ DECLARE_EXPORT void Object::setProperty(const string& name, const DataValue& val
 }
 
 
+DECLARE_EXPORT bool Object::getBoolProperty(const string& name, bool def) const
+{
+  if (!dict)
+    // Not a single property has been defined
+    return def;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  if (!lkp)
+    // Value not found in the dictionary
+    return def;
+  PythonData val(lkp);
+  bool result = val.getBool();
+  PyGILState_Release(pythonstate);
+  return result;
+}
+
+
+DECLARE_EXPORT Date Object::getDateProperty(const string& name, Date def) const
+{
+  if (!dict)
+    // Not a single property has been defined
+    return def;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  if (!lkp)
+    // Value not found in the dictionary
+    return def;
+  PythonData val(lkp);
+  Date result = val.getDate();
+  PyGILState_Release(pythonstate);
+  return result;
+}
+
+
+DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) const
+{
+  if (!dict)
+    // Not a single property has been defined
+    return def;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  if (!lkp)
+    // Value not found in the dictionary
+    return def;
+  PythonData val(lkp);
+  double result = val.getDouble();
+  PyGILState_Release(pythonstate);
+  return result;
+}
+
+
+DECLARE_EXPORT string Object::getStringProperty(const string& name, const string& def) const
+{
+  if (!dict)
+    // Not a single property has been defined
+    return def;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  if (!lkp)
+    // Value not found in the dictionary
+    return def;
+  PythonData val(lkp);
+  string result = val.getString();
+  PyGILState_Release(pythonstate);
+  return result;
+}
+
+
 DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 {
   try

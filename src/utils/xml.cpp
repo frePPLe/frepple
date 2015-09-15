@@ -257,6 +257,34 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
           setSource(transcodeUTF8(atts.getValue(i)));
       }
     }
+    else if (data[dataindex].hash == Tags::booleanproperty.getHash()
+      || data[dataindex].hash == Tags::stringproperty.getHash()
+      || data[dataindex].hash == Tags::doubleproperty.getHash()
+      || data[dataindex].hash == Tags::dateproperty.getHash()
+      )
+    {
+      // Special case: custom properties
+      short ok = 0;
+      for (XMLSize_t i = 0, cnt = atts.getLength(); i < cnt; ++i)
+      {
+        string attr_name = transcodeUTF8(atts.getLocalName(i));
+        if (attr_name == "name")
+        {
+          data[dataindex].name = transcodeUTF8(atts.getValue(i));
+          ok += 1;
+        }
+        else if (attr_name == "value")
+        {
+          data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
+          ok += 2;
+        }
+      }
+      if (ok != 3)
+      {
+        data[dataindex].hash = 0; // Mark the field as invalid
+        logger << "Warning: property missing name and/or value field" << endl;
+      }
+    }
     else
     {
       // Ignore this element
@@ -459,12 +487,21 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
               // Set fields already available now on the parent object
               for (int idx = objects[objectindex-1].start; idx < objects[objectindex].start; ++idx)
               {
-                if (data[idx].field && data[idx].hash != Tags::type.getHash()
-                  && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
+                if (data[idx].hash == Tags::type.getHash() || data[idx].hash == Tags::action.getHash())
+                  continue;
+                if (data[idx].field && !data[idx].field->isGroup())
                 {
                     data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
                     data[idx].field = NULL; // Mark as already applied
                 }
+                else if (data[idx].hash == Tags::booleanproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+                else if (data[idx].hash == Tags::dateproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+                else if (data[idx].hash == Tags::doubleproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+                else if (data[idx].hash == Tags::stringproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
               }
 
             }
@@ -520,12 +557,21 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
               // Set fields already available now on the parent object
               for (int idx = objects[objectindex-1].start; idx < objects[objectindex].start; ++idx)
               {
-                if (data[idx].field && data[idx].hash != Tags::type.getHash()
-                  && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
+                if (data[idx].hash == Tags::type.getHash() || data[idx].hash == Tags::action.getHash())
+                  continue;
+                if (data[idx].field && !data[idx].field->isGroup())
                 {
                     data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
                     data[idx].field = NULL; // Mark as already applied
                 }
+                else if (data[idx].hash == Tags::booleanproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+                else if (data[idx].hash == Tags::dateproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+                else if (data[idx].hash == Tags::doubleproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+                else if (data[idx].hash == Tags::stringproperty.getHash())
+                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
               }
             }
             // Add reference to parent to the current dict
@@ -579,9 +625,18 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     {
       for (int idx = objects[objectindex].start; idx <= dataindex; ++idx)
       {
-        if (data[idx].field && data[idx].hash != Tags::type.getHash()
-          && data[idx].hash != Tags::action.getHash() && !data[idx].field->isGroup())
-            data[idx].field->setField(objects[objectindex].object, data[idx].value);
+        if (data[idx].hash == Tags::type.getHash() || data[idx].hash == Tags::action.getHash())
+          continue;
+        if (data[idx].field && !data[idx].field->isGroup())
+          data[idx].field->setField(objects[objectindex].object, data[idx].value);
+        else if (data[idx].hash == Tags::booleanproperty.getHash())
+          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+        else if (data[idx].hash == Tags::dateproperty.getHash())
+          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+        else if (data[idx].hash == Tags::doubleproperty.getHash())
+          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+        else if (data[idx].hash == Tags::stringproperty.getHash())
+          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
       }
     }
 

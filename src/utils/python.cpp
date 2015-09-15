@@ -42,8 +42,6 @@ DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
 DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
 DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
 
-const MetaCategory* PythonDictionary::metadata = NULL;
-
 
 DECLARE_EXPORT void Object::writeElement(
   Serializer* o, const Keyword& tag, FieldCategory m
@@ -88,7 +86,7 @@ DECLARE_EXPORT void Object::writeElement(
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
       if (!(*i)->getFlag(DETAIL) && !(*i)->getFlag(PLAN))
         (*i)->writeField(*o);
-    PythonDictionary::write(o, getDict());
+    writeProperties(*o);
   }
   else
   {
@@ -98,7 +96,7 @@ DECLARE_EXPORT void Object::writeElement(
         (*i)->writeField(*o);
     for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
       (*i)->writeField(*o);
-    PythonDictionary::write(o, getDict());
+    writeProperties(*o);
   }
 
   // Write the tail
@@ -193,14 +191,6 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
 
   // Add a string constant for the version
   nok += PyModule_AddStringConstant(module, "version", PACKAGE_VERSION);
-
-  // Create new python type for the dictionary wrapper
-  PythonDictionary::metadata = MetaCategory::registerCategory<PythonDictionary>("dictionary","");
-  PythonType& x = PythonExtension<PythonDictionary>::getPythonType();
-  x.setName("dictionary");
-  x.setDoc("frePPLe wrapper for a Python dictionary");
-  x.typeReady();
-  const_cast<MetaCategory*>(PythonDictionary::metadata)->pythonClass = x.type_object();
 
   // Redirect the stderr and stdout streams of Python
   registerGlobalMethod("log", python_log, METH_VARARGS,
@@ -561,13 +551,13 @@ DECLARE_EXPORT PythonType* Object::registerPythonType(int size, const type_info 
 }
 
 
-DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydict)
+DECLARE_EXPORT void Object::writeProperties(Serializer& o) const
 {
-  if (!*pydict) return; // No custom fields here
+  if (!dict) return; // No custom fields here
 
   // Create a sorted list of all keys
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* key_iterator = PyObject_CallMethod(*pydict, "keys", NULL); // new ref
+  PyObject* key_iterator = PyObject_CallMethod(dict, "keys", NULL); // new ref
   PyObject* keylist = PySequence_Fast(key_iterator, ""); // new ref
   PyList_Sort(keylist);
 
@@ -578,25 +568,25 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
   {
     py_key = PySequence_Fast_GET_ITEM(keylist, i); // borrowed ref
     PythonData key(py_key);
-    py_value = PyDict_GetItem(*pydict, py_key); // borrowed ref
+    py_value = PyDict_GetItem(dict, py_key); // borrowed ref
     PythonData value(py_value);
     if (PyBool_Check(py_value))
-      o->writeElement(Tags::booleanproperty,
+      o.writeElement(Tags::booleanproperty,
         Tags::name, key.getString(),
         Tags::value, value.getBool() ? "1" : "0"
         );
     else if (PyFloat_Check(py_value))
-      o->writeElement(Tags::doubleproperty,
+      o.writeElement(Tags::doubleproperty,
         Tags::name, key.getString(),
         Tags::value, value.getString()
         );
     else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
-      o->writeElement(Tags::dateproperty,
+      o.writeElement(Tags::dateproperty,
         Tags::name, key.getString(),
         Tags::value, string(value.getDate())
         );
     else
-      o->writeElement(Tags::stringproperty,
+      o.writeElement(Tags::stringproperty,
         Tags::name, key.getString(),
         Tags::value, value.getString()
         );
@@ -609,84 +599,42 @@ DECLARE_EXPORT void PythonDictionary::write(Serializer* o, PyObject* const* pydi
 }
 
 
-//XXX TODO change API:  void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
-/*
-void PythonDictionary::endElement(DataInput& pIn, const Attribute& pAttr, const DataValue& pElement)
+DECLARE_EXPORT void Object::setProperty(const string& name, const DataValue& value, short type)
 {
-
-  if (pAttr.isA(Tags::name))
-    name = pElement.getString();
-  else if (pAttr.isA(Tags::value))
+  // Adding the new key-value pair to the dictionary.
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
   {
-    switch (type)
-    {
-      case 1: // Boolean
-        value_bool = pElement.getBool();
-        break;
-      case 2: // Date
-        value_date = pElement.getDate();
-        break;
-      case 3: // Double
-        value_double = pElement.getDouble();
-        break;
-      default: // String
-        value_string = pElement.getString();
-    }
+    dict = PyDict_New();
+    Py_INCREF(dict);
   }
-  else if (pIn.isObjectEnd())
+  switch (type)
   {
-    // Adding the new key-value pair to the dictionary.
-    PyGILState_STATE pythonstate = PyGILState_Ensure();
-    PythonData key(name);
-    if (!*dict)
-    {
-      *dict = PyDict_New();
-      Py_INCREF(*dict);
-    }
-    switch (type)
-    {
-      case 1: // Boolean
-        {
-        PythonData val(value_bool);
-        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
-        break;
-        }
-      case 2: // Date
-        {
-        PythonData val(value_date);
-        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
-        break;
-        }
-      case 3: // Double
-        {
-        PythonData val(value_double);
-        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
-        break;
-        }
-      default: // String
-        {
-        PythonData val(value_string);
-        PyDict_SetItem(*dict, static_cast<PyObject*>(key), static_cast<PyObject*>(val));
-        }
-    }
-    PyGILState_Release(pythonstate);
-    delete this;  // This was only a temporary object during the read!
+    case 1: // Boolean
+      {
+      PythonData val(value.getBool());
+      PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+      break;
+      }
+    case 2: // Date
+      {
+      PythonData val(value.getDate());
+      PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+      break;
+      }
+    case 3: // Double
+      {
+      PythonData val(value.getDouble());
+      PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+      break;
+      }
+    default: // String
+      {
+      PythonData val(value.getString());
+      PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+      }
   }
-}
-*/
-
-DECLARE_EXPORT void PythonDictionary::read(DataInput& pIn, const DataKeyword& pAttr, PyObject** pDict)
-{
-  /* XXX TODO
-  if (pAttr.isA(Tags::booleanproperty))
-    pIn.readto(new PythonDictionary(pDict, 1));
-  else if (pAttr.isA(Tags::dateproperty))
-    pIn.readto(new PythonDictionary(pDict, 2));
-  else if (pAttr.isA(Tags::doubleproperty))
-    pIn.readto(new PythonDictionary(pDict, 3));
-  else if (pAttr.isA(Tags::stringproperty))
-    pIn.readto(new PythonDictionary(pDict, 4));
-  */
+  PyGILState_Release(pythonstate);
 }
 
 

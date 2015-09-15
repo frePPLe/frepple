@@ -3607,6 +3607,18 @@ class Object : public PyObject
       * and are used only as dummy constructs. */
     virtual void setHidden(bool b) {}
 
+    /** Method to set a custom property.
+      * Avaialable types:
+      *   1: bool
+      *   2: date
+      *   3: double
+      *   4: string
+      */
+    DECLARE_EXPORT void setProperty(const string& name, const DataValue& value, short type);
+
+    /** Method to write custom properties to a serializer. */
+    DECLARE_EXPORT void writeProperties(Serializer&) const;
+
     /** Returns whether an entity is real or dummy. */
     virtual bool getHidden() const
     {
@@ -3944,53 +3956,6 @@ class PythonIterator : public Object
       Py_INCREF(result);
       return result;
     }
-};
-
-
-/** @brief A wrapper class for a Python dictionary, thats allows serialization
-  * to and from XML.
-  *
-  * Note that the dictionary isn't owned by this class. It remains fully owned
-  * by code constructing an instance of the PythonDictionary class, following
-  * the flyweight design pattern.
-  */
-class PythonDictionary : public Object
-{
-  private:
-    /** Python dictionary being wrapped. */
-    PyObject** dict;
-
-    /** Temporary storage while reading. */
-    string name;
-
-    /** Temporary storage while reading. */
-    string value_string;
-    bool value_bool;
-    Date value_date;
-    double value_double;
-
-    /** Temporary storage of the data type. */
-    short type;
-
-  public:
-    /** Constructor.<br>
-      * We *assume* the Python object passed is a dictionary.
-      */
-    explicit PythonDictionary(PyObject** d, short i) : dict(d), type(i)
-    {
-      initType(metadata);
-    }
-
-    /** This static method is used to read XML data into a dictionary. */
-    static DECLARE_EXPORT void read(DataInput&, const DataKeyword&, PyObject**);
-
-    /** This static method is used to write a dictionary as XML.
-      * It is normally called from the writeElement() method of an object.
-      */
-    static DECLARE_EXPORT void write(Serializer*, PyObject* const*);
-
-    static const MetaCategory *metadata;
-    const MetaClass& getType() const {return *metadata;}
 };
 
 
@@ -6949,6 +6914,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
     {
       // This code is Python-specific. Only from Python can we call
       // this method. Not generic, but good enough...
+      // TODO avoid calling the copy constructor here to improve performance!
       PyIter *o = new PyIter((static_cast<Cls*>(me)->*getf)());
       el.setObject(o);
     }

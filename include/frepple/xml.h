@@ -84,6 +84,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       const MetaFieldBase* field;
       hashtype hash;
       XMLData value;
+      string name;
     };
 
   private:

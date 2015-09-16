@@ -4,7 +4,7 @@
 body {
   margin: 0;
   padding: 0;
-  color: #333;
+  color: #555555;
   background: white;
 }
 
@@ -51,7 +51,7 @@ a {
 }
 
 a:link, a:visited {
-  color: #333333;
+  color: #555555;
   text-decoration: none;
 }
 
@@ -71,9 +71,8 @@ a:link, a:visited {
     content: "";
     display: block;
     height: 1px;
-    width: 80%;
-    margin: 10px;
-    background: #D21800;
+    width: 100%;
+    margin: 0px;
 }
 /* hr {
     clear: both;
@@ -90,19 +89,18 @@ a:link, a:visited {
 /* FORM DEFAULTS */
 
 .button.default, input[type=submit].default, .submit-row input.default {
-    border: 1px solid #d3d3d3;
-    background: #ebebeb;
+    border: 1px solid #EBEBEB;
+    background: #EBEBEB;
     font-weight: normal;
-    color: #555;
+    color: #555555;
     float: right;
 }
 
 .ui-state-disabled {
-    background-image: none;
+    background: transparent;
     opacity: 1;
     border: none;
-    background-image: none;
-    color: #555;
+    color: #555555;
 }
 
 .save_undo_button_active {
@@ -110,8 +108,8 @@ a:link, a:visited {
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
-    border: 1px solid #d3d3d3;
-    background: red;
+    border: 1px solid #EBEBEB;
+    background: #FF5656;
     font-size: 10px;
     font-weight: bold;
     color: white;
@@ -122,18 +120,18 @@ a:link, a:visited {
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
-    border: 1px solid #d3d3d3;
-    background-color: #ebebeb;
+    border: 1px solid #EBEBEB;
+    background-color: #EBEBEB;
     background-image: none;
     font-size: 10px;
     font-weight: bold;
-    color: #b3b3b3;
+    color: #B3B3B3;
 }
 
 button:hover {
-        border: 1px solid #999;
-        background: #dadada;
-        color: #212121;
+        border: 1px solid black;
+        background: #EBEBEB;
+        color: black;
 }
 
 form {
@@ -152,7 +150,7 @@ textarea {
 }
 
 input[type=text], input[type=password], textarea, select, .vTextField {
-    border: 1px solid #ccc;
+    border: 1px solid #B3B3B3;
 }
 
 div #tabs  {
@@ -164,8 +162,8 @@ div #tabs  {
 
 div.breadcrumbs {
   padding: 0 15px 0 15px;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #B3B3B3;
+  border-bottom: 1px solid #B3B3B3;
   text-align: left;
   font-size: 13px;
   background: none;
@@ -173,7 +171,7 @@ div.breadcrumbs {
 }
 
 div.breadcrumbs a {
-  color: #333333;
+  color: #555555;
   text-align: left;
 }
 
@@ -228,9 +226,10 @@ ul.messagelist li {
     display: block;
     padding: 4px 5px 4px 25px;
     margin: 0 0 3px 0;
-    border-bottom: 1px solid #ddd;
-    color: #666;
-    background: #ffc url(../admin/img/icon_success.gif) 5px .3em no-repeat;
+    border-bottom: 1px solid #555555;
+    border-top: 1px solid #555555;
+    color: #000000;
+    background: #C1C688 url(../admin/img/icon_success.gif) 5px .3em no-repeat;
 }
 
 ul.messagelist li.warning{
@@ -246,9 +245,9 @@ ul.messagelist li.error{
     display: block;
     padding: 4px 5px 4px 25px;
     margin: 0 0 3px 0;
-    border: 1px solid red;
-    color: red;
-    background: #ffc url(../admin/img/icon_error.gif) 5px .3em no-repeat;
+    border: 1px solid #FF5656;
+    color: #FF5656;
+    background: #FF5656 url(../admin/img/icon_error.gif) 5px .3em no-repeat;
 }
 
 ul.errorlist {
@@ -261,9 +260,9 @@ ul.errorlist {
     display: block;
     padding: 4px 5px 4px 25px;
     margin: 0 0 3px 0;
-    border: 1px solid red;
+    border: 1px solid #FF5656;
     color: white;
-    background: red url(../admin/img/icon_alert.gif) 5px .3em no-repeat;
+    background: #FF5656 url(../admin/img/icon_alert.gif) 5px .3em no-repeat;
 }
 
 .errorlist li a {
@@ -281,15 +280,15 @@ td ul.errorlist li {
 }
 
 .errors {
-    background: #ffc;
+    background: #FF5656;
 }
 
 .errors input, .errors select, .errors textarea {
-    border: 1px solid red;
+    border: 1px solid black;
 }
 
 div.system-message {
-    background: #ffc;
+    background: #FF5656;
     margin: 10px;
     padding: 6px 8px;
     font-size: .8em;
@@ -298,7 +297,7 @@ div.system-message {
 div.system-message p.system-message-title {
     padding: 4px 5px 4px 25px;
     margin: 0;
-    color: red;
+    color: #FF5656;
     background: #ffc url(../admin/img/icon_error.gif) 5px .3em no-repeat;
 }
 
@@ -361,7 +360,7 @@ a.icon {
   padding:0.4em 1em 0.4em 20px;
   position:relative;
   text-decoration:none;
-  color: #333333;
+  color: #555555;
 }
 
 /* Show an icon next to the link text. */
@@ -457,7 +456,7 @@ nav ul li a {
   padding: 0 8px 0 8px;
   line-height: 40px;
   font-size: 13px;
-  color: #333333;
+  color: #555555;
   text-decoration: none;
 }
 
@@ -493,7 +492,7 @@ nav ul ul ul {
 /* Styles for the tabs. */
 .frepple-tabs {
   padding: 0 5px 0 5px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #B3B3B3;
   font-size: 13px;
 }
 
@@ -511,7 +510,7 @@ nav ul ul ul {
 }
 
 .frepple-tabs ul li a {
-  color: #333333;
+  color: #555555;
   font-size: 13px;
   text-decoration: none;
 }
@@ -528,16 +527,16 @@ table thead th {
   white-space:nowrap;
   border: 0;
   vertical-align: top;
-  background: #e0e0e0;
+  background: #EBEBEB;
 }
 
 .module h2, .module caption, .inline-group h2 {
-    color: #666;
-    background: #e0e0e0;
+    color: #555555;
+    background: #EBEBEB;
 }
 
 table thead th.sorted {
-  background: #c0c0c0;
+  background: #B3B3B3;
 }
 
 #toolicons span.ui-button-text {
@@ -627,7 +626,7 @@ div.calendarbox
   top: 50%;
   right: 32px;
   margin-top: -8px;
-  color: #666;
+  color: #555555;
 }
 
 .portlet-toggle {
@@ -635,7 +634,7 @@ div.calendarbox
   top: 50%;
   right: 17px;
   margin-top: -8px;
-  color: #666;
+  color: #555555;
 }
 
 .portlet-close {
@@ -643,7 +642,7 @@ div.calendarbox
   top: 50%;
   right: 2px;
   margin-top: -8px;
-  color: #666;
+  color: #555555;
 }
 
 .portlet-content {
@@ -665,7 +664,7 @@ div.calendarbox
 
 .taskfailed
 {
-  background-color: red;
+  background-color: #FF5656;
   display: block;
 }
 
@@ -678,12 +677,12 @@ div.calendarbox
 
 .tourguide {
   border-width: thick;
-  border-color: red;
+  border-color: #FF5656;
 }
 
 .tourtooltip {
   border-width: thick;
-  border-color: red;
+  border-color: #FF5656;
   padding: 10px 20px;
   position: absolute;
   box-sizing: border-box;
@@ -716,7 +715,7 @@ div.calendarbox
 }
 
 .graphheader  {
-  fill: #4c3000;
+  fill: #555555;
   stroke: none;
   font-size: 12px;
   text-anchor:middle;
@@ -760,7 +759,7 @@ div.calendarbox
    of the Gantt charts will match the other columns.
 */
 .svgheadertext {
-  fill: #4c3000;
+  fill: #555555;
   stroke: none;
   font-size: 12px;
   text-anchor:middle;

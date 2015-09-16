@@ -18,11 +18,11 @@
   
 @import url("../opensans.css");
 
-.red {
+.red {                  /* classes used for save_undo_buttons */
   color: #ff5656;
 }
 
-.white {
+.white {                /* classes used for save_undo_buttons */
     color: white;
 }
 
@@ -90,6 +90,7 @@ nav ul ul li a:hover {                          /* Copy from the Jquery UI style
   border-top: 2px solid #000000; //Color green3
 }
 
+/* separator style in nav menus */
 nav ul ul li.separator {
     display: block;
     margin-top: 0.5em;
@@ -100,17 +101,22 @@ nav ul ul li.separator {
     border-width: 1px;
 }
 
+/* separator color in nav menus */
 .separator::after {
     background: #555555;
 }
 
-.ui-state-default a:hover {
+/* for pop-up menus in listing items */
+.ui-state-default li {          
+    color: #555555;
+    background: #EBEBEB;
+}
+.ui-state-default li:hover {
     color: #000000;
     background: #B3B3B3;
 }
 
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-    border-color: #838d11;
-    background: #C1C688;
-    color: #000000;
+/* disable focus blue outline */
+input:focus, select:focus, textarea:focus, button:focus {
+    outline: none;      
 }

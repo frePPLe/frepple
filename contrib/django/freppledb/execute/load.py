@@ -112,7 +112,7 @@ class loadData(object):
        SELECT
          calendar_id, startdate, enddate, id, priority, value,
          sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-         starttime, endtime
+         starttime, endtime, source
       FROM calendarbucket %s
       ORDER BY calendar_id, startdate desc
       ''' % self.filter_where)
@@ -147,6 +147,8 @@ class loadData(object):
           b.start = i[1]
         if i[2]:
           b.end = i[2]
+        if i[15]:
+          b.source = i[15]
       except Exception as e:
         print("Error:", e)
     print('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))

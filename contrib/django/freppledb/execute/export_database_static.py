@@ -166,7 +166,7 @@ class exportStaticModel(object):
             (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
             (i[0].days & 64) and True or False,
             int_to_time(i[0].starttime), int_to_time(i[0].endtime - 1),
-            i[0].calendar.source, self.timestamp
+            i[0].source, self.timestamp
           )
           for i in buckets()
         ])

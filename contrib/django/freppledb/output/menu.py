@@ -24,10 +24,10 @@ import freppledb.output.views.operation
 import freppledb.output.views.kpi
 
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
-menu.addItem("sales", "demand report", url="/demand/", report=freppledb.output.views.demand.OverviewReport, index=100)
-menu.addItem("sales", "demand detail report", url="/demandplan/", report=freppledb.output.views.demand.DetailReport, index=200)
-menu.addItem("sales", "problem report", url="/problem/?entity=demand", report=freppledb.output.views.problem.Report, index=300)
-menu.addItem("sales", "constraint report", url="/constraint/", report=freppledb.output.views.constraint.BaseReport, index=400)
+menu.addItem("sales", "demand report", url="/demand/", report=freppledb.output.views.demand.OverviewReport, index=200)
+menu.addItem("sales", "demand detail report", url="/demandplan/", report=freppledb.output.views.demand.DetailReport, index=300)
+menu.addItem("sales", "problem report", url="/problem/?entity=demand", report=freppledb.output.views.problem.Report, index=400)
+menu.addItem("sales", "constraint report", url="/constraint/", report=freppledb.output.views.constraint.BaseReport, index=500)
 menu.addItem("admin", "kpi report", url="/kpi/", report=freppledb.output.views.kpi.Report, index=1000)
 menu.addItem("inventory", "inventory report", url="/buffer/", report=freppledb.output.views.buffer.OverviewReport, index=100)
 menu.addItem("inventory", "inventory detail report", url="/flowplan/", report=freppledb.output.views.buffer.DetailReport, index=200)

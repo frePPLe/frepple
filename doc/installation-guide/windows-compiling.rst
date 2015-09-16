@@ -27,7 +27,9 @@ You will also need to install:
   its extension modules are all compiled with Visual C++ 2010, and frePPle
   needs to use the same compiler and C runtime libraries.
 
-* **Python 3.2 or higher**
+* **Python 3.2, 3.3 or 3.4**
+  Python 3.5 is NOT supported yet on Windows, as it requires a different
+  compiler version. (Note that Python 3.5 is supported for the linux version)
 
 * **Xerces-C 3.1**
 

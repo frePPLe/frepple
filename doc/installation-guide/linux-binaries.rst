@@ -84,24 +84,20 @@ Here are the steps to get a fully working environment.
 
    Since frePPle requires some patches to the standard Django package,
    you can't install the binary package that comes with your Linux distribution.
-   Instead, download the source from http://www.djangoproject.com and expand
-   it in a local folder. Next, download and apply frePPLe's django patch
-   and install the package.
 
-   A version of frePPle requires a specific version of Django. FrePPLe 2.2, 2.3 require
-   Django 1.6.x. FrePPLe 3.0 requires django 1.8.x.
+   Instead, download the source from our cloned and patched version of django
+   and install that. The URL of the django clone is https://github.com/frePPLe/django
 
-   The patch file is available at https://github.com/frePPLe/frePPLe/tree/3.0/contrib/django
-   - replace the version number to match the frePPLe release
+   Make sure you download the branch for the correct frePPLe version
 
-   The shell commands for these steps are:
+   The shell commands for these steps are (replace 3.0 with the correct frePPLe
+   version:
    ::
 
-      wget https://www.djangoproject.com/download/1.8/tarball/
-      tar xvfz Django-1.8.tar.gz
-      cd Django-1.8
-      patch -p0 < django.patch
-      python setup.py install
+      wget https://github.com/frePPLe/django/archive/frepple_3.0.tar.gz
+      tar xvfz frepple_3.0.tar.gz
+      cd django-frepple_3.0
+      python3 setup.py install
 
 #. **Install OpenPyXL**
 
@@ -219,6 +215,8 @@ inspiration for your own deployments.
 
 ::
 
+  export FREPPLERELEASE=3.0
+
   # Bring the server up to date
   sudo apt-get -y -q update
   sudo apt-get -y -q upgrade
@@ -235,13 +233,11 @@ inspiration for your own deployments.
   service postgresql restart
   exit
 
-  # Install Django
-  export DJANGORELEASE=1.8
-  wget -q -O Django-$DJANGORELEASE.tar.gz https://www.djangoproject.com/download/$DJANGORELEASE/tarball/
-  tar xfz Django-$DJANGORELEASE.tar.gz
-  cd ~/Django-$DJANGORELEASE
-  patch -p0 < frepple_directory/contrib/django/django.patch
-  sudo python setup.py install
+  # Install a patched version of Django
+  wget -q https://github.com/frePPLe/django/archive/frepple_$FREPPLERELEASE.tar.gz
+  tar xfz frepple_$FREPPLERELEASE.tar.gz
+  cd django-frepple_$FREPPLERELEASE
+  sudo python3 setup.py install
 
   # Install openpyxl
   sudo apt-get -y install python3-pip
@@ -249,7 +245,7 @@ inspiration for your own deployments.
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev debian package files.
-  # You only need to install the frepple debian package.
+  # Normally you only need to install the frepple debian package.
   cd ~
   sudo dpkg -i frepple_*.deb
   sudo apt-get -f -y -q install
@@ -277,6 +273,8 @@ inspiration for your own deployments.
 
 ::
 
+  export FREPPLERELEASE=3.0
+
   # Update and upgrade
   sudo -S -n yum -y update
 
@@ -293,21 +291,24 @@ inspiration for your own deployments.
   sed -i 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf
   sudo service postgresql restart
 
-  # Install django
-  export DJANGORELEASE=1.8
-  wget -q -O Django-$DJANGORELEASE.tar.gz https://www.djangoproject.com/download/$DJANGORELEASE/tarball/
-  tar xfz Django-$DJANGORELEASE.tar.gz
-  cd ~/Django-$DJANGORELEASE
-  patch -p0 < ~/frepple-$RELEASE/contrib/django/django.patch
-  sudo -S -n python setup.py install
+  # Install a patched version of Django
+  wget -q https://github.com/frePPLe/django/archive/frepple_$FREPPLERELEASE.tar.gz
+  tar xfz frepple_$FREPPLERELEASE.tar.gz
+  cd django-frepple_$FREPPLERELEASE
+  sudo -S -n python3 setup.py install
 
   # Install openpyxl
   # The sequence is a bit weird: we first enable the EPEL repository, then install pip, and
   # finish by installing openpyxl itself.
   sudo -S -n rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
   sudo -S -n yum -y install yum-plugin-protectbase.noarch
-  sudo -S -n yum -y install python-pip
-  sudo pip install openpyxl
+  sudo -S -n yum -y install python3-pip
+  sudo pip3 install openpyxl
 
-  # Build frepple RPM
+  # Install the frePPLe binary RPM package and the necessary dependencies.
+  # There are frepple, frepple-doc and frepple-dev package files.
+  # Normally you only need to install the frepple package.
   yum --nogpgcheck localinstall  *.rpm
+
+  # Create frepple database schema
+  frepplectl migrate --noinput

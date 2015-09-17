@@ -49,13 +49,14 @@ minimum          double            | Desired minimum inventory, aka safety stock
                                    | Use this field if the safety stock doesn't change over
                                      time.
                                    | The solver treats this as a soft constraint, ie it tries
-                                     to meet this inventory level but will go below the minimum
-                                     level if required to meet the demand.
-                                   | A problem is reported when the inventory drops below this
-                                     level.The safety stock target is expressed as a quantity. If
-                                     you want to define a safety stock target as a time value
-                                     (aka days of inventory), you can set a post-operation time
-                                     on the producing operation of the buffer.
+                                     to meet this inventory level but will go below the
+                                     minimum level if required to meet the demand.
+                                   | A problem is reported when the inventory drops below
+                                     this level.The safety stock target is expressed as a
+                                     quantity. If you want to define a safety stock target
+                                     as a time value (aka days of inventory), you can set a
+                                     post-operation timeon the producing operation of the
+                                     buffer.
 minimum_calendar calendar          | Refers to a calendar storing the desired minimum inventory
                                      level, aka safety stock.
                                    | Use this field when the minimum inventory level is varying
@@ -84,9 +85,9 @@ producing        operation         | This operation will be instantiated by the 
                                      is using the ItemSupplier and ItemDistribution models as
                                      input.
                                    | In versions before 3.0 the only way was the explicit
-                                     construction of the operation to populate this field. From 
-                                     version 3.0 onwards we recommend to use the auto-generated 
-                                     operations, unless you have some very specific modeling 
+                                     construction of the operation to populate this field. From
+                                     version 3.0 onwards we recommend to use the auto-generated
+                                     operations, unless you have some very specific modeling
                                      requirements.
 detectproblems   boolean           | Set this field to false to supress problem detection on this
                                      buffer.

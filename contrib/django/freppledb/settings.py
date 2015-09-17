@@ -38,8 +38,11 @@ else:
 if 'FREPPLE_HOME' in os.environ:
   FREPPLE_HOME = os.environ['FREPPLE_HOME']
 elif os.sep == '/' and os.path.isfile('/usr/share/frepple/frepple.xsd'):
-  # Linux installation layout
+  # Linux installation layout with prefix /usr
   FREPPLE_HOME = '/usr/share/frepple'
+elif os.sep == '/' and os.path.isfile('/usr/local/share/frepple/frepple.xsd'):
+  # Linux installation layout with prefix /usr/local
+  FREPPLE_HOME = '/usr/local/share/frepple'
 elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP, '..', 'frepple.xsd'))):
   # Py2exe layout
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP, '..'))

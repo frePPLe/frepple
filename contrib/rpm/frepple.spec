@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: Free Production PLanning
 Name: frepple
@@ -27,10 +27,10 @@ URL: http://www.frepple.com
 Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
-Requires: xerces-c, openssl, httpd, mod_wsgi, python, python-cherrypy
+Requires: xerces-c, openssl, httpd, mod_wsgi, python3, python3-cherrypy
 Requires(pre): shadow-utils
-BuildRequires: python-devel, automake, autoconf, libtool, xerces-c-devel
-BuildRequires: graphviz, doxygen, python-sphinx
+BuildRequires: python3-devel, automake, autoconf, libtool, xerces-c-devel
+BuildRequires: python3-sphinx
 
 %description
 FrePPLe stands for "Free Production PLanning". It is an application for
@@ -130,7 +130,7 @@ rm -rf /var/log/frepple
 #%dir %{_libdir}/frepple
 %{_datadir}/frepple
 %attr(0770,-,frepple) %dir %{_localstatedir}/log/frepple
-%{python_sitelib}/freppledb*
+%{python3_sitelib}/freppledb*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING

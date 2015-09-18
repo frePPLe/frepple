@@ -385,9 +385,9 @@ class ModelDependenciesNode(Node):
         (
          "%s.%s" % (i._meta.app_label, i._meta.model_name),
          [
-           "%s.%s" % (j[0].model._meta.app_label, j[0].model._meta.model_name)
+           "%s.%s" % (j[0].related_model._meta.app_label, j[0].related_model._meta.model_name)
            for j in i._meta.get_all_related_objects_with_model()
-           if j[0].model != i
+           if j[0].related_model != i
          ]
         )
         for i in models.get_models(include_auto_created=True)

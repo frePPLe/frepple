@@ -41,6 +41,7 @@ menu.addItem("capacity", "data", separator=True, index=1000)
 menu.addItem("purchasing", "data", separator=True, index=1000)
 menu.addItem("distribution", "data", separator=True, index=1000)
 menu.addItem("manufacturing", "data", separator=True, index=1000)
+menu.addItem("admin", "data", separator=True, index=1000)
 
 # Adding the menu modules of each installed application.
 # Note that the menus of the apps are processed in reverse order.

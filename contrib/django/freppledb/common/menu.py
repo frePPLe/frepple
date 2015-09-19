@@ -21,7 +21,7 @@ from freppledb.menu import menu
 from freppledb.admin import admin_site
 
 # Admin menu
-menu.addItem("admin", "admin_site", admin=admin_site, index=200)
+menu.addItem("admin", "admin_site", admin=admin_site, index=1100)
 
 # Help menu
 menu.addItem("help", "tour", javascript="tour.start('0,0,0')", label=_('Guided tour'), index=100)

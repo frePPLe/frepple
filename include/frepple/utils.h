@@ -3628,7 +3628,7 @@ class Object : public PyObject
     DECLARE_EXPORT double getDoubleProperty(const string&, double=0.0) const;
 
     /** Retrieve a string property. */
-    DECLARE_EXPORT string getStringProperty(const string&, const string& = "") const;
+    DECLARE_EXPORT const char* getStringProperty(const string&, const string& = "") const;
 
     /** Method to write custom properties to a serializer. */
     DECLARE_EXPORT void writeProperties(Serializer&) const;

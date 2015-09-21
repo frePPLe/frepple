@@ -698,23 +698,25 @@ DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) 
 }
 
 
-DECLARE_EXPORT string Object::getStringProperty(const string& name, const string& def) const
+DECLARE_EXPORT const char* Object::getStringProperty(const string& name, const string& def) const
 {
   if (!dict)
     // Not a single property has been defined
-    return def;
+    return def.c_str();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp)
   {
     // Value not found in the dictionary
     PyGILState_Release(pythonstate);
-    return def;
+    return def.c_str();
   }
   PythonData val(lkp);
   string result = val.getString();
   PyGILState_Release(pythonstate);
-  return result;
+  // TODO: next line is not really ok, since we are returning a pointer to a temporary stack object.
+  // Returning a string here is not possible on windows - the string can get freed in a seperate module, resulting in a nasty crash.
+  return result.c_str();
 }
 
 

@@ -52,7 +52,13 @@ $(function() {
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
 	  loadError: function(xhr,st,err) {
 	    $('#load_grid').show();
-	    $('#curfilter').html("{% trans 'Error retrieving report data' %}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
+	    if (xhr.status == 200)
+      {
+        $('#curfilter').html("{{_('Warning: no data found')|escapejs}}");
+        $('#grid').clearGridData();
+      }
+      else
+        $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if filters %}
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}

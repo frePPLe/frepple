@@ -169,11 +169,15 @@ The steps to work with such packages are standard:
    ::
 
      yum install rpmbuild
+     or
+     zypper in rpmbuild
 
 #. Create a build directory structure:
    ::
 
      rpmdev-setuptree
+     or
+     mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 #. Install the source RPM file:
 

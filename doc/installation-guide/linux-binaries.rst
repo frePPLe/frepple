@@ -312,3 +312,64 @@ inspiration for your own deployments.
 
   # Create frepple database schema
   frepplectl migrate --noinput
+  
+***************************
+Suse installation instructions
+***************************
+
+This section shows the instructions for installing
+and configuring frePPLe with a PostgreSQL database on a SLES 12 server.
+
+You can use it as a guideline and inspiration for your own deployments.
+
+::
+
+  export FREPPLERELEASE=3.0
+
+  # Update and Upgrade
+  sudo zypper update
+  sudo zypper upgrade
+  
+  # Install the PostgreSQL database
+  
+  tip: "sudo zypper se PACKAGENAME" to look for the correct package names 
+  
+  sudo zypper install postgresql postgresql-server postgres-devel
+  
+  sudo su
+  rcpostgresql start
+  su - postgres
+  psql
+  postgres=# ALTER USER postgres WITH PASSWORD 'postgres';
+  postgres=# \q
+  exit
+  rcpostgresql restart
+  su - postgres
+  psql -dpostgres -c "create user frepple with password 'frepple'"
+  psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
+  psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
+  psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
+  psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
+  sed -i 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf
+  exit
+  rcpostgrsql restart
+
+  # Install a patched version of Django
+  wget -q https://github.com/frePPLe/django/archive/frepple_$FREPPLERELEASE.tar.gz
+  tar xfz frepple_$FREPPLERELEASE.tar.gz
+  cd django-frepple_$FREPPLERELEASE
+  sudo -S -n python3 setup.py install
+
+  # Install openpyxl
+  # pip is in SUSE included in the Python3 package but must be enabled.
+  # After pip3 is available we can finish by installing openpyxl itself.
+  sudo python3 -m ensure pip
+  sudo pip3 install openpyxl
+
+  # Install the frePPLe binary RPM package and the necessary dependencies.
+  # There are frepple, frepple-doc and frepple-dev package files.
+  # Normally you only need to install the frepple package.
+  sudo rpm -i *.rpm
+
+  # Create frepple database schema
+  frepplectl migrate --noinput

@@ -170,7 +170,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
   public:
     /** Default constructor. */
-    CalendarBucket() : id(INT_MIN), enddate(Date::infiniteFuture),
+    DECLARE_EXPORT CalendarBucket() : id(INT_MIN), enddate(Date::infiniteFuture),
       nextBucket(NULL), prevBucket(NULL), priority(0), days(127),
       starttime(0L), endtime(86400L), cal(NULL), val(0.0), offsetcounter(0)
     {

@@ -4350,7 +4350,10 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       return flows.begin();
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = NULL) const
+    {
+      s.solve(this,v);
+    }
 
     /** Returns a reference to the list of all flow plans of this buffer. */
     const flowplanlist& getFlowPlans() const

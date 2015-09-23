@@ -115,6 +115,12 @@ class SolverMRP : public Solver
 
     bool allowSplits;
 
+    /** When set to false we solve only for the entity being called. This is
+      * used when you want to control manual the sequence of the planning
+      * loop.
+      */
+    bool propagate;
+
     /** Behavior of this solver method is:
       *  - It will ask the consuming flows for the required quantity.
       *  - The quantity asked for takes into account the quantity_per of the
@@ -303,10 +309,10 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true), plantype(1),
-      lazydelay(86400L), iteration_threshold(1), iteration_accuracy(0.01),
-      iteration_max(0), autocommit(true), planSafetyStockFirst(false),
-      erasePreviousFirst(true)
+    DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true),
+      propagate(true), plantype(1), lazydelay(86400L), iteration_threshold(1),
+      iteration_accuracy(0.01), iteration_max(0), autocommit(true),
+      planSafetyStockFirst(false), erasePreviousFirst(true)
     {
       initType(metadata);
       commands.sol = this;
@@ -605,6 +611,16 @@ class SolverMRP : public Solver
       allowSplits = b;
     }
 
+    bool getPropagate() const
+    {
+      return propagate;
+    }
+
+    void setPropagate(bool b)
+    {
+      propagate = b;
+    }
+
     bool getPlanSafetyStockFirst() const
     {
       return planSafetyStockFirst;
@@ -826,8 +842,8 @@ class SolverMRP : public Solver
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = NULL, int c = 0, deque<Demand*>* d = NULL)
-          : sol(s), cluster(c), demands(d),
-            constrainedPlanning(true), state(statestack),
+          : sol(s), cluster(c), demands(d), constrainedPlanning(true),
+            logConstraints(true), planningDemand(NULL), state(statestack),
             prevstate(statestack-1)
         {
           operator_delete = new OperatorDelete(this);

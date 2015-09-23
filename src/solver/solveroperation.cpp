@@ -185,61 +185,66 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
     matnext.setStart(Date::infinitePast);
     matnext.setEnd(Date::infiniteFuture);
 
-    // Loop through all flowplans  // @todo need some kind of coordination run here!!! see test alternate_flow_1
-    for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
-        g!=opplan->endFlowPlans(); ++g)
-      if (g->getFlow()->isConsumer())
+    // Loop through all flowplans, if propagation is required  // @todo need some kind of coordination run here!!! see test alternate_flow_1
+    if (data.getSolver()->getPropagate())
+    {
+      for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
+          g!=opplan->endFlowPlans(); ++g)
       {
-        // Switch back to the main alternate if this flowplan was already    // @todo is this really required? If yes, in this place?
-        // planned on an alternate
-        if (g->getFlow()->getAlternate())
-          g->setFlow(g->getFlow()->getAlternate());
-
-        // Trigger the flow solver, which will call the buffer solver
-        data.state->q_flowplan = &*g;
-        q_qty_Flow = - data.state->q_flowplan->getQuantity(); // @todo flow quantity can change when using alternate flows -> move to flow solver!
-        q_date_Flow = data.state->q_flowplan->getDate();
-        g->getFlow()->solve(*this,&data);
-
-        // Validate the answered quantity
-        if (data.state->a_qty < q_qty_Flow)
+        if (g->getFlow()->isConsumer())
         {
-          // Update the opplan, which is required to (1) update the flowplans
-          // and to (2) take care of lot sizing constraints of this operation.
-          g->setQuantity(-data.state->a_qty, true);
-          a_qty = opplan->getQuantity();
-          incomplete = true;
+          // Switch back to the main alternate if this flowplan was already    // @todo is this really required? If yes, in this place?
+          // planned on an alternate
+          if (g->getFlow()->getAlternate())
+            g->setFlow(g->getFlow()->getAlternate());
 
-          // Validate the answered date of the most limiting flowplan.
-          // Note that the delay variable only reflects the delay due to
-          // material constraints. If the operationplan is moved early or late
-          // for capacity constraints, this is not included.
-          if (data.state->a_date < Date::infiniteFuture)
-          {
-            OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
-              opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
-              );
-            if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
-            //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
-          }
+          // Trigger the flow solver, which will call the buffer solver
+          data.state->q_flowplan = &*g;
+          q_qty_Flow = - data.state->q_flowplan->getQuantity(); // @todo flow quantity can change when using alternate flows -> move to flow solver!
+          q_date_Flow = data.state->q_flowplan->getDate();
+          g->getFlow()->solve(*this,&data);
 
-          // Jump out of the loop if the answered quantity is 0.
-          if (a_qty <= ROUNDING_ERROR)
+          // Validate the answered quantity
+          if (data.state->a_qty < q_qty_Flow)
           {
-            // @TODO disabled To speed up the planning the constraining flow is moved up a
-            // position in the list of flows. It'll thus be checked earlier
-            // when this operation is asked again
-            //const_cast<Operation::flowlist&>(g->getFlow()->getOperation()->getFlows()).promote(g->getFlow());
-            // There is absolutely no need to check other flowplans if the
-            // operationplan quantity is already at 0.
-            break;
+            // Update the opplan, which is required to (1) update the flowplans
+            // and to (2) take care of lot sizing constraints of this operation.
+            g->setQuantity(-data.state->a_qty, true);
+            a_qty = opplan->getQuantity();
+            incomplete = true;
+
+            // Validate the answered date of the most limiting flowplan.
+            // Note that the delay variable only reflects the delay due to
+            // material constraints. If the operationplan is moved early or late
+            // for capacity constraints, this is not included.
+            if (data.state->a_date < Date::infiniteFuture)
+            {
+              OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
+                opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
+                );
+              if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
+              //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
+            }
+
+            // Jump out of the loop if the answered quantity is 0.
+            if (a_qty <= ROUNDING_ERROR)
+            {
+              // @TODO disabled To speed up the planning the constraining flow is moved up a
+              // position in the list of flows. It'll thus be checked earlier
+              // when this operation is asked again
+              //const_cast<Operation::flowlist&>(g->getFlow()->getOperation()->getFlows()).promote(g->getFlow());
+              // There is absolutely no need to check other flowplans if the
+              // operationplan quantity is already at 0.
+              break;
+            }
           }
+          else if (data.state->a_qty >+ q_qty_Flow + ROUNDING_ERROR)
+            // Never answer more than asked.
+            // The actual operationplan could be bigger because of lot sizing.
+            a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
         }
-        else if (data.state->a_qty >+ q_qty_Flow + ROUNDING_ERROR)
-          // Never answer more than asked.
-          // The actual operationplan could be bigger because of lot sizing.
-          a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
       }
+    }
 
     isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
 

@@ -441,7 +441,7 @@ class Calendar : public HasName<Calendar>, public HasSource
     /** Updates the value in a certain date range.<br>
       * This will create a new bucket if required.
       */
-    void setValue(Date start, Date end, const double v);
+    DECLARE_EXPORT void setValue(Date start, Date end, const double v);
 
     double getValue(CalendarBucket::iterator& i) const
     {

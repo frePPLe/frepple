@@ -97,7 +97,7 @@ int CalendarDefault::initialize()
 
 /** Updates the value in a certain date range.<br>
   * This will create a new bucket if required. */
-void Calendar::setValue(Date start, Date end, const double v)
+DECLARE_EXPORT void Calendar::setValue(Date start, Date end, const double v)
 {
   CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(start));
   if (x && x->getStart() == start && x->getEnd() <= end)

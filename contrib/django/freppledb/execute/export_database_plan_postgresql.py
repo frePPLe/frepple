@@ -39,6 +39,7 @@ else:
   database = DEFAULT_DB_ALIAS
 
 encoding = 'UTF8'
+timestamp = str(datetime.now())
 
 
 def truncate(process):
@@ -255,16 +256,17 @@ def exportPurchaseOrders(process):
   starttime = time()
 
   # Export new proposed orders
-  process.stdin.write('COPY purchase_order (id,reference,item_id,location_id,supplier_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
+  process.stdin.write('COPY purchase_order (id,reference,item_id,location_id,supplier_id,quantity,startdate,enddate,criticality,source,status,lastmodified) FROM STDIN;\n'.encode(encoding))
   for p in getPOs(True):
-    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
+    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\t%s\n" % (
       p.id, p.reference or "\\N",
       p.operation.buffer.item.name[0:300],
       p.operation.buffer.location.name[0:300],
       p.operation.itemsupplier.supplier.name[0:300],
       round(p.quantity, 4), str(p.start), str(p.end),
       round(p.criticality, 4),
-      p.source or "\\N"
+      p.source or "\\N",
+      timestamp
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
 
@@ -293,16 +295,17 @@ def exportDistributionOrders(process):
   starttime = time()
 
   # Export new proposed orders
-  process.stdin.write('COPY distribution_order (id,reference,item_id,origin_id,destination_id,quantity,startdate,enddate,criticality,source,status) FROM STDIN;\n'.encode(encoding))
+  process.stdin.write('COPY distribution_order (id,reference,item_id,origin_id,destination_id,quantity,startdate,enddate,criticality,source,status,consume_material,lastmodified) FROM STDIN;\n'.encode(encoding))
   for p in getDOs(True):
-    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\n" % (
+    process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\tproposed\ttrue\t%s\n" % (
       p.id, p.reference or "\\N",
       p.operation.destination.item.name[0:300],
       p.operation.origin.location.name[0:300],
       p.operation.destination.location.name[0:300],
       round(p.quantity, 4), str(p.start), str(p.end),
       round(p.criticality, 4),
-      p.source or "\\N"
+      p.source or "\\N",
+      timestamp
       )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
 
@@ -361,6 +364,9 @@ def exportfrepple():
   This function exports the data from the frePPLe memory into the database.
   The export runs in parallel over 4 connections to PostgreSQL.
   '''
+  global timestamp
+  timestamp = str(datetime.now())
+
   # Truncate
   task = DatabasePipe(truncate)
   task.start()

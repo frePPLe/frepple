@@ -133,11 +133,9 @@ a:link, a:visited {
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
-    background: #b3b3b3;
     font-size: 10px;
     font-weight: bold;
     color: #555555;
-    a:hover {color:#ebebeb!important;}
 }
 
 .change_status_selectmenu_inactive {

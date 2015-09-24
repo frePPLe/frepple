@@ -120,7 +120,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
 }
 
 
-DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDefault* c)
+DECLARE_EXPORT void Resource::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;
@@ -158,7 +158,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(CalendarDefault* c)
 }
 
 
-DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(CalendarDefault* c)
+DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;

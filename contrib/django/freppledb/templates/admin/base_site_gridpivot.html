@@ -37,7 +37,8 @@ $(function() {
     cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
-    beforeSaveCell: upload.select,
+    beforeSaveCell: upload.select,{% else %}
+    onSelectRow: function() {$(this).resetSelection();},
     {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
     viewrecords: true,
@@ -45,8 +46,8 @@ $(function() {
     iconSet: "fontAwesome",
     hidegrid: false,
     scrollRows: true,
-    {% if mode == "table" %}altRows: true,
-    altclass:'altRow',{% endif %}
+    altRows: true,
+    altclass:'altRow',
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},

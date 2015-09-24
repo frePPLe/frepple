@@ -24,7 +24,8 @@ $(function() {
     cellsubmit: 'clientArray',
     editurl: location.pathname,
     afterEditCell: grid.afterEditCell,
-    beforeSaveCell: upload.select,{% endif %}
+    beforeSaveCell: upload.select,{% else %}
+    onSelectRow: function() {$(this).resetSelection();},{% endif %}
     pager: '#gridpager',
     iconSet: "fontAwesome",
     viewrecords: true,

@@ -687,6 +687,7 @@ class DemandList(GridReport):
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
     GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
+    GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -695,12 +696,19 @@ class DemandList(GridReport):
     GridFieldText('operation', title=_('delivery operation'), formatter='operation'),
     GridFieldInteger('priority', title=_('priority')),
     GridFieldText('owner', title=_('owner'), formatter='demand'),
-    GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
     GridFieldDuration('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+
+  actions = [          
+    {"name": 'inquiry', "label": _("change status to %(status)s") % {'status': _("Inquiry")}, "function": "grid.setStatus('inquiry')"},
+    {"name": 'quote', "label": _("change status to %(status)s") % {'status': _("Quote")}, "function": "grid.setStatus('quote')"},
+    {"name": 'open', "label": _("change status to %(status)s") % {'status': _("Open")}, "function": "grid.setStatus('open')"},
+    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+    {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("Canceled")}, "function": "grid.setStatus('canceled')"},
+    ]
 
 
 class CalendarList(GridReport):
@@ -827,6 +835,12 @@ class OperationPlanList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+    
+  actions = [          
+    {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
+    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
+    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+    ]
 
 
 class DistributionOrderList(GridReport):
@@ -855,6 +869,11 @@ class DistributionOrderList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+  actions = [          
+    {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
+    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
+    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+    ]
 
 class PurchaseOrderList(GridReport):
   '''
@@ -883,7 +902,7 @@ class PurchaseOrderList(GridReport):
     
   actions = [          
     {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
-    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
+    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
     ]
 

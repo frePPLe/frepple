@@ -18,6 +18,27 @@
   
 @import url("../opensans.css");
 
+
+/* disable annoying on-focus blue outline */
+*:focus {
+    outline: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    //background-color: #555555;
+    //color: black;
+}
+
+.ui-widget * {
+    outline: none;
+}
+.ui-tabs-anchor:active .ui-selectmenu-menu {
+    outline: none;
+}
+
+
+/*   end of blue outline  */
+
 .red {                  /* classes used for save_undo_buttons */
   color: #ff5656;
 }
@@ -73,9 +94,9 @@ nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
 }
 
 nav ul li:hover a, nav ul ul, .ui-autocomplete {/* Copy from the Jquery UI style ".ui-widget-header". */
-  background: #A2B3A4; //Special green for menu  
-  font-weight: 600;
-  //color: white;
+  background: #259B24; //Special green for menu  
+  font-weight: 1000;
+  color: black;
 }
 
 nav ul ul li a:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
@@ -116,7 +137,23 @@ nav ul ul li.separator {
     background: #B3B3B3;
 }
 
-/* disable focus blue outline */
-input:focus, select:focus, textarea:focus, button:focus {
-    outline: none;      
+select option, select {
+    color: #555555;
+    background: #B3B3B3;
+    font-weight: bold;
+    
 }
+
+.ui-selectmenu-menu {
+    color: #555555;
+    background: #B3B3B3;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: none;
+}
+
+
+

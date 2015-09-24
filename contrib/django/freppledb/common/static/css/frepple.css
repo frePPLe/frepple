@@ -128,6 +128,31 @@ a:link, a:visited {
     color: #B3B3B3;
 }
 
+.change_status_selectmenu_active {
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    background: #b3b3b3;
+    font-size: 10px;
+    font-weight: bold;
+    color: #555555;
+    a:hover {color:#ebebeb!important;}
+}
+
+.change_status_selectmenu_inactive {
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 4px;
+    border: 1px solid #EBEBEB;
+    background-color: #EBEBEB;
+    background-image: none;
+    font-size: 10px;
+    font-weight: bold;
+    color: #B3B3B3;
+}
+
 button:hover {
         border: 1px solid black;
         background: #EBEBEB;

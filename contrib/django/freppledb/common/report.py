@@ -333,6 +333,8 @@ class GridReport(View):
   # Defines the difference between height of the grid and its boundaries
   heightmargin = 70
 
+  # Define a list of actions
+  actions = None
 
   @classmethod
   def getKey(cls):
@@ -736,7 +738,8 @@ class GridReport(View):
         'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('delete', reportclass.model._meta))),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('change', reportclass.model._meta))),
         'active_tab': 'plan',
-        'mode': mode
+        'mode': mode,
+        'actions': reportclass.actions
         }
       for k, v in reportclass.extra_context(request, *args, **kwargs).items():
         context[k] = v

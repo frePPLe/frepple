@@ -845,7 +845,7 @@ body .ui-tooltip {
 }
 .ui-widget-content {
 	border: 1px solid #b3b3b3;
-	background: #ffffff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
+	background: #ffffff;
 	color: #555555;
 }
 .ui-widget-content a {
@@ -853,7 +853,7 @@ body .ui-tooltip {
 }
 .ui-widget-header {
 	border: 1px solid #b3b3b3;
-	background: #ebebeb url("images/ui-bg_flat_100_ebebeb_40x100.png") 50% 50% repeat-x;
+	background: #ebebeb;
 	color: #555555;
 	font-weight: bold;
 }
@@ -867,7 +867,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
 	border: 1px solid #ebebeb;
-	background: #ebebeb url("images/ui-bg_flat_75_ebebeb_40x100.png") 50% 50% repeat-x;
+	background: #ebebeb;
 	font-weight: normal;
 	color: #555555;
 }
@@ -884,7 +884,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
 	border: 1px solid #555555;
-	background: #b3b3b3 url("images/ui-bg_flat_75_b3b3b3_40x100.png") 50% 50% repeat-x;
+	background: #b3b3b3;
 	font-weight: normal;
 	color: #000000;
 }
@@ -903,7 +903,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	border: 1px solid #b3b3b3;
-	background: #ffffff url("images/ui-bg_flat_65_ffffff_40x100.png") 50% 50% repeat-x;
+	background: #ffffff;
 	font-weight: normal;
 	color: #555555;
 }
@@ -920,7 +920,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 1px solid #838d11;
-	background: #C1C688 url("images/ui-bg_flat_55_C1C688_40x100.png") 50% 50% repeat-x;
+	background: #C1C688;
 	color: #000000;
 }
 .ui-state-highlight a,
@@ -932,7 +932,7 @@ body .ui-tooltip {
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #ff5656;
-	background: #ff5656 url("images/ui-bg_flat_95_ff5656_40x100.png") 50% 50% repeat-x;
+	background: #ff5656;
 	color: #ffffff;
 }
 .ui-state-error a,
@@ -1211,14 +1211,14 @@ body .ui-tooltip {
 
 /* Overlays */
 .ui-widget-overlay {
-	background: #b3b3b3 url("images/ui-bg_flat_0_b3b3b3_40x100.png") 50% 50% repeat-x;
+	background: #B3B3B3;
 	opacity: .3;
 	filter: Alpha(Opacity=30); /* support: IE8 */
 }
 .ui-widget-shadow {
 	margin: -8px 0 0 -8px;
 	padding: 8px;
-	background: #b3b3b3 url("images/ui-bg_flat_0_b3b3b3_40x100.png") 50% 50% repeat-x;
+	background: #b3b3b3;
 	opacity: .3;
 	filter: Alpha(Opacity=30); /* support: IE8 */
 	border-radius: 8px;

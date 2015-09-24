@@ -47,6 +47,10 @@ var upload = {
     $("#grid").trigger("reloadGrid");
     $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
+    $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+    .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+    .prop('disabled', 'disabled');
+   
     $('#filter').removeClass("ui-state-disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -413,7 +417,29 @@ var grid = {
      grid.selected = id;
      $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
    },
+   
+   runAction: function(next_action) {
+    console.log($("#actions").val());
+    if ($("#actions").val() != "no_action")
+       actions[$("#actions").val()]();    
+   },
 
+   setStatus : function(newstatus) 
+   {
+    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+    console.log(sel);
+    console.log(sel.length);
+    for ( i in sel ) {
+      jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
+      jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
+      console.log(sel[i]);
+    };
+
+    $("#actions").prop("selectedIndex",0);
+    $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
+    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");    
+   },
+  
   // Renders the cross list in a pivot grid
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
@@ -798,11 +824,18 @@ var grid = {
     {
       $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
       $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+      $("#actions").removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .addClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      .prop('disabled', false);
     }
     else
     {
       $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-      $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+      $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+      $("#actions")
+      .addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      .prop('disabled', 'disabled');
     }
   },
 
@@ -812,12 +845,20 @@ var grid = {
     {
       $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
       $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+      $("#actions").removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .addClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      .prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
       $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
       $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+      $("#actions")
+      .addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      .prop('disabled', 'disabled');
       $('.cbox').prop("checked", false);
     }
   },

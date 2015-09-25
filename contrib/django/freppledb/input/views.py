@@ -859,7 +859,7 @@ class DistributionOrderList(GridReport):
     GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='location'),
-    GridFieldText('destination', title=_('destination'), field_name='origin__name', formatter='location'),
+    GridFieldText('destination', title=_('destination'), field_name='destination__name', formatter='location'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),

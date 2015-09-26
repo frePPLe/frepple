@@ -252,7 +252,6 @@ ul.messagelist li {
     border-bottom: 1px solid #555555;
     border-top: 1px solid #555555;
     color: #000000;
-    background: #C1C688 url(../admin/img/icon_success.gif) 5px .3em no-repeat;
 }
 
 ul.messagelist li.warning{

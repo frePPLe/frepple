@@ -279,12 +279,12 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # preferences among the ones listed here.
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
-THEMES = [ (i,i) for i in (
-  'frepple', 'frepple_special',
-  )]
+THEMES = [
+  'grass', 'lemon', 'water', 'strawberry', 'earth'
+  ]
 
 # The default user interface theme
-DEFAULT_THEME = 'frepple'
+DEFAULT_THEME = 'grass'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

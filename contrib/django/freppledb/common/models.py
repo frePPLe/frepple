@@ -249,7 +249,7 @@ class User(AbstractUser):
     )
   theme = models.CharField(
     _('theme'), max_length=20, default=settings.DEFAULT_THEME,
-    choices=settings.THEMES
+    choices=[ (i, capfirst(i)) for i in settings.THEMES ]
     )
   pagesize = models.PositiveIntegerField(_('page size'), default=settings.DEFAULT_PAGESIZE)
   horizonbuckets = models.CharField(max_length=300, blank=True, null=True)

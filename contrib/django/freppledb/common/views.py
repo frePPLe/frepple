@@ -85,7 +85,7 @@ class PreferencesForm(forms.Form):
   theme = forms.ChoiceField(
     label=_('Theme'),
     required=False,
-    choices=settings.THEMES,
+    choices=[ (i, capfirst(i)) for i in settings.THEMES ],
     help_text=_('Theme for the user interface'),
     )
   cur_password = forms.CharField(
@@ -163,7 +163,7 @@ def preferences(request):
       'pagesize': pref.pagesize,
       })
   return render_to_response('common/preferences.html', {
-     'title': _('Edit my preferences'),
+     'title': _('My preferences'),
      'form': form,
      },
      context_instance=RequestContext(request))

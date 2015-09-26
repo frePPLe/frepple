@@ -188,17 +188,16 @@ DEFAULT_CHARSET = 'utf-8'
 CSV_CHARSET = locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
-# The current selection is nothing but the pack of standard themes of JQuery UI.
-# Check out http://jqueryui.com/themeroller/ to roll your own theme.
-THEMES = [ (i, i) for i in (
-  'black-tie', 'blitzer', 'cupertino', 'dark-hive', 'dot-luv', 'eggplant',
-  'excite-bike', 'flick', 'hot-sneaks', 'humanity', 'le-frog', 'mint-choc',
-  'overcast', 'pepper-grinder', 'redmond', 'smoothness', 'south-street', 'start',
-  'sunny', 'swanky-purse', 'trontastic', 'ui-darkness', 'ui-lightness', 'vader'
-  )]
+# If multiple themes are configured in this list, the user's can change their
+# preferences among the ones listed here.
+# If the list contains only a single value, the preferences screen will not
+# display users an option to choose the theme.
+THEMES = [
+  'grass', 'lemon', 'water', 'strawberry', 'earth'
+  ]
 
 # The default user interface theme
-DEFAULT_THEME = 'sunny'
+DEFAULT_THEME = 'grass'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

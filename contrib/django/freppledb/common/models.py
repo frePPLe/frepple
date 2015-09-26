@@ -26,6 +26,7 @@ from django.core.urlresolvers import NoReverseMatch, reverse
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import capfirst
 
 
 logger = logging.getLogger(__name__)

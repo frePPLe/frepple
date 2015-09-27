@@ -280,7 +280,7 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'grass', 'lemon', 'water', 'strawberry', 'earth'
+  'earth', 'grass', 'lemon', 'snow', 'strawberry', 'water'
   ]
 
 # The default user interface theme

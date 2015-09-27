@@ -156,3 +156,15 @@ ul.messagelist li {
 	left: 0;
 	display: none;
 }
+
+input.ui-button {
+  background: #EBEBEB !important; /* Color green1 */  /* Theme color not followed here */
+  border: 1px solid #D4D4D4 !important; /* Color green2 */
+  color: #222222 !important
+}
+
+input.ui-button:hover {
+  background: #B3B3B3 !important; /* Color green2 */ /* Theme color not followed here */
+  border: 1px solid  #8F8F8F !important; /* Color green3 */ /* Theme color not followed here */
+  color: #222222 !important
+}

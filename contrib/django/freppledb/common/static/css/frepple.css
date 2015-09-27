@@ -185,8 +185,6 @@ div #tabs  {
 
 div.breadcrumbs {
   padding: 0 15px 0 15px;
-  border-top: 1px solid #B3B3B3;
-  border-bottom: 1px solid #B3B3B3;
   text-align: left;
   font-size: 13px;
   background: none;
@@ -249,8 +247,6 @@ ul.messagelist li {
     display: block;
     padding: 4px 5px 4px 25px;
     margin: 0 0 3px 0;
-    border-bottom: 1px solid #555555;
-    border-top: 1px solid #555555;
     color: #000000;
 }
 

@@ -1,21 +1,21 @@
 /*
  * This file contains extra frePPLe styles that vary by theme.
  */
- 
+
  /*
   * Frepple logo colors are: green #838D11, orange #F47A00 and red #D21800
-                
-  * black       black       
+
+  * black       black
   * gray1       #ebebeb
   * gray2       #b3b3b3
   * gray3       #555555
-  * green1      #FFFFFF  // header background-color
-  * green2      #E5E5E5  //special green for nav menu
+  * green1      #FFFFFF header background-color
+  * green2      #E5E5E5 special green for nav menu
   * green3      #838d11
-  * oranje1     
+  * oranje1
   * red1        #ff5656
   */
-  
+
 @import url("../opensans.css");
 
 
@@ -30,6 +30,7 @@
 .ui-widget * {
     outline: none;
 }
+
 .ui-tabs-anchor:active .ui-selectmenu-menu {
     outline: none;
 }
@@ -53,13 +54,13 @@ body, input, textarea, select, .form-row p {
 
 /* Style for the separator between breadcrumbs. */
 div.breadcrumbs .fa {
-  color: black; //Color black
+  color: black; /* Color black */
   font-size: 16px;
 }
 
-div.breadcrumbs {
-  border-top: 1px solid #555555; //Color gray3
-  border-bottom: 1px solid #555555; //Color gray3
+div.breadcrumbs, ul.messagelist li {
+  border-top: 1px solid #E5E5E5; /* Color green2 */
+  border-bottom: 1px solid #E5E5E5; /* Color green2 */
 }
 
 /* Style for edited cells in a table. */
@@ -69,11 +70,11 @@ div.breadcrumbs {
 
 /* Background color to display alternate rows in a table. */
 .altRow, .row1 {
-  background-color: #EBEBEB; //Color gray1
+  background-color: #EBEBEB; /* Color gray1 */
 }
 
-/* 
- * Header bar and navigation styles. 
+/*
+ * Header bar and navigation styles.
  */
 nav ul ul {
   list-style: none;
@@ -88,8 +89,7 @@ nav .separator::after {
 }
 
 #headerbar, div.breadcrumbs {
-  background: #FFFFFF; //Color green1
-  font-weight: 600;
+  background: #FFFFFF; /* Color green1 */
   color: #222222;
 }
 
@@ -98,27 +98,25 @@ nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
 }
 
 nav ul li:hover a, nav ul ul, .ui-autocomplete {/* Copy from the Jquery UI style ".ui-widget-header". */
-  background: #E5E5E5; //Special green for menu  
-  font-weight: 1000;
+  background: #E5E5E5; /* Color green2 */
   color: #222222;
 }
 
 nav ul ul li a:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
-  background: #DADADA; //Color gray2  
-  font-weight: 600;
+  background: #DADADA; /* Color gray2 */
   color: #111111;
 }
 
 /* Style for highlighted rows in a grid. */
 tr.ui-state-highlight {
-  border: 1px solid #838D11 !important; // Theme color not followed here - highlighting in white isn't clean
-  background: #C1C688 !important;   // Theme color not followed here - highlighting in white isn't clean
+  border: 1px solid #838D11 !important; /* Theme color not followed here - highlighting in white isn't clean */
+  background: #C1C688 !important;   /* Theme color not followed here - highlighting in white isn't clean */
 }
 
 /* Style to mark the active tab. */
 .frepple-tabs-active {
   font-weight: bold;
-  border-top: 2px solid #000000; //Color green3
+  border-top: 2px solid #000000; /* Color green3 */
 }
 
 /* separator style in nav menus */
@@ -138,15 +136,15 @@ ul.messagelist li {
 }
 
 /* for pop-up menus in listing items */
-.ui-state-default li {          
+.ui-state-default li {
     color: #555555;
     background: #EBEBEB;
 }
+
 .ui-state-default li:hover {
     color: #000000;
     background: #B3B3B3;
 }
-
 
 .ui-selectmenu-menu {
     color: #555555;
@@ -158,6 +156,3 @@ ul.messagelist li {
 	left: 0;
 	display: none;
 }
-
-
-

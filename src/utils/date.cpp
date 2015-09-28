@@ -260,9 +260,16 @@ DECLARE_EXPORT double Duration::parse2double (const char* s)
     ++c;
   }
 
-  // Compulsary 'P'
+  // Compulsary 'P' if the string is formatted as an XML duration, but
+  // the string can also be formatted as a numeric value
   if (*c != 'P')
-    throw DataException("Invalid time string '" + string(s) + "'");
+  {
+    char* endptr;
+    double value = strtod(s, &endptr);
+    if (*endptr)
+      throw DataException("Invalid time string '" + string(s) + "'");
+    return value;
+  }
   ++c;
 
   // Parse the date part

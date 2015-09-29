@@ -175,7 +175,7 @@ class Buffer_admin(MultiDBModelAdmin):
     (_('Inventory'), {
       'fields': ('onhand',)}),
     (_('Planning parameters'), {
-      'fields': ('type', 'minimum', 'minimum_calendar', 'producing', 'carrying_cost'),
+      'fields': ('type', 'minimum', 'minimum_calendar', 'producing'),
       'classes': ('collapse',)},),
     (_('Planning parameters for procurement buffers'), {
       'fields': ('leadtime', 'fence', 'min_inventory', 'max_inventory', 'min_interval', 'max_interval', 'size_minimum', 'size_multiple', 'size_maximum'),

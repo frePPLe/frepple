@@ -8,6 +8,8 @@
 {% include "demandcontext.html" %}
 {% include "resourcecontext.html" %}
 {% include "locationcontext.html" %}
+{% include "itemsuppliercontext.html" %}
+{% include "itemdistributioncontext.html" %}
 {% endblock %}
 
 {% block extrahead %}{{block.super}}
@@ -71,17 +73,13 @@ var maxlevel = 0;
 
 function hideContext()
 {
-  $('#operationcontext').css('display','none');
-  $('#buffercontext').css('display','none');
-  $('#resourcecontext').css('display','none');
+  $('#operationcontext, #buffercontext, #resourcecontext, #itemsupplier, #resourcecontext, #itemsupplier, #itemdistribution').css('display','none');
 }
 
 function clickedShaped(event)
 {
   // Hide previous context menu
-  $('#operationcontext').css('display','none');
-  $('#buffercontext').css('display','none');
-  $('#resourcecontext').css('display','none');
+  $('#operationcontext, #buffercontext, #resourcecontext, #itemsupplier, #resourcecontext, #itemsupplier, #itemdistribution').css('display','none');
 
   // Analyze where we have clicked
   var type = $(this).children("use").prop("href").baseVal;
@@ -170,6 +168,7 @@ function tick(e)
 
 function drawGraph(jsondata)
 {
+console.log(jsondata);
   var count = -1;
   for (var oper in jsondata['rows'])
   {
@@ -190,6 +189,10 @@ function drawGraph(jsondata)
       || jsondata['rows'][oper]['type'] == 'routing'
       || jsondata['rows'][oper]['type'] == 'split')
       nodetype = jsondata['rows'][oper]['type'];
+    else if (jsondata['rows'][oper]['type'] == 'purchase')
+      nodetype = 'itemsupplier';
+    else if (jsondata['rows'][oper]['type'] == 'distribution')
+      nodetype = 'itemdistribution';
     var numsuboperations = 0;
     if ('numsuboperations' in jsondata['rows'][oper])
       numsuboperations = Math.abs(parseInt(jsondata['rows'][oper]['numsuboperations']));
@@ -396,6 +399,12 @@ ExpandColClick: true,
     </polygon>
   </marker>
   <rect id="operation" class="operation" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #1f77b4;">
+  </rect>
+  <rect id="itemsupplier" class="itemsupplier" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #1f77b4;">
+  </rect>
+  <rect id="itemdistribution" class="itemdistribution" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
     style="cursor: pointer; fill: #1f77b4;">
   </rect>
   <rect id="routing" class="routing" width="110" height="25" x="-55" y="-9" rx="2" ry="2"

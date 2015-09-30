@@ -1770,7 +1770,7 @@ class OperationPlan
       * plans should pass on a call to the parent operationplan.
       */
     inline double setQuantity(double f, bool roundDown,
-      bool update = true, bool execute = true, Date start = Date::infinitePast);
+      bool update = true, bool execute = true, Date end = Date::infinitePast);
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
       * If the operationplan isn't a delivery, this is a NULL pointer.
@@ -2857,10 +2857,10 @@ class Operation : public HasName<Operation>,
 
 
 inline double OperationPlan::setQuantity(double f, bool roundDown,
-  bool update, bool execute, Date start)
+  bool update, bool execute, Date end)
 {
   return oper ?
-    oper->setOperationPlanQuantity(this, f, roundDown, update, execute, start) :
+    oper->setOperationPlanQuantity(this, f, roundDown, update, execute, end) :
     f;
 }
 
@@ -3300,7 +3300,7 @@ class OperationRouting : public Operation
 
     DECLARE_EXPORT double setOperationPlanQuantity(
       OperationPlan* oplan, double f, bool roundDown, bool upd,
-      bool execute, Date start
+      bool execute, Date end
       ) const;
 
     /** Add a new child operationplan.

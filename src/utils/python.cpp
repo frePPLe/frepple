@@ -712,10 +712,11 @@ DECLARE_EXPORT const char* Object::getStringProperty(const string& name, const s
     return def.c_str();
   }
   PythonData val(lkp);
-  string result = val.getString();
+  // TODO: using a static string here is not ideal.
+  // Returning a string here is not possible on windows - the string can get
+  // freed in a seperate module, resulting in a nasty crash.
+  static string result = val.getString();
   PyGILState_Release(pythonstate);
-  // TODO: next line is not really ok, since we are returning a pointer to a temporary stack object.
-  // Returning a string here is not possible on windows - the string can get freed in a seperate module, resulting in a nasty crash.
   return result.c_str();
 }
 

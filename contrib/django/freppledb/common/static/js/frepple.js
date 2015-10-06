@@ -45,6 +45,7 @@ var upload = {
   {
     if ($('#undo').hasClass("save_undo_button_inactive")) return;
     $("#grid").trigger("reloadGrid");
+    $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")

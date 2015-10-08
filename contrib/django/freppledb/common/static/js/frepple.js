@@ -149,11 +149,11 @@ function linkunformat (cellvalue, options, cell) {
 
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     return cellvalue + "%";
   },
   duration : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     var d = cellvalue.split(" ");
     if (d.length == 1)
     {
@@ -193,42 +193,42 @@ jQuery.extend($.fn.fmatter, {
     return seconds;
   },
   item : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='customer'></span>";
   },
   supplier : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='supplier'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
   },
   demanddetail : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellvalue;
     var result = '';
     var dmds = cellvalue.split(", ");
@@ -241,87 +241,88 @@ jQuery.extend($.fn.fmatter, {
     return result;
   },
   operation : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='calendar'></span>";
   },
   calendarbucket : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='calendarbucket'></span>";
   },
   location : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+	  console.log(cellvalue);
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='location'></span>";
   },
   setupmatrix : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='setupmatrix'></span>";
   },
   user : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='user'></span>";
   },
   group : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='group'></span>";
   },
   flow : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='flow'></span>";
   },
   itemsupplier : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='itemsupplier'></span>";
   },
   itemdistribution : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
-    if (options['colModel']['popup']) return cellvalue;
+    if (cellvalue === undefined || cellvalue === '') return '';
+    if (options['colModel']['popup']) return cellv || cellvalue === nullalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='itemdistribution'></span>";
   },
   load : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='load'></span>";
   },
   bucket : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='bucket'></span>";
   },
   parameter : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='parameter'></span>";
   },
   skill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='skill'></span>";
   },
   resourceskill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='resourceskill'></span>";
   },
   project : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='project'></span>";
   },
   projectdeel : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='projectdeel'></span>";
   },

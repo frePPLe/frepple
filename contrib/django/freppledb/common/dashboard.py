@@ -36,7 +36,7 @@ class Dashboard:
       widget, so keep it short and avoid special characters.
     - Class attribute 'title' needs to a translatable title string for
       the title bar of the widget.
-    - Class attribute 'async' is a boolean specifying whether the widget
+    - Class attribute 'asynchronous' is a boolean specifying whether the widget
       is immediately rendered in the page, or asynchronously with an
       Ajax request.
     - Class method render(request) is called to render the widget to the
@@ -77,7 +77,7 @@ class Dashboard:
     w = cls.__registry__.get(name, None)
     if not w:
       raise Http404("Unknown widget")
-    if not w.async:
+    if not w.asynchronous:
       raise Http404("This widget is synchronous")
     if not w.has_permission(request.user):
       return HttpResponseForbidden()
@@ -115,7 +115,7 @@ class Widget:
       This string is also used for the URL to access the widget, so keep it
       short and avoid special characters.
     - Class attribute 'title' defines a translatable title string for the widget.
-    - Class attribute 'async' needs to be set to true for asynchronous widgets.
+    - Class attribute 'asynchronous' needs to be set to true for asynchronous widgets.
       Such widgets are rendered in 2 steps: initially the dashboard displays a
       loading icon, and next an ajax request is launched to populate the widget
       content.
@@ -129,11 +129,11 @@ class Widget:
   name = "Undefined"
   title = "Undefined"
   permissions = ()
-  async = False       # Asynchroneous widget
-  url = None          # URL opened when the header is clicked
-  exporturl = False   # Enable or disable a download icon
-  args = ''           # Arguments passed in the url for asynchronous widgets
-  javascript = ''     # Javascript called for rendering the widget
+  asynchronous = False  # Asynchroneous widget
+  url = None            # URL opened when the header is clicked
+  exporturl = False     # Enable or disable a download icon
+  args = ''             # Arguments passed in the url for asynchronous widgets
+  javascript = ''       # Javascript called for rendering the widget
 
   def __init__(self, **options):
     # Store all options as attributes on the instance

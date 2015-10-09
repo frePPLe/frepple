@@ -59,7 +59,7 @@ class OverviewReport(GridPivot):
       return {}
 
   @staticmethod
-  def query(request, basequery, sortsql='1 asc'):
+  def query(request, basequery, sortsql='1 asc nulls last'):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 

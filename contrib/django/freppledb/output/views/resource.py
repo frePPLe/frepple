@@ -78,7 +78,7 @@ class OverviewReport(GridPivot):
       return (1.0 / 24.0, _('days'))
 
   @staticmethod
-  def query(request, basequery, sortsql='1 asc'):
+  def query(request, basequery, sortsql='1 asc nulls last'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 
     # Get the time units

@@ -20,7 +20,7 @@ from importlib import import_module
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseNotAllowed, HttpResponseForbidden, Http404
+from django.http import HttpResponseNotAllowed, HttpResponseForbidden, HttpResponseServerError
 
 
 class Dashboard:
@@ -46,6 +46,7 @@ class Dashboard:
   '''
 
   __registry__ = {}
+  __ready__ = False
 
 
   @classmethod
@@ -55,7 +56,7 @@ class Dashboard:
 
   @classmethod
   def buildList(cls):
-    if not cls.__registry__:
+    if not cls.__ready__:
       # Adding the widget modules of each installed application.
       # Note that the application list is processed in reverse order.
       # This is required to allow the first apps to override the entries
@@ -67,21 +68,28 @@ class Dashboard:
           # Silently ignore if it's the widget module which isn't found
           if str(e) not in ("No module named %s.widget" % app, "No module named '%s.widget'" % app):
             raise e
+      cls.__ready__ = True
     return cls.__registry__
 
 
   @classmethod
   def dispatch(cls, request, name):
-    if request.method != 'GET':
-      return HttpResponseNotAllowed(['get'])
-    w = cls.__registry__.get(name, None)
-    if not w:
-      raise Http404("Unknown widget")
-    if not w.asynchronous:
-      raise Http404("This widget is synchronous")
-    if not w.has_permission(request.user):
-      return HttpResponseForbidden()
-    return w.render(request)
+    try:
+      if request.method != 'GET':
+        return HttpResponseNotAllowed(['get'])
+      w = cls.buildList().get(name, None)
+      if not w:
+        return HttpResponseServerError("Unknown widget")
+      if not w.asynchronous:
+        return HttpResponseServerError("This widget is synchronous")
+      if not w.has_permission(request.user):
+        return HttpResponseForbidden()
+      return w.render(request)
+    except Exception as e:
+      if settings.DEBUG:
+        return HttpResponseServerError("Server error: %s" % e)
+      else:
+        return HttpResponseServerError("Server error")
 
 
   @classmethod

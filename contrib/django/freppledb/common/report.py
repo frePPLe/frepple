@@ -642,7 +642,7 @@ class GridReport(View):
 
     # GridReport
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
-    for i in hasattr(reportclass, 'query') and reportclass.query(request, query) or query[cnt - 1:cnt + request.pagesize].values(*fields):
+    for i in hasattr(reportclass, 'query') and reportclass.query(request, query[cnt - 1:cnt + request.pagesize]) or query[cnt - 1:cnt + request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False

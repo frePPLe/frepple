@@ -718,7 +718,7 @@ class loadData(object):
       SELECT
         operation_id, id, quantity, startdate, enddate, status, source
       FROM operationplan
-      WHERE owner_id IS NULL and quantity >= 0 %s
+      WHERE owner_id IS NULL and quantity >= 0 and status <> 'closed' %s
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
@@ -727,12 +727,12 @@ class loadData(object):
         operation=frepple.operation(name=i[0]),
         id=i[1], quantity=i[2], start=i[3], end=i[4],
         status=i[5], source=i[6]
-        ).quantity = i[2]
+        )
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, status, owner_id, source
       FROM operationplan
-      WHERE owner_id IS NOT NULL and quantity >= 0 %s
+      WHERE owner_id IS NOT NULL and quantity >= 0 and status <> 'closed' %s
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
@@ -742,7 +742,7 @@ class loadData(object):
         id=i[1], start=i[3], end=i[4], quantity=i[2],
         status=i[5], source=i[7],
         owner=frepple.operationplan(id=i[6])
-        ).quantity = i[2]
+        )
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 
@@ -753,9 +753,10 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         location_id, id, reference, item_id, supplier_id, quantity, startdate, enddate, status, source
-      FROM purchase_order %s
+      FROM purchase_order
+      WHERE status <> 'closed' %s
       ORDER BY location_id, id ASC
-      ''' % self.filter_where)
+      ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
       try:
@@ -780,9 +781,10 @@ class loadData(object):
       SELECT
         destination_id, id, reference, item_id, origin_id, quantity, startdate,
         enddate, consume_material, status, source
-      FROM distribution_order %s
+      FROM distribution_order
+      WHERE status <> 'closed' %s
       ORDER BY destination_id, id ASC
-      ''' % self.filter_where)
+      ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
       try:

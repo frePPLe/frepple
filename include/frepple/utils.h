@@ -3232,7 +3232,10 @@ class PythonData : public DataValue
           throw DataException("Invalid number");
         return static_cast<unsigned long>(x);
       }
-      return PyLong_AsUnsignedLong(obj);
+      else if (PyLong_Check(obj))
+        return PyLong_AsUnsignedLong(obj);
+      else
+        return getInt();
     }
 
     /** Convert a Python datetime.date or datetime.datetime object into a

@@ -468,6 +468,7 @@ nav ul li:hover > ul {
 
 nav ul li {
   float: left;
+  list-style: none;
   padding: 0;
 }
 

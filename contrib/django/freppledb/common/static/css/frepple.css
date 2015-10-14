@@ -8,7 +8,6 @@ body {
   background: white;
 }
 
-
 h1,h2,h3,h4,h5 {
     font-weight: bold;
 }
@@ -363,10 +362,13 @@ div.ContextMenu ul {
   z-index: 100;
 }
 
-div ul li {
-    list-style-type: none;
+div.ContextMenu li a {
+  display: block;
 }
 
+div.ContextMenu ul li {
+  list-style-type: none;
+}
 
 /* Raw id fields are too small by default. */
 .vForeignKeyRawIdAdminField {

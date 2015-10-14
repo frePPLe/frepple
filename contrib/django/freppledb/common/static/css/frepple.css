@@ -527,6 +527,7 @@ nav ul ul ul {
 .frepple-tabs ul li {
   float: left;
   padding: 0 10px 0 10px;
+  list-style-type: none;
 }
 
 .frepple-tabs ul li a {

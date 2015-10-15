@@ -1,15 +1,15 @@
-This package was debianized by jdetaeye <jdetaeye@users.sourceforge.net> on
+This package was debianized by jdetaeye <jdetaeye@frepple.com> on
 Tue, 14 Jul 2009 07:36:24 -0400.
 
 It was downloaded from http://downloads.sourceforge.net/sourceforge/frepple/frepple-0.7.1.tar.gz
 
 Upstream Author(s):
 
-    jdetaeye@users.sourceforge.net
+    jdetaeye@frepple.com
 
 Copyright:
 
-    2009-2013 by Johan De Taeye
+    2009-2015 by frepple.com
 
 License:
 
@@ -29,5 +29,5 @@ License:
 On Debian systems, the complete text of the GNU Affero General
 Public License can be found in `/usr/share/common-licenses/AGPL-3'.
 
-The Debian packaging is copyright 2012, jdetaeye <jdetaeye@users.sourceforge.net> and
+The Debian packaging is copyright 2012, jdetaeye <jdetaeye@frepple.com> and
 is licensed under the AGPL, see `/usr/share/common-licenses/AGPL-3'.

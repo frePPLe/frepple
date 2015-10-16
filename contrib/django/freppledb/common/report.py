@@ -314,6 +314,9 @@ class GridReport(View):
   # Include time bucket support in the report
   hasTimeBuckets = False
 
+  # Allow to exclude time buckets in the past
+  showOnlyFutureTimeBuckets = False
+
   # Specify a minimum level for the time buckets available in the report.
   # Higher values (ie more granular) buckets can then not be selected.
   maxBucketLevel = None
@@ -409,15 +412,17 @@ class GridReport(View):
     else:
       # Second type: Absolute start and end dates given
       start = pref.horizonstart
-      if not start:
+      if reportclass.showOnlyFutureTimeBuckets or not start:
         try:
-          start = datetime.strptime(
+          current = datetime.strptime(
             Parameter.objects.using(request.database).get(name="currentdate").value,
             "%Y-%m-%d %H:%M:%S"
             )
         except:
-          start = datetime.now()
-          start = start.replace(microsecond=0)
+          current = datetime.now()
+          current = start.replace(microsecond=0)
+      if not start or (reportclass.showOnlyFutureTimeBuckets and start < current):
+        start = current
       end = pref.horizonend
       if end:
         if end < start:
@@ -434,6 +439,8 @@ class GridReport(View):
           end = start + timedelta(weeks=pref.horizonlength or 8)
 
     # Filter based on the start and end date
+    if reportclass.showOnlyFutureTimeBuckets:
+      request.current_date = str(current)
     request.report_startdate = start
     request.report_enddate = end
     request.report_bucket = str(bucket)

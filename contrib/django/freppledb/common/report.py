@@ -70,7 +70,7 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
-
+from freppledb.boot import getAttributes
 from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
 
 
@@ -339,6 +339,8 @@ class GridReport(View):
   # Define a list of actions
   actions = None
 
+  _attributes_added = False
+
   @classmethod
   def getKey(cls):
     return "%s.%s" % (cls.__module__, cls.__name__)
@@ -468,6 +470,29 @@ class GridReport(View):
     # Unescape special characters in the arguments.
     # All arguments are encoded with escaping function used on the django admin.
     args_unquoted = [ unquote(i) for i in args ]
+
+    # Add attributes if not done already
+    if not self._attributes_added:
+      self.__class__._attributes_added = True
+      for field_name, label, fieldtype in getAttributes("%s.%s" % (self.model.__module__, self.model.__name__)):
+        if fieldtype == 'string':
+          self.__class__.rows += (GridFieldText(field_name, title=label),)
+        elif fieldtype == 'boolean':
+          self.__class__.rows += (GridFieldBool(field_name, title=label),)
+        elif fieldtype == 'number':
+          self.__class__.rows += (GridFieldNumber(field_name, title=label),)
+        elif fieldtype == 'integer':
+          self.__class__.rows += (GridFieldInteger(field_name, title=label),)
+        elif fieldtype == 'date':
+          self.__class__.rows += (GridFieldDate(field_name, title=label),)
+        elif fieldtype == 'datetime':
+          self.__class__.rows += (GridFieldDateTime(field_name, title=label),)
+        elif fieldtype == 'duration':
+          self.__class__.rows += (GridFieldDuration(field_name, title=label),)
+        elif fieldtype == 'time':
+          self.__class__.rows += (GridFieldTime(field_name, title=label),)
+        else:
+          raise Exception("Invalid attribute type '%s'." % fieldtype)
 
     # Dispatch to the correct method
     if request.method == 'GET':

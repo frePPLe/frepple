@@ -125,10 +125,10 @@ The installer has been tested on Windows XP, Windows 7 and Windows 8.
 
    #. Either it was already started at the last step of the installation process.
 
-   #. Select “Run frePPLe server” from the program menu to start the web server
+   #. Select "Run frePPLe server" from the program menu to start the web server
       in the system tray. If you’re new to frePPLe, this method is preferred.
 
-   #. Select “Start Service” from the program menu or the Windows service manager.
+   #. Select "Start Service" from the program menu or the Windows service manager.
       This option is available only when you choose to register a service during
       the installation.
 

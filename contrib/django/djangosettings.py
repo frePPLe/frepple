@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'freppledb.boot',
     'freppledb.odoo',
     'freppledb.openbravo',
     'freppledb.input',
@@ -182,6 +183,39 @@ INSTALLED_APPS = (
     'freppledb.execute',
     'freppledb.common',
 )
+
+# Custom attribute fields in the database
+# After each change of this setting, the following commands MUST be
+# executed to create the fields in the database(s).
+#   frepplectl makemigrations
+#   frepplectl migrate     OR     frepplectl migrate --database DATABASE
+#
+# The commands will create migration files to keep track of the changes.
+# You MUST use the above commands and the generated migration scripts. Manually
+# changing the database schema will work in simple cases, but will get you
+# in trouble in the long run!
+# You'll need write permissions in the folder where these are stored.
+#
+# See https://docs.djangoproject.com/en/1.8/topics/migrations/ for the
+# details on the migration files. For complex changes to the attributes
+# an administrator may need to edit, delete or extend these files.
+#
+# Supported field types are 'string', 'boolean', 'number', 'integer',
+# 'date', 'datetime', 'duration' and 'time'.
+# Example:
+#  ATTRIBUTES = [
+#    ('freppledb.input.models.Item', [
+#      ('attribute1', ugettext('attribute_1'), 'string'),
+#      ('attribute2', ugettext('attribute_2'), 'boolean'),
+#      ('attribute3', ugettext('attribute_3'), 'date'),
+#      ('attribute4', ugettext('attribute_4'), 'datetime'),
+#      ('attribute5', ugettext('attribute_5'), 'number'),
+#      ]),
+#    ('freppledb.input.models.Operation', [
+#      ('attribute1', ugettext('attribute_1'), 'string'),
+#      ])
+#    ]
+ATTRIBUTES = []
 
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),

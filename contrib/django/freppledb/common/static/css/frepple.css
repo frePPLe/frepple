@@ -150,6 +150,15 @@ a:link, a:visited {
     color: #B3B3B3;
 }
 
+.comment_button_active {
+    font-weight: bold;
+    color: #555555;
+}
+
+*.ui-state-highlight.edit-cell {
+  background: transparent;
+}
+
 button:hover {
         border: 1px solid black;
         background: #EBEBEB;
@@ -567,6 +576,7 @@ table thead th.sorted {
 
 .smallpadding {
   padding: 0 3px;
+  text-align: center;
 }
 
 .editablepivotcol {
@@ -613,8 +623,8 @@ div.calendarbox
   padding-right: 20px;
 }
 
-.ui-autocomplete-categoryz {
-  font-weight:bold;
+.ui-autocomplete-category {
+  font-weight:normal;
   list-style-type: none;
 }
 

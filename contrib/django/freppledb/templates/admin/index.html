@@ -24,17 +24,16 @@
       cancel: ".portlet-toggle",
       placeholder: "portlet-placeholder ui-corner-all"
     });
-
     $(".portlet-toggle").click(function() {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");
       icon.closest(".portlet").find(".portlet-content").toggle();
     });
-
     $(".portlet-close").click(function() {
       $(this).closest(".portlet").remove();
     });
     $(".button").button();
+    $("#toolicons").tooltip({show: {effect: "fade", delay: 500}});
   });
 </script>
 {% endblock %}

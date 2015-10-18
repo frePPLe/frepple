@@ -277,13 +277,14 @@ def Comments(request, app, model, object_id):
   except:
     raise Http404('Object not found')
   if request.method == 'POST':
-    comment = request.POST['comment']
-    if comment:
-      Comment(
-           content_object=modelinstance,
-           user=request.user,
-           comment=comment
-           ).save(using=request.database)
+    if request.user.has_perm("common.add_comment"):
+      comment = request.POST['comment']
+      if comment:
+        Comment(
+             content_object=modelinstance,
+             user=request.user,
+             comment=comment
+             ).save(using=request.database)
     return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (request.prefix, app, model, object_id))
   else:
     return render_to_response('common/comments.html', {

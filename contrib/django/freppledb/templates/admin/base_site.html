@@ -18,6 +18,9 @@
 <script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 <script type="text/javascript">
+
+  var url_prefix = '{{request.prefix}}';
+
   $(function() {
     breadcrumbs_reflow();
     $(window).resize(breadcrumbs_reflow);{% if request.GET.tour %}

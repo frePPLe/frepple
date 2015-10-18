@@ -51,7 +51,7 @@ var upload = {
     $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
     .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
     .prop('disabled', 'disabled');
-   
+
     $('#filter').removeClass("ui-state-disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -256,7 +256,6 @@ jQuery.extend($.fn.fmatter, {
     return cellvalue + "<span class='context fa fa-caret-right' role='calendarbucket'></span>";
   },
   location : function(cellvalue, options, rowdata) {
-	  console.log(cellvalue);
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='location'></span>";
@@ -419,29 +418,25 @@ var grid = {
      grid.selected = id;
      $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
    },
-   
+
    runAction: function(next_action) {
-    console.log($("#actions").val());
     if ($("#actions").val() != "no_action")
-       actions[$("#actions").val()]();    
+       actions[$("#actions").val()]();
    },
 
-   setStatus : function(newstatus) 
+   setStatus : function(newstatus)
    {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-    console.log(sel);
-    console.log(sel.length);
     for ( i in sel ) {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
-      console.log(sel[i]);
     };
 
     $("#actions").prop("selectedIndex",0);
     $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
-    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");    
+    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
    },
-  
+
   // Renders the cross list in a pivot grid
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
@@ -484,7 +479,68 @@ var grid = {
     $(cell).select();
   },
 
-  // Display dialog for exporting CSV-files
+  // Display dialog for incremental export from openbravo
+  openbravoIncrExport: function() {
+    $('#popup').html(
+    gettext("export selected records to openbravo")
+    );
+
+    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+
+    $('#popup').dialog({
+      title: gettext("export"),
+      autoOpen: true, resizable: false, width: 390, height: 'auto',
+      buttons: [
+        {
+          text: gettext("export"),
+          id: 'button_export',
+          click: function() {
+            if (sel != null && sel.length > 0)
+            // Send the update to the server
+              $.ajax({
+                  url: "/openbravo/upload/",
+                  data: JSON.stringify(sel),
+                  type: "POST",
+                  contentType: "application/json",
+                  success: function () {
+                    $('#popup').html(gettext("export: OK"))
+                      .dialog({
+                        title: gettext("data exported to openbravo"),
+                        autoOpen: true,
+                        resizable: false,
+                        width: 'auto',
+                        height: 'auto'
+                      });
+                    $('#button_close').find('.ui-button-text').text(gettext('close'));
+                    $('#button_export').removeClass("ui-state-default").addClass("ui-state-disabled").prop('disabled', 'disabled');
+                    upload.undo();
+                  },
+                  error: function (result, stat, errorThrown) {
+                    $('#popup').html(result.responseText)
+                      .dialog({
+                        title: gettext("error exporting data"),
+                        autoOpen: true,
+                        resizable: false,
+                        width: 'auto',
+                        height: 'auto'
+                      });
+                    $('#button_export').find('.ui-button-text').text(gettext('retry'));
+                  }
+              });
+
+            $(this).dialog("close");
+          }
+        },
+        {
+          text: gettext("cancel"),
+          id: 'button_close',
+          click: function() { $(this).dialog("close"); }
+        }
+        ]
+    });
+    $("#actions").prop("selectedIndex",0);
+  },
+
   showExport: function(only_list)
   {
     // The argument is true when we show a "list" report.
@@ -891,7 +947,7 @@ var grid = {
 $.widget( "custom.catcomplete", $.ui.autocomplete, {
   _renderItem: function( ul, item) {
     if (item.value == undefined)
-      return $( "<li class='ui-autocomplete-category'>" + item.label + "</li>" ).appendTo( ul );
+      return $( "<li class='ui-autocomplete-category' style='border-bottom: 1px; border-bottom-style: solid; border-bottom-color: #222 '>" + item.label + "</li>" ).appendTo( ul );
     else
       return $( "<li></li>" )
       .data( "item.autocomplete", item )

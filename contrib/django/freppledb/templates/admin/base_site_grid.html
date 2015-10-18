@@ -99,7 +99,7 @@ $(window).bind('resize', function() {
 {% if actions %}&nbsp;&nbsp;
     <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class=" ui-corner-all ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive" >
     <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}
-    <option value="{{ i.name|escape }}">{{ i.label|capfirst }}</option>{% endfor %}
+    <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>{% endfor %}
     </select>{% endif %}
 </div>{% endif %}
 {% endblock save_undo_buttons %}

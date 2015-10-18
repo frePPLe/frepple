@@ -2,7 +2,7 @@ Source: frepple
 Section: science
 Priority: optional
 Maintainer: Johan De Taeye <jdetaeye@frepple.com>
-Build-Depends: debhelper (>= 8), cdbs (>= 0.4.90), autotools-dev, python3-dev (>= 3.4), libxerces-c-dev, libtool, python-sphinx
+Build-Depends: debhelper (>= 8), cdbs (>= 0.4.90), autotools-dev, python3-dev (>= 3.4), libxerces-c-dev, libtool, python3-sphinx
 Standards-Version: 3.8.4
 Homepage: http://frepple.com
 Vcs-Browser: https://github.com/frePPLe/frePPLe/commits/

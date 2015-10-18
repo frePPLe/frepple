@@ -1024,6 +1024,8 @@ class DistributionOrderList(GridReport):
     {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
     ]
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions.append({"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "grid.openbravoIncrExport()"})
 
 class PurchaseOrderList(GridReport):
   '''
@@ -1055,4 +1057,6 @@ class PurchaseOrderList(GridReport):
     {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
     ]
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions.append({"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "grid.openbravoIncrExport()"})
 

@@ -118,17 +118,6 @@ tr.ui-state-highlight {
   border-top: 2px solid #000000; /* Color green3 */
 }
 
-/* separator style in nav menus */
-nav ul ul li.separator {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: none;
-    border-width: 1px;
-}
-
 /* Confirmation message shown just below the header */
 ul.messagelist li {
     background: #C2AE99 url(../../admin/img/icon_success.gif) 5px .3em no-repeat;

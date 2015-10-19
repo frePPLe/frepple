@@ -66,6 +66,18 @@ a:link, a:visited {
     font-size: 75%;
 }
 
+
+/* separator style in nav menus */
+nav ul ul li.separator {
+    display: block;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: none;
+    border-width: 1px;
+}
+
 .separator::after {
     content: "";
     display: block;
@@ -73,6 +85,7 @@ a:link, a:visited {
     width: 100%;
     margin: 0px;
 }
+
 /* hr {
     clear: both;
     color: #eee;

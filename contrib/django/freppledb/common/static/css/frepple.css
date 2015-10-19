@@ -439,6 +439,7 @@ span.context {
   float: right;
   font-size: 13px;
   text-align: right;
+  padding: 0;
 }
 
 #headerbar {

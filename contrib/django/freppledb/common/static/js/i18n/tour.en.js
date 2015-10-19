@@ -45,10 +45,10 @@ var tourdata = [
          },
          {
            url: "/admin/",
-           element : '.menuBar',
+           element : '#nav-menu',
            description : "The menu bar gives access to all screens.<br/><br/>" +
                "Screens that are not accessible with your profile<br/>won't be shown in the list.",
-           position : 'BL'
+           position : 'B'
          },
          {
            url: "/admin/",
@@ -81,10 +81,11 @@ var tourdata = [
         [
          {
            url: "/admin/",
-           element : '.ui-menu',
-           beforestep: '$(".menuButton").first().click()',
-           description : "All entities have a data table in the input section.",
-           position : 'R'
+           element : '#nav-menu',
+//           beforestep: '$("#nav-menu").first().hover()',
+//           beforestep: 'document.getElementById().hover()',
+           description : "All entities (items, locations, suppliers, ...) <br/>" + "have a data table in the input section.",
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
@@ -108,20 +109,20 @@ var tourdata = [
            description : "You can define filters to see a subset of the data.<br/>" +
              "The filter expression can use all attributes from<br/>" +
              "the table and combine them using AND and OR criteria.",
-           position : 'B'
+           position : 'L'
          },
          {
            url: "/data/input/demand/",
-           element : ".fa-check",
+           element : "#undo",
            description : "You can directly edit data cells in the grid.<br/>" +
              "Click 'save' to store the changes in the database.<br/>" +
              "Clicking 'undo' will restore the original data.",
-           position : 'B'
+           position : 'R'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-plus",
-           description : "Clicking 'add' opens a form in which you can enter data for a new record.",
+           description : "Clicking 'add' (+ sign) opens a form where you can enter data for a new record.",
            position : 'B'
          },
          {
@@ -170,14 +171,14 @@ var tourdata = [
         [
          {
            url: "/admin/",
-           element : '.ui-menu',
-           beforestep: '$(".menuButton").first().click()',
+           element : '#nav-menu',
+//           beforestep: '$(".menuButton").first().click()',
            description : "All entities have a data table in the input section.<br/>" +
              "A complete description of all entities and their relationships<br/>" +
              "is beyond the scope of this tour.<br/>" +
              "In this tour we'll only show the concepts at a very high level.<br/>" +
              "Check out the documentation for more detail.<br/>",
-           position : 'R'
+           position : 'B'
          },
          {
            url: "/supplypath/item/product/",
@@ -198,7 +199,7 @@ var tourdata = [
          },
          {
            url: "/whereused/buffer/thread%20%40%20factory%201/",
-           element : "#tabs ul li:nth-child(2)",
+           element : "#tabs ul li:nth-child(1)",
            description : "The supply path report displays the structure upstream,<br/>" +
              "ie walking from end item towards the raw materials.<br/><br/>" +
              "The where-used report displays the structure downstream,<br/>" +
@@ -382,7 +383,7 @@ var tourdata = [
              element : '.fa-table',
              description : "You can display the report in graphical format<br/>" +
                "or in table format.",
-             position : 'T'
+             position : 'L'
            },
            {
              url: "/resource/",
@@ -416,11 +417,9 @@ var tourdata = [
            {
              url: "/loadplan/",
              element : 'h1',
-             description : "This report shows the details of all operations<br/>" +
-               "planned on a resource: start date, end date, operation, quantity.<br/><br/>" +
-               "This list can be used to communicate the plan to operators<br/>" +
-               "on the shop floor, or integrate it to ERP and other systems.",
-             position : 'BL'
+             description : "This report shows the details of all operations planned on a resource: start date, end date, operation, quantity.<br/>" +
+               "This list can be used to communicate the plan to operators on the shop floor, or integrate it to ERP and other systems.",
+             position : 'R'
            },
            {
              url: "/buffer/",
@@ -428,11 +427,11 @@ var tourdata = [
              description : "This report shows the inventory profile of all SKUs.<br/>" +
                "It displays how much inventory we plan to have for each raw<br/>" +
                "material, end product or intermediate product.",
-             position : 'BL'
+             position : 'R'
            },
            {
              url: "/buffer/",
-             element : 'td[aria-describedby="grid_columns"]',
+             element : '#gview_grid',
              description : "For each buffer and time bucket the report shows:<br/>" +
                "&nbsp;&nbsp;- Start Inventory: on hand at the start of the bucket<br/>" +
                "&nbsp;&nbsp;- Produced: quantity added during the bucket<br/>" +
@@ -443,22 +442,20 @@ var tourdata = [
            {
              url: "/flowplan/",
              element : 'h1',
-             description : "This report shows the detailed list of all material<br/>" +
-               "consumed and produced.<br/><br/>" +
-               "This list can be used to communicate the plan to operators<br/>" +
-               "on the shop floor, or integrate it to ERP and other systems.",
-             position : 'BL'
+             description : "This report shows the detailed list of all material consumed and produced.<br/>" +
+               "This list can be used to communicate the plan to operatorson the shop floor, or integrate it to ERP and other systems.",
+             position : 'R'
            },
            {
              url: "/operation/",
              element : 'h1',
              description : "This report summarizes the planned operations.<br/>" +
                "It displays what operations we are planned to start and finish.",
-             position : 'BL'
+             position : 'R'
            },
            {
              url: "/operation/",
-             element : 'td[aria-describedby="grid_columns"]',
+             element : '#gview_grid',
              description : "For each operation and time bucket the report shows:<br/>" +
                "&nbsp;&nbsp;- Locked starts: work-in-progress or frozen quantity started in the bucket<br/>" +
                "&nbsp;&nbsp;- Total starts: total quantity of operations starting in the bucket<br/>" +
@@ -469,21 +466,21 @@ var tourdata = [
            {
              url: "/operationplan/",
              element : 'h1',
-             description : "This report shows the detailed list of all planned operations.<br/><br/>" +
+             description : "This report shows the detailed list of all planned operations.<br/>" +
                "This list would be typically be used to communicate the plan to operators<br/>" +
                "on the shop floor, or integrate it to ERP and other systems.",
-             position : 'BL'
+             position : 'R'
            },
            {
              url: "/demand/",
              element : 'h1',
              description : "This report summarizes the demand for each item.<br/>" +
                "It displays the customer demand for the item and the planned supply.",
-             position : 'BL'
+             position : 'R'
            },
            {
              url: "/demand/",
-             element : 'td[aria-describedby="grid_columns"]',
+             element : '#gview_grid',
              description : "For each item and time bucket the report shows:<br/>" +
                "&nbsp;&nbsp;- Demand: customer demand due in the bucket<br/>" +
                "&nbsp;&nbsp;- Supply: supply of the item in the bucket<br/>" +
@@ -495,19 +492,17 @@ var tourdata = [
            },
            {
              url: "/demand/",
-             element : 'span[role="detail1"]',
-             description : "Clicking on the triangles allows you to drill<br/>" +
+             element : 'thead',
+             description : "Clicking on the item triangles allows you to drill<br/>" +
                "down to the individual orders due in the bucket",
-             position : 'T'
+             position : 'TL'
            },
            {
              url: "/demandplan/",
              element : 'h1',
-             description : "This report shows the detailed list of all<br/>" +
-               "planned deliveries of each order.<br/><br/>" +
-               "It can be used for more detailed analysis of<br/>" +
-               "delays or shortages.",
-             position : 'BL'
+             description : "This report shows the detailed list of all planned deliveries of each order.<br/>" +
+               "It can be used for more detailed analysis of delays or shortages.",
+             position : 'R'
            },
            {
              url: "/problem/",

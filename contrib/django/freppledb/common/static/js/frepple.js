@@ -947,7 +947,7 @@ var grid = {
 $.widget( "custom.catcomplete", $.ui.autocomplete, {
   _renderItem: function( ul, item) {
     if (item.value == undefined)
-      return $( "<li class='ui-autocomplete-category' style='border-bottom: 1px; border-bottom-style: solid; border-bottom-color: #222 '>" + item.label + "</li>" ).appendTo( ul );
+      return $( "<li class='ui-autocomplete-category' style='border-top: 1px; border-top-style: solid; border-top-color: #222; text-align:center;'>" + item.label + "</li>" ).appendTo( ul );
     else
       return $( "<li></li>" )
       .data( "item.autocomplete", item )

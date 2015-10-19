@@ -638,7 +638,6 @@
       <xsd:element name="location" type="location" />
       <xsd:element name="item" type="item" />
       <xsd:element name="onhand" type="xsd:double" />
-      <xsd:element name="carrying_cost" type="positiveDouble" />
       <xsd:element name="minimum" type="xsd:double" />
       <xsd:element name="maximum" type="xsd:double" />
       <xsd:element name="minimum_calendar" type="calendar" />
@@ -653,7 +652,6 @@
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="onhand" type="xsd:double" />
-    <xsd:attribute name="carrying_cost" type="positiveDouble" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
     <xsd:attribute name="mininterval" type="xsd:duration" />

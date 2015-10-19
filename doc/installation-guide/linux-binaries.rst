@@ -137,9 +137,10 @@ Here are the steps to get a fully working environment.
       | Edit the "TIMEZONE" variable to your local setting.
       | Edit the "DATABASES" with your database parameters.
       | Change "SECRET_KEY" to some arbitrary value - important for security reasons.
+      | Optionally, you can define custom attributes in this file: see below.
 
    #. | /etc/frepple/license.xml
-      | No license file is required for the community edition.
+      | No license file is required for the Community Edition.
       | If you are using the Enterprise Edition, replace this file with the
       | license file you received from us.
 
@@ -150,6 +151,44 @@ Here are the steps to get a fully working environment.
       | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of
       | the Apache web server.
+
+#. **Optionally, define custom attributes**
+
+   It is pretty common to add customized attributes on items, locations,
+   operations, etc to reflect the specifics of your business. They can be edited
+   in the property ATTRIBUTES in the file /etc/frepple/djangosettings.py.
+   ::
+
+      ATTRIBUTES = [
+        ('freppledb.input.models.Item', [
+          ('attribute1', ugettext('attribute_1'), 'string'),
+          ('attribute2', ugettext('attribute_2'), 'boolean'),
+          ('attribute3', ugettext('attribute_3'), 'date'),
+          ('attribute4', ugettext('attribute_4'), 'datetime'),
+          ('attribute5', ugettext('attribute_5'), 'duration'),
+          ('attribute6', ugettext('attribute_6'), 'number'),
+          ('attribute7', ugettext('attribute_7'), 'integer'),
+          ]),
+        ('freppledb.input.models.Operation', [
+          ('attribute1', ugettext('attribute_1'), 'string'),
+          ])
+        ]
+
+   After editing the file, a script needs to be executed to generate a
+   migration script for the database schema:
+   ::
+
+     frepplectl makemigrations
+
+   Attributes can be added, changed and deleted at any later time as well,
+   but it's most convenient to define them upfront before the database
+   schema is created in the next step. When you later edit attributes you
+   need to run the following commands to apply the changes to the database
+   schema:
+   ::
+
+     frepplectl makemigrations
+     frepplectl migrate
 
 #. **Create the database schema**
 
@@ -312,10 +351,10 @@ inspiration for your own deployments.
 
   # Create frepple database schema
   frepplectl migrate --noinput
-  
-***************************
+
+******************************
 Suse installation instructions
-***************************
+******************************
 
 This section shows the instructions for installing
 and configuring frePPLe with a PostgreSQL database on a SLES 12 server.
@@ -329,13 +368,13 @@ You can use it as a guideline and inspiration for your own deployments.
   # Update and Upgrade
   sudo zypper update
   sudo zypper upgrade
-  
+
   # Install the PostgreSQL database
-  
-  tip: "sudo zypper se PACKAGENAME" to look for the correct package names 
-  
+
+  tip: "sudo zypper se PACKAGENAME" to look for the correct package names
+
   sudo zypper install postgresql postgresql-server postgres-devel
-  
+
   sudo su
   rcpostgresql start
   su - postgres

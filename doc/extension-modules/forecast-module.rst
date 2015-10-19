@@ -95,12 +95,14 @@ in your company:
 
 The module support the following configuration parameters:
 
-* | *DueAtEndOfBucket*:
-  | By default, forecast demand is due at the start of the forecasting bucket.
-    Since the actual customer demand will come in any time in the bucket this
-    is a conservative setting. By setting this flag to true, the forecast will
-    be due at the end of the forecast bucket. This more relaxed setting may
-    give more realistic plans in some cases.
+* | *DueWithinBucket*:
+  | Specifies whether forecasted demand is due at the 'start', 'middle' or
+    'end' of the bucket.
+  | Using the middle of the bucket gives the most realistic approximation and
+    is the recommended default value.
+  | Using the start date of the bucket is a more conservative setting: it
+    assures that all forecast supply is already available at the start of the
+    month.
 
 * | *Net_CustomerThenItemHierarchy*:
   | As part of the forecast netting a demand is assiociated with a certain

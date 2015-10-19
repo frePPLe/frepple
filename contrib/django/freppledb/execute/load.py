@@ -408,8 +408,7 @@ class loadData(object):
       SELECT name, description, location_id, item_id, onhand,
         minimum, minimum_calendar_id, producing_id, type, leadtime, min_inventory,
         max_inventory, min_interval, max_interval, size_minimum,
-        size_multiple, size_maximum, fence, carrying_cost,
-        category, subcategory, source
+        size_multiple, size_maximum, fence, category, subcategory, source
       FROM buffer %s
       ''' % self.filter_where)
     for i in self.cursor.fetchall():
@@ -417,7 +416,7 @@ class loadData(object):
       if i[8] == "procure":
         b = frepple.buffer_procure(
           name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[19], subcategory=i[20], source=i[21]
+          category=i[18], subcategory=i[19], source=i[20]
           )
         if i[9]:
           b.leadtime = i[9]
@@ -436,12 +435,12 @@ class loadData(object):
       elif i[8] == "infinite":
         b = frepple.buffer_infinite(
           name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[19], subcategory=i[20], source=i[21]
+          category=i[18], subcategory=i[19], source=i[20]
           )
       elif not i[8] or i[8] == "default":
         b = frepple.buffer(
           name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[19], subcategory=i[20], source=i[21]
+          category=i[18], subcategory=i[19], source=i[20]
           )
       else:
         raise ValueError("Buffer type '%s' not recognized" % i[8])
@@ -455,8 +454,6 @@ class loadData(object):
         b.minimum_calendar = frepple.calendar(name=i[6])
       if i[7]:
         b.producing = frepple.operation(name=i[7])
-      if i[18]:
-        b.carrying_cost = i[18]
       if i[12]:
         b.mininterval = i[12]
       if i[13]:
@@ -721,7 +718,7 @@ class loadData(object):
       SELECT
         operation_id, id, quantity, startdate, enddate, status, source
       FROM operationplan
-      WHERE owner_id IS NULL and quantity >= 0 %s
+      WHERE owner_id IS NULL and quantity >= 0 and status <> 'closed' %s
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
@@ -730,12 +727,12 @@ class loadData(object):
         operation=frepple.operation(name=i[0]),
         id=i[1], quantity=i[2], start=i[3], end=i[4],
         status=i[5], source=i[6]
-        ).quantity = i[2]
+        )
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, status, owner_id, source
       FROM operationplan
-      WHERE owner_id IS NOT NULL and quantity >= 0 %s
+      WHERE owner_id IS NOT NULL and quantity >= 0 and status <> 'closed' %s
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
@@ -745,7 +742,7 @@ class loadData(object):
         id=i[1], start=i[3], end=i[4], quantity=i[2],
         status=i[5], source=i[7],
         owner=frepple.operationplan(id=i[6])
-        ).quantity = i[2]
+        )
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 
@@ -756,9 +753,10 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         location_id, id, reference, item_id, supplier_id, quantity, startdate, enddate, status, source
-      FROM purchase_order %s
+      FROM purchase_order
+      WHERE status <> 'closed' %s
       ORDER BY location_id, id ASC
-      ''' % self.filter_where)
+      ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
       try:
@@ -783,9 +781,10 @@ class loadData(object):
       SELECT
         destination_id, id, reference, item_id, origin_id, quantity, startdate,
         enddate, consume_material, status, source
-      FROM distribution_order %s
+      FROM distribution_order
+      WHERE status <> 'closed' %s
       ORDER BY destination_id, id ASC
-      ''' % self.filter_where)
+      ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
       try:

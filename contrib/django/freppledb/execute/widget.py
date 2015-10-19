@@ -27,7 +27,7 @@ class ExecuteWidget(Widget):
   title = _("Execute")
   permissions = (("generate_plan", "Can generate plans"),)
   tooltip = _("Generate a constrained plan")
-  async = False
+  asynchronous = False
   url = '/execute/'
 
   def render(self, request=None):

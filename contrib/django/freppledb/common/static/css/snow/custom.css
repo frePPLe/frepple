@@ -11,7 +11,7 @@
   * gray3       #555555
   * green1      #FFFFFF header background-color
   * green2      #E5E5E5 special green for nav menu
-  * green3      #838d11
+  * green3      #DADADA
   * oranje1
   * red1        #ff5656
   */
@@ -119,17 +119,6 @@ tr.ui-state-highlight {
   border-top: 2px solid #000000; /* Color green3 */
 }
 
-/* separator style in nav menus */
-nav ul ul li.separator {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: none;
-    border-width: 1px;
-}
-
 /* Confirmation message shown just below the header */
 ul.messagelist li {
     background: #FFFFFF url(../../admin/img/icon_success.gif) 5px .3em no-repeat;
@@ -168,3 +157,25 @@ input.ui-button:hover {
   border: 1px solid  #8F8F8F !important; /* Color green3 */ /* Theme color not followed here */
   color: #222222 !important
 }
+
+ui-widget-content .jqgrow.ui-row-ltr {
+    color: #222222; //grid font color
+}
+
+.ui-autocomplete .ui-menu-item, .ui-autocomplete-category, .ui-autocomplete a {
+  color: #222222;
+  background: #E5E5E5;
+}
+
+.ui-autocomplete li:hover,
+.ui-autocomplete .ui-menu-item *:hover {
+  background: #DADADA;
+  border: 0;
+} 
+
+.ui-autocomplete .ui-state-focus,
+.ui-autocomplete .ui-menu-item * .ui-state-focus {
+  background: #DADADA;
+  border: 0;
+} 
+

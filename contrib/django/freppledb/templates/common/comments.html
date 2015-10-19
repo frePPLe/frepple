@@ -15,12 +15,11 @@
 {% block content %}
 <div id="content-main">
 <div class="module">
-
-<form method="post" action="">
+{% if perms.common.add_comment %}<form method="post" action="">
   {% csrf_token %}
   <textarea id="comment" name="comment" rows="10" style="width:100%" ></textarea>
   <input id="submit" type="submit" value="{% trans 'Save' %}"/>
-</form>
+</form>{% endif%}
 
 {% for c in comments %}
 <hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>

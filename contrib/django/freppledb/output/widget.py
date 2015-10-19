@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport
+from freppledb.input.models import PurchaseOrder, DistributionOrder
 from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
 
 
@@ -36,7 +37,7 @@ class LateOrdersWidget(Widget):
   title = _("Late orders")
   tooltip = _("Shows orders that will be delivered after their due date")
   permissions = (("view_problem_report", "Can view problem report"),)
-  async = True
+  asynchronous = True
   url = '/problem/?entity=demand&name=late&sord=asc&sidx=startdate'
   exporturl = True
   limit = 20
@@ -75,7 +76,7 @@ class ShortOrdersWidget(Widget):
   title = _("Short orders")
   tooltip = _("Shows orders that are not planned completely")
   permissions = (("view_problem_report", "Can view problem report"),)
-  async = True
+  asynchronous = True
   # Note the gte filter lets pass "short" and "unplanned", and filters out
   # "late" and "early".
   url = '/problem/?entity=demand&name__gte=short&sord=asc&sidx=startdate'
@@ -114,9 +115,9 @@ class PurchaseQueueWidget(Widget):
   name = "purchase_queue"
   title = _("Purchase queue")
   tooltip = _("Display a list of new purchase orders")
-  permissions = (("view_operation_report", "Can view operation report"),)
-  async = True
-  url = '/operationplan/?locked=0&sidx=startdate&sord=asc&operation__startswith=Purchase'
+  permissions = (("view_purchaseorder", "Can view purchase orders"),)
+  asynchronous = True
+  url = '/data/input/purchaseorder/?status=proposed&sidx=startdate&sord=asc'
   exporturl = True
   limit = 20
 
@@ -133,15 +134,15 @@ class PurchaseQueueWidget(Widget):
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_text(_("operation"))), capfirst(force_text(_("startdate"))),
+        capfirst(force_text(_("item"))), capfirst(force_text(_("supplier"))),
         capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
         capfirst(force_text(_("criticality")))
         )
       ]
     alt = False
-    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=False).order_by('startdate')[:limit]:
+    for po in PurchaseOrder.objects.using(db).filter(status='proposed').order_by('startdate')[:limit]:
       result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', escape(opplan.operation), opplan.startdate.date(), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+        alt and ' class="altRow"' or '', escape(po.item.name), escape(po.supplier.name), po.enddate.date(), int(po.quantity), int(po.criticality)
         ))
       alt = not alt
     result.append('</table>')
@@ -153,10 +154,10 @@ Dashboard.register(PurchaseQueueWidget)
 class ShippingQueueWidget(Widget):
   name = "shipping_queue"
   title = _("Shipping queue")
-  tooltip = _("Display a list of customer orders and their shipping date")
-  permissions = (("view_operation_report", "Can view operation report"),)
-  async = True
-  url = '/demandplan/?sidx=plandate&sord=asc'
+  tooltip = _("Display a list of new distribution orders")
+  permissions = (("view_distributionorder", "Can view distribution orders"),)
+  asynchronous = True
+  url = '/data/input/distributionorder/?sidx=plandate&sord=asc'
   exporturl = True
   limit = 20
 
@@ -172,16 +173,17 @@ class ShippingQueueWidget(Widget):
       db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_text(_("demand"))), capfirst(force_text(_("customer"))),
-        capfirst(force_text(_("item"))), capfirst(force_text(_("quantity"))),
-        capfirst(force_text(_("plan date")))
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_text(_("item"))), capfirst(force_text(_("origin"))),
+        capfirst(force_text(_("destination"))), capfirst(force_text(_("quantity"))),
+        capfirst(force_text(_("start date"))), capfirst(force_text(_("criticality")))
         )
       ]
     alt = False
-    for dmdplan in Demand.objects.using(db).filter(planquantity__gt=0).order_by('plandate')[:limit]:
-      result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(dmdplan.demand), escape(dmdplan.demand), escape(dmdplan.customer), escape(dmdplan.item), int(dmdplan.planquantity), dmdplan.plandate.date()
+    for do in DistributionOrder.objects.using(db).filter(status='proposed').order_by('startdate')[:limit]:
+      result.append('<tr%s><td>%s</td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+        alt and ' class="altRow"' or '', escape(do.item), escape(do.origin.name), escape(do.destination),
+        int(do.quantity), do.startdate.date(), int(do.criticality)
         ))
       alt = not alt
     result.append('</table>')
@@ -195,7 +197,7 @@ class ResourceQueueWidget(Widget):
   title = _("Resource queue")
   tooltip = _("Display planned activities for the resources")
   permissions = (("view_resource_report", "Can view resource report"),)
-  async = True
+  asynchronous = True
   url = '/loadplan/?sidx=startdate&sord=asc'
   exporturl = True
   limit = 20
@@ -234,8 +236,9 @@ class PurchaseAnalysisWidget(Widget):
   name = "purchase_order_analysis"
   title = _("Purchase order analysis")
   tooltip = _("Analyse the urgency of existing purchase orders")
-  async = True
-  url = '/operationplan/?locked=1&operation__startswith=Purchase&sidx=criticality&sord=asc'
+  permissions = (("view_purchaseorder", "Can view purchase orders"),)
+  asynchronous = True
+  url = '/data/input/purchaseorder/?status=confirmed&sidx=criticality&sord=asc'
   limit = 20
 
   @classmethod
@@ -247,15 +250,16 @@ class PurchaseAnalysisWidget(Widget):
       db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_text(_("operation"))), capfirst(force_text(_("end date"))),
-        capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_text(_("item"))), capfirst(force_text(_("supplier"))),
+        capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
+        capfirst(force_text(_("criticality")))
         )
       ]
     alt = False
-    for opplan in OperationPlan.objects.using(db).filter(operation__startswith='Purchase ', locked=True).order_by('criticality')[:limit]:
-      result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', escape(opplan.operation), opplan.enddate.date(), int(opplan.quantity), int(opplan.criticality)
+    for po in PurchaseOrder.objects.using(db).filter(status='confirmed').order_by('criticality')[:limit]:
+      result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+        alt and ' class="altRow"' or '', escape(po.item.name), escape(po.supplier.name), po.enddate.date(), int(po.quantity), int(po.criticality)
         ))
       alt = not alt
     result.append('</table>')
@@ -269,7 +273,7 @@ class AlertsWidget(Widget):
   title = _("Alerts")
   tooltip = _("Overview of all alerts in the plan")
   permissions = (("view_problem_report", "Can view problem report"),)
-  async = True
+  asynchronous = True
   url = '/problem/'
 
   @classmethod
@@ -305,7 +309,7 @@ class ResourceLoadWidget(Widget):
   title = _("Resource utilization")
   tooltip = _("Shows the resources with the highest utilization")
   permissions = (("view_resource_report", "Can view resource report"),)
-  async = True
+  asynchronous = True
   url = '/resource/'
   exporturl = True
   limit = 5
@@ -405,7 +409,7 @@ class InventoryByLocationWidget(Widget):
   name = "inventory_by_location"
   title = _("Inventory by location")
   tooltip = _("Display the locations with the highest inventory value")
-  async = True
+  asynchronous = True
   limit = 5
 
   def args(self):
@@ -494,7 +498,7 @@ class InventoryByItemWidget(Widget):
   name = "inventory_by_item"
   title = _("Inventory by item")
   tooltip = _("Display the items with the highest inventory value")
-  async = True
+  asynchronous = True
   limit = 20
 
   def args(self):
@@ -583,7 +587,7 @@ class DeliveryPerformanceWidget(Widget):
   name = "delivery_performance"
   title = _("Delivery performance")
   tooltip = _("Shows the percentage of demands that are planned to be shipped completely on time")
-  async = True
+  asynchronous = True
   green = 90
   yellow = 80
 

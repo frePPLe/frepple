@@ -34,7 +34,6 @@ $(function() {
       {% for f in request.report_bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
       {% endif %}],{% if reportclass.editable and haschangeperm %}
-    cellEdit: true,
     cellsubmit: 'clientArray',
     editurl: location.pathname,
     beforeSaveCell: upload.select,{% else %}
@@ -48,7 +47,6 @@ $(function() {
     scrollRows: true,
     altRows: true,
     altclass:'altRow',
-    //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
 	  loadError: function(xhr,st,err) {
@@ -83,24 +81,29 @@ $(window).bind('resize', function() {
 {% endblock %}
 {% block content %}
 {% block before_table %}{% endblock %}<div id="toolicons">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
-<input type="radio" id="radio1" name="radio" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="radio1"><span title="{% trans "Display table"|escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
-<input type="radio" id="radio2" name="radio" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="radio2"><span title="{% trans "Display graph"|escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
+<input type="radio" id="gridmode" name="mode" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="gridmode"><span title="{% trans "Display table"|escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
+<input type="radio" id="graphmode" name="mode" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="graphmode"><span title="{% trans "Display graph"|escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
 </span></form>&nbsp;&nbsp;
-{% endif %}{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
-{% if reportclass.editable and haschangeperm %}
-<span id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}" class="ui-state-disabled fa fa-check fa-lg"></span>
-<span id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}" class="ui-state-disabled fa fa-undo fa-lg"></span>&nbsp;&nbsp;
 {% endif %}
+{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
 {% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
+{% endif %}{% if reportclass.editable and haschangeperm %}<span id="csvimport" title="{% trans 'Import CSV or Excel file'|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
 {% endif %}<span onclick="grid.showExport(false)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>
 </div>
+{% if reportclass.editable and haschangeperm %}
+{% block save_undo_buttons %}
+<div id="save_undo" style="float:left">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}"></div>
+{% endblock save_undo_buttons %}
+{% endif %}
 <div id="content-main" style="margin-right: 15px;">
 <table id="grid" class="pivotgrid"></table>
 <div id="gridpager"></div>
 </div>
 {% block after_table %}{% endblock %}
 {% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'Time buckets' %}">
-<form method="get" action="">
+<form method="get" action="#">
 {% trans 'Bucket size' %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i request.user.horizonbuckets %} selected="selected"{% endifequal %}>{% trans i %}</option>
 {% endfor %}</select><br/>

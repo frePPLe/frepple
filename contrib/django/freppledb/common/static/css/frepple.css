@@ -8,7 +8,6 @@ body {
   background: white;
 }
 
-
 h1,h2,h3,h4,h5 {
     font-weight: bold;
 }
@@ -67,6 +66,18 @@ a:link, a:visited {
     font-size: 75%;
 }
 
+
+/* separator style in nav menus */
+nav ul ul li.separator {
+    display: block;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: none;
+    border-width: 1px;
+}
+
 .separator::after {
     content: "";
     display: block;
@@ -74,6 +85,7 @@ a:link, a:visited {
     width: 100%;
     margin: 0px;
 }
+
 /* hr {
     clear: both;
     color: #eee;
@@ -149,6 +161,15 @@ a:link, a:visited {
     font-size: 10px;
     font-weight: bold;
     color: #B3B3B3;
+}
+
+.comment_button_active {
+    font-weight: bold;
+    color: #555555;
+}
+
+*.ui-state-highlight.edit-cell {
+  background: transparent;
 }
 
 button:hover {
@@ -363,10 +384,13 @@ div.ContextMenu ul {
   z-index: 100;
 }
 
-div ul li {
-    list-style-type: none;
+div.ContextMenu li a {
+  display: block;
 }
 
+div.ContextMenu ul li {
+  list-style-type: none;
+}
 
 /* Raw id fields are too small by default. */
 .vForeignKeyRawIdAdminField {
@@ -428,6 +452,7 @@ span.context {
   float: right;
   font-size: 13px;
   text-align: right;
+  padding: 0;
 }
 
 #headerbar {
@@ -466,6 +491,7 @@ nav ul li:hover > ul {
 
 nav ul li {
   float: left;
+  list-style: none;
   padding: 0;
 }
 
@@ -525,6 +551,7 @@ nav ul ul ul {
 .frepple-tabs ul li {
   float: left;
   padding: 0 10px 0 10px;
+  list-style-type: none;
 }
 
 .frepple-tabs ul li a {
@@ -563,6 +590,7 @@ table thead th.sorted {
 
 .smallpadding {
   padding: 0 3px;
+  text-align: center;
 }
 
 .editablepivotcol {
@@ -609,8 +637,8 @@ div.calendarbox
   padding-right: 20px;
 }
 
-.ui-autocomplete-categoryz {
-  font-weight:bold;
+.ui-autocomplete-category {
+  font-weight:normal;
   list-style-type: none;
 }
 

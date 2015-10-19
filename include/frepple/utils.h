@@ -3232,7 +3232,10 @@ class PythonData : public DataValue
           throw DataException("Invalid number");
         return static_cast<unsigned long>(x);
       }
-      return PyLong_AsUnsignedLong(obj);
+      else if (PyLong_Check(obj))
+        return PyLong_AsUnsignedLong(obj);
+      else
+        return getInt();
     }
 
     /** Convert a Python datetime.date or datetime.datetime object into a
@@ -3627,8 +3630,29 @@ class Object : public PyObject
     /** Retrieve a double property. */
     DECLARE_EXPORT double getDoubleProperty(const string&, double=0.0) const;
 
-    /** Retrieve a string property. */
-    DECLARE_EXPORT const char* getStringProperty(const string&, const string& = "") const;
+    /** Retrieve a string property.
+      * This method needs to be defined inline. On windows the function
+      * otherwise can allocate and release the string in different modules,
+      * resulting in a nasty crash.
+      */
+    string getStringProperty(const string& name, const string& def = "") const
+    {
+      if (!dict)
+        // Not a single property has been defined
+        return def;
+      PyGILState_STATE pythonstate = PyGILState_Ensure();
+      PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+      if (!lkp)
+      {
+        // Value not found in the dictionary
+        PyGILState_Release(pythonstate);
+        return def;
+      }
+      PythonData val(lkp);
+      string result = val.getString();
+      PyGILState_Release(pythonstate);
+      return result;
+    }
 
     /** Method to write custom properties to a serializer. */
     DECLARE_EXPORT void writeProperties(Serializer&) const;

@@ -49,7 +49,7 @@ def search(request):
   #  - primary key is of type text
   #  - user has change permissions
   for cls, admn in data_site._registry.items():
-    if admn.has_change_permission(request) and isinstance(cls._meta.pk, CharField):
+    if request.user.has_perm("%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())) and isinstance(cls._meta.pk, CharField):
       query = cls.objects.using(request.database).filter(pk__icontains=term).order_by('pk').values_list('pk')
       count = len(query)
       if count > 0:
@@ -130,8 +130,94 @@ class PathReport(GridReport):
 
 
   @classmethod
-  def getRoot(request, entity):
+  def getRoot(reportclass, request, entity):
     raise Http404("invalid entity type")
+
+
+  @classmethod
+  def findDeliveries(reportclass, item, location, db):
+    # Automatically detect delivery operations. This is done by looking for
+    # a buffer for this item and location combination. (Special case is when
+    # there is only a single location in the model, in which case only a match
+    # on the item is sufficient.)
+    # If this buffer results in a single buffer, we call the method to pick up
+    # its replenishing operations.
+    buf = None
+    if location:
+      for b in Buffer.objects.using(db).filter(item=item, location=location):
+        if buf:
+          # More than 1 buffer found
+          return []
+        else:
+          # First buffer found
+          buf = b
+    else:
+      if Location.objects.using(db).count() > 1:
+        return []
+      # Special case: only 1 location exists, and a match on the item is enough
+      for b in Buffer.objects.using(db).filter(item=item):
+        if buf:
+          # More than 1 buffer found
+          return []
+        else:
+          # First buffer found
+          buf = b
+    return reportclass.findReplenishment(buf, db, 0, 1, 0, False)
+
+
+  @classmethod
+  def findUsage(reportclass, buffer, db, level, curqty, realdepth, pushsuper):
+    result = [
+      (level + 1, None, i.operation, curqty, 0, None, realdepth, pushsuper)
+      for i in buffer.flows.filter(quantity__lt=0).only('operation').using(db)
+      ]
+    result.extend([
+      (level + 1, None, i, curqty, 0, None, realdepth, pushsuper)
+      for i in ItemDistribution.objects.using(db).filter(
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
+        origin__lft__lte=buffer.location.lft, origin__rght__gt=buffer.location.lft
+        )
+      ])
+    return result
+
+
+  @classmethod
+  def findReplenishment(reportclass, buffer, db, level, curqty, realdepth, pushsuper):
+    # If a producing operation is set on the buffer, we use that and skip the
+    # automated search described below.
+    # If no producing operation is set, we look for item distribution and
+    # item supplier models for the item and location combination. (As a special
+    # case in case only a single location exists in the model, a match on the
+    # item is sufficient).
+    if buffer.producing:
+      return [ (level, None, buffer.producing, curqty, 0, None, realdepth, pushsuper) ]
+    result = []
+    if Location.objects.using(db).count() > 1:
+      # Multiple locations
+      result.extend([
+        (level, None, i, curqty, 0, None, realdepth, pushsuper)
+        for i in ItemSupplier.objects.using(db).filter(
+          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
+          location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
+          )
+        ])
+      # TODO if the itemdistribution is at an aggregate location level, we should loop over all child locations
+      result.extend([
+        (level, None, i, curqty, 0, None, realdepth, pushsuper)
+        for i in ItemDistribution.objects.using(db).filter(
+          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
+          location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
+          )
+        ])
+    else:
+      # Single location, and itemdistributions obviously aren't defined here
+      result.extend([
+        (level, None, i, curqty, 0, None, realdepth, pushsuper)
+        for i in ItemSupplier.objects.using(db).filter(
+          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.rght
+          )
+        ])
+    return result
 
 
   @classmethod
@@ -144,6 +230,9 @@ class PathReport(GridReport):
     root = reportclass.getRoot(request, entity)
 
     # Recurse over all operations
+    # TODO the current logic isn't generic enough. A lot of buffers may not be explicitly
+    # defined, and are created on the fly by deliveries, itemsuppliers or itemdistributions.
+    # Currently we don't account for such situations.
     counter = 1
     #operations = set()
     while len(root) > 0:
@@ -154,7 +243,7 @@ class PathReport(GridReport):
 
       # If an operation has parent operations we forget about the current operation
       # and use only the parent
-      if pushsuper:
+      if pushsuper and not isinstance(curoperation, (ItemSupplier, ItemDistribution)):
         hasParents = False
         for x in curoperation.superoperations.using(request.database).only('operation').order_by("-priority"):
           root.append( (level, parent, x.operation, curqty, issuboperation, parentoper, realdepth, False) )
@@ -175,47 +264,99 @@ class PathReport(GridReport):
       subcount = 0
       if reportclass.downstream:
         # Downstream recursion
-        for x in curoperation.flows.filter(quantity__gt=0).only('thebuffer').using(request.database):
-          curflows = x.thebuffer.flows.filter(quantity__lt=0).only('operation', 'quantity').using(request.database)
-          for y in curflows:
+        if isinstance(curoperation, ItemSupplier):
+          name = 'Purchase %s from %s' % (curoperation.item.name, curoperation.supplier.name)
+          optype = "purchase"
+          duration = curoperation.leadtime
+          duration_per = None
+          buffers = [ ("%s@%s" % (curoperation.item.name, curoperation.location.name), 1), ]
+          resources = None
+          try:
+            downstr = Buffer.objects.using(request.database).get(name="%s@%s" % (curoperation.item.name, curoperation.location.name))
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+          except Buffer.DoesNotExist:
+            pass
+        elif isinstance(curoperation, ItemDistribution):
+          name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
+          optype = "distribution"
+          duration = curoperation.leadtime
+          duration_per = None
+          buffers = [
+            ("%s@%s" % (curoperation.item.name, curoperation.origin.name), -1),
+            ("%s@%s" % (curoperation.item.name, curoperation.location.name), 1)
+            ]
+          resources = None
+        else:
+          for x in curoperation.flows.filter(quantity__gt=0).only('thebuffer').using(request.database):
+            curflows = x.thebuffer.flows.filter(quantity__lt=0).only('operation', 'quantity').using(request.database)
+            for y in curflows:
+              hasChildren = True
+              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper) )
+          for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
+            subcount += curoperation.type == "routing" and 1 or -1
+            root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
             hasChildren = True
-            root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper) )
-        for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
-          subcount += curoperation.type == "routing" and 1 or -1
-          root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
-          hasChildren = True
       else:
         # Upstream recursion
-        curprodflow = None
-        for x in curoperation.flows.filter(quantity__gt=0).only('quantity').using(request.database):
-          curprodflow = x
-        curflows = curoperation.flows.filter(quantity__lt=0).only('thebuffer', 'quantity').using(request.database)
-        for y in curflows:
-          if y.thebuffer.producing:
+        if isinstance(curoperation, ItemSupplier):
+          name = 'Purchase %s @ %s from %s' % (curoperation.item.name, curoperation.location.name, curoperation.supplier.name)
+          optype = "purchase"
+          duration = curoperation.leadtime
+          duration_per = None
+          buffers = [ ("%s@%s" % (curoperation.item.name, curoperation.location.name), 1), ]
+          resources = None
+        elif isinstance(curoperation, ItemDistribution):
+          name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
+          optype = "distribution"
+          duration = curoperation.leadtime
+          duration_per = None
+          buffers = [
+            ("%s@%s" % (curoperation.item.name, curoperation.origin.name), -1),
+            ("%s@%s" % (curoperation.item.name, curoperation.location.name), 1)
+            ]
+          resources = None
+          try:
+            upstr = Buffer.objects.using(request.database).get(name="%s@%s" % (curoperation.item.name, curoperation.origin.name))
+            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
+          except Buffer.DoesNotExist:
+            pass
+        else:
+          curprodflow = None
+          name = curoperation.name
+          optype = curoperation.type
+          duration = curoperation.duration
+          duration_per = curoperation.duration_per
+          buffers = [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.only('thebuffer', 'quantity').using(request.database) ]
+          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.only('resource', 'quantity').using(request.database) ]
+          for x in curoperation.flows.filter(quantity__gt=0).only('quantity').using(request.database):
+            curprodflow = x
+          curflows = curoperation.flows.filter(quantity__lt=0).only('thebuffer', 'quantity').using(request.database)
+          for y in curflows:
+            if y.thebuffer.producing:
+              hasChildren = True
+              root.append( (
+                level + 1, curnode, y.thebuffer.producing,
+                curprodflow and (-curqty * y.quantity) / curprodflow.quantity or (-curqty * y.quantity),
+                subcount, None, realdepth + 1, True
+                ) )
+          for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
+            subcount += curoperation.type == "routing" and 1 or -1
+            root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
             hasChildren = True
-            root.append( (
-              level + 1, curnode, y.thebuffer.producing,
-              curprodflow and (-curqty * y.quantity) / curprodflow.quantity or (-curqty * y.quantity),
-              subcount, None, realdepth + 1, True
-              ) )
-        for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
-          subcount += curoperation.type == "routing" and 1 or -1
-          root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False) )
-          hasChildren = True
 
       # Process the current node
       yield {
         'depth': abs(level),
         'id': curnode,
-        'operation': curoperation.name,
-        'type': curoperation.type,
+        'operation': name,
+        'type': optype,
         'location': curoperation.location and curoperation.location.name or '',
-        'duration': curoperation.duration,
-        'duration_per': curoperation.duration_per,
+        'duration': duration,
+        'duration_per': duration_per,
         'quantity': curqty,
         'suboperation': issuboperation,
-        'buffers': [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.only('thebuffer', 'quantity').using(request.database) ],
-        'resources': [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.only('resource', 'quantity').using(request.database) ],
+        'buffers': buffers,
+        'resources': resources,
         'parentoper': parentoper and parentoper.name,
         'parent': parent,
         'leaf': hasChildren and 'false' or 'true',
@@ -232,16 +373,24 @@ class UpstreamDemandPath(PathReport):
   @classmethod
   def getRoot(reportclass, request, entity):
     from django.core.exceptions import ObjectDoesNotExist
+
     try:
       dmd = Demand.objects.using(request.database).get(name=entity)
-      if dmd.operation:
-        return [ (0, None, dmd.operation, 1, 0, None, 0, False) ]
-      elif dmd.item.operation:
-        return [ (0, None, dmd.item.operation, 1, 0, None, 0, False) ]
-      else:
-        raise Http404("No supply path defined for demand %s" % entity)
     except ObjectDoesNotExist:
       raise Http404("demand %s doesn't exist" % entity)
+
+    if dmd.operation:
+      # Delivery operation on the demand
+      return [ (0, None, dmd.operation, 1, 0, None, 0, False) ]
+    elif dmd.item.operation:
+      # Delivery operation on the item
+      return [ (0, None, dmd.item.operation, 1, 0, None, 0, False) ]
+    else:
+      # Autogenerated delivery operation
+      try:
+        return reportclass.findDeliveries(dmd.item, dmd.location, request.database)
+      except:
+        raise Http404("No supply path defined for demand %s" % entity)
 
 
 class UpstreamItemPath(PathReport):
@@ -253,14 +402,22 @@ class UpstreamItemPath(PathReport):
     from django.core.exceptions import ObjectDoesNotExist
     try:
       it = Item.objects.using(request.database).get(name=entity)
-      if it.operation:
-        return [ (0, None, it.operation, 1, 0, None, 0, False) ]
+      if reportclass.downstream:
+        # Find all buffers where the item is being stored and walk downstream
+        result = []
+        for b in Buffer.objects.filter(item=it).using(request.database):
+          result.extend( reportclass.findUsage(b, request.database, 0, 1, 0, False) )
+        return result
       else:
-        return [
-          (0, None, r.producing, 1, 0, None, 0, False)
-          for r in Buffer.objects.filter(item=entity).using(request.database)
-          if r.producing
-          ]
+        if it.operation:
+          # Delivery operation on the item
+          return [ (0, None, it.operation, 1, 0, None, 0, False) ]
+        else:
+          # Find the supply path of all buffers of this item
+          result = []
+          for b in Buffer.objects.filter(item=entity).using(request.database):
+            result.extend( reportclass.findReplenishment(b, request.database, 0, 1, 0, False) )
+          return result
     except ObjectDoesNotExist:
       raise Http404("item %s doesn't exist" % entity)
 
@@ -275,15 +432,9 @@ class UpstreamBufferPath(PathReport):
     try:
       buf = Buffer.objects.using(request.database).get(name=entity)
       if reportclass.downstream:
-        return [
-          (0, None, i.operation, 1, 0, None, 0, True)
-          for i in buf.flows.filter(quantity__lt=0).only('operation').using(request.database)
-          ]
+        return reportclass.findUsage(buf, request.database, 0, 1, 0, False)
       else:
-        if buf.producing:
-          return [ (0, None, buf.producing, 1, 0, None, 0, False) ]
-        else:
-          return []
+        return reportclass.findReplenishment(buf, request.database, 0, 1, 0, False)
     except ObjectDoesNotExist:
       raise Http404("buffer %s doesn't exist" % entity)
 
@@ -384,7 +535,6 @@ class BufferList(GridReport):
     GridFieldNumber('minimum', title=_('minimum')),
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
     GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
-    GridFieldNumber('carrying_cost', title=_('carrying cost')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -874,6 +1024,8 @@ class DistributionOrderList(GridReport):
     {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
     ]
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions.append({"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "grid.openbravoIncrExport()"})
 
 class PurchaseOrderList(GridReport):
   '''
@@ -905,4 +1057,6 @@ class PurchaseOrderList(GridReport):
     {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
     ]
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions.append({"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "grid.openbravoIncrExport()"})
 

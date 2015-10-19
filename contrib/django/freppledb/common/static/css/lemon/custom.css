@@ -118,17 +118,6 @@ tr.ui-state-highlight {
   border-top: 2px solid #000000; /* Color green3 */
 }
 
-/* separator style in nav menus */
-nav ul ul li.separator {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: none;
-    border-width: 1px;
-}
-
 /* Confirmation message shown just below the header */
 ul.messagelist li {
     background: #FFFFC2 url(../../admin/img/icon_success.gif) 5px .3em no-repeat;
@@ -167,3 +156,25 @@ input.ui-button:hover {
   border: 1px solid #FFFF00 !important; /* Color green3 */
   color: #222222 !important
 }
+
+ui-widget-content .jqgrow.ui-row-ltr {
+    color: #222222; //grid font color
+}
+
+.ui-autocomplete .ui-menu-item, .ui-autocomplete-category, .ui-autocomplete a {
+  color: #222222;
+  background: #FFFFA3;
+}
+
+.ui-autocomplete li:hover,
+.ui-autocomplete .ui-menu-item *:hover {
+  background: #FFFF00;
+  border: 0;
+}
+
+.ui-autocomplete .ui-state-focus,
+.ui-autocomplete .ui-menu-item * .ui-state-focus {
+  background: #FFFF00;
+  border: 0;
+}
+

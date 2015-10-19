@@ -70,7 +70,7 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
-
+from freppledb.boot import getAttributes
 from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
 
 
@@ -314,6 +314,9 @@ class GridReport(View):
   # Include time bucket support in the report
   hasTimeBuckets = False
 
+  # Allow to exclude time buckets in the past
+  showOnlyFutureTimeBuckets = False
+
   # Specify a minimum level for the time buckets available in the report.
   # Higher values (ie more granular) buckets can then not be selected.
   maxBucketLevel = None
@@ -335,6 +338,8 @@ class GridReport(View):
 
   # Define a list of actions
   actions = None
+
+  _attributes_added = False
 
   @classmethod
   def getKey(cls):
@@ -371,29 +376,41 @@ class GridReport(View):
       - the start date of the report horizon
       - the end date of the reporting horizon
       - a list of buckets.
+
+    The functions takes into consideration some special flags:
+      - showOnlyFutureTimeBuckets: filter to allow only future time buckets to be shown
+      - maxBucketLevel: respect the lowest supported level in the time bucket hierarchy
     '''
     # Pick up the user preferences
     pref = request.user
 
-    # Select the bucket size (unless it is passed as argument)
+    # Select the bucket size
     try:
-      bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
+      if reportclass.maxBucketLevel:
+        bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets, level__lte=reportclass.maxBucketLevel)
+      else:
+        bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
     except:
       try:
-        bucket = Bucket.objects.using(request.database).order_by('-level')[0].name
+        if reportclass.maxBucketLevel:
+          bucket = Bucket.objects.using(request.database).filter(level__lte=reportclass.maxBucketLevel).order_by('-level')[0].name
+        else:
+          bucket = Bucket.objects.using(request.database).order_by('-level')[0].name
       except:
         bucket = None
 
+    # Pick up the current date
+    try:
+      current = datetime.strptime(
+        Parameter.objects.using(request.database).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current = datetime.now()
+      current = current.replace(microsecond=0)
+
     if pref.horizontype:
-      # First type: Start and end dates relative to current
-      try:
-        start = datetime.strptime(
-          Parameter.objects.using(request.database).get(name="currentdate").value,
-          "%Y-%m-%d %H:%M:%S"
-          )
-      except:
-        start = datetime.now()
-      start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+      start = current.replace(hour=0, minute=0, second=0, microsecond=0)
       if pref.horizonunit == 'day':
         end = start + timedelta(days=pref.horizonlength or 60)
         end = end.replace(hour=0, minute=0, second=0)
@@ -409,15 +426,8 @@ class GridReport(View):
     else:
       # Second type: Absolute start and end dates given
       start = pref.horizonstart
-      if not start:
-        try:
-          start = datetime.strptime(
-            Parameter.objects.using(request.database).get(name="currentdate").value,
-            "%Y-%m-%d %H:%M:%S"
-            )
-        except:
-          start = datetime.now()
-          start = start.replace(microsecond=0)
+      if not start or (reportclass.showOnlyFutureTimeBuckets and start < current):
+        start = current
       end = pref.horizonend
       if end:
         if end < start:
@@ -434,6 +444,7 @@ class GridReport(View):
           end = start + timedelta(weeks=pref.horizonlength or 8)
 
     # Filter based on the start and end date
+    request.current_date = str(current)
     request.report_startdate = start
     request.report_enddate = end
     request.report_bucket = str(bucket)
@@ -459,6 +470,29 @@ class GridReport(View):
     # Unescape special characters in the arguments.
     # All arguments are encoded with escaping function used on the django admin.
     args_unquoted = [ unquote(i) for i in args ]
+
+    # Add attributes if not done already
+    if not self._attributes_added:
+      self.__class__._attributes_added = True
+      for field_name, label, fieldtype in getAttributes("%s.%s" % (self.model.__module__, self.model.__name__)):
+        if fieldtype == 'string':
+          self.__class__.rows += (GridFieldText(field_name, title=label),)
+        elif fieldtype == 'boolean':
+          self.__class__.rows += (GridFieldBool(field_name, title=label),)
+        elif fieldtype == 'number':
+          self.__class__.rows += (GridFieldNumber(field_name, title=label),)
+        elif fieldtype == 'integer':
+          self.__class__.rows += (GridFieldInteger(field_name, title=label),)
+        elif fieldtype == 'date':
+          self.__class__.rows += (GridFieldDate(field_name, title=label),)
+        elif fieldtype == 'datetime':
+          self.__class__.rows += (GridFieldDateTime(field_name, title=label),)
+        elif fieldtype == 'duration':
+          self.__class__.rows += (GridFieldDuration(field_name, title=label),)
+        elif fieldtype == 'time':
+          self.__class__.rows += (GridFieldTime(field_name, title=label),)
+        else:
+          raise Exception("Invalid attribute type '%s'." % fieldtype)
 
     # Dispatch to the correct method
     if request.method == 'GET':
@@ -641,7 +675,7 @@ class GridReport(View):
 
     # GridReport
     fields = [ i.field_name for i in reportclass.rows if i.field_name ]
-    for i in hasattr(reportclass, 'query') and reportclass.query(request, query) or query[cnt - 1:cnt + request.pagesize].values(*fields):
+    for i in hasattr(reportclass, 'query') and reportclass.query(request, query[cnt - 1:cnt + request.pagesize]) or query[cnt - 1:cnt + request.pagesize].values(*fields):
       if first:
         r = [ '{' ]
         first = False
@@ -695,11 +729,6 @@ class GridReport(View):
       reportclass.getBuckets(request, args, kwargs)
       if reportclass.maxBucketLevel:
         bucketnames = Bucket.objects.order_by('-level').filter(level__lte=reportclass.maxBucketLevel).values_list('name', flat=True)
-        if request.report_bucket not in bucketnames:
-          # Current preference is set to a higher granularity than allowed.
-          # We adjust to the highest supported level.
-          request.user.horizonbuckets = bucketnames[0]
-          reportclass.getBuckets(request, args, kwargs)
       else:
         bucketnames = Bucket.objects.order_by('-level').values_list('name', flat=True)
     else:

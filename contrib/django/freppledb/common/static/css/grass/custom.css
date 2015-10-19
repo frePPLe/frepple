@@ -96,13 +96,13 @@ nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
   color: #222222 !important;
 }
 
-nav ul li:hover a, nav ul ul, .ui-autocomplete {/* Copy from the Jquery UI style ".ui-widget-header". */
+nav ul li:hover a, nav ul ul {/* Copy from the Jquery UI style ".ui-widget-header". */
   background: #9CA441; /* Color green2 */
   color: #222222;
 }
 
 nav ul ul li a:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
-  background: #838d11; /* Color gray2 */
+  background: #838d11; /* Color green3 */
   color: #111111;
 }
 
@@ -116,17 +116,6 @@ tr.ui-state-highlight {
 .frepple-tabs-active {
   font-weight: bold;
   border-top: 2px solid #000000; /* Color green3 */
-}
-
-/* separator style in nav menus */
-nav ul ul li.separator {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: none;
-    border-width: 1px;
 }
 
 /* Confirmation message shown just below the header */
@@ -167,3 +156,25 @@ input.ui-button:hover {
   border: 1px solid #838d11 !important; /* Color green3 */
   color: #222222 !important
 }
+
+.ui-widget-content .jqgrow.ui-row-ltr {
+    color: #222222; //grid font color
+}
+
+.ui-autocomplete .ui-menu-item, .ui-autocomplete-category, .ui-autocomplete a {
+  color: #222222;
+  background: #9CA441;
+}
+
+.ui-autocomplete li:hover,
+.ui-autocomplete .ui-menu-item *:hover {
+  background: #838d11;
+  border: 0;
+}
+
+.ui-autocomplete .ui-state-focus,
+.ui-autocomplete .ui-menu-item * .ui-state-focus {
+  background: #838d11;;
+  border: 0;
+} 
+

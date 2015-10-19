@@ -30,7 +30,7 @@ from django.core.exceptions import ValidationError
 
 
 #
-# DURATIONFIELD
+# DURATIONFIELD   TODO Use standard django duration field
 #
 # This field is stored in the database as an Decimal field, but it is displayed
 # in forms as a text in the form 'DD HH:MM:SS'.

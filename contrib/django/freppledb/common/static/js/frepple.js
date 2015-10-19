@@ -45,12 +45,13 @@ var upload = {
   {
     if ($('#undo').hasClass("save_undo_button_inactive")) return;
     $("#grid").trigger("reloadGrid");
+    $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
     .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
     .prop('disabled', 'disabled');
-   
+
     $('#filter').removeClass("ui-state-disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -148,11 +149,11 @@ function linkunformat (cellvalue, options, cell) {
 
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     return cellvalue + "%";
   },
   duration : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     var d = cellvalue.split(" ");
     if (d.length == 1)
     {
@@ -192,42 +193,42 @@ jQuery.extend($.fn.fmatter, {
     return seconds;
   },
   item : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='item'></span>";
   },
   customer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='customer'></span>";
   },
   supplier : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='supplier'></span>";
   },
   buffer : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
   },
   resource : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
   },
   forecast : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='forecast'></span>";
   },
   demand : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
   },
   demanddetail : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellvalue;
     var result = '';
     var dmds = cellvalue.split(", ");
@@ -240,87 +241,87 @@ jQuery.extend($.fn.fmatter, {
     return result;
   },
   operation : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
   },
   calendar : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='calendar'></span>";
   },
   calendarbucket : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='calendarbucket'></span>";
   },
   location : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='location'></span>";
   },
   setupmatrix : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='setupmatrix'></span>";
   },
   user : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='user'></span>";
   },
   group : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='group'></span>";
   },
   flow : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='flow'></span>";
   },
   itemsupplier : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='itemsupplier'></span>";
   },
   itemdistribution : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
-    if (options['colModel']['popup']) return cellvalue;
+    if (cellvalue === undefined || cellvalue === '') return '';
+    if (options['colModel']['popup']) return cellv || cellvalue === nullalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='itemdistribution'></span>";
   },
   load : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='load'></span>";
   },
   bucket : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='bucket'></span>";
   },
   parameter : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='parameter'></span>";
   },
   skill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='skill'></span>";
   },
   resourceskill : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='resourceskill'></span>";
   },
   project : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='project'></span>";
   },
   projectdeel : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue ==='') return '';
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<span class='context fa fa-caret-right' role='projectdeel'></span>";
   },
@@ -417,29 +418,25 @@ var grid = {
      grid.selected = id;
      $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
    },
-   
+
    runAction: function(next_action) {
-    console.log($("#actions").val());
     if ($("#actions").val() != "no_action")
-       actions[$("#actions").val()]();    
+       actions[$("#actions").val()]();
    },
 
-   setStatus : function(newstatus) 
+   setStatus : function(newstatus)
    {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-    console.log(sel);
-    console.log(sel.length);
     for ( i in sel ) {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
-      console.log(sel[i]);
     };
 
     $("#actions").prop("selectedIndex",0);
     $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
-    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");    
+    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
    },
-  
+
   // Renders the cross list in a pivot grid
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
@@ -482,7 +479,68 @@ var grid = {
     $(cell).select();
   },
 
-  // Display dialog for exporting CSV-files
+  // Display dialog for incremental export from openbravo
+  openbravoIncrExport: function() {
+    $('#popup').html(
+    gettext("export selected records to openbravo")
+    );
+
+    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
+
+    $('#popup').dialog({
+      title: gettext("export"),
+      autoOpen: true, resizable: false, width: 390, height: 'auto',
+      buttons: [
+        {
+          text: gettext("export"),
+          id: 'button_export',
+          click: function() {
+            if (sel != null && sel.length > 0)
+            // Send the update to the server
+              $.ajax({
+                  url: "/openbravo/upload/",
+                  data: JSON.stringify(sel),
+                  type: "POST",
+                  contentType: "application/json",
+                  success: function () {
+                    $('#popup').html(gettext("export: OK"))
+                      .dialog({
+                        title: gettext("data exported to openbravo"),
+                        autoOpen: true,
+                        resizable: false,
+                        width: 'auto',
+                        height: 'auto'
+                      });
+                    $('#button_close').find('.ui-button-text').text(gettext('close'));
+                    $('#button_export').removeClass("ui-state-default").addClass("ui-state-disabled").prop('disabled', 'disabled');
+                    upload.undo();
+                  },
+                  error: function (result, stat, errorThrown) {
+                    $('#popup').html(result.responseText)
+                      .dialog({
+                        title: gettext("error exporting data"),
+                        autoOpen: true,
+                        resizable: false,
+                        width: 'auto',
+                        height: 'auto'
+                      });
+                    $('#button_export').find('.ui-button-text').text(gettext('retry'));
+                  }
+              });
+
+            $(this).dialog("close");
+          }
+        },
+        {
+          text: gettext("cancel"),
+          id: 'button_close',
+          click: function() { $(this).dialog("close"); }
+        }
+        ]
+    });
+    $("#actions").prop("selectedIndex",0);
+  },
+
   showExport: function(only_list)
   {
     // The argument is true when we show a "list" report.
@@ -889,7 +947,7 @@ var grid = {
 $.widget( "custom.catcomplete", $.ui.autocomplete, {
   _renderItem: function( ul, item) {
     if (item.value == undefined)
-      return $( "<li class='ui-autocomplete-category'>" + item.label + "</li>" ).appendTo( ul );
+      return $( "<li class='ui-autocomplete-category' style='border-bottom: 1px; border-bottom-style: solid; border-bottom-color: #222 '>" + item.label + "</li>" ).appendTo( ul );
     else
       return $( "<li></li>" )
       .data( "item.autocomplete", item )

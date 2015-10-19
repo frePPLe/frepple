@@ -358,8 +358,8 @@ class exportStaticModel(object):
          producing_id,type,leadtime,min_inventory,
          max_inventory,min_interval,max_interval,size_minimum,
          size_multiple,size_maximum,fence,
-         carrying_cost,category,subcategory,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+         category,subcategory,source,lastmodified)
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
             i.name, i.description, i.location and i.location.name or None,
@@ -377,8 +377,7 @@ class exportStaticModel(object):
             isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.fence or None,
-            round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
-            i.source, self.timestamp
+            i.category, i.subcategory, i.source, self.timestamp
           )
           for i in frepple.buffers()
           if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
@@ -388,7 +387,7 @@ class exportStaticModel(object):
          set description=%s, location_id=%s, item_id=%s, onhand=%s, minimum=%s, minimum_calendar_id=%s,
          producing_id=%s, type=%s, leadtime=%s, min_inventory=%s, max_inventory=%s, min_interval=%s,
          max_interval=%s, size_minimum=%s, size_multiple=%s, size_maximum=%s, fence=%s,
-         carrying_cost=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
+         category=%s, subcategory=%s, source=%s, lastmodified=%s
          where name=%s''',
         [
           (
@@ -406,8 +405,7 @@ class exportStaticModel(object):
             isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
             isinstance(i, frepple.buffer_procure) and i.fence or None,
-            round(i.carrying_cost, settings.DECIMAL_PLACES), i.category, i.subcategory,
-            i.source, self.timestamp, i.name
+            i.category, i.subcategory, i.source, self.timestamp, i.name
           )
           for i in frepple.buffers()
           if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)

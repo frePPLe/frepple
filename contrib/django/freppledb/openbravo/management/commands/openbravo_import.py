@@ -18,6 +18,7 @@ import base64
 from datetime import datetime, timedelta, date
 from time import time
 from xml.etree.cElementTree import iterparse
+from xml.etree.ElementTree import ParseError
 import http.client
 import urllib
 from io import StringIO
@@ -80,12 +81,13 @@ class Command(BaseCommand):
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
     # Passwords in djangosettings file are preferably used
-    if settings.OPENBRAVO_PASSWORDS.get(db) == '':
+    if settings.OPENBRAVO_PASSWORDS.get(self.database) == '':
         self.openbravo_password = Parameter.getValue("openbravo.password", self.database)
     else:
-        self.openbravo_password = settings.OPENBRAVO_PASSWORDS.get(db)
+        self.openbravo_password = settings.OPENBRAVO_PASSWORDS.get(self.database)
     self.openbravo_host = Parameter.getValue("openbravo.host", self.database)
     self.openbravo_pagesize = int(Parameter.getValue("openbravo.pagesize", self.database, default='1000'))
+    self.openbravo_dateformat = Parameter.getValue("openbravo.date_format", self.database, default='%Y-%m-%d')
     if not self.openbravo_user:
       raise CommandError("Missing or invalid parameter openbravo_user")
     if not self.openbravo_password:
@@ -128,11 +130,13 @@ class Command(BaseCommand):
       self.locations = {}
       self.organization_location = {}
       self.customers = {}
+      self.suppliers = {}
+      self.itemsupplier = {}
       self.items = {}
       self.locators = {}
       self.resources = {}
       self.date = datetime.now()
-      self.delta = str(date.today() - timedelta(days=self.delta))
+      self.delta = (date.today() - timedelta(days=self.delta)).strftime(self.openbravo_dateformat)
 
       # Pick up the current date
       try:
@@ -146,6 +150,8 @@ class Command(BaseCommand):
       self.import_organizations(cursor)
       self.import_customers(cursor)
       task.status = '10%'
+      self.import_suppliers(cursor)
+      task.status = '15%'
       task.save(using=self.database)
       self.import_products(cursor)
       task.status = '20%'
@@ -162,7 +168,7 @@ class Command(BaseCommand):
       self.import_onhand(cursor)
       task.status = '60%'
       task.save(using=self.database)
-      self.import_approvedvendors(cursor)
+      self.import_itemsupplier(cursor)
       task.status = '70%'
       task.save(using=self.database)
       self.import_purchaseorders(cursor)
@@ -202,32 +208,34 @@ class Command(BaseCommand):
         url2 = "%s?firstResult=%d&maxResult=%d" % (url, firstResult, self.openbravo_pagesize)
       if self.verbosity > 1:
         print('Request: ', url2)
-      webservice = http.client.HTTP(self.openbravo_host)
+      webservice = http.client.HTTPConnection(self.openbravo_host)
       webservice.putrequest("GET", url2)
       webservice.putheader("Host", self.openbravo_host)
       webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
       webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
       webservice.putheader("Content-length", "0")
-      webservice.putheader("Authorization", "Basic %s" % base64.encodestring('%s:%s' % (self.openbravo_user, self.openbravo_password)).replace('\n', ''))
+      webservice.putheader("Authorization", "Basic %s" % base64.encodestring(('%s:%s' % (self.openbravo_user, self.openbravo_password)).replace('\n', '').encode("utf-8")).decode("utf-8"))  # TODO cleanere way???
       webservice.endheaders()
       webservice.send('')
-
       # Get the response
-      statuscode, statusmessage, header = webservice.getreply()
-      if statuscode != http.client.OK:
-        raise Exception(statusmessage)
+      response = webservice.getresponse()
+      if response.status != http.client.OK:
+        raise Exception(response.reason)
       if self.verbosity == 1:
         print('.', end="")
-        conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
+        conn = iterparse(StringIO(response.read().decode("utf-8").replace("&#0;","").replace("&#22;","").replace("\xcc","")), events=('start', 'end'))
       elif self.verbosity > 2:
-        res = webservice.getfile().read()
-        print('Response status: ', statuscode, statusmessage, header)
+        res = response.read().decode("utf-8").replace("&#0;","").replace("&#22;","").replace("\xcc","")
+        print('Response status: ', response.status, response.reason)
         print('Response content: ', res)
-        conn = iter(iterparse(StringIO(res), events=('start', 'end')))
+        conn = iterparse(StringIO(res), events=('start', 'end'))
       else:
-        conn = iter(iterparse(webservice.getfile(), events=('start', 'end')))
-      root = conn.next()[1]
-      count = callback(conn, root)
+        conn = iterparse(StringIO(response.read().decode("utf-8").replace("&#0;","").replace("&#22;","").replace("\xcc","")), events=('start', 'end'))
+      try:
+        count = callback(conn)
+      except ParseError:
+        print ("Error parsing Openbravo XML document")
+        count = self.openbravo_pagesize
       if count < self.openbravo_pagesize:
         # No more records to be expected
         if self.verbosity == 1:
@@ -247,9 +255,13 @@ class Command(BaseCommand):
   # can be used as a simple filter for some data.
   def import_organizations(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'Organization':
           continue
         records += 1
@@ -281,13 +293,17 @@ class Command(BaseCommand):
   #        - %description -> description
   #        - %id -> source
   #        - 'openbravo' -> subcategory
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_customers(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
-        if event != 'end' or elem.tag != 'AFP_BPartner':  #JF Change
+        if not root:
+          root = elem
+          continue
+        if event != 'end' or elem.tag != 'BusinessPartner':
           continue
         records += 1
         organization = self.organizations.get(elem.find("organization").get("id"), None)
@@ -309,6 +325,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing customers...")
@@ -323,11 +340,12 @@ class Command(BaseCommand):
         frepple_keys[i[0]] = None
     unused_keys = frepple_keys.copy()
 
-    # Retrieve businesspartners
+      # Retrieve businesspartners - customers
     insert = []
     update = []
-    query = urllib.quote("customer=true")
+      query = urllib.parse.quote("customer=true")
     self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query, parse)
+
 
     # Create records
     cursor.executemany(
@@ -367,6 +385,114 @@ class Command(BaseCommand):
       print("Imported customers in %.2f seconds" % (time() - starttime))
 
 
+  # Importing suppliers
+  #   - extracting recently changed BusinessPartner objects
+  #   - meeting the criterion:
+  #        - %active = True
+  #        - %vendor = True
+  #   - mapped fields openbravo -> frePPLe supplier
+  #        - %searchKey %name -> name
+  #        - %description -> description
+  #        - %id -> source
+  #        - 'openbravo' -> subcategory
+  def import_suppliers(self, cursor):
+
+    def parse(conn):
+      records = 0
+      root = None
+      for event, elem in conn:
+        if not root:
+          root = elem
+          continue
+        if event != 'end' or elem.tag != 'BusinessPartner':
+          continue
+        records += 1
+        #print(records)
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        if not organization:
+          continue
+        searchkey = elem.find("searchKey").text
+        name = elem.find("name").text
+        unique_name = u'%s %s' % (searchkey, name)
+        objectid = elem.get('id')
+        description = elem.find("description").text
+        if description: description = description[0:500]
+        self.suppliers[objectid] = unique_name
+        if unique_name in frepple_keys:
+          update.append( (description, objectid, unique_name) )
+        else:
+          insert.append( (description, unique_name, objectid) )
+        unused_keys.pop(unique_name, None)
+        # Clean the XML hierarchy
+        #print('root.clear here')
+        root.clear()
+      return records
+
+    starttime = time()
+    if self.verbosity > 0:
+      print("Importing suppliers...")
+
+    # Get existing records
+    cursor.execute("SELECT name, subcategory, source FROM supplier")
+    frepple_keys = {}
+    for i in cursor.fetchall():
+      if i[1] == 'openbravo':
+        frepple_keys[i[0]] = i[2]
+      else:
+        frepple_keys[i[0]] = None
+    unused_keys = frepple_keys.copy()
+
+    # Retrieve businesspartners - suppliers
+    insert = []
+    update = []
+    query = urllib.parse.quote("vendor=true")
+    self.get_data("/openbravo/ws/dal/BusinessPartner?where=%s&orderBy=name&includeChildren=false" % query, parse)
+
+    # Create records
+    cursor.executemany(
+      "insert into supplier \
+        (description,name,source,subcategory,lastmodified) \
+        values (%%s,%%s,%%s,'openbravo','%s')" % self.date,
+      insert
+      )
+
+    # Update records
+    cursor.executemany(
+      "update supplier \
+        set description=%%s,source=%%s,subcategory='openbravo',lastmodified='%s' \
+        where name=%%s" % self.date,
+      update
+      )
+
+    # Delete records
+    delete = [ (i,) for i, j in unused_keys.items() if j ]
+    cursor.executemany(
+      'update supplier set owner_id=null where owner_id=%s',
+      delete
+      )
+    cursor.executemany(
+      'update purchase_order set supplier_id=null where supplier_id=%s',
+      delete
+      )
+    cursor.executemany(
+      'delete from itemsupplier where supplier_id=%s',
+      delete
+      )
+    cursor.executemany(
+      'delete from supplier where name=%s',
+      delete
+      )
+
+
+
+    if self.verbosity > 0:
+      print("Inserted %d new suppliers" % len(insert))
+      print("Updated %d existing suppliers" % len(update))
+      print("Deleted %d suppliers" % len(delete))
+      print("Imported suppliers in %.2f seconds" % (time() - starttime))
+
+
+
   # Importing products
   #   - extracting recently changed Product objects
   #   - meeting the criterion:
@@ -376,12 +502,16 @@ class Command(BaseCommand):
   #        - %description -> description
   #        - %searchKey -> source
   #        - 'openbravo' -> subcategory
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_products(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'Product':
           continue
         records += 1
@@ -409,6 +539,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing products...")
@@ -478,12 +609,16 @@ class Command(BaseCommand):
   #        - %searchKey %name -> name
   #        - %searchKey -> category
   #        - 'openbravo' -> source
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_locations(self, cursor):
 
-    def parse1(conn, root):
+    def parse1(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'Warehouse':
           continue
         records += 1
@@ -515,9 +650,13 @@ class Command(BaseCommand):
         root.clear()
       return records
 
-    def parse2(conn, root):
+    def parse2(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'Locator':
           continue
         records += 1
@@ -527,6 +666,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing locations...")
@@ -543,7 +683,7 @@ class Command(BaseCommand):
 
     # Get locations
     locations = []
-    query = urllib.quote("active=true")
+      query = urllib.parse.quote("active=true")
     self.get_data("/openbravo/ws/dal/Warehouse?where=%s&orderBy=name&includeChildren=false" % query, parse1)
 
     # Remove deleted or inactive locations
@@ -615,12 +755,16 @@ class Command(BaseCommand):
   #        - 'openbravo' -> source
   #        - 1 -> priority
   # We assume that a lineNo is unique within an order. However, this is not enforced by Openbravo!
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_salesorders(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'OrderLine':
           continue
         records += 1
@@ -669,6 +813,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     deliveries = set()
     if self.verbosity > 0:
@@ -682,8 +827,8 @@ class Command(BaseCommand):
     insert = []
     update = []
     deliveries = set()
-    query = urllib.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))      
-    query = urllib.quote("salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')")
+      query = urllib.parse.quote("(updated>'%s' or salesOrder.updated>'%s') and salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')" % (self.delta, self.delta))
+      query = urllib.parse.quote("salesOrder.salesTransaction=true and (salesOrder.documentStatus='CO' or salesOrder.documentStatus='CL')")
     self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
     # Create or update delivery operations
@@ -760,12 +905,16 @@ class Command(BaseCommand):
   #     You should assign a location in frePPLe to assure that the user interface
   #     working.
   #
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_machines(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'ManufacturingMachine':
           continue
         records += 1
@@ -784,6 +933,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing machines...")
@@ -835,12 +985,16 @@ class Command(BaseCommand):
   #        - %locator.warehouse -> location_id
   #        - %qty -> onhand
   #        - 'openbravo' -> subcategory
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_onhand(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'MaterialMgmtStorageDetail':
           continue
         records += 1
@@ -872,6 +1026,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing onhand...")
@@ -889,7 +1044,7 @@ class Command(BaseCommand):
     insert = []
     increment = []
     update = []
-    query = urllib.quote("quantityOnHand>0")
+      query = urllib.parse.quote("quantityOnHand>0")
     self.get_data("/openbravo/ws/dal/MaterialMgmtStorageDetail?where=%s" % query, parse)
 
     cursor.executemany(
@@ -916,162 +1071,117 @@ class Command(BaseCommand):
       print("Imported onhand in %.2f seconds" % (time() - starttime))
 
 
-  # Load approved vendors
-  #   - exctracting approvedvendor records
-  #   - creating a purchasing buffer in each warehouse
-  #   - NOT supported are situations with multiple approved vendors per part.
-  #     Only the first record is used.
+  # Load itemsupplier with data
+  #   - exctracting data from approvedvendor records
   #   - meeting the criterion:
-  #        - %product already exists in frePPLe
-  #        - %product.purchase = true
+  #        - %discontinued = false
   #        - %currentVendor = true
-  #   - mapped fields openbravo -> frePPLe buffer
-  #        - %product @ %warehouse -> name
-  #        - %warehouse -> location
-  #        - %product -> item
-  #        - 'openbravo' -> subcategory
-  #   - mapped fields openbravo -> frePPLe operation
-  #        - 'Purchase ' %product ' @ ' %warehouse -> name
-  #        - %businessPartner -> category
-  #        - 'fixed_time' -> type
-  #        - %purchasingLeadTime -> duration
-  #        - %minimumOrderQty ->sizeminimum
-  #        - %quantityPerPackage -> sizemultiple
-  #        - 'openbravo' -> subcategory
-  #   - mapped fields openbravo -> frePPLe flow
-  #        - 'Purchase ' %product ' @ ' %warehouse -> operation
-  #        - %product ' @ ' %warehouse -> buffer
-  #        - 1 -> quantity
-  #        - 'end' -> type
-  @transaction.atomic(using=self.database, savepoint=False)
-  def import_approvedvendors(self, cursor):
+  #   - mapped fields openbravo -> frePPLe itemsupplier
+  #        - 'product id' ->item_id
+  #        - 'businessPartner id' -> supplier_id
+  #        - 'purchasingLeadTime' -> leadtime
+  #        - 'minimumOrderQty' ->sizeminimum
+  #        - 'quantityPerPackage' -> sizemultiple
+  #        - 'listPrice' -> cost
+  #        - 'currentVendor' -> priority (1 if true, 2 otherwise)
+  #        - 'creationDate'  -> effective_start
+  #        - 'endDate' -> effective_end
+  #        - 'organization id' -> location_id
+  #        - 'openbravo' -> source
 
-    def parse(conn, root):
+  def import_itemsupplier(self, cursor):
+
+    def parse(conn):
       global prevproduct
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'ApprovedVendor':
           continue
+
         records += 1
         objectid = elem.get('id')
-        product = self.items.get(elem.find('product').get('id'), None)
-        if not product:
+        item_id = self.items.get(elem.find('product').get('id'), None)
+        if not item_id:
           root.clear()
           continue
-        if product == prevproduct:
-          # TODO there could be multiple supplier for an item
-          print("Warning: Multiple approved vendors for a part are not supported. Skipping record")
-          continue
-        prevproduct = product
-        businessPartner = elem.find('businessPartner').get('identifier')[:300]
-        purchasingLeadTime = elem.find("purchasingLeadTime").text
-        minimumOrderQty = elem.find("minimumOrderQty").text
-        quantityPerPackage = elem.find("quantityPerPackage").text
-        for wh in warehouses:
-          operation = "Purchase %s @ %s" % (product, wh)
-          unused_keys.pop(operation, None)
-          purchasing.append((
-            operation, "%s @ %s" % (product, wh), product, wh, businessPartner,
-            purchasingLeadTime, minimumOrderQty, quantityPerPackage, objectid
-            ))
+        supplier_id = elem.find('businessPartner').get('identifier')[:300]
+        leadtime = elem.find("purchasingLeadTime").text
+        sizeminimum = elem.find("minimumOrderQty").text
+        sizemultiple = elem.find("quantityPerPackage").text
+        cost = elem.find("listPrice").text
+
+        priority = elem.find("currentVendor").text
+        if priority:
+          priority = 1
+        else:
+          priority = 2
+
+        effective_end = elem.find("discontinuedBy").text
+        if effective_end:
+          effective_end = datetime.strptime(effective_end, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        organization = self.organizations.get(elem.find("organization").get("id"), None)
+        location_id=""         #openbravo does not have location at this moment
+        source="openbravo"
+
+        key = (item_id, supplier_id, None)
+        unused_keys.discard(key)
+        print (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id)
+        if key in frepple_keys:
+          update.append( (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
+        else:
+          insert.append( (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
+
         # Clean the XML hierarchy
         root.clear()
       return records
 
     global prevproduct
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing approved vendors...")
-    cursor.execute("SELECT name, subcategory, source FROM operation where name like 'Purchase %'")
-    frepple_keys = {}
+      cursor.execute("SELECT DISTINCT item_id, supplier_id, location_id FROM itemsupplier")
+      frepple_keys=set()
     for i in cursor.fetchall():
-      if i[1] == 'openbravo':
-        frepple_keys[i[0]] = i[2]
-      else:
-        frepple_keys[i[0]] = None
+          frepple_keys.add( ( i[0], i[1], i[2] ) )
     unused_keys = frepple_keys.copy()
-    purchasing = []
-    warehouses = self.locations.values()
-    query = urllib.quote("product.purchase=true and currentVendor=true")
+
+      insert = []
+      update = []
+      query = urllib.parse.quote("active=true and discontinued=false")
     prevproduct = None
     self.get_data("/openbravo/ws/dal/ApprovedVendor?where=%s&orderBy=product&includeChildren=false" % query, parse)
 
-    # Remove deleted operations
     cursor.executemany(
-      "update buffer \
-      set producing_id=null \
-      where producing_id=%s",
-      [ (i,) for i, j in unused_keys.items() if j ]
-      )
-    cursor.executemany(
-      "delete from flow \
-      where operation_id=%s \
-      and not exists (select 1 from operationplan where operation_id=flow.operation_id)",
-      [ (i,) for i, j in unused_keys.items() if j ]
-      )
-    cursor.executemany(
-      "delete from operation \
-      where name=%s \
-      and not exists (select 1 from operationplan where operation_id=operation.name)",
-      [ (i,) for i, j in unused_keys.items() if j ]
+        "delete from itemsupplier \
+        where item_id=%s and supplier_id=%s and location_id=%s",
+        [ i for i in unused_keys ]
       )
 
     # Create or update purchasing operations
     cursor.executemany(
-      "insert into operation \
-        (name,location_id,category,duration,sizeminimum,sizemultiple,subcategory,type,lastmodified,source) \
-        values (%%s,%%s,%%s,%%s,%%s,%%s,'openbravo','fixed_time','%s',%%s)" % self.date,
-      [
-        (i[0], i[3], i[4], i[5], i[6], i[7], i[8])
-        for i in purchasing
-        if i[0] not in frepple_keys
-      ])
-    cursor.executemany(
-      "update operation \
-        set source=%%s, location_id=%%s, category=%%s, duration=%%s, sizeminimum=%%s, \
-        sizemultiple=%%s, subcategory='openbravo', type='fixed_time', lastmodified='%s' where name=%%s" % self.date,
-      [
-        (i[8], i[3], i[4], i[5], i[6], i[7], i[0])
-        for i in purchasing
-        if i[0] in frepple_keys
-      ])
-
-    # Create or update buffers
-    cursor.execute("SELECT name FROM buffer")
-    frepple_keys = set([ i[0] for i in cursor.fetchall() ])
-    cursor.executemany(
-      "insert into buffer \
-        (producing_id,name,item_id,location_id,subcategory,lastmodified,source) \
-        values (%%s,%%s,%%s,%%s,'openbravo','%s',%%s)" % self.date,
-      [ (i[0], i[1], i[2], i[3], i[8]) for i in purchasing if i[1] not in frepple_keys ]
+        "insert into itemsupplier \
+          (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id, lastmodified) \
+          values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%%s',%s)" % self.date,
+        insert
       )
     cursor.executemany(
-      "update buffer \
-        set producing_id=%%s, source=%%s, item_id=%%s, location_id=%%s, \
-        subcategory='openbravo', lastmodified='%s' \
-        where name=%%s" % self.date,
-      [ (i[0], i[8], i[2], i[3], i[1]) for i in purchasing if i[1] in frepple_keys ]
-      )
-
-    # Create or update flows
-    cursor.execute("SELECT operation_id, thebuffer_id FROM flow")
-    frepple_keys = set([ i for i in cursor.fetchall() ])
-    cursor.executemany(
-      "insert into flow \
-        (operation_id,thebuffer_id,quantity,type,source,lastmodified) \
-        values(%%s,%%s,1,'end','openbravo','%s')" % self.date,
-      [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) not in frepple_keys ]
-      )
-    cursor.executemany(
-      "update flow \
-        set quantity=1, type='end', source='openbravo', lastmodified='%s' \
-        where operation_id=%%s and thebuffer_id=%%s" % self.date,
-      [ (i[0], i[1]) for i in purchasing if (i[0], i[1]) in frepple_keys ]
+        "update itemsupplier \
+          set source=%%s, leadtime=%%s, sizeminimum=%%s, sizemultiple=%%s, cost=%%s, priority=%%s, effective_end=%%s,\
+           lastmodified='%s' where item_id=%%s and location_id=%%s and supplier_id=%%s" % self.date,
+        update
       )
 
     if self.verbosity > 0:
-      print("Processed %d approved vendors" % len(purchasing))
-      print("Imported approved vendors in %.2f seconds" % (time() - starttime))
+        print("Inserted %d new approved vendors" % len(insert))
+        print("Updated %d existing approved vendors" % len(update))
+        print("Deleted %d approved vendors" % len(unused_keys))
+        print("Populated approved vendors in %.2f seconds" % (time() - starttime))
 
 
   # Load open purchase orders
@@ -1100,13 +1210,17 @@ class Command(BaseCommand):
   #        - %creationDate -> startdate
   #        - %scheduledDeliveryDate -> enddate
   #        - 'openbravo' -> source
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_purchaseorders(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       global idcounter
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'OrderLine':
           continue
         records += 1
@@ -1149,6 +1263,7 @@ class Command(BaseCommand):
       return records
 
     global idcounter
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing purchase orders...")
@@ -1167,7 +1282,7 @@ class Command(BaseCommand):
     update = []
     delete = []
     deliveries = set()
-    query = urllib.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
+      query = urllib.parse.quote("updated>'%s' and salesOrder.salesTransaction=false and salesOrder.documentType.name<>'RTV Order'" % self.delta)
     self.get_data("/openbravo/ws/dal/OrderLine?where=%s&orderBy=salesOrder.creationDate&includeChildren=false" % query, parse)
 
     # Create or update procurement operations
@@ -1212,13 +1327,13 @@ class Command(BaseCommand):
     # Create purchasing operationplans
     cursor.executemany(
       "insert into operationplan \
-        (id,operation_id,quantity,startdate,enddate,locked,source,lastmodified) \
-        values(%%s,%%s,%%s,%%s,%%s,'1',%%s,'%s')" % self.date,
+          (id,operation_id,quantity,startdate,enddate,status,source,lastmodified) \
+          values(%%s,%%s,%%s,%%s,%%s,'confirmed',%%s,'%s')" % self.date,
       insert
       )
     cursor.executemany(
       "update operationplan \
-        set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, locked='1', lastmodified='%s' \
+          set operation_id=%%s, quantity=%%s, startdate=%%s, enddate=%%s, status='confirmed', lastmodified='%s' \
         where source=%%s" % self.date,
       update)
     cursor.executemany(
@@ -1241,12 +1356,16 @@ class Command(BaseCommand):
   #        - %warehouse -> location
   #        - %product -> item
   #        - 'openbravo' -> subcategory
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_workInProgress(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'ManufacturingWorkRequirement':
           continue
         records += 1
@@ -1271,6 +1390,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing manufacturing work requirement ...")
@@ -1295,7 +1415,7 @@ class Command(BaseCommand):
     # Get the list of all open work requirements
     insert = []
     update = []
-    query = urllib.quote("closed=false")
+      query = urllib.parse.quote("closed=false")
     self.get_data("/openbravo/ws/dal/ManufacturingWorkRequirement?where=%s" % query, parse)
 
     # Delete closed/canceled/deleted work requirements
@@ -1326,12 +1446,16 @@ class Command(BaseCommand):
   # Importing productboms
   #   - extracting productBOM object for all Products with
   #
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_productbom(self, cursor):
 
-    def parse(conn, root):
+    def parse(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'ProductBOM':
           continue
         records += 1
@@ -1359,6 +1483,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing product boms...")
@@ -1383,7 +1508,7 @@ class Command(BaseCommand):
       frepple_keys.add(i[0])
 
     # Loop over all productboms
-    query = urllib.quote("product.billOfMaterials=true")
+      query = urllib.parse.quote("product.billOfMaterials=true")
     operations = set()
     buffers = set()
     flows = {}
@@ -1430,21 +1555,29 @@ class Command(BaseCommand):
   #        - subproducts
   #        - routings
   #
-  @transaction.atomic(using=self.database, savepoint=False)
+
   def import_processplan(self, cursor):
 
-    def parse1(conn, root):
+    def parse1(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'ManufacturingProcessPlan':
           continue
         records += 1
         processplans[elem.get('id')] = elem
       return records
 
-    def parse2(conn, root):
+    def parse2(conn):
       records = 0
+      root = None
       for event, elem in conn:
+        if not root:
+          root = elem
+          continue
         if event != 'end' or elem.tag != 'Product':
           continue
         records += 1
@@ -1538,6 +1671,7 @@ class Command(BaseCommand):
         root.clear()
       return records
 
+    with transaction.atomic(using=self.database, savepoint=False):
     starttime = time()
     if self.verbosity > 0:
       print("Importing processplans...")
@@ -1568,7 +1702,7 @@ class Command(BaseCommand):
     self.get_data("/openbravo/ws/dal/ManufacturingProcessPlan?includeChildren=true", parse1)
 
     # Loop over all produced products
-    query = urllib.quote("production=true and processPlan is not null")
+      query = urllib.parse.quote("production=true and processPlan is not null")
     operations = []
     suboperations = []
     buffers_create = []

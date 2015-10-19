@@ -49,7 +49,7 @@ def search(request):
   #  - primary key is of type text
   #  - user has change permissions
   for cls, admn in data_site._registry.items():
-    if admn.has_change_permission(request) and isinstance(cls._meta.pk, CharField):
+    if request.user.has_perm("%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())) and isinstance(cls._meta.pk, CharField):
       query = cls.objects.using(request.database).filter(pk__icontains=term).order_by('pk').values_list('pk')
       count = len(query)
       if count > 0:

@@ -50,6 +50,10 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
       return self.readonly_fields + ('last_login', 'date_joined')
     return self.readonly_fields
 
+  def has_delete_permission(self, request, obj=None):
+    # Users can't be deleted. Just mark them as inactive instead
+    return False
+
 admin_site.register(User, MyUserAdmin)
 
 

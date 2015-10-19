@@ -601,6 +601,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   }
   assert(data->state->a_qty >= 0);
 
+  // Optionally add a penalty depending on the amount of quantity already planned on
+  // this operation. This is useful to create a plan where the loading is divided
+  // equally over the different available resources, when the search mode MINCOSTPENALTY
+  // is used.
+  if (data->getSolver()->getRotateResources())
+    for (OperationPlan::iterator rr = oper->getOperationPlans(); rr != OperationPlan::end(); ++rr)
+      data->state->a_penalty += rr->getQuantity();
+
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
@@ -1037,7 +1045,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Message
       if (loglevel && search != PRIORITY)
         logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
-          << "' evaluates alternate '" << *altIter << "': quantity " << data->state->a_qty
+          << "' evaluates alternate '" << (*altIter)->getOperation() << "': quantity " << data->state->a_qty
           << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
 
       // Process the result

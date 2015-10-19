@@ -3,6 +3,7 @@
 {"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "days", "description": "Time units to be used for the resource report: hours, days, weeks"}},
 {"pk": "plan.loglevel", "model": "common.parameter", "fields": {"value": "0", "description": "Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},
 {"pk": "plan.planSafetyStockFirst", "model": "common.parameter", "fields": {"value": "false", "description": "Controls whether safety stock is planned before or after the demand. Accepted values are false (default) and true"}},
+{"pk": "plan.rotateResources", "model": "common.parameter", "fields": {"value": "true", "description": "When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
 {"pk": "pack capacity factory 1", "model": "input.calendar", "fields": {}},
 {"pk": "pack capacity factory 2", "model": "input.calendar", "fields": {}},
 {"pk": "weave capacity factory 1", "model": "input.calendar", "fields": {}},

@@ -115,6 +115,8 @@ class SolverMRP : public Solver
 
     bool allowSplits;
 
+    bool rotateResources;
+
     /** When set to false we solve only for the entity being called. This is
       * used when you want to control manual the sequence of the planning
       * loop.
@@ -309,7 +311,7 @@ class SolverMRP : public Solver
     DECLARE_EXPORT void solve(void *v = NULL);
 
     /** Constructor. */
-    DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true),
+    DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true), rotateResources(true),
       propagate(true), plantype(1), lazydelay(86400L), iteration_threshold(1),
       iteration_accuracy(0.01), iteration_max(0), autocommit(true),
       planSafetyStockFirst(false), erasePreviousFirst(true)
@@ -601,6 +603,16 @@ class SolverMRP : public Solver
     /** Python method for undoing the plan changes. */
     static DECLARE_EXPORT PyObject* rollback(PyObject*, PyObject*);
 
+    bool getRotateResources() const
+    {
+      return rotateResources;
+    }
+
+    void setRotateResources(bool b)
+    {
+      rotateResources = b;
+    }
+
     bool getAllowSplits() const
     {
       return allowSplits;
@@ -650,6 +662,7 @@ class SolverMRP : public Solver
       m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
       m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
       m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
+      m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
       m->addPythonFunctionField<Cls>(Tags::userexit_flow, &Cls::getUserExitFlow, &Cls::setUserExitFlow);
@@ -668,6 +681,7 @@ class SolverMRP : public Solver
     static const Keyword tag_iterationaccuracy;
     static const Keyword tag_lazydelay;
     static const Keyword tag_allowsplits;
+    static const Keyword tag_rotateresources;
     static const Keyword tag_planSafetyStockFirst;
     static const Keyword tag_iterationmax;
 

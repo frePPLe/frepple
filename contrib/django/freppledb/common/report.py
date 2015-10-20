@@ -472,7 +472,7 @@ class GridReport(View):
     args_unquoted = [ unquote(i) for i in args ]
 
     # Add attributes if not done already
-    if not self._attributes_added:
+    if not self._attributes_added and self.model:
       self.__class__._attributes_added = True
       for field_name, label, fieldtype in getAttributes("%s.%s" % (self.model.__module__, self.model.__name__)):
         if fieldtype == 'string':

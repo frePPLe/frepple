@@ -55,8 +55,7 @@ else:
   input("Hit any key to continue...")
   sys.exit(1)
 
-
-if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
+if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='migrate':
   print("\nDatabase schema has not been initialized yet.")
   confirm = input("Do you want to do that now? (yes/no): ")
   while confirm not in ('yes', 'no'):
@@ -64,7 +63,7 @@ if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='syncdb':
   if confirm == 'yes':
     # Create the database
     print("\nCreating database scheme")
-    call_command('syncdb', verbosity=1)
+    call_command('migrate', verbosity=1)
 
 # Execute the command
 execute_from_command_line(sys.argv)

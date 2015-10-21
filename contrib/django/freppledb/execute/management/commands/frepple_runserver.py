@@ -92,7 +92,6 @@ class Command(BaseCommand):
         print('    http://%s:%s/' % (ip, port))
     else:
       print('    http://%s:%s/' % (address, port))
-    print('\nThree users are created by default: "admin", "frepple" and "guest" (the default password is equal to the user name)\n')
     print('Quit the server with CTRL-C.\n')
 
     # Start a separate thread that will check for updates

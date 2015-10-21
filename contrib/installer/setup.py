@@ -36,7 +36,7 @@ freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
-            'django', 'email', 'cherrypy.wsgiserver', 'sqlite3',
+            'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
             # Added for PostgreSQL
             'psycopg2',
             # Added to be able to connect to SQL Server
@@ -44,12 +44,12 @@ packages = [# Required for django standalone deployment
             # Required for reading and writing spreadsheets
             'openpyxl',
             # Added to package a more complete python library with frePPLe
-            'urllib', 'multiprocessing', 'asyncio',
+            'urllib', 'multiprocessing', 'asyncio', 'pip',
             # Added for unicode and internationalization
             'encodings',
            ]
-includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib']
-excludes = ['django.utils.six.moves', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb']
+includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib', '_sitebuiltins']
+excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using psycopg (using psycopg2 instead)
@@ -82,27 +82,23 @@ ignores = [# Not using docutils
            'frepple',
            ]
 
-# Collect all static files to be included in the distribution.
-# This includes our custom python code as well.
+# Add django and frepple.
+# Both are added in uncompiled format
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
 data_files = []
+import site
+data_files.append( ['custom', [site.__file__,]] )
 for srcdir, targetdir in [
-   (os.path.join(djangodirectory,'contrib','admin','templates'), 'templates'),
-   (os.path.join(djangodirectory,'contrib','admin','static'), 'static'),
-   (os.path.join(djangodirectory,'conf','locale'), os.path.join('locale','django')),
-   (os.path.join(djangodirectory,'contrib','auth','locale'), os.path.join('locale','auth')),
-   (os.path.join(djangodirectory,'contrib','contenttypes','locale'), os.path.join('locale','contenttypes')),
-   (os.path.join(djangodirectory,'contrib','sessions','locale'), os.path.join('locale','sessions')),
-   (os.path.join(djangodirectory,'contrib','admin','locale'), os.path.join('locale','admin')),
-   (os.path.join(djangodirectory,'contrib','messages','locale'), os.path.join('locale','messages')),
+   (djangodirectory, os.path.join('custom','django')),
    (freppledirectory, os.path.join('custom','freppledb')),
    ]:
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
      # Ignore dirnames that start with '.'
      for i, dirname in enumerate(dirnames):
-       if dirname.startswith('.'): del dirnames[i]
+       if dirname.startswith('.') or dirname == '__pycache__':
+         del dirnames[i]
      # Append data files for this subdirectory
      data_files.append([
        os.path.join(targetdir, dirpath[root_path_length:]),

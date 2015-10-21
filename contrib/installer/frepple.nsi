@@ -180,13 +180,14 @@ FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
-  !system "${PYTHON} setup.py"
-  !cd "../.."
+  !system '${PYTHON} setup.py'
 
   ; Build the documentation if it doesn't exist yet
-  !system "bash -c 'if (test ! -f doc/_build/html:index.html ); then cd doc && make; fi'"
+  !cd "../../doc"
+  !system "bash -c 'if (test ! -f _build/html/index.html ); then pwd; fi'"
 
   ; Create a distribution if none exists yet
+  !cd ".."
   !system "bash -c 'if (test ! -f frepple-${PRODUCT_VERSION}.tar.gz ); then make dist; fi'"
 
   ; Expand the distribution
@@ -228,6 +229,8 @@ Section "Application" SecAppl
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  ; SetOutPath is used to set the working directory for the shortcut
+  SetOutPath "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start frePPLe server.lnk" "$INSTDIR\bin\freppleserver.exe"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk" "$INSTDIR\bin\custom"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
@@ -342,16 +345,17 @@ Function Databaseleave
     Abort
   ${endif}
   ClearErrors
-  ExecWait 'set PGPASSWORD=$4&&psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
+  System::Call 'Kernel32::SetEnvironmentVariable(t, t)i ("PGPASSWORD", "$4").r0'
+  ExecWait 'psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
   IfErrors 0 ok
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
      StrCpy $1 '$1Update the parameters or:$\r$\n'
-     StrCpy $1 '$1  1) Install PostgreSQL$\r$\n'
-     StrCpy $1 '$1  2) Configure it to accepts connections from these commands:$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL 9.4$\r$\n'
+     StrCpy $1 '$1  2) Configure it to till you can successfully connect from the commands:$\r$\n'
      StrCpy $1 '$1        set PGPASSWORD=$4$\r$\n'
      StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"$\r$\n'
      StrCpy $1 '$1  3) Assure psql is on the PATH environment variable'
-     MessageBox MB_OK $1       
+     MessageBox MB_OK $1
      ; Return to the page
      Abort
   ok:
@@ -464,6 +468,9 @@ Section -Post
   ; Clean up the distribution directory
   !cd ".."
   !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
+
+  ; Create the log directory
+  CreateDirectory "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
 
   ; Create the database schema
   DetailPrint "Creating database schema"

@@ -251,6 +251,10 @@ if __name__=='__main__':
   # Add the custom directory to the Python path.
   sys.path = [ os.environ['FREPPLE_APP'], sys.path[0] ]
 
+  # Initialize django
+  import django
+  django.setup()
+
   # Parse command line
   parser = argparse.ArgumentParser(
     description='Runs a web server for frePPLe.'

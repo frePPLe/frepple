@@ -11,16 +11,16 @@ $(function(){ graph.header(); })
 {% include "operationcontext.html" %}
 {% include "locationcontext.html" %}
 <div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?startdate__gte={startdate}&amp;startdate__lt={enddate}&amp;locked=1">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?startdate__gte={startdate}&amp;startdate__lt={enddate}&amp;locked=1">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>
 <div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?startdate__gte={startdate}&amp;startdate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?startdate__gte={startdate}&amp;startdate__lt={enddate}">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>
 <div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?enddate__gte={startdate}&amp;enddate__lt={enddate}&amp;locked=1">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?enddate__gte={startdate}&amp;enddate__lt={enddate}&amp;locked=1">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>
 <div id="detail3context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?enddate__gte={startdate}&amp;enddate__lt={enddate}">{% trans 'Detail' %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?enddate__gte={startdate}&amp;enddate__lt={enddate}">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>{% endblock %}
 
 {% block tools %}{% if args.0 %}

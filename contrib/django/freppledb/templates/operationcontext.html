@@ -1,11 +1,11 @@
 {% load i18n %}
 <div id="operationcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.input.change_operation %}<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/operation/{value}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-menu-item"><a id="{{request.prefix}}/supplypath/operation/{value}/">{% trans 'Supply Path' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/whereused/operation/{value}/">{% trans 'Where Used' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/operation/{value}/">{% trans 'Plan' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/">{% trans 'Plan detail' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/constraintoperation/{value}/">{% trans 'Constrained demand' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/comments/input/operation/{value}/">{% trans 'Comments' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/operation/{value}/history/">{% trans 'History' %}</a></li>
+{% if perms.input.change_operation %}<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/operation/{value}/">{% trans 'edit'|capfirst %}</a></li>{% endif %}
+<li class="ui-menu-item"><a id="{{request.prefix}}/supplypath/operation/{value}/">{% trans 'supply path'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/whereused/operation/{value}/">{% trans 'where used'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operation/{value}/">{% trans 'plan'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/">{% trans 'plan detail'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/constraintoperation/{value}/">{% trans 'constrained demand'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/comments/input/operation/{value}/">{% trans 'comments'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/operation/{value}/history/">{% trans 'history'|capfirst %}</a></li>
 </ul></div>

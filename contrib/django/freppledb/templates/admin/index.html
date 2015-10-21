@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}frePPLe{% endblock %}
-{% block content_title %}<h1>{% trans "Cockpit" %}</h1>{% endblock %}
+{% block content_title %}<h1>{% trans "cockpit"|capfirst %}</h1>{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/static/js/d3.min.js"></script>
@@ -63,7 +63,7 @@
         {{widget.javascript|safe}}
         },
       error: function (result, stat, errorThrown) {
-        $("#widget_{{widget.name}}").parent().html("{% trans "Failed" %}");
+        $("#widget_{{widget.name}}").parent().html("{% trans "failed"|capfirst %}");
         }
     });
 {% else %}{{widget.javascript|safe}}

@@ -19,7 +19,7 @@
 <div id="content-main">
 <form action="." method="post" class="form">{% csrf_token %}
 <table>{{form.as_table}}
-<tr><td><input type="submit" value="{% trans 'Save' %}"/></td></tr>
+<tr><td><input type="submit" value="{% trans 'save'|capfirst %}"/></td></tr>
 </table></form>
 
 </div>

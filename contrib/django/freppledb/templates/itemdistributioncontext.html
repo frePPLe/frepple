@@ -1,6 +1,6 @@
 {% load i18n %}
 <div id="itemdistributioncontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-{% if perms.input.change_itemdistribution %}<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/itemdistribution/{value}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li class="ui-menu-item"><a id="{{request.prefix}}/comments/input/itemdistribution/{value}/">{% trans 'Comments' %}</a></li>
-<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/itemdistribution/{value}/history/">{% trans 'History' %}</a></li>
+{% if perms.input.change_itemdistribution %}<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/itemdistribution/{value}/">{% trans 'edit'|capfirst %}</a></li>{% endif %}
+<li class="ui-menu-item"><a id="{{request.prefix}}/comments/input/itemdistribution/{value}/">{% trans 'comments'|capfirst %}</a></li>
+<li class="ui-menu-item"><a id="{{request.prefix}}/data/input/itemdistribution/{value}/history/">{% trans 'history'|capfirst %}</a></li>
 </ul></div>

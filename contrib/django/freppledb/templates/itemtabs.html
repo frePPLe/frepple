@@ -1,12 +1,12 @@
 {% load i18n %}
 <div class="frepple-tabs" id="tabs">
 <ul role="tablist">
-{% if perms.input.change_item %}<li{% if not active_tab %} class="frepple-tabs-active"{% endif %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/item/{{object_id}}/">{% trans 'Edit' %}</a></li>{% endif %}
-<li{% ifequal active_tab 'supplypath' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/supplypath/item/{{object_id}}/">{% trans 'Supply Path' %}</a></li>
-<li{% ifequal active_tab 'whereused' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/whereused/item/{{object_id}}/">{% trans 'Where Used' %}</a></li>
-<li{% ifequal active_tab 'plan' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/demand/{{object_id}}/">{% trans 'Plan' %}</a></li>
-<li{% ifequal active_tab 'plandetail' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/demandplan/{{object_id}}/">{% trans 'Plan detail' %}</a></li>
-<li{% ifequal active_tab 'comments' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/item/{{object_id}}/">{% trans 'Comments' %}</a></li>
-<li{% ifequal active_tab 'history' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/item/{{object_id}}/history/">{% trans 'History' %}</a></li>
+{% if perms.input.change_item %}<li{% if not active_tab %} class="frepple-tabs-active"{% endif %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/item/{{object_id}}/">{% trans 'edit'|capfirst %}</a></li>{% endif %}
+<li{% ifequal active_tab 'supplypath' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/supplypath/item/{{object_id}}/">{% trans 'supply path'|capfirst %}</a></li>
+<li{% ifequal active_tab 'whereused' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/whereused/item/{{object_id}}/">{% trans 'where used'|capfirst %}</a></li>
+<li{% ifequal active_tab 'plan' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/demand/{{object_id}}/">{% trans 'plan'|capfirst %}</a></li>
+<li{% ifequal active_tab 'plandetail' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/demandplan/{{object_id}}/">{% trans 'plan detail'|capfirst %}</a></li>
+<li{% ifequal active_tab 'comments' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/input/item/{{object_id}}/">{% trans 'comments'|capfirst %}</a></li>
+<li{% ifequal active_tab 'history' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/input/item/{{object_id}}/history/">{% trans 'history'|capfirst %}</a></li>
 </ul>
 </div>

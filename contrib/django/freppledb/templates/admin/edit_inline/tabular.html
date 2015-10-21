@@ -17,7 +17,7 @@
          </th>
        {% endif %}
      {% endfor %}
-     {% if inline_admin_formset.formset.can_delete %}<th>{% trans "Delete?" %}</th>{% endif %}
+     {% if inline_admin_formset.formset.can_delete %}<th>{% trans "delete?|capfirst" %}</th>{% endif %}
      </tr></thead>
 
      <tbody>
@@ -87,7 +87,7 @@
     prefix: "{{ inline_admin_formset.formset.prefix }}",
     adminStaticPrefix: '{% static "admin/" %}',
     addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}",
-    deleteText: "{% trans 'Remove' %}"
+    deleteText: "{% trans 'remove'|capfirst %}"
   });
 })(django.jQuery);
 </script>

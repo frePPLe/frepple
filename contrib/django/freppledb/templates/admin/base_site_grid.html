@@ -82,20 +82,20 @@ $(window).bind('resize', function() {
 
 
 <div id="toolicons">{% block actions %}{% if reportclass.filterable %}
-<span id="filter" onclick="grid.showFilter()" title="{% trans 'Filter data'|escape%}" class="fa fa-search fa-lg"></span>{% endif %}
+<span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span>{% endif %}
 
 {% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/{{adminsite}}/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
 {% if not is_popup %}<span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="ui-state-disabled fa fa-copy fa-lg"></span>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span>
 {% endif %}{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span>
-{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'Import CSV or Excel file'|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
-{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'Export as CSV or Excel file'|escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
+{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_|escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
+{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
 
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
 <div id="save_undo" style="float:left">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'Save changes'|escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'Undo changes'|escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper %}{% trans "undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}&nbsp;&nbsp;
     <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class=" ui-corner-all ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive" >
     <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}
@@ -109,9 +109,9 @@ $(window).bind('resize', function() {
 <div id="gridpager"></div>
 {% block after_table %}{% endblock %}
 </div>
-{% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'Time buckets' %}">
+{% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'time buckets|capfirst' %}">
 <form method="get" action="">
-{% trans 'Bucket size' %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
+{% trans 'bucket size'|capfirst %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
 {% for i in bucketnames %}<option value="{{i}}"{% ifequal i request.user.horizonbuckets %} selected="selected"{% endifequal %}>{% trans i %}</option>
 {% endfor %}</select><br/>
 <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;

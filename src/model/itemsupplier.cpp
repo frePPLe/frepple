@@ -503,6 +503,8 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
 
   // Finally, create the operationplan
   OperationPlan *opplan = oper->createOperationPlan(qty, start, end);
+  if (id)
+    opplan->setIdentifier(id);
   if (status)
     opplan->setStatus(status);
   if (ref)

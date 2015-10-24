@@ -255,7 +255,7 @@ class ItemDistribution(AuditModel):
   leadtime = DurationField(
     _('lead time'), null=True, blank=True,
     max_digits=15, decimal_places=4,
-    help_text=_('Shipping lead time')
+    help_text=_('lead time')
     )
   sizeminimum = models.DecimalField(
     _('size minimum'), max_digits=15, decimal_places=4,

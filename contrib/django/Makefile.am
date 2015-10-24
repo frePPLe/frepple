@@ -40,8 +40,10 @@ runserver:
 	./frepplectl.py frepple_runserver
 
 international:
-	cd freppledb; django-admin.py makemessages -a -e html -e xml && django-admin.py compilemessages
-	cd freppledb; django-admin.py makemessages -a -d djangojs && django-admin.py compilemessages
+	cd freppledb; django-admin.py makemessages -a -d django
+	cd freppledb; django-admin.py makemessages -a -d djangojs
+	find .  -name '*.po' -exec msggrep --msgctxt --ignore-case -e '[Tt]ranslation included with [Dd]jango' --invert-match  {} -o tmp.po \; -exec mv tmp.po {} \;
+	cd freppledb; django-admin.py compilemessages
 
 pep8:
 	flake8 freppledb --ignore=E121,E111,E501,E303,E201,E202,E123

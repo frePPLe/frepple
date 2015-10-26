@@ -44,6 +44,15 @@ int PeggingIterator::initialize()
 }
 
 
+DECLARE_EXPORT PeggingIterator::PeggingIterator(const PeggingIterator& c)
+  : downstream(c.downstream), firstIteration(c.firstIteration), first(c.first)
+{
+  initType(metadata);
+  for (statestack::const_iterator i = c.states.begin(); i != c.states.end(); ++i)
+    states.push_back( state(i->opplan, i->quantity, i->offset, i->level) );
+}
+
+
 DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
   : downstream(false), firstIteration(true), first(false)
 {

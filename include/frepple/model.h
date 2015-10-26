@@ -8465,16 +8465,19 @@ class CommandMoveOperationPlan : public Command
 class PeggingIterator : public Object
 {
   public:
-    /** Constructor. */
+    /** Copy constructor. */
+    DECLARE_EXPORT PeggingIterator(const PeggingIterator& c);
+
+    /** Constructor for demand pegging. */
     DECLARE_EXPORT PeggingIterator(const Demand*);
 
-    /** Constructor. */
+    /** Constructor for operationplan pegging. */
     DECLARE_EXPORT PeggingIterator(const OperationPlan*, bool=true);
 
-    /** Constructor. */
+    /** Constructor for flowplan pegging. */
     DECLARE_EXPORT PeggingIterator(FlowPlan*, bool=true);
 
-    /** Constructor. */
+    /** Constructor for loadplan pegging. */
     DECLARE_EXPORT PeggingIterator(LoadPlan*, bool=true);
 
     /** Return the operationplan. */

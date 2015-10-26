@@ -64,8 +64,6 @@ if _first:
 
   # Scan attribute definitions from the installed apps
   for app in reversed(settings.INSTALLED_APPS):
-    if not app.startswith('freppledb.') or app == 'freppledb.boot':
-      continue
     try:
       mod = import_module('%s.attributes' % app)
     except ImportError as e:

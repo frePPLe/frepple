@@ -28,6 +28,7 @@ const Keyword tag_iterationthreshold("iterationthreshold");
 const Keyword tag_iterationaccuracy("iterationaccuracy");
 const Keyword tag_lazydelay("lazydelay");
 const Keyword tag_allowsplits("allowsplits");
+const Keyword SolverMRP::tag_rotateresources("rotateresources");
 const Keyword tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword tag_iterationmax("iterationmax");
 

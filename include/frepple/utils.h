@@ -120,7 +120,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "2.4"
+#define PACKAGE_VERSION "2.5"
 #endif
 
 // Header for multithreading

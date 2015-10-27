@@ -155,6 +155,9 @@ class ExcelTest(TransactionTestCase):
   def test_workbook_dutch(self):
     self.run_workbook("nl")
 
+  def test_workbook_spanish(self):
+    self.run_workbook("es")
+
   def test_workbook_french(self):
     self.run_workbook("fr")
 

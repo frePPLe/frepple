@@ -319,6 +319,8 @@ DECLARE_EXPORT void SolverMRP::endElement(XMLInput& pIn, const Attribute& pAttr,
     setIterationAccuracy(pElement.getDouble());
   else if (pAttr.isA(tag_lazydelay))
     setLazyDelay(pElement.getTimeperiod());
+  else if (pAttr.isA(SolverMRP::tag_rotateresources))
+    setRotateResources(pElement.getBool());
   // Default parameters
   else
     Solver::endElement(pIn, pAttr, pElement);
@@ -354,6 +356,8 @@ DECLARE_EXPORT PyObject* SolverMRP::getattro(const Attribute& attr)
     return PythonObject(getPlanSafetyStockFirst());
   if (attr.isA(tag_iterationmax))
     return PythonObject(getIterationMax());
+  if (attr.isA(SolverMRP::tag_rotateresources))
+    return PythonObject(getRotateResources());
   // Default parameters
   return Solver::getattro(attr);
 }
@@ -390,6 +394,8 @@ DECLARE_EXPORT int SolverMRP::setattro(const Attribute& attr, const PythonObject
     setPlanSafetyStockFirst(field.getBool());
   else if (attr.isA(tag_iterationmax))
     setIterationMax(field.getUnsignedLong());
+  else if (attr.isA(SolverMRP::tag_rotateresources))
+    setRotateResources(field.getBool());
   // Default parameters
   else
     return Solver::setattro(attr, field);

@@ -458,87 +458,24 @@ var grid = {
   //date.
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
-  var cell = document.getElementById(iRow+'_'+cellname);
-  var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[iCol];
+  var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
   if (colmodel.formatter == 'date')
   {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
-      $(cell).datepicker({
+      $("#" + iRow + '_' + cellname).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         dateFormat: "yy-mm-dd", changeMonth:true,
         changeYear:true, yearRange: "c-1:c+5"
         });
     else
-      $(cell).datepicker({
+      $("#" + iRow + '_' + cellname).datepicker({
         showOtherMonths: true, selectOtherMonths: true,
         dateFormat: "yy-mm-dd 00:00:00", changeMonth:true,
         changeYear:true, yearRange: "c-1:c+5"
         });
   }
   else
-    $(cell).select();
-  },
-
-  // Display dialog for incremental export from openbravo
-  openbravoIncrExport: function() {
-    $('#popup').html(
-    gettext("export selected records to openbravo")
-    );
-
-    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-
-    $('#popup').dialog({
-      title: gettext("export"),
-      autoOpen: true, resizable: false, width: 390, height: 'auto',
-      buttons: [
-        {
-          text: gettext("export"),
-          id: 'button_export',
-          click: function() {
-            if (sel != null && sel.length > 0)
-            // Send the update to the server
-              $.ajax({
-                  url: "/openbravo/upload/",
-                  data: JSON.stringify(sel),
-                  type: "POST",
-                  contentType: "application/json",
-                  success: function () {
-                    $('#popup').html(gettext("export: OK"))
-                      .dialog({
-                        title: gettext("data exported to openbravo"),
-                        autoOpen: true,
-                        resizable: false,
-                        width: 'auto',
-                        height: 'auto'
-                      });
-                    $('#button_close').find('.ui-button-text').text(gettext('close'));
-                    $('#button_export').removeClass("ui-state-default").addClass("ui-state-disabled").prop('disabled', 'disabled');
-                    upload.undo();
-                  },
-                  error: function (result, stat, errorThrown) {
-                    $('#popup').html(result.responseText)
-                      .dialog({
-                        title: gettext("error exporting data"),
-                        autoOpen: true,
-                        resizable: false,
-                        width: 'auto',
-                        height: 'auto'
-                      });
-                    $('#button_export').find('.ui-button-text').text(gettext('retry'));
-                  }
-              });
-
-            $(this).dialog("close");
-          }
-        },
-        {
-          text: gettext("cancel"),
-          id: 'button_close',
-          click: function() { $(this).dialog("close"); }
-        }
-        ]
-    });
-    $("#actions").prop("selectedIndex",0);
+	$("#" + iRow + '_' + cellname).select();
   },
 
   showExport: function(only_list)
@@ -937,6 +874,86 @@ var grid = {
   }
 }
 
+//----------------------------------------------------------------------------
+// Code for Openbravo integration
+//----------------------------------------------------------------------------
+
+var openbravo = {
+  IncrementalExport: function(grid, transactiontype) {
+	// Collect all selected rows in the status 'proposed'
+	  var sel = grid.jqGrid('getGridParam','selarrrow');
+	  if (sel === null || sel.length == 0)
+	    return;
+	  var data = [];
+	  for (var i in sel)
+	  {
+		  var r = grid.jqGrid('getRowData', sel[i]);
+		  if (r.type === undefined)
+			  r.type = transactiontype;
+		  if (r.status == 'proposed')
+		    data.push(r);
+	  }
+	  if (data == [])
+		  return;
+
+	  // Send to the server for upload into openbravo
+	  $('#popup')
+	  .html(gettext("export selected records to openbravo"))
+	  .dialog({
+	    title: gettext("export"),
+	    autoOpen: true, resizable: false, width: 390, height: 'auto', modal: true,
+	    buttons: [
+	      {
+	        text: gettext("export"),
+	        id: 'button_export',
+	        click: function() {
+
+	          $('#popup').html(gettext("connecting to openbravo..."));
+	          // Send the update to the server
+	          var database = $('#database').val();
+	          database = (database===undefined || database==='default') ? '' : '/' + database;	          
+	          $.ajax({
+	               url: database + "/openbravo/upload/",
+	               data: JSON.stringify(data),
+	               type: "POST",
+	               contentType: "application/json",
+	               success: function () {
+	                 $('#popup').html(gettext("Export successful"))
+	                   .dialog({
+	                     autoOpen: true,
+	                     resizable: false,
+	                     width: 'auto',
+	                     height: 'auto',
+	                     model: false
+	                   });
+	                 $('#button_close').find('.ui-button-text').text(gettext('close'));
+	                 $('#button_export').removeClass("ui-state-default").addClass("ui-state-disabled").prop('disabled', 'disabled');
+	                 // Mark selected rows as "approved" if the original status was "proposed".
+	                 for (var i in sel)
+	                 {
+	                   var cur = grid.jqGrid('getCell', sel[i], 'status');
+	                   if (cur == 'proposed')
+	                     grid.jqGrid('setCell', sel[i], 'status', 'approved');
+	                 }
+	               },
+	               error: function (result, stat, errorThrown) {
+                     fmts = ngettext("Error during export")
+	                 $('#popup').html(gettext("Error during export") + ':' + result.responseText);
+	                 $('#button_export').find('.ui-button-text').text(gettext('retry'));
+	               }
+	           });
+	        }
+	      },
+	      {
+	        text: gettext("cancel"),
+	        id: 'button_close',
+	        click: function() { $(this).dialog("close"); }
+	      }
+	      ]
+	  });
+	  $("#actions").prop("selectedIndex",0);
+  }
+};
 
 //----------------------------------------------------------------------------
 // Code for customized autocomplete widget.

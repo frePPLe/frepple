@@ -31,7 +31,7 @@ DECLARE_EXPORT(const char*) FreppleVersion()
 }
 
 
-DECLARE_EXPORT(void) FreppleInitialize()
+DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles)
 {
   // Initialize only once
   static bool initialized = false;
@@ -42,6 +42,9 @@ DECLARE_EXPORT(void) FreppleInitialize()
   LibraryUtils::initialize();
   LibraryModel::initialize();
   LibrarySolver::initialize();
+
+  if (!procesInitializationFiles)
+    return;
 
   // Search for the initialization PY file
   string init = Environment::searchFile("init.py");
@@ -197,17 +200,19 @@ PyMODINIT_FUNC PyInit_frepple(void)
 {
   try
   {
-    FreppleInitialize();
+    // Initialize frePPLe, without reading the configuration
+    // files init.xml or init.py
+    FreppleInitialize(false);
     return PythonInterpreter::getModule();
   }
   catch(const exception& e)
   {
-    logger << "Initialization failed: " << e.what() << endl;
+    PyErr_SetString(PyExc_SystemError, e.what());
     return NULL;
   }
   catch (...)
   {
-    logger << "Initialization failed: reason unknown" << endl;
+    PyErr_SetString(PyExc_SystemError, "Initialization failed");
     return NULL;
   }
 }

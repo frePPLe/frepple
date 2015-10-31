@@ -752,6 +752,11 @@ div.calendarbox
   text-decoration: underline;
 }
 
+.leftpadding
+{
+  padding-left: 5px;
+}
+
 /* GRAPHS */
 
 .graphcell {

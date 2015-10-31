@@ -302,9 +302,6 @@ class GridReport(View):
   # A model class from which we can inherit information.
   model = None
 
-  # Which admin site is used for the model: 'data' or 'admin'
-  adminsite = 'data'
-
   # Allow editing in this report or not
   editable = True
 
@@ -762,7 +759,6 @@ class GridReport(View):
         'args': args,
         'bucketnames': bucketnames,
         'model': reportclass.model,
-        'adminsite': reportclass.adminsite,
         'hasaddperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('add', reportclass.model._meta))),
         'hasdeleteperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('delete', reportclass.model._meta))),
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('change', reportclass.model._meta))),

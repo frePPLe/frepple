@@ -66,7 +66,7 @@ class MenuItem:
           return False
       return True
     elif self.model:
-      # The menu item is a model, belonging to an admin site
+      # The menu item is a model
       return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('view', self.model._meta)))
     else:
       # Other item is always available
@@ -122,7 +122,7 @@ class Menu:
     # No action required when the group isn't found
 
 
-  def addItem(self, group, name, separator=False, admin=None, report=None,
+  def addItem(self, group, name, separator=False, report=None,
               url=None, javascript=None, label=None, index=None,
               prefix=True, window=False, model=None):
     for i in range(len(self._groups)):
@@ -148,22 +148,11 @@ class Menu:
             it['model'] = model
             return
         # Create a new item
-        if admin:
-          # Add all models from an admin site
-          for m in admin._registry:
-            self._groups[i][3].append( MenuItem(
-              m.__name__.lower(),
-              model=m,
-              url='/%s/%s/%s/' % (admin.name, m._meta.app_label, m.__name__.lower()),
-              index=index
-              ) )
-        else:
-          # Add a single item
-          self._groups[i][3].append( MenuItem(
-            name, report=report, url=url, javascript=javascript, label=label,
-            index=index, prefix=prefix, window=window, separator=separator,
-            model=model
-            ) )
+        self._groups[i][3].append( MenuItem(
+          name, report=report, url=url, javascript=javascript, label=label,
+          index=index, prefix=prefix, window=window, separator=separator,
+          model=model
+          ) )
         return
     # Couldn't locate the group
     raise Exception("Menu group %s not found" % group)

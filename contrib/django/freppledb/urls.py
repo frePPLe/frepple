@@ -25,14 +25,14 @@ from django.conf.urls import patterns, include
 from django.conf import settings
 from django.views.generic.base import RedirectView
 
-import freppledb.admin
+from freppledb.admin import data_site
 
 urlpatterns = patterns(
   # Prefix
   '',
 
   # Root url redirects to the admin index page
-  (r'^$', RedirectView.as_view(url='/admin/')),
+  (r'^$', RedirectView.as_view(url='/data/')),
 
   # Handle browser icon and robots.txt
   (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),
@@ -60,8 +60,7 @@ for app in settings.INSTALLED_APPS:
 # hide/override some admin urls.
 urlpatterns += patterns(
   '',  # Prefix
-  (r'^data/', include(freppledb.admin.data_site.urls)),
-  (r'^admin/', include(freppledb.admin.admin_site.urls)),
+  (r'^data/', include(data_site.urls)),
   (r'^data/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf', 'freppledb')}),
   (r'^admin/jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('django.conf', 'freppledb')}),
 )

@@ -38,13 +38,13 @@ urlpatterns = patterns(
   (r'^widget/(.+)/', freppledb.common.dashboard.Dashboard.dispatch),
 
   # Model list reports, which override standard admin screens
-  (r'^admin/auth/group/$', freppledb.common.views.GroupList.as_view()),
-  (r'^admin/common/user/$', freppledb.common.views.UserList.as_view()),
-  (r'^admin/common/bucket/$', freppledb.common.views.BucketList.as_view()),
-  (r'^admin/common/bucketdetail/$', freppledb.common.views.BucketDetailList.as_view()),
-  (r'^admin/common/parameter/$', freppledb.common.views.ParameterList.as_view()),
+  (r'^data/auth/group/$', freppledb.common.views.GroupList.as_view()),
+  (r'^data/common/user/$', freppledb.common.views.UserList.as_view()),
+  (r'^data/common/bucket/$', freppledb.common.views.BucketList.as_view()),
+  (r'^data/common/bucketdetail/$', freppledb.common.views.BucketDetailList.as_view()),
+  (r'^data/common/parameter/$', freppledb.common.views.ParameterList.as_view()),
+  (r'^data/common/comment/$', freppledb.common.views.CommentList.as_view()),
   (r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments),
-  (r'^admin/common/comment/$', freppledb.common.views.CommentList.as_view()),
 
   (r'^detail/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.detail),
 )

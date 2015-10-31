@@ -36,7 +36,6 @@ class freppleAdminSite(AdminSite):
 
 # Create two admin sites where all our apps will register their models
 data_site = freppleAdminSite(name='data')
-admin_site = freppleAdminSite(name='admin')
 
 # Adding the admin modules of each installed application.
 for app in settings.INSTALLED_APPS:

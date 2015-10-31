@@ -20,7 +20,7 @@
 {% if user.is_authenticated and user.is_staff %}<div id="user-tools">
 {% firstof user.first_name user.username %}&nbsp;&nbsp;
 <span onclick="window.location='{{request.prefix}}/preferences/'" class="fa fa-wrench fa-lg"></span>&nbsp;&nbsp;
-<span onclick="window.location='/admin/logout/?next=/'" class="fa fa-sign-out fa-lg"></span></div>{% endif %}
+<span onclick="window.location='/data/logout/?next=/'" class="fa fa-sign-out fa-lg"></span></div>{% endif %}
 {% block branding %}{% endblock %}{% block nav-global %}{% endblock %}
 </div>
 <!-- END Header -->

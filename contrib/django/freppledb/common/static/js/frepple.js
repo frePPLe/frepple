@@ -204,8 +204,13 @@ jQuery.extend($.fn.fmatter, {
       return minutes + ((seconds < 10) ? ":0" : ":") + seconds;
     return seconds;
   },
+  detail : function(cellvalue, options, rowdata) {
+	  console.log(options);
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
+    if (options['colModel']['popup']) return cellvalue;
+    return cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
+  },
   item : function(cellvalue, options, rowdata) {
-    console.log(options['colModel']);
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<a href='/detail/input/item/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='item'></span></a>";
@@ -349,9 +354,12 @@ jQuery.extend($.fn.fmatter.resource, {
 jQuery.extend($.fn.fmatter.forecast, {
     unformat : linkunformat
 });
+jQuery.extend($.fn.fmatter.detail, {
+	  unformat : linkunformat
+	});
 jQuery.extend($.fn.fmatter.customer, {
-  unformat : linkunformat
-});
+	  unformat : linkunformat
+	});
 jQuery.extend($.fn.fmatter.supplier, {
   unformat : linkunformat
 });

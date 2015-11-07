@@ -1,11 +1,5 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block contextmenus %}
-{% include "buffercontext.html" %}
-{% include "operationcontext.html" %}
-{% include "demandcontext.html" %}
-{% endblock %}
-
 {% block before_table %}{% if args.0 %}
 {% include "buffertabs.html" %}<div style="clear:both"></div>
 {% endif %}{{block.super}}

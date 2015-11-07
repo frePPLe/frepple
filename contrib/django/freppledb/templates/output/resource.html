@@ -15,8 +15,6 @@ $(function(){ graph.header(); })
 {% endblock %}
 
 {% block contextmenus %}
-{% include "resourcecontext.html" %}
-{% include "locationcontext.html" %}
 <div id="detailcontext" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/loadplan/{value}/?startdate__lt={enddate}&amp;enddate__gt={startdate}">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>{% endblock %}

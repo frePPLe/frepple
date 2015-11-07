@@ -1,13 +1,5 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block contextmenus %}
-{% include "usercontext.html" %}
-{% include "buffercontext.html" %}
-{% include "demandcontext.html" %}
-{% include "resourcecontext.html" %}
-{% include "operationcontext.html" %}
-{% endblock %}
-
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 function objectfmt(cellvalue, options, row)

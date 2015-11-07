@@ -8,7 +8,6 @@ $(function(){ graph.header(); })
 {% endblock %}
 
 {% block contextmenus %}
-{% include "itemcontext.html" %}
 <div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;due__gte={startdate}&amp;due__lt={enddate}">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>

@@ -1,10 +1,5 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block contextmenus %}
-{% include "demandcontext.html" %}
-{% include "itemcontext.html" %}
-{% endblock %}
-
 {% block before_table %}{% if args.0 %}
 {% include "itemtabs.html" %}<div style="clear:both"></div>
 {% endif %}{{block.super}}

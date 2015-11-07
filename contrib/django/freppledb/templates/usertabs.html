@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="frepple-tabs" id="tabs">
 <ul role="tablist">
-{% if perms.common.change_user %}<li{% if not active_tab %} class="frepple-tabs-active"{% endif %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/admin/common/user/{{object_id}}/">{% trans 'edit'|capfirst %}</a></li>{% endif %}
+{% if perms.common.change_user %}<li{% if not active_tab %} class="frepple-tabs-active"{% endif %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/data/common/user/{{object_id}}/">{% trans 'edit'|capfirst %}</a></li>{% endif %}
 <li{% ifequal active_tab 'comments' %} class="frepple-tabs-active"{% endifequal %} role="tab"><a class="ui-tabs-anchor" href="{{request.prefix}}/comments/common/user/{{object_id}}/">{% trans 'comments'|capfirst %}</a></li>
 </ul>
 </div>

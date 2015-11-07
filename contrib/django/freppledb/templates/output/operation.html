@@ -8,8 +8,6 @@ $(function(){ graph.header(); })
 {% endblock %}
 
 {% block contextmenus %}
-{% include "operationcontext.html" %}
-{% include "locationcontext.html" %}
 <div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
 <li class="ui-menu-item"><a id="{{request.prefix}}/operationplan/{value}/?startdate__gte={startdate}&amp;startdate__lt={enddate}&amp;locked=1">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>

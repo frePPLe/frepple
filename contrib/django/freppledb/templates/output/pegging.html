@@ -1,14 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 {% load i18n %}
 
-{% block contextmenus %}
-{% include "operationcontext.html" %}
-{% include "itemcontext.html" %}
-{% include "buffercontext.html" %}
-{% include "demandcontext.html" %}
-{% include "resourcecontext.html" %}
-{% endblock %}
-
 {% block extrahead %}{{block.super}}
 <style type="text/css">
 #grid_location__name, #grid_operationplans, .ui-jqgrid .ui-jqgrid-resize, .ui-jqgrid .ui-jqgrid-htable th div {

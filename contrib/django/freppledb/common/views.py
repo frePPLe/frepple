@@ -235,7 +235,7 @@ class GroupList(GridReport):
   '''
   A list report to show groups.
   '''
-  template = 'auth/grouplist.html'
+  template = 'admin/base_site_grid.html'
   title = _("groups")
   basequeryset = Group.objects.all()
   model = Group
@@ -363,18 +363,21 @@ def detail(request, app, model, object_id):
   ct = ContentType.objects.get(app_label=app, model=model)
   admn = data_site._registry[ct.model_class()]
   if not hasattr(admn, 'tabs'):
-    return HttpResponseNotFound('<h1>Page not found</h1>')
+    return HttpResponseNotFound('Object type not found')
   lasttab = request.session.get('lasttab')
   for tab in admn.tabs:
     if lasttab == tab['name'] or not lasttab:
       request.session['lasttab'] = lasttab
       if isinstance(tab['view'], types.FunctionType):
+        print (1, tab['view'])
         return tab['view'](request, object_id)
       else:
+        print (2)
         return tab['view'].as_view()(request, object_id)
-  request.session['lasttab'] = lasttab
   if isinstance(admn.tabs[0], types.MethodType):
+    print (3)
     return admn.tabs[0]['view'](request, object_id)   
   else:
+    print (4)
     return admn.tabs[0]['view'].as_view()(request, object_id) 
     

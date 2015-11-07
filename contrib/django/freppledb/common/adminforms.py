@@ -328,9 +328,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   @transaction.atomic
   def comment_view(self, request, object_id, extra_context=None):
     "The 'comment' view for this model."
-   # return Comments(request, self.model._meta.app_label, self.model._meta.model_name, object_id)
-
-#def Comments(request, app, model, object_id):  # TODO move this view completely into MultiDBModelAdmin
     request.session['lasttab'] = 'comments'
     try:
       modeltype = ContentType.objects.using(request.database).get(

@@ -1,7 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'change history'|capfirst|force_escape %}</h1>
+{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'change history'|capfirst|force_escape %}</h1>
 {% tabs model %}
 </div>{% endblock %}
 

@@ -167,14 +167,6 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   multiselect = False
-
-  @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
-    if args and args[0]:
-      return Demand.objects.filter(item__exact=args[0])
-    else:
-      return Demand.objects.all()
-
   rows = (
     GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra="role:'input/item'"),

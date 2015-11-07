@@ -8,7 +8,7 @@
 </script>
 {% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|escape}}: {% trans 'comments'|capfirst|escape %}</h1>{% endif %}
+{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'comments'|capfirst|force_escape %}</h1>{% endif %}
 {% tabs model %}
 </div>{% endblock %}
 
@@ -18,7 +18,7 @@
 {% if perms.common.add_comment %}<form method="post" action="">
   {% csrf_token %}
   <textarea id="comment" name="comment" rows="10" style="width:100%" ></textarea>
-  <input id="submit" type="submit" value="{% trans 'save'|capfirst %}"/>
+  <input id="submit" type="submit" value="{% filter force_escape %}{% trans 'Save' context "Included in Django translations" %}{% endfilter %}"/>
 </form>{% endif%}
 
 {% for c in comments %}

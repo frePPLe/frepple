@@ -233,7 +233,7 @@ jQuery.extend($.fn.fmatter, {
   forecast : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='forecast'></span>";
+    return cellvalue + "<a href='/detail/forecast/forecast/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='forecast'></span></a>";
   },
   demand : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -327,16 +327,6 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
     return cellvalue + "<a href='/detail/input/skill/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='resourceskill'></span></a>";
-  },
-  project : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='project'></span>";
-  },
-  projectdeel : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='projectdeel'></span>";
   },
   graph : function (cellvalue, options, rowdata) {
     return '<div class="graph" style="height:80px"></div>';

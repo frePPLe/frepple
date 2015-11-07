@@ -65,7 +65,7 @@ class BaseReport(GridReport):
   A list report to show constraints.
   '''
   template = 'output/constraint.html'
-  title = _("Constraint Report")
+  title = _("Constraint report")
   basequeryset = Constraint.objects.all()
   model = Constraint
   permissions = (("view_constraint_report", "Can view constraint report"),)
@@ -85,6 +85,8 @@ class BaseReport(GridReport):
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'constraint'
     return {'active_tab': 'constraint'}
 
 

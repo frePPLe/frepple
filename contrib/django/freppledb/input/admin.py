@@ -48,11 +48,11 @@ class CalendarBucket_admin(MultiDBModelAdmin):
       'fields': (('starttime', 'endtime'), ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')),
       }),
     )
-CalendarBucket_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  CalendarBucket_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": CalendarBucket_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": CalendarBucket_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permissions": "input.change_calendarbucket"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(CalendarBucket, CalendarBucket_admin)
 
 
@@ -61,11 +61,11 @@ class Calendar_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ CalendarBucket_inline, ]
   exclude = ('source',)
-Calendar_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  Calendar_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Calendar_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Calendar_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permissions": "input.change_calendar"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Calendar, Calendar_admin)
 
 
@@ -74,11 +74,11 @@ class Location_admin(MultiDBModelAdmin):
   raw_id_fields = ('available', 'owner',)
   save_on_top = True
   exclude = ('source',)
-Location_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Calendar_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Location_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Location_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_location"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Location, Location_admin)
 
 
@@ -87,11 +87,11 @@ class Customer_admin(MultiDBModelAdmin):
   raw_id_fields = ('owner',)
   save_on_top = True
   exclude = ('source',)
-Customer_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Customer_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Customer_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Customer_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_customer"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Customer, Customer_admin)
 
 
@@ -109,14 +109,12 @@ class Supplier_admin(MultiDBModelAdmin):
   raw_id_fields = ('owner',)
   save_on_top = True
   exclude = ('source',)
-Supplier_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Supplier_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Supplier_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Supplier_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_supplier"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Supplier, Supplier_admin)
-
-
 
 
 class Item_admin(MultiDBModelAdmin):
@@ -125,15 +123,15 @@ class Item_admin(MultiDBModelAdmin):
   raw_id_fields = ('operation', 'owner',)
   inlines = [ ItemSupplier_inline, ]
   exclude = ('source',)
-Item_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Item_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamItemPath, "permission": ''},
-    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamItemPath, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.demand.OverviewReport, "permission": ''},
-    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.demand.DetailReport, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Item_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Item_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_item"},
+    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamItemPath},
+    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamItemPath},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.demand.OverviewReport},
+    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.demand.DetailReport},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Item, Item_admin)
 
 
@@ -142,11 +140,11 @@ class ItemSupplier_admin(MultiDBModelAdmin):
   save_on_top = True
   raw_id_fields = ('item', 'supplier')
   exclude = ('source',)
-ItemSupplier_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": ItemSupplier_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": ItemSupplier_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": ItemSupplier_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_itemsupplier"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(ItemSupplier, ItemSupplier_admin)
 
 
@@ -155,10 +153,10 @@ class ItemDistribution_admin(MultiDBModelAdmin):
   save_on_top = True
   raw_id_fields = ('item',)
   exclude = ('source',)
-ItemDistribution_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": ItemDistribution_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": ItemDistribution_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": ItemDistribution_admin.history_view, "permission": ''},
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_itemdistribution"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
   ]
 data_site.register(ItemDistribution, ItemDistribution_admin)
 
@@ -210,15 +208,15 @@ class Operation_admin(MultiDBModelAdmin):
         'classes': ('collapse',)
        }),
     )
-Operation_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Operation_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view":  freppledb.input.views.UpstreamOperationPath, "permission": ''},
-    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamOperationPath, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.operation.OverviewReport, "permission": ''},
-    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.operation.DetailReport, "permission": ''},
-    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByOperation, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Operation_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Operation_admin.history_view, "permission": ''},
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_operation"},
+    {"name": 'supplypath', "label": _("supply path"), "view":  freppledb.input.views.UpstreamOperationPath},
+    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamOperationPath},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.operation.OverviewReport},
+    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.operation.DetailReport},
+    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByOperation},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
   ]
 data_site.register(Operation, Operation_admin)
 
@@ -247,16 +245,16 @@ class Buffer_admin(MultiDBModelAdmin):
     )
   save_on_top = True
   inlines = [ Flow_inline, ]
-Buffer_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Buffer_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamBufferPath, "permission": ''},
-    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamBufferPath, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.buffer.OverviewReport, "permission": ''},
-    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.buffer.DetailReport, "permission": ''},
-    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByBuffer, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Buffer_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Buffer_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_buffer"},
+    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamBufferPath},
+    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamBufferPath},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.buffer.OverviewReport},
+    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.buffer.DetailReport},
+    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByBuffer},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Buffer, Buffer_admin)
 
 
@@ -271,11 +269,11 @@ class SetupMatrix_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ SetupRule_inline, ]
   exclude = ('source',)
-SetupMatrix_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": SetupMatrix_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": SetupMatrix_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": SetupMatrix_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_setupmatrix"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(SetupMatrix, SetupMatrix_admin)
 
 
@@ -283,11 +281,11 @@ class Skill_admin(MultiDBModelAdmin):
   model = Skill
   save_on_top = True
   exclude = ('source',)
-Skill_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Skill_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Skill_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Skill_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_skill"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Skill, Skill_admin)
 
 
@@ -296,11 +294,11 @@ class ResourceSkill_admin(MultiDBModelAdmin):
   raw_id_fields = ('resource', 'skill')
   save_on_top = True
   exclude = ('source',)
-ResourceSkill_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": ResourceSkill_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": ResourceSkill_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": ResourceSkill_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_resoureskill"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(ResourceSkill, ResourceSkill_admin)
 
 
@@ -310,17 +308,17 @@ class Resource_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ Load_inline, ResourceSkill_inline, ]
   exclude = ('source',)
-Resource_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Resource_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamResourcePath, "permission": ''},
-    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamResourcePath, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.resource.OverviewReport, "permission": ''},
-    {"name": 'gantt', "label": _("gantt chart"), "view": freppledb.output.views.resource.GanttReport, "permission": ''},
-    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.resource.DetailReport, "permission": ''},
-    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByResource, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Resource_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Resource_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_resource"},
+    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamResourcePath},
+    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamResourcePath},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.resource.OverviewReport},
+    {"name": 'gantt', "label": _("gantt chart"), "view": freppledb.output.views.resource.GanttReport},
+    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.resource.DetailReport},
+    {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByResource},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Resource, Resource_admin)
 
 
@@ -334,11 +332,11 @@ class Flow_admin(MultiDBModelAdmin):
        'fields': ('name', 'alternate', 'priority', 'search'),
        }),
     )
-Flow_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Flow_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Item_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Flow_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_flow"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Flow, Flow_admin)
 
 
@@ -352,11 +350,11 @@ class Load_admin(MultiDBModelAdmin):
        'fields': ('name', 'alternate', 'priority', 'search'),
        }),
     )
-Load_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Load_admin.change_view, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Load_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Load_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_load"},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Load, Load_admin)
 
 
@@ -365,17 +363,18 @@ class OperationPlan_admin(MultiDBModelAdmin):
   raw_id_fields = ('operation', 'owner',)
   save_on_top = True
   exclude = ('source', 'criticality')
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_operationplan"},
+    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamOperationPath},
+    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamOperationPath},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.operation.OverviewReport},
+    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.operation.DetailReport},
+    {"name": 'constraint', "label": _("constrained operation"), "view": freppledb.output.views.constraint.ReportByOperation},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(OperationPlan, OperationPlan_admin)
-OperationPlan_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": OperationPlan_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamOperationPath, "permission": ''},
-    {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamOperationPath, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.operation.OverviewReport, "permission": ''},
-    {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.operation.DetailReport, "permission": ''},
-    {"name": 'constraint', "label": _("constrained operation"), "view": freppledb.output.views.constraint.ReportByOperation, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": OperationPlan_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": OperationPlan_admin.history_view, "permission": ''},
-  ]
+
 
 class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
@@ -406,12 +405,12 @@ class Demand_admin(MultiDBModelAdmin):
       ), 'classes': ('collapse') }),
     )
   save_on_top = True
-Demand_admin.tabs = [
-    {"name": 'edit', "label": _("edit"), "view": Demand_admin.change_view, "permission": ''},
-    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamDemandPath, "permission": ''},
-    {"name": 'constraint', "label": _("why short or late?"),"view": freppledb.output.views.constraint.ReportByDemand, "permission": ''},
-    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.pegging.ReportByDemand, "permission": ''},
-    {"name": 'comments', "label": _("comments"), "view": Demand_admin.comment_view, "permission": ''},
-    {"name": 'history', "label": _("history"), "view": Demand_admin.history_view, "permission": ''},
-  ]
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": MultiDBModelAdmin.change_view, "permissions": "input.change_demand"},
+    {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamDemandPath},
+    {"name": 'constraint', "label": _("why short or late?"),"view": freppledb.output.views.constraint.ReportByDemand},
+    {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.pegging.ReportByDemand},
+    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
+    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    ]
 data_site.register(Demand, Demand_admin)

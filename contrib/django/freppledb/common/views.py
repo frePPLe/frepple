@@ -15,9 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import inspect
 import json
-import types
-
 
 from django.shortcuts import render_to_response
 from django.contrib import messages
@@ -37,14 +36,12 @@ from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
-from django.views.generic import View
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 
 from freppledb.admin import data_site
-from freppledb.input import views
 
 import logging
 logger = logging.getLogger(__name__)
@@ -88,7 +85,7 @@ class PreferencesForm(forms.Form):
     min_value=25,
     help_text=_('Number of records to display in a single page'),
     )
-  
+
   theme = forms.ChoiceField(
     label=_('Theme'),
     required=False,
@@ -113,12 +110,12 @@ class PreferencesForm(forms.Form):
     help_text = _('New password confirmation'),
     widget = forms.PasswordInput()
     )
-  
+
   def __init__(self, *args, **kwargs):
-    super(PreferencesForm, self).__init__(*args, **kwargs) 
+    super(PreferencesForm, self).__init__(*args, **kwargs)
     if len(settings.THEMES) == 1:  #If there is only one theme make this choice unavailable
       self.fields.pop('theme')
-    
+
   def clean(self):
     newdata = super(PreferencesForm, self).clean()
     if newdata['cur_password']:
@@ -360,24 +357,43 @@ class BucketDetailList(GridReport):
 
 @staff_member_required
 def detail(request, app, model, object_id):
+  # Find the object type
   ct = ContentType.objects.get(app_label=app, model=model)
   admn = data_site._registry[ct.model_class()]
   if not hasattr(admn, 'tabs'):
     return HttpResponseNotFound('Object type not found')
+
+  # Find the tab we need to open
   lasttab = request.session.get('lasttab')
+  newtab = None
   for tab in admn.tabs:
     if lasttab == tab['name'] or not lasttab:
-      request.session['lasttab'] = lasttab
-      if isinstance(tab['view'], types.FunctionType):
-        print (1, tab['view'])
-        return tab['view'](request, object_id)
-      else:
-        print (2)
-        return tab['view'].as_view()(request, object_id)
-  if isinstance(admn.tabs[0], types.MethodType):
-    print (3)
-    return admn.tabs[0]['view'](request, object_id)   
+      perms = tab.get('permissions')
+      if perms:
+        if isinstance(perms, str):
+          # A single permission is given
+          if not request.user.has_perm(perms):
+            continue
+        else:
+          # A list or tuple of permissions is given
+          ok =  True
+          for p in perms:
+            if not request.user.has_perm(p):
+              ok = False
+              break
+          if not ok:
+            continue
+      newtab = tab
+      break
+  if not newtab:
+    newtab = admn.tabs[0]
+
+  # Convert a view class into a function when accessed the first time
+  if inspect.isclass(newtab['view']):
+    newtab['view'] = newtab['view'].as_view()
+
+  # Open the tab
+  if newtab['view'].__name__ != newtab['view'].__qualname__:
+    return newtab['view'](admn, request, object_id)
   else:
-    print (4)
-    return admn.tabs[0]['view'].as_view()(request, object_id) 
-    
+    return newtab['view'](request, object_id)

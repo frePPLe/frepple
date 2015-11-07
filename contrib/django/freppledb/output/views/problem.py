@@ -42,7 +42,7 @@ class Report(GridReport):
   A list report to show problems.
   '''
   template = 'output/problem.html'
-  title = _("Problem Report")
+  title = _("Problem report")
   basequeryset = Problem.objects  # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
   model = Problem
   permissions = (("view_problem_report", "Can view problem report"),)

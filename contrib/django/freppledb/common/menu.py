@@ -38,7 +38,7 @@ menu.addItem(
   )
 menu.addItem(
   "admin", "comment admin", url="/data/common/comment/",
-  report=freppledb.common.views.CommentList, index=2200, model=Comment
+  report=freppledb.common.views.CommentList, index=1400, model=Comment
   )
 
 # User maintenance

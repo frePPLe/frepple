@@ -35,6 +35,7 @@ price        double            | Cost or price of the item.
                                | For most applications the booking value is the appropriate
                                  one.
                                | The default value is 0.
+buffers      list of buffer    Returns the list of buffers for this item.
 hidden       boolean           Marks entities that are considered hidden and are normally
                                not shown to the end user.
 action       A/C/AC/R          | Type of action to be executed:

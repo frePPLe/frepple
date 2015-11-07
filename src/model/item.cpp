@@ -54,9 +54,9 @@ int ItemDefault::initialize()
 DECLARE_EXPORT Item::~Item()
 {
   // Remove references from the buffers
-  for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if (buf->getItem() == this)
-      buf->setItem(NULL);
+  bufferIterator bufiter(this);
+  while (Buffer* buf = bufiter.next())
+    buf->setItem(NULL);
 
   // Remove references from the demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)

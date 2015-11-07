@@ -253,10 +253,10 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
     // Search for buffers for the requested item and location.
     bool ok = true;
     Buffer* buf = NULL;
-    for (Buffer::iterator buf_iter = Buffer::begin();
-      buf_iter != Buffer::end(); ++buf_iter)
+    Item::bufferIterator buf_iter(getItem());
+    while (Buffer* tmpbuf = buf_iter.next())
     {
-      if (buf_iter->getItem() == getItem() && buf_iter->getLocation() == l)
+      if (tmpbuf->getLocation() == l)
       {
         if (buf)
         {
@@ -265,7 +265,7 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
           break;
         }
         else
-          buf = &*buf_iter;
+          buf = tmpbuf;
       }
     }
 

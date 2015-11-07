@@ -3744,14 +3744,19 @@ class ItemDistribution : public Object,
   */
 class Item : public HasHierarchy<Item>, public HasDescription
 {
+  friend class Buffer;
   friend class ItemSupplier;
   friend class ItemDistribution;
+
   public:
+    class bufferIterator;
+    friend class bufferIterator;
+
     typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Item()
-      : deliveryOperation(NULL), price(0.0), firstItemDistribution(NULL) {}
+    explicit DECLARE_EXPORT Item() : deliveryOperation(NULL), price(0.0),
+      firstItemDistribution(NULL), firstItemBuffer(NULL) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -3838,6 +3843,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return this;
     }
 
+    inline bufferIterator getBufferIterator() const;
+
     static int initialize();
 
     /** Destructor. */
@@ -3855,6 +3862,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
+      m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
     }
 
   private:
@@ -3871,6 +3879,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** Maintain a list of ItemDistributions. */
     ItemDistribution *firstItemDistribution;
+
+    /** Maintain a list of buffers. */
+    Buffer *firstItemBuffer;
 };
 
 
@@ -4202,7 +4213,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     explicit DECLARE_EXPORT Buffer() :
       hidden(false), producing_operation(uninitializedProducing), loc(NULL), it(NULL),
       min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
-      min_interval(-1), tool(false) {}
+      min_interval(-1), tool(false), nextItemBuffer(NULL) {}
 
     /** Builds a producing operation for a buffer.
       * The logic used is based on the following:
@@ -4245,11 +4256,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     }
 
     /** Updates the Item stored in this buffer. */
-    void setItem(Item* i)
-    {
-      it = i;
-      setChanged();
-    }
+    DECLARE_EXPORT void setItem(Item*);
 
     /** Returns the Location of this buffer. */
     Location* getLocation() const
@@ -4279,6 +4286,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     void setTool(bool b)
     {
       tool = b;
+    }
+
+    /** Return a pointer to the next buffer for the same item. */
+    Buffer* getNextItemBuffer() const
+    {
+      return nextItemBuffer;
     }
 
     /** Returns a pointer to a calendar for storing the minimum inventory
@@ -4530,7 +4543,69 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** A flag that marks whether this buffer represents a tool or not. */
     bool tool;
+
+    /** Maintain a linked list of buffers per item. */
+    Buffer *nextItemBuffer;
 };
+
+
+class Item::bufferIterator
+{
+  private:
+    Buffer* cur;
+
+  public:
+    /** Constructor. */
+    bufferIterator(const Item* i) : cur(i ? i->firstItemBuffer : NULL) {}
+
+    bool operator != (const bufferIterator &b) const
+    {
+      return b.cur != cur;
+    }
+
+    bool operator == (const bufferIterator &b) const
+    {
+      return b.cur == cur;
+    }
+
+    bufferIterator& operator++()
+    {
+      if (cur)
+        cur = cur->getNextItemBuffer();
+      return *this;
+    }
+
+    bufferIterator operator++(int)
+    {
+      bufferIterator tmp = *this;
+      ++*this;
+      return tmp;
+    }
+
+    Buffer* next()
+    {
+      Buffer *tmp = cur;
+      if (cur)
+        cur = cur->getNextItemBuffer();
+      return tmp;
+    }
+
+    Buffer* operator ->() const
+    {
+      return cur;
+    }
+
+    Buffer& operator *() const
+    {
+      return *cur;
+    }
+};
+
+
+inline Item::bufferIterator Item::getBufferIterator() const
+{
+  return this;
+}
 
 
 /** @brief This class is the default implementation of the abstract Buffer class. */

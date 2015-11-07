@@ -94,6 +94,38 @@ int BufferProcure::initialize()
 }
 
 
+DECLARE_EXPORT void Buffer::setItem(Item* i)
+{
+  if (it == i)
+    // No change
+    return;
+
+  // Unlink from previous item
+  if (it)
+  {
+    if (it->firstItemBuffer == this)
+      it->firstItemBuffer = nextItemBuffer;
+    else
+    {
+      Buffer* buf = it->firstItemBuffer;
+      while (buf && buf->nextItemBuffer != this)
+        buf = buf->nextItemBuffer;
+      if (!buf)
+        throw LogicException("corrupted buffer list for an item");
+      buf->nextItemBuffer = nextItemBuffer;
+    }
+  }
+
+  // Link at new item
+  it = i;
+  nextItemBuffer = it->firstItemBuffer;
+  it->firstItemBuffer = this;
+
+  // Mark changed
+  setChanged();
+}
+
+
 DECLARE_EXPORT void Buffer::setOnHand(double f)
 {
   // The dummy operation to model the inventory may need to be created
@@ -381,6 +413,19 @@ DECLARE_EXPORT Buffer::~Buffer()
 
   // The Flow objects are automatically deleted by the destructor of the
   // Association list class.
+
+  // Unlink from the item
+  if (it->firstItemBuffer == this)
+    it->firstItemBuffer = nextItemBuffer;
+  else
+  {
+    Buffer* buf = it->firstItemBuffer;
+    while (buf && buf->nextItemBuffer != this)
+      buf = buf->nextItemBuffer;
+    if (!buf)
+      throw LogicException("corrupted buffer list for an item");
+    buf->nextItemBuffer = nextItemBuffer;
+  }
 
   // Remove the inventory operation
   Operation *invoper = Operation::find(INVENTORY_OPERATION);

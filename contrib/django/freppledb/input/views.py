@@ -491,32 +491,11 @@ class DownstreamOperationPath(UpstreamOperationPath):
   objecttype = Operation
 
 
-@staff_member_required
-def location_calendar(request, location):
-  # Check to find a location availability calendar
-  loc = Location.objects.using(request.database).get(pk=location)
-  if loc:
-    cal = loc.available
-  if cal:
-    # Go to the calendar
-    return HttpResponseRedirect('%s/data/input/calendar/%s/' % (request.prefix, iri_to_uri(cal.name)) )
-  # Generate a message
-  try:
-    url = request.META.get('HTTP_REFERER')
-    messages.add_message(
-      request, messages.ERROR,
-      force_text(_('No availability calendar found'))
-      )
-    return HttpResponseRedirect(url)
-  except:
-    raise Http404
-
-
 class BufferList(GridReport):
   '''
   A list report to show buffers.
   '''
-  template = 'input/bufferlist.html'
+
   title = _("buffers")
   basequeryset = Buffer.objects.all()
   model = Buffer
@@ -539,12 +518,10 @@ class BufferList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class SetupMatrixList(GridReport):
   '''
   A list report to show setup matrices.
   '''
-  template = 'input/setupmatrixlist.html'
   title = _("setup matrices")
   basequeryset = SetupMatrix.objects.all()
   model = SetupMatrix
@@ -561,7 +538,6 @@ class ResourceList(GridReport):
   '''
   A list report to show resources.
   '''
-  template = 'input/resourcelist.html'
   title = _("resources")
   basequeryset = Resource.objects.all()
   model = Resource
@@ -585,12 +561,10 @@ class ResourceList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class LocationList(GridReport):
   '''
   A list report to show locations.
   '''
-  template = 'input/locationlist.html'
   title = _("locations")
   basequeryset = Location.objects.all()
   model = Location
@@ -607,12 +581,10 @@ class LocationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class CustomerList(GridReport):
   '''
   A list report to show customers.
   '''
-  template = 'input/customerlist.html'
   title = _("customers")
   basequeryset = Customer.objects.all()
   model = Customer
@@ -628,12 +600,10 @@ class CustomerList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class SupplierList(GridReport):
   '''
   A list report to show supplier.
   '''
-  template = 'input/supplierlist.html'
   title = _("suppliers")
   basequeryset = Supplier.objects.all()
   model = Supplier
@@ -649,12 +619,10 @@ class SupplierList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class ItemSupplierList(GridReport):
   '''
   A list report to show item suppliers.
   '''
-  template = 'input/itemsupplierlist.html'
   title = _("item suppliers")
   basequeryset = ItemSupplier.objects.all()
   model = ItemSupplier
@@ -676,12 +644,10 @@ class ItemSupplierList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class ItemDistributionList(GridReport):
   '''
   A list report to show item distribution.
   '''
-  template = 'input/itemdistributionlist.html'
   title = _("item distributions")
   basequeryset = ItemDistribution.objects.all()
   model = ItemDistribution
@@ -703,12 +669,10 @@ class ItemDistributionList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class ItemList(GridReport):
   '''
   A list report to show items.
   '''
-  template = 'input/itemlist.html'
   title = _("items")
   basequeryset = Item.objects.all()
   model = Item
@@ -727,12 +691,10 @@ class ItemList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class SkillList(GridReport):
   '''
   A list report to show skills.
   '''
-  template = 'input/skilllist.html'
   title = _("skills")
   basequeryset = Skill.objects.all()
   model = Skill
@@ -744,12 +706,10 @@ class SkillList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class ResourceSkillList(GridReport):
   '''
   A list report to show resource skills.
   '''
-  template = 'input/resourceskilllist.html'
   title = _("resource skills")
   basequeryset = ResourceSkill.objects.all()
   model = ResourceSkill
@@ -766,12 +726,10 @@ class ResourceSkillList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class LoadList(GridReport):
   '''
   A list report to show loads.
   '''
-  template = 'input/loadlist.html'
   title = _("loads")
   basequeryset = Load.objects.all()
   model = Load
@@ -794,12 +752,10 @@ class LoadList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class FlowList(GridReport):
   '''
   A list report to show flows.
   '''
-  template = 'input/flowlist.html'
   title = _("flows")
   basequeryset = Flow.objects.all()
   model = Flow
@@ -821,12 +777,10 @@ class FlowList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class DemandList(GridReport):
   '''
   A list report to show demands.
   '''
-  template = 'input/demandlist.html'
   title = _("sales orders")
   basequeryset = Demand.objects.all()
   model = Demand
@@ -860,12 +814,10 @@ class DemandList(GridReport):
     {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("Canceled")}, "function": "grid.setStatus('canceled')"},
     ]
 
-
 class CalendarList(GridReport):
   '''
   A list report to show calendars.
   '''
-  template = 'input/calendarlist.html'
   title = _("calendars")
   basequeryset = Calendar.objects.all()
   model = Calendar
@@ -880,12 +832,10 @@ class CalendarList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class CalendarBucketList(GridReport):
   '''
   A list report to show calendar buckets.
   '''
-  template = 'input/calendarbucketlist.html'
   title = _("calendar buckets")
   basequeryset = CalendarBucket.objects.all()
   model = CalendarBucket
@@ -910,12 +860,10 @@ class CalendarBucketList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class OperationList(GridReport):
   '''
   A list report to show operations.
   '''
-  template = 'input/operationlist.html'
   title = _("operations")
   basequeryset = Operation.objects.all()
   model = Operation
@@ -941,12 +889,10 @@ class OperationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class SubOperationList(GridReport):
   '''
   A list report to show suboperations.
   '''
-  template = 'input/suboperationlist.html'
   title = _("suboperations")
   basequeryset = SubOperation.objects.all()
   model = SubOperation
@@ -963,12 +909,10 @@ class SubOperationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-
 class OperationPlanList(GridReport):
   '''
   A list report to show operationplans.
   '''
-  template = 'input/operationplanlist.html'
   title = _("operationplans")
   basequeryset = OperationPlan.objects.all()
   model = OperationPlan
@@ -997,7 +941,6 @@ class DistributionOrderList(GridReport):
   '''
   A list report to show distribution orders.
   '''
-  template = 'input/distributionorderlist.html'
   title = _("distribution orders")
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
@@ -1039,7 +982,6 @@ class PurchaseOrderList(GridReport):
   '''
   A list report to show purchase orders.
   '''
-  template = 'input/purchaseorderlist.html'
   title = _("purchase orders")
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder

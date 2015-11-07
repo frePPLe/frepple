@@ -59,7 +59,11 @@ admin_site.register(User, MyUserAdmin)
 
 class MyGroupAdmin(MultiDBModelAdmin):
   pass
-
+MyGroupAdmin.tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  MyGroupAdmin.change_view, "permission": ''},
+    {"name": 'comments', "label": _("comments"), "view": MyGroupAdmin.comment_view, "permission": ''},
+    {"name": 'history', "label": _("history"), "view": MyGroupAdmin.history_view, "permission": ''},
+  ]
 admin_site.register(Group, MyGroupAdmin)
 
 
@@ -87,6 +91,11 @@ class Parameter_admin(MultiDBModelAdmin):
   save_on_top = True
   form = ParameterForm
   exclude = ('source',)
+Parameter_admin.tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  Parameter_admin.change_view, "permission": ''},
+    {"name": 'comments', "label": _("comments"), "view": Parameter_admin.comment_view, "permission": ''},
+    {"name": 'history', "label": _("history"), "view": Parameter_admin.history_view, "permission": ''},
+  ]
 admin_site.register(Parameter, Parameter_admin)
 
 
@@ -107,6 +116,11 @@ class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail
   save_on_top = True
   exclude = ('source',)
+Parameter_admin.tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  BucketDetail_admin.change_view, "permission": ''},
+    {"name": 'comments', "label": _("comments"), "view": BucketDetail_admin.comment_view, "permission": ''},
+    {"name": 'history', "label": _("history"), "view": BucketDetail_admin.history_view, "permission": ''},
+  ]
 admin_site.register(BucketDetail, BucketDetail_admin)
 
 
@@ -115,4 +129,9 @@ class Bucket_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ BucketDetail_inline, ]
   exclude = ('source',)
+Bucket_admin.tabs = [
+    {"name": 'edit', "label": _("edit"), "view":  Bucket_admin.change_view, "permission": ''},
+    {"name": 'comments', "label": _("comments"), "view": Bucket_admin.comment_view, "permission": ''},
+    {"name": 'history', "label": _("history"), "view": Bucket_admin.history_view, "permission": ''},
+  ]
 admin_site.register(Bucket, Bucket_admin)

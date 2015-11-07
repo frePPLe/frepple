@@ -15,6 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
+import types
+
+
 from django.shortcuts import render_to_response
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -30,14 +34,17 @@ from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
+from django.views.generic import View
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 
+from freppledb.admin import data_site
+from freppledb.input import views
 
 import logging
 logger = logging.getLogger(__name__)
@@ -205,7 +212,6 @@ class UserList(GridReport):
   '''
   A list report to show users.
   '''
-  template = 'common/userlist.html'
   title = _("User List")
   basequeryset = User.objects.all()
   model = User
@@ -247,7 +253,6 @@ class ParameterList(GridReport):
   '''
   A list report to show all configurable parameters.
   '''
-  template = 'common/parameterlist.html'
   title = _("Parameter List")
   basequeryset = Parameter.objects.all()
   model = Parameter
@@ -324,7 +329,6 @@ class BucketList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'common/bucketlist.html'
   title = _("Bucket List")
   basequeryset = Bucket.objects.all()
   model = Bucket
@@ -357,3 +361,25 @@ class BucketDetailList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+
+
+@staff_member_required
+def detail(request, app, model, object_id):
+  ct = ContentType.objects.get(app_label=app, model=model)
+  admn = data_site._registry[ct.model_class()]
+  if not hasattr(admn, 'tabs'):
+    return HttpResponseNotFound('<h1>Page not found</h1>')
+  lasttab = request.session.get('lasttab')
+  for tab in admn.tabs:
+    if lasttab == tab['name'] or not lasttab:
+      request.session['lasttab'] = lasttab
+      if isinstance(tab['view'], types.FunctionType):
+        return tab['view'](request, object_id)
+      else:
+        return tab['view'].as_view()(request, object_id)
+  request.session['lasttab'] = lasttab
+  if isinstance(admn.tabs[0], types.MethodType):
+    return admn.tabs[0]['view'](request, object_id)   
+  else:
+    return admn.tabs[0]['view'].as_view()(request, object_id) 
+    

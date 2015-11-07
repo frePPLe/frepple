@@ -47,6 +47,7 @@ class OverviewReport(GridPivot):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
+      request.session['lasttab'] = 'plan'
       return {
         'title': capfirst(force_text(Item._meta.verbose_name) + " " + args[0]),
         'post_title': ': ' + capfirst(force_text(_('plan'))),
@@ -188,3 +189,8 @@ class DetailReport(GridReport):
     GridFieldDateTime('plandate', title=_('planned date'), editable=False),
     GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
     )
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'plandetail'

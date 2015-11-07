@@ -147,6 +147,18 @@ function linkunformat (cellvalue, options, cell) {
   return cellvalue;
 }
 
+function opendetail(event) {
+  var database = $('#database').val();
+  database = (database===undefined || database==='default') ? '' : '/' + database;
+  var curlink = $(event.target).parent().attr('href');
+  var objectid = $(event.target).parent().parent().text();
+  objectid = admin_escape(objectid);
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  window.location.href = database + curlink.replace('key', objectid);
+}
+
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -193,29 +205,30 @@ jQuery.extend($.fn.fmatter, {
     return seconds;
   },
   item : function(cellvalue, options, rowdata) {
+    console.log(options['colModel']);
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='item'></span>";
+    return cellvalue + "<a href='/detail/input/item/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='item'></span></a>";
   },
   customer : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='customer'></span>";
+    return cellvalue + "<a href='/detail/input/customer/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='customer'></span></a>";
   },
   supplier : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='supplier'></span>";
+    return cellvalue + "<a href='/detail/input/supplier/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='supplier'></span></a>";
   },
   buffer : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='buffer'></span>";
+    return cellvalue + "<a href='/detail/input/buffer/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='buffer'></span></a>";
   },
   resource : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='resource'></span>";
+    return cellvalue + "<a href='/detail/input/resource/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='resource'></span></a>";
   },
   forecast : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -225,7 +238,7 @@ jQuery.extend($.fn.fmatter, {
   demand : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='demand'></span>";
+    return cellvalue + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='demand'></span></a>";
   },
   demanddetail : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '') return '';
@@ -243,37 +256,37 @@ jQuery.extend($.fn.fmatter, {
   operation : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='operation'></span>";
+    return cellvalue + "<a href='/detail/input/operation/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='operation'></span></a>";
   },
   calendar : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='calendar'></span>";
+    return cellvalue + "<a href='/detail/input/calendar/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='calendar'></span></a>";
   },
   calendarbucket : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='calendarbucket'></span>";
+    return cellvalue + "<a href='/detail/input/calendarbucket/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='calendarbucket'></span></a>";
   },
   location : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='location'></span>";
+    return cellvalue + "<a href='/detail/input/location/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='location'></span></a>";
   },
   setupmatrix : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='setupmatrix'></span>";
+    return cellvalue + "<a href='/detail/input/setupmatrix/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='setupmatrix'></span></a>";
   },
   user : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='user'></span>";
+    return cellvalue + "<a href='/detail/common/user/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='user'></span></a>";
   },
   group : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='group'></span>";
+    return cellvalue + "<a href='/detail/auth/group/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='group'></span></a>";
   },
   flow : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -283,12 +296,12 @@ jQuery.extend($.fn.fmatter, {
   itemsupplier : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='itemsupplier'></span>";
+    return cellvalue + "<a href='/detail/input/itemsupplier/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='itemsupplier'></span></a>";
   },
   itemdistribution : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellv || cellvalue === nullalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='itemdistribution'></span>";
+    return cellvalue + "<a href='/detail/input/itemdistribution/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='itemdistribution'></span></a>";
   },
   load : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -298,22 +311,22 @@ jQuery.extend($.fn.fmatter, {
   bucket : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='bucket'></span>";
+    return cellvalue + "<a href='/detail/common/bucket/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='bucket'></span></a>";
   },
   parameter : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='parameter'></span>";
+    return cellvalue + "<a href='/detail/common/parameter/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='parameter'></span></a>";
   },
   skill : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='skill'></span>";
+    return cellvalue + "<a href='/detail/input/skill/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='skill'></span></a>";
   },
   resourceskill : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     if (options['colModel']['popup']) return cellvalue;
-    return cellvalue + "<span class='context fa fa-caret-right' role='resourceskill'></span>";
+    return cellvalue + "<a href='/detail/input/skill/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='resourceskill'></span></a>";
   },
   project : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
@@ -1060,7 +1073,7 @@ $(document).mousedown(function (event) {
     contextMenu.css('display', 'none');
     contextMenu = null;
   }
-
+  
   // We clicked on a context menu. Display that now.
   if ($(event.target).hasClass('context'))
   {

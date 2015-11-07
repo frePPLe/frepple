@@ -41,8 +41,10 @@ class BucketSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.common.models.Bucket
       fields = ('name', 'description', 'level', 'source', 'lastmodified')
-
 class BucketREST(generics.ListCreateAPIView):
+    queryset = freppledb.common.models.Bucket.objects.all()#.using(request.database)
+    serializer_class = BucketSerializer
+class BucketdetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Bucket.objects.all()#.using(request.database)
     serializer_class = BucketSerializer
 
@@ -52,8 +54,10 @@ class BucketDetailSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.common.models.BucketDetail
       fields = ('bucket', 'name', 'startdate', 'enddate', 'source', 'lastmodified')
-
 class BucketDetailREST(generics.ListCreateAPIView):
+    queryset = freppledb.common.models.BucketDetail.objects.all()#.using(request.database)
+    serializer_class = BucketDetailSerializer
+class BucketDetaildetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.BucketDetail.objects.all()#.using(request.database)
     serializer_class = BucketDetailSerializer
 
@@ -63,8 +67,10 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.common.models.Comment
       fields = ('id', 'content_type', 'object_pk', 'content_object', 'comment')
-
 class CommentREST(generics.ListCreateAPIView):
+    queryset = freppledb.common.models.Comment.objects.all()#.using(request.database)
+    serializer_class = CommentSerializer
+class CommentdetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Comment.objects.all()#.using(request.database)
     serializer_class = CommentSerializer
 
@@ -73,8 +79,10 @@ class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.common.models.Parameter
       fields = ('name', 'value', 'description', 'source', 'lastmodified')
-
 class ParameterREST(generics.ListCreateAPIView):
+    queryset = freppledb.common.models.Parameter.objects.all()#.using(request.database)
+    serializer_class = ParameterSerializer
+class ParameterdetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Parameter.objects.all()#.using(request.database)
     serializer_class = ParameterSerializer
 
@@ -83,8 +91,10 @@ class ScenarioSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.common.models.Scenario
       fields = ('name', 'description', 'status', 'lastrefresh')
-
 class ScenarioREST(generics.ListCreateAPIView):
+    queryset = freppledb.common.models.Scenario.objects.all()#.using(request.database)
+    serializer_class = ScenarioSerializer
+class ScenariodetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Scenario.objects.all()#.using(request.database)
     serializer_class = ScenarioSerializer
 

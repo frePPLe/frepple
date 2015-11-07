@@ -55,4 +55,10 @@ urlpatterns = patterns(
   (r'^api/common/parameter/$', freppledb.common.serializers.ParameterREST.as_view()),
   (r'^api/common/comment/$', freppledb.common.serializers.CommentREST.as_view()),
   (r'^api/common/scenario/$', freppledb.common.serializers.ScenarioREST.as_view()),
+
+  (r'^api/common/bucket/(?P<pk>(.+))/$', freppledb.common.serializers.BucketdetailREST.as_view()),
+  (r'^api/common/bucketdetail/(?P<pk>(.+))/$', freppledb.common.serializers.BucketDetaildetailREST.as_view()),
+  (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailREST.as_view()),
+  (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailREST.as_view()),
+  (r'^api/common/scenario/(?P<pk>(.+))/$', freppledb.common.serializers.ScenariodetailREST.as_view()),
 )

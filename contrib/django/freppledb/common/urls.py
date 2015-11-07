@@ -18,6 +18,7 @@
 from django.conf.urls import patterns
 
 import freppledb.common.views
+import freppledb.common.serializers
 import freppledb.common.dashboard
 
 
@@ -47,4 +48,11 @@ urlpatterns = patterns(
   (r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments),
 
   (r'^detail/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.detail),
+
+  # REST framework
+  (r'^api/common/bucket/$', freppledb.common.serializers.BucketREST.as_view()),
+  (r'^api/common/bucketdetail/$', freppledb.common.serializers.BucketDetailREST.as_view()),
+  (r'^api/common/parameter/$', freppledb.common.serializers.ParameterREST.as_view()),
+  (r'^api/common/comment/$', freppledb.common.serializers.CommentREST.as_view()),
+  (r'^api/common/scenario/$', freppledb.common.serializers.ScenarioREST.as_view()),
 )

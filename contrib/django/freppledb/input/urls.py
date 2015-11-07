@@ -18,6 +18,7 @@
 from django.conf.urls import patterns
 
 import freppledb.input.views
+import freppledb.input.serializers
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -59,4 +60,29 @@ urlpatterns = patterns(
   (r'^supplypath/operation/(.+)/$', freppledb.input.views.UpstreamOperationPath.as_view()),
   (r'^whereused/operation/(.+)/$', freppledb.input.views.DownstreamOperationPath.as_view()),
   (r'^search/$', freppledb.input.views.search),
+
+  # REST framework
+  (r'^api/input/buffer/$', freppledb.input.serializers.BufferREST.as_view()),
+  (r'^api/input/resource/$', freppledb.input.serializers.ResourceREST.as_view()),
+  (r'^api/input/location/$', freppledb.input.serializers.LocationREST.as_view()),
+  (r'^api/input/customer/$', freppledb.input.serializers.CustomerREST.as_view()),
+  (r'^api/input/demand/$', freppledb.input.serializers.DemandREST.as_view()),
+  (r'^api/input/item/$', freppledb.input.serializers.ItemREST.as_view()),
+  (r'^api/input/load/$', freppledb.input.serializers.LoadREST.as_view()),
+  (r'^api/input/flow/$', freppledb.input.serializers.FlowREST.as_view()),
+  (r'^api/input/calendar/$', freppledb.input.serializers.CalendarREST.as_view()),
+  (r'^api/input/calendarbucket/$', freppledb.input.serializers.CalendarBucketREST.as_view()),
+  (r'^api/input/operation/$', freppledb.input.serializers.OperationREST.as_view()),
+  (r'^api/input/setupmatrix/$', freppledb.input.serializers.SetupMatrixREST.as_view()),
+  (r'^api/input/setuprule/$', freppledb.input.serializers.SetupRuleREST.as_view()),
+  (r'^api/input/suboperation/$', freppledb.input.serializers.SubOperationREST.as_view()),
+  (r'^api/input/operationplan/$', freppledb.input.serializers.OperationPlanREST.as_view()),
+  (r'^api/input/purchaseorder/$', freppledb.input.serializers.PurchaseOrderREST.as_view()),
+  (r'^api/input/distributionorder/$', freppledb.input.serializers.DistributionOrderREST.as_view()),
+  (r'^api/input/skill/$', freppledb.input.serializers.SkillREST.as_view()),
+  (r'^api/input/resourceskill/$', freppledb.input.serializers.ResourceSkillREST.as_view()),
+  (r'^api/input/supplier/$', freppledb.input.serializers.SupplierREST.as_view()),
+  (r'^api/input/itemsupplier/$', freppledb.input.serializers.ItemSupplierREST.as_view()),
+  (r'^api/input/itemdistribution/$', freppledb.input.serializers.ItemDistributionREST.as_view()),
+
   )

@@ -118,6 +118,10 @@ class PathReport(GridReport):
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
+    if reportclass.downstream:
+      request.session['lasttab'] = 'whereused'
+    else:
+      request.session['lasttab'] = 'supplypath'
     return {
       'title': capfirst(
         force_text(reportclass.objecttype._meta.verbose_name) + " " + args[0] +

@@ -175,10 +175,6 @@ class DetailReport(GridReport):
     else:
       return Demand.objects.all()
 
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
-    return {'active_tab': 'plandetail'}
-
   rows = (
     GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra="role:'input/item'"),

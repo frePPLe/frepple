@@ -313,7 +313,6 @@ class Resource_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": freppledb.input.views.UpstreamResourcePath},
     {"name": 'whereused', "label": _("where used"),"view": freppledb.input.views.DownstreamResourcePath},
     {"name": 'plan', "label": _("plan"), "view": freppledb.output.views.resource.OverviewReport},
-    {"name": 'gantt', "label": _("gantt chart"), "view": freppledb.output.views.resource.GanttReport},
     {"name": 'plandetail', "label": _("plandetails"), "view": freppledb.output.views.resource.DetailReport},
     {"name": 'constraint', "label": _("constrained demand"), "view": freppledb.output.views.constraint.ReportByResource},
     {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},

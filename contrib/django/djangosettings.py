@@ -182,6 +182,7 @@ INSTALLED_APPS = (
     'freppledb.output',
     'freppledb.execute',
     'freppledb.common',
+    'rest_framework',
 )
 
 # Custom attribute fields in the database
@@ -216,6 +217,14 @@ INSTALLED_APPS = (
 #      ])
 #    ]
 ATTRIBUTES = []
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissions'
+    ]
+}
 
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),

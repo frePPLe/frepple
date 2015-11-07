@@ -216,7 +216,7 @@ class UserList(GridReport):
   multiselect = False
 
   rows = (
-    GridFieldInteger('id', title=_('id'), key=True, formatter='user'),
+    GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra="role:'common/user'"),
     GridFieldText('username', title=_('username')),
     GridFieldText('email', title=_('email address'), formatter='email', width=200),
     GridFieldText('first_name', title=_('first name')),
@@ -239,7 +239,7 @@ class GroupList(GridReport):
   frozenColumns = 0
   multiselect = False
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='group'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
     GridFieldText('name', title=_('name'), key=True, width=200),
     )
 
@@ -255,7 +255,7 @@ class ParameterList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='parameter'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/parameter'"),
     GridFieldText('value', title=_('value')),
     GridFieldText('description', title=_('description')),
     GridFieldText('source', title=_('source')),

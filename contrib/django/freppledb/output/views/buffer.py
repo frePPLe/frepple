@@ -37,9 +37,9 @@ class OverviewReport(GridPivot):
   model = Buffer
   permissions = (('view_inventory_report', 'Can view inventory report'),)
   rows = (
-    GridFieldText('buffer', title=_('buffer'), key=True, field_name='name', formatter='buffer', editable=False),
-    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item', editable=False),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
+    GridFieldText('buffer', title=_('buffer'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/buffer'"),
+    GridFieldText('item', title=_('item'), editable=False, field_name='item__name', formatter='detail', extra="role:'input/item'"),
+    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
     )
   crosses = (
     ('startoh', {'title': _('start inventory')}),
@@ -185,8 +185,8 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    GridFieldText('thebuffer', title=_('buffer'), key=True, formatter='buffer', editable=False),
-    GridFieldText('operationplan__operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldText('thebuffer', title=_('buffer'), key=True, editable=False, formatter='detail', extra="role:'input/buffer'"),
+    GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),

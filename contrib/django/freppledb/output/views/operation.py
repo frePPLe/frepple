@@ -36,8 +36,8 @@ class OverviewReport(GridPivot):
   model = Operation
   permissions = (("view_operation_report", "Can view operation report"),)
   rows = (
-    GridFieldText('operation', title=_('operation'), key=True, field_name='name', formatter='operation', editable=False),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location', editable=False),
+    GridFieldText('operation', title=_('operation'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
     )
   crosses = (
     ('locked_start', {'title': _('locked starts')}),
@@ -152,7 +152,7 @@ class DetailReport(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
-    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False),
+    GridFieldText('operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldText('demand', title=_('demand quantity'), formatter='demanddetail', width=300, editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),

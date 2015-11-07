@@ -36,7 +36,7 @@ class OverviewReport(GridPivot):
   model = Item
   permissions = (("view_demand_report", "Can view demand report"),)
   rows = (
-    GridFieldText('item', title=_('item'), key=True, field_name='name', formatter='item', editable=False),
+    GridFieldText('item', title=_('item'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/item'"),
     )
   crosses = (
     ('demand', {'title': _('demand')}),
@@ -180,9 +180,9 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='demand'),
-    GridFieldText('item', title=_('item'), formatter='item', editable=False),
-    GridFieldText('customer', title=_('customer'), formatter='customer', editable=False),
+    GridFieldText('demand', title=_('demand'), key=True, editable=False, formatter='detail', extra="role:'input/demand'"),
+    GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra="role:'input/item'"),
+    GridFieldText('customer', title=_('customer'), editable=False, formatter='detail', extra="role:'input/customer'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('planquantity', title=_('planned quantity'), editable=False),
     GridFieldDateTime('due', title=_('due date'), editable=False),

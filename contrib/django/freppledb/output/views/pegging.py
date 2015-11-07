@@ -42,7 +42,7 @@ class ReportByDemand(GridReport):
   heightmargin = 82
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
-    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False, key=True),
+    GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra="role:'input/operation'"),
     #GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
     #GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
     GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),

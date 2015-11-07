@@ -88,7 +88,7 @@ class PathReport(GridReport):
   multiselect = False
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
-    GridFieldText('operation', title=_('operation'), formatter='operation', editable=False, sortable=False),
+    GridFieldText('operation', title=_('operation'), editable=False, sortable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
     GridFieldText('location', title=_('location'), editable=False, sortable=False),
     GridFieldText('type', title=_('type'), editable=False, sortable=False),
@@ -502,18 +502,18 @@ class BufferList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='buffer'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/buffer'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
-    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra="role:'input/item'"),
     GridFieldNumber('onhand', title=_('onhand')),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='buffer'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra="role:'input/buffer'"),
     GridFieldChoice('type', title=_('type'), choices=Buffer.types),
     GridFieldNumber('minimum', title=_('minimum')),
-    GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='calendar'),
-    GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='operation'),
+    GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='detail', extra="role:'input/calendar'"),
+    GridFieldText('producing', title=_('producing'), field_name='producing__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -528,7 +528,7 @@ class SetupMatrixList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='setupmatrix'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/setupmatrix'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -544,18 +544,18 @@ class ResourceList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='resource'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/resource'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='resource'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra="role:'input/resource'"),
     GridFieldChoice('type', title=_('type'), choices=Resource.types),
     GridFieldNumber('maximum', title=_('maximum')),
-    GridFieldText('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='calendar'),
+    GridFieldText('maximum_calendar', title=_('maximum calendar'), field_name='maximum_calendar__name', formatter='detail', extra="role:'input/calendar'"),
     GridFieldCurrency('cost', title=_('cost')),
     GridFieldDuration('maxearly', title=_('maxearly')),
-    GridFieldText('setupmatrix', title=_('setup matrix'), formatter='setupmatrix'),
+    GridFieldText('setupmatrix', title=_('setup matrix'), formatter='detail', extra="role:'input/setupmatrix'"),
     GridFieldText('setup', title=_('setup')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
@@ -571,12 +571,12 @@ class LocationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='location'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/location'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('available', title=_('available'), field_name='available__name', formatter='calendar'),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='location'),
+    GridFieldText('available', title=_('available'), field_name='available__name', formatter='detail', extra="role:'input/calendar'"),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra="role:'input/location'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -591,11 +591,11 @@ class CustomerList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='customer'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/customer'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='customer'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra="role:'input/customer'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -610,11 +610,11 @@ class SupplierList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='supplier'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/supplier'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='supplier'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra="role:'input/supplier'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -629,10 +629,10 @@ class ItemSupplierList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='itemsupplier'),
-    GridFieldText('item', title=_('item'), formatter='item'),
-    GridFieldText('location', title=_('location'), formatter='location'),
-    GridFieldText('supplier', title=_('supplier'), formatter='supplier'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/itemsupplier'"),
+    GridFieldText('item', title=_('item'), formatter='detail', extra="role:'input/item'"),
+    GridFieldText('location', title=_('location'), formatter='detail', extra="role:'input/location'"),
+    GridFieldText('supplier', title=_('supplier'), formatter='detail', extra="role:'input/supplier'"),
     GridFieldDuration('leadtime', title=_('lead time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),
@@ -654,10 +654,10 @@ class ItemDistributionList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='itemdistribution'),
-    GridFieldText('item', title=_('item'), formatter='item'),
-    GridFieldText('location', title=_('location'), formatter='location'),
-    GridFieldText('origin', title=_('origin'), formatter='location'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/itemdistribution'"),
+    GridFieldText('item', title=_('item'), formatter='detail', extra="role:'input/item'"),
+    GridFieldText('location', title=_('location'), formatter='detail', extra="role:'input/location'"),
+    GridFieldText('origin', title=_('origin'), formatter='detail', extra="role:'input/location'"),
     GridFieldDuration('leadtime', title=_('lead time')),
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),
@@ -680,11 +680,11 @@ class ItemList(GridReport):
   editable = True
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='item'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/item'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldText('owner', title=_('owner'), field_name='owner__name'),
     GridFieldCurrency('price', title=_('price')),
     GridFieldText('source', title=_('source')),
@@ -701,7 +701,7 @@ class SkillList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='skill'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/skill'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -716,9 +716,9 @@ class ResourceSkillList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='resourceskill'),
-    GridFieldText('resource', title=_('resource'), formatter='resource'),
-    GridFieldText('skill', title=_('skill'), formatter='skill'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/resourceskill'"),
+    GridFieldText('resource', title=_('resource'), formatter='detail', extra="role:'input/resource'"),
+    GridFieldText('skill', title=_('skill'), formatter='detail', extra="role:'input/skill'"),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
     GridFieldNumber('priority', title=_('priority')),
@@ -736,10 +736,10 @@ class LoadList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='load'),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='resource'),
-    GridFieldText('skill', title=_('skill'), formatter='skill'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/load'"),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra="role:'input/resource'"),
+    GridFieldText('skill', title=_('skill'), formatter='detail', extra="role:'input/skill'"),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
@@ -762,9 +762,9 @@ class FlowList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='flow'),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    GridFieldText('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='buffer'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/flow'"),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('thebuffer', title=_('buffer'), field_name='thebuffer__name', formatter='detail', extra="role:'input/buffer'"),
     GridFieldChoice('type', title=_('type'), choices=Flow.types),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
@@ -787,19 +787,19 @@ class DemandList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='demand'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra="role:'input/item'"),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
-    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='customer'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='detail', extra="role:'input/customer'"),
     GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldDateTime('due', title=_('due')),
     GridFieldNumber('quantity', title=_('quantity')),
-    GridFieldText('operation', title=_('delivery operation'), formatter='operation'),
+    GridFieldText('operation', title=_('delivery operation'), formatter='detail', extra="role:'input/operation'"),
     GridFieldInteger('priority', title=_('priority')),
-    GridFieldText('owner', title=_('owner'), formatter='demand'),
+    GridFieldText('owner', title=_('owner'), formatter='detail', extra="role:'input/demand'"),
     GridFieldDuration('maxlateness', title=_('maximum lateness')),
     GridFieldNumber('minshipment', title=_('minimum shipment')),
     GridFieldText('source', title=_('source')),
@@ -823,7 +823,7 @@ class CalendarList(GridReport):
   model = Calendar
   frozenColumns = 1
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='calendar'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/calendar'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
@@ -841,8 +841,8 @@ class CalendarBucketList(GridReport):
   model = CalendarBucket
   frozenColumns = 3
   rows = (
-    GridFieldInteger('id', title=_('identifier'), formatter='calendarbucket'),
-    GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='calendar'),
+    GridFieldInteger('id', title=_('identifier'), formatter='detail', extra="role:'input/calendarbucket'"),
+    GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='detail', extra="role:'input/calendar'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('value', title=_('value')),
@@ -870,12 +870,12 @@ class OperationList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter='operation'),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/operation'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldChoice('type', title=_('type'), choices=Operation.types),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
     GridFieldDuration('duration', title=_('duration')),
     GridFieldDuration('duration_per', title=_('duration per unit')),
     GridFieldDuration('fence', title=_('release fence')),
@@ -900,8 +900,8 @@ class SubOperationList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
-    GridFieldText('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='operation'),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldInteger('priority', title=_('priority')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
@@ -920,7 +920,7 @@ class OperationPlanList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='operation'),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
@@ -954,9 +954,9 @@ class DistributionOrderList(GridReport):
     GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus,
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
-    GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='location'),
-    GridFieldText('destination', title=_('destination'), field_name='destination__name', formatter='location'),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra="role:'input/item'"),
+    GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('destination', title=_('destination'), field_name='destination__name', formatter='detail', extra="role:'input/location'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
@@ -995,9 +995,9 @@ class PurchaseOrderList(GridReport):
     GridFieldChoice('status', title=_('status'),
       choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldText('item', title=_('item'), field_name='item__name', formatter='item'),
-    GridFieldText('location', title=_('location'), field_name='location__name', formatter='location'),
-    GridFieldText('supplier', title=_('supplier'), field_name='supplier__name', formatter='supplier'),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra="role:'input/item'"),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('supplier', title=_('supplier'), formatter='detail', extra="role:'input/supplier'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),

@@ -130,7 +130,7 @@ rm -rf /var/log/frepple
 #%dir %{_libdir}/frepple
 %{_datadir}/frepple
 %attr(0770,-,frepple) %dir %{_localstatedir}/log/frepple
-%{python3_sitelib}/freppledb*
+%{python_sitelib}/frepple*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING

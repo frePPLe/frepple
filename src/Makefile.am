@@ -21,13 +21,21 @@ libfrepple_la_LDFLAGS += -Wl,--export-all-symbols
 endif
 libfrepple_la_LIBADD = ./solver/libsolver.la ./model/libmodel.la ./utils/libutils.la
 
+# Python extension
+install-data-local: setup.py pythonextension.cpp
+	export VERSION="$(PACKAGE_VERSION)" LIB_DIR="$(DESTDIR)$(libdir)"; $(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) $(PYFLAGS)
+
+uninstall-local:
+	-rm -rf $(DESTDIR)$(pythondir)/frepple.*.so $(DESTDIR)$(pythondir)/frepple-$(PACKAGE_VERSION).egg-info
+
 # Dynamically linked executable
 frepple_SOURCES = main.cpp
 frepple_LDFLAGS = -dynamic -export-dynamic
 frepple_LDADD = libfrepple.la
 
+
 SUBDIRS = utils model solver
 
-EXTRA_DIST = dll.rc exe.rc frepple.ico
+EXTRA_DIST = dll.rc exe.rc frepple.ico setup.py pythonextension.cpp
 
-CLEANFILES = *.gcda *.gcov *.gcno
+CLEANFILES = *.gcda *.gcov *.gcno build

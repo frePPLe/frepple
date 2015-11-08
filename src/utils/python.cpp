@@ -130,7 +130,7 @@ PyObject* PythonInterpreter::createModule()
   static struct PyModuleDef frepplemodule = {
     PyModuleDef_HEAD_INIT,
     "frepple",
-    "Access to the frePPLe library",
+    "Bindings for the frePPLe production planning application",
     -1, freppleMethods,
     NULL, NULL, NULL, NULL
   };

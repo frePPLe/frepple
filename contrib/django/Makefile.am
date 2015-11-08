@@ -7,7 +7,7 @@ pkgsysconf_DATA = djangosettings.py
 
 EXTRA_DIST = freppledb README.txt frepplectl.py setup.py djangosettings.py
 
-install-data-local:
+install-data-local: setup.py
 	echo "Installing Django web application"; \
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) $(PYFLAGS)
 	-mkdir static
@@ -31,7 +31,7 @@ dist-hook:
 	-rm -rf `find $(distdir) -name '__pycache__'`
 
 create:
-	./frepplectl.py syncdb
+	./frepplectl.py migrate
 
 contrib-check:
 	./frepplectl.py test

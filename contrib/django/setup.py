@@ -71,7 +71,7 @@ setup(name = 'freppledb',
         'Intended Audience :: Manufacturing',
         'Framework :: Django',
         ],
-      description = "Open source Production PLanning",
+      description = "frePPLe - Open source Production PLanning",
       long_description = '''FrePPLe stands for "Free Production Planning Library".
 It is a framework for modeling and solving production planning problems,
 targeted primarily at discrete manufacturing industries.

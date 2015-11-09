@@ -100,17 +100,23 @@ class api:
 #       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #===============================================================================
 
+class frePPleCreateAPIView(generics.ListCreateAPIView):
+    def get_queryset(self):
+      return super(generics.ListCreateAPIView, self).get_queryset().using(self.request.database)
 
+class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    def get_queryset(self):
+      return super(generics.RetrieveUpdateDestroyAPIView, self).get_queryset().using(self.request.database)
 
 class CalendarSerializer(serializers.ModelSerializer):
     class Meta:
       model = freppledb.input.models.Calendar
       fields = ('name', 'description', 'category', 'subcategory', 'defaultvalue', 'source', 'lastmodified')
-class CalendarREST(generics.ListCreateAPIView):
-    queryset = freppledb.input.models.Calendar.objects.all()#.using(request.database)
+class CalendarREST(frePPleCreateAPIView):
+    queryset = freppledb.input.models.Calendar.objects.all()
     serializer_class = CalendarSerializer
-class CalendardetailREST(generics.ListCreateAPIView):
-    queryset = freppledb.input.models.Calendar.objects.all()#.using(request.database)
+class CalendardetailREST(frePPleRetrieveUpdateDestroyAPIView):
+    queryset = freppledb.input.models.Calendar.objects.all()
     serializer_class = CalendarSerializer
 
 
@@ -122,7 +128,7 @@ class CalendarBucketSerializer(serializers.ModelSerializer):
 class CalendarBucketREST(generics.ListCreateAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()#.using(request.database)
     serializer_class = CalendarBucketSerializer
-class CalendarBucketdetailREST(generics.ListCreateAPIView):
+class CalendarBucketdetailREST(generics.RetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()#.using(request.database)
     serializer_class = CalendarBucketSerializer
 

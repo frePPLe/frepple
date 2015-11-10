@@ -38,4 +38,5 @@ SUBDIRS = utils model solver
 
 EXTRA_DIST = dll.rc exe.rc frepple.ico setup.py pythonextension.cpp
 
-CLEANFILES = *.gcda *.gcov *.gcno build
+clean-local:
+	-rm -rf *.gcda *.gcov *.gcno build

@@ -1,0 +1,273 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-07 16:04+0100\n"
+"PO-Revision-Date: 2015-11-08 11:34+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: freppledb/common/static/js/frepple.js:41
+msgid "There are unsaved changes on this page."
+msgstr "Existem alterações por gravar nesta página."
+
+#: freppledb/common/static/js/frepple.js:92
+msgid "Error saving data"
+msgstr "Erro ao guardar dados"
+
+#: freppledb/common/static/js/frepple.js:113
+msgid "Save or cancel your changes first"
+msgstr "Guarde ou cancele as alterações primeiro"
+
+#: freppledb/common/static/js/frepple.js:120
+msgid "Save"
+msgstr "Guardar"
+
+#: freppledb/common/static/js/frepple.js:127
+#: freppledb/common/static/js/frepple.js:477
+#: freppledb/common/static/js/frepple.js:683
+#: freppledb/common/static/js/frepple.js:744
+#: freppledb/common/static/js/frepple.js:804
+#: freppledb/common/static/js/frepple.js:861
+#: freppledb/common/static/js/frepple.js:1279
+#: freppledb/common/static/js/frepple.js:1523
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: freppledb/common/static/js/frepple.js:323
+msgid "Select"
+msgstr "Seleccionar"
+
+#: freppledb/common/static/js/frepple.js:414
+#: freppledb/common/static/js/frepple.js:1195
+msgid "Customize"
+msgstr "Customizar"
+
+#: freppledb/common/static/js/frepple.js:420
+#: freppledb/common/static/js/frepple.js:710
+#: freppledb/common/static/js/frepple.js:1202
+msgid "OK"
+msgstr "OK"
+
+#: freppledb/common/static/js/frepple.js:481
+msgid "reset"
+msgstr "reset"
+
+#: freppledb/common/static/js/frepple.js:497
+#: freppledb/common/static/js/frepple.js:602
+#: freppledb/common/static/js/frepple.js:1162
+#: freppledb/common/static/js/frepple.js:1267
+#: freppledb/planningboard/static/planningboard/js/planningboard.js:652
+#: freppledb/planningboard/static/planningboard/js/planningboard.js:1039
+msgid "Error saving report settings"
+msgstr "Erro ao guardar definições do relatório"
+
+#: freppledb/common/static/js/frepple.js:644
+#: freppledb/common/static/js/frepple.js:650
+msgid "Export format"
+msgstr "Formato de Exportação"
+
+#: freppledb/common/static/js/frepple.js:645
+#: freppledb/common/static/js/frepple.js:652
+msgid "Spreadsheet list"
+msgstr "Lista de folha de cálculo"
+
+#: freppledb/common/static/js/frepple.js:646
+#: freppledb/common/static/js/frepple.js:654
+msgid "CSV list"
+msgstr "Lista CSV"
+
+#: freppledb/common/static/js/frepple.js:651
+msgid "Spreadsheet table"
+msgstr "Tabela de folha de cálculo"
+
+#: freppledb/common/static/js/frepple.js:653
+msgid "CSV table"
+msgstr "Tabela CSV"
+
+#: freppledb/common/static/js/frepple.js:657
+msgid "Export CSV or Excel file"
+msgstr "Exportar ficheiro Excel ou CSV"
+
+#: freppledb/common/static/js/frepple.js:661
+msgid "Export"
+msgstr "Exportar"
+
+#: freppledb/common/static/js/frepple.js:764
+#, javascript-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr "Está prestes a apagar %s objects E TODOS OS REGISTOS RELACIONADOS!"
+
+#: freppledb/common/static/js/frepple.js:766
+msgid "Delete data"
+msgstr "Apagar dados"
+
+#: freppledb/common/static/js/frepple.js:773
+#: freppledb/common/static/js/frepple.js:830
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: freppledb/common/static/js/frepple.js:791
+msgid "Error deleting data"
+msgstr "Erro ao apagar dados"
+
+#: freppledb/common/static/js/frepple.js:821
+#, javascript-format
+msgid "You are about to duplicate %s objects"
+msgstr "Está prestes a duplicar %s objectos"
+
+#: freppledb/common/static/js/frepple.js:823
+msgid "Copy data"
+msgstr "Copiar dados"
+
+#: freppledb/common/static/js/frepple.js:848
+msgid "Error copying data"
+msgstr "Erro ao copiar dados"
+
+#: freppledb/common/static/js/frepple.js:885
+#: freppledb/common/static/js/frepple.js:891
+msgid "Filtered where"
+msgstr "Filtrado por"
+
+#: freppledb/common/static/js/frepple.js:1060
+msgid "export selected records to openbravo"
+msgstr "Exportar registos selecionados para o openbravo"
+
+#: freppledb/common/static/js/frepple.js:1062
+#: freppledb/common/static/js/frepple.js:1066
+msgid "export"
+msgstr "exportar"
+
+#: freppledb/common/static/js/frepple.js:1070
+msgid "connecting to openbravo..."
+msgstr "a ligar ao openbravo..."
+
+#: freppledb/common/static/js/frepple.js:1080
+msgid "Export successful"
+msgstr "Exportação bem sucedida"
+
+#: freppledb/common/static/js/frepple.js:1088
+msgid "close"
+msgstr "fechar"
+
+#: freppledb/common/static/js/frepple.js:1100
+msgid "Error during export"
+msgstr "Erro ao exportar dados"
+
+#: freppledb/common/static/js/frepple.js:1101
+msgid "retry"
+msgstr "tentar de novo"
+
+#: freppledb/common/static/js/frepple.js:1107
+msgid "cancel"
+msgstr "cancelar"
+
+#: freppledb/common/static/js/frepple.js:1188
+msgid "Add"
+msgstr "Adicionar"
+
+#: freppledb/common/static/js/frepple.js:1249
+msgid "Reset"
+msgstr "Reset"
+
+#: freppledb/common/static/js/frepple.js:1486
+msgid "Load an Excel file or a CSV-formatted text file."
+msgstr "Carregar dados de ficheiro Excel ou CSV"
+
+#: freppledb/common/static/js/frepple.js:1487
+msgid "The first row should contain the field names."
+msgstr "A primeira linha deve conter os nomes dos campos."
+
+#: freppledb/common/static/js/frepple.js:1488
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr "Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
+
+#: freppledb/common/static/js/frepple.js:1489
+msgid "Data file"
+msgstr "Ficheiro de dados"
+
+#: freppledb/common/static/js/frepple.js:1492
+msgid "Import CSV or Excel file"
+msgstr "Importar ficheiro Excel ou CSV"
+
+#: freppledb/common/static/js/frepple.js:1496
+msgid "Import"
+msgstr "Importar"
+
+#: freppledb/common/static/js/frepple.js:1966
+msgid "Guided tour"
+msgstr "Visita guiada"
+
+#: freppledb/common/static/js/frepple.js:1990
+msgid "Previous"
+msgstr "Anterior"
+
+#: freppledb/common/static/js/frepple.js:1995
+#: freppledb/common/static/js/frepple.js:2128
+msgid "Stop"
+msgstr "Stop"
+
+#: freppledb/common/static/js/frepple.js:1995
+#: freppledb/common/static/js/frepple.js:2119
+msgid "Play"
+msgstr "Play"
+
+#: freppledb/common/static/js/frepple.js:2001
+msgid "Next"
+msgstr "Próximo"
+
+#: freppledb/common/static/js/frepple.js:2094
+msgid "out of"
+msgstr "fora de"
+
+#: freppledb/planningboard/static/planningboard/js/planningboard.js:598
+#, javascript-format
+msgid "%s allocated out of %s"
+msgstr "%s alocados fora de %s"
+
+#~ msgid "export: OK"
+#~ msgstr "exportar: OK"
+
+#~ msgid "data exported to openbravo"
+#~ msgstr "dados exportados para o openbravo"
+
+#~ msgid "error exporting data"
+#~ msgstr "erro ao exportar dados"
+
+#~ msgid "Cancel task"
+#~ msgstr "Cancelar tarefa"
+
+#~ msgid "Uploading spreadsheet"
+#~ msgstr "A carregar folha de cálculo"
+
+#~ msgid "Admin"
+#~ msgstr "Admin"
+
+#~ msgid "Unsaved changes"
+#~ msgstr "Alterações não gravadas"
+
+#~ msgid "Error retrieving data"
+#~ msgstr "Erro ao extrair dados"
+
+#~ msgid "proposed"
+#~ msgstr "proposta"
+
+#~ msgid "closed"
+#~ msgstr "fechada"
+
+#~ msgid "Error"
+#~ msgstr "erro"
+
+#~ msgid "Error getting quote info"
+#~ msgstr "Erro ao carregar informação de cotação"

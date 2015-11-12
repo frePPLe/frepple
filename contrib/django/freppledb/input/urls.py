@@ -107,4 +107,5 @@ urlpatterns = patterns(
   (r'^api/input/supplier/(?P<pk>(.+))/$', freppledb.input.serializers.SupplierdetailAPI.as_view()),
   (r'^api/input/itemsupplier/(?P<pk>(.+))/$', freppledb.input.serializers.ItemSupplierdetailAPI.as_view()),
   (r'^api/input/itemdistribution/(?P<pk>(.+))/$', freppledb.input.serializers.ItemDistributiondetailAPI.as_view()),
+
   )

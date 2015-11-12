@@ -69,6 +69,12 @@ def handler500(request):
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
   return HttpResponseServerError(template.render(RequestContext(request)))
 
+@csrf_protect
+def IndexView(request):
+  return render_to_response('rest_framework/index.html', {
+     'title': _('API Help'),
+     },
+    context_instance=RequestContext(request))
 
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(

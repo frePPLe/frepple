@@ -322,6 +322,11 @@ def model_name(obj):
 register.filter(model_name)
 
 
+def short_model_name(obj):
+  return obj._meta.model_name
+register.filter(short_model_name)
+
+
 def admin_unquote(obj):
   return unquote(obj)
 register.filter(admin_unquote)

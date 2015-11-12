@@ -1,0 +1,34 @@
+{% extends "admin/base_site_nav.html" %}
+{% load rest_framework %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+
+
+{% trans "API views for help and a beter text must be here." %}<br><br>
+  {% getMenu as menu %}
+  <div><table>
+  
+  {% for group in menu %}
+    {% for item in group.1 %}
+      {% if item.1.model and not item.1.excludeFromBulkOperations %}{{ item.1 }}
+          <tr>
+            <td> {{ group.0 }} - {{ item.0 }} </td>
+            <td> 
+              <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/">
+                {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}
+              </a>
+            </td>
+            <td>
+                 {{request.prefix}}/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
+                <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text"></input>/
+            </td>
+          </tr>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  </table></div>
+</div>
+{% endblock %}

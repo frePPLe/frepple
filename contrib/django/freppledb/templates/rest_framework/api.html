@@ -45,28 +45,31 @@ $(function() {
 <div id="html_raw">
 
 {% if 'GET' in allowed_methods %}
-<h3>Make a GET request to read {{ name }} object(s)</h3>
+<h3>{% blocktrans with model=name %}Make a GET request to read {{ model }} object(s){% endblocktrans %}</h3>
 <div><table><tr>
 {% if api_settings.URL_FORMAT_OVERRIDE %}
   {% for format in available_formats %}
   <td>
   <input type="submit"
-    value="GET in '{{ format }}' format"
+    value="{{ format|upper }} {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}"
     onclick="window.location.href = '{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}'"
-    title="Make a GET request on the {{ name }} object with the format set to '{{ format }}'">
+    title="{% blocktrans with model=name rqformat=format|upper %}Make a GET request on the {{ model }} object with the format set to {{ rqformat }}{% endblocktrans %}">
   <td>
   {% endfor %}
 {% else %}
-  <td><a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow" title="Make a GET request on the {{ name }} object">GET</a></td>
+  <td>
+    <a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow" title="{% blocktrans with model=name %}Make a GET request on the {{ model }} object{% endblocktrans %}">
+    {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}</a>
+  </td>
 {% endif %}
 </tr></table></div>
 {% endif %}
 
 {% if options_form %}
-<h3>Make an OPTIONS request to see all fields on the {{ name }} object</h3>
+<h3>{% blocktrans with model=name %}Make an OPTIONS request to see all fields on the {{ model }} object{% endblocktrans %}</h3>
 <div>
   <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="OPTIONS">
-    <input type="submit" value="Request OPTIONS">
+    <input type="submit" value="{% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}">
   </form>
 </div>
 {% endif %}
@@ -74,26 +77,26 @@ $(function() {
 {% if display_edit_forms %}
   {% if post_form or raw_data_post_form %}
      {% if post_form %}
-     <h3>Make a POST request using a HTML form to create a new {{ name }} object</h3>
+     <h3>{% blocktrans with model=name %}Make a POST request using a HTML form to create a new {{ model }} object{% endblocktrans %}</h3>
      <div>
        {% with form=post_form %}
        <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" novalidate>
        {% csrf_token %}
        {{ post_form }}
        <div class="form-actions">
-         <input type="submit" value="Make a POST request on the {{ name }} object">
+         <input type="submit" value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
        </div>
        </form>
        {% endwith %}
      </div>
      {% endif %}
-	   <h3>Make a POST request in raw format to create a new {{ name }} object</h3>
+	   <h3>{% blocktrans with model=name %}Make a POST request in raw format to create a new {{ model }} object{% endblocktrans %}</h3>
 	   <div>
 	     {% with form=raw_data_post_form %}
        <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
         {% include "rest_framework/raw_data_form.html" %}
         <div class="form-actions">
-          <input type="submit" value="Make a POST request on the {{ name }} object">
+          <input type="submit" value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
         </div>
        </form>
 	     {% endwith %}
@@ -101,26 +104,26 @@ $(function() {
    {% endif %}
 
    {% if put_form or raw_data_put_form or raw_data_patch_form %}
-   <h3>Make a PUT request using a HTML form to update an existing {{ name }} object</h3>
+   <h3>{% blocktrans with model=name %}Make a PUT request using a HTML form to update an existing {{ model }} object{% endblocktrans %}</h3>
    <div>
      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
       {{ put_form }}
         <div class="form-actions">
-          <input type="submit" value="Make a PUT request on the {{ name }} object">
+          <input type="submit" value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
         </div>
     </form>
    </div>
-   <h3>Make a PUT or PATCH request in raw format to update an existing {{ name }} object</h3>
+   <h3>{% blocktrans with model=name %}Make a PUT or PATCH request in raw format to update an existing {{ model }} object{% endblocktrans %}</h3>
    <div>
     {% with form=raw_data_put_or_patch_form %}
       <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
         {% include "rest_framework/raw_data_form.html" %}
         <div class="form-actions">
           {% if raw_data_put_form %}
-            <input type="submit" value="Make a PUT request on the {{ name }} object">
+            <input type="submit" value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
           {% endif %}
           {% if raw_data_patch_form %}
-            <input type="submit" data-method="PATCH" value="Make a PATCH request on the {{ name }} object">
+            <input type="submit" data-method="PATCH" value="{% blocktrans with http_method='PATCH' %}{{ http_method }} request{% endblocktrans %}">
           {% endif %}
         </div>
       </form>
@@ -129,10 +132,10 @@ $(function() {
   {% endif %}
 
 	{% if delete_form %}
-	  <h3>Make a DELETE request to delete an existing {{ name }} object</h3>
+	  <h3>{% blocktrans with model=name %}Make a DELETE request to delete an existing {{ model }} object{% endblocktrans %}</h3>
 	  <div>
 	  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
-	    <input type="submit" value="DELETE">
+	    <input type="submit" value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">
 	  </form>
 	  </div>
 	{% endif %}

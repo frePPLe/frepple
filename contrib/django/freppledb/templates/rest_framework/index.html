@@ -3,32 +3,49 @@
 {% load i18n %}
 
 {% block content %}
-<div id="content-main">
+<div id="content-summary" style="margin-top: 20px; margin-bottom: 20px">
+  <br><br>
+	{% blocktrans %}
+	In this page you can find the links to the REST framework API of frePPLe.<br>
+	With this framework developers can easily create code to exchange information with other applications.<br>
+	<br>
+	The "URLs for API model" take you to the object list page and the "URLs for specific objects" will take you to a specific object when you enter the object name.<br>
+	In these pages you will be able to perform GET/POST/OPTIONS requests, and in the "URLs for specific objects" you can also PUT/PATCH.<br>
+	You can also use different formats for the requests, dus making this platform very flexible.<br>
+	<br>
+	You can also do without the browser, it is possible to use the command line to comunicate with frePPLe.<br>
+	For example with tools like 'wget' or 'curl' you can use the link below and get the a list of all sales orders in JSON format:<br>
+	<pre>wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
+	<pre>curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json</pre><br>
+	{% endblocktrans %}
+</div> 
 
-
-{% trans "API views for help and a beter text must be here." %}<br><br>
-  {% getMenu as menu %}
-  <div><table>
-  
-  {% for group in menu %}
-    {% for item in group.1 %}
-      {% if item.1.model and not item.1.excludeFromBulkOperations %}{{ item.1 }}
-          <tr>
-            <td> {{ group.0 }} - {{ item.0 }} </td>
-            <td> 
-              <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/">
-                {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}
-              </a>
-            </td>
-            <td>
-                 {{request.prefix}}/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
-                <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text"></input>/
-            </td>
-          </tr>
-      {% endif %}
-    {% endfor %}
-  {% endfor %}
-
-  </table></div>
+<div>
+	<table>
+	<tr><td></td><td>{% trans 'URLs for API model:' %}</td><td>{% trans 'URLs for specific objects:' %}</td></tr>
+	{% getMenu as menu %}
+	{% for group in menu %}
+	  {% for item in group.1 %}
+	    {% if item.1.model and not item.1.excludeFromBulkOperations %}
+	        <tr>
+	          <td> {{ group.0 }} - {{ item.0 }} </td>
+	          <td> 
+	            <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/ ">
+	              {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
+	              <span class="leftpadding fa fa-caret-right" role="input/item"></span>
+	            </a>
+	          </td>
+	          <td>
+              {{request.prefix}}/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
+              <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text">
+              </input>/<span class="leftpadding fa fa-caret-right"></span>
+	          </td>
+	        </tr>
+	    {% endif %}
+	  {% endfor %}
+	{% endfor %}
+	
+	</table>
 </div>
+
 {% endblock %}

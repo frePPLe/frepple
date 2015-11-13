@@ -142,6 +142,8 @@ LANGUAGES = (
   ('it', ugettext('Italian')),
   ('ja', ugettext('Japanese')),
   ('nl', ugettext('Dutch')),
+  ('pt', ugettext('Portuguese')),
+  ('pt-br', ugettext('Brazilian Portuguese')),
   ('zh-cn', ugettext('Simplified Chinese')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )

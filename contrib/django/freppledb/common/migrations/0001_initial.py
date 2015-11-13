@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField(verbose_name='staff status', default=False, help_text='Designates whether the user can log into this admin site.')),
                 ('is_active', models.BooleanField(verbose_name='active', default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.')),
                 ('date_joined', models.DateTimeField(verbose_name='date joined', default=django.utils.timezone.now)),
-                ('language', models.CharField(choices=[('auto', 'Detect automatically'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], verbose_name='language', default='auto', max_length=10)),
+                ('language', models.CharField(choices=[('auto', 'Detect automatically'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('pt', 'Portuguese'), ('pt-br', 'Brazilian Portuguese'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], verbose_name='language', default='auto', max_length=10)),
                 ('theme', models.CharField(max_length=20, choices=[('grass', 'Grass'), ('lemon', 'Lemon'), ('water', 'Water'), ('snow', 'Snow'), ('strawberry', 'Strawberry'), ('earth', 'Earth')], verbose_name='theme', default='grass')),
                 ('pagesize', models.PositiveIntegerField(verbose_name='page size', default=100)),
                 ('horizonbuckets', models.CharField(null=True, blank=True, max_length=300)),

@@ -22,7 +22,7 @@
 
 <div>
 	<table>
-	<tr><td></td><td>{% trans 'URLs for API model:' %}</td><td>{% trans 'URLs for specific objects:' %}</td></tr>
+	<tr><td></td><td><strong>{% trans 'URLs for API model:' %}</strong></td><td><strong>{% trans 'URLs for specific objects:' %}</strong></td></tr>
 	{% getMenu as menu %}
 	{% for group in menu %}
 	  {% for item in group.1 %}

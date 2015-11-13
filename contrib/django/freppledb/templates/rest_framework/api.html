@@ -1,174 +1,145 @@
 {% extends "admin/base_site_nav.html" %}
-{% load i18n %}
-{% block extrahead %}{{block.super}}
-<script src="{{STATIC_URL}}rest_framework/js/ajax-form.js"></script>
-    <script src="{{STATIC_URL}}rest_framework/js/csrf.js"></script>
-<script type="text/javascript">
-  $(function() {
-    $("input:submit").button();
- // Accordions
- $('form').ajaxForm();
-    $("#html_raw").accordion({
-      collapsible: true, active: false, heightStyle: "content"
-      });
-  });
-</script>
-{% endblock %}
-
-{% block content_title %}<div>
-</div>{% endblock %}
-
-{% load staticfiles %}
 {% load rest_framework %}
 {% load i18n %}
 
+{% block extrahead %}{{block.super}}
+<script src="{{STATIC_URL}}rest_framework/js/ajax-form.js"></script>
+<script type="text/javascript">
+
+$(function() {
+  $("input:submit, .button").button().tooltip({show: {effect: "fade", delay: 500} });
+  $('form').ajaxForm();
+  $("#html_raw").accordion({
+    collapsible: true, active: false, heightStyle: "content"
+    });
+});
+
+</script>
+{% endblock %}
 
 {% block content %}
+<div id="content-main">
 
-          <div class="content-main">
-          <div class="module">
-            
+<div id="request-info">
+<br>
+{% trans "HTTP request" %}:<b><br>
+&nbsp;&nbsp;{{ request.method }}</b> {{request.prefix}}{{ request.get_full_path }}<br><br>
+</div>
 
+<div class="response-info">
+{% trans "HTTP response headers" %}:<br>
+&nbsp;&nbsp;<b>HTTP {{ response.status_code }} {{ response.status_text }}</b>
+<br>
+{% autoescape off %}
+{% for key, val in response_headers.items %}<b>&nbsp;&nbsp;{{ key }}:&nbsp;&nbsp;</b>
+{{ val|break_long_headers|urlize_quoted_links }}<br>
+{% endfor %}
+</div>
 
-            <div id="request-info">
-              <pre><b>{{ request.method }}</b> {{request.prefix}}{{ request.get_full_path }}</pre>
-            </div>
+<div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
+{% trans "HTTP response content" %}:<br>
+<textarea id="records" rows="20" style="width:100%">{{ content|urlize_quoted_links }}</textarea>
+{% endautoescape %}
+</div>
 
-            <div class="response-info">
- 
-              
-                <b>HTTP {{ response.status_code }} {{ response.status_text }}</b>{% autoescape off %}
-                <br>
+<div id="html_raw">
 
+{% if 'GET' in allowed_methods %}
+<h3>Make a GET request to read {{ name }} object(s)</h3>
+<div><table><tr>
+{% if api_settings.URL_FORMAT_OVERRIDE %}
+  {% for format in available_formats %}
+  <td>
+  <input type="submit"
+    value="GET in '{{ format }}' format"
+    onclick="window.location.href = '{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}'"
+    title="Make a GET request on the {{ name }} object with the format set to '{{ format }}'">
+  <td>
+  {% endfor %}
+{% else %}
+  <td><a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow" title="Make a GET request on the {{ name }} object">GET</a></td>
+{% endif %}
+</tr></table></div>
+{% endif %}
 
-	                {% for key, val in response_headers.items %}<b>{{ key }}:&nbsp;&nbsp;</b> 
-	                  {{ val|break_long_headers|urlize_quoted_links }}<br>
-	                {% endfor %}
+{% if options_form %}
+<h3>Make an OPTIONS request to see all fields on the {{ name }} object</h3>
+<div>
+  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="OPTIONS">
+    <input type="submit" value="Request OPTIONS">
+  </form>
+</div>
+{% endif %}
 
+{% if display_edit_forms %}
+  {% if post_form or raw_data_post_form %}
+     {% if post_form %}
+     <h3>Make a POST request using a HTML form to create a new {{ name }} object</h3>
+     <div>
+       {% with form=post_form %}
+       <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" novalidate>
+       {% csrf_token %}
+       {{ post_form }}
+       <div class="form-actions">
+         <input type="submit" value="Make a POST request on the {{ name }} object">
+       </div>
+       </form>
+       {% endwith %}
+     </div>
+     {% endif %}
+	   <h3>Make a POST request in raw format to create a new {{ name }} object</h3>
+	   <div>
+	     {% with form=raw_data_post_form %}
+       <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
+        {% include "rest_framework/raw_data_form.html" %}
+        <div class="form-actions">
+          <input type="submit" value="Make a POST request on the {{ name }} object">
+        </div>
+       </form>
+	     {% endwith %}
+	   </div>
+   {% endif %}
 
-            </div>
+   {% if put_form or raw_data_put_form or raw_data_patch_form %}
+   <h3>Make a PUT request using a HTML form to update an existing {{ name }} object</h3>
+   <div>
+     <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
+      {{ put_form }}
+        <div class="form-actions">
+          <input type="submit" value="Make a PUT request on the {{ name }} object">
+        </div>
+    </form>
+   </div>
+   <h3>Make a PUT or PATCH request in raw format to update an existing {{ name }} object</h3>
+   <div>
+    {% with form=raw_data_put_or_patch_form %}
+      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
+        {% include "rest_framework/raw_data_form.html" %}
+        <div class="form-actions">
+          {% if raw_data_put_form %}
+            <input type="submit" value="Make a PUT request on the {{ name }} object">
+          {% endif %}
+          {% if raw_data_patch_form %}
+            <input type="submit" data-method="PATCH" value="Make a PATCH request on the {{ name }} object">
+          {% endif %}
+        </div>
+      </form>
+    {% endwith %}
+    </div>
+  {% endif %}
 
-            <div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
+	{% if delete_form %}
+	  <h3>Make a DELETE request to delete an existing {{ name }} object</h3>
+	  <div>
+	  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
+	    <input type="submit" value="DELETE">
+	  </form>
+	  </div>
+	{% endif %}
 
+{% endif %}
 
-								<textarea id=records rows="20" style="width:100%">{{ content|urlize_quoted_links }}</textarea>
-
-              {% endautoescape %}
-            </div>
-
-          </div>
-
-          
-          <div id="html_raw">
-          
-            {% if 'GET' in allowed_methods %}
-		          <h3>Make a GET request on the {{ name }} object with format set to JSON or API</h3>
-		          <div><table><tr>
-							  {% if api_settings.URL_FORMAT_OVERRIDE %}
-							    {% for format in available_formats %}
-							     
-							      <td><form class="button-form" action="{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}" 
-							      rel="nofollow" 
-							      title="Make a GET request on the {{ name }} resource with the format set to '{{ format }}'" 
-							      data-method="GET">
-							        <input id="patch" type="submit" class="btn btn-primary js-tooltip format-option" value="GET '{{ format }}'">
-							      </form></td>
-
-							    {% endfor %}
-							  {% else %}
-							    <a class="btn btn-primary js-tooltip" href="{{request.prefix}}{{request.prefix}}{{ request.get_full_path }}" rel="nofollow" title="Make a GET request on the {{ name }} resource">GET</a>
-							  {% endif %}
-				      </tr></table></div>
-			      {% endif %}
-			      
-	          {% if options_form %}
-		          <h3>Make an OPTIONS request on the {{ name }} object</h3>
-		          <div>
-		            <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="OPTIONS">
-		              <input id="patch" type="submit" class="btn btn-primary js-tooltip" value="Request OPTIONS">
-		            </form>
-		          </div>
-	          {% endif %}
-	        
-            {% if display_edit_forms %}
-              {% if post_form or raw_data_post_form %}
-
-	              {% if post_form %}
-	                <h3>HTML form to make a POST request on the {{ name }} object</h3>
-	                <div>
-	                  {% with form=post_form %}
-	                    <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" novalidate>
-	                      <fieldset>
-	                        {% csrf_token %}
-	                        {{ post_form }}
-	                        <div class="form-actions">
-	                          <input type="submit" class="btn btn-primary" value="Make a POST request on the {{ name }} resource">
-	                          <button class="btn btn-primary" title="Make a POST request on the {{ name }} resource">POlllST</button>
-	                        </div>
-	                      </fieldset>
-	                    </form>
-	                  {% endwith %}
-	                </div>
-	              {% endif %}
-
-	              <h3>Raw data text to make a POST request on the {{ name }} object</h3>
-	              <div>
-                  {% with form=raw_data_post_form %}
-                    <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
-                      <fieldset>
-                        {% include "rest_framework/raw_data_form.html" %}
-                        <div class="form-actions">
-                          <input type="submit" class="btn btn-primary" value="Make a POST request on the {{ name }} resource">
-                        </div>
-                      </fieldset>
-                    </form>
-                  {% endwith %}
-	              </div>
-	            {% endif %}
-
-            {% if put_form or raw_data_put_form or raw_data_patch_form %}
-              <h3>HTML form to make a PUT/PATCH request on the {{ name }} resource</h3>
-              <div>
-              <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
-                        <fieldset>
-                          {{ put_form }}
-                          <div class="form-actions">
-                            <input id="patch" type="submit" class="btn btn-primary js-tooltip" value="Make a PUT request on the {{ name }} resource">
-                          </div>
-                        </fieldset>
-                      </form>
-              </div>              
-              <h3>Raw data text to make a PUT/PATCH request on the {{ name }} resource</h3>
-              <div>
-                  {% with form=raw_data_put_or_patch_form %}
-                    <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
-                      <fieldset>
-                        {% include "rest_framework/raw_data_form.html" %}
-                        <div class="form-actions">
-                          {% if raw_data_put_form %}
-                            <input id="patch" type="submit" class="btn btn-primary js-tooltip" value="Make a PUT request on the {{ name }} resource">
-                          {% endif %}
-                          {% if raw_data_patch_form %}
-                            <input id="patch" type="submit" data-method="PATCH" class="btn btn-primary js-tooltip" value="Make a PATCH request on the {{ name }} resource">
-                          {% endif %}
-                        </div>
-                      </fieldset>
-                    </form>
-                  {% endwith %}             
-              </div>
-              {% endif %}
-			        {% if delete_form %}
-			          <h3>Make a DELETE request of the {{ name }} object</h3>
-			          <div>
-			          <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
-			            <input id="delete" type="submit" value="DELETE">
-			          </form>
-			          </div>
-			        {% endif %}
-		      {% endif %}
-
-        </div>   
-        </div> 
+</div>
 
 {% endblock %}
 

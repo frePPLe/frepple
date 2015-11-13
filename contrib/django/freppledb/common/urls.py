@@ -49,16 +49,14 @@ urlpatterns = patterns(
 
   (r'^detail/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.detail),
 
-  # REST framework
-  (r'^api/common/bucket/$', freppledb.common.serializers.BucketREST.as_view()),
-  (r'^api/common/bucketdetail/$', freppledb.common.serializers.BucketDetailREST.as_view()),
-  (r'^api/common/parameter/$', freppledb.common.serializers.ParameterREST.as_view()),
-  (r'^api/common/comment/$', freppledb.common.serializers.CommentREST.as_view()),
-  (r'^api/common/scenario/$', freppledb.common.serializers.ScenarioREST.as_view()),
+  # REST API framework
+  (r'^api/common/bucket/$', freppledb.common.serializers.BucketAPI.as_view()),
+  (r'^api/common/bucketdetail/$', freppledb.common.serializers.BucketDetailAPI.as_view()),
+  (r'^api/common/parameter/$', freppledb.common.serializers.ParameterAPI.as_view()),
+  (r'^api/common/comment/$', freppledb.common.serializers.CommentAPI.as_view()),
 
-  (r'^api/common/bucket/(?P<pk>(.+))/$', freppledb.common.serializers.BucketdetailREST.as_view()),
-  (r'^api/common/bucketdetail/(?P<pk>(.+))/$', freppledb.common.serializers.BucketDetaildetailREST.as_view()),
-  (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailREST.as_view()),
-  (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailREST.as_view()),
-  (r'^api/common/scenario/(?P<pk>(.+))/$', freppledb.common.serializers.ScenariodetailREST.as_view()),
+  (r'^api/common/bucket/(?P<pk>(.+))/$', freppledb.common.serializers.BucketdetailAPI.as_view()),
+  (r'^api/common/bucketdetail/(?P<pk>(.+))/$', freppledb.common.serializers.BucketDetaildetailAPI.as_view()),
+  (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailAPI.as_view()),
+  (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailAPI.as_view()),
 )

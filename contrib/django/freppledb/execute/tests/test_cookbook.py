@@ -19,9 +19,11 @@ import os.path
 
 from django.conf import settings
 from django.core import management
+from django.http.response import StreamingHttpResponse
 from django.test import TransactionTestCase
 from django.test.utils import override_settings
 
+from freppledb.common.models import User
 import freppledb.output as output
 
 
@@ -37,10 +39,13 @@ class cookbooktest(TransactionTestCase):
 
   def loadExcel(self, *filepath):
     # Login
+    User.objects.create_superuser('admin', 'your@company.com', 'admin')
     self.client.login(username='admin', password='admin')
     try:
       with open(os.path.join(*filepath), "rb") as myfile:
         response = self.client.post('/execute/launch/importworkbook/', {'spreadsheet': myfile})
+        if not isinstance(response, StreamingHttpResponse):
+          raise Exception("expected a streaming response")
         for rec in response.streaming_content:
           rec
     except Exception as e:

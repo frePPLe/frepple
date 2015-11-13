@@ -339,7 +339,7 @@ class DatabasePipe(Thread):
         settings.DATABASES[database]['USER'],
        settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
        settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
-       test and settings.DATABASES[database]['TEST_NAME'] or settings.DATABASES[database]['NAME'],
+       settings.DATABASES[database]['TEST']['NAME'] if test else settings.DATABASES[database]['NAME'],
      ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
     if process.returncode is None:
       # PSQL session is still running

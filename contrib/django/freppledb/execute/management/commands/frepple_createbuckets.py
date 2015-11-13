@@ -132,18 +132,18 @@ class Command(BaseCommand):
       with transaction.atomic(using=database, savepoint=False):
         # Delete previous contents
         connections[database].cursor().execute(
-          "delete from common_bucketdetail where bucket_id in ('year', 'quarter','month','week','day')"
+          "delete from common_bucketdetail where bucket_id in ('year','quarter','month','week','day')"
           )
         connections[database].cursor().execute(
-          "delete from common_bucket where name in ('year', 'quarter','month','week','day')"
+          "delete from common_bucket where name in ('year','quarter','month','week','day')"
           )
 
         # Create buckets
-        y = Bucket(name='year', description='Yearly time buckets')
-        q = Bucket(name='quarter', description='Quarterly time buckets')
-        m = Bucket(name='month', description='Monthly time buckets')
-        w = Bucket(name='week', description='Weeky time buckets')
-        d = Bucket(name='day', description='Daily time buckets')
+        y = Bucket(name='year', description='Yearly time buckets', level=1)
+        q = Bucket(name='quarter', description='Quarterly time buckets', level=2)
+        m = Bucket(name='month', description='Monthly time buckets', level=3)
+        w = Bucket(name='week', description='Weeky time buckets', level=4)
+        d = Bucket(name='day', description='Daily time buckets', level=5)
         y.save(using=database)
         q.save(using=database)
         m.save(using=database)

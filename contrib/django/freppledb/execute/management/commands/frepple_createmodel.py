@@ -21,10 +21,10 @@ from datetime import timedelta, datetime, date
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core import management
-from django.db import connections, DEFAULT_DB_ALIAS, transaction
+from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Min, Max
 
-from freppledb.common.models import Parameter, Bucket, BucketDetail
+from freppledb.common.models import Parameter, BucketDetail
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, Customer, Demand, Flow
 from freppledb.input.models import Load, Item
@@ -242,9 +242,6 @@ class Command(BaseCommand):
       if verbosity > 0:
         print("Updating buckets...")
       management.call_command('frepple_createbuckets', user=user, database=database)
-      if verbosity > 0:
-        print("Updating horizon telescope...")
-      updateTelescope(10, 40, 730, database)
       task.status = '2%'
       task.save(using=database)
 
@@ -460,89 +457,3 @@ class Command(BaseCommand):
       if task:
         task.save(using=database)
       settings.DEBUG = tmp_debug
-
-
-def updateTelescope(min_day_horizon=10, min_week_horizon=40, min_month_horizon=730, database=DEFAULT_DB_ALIAS):
-  '''
-  Update for the telescopic horizon.
-  The first argument specifies the minimum number of daily buckets. Additional
-  daily buckets will be appended till we come to a monday. At that date weekly
-  buckets are starting.
-  The second argument specifies the minimum horizon with weeks before the
-  monthly buckets. The last weekly bucket can be a partial one: starting on
-  monday and ending on the first day of the next calendar month.
-  '''
-
-  # Make sure the debug flag is not set!
-  # When it is set, the django database wrapper collects a list of all sql
-  # statements executed and their timings. This consumes plenty of memory
-  # and cpu time.
-  tmp_debug = settings.DEBUG
-  settings.DEBUG = False
-  try:
-    with transaction.atomic(using=database, savepoint=False):
-
-      # Delete previous contents
-      connections[database].cursor().execute(
-        "delete from common_bucketdetail where bucket_id = 'telescope'"
-        )
-
-      # Create bucket
-      try:
-        b = Bucket.objects.using(database).get(name='telescope')
-      except Bucket.DoesNotExist:
-        b = Bucket(name='telescope', description='Time buckets with decreasing granularity')
-      b.save(using=database)
-
-      # Create bucket for all dates in the past
-      startdate = datetime.strptime(Parameter.objects.using(database).get(name="currentdate").value, "%Y-%m-%d %H:%M:%S")
-      curdate = startdate
-      BucketDetail(
-        bucket=b,
-        name='past',
-        startdate=datetime(2000, 1, 1),
-        enddate=curdate,
-        ).save(using=database)
-
-      # Create daily buckets
-      limit = curdate + timedelta(min_day_horizon)
-      while curdate < limit or curdate.strftime("%w") != '0':
-        BucketDetail(
-          bucket=b,
-          name=str(curdate.date()),
-          startdate=curdate,
-          enddate=curdate + timedelta(1)
-          ).save(using=database)
-        curdate = curdate + timedelta(1)
-
-      # Create weekly buckets
-      limit = startdate + timedelta(min_week_horizon)
-      stop = False
-      while not stop:
-        enddate = curdate + timedelta(7)
-        if curdate > limit and curdate.month != enddate.month:
-          stop = True
-          enddate = datetime(enddate.year, enddate.month, 1)
-        BucketDetail(
-          bucket=b,
-          name=curdate.strftime("%y W%W"),
-          startdate=curdate,
-          enddate=enddate
-          ).save(using=database)
-        curdate = enddate
-
-      # Create monthly buckets
-      limit = startdate + timedelta(min_month_horizon)
-      while curdate < limit:
-        enddate = curdate + timedelta(32)
-        enddate = datetime(enddate.year, enddate.month, 1)
-        BucketDetail(
-          bucket=b,
-          name=curdate.strftime("%b %y"),
-          startdate=curdate,
-          enddate=enddate
-          ).save(using=database)
-        curdate = enddate
-
-  finally:
-    settings.DEBUG = tmp_debug

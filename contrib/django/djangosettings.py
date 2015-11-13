@@ -46,7 +46,9 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default.
-    'TEST_NAME': 'test_frepple'  # Database name used when running the test suite.
+    'TEST': {
+      'NAME': 'test_frepple' # Database name used when running the test suite.
+      }
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -56,7 +58,9 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default.
-    'TEST_NAME': 'test_scenario1'    # Database for running the test suite
+    'TEST': {
+      'NAME': 'test_scenario1' # Database name used when running the test suite.
+      }
     },
   'scenario2': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -66,7 +70,9 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default.
-    'TEST_NAME': 'test_scenario2'    # Database for running the test suite
+    'TEST': {
+      'NAME': 'test_scenario2' # Database name used when running the test suite.
+      }
     },
   'scenario3': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -76,8 +82,10 @@ DATABASES = {
     'HOST': '',     # Set to empty string for localhost.
     'OPTIONS': {},  # Backend specific configuration parameters.
     'PORT': '',     # Set to empty string for default.
-    'TEST_NAME': 'test_scenario3'    # Database for running the test suite
-    }
+    'TEST': {
+      'NAME': 'test_scenario3' # Database name used when running the test suite.
+      }
+    },
   }
 
 LANGUAGE_CODE = 'en'

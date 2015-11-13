@@ -764,17 +764,20 @@ DECLARE_EXPORT PyObject* Calendar::addPythonBucket(PyObject* self, PyObject* arg
     if (!cal) throw LogicException("Can't set value of a NULL calendar");
 
     // Parse the arguments
-    int id = 1;
+    int id = INT_MIN;
     if (!PyArg_ParseTuple(args, "|i:addBucket", &id))
       return NULL;
 
     // See if the bucket exists, or create it
-    CalendarBucket * b = cal->findBucket(id);
+    CalendarBucket * b = NULL;
+    if (id != INT_MIN)
+      b = cal->findBucket(id);
     if (!b)
     {
       b = new CalendarBucket();
       b->setCalendar(cal);
-      b->setId(id);
+      if (id != INT_MIN)
+        b->setId(id);
     }
 
     // Return a reference

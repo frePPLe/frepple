@@ -6672,7 +6672,9 @@ class Demand
       return constraints;
     }
 
-    Problem::List::iterator getConstraintIterator() const;
+    /** Return an iterator over the constraints encountered when planning
+      * this demand. */
+    DECLARE_EXPORT Problem::List::iterator getConstraintIterator() const;
 
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
@@ -7229,12 +7231,6 @@ inline Problem::iterator Problem::List::begin() const
 inline Problem::iterator Problem::List::end() const
 {
   return Problem::iterator(static_cast<Problem*>(NULL));
-}
-
-
-inline Problem::List::iterator Demand::getConstraintIterator() const
-{
-  return constraints.begin();
 }
 
 

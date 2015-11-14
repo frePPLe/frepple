@@ -319,4 +319,10 @@ DECLARE_EXPORT PeggingIterator Demand::getPegging() const
   return PeggingIterator(this);
 }
 
+
+DECLARE_EXPORT Problem::List::iterator Demand::getConstraintIterator() const
+{
+  return constraints.begin();
+}
+
 } // end namespace

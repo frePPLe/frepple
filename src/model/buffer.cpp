@@ -118,8 +118,11 @@ DECLARE_EXPORT void Buffer::setItem(Item* i)
 
   // Link at new item
   it = i;
-  nextItemBuffer = it->firstItemBuffer;
-  it->firstItemBuffer = this;
+  if (it)
+  {
+    nextItemBuffer = it->firstItemBuffer;
+    it->firstItemBuffer = this;
+  }
 
   // Mark changed
   setChanged();

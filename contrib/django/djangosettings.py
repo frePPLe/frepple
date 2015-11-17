@@ -181,6 +181,7 @@ CURRENCY=("","$")    # Prefix and suffix for currency strings
 # take precedence over and override later entries.
 INSTALLED_APPS = (
     'django.contrib.auth',
+    'registration',  #for cloud registration
     'django.contrib.contenttypes',
     'django.contrib.admin',
     'django.contrib.messages',
@@ -194,6 +195,7 @@ INSTALLED_APPS = (
     'freppledb.common',
     'rest_framework',
 )
+
 
 # Custom attribute fields in the database
 # After each change of this setting, the following commands MUST be
@@ -375,6 +377,16 @@ DEFAULT_DASHBOARD = [
     ("inventory_by_item",{"limit":10}),
   ]},
   ]
+
+# The following settings are for the 2 factor email registration on the cloud setup
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
+site = { 'id':1, 'domain':'127.0.0.1:8000', 'name':'127.0.0.1:8000',}
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'user@frepple.com'
+EMAIL_HOST_PASSWORD = 'Password'
+EMAIL_PORT = 587
+
 
 # Port number for the CherryPy web server
 PORT = 8000

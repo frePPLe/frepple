@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url, include
 
 import freppledb.common.views
 import freppledb.common.serializers
@@ -63,4 +63,7 @@ urlpatterns = patterns(
   (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailAPI.as_view()),
   (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailAPI.as_view()),
   (r'^api/$', APIIndexView),
+
+ # two factor authentication for cloud
+  (r'^accounts/', include('registration.backends.default.urls')),
 )

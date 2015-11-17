@@ -80,35 +80,29 @@ Here are the steps to get a fully working environment.
 
    You'll need to install the python-psycopg2 package for PostgreSQL.
 
-#. **Install Django**
+#. **Install the Python database drivers, Django and other python modules**
 
    Since frePPle requires some patches to the standard Django package,
    you can't install the binary package that comes with your Linux distribution.
 
-   Instead, download the source from our cloned and patched version of django
-   and install that. The URL of the django clone is https://github.com/frePPLe/django
+   Instead, the source from our cloned and patched version of django will be downloaded
+   and installed.
 
-   Make sure you download the branch for the correct frePPLe version
-
-   The shell commands for these steps are (replace 3.0 with the correct frePPLe
-   version:
+   In the root of your python install you will find a "requirements.txt" file containing a list like:
    ::
 
-      wget https://github.com/frePPLe/django/archive/frepple_3.0.tar.gz
-      tar xvfz frepple_3.0.tar.gz
-      cd django-frepple_3.0
-      python3 setup.py install
+      CherryPy >= 3.2.2
+      et-xmlfile >= 1.0.0
+      html5lib >= 0.999
+      jdcal >= 1.0
+      openpyxl >= 2.3.0-b2
+      https://github.com/frePPLe/django/tarball/frepple_3.0
+      djangorestframework >= 3.3.1
 
-#. **Install OpenPyXL**
-
-   This python package allows us to read and write Excel spreadsheet files. It
-   is best to install it from PyPi using pip.
+   To install the requirements just issue a pip3 (or pip depending on your distribution) command:
    ::
 
-     pip3 install openpyxl
-
-   Most linux distributions don't install pip by default, so you'll need to install
-   that first. See below for the commands for this on Ubuntu and RHEL.
+      sudo pip install -r requirements.txt
 
 #. **Install the frepple binary package**
 

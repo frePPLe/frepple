@@ -1,18 +1,14 @@
-=============
-API framework
-=============
+=========================
+API from the command line
+=========================
 
-You are not obliged to use the web browser to work with the REST API framework of frePPLE.
-
-If you install tolls like "curl", "wget" or similar you can use the command line to (depending on your permissions) see/add/delete/modify data.
+Using tools like "curl", "wget" or similar you can use the command line to (depending on your permissions) change/read/add/delete data.
 
 To just get a list of all sales orders in JSON format:
 
 ::
 
    wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json
-
-::
 
    curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
 
@@ -22,9 +18,7 @@ To just get a list of all sales orders in API format (assuming the user is named
 ::
 
    wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=api
-
-::
-
+   
    curl -H 'Accept: application/json; indent=4; charset=UTF-8' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=api
 
 

@@ -6,30 +6,34 @@
 <div id="content-summary" style="margin-top: 20px; margin-bottom: 20px">
   <br><br>
 	{% blocktrans %}
-	In this page you can find the links to the REST framework API of frePPLe.<br>
-	With this framework developers can easily create code to exchange information with other applications.<br>
+	This page helps developers to learn and experiment with the
+	<a style="text-decoration:underline" target="_blank" href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>
+	API of frePPLe.<br>
+	This API allows your application to exchange information with frePPLe is efficient and direct way.<br>
 	<br>
-	The "URLs for API model" take you to the object list page and the "URLs for specific objects" will take you to a specific object when you enter the object name.<br>
-	In these pages you will be able to perform GET/POST/OPTIONS requests, and in the "URLs for specific objects" you can also PUT/PATCH.<br>
-	You can also use different formats for the requests, dus making this platform very flexible.<br>
+	The "list API" link takes you to the object list page.<br>
+	And the "detail API" link takes you to a specific object when you enter the object's primary key.<br>
+	In these pages you will be able to perform HTTP requests with methods GET, POST, OPTIONS, PUT,
+	PATCH and DELETE.<br>
+	The results can shown in JSON format or as HTML in your browser.<br>
 	<br>
-	You can also do without the browser, it is possible to use the command line to comunicate with frePPLe.<br>
-	For example with tools like 'wget' or 'curl' you can use the link below and get the a list of all sales orders in JSON format:<br>
-	<pre>wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
-	<pre>curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json</pre><br>
+	Using a tool like 'wget' or 'curl' you can access the API from the command line.<br>
+	For instance, to return the list of all sales orders in JSON format:<br>
+	<pre>    wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
+	<pre>    curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
 	{% endblocktrans %}
-</div> 
+</div>
 
 <div>
 	<table>
-	<tr><td></td><td><strong>{% trans 'URLs for API model:' %}</strong></td><td><strong>{% trans 'URLs for specific objects:' %}</strong></td></tr>
+	<tr><td></td><td><strong>{% trans 'List API' %}</strong></td><td><strong>{% trans 'Detail API' %}</strong></td></tr>
 	{% getMenu as menu %}
 	{% for group in menu %}
 	  {% for item in group.1 %}
 	    {% if item.1.model and not item.1.excludeFromBulkOperations %}
 	        <tr>
 	          <td> {{ group.0 }} - {{ item.0 }} </td>
-	          <td> 
+	          <td>
 	            <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/ ">
 	              {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
 	              <span class="leftpadding fa fa-caret-right" role="input/item"></span>
@@ -44,7 +48,7 @@
 	    {% endif %}
 	  {% endfor %}
 	{% endfor %}
-	
+
 	</table>
 </div>
 

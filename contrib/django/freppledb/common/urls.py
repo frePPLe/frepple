@@ -21,6 +21,8 @@ import freppledb.common.views
 import freppledb.common.serializers
 import freppledb.common.dashboard
 
+from freppledb.common.api.views import APIIndexView
+
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -60,5 +62,5 @@ urlpatterns = patterns(
   (r'^api/common/bucketdetail/(?P<pk>(.+))/$', freppledb.common.serializers.BucketDetaildetailAPI.as_view()),
   (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailAPI.as_view()),
   (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailAPI.as_view()),
-  (r'^api/$', freppledb.common.views.IndexView),
+  (r'^api/$', APIIndexView),
 )

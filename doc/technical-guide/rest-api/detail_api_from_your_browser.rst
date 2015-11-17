@@ -1,8 +1,8 @@
-=============
-API framework
-=============
+============================
+Detail API from your browser
+============================
 
-In the "Detail API for [model name]", 
+In the "Detail API for [model name]",
 you will see the request that was made to the rest framework
 (for a single record of the database table),
 
@@ -24,3 +24,6 @@ The fourth will allow you to send either PUT or PATCH requests to the database b
 Here you can also select the format "application/json", "application/x-www-form-urlencoded" or "multipart/form-data".
 
 The fifth and last option is to delete the record from the database.
+
+.. image:: ../_images/api_detail.png
+   :alt: REST detail API

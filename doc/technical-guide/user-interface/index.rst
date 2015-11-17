@@ -4,7 +4,7 @@ User interface
 
 FrePPLe has a rich and modern web-based user interface.
 
-It's main features:
+Its main features:
 
 * Supports all modern web browsers.
 

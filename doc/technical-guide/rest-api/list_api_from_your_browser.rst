@@ -1,6 +1,6 @@
-=============
-API framework
-=============
+==========================
+List API from your browser
+==========================
 
 In the "List API for [model name]",
 you will see the request that was made to the rest framework,
@@ -21,3 +21,6 @@ The third menu entry will show an HTML form that you can send in a POST request 
 
 The fourth option will allow you to send a POST request to the database by changing the information in the text area.
 Here you can also select the format "application/json", "application/x-www-form-urlencoded" or "multipart/form-data".
+
+.. image:: ../_images/api_list.png
+   :alt: REST list API

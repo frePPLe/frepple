@@ -44,10 +44,6 @@ interface to your favourite language.
    you just copied. There are around 500 strings to be translated, which should
    take about half a day's work.
 
-   Some words already have been translated by the Django project. A comment
-   marks those and you should **not** translate those. If you do translate them
-   we'll strip those out anyway when merging your translations.
-
 #. You can now test the translations, after a restart of the web server.
 
    Update your user preferences to use the new language. If your browser has

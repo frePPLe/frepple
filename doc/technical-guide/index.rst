@@ -20,5 +20,5 @@ accordingly:
    architecture
    user-interface/index
    planning-engine/index
-   API-framework/index
+   rest-api/index
    security

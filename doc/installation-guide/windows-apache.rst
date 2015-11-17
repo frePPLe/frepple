@@ -58,45 +58,26 @@ are required:
 
    Select the 32-bit installer for Python 2.7.
 
-#. **Install django**
+#. **Install the Python database drivers, Django and other python modules**
 
-   Django is a high-level Python Web framework.
+   Since frePPle requires some patches to the standard Django package, so the source 
+   from our cloned and patched version of django will be downloaded and installed.
 
-   A version of frePPle requires a specific version of Django. FrePPLe 2.1 requires 
-   Django 1.6.x. FrePPLe 2.2, 2.3 and 3.0 require django 1.7.x.
-   
-   You will need to:
-
-     #. Download django 1.7.x from https://www.djangoproject.com/download/
-
-     #. Apply the patch you find in contrib/django/django.patch
-
-     #. Install django with the command:
-        ::
-
-           python setup.py install
-
-#. **Install openpyxl**
-
-   OpenPyXL is a Python library to read/write Excel 2007 xlsx/xlsm files
-
-   First install PIP wich you can find on http://www.lfd.uci.edu/~gohlke/pythonlibs/#pip
-
-   Next, run this command from the Scripts folder in your Python installation:
+   In the root of your python install you will find a "requirements.txt" file containing a list like:
    ::
 
-      pip install openpyxl
+      CherryPy >= 3.2.2
+      et-xmlfile >= 1.0.0
+      html5lib >= 0.999
+      jdcal >= 1.0
+      openpyxl >= 2.3.0-b2
+      https://github.com/frePPLe/django/tarball/frepple_3.0
+      djangorestframework >= 3.3.1
 
-#. **Install cherrypy**:
+   To install the requirements just issue a pip3 (or pip depending on your distribution) command:
+   ::
 
-   CherryPy is pythonic, object-oriented HTTP framework available from
-   https://bitbucket.org/cherrypy/cherrypy/issue-attachment/1110/cherrypy/cherrypy/1322273715.09/1110/CherryPy-3.2.2.win32.exe
-
-#. **Install Apache web server**
-
-   Recommended download is http://www.apachelounge.com/download/win32/: 2.4.7, 32-bit, vc10
-
-   It is easiest to run Apache as a service.
+      sudo pip install -r requirements.txt
 
 #. **Install mod_wsgi**
 

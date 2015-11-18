@@ -1,13 +1,22 @@
-=================
-API: XML & Python
-=================
+=========================
+API: XML, Python and REST
+=========================
 
-The planning engine has 2 native APIs:
+FrePPLe provides multiple APIs to communicate with the application or the
+core planning engine:
+
+* **REST web service**:
+
+  The user interface exposes a rich set of REST web services to created,
+  read, update and delete objects from the frePPLe database.
+
+  More detail is available on :doc:`this page </technical-guide/rest-api/index>`.
 
 * **XML**:
 
-  The files frepple.xsd and frepple_core.xsd define the XML Schema of the
-  frePPLe data.
+  The core planning engine natively reads and writes XML data files. The
+  files frepple.xsd and frepple_core.xsd define the XML Schema of the
+  data format.
 
   The XML-data can be placed in any namespace. To support subclassing the
   namespace xsi must be defined as “http\://www.w3.org/2001/XMLSchema-instance”.
@@ -28,10 +37,13 @@ The planning engine has 2 native APIs:
 
 * **Python**:
 
-  FrePPLe embeds an interpreter for the Python language. All objects in
-  the planning engine can be read, created, updated and deleted from Python
-  code. All functionality of Python and its extension modules is accessible
-  from the planning engine.
+  The frePPLe planning engine embeds an interpreter for the Python language.
+  All objects in the planning engine can be read, created, updated and deleted
+  from Python code. All functionality of Python and its extension modules is
+  accessible from the planning engine.
+
+  It is also possible to access the frePPLe functionality as a Python module.
+  A regular "import frepple" statement suffices to load the module.
 
   Detailed programming and scripting is possible in this way. For complex
   integration tasks and for customization of the algorithms Python is your

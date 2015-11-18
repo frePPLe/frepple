@@ -7,6 +7,7 @@ This series of screens is used to review the planning results.
 .. toctree::
    :maxdepth: 2
 
+   distribution-planning
    problem-report
    constraint-report
    inventory-report

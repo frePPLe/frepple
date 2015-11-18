@@ -11,5 +11,6 @@ This chapter describes the modules that are provided with frePPLe.
    odoo-connector
    openbravo-connector
    forecast-module
+   inventory-planning-module
    order-quoting-module
    web-service-module

@@ -328,7 +328,7 @@ class BucketList(GridReport):
   model = Bucket
   frozenColumns = 1
   rows = (
-    GridFieldText('name', title=_('name'), key=True, formatter="bucket"),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/bucket'"),
     GridFieldText('description', title=_('description')),
     GridFieldInteger('level', title=_('level')),
     GridFieldText('source', title=_('source')),
@@ -340,13 +340,12 @@ class BucketDetailList(GridReport):
   '''
   A list report to show dates.
   '''
-  template = 'common/bucketlist.html'
   title = _("bucket dates")
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail
   frozenColumns = 2
   rows = (
-    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter="bucket"),
+    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra="role:'common/bucket'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldText('name', title=_('name')),

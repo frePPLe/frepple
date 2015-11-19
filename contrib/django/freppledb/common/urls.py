@@ -16,6 +16,7 @@
 #
 
 from django.conf.urls import patterns
+from django.views.generic.base import RedirectView
 
 import freppledb.common.views
 import freppledb.common.serializers
@@ -49,6 +50,10 @@ urlpatterns = patterns(
   (r'^data/common/comment/$', freppledb.common.views.CommentList.as_view()),
   (r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments),
 
+  # Special case of the next line for user password changes in the user edit screen
+  (r'detail/common/user/(?P<id>.+)/password/$', RedirectView.as_view(url="/data/common/user/%(id)s/password/")),
+
+  # Detail URL for an object, which internally redirects to the view for the last opened tab
   (r'^detail/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.detail),
 
   # REST API framework

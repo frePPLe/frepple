@@ -130,7 +130,7 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "French"
 !insertmacro MUI_LANGUAGE "Italian"
 !insertmacro MUI_LANGUAGE "Japanese"
-!insertmacro MUI_LANGUAGE "Portugese"
+!insertmacro MUI_LANGUAGE "Portuguese"
 !insertmacro MUI_LANGUAGE "PortugueseBR"
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "Spanish"

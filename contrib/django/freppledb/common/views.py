@@ -213,6 +213,7 @@ class UserList(GridReport):
   model = User
   frozenColumns = 2
   multiselect = False
+  permissions = (("change_user", "Can change user"),)
 
   rows = (
     GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra="role:'common/user'"),
@@ -237,6 +238,8 @@ class GroupList(GridReport):
   model = Group
   frozenColumns = 0
   multiselect = False
+  permissions = (("change_group", "Can change group"),)
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
     GridFieldText('name', title=_('name'), key=True, width=200),

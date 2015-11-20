@@ -26,7 +26,7 @@ To POST/PATCH/PUT in JSON format it is also straightforward:
 
 ::
 
-   curl -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{\"key\":\"val\"}' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
+   curl -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"key":"val"}' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
 
 "key:val" pairs should be separated by a comma, so it is probably easier if you store the data in a file:
 

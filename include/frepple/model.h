@@ -7103,13 +7103,13 @@ class HasProblems::EntityIterator
 
     /** Used to create an iterator pointing beyond the last HasProblems
       * object. */
-    explicit EntityIterator(unsigned short i) : type(i) {}
+    explicit EntityIterator(unsigned short i) : type(i), bufIter(NULL) {}
 
     /** Copy constructor. */
-    DECLARE_EXPORT EntityIterator(const EntityIterator& o);
+    DECLARE_EXPORT EntityIterator(const EntityIterator&);
 
     /** Assignment operator. */
-    DECLARE_EXPORT EntityIterator& operator=(const EntityIterator& o);
+    DECLARE_EXPORT EntityIterator& operator=(const EntityIterator&);
 
     /** Destructor. */
     DECLARE_EXPORT ~EntityIterator();

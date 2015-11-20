@@ -154,29 +154,9 @@ Modelling and solver algorithm
 Database
 --------
 
-* **Which database should I use?**
-
-  FrePPLe supports both SQLite and PostgreSQL.
-
-  SQLite is suitable for small models and for learning frePPLe, because it
-  doesn’t require any specific configuration and extra installation.
-
-  PostgreSQL is the recommended database for scalable production deployments.
-
-  MySQL and Oracle are no longer from release 2.2. Also in earlier release they
-  are less tested.
-
-* **Can frePPLe support my favorite database X?**
-
-  To keep the maintenance, support and development easy we restrict ourselves
-  to SQLite and PostgreSQL.
-
-  FrePPLe can technically support all database engines that are supported in
-  the Django web application framework. This also includes MySQL and Oracle.
-
-  For a number of additional databases third party django database backends
-  are available: see https://docs.djangoproject.com/en/dev/ref/databases/.
-
 * **What are recommended PostgreSQL database settings?**
 
   See the Django documentation at https://docs.djangoproject.com/en/dev/ref/databases/#postgresql-notes
+
+  We highly recommend the pgtune tool http://pgtune.leopard.in.ua/ to configure
+  the database to your hardware capabilities.

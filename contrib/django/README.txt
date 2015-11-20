@@ -19,7 +19,6 @@ The basic steps to set up a development environment:
       python3 setup.py install
 
 - Install and configure the PostgreSQL database.
-  For a quick test run, you can also use the SQLite3 database bundled with Python.
 
 - Install the psycopg2 package to access PostgreSQL databases from Python.
 

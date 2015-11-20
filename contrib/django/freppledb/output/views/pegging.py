@@ -85,13 +85,6 @@ class ReportByDemand(GridReport):
     if not end:
       end = due
 
-    if not isinstance(start, datetime):
-      # SQLite max(datetime) function doesn't return a datetime. Sigh.
-      start = datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
-    if not isinstance(end, datetime):
-      # SQLite max(datetime) function doesn't return a datetime. Sigh.
-      end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
-
     # Adjust the horizon
     if due > end:
       end = due

@@ -10,8 +10,6 @@ accordingly:
 * User interface and scripting, coded in Python for flexibility and agile
   development.
 
-* API Framework, for informatio exchange with other applications.
-
 * Planning engine, coded in C++ for best performance.
 
 .. toctree::
@@ -19,6 +17,6 @@ accordingly:
 
    architecture
    user-interface/index
-   planning-engine/index
    rest-api/index
+   planning-engine/index
    security

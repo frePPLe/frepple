@@ -233,6 +233,10 @@ class PathReport(GridReport):
     entity = entity[0]
     root = reportclass.getRoot(request, entity)
 
+    # Update item and location hierarchies
+    Item.rebuildHierarchy(database=request.database)
+    Location.rebuildHierarchy(database=request.database)
+
     # Recurse over all operations
     # TODO the current logic isn't generic enough. A lot of buffers may not be explicitly
     # defined, and are created on the fly by deliveries, itemsuppliers or itemdistributions.
@@ -291,6 +295,12 @@ class PathReport(GridReport):
             ]
           resources = None
         else:
+          name = curoperation.name
+          optype = curoperation.type
+          duration = curoperation.duration
+          duration_per = curoperation.duration_per
+          buffers = [ (x.thebuffer.name, float(x.quantity)) for x in curoperation.flows.only('thebuffer', 'quantity').using(request.database) ]
+          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.loads.only('resource', 'quantity').using(request.database) ]
           for x in curoperation.flows.filter(quantity__gt=0).only('thebuffer').using(request.database):
             curflows = x.thebuffer.flows.filter(quantity__lt=0).only('operation', 'quantity').using(request.database)
             for y in curflows:

@@ -6,9 +6,10 @@ frePPLe |release| documentation
 To get started we suggest the following **introduction trail**:
 
 #. | :doc:`Install the software <installation-guide/windows-installer>`
-   | The easiest start is to use the Windows installer, using the built-in
-     web server and database.
-   | Click through the installer and you'll be up and running in 2 minutes.
+   | The easiest start to learn frePPLe is to use the online demo
+     environment.
+   | To try on your own computer you'll need to install the PostgreSQL
+     database server, and then run the frePPLe installer.
 
 #. | :doc:`Follow the guided tour <user-guide/guided-tour>`
    | The application has an integrated guided tour. It interactively guides

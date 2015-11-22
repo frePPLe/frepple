@@ -19,10 +19,10 @@ HTTP methods supported by the API.
 .. toctree::
    :maxdepth: 3
 
-   list_api_from_your_browser
-   detail_api_from_your_browser
-   api_from_the_command_line
+   list-api-from-your-browser
+   detail-api-from-your-browser
+   api-from-the-command-line
 
-.. image:: ../_images/api_index.png
+.. image:: ../_images/api-index.png
    :alt: REST API index
    

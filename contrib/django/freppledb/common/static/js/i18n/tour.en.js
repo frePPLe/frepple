@@ -2,15 +2,15 @@ var tourdata = [
    // Main page of the tour
    {
      description: '<h2>Main</h2>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=4,0,0">Generating the plan</a></span> (11 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/admin/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
+        'Jump to <span class="underline"><a href="/data/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/data/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/data/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/data/?tour=4,0,0">Generating the plan</a></span> (11 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/data/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
      delay: 5,
      steps: [
              {
-               url: "/admin/",
+               url: "/data/",
                element : '.tourguide',
                description : "Welcome to frePPLe.<br/>" +
                  "This guided tour will show you around.<br/><br/>" +
@@ -24,13 +24,13 @@ var tourdata = [
 
    // Navigation
    {
-     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Navigation</h2>' +
+     description: '<h2><span class="underline"><a href="/data/?tour=0,0,0">Main</a></span> &gt; Navigation</h2>' +
         'The main dashboard, the menu bar, breadcrumbs and a quick search option allow easy and intuitive navigation',
      delay: 5,
      steps:
         [
          {
-           url: "/admin/",
+           url: "/data/",
            element : 'h1',
            description : 'The main screen is organized as a dashboard with widgets<br/>' +
                 'for the most common activities, such as:<br/>' +
@@ -44,14 +44,14 @@ var tourdata = [
            position : 'B'
          },
          {
-           url: "/admin/",
+           url: "/data/",
            element : '#nav-menu',
            description : "The menu bar gives access to all screens.<br/><br/>" +
                "Screens that are not accessible with your profile<br/>won't be shown in the list.",
            position : 'B'
          },
          {
-           url: "/admin/",
+           url: "/data/",
            element : '#search',
            description : 'You can enter a search string here.<br/>' +
                    'A list of matching entities will be displayed.<br/>' +
@@ -59,7 +59,7 @@ var tourdata = [
            position : 'B'
          },
          {
-           url: "/admin/",
+           url: "/data/",
            element : '.breadcrumbs a',
            description : 'A breadcrumb trail shows the history of screens you have accessed.<br/>' +
                    'You can easily step back and forth.',
@@ -70,7 +70,7 @@ var tourdata = [
 
     // Data entry
     {
-     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Data entry</h2>' +
+     description: '<h2><span class="underline"><a href="/data/?tour=0,0,0">Main</a></span> &gt; Data entry</h2>' +
         'Data can be entered in different ways:<br/>' +
         '&nbsp;&nbsp;- Directly in a data grid<br/>' +
         '&nbsp;&nbsp;- Using an edit form<br/>' +
@@ -80,11 +80,11 @@ var tourdata = [
      steps:
         [
          {
-           url: "/admin/",
+           url: "/data/",
            element : '#nav-menu',
 //           beforestep: '$("#nav-menu").first().hover()',
 //           beforestep: 'document.getElementById().hover()',
-           description : "All entities (items, locations, suppliers, ...) <br/>" + "have a data table in the input section.",
+           description : "Entities (items, locations, suppliers, ...) <br/>" + "have reports, and table views to add/change/detete data.",
            position : 'B'
          },
          {
@@ -97,8 +97,8 @@ var tourdata = [
          },
          {
            url: "/data/input/demand/",
-           element : 'span[role="item"]',
-           description : "A triangle on a field indicates a drill-drown menu.<br/>" +
+           element : 'span[role="input/item"]',
+           description : "A triangle on a field indicates gives access to details.<br/>" +
              "Click the icon to display the detailed screens for the selected entity.<br/>" +
              "Screens that are not accessible with your profile won't be shown in this menu.",
            position : 'B'
@@ -138,14 +138,14 @@ var tourdata = [
            element : ".fa-arrow-down",
            description : "Click 'export' to export all data from the grid<br/>" +
               "to a CSV-file or an Excel spreadsheet.",
-           position : 'LC'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-arrow-up",
            description : "Spreadsheets and CSV-files can also be imported again.<br/>" +
-             "The data are validated and any errors are reported.",
-           position : 'LC'
+             "The data is validated and any errors are reported.",
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
@@ -164,16 +164,16 @@ var tourdata = [
 
     // Modeling
     {
-     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Modelling</h2>' +
+     description: '<h2><span class="underline"><a href="/data/?tour=0,0,0">Main</a></span> &gt; Modelling</h2>' +
         "Modelling your manufacturing environment.",
      delay: 5,
      steps:
         [
          {
-           url: "/admin/",
+           url: "/data/",
            element : '#nav-menu',
 //           beforestep: '$(".menuButton").first().click()',
-           description : "All entities have a data table in the input section.<br/>" +
+           description : "Entities have a data table view.<br/>" +
              "A complete description of all entities and their relationships<br/>" +
              "is beyond the scope of this tour.<br/>" +
              "In this tour we'll only show the concepts at a very high level.<br/>" +
@@ -212,13 +212,13 @@ var tourdata = [
 
     // Planning tasks
     {
-     description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Generating the plan</h2>' +
+     description: '<h2><span class="underline"><a href="/data/?tour=0,0,0">Main</a></span> &gt; Generating the plan</h2>' +
         "Generating plans and performing other tasks.",
      delay: 5,
      steps:
         [
          {
-           url: "/admin/",
+           url: "/data/",
            element : '.ui-menu:eq(2) .ui-menu-item',
            beforestep: '$(".menuButton:eq(2)").click()',
            description : "Once you have loaded all data, you are now<br/>" +
@@ -319,7 +319,7 @@ var tourdata = [
 
       // Plan review analysis
       {
-       description: '<h2><span class="underline"><a href="/admin/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
+       description: '<h2><span class="underline"><a href="/data/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
           'Review and analyze the plan from different angles:<br/>' +
           '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,1,0">Cockpit</a></span> (1 step)<br/>' +
           '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,2,0">Resource utilization</a></span> (8 steps)<br/>' +
@@ -332,7 +332,7 @@ var tourdata = [
        steps:
           [
            {
-             url: "/admin/",
+             url: "/data/",
              element : '.ui-menu:eq(1)',
              beforestep: '$(".menuButton:eq(1)").click()',
              description : "Once you have loaded all data and generated<br/>" +
@@ -341,7 +341,7 @@ var tourdata = [
              position : 'R'
            },
            {
-             url: "/admin/",
+             url: "/data/",
              element : 'h1',
              description : 'In their day to day usage planners will be using the main<br/>' +
                   'cockpit screen for the common analysis tasks.<br/><br/>' +

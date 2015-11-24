@@ -172,9 +172,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         'key': escape(object_id),
       })
 
-    if not self.has_change_permission(request, obj):
-      raise PermissionDenied
-
     # Then get the history for this object.
     opts = model._meta
     app_label = opts.app_label

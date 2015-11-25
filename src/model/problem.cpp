@@ -472,11 +472,11 @@ DECLARE_EXPORT Problem::iterator& Problem::iterator::operator++()
 
   // Move to the next entity
   // We need a while loop here because some entities can be without problems
-  while (!iter && !owner && eiter!=HasProblems::endEntity())
+  while (!iter && !owner && eiter && *eiter!=HasProblems::endEntity())
   {
-    ++eiter;
-    if (eiter!=HasProblems::endEntity())
-      iter = eiter->firstProblem;
+    ++(*eiter);
+    if (*eiter != HasProblems::endEntity())
+      iter = (*eiter)->firstProblem;
   }
   return *this;
 }

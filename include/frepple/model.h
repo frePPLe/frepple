@@ -7154,7 +7154,7 @@ class Problem::iterator
       * at the end of the list. */
     Problem* iter;
     HasProblems* owner;
-    HasProblems::EntityIterator eiter;
+    HasProblems::EntityIterator *eiter;
 
   public:
     /** Creates an iterator that will loop through the problems of a
@@ -7163,26 +7163,33 @@ class Problem::iterator
       * a NULL pointer as argument.
       */
     explicit iterator(HasProblems* o) : iter(o ? o->firstProblem : NULL),
-      owner(o), eiter(4) {}
+      owner(o), eiter(NULL) {}
 
     /** Creates an iterator that will loop through the constraints of
       * a demand.
       */
-    explicit iterator(Problem* o) : iter(o),
-      owner(NULL), eiter(4) {}
+    explicit iterator(Problem* o) : iter(o), owner(NULL), eiter(NULL) {}
 
     /** Creates an iterator that will loop through the problems of all
       * entities. */
-    explicit iterator() : owner(NULL)
+    DECLARE_EXPORT explicit iterator() : owner(NULL)
     {
       // Update problems
       Plannable::computeProblems();
 
       // Loop till we find an entity with a problem
-      while (eiter!=HasProblems::endEntity() && !(eiter->firstProblem))
-        ++eiter;
+      eiter = new HasProblems::EntityIterator();
+      while (*eiter != HasProblems::endEntity() && !((*eiter)->firstProblem))
+        ++(*eiter);
       // Found a first problem, or no problem at all
-      iter = (eiter!=HasProblems::endEntity()) ? eiter->firstProblem : NULL;
+      iter = (*eiter != HasProblems::endEntity()) ? (*eiter)->firstProblem : NULL;
+    }
+
+    /** Destructor. */
+    DECLARE_EXPORT ~iterator()
+    {
+      if (eiter)
+        delete eiter;
     }
 
     /** Pre-increment operator. */

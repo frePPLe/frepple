@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 by Johan De Taeye, Guy Ollagnon, Gilles Manon
+# Copyright (C) 2013 by Johan De Taeye, Guy Ollagnon, Gilles Manon
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -17,179 +17,255 @@
 # file : $URL: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk/contrib/django/freppledb/locale/fr/LC_MESSAGES/djangojs.po $
 # revision : $LastChangedRevision: 1358 $  $LastChangedBy: jdetaeye $
 # date : $LastChangedDate: 2010-09-17 22:28:46 +0200 (Fri, 17 Sep 2010, 2012) $.
+# Joao Ranita <jranita@frepple.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: 3.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-08 08:49+0100\n"
-"PO-Revision-Date: 2014-11-11 17:46+0100\n"
-"Last-Translator: Guy Ollagnon <guy.ollagnon@demand2plan.com>\n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
-"Language: en_US\n"
+"POT-Creation-Date: 2015-11-22 14:53+0100\n"
+"PO-Revision-Date: 2015-11-25 09:58+0200\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Virtaal 0.7.1\n"
 
-#: common/static/js/frepple.js:41
+#: .\common\static\js\frepple.js:41
 msgid "There are unsaved changes on this page."
 msgstr "Il y a des changements non enregistrés sur cette page."
 
-#: common/static/js/frepple.js:87
+#: .\common\static\js\frepple.js:92
 msgid "Error saving data"
 msgstr "Erreur en enregistrant les données"
 
-#: common/static/js/frepple.js:108
+#: .\common\static\js\frepple.js:113
 msgid "Save or cancel your changes first"
 msgstr "Enregistrer ou annuler vos modifications"
 
-#: common/static/js/frepple.js:115
+#: .\common\static\js\frepple.js:120
 msgid "Save"
 msgstr "Enregistrer"
 
-#: common/static/js/frepple.js:122 common/static/js/frepple.js.c:510
-#: common/static/js/frepple.js:679 common/static/js/frepple.js.c:740
-#: common/static/js/frepple.js:800 common/static/js/frepple.js.c:857
-#: common/static/js/frepple.js:1093 common/static/js/frepple.js.c:1337
+#: .\common\static\js\frepple.js:127 .\common\static\js\frepple.js:476
+#: .\common\static\js\frepple.js:682 .\common\static\js\frepple.js:743
+#: .\common\static\js\frepple.js:803 .\common\static\js\frepple.js:860
+#: .\common\static\js\frepple.js:1278 .\common\static\js\frepple.js:1522
 msgid "Cancel"
 msgstr "Annuler"
 
-#: common/static/js/frepple.js:377
+#: .\common\static\js\frepple.js:322
 msgid "Select"
 msgstr "Sélectionner"
 
-#: common/static/js/frepple.js:447 common/static/js/frepple.js.c:1013
+#: .\common\static\js\frepple.js:413 .\common\static\js\frepple.js:1194
 msgid "Customize"
 msgstr "Personaliser"
 
-#: common/static/js/frepple.js:453 common/static/js/frepple.js.c:706
-#: common/static/js/frepple.js:1020
+#: .\common\static\js\frepple.js:419 .\common\static\js\frepple.js:709
+#: .\common\static\js\frepple.js:1201
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:596 common/static/js/frepple.js.c:980
-#: common/static/js/frepple.js:1081
+#: .\common\static\js\frepple.js:480
+msgid "reset"
+msgstr ""
+
+#: .\common\static\js\frepple.js:496 .\common\static\js\frepple.js:601
+#: .\common\static\js\frepple.js:1161 .\common\static\js\frepple.js:1266
+#: .\planningboard\static\planningboard\js\planningboard.js:652
+#: .\planningboard\static\planningboard\js\planningboard.js:1039
 msgid "Error saving report settings"
 msgstr "Erreur en enregistrant la configuration du rapport"
 
-#: common/static/js/frepple.js:640 common/static/js/frepple.js.c:646
+#: .\common\static\js\frepple.js:643 .\common\static\js\frepple.js:649
+#| msgid "Export"
 msgid "Export format"
-msgstr "Format d'export"
+msgstr ""
 
-#: common/static/js/frepple.js:641 common/static/js/frepple.js.c:648
+#: .\common\static\js\frepple.js:644 .\common\static\js\frepple.js:651
 msgid "Spreadsheet list"
-msgstr "Liste du tableur"
+msgstr ""
 
-#: common/static/js/frepple.js:642 common/static/js/frepple.js.c:650
+#: .\common\static\js\frepple.js:645 .\common\static\js\frepple.js:653
 msgid "CSV list"
-msgstr "Liste CSV"
+msgstr ""
 
-#: common/static/js/frepple.js:647
+#: .\common\static\js\frepple.js:650
 msgid "Spreadsheet table"
-msgstr "Table du tableur"
+msgstr ""
 
-#: common/static/js/frepple.js:649
+#: .\common\static\js\frepple.js:652
 msgid "CSV table"
-msgstr "Table CSV"
+msgstr ""
 
-#: common/static/js/frepple.js:653
+#: .\common\static\js\frepple.js:656
 msgid "Export CSV or Excel file"
-msgstr "Exporter un fichier CSV ou Excel"
+msgstr ""
 
-#: common/static/js/frepple.js:657
+#: .\common\static\js\frepple.js:660
+#| msgid "Export"
 msgid "Export"
 msgstr "Exporter"
 
-#: common/static/js/frepple.js:760
-#, c-format
+#: .\common\static\js\frepple.js:763
+#, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "Vous allez effacer %s objets ET TOUTES LES LIGNES ASSOCIEES !"
 
-#: common/static/js/frepple.js:762
+#: .\common\static\js\frepple.js:765
 msgid "Delete data"
 msgstr "Effacer les données"
 
-#: common/static/js/frepple.js:769 common/static/js/frepple.js.c:826
+#: .\common\static\js\frepple.js:772 .\common\static\js\frepple.js:829
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: common/static/js/frepple.js:787
+#: .\common\static\js\frepple.js:790
+#| msgid "Error deleting data"
 msgid "Error deleting data"
 msgstr "Erreur lors de l'effacement des données"
 
-#: common/static/js/frepple.js:817
-#, c-format
+#: .\common\static\js\frepple.js:820
+#, javascript-format
+#| msgid "You are about to duplicate %s objects"
 msgid "You are about to duplicate %s objects"
-msgstr "Vous allez copier %s objets"
+msgstr ""
 
-#: common/static/js/frepple.js:819
+#: .\common\static\js\frepple.js:822
 msgid "Copy data"
 msgstr "Copier les données"
 
-#: common/static/js/frepple.js:844
+#: .\common\static\js\frepple.js:847
 msgid "Error copying data"
 msgstr "Erreur de copie des données"
 
-#: common/static/js/frepple.js:881 common/static/js/frepple.js.c:885
+#: .\common\static\js\frepple.js:884 .\common\static\js\frepple.js:890
 msgid "Filtered where"
 msgstr "Filtré où"
 
-#: common/static/js/frepple.js:1006
+#: .\common\static\js\frepple.js:1059
+msgid "export selected records to openbravo"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1061 .\common\static\js\frepple.js:1065
+#| msgid "Export"
+msgid "export"
+msgstr "exporter"
+
+#: .\common\static\js\frepple.js:1069
+msgid "connecting to openbravo..."
+msgstr ""
+
+#: .\common\static\js\frepple.js:1079
+msgid "Export successful"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1087
+msgid "close"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1099
+#| msgid "Error saving report settings"
+msgid "Error during export"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1100
+msgid "retry"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1106
+#| msgid "Cancel"
+msgid "cancel"
+msgstr ""
+
+#: .\common\static\js\frepple.js:1187
 msgid "Add"
-msgstr "Ajouter"
+msgstr ""
 
-#: common/static/js/frepple.js:1067
+#: .\common\static\js\frepple.js:1248
 msgid "Reset"
-msgstr "Reset"
+msgstr ""
 
-#: common/static/js/frepple.js:1300
+#: .\common\static\js\frepple.js:1485
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "Charger un fichier Excel ou un fichier texte format CSV"
+msgstr ""
 
-#: common/static/js/frepple.js:1301
+#: .\common\static\js\frepple.js:1486
 msgid "The first row should contain the field names."
 msgstr "La première ligne devrait contenir les noms des champs."
 
-#: common/static/js/frepple.js:1302
+#: .\common\static\js\frepple.js:1487
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Effacer dábord les lignes existantes ET TOUTES LES TABLES ASSOCIEES"
 
-#: common/static/js/frepple.js:1303
+#: .\common\static\js\frepple.js:1488
 msgid "Data file"
 msgstr "Fichier de données"
 
-#: common/static/js/frepple.js:1306
+#: .\common\static\js\frepple.js:1491
 msgid "Import CSV or Excel file"
-msgstr "Importer un fichier CSV ou Excel"
+msgstr ""
 
-#: common/static/js/frepple.js:1310
+#: .\common\static\js\frepple.js:1495
 msgid "Import"
 msgstr "Importer"
 
-#: common/static/js/frepple.js:1785
+#: .\common\static\js\frepple.js:1965
 msgid "Guided tour"
-msgstr "Visite guidée"
+msgstr ""
 
-#: common/static/js/frepple.js:1809
+#: .\common\static\js\frepple.js:1989
 msgid "Previous"
 msgstr "Précédent"
 
-#: common/static/js/frepple.js:1814 common/static/js/frepple.js.c:1947
+#: .\common\static\js\frepple.js:1994 .\common\static\js\frepple.js:2127
 msgid "Stop"
 msgstr "Arrêter"
 
-#: common/static/js/frepple.js:1814 common/static/js/frepple.js.c:1938
+#: .\common\static\js\frepple.js:1994 .\common\static\js\frepple.js:2118
 msgid "Play"
 msgstr "Play"
 
-#: common/static/js/frepple.js:1820
+#: .\common\static\js\frepple.js:2000
 msgid "Next"
 msgstr "Suivant"
 
-#: common/static/js/frepple.js:1913
+#: .\common\static\js\frepple.js:2093
 msgid "out of"
 msgstr "de"
+
+#: .\planningboard\static\planningboard\js\planningboard.js:598
+#, javascript-format
+msgid "%s allocated out of %s"
+msgstr ""
+
+#, fuzzy
+#~| msgid "Export"
+#~ msgid "export: OK"
+#~ msgstr "Exporter"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "error exporting data"
+#~ msgstr "Erreur lors de l'effacement des données"
+
+#, fuzzy
+#~| msgid "Cancel"
+#~ msgid "Cancel task"
+#~ msgstr "Annuler"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "Error retrieving data"
+#~ msgstr "Erreur lors de l'effacement des données"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "Error getting quote info"
+#~ msgstr "Erreur lors de l'effacement des données"
 
 #~ msgid "Table"
 #~ msgstr "Table"

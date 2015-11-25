@@ -244,7 +244,7 @@ class XMLInputString : public XMLInput
     XMLInputString(const string& s) : data(s) {};
 
     /** Parse the specified string. */
-    void parse(Object* pRoot, bool v = false)
+    DECLARE_EXPORT void parse(Object* pRoot, bool v = false)
     {
       /* The MemBufInputSource expects the number of bytes as second parameter.
        * In our case this is the same as the number of characters, but this

@@ -19,7 +19,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.admin.utils import quote
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
@@ -347,18 +347,23 @@ class User(AbstractUser):
               force_update=force_update,
               using=db
               )
-
+            if settings.DEFAULT_USER_GROUP:
+                  grp = Group.objects.all().using(db).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
+                  self.groups.add(grp.id)  
 
     # Continue with the regular save, as if nothing happened.
     self.is_active = tmp_is_active
     self.is_superuser = tmp_is_superuser
-    return super(User, self).save(
+    usr = super(User, self).save(
       force_insert=force_insert,
       force_update=force_update,
       using=using,
       update_fields=update_fields
       )
-
+    if settings.DEFAULT_USER_GROUP and newuser:
+                  grp = Group.objects.all().using(using).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
+                  self.groups.add(grp.id)    
+    return usr
 
 
   def joined_age(self):

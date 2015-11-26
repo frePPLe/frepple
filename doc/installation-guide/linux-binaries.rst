@@ -143,15 +143,17 @@ Here are the steps to get a fully working environment.
       | Change "SECRET_KEY" to some arbitrary value - important for security reasons.
       | Optionally, you can define custom attributes in this file: see below.
 
-   #. | /etc/frepple/license.xml
+   #. | **/etc/frepple/license.xml**
       | No license file is required for the Community Edition.
       | If you are using the Enterprise Edition, replace this file with the
       | license file you received from us.
 
-   #. | /etc/frepple/init.xml
-      | Comment out the lines loading modules you are not using.
+   #. | **/etc/frepple/init.xml**
+      | For a standard deployment this file doesn't need modification.
+      | Comment out the lines loading modules you are not using for a small
+      | performance improvement.
 
-   #. | /etc/httpd/conf.d/z_frepple.conf
+   #. | **/etc/httpd/conf.d/z_frepple.conf**
       | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of
       | the Apache web server.

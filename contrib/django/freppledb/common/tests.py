@@ -28,6 +28,9 @@ from freppledb.common.models import User
 import freppledb.common as common
 import freppledb.input as input
 
+from rest_framework.test import APIClient, APITestCase, APIRequestFactory
+from rest_framework import status
+from django.core.urlresolvers import reverse
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):
@@ -182,3 +185,78 @@ class ExcelTest(TransactionTestCase):
 
   def test_workbook_brazilian_portuguese(self):
     self.run_workbook("pt-br")
+
+
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
+class freppleREST(APITestCase):
+
+
+  fixtures = ["demo"]
+
+  #Default request format is multipart
+  self.factory = APIRequestFactory(enforce_csrf_checks=True) 
+
+  def setUp(self):
+    # Login
+    self.client = APIClient()
+    self.client.login(username='admin', password='admin')
+
+  # REST API framework
+  def test_api_listpages_getapi(self):
+    response = self.client.get('/api/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/demand/')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(demand.objects.count(), 24)
+    data = { 
+	  "name": "Order UFO 25",
+          "description": null,
+          "category": null,
+          "subcategory": null,
+          "item": "product",
+          "location": null,
+          "due": "2013-12-01T00:00:00",
+          "status": "closed",
+          "operation": null,
+          "quantity": "110.0000",
+          "priority": 1,
+          "minshipment": null,
+          "maxlateness": null
+    }
+    response = self.client.post(url, data)
+    self.assertEqual(customer.objects.count(), 1)
+    self.assertEqual(demand.objects.get().name, 'Order UFO 25')
+
+    response = self.client.get('/api/input/customer/')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(customer.objects.count(), 2)
+    data = {
+	  "name": "Customer near Area 51"
+    }
+    self.assertEqual(customer.objects.count(), 1)    
+    self.assertEqual(customer.objects.get().name, 'Customer near Area 51')
+
+  def test_api_detailpages_getapi(self):
+    response = self.client.get('/api/input/demand/Demand 1/')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(demand.objects.get().name, 'Demand 1')
+
+    response = self.client.get('/api/input/customer/Customer near factory 1/')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(customer.objects.get().name, 'Customer near factory 1')
+
+  def test_api_listpages_getjson(self):
+    response = self.client.get('/api/input/demand/',format='json')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(demand.objects.get().pk, 'Demand 1')
+
+    response = self.client.get('/api/input/customer/', format='json')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(customer.objects.get().pk, 'Customer near factory 1')
+
+  def test_api_detailpages_getjson(self):
+    response = self.client.get('/api/input/demand/Demand 1/')
+    self.assertEqual(response.status_code, 200)
+    response = self.client.get('/api/input/customer/Customer near factory 1/')
+    self.assertEqual(response.status_code, 200)

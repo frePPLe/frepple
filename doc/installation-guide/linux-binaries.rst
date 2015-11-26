@@ -275,8 +275,9 @@ inspiration for your own deployments.
   psql template1 -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario3 encoding 'utf-8' owner frepple"
   sed -i 's/peer$/md5/g' /etc/postgresql/9.*/main/pg_hba.conf
-  service postgresql restart
   exit
+  
+  sudo service postgresql restart
 
   # Install python3 and required python modules
   sudo apt-get -y install python3 python3-pip

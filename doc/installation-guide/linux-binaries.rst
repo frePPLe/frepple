@@ -14,7 +14,7 @@ Supported distributions
 Binary installation packages are available for the following Linux
 distributions:
 
-#. | **Fedora 20** and higher
+#. | **Fedora 22** and higher
    | FrePPLe is included in the official repositories.
 
    .. image:: _images/fedorainstall.png
@@ -143,15 +143,17 @@ Here are the steps to get a fully working environment.
       | Change "SECRET_KEY" to some arbitrary value - important for security reasons.
       | Optionally, you can define custom attributes in this file: see below.
 
-   #. | /etc/frepple/license.xml
+   #. | **/etc/frepple/license.xml**
       | No license file is required for the Community Edition.
       | If you are using the Enterprise Edition, replace this file with the
       | license file you received from us.
 
-   #. | /etc/frepple/init.xml
-      | Comment out the lines loading modules you are not using.
+   #. | **/etc/frepple/init.xml**
+      | For a standard deployment this file doesn't need modification.
+      | Comment out the lines loading modules you are not using for a small
+      | performance improvement.
 
-   #. | /etc/httpd/conf.d/z_frepple.conf
+   #. | **/etc/httpd/conf.d/z_frepple.conf**
       | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of
       | the Apache web server.
@@ -258,8 +260,6 @@ inspiration for your own deployments.
 
 ::
 
-  export FREPPLERELEASE=3.0
-
   # Bring the server up to date
   sudo apt-get -y -q update
   sudo apt-get -y -q upgrade
@@ -274,9 +274,10 @@ inspiration for your own deployments.
   psql template1 -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario3 encoding 'utf-8' owner frepple"
-  sed -i 's/peer$/md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   exit
-  
+  # Allow local connections to the database using a username and password.
+  # The default peer authentication isn't good for frepple.
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   sudo service postgresql restart
 
   # Install python3 and required python modules
@@ -312,8 +313,6 @@ inspiration for your own deployments.
 
 ::
 
-  export FREPPLERELEASE=3.0
-
   # Update and upgrade
   sudo -S -n yum -y update
 
@@ -329,7 +328,10 @@ inspiration for your own deployments.
   psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
-  sed -i 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf
+  exit
+  # Allow local connections to the database using a username and password.
+  # The default peer authentication isn't good for frepple.
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   sudo service postgresql restart
 
   # Install python3 and required python modules
@@ -355,8 +357,6 @@ You can use it as a guideline and inspiration for your own deployments.
 
 ::
 
-  export FREPPLERELEASE=3.0
-
   # Update and Upgrade
   sudo zypper update
   sudo zypper upgrade
@@ -379,8 +379,10 @@ You can use it as a guideline and inspiration for your own deployments.
   psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
-  sed -i 's/peer$/md5/g' /var/lib/pgsql/data/pg_hba.conf
   exit
+  # Allow local connections to the database using a username and password.
+  # The default peer authentication isn't good for frepple.
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   rcpostgrsql restart
 
   # Install python3 and required python modules

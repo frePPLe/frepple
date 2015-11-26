@@ -3,215 +3,321 @@
 	<name>Sample Module</name>
 	<current>2009-01-01T00:00:00</current>
 	<locations>
-		<location name="distribution centre">
+		<location>
+			<name>distribution centre</name>
 		</location>
-		<location name="factory 1">
+		<location>
+			<name>factory 1</name>
 		</location>
-		<location name="factory 2">
+		<location>
+			<name>factory 2</name>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="capacity factory 1">
+		<calendar>
+			<name>capacity factory 1</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="capacity factory 2">
+		<calendar>
+			<name>capacity factory 2</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time">
-		</operation>
-		<operation name="make product in factory 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="make product in factory 2" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply distribution centre" xsi:type="operation_alternate">
-			<alternates>
-				<alternate>
-					<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-					<priority>1</priority>
-				</alternate>
-				<alternate>
-					<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
-					<priority>2</priority>
-				</alternate>
-			</alternates>
-		</operation>
-		<operation name="transport supply from factory 1" xsi:type="operation_transport">
-			<duration>P1D</duration>
-			<frombuffer name="product in factory 1"/>
-			<tobuffer name="product in distribution centre"/>
-		</operation>
-		<operation name="transport supply from factory 2" xsi:type="operation_transport">
-			<duration>P1D</duration>
-			<frombuffer name="product in factory 2"/>
-			<tobuffer name="product in distribution centre"/>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>capacity of factory 1</name>
+			<maximum_calendar>
+				<name>capacity factory 1</name>
+			</maximum_calendar>
+		</resource>
+		<resource>
+			<name>capacity of factory 2</name>
+			<maximum_calendar>
+				<name>capacity factory 2</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
-		<item name="product">
+		<item>
+			<name>product</name>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="product in distribution centre">
-			<producing name="supply distribution centre" xsi:type="operation_alternate"/>
-			<item name="product"/>
-			<location name="distribution centre"/>
+		<buffer>
+			<name>product in distribution centre</name>
+			<producing xsi:type="operation_alternate">
+				<name>supply distribution centre</name>
+			</producing>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>distribution centre</name>
+			</location>
 			<onhand>5</onhand>
 		</buffer>
-		<buffer name="product in factory 1">
-			<producing name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<item name="product"/>
-			<location name="factory 1"/>
+		<buffer>
+			<name>product in factory 1</name>
+			<producing>
+				<name>make product in factory 1</name>
+			</producing>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>factory 1</name>
+			</location>
 		</buffer>
-		<buffer name="product in factory 2">
-			<producing name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<item name="product"/>
-			<location name="factory 2"/>
+		<buffer>
+			<name>product in factory 2</name>
+			<producing>
+				<name>make product in factory 2</name>
+			</producing>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>factory 2</name>
+			</location>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery product from distribution centre</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>product in distribution centre</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>make product in factory 1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>capacity of factory 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in factory 1</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>make product in factory 2</name>
+			<loads>
+				<load>
+					<resource>
+						<name>capacity of factory 2</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in factory 2</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>supply distribution centre</name>
+			<suboperations>
+				<suboperation>
+					<operation xsi:type="operation_transport">
+						<name>transport supply from factory 1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation xsi:type="operation_transport">
+						<name>transport supply from factory 2</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation xsi:type="operation_transport">
+			<name>transport supply from factory 1</name>
+			<flows>
+				<flow xsi:type="flow">
+					<buffer>
+						<name>product in factory 1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in distribution centre</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<frombuffer>
+				<name>product in factory 1</name>
+			</frombuffer>
+			<tobuffer>
+				<name>product in distribution centre</name>
+			</tobuffer>
+		</operation>
+		<operation xsi:type="operation_transport">
+			<name>transport supply from factory 2</name>
+			<flows>
+				<flow xsi:type="flow">
+					<buffer>
+						<name>product in factory 2</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in distribution centre</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<frombuffer>
+				<name>product in factory 2</name>
+			</frombuffer>
+			<tobuffer>
+				<name>product in distribution centre</name>
+			</tobuffer>
+		</operation>
+	</operations>
 	<demands>
-		<demand name="order 1">
-			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>order 1</name>
 			<quantity>10</quantity>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
 			<due>2009-01-03T12:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 2">
-			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>order 2</name>
 			<quantity>10</quantity>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
 			<due>2009-01-03T12:00:00</due>
 			<priority>2</priority>
 		</demand>
 	</demands>
-	<resources>
-		<resource name="capacity of factory 1">
-			<maximum_calendar name="capacity factory 1"/>
-		</resource>
-		<resource name="capacity of factory 2">
-			<maximum_calendar name="capacity factory 2"/>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<resource name="capacity of factory 1"/>
-		</load>
-		<load>
-			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<resource name="capacity of factory 2"/>
-		</load>
-	</loads>
-	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
-			<buffer name="product in distribution centre"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<buffer name="product in factory 1"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<buffer name="product in factory 2"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow">
-			<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-			<buffer name="product in factory 1"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="transport supply from factory 1" xsi:type="operation_transport"/>
-			<buffer name="product in distribution centre"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow">
-			<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
-			<buffer name="product in factory 2"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="transport supply from factory 2" xsi:type="operation_transport"/>
-			<buffer name="product in distribution centre"/>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
-		<operationplan id="2" operation="delivery product from distribution centre">
-			<demand name="order 2"/>
+		<operationplan>
+			<id>2</id>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
+			<demand>
+				<name>order 2</name>
+			</demand>
 			<start>2009-01-03T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="3" operation="delivery product from distribution centre">
-			<demand name="order 1"/>
+		<operationplan>
+			<id>3</id>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
+			<demand>
+				<name>order 1</name>
+			</demand>
 			<start>2009-01-03T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="4" operation="make product in factory 1">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>make product in factory 1</name>
+			</operation>
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="5" operation="make product in factory 2">
+		<operationplan>
+			<id>5</id>
+			<operation>
+				<name>make product in factory 2</name>
+			</operation>
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="6" operation="supply distribution centre">
+		<operationplan>
+			<id>6</id>
+			<operation xsi:type="operation_alternate">
+				<name>supply distribution centre</name>
+			</operation>
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="7" operation="supply distribution centre">
+		<operationplan>
+			<id>7</id>
+			<operation xsi:type="operation_alternate">
+				<name>supply distribution centre</name>
+			</operation>
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>5</quantity>
-			<criticality>0</criticality>
 		</operationplan>
-		<operationplan id="8" operation="transport supply from factory 1">
+		<operationplan>
+			<id>8</id>
+			<operation xsi:type="operation_transport">
+				<name>transport supply from factory 1</name>
+			</operation>
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>5</quantity>
-			<criticality>0</criticality>
-			<owner id="7" operation="supply distribution centre"/>
+			<owner>
+				<id>7</id>
+			</owner>
 		</operationplan>
-		<operationplan id="9" operation="transport supply from factory 2">
+		<operationplan>
+			<id>9</id>
+			<operation xsi:type="operation_transport">
+				<name>transport supply from factory 2</name>
+			</operation>
 			<start>2009-01-02T12:00:00</start>
 			<end>2009-01-03T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>0</criticality>
-			<owner id="6" operation="supply distribution centre"/>
+			<owner>
+				<id>6</id>
+			</owner>
 		</operationplan>
 	</operationplans>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;product in distribution centre&apos; has material excess of 5</description>
-			<start>1971-01-01T00:00:00</start>
-			<end>2009-01-03T12:00:00</end>
-			<weight>5</weight>
-		</problem>
-	</problems>
 </plan>

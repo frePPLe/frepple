@@ -3,162 +3,197 @@
 	<name>Sample Module</name>
 	<current>2009-01-01T00:00:00</current>
 	<locations>
-		<location name="distribution centre">
+		<location>
+			<name>distribution centre</name>
 		</location>
-		<location name="factory 1">
+		<location>
+			<name>factory 1</name>
 		</location>
-		<location name="factory 2">
+		<location>
+			<name>factory 2</name>
 		</location>
 	</locations>
 	<calendars>
-		<calendar name="capacity factory 1">
+		<calendar>
+			<name>capacity factory 1</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
-		<calendar name="capacity factory 2">
+		<calendar>
+			<name>capacity factory 2</name>
 			<buckets>
-				<bucket id="1" start="2009-01-01T00:00:00">
+				<bucket>
+					<id>1</id>
+					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time">
-		</operation>
-		<operation name="make product in factory 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="make product in factory 2" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply distribution centre" xsi:type="operation_alternate">
-			<alternates>
-			</alternates>
-		</operation>
-		<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport">
-			<duration>P1D</duration>
-			<frombuffer name="product in factory 1"/>
-			<tobuffer name="product in factory 2"/>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>capacity of factory 1</name>
+			<maximum_calendar>
+				<name>capacity factory 1</name>
+			</maximum_calendar>
+		</resource>
+		<resource>
+			<name>capacity of factory 2</name>
+			<maximum_calendar>
+				<name>capacity factory 2</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
-		<item name="product">
+		<item>
+			<name>product</name>
 		</item>
 	</items>
 	<buffers>
-		<buffer name="product in factory 1">
-			<producing name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<item name="product"/>
-			<location name="factory 1"/>
+		<buffer>
+			<name>product in factory 1</name>
+			<producing>
+				<name>make product in factory 1</name>
+			</producing>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>factory 1</name>
+			</location>
 		</buffer>
-		<buffer name="product in factory 2">
-			<producing name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<item name="product"/>
-			<location name="factory 2"/>
+		<buffer>
+			<name>product in factory 2</name>
+			<producing>
+				<name>make product in factory 2</name>
+			</producing>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>factory 2</name>
+			</location>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery product from distribution centre</name>
+		</operation>
+		<operation>
+			<name>make product in factory 1</name>
+			<loads>
+				<load>
+					<resource>
+						<name>capacity of factory 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in factory 1</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>make product in factory 2</name>
+			<loads>
+				<load>
+					<resource>
+						<name>capacity of factory 2</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in factory 2</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>supply distribution centre</name>
+		</operation>
+		<operation xsi:type="operation_transport">
+			<name>transport from factories 1 to factory 2</name>
+			<flows>
+				<flow xsi:type="flow">
+					<buffer>
+						<name>product in factory 1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<buffer>
+						<name>product in factory 2</name>
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<frombuffer>
+				<name>product in factory 1</name>
+			</frombuffer>
+			<tobuffer>
+				<name>product in factory 2</name>
+			</tobuffer>
+		</operation>
+	</operations>
 	<demands>
-		<demand name="order 1">
-			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>order 1</name>
 			<quantity>10</quantity>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
 			<due>2009-01-03T12:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 2">
-			<operation name="delivery product from distribution centre" xsi:type="operation_fixed_time"/>
+		<demand>
+			<name>order 2</name>
 			<quantity>10</quantity>
-			<item name="product"/>
+			<item>
+				<name>product</name>
+			</item>
+			<operation>
+				<name>delivery product from distribution centre</name>
+			</operation>
 			<due>2009-01-03T12:00:00</due>
 			<priority>2</priority>
 		</demand>
 	</demands>
-	<resources>
-		<resource name="capacity of factory 1">
-			<maximum_calendar name="capacity factory 1"/>
-		</resource>
-		<resource name="capacity of factory 2">
-			<maximum_calendar name="capacity factory 2"/>
-		</resource>
-	</resources>
-	<loads>
-		<load>
-			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<resource name="capacity of factory 1"/>
-		</load>
-		<load>
-			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<resource name="capacity of factory 2"/>
-		</load>
-	</loads>
-	<flows>
-		<flow xsi:type="flow_end">
-			<operation name="make product in factory 1" xsi:type="operation_fixed_time"/>
-			<buffer name="product in factory 1"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="make product in factory 2" xsi:type="operation_fixed_time"/>
-			<buffer name="product in factory 2"/>
-			<quantity>1</quantity>
-		</flow>
-		<flow xsi:type="flow">
-			<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport"/>
-			<buffer name="product in factory 1"/>
-			<quantity>-1</quantity>
-		</flow>
-		<flow xsi:type="flow_end">
-			<operation name="transport from factories 1 to factory 2" xsi:type="operation_transport"/>
-			<buffer name="product in factory 2"/>
-			<quantity>1</quantity>
-		</flow>
-	</flows>
 	<operationplans>
-		<operationplan id="4" operation="make product in factory 1">
+		<operationplan>
+			<id>4</id>
+			<operation>
+				<name>make product in factory 1</name>
+			</operation>
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>5</quantity>
-			<criticality>999</criticality>
 		</operationplan>
-		<operationplan id="5" operation="make product in factory 2">
+		<operationplan>
+			<id>5</id>
+			<operation>
+				<name>make product in factory 2</name>
+			</operation>
 			<start>2009-01-01T12:00:00</start>
 			<end>2009-01-02T12:00:00</end>
 			<quantity>10</quantity>
-			<criticality>999</criticality>
 		</operationplan>
 	</operationplans>
-	<problems>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;product in factory 1&apos; has material excess of 5</description>
-			<start>2009-01-02T12:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>5</weight>
-		</problem>
-		<problem>
-			<name>material excess</name>
-			<description>Buffer &apos;product in factory 2&apos; has material excess of 10</description>
-			<start>2009-01-02T12:00:00</start>
-			<end>2030-12-31T00:00:00</end>
-			<weight>10</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 1&apos; is not planned</description>
-			<start>2009-01-03T12:00:00</start>
-			<end>2009-01-03T12:00:00</end>
-			<weight>10</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 2&apos; is not planned</description>
-			<start>2009-01-03T12:00:00</start>
-			<end>2009-01-03T12:00:00</end>
-			<weight>10</weight>
-		</problem>
-	</problems>
 </plan>

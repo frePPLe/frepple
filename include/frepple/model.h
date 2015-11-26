@@ -809,6 +809,7 @@ class HasProblems
 {
     friend class Problem::iterator;
     friend class Problem;
+    friend class Plannable;
   public:
     class EntityIterator;
 
@@ -839,13 +840,9 @@ class HasProblems
       */
     virtual void updateProblems() = 0;
 
-    /** Return an iterator over the list of problems. */
-    DECLARE_EXPORT Problem::iterator getProblems() const;
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addBoolField<Cls>(Tags::detectproblems, &Cls::getDetectProblems, &Cls::setDetectProblems, BOOL_TRUE);
-      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
     }
 
   private:
@@ -1158,8 +1155,12 @@ class Plannable : public HasProblems, public Solvable
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
+      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
       HasProblems::registerFields<Cls>(m);
     }
+
+    /** Return an iterator over the list of problems. */
+    DECLARE_EXPORT Problem::iterator getProblems() const;
 
   private:
     /** Stores whether this entity should be skip problem detection, or not. */
@@ -6679,6 +6680,9 @@ class Demand
     /** Returns the total amount that has been planned. */
     DECLARE_EXPORT double getPlannedQuantity() const;
 
+    /** Return an iterator over the problems of this demand. */
+    DECLARE_EXPORT Problem::List::iterator getProblemIterator() const;
+
     static int initialize();
 
     virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
@@ -6759,7 +6763,7 @@ class Demand
       m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_FULL);
-      m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL);
+      m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
     }
 

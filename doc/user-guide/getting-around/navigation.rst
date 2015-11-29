@@ -16,9 +16,9 @@ Navigating the user interface is easy and intuitive.
   | The breadcrumbs allow you to navigate with a single click to a screen
     you visited before.
 
-* | **Context menus**
+* | **Detail links**
   | The modelling objects have an triangular icon next to them. Clicking on
-    it will open a context menu with a selection of detailed reports on the
+    it will open a screen with a selection of detailed reports on the
     object.
 
 The screenshot below illustrates each of these methods.

@@ -37,7 +37,7 @@ A couple of notes on the CSV-format:
    Exporting to Excel format avoids these common pitfalls from the CSV
    text-files.
 
-In the tools/execute menu you also have the capability to export all entities
+In the admin/execute menu you also have the capability to export all entities
 into a single Excel workbook.
 
 .. image:: ../_images/exporting-data.png

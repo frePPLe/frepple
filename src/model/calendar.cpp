@@ -310,6 +310,17 @@ DECLARE_EXPORT CalendarBucket* Calendar::findBucket(int ident) const
 }
 
 
+DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
+{
+  CalendarBucket* bckt = new CalendarBucket();
+  bckt->setCalendar(this);
+  bckt->setStart(st);
+  bckt->setEnd(nd);
+  bckt->setValue(val);
+  return bckt;
+}
+
+
 DECLARE_EXPORT Object* CalendarBucket::createBucket(
   const MetaClass* cat, const DataValueDict& atts
   )

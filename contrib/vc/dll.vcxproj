@@ -71,6 +71,8 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -83,7 +85,7 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" ..\..\bin &amp;&amp; copy "$(TargetPath)" ..\..\bin\frepple_d.pyd</Command>
+      <Command>copy "$(TargetPath)" ..\..\bin</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy frepple.dll to the bin folder</Message>
@@ -113,7 +115,7 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" ..\..\bin &amp;&amp; copy "$(TargetPath)" ..\..\bin\frepple.pyd</Command>
+      <Command>copy "$(TargetPath)" ..\..\bin</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy frepple.dll to the bin folder</Message>

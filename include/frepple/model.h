@@ -480,6 +480,9 @@ class Calendar : public HasName<Calendar>, public HasSource
       */
     DECLARE_EXPORT CalendarBucket* findBucket(int ident) const;
 
+    /** Add a new bucket to the calendar. */
+    DECLARE_EXPORT CalendarBucket* addBucket(Date, Date, double);
+
     /** Find an existing bucket with a given identifier, or create a new one.
       * If no identifier is passed, we always create a new bucket and automatically
       * generate a unique identifier for it.

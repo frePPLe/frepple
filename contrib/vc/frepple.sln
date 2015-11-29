@@ -20,6 +20,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dll", "dll.vcxproj", "{3614
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "main.vcxproj", "{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pythonextension", "pythonextension.vcxproj", "{DD3E871E-935F-4000-99E1-BF8E34E36A40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{36145D08-F369-4F6E-8BB6-13B1416CEA66} = {36145D08-F369-4F6E-8BB6-13B1416CEA66}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -46,6 +51,10 @@ Global
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Debug|Win32.Build.0 = Debug|Win32
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Release|Win32.ActiveCfg = Release|Win32
 		{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}.Release|Win32.Build.0 = Release|Win32
+		{DD3E871E-935F-4000-99E1-BF8E34E36A40}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD3E871E-935F-4000-99E1-BF8E34E36A40}.Debug|Win32.Build.0 = Debug|Win32
+		{DD3E871E-935F-4000-99E1-BF8E34E36A40}.Release|Win32.ActiveCfg = Release|Win32
+		{DD3E871E-935F-4000-99E1-BF8E34E36A40}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

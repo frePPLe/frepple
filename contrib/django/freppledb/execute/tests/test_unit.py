@@ -60,7 +60,7 @@ class execute_with_commands(TransactionTestCase):
     # across different version and platforms, we can only do a rough
     # check on the output.
     management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertTrue(output.models.Problem.objects.count() > 80)
+    self.assertTrue(output.models.Problem.objects.count() > 70)
     self.assertTrue(output.models.FlowPlan.objects.count() > 500)
     self.assertTrue(output.models.LoadPlan.objects.count() > 40)
     self.assertTrue(output.models.OperationPlan.objects.count(), 350)

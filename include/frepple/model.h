@@ -7110,7 +7110,7 @@ class HasProblems::EntityIterator
 
     /** Used to create an iterator pointing beyond the last HasProblems
       * object. */
-    explicit EntityIterator(unsigned short i) : type(i), bufIter(NULL) {}
+    explicit EntityIterator(unsigned short i) : bufIter(NULL), type(i) {}
 
     /** Copy constructor. */
     DECLARE_EXPORT EntityIterator(const EntityIterator&);

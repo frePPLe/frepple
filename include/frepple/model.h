@@ -7192,6 +7192,15 @@ class Problem::iterator
       iter = (*eiter != HasProblems::endEntity()) ? (*eiter)->firstProblem : NULL;
     }
 
+    /** Copy constructor. */
+    DECLARE_EXPORT iterator(const iterator& i) : iter(i.iter), owner(i.owner)
+    {
+      if (i.eiter)
+        eiter = new HasProblems::EntityIterator(*(i.eiter));
+      else
+        eiter = NULL;
+    }
+
     /** Destructor. */
     DECLARE_EXPORT ~iterator()
     {

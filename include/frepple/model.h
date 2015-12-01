@@ -6303,8 +6303,8 @@ class Load
       return hasAlts;
     }
 
-    /** Returns the load of which this one is an alternate.<br>
-      * NULL is return where there is none.
+    /** Returns the load for which this one is an alternate.<br>
+      * NULL is returned where there is none.
       */
     Load* getAlternate() const
     {
@@ -6314,8 +6314,9 @@ class Load
     /** Define the load of which this one is an alternate. */
     DECLARE_EXPORT void setAlternate(Load *);
 
-    /** Returns the load of which this one is an alternate.<br>
-      * NULL is return where there is none.
+    /** Returns the name of the load for which this one
+      * is an alternate. An empty string is returned when
+      * there is none.
       */
     string getAlternateName() const
     {

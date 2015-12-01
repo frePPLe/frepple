@@ -375,12 +375,12 @@
     <operation name="5. Make item" xsi:type="operation_time_per">
       <flows>
         <flow xsi:type="flow_end">
-      	  <buffer name="5. buffer">
-      	    <item name="5. item" />
-      	    <producing name="5. Make item" />
-      	  </buffer>
-      	  <quantity>1</quantity>
-      	</flow>
+          <buffer name="5. buffer">
+            <item name="5. item" />
+            <producing name="5. Make item" xsi:type="operation_time_per"/>
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
       </flows>
       <loads>
         <load>
@@ -405,12 +405,12 @@
       <operation name="5. Deliver item" xsi:type="operation_fixed_time">
         <flows>
           <flow xsi:type="flow_start">
-        	  <buffer name="5. buffer">
-        	    <item name="5. item" />
-        	    <producing name="5. Make item" />
-        	  </buffer>
-        	  <quantity>-1</quantity>
-        	</flow>
+            <buffer name="5. buffer">
+              <item name="5. item" />
+              <producing name="5. Make item" />
+            </buffer>
+            <quantity>-1</quantity>
+          </flow>
         </flows>
         <duration>P1D</duration>
       </operation>

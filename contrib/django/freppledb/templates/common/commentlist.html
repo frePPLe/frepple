@@ -4,8 +4,10 @@
 <script type="text/javascript">
 function objectfmt(cellvalue, options, row)
 {
-  return cellvalue
-     + "<span class='context fa fa-caret-right' role='" + row['content_type'] + "'></span>";
+  var role = row['app'] + "/" + row['model']
+  return cellvalue + "<a href='/detail/" + role
+    + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='"
+    + role + "'></span></a>";
 }
 </script>
 {% endblock %}

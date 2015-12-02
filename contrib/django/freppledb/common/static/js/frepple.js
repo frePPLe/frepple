@@ -139,13 +139,8 @@ var upload = {
 
 
 //----------------------------------------------------------------------------
-// Custom formatter functions for the grid cells. Most of the custom handlers
-// just add an appropriate context menu.
+// Custom formatter functions for the grid cells.
 //----------------------------------------------------------------------------
-
-function linkunformat (cellvalue, options, cell) {
-  return cellvalue;
-}
 
 function opendetail(event) {
   var database = $('#database').val();
@@ -233,72 +228,6 @@ jQuery.extend($.fn.fmatter.percentage, {
     unformat : function(cellvalue, options, cell) {
       return cellvalue;
       }
-});
-jQuery.extend($.fn.fmatter.item, {
-    unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.buffer, {
-    unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.resource, {
-    unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.forecast, {
-    unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.detail, {
-	  unformat : linkunformat
-	});
-jQuery.extend($.fn.fmatter.customer, {
-	  unformat : linkunformat
-	});
-jQuery.extend($.fn.fmatter.supplier, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.operation, {
-    unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.demand, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.location, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.calendar, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.setupmatrix, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.user, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.group, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.flow, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.load, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.bucket, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.parameter, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.skill, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.resourceskill, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.itemsupplier, {
-  unformat : linkunformat
-});
-jQuery.extend($.fn.fmatter.itemdistribution, {
-  unformat : linkunformat
 });
 
 
@@ -814,7 +743,7 @@ var openbravo = {
 	          $('#popup').html(gettext("connecting to openbravo..."));
 	          // Send the update to the server
 	          var database = $('#database').val();
-	          database = (database===undefined || database==='default') ? '' : '/' + database;	          
+	          database = (database===undefined || database==='default') ? '' : '/' + database;
 	          $.ajax({
 	               url: database + "/openbravo/upload/",
 	               data: JSON.stringify(data),
@@ -963,7 +892,7 @@ $(document).mousedown(function (event) {
     contextMenu.css('display', 'none');
     contextMenu = null;
   }
-  
+
   // We clicked on a context menu. Display that now.
   if ($(event.target).hasClass('context'))
   {

@@ -46,9 +46,9 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
   )
 
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permission": 'common.change_user'},
-    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
-    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    {"name": 'edit', "label": _("edit"), "view": "admin:common_user_change", "permission": 'common.change_user'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:common_user_comment"},
+    {"name": 'history', "label": _("history"), "view": "admin:common_user_history"},
     ]
 
   def get_readonly_fields(self, request, obj=None):
@@ -66,9 +66,9 @@ data_site.register(User, MyUserAdmin)
 class MyGroupAdmin(MultiDBModelAdmin):
   pass
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permission": 'auth.change_group'},
-    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
-    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    {"name": 'edit', "label": _("edit"), "view": "admin:common_group_change", "permission": 'auth.change_group'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:common_group_comment"},
+    {"name": 'history', "label": _("history"), "view": "admin:common_group_history"},
     ]
 data_site.register(Group, MyGroupAdmin)
 
@@ -98,9 +98,9 @@ class Parameter_admin(MultiDBModelAdmin):
   form = ParameterForm
   exclude = ('source',)
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permission": 'common.change_parameter'},
-    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
-    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    {"name": 'edit', "label": _("edit"), "view": "admin:common_parameter_change", "permission": 'common.change_parameter'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:common_parameter_comment"},
+    {"name": 'history', "label": _("history"), "view": "admin:common_parameter_history"},
     ]
 data_site.register(Parameter, Parameter_admin)
 
@@ -123,9 +123,9 @@ class BucketDetail_admin(MultiDBModelAdmin):
   save_on_top = True
   exclude = ('source',)
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permission": 'common.change_bucketdetail'},
-    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
-    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    {"name": 'edit', "label": _("edit"), "view": "admin:common_bucketdetail_change", "permission": 'common.change_bucketdetail'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:common_bucketdetail_comment"},
+    {"name": 'history', "label": _("history"), "view": "admin:common_bucketdetail_history"},
     ]
 data_site.register(BucketDetail, BucketDetail_admin)
 
@@ -136,8 +136,8 @@ class Bucket_admin(MultiDBModelAdmin):
   inlines = [ BucketDetail_inline, ]
   exclude = ('source',)
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  MultiDBModelAdmin.change_view, "permission": 'common.change_bucket'},
-    {"name": 'comments', "label": _("comments"), "view": MultiDBModelAdmin.comment_view},
-    {"name": 'history', "label": _("history"), "view": MultiDBModelAdmin.history_view},
+    {"name": 'edit', "label": _("edit"), "view": "admin:common_bucket_change", "permission": 'common.change_bucket'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:common_bucket_comment"},
+    {"name": 'history', "label": _("history"), "view": "admin:common_group_history"},
     ]
 data_site.register(Bucket, Bucket_admin)

@@ -55,8 +55,8 @@ class OverviewReport(GridPivot):
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
-    request.session['lasttab'] = 'plan'
     if args and args[0]:
+      request.session['lasttab'] = 'plan'
       return {
         'units': reportclass.getUnits(request),
         'title': capfirst(force_text(Resource._meta.verbose_name) + " " + args[0]),

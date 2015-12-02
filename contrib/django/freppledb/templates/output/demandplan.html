@@ -1,8 +1,5 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}{% if args.0 %}
-{% include "itemtabs.html" %}<div style="clear:both"></div>
-{% endif %}{{block.super}}
-{% endblock %}
+{% block before_table %}{% if args.0 %}{% tabs "input.item" %}{% endif %}{{block.super}}{% endblock %}
 
 {% comment %} TODO demand field can point to a demand or a forecast {% endcomment %}

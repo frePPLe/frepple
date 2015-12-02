@@ -24,6 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext, loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_text
@@ -390,12 +391,11 @@ def detail(request, app, model, object_id):
   if not newtab:
     newtab = admn.tabs[0]
 
-  # Convert a view class into a function when accessed the first time
-  if inspect.isclass(newtab['view']):
-    newtab['view'] = newtab['view'].as_view()
+  # Convert a view name into a function when accessed the first time
+  viewfunc = newtab.get('viewfunc', None)
+  if not viewfunc:
+    url = reverse(newtab['view'], args=("dummy",))
+    newtab['viewfunc'] = resolve(url).func
 
   # Open the tab
-  if newtab['view'].__name__ != newtab['view'].__qualname__:
-    return newtab['view'](admn, request, object_id)
-  else:
-    return newtab['view'](request, object_id)
+  return newtab['viewfunc'](request, object_id)

@@ -1,9 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}{% if args.0 %}
-{% include "buffertabs.html" %}<div style="clear:both"></div>
-{% endif %}{{block.super}}
-{% endblock %}
+{% block before_table %}{% if args.0 %}{% tabs "input.buffer" %}{% endif %}{{block.super}}{% endblock %}
 
 {% comment %} TODO operation column needs to distinguish between existing and non-existing operations
 <td>{% if i.operation_in %}{% superlink i.operationplan__operation operation %}{% else %}{{i.operationplan__operation}}{% endif %}</td>

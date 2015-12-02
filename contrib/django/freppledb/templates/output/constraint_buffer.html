@@ -1,8 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}{% include "buffertabs.html" %}<div style="clear:both"></div>
-{{block.super}}
-{% endblock %}
+{% block before_table %}{% tabs "input.buffer" %}{{block.super}}{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">

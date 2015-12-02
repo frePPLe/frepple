@@ -183,10 +183,51 @@ class ModelTabs(Node):
     self.model = model
 
   def render(self, context):
+    from django.db.models.options import Options
+    from django.contrib.contenttypes.models import ContentType
+    from freppledb.admin import data_site
+    from django.core.urlresolvers import reverse
     try:
+      # Look up the admin class to use
       model = Variable(self.model).resolve(context)
-      template = get_template("%stabs.html" % model)
-      return template.render(context)
+      if isinstance(model, Options):
+        ct = ContentType.objects.get(app_label=model.app_label, model=model.object_name.lower())
+      else:
+        model = model.split(".")
+        ct = ContentType.objects.get(app_label=model[0], model=model[1])
+      admn = data_site._registry[ct.model_class()]
+      if not hasattr(admn, 'tabs'):
+        return ''
+
+      # Render the admin class
+      result = ['<div class="frepple-tabs" id="tabs"><ul role="tablist">']
+      obj = context['object_id']
+      active_tab = context.get('active_tab', 'edit')
+      for tab in admn.tabs:
+        if 'permissions' in tab:
+          # A single permission is required
+          if isinstance(tab['permissions'], str):
+            if not context['request'].user.has_perm(tab['permissions']):
+              continue
+          else:
+            # A list or tuple of permissions is given
+            ok =  True
+            for p in tab['permissions']:
+              if not context['request'].user.has_perm(p):
+                ok = False
+                break
+            if not ok:
+              continue
+        # Append to the results
+        result.append(
+          '<li %srole="tab"><a class="ui-tabs-anchor" href="%s%s">%s</a></li>' % (
+          'class="frepple-tabs-active" ' if active_tab == tab['name'] else '',
+          context['request'].prefix,
+          reverse(tab['view'], args=(obj,)),
+          force_text(tab['label']).capitalize()
+          ))
+      result.append('</ul></div>')
+      return '\n'.join(result)
     except:
       if settings.TEMPLATE_DEBUG:
         raise
@@ -204,8 +245,8 @@ def get_modeltabs(parser, token):
     raise TemplateSyntaxError("'%s' tag requires 1 argument" % bits[0])
   return ModelTabs(bits[1])
 
+get_modeltabs.is_safe = True
 register.tag('tabs', get_modeltabs)
-
 
 
 #

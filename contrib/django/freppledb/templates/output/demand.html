@@ -15,10 +15,7 @@ $(function(){ graph.header(); })
 <li class="ui-menu-item"><a id="{{request.prefix}}/demandplan/{value}/?o=5a&amp;plandate__gte={startdate}&amp;plandate__lt={enddate}">{% trans 'detail'|capfirst %}</a></li>
 </ul></div>{% endblock %}
 
-{% block tools %}{% if args.0 %}
-{% include "itemtabs.html" %}
-{% endif %}{{block.super}}
-{% endblock %}
+{% block tools %}{% if args.0 %}{% tabs "input.item" %}{% endif %}{{block.super}}{% endblock %}
 
 {% block before_table %}{% if args.0 %}
 <div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>

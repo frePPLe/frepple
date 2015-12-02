@@ -1,9 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}
-{% include "operationtabs.html" %}<div style="clear:both"></div>
-{{block.super}}
-{% endblock %}
+{% block before_table %}{% tabs "input.operation" %}{{block.super}}{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">

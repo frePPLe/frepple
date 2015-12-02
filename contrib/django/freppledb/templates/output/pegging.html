@@ -92,9 +92,7 @@ resizeStop: gantt.redraw,
 <span onclick="grid.showCustomize(false)" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench fa-lg"></span>
 {% endblock %}
 
-{% block tools %}
-{% include "demandtabs.html" %}
-{% endblock %}
+{% block tools %}{% tabs "input.demand" %}{% endblock %}
 
 {% comment %}
 TODO operation can be hidden and have no link

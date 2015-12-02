@@ -15,6 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from functools import update_wrapper
+
+from django.conf.urls import url
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib import admin
@@ -60,6 +63,19 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   The level of customization is relatively high, and this code is a bit of a
   concern for future upgrades of Django...
   '''
+
+  def get_urls(self):
+    def wrap(view):
+      def wrapper(*args, **kwargs):
+        return self.admin_site.admin_view(view)(*args, **kwargs)
+      return update_wrapper(wrapper, view)
+
+    urls = super(MultiDBModelAdmin, self).get_urls()
+    my_urls = [
+      url(r'^(.+)/comment/$', wrap(self.comment_view), name='%s_%s_comment' % (self.model._meta.app_label, self.model._meta.model_name)),
+      ]
+    return my_urls + urls
+
 
   def save_form(self, request, form, change):
     # Execute the standard behavior
@@ -348,13 +364,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                user=request.user,
                comment=comment
                ).save(using=request.database)
-      return HttpResponseRedirect('%s/comments/%s/%s/%s/' % (
-        request.prefix, self.model._meta.app_label, self.model._meta.model_name, object_id
+      return HttpResponseRedirect('%s%s' % (
+        request.prefix, request.path
         ))
     else:
       return render_to_response('common/comments.html', {
         'title': capfirst(force_text(modelinstance._meta.verbose_name) + " " + object_id),
         'model': self.model._meta.model_name,
+        'opts': self.model._meta,
         'object_id': quote(object_id),
         'active_tab': 'comments',
         'comments': comments

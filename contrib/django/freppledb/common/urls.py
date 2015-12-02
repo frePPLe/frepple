@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url
 from django.views.generic.base import RedirectView
 
 import freppledb.common.views
@@ -33,22 +33,23 @@ urlpatterns = patterns(
   '',
 
   # User preferences
-  (r'^preferences/$', freppledb.common.views.preferences),
+  url(r'^preferences/$', freppledb.common.views.preferences, name="preferences"),
 
   # Horizon updates
-  (r'^horizon/$', freppledb.common.views.horizon),
+  url(r'^horizon/$', freppledb.common.views.horizon, name="horizon"),
 
   # Dashboard widgets
-  (r'^widget/(.+)/', freppledb.common.dashboard.Dashboard.dispatch),
+  url(r'^widget/(.+)/', freppledb.common.dashboard.Dashboard.dispatch, name="dashboard"),
 
   # Model list reports, which override standard admin screens
-  (r'^data/auth/group/$', freppledb.common.views.GroupList.as_view()),
-  (r'^data/common/user/$', freppledb.common.views.UserList.as_view()),
-  (r'^data/common/bucket/$', freppledb.common.views.BucketList.as_view()),
-  (r'^data/common/bucketdetail/$', freppledb.common.views.BucketDetailList.as_view()),
-  (r'^data/common/parameter/$', freppledb.common.views.ParameterList.as_view()),
-  (r'^data/common/comment/$', freppledb.common.views.CommentList.as_view()),
-  (r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments),
+  url(r'^data/auth/group/$', freppledb.common.views.GroupList.as_view(), name="admin:auth_group_changelist"),
+  url(r'^data/common/user/$', freppledb.common.views.UserList.as_view(), name="admin:common_user_changelist"),
+  url(r'^data/common/bucket/$', freppledb.common.views.BucketList.as_view(), name="admin:common_bucket_changelist"),
+  url(r'^data/common/bucketdetail/$', freppledb.common.views.BucketDetailList.as_view(), name="admin:common_bucketdetail_changelist"),
+  url(r'^data/common/parameter/$', freppledb.common.views.ParameterList.as_view(), name="admin:common_parameter_changelist"),
+  url(r'^data/common/comment/$', freppledb.common.views.CommentList.as_view(), name="admin:common_comment_changelist"),
+  #url(r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments, name="comments"),
+  #url(r'^data/([^/]+)/([^/]+)/comment/(.+)/$', freppledb.common.views.Comments, name="comments"),
 
   # Special case of the next line for user password changes in the user edit screen
   (r'detail/common/user/(?P<id>.+)/password/$', RedirectView.as_view(url="/data/common/user/%(id)s/password/")),

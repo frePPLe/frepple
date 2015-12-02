@@ -13,7 +13,7 @@
 {% block coltype %}change-form{% endblock %}
 
 {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left; color:#333">{{title|escape}}: {% trans "edit"|capfirst|force_escape %}</h1>{% endif %}
-{% if object_id %}{% tabs opts.object_name.lower %}{% endif %}{% endblock %}
+{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
 
 {% block content %}<div id="content-main">
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}

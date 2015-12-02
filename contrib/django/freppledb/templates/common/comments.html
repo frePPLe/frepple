@@ -9,13 +9,12 @@
 {% endblock %}
 
 {% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'comments'|capfirst|force_escape %}</h1>{% endif %}
-{% tabs model %}
-</div>{% endblock %}
+{% tabs opts %}</div>{% endblock %}
 
 {% block content %}
 <div id="content-main">
 <div class="module">
-{% if perms.common.add_comment %}<form method="post" action="">
+{% if perms.common.add_comment %}<form method="post">
   {% csrf_token %}
   <textarea id="comment" name="comment" rows="10" style="width:100%" ></textarea>
   <input id="submit" type="submit" value="{% filter force_escape %}{% trans 'Save' context "Included in Django translations" %}{% endfilter %}"/>

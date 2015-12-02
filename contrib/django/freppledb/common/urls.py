@@ -48,8 +48,6 @@ urlpatterns = patterns(
   url(r'^data/common/bucketdetail/$', freppledb.common.views.BucketDetailList.as_view(), name="admin:common_bucketdetail_changelist"),
   url(r'^data/common/parameter/$', freppledb.common.views.ParameterList.as_view(), name="admin:common_parameter_changelist"),
   url(r'^data/common/comment/$', freppledb.common.views.CommentList.as_view(), name="admin:common_comment_changelist"),
-  #url(r'^comments/([^/]+)/([^/]+)/(.+)/$', freppledb.common.views.Comments, name="comments"),
-  #url(r'^data/([^/]+)/([^/]+)/comment/(.+)/$', freppledb.common.views.Comments, name="comments"),
 
   # Special case of the next line for user password changes in the user edit screen
   (r'detail/common/user/(?P<id>.+)/password/$', RedirectView.as_view(url="/data/common/user/%(id)s/password/")),

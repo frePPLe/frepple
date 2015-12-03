@@ -15,25 +15,35 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from rest_framework import serializers
+from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
+from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 
+from rest_framework.serializers import ModelSerializer
 from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieveUpdateDestroyAPIView
+
 import freppledb.common.models
+from rest_framework import filters
 
-
-class BucketSerializer(serializers.ModelSerializer):
+class BucketSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.common.models.Bucket
       fields = ('name', 'description', 'level', 'source', 'lastmodified')
+      list_serializer_class = BulkListSerializer
+      update_lookup_field = 'name'
+      partial=True
+
 class BucketAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.Bucket.objects.all()
     serializer_class = BucketSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('name','description','level','source')
+
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Bucket.objects.all()
     serializer_class = BucketSerializer
 
-
-class BucketDetailSerializer(serializers.ModelSerializer):
+class BucketDetailSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.common.models.BucketDetail
       fields = ('bucket', 'name', 'startdate', 'enddate', 'source', 'lastmodified')
@@ -45,25 +55,34 @@ class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = BucketDetailSerializer
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(ModelSerializer):
     class Meta:
       model = freppledb.common.models.Comment
       fields = ('id', 'content_type', 'object_pk', 'content_object', 'comment')
 class CommentAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.Comment.objects.all()
     serializer_class = CommentSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('name','description','level','source')
+
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Comment.objects.all()
     serializer_class = CommentSerializer
 
 
-class ParameterSerializer(serializers.ModelSerializer):
+class ParameterSerializer(ModelSerializer):
     class Meta:
       model = freppledb.common.models.Parameter
       fields = ('name', 'value', 'description', 'source', 'lastmodified')
 class ParameterAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.Parameter.objects.all()
     serializer_class = ParameterSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('name','description','level','source')
+
 class ParameterdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.Parameter.objects.all()
     serializer_class = ParameterSerializer
+

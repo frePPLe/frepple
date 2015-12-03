@@ -58,6 +58,7 @@ urlpatterns = patterns(
   # REST API framework
   (r'^api/common/bucket/$', freppledb.common.serializers.BucketAPI.as_view()),
   (r'^api/common/bucketdetail/$', freppledb.common.serializers.BucketDetailAPI.as_view()),
+  (r'^api/common/bucketdetail/$', freppledb.common.serializers.BucketDetailAPI.as_view()),
   (r'^api/common/parameter/$', freppledb.common.serializers.ParameterAPI.as_view()),
   (r'^api/common/comment/$', freppledb.common.serializers.CommentAPI.as_view()),
 

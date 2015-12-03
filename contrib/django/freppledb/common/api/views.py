@@ -15,6 +15,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework import generics
+from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView, ListBulkCreateAPIView
+
 
 
 @staff_member_required
@@ -26,21 +28,28 @@ def APIIndexView(request):
     context_instance=RequestContext(request))
 
 
-class frePPleListCreateAPIView(generics.ListCreateAPIView):
+class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
   '''
   Customized API view for the REST framework.:
      - support for request-specific scenario database
      - add 'title' to the context of the html view
   '''
-  def get_queryset(self):
-    return super(frePPleListCreateAPIView, self).get_queryset().using(self.request.database)
 
+  def get_queryset(self):
+    if self.request.database == 'default':
+      return super(frePPleListCreateAPIView,self).get_queryset()
+    else:
+      return super(frePPleListCreateAPIView, self).get_queryset().using(self.request.database)
 
 class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+#class frePPleRetrieveUpdateDestroyAPIView(ListBulkCreateUpdateDestroyAPIView):
   '''
   Customized API view for the REST framework.
      - support for request-specific scenario database
      - add 'title' to the context of the html view
   '''
   def get_queryset(self):
-    return super(frePPleRetrieveUpdateDestroyAPIView, self).get_queryset().using(self.request.database)
+    if self.request.database == 'default':
+      return super(frePPleRetrieveUpdateDestroyAPIView,self).get_queryset()
+    else:
+      return super(frePPleRetrieveUpdateDestroyAPIView, self).get_queryset().using(self.request.database)

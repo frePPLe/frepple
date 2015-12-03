@@ -40,7 +40,7 @@
 	            </a>
 	          </td>
 	          <td>
-              {{request.prefix}}/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
+              {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
               <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text">
               </input>/<span class="leftpadding fa fa-caret-right"></span>
 	          </td>

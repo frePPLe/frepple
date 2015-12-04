@@ -118,7 +118,7 @@ class RecentCommentsWidget(Widget):
       result.append('<a href="%s%s">%s</a>&nbsp;<span class="mini">%s</span><div class="float_right mini">%s&nbsp;&nbsp;%s</div><br/>%s<br/>' % (
         _thread_locals.request.prefix, c.get_admin_url(), escape(c.object_pk),
         escape(capfirst(force_text(_(c.content_type.name))) if c.content_type else force_text(_('Unknown content'))),
-        escape(c.user.username),
+        escape(c.user.username if c.user else ''),
         formats.date_format(c.lastmodified, 'SHORT_DATETIME_FORMAT'),
         escape(c.comment)
         ))

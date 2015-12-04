@@ -37,13 +37,13 @@ $(function() {
 </div>
 
 <div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
+
 {% trans "HTTP response content" %}:<br>
 <textarea id="records" rows="20" style="width:100%">{{ content|urlize_quoted_links }}</textarea>
 {% endautoescape %}
 </div>
 
 <div id="html_raw">
-
 {% if 'GET' in allowed_methods %}
 <h3>{% blocktrans with model=name %}Make a GET request to read {{ model }} object(s){% endblocktrans %}</h3>
 <div><table><tr>
@@ -90,7 +90,7 @@ $(function() {
        {% endwith %}
      </div>
      {% endif %}
-	   <h3>{% blocktrans with model=name %}Make a POST request in raw format to create a new {{ model }} object{% endblocktrans %}</h3>
+	   <h3>{% blocktrans with model=name %}Make a POST request in raw format to create one or more new {{ model }} objects{% endblocktrans %}</h3>
 	   <div>
 	     {% with form=raw_data_post_form %}
        <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
@@ -104,7 +104,7 @@ $(function() {
    {% endif %}
 
    {% if put_form or raw_data_put_form or raw_data_patch_form %}
-   <h3>{% blocktrans with model=name %}Make a PUT request using a HTML form to update an existing {{ model }} object{% endblocktrans %}</h3>
+   <h3>{% blocktrans with model=name %}Make a PUT request using a HTML form to update one {{ model }} object{% endblocktrans %}</h3>
    <div>
      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
       {{ put_form }}
@@ -113,7 +113,7 @@ $(function() {
         </div>
     </form>
    </div>
-   <h3>{% blocktrans with model=name %}Make a PUT or PATCH request in raw format to update an existing {{ model }} object{% endblocktrans %}</h3>
+   <h3>{% blocktrans with model=name %}Make a PUT or PATCH request in raw format to update an existing or more existing {{ model }} objects{% endblocktrans %}</h3>
    <div>
     {% with form=raw_data_put_or_patch_form %}
       <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
@@ -132,7 +132,7 @@ $(function() {
   {% endif %}
 
 	{% if delete_form %}
-	  <h3>{% blocktrans with model=name %}Make a DELETE request to delete an existing {{ model }} object{% endblocktrans %}</h3>
+	  <h3>{% blocktrans with model=name %}Make a DELETE request to delete one or more existing {{ model }} objects (requires filtering){% endblocktrans %}</h3>
 	  <div>
 	  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
 	    <input type="submit" value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">

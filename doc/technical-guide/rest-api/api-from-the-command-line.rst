@@ -22,11 +22,18 @@ To just get a list of all sales orders in API format (assuming the user is named
    curl -H 'Accept: application/json; indent=4; charset=UTF-8' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=api
 
 
-To POST/PATCH/PUT in JSON format it is also straightforward:
+To POST a single or multiple records in JSON format it is also straightforward.
+For a single record POST request:
 
 ::
 
-   curl -X POST -H "Content-Type: application/json; charset=UTF-8" -d '{"key":"val"}' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
+   curl -X POST -H "Content-Type: application/json; charset=UTF-8" -d '[{"keyA0":"valA0", "keyA1":"valA1"}]' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
+
+For a multiple record POST request:
+
+::
+
+   curl -X POST -H "Content-Type: application/json; charset=UTF-8" -d '[{"keyA0":"valA0", "keyA1":"valA1"},{"keyB0":"valB0", "keyB1":"valB1"}]' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
 
 "key:val" pairs should be separated by a comma, so it is probably easier if you store the data in a file:
 
@@ -34,3 +41,23 @@ To POST/PATCH/PUT in JSON format it is also straightforward:
 
    curl -X POST -H "Content-Type: application/json; charset=UTF-8" --data @json_records_file.txt -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
 
+To PUT/PATCH a single record in JSON format:
+
+::
+
+   curl -X PATCH -H "Content-Type: application/json; charset=UTF-8" -d '{"key":"val"}' -u admin:admin http://127.0.0.1:8000/api/input/demand/a_demand_id/
+
+::
+
+   curl -X PUT -H "Content-Type: application/json; charset=UTF-8" --data @json_records_file.txt -u admin:admin http://127.0.0.1:8000/api/input/demand/a_demand_id/
+
+PUT requires all fields so "key:val" pairs should be separated by a comma, so it is probably easier if you upload the data from a file like in the POST example.
+
+To DELETE records a safeguard is in place that prevents deleting all records in a table.
+So the DELETE request requires that the number of records to be deleted is lower than the number of all records in the table.
+A DELETE request for one or more records can be done with:
+
+::
+
+   curl -X DELETE -H "Content-Type: application/json; charset=UTF-8" -u admin:admin http://127.0.0.1:8000/api/input/demand/?source=ERP
+   

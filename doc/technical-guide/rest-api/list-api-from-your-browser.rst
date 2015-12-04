@@ -4,8 +4,10 @@ List API from your browser
 
 The top part of this screen show the headers and content of the HTTP response of the web service.
 
-The different sections below allow you to create new request for the GET, OPTIONS, PUT,
+The different sections below allow you to create new request for the GET, OPTIONS, POST, PUT,
 PATCH and DELETE HTTP methods.
+Some models will allow bulk operations. For these requests in JSON format have been tested for bulk POST (using a LIST as argument).
+Requesting a bulk DELETE requires that the number of records to be deleted is smaller than the total of the table.
 
 .. image:: ../_images/api-list.png
    :alt: REST list API

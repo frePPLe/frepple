@@ -30,7 +30,9 @@ The changes are:
 </style>
 {% endblock %}
 
-{% block extrahead %}{{block.super}}
+{% block extrahead %}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript">
 $(function() {
   $('#id_username').focus();
@@ -103,7 +105,3 @@ document.getElementById('id_username').focus()
 {% blocktrans %}The user "admin" has password "admin".<br/>
 We suggest changing this password.{% endblocktrans %}</div>{% endif %}
 {% endblock %}
-
-
-
-

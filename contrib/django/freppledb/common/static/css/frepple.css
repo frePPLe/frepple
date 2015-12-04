@@ -469,7 +469,7 @@ nav {
 }
 
 nav ul {
-  padding: 0 20px;
+  padding: 0 0 0 20px;
   margin: 0;
   list-style: none;
   position: relative;
@@ -478,7 +478,7 @@ nav ul {
 }
 
 nav ul li input {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 nav ul ul {

@@ -19,8 +19,6 @@ from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView, ListBulkCreateAPIView
 from rest_framework import filters
 
-
-
 @staff_member_required
 @csrf_protect
 def APIIndexView(request):

@@ -1,26 +1,21 @@
-# 
 # Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
-# 
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-# 
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 # General Public License for more details.
-# 
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
 # Joao Ranita <jranita@frepple.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-12 10:56+0200\n"
-"PO-Revision-Date: 2015-11-25 11:26+0200\n"
+"POT-Creation-Date: 2015-12-07 09:31+0100\n"
+"PO-Revision-Date: 2015-12-07 11:12+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: en\n"
@@ -32,151 +27,2190 @@ msgstr ""
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 "X-Poedit-SearchPath-0: \n"
 
-#: planningboard/templates/planningboard/index.html:86
-#: templates/output/pegging.html:95 templates/output/resourcegantt.html:91
-msgid "Zoom in"
-msgstr "放大"
-
-#: planningboard/templates/planningboard/index.html:87
-#: templates/output/pegging.html:96 templates/output/resourcegantt.html:92
-msgid "Zoom out"
-msgstr "缩小"
-
-#: planningboard/templates/planningboard/index.html:88
-#: templates/output/pegging.html:97 templates/output/resourcegantt.html:93
-msgid "Move in"
-msgstr "移入"
-
-#: planningboard/templates/planningboard/index.html:89
-#: templates/output/pegging.html:98 templates/output/resourcegantt.html:94
-msgid "Move out"
-msgstr "移出"
-
-#: planningboard/templates/planningboard/index.html:90
-#: templates/output/pegging.html:99 templates/output/resourcegantt.html:95
-msgid "Reset"
-msgstr "重置"
-
-#: planningboard/templates/planningboard/index.html:91
-#: templates/admin/base_site_grid.html:105
-#: templates/admin/base_site_gridpivot.html:115
-#: templates/output/resourcegantt.html:97
-msgid "Configure time buckets"
-msgstr "配置计划日期"
-
-#: planningboard/templates/planningboard/index.html:99
-#| msgid "demand"
-msgid "Demand"
+#: common/admin.py:42
+msgid "Personal info"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:100
-#| msgid "resource"
-msgid "Resource"
+#: common/admin.py:43
+#| msgid "Permission denied"
+msgid "Permissions in this scenario"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:101
-#| msgid "buffer"
-msgid "Buffer"
+#: common/admin.py:45
+#| msgid "plan date"
+msgid "Important dates"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:102
-#| msgid "operation"
-msgid "Operation"
+#: common/admin.py:49 common/admin.py:69 common/admin.py:101
+#: common/admin.py:126 common/admin.py:139 input/admin.py:45 input/admin.py:58
+#: input/admin.py:71 input/admin.py:84 input/admin.py:106 input/admin.py:120
+#: input/admin.py:137 input/admin.py:150 input/admin.py:205 input/admin.py:242
+#: input/admin.py:266 input/admin.py:278 input/admin.py:291 input/admin.py:305
+#: input/admin.py:328 input/admin.py:346 input/admin.py:359 input/admin.py:401
+#: templates/admin/change_form.html:15
+msgid "edit"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:103
-msgid "Supplier"
+#: common/admin.py:50 common/admin.py:70 common/admin.py:102
+#: common/admin.py:127 common/admin.py:140 common/models.py:406
+#: common/views.py:274 common/widget.py:103 input/admin.py:46 input/admin.py:59
+#: input/admin.py:72 input/admin.py:85 input/admin.py:107 input/admin.py:125
+#: input/admin.py:138 input/admin.py:151 input/admin.py:211 input/admin.py:248
+#: input/admin.py:267 input/admin.py:279 input/admin.py:292 input/admin.py:311
+#: input/admin.py:329 input/admin.py:347 input/admin.py:365 input/admin.py:405
+#: templates/common/comments.html:11
+msgid "comments"
+msgstr "评论"
+
+# Translation included with django
+#: common/admin.py:51 common/admin.py:71 common/admin.py:103
+#: common/admin.py:128 common/admin.py:141 input/admin.py:47 input/admin.py:60
+#: input/admin.py:73 input/admin.py:86 input/admin.py:108 input/admin.py:126
+#: input/admin.py:139 input/admin.py:152 input/admin.py:212 input/admin.py:249
+#: input/admin.py:268 input/admin.py:280 input/admin.py:293 input/admin.py:312
+#: input/admin.py:330 input/admin.py:348 input/admin.py:366 input/admin.py:406
+#| msgid "History"
+msgid "history"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:104
-#| msgid "message"
-msgid "Messages"
+#: common/admin.py:90
+msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
+msgstr "无效日期：支持格式为 YYYY-MM-DD HH:MM:SS"
+
+# Translation included with django
+#: common/adminforms.py:186 common/adminforms.py:427
+#, python-format
+msgid "%(name)s object with primary key %(key)r does not exist."
+msgstr "%(name)s  主键%(key)r 不存在。"
+
+# Translation included with django
+#: common/adminforms.py:246 common/adminforms.py:304
+#, python-format
+msgid ""
+"The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
+msgstr "%(name)s \"%(obj)s\" 添加成功，你可以继续编辑它。"
+
+# Translation included with django
+#: common/adminforms.py:261
+#, python-format
+msgid ""
+"The %(name)s \"%(obj)s\" was added successfully. You may add another "
+"%(name)s below."
+msgstr "%(name)s \"%(obj)s\" 添加成功，你可以继续添加另一个 %(name)s。"
+
+# Translation included with django
+#: common/adminforms.py:268
+#, python-format
+msgid "The %(name)s \"%(obj)s\" was added successfully."
+msgstr "%(name)s \"%(obj)s\" 添加成功。"
+
+# Translation included with django
+#: common/adminforms.py:297
+#, python-format
+msgid ""
+"The %(name)s \"%(obj)s\" was changed successfully. You may edit it again "
+"below."
+msgstr "%(name)s \"%(obj)s\" 修改成功，你可以继续编辑。"
+
+# Translation included with django
+#: common/adminforms.py:315
+#, python-format
+msgid ""
+"The %(name)s \"%(obj)s\" was changed successfully. You may add another "
+"%(name)s below."
+msgstr " %(name)s \"%(obj)s\" 修改成功。 你可以在下面添加另一个 %(name)s 。"
+
+# Translation included with django
+#: common/adminforms.py:325
+#, python-format
+msgid "The %(name)s \"%(obj)s\" was changed successfully."
+msgstr " %(name)s \"%(obj)s\" 修改成功。"
+
+# Translation included with django
+#: common/adminforms.py:396
+#, python-format
+msgid "The %(name)s \"%(obj)s\" was deleted successfully."
+msgstr " %(name)s \"%(obj)s\" 删除成功。"
+
+#: common/api/views.py:26
+msgid "REST API Help"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:105
-msgid "Chart"
+#: common/fields.py:75 common/fields.py:105
+msgid "Expected format \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
+msgstr "期望格式 \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
+
+#: common/menu.py:56
+msgid "Guided tour"
+msgstr "指导流程"
+
+#: common/menu.py:57
+#| msgid "Documentation"
+msgid "documentation"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:109
-#| msgid "Due date of the demand"
-msgid "Clear the plan of selected demands"
+#: common/menu.py:58
+msgid "API help"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:110
-msgid "Plan selected demands backward from their due date"
+#: common/menu.py:59
+msgid "frePPLe website"
+msgstr "frePPLe 网站"
+
+#: common/models.py:43 common/models.py:180 common/models.py:208
+#: common/models.py:433 common/models.py:450 common/views.py:246
+#: common/views.py:261 common/views.py:301 common/views.py:321
+#: execute/models.py:38 execute/views.py:62 input/models.py:37
+#: input/models.py:313 input/models.py:536 input/models.py:663
+#: input/models.py:745 input/models.py:791 input/views.py:519
+#: input/views.py:545 input/views.py:561 input/views.py:588 input/views.py:608
+#: input/views.py:627 input/views.py:697 input/views.py:718 input/views.py:760
+#: input/views.py:786 input/views.py:804 input/views.py:840 input/views.py:887
+#: output/models.py:48 output/models.py:69 output/views/constraint.py:78
+#: output/views/kpi.py:33 output/views/problem.py:54 output/widget.py:58
+#: output/widget.py:99 templates/execute/execute.html:299
+msgid "name"
+msgstr "名称"
+
+#: common/models.py:44 input/models.py:664 input/models.py:883
+#: input/models.py:940
+msgid "Unique identifier"
+msgstr "唯一标识符"
+
+#: common/models.py:45 input/models.py:858 input/views.py:526
+#: input/views.py:566 input/views.py:593 input/views.py:612 input/views.py:631
+#: input/views.py:702 input/views.py:816 input/views.py:942 output/models.py:33
+#: output/models.py:47 output/models.py:68 output/views/constraint.py:79
+#: output/views/operation.py:163 output/views/problem.py:55
+msgid "owner"
+msgstr "所有者"
+
+#: common/models.py:46 input/models.py:859
+msgid "Hierarchical parent"
+msgstr "父类"
+
+#: common/models.py:162 common/report.py:1900 common/views.py:264
+#: common/views.py:304 common/views.py:322 input/views.py:531
+#: input/views.py:546 input/views.py:574 input/views.py:594 input/views.py:613
+#: input/views.py:632 input/views.py:657 input/views.py:682 input/views.py:704
+#: input/views.py:719 input/views.py:739 input/views.py:765 input/views.py:790
+#: input/views.py:819 input/views.py:845 input/views.py:873 input/views.py:902
+#: input/views.py:922 input/views.py:943 input/views.py:979 input/views.py:1019
+msgid "source"
+msgstr "源"
+
+#: common/models.py:163 common/models.py:270 common/models.py:400
+#: common/report.py:182 common/report.py:1903
+msgid "last modified"
+msgstr "上次修改"
+
+#: common/models.py:181 common/views.py:262 input/models.py:74
+#: input/views.py:862 output/views/kpi.py:34
+msgid "value"
+msgstr "值"
+
+#: common/models.py:182 common/models.py:209 common/models.py:434
+#: common/views.py:263 common/views.py:302 input/models.py:39
+#: input/models.py:100 input/models.py:121 input/models.py:137
+#: input/models.py:162 input/models.py:315 input/models.py:433
+#: input/models.py:596 input/models.py:1003 input/views.py:520
+#: input/views.py:562 input/views.py:589 input/views.py:609 input/views.py:628
+#: input/views.py:698 input/views.py:809 input/views.py:841 input/views.py:888
+#: output/models.py:49 output/models.py:70 output/views/constraint.py:80
+#: output/views/problem.py:56 templates/execute/execute.html:301
+msgid "description"
+msgstr "描述"
+
+#: common/models.py:189
+msgid "parameter"
+msgstr "参数"
+
+#: common/models.py:190 common/views.py:254
+msgid "parameters"
+msgstr "参数"
+
+#: common/models.py:202
+msgid "Free"
+msgstr "空闲的"
+
+#: common/models.py:203
+msgid "In use"
+msgstr "使用中"
+
+#: common/models.py:204
+msgid "Busy"
+msgstr "忙碌"
+
+#: common/models.py:211 execute/models.py:43 execute/views.py:66
+#: input/models.py:836 input/models.py:890 input/models.py:947
+#: input/models.py:1022 input/views.py:808 input/views.py:941
+#: input/views.py:968 input/views.py:1009 templates/execute/execute.html:300
+msgid "status"
+msgstr "状态"
+
+#: common/models.py:214
+msgid "last refreshed"
+msgstr "最后刷新"
+
+#: common/models.py:244
+msgid "scenarios"
+msgstr "方案"
+
+#: common/models.py:245
+msgid "scenario"
+msgstr "方案"
+
+#: common/models.py:250
+msgid "Detect automatically"
+msgstr "自动检索"
+
+#: common/models.py:252
+msgid "language"
+msgstr "语言"
+
+#: common/models.py:256
+msgid "theme"
+msgstr "主题"
+
+#: common/models.py:259
+msgid "page size"
+msgstr "页面大小"
+
+#: common/models.py:383 common/models.py:399 common/views.py:284
+#: execute/models.py:45 execute/views.py:69
+#: templates/admin/object_history.html:17
+msgid "user"
+msgstr "用户"
+
+# Translation included with django
+#: common/models.py:384 common/views.py:212
+msgid "users"
+msgstr "用户"
+
+#: common/models.py:391 common/models.py:448 common/views.py:245
+#: common/views.py:282 execute/models.py:37 execute/views.py:61
+#: input/models.py:69 input/models.py:179 input/models.py:242
+#: input/models.py:390 input/models.py:680 input/models.py:718
+#: input/models.py:774 input/models.py:832 input/models.py:882
+#: input/models.py:939 input/views.py:646 input/views.py:671 input/views.py:733
+#: input/views.py:753 input/views.py:779 input/views.py:858 input/views.py:916
+#: input/views.py:936 input/views.py:964 input/views.py:1005
+#: output/models.py:25
+msgid "identifier"
+msgstr "标识符"
+
+# Translation included with django
+#: common/models.py:393
+msgid "content type"
+msgstr "内容类型"
+
+#: common/models.py:396 common/views.py:286
+msgid "object ID"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:111
-msgid "Plan selected demands forward from the current date"
+#: common/models.py:398 common/models.py:405 common/views.py:287
+#| msgid "comments"
+msgid "comment"
 msgstr ""
 
-#: planningboard/templates/planningboard/index.html:112
-#: planningboard/templates/planningboard/index.html:118
-#: planningboard/templates/planningboard/index.html:124
-#: planningboard/templates/planningboard/index.html:130
-#: planningboard/templates/planningboard/index.html:136
-msgid "Add to the graph"
-msgstr ""
-
-#: planningboard/templates/planningboard/index.html:142
-msgid "Send"
-msgstr ""
-
-#: planningboard/templates/planningboard/index.html:154
-#: templates/admin/base_site_grid.html:128
-#: templates/admin/base_site_gridpivot.html:125
-msgid "Time buckets"
-msgstr "时间段"
-
-#: planningboard/templates/planningboard/index.html:156
-#: templates/admin/base_site_grid.html:130
-#: templates/admin/base_site_gridpivot.html:127
-msgid "Bucket size"
-msgstr "日期范围"
-
-#: planningboard/templates/planningboard/index.html:160
-#: templates/admin/base_site_grid.html:134
-#: templates/admin/base_site_gridpivot.html:131
-msgid "from"
-msgstr "从"
-
-#: planningboard/templates/planningboard/index.html:162
-#: templates/admin/base_site_grid.html:136
-#: templates/admin/base_site_gridpivot.html:133
-msgid "to"
-msgstr "到"
-
-#: planningboard/templates/planningboard/index.html:167
-#: templates/admin/base_site_grid.html:141
-#: templates/admin/base_site_gridpivot.html:138
-#: templates/inventoryplanning/drp.html:1122
-#: templates/inventoryplanning/drp.html:1134
-#: templates/inventoryplanning/drp.html:1136
-msgid "days"
+#: common/models.py:430
+msgid "day"
 msgstr "天"
 
-#: planningboard/templates/planningboard/index.html:168
-#: templates/admin/base_site_grid.html:142
-#: templates/admin/base_site_gridpivot.html:139
+#: common/models.py:430
+msgid "week"
+msgstr "周"
+
+#: common/models.py:430
+msgid "month"
+msgstr "月"
+
+#: common/models.py:430
+msgid "quarter"
+msgstr "刻"
+
+#: common/models.py:430
+msgid "year"
+msgstr "年"
+
+#: common/models.py:435 common/views.py:303 output/models.py:163
+msgid "level"
+msgstr "级别"
+
+#: common/models.py:435
+msgid "Higher values indicate more granular time buckets"
+msgstr ""
+
+#: common/models.py:441 common/models.py:449 common/report.py:1639
+#: common/report.py:1757 common/views.py:318
+msgid "bucket"
+msgstr "日期"
+
+#: common/models.py:442 common/views.py:296
+msgid "buckets"
+msgstr "日期"
+
+#: common/models.py:451 common/views.py:319 input/models.py:71
+#: input/models.py:851 input/models.py:909 input/models.py:966
+#: input/views.py:860 input/views.py:938 input/views.py:974 input/views.py:1015
+#: output/models.py:50 output/models.py:71 output/views/constraint.py:81
+#: output/views/operation.py:158 output/views/problem.py:57
+#: output/views/resource.py:202 output/widget.py:179
+msgid "start date"
+msgstr "开始日期"
+
+#: common/models.py:452 common/views.py:320 input/models.py:72
+#: input/models.py:852 input/models.py:910 input/models.py:967
+#: input/views.py:861 input/views.py:939 input/views.py:975 input/views.py:1016
+#: output/models.py:51 output/models.py:72 output/views/constraint.py:82
+#: output/views/operation.py:159 output/views/problem.py:58
+#: output/views/resource.py:203
+msgid "end date"
+msgstr "结束日期"
+
+#: common/models.py:458
+msgid "bucket date"
+msgstr "具体日期"
+
+#: common/models.py:459 common/views.py:313
+msgid "bucket dates"
+msgstr "具体日期"
+
+#: common/report.py:465 common/report.py:800 common/report.py:803
+#: common/report.py:929 common/report.py:968 common/report.py:1129
+msgid "Permission denied"
+msgstr "权限不足，拒绝访问"
+
+#: common/report.py:749
+#, python-format
+msgid "%(title)s for %(entity)s"
+msgstr "%(entity)s的%(title)s"
+
+#: common/report.py:827 common/report.py:858 common/report.py:889
+#, python-format
+msgid "Can't find %s"
+msgstr "找不到%s"
+
+#: common/report.py:846
+#, python-format
+msgid "Can't copy %s"
+msgstr "无法复制%s"
+
+#: common/report.py:854
+#, python-format
+msgid "Copied from %s."
+msgstr "复制%s"
+
+# Translation included with django
+#: common/report.py:885 common/report.py:1083 common/report.py:1248
+#: common/report.py:2088
+#, python-format
+msgid "Changed %s."
+msgstr "修改%s。"
+
+#: common/report.py:885 common/report.py:1083 common/report.py:1248
+#: common/report.py:2088
+msgid "and"
+msgstr "和"
+
+#: common/report.py:945
+#, python-format
+msgid "Erasing data from %(model)s"
+msgstr "从%(model)s删除数据"
+
+#: common/report.py:964 common/report.py:1125
+msgid "Invalid upload request"
+msgstr "无效的上传请求"
+
+#: common/report.py:1018 common/report.py:1179 common/report.py:2023
+#, python-format
+msgid "Incorrect field %(column)s"
+msgstr "不正确的字段%(column)s"
+
+#: common/report.py:1025 common/report.py:1186 common/report.py:2033
+#, python-format
+msgid "Missing primary key field %(key)s"
+msgstr "丢失主键字段%(key)s"
+
+#: common/report.py:1093 common/report.py:1258 common/report.py:2098
+#, python-format
+msgid "Row %(rownum)s: %(message)s"
+msgstr "%(rownum)s 行: %(message)s"
+
+#: common/report.py:1099 common/report.py:1264 common/report.py:2105
+#, python-format
+msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
+msgstr "%(rownum)s行%(field)s字段：%(data)s：%(message)s"
+
+#: common/report.py:1104 common/report.py:1269
+#, python-format
+msgid "Exception during upload: %(message)s"
+msgstr "上传发生异常： %(message)s"
+
+#: common/report.py:1108 common/report.py:1273
+#, python-format
+msgid ""
+"Uploaded data successfully: changed %(changed)d and added %(added)d records"
+msgstr "上传资料成功： 修改%(changed)d 和 新增%(added)d 记录"
+
+#: common/report.py:1642 common/report.py:1760
+#| msgid "Data file"
+msgid "data field"
+msgstr ""
+
+#: common/report.py:1928
+msgid "Nothing to export"
+msgstr "没有导出内容"
+
+#: common/report.py:1965
+#, python-format
+msgid "Ignoring data in worksheet: %s"
+msgstr "工作表中忽略的数据： %s"
+
+#: common/report.py:1968
+#, python-format
+msgid "You don't permissions to add: %s"
+msgstr "你没有添加%s的权限。"
+
+#: common/report.py:1989
+#, python-format
+msgid "Processing data in worksheet: %s"
+msgstr "处理数据的工作表: %s"
+
+#: common/report.py:2113
+#, python-format
+msgid ""
+"%(rows)d data rows, changed %(changed)d and added %(added)d records, "
+"%(errors)d errors"
+msgstr "%(rows)d数据行，修改 %(changed)d和添加 %(added)d的记录，%(errors)d错误"
+
+#: common/report.py:2116
+msgid "Done"
+msgstr "完成"
+
+# Translation included with django
+#: common/templatetags/base_utils.py:86
+msgid "Site administration"
+msgstr "站点管理"
+
+# Translation included with django
+#: common/views.py:56 templates/404.html:4 templates/404.html.py:8
+msgid "Page not found"
+msgstr "找不到页面"
+
+#: common/views.py:76
+#| msgid "language"
+msgid "Language"
+msgstr ""
+
+#: common/views.py:79
+msgid "Language of the user interface"
+msgstr "用户界面的语言"
+
+#: common/views.py:82
+#| msgid "page size"
+msgid "Page size"
+msgstr ""
+
+#: common/views.py:86
+#| msgid "Number of records to fetch in a single page from the server"
+msgid "Number of records to display in a single page"
+msgstr ""
+
+#: common/views.py:90
+#| msgid "theme"
+msgid "Theme"
+msgstr ""
+
+#: common/views.py:93
+msgid "Theme for the user interface"
+msgstr "用户界面主题"
+
+# Translation included with django
+#: common/views.py:96
+msgid "Change password"
+msgstr "修改密码"
+
+# Translation included with django
+#: common/views.py:98
+#| msgid "Change password"
+msgid "Old password"
+msgstr ""
+
+# Translation included with django
+#: common/views.py:104
+#| msgid "Change password"
+msgid "New password"
+msgstr ""
+
+#: common/views.py:110
+msgid "New password confirmation"
+msgstr ""
+
+#: common/views.py:123
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr ""
+
+#: common/views.py:158
+msgid "Successfully updated preferences"
+msgstr "成功更新参数"
+
+#: common/views.py:161
+msgid "Failure updating preferences"
+msgstr "更新个人参数失败"
+
+#: common/views.py:170
+#| msgid "Edit my preferences"
+msgid "My preferences"
+msgstr ""
+
+#: common/views.py:220
+msgid "id"
+msgstr "id"
+
+#: common/views.py:221
+msgid "username"
+msgstr "用户名称"
+
+# Translation included with django
+#: common/views.py:222
+msgid "email address"
+msgstr "邮件地址"
+
+# Translation included with django
+#: common/views.py:223
+msgid "first name"
+msgstr "名"
+
+#: common/views.py:224
+msgid "last name"
+msgstr "姓"
+
+#: common/views.py:225
+msgid "active"
+msgstr ""
+
+#: common/views.py:226
+msgid "superuser status"
+msgstr ""
+
+# Translation included with django
+#: common/views.py:227
+msgid "date joined"
+msgstr "添加时间"
+
+#: common/views.py:228
+#| msgid "last name"
+msgid "last login"
+msgstr ""
+
+#: common/views.py:237
+#| msgid "Group List"
+msgid "groups"
+msgstr ""
+
+#: common/views.py:285
+#| msgid "Model:"
+msgid "model"
+msgstr ""
+
+#: common/widget.py:33
+msgid "Welcome"
+msgstr "欢迎"
+
+#: common/widget.py:34
+msgid "Some links to get started"
+msgstr "开始的链接"
+
+#: common/widget.py:38
+msgid ""
+"Welcome to frePPLe, the world's leading open source production planning tool!"
+"<br/><br/>\n"
+"How to get started?\n"
+"<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);\" "
+"onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></li>\n"
+"<li>Check out the <span class=\"underline\"><a href=\"/static/doc/index.html"
+"\" target=\"_blank\">documentation</a></span></li>\n"
+"<li>Visit and join the <span class=\"underline\"><a href=\"http://groups."
+"google.com/group/frepple-users\" target=\"_blank\">user community</a></"
+"span></li>\n"
+"<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" target="
+"\"_blank\">Contact us</a></span></li>\n"
+"</ol>\n"
+msgstr ""
+"欢迎来到frePPLe,世界领先的开源生产计划工具！<br/><br/>\n"
+"怎样开始?\n"
+"<ol><li>开始<span class=\"underline\"><a href=\"javascript:void(0);\" "
+"onclick=\"tour.start('0,0,0'); return false;\">指导流程</a></span></li>\n"
+"<li>查看<span class=\"underline\"><a href=\"/static/doc/index.html\" target="
+"\"_blank\">文档</a></span></li>\n"
+"<li>加入<span class=\"underline\"><a href=\"http://groups.google.com/group/"
+"frepple-users\" target=\"_blank\">用户社区</a></span></li>\n"
+"<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" target="
+"\"_blank\">联系我们</a></span></li>\n"
+"</ol>\n"
+
+#: common/widget.py:52
+msgid "News"
+msgstr "新闻"
+
+#: common/widget.py:53
+msgid "Show the latest news items from the frePPLe website"
+msgstr "从 frePPLe网站显示最新信息"
+
+#: common/widget.py:64
+#| msgid "locations"
+msgid "My actions"
+msgstr ""
+
+#: common/widget.py:65
+msgid "Display a list of the entities you recently changed"
+msgstr "显示最近修改项目"
+
+#: common/widget.py:95 common/widget.py:120
+msgid "Unknown content"
+msgstr "未知内容"
+
+# Translation included with django
+#: common/widget.py:96 common/widget.py:125
+msgid "None available"
+msgstr "无效"
+
+#: common/widget.py:104
+#| msgid "Display a list of new purchase orders"
+msgid "Display a list of recent comments"
+msgstr ""
+
+#: execute/menu.py:22 execute/widget.py:27
+msgid "Execute"
+msgstr "执行"
+
+#: execute/models.py:39 execute/models.py:41 execute/views.py:63
+msgid "submitted"
+msgstr "提交"
+
+#: execute/models.py:40 execute/views.py:64
+msgid "started"
+msgstr "开始"
+
+#: execute/models.py:42 execute/views.py:68
+msgid "arguments"
+msgstr "参数"
+
+#: execute/models.py:44 execute/views.py:67
+msgid "message"
+msgstr ""
+
+#: execute/models.py:52
+msgid "tasks"
+msgstr "任务"
+
+#: execute/models.py:53
+msgid "task"
+msgstr "任务"
+
+#: execute/views.py:51
+msgid "Task status"
+msgstr "任务状态"
+
+#: execute/views.py:65
+msgid "finished"
+msgstr "完成"
+
+#: execute/views.py:132
+#, python-format
+msgid "Failure launching action: %(msg)s"
+msgstr "失败的发动动作:%(msg)s"
+
+#: execute/views.py:352
+msgid "Displaying only the last 50K from the log file"
+msgstr "只显示最后50K的日志文件"
+
+#: execute/views.py:361 templates/execute/logfrepple.html:6
+msgid "Log file"
+msgstr "日志文件"
+
+#: execute/widget.py:29
+msgid "Generate a constrained plan"
+msgstr ""
+
+#: execute/widget.py:42 templates/execute/execute.html:231
+msgid "Create a plan"
+msgstr "创建计划"
+
+#: input/admin.py:40
+msgid "Repeating pattern"
+msgstr "重复模式"
+
+#: input/admin.py:121 input/admin.py:206 input/admin.py:243 input/admin.py:306
+#: input/admin.py:360 input/admin.py:402
+#| msgid "Supply path"
+msgid "supply path"
+msgstr ""
+
+#: input/admin.py:122 input/admin.py:207 input/admin.py:244 input/admin.py:307
+#: input/admin.py:361
+#| msgid "Where Used"
+msgid "where used"
+msgstr ""
+
+#: input/admin.py:123 input/admin.py:208 input/admin.py:245 input/admin.py:308
+#: input/admin.py:362 input/admin.py:404 output/views/buffer.py:57
+#: output/views/demand.py:53 output/views/operation.py:55
+#: output/views/resource.py:63
+msgid "plan"
+msgstr "计划"
+
+#: input/admin.py:124 input/admin.py:209 input/admin.py:246 input/admin.py:309
+#: input/admin.py:363
+#| msgid "Plan detail"
+msgid "plan detail"
+msgstr ""
+
+#: input/admin.py:178 input/admin.py:323 input/admin.py:341
+msgid "Alternates"
+msgstr "替代项"
+
+#: input/admin.py:199 input/admin.py:232 input/admin.py:395
+msgid "Planning parameters"
+msgstr "计划参数"
+
+#: input/admin.py:210 input/admin.py:247 input/admin.py:310
+#| msgid "Constrained demand"
+msgid "constrained demand"
+msgstr ""
+
+#: input/admin.py:230 menu.py:31
+msgid "Inventory"
+msgstr "库存"
+
+#: input/admin.py:235
+msgid "Planning parameters for procurement buffers"
+msgstr "采购库存的计划参数"
+
+#: input/admin.py:364
+#| msgid "consuming operationplan"
+msgid "constrained operation"
+msgstr ""
+
+#: input/admin.py:403
+#| msgid "Why short or late?"
+msgid "why short or late?"
+msgstr ""
+
+#: input/models.py:28 input/models.py:77 input/models.py:213
+#: input/models.py:276 input/models.py:396 input/models.py:557
+#: input/models.py:696 input/models.py:753 input/models.py:799
+#: input/models.py:1036 input/views.py:654 input/views.py:679
+#: input/views.py:738 input/views.py:762 input/views.py:788 input/views.py:815
+#: input/views.py:863 input/views.py:919
+msgid "priority"
+msgstr "优先级"
+
+#: input/models.py:29
+msgid "minimum cost"
+msgstr "最低成本"
+
+#: input/models.py:30
+msgid "minimum penalty"
+msgstr "最小罚款"
+
+#: input/models.py:31
+msgid "minimum cost plus penalty"
+msgstr "最低成本加罚款"
+
+#: input/models.py:43 input/models.py:101 input/models.py:122
+#: input/models.py:138 input/models.py:163 input/models.py:316
+#: input/models.py:434 input/models.py:599 input/models.py:1006
+#: input/views.py:521 input/views.py:563 input/views.py:590 input/views.py:610
+#: input/views.py:629 input/views.py:699 input/views.py:810 input/views.py:842
+#: input/views.py:889 output/views/kpi.py:32
+msgid "category"
+msgstr "类别"
+
+#: input/models.py:47 input/models.py:102 input/models.py:123
+#: input/models.py:139 input/models.py:164 input/models.py:317
+#: input/models.py:435 input/models.py:602 input/models.py:1009
+#: input/views.py:522 input/views.py:564 input/views.py:591 input/views.py:611
+#: input/views.py:630 input/views.py:700 input/views.py:811 input/views.py:843
+#: input/views.py:890
+msgid "subcategory"
+msgstr "子类"
+
+#: input/models.py:51 input/views.py:844
+msgid "default value"
+msgstr "默认值"
+
+#: input/models.py:53
+msgid "Value to be used when no entry is effective"
+msgstr "当输入无效值时使用的值"
+
+#: input/models.py:61 input/models.py:70 input/views.py:859
+msgid "calendar"
+msgstr "日历"
+
+#: input/models.py:62 input/views.py:835
+msgid "calendars"
+msgstr "日历"
+
+# Translation included with django
+#: input/models.py:78 input/views.py:864
+msgid "Monday"
+msgstr "星期一"
+
+# Translation included with django
+#: input/models.py:79 input/views.py:865
+msgid "Tuesday"
+msgstr "星期二"
+
+# Translation included with django
+#: input/models.py:80 input/views.py:866
+msgid "Wednesday"
+msgstr "星期三"
+
+# Translation included with django
+#: input/models.py:81 input/views.py:867
+msgid "Thursday"
+msgstr "星期四"
+
+# Translation included with django
+#: input/models.py:82 input/views.py:868
+msgid "Friday"
+msgstr "星期五"
+
+# Translation included with django
+#: input/models.py:83 input/views.py:869
+msgid "Saturday"
+msgstr "星期六"
+
+# Translation included with django
+#: input/models.py:84 input/views.py:870
+msgid "Sunday"
+msgstr "星期日"
+
+#: input/models.py:85 input/views.py:871
+msgid "start time"
+msgstr "开始时间"
+
+#: input/models.py:86 input/views.py:872
+msgid "end time"
+msgstr "结束时间"
+
+#: input/models.py:94
+msgid "calendar bucket"
+msgstr "日历清单"
+
+#: input/models.py:95 input/views.py:853
+msgid "calendar buckets"
+msgstr "日历清单"
+
+#: input/models.py:104 input/views.py:592 output/models.py:88
+#: output/views/resource.py:48 templates/output/resource.html:126
+msgid "available"
+msgstr "有效性"
+
+#: input/models.py:106
+msgid "Calendar defining the working hours and holidays of this location"
+msgstr "定义这个地点的工时和假日的日历"
+
+#: input/models.py:114 input/models.py:185 input/models.py:248
+#: input/models.py:319 input/models.py:438 input/models.py:618
+#: input/models.py:959 input/models.py:1018 input/views.py:93
+#: input/views.py:523 input/views.py:565 input/views.py:648 input/views.py:673
+#: input/views.py:806 input/views.py:892 input/views.py:1013
+#: output/views/buffer.py:42 output/views/operation.py:40
+#: output/views/resource.py:43
+msgid "location"
+msgstr "地点"
+
+#: input/models.py:115 input/views.py:582
+msgid "locations"
+msgstr "地点"
+
+#: input/models.py:130 input/models.py:1012 input/views.py:807
+#: output/models.py:143 output/views/demand.py:173
+msgid "customer"
+msgstr "客户"
+
+#: input/models.py:131 input/views.py:602
+msgid "customers"
+msgstr "客户"
+
+#: input/models.py:141 input/models.py:1028 input/views.py:814
+msgid "delivery operation"
+msgstr "交货工序"
+
+#: input/models.py:142
+msgid "Default operation used to ship a demand for this item"
+msgstr "满足这项产品需求的默认工序"
+
+#: input/models.py:145 input/views.py:703
+msgid "price"
+msgstr "价格"
+
+#: input/models.py:147
+msgid "Selling price of the item"
+msgstr "产品的价格"
+
+#: input/models.py:155 input/models.py:181 input/models.py:244
+#: input/models.py:441 input/models.py:894 input/models.py:951
+#: input/models.py:1015 input/views.py:524 input/views.py:647
+#: input/views.py:672 input/views.py:805 input/views.py:971 input/views.py:1012
+#: output/models.py:142 output/views/buffer.py:41 output/views/demand.py:39
+#: output/views/demand.py:172 output/widget.py:137 output/widget.py:177
+#: output/widget.py:254
+msgid "item"
+msgstr "产品"
+
+#: input/models.py:156 input/views.py:690
+msgid "items"
+msgstr "产品"
+
+#: input/models.py:171 input/models.py:189 input/models.py:955
+#: input/views.py:649 input/views.py:1014 output/widget.py:137
+#: output/widget.py:254
+#| msgid "supply"
+msgid "supplier"
+msgstr ""
+
+#: input/models.py:172 input/views.py:621
+#| msgid "supply"
+msgid "suppliers"
+msgstr ""
+
+#: input/models.py:193 input/models.py:256 input/models.py:258
+#: input/views.py:650 input/views.py:675
+#| msgid "leadtime"
+msgid "lead time"
+msgstr ""
+
+#: input/models.py:195
+msgid "Purchasing lead time"
+msgstr ""
+
+#: input/models.py:198 input/models.py:261 input/models.py:331
+#: input/views.py:651 input/views.py:676 input/views.py:897
+msgid "size minimum"
+msgstr "最小量"
+
+#: input/models.py:200
+msgid "A minimum purchasing quantity"
+msgstr ""
+
+#: input/models.py:203 input/models.py:266 input/models.py:336
+#: input/views.py:652 input/views.py:677 input/views.py:898
+msgid "size multiple"
+msgstr "倍数"
+
+#: input/models.py:205
+msgid "A multiple purchasing quantity"
+msgstr ""
+
+#: input/models.py:208 input/models.py:271 input/models.py:346
+#: input/models.py:571 input/models.py:622 input/views.py:570
+#: input/views.py:653 input/views.py:678 input/views.py:900
+msgid "cost"
+msgstr "消耗"
+
+#: input/models.py:210
+#| msgid "duration per unit"
+msgid "Purchasing cost per unit"
+msgstr ""
+
+#: input/models.py:214 input/models.py:277
+#| msgid "Priority of this flow in a group of alternates"
+msgid "Priority among all alternates"
+msgstr ""
+
+#: input/models.py:217 input/models.py:280 input/models.py:404
+#: input/models.py:688 input/models.py:737 input/models.py:783
+#: input/views.py:655 input/views.py:680 input/views.py:736 input/views.py:758
+#: input/views.py:784 input/views.py:920
+msgid "effective start"
+msgstr "生效开始时间"
+
+#: input/models.py:218 input/models.py:281 input/models.py:405
+#: input/models.py:689 input/models.py:738 input/models.py:784
+msgid "Validity start date"
+msgstr "有效开始时间"
+
+#: input/models.py:221 input/models.py:284 input/models.py:408
+#: input/models.py:692 input/models.py:741 input/models.py:787
+#: input/views.py:656 input/views.py:681 input/views.py:737 input/views.py:759
+#: input/views.py:785 input/views.py:921
+msgid "effective end"
+msgstr "生效结束时间"
+
+#: input/models.py:222 input/models.py:285 input/models.py:409
+#: input/models.py:693 input/models.py:742 input/models.py:788
+msgid "Validity end date"
+msgstr "有效结束时间"
+
+#: input/models.py:235
+msgid "item supplier"
+msgstr ""
+
+#: input/models.py:236 input/views.py:640
+msgid "item suppliers"
+msgstr ""
+
+#: input/models.py:252 input/models.py:898 input/views.py:674
+#: input/views.py:972 output/widget.py:177
+msgid "origin"
+msgstr ""
+
+#: input/models.py:263
+#| msgid "minimum shipment"
+msgid "A minimum shipping quantity"
+msgstr ""
+
+#: input/models.py:268
+msgid "A multiple shipping quantity"
+msgstr ""
+
+#: input/models.py:273
+#| msgid "Shipping queue"
+msgid "Shipping cost per unit"
+msgstr ""
+
+# Translation included with django
+#: input/models.py:298
+#| msgid "Site administration"
+msgid "item distribution"
+msgstr ""
+
+# Translation included with django
+#: input/models.py:299 input/views.py:665
+#| msgid "Site administration"
+msgid "item distributions"
+msgstr ""
+
+#: input/models.py:305
+msgid "fixed_time"
+msgstr "固定时间"
+
+#: input/models.py:306
+msgid "time_per"
+msgstr "单位时间"
+
+#: input/models.py:307
+msgid "routing"
+msgstr "工艺路线"
+
+#: input/models.py:308 input/models.py:749 input/models.py:795
+#: input/views.py:761 input/views.py:787
+msgid "alternate"
+msgstr "替换项"
+
+#: input/models.py:309
+msgid "split"
+msgstr "分开"
+
+#: input/models.py:314 input/models.py:436 input/models.py:605
+#: input/models.py:733 input/views.py:94 input/views.py:527 input/views.py:567
+#: input/views.py:782 input/views.py:891
+msgid "type"
+msgstr "类型"
+
+#: input/models.py:323 input/views.py:895
+msgid "release fence"
+msgstr "释放冻结"
+
+#: input/models.py:324
+msgid ""
+"Operationplans within this time window from the current day are expected to "
+"be released to production ERP"
+msgstr "由当天起的工序计划的时间窗口将发布到生产ERP系统中。"
+
+#: input/models.py:327 input/views.py:896
+msgid "post-op time"
+msgstr "后置时间"
+
+#: input/models.py:328
+msgid ""
+"A delay time to be respected as a soft constraint after ending the operation"
+msgstr "结束工序后,期望一个延迟时间作为一个软约束"
+
+#: input/models.py:333
+msgid "A minimum quantity for operationplans"
+msgstr "工序计划的最小量"
+
+#: input/models.py:338
+msgid "A multiple quantity for operationplans"
+msgstr "工序计划的倍数数量"
+
+#: input/models.py:341 input/views.py:899
+msgid "size maximum"
+msgstr "最大量"
+
+#: input/models.py:343
+msgid "A maximum quantity for operationplans"
+msgstr "工序计划的最大量"
+
+#: input/models.py:348
+msgid "Cost per operationplan unit"
+msgstr "每单位工序的消耗"
+
+#: input/models.py:351 input/models.py:567 input/views.py:95 input/views.py:893
+msgid "duration"
+msgstr "持续时间"
+
+#: input/models.py:353
+msgid "A fixed duration for the operation"
+msgstr "工序的固定持续时间"
+
+#: input/models.py:356 input/views.py:96 input/views.py:894
+msgid "duration per unit"
+msgstr "每单位时间"
+
+#: input/models.py:358
+msgid "A variable duration for the operation"
+msgstr "工序的有效持续时间"
+
+#: input/models.py:361 input/models.py:757 input/models.py:807
+#: input/views.py:764 input/views.py:789 input/views.py:901
+msgid "search mode"
+msgstr ""
+
+#: input/models.py:363 input/models.py:759 input/models.py:809
+msgid "Method to select preferred alternate"
+msgstr "选择推荐替换项的方法"
+
+#: input/models.py:383 input/models.py:392 input/models.py:720
+#: input/models.py:775 input/models.py:844 input/views.py:91 input/views.py:701
+#: input/views.py:754 input/views.py:780 input/views.py:917 input/views.py:937
+#: output/models.py:26 output/views/buffer.py:189 output/views/constraint.py:30
+#: output/views/operation.py:39 output/views/operation.py:155
+#: output/views/pegging.py:45 output/views/resource.py:201 output/widget.py:218
+#| msgid "operations"
+msgid "operation"
+msgstr ""
+
+#: input/models.py:384 input/views.py:881
+msgid "operations"
+msgstr "工序"
+
+#: input/models.py:393
+msgid "Parent operation"
+msgstr "父工序"
+
+#: input/models.py:397
+msgid ""
+"Sequence of this operation among the suboperations. Negative values are "
+"ignored."
+msgstr "这项工序的子工序的操作序列，忽略负值。"
+
+#: input/models.py:400 input/models.py:420 input/views.py:918
+msgid "suboperation"
+msgstr "子工序"
+
+#: input/models.py:401
+msgid "Child operation"
+msgstr "子类工序"
+
+#: input/models.py:421 input/views.py:910
+msgid "suboperations"
+msgstr "子工序"
+
+#: input/models.py:427 input/models.py:589
+msgid "Default"
+msgstr "默认"
+
+#: input/models.py:428 input/models.py:591
+msgid "Infinite"
+msgstr "无限的"
+
+#: input/models.py:429
+msgid "Procure"
+msgstr "采购"
+
+#: input/models.py:443 input/views.py:525 output/models.py:127
+#: output/views/buffer.py:192
+msgid "onhand"
+msgstr "现有库存量"
+
+#: input/models.py:445
+msgid "current inventory"
+msgstr "目前存货"
+
+#: input/models.py:448 input/views.py:528
+msgid "minimum"
+msgstr "最小值"
+
+#: input/models.py:450
+msgid "Safety stock"
+msgstr ""
+
+#: input/models.py:453 input/views.py:529
+msgid "minimum calendar"
+msgstr "安全库存日历表"
+
+#: input/models.py:455
+msgid "Calendar storing a time-dependent safety stock profile"
+msgstr "库存的存储安全期"
+
+#: input/models.py:458 input/views.py:530
+msgid "producing"
+msgstr "生产"
+
+#: input/models.py:460
+msgid "Operation to replenish the buffer"
+msgstr "补充存货的工序"
+
+#: input/models.py:464
+msgid "leadtime"
+msgstr "前置时间"
+
+#: input/models.py:466
+msgid "Leadtime for supplier of a procure buffer"
+msgstr "供应商采购库存的前置时间"
+
+#: input/models.py:469
+msgid "fence"
+msgstr "冻结时间"
+
+#: input/models.py:471
+msgid "Frozen fence for creating new procurements"
+msgstr "创建新采购的冻结时间"
+
+#: input/models.py:474
+msgid "min_inventory"
+msgstr "最低库存"
+
+#: input/models.py:476
+msgid "Inventory level that triggers replenishment of a procure buffer"
+msgstr "触发库存补充采购的水平"
+
+#: input/models.py:479
+msgid "max_inventory"
+msgstr "库存最大值"
+
+#: input/models.py:481
+msgid "Inventory level to which a procure buffer is replenished"
+msgstr "补充库存的采购水平"
+
+#: input/models.py:484
+msgid "min_interval"
+msgstr "最小间隔"
+
+#: input/models.py:486
+msgid "Minimum time interval between replenishments of a procure buffer"
+msgstr "补充库存采购的最小间隔"
+
+#: input/models.py:489
+msgid "max_interval"
+msgstr "最大间隔"
+
+#: input/models.py:491
+msgid "Maximum time interval between replenishments of a procure buffer"
+msgstr "补充库存采购的最大间隔"
+
+#: input/models.py:494
+msgid "size_minimum"
+msgstr "最低采购量"
+
+#: input/models.py:496
+msgid "Minimum size of replenishments of a procure buffer"
+msgstr "补充库存采购的最小值"
+
+#: input/models.py:499
+msgid "size_multiple"
+msgstr "系数"
+
+#: input/models.py:501
+msgid "Replenishments of a procure buffer are a multiple of this quantity"
+msgstr "补充库存的采购是一个多重数"
+
+#: input/models.py:504
+msgid "size_maximum"
+msgstr "最大值"
+
+#: input/models.py:506
+msgid "Maximum size of replenishments of a procure buffer"
+msgstr "补充生产库存的最大值"
+
+#: input/models.py:529 input/models.py:724 input/views.py:781
+#: output/models.py:123 output/views/buffer.py:40 output/views/buffer.py:188
+msgid "buffer"
+msgstr "库存"
+
+#: input/models.py:530 input/views.py:513
+msgid "buffers"
+msgstr "库存"
+
+#: input/models.py:544 input/models.py:555 input/models.py:631
+#: input/views.py:572
+msgid "setup matrix"
+msgstr "配置矩阵"
+
+#: input/models.py:545 input/views.py:539
+msgid "setup matrices"
+msgstr "配置矩阵"
+
+#: input/models.py:559
+msgid "from setup"
+msgstr "初始设置"
+
+#: input/models.py:560
+msgid "Name of the old setup (wildcard characters are supported)"
+msgstr "旧设置的名称（支持使用通用符）"
+
+#: input/models.py:563
+msgid "to setup"
+msgstr "切换设置"
+
+#: input/models.py:564
+msgid "Name of the new setup (wildcard characters are supported)"
+msgstr "切换设置"
+
+#: input/models.py:568
+msgid "Duration of the changeover"
+msgstr "转换期间"
+
+#: input/models.py:572
+msgid "Cost of the conversion"
+msgstr "转换所需的花费"
+
+#: input/models.py:582
+msgid "setup matrix rule"
+msgstr "设置规则"
+
+#: input/models.py:583
+msgid "setup matrix rules"
+msgstr "设置规则"
+
+#: input/models.py:590
+msgid "Buckets"
+msgstr "日期"
+
+#: input/models.py:608 input/views.py:568
+msgid "maximum"
+msgstr "最大值"
+
+#: input/models.py:610
+msgid "Size of the resource"
+msgstr "资源量"
+
+#: input/models.py:613 input/views.py:569
+msgid "maximum calendar"
+msgstr "最大限度的日程表"
+
+#: input/models.py:615
+msgid "Calendar defining the resource size varying over time"
+msgstr "日历决定资源大小随时间变化"
+
+#: input/models.py:624
+msgid "Cost for using 1 unit of the resource for 1 hour"
+msgstr "每小时每单元所消耗的资源"
+
+#: input/models.py:626
+msgid "max early"
+msgstr "最大限度提前期"
+
+#: input/models.py:628
+msgid "Time window before the ask date where we look for available capacity"
+msgstr "寻求可用能力的有效时间窗口"
+
+#: input/models.py:633
+msgid "Setup matrix defining the conversion time and cost"
+msgstr "配置定义交换时间和消耗的矩阵"
+
+#: input/models.py:636 input/models.py:803 input/views.py:573
+#: input/views.py:763 output/models.py:90 output/models.py:109
+#: output/views/resource.py:51 output/views/resource.py:211
+#: templates/output/resource.html:130 templates/output/resource.html.py:233
+msgid "setup"
+msgstr "配置"
+
+#: input/models.py:637
+msgid "Setup of the resource at the start of the plan"
+msgstr "在计划开始时的资源配置"
+
+#: input/models.py:655 input/models.py:682 input/models.py:776
+#: input/views.py:734 input/views.py:755 output/models.py:86
+#: output/models.py:104 output/views/pegging.py:48 output/views/resource.py:42
+#: output/views/resource.py:200 output/widget.py:218 output/widget.py:284
+#| msgid "resources"
+msgid "resource"
+msgstr ""
+
+#: input/models.py:656 input/views.py:555
+msgid "resources"
+msgstr "资源"
+
+#: input/models.py:673 input/models.py:685 input/models.py:777
+#: input/views.py:735 input/views.py:756
+msgid "skill"
+msgstr "技能"
+
+#: input/models.py:674 input/views.py:712
+msgid "skills"
+msgstr "技能"
+
+#: input/models.py:697
+msgid "Priority of this skill in a group of alternates"
+msgstr "替代项的优先级"
+
+#: input/models.py:703
+msgid "resource skill"
+msgstr "资源技能"
+
+#: input/models.py:704 input/views.py:727
+msgid "resource skills"
+msgstr "资源技能"
+
+#: input/models.py:711
+msgid "Start"
+msgstr "开始"
+
+#: input/models.py:712
+msgid "End"
+msgstr "结束"
+
+#: input/models.py:713
+#| msgid "locked starts"
+msgid "Fixed start"
+msgstr ""
+
+#: input/models.py:714
+#| msgid "locked ends"
+msgid "Fixed end"
+msgstr ""
+
+#: input/models.py:728 input/models.py:779 input/models.py:848
+#: input/models.py:906 input/models.py:963 input/models.py:1033
+#: input/views.py:92 input/views.py:757 input/views.py:783 input/views.py:813
+#: input/views.py:940 input/views.py:976 input/views.py:1017
+#: output/models.py:27 output/models.py:105 output/models.py:125
+#: output/models.py:165 output/views/buffer.py:190 output/views/demand.py:174
+#: output/views/operation.py:156 output/views/pegging.py:49
+#: output/widget.py:138 output/widget.py:178 output/widget.py:220
+#: output/widget.py:255
+msgid "quantity"
+msgstr "数量"
+
+#: input/models.py:730
+msgid "Quantity to consume or produce per operationplan unit"
+msgstr "每一次工序计划消耗或生产物料的数量"
+
+#: input/models.py:734
+msgid "Consume/produce material at the start or the end of the operationplan"
+msgstr "在工序计划前或者后消耗或生产物料"
+
+#: input/models.py:746
+msgid "Optional name of this flow"
+msgstr "可选工艺流的名称"
+
+#: input/models.py:750
+msgid "Puts the flow in a group of alternate flows"
+msgstr "把工艺流添加到可替代项"
+
+#: input/models.py:754
+msgid "Priority of this flow in a group of alternates"
+msgstr "工序流替代项的优先级"
+
+#: input/models.py:768
+msgid "flow"
+msgstr "工序流"
+
+#: input/models.py:769 input/views.py:773
+msgid "flows"
+msgstr "工序流"
+
+#: input/models.py:792
+msgid "Optional name of this load"
+msgstr "可选负载的名称"
+
+#: input/models.py:796
+msgid "Puts the load in a group of alternate loads"
+msgstr "将负载添加到可替代项"
+
+#: input/models.py:800
+msgid "Priority of this load in a group of alternates"
+msgstr "负载可替代项的优先级"
+
+#: input/models.py:804
+msgid "Setup required on the resource for this operation"
+msgstr "这个工序的切换要求"
+
+#: input/models.py:818 output/models.py:91 output/views/resource.py:52
+#: templates/output/resource.html:132 templates/output/resource.html.py:234
+msgid "load"
+msgstr "负载"
+
+#: input/models.py:819 input/views.py:747
+msgid "loads"
+msgstr "负载"
+
+#: input/models.py:825 input/models.py:875 input/models.py:932
+msgid "proposed"
+msgstr ""
+
+#: input/models.py:826 input/models.py:876 input/models.py:933
+msgid "confirmed"
+msgstr ""
+
+#: input/models.py:827 input/models.py:877 input/models.py:934
+msgid "closed"
+msgstr ""
+
+#: input/models.py:833
+msgid "Unique identifier of an operationplan"
+msgstr "工序计划的唯一标识符"
+
+#: input/models.py:837 input/models.py:891 input/models.py:948
+#| msgid "Size of the resource"
+msgid "Status of the order"
+msgstr ""
+
+#: input/models.py:840 input/models.py:886 input/models.py:943
+#: input/views.py:965 input/views.py:1006
+msgid "reference"
+msgstr ""
+
+#: input/models.py:841 input/models.py:887 input/models.py:944
+#| msgid "Optional name of this load"
+msgid "External reference of this order"
+msgstr ""
+
+#: input/models.py:854 input/models.py:915 input/models.py:969
+#: input/views.py:978 input/views.py:1018 output/models.py:31
+#: output/views/buffer.py:193 output/views/operation.py:160
+#: output/views/resource.py:207 output/widget.py:139 output/widget.py:179
+#: output/widget.py:220 output/widget.py:256
+msgid "criticality"
+msgstr "危急程度"
+
+#: input/models.py:867 output/models.py:40 output/models.py:108
+#: output/models.py:124 output/models.py:148 output/models.py:164
+#: output/views/buffer.py:197 output/views/demand.py:178
+#: output/views/operation.py:154 output/views/resource.py:210
+msgid "operationplan"
+msgstr "工序计划"
+
+#: input/models.py:868 input/views.py:930 output/models.py:41
+msgid "operationplans"
+msgstr "工序计划"
+
+#: input/models.py:902 input/views.py:973 output/widget.py:178
+#| msgid "description"
+msgid "destination"
+msgstr ""
+
+#: input/models.py:911 input/views.py:977
+#| msgid "material"
+msgid "consume material"
+msgstr ""
+
+#: input/models.py:912
+msgid "Consume material at origin location"
+msgstr ""
+
+#: input/models.py:924
+msgid "distribution order"
+msgstr ""
+
+#: input/models.py:925 input/views.py:958
+#| msgid "open orders"
+msgid "distribution orders"
+msgstr ""
+
+#: input/models.py:978
+#| msgid "Purchase order analysis"
+msgid "purchase order"
+msgstr ""
+
+#: input/models.py:979 input/views.py:999
+#| msgid "Purchase order analysis"
+msgid "purchase orders"
+msgstr ""
+
+#: input/models.py:994 input/views.py:824
+msgid "Inquiry"
+msgstr "调查"
+
+#: input/models.py:995 input/views.py:825
+msgid "Quote"
+msgstr "询交期"
+
+#: input/models.py:996 input/views.py:826
+msgid "Open"
+msgstr "打开"
+
+#: input/models.py:997 input/views.py:827 input/views.py:950 input/views.py:991
+#: input/views.py:1031
+msgid "Closed"
+msgstr ""
+
+#: input/models.py:998 input/views.py:828
+msgid "Canceled"
+msgstr "取消"
+
+#: input/models.py:1020 input/views.py:812 output/models.py:144
+#: output/widget.py:58 output/widget.py:99
+msgid "due"
+msgstr "交期"
+
+#: input/models.py:1020
+msgid "Due date of the demand"
+msgstr ""
+
+#: input/models.py:1024
+msgid "Status of the demand. Only \"open\" demands are planned"
+msgstr "需求的状态。只有 \"open\"的需求才会被执行"
+
+#: input/models.py:1030
+msgid "Operation used to satisfy this demand"
+msgstr "满足这项需求的工序"
+
+#: input/models.py:1037
+msgid "Priority of the demand (lower numbers indicate more important demands)"
+msgstr "需求的优先级（数据越小代表需求越重要）"
+
+#: input/models.py:1040 input/views.py:818
+msgid "minimum shipment"
+msgstr "最低出货"
+
+#: input/models.py:1042
+msgid "Minimum shipment quantity when planning this demand"
+msgstr "计划这需求时的最低出货量"
+
+#: input/models.py:1045 input/views.py:817
+msgid "maximum lateness"
+msgstr "最大延误"
+
+#: input/models.py:1047
+msgid "Maximum lateness allowed when planning this demand"
+msgstr "计划该需求允许的最大延误"
+
+#: input/models.py:1056
+#| msgid "Late orders"
+msgid "sales order"
+msgstr ""
+
+#: input/models.py:1057 input/views.py:798
+#| msgid "Late orders"
+msgid "sales orders"
+msgstr ""
+
+#: input/views.py:57
+#, python-format
+msgid "%(name)s - %(count)d match"
+msgid_plural "%(name)s - %(count)d matches"
+msgstr[0] "%(name)s - %(count)d 匹配"
+msgstr[1] "%(name)s - %(count)d 匹配"
+
+#: input/views.py:83
+msgid "Supply path"
+msgstr "供应路线"
+
+#: input/views.py:90 output/views/pegging.py:44
+msgid "depth"
+msgstr "深度"
+
+#: input/views.py:128
+msgid "Where Used"
+msgstr "用于何处"
+
+#: input/views.py:128
+msgid "Supply Path"
+msgstr "供应线"
+
+#: input/views.py:571
+msgid "maxearly"
+msgstr "最早提前时间"
+
+#: input/views.py:824 input/views.py:825 input/views.py:826 input/views.py:827
+#: input/views.py:828 input/views.py:948 input/views.py:949 input/views.py:950
+#: input/views.py:989 input/views.py:990 input/views.py:991 input/views.py:1029
+#: input/views.py:1030 input/views.py:1031
+#, python-format
+msgid "change status to %(status)s"
+msgstr ""
+
+#: input/views.py:948 input/views.py:989 input/views.py:1029
+msgid "Proposed"
+msgstr ""
+
+#: input/views.py:949 input/views.py:990 input/views.py:1030
+#| msgid "Confirm"
+msgid "Confirmed"
+msgstr ""
+
+#: input/views.py:985 input/views.py:1025
+msgid "incremental export to openbravo"
+msgstr ""
+
+#: menu.py:30
+msgid "Sales"
+msgstr ""
+
+#: menu.py:32
+#| msgid "capacity"
+msgid "Capacity"
+msgstr ""
+
+#: menu.py:33
+msgid "Purchasing"
+msgstr ""
+
+#: menu.py:34
+#| msgid "description"
+msgid "Distribution"
+msgstr ""
+
+#: menu.py:35
+msgid "Manufacturing"
+msgstr ""
+
+#: menu.py:36 templates/execute/execute.html:343
+msgid "Admin"
+msgstr "管理"
+
+#: menu.py:37
+msgid "Help"
+msgstr ""
+
+#: openbravo/views.py:73
+msgid "No proposed data records selected"
+msgstr ""
+
+#: output/models.py:28 output/models.py:89 output/views/operation.py:162
+#: output/views/resource.py:50 output/views/resource.py:209
+#: templates/output/resource.html:128 templates/output/resource.html.py:232
+msgid "unavailable"
+msgstr "不可用"
+
+#: output/models.py:29 output/models.py:87 output/models.py:106
+#: output/widget.py:219
+msgid "startdate"
+msgstr "开始日期"
+
+#: output/models.py:30 output/models.py:107 output/widget.py:138
+#: output/widget.py:219 output/widget.py:255
+msgid "enddate"
+msgstr "结束日期"
+
+#: output/models.py:32 output/views/buffer.py:194 output/views/operation.py:161
+#: output/views/resource.py:208
+msgid "locked"
+msgstr "锁定"
+
+#: output/models.py:46 output/models.py:67 output/views/constraint.py:77
+#: output/views/problem.py:53
+msgid "entity"
+msgstr "实体"
+
+#: output/models.py:52 output/models.py:73 output/views/constraint.py:83
+#: output/views/problem.py:59 output/widget.py:285
+msgid "weight"
+msgstr "重量"
+
+#: output/models.py:60
+msgid "problem"
+msgstr "问题"
+
+#: output/models.py:61
+msgid "problems"
+msgstr "问题"
+
+#: output/models.py:66 output/models.py:141 output/models.py:156
+#: output/models.py:162 output/views/constraint.py:27
+#: output/views/constraint.py:76 output/views/demand.py:42
+#: output/views/demand.py:171 templates/output/demand.html:125
+#: templates/output/demand.html.py:198
+msgid "demand"
+msgstr "需求"
+
+#: output/models.py:81
+msgid "constraint"
+msgstr "约束"
+
+#: output/models.py:82 templates/execute/execute.html:249
+msgid "constraints"
+msgstr "约束"
+
+#: output/models.py:92 templates/output/resource.html:235
+msgid "free"
+msgstr "不受约束"
+
+#: output/models.py:117
+msgid "loadplan"
+msgstr "负载计划"
+
+#: output/models.py:118
+msgid "loadplans"
+msgstr "负载计划"
+
+#: output/models.py:126 output/views/buffer.py:191
+msgid "date"
+msgstr "日期"
+
+#: output/models.py:135
+msgid "flowplan"
+msgstr "工序流计划"
+
+#: output/models.py:136
+msgid "flowplans"
+msgstr "工序流计划"
+
+#: output/models.py:145 output/views/buffer.py:196
+#: output/views/operation.py:157 output/views/resource.py:205
+#| msgid "planned quantity"
+msgid "demand quantity"
+msgstr ""
+
+#: output/models.py:146 output/views/demand.py:175
+msgid "planned quantity"
+msgstr "计划量"
+
+#: output/models.py:147 output/views/demand.py:177 output/widget.py:59
+msgid "planned date"
+msgstr "计划日期"
+
+#: output/models.py:157
+msgid "demands"
+msgstr "需求"
+
+#: output/models.py:175
+msgid "demand pegging"
+msgstr "需求分析"
+
+#: output/models.py:176
+msgid "demand peggings"
+msgstr "需求分析"
+
+#: output/views/buffer.py:35
+msgid "Inventory report"
+msgstr "库存报表"
+
+#: output/views/buffer.py:45 templates/output/buffer.html:128
+#: templates/output/buffer.html.py:216
+msgid "start inventory"
+msgstr "初始库存"
+
+#: output/views/buffer.py:46 templates/output/buffer.html:130
+#: templates/output/buffer.html.py:214
+msgid "produced"
+msgstr "生产"
+
+#: output/views/buffer.py:47 templates/output/buffer.html:132
+#: templates/output/buffer.html.py:215
+msgid "consumed"
+msgstr "消耗"
+
+#: output/views/buffer.py:48 templates/output/buffer.html:134
+msgid "end inventory"
+msgstr "最终库存"
+
+#: output/views/buffer.py:157
+msgid "Inventory detail report"
+msgstr "库存明细报表"
+
+#: output/views/buffer.py:195 output/views/resource.py:204
+msgid "operationplan quantity"
+msgstr "生产计划数量"
+
+#: output/views/constraint.py:28
+msgid "material"
+msgstr "物料"
+
+#: output/views/constraint.py:29
+msgid "capacity"
+msgstr "能力"
+
+#: output/views/constraint.py:34 templates/output/resource.html:236
+msgid "overload"
+msgstr "负载过重"
+
+#: output/views/constraint.py:35
+msgid "underload"
+msgstr "负载不足"
+
+#: output/views/constraint.py:36
+msgid "material excess"
+msgstr "超额物料"
+
+#: output/views/constraint.py:37
+msgid "material shortage"
+msgstr "短缺物料"
+
+#: output/views/constraint.py:38
+msgid "excess"
+msgstr "超额"
+
+#: output/views/constraint.py:39 output/widget.py:99
+msgid "short"
+msgstr "短缺"
+
+#: output/views/constraint.py:40
+msgid "early"
+msgstr "提早"
+
+#: output/views/constraint.py:41
+msgid "late"
+msgstr "延迟"
+
+#: output/views/constraint.py:42
+msgid "unplanned"
+msgstr "无计划"
+
+#: output/views/constraint.py:43
+msgid "precedence"
+msgstr "优先级"
+
+#: output/views/constraint.py:44
+msgid "before fence"
+msgstr "冻结期前"
+
+#: output/views/constraint.py:45
+msgid "before current"
+msgstr "当前日期之前"
+
+#: output/views/constraint.py:68
+#| msgid "Constraint Report"
+msgid "Constraint report"
+msgstr ""
+
+#: output/views/demand.py:34
+msgid "Demand report"
+msgstr "需求报告"
+
+#: output/views/demand.py:43 templates/output/demand.html:127
+#: templates/output/demand.html.py:199
+msgid "supply"
+msgstr "供应"
+
+#: output/views/demand.py:44 templates/output/demand.html:129
+#: templates/output/demand.html.py:200
+msgid "backlog"
+msgstr "合计"
+
+#: output/views/demand.py:164
+#| msgid "Demand plan"
+msgid "Demand plan detail"
+msgstr ""
+
+#: output/views/demand.py:176
+msgid "due date"
+msgstr "交期日"
+
+#: output/views/kpi.py:27
+msgid "Performance Indicators"
+msgstr "绩效指标"
+
+#: output/views/operation.py:34
+msgid "Operation report"
+msgstr "工序报告"
+
+#: output/views/operation.py:43 templates/output/operation.html:126
+#: templates/output/operation.html:297
+msgid "locked starts"
+msgstr "锁定开始"
+
+#: output/views/operation.py:44 templates/output/operation.html:128
+msgid "total starts"
+msgstr "全部开始"
+
+#: output/views/operation.py:45 templates/output/operation.html:130
+#: templates/output/operation.html:299
+msgid "locked ends"
+msgstr "锁定结束"
+
+#: output/views/operation.py:46 templates/output/operation.html:132
+msgid "total ends"
+msgstr "全部结束"
+
+#: output/views/operation.py:122
+msgid "Operation detail report"
+msgstr "工序明细报表"
+
+#: output/views/pegging.py:35
+msgid "Demand plan"
+msgstr "需求计划"
+
+#: output/views/problem.py:45
+#| msgid "Problem Report"
+msgid "Problem report"
+msgstr ""
+
+#: output/views/resource.py:36
+msgid "Resource report"
+msgstr "资源报表"
+
+#: output/views/resource.py:44 output/views/resource.py:53
+msgid "utilization %"
+msgstr "使用率 %"
+
+#: output/views/resource.py:73
+msgid "hours"
+msgstr "小时"
+
+#: output/views/resource.py:75 templates/admin/base_site_grid.html:126
+#: templates/admin/base_site_gridpivot.html:119
 msgid "weeks"
 msgstr "周"
 
-#: planningboard/templates/planningboard/index.html:169
-#: templates/admin/base_site_grid.html:143
-#: templates/admin/base_site_gridpivot.html:140
-msgid "months"
-msgstr "月"
+#: output/views/resource.py:77 output/views/resource.py:79
+#: templates/admin/base_site_grid.html:125
+#: templates/admin/base_site_gridpivot.html:118
+msgid "days"
+msgstr "天"
 
-#: planningboard/templates/planningboard/index.html:170
-#: templates/admin/base_site_grid.html:144
-#: templates/admin/base_site_gridpivot.html:141
-msgid "after plan current date"
-msgstr "计划当前日期后"
+#: output/views/resource.py:169
+msgid "Resource detail report"
+msgstr "资源明细报表"
+
+#: output/views/resource.py:206
+#| msgid "planned quantity"
+msgid "load quantity"
+msgstr ""
+
+#: output/widget.py:37
+msgid "Late orders"
+msgstr "逾期订单"
+
+#: output/widget.py:38
+msgid "Shows orders that will be delivered after their due date"
+msgstr "显示交货晚于交期的订单"
+
+#: output/widget.py:59
+msgid "delay"
+msgstr "延期"
+
+#: output/widget.py:76
+msgid "Short orders"
+msgstr "短期订单"
+
+#: output/widget.py:77
+msgid "Shows orders that are not planned completely"
+msgstr "显示完全没有计划的订单"
+
+#: output/widget.py:116
+msgid "Purchase queue"
+msgstr "购买队列"
+
+#: output/widget.py:117
+msgid "Display a list of new purchase orders"
+msgstr "显示新的采购订单表"
+
+#: output/widget.py:156
+msgid "Shipping queue"
+msgstr "出货队列"
+
+#: output/widget.py:157
+#| msgid "Display a list of new purchase orders"
+msgid "Display a list of new distribution orders"
+msgstr ""
+
+#: output/widget.py:197
+msgid "Resource queue"
+msgstr "资源队列"
+
+#: output/widget.py:198
+msgid "Display planned activities for the resources"
+msgstr "显示资源的计划活动"
+
+#: output/widget.py:237
+msgid "Purchase order analysis"
+msgstr "采购订单分析"
+
+#: output/widget.py:238
+msgid "Analyse the urgency of existing purchase orders"
+msgstr "分析现存采购订单的紧急性"
+
+#: output/widget.py:273
+msgid "Alerts"
+msgstr "警告"
+
+#: output/widget.py:274
+msgid "Overview of all alerts in the plan"
+msgstr "概览计划中所有的警告"
+
+#: output/widget.py:284
+msgid "count"
+msgstr "数量"
+
+#: output/widget.py:309
+msgid "Resource utilization"
+msgstr "资源利用率"
+
+#: output/widget.py:310
+msgid "Shows the resources with the highest utilization"
+msgstr "显示最高利用率的资源"
+
+#: output/widget.py:410
+msgid "Inventory by location"
+msgstr "库存"
+
+#: output/widget.py:411
+msgid "Display the locations with the highest inventory value"
+msgstr "显示仓库最高库存值"
+
+#: output/widget.py:499
+msgid "Inventory by item"
+msgstr "产品的库存"
+
+#: output/widget.py:500
+msgid "Display the items with the highest inventory value"
+msgstr "显示产品最高库存值"
+
+#: output/widget.py:588
+msgid "Delivery performance"
+msgstr "交货能力"
+
+#: output/widget.py:589
+msgid ""
+"Shows the percentage of demands that are planned to be shipped completely on "
+"time"
+msgstr "显示计划中可以按时完全出货的需求的百分比"
+
+#: output/widget.py:628
+msgid "On time delivery"
+msgstr "按时交货"
 
 # Translation included with django
-#: templates/404.html:4 templates/404.html.py:8
-msgid "Page not found"
-msgstr "找不到页面"
+#: settings.py:109
+msgid "English"
+msgstr "英语"
+
+# Translation included with django
+#: settings.py:110
+msgid "French"
+msgstr "法语"
+
+# Translation included with django
+#: settings.py:111
+msgid "Italian"
+msgstr "意大利语"
+
+# Translation included with django
+#: settings.py:112
+msgid "Japanese"
+msgstr "日语"
+
+# Translation included with django
+#: settings.py:113
+msgid "Dutch"
+msgstr "荷兰语"
+
+#: settings.py:114
+msgid "Portuguese"
+msgstr ""
+
+#: settings.py:115
+msgid "Brazilian Portuguese"
+msgstr ""
+
+# Translation included with django
+#: settings.py:116
+msgid "Simplified Chinese"
+msgstr "简体中文"
+
+# Translation included with django
+#: settings.py:117
+msgid "Traditional Chinese"
+msgstr "繁体中文"
 
 # Translation included with django
 #: templates/404.html:10
@@ -200,146 +2234,141 @@ msgid ""
 "email and should be fixed shortly. Thanks for your patience."
 msgstr "发生错误。已经发送给管理员,将会尽快解决。感谢您的耐心。"
 
-# Translation included with django
-#: templates/admin/base.html:27
-#: templates/registration/password_change_done.html:8
-#: templates/registration/password_change_form.html:9
-msgid "Home"
-msgstr "首页"
+#: templates/admin/base_site.html:31 templates/admin/index.html:5
+#| msgid "Cockpit"
+msgid "cockpit"
+msgstr ""
 
-#: templates/admin/base_site.html:34 templates/admin/index.html:6
-msgid "Cockpit"
-msgstr "组件"
-
-#: templates/admin/base_site_grid.html:18
-#: templates/admin/base_site_gridpivot.html:26
+#: templates/admin/base_site_grid.html:17
+#: templates/admin/base_site_gridpivot.html:24
 msgid "Error: Missing time buckets or bucket dates"
 msgstr "错误:没有计划日期。"
 
 # Translation included with django
-#: templates/admin/base_site_grid.html:60
-#: templates/admin/base_site_gridpivot.html:67
-#| msgid "Page not found"
+#: templates/admin/base_site_grid.html:52
+#: templates/admin/base_site_gridpivot.html:56
 msgid "Warning: no data found"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:64
-#: templates/admin/base_site_gridpivot.html:71
+#: templates/admin/base_site_grid.html:56
+#: templates/admin/base_site_gridpivot.html:60
 msgid "Error retrieving report data"
 msgstr "错误检索数据报表"
 
-#: templates/admin/base_site_grid.html:100
-#: templates/admin/base_site_gridpivot.html:110
-#: templates/inventoryplanning/drp.html:1072
-#: templates/output/resourcegantt.html:96
-msgid "Filter data"
-msgstr "过滤数据"
+#: templates/admin/base_site_grid.html:85
+#: templates/admin/base_site_gridpivot.html:88
+#| msgid "Filter data"
+msgid "filter data"
+msgstr ""
 
-#: templates/admin/base_site_grid.html:102
+#: templates/admin/base_site_grid.html:87
 msgid "Create new object"
 msgstr "新建"
 
-#: templates/admin/base_site_grid.html:103
+#: templates/admin/base_site_grid.html:88
 msgid "Copy selected objects"
 msgstr "复制"
 
-#: templates/admin/base_site_grid.html:104
+#: templates/admin/base_site_grid.html:89
 msgid "Delete selected objects"
 msgstr "删除"
 
-#: templates/admin/base_site_grid.html:106
-#: templates/admin/base_site_gridpivot.html:116
-msgid "Import CSV or Excel file"
+#: templates/admin/base_site_grid.html:90
+msgid "Configure time buckets"
+msgstr "配置计划日期"
+
+#: templates/admin/base_site_grid.html:91
+#: templates/admin/base_site_gridpivot.html:90
+#| msgid "Import CSV or Excel file"
+msgid "import CSV or Excel file"
 msgstr "导入CSV或Excel文件"
 
-#: templates/admin/base_site_grid.html:107
-#: templates/admin/base_site_gridpivot.html:117
-#: templates/inventoryplanning/drp.html:1073
-msgid "Export as CSV or Excel file"
+#: templates/admin/base_site_grid.html:92
+#| msgid "Export as CSV or Excel file"
+msgid "export as CSV or Excel file"
 msgstr "导出CSV或Excel文件"
 
-#: templates/admin/base_site_grid.html:108
-#: templates/admin/base_site_gridpivot.html:118 templates/admin/index.html:5
-#: templates/inventoryplanning/drp.html:1074 templates/output/pegging.html:100
-#: templates/output/resourcegantt.html:98
-msgid "Customize"
-msgstr "定制"
-
-#: templates/admin/base_site_grid.html:113
-#: templates/inventoryplanning/drp.html:1078
-msgid "save"
-msgstr ""
-
 # Translation included with django
-#: templates/admin/base_site_grid.html:113
-#: templates/admin/base_site_gridpivot.html:112
-#: templates/inventoryplanning/drp.html:1078
-msgid "Save changes"
-msgstr "保存修改"
-
-#: templates/admin/base_site_grid.html:114
-#: templates/inventoryplanning/drp.html:1079
-msgid "undo"
+#: templates/admin/base_site_grid.html:97
+#: templates/admin/base_site_gridpivot.html:96
+#| msgid "Save changes"
+msgid "save changes"
 msgstr ""
 
-#: templates/admin/base_site_grid.html:114
-#: templates/admin/base_site_gridpivot.html:113
-#: templates/inventoryplanning/drp.html:1079
-msgid "Undo changes"
-msgstr "撤销修改"
+#: templates/admin/base_site_grid.html:98
+#: templates/admin/base_site_gridpivot.html:97
+#| msgid "Undo changes"
+msgid "undo changes"
+msgstr ""
 
-#: templates/admin/base_site_grid.html:117
-#| msgid "location"
+#: templates/admin/base_site_grid.html:101
 msgid "select action"
 msgstr ""
 
+#: templates/admin/base_site_grid.html:112
+#: templates/admin/base_site_gridpivot.html:105
+#| msgid "Time buckets"
+msgid "time buckets"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:114
 #: templates/admin/base_site_gridpivot.html:107
-msgid "Display table"
+#| msgid "Bucket size"
+msgid "bucket size"
+msgstr ""
+
+#: templates/admin/base_site_grid.html:118
+#: templates/admin/base_site_gridpivot.html:111
+msgid "from"
+msgstr "从"
+
+#: templates/admin/base_site_grid.html:120
+#: templates/admin/base_site_gridpivot.html:113
+msgid "to"
+msgstr "到"
+
+#: templates/admin/base_site_grid.html:127
+#: templates/admin/base_site_gridpivot.html:120
+msgid "months"
+msgstr "月"
+
+#: templates/admin/base_site_grid.html:128
+#: templates/admin/base_site_gridpivot.html:121
+msgid "after plan current date"
+msgstr "计划当前日期后"
+
+#: templates/admin/base_site_gridpivot.html:84
+#| msgid "Display table"
+msgid "display table"
 msgstr "显示表格"
 
-#: templates/admin/base_site_gridpivot.html:108
-msgid "Display graph"
+#: templates/admin/base_site_gridpivot.html:85
+#| msgid "Display graph"
+msgid "display graph"
 msgstr "显示图形"
 
+#: templates/admin/base_site_gridpivot.html:89
+#| msgid "Configure time buckets"
+msgid "configure time buckets"
+msgstr ""
+
+#: templates/admin/base_site_gridpivot.html:91 templates/output/pegging.html:92
+#| msgid "Customize"
+msgid "customize"
+msgstr ""
+
 #: templates/admin/base_site_nav.html:9
-#| msgid "search mode"
 msgid "search"
 msgstr ""
 
-#: templates/admin/change_form.html:15 templates/bucketcontext.html:3
-#: templates/buckettabs.html:4 templates/buffercontext.html:3
-#: templates/buffertabs.html:4 templates/calendarbucketcontext.html:3
-#: templates/calendarbuckettabs.html:4 templates/calendarcontext.html:3
-#: templates/calendartabs.html:4 templates/customercontext.html:3
-#: templates/customertabs.html:4 templates/demandcontext.html:3
-#: templates/demandtabs.html:4 templates/flowcontext.html:3
-#: templates/flowtabs.html:4 templates/forecastcontext.html:3
-#: templates/forecasttabs.html:4 templates/groupcontext.html:3
-#: templates/grouptabs.html:4 templates/itemcontext.html:3
-#: templates/itemdistributioncontext.html:3
-#: templates/itemdistributiontabs.html:4 templates/itemsuppliercontext.html:3
-#: templates/itemsuppliertabs.html:4 templates/itemtabs.html:4
-#: templates/loadcontext.html:3 templates/loadtabs.html:4
-#: templates/locationcontext.html:3 templates/locationtabs.html:4
-#: templates/operationcontext.html:3 templates/operationtabs.html:4
-#: templates/parametercontext.html:3 templates/parametertabs.html:4
-#: templates/resourcecontext.html:3 templates/resourceskillcontext.html:3
-#: templates/resourceskilltabs.html:4 templates/resourcetabs.html:4
-#: templates/setupmatrixcontext.html:3 templates/setupmatrixtabs.html:4
-#: templates/skillcontext.html:3 templates/skilltabs.html:4
-#: templates/suppliercontext.html:3 templates/suppliertabs.html:4
-#: templates/usercontext.html:3 templates/usertabs.html:4
-msgid "Edit"
-msgstr "编辑"
-
 # Translation included with django
-#: templates/admin/change_form.html:26 templates/admin/login.html:63
+#: templates/admin/change_form.html:26 templates/admin/login.html:65
 #: templates/auth/change_password.html:18
 msgid "Please correct the error below."
 msgstr "请纠正以下错误。"
 
 # Translation included with django
-#: templates/admin/change_form.html:26 templates/admin/login.html:63
+#: templates/admin/change_form.html:26 templates/admin/login.html:65
 #: templates/auth/change_password.html:18
 msgid "Please correct the errors below."
 msgstr "请纠正以下错误。"
@@ -347,8 +2376,9 @@ msgstr "请纠正以下错误。"
 # Translation included with django
 #: templates/admin/delete_confirmation.html:16
 #: templates/admin/submit_line.html:6
-msgid "Delete"
-msgstr "删除"
+#| msgid "Delete"
+msgid "delete"
+msgstr ""
 
 # Translation included with django
 #: templates/admin/delete_confirmation.html:19
@@ -380,10 +2410,8 @@ msgid ""
 msgstr ""
 "确定删除 %(object_name)s \"%(escaped_object)s\"？以下内容将会被全部删除："
 
-# Translation included with django
 #: templates/admin/delete_confirmation.html:35
-#| msgid "object ID"
-msgid "Objects"
+msgid "objects"
 msgstr ""
 
 # Translation included with django
@@ -397,8 +2425,9 @@ msgstr ""
 
 # Translation included with django
 #: templates/admin/edit_inline/tabular.html:20
-msgid "Delete?"
-msgstr "删除?"
+#| msgid "Delete?"
+msgid "delete?"
+msgstr ""
 
 #: templates/admin/edit_inline/tabular.html:25
 #, python-format
@@ -415,47 +2444,43 @@ msgid "Add another %(verbose_name)s"
 msgstr "新增另一个%(verbose_name)s"
 
 #: templates/admin/edit_inline/tabular.html:90
-msgid "Remove"
-msgstr "移除"
+#| msgid "Remove"
+msgid "remove"
+msgstr ""
 
-#: templates/admin/index.html:80 templates/execute/execute.html:42
-msgid "Failed"
-msgstr "失败"
-
-# Translation included with django
-#: templates/admin/login.html:83
-msgid "Password:"
-msgstr "密码："
+#: templates/admin/index.html:66 templates/execute/execute.html:34
+#| msgid "Failed"
+msgid "failed"
+msgstr ""
 
 # Translation included with django
-#: templates/admin/login.html:88
-msgid "Log in"
-msgstr "登录"
+#: templates/admin/login.html:85
+#| msgid "Password:"
+msgid "password:"
+msgstr ""
 
-#: templates/admin/login.html:103
+#: templates/admin/login.html:105
 msgid ""
 "The user \"admin\" has password \"admin\".<br/>\n"
 "We suggest changing this password."
 msgstr ""
 
 #: templates/admin/object_history.html:4
-msgid "Change history"
-msgstr "修改历史 "
+#| msgid "Change history"
+msgid "change history"
+msgstr ""
 
 # Translation included with django
 #: templates/admin/object_history.html:16
-msgid "Date/time"
-msgstr "日期/时间"
-
-# Translation included with django
-#: templates/admin/object_history.html:17
-msgid "User"
-msgstr "用户"
+#| msgid "Date/time"
+msgid "date/time"
+msgstr ""
 
 # Translation included with django
 #: templates/admin/object_history.html:18
-msgid "Action"
-msgstr "动作"
+#| msgid "Action"
+msgid "action"
+msgstr ""
 
 # Translation included with django
 #: templates/admin/object_history.html:32
@@ -464,28 +2489,6 @@ msgid ""
 "admin site."
 msgstr "这个对象没有修改历史。它可能不是通过这个网站来添加的。"
 
-# Translation included with django
-#: templates/admin/submit_line.html:3 templates/common/comments.html:22
-#: templates/common/preferences.html:22
-#: templates/inventoryplanning/drp.html:49
-msgid "Save"
-msgstr "保存"
-
-# Translation included with django
-#: templates/admin/submit_line.html:8
-msgid "Save as new"
-msgstr "新增"
-
-# Translation included with django
-#: templates/admin/submit_line.html:9
-msgid "Save and add another"
-msgstr "保存和新增另一个"
-
-# Translation included with django
-#: templates/admin/submit_line.html:10
-msgid "Save and continue editing"
-msgstr "保存和继续编辑"
-
 #: templates/auth/change_password.html:22
 #, python-format
 msgid "Enter a new password for the user <strong>%(username)s</strong>."
@@ -493,181 +2496,88 @@ msgstr ""
 
 # Translation included with django
 #: templates/auth/change_password.html:45
-msgid "Change password"
-msgstr "修改密码"
-
-#: templates/bucketcontext.html:4 templates/buckettabs.html:5
-#: templates/buffercontext.html:9 templates/buffertabs.html:10
-#: templates/calendarbucketcontext.html:4 templates/calendarbuckettabs.html:5
-#: templates/calendarcontext.html:4 templates/calendartabs.html:5
-#: templates/customercontext.html:4 templates/customertabs.html:5
-#: templates/demandcontext.html:7 templates/demandtabs.html:8
-#: templates/flowcontext.html:4 templates/flowtabs.html:5
-#: templates/forecastcontext.html:7 templates/forecasttabs.html:8
-#: templates/grouptabs.html:5 templates/inventoryplanning/drp.html:1092
-#: templates/itemcontext.html:8 templates/itemdistributioncontext.html:4
-#: templates/itemdistributiontabs.html:5 templates/itemsuppliercontext.html:4
-#: templates/itemsuppliertabs.html:5 templates/itemtabs.html:9
-#: templates/loadcontext.html:4 templates/loadtabs.html:5
-#: templates/locationcontext.html:5 templates/locationtabs.html:5
-#: templates/operationcontext.html:9 templates/operationtabs.html:10
-#: templates/parametercontext.html:4 templates/parametertabs.html:5
-#: templates/resourcecontext.html:10 templates/resourceskillcontext.html:4
-#: templates/resourceskilltabs.html:5 templates/resourcetabs.html:11
-#: templates/setupmatrixcontext.html:4 templates/setupmatrixtabs.html:5
-#: templates/skillcontext.html:4 templates/skilltabs.html:5
-#: templates/suppliercontext.html:4 templates/suppliertabs.html:5
-#: templates/usercontext.html:4 templates/usertabs.html:5
-msgid "Comments"
-msgstr "评论"
+#| msgid "Change password"
+msgid "change password"
+msgstr ""
 
 # Translation included with django
-#: templates/bucketcontext.html:5 templates/buckettabs.html:6
-#: templates/buffercontext.html:10 templates/buffertabs.html:11
-#: templates/calendarbucketcontext.html:5 templates/calendarbuckettabs.html:6
-#: templates/calendarcontext.html:5 templates/calendartabs.html:6
-#: templates/customercontext.html:5 templates/customertabs.html:6
-#: templates/demandcontext.html:8 templates/demandtabs.html:9
-#: templates/flowcontext.html:5 templates/flowtabs.html:6
-#: templates/forecastcontext.html:8 templates/forecasttabs.html:9
-#: templates/grouptabs.html:6 templates/inventoryplanning/drp.html:1093
-#: templates/itemcontext.html:9 templates/itemdistributioncontext.html:5
-#: templates/itemdistributiontabs.html:6 templates/itemsuppliercontext.html:5
-#: templates/itemsuppliertabs.html:6 templates/itemtabs.html:10
-#: templates/loadcontext.html:5 templates/loadtabs.html:6
-#: templates/locationcontext.html:6 templates/locationtabs.html:6
-#: templates/operationcontext.html:10 templates/operationtabs.html:11
-#: templates/parametercontext.html:5 templates/parametertabs.html:6
-#: templates/resourcecontext.html:11 templates/resourceskillcontext.html:5
-#: templates/resourceskilltabs.html:6 templates/resourcetabs.html:12
-#: templates/setupmatrixcontext.html:5 templates/setupmatrixtabs.html:6
-#: templates/skillcontext.html:5 templates/skilltabs.html:6
-#: templates/suppliercontext.html:5 templates/suppliertabs.html:6
-msgid "History"
-msgstr "历史记录"
+#: templates/common/comments.html:20 templates/common/preferences.html:22
+#| msgid "Save"
+msgctxt "Included in Django translations"
+msgid "Save"
+msgstr "保存"
 
-#: templates/buffercontext.html:4 templates/buffertabs.html:5
-#: templates/demandcontext.html:4 templates/demandtabs.html:5
-#: templates/forecastcontext.html:4 templates/forecasttabs.html:5
-#: templates/itemcontext.html:4 templates/itemtabs.html:5
-#: templates/operationcontext.html:4 templates/operationtabs.html:5
-#: templates/resourcecontext.html:4 templates/resourcetabs.html:5
-msgid "Supply Path"
-msgstr "供应线"
+#: templates/execute/execute.html:32 templates/execute/execute.html.py:36
+#| msgid "Cancel"
+msgid "cancel"
+msgstr ""
 
-#: templates/buffercontext.html:5 templates/buffertabs.html:6
-#: templates/itemcontext.html:5 templates/itemtabs.html:6
-#: templates/operationcontext.html:5 templates/operationtabs.html:6
-#: templates/resourcecontext.html:5 templates/resourcetabs.html:6
-msgid "Where Used"
-msgstr "用于何处"
+#: templates/execute/execute.html:36
+#| msgid "Waiting"
+msgid "waiting"
+msgstr ""
 
-#: templates/buffercontext.html:6 templates/buffertabs.html:7
-#: templates/demandcontext.html:6 templates/demandtabs.html:7
-#: templates/forecastcontext.html:5 templates/forecasttabs.html:6
-#: templates/inventoryplanning/drp.html:1090 templates/itemcontext.html:6
-#: templates/itemtabs.html:7 templates/operationcontext.html:6
-#: templates/operationtabs.html:7 templates/resourcecontext.html:6
-#: templates/resourcetabs.html:7
-msgid "Plan"
-msgstr "计划"
+#: templates/execute/execute.html:38
+msgid "done"
+msgstr ""
 
-#: templates/buffercontext.html:7 templates/buffertabs.html:8
-#: templates/itemcontext.html:7 templates/itemtabs.html:8
-#: templates/operationcontext.html:7 templates/operationtabs.html:8
-#: templates/resourcecontext.html:8 templates/resourcetabs.html:9
-msgid "Plan detail"
-msgstr "计划明细"
+#: templates/execute/execute.html:40
+#| msgid "Canceled"
+msgid "canceled"
+msgstr ""
 
-#: templates/buffercontext.html:8 templates/buffertabs.html:9
-#: templates/operationcontext.html:8 templates/operationtabs.html:9
-#: templates/resourcecontext.html:9 templates/resourcetabs.html:10
-msgid "Constrained demand"
-msgstr "约束需求"
+#: templates/execute/execute.html:222
+#| msgid "Autorefresh"
+msgid "autorefresh"
+msgstr ""
 
-#: templates/common/comments.html:11
-msgid "comments"
-msgstr "评论"
+#: templates/execute/execute.html:225
+#| msgid "Launch new tasks"
+msgid "launch new tasks"
+msgstr ""
 
-#: templates/demandcontext.html:5 templates/demandtabs.html:6
-#: templates/forecastcontext.html:6 templates/forecasttabs.html:7
-#: templates/quoting/quote.html:81 templates/quoting/quote.html.py:150
-#: templates/quoting/quote.html:265 templates/quoting/quote.html.py:330
-msgid "Why short or late?"
-msgstr "为什么会短缺/延迟？"
+#: templates/execute/execute.html:235 templates/execute/execute.html.py:330
+#: templates/execute/execute.html:339 templates/execute/execute.html.py:350
+#: templates/execute/execute.html:365 templates/execute/execute.html.py:372
+#: templates/execute/execute.html:380 templates/execute/execute.html.py:399
+#| msgid "Launch"
+msgid "launch"
+msgstr ""
 
-#: templates/execute/execute.html:40 templates/execute/execute.html.py:44
-#: templates/quoting/quote.html:324
-msgid "Cancel"
-msgstr "取消"
-
-#: templates/execute/execute.html:44
-msgid "Waiting"
-msgstr "等待"
-
-#: templates/execute/execute.html:46
-msgid "Done"
-msgstr "完成"
-
-#: templates/execute/execute.html:48
-msgid "Canceled"
-msgstr "取消"
-
-#: templates/execute/execute.html:230
-msgid "Autorefresh"
-msgstr "自动更新"
-
-#: templates/execute/execute.html:233
-msgid "Launch new tasks"
-msgstr "推出新任务"
-
-#: templates/execute/execute.html:239
-msgid "Create a plan"
-msgstr "创建计划"
-
-#: templates/execute/execute.html:243 templates/execute/execute.html.py:313
-#: templates/execute/execute.html:356 templates/execute/execute.html.py:365
-#: templates/execute/execute.html:376 templates/execute/execute.html.py:391
-#: templates/execute/execute.html:398 templates/execute/execute.html.py:406
-#: templates/execute/execute.html:425
-msgid "Launch"
-msgstr "开始"
-
-#: templates/execute/execute.html:244
+#: templates/execute/execute.html:236
+#| msgid ""
+#| "\n"
+#| "Load frePPLe from the database and live data sources...<br/>\n"
+#| "and create a plan in frePPLe...<br/>\n"
+#| "and export results.<br/>\n"
+#| "<br/>\n"
+#| "<b>Plan type</b><br/>"
 msgid ""
 "\n"
-"Load frePPLe from the database and live data sources...<br/>\n"
-"and create a plan in frePPLe...<br/>\n"
-"and export results.<br/>\n"
-"<br/>\n"
-"<b>Plan type</b><br/>"
+"Load frePPLe from the database and live data sources...<br>\n"
+"and create a plan in frePPLe...<br>\n"
+"and export results.<br>\n"
+"<br>\n"
+"<b>Plan type</b><br>"
 msgstr ""
 "\n"
-"从数据库加载frePPLe和激活数据源...<br/>\n"
-"创建计划...<br/>\n"
-"输出结果.<br/>\n"
-"<br/>\n"
-"<b>计划类型</b><br/>"
+"从数据库加载frePPLe和激活数据源...<br>\n"
+"创建计划...<br>\n"
+"输出结果.<br>\n"
+"<br>\n"
+"<b>计划类型</b><br>"
 
-#: templates/execute/execute.html:251
-#| msgid "net forecast"
-msgid "Generate forecast"
-msgstr ""
-
-#: templates/execute/execute.html:252
-#| msgid "Generate a constrained plan"
-msgid "Generate production plan"
-msgstr ""
-
-#: templates/execute/execute.html:254
+#: templates/execute/execute.html:243
+#| msgid ""
+#| "<span title=\"This plan respects the constraints enabled below.<br/>In "
+#| "case of shortages the demand is planned late or short.\">Constrained "
+#| "plan</span>"
 msgid ""
-"<span title=\"This plan respects the constraints enabled below.<br/>In case "
+"<span title=\"This plan respects the constraints enabled below.<br>In case "
 "of shortages the demand is planned late or short.\">Constrained plan</span>"
 msgstr ""
-"<span title=\"该计划遵循以下的约束<br/>需求不足的情况下会排程延迟或短期\">约"
-"束计划</span>"
 
-#: templates/execute/execute.html:257
+#: templates/execute/execute.html:246
 msgid ""
 "<span title=\"This plan shows material, capacity and operation problems that "
 "prevent the demand from being planned in time.<br/>The demand is always met "
@@ -676,210 +2586,198 @@ msgstr ""
 "<span title=\"该计划说明物料，产能和工序的问题，防止需求被最后安排。<br/>需求"
 "总是可以完全按时安排计划。\">没有约束的计划</span>"
 
-#: templates/execute/execute.html:260
-msgid "Constraints"
-msgstr "约束"
-
-#: templates/execute/execute.html:261
+#: templates/execute/execute.html:250
 msgid "Capacity: respect capacity limits"
 msgstr "能力：遵循能力限制"
 
-#: templates/execute/execute.html:262
+#: templates/execute/execute.html:251
 msgid "Material: respect procurement limits"
 msgstr "物料：遵循采购限制"
 
-#: templates/execute/execute.html:263
+#: templates/execute/execute.html:252
 msgid "Lead time: do not plan in the past"
 msgstr "交付周期：不在过去安排计划"
 
-#: templates/execute/execute.html:264
+#: templates/execute/execute.html:253
 msgid "Release fence: do not plan within the release time window"
 msgstr "释放冻结：不在释放的时间窗口安排计划"
 
-#: templates/execute/execute.html:266
-msgid ""
-"<b title=\"The planning engine is normally shut down after generating the "
-"plan.<br/><br/>With this option you can keep the plan active in memory as a "
-"web service, which is used for order quoting and interactive planning.\">Web "
-"service</b>"
-msgstr ""
-"<b title=\"排程后，该计划引擎正常的关闭。<br/><br/>该选项可以保持计划在内存作"
-"为网络服务活动,用来询交期和交互规划\">网络服务</b>"
-
-#: templates/execute/execute.html:268
-msgid "Keep active in memory"
-msgstr "保持运行"
-
-#: templates/execute/execute.html:271
+#: templates/execute/execute.html:256
 #, python-format
+#| msgid ""
+#| "<b title=\"A live data source allows your frePPLe plan to be 100%% in "
+#| "sync with data in an external system.<br/><br/>FrePPLe will read data "
+#| "from them before planning.<br/>And after the plan is generated frePPLe "
+#| "directly exports the results to them.<br/>FrePPLe also saves a copy of "
+#| "the data in its own database for reporting.\">Live data sources</b>"
 msgid ""
 "<b title=\"A live data source allows your frePPLe plan to be 100%% in sync "
-"with data in an external system.<br/><br/>FrePPLe will read data from them "
-"before planning.<br/>And after the plan is generated frePPLe directly "
-"exports the results to them.<br/>FrePPLe also saves a copy of the data in "
-"its own database for reporting.\">Live data sources</b>"
+"with data in an external system.<br><br>FrePPLe will read data from them "
+"before planning.<br>And after the plan is generated frePPLe directly exports "
+"the results to them.<br>FrePPLe also saves a copy of the data in its own "
+"database for reporting.\">Live data sources</b>"
 msgstr ""
-"<b title=\"一个实时数据源允许你的frePPLe计划在外部系统100%%同步.<br/><br/"
-">FrePPLe在计划前从外部系统读数据.<br/>产生计划后,FrePPLe会直接输出结果给外部"
-"系统.<br/>FrePPLe同样保存数据副本在自己的数据库\">实时数据源</b>"
+"<b title=\"一个实时数据源允许你的frePPLe计划在外部系统100%%同步.<br><br>FrePPLe在计划前从外部系统读数据.<br>产"
+"生计划后,FrePPLe会直接输出结果给外部系统.<br>FrePPLe同样保存数据副本在自己的数据库\">实时数据源</b>"
 
-#: templates/execute/execute.html:275
-msgid "Read"
-msgstr "读"
+#: templates/execute/execute.html:260
+msgid "read"
+msgstr ""
 
-#: templates/execute/execute.html:276
-msgid "Write"
-msgstr "写"
+#: templates/execute/execute.html:261
+#| msgid "Write"
+msgid "write"
+msgstr ""
 
-#: templates/execute/execute.html:282
+#: templates/execute/execute.html:267
 msgid "View log file"
 msgstr "查看日记文件"
 
-#: templates/execute/execute.html:288
+#: templates/execute/execute.html:273
 msgid "Export a spreadsheet"
 msgstr "导出数据表"
 
-#: templates/execute/execute.html:291
-msgid "Export"
-msgstr "导出"
+#: templates/execute/execute.html:276
+#| msgid "Export"
+msgid "export"
+msgstr ""
 
-#: templates/execute/execute.html:292
+#: templates/execute/execute.html:277
 msgid "Download all input data in a single spreadsheet."
 msgstr "下载所有内容到数据表"
 
-#: templates/execute/execute.html:300
+#: templates/execute/execute.html:285
 msgid "Import a spreadsheet"
 msgstr "导入数据表"
 
-#: templates/execute/execute.html:303
-msgid "Import"
-msgstr "导入"
+#: templates/execute/execute.html:288
+#| msgid "Import"
+msgid "import"
+msgstr ""
 
-#: templates/execute/execute.html:304
+#: templates/execute/execute.html:289
+#| msgid ""
+#| "Import input data from a spreadsheet.<br/>The spreadsheet must match the "
+#| "structure exported with the task above."
 msgid ""
-"Import input data from a spreadsheet.<br/>The spreadsheet must match the "
+"Import input data from a spreadsheet.<br>The spreadsheet must match the "
 "structure exported with the task above."
-msgstr "从数据表中导入数据。<br/>该数据表必须与上述导出任务的结构相匹配。"
+msgstr "从数据表中导入数据。<br>该数据表必须与上述导出任务的结构相匹配。"
 
-#: templates/execute/execute.html:305
+#: templates/execute/execute.html:290
 msgid "Data file"
 msgstr "数据文件"
 
-#: templates/execute/execute.html:310
-msgid "Web service"
-msgstr "网站服务"
+#: templates/execute/execute.html:295
+#| msgid "Scenario management"
+msgid "scenario management"
+msgstr ""
 
-#: templates/execute/execute.html:314
-msgid "Stop the web service."
-msgstr "停止网站服务"
-
-#: templates/execute/execute.html:321
-msgid "Scenario management"
-msgstr "方案管理"
-
-#: templates/execute/execute.html:325
-msgid "name"
-msgstr "名称"
-
-#: templates/execute/execute.html:326 templates/inventoryplanning/drp.html:963
-msgid "status"
-msgstr "状态"
-
-#: templates/execute/execute.html:327
-msgid "description"
-msgstr "描述"
-
-#: templates/execute/execute.html:328
+#: templates/execute/execute.html:302
 msgid "last refresh"
 msgstr "上次更新"
 
-#: templates/execute/execute.html:336 templates/execute/execute.html.py:337
-msgid "Copy"
-msgstr "复制"
+#: templates/execute/execute.html:310 templates/execute/execute.html.py:311
+msgid "copy"
+msgstr ""
 
-#: templates/execute/execute.html:337
+#: templates/execute/execute.html:311
 msgid "into selected scenarios"
 msgstr "添加到已选择的方案中"
 
-#: templates/execute/execute.html:340
-msgid "Release"
-msgstr "释放"
+#: templates/execute/execute.html:314
+#| msgid "Release"
+msgid "release"
+msgstr ""
 
-#: templates/execute/execute.html:341
-msgid "Release selected scenarios"
-msgstr "释放所选方案"
+#: templates/execute/execute.html:315
+#| msgid "Release selected scenarios"
+msgid "release selected scenarios"
+msgstr ""
 
-#: templates/execute/execute.html:343
-msgid "Update"
-msgstr "更新"
+#: templates/execute/execute.html:317
+#| msgid "Update"
+msgid "update"
+msgstr ""
 
-#: templates/execute/execute.html:344
+#: templates/execute/execute.html:318
 msgid "Update description of selected scenarios"
 msgstr "更新已选择方案的描述"
 
-#: templates/execute/execute.html:353
+#: templates/execute/execute.html:327
 msgid "Back up the database"
 msgstr "备份数据库"
 
-#: templates/execute/execute.html:357
+#: templates/execute/execute.html:331
 msgid "Dump the database contents to a file."
 msgstr "将数据库的内容转储到一个文件。"
 
-#: templates/execute/execute.html:361
+#: templates/execute/execute.html:335
 msgid "Empty the database"
 msgstr "清空数据库"
 
-#: templates/execute/execute.html:366
+#: templates/execute/execute.html:340
 msgid "Erase selected tables in the database."
 msgstr "在数据库清除所选的表"
 
-#: templates/execute/execute.html:369
-msgid "Admin"
-msgstr "管理"
-
-#: templates/execute/execute.html:373
+#: templates/execute/execute.html:347
 msgid "Load a dataset"
 msgstr "加载数据集"
 
-#: templates/execute/execute.html:377
+#: templates/execute/execute.html:351
 msgid "Load a dataset from a file in the database."
 msgstr "从一个文件中加载数据集到数据库"
 
-#: templates/execute/execute.html:378
+#: templates/execute/execute.html:352
 msgid "Available datasets:"
 msgstr "有效的数据集"
 
-#: templates/execute/execute.html:388
+#: templates/execute/execute.html:362
 #, python-format
 msgid "Import data from %(erp)s"
 msgstr "从%(erp)s导入数据"
 
-#: templates/execute/execute.html:392
+#: templates/execute/execute.html:366
 #, python-format
 msgid ""
 "Import data changes in the last %(delta)s days from the ERP into frePPLe."
 msgstr "从ERP导入最新 %(delta)s数据变化到frePPLe."
 
-#: templates/execute/execute.html:395
+#: templates/execute/execute.html:369
 #, python-format
 msgid "Export data to %(erp)s"
 msgstr "导出数据到%(erp)s"
 
-#: templates/execute/execute.html:399
+#: templates/execute/execute.html:373
 msgid "Export frePPLe plan to the ERP."
 msgstr "导出frePPLe计划到ERP"
 
-#: templates/execute/execute.html:403
+#: templates/execute/execute.html:377
 msgid "Generate buckets"
 msgstr "生成日期"
 
-#: templates/execute/execute.html:407
+#: templates/execute/execute.html:381
+#| msgid ""
+#| "Create time buckets for reporting.<br/>\n"
+#| "Start date: <input class=\"date\" name=\"start\" type=\"text\" maxlength="
+#| "\"5\" size=\"12\"/><br/>\n"
+#| "End date: <input class=\"date\" name=\"end\" type=\"text\" maxlength="
+#| "\"5\" size=\"12\"/><br/>\n"
+#| "Week starts on: <select name=\"weekstart\">\n"
+#| "<option value=\"0\">Sunday</option>\n"
+#| "<option value=\"1\" selected=\"selected\">Monday</option>\n"
+#| "<option value=\"2\">Tuesday</option>\n"
+#| "<option value=\"3\">Wednesday</option>\n"
+#| "<option value=\"4\">Thursday</option>\n"
+#| "<option value=\"5\">Friday</option>\n"
+#| "<option value=\"6\">Saturday</option>\n"
+#| "</select>\n"
 msgid ""
-"Create time buckets for reporting.<br/>\n"
+"Create time buckets for reporting.<br>\n"
 "Start date: <input class=\"date\" name=\"start\" type=\"text\" maxlength="
-"\"5\" size=\"12\"/><br/>\n"
+"\"5\" size=\"12\"/><br>\n"
 "End date: <input class=\"date\" name=\"end\" type=\"text\" maxlength=\"5\" "
-"size=\"12\"/><br/>\n"
+"size=\"12\"/><br>\n"
 "Week starts on: <select name=\"weekstart\">\n"
 "<option value=\"0\">Sunday</option>\n"
 "<option value=\"1\" selected=\"selected\">Monday</option>\n"
@@ -890,11 +2788,11 @@ msgid ""
 "<option value=\"6\">Saturday</option>\n"
 "</select>\n"
 msgstr ""
-"为报告创建时间段.<br/>\n"
+"为报告创建时间段.<br>\n"
 "开始日期: <input class=\"date\" name=\"start\" type=\"text\" maxlength=\"5\" "
-"size=\"12\"/><br/>\n"
-"结束日期: <input class=\"date\" name=\"end\" type=\"text\" maxlength=\"5\" "
-"size=\"12\"/><br/>\n"
+"size=\"12\"/><br>\n"
+"结束日期: <input class=\"date\" name=\"end\" type=\"text\" maxlength=\"5\" size="
+"\"12\"/><br>\n"
 "一周开始: <select name=\"weekstart\">\n"
 "<option value=\"0\">周日</option>\n"
 "<option value=\"1\" selected=\"selected\">周一</option>\n"
@@ -905,574 +2803,170 @@ msgstr ""
 "<option value=\"6\">周六</option>\n"
 "</select>\n"
 
-#: templates/execute/execute.html:422
+#: templates/execute/execute.html:396
 msgid "Generate model"
 msgstr "生产模板"
 
-#: templates/execute/execute.html:426
+#: templates/execute/execute.html:400
+#| msgid ""
+#| "Create a sample model in the database.<br/>\n"
+#| "The parameters control the size and complexity.<br/>\n"
+#| "Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text"
+#| "\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/"
+#| ">\n"
+#| "<b>Demand:</b><br/>\n"
+#| "&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name="
+#| "\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
+#| "\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
+#| "type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
+#| "\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
+#| "\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
+#| "onchange=\"calcUtil()\"/> days<br/>\n"
+#| "<b>Raw Materials:</b><br/>\n"
+#| "&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels"
+#| "\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange="
+#| "\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
+#| "\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
+#| "onchange=\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
+#| "\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
+#| "onchange=\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
+#| "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
+#| "onchange=\"calcUtil()\"/> days<br/>\n"
+#| "<b>Capacity:</b><br/>\n"
+#| "&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number"
+#| "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
+#| "\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size"
+#| "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange="
+#| "\"calcUtil()\"/><br/>\n"
+#| "&nbsp;&nbsp;Expected average resource utilization: <span id=\"util"
+#| "\">76.7</span>&#37;<br/>\n"
 msgid ""
-"Create a sample model in the database.<br/>\n"
-"The parameters control the size and complexity.<br/>\n"
+"Create a sample model in the database.<br>\n"
+"The parameters control the size and complexity.<br>\n"
 "Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text\" "
-"maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
-"<b>Demand:</b><br/>\n"
+"maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br>\n"
+"<b>Demand:</b><br>\n"
 "&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name=\"fcst"
 "\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
-"\"calcUtil()\"/><br/>\n"
+"\"calcUtil()\"/><br>\n"
 "&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
 "type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
-"\"calcUtil()\"/><br/>\n"
+"\"calcUtil()\"/><br>\n"
 "&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
 "\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
-"onchange=\"calcUtil()\"/> days<br/>\n"
-"<b>Raw Materials:</b><br/>\n"
+"onchange=\"calcUtil()\"/> days<br>\n"
+"<b>Raw Materials:</b><br>\n"
 "&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels\" "
 "type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/"
-"><br/>\n"
+"><br>\n"
 "&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
 "\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
-"onchange=\"calcUtil()\"/><br/>\n"
+"onchange=\"calcUtil()\"/><br>\n"
 "&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
 "\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
-"onchange=\"calcUtil()\"/><br/>\n"
+"onchange=\"calcUtil()\"/><br>\n"
 "&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
 "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
-"onchange=\"calcUtil()\"/> days<br/>\n"
-"<b>Capacity:</b><br/>\n"
+"onchange=\"calcUtil()\"/> days<br>\n"
+"<b>Capacity:</b><br>\n"
 "&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number\" "
 "type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
-"\"calcUtil()\"/><br/>\n"
+"\"calcUtil()\"/><br>\n"
 "&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size\" "
 "type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/"
-"><br/>\n"
+"><br>\n"
 "&nbsp;&nbsp;Expected average resource utilization: <span id=\"util\">76.7</"
-"span>&#37;<br/>\n"
+"span>&#37;<br>\n"
 msgstr ""
-"在数据库创建一个示例模板。<br/>\n"
-"这些参数控制规模和复杂性。<br/>\n"
-"成品的数量: <input id=\"create0\" name=\"clusters\" type=\"text\" maxlength="
-"\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br/>\n"
-"<b>需求:</b><br/>\n"
-"&nbsp;&nbsp;每个成品的月预测: <input id=\"create1\" name=\"fcst\" type=\"text"
-"\" maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;每个成品的需求: <input id=\"create2\" name=\"demands\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/"
-"><br/>\n"
-"&nbsp;&nbsp;平均交货生产周期: <input id=\"create3\" name=\"deliver_lt\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> 天"
-"<br/>\n"
-"<b>原料:</b><br/>\n"
-"&nbsp;&nbsp;物料清单的深度: <input id=\"create4\" name=\"levels\" type=\"text"
-"\" maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;组件总数量: <input id=\"create5\" name=\"components\" type=\"text"
-"\" maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;成品组件的数量: <input id=\"create6\" name=\"components_per\" "
-"type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/"
-"><br/>\n"
-"&nbsp;&nbsp;平均采购周期: <input id=\"create7\" name=\"procure_lt\" type="
-"\"text\" maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> 天"
-"<br/>\n"
-"<b>产能:</b><br/>\n"
+"在数据库创建一个示例模板。<br>\n"
+"这些参数控制规模和复杂性。<br>\n"
+"成品的数量: <input id=\"create0\" name=\"clusters\" type=\"text\" maxlength=\"5\" "
+"size=\"5\" value=\"100\" onchange=\"calcUtil()\"/><br>\n"
+"<b>需求:</b><br>\n"
+"&nbsp;&nbsp;每个成品的月预测: <input id=\"create1\" name=\"fcst\" type=\"text\" "
+"maxlength=\"4\" size=\"4\" value=\"50\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;每个成品的需求: <input id=\"create2\" name=\"demands\" type=\"text\" "
+"maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;平均交货生产周期: <input id=\"create3\" name=\"deliver_lt\" type=\"text\""
+" maxlength=\"4\" size=\"4\" value=\"30\" onchange=\"calcUtil()\"/> 天<br>\n"
+"<b>原料:</b><br>\n"
+"&nbsp;&nbsp;物料清单的深度: <input id=\"create4\" name=\"levels\" type=\"text\" "
+"maxlength=\"2\" size=\"2\" value=\"5\" onchange=\"calcUtil()\"/><br/>\n"
+"&nbsp;&nbsp;组件总数量: <input id=\"create5\" name=\"components\" type=\"text\" "
+"maxlength=\"5\" size=\"5\" value=\"200\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;成品组件的数量: <input id=\"create6\" name=\"components_per\" type=\""
+"text\" maxlength=\"5\" size=\"5\" value=\"4\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;平均采购周期: <input id=\"create7\" name=\"procure_lt\" type=\"text\" "
+"maxlength=\"4\" size=\"4\" value=\"40\" onchange=\"calcUtil()\"/> 天<br>\n"
+"<b>产能:</b><br>\n"
 "&nbsp;&nbsp;资源数: <input id=\"create8\" name=\"rsrc_number\" type=\"text\" "
-"maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil()\"/><br/>\n"
-"&nbsp;&nbsp;每个资源的规模: <input id=\"create9\" name=\"rsrc_size\" type="
-"\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/><br/"
-">\n"
-"&nbsp;&nbsp;期望平均资源利用: <span id=\"util\">76.7</span>&#37;<br/>\n"
+"maxlength=\"3\" size=\"3\" value=\"60\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;每个资源的规模: <input id=\"create9\" name=\"rsrc_size\" type=\"text\" "
+"maxlength=\"3\" size=\"3\" value=\"5\" onchange=\"calcUtil()\"/><br>\n"
+"&nbsp;&nbsp;期望平均资源利用: <span id=\"util\">76.7</span>&#37;<br>\n"
 
-#: templates/execute/execute.html:447
+#: templates/execute/execute.html:421
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "对不起，您沒有任何执行权限..."
 
-#: templates/execute/logfrepple.html:6
-msgid "Log file"
-msgstr "日志文件"
-
-#: templates/forecast/forecast.html:34
-#: templates/inventoryplanning/drp.html:1069
-#| msgid "Display table"
-msgid "Display value"
-msgstr ""
-
-#: templates/forecast/forecast.html:35
-#: templates/inventoryplanning/drp.html:1070
-#| msgid "Display table"
-msgid "Display units"
-msgstr ""
-
-#: templates/forecast/forecast.html:44 templates/forecast/forecast.html:47
-#: templates/forecast/forecast.html:50
-#: templates/inventoryplanning/drp.html:1077 templates/output/buffer.html:15
-#: templates/output/buffer.html.py:18 templates/output/buffer.html:21
-#: templates/output/demand.html:13 templates/output/demand.html.py:16
-#: templates/output/demand.html:19 templates/output/operation.html:14
-#: templates/output/operation.html.py:17 templates/output/operation.html:20
-#: templates/output/operation.html.py:23 templates/output/resource.html:21
-#: templates/output/resourcegantt.html:85
-msgid "Detail"
-msgstr "明细"
-
-#: templates/forecast/forecast.html:185 templates/forecast/forecast.html:295
-#: templates/inventoryplanning/drp.html:351
-#: templates/inventoryplanning/drp.html:728
-#: templates/inventoryplanning/drp.html:806
-msgid "total orders"
-msgstr "全部订单"
-
-#: templates/forecast/forecast.html:187 templates/forecast/forecast.html:294
-#: templates/inventoryplanning/drp.html:352
-#: templates/inventoryplanning/drp.html:730
-#: templates/inventoryplanning/drp.html:805
-msgid "open orders"
-msgstr "未结订单"
-
-#: templates/forecast/forecast.html:189
-#: templates/inventoryplanning/drp.html:732
-msgid "orders adjustment"
-msgstr "订单调整"
-
-#: templates/forecast/forecast.html:191
-#: templates/inventoryplanning/drp.html:353
-#: templates/inventoryplanning/drp.html:734
-msgid "forecast baseline"
-msgstr "预测基线"
-
-#: templates/forecast/forecast.html:193
-#: templates/inventoryplanning/drp.html:354
-#: templates/inventoryplanning/drp.html:736
-msgid "forecast adjustment"
-msgstr "预测调整"
-
-#: templates/forecast/forecast.html:195 templates/forecast/forecast.html:296
-#: templates/inventoryplanning/drp.html:738
-#: templates/inventoryplanning/drp.html:807
-msgid "forecast total"
-msgstr "总体预测"
-
-#: templates/forecast/forecast.html:197
-#: templates/inventoryplanning/drp.html:740
-msgid "forecast net"
-msgstr "预测网络"
-
-#: templates/forecast/forecast.html:199
-#: templates/inventoryplanning/drp.html:742
-msgid "forecast consumed"
-msgstr "预测消耗"
-
-#: templates/forecast/forecast.html:201 templates/forecast/forecast.html:297
-msgid "planned orders"
-msgstr "计划订单"
-
-#: templates/forecast/forecast.html:203 templates/forecast/forecast.html:298
-msgid "planned net forecast"
-msgstr "计划网络预测"
-
-#: templates/input/path.html:278
+#: templates/input/JJJpath.html:241 templates/input/path.html:267
 msgid "Too many objects to display"
 msgstr "过多项目"
 
-#: templates/inventoryplanning/drp.html:41
-msgid "Do you want to save your changes first?"
+#: templates/output/buffer.html:12 templates/output/buffer.html.py:15
+#: templates/output/buffer.html:18 templates/output/demand.html:12
+#: templates/output/demand.html.py:15 templates/output/operation.html:12
+#: templates/output/operation.html.py:15 templates/output/operation.html:18
+#: templates/output/operation.html.py:21 templates/output/resource.html:19
+#| msgid "Detail"
+msgid "detail"
 msgstr ""
 
-#: templates/inventoryplanning/drp.html:54
-msgid "No"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:345
-#| msgid "total orders"
-msgid "total orders 3 years ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:346
-#| msgid "orders adjustment"
-msgid "orders adjustment 3 years ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:347
-#| msgid "total orders"
-msgid "total orders 2 years ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:348
-#| msgid "orders adjustment"
-msgid "orders adjustment 2 years ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:349
-#| msgid "total orders"
-msgid "total orders 1 year ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:350
-#| msgid "orders adjustment"
-msgid "orders adjustment 1 year ago"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:361
-#: templates/inventoryplanning/drp.html:531
-#: templates/inventoryplanning/drp.html:633
-#: templates/inventoryplanning/drp.html:1117
-#| msgid "load quantity"
-msgid "reorder quantity"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:362
-#: templates/inventoryplanning/drp.html:533
-msgid "reorder quantity override"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:363
-#: templates/inventoryplanning/drp.html:535
-#: templates/inventoryplanning/drp.html:634
-#: templates/inventoryplanning/drp.html:1118
-#| msgid "Safety stock"
-msgid "safety stock"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:364
-#: templates/inventoryplanning/drp.html:537
-#| msgid "Safety stock"
-msgid "safety stock override"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:365
-#| msgid "start inventory"
-msgid "starting inventory"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:366
-#| msgid "total demand"
-msgid "local demand"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:367
-msgid "dependent demand"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:368
-msgid "total demand"
-msgstr "总体需求"
-
-#: templates/inventoryplanning/drp.html:369
-msgid "confirmed supply"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:370
-msgid "proposed supply"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:371
-msgid "total supply"
-msgstr "总体供应"
-
-#: templates/inventoryplanning/drp.html:372
-#| msgid "end inventory"
-msgid "ending inventory"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:539
-#: templates/inventoryplanning/drp.html:630 templates/output/buffer.html:141
-#: templates/output/buffer.html.py:240
-msgid "start inventory"
-msgstr "初始库存"
-
-#: templates/inventoryplanning/drp.html:541 templates/output/buffer.html:147
-#: templates/output/buffer.html.py:243
-msgid "end inventory"
-msgstr "最终库存"
-
-#: templates/inventoryplanning/drp.html:631 templates/output/buffer.html:143
-#: templates/output/buffer.html.py:241
-msgid "produced"
-msgstr "生产"
-
-#: templates/inventoryplanning/drp.html:632 templates/output/buffer.html:145
-#: templates/output/buffer.html.py:242
-msgid "consumed"
-msgstr "消耗"
-
-#: templates/inventoryplanning/drp.html:842
-msgid "buffer"
-msgstr "库存"
-
-#: templates/inventoryplanning/drp.html:844
-#: templates/inventoryplanning/drp.html:964
-msgid "item"
-msgstr "产品"
-
-#: templates/inventoryplanning/drp.html:846
-msgid "location"
-msgstr "地点"
-
-#: templates/inventoryplanning/drp.html:891
-#: templates/inventoryplanning/drp.html:925
-#| msgid "data field"
-msgid "fields"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:959
-msgid "identifier"
-msgstr "标识符"
-
-#: templates/inventoryplanning/drp.html:960
-msgid "date"
-msgstr "日期"
-
-#: templates/inventoryplanning/drp.html:961
-msgid "type"
-msgstr "类型"
-
-#: templates/inventoryplanning/drp.html:962
-#| msgid "Preferences"
-msgid "reference"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:965
-msgid "origin"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:966
-msgid "start date"
-msgstr "开始日期"
-
-#: templates/inventoryplanning/drp.html:967
-msgid "end date"
-msgstr "结束日期"
-
-#: templates/inventoryplanning/drp.html:968
-#: templates/inventoryplanning/drp.html:1121
-#: templates/inventoryplanning/drp.html:1135
-msgid "quantity"
-msgstr "数量"
-
-#: templates/inventoryplanning/drp.html:969
-msgid "value"
-msgstr "值"
-
-#: templates/inventoryplanning/drp.html:970
-msgid "criticality"
-msgstr "危急程度"
-
-#: templates/inventoryplanning/drp.html:1082
-#| msgid "location"
-msgid "Select action"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1083
-msgid "proposed"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1083
-#: templates/inventoryplanning/drp.html:1084
-#: templates/inventoryplanning/drp.html:1085
-#, python-format
-msgid "change status to %(status)s"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1084
-#| msgid "Confirm"
-msgid "confirmed"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1085
-#| msgid "Closed"
-msgid "closed"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1089
-msgid "forecast"
-msgstr "预测"
-
-# Translation included with django
-#: templates/inventoryplanning/drp.html:1091
-#| msgid "My actions"
-msgid "Transactions"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1100
-#: templates/inventoryplanning/drp.html:1116
-msgid "parameters"
-msgstr "参数"
-
-#: templates/inventoryplanning/drp.html:1101
-msgid "Forecast method"
-msgstr "预测方法"
-
-#: templates/inventoryplanning/drp.html:1110
-#| msgid "Forecast Report"
-msgid "SMAPE Forecast error"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1120
-#| msgid "demand quantity"
-msgid "economic order quantity"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1120
-#: templates/inventoryplanning/drp.html:1121
-#: templates/inventoryplanning/drp.html:1124
-#: templates/inventoryplanning/drp.html:1133
-#: templates/inventoryplanning/drp.html:1135
-msgid "units"
-msgstr "单元"
-
-#: templates/inventoryplanning/drp.html:1122
-#: templates/inventoryplanning/drp.html:1136
-msgid "period of cover"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1124
-msgid "service level"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1125
-msgid "minimum"
-msgstr "最小值"
-
-#: templates/inventoryplanning/drp.html:1126
-msgid "statistical distribution"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1128
-#| msgid "Automatic"
-msgid "automatic"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1129
-msgctxt "statistical distribution"
-msgid "normal"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1130
-msgid "poisson"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1131
-msgid "negative binomial"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1133
-#| msgid "Demand plan detail"
-msgid "demand standard deviation"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1134
-msgid "lead time standard deviation"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1139
-#| msgid "Safety stock"
-msgid "don't stock"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1146
-#| msgid "comment"
-msgid "new item comment"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1148
-msgid "new item-location comment"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1150
-msgid "new location comment"
-msgstr ""
-
-#: templates/inventoryplanning/drp.html:1153
-#| msgid "comments"
-msgid "no comments yet"
-msgstr ""
-
-#: templates/locationcontext.html:4
-msgid "Edit availability"
-msgstr "可编辑"
-
-#: templates/output/demand.html:141 templates/output/demand.html.py:217
-msgid "demand"
-msgstr "需求"
-
-#: templates/output/demand.html:143 templates/output/demand.html.py:218
-msgid "supply"
-msgstr "供应"
-
-#: templates/output/demand.html:145 templates/output/demand.html.py:219
-msgid "backlog"
-msgstr "合计"
-
-#: templates/output/operation.html:142 templates/output/operation.html:313
-msgid "locked starts"
-msgstr "锁定开始"
-
-#: templates/output/operation.html:144
-msgid "total starts"
-msgstr "全部开始"
-
-#: templates/output/operation.html:146 templates/output/operation.html:315
-msgid "locked ends"
-msgstr "锁定结束"
-
-#: templates/output/operation.html:148
-msgid "total ends"
-msgstr "全部结束"
-
-#: templates/output/operation.html:314
+#: templates/output/operation.html:298
 msgid "new starts"
 msgstr "新的开始"
 
-#: templates/output/operation.html:316
+#: templates/output/operation.html:300
 msgid "new ends"
 msgstr "新结束"
 
-#: templates/output/resource.html:144 templates/output/resource.html.py:250
-msgid "available"
-msgstr "有效性"
+#: templates/output/pegging.html:87
+#| msgid "Zoom in"
+msgid "zoom in"
+msgstr ""
 
-#: templates/output/resource.html:146 templates/output/resource.html.py:251
-msgid "unavailable"
-msgstr "不可用"
+#: templates/output/pegging.html:88
+#| msgid "Zoom out"
+msgid "zoom out"
+msgstr ""
 
-#: templates/output/resource.html:148 templates/output/resource.html.py:252
-msgid "setup"
-msgstr "配置"
+#: templates/output/pegging.html:89
+#| msgid "Move in"
+msgctxt "Gantt"
+msgid "move in"
+msgstr ""
 
-#: templates/output/resource.html:150 templates/output/resource.html.py:253
-msgid "load"
-msgstr "负载"
+#: templates/output/pegging.html:90
+#| msgid "Move out"
+msgctxt "Gantt"
+msgid "move out"
+msgstr ""
 
-#: templates/output/resource.html:254
-msgid "free"
-msgstr "不受约束"
+#: templates/output/pegging.html:91
+#| msgid "Reset"
+msgid "reset"
+msgstr ""
 
-#: templates/output/resource.html:255
-msgid "overload"
-msgstr "负载过重"
-
-#: templates/output/resourcegantt.html:86
-msgid "Pegging"
-msgstr "分析"
-
-#: templates/quoting/quote.html:73 templates/quoting/quote.html.py:142
-#: templates/quoting/quote.html:257 templates/quoting/quote.html.py:328
-msgid "Deliveries"
-msgstr "交货"
-
-#: templates/quoting/quote.html:77 templates/quoting/quote.html.py:146
-#: templates/quoting/quote.html:261 templates/quoting/quote.html.py:329
-msgid "problems"
-msgstr "问题"
-
-#: templates/quoting/quote.html:314 templates/quoting/quote.html.py:323
-msgid "Quote"
-msgstr "询交期"
-
-#: templates/quoting/quote.html:322
-msgid "Inquiry"
-msgstr "调查"
-
-#: templates/quoting/quote.html:325
-msgid "Confirm"
-msgstr "确认"
+# Translation included with django
+#: templates/registration/password_change_form.html:9
+msgid "Home"
+msgstr "首页"
 
 # Translation included with django
 #: templates/registration/password_change_form.html:11
@@ -1480,13 +2974,215 @@ msgstr "确认"
 msgid "Password change"
 msgstr "修改密码"
 
-#: templates/resourcecontext.html:7 templates/resourcetabs.html:8
-msgid "Gantt chart"
-msgstr "甘特图"
+#: templates/rest_framework/api.html:25
+msgid "HTTP request"
+msgstr ""
+
+#: templates/rest_framework/api.html:30
+msgid "HTTP response headers"
+msgstr ""
+
+#: templates/rest_framework/api.html:41
+msgid "HTTP response content"
+msgstr ""
+
+#: templates/rest_framework/api.html:48
+#, python-format
+msgid "Make a GET request to read %(model)s object(s)"
+msgstr ""
+
+#: templates/rest_framework/api.html:54 templates/rest_framework/api.html:62
+#: templates/rest_framework/api.html:72 templates/rest_framework/api.html:87
+#: templates/rest_framework/api.html:99 templates/rest_framework/api.html:112
+#: templates/rest_framework/api.html:123 templates/rest_framework/api.html:126
+#: templates/rest_framework/api.html:138
+#, python-format
+msgid "%(http_method)s request"
+msgstr ""
+
+#: templates/rest_framework/api.html:56
+#, python-format
+msgid ""
+"Make a GET request on the %(model)s object with the format set to "
+"%(rqformat)s"
+msgstr ""
+
+#: templates/rest_framework/api.html:61
+#, python-format
+msgid "Make a GET request on the %(model)s object"
+msgstr ""
+
+#: templates/rest_framework/api.html:69
+#, python-format
+msgid "Make an OPTIONS request to see all fields on the %(model)s object"
+msgstr ""
+
+#: templates/rest_framework/api.html:80
+#, python-format
+msgid "Make a POST request using a HTML form to create a new %(model)s object"
+msgstr ""
+
+#: templates/rest_framework/api.html:93
+#, python-format
+msgid ""
+"Make a POST request in raw format to create one or more new %(model)s objects"
+msgstr ""
+
+#: templates/rest_framework/api.html:107
+#, python-format
+msgid "Make a PUT request using a HTML form to update one %(model)s object"
+msgstr ""
+
+#: templates/rest_framework/api.html:116
+#, python-format
+msgid ""
+"Make a PUT or PATCH request in raw format to update an existing or more "
+"existing %(model)s objects"
+msgstr ""
+
+#: templates/rest_framework/api.html:135
+#, python-format
+msgid ""
+"Make a DELETE request to delete one or more existing %(model)s objects "
+"(requires filtering)"
+msgstr ""
+
+#: templates/rest_framework/index.html:8
+msgid ""
+"\n"
+"\tThis page helps developers to learn and experiment with the\n"
+"\t<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
+"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"\tAPI of frePPLe.<br>\n"
+"\tThis API allows your application to exchange information with frePPLe is "
+"efficient and direct way.<br>\n"
+"\t<br>\n"
+"\tThe \"list API\" link takes you to the object list page.<br>\n"
+"\tAnd the \"detail API\" link takes you to a specific object when you enter "
+"the object's primary key.<br>\n"
+"\tIn these pages you will be able to perform HTTP requests with methods GET, "
+"POST, OPTIONS, PUT,\n"
+"\tPATCH and DELETE.<br>\n"
+"\tThe results can shown in JSON format or as HTML in your browser.<br>\n"
+"\t<br>\n"
+"\tUsing a tool like 'wget' or 'curl' you can access the API from the command "
+"line.<br>\n"
+"\tFor instance, to return the list of all sales orders in JSON format:<br>\n"
+"\t<pre>    wget --http-user=admin --http-password=admin "
+"http://127.0.0.1:8000/api/input/demand/?format=json</pre>\n"
+"\t<pre>    curl -H 'Accept: application/json; indent=4' -u admin:admin "
+"http://127.0.0.1:8000/api/input/demand/?format=json</pre>\n"
+"\t"
+msgstr ""
+
+#: templates/rest_framework/index.html:29
+#| msgid "List"
+msgid "List API"
+msgstr ""
+
+#: templates/rest_framework/index.html:29
+#| msgid "Detail"
+msgid "Detail API"
+msgstr ""
+
+#, fuzzy
+#~| msgid "Time buckets"
+#~ msgid "time buckets|capfirst"
+#~ msgstr "时间段"
+
+#~ msgid "Edit"
+#~ msgstr "编辑"
 
 # Translation included with django
-#~ msgid "Password change successful"
-#~ msgstr "密码修改成功"
+#~ msgid "User"
+#~ msgstr "用户"
+
+#~ msgid "Comments"
+#~ msgstr "评论"
+
+#~ msgid "Plan"
+#~ msgstr "计划"
+
+#~ msgid "Constraints"
+#~ msgstr "约束"
+
+#~ msgid ""
+#~ "<b title=\"The planning engine is normally shut down after generating the "
+#~ "plan.<br/><br/>With this option you can keep the plan active in memory as "
+#~ "a web service, which is used for order quoting and interactive planning."
+#~ "\">Web service</b>"
+#~ msgstr ""
+#~ "<b title=\"排程后，该计划引擎正常的关闭。<br/><br/>该选项可以保持计划在内"
+#~ "存作为网络服务活动,用来询交期和交互规划\">网络服务</b>"
+
+#~ msgid "Keep active in memory"
+#~ msgstr "保持运行"
+
+#~ msgid "Read"
+#~ msgstr "读"
+
+#~ msgid "Web service"
+#~ msgstr "网站服务"
+
+#~ msgid "Stop the web service."
+#~ msgstr "停止网站服务"
+
+#~ msgid "Copy"
+#~ msgstr "复制"
+
+#~ msgid "total orders"
+#~ msgstr "全部订单"
+
+#~ msgid "orders adjustment"
+#~ msgstr "订单调整"
+
+#~ msgid "forecast baseline"
+#~ msgstr "预测基线"
+
+#~ msgid "forecast adjustment"
+#~ msgstr "预测调整"
+
+#~ msgid "forecast total"
+#~ msgstr "总体预测"
+
+#~ msgid "forecast net"
+#~ msgstr "预测网络"
+
+#~ msgid "forecast consumed"
+#~ msgstr "预测消耗"
+
+#~ msgid "planned orders"
+#~ msgstr "计划订单"
+
+#~ msgid "planned net forecast"
+#~ msgstr "计划网络预测"
+
+#~ msgid "total demand"
+#~ msgstr "总体需求"
+
+#~ msgid "total supply"
+#~ msgstr "总体供应"
+
+#~ msgid "forecast"
+#~ msgstr "预测"
+
+#~ msgid "Forecast method"
+#~ msgstr "预测方法"
+
+#~ msgid "units"
+#~ msgstr "单元"
+
+#~ msgid "Edit availability"
+#~ msgstr "可编辑"
+
+#~ msgid "Pegging"
+#~ msgstr "分析"
+
+#~ msgid "Deliveries"
+#~ msgstr "交货"
+
+#~ msgid "Gantt chart"
+#~ msgstr "甘特图"
 
 #~ msgid "Input"
 #~ msgstr "输入"
@@ -1495,277 +3191,18 @@ msgstr "甘特图"
 #~ msgstr "报表"
 
 # Translation included with django
-#~ msgid "English"
-#~ msgstr "英语"
-
-# Translation included with django
-#~ msgid "French"
-#~ msgstr "法语"
-
-# Translation included with django
-#~ msgid "Italian"
-#~ msgstr "意大利语"
-
-# Translation included with django
-#~ msgid "Japanese"
-#~ msgstr "日语"
-
-# Translation included with django
-#~ msgid "Dutch"
-#~ msgstr "荷兰语"
-
-# Translation included with django
-#~ msgid "Simplified Chinese"
-#~ msgstr "简体中文"
-
-# Translation included with django
-#~ msgid "Traditional Chinese"
-#~ msgstr "繁体中文"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "无效日期：支持格式为 YYYY-MM-DD HH:MM:SS"
-
-# Translation included with django
-#~ msgid ""
-#~ "The %(name)s \"%(obj)s\" was added successfully. You may edit it again "
-#~ "below."
-#~ msgstr "%(name)s \"%(obj)s\" 添加成功，你可以继续编辑它。"
-
-# Translation included with django
-#~ msgid ""
-#~ "The %(name)s \"%(obj)s\" was added successfully. You may add another "
-#~ "%(name)s below."
-#~ msgstr "%(name)s \"%(obj)s\" 添加成功，你可以继续添加另一个 %(name)s。"
-
-# Translation included with django
-#~ msgid "The %(name)s \"%(obj)s\" was added successfully."
-#~ msgstr "%(name)s \"%(obj)s\" 添加成功。"
-
-# Translation included with django
-#~ msgid ""
-#~ "The %(name)s \"%(obj)s\" was changed successfully. You may edit it again "
-#~ "below."
-#~ msgstr "%(name)s \"%(obj)s\" 修改成功，你可以继续编辑。"
-
-# Translation included with django
-#~ msgid ""
-#~ "The %(name)s \"%(obj)s\" was changed successfully. You may add another "
-#~ "%(name)s below."
-#~ msgstr " %(name)s \"%(obj)s\" 修改成功。 你可以在下面添加另一个 %(name)s 。"
-
-# Translation included with django
-#~ msgid "The %(name)s \"%(obj)s\" was changed successfully."
-#~ msgstr " %(name)s \"%(obj)s\" 修改成功。"
-
-# Translation included with django
-#~ msgid "%(name)s object with primary key %(key)r does not exist."
-#~ msgstr "%(name)s  主键%(key)r 不存在。"
-
-# Translation included with django
-#~ msgid "The %(name)s \"%(obj)s\" was deleted successfully."
-#~ msgstr " %(name)s \"%(obj)s\" 删除成功。"
-
-#~ msgid "Expected format \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
-#~ msgstr "期望格式 \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
-
-# Translation included with django
 #~ msgid "Log out"
 #~ msgstr "退出系统"
-
-#~ msgid "Guided tour"
-#~ msgstr "指导流程"
-
-#~ msgid "Documentation"
-#~ msgstr "文档"
-
-#~ msgid "frePPLe website"
-#~ msgstr "frePPLe 网站"
-
-#~ msgid "Unique identifier"
-#~ msgstr "唯一标识符"
-
-#~ msgid "owner"
-#~ msgstr "所有者"
-
-#~ msgid "Hierarchical parent"
-#~ msgstr "父类"
-
-#~ msgid "source"
-#~ msgstr "源"
-
-#~ msgid "last modified"
-#~ msgstr "上次修改"
-
-#~ msgid "parameter"
-#~ msgstr "参数"
-
-#~ msgid "Detect automatically"
-#~ msgstr "自动检索"
-
-#~ msgid "language"
-#~ msgstr "语言"
-
-#~ msgid "theme"
-#~ msgstr "主题"
-
-#~ msgid "page size"
-#~ msgstr "页面大小"
-
-#~ msgid "user"
-#~ msgstr "用户"
-
-# Translation included with django
-#~ msgid "users"
-#~ msgstr "用户"
-
-# Translation included with django
-#~ msgid "content type"
-#~ msgstr "内容类型"
-
-#~ msgid "day"
-#~ msgstr "天"
-
-#~ msgid "week"
-#~ msgstr "周"
-
-#~ msgid "month"
-#~ msgstr "月"
-
-#~ msgid "quarter"
-#~ msgstr "刻"
-
-#~ msgid "year"
-#~ msgstr "年"
 
 #~ msgid "telescope"
 #~ msgstr "周期"
 
-#~ msgid "bucket"
-#~ msgstr "日期"
-
-#~ msgid "buckets"
-#~ msgstr "日期"
-
-#~ msgid "bucket date"
-#~ msgstr "具体日期"
-
-#~ msgid "bucket dates"
-#~ msgstr "具体日期"
-
-#~ msgid "Permission denied"
-#~ msgstr "权限不足，拒绝访问"
-
-#~ msgid "%(title)s for %(entity)s"
-#~ msgstr "%(entity)s的%(title)s"
-
-#~ msgid "Can't find %s"
-#~ msgstr "找不到%s"
-
-#~ msgid "Can't copy %s"
-#~ msgstr "无法复制%s"
-
-#~ msgid "Copied from %s."
-#~ msgstr "复制%s"
-
-# Translation included with django
-#~ msgid "Changed %s."
-#~ msgstr "修改%s。"
-
-#~ msgid "and"
-#~ msgstr "和"
-
-#~ msgid "Erasing data from %(model)s"
-#~ msgstr "从%(model)s删除数据"
-
-#~ msgid "Invalid upload request"
-#~ msgstr "无效的上传请求"
-
-#~ msgid "Incorrect field %(column)s"
-#~ msgstr "不正确的字段%(column)s"
-
-#~ msgid "Missing primary key field %(key)s"
-#~ msgstr "丢失主键字段%(key)s"
-
-#~ msgid "Row %(rownum)s: %(message)s"
-#~ msgstr "%(rownum)s 行: %(message)s"
-
-#~ msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
-#~ msgstr "%(rownum)s行%(field)s字段：%(data)s：%(message)s"
-
-#~ msgid "Exception during upload: %(message)s"
-#~ msgstr "上传发生异常： %(message)s"
-
-#~ msgid ""
-#~ "Uploaded data successfully: changed %(changed)d and added %(added)d "
-#~ "records"
-#~ msgstr "上传资料成功： 修改%(changed)d 和 新增%(added)d 记录"
-
-#~ msgid "Nothing to export"
-#~ msgstr "没有导出内容"
-
-#~ msgid "Ignoring data in worksheet: %s"
-#~ msgstr "工作表中忽略的数据： %s"
-
-#~ msgid "You don't permissions to add: %s"
-#~ msgstr "你没有添加%s的权限。"
-
-#~ msgid "Processing data in worksheet: %s"
-#~ msgstr "处理数据的工作表: %s"
-
-#~ msgid ""
-#~ "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
-#~ "%(errors)d errors"
-#~ msgstr ""
-#~ "%(rows)d数据行，修改 %(changed)d和添加 %(added)d的记录，%(errors)d错误"
-
-#~ msgid "Language of the user interface"
-#~ msgstr "用户界面的语言"
-
-#~ msgid "Number of records to fetch in a single page from the server"
-#~ msgstr "在一个页面从服务器获取记录的数量"
-
-#~ msgid "Theme for the user interface"
-#~ msgstr "用户界面主题"
-
-#~ msgid "Successfully updated preferences"
-#~ msgstr "成功更新参数"
-
-#~ msgid "Failure updating preferences"
-#~ msgstr "更新个人参数失败"
-
-#~ msgid "Edit my preferences"
-#~ msgstr "编辑个人参数"
-
 #~ msgid "User List"
 #~ msgstr "用户列表"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "username"
-#~ msgstr "用户名称"
-
-# Translation included with django
-#~ msgid "email address"
-#~ msgstr "邮件地址"
-
-# Translation included with django
-#~ msgid "first name"
-#~ msgstr "名"
-
-#~ msgid "last name"
-#~ msgstr "姓"
-
-# Translation included with django
-#~ msgid "date joined"
-#~ msgstr "添加时间"
 
 # Translation included with django
 #~ msgid "staff status"
 #~ msgstr "员工身份"
-
-#~ msgid "Group List"
-#~ msgstr "组别列表"
 
 #~ msgid "Parameter List"
 #~ msgstr "参数列表"
@@ -1775,114 +3212,6 @@ msgstr "甘特图"
 
 #~ msgid "Bucket Detail List"
 #~ msgstr "日期明细列表"
-
-#~ msgid "Welcome"
-#~ msgstr "欢迎"
-
-#~ msgid "Some links to get started"
-#~ msgstr "开始的链接"
-
-#~ msgid ""
-#~ "Welcome to frePPLe, the world's leading open source production planning "
-#~ "tool!<br/><br/>\n"
-#~ "How to get started?\n"
-#~ "<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);"
-#~ "\" onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></"
-#~ "li>\n"
-#~ "<li>Check out the <span class=\"underline\"><a href=\"/static/doc/index."
-#~ "html\" target=\"_blank\">documentation</a></span></li>\n"
-#~ "<li>Visit and join the <span class=\"underline\"><a href=\"http://groups."
-#~ "google.com/group/frepple-users\" target=\"_blank\">user community</a></"
-#~ "span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" "
-#~ "target=\"_blank\">Contact us</a></span></li>\n"
-#~ "</ol>\n"
-#~ msgstr ""
-#~ "欢迎来到frePPLe,世界领先的开源生产计划工具！<br/><br/>\n"
-#~ "怎样开始?\n"
-#~ "<ol><li>开始<span class=\"underline\"><a href=\"javascript:void(0);\" "
-#~ "onclick=\"tour.start('0,0,0'); return false;\">指导流程</a></span></li>\n"
-#~ "<li>查看<span class=\"underline\"><a href=\"/static/doc/index.html\" "
-#~ "target=\"_blank\">文档</a></span></li>\n"
-#~ "<li>加入<span class=\"underline\"><a href=\"http://groups.google.com/"
-#~ "group/frepple-users\" target=\"_blank\">用户社区</a></span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" "
-#~ "target=\"_blank\">联系我们</a></span></li>\n"
-#~ "</ol>\n"
-
-#~ msgid "News"
-#~ msgstr "新闻"
-
-#~ msgid "Show the latest news items from the frePPLe website"
-#~ msgstr "从 frePPLe网站显示最新信息"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "显示最近修改项目"
-
-#~ msgid "Unknown content"
-#~ msgstr "未知内容"
-
-# Translation included with django
-#~ msgid "None available"
-#~ msgstr "无效"
-
-# Translation included with django
-#~ msgid "Site administration"
-#~ msgstr "站点管理"
-
-#~ msgid "Model:"
-#~ msgstr "模板："
-
-#~ msgid "Execute"
-#~ msgstr "执行"
-
-#~ msgid "submitted"
-#~ msgstr "提交"
-
-#~ msgid "started"
-#~ msgstr "开始"
-
-#~ msgid "arguments"
-#~ msgstr "参数"
-
-#~ msgid "tasks"
-#~ msgstr "任务"
-
-#~ msgid "task"
-#~ msgstr "任务"
-
-#~ msgid "Free"
-#~ msgstr "空闲的"
-
-#~ msgid "In use"
-#~ msgstr "使用中"
-
-#~ msgid "Busy"
-#~ msgstr "忙碌"
-
-#~ msgid "last refreshed"
-#~ msgstr "最后刷新"
-
-#~ msgid "scenarios"
-#~ msgstr "方案"
-
-#~ msgid "scenario"
-#~ msgstr "方案"
-
-#~ msgid "Task status"
-#~ msgstr "任务状态"
-
-#~ msgid "finished"
-#~ msgstr "完成"
-
-#~ msgid "Failure launching action: %(msg)s"
-#~ msgstr "失败的发动动作:%(msg)s"
-
-#~ msgid "Displaying only the last 50K from the log file"
-#~ msgstr "只显示最后50K的日志文件"
-
-#~ msgid "Planning parameters"
-#~ msgstr "计划参数"
 
 #~ msgid "Constant"
 #~ msgstr "常数"
@@ -1899,45 +3228,8 @@ msgstr "甘特图"
 #~ msgid "Manual"
 #~ msgstr "手工"
 
-#~ msgid "category"
-#~ msgstr "类别"
-
-#~ msgid "subcategory"
-#~ msgstr "子类"
-
-#~ msgid "customer"
-#~ msgstr "客户"
-
 #~ msgid "Method used to generate a base forecast"
 #~ msgstr "生成一个基础预测的方法"
-
-#~ msgid "calendar"
-#~ msgstr "日历"
-
-#~ msgid "delivery operation"
-#~ msgstr "交货工序"
-
-#~ msgid "Operation used to satisfy this demand"
-#~ msgstr "满足这项需求的工序"
-
-#~ msgid "priority"
-#~ msgstr "优先级"
-
-#~ msgid ""
-#~ "Priority of the demand (lower numbers indicate more important demands)"
-#~ msgstr "需求的优先级（数据越小代表需求越重要）"
-
-#~ msgid "minimum shipment"
-#~ msgstr "最低出货"
-
-#~ msgid "Minimum shipment quantity when planning this demand"
-#~ msgstr "计划这需求时的最低出货量"
-
-#~ msgid "maximum lateness"
-#~ msgstr "最大延误"
-
-#~ msgid "Maximum lateness allowed when planning this demand"
-#~ msgstr "计划该需求允许的最大延误"
 
 #~ msgid "discrete"
 #~ msgstr "不连续的"
@@ -1972,229 +3264,6 @@ msgstr "甘特图"
 #~ msgid "Forecasted Demand List"
 #~ msgstr "预测需求列表"
 
-#~ msgid "plan"
-#~ msgstr "计划"
-
-#~ msgid "Repeating pattern"
-#~ msgstr "重复模式"
-
-#~ msgid "Alternates"
-#~ msgstr "替代项"
-
-#~ msgid "Inventory"
-#~ msgstr "库存"
-
-#~ msgid "Planning parameters for procurement buffers"
-#~ msgstr "采购库存的计划参数"
-
-#~ msgid "minimum cost"
-#~ msgstr "最低成本"
-
-#~ msgid "minimum penalty"
-#~ msgstr "最小罚款"
-
-#~ msgid "minimum cost plus penalty"
-#~ msgstr "最低成本加罚款"
-
-#~ msgid "default value"
-#~ msgstr "默认值"
-
-#~ msgid "Value to be used when no entry is effective"
-#~ msgstr "当输入无效值时使用的值"
-
-#~ msgid "calendars"
-#~ msgstr "日历"
-
-# Translation included with django
-#~ msgid "Monday"
-#~ msgstr "星期一"
-
-# Translation included with django
-#~ msgid "Tuesday"
-#~ msgstr "星期二"
-
-# Translation included with django
-#~ msgid "Wednesday"
-#~ msgstr "星期三"
-
-# Translation included with django
-#~ msgid "Thursday"
-#~ msgstr "星期四"
-
-# Translation included with django
-#~ msgid "Friday"
-#~ msgstr "星期五"
-
-# Translation included with django
-#~ msgid "Saturday"
-#~ msgstr "星期六"
-
-# Translation included with django
-#~ msgid "Sunday"
-#~ msgstr "星期日"
-
-#~ msgid "start time"
-#~ msgstr "开始时间"
-
-#~ msgid "end time"
-#~ msgstr "结束时间"
-
-#~ msgid "calendar bucket"
-#~ msgstr "日历清单"
-
-#~ msgid "calendar buckets"
-#~ msgstr "日历清单"
-
-#~ msgid "Calendar defining the working hours and holidays of this location"
-#~ msgstr "定义这个地点的工时和假日的日历"
-
-#~ msgid "locations"
-#~ msgstr "地点"
-
-#~ msgid "customers"
-#~ msgstr "客户"
-
-#~ msgid "Default operation used to ship a demand for this item"
-#~ msgstr "满足这项产品需求的默认工序"
-
-#~ msgid "price"
-#~ msgstr "价格"
-
-#~ msgid "Selling price of the item"
-#~ msgstr "产品的价格"
-
-#~ msgid "items"
-#~ msgstr "产品"
-
-#~ msgid "fixed_time"
-#~ msgstr "固定时间"
-
-#~ msgid "time_per"
-#~ msgstr "单位时间"
-
-#~ msgid "routing"
-#~ msgstr "工艺路线"
-
-#~ msgid "alternate"
-#~ msgstr "替换项"
-
-#~ msgid "split"
-#~ msgstr "分开"
-
-#~ msgid "release fence"
-#~ msgstr "释放冻结"
-
-#~ msgid ""
-#~ "Operationplans within this time window from the current day are expected "
-#~ "to be released to production ERP"
-#~ msgstr "由当天起的工序计划的时间窗口将发布到生产ERP系统中。"
-
-#~ msgid "post-op time"
-#~ msgstr "后置时间"
-
-#~ msgid ""
-#~ "A delay time to be respected as a soft constraint after ending the "
-#~ "operation"
-#~ msgstr "结束工序后,期望一个延迟时间作为一个软约束"
-
-#~ msgid "size minimum"
-#~ msgstr "最小量"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "工序计划的最小量"
-
-#~ msgid "size multiple"
-#~ msgstr "倍数"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "工序计划的倍数数量"
-
-#~ msgid "size maximum"
-#~ msgstr "最大量"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "工序计划的最大量"
-
-#~ msgid "cost"
-#~ msgstr "消耗"
-
-#~ msgid "Cost per operationplan unit"
-#~ msgstr "每单位工序的消耗"
-
-#~ msgid "duration"
-#~ msgstr "持续时间"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "工序的固定持续时间"
-
-#~ msgid "duration per unit"
-#~ msgstr "每单位时间"
-
-#~ msgid "A variable duration for the operation"
-#~ msgstr "工序的有效持续时间"
-
-#~ msgid "Method to select preferred alternate"
-#~ msgstr "选择推荐替换项的方法"
-
-#~ msgid "operations"
-#~ msgstr "工序"
-
-#~ msgid "Parent operation"
-#~ msgstr "父工序"
-
-#~ msgid ""
-#~ "Sequence of this operation among the suboperations. Negative values are "
-#~ "ignored."
-#~ msgstr "这项工序的子工序的操作序列，忽略负值。"
-
-#~ msgid "suboperation"
-#~ msgstr "子工序"
-
-#~ msgid "Child operation"
-#~ msgstr "子类工序"
-
-#~ msgid "effective start"
-#~ msgstr "生效开始时间"
-
-#~ msgid "Validity start date"
-#~ msgstr "有效开始时间"
-
-#~ msgid "effective end"
-#~ msgstr "生效结束时间"
-
-#~ msgid "Validity end date"
-#~ msgstr "有效结束时间"
-
-#~ msgid "suboperations"
-#~ msgstr "子工序"
-
-#~ msgid "Default"
-#~ msgstr "默认"
-
-#~ msgid "Infinite"
-#~ msgstr "无限的"
-
-#~ msgid "Procure"
-#~ msgstr "采购"
-
-#~ msgid "onhand"
-#~ msgstr "现有库存量"
-
-#~ msgid "current inventory"
-#~ msgstr "目前存货"
-
-#~ msgid "minimum calendar"
-#~ msgstr "安全库存日历表"
-
-#~ msgid "Calendar storing a time-dependent safety stock profile"
-#~ msgstr "库存的存储安全期"
-
-#~ msgid "producing"
-#~ msgstr "生产"
-
-#~ msgid "Operation to replenish the buffer"
-#~ msgstr "补充存货的工序"
-
 #~ msgid "carrying cost"
 #~ msgstr "运输费"
 
@@ -2203,221 +3272,8 @@ msgstr "甘特图"
 #~ "percentage of the item price."
 #~ msgstr "该库存持有库存的成本,表示为该产品价格的年度百分比"
 
-#~ msgid "leadtime"
-#~ msgstr "前置时间"
-
-#~ msgid "Leadtime for supplier of a procure buffer"
-#~ msgstr "供应商采购库存的前置时间"
-
-#~ msgid "fence"
-#~ msgstr "冻结时间"
-
-#~ msgid "Frozen fence for creating new procurements"
-#~ msgstr "创建新采购的冻结时间"
-
-#~ msgid "min_inventory"
-#~ msgstr "最低库存"
-
-#~ msgid "Inventory level that triggers replenishment of a procure buffer"
-#~ msgstr "触发库存补充采购的水平"
-
-#~ msgid "max_inventory"
-#~ msgstr "库存最大值"
-
-#~ msgid "Inventory level to which a procure buffer is replenished"
-#~ msgstr "补充库存的采购水平"
-
-#~ msgid "min_interval"
-#~ msgstr "最小间隔"
-
-#~ msgid "Minimum time interval between replenishments of a procure buffer"
-#~ msgstr "补充库存采购的最小间隔"
-
-#~ msgid "max_interval"
-#~ msgstr "最大间隔"
-
-#~ msgid "Maximum time interval between replenishments of a procure buffer"
-#~ msgstr "补充库存采购的最大间隔"
-
-#~ msgid "size_minimum"
-#~ msgstr "最低采购量"
-
-#~ msgid "Minimum size of replenishments of a procure buffer"
-#~ msgstr "补充库存采购的最小值"
-
-#~ msgid "size_multiple"
-#~ msgstr "系数"
-
-#~ msgid "Replenishments of a procure buffer are a multiple of this quantity"
-#~ msgstr "补充库存的采购是一个多重数"
-
-#~ msgid "size_maximum"
-#~ msgstr "最大值"
-
-#~ msgid "Maximum size of replenishments of a procure buffer"
-#~ msgstr "补充生产库存的最大值"
-
-#~ msgid "buffers"
-#~ msgstr "库存"
-
-#~ msgid "setup matrix"
-#~ msgstr "配置矩阵"
-
-#~ msgid "setup matrices"
-#~ msgstr "配置矩阵"
-
-#~ msgid "from setup"
-#~ msgstr "初始设置"
-
-#~ msgid "Name of the old setup (wildcard characters are supported)"
-#~ msgstr "旧设置的名称（支持使用通用符）"
-
-#~ msgid "to setup"
-#~ msgstr "切换设置"
-
-#~ msgid "Name of the new setup (wildcard characters are supported)"
-#~ msgstr "切换设置"
-
-#~ msgid "Duration of the changeover"
-#~ msgstr "转换期间"
-
-#~ msgid "Cost of the conversion"
-#~ msgstr "转换所需的花费"
-
-#~ msgid "setup matrix rule"
-#~ msgstr "设置规则"
-
-#~ msgid "setup matrix rules"
-#~ msgstr "设置规则"
-
-#~ msgid "Buckets"
-#~ msgstr "日期"
-
-#~ msgid "maximum"
-#~ msgstr "最大值"
-
-#~ msgid "Size of the resource"
-#~ msgstr "资源量"
-
-#~ msgid "maximum calendar"
-#~ msgstr "最大限度的日程表"
-
-#~ msgid "Calendar defining the resource size varying over time"
-#~ msgstr "日历决定资源大小随时间变化"
-
-#~ msgid "Cost for using 1 unit of the resource for 1 hour"
-#~ msgstr "每小时每单元所消耗的资源"
-
-#~ msgid "max early"
-#~ msgstr "最大限度提前期"
-
-#~ msgid "Time window before the ask date where we look for available capacity"
-#~ msgstr "寻求可用能力的有效时间窗口"
-
-#~ msgid "Setup matrix defining the conversion time and cost"
-#~ msgstr "配置定义交换时间和消耗的矩阵"
-
-#~ msgid "Setup of the resource at the start of the plan"
-#~ msgstr "在计划开始时的资源配置"
-
-#~ msgid "resources"
-#~ msgstr "资源"
-
-#~ msgid "skill"
-#~ msgstr "技能"
-
-#~ msgid "skills"
-#~ msgstr "技能"
-
-#~ msgid "Priority of this skill in a group of alternates"
-#~ msgstr "替代项的优先级"
-
-#~ msgid "resource skill"
-#~ msgstr "资源技能"
-
-#~ msgid "resource skills"
-#~ msgstr "资源技能"
-
-#~ msgid "Start"
-#~ msgstr "开始"
-
-#~ msgid "End"
-#~ msgstr "结束"
-
-#~ msgid "Quantity to consume or produce per operationplan unit"
-#~ msgstr "每一次工序计划消耗或生产物料的数量"
-
-#~ msgid ""
-#~ "Consume/produce material at the start or the end of the operationplan"
-#~ msgstr "在工序计划前或者后消耗或生产物料"
-
-#~ msgid "Optional name of this flow"
-#~ msgstr "可选工艺流的名称"
-
-#~ msgid "Puts the flow in a group of alternate flows"
-#~ msgstr "把工艺流添加到可替代项"
-
-#~ msgid "Priority of this flow in a group of alternates"
-#~ msgstr "工序流替代项的优先级"
-
-#~ msgid "flow"
-#~ msgstr "工序流"
-
-#~ msgid "flows"
-#~ msgstr "工序流"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "可选负载的名称"
-
-#~ msgid "Puts the load in a group of alternate loads"
-#~ msgstr "将负载添加到可替代项"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "负载可替代项的优先级"
-
-#~ msgid "Setup required on the resource for this operation"
-#~ msgstr "这个工序的切换要求"
-
-#~ msgid "loads"
-#~ msgstr "负载"
-
-#~ msgid "Unique identifier of an operationplan"
-#~ msgstr "工序计划的唯一标识符"
-
-#~ msgid "locked"
-#~ msgstr "锁定"
-
 #~ msgid "Prevent or allow changes"
 #~ msgstr "阻止或允许权限修改"
-
-#~ msgid "operationplan"
-#~ msgstr "工序计划"
-
-#~ msgid "operationplans"
-#~ msgstr "工序计划"
-
-#~ msgid "Open"
-#~ msgstr "打开"
-
-#~ msgid "due"
-#~ msgstr "交期"
-
-#~ msgid "Status of the demand. Only \"open\" demands are planned"
-#~ msgstr "需求的状态。只有 \"open\"的需求才会被执行"
-
-#~ msgid "demands"
-#~ msgstr "需求"
-
-#~ msgid "%(name)s - %(count)d match"
-#~ msgid_plural "%(name)s - %(count)d matches"
-#~ msgstr[0] "%(name)s - %(count)d 匹配"
-#~ msgstr[1] "%(name)s - %(count)d 匹配"
-
-#~ msgid "Supply path"
-#~ msgstr "供应路线"
-
-#~ msgid "depth"
-#~ msgstr "深度"
 
 #~ msgid "No availability calendar found"
 #~ msgstr "没有找到可用的日历"
@@ -2430,9 +3286,6 @@ msgstr "甘特图"
 
 #~ msgid "Resource List"
 #~ msgstr "资源列表"
-
-#~ msgid "maxearly"
-#~ msgstr "最早提前时间"
 
 #~ msgid "Location List"
 #~ msgstr "地点列表"
@@ -2473,202 +3326,11 @@ msgstr "甘特图"
 #~ msgid "Operationplan List"
 #~ msgstr "工序计划列表"
 
-#~ msgid "startdate"
-#~ msgstr "开始日期"
-
-#~ msgid "enddate"
-#~ msgstr "结束日期"
-
-#~ msgid "entity"
-#~ msgstr "实体"
-
-#~ msgid "weight"
-#~ msgstr "重量"
-
-#~ msgid "problem"
-#~ msgstr "问题"
-
-#~ msgid "constraint"
-#~ msgstr "约束"
-
-#~ msgid "constraints"
-#~ msgstr "约束"
-
-#~ msgid "loadplan"
-#~ msgstr "负载计划"
-
-#~ msgid "loadplans"
-#~ msgstr "负载计划"
-
-#~ msgid "flowplan"
-#~ msgstr "工序流计划"
-
-#~ msgid "flowplans"
-#~ msgstr "工序流计划"
-
-#~ msgid "planned quantity"
-#~ msgstr "计划量"
-
-#~ msgid "planned date"
-#~ msgstr "计划日期"
-
-#~ msgid "level"
-#~ msgstr "级别"
-
-#~ msgid "demand pegging"
-#~ msgstr "需求分析"
-
-#~ msgid "demand peggings"
-#~ msgstr "需求分析"
-
-#~ msgid "Late orders"
-#~ msgstr "逾期订单"
-
-#~ msgid "Shows orders that will be delivered after their due date"
-#~ msgstr "显示交货晚于交期的订单"
-
-#~ msgid "delay"
-#~ msgstr "延期"
-
-#~ msgid "Short orders"
-#~ msgstr "短期订单"
-
-#~ msgid "Shows orders that are not planned completely"
-#~ msgstr "显示完全没有计划的订单"
-
-#~ msgid "short"
-#~ msgstr "短缺"
-
-#~ msgid "Purchase queue"
-#~ msgstr "购买队列"
-
-#~ msgid "Display a list of new purchase orders"
-#~ msgstr "显示新的采购订单表"
-
-#~ msgid "Shipping queue"
-#~ msgstr "出货队列"
-
 #~ msgid "Display a list of customer orders and their shipping date"
 #~ msgstr "显示客户订单表和他们的出货期"
 
-#~ msgid "plan date"
-#~ msgstr "计划日期"
-
-#~ msgid "Resource queue"
-#~ msgstr "资源队列"
-
-#~ msgid "Display planned activities for the resources"
-#~ msgstr "显示资源的计划活动"
-
-#~ msgid "Purchase order analysis"
-#~ msgstr "采购订单分析"
-
-#~ msgid "Analyse the urgency of existing purchase orders"
-#~ msgstr "分析现存采购订单的紧急性"
-
-#~ msgid "Alerts"
-#~ msgstr "警告"
-
-#~ msgid "Overview of all alerts in the plan"
-#~ msgstr "概览计划中所有的警告"
-
-#~ msgid "count"
-#~ msgstr "数量"
-
-#~ msgid "Resource utilization"
-#~ msgstr "资源利用率"
-
-#~ msgid "Shows the resources with the highest utilization"
-#~ msgstr "显示最高利用率的资源"
-
-#~ msgid "Inventory by location"
-#~ msgstr "库存"
-
-#~ msgid "Display the locations with the highest inventory value"
-#~ msgstr "显示仓库最高库存值"
-
-#~ msgid "Inventory by item"
-#~ msgstr "产品的库存"
-
-#~ msgid "Display the items with the highest inventory value"
-#~ msgstr "显示产品最高库存值"
-
-#~ msgid "Delivery performance"
-#~ msgstr "交货能力"
-
-#~ msgid ""
-#~ "Shows the percentage of demands that are planned to be shipped completely "
-#~ "on time"
-#~ msgstr "显示计划中可以按时完全出货的需求的百分比"
-
-#~ msgid "On time delivery"
-#~ msgstr "按时交货"
-
-#~ msgid "Inventory report"
-#~ msgstr "库存报表"
-
-#~ msgid "Inventory detail report"
-#~ msgstr "库存明细报表"
-
-#~ msgid "material"
-#~ msgstr "物料"
-
-#~ msgid "capacity"
-#~ msgstr "能力"
-
-#~ msgid "underload"
-#~ msgstr "负载不足"
-
-#~ msgid "material excess"
-#~ msgstr "超额物料"
-
-#~ msgid "material shortage"
-#~ msgstr "短缺物料"
-
-#~ msgid "excess"
-#~ msgstr "超额"
-
-#~ msgid "early"
-#~ msgstr "提早"
-
-#~ msgid "late"
-#~ msgstr "延迟"
-
-#~ msgid "unplanned"
-#~ msgstr "无计划"
-
-#~ msgid "precedence"
-#~ msgstr "优先级"
-
-#~ msgid "before fence"
-#~ msgstr "冻结期前"
-
-#~ msgid "before current"
-#~ msgstr "当前日期之前"
-
-#~ msgid "Constraint Report"
-#~ msgstr "约束条件报表"
-
-#~ msgid "Demand report"
-#~ msgstr "需求报告"
-
 #~ msgid "orders"
 #~ msgstr "订单"
-
-#~ msgid "due date"
-#~ msgstr "交期日"
-
-#~ msgid "Performance Indicators"
-#~ msgstr "绩效指标"
-
-#~ msgid "Operation report"
-#~ msgstr "工序报告"
-
-#~ msgid "Operation detail report"
-#~ msgstr "工序明细报表"
-
-#~ msgid "Demand plan"
-#~ msgstr "需求计划"
 
 #~ msgid "Pegging report"
 #~ msgstr "分析报表"
@@ -2678,24 +3340,6 @@ msgstr "甘特图"
 
 #~ msgid "end item"
 #~ msgstr "最终产品"
-
-#~ msgid "Problem Report"
-#~ msgstr "问题报表"
-
-#~ msgid "Resource report"
-#~ msgstr "资源报表"
-
-#~ msgid "utilization %"
-#~ msgstr "使用率 %"
-
-#~ msgid "hours"
-#~ msgstr "小时"
-
-#~ msgid "Resource detail report"
-#~ msgstr "资源明细报表"
-
-#~ msgid "operationplan quantity"
-#~ msgstr "生产计划数量"
 
 #~ msgid "Resource Gantt report"
 #~ msgstr "资源甘特图报表"
@@ -2728,9 +3372,6 @@ msgstr "甘特图"
 #~ msgid "Table"
 #~ msgstr "表格"
 
-#~ msgid "List"
-#~ msgstr "列表"
-
 #~ msgid "graph"
 #~ msgstr "图"
 
@@ -2741,9 +3382,6 @@ msgstr "甘特图"
 #~ "A delay time to be respected as a soft constraint before starting the "
 #~ "operation"
 #~ msgstr "工序操作开始之前的延迟时间受软约束条件的约束"
-
-#~ msgid "consuming operationplan"
-#~ msgstr "工序计划消耗"
 
 #~ msgid "consuming date"
 #~ msgstr "消耗日期"
@@ -2759,10 +3397,6 @@ msgstr "甘特图"
 
 #~ msgid "quantity buffer"
 #~ msgstr "存货数量"
-
-# Translation included with django
-#~ msgid "Undo"
-#~ msgstr "撤销"
 
 # Translation included with django
 #~ msgid "Add"

@@ -1,163 +1,88 @@
-#
 # Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
-#
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 # General Public License for more details.
-#
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Chris Zajaczkowski <info@businesstec.net>, 2015.
-#
+# Joao Ranita <jranita@frepple.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-24 15:59+0100\n"
-"PO-Revision-Date: 2015-11-24 16:41+0100\n"
-"Last-Translator: Chris Zajaczkowski <info@businesstec.net>\n"
-"Language-Team: Spanish; Castilian <info@businesstec.net>\n"
-"Language: es_CR\n"
+"POT-Creation-Date: 2015-12-07 09:31+0100\n"
+"PO-Revision-Date: 2015-12-07 09:42+0200\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Basepath: ../../..\n"
-"X-Generator: Poedit 1.8.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: freppledb/common/admin.py:35
+#: common/admin.py:42
 msgid "Personal info"
 msgstr "Información personal"
 
-#: freppledb/common/admin.py:36
+#: common/admin.py:43
 msgid "Permissions in this scenario"
 msgstr "Permisos en este escenario"
 
-#: freppledb/common/admin.py:38
+#: common/admin.py:45
 msgid "Important dates"
 msgstr "Fechas importantes"
 
-#: freppledb/common/admin.py:42 freppledb/common/admin.py:62
-#: freppledb/common/admin.py:94 freppledb/common/admin.py:119
-#: freppledb/common/admin.py:132 freppledb/forecast/admin.py:41
-#: freppledb/input/admin.py:45 freppledb/input/admin.py:58
-#: freppledb/input/admin.py:71 freppledb/input/admin.py:84
-#: freppledb/input/admin.py:106 freppledb/input/admin.py:120
-#: freppledb/input/admin.py:137 freppledb/input/admin.py:150
-#: freppledb/input/admin.py:205 freppledb/input/admin.py:242
-#: freppledb/input/admin.py:266 freppledb/input/admin.py:278
-#: freppledb/input/admin.py:291 freppledb/input/admin.py:305
-#: freppledb/input/admin.py:329 freppledb/input/admin.py:347
-#: freppledb/input/admin.py:360 freppledb/input/admin.py:402
-#: freppledb/templates/admin/change_form.html:15
-#: freppledb/templates/buckettabs.html:4 freppledb/templates/buffertabs.html:4
-#: freppledb/templates/calendarbuckettabs.html:4
-#: freppledb/templates/calendartabs.html:4
-#: freppledb/templates/customertabs.html:4
-#: freppledb/templates/demandtabs.html:4 freppledb/templates/flowtabs.html:4
-#: freppledb/templates/forecasttabs.html:4 freppledb/templates/grouptabs.html:4
-#: freppledb/templates/itemdistributiontabs.html:4
-#: freppledb/templates/itemsuppliertabs.html:4
-#: freppledb/templates/itemtabs.html:4 freppledb/templates/loadtabs.html:4
-#: freppledb/templates/locationtabs.html:4
-#: freppledb/templates/operationtabs.html:4
-#: freppledb/templates/parametertabs.html:4
-#: freppledb/templates/resourceskilltabs.html:4
-#: freppledb/templates/resourcetabs.html:4
-#: freppledb/templates/setupmatrixtabs.html:4
-#: freppledb/templates/skilltabs.html:4 freppledb/templates/suppliertabs.html:4
-#: freppledb/templates/usertabs.html:4
+#: common/admin.py:49 common/admin.py:69 common/admin.py:101
+#: common/admin.py:126 common/admin.py:139 input/admin.py:45 input/admin.py:58
+#: input/admin.py:71 input/admin.py:84 input/admin.py:106 input/admin.py:120
+#: input/admin.py:137 input/admin.py:150 input/admin.py:205 input/admin.py:242
+#: input/admin.py:266 input/admin.py:278 input/admin.py:291 input/admin.py:305
+#: input/admin.py:328 input/admin.py:346 input/admin.py:359 input/admin.py:401
+#: templates/admin/change_form.html:15
 msgid "edit"
 msgstr "editar"
 
-#: freppledb/common/admin.py:43 freppledb/common/admin.py:63
-#: freppledb/common/admin.py:95 freppledb/common/admin.py:120
-#: freppledb/common/admin.py:133 freppledb/common/models.py:437
-#: freppledb/common/views.py:317 freppledb/common/widget.py:96
-#: freppledb/forecast/admin.py:45 freppledb/input/admin.py:46
-#: freppledb/input/admin.py:59 freppledb/input/admin.py:72
-#: freppledb/input/admin.py:85 freppledb/input/admin.py:107
-#: freppledb/input/admin.py:125 freppledb/input/admin.py:138
-#: freppledb/input/admin.py:151 freppledb/input/admin.py:211
-#: freppledb/input/admin.py:248 freppledb/input/admin.py:267
-#: freppledb/input/admin.py:279 freppledb/input/admin.py:292
-#: freppledb/input/admin.py:312 freppledb/input/admin.py:330
-#: freppledb/input/admin.py:348 freppledb/input/admin.py:366
-#: freppledb/input/admin.py:406 freppledb/templates/buckettabs.html:5
-#: freppledb/templates/buffertabs.html:10
-#: freppledb/templates/calendarbuckettabs.html:5
-#: freppledb/templates/calendartabs.html:5
-#: freppledb/templates/common/comments.html:11
-#: freppledb/templates/customertabs.html:5
-#: freppledb/templates/demandtabs.html:8 freppledb/templates/flowtabs.html:5
-#: freppledb/templates/forecasttabs.html:8 freppledb/templates/grouptabs.html:5
-#: freppledb/templates/inventoryplanning/drp.html:1362
-#: freppledb/templates/itemdistributiontabs.html:5
-#: freppledb/templates/itemsuppliertabs.html:5
-#: freppledb/templates/itemtabs.html:9 freppledb/templates/loadtabs.html:5
-#: freppledb/templates/locationtabs.html:5
-#: freppledb/templates/operationtabs.html:10
-#: freppledb/templates/parametertabs.html:5
-#: freppledb/templates/resourceskilltabs.html:5
-#: freppledb/templates/resourcetabs.html:11
-#: freppledb/templates/setupmatrixtabs.html:5
-#: freppledb/templates/skilltabs.html:5 freppledb/templates/suppliertabs.html:5
-#: freppledb/templates/usertabs.html:5
+#: common/admin.py:50 common/admin.py:70 common/admin.py:102
+#: common/admin.py:127 common/admin.py:140 common/models.py:406
+#: common/views.py:274 common/widget.py:103 input/admin.py:46 input/admin.py:59
+#: input/admin.py:72 input/admin.py:85 input/admin.py:107 input/admin.py:125
+#: input/admin.py:138 input/admin.py:151 input/admin.py:211 input/admin.py:248
+#: input/admin.py:267 input/admin.py:279 input/admin.py:292 input/admin.py:311
+#: input/admin.py:329 input/admin.py:347 input/admin.py:365 input/admin.py:405
+#: templates/common/comments.html:11
 msgid "comments"
 msgstr "comentarios"
 
 # Translation included with django
-#: freppledb/common/admin.py:44 freppledb/common/admin.py:64
-#: freppledb/common/admin.py:96 freppledb/common/admin.py:121
-#: freppledb/common/admin.py:134 freppledb/forecast/admin.py:46
-#: freppledb/input/admin.py:47 freppledb/input/admin.py:60
-#: freppledb/input/admin.py:73 freppledb/input/admin.py:86
-#: freppledb/input/admin.py:108 freppledb/input/admin.py:126
-#: freppledb/input/admin.py:139 freppledb/input/admin.py:152
-#: freppledb/input/admin.py:212 freppledb/input/admin.py:249
-#: freppledb/input/admin.py:268 freppledb/input/admin.py:280
-#: freppledb/input/admin.py:293 freppledb/input/admin.py:313
-#: freppledb/input/admin.py:331 freppledb/input/admin.py:349
-#: freppledb/input/admin.py:367 freppledb/input/admin.py:407
-#: freppledb/templates/buckettabs.html:6 freppledb/templates/buffertabs.html:11
-#: freppledb/templates/calendarbuckettabs.html:6
-#: freppledb/templates/calendartabs.html:6
-#: freppledb/templates/customertabs.html:6
-#: freppledb/templates/demandtabs.html:9 freppledb/templates/flowtabs.html:6
-#: freppledb/templates/forecasttabs.html:9 freppledb/templates/grouptabs.html:6
-#: freppledb/templates/inventoryplanning/drp.html:1363
-#: freppledb/templates/itemdistributiontabs.html:6
-#: freppledb/templates/itemsuppliertabs.html:6
-#: freppledb/templates/itemtabs.html:10 freppledb/templates/loadtabs.html:6
-#: freppledb/templates/locationtabs.html:6
-#: freppledb/templates/operationtabs.html:11
-#: freppledb/templates/parametertabs.html:6
-#: freppledb/templates/resourceskilltabs.html:6
-#: freppledb/templates/resourcetabs.html:12
-#: freppledb/templates/setupmatrixtabs.html:6
-#: freppledb/templates/skilltabs.html:6 freppledb/templates/suppliertabs.html:6
+#: common/admin.py:51 common/admin.py:71 common/admin.py:103
+#: common/admin.py:128 common/admin.py:141 input/admin.py:47 input/admin.py:60
+#: input/admin.py:73 input/admin.py:86 input/admin.py:108 input/admin.py:126
+#: input/admin.py:139 input/admin.py:152 input/admin.py:212 input/admin.py:249
+#: input/admin.py:268 input/admin.py:280 input/admin.py:293 input/admin.py:312
+#: input/admin.py:330 input/admin.py:348 input/admin.py:366 input/admin.py:406
 msgid "history"
 msgstr "historial"
 
-#: freppledb/common/admin.py:83
+#: common/admin.py:90
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 msgstr "Fecha no válida: esperando AAAA-MM-DD HH:MM:SS"
 
 # Translation included with django
-#: freppledb/common/adminforms.py:164 freppledb/common/adminforms.py:404
+#: common/adminforms.py:186 common/adminforms.py:427
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "%(name)s objeto con llave primaria %(key)r no existe."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:224 freppledb/common/adminforms.py:282
+#: common/adminforms.py:246 common/adminforms.py:304
 #, python-format
 msgid ""
 "The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
@@ -166,7 +91,7 @@ msgstr ""
 "nuevo a continuación."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:239
+#: common/adminforms.py:261
 #, python-format
 msgid ""
 "The %(name)s \"%(obj)s\" was added successfully. You may add another "
@@ -176,13 +101,13 @@ msgstr ""
 "%(name)s debajo."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:246
+#: common/adminforms.py:268
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was added successfully."
 msgstr "%(name)s \"%(obj)s\" se ha agregado correctamente. "
 
 # Translation included with django
-#: freppledb/common/adminforms.py:275
+#: common/adminforms.py:297
 #, python-format
 msgid ""
 "The %(name)s \"%(obj)s\" was changed successfully. You may edit it again "
@@ -192,7 +117,7 @@ msgstr ""
 "debajo."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:293
+#: common/adminforms.py:315
 #, python-format
 msgid ""
 "The %(name)s \"%(obj)s\" was changed successfully. You may add another "
@@ -202,412 +127,332 @@ msgstr ""
 "%(name)s abajo."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:303
+#: common/adminforms.py:325
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was changed successfully."
 msgstr "%(name)s \"%(obj)s\" se ha agregado correctamente."
 
 # Translation included with django
-#: freppledb/common/adminforms.py:373
+#: common/adminforms.py:396
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr "%(name)s \"%(obj)s\" fue eliminado correctamente."
 
-#: freppledb/common/api/views.py:24
+#: common/api/views.py:26
 msgid "REST API Help"
 msgstr "Ayuda API REST"
 
-#: freppledb/common/fields.py:68 freppledb/common/fields.py:98
+#: common/fields.py:75 common/fields.py:105
 msgid "Expected format \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
 msgstr "Formato esperado \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" o \"SS\""
 
-#: freppledb/common/menu.py:50
+#: common/menu.py:56
 msgid "Guided tour"
 msgstr "Demostración guiada"
 
-#: freppledb/common/menu.py:51
+#: common/menu.py:57
 msgid "documentation"
 msgstr "documentación"
 
-#: freppledb/common/menu.py:52
+#: common/menu.py:58
 msgid "API help"
 msgstr "Ayuda API"
 
-#: freppledb/common/menu.py:53
+#: common/menu.py:59
 msgid "frePPLe website"
 msgstr "Sitio web de frePPLe"
 
-#: freppledb/common/models.py:38 freppledb/common/models.py:175
-#: freppledb/common/models.py:203 freppledb/common/models.py:464
-#: freppledb/common/models.py:481 freppledb/common/views.py:254
-#: freppledb/common/views.py:269 freppledb/common/views.py:343
-#: freppledb/common/views.py:363 freppledb/execute/models.py:31
-#: freppledb/execute/views.py:57 freppledb/forecast/models.py:33
-#: freppledb/forecast/views.py:49 freppledb/forecast/views.py:622
-#: freppledb/input/models.py:30 freppledb/input/models.py:306
-#: freppledb/input/models.py:529 freppledb/input/models.py:656
-#: freppledb/input/models.py:738 freppledb/input/models.py:784
-#: freppledb/input/views.py:512 freppledb/input/views.py:538
-#: freppledb/input/views.py:554 freppledb/input/views.py:581
-#: freppledb/input/views.py:601 freppledb/input/views.py:620
-#: freppledb/input/views.py:690 freppledb/input/views.py:711
-#: freppledb/input/views.py:753 freppledb/input/views.py:779
-#: freppledb/input/views.py:797 freppledb/input/views.py:833
-#: freppledb/input/views.py:880 freppledb/output/models.py:41
-#: freppledb/output/models.py:62 freppledb/output/views/constraint.py:71
-#: freppledb/output/views/kpi.py:26 freppledb/output/views/problem.py:47
-#: freppledb/output/widget.py:51 freppledb/output/widget.py:92
-#: freppledb/quoting/views.py:68 freppledb/templates/execute/execute.html:329
+#: common/models.py:43 common/models.py:180 common/models.py:208
+#: common/models.py:433 common/models.py:450 common/views.py:246
+#: common/views.py:261 common/views.py:301 common/views.py:321
+#: execute/models.py:38 execute/views.py:62 input/models.py:37
+#: input/models.py:313 input/models.py:536 input/models.py:663
+#: input/models.py:745 input/models.py:791 input/views.py:519
+#: input/views.py:545 input/views.py:561 input/views.py:588 input/views.py:608
+#: input/views.py:627 input/views.py:697 input/views.py:718 input/views.py:760
+#: input/views.py:786 input/views.py:804 input/views.py:840 input/views.py:887
+#: output/models.py:48 output/models.py:69 output/views/constraint.py:78
+#: output/views/kpi.py:33 output/views/problem.py:54 output/widget.py:58
+#: output/widget.py:99 templates/execute/execute.html:299
 msgid "name"
 msgstr "nombre"
 
-#: freppledb/common/models.py:39 freppledb/input/models.py:657
-#: freppledb/input/models.py:876 freppledb/input/models.py:933
+#: common/models.py:44 input/models.py:664 input/models.py:883
+#: input/models.py:940
 msgid "Unique identifier"
 msgstr "Identificador único"
 
-#: freppledb/common/models.py:40 freppledb/forecast/views.py:632
-#: freppledb/input/models.py:851 freppledb/input/views.py:519
-#: freppledb/input/views.py:559 freppledb/input/views.py:586
-#: freppledb/input/views.py:605 freppledb/input/views.py:624
-#: freppledb/input/views.py:695 freppledb/input/views.py:809
-#: freppledb/input/views.py:935 freppledb/output/models.py:26
-#: freppledb/output/models.py:40 freppledb/output/models.py:61
-#: freppledb/output/views/constraint.py:72
-#: freppledb/output/views/operation.py:156 freppledb/output/views/problem.py:48
-#: freppledb/quoting/views.py:78
+#: common/models.py:45 input/models.py:858 input/views.py:526
+#: input/views.py:566 input/views.py:593 input/views.py:612 input/views.py:631
+#: input/views.py:702 input/views.py:816 input/views.py:942 output/models.py:33
+#: output/models.py:47 output/models.py:68 output/views/constraint.py:79
+#: output/views/operation.py:163 output/views/problem.py:55
 msgid "owner"
 msgstr "dueño"
 
-#: freppledb/common/models.py:41 freppledb/input/models.py:852
+#: common/models.py:46 input/models.py:859
 msgid "Hierarchical parent"
 msgstr "Padre jerárquico"
 
-#: freppledb/common/models.py:157 freppledb/common/report.py:2013
-#: freppledb/common/views.py:272 freppledb/common/views.py:346
-#: freppledb/common/views.py:364 freppledb/forecast/views.py:63
-#: freppledb/forecast/views.py:84 freppledb/forecast/views.py:636
-#: freppledb/input/views.py:524 freppledb/input/views.py:539
-#: freppledb/input/views.py:567 freppledb/input/views.py:587
-#: freppledb/input/views.py:606 freppledb/input/views.py:625
-#: freppledb/input/views.py:650 freppledb/input/views.py:675
-#: freppledb/input/views.py:697 freppledb/input/views.py:712
-#: freppledb/input/views.py:732 freppledb/input/views.py:758
-#: freppledb/input/views.py:783 freppledb/input/views.py:812
-#: freppledb/input/views.py:838 freppledb/input/views.py:866
-#: freppledb/input/views.py:895 freppledb/input/views.py:915
-#: freppledb/input/views.py:936 freppledb/input/views.py:972
-#: freppledb/input/views.py:1012 freppledb/inventoryplanning/views.py:177
+#: common/models.py:162 common/report.py:1900 common/views.py:264
+#: common/views.py:304 common/views.py:322 input/views.py:531
+#: input/views.py:546 input/views.py:574 input/views.py:594 input/views.py:613
+#: input/views.py:632 input/views.py:657 input/views.py:682 input/views.py:704
+#: input/views.py:719 input/views.py:739 input/views.py:765 input/views.py:790
+#: input/views.py:819 input/views.py:845 input/views.py:873 input/views.py:902
+#: input/views.py:922 input/views.py:943 input/views.py:979 input/views.py:1019
 msgid "source"
 msgstr "origen"
 
-#: freppledb/common/models.py:158 freppledb/common/models.py:265
-#: freppledb/common/models.py:431 freppledb/common/report.py:175
-#: freppledb/common/report.py:2016 freppledb/planningboard/models.py:25
+#: common/models.py:163 common/models.py:270 common/models.py:400
+#: common/report.py:182 common/report.py:1903
 msgid "last modified"
 msgstr "última modificación"
 
-#: freppledb/common/models.py:176 freppledb/common/views.py:270
-#: freppledb/input/models.py:67 freppledb/input/views.py:855
-#: freppledb/output/views/kpi.py:27
-#: freppledb/templates/inventoryplanning/drp.html:1188
+#: common/models.py:181 common/views.py:262 input/models.py:74
+#: input/views.py:862 output/views/kpi.py:34
 msgid "value"
 msgstr "valor"
 
-#: freppledb/common/models.py:177 freppledb/common/models.py:204
-#: freppledb/common/models.py:465 freppledb/common/views.py:271
-#: freppledb/common/views.py:344 freppledb/forecast/models.py:34
-#: freppledb/forecast/views.py:53 freppledb/forecast/views.py:625
-#: freppledb/input/models.py:32 freppledb/input/models.py:93
-#: freppledb/input/models.py:114 freppledb/input/models.py:130
-#: freppledb/input/models.py:155 freppledb/input/models.py:308
-#: freppledb/input/models.py:426 freppledb/input/models.py:589
-#: freppledb/input/models.py:996 freppledb/input/views.py:513
-#: freppledb/input/views.py:555 freppledb/input/views.py:582
-#: freppledb/input/views.py:602 freppledb/input/views.py:621
-#: freppledb/input/views.py:691 freppledb/input/views.py:802
-#: freppledb/input/views.py:834 freppledb/input/views.py:881
-#: freppledb/output/models.py:42 freppledb/output/models.py:63
-#: freppledb/output/views/constraint.py:73 freppledb/output/views/problem.py:49
-#: freppledb/quoting/views.py:71 freppledb/templates/execute/execute.html:331
+#: common/models.py:182 common/models.py:209 common/models.py:434
+#: common/views.py:263 common/views.py:302 input/models.py:39
+#: input/models.py:100 input/models.py:121 input/models.py:137
+#: input/models.py:162 input/models.py:315 input/models.py:433
+#: input/models.py:596 input/models.py:1003 input/views.py:520
+#: input/views.py:562 input/views.py:589 input/views.py:609 input/views.py:628
+#: input/views.py:698 input/views.py:809 input/views.py:841 input/views.py:888
+#: output/models.py:49 output/models.py:70 output/views/constraint.py:80
+#: output/views/problem.py:56 templates/execute/execute.html:301
 msgid "description"
 msgstr "descripción"
 
-#: freppledb/common/models.py:184
+#: common/models.py:189
 msgid "parameter"
 msgstr "parámetro"
 
-#: freppledb/common/models.py:185 freppledb/common/views.py:262
-#: freppledb/templates/inventoryplanning/drp.html:1370
-#: freppledb/templates/inventoryplanning/drp.html:1387
+#: common/models.py:190 common/views.py:254
 msgid "parameters"
 msgstr "parámetros"
 
-#: freppledb/common/models.py:197
+#: common/models.py:202
 msgid "Free"
 msgstr "Libre"
 
-#: freppledb/common/models.py:198
+#: common/models.py:203
 msgid "In use"
 msgstr "En uso"
 
-#: freppledb/common/models.py:199
+#: common/models.py:204
 msgid "Busy"
 msgstr "Ocupado"
 
-#: freppledb/common/models.py:206 freppledb/execute/models.py:36
-#: freppledb/execute/views.py:61 freppledb/forecast/views.py:633
-#: freppledb/input/models.py:829 freppledb/input/models.py:883
-#: freppledb/input/models.py:940 freppledb/input/models.py:1015
-#: freppledb/input/views.py:801 freppledb/input/views.py:934
-#: freppledb/input/views.py:961 freppledb/input/views.py:1002
-#: freppledb/templates/execute/execute.html:330
-#: freppledb/templates/inventoryplanning/drp.html:1181
+#: common/models.py:211 execute/models.py:43 execute/views.py:66
+#: input/models.py:836 input/models.py:890 input/models.py:947
+#: input/models.py:1022 input/views.py:808 input/views.py:941
+#: input/views.py:968 input/views.py:1009 templates/execute/execute.html:300
 msgid "status"
 msgstr "estado"
 
-#: freppledb/common/models.py:209
+#: common/models.py:214
 msgid "last refreshed"
 msgstr "última actualización"
 
-#: freppledb/common/models.py:239
+#: common/models.py:244
 msgid "scenarios"
 msgstr "escenarios"
 
-#: freppledb/common/models.py:240
+#: common/models.py:245
 msgid "scenario"
 msgstr "escenario"
 
-#: freppledb/common/models.py:245
+#: common/models.py:250
 msgid "Detect automatically"
 msgstr "Detectar automáticamente"
 
-#: freppledb/common/models.py:247
+#: common/models.py:252
 msgid "language"
 msgstr "idioma"
 
-#: freppledb/common/models.py:251
+#: common/models.py:256
 msgid "theme"
 msgstr "tema"
 
-#: freppledb/common/models.py:254
+#: common/models.py:259
 msgid "page size"
 msgstr "tamaño de página"
 
-#: freppledb/common/models.py:373 freppledb/common/models.py:407
-#: freppledb/common/models.py:430 freppledb/common/views.py:327
-#: freppledb/execute/models.py:38 freppledb/execute/views.py:64
-#: freppledb/planningboard/models.py:24
-#: freppledb/templates/admin/object_history.html:17
+#: common/models.py:383 common/models.py:399 common/views.py:284
+#: execute/models.py:45 execute/views.py:69
+#: templates/admin/object_history.html:17
 msgid "user"
 msgstr "usuario"
 
 # Translation included with django
-#: freppledb/common/models.py:374 freppledb/common/views.py:220
+#: common/models.py:384 common/views.py:212
 msgid "users"
 msgstr "usuarios"
 
-#: freppledb/common/models.py:406 freppledb/common/models.py:422
-#: freppledb/common/models.py:479 freppledb/common/views.py:253
-#: freppledb/common/views.py:325 freppledb/execute/models.py:30
-#: freppledb/execute/views.py:56 freppledb/forecast/models.py:840
-#: freppledb/forecast/models.py:857 freppledb/forecast/views.py:79
-#: freppledb/input/models.py:62 freppledb/input/models.py:172
-#: freppledb/input/models.py:235 freppledb/input/models.py:383
-#: freppledb/input/models.py:673 freppledb/input/models.py:711
-#: freppledb/input/models.py:767 freppledb/input/models.py:825
-#: freppledb/input/models.py:875 freppledb/input/models.py:932
-#: freppledb/input/views.py:639 freppledb/input/views.py:664
-#: freppledb/input/views.py:726 freppledb/input/views.py:746
-#: freppledb/input/views.py:772 freppledb/input/views.py:851
-#: freppledb/input/views.py:909 freppledb/input/views.py:929
-#: freppledb/input/views.py:957 freppledb/input/views.py:998
-#: freppledb/output/models.py:18 freppledb/planningboard/models.py:22
-#: freppledb/templates/inventoryplanning/drp.html:1177
+#: common/models.py:391 common/models.py:448 common/views.py:245
+#: common/views.py:282 execute/models.py:37 execute/views.py:61
+#: input/models.py:69 input/models.py:179 input/models.py:242
+#: input/models.py:390 input/models.py:680 input/models.py:718
+#: input/models.py:774 input/models.py:832 input/models.py:882
+#: input/models.py:939 input/views.py:646 input/views.py:671 input/views.py:733
+#: input/views.py:753 input/views.py:779 input/views.py:858 input/views.py:916
+#: input/views.py:936 input/views.py:964 input/views.py:1005
+#: output/models.py:25
 msgid "identifier"
 msgstr "identificador"
 
 # Translation included with django
-#: freppledb/common/models.py:424
+#: common/models.py:393
 msgid "content type"
 msgstr "Tipo de contenido"
 
 # Translation included with django
-#: freppledb/common/models.py:427 freppledb/common/views.py:329
+#: common/models.py:396 common/views.py:286
 msgid "object ID"
 msgstr "ID objecto"
 
-#: freppledb/common/models.py:429 freppledb/common/models.py:436
-#: freppledb/common/views.py:330
+#: common/models.py:398 common/models.py:405 common/views.py:287
 msgid "comment"
 msgstr "comentarios"
 
-#: freppledb/common/models.py:461
+#: common/models.py:430
 msgid "day"
 msgstr "día"
 
-#: freppledb/common/models.py:461
+#: common/models.py:430
 msgid "week"
 msgstr "semana"
 
-#: freppledb/common/models.py:461
+#: common/models.py:430
 msgid "month"
 msgstr "mes"
 
-#: freppledb/common/models.py:461
+#: common/models.py:430
 msgid "quarter"
 msgstr "trimestre"
 
-#: freppledb/common/models.py:461
+#: common/models.py:430
 msgid "year"
 msgstr "año"
 
-#: freppledb/common/models.py:466 freppledb/common/views.py:345
-#: freppledb/output/models.py:156
+#: common/models.py:435 common/views.py:303 output/models.py:163
 msgid "level"
 msgstr "niveau"
 
-#: freppledb/common/models.py:466
+#: common/models.py:435
 msgid "Higher values indicate more granular time buckets"
 msgstr "Los valores más altos indican intervalos de tiempo más granulares"
 
-#: freppledb/common/models.py:472 freppledb/common/models.py:480
-#: freppledb/common/report.py:1753 freppledb/common/report.py:1886
-#: freppledb/common/views.py:360 freppledb/forecast/views.py:305
-#: freppledb/forecast/views.py:461
+#: common/models.py:441 common/models.py:449 common/report.py:1639
+#: common/report.py:1757 common/views.py:318
 msgid "bucket"
 msgstr "intervalo"
 
-#: freppledb/common/models.py:473 freppledb/common/views.py:338
+#: common/models.py:442 common/views.py:296
 msgid "buckets"
 msgstr "intervalos"
 
-#: freppledb/common/models.py:482 freppledb/common/views.py:361
-#: freppledb/forecast/models.py:842 freppledb/forecast/models.py:859
-#: freppledb/forecast/views.py:81 freppledb/forecast/views.py:301
-#: freppledb/forecast/views.py:457 freppledb/input/models.py:64
-#: freppledb/input/models.py:844 freppledb/input/models.py:902
-#: freppledb/input/models.py:959 freppledb/input/views.py:853
-#: freppledb/input/views.py:931 freppledb/input/views.py:967
-#: freppledb/input/views.py:1008 freppledb/output/models.py:43
-#: freppledb/output/models.py:64 freppledb/output/views/constraint.py:74
-#: freppledb/output/views/operation.py:151 freppledb/output/views/problem.py:50
-#: freppledb/output/views/resource.py:195 freppledb/output/widget.py:172
-#: freppledb/templates/inventoryplanning/drp.html:1185
+#: common/models.py:451 common/views.py:319 input/models.py:71
+#: input/models.py:851 input/models.py:909 input/models.py:966
+#: input/views.py:860 input/views.py:938 input/views.py:974 input/views.py:1015
+#: output/models.py:50 output/models.py:71 output/views/constraint.py:81
+#: output/views/operation.py:158 output/views/problem.py:57
+#: output/views/resource.py:202 output/widget.py:179
 msgid "start date"
 msgstr "fecha de inicio"
 
-#: freppledb/common/models.py:483 freppledb/common/views.py:362
-#: freppledb/forecast/models.py:843 freppledb/forecast/models.py:860
-#: freppledb/forecast/views.py:82 freppledb/forecast/views.py:303
-#: freppledb/forecast/views.py:459 freppledb/input/models.py:65
-#: freppledb/input/models.py:845 freppledb/input/models.py:903
-#: freppledb/input/models.py:960 freppledb/input/views.py:854
-#: freppledb/input/views.py:932 freppledb/input/views.py:968
-#: freppledb/input/views.py:1009 freppledb/output/models.py:44
-#: freppledb/output/models.py:65 freppledb/output/views/constraint.py:75
-#: freppledb/output/views/operation.py:152 freppledb/output/views/problem.py:51
-#: freppledb/output/views/resource.py:196
-#: freppledb/templates/inventoryplanning/drp.html:1186
+#: common/models.py:452 common/views.py:320 input/models.py:72
+#: input/models.py:852 input/models.py:910 input/models.py:967
+#: input/views.py:861 input/views.py:939 input/views.py:975 input/views.py:1016
+#: output/models.py:51 output/models.py:72 output/views/constraint.py:82
+#: output/views/operation.py:159 output/views/problem.py:58
+#: output/views/resource.py:203
 msgid "end date"
 msgstr "fecha final"
 
-#: freppledb/common/models.py:489
+#: common/models.py:458
 msgid "bucket date"
 msgstr "fecha de intervalo"
 
-#: freppledb/common/models.py:490 freppledb/common/views.py:355
+#: common/models.py:459 common/views.py:313
 msgid "bucket dates"
 msgstr "fechas de intervalo"
 
-#: freppledb/common/report.py:458 freppledb/common/report.py:889
-#: freppledb/common/report.py:892 freppledb/common/report.py:1018
-#: freppledb/common/report.py:1057 freppledb/common/report.py:1218
-#: freppledb/forecast/views.py:223 freppledb/forecast/views.py:266
-#: freppledb/forecast/views.py:422 freppledb/inventoryplanning/views.py:735
-#: freppledb/inventoryplanning/views.py:826
-#: freppledb/inventoryplanning/views.py:926
-#: freppledb/inventoryplanning/views.py:949
-#: freppledb/inventoryplanning/views.py:992
+#: common/report.py:465 common/report.py:800 common/report.py:803
+#: common/report.py:929 common/report.py:968 common/report.py:1129
 msgid "Permission denied"
 msgstr "Permiso denegado"
 
-#: freppledb/common/report.py:835
+#: common/report.py:749
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s de %(entity)s"
 
-#: freppledb/common/report.py:916 freppledb/common/report.py:947
-#: freppledb/common/report.py:978
+#: common/report.py:827 common/report.py:858 common/report.py:889
 #, python-format
 msgid "Can't find %s"
 msgstr "No se puede encontrar %s"
 
-#: freppledb/common/report.py:935
+#: common/report.py:846
 #, python-format
 msgid "Can't copy %s"
 msgstr "No se puede copiar %s"
 
-#: freppledb/common/report.py:943
+#: common/report.py:854
 #, python-format
 msgid "Copied from %s."
 msgstr "Copia de %s."
 
 # Translation included with django
-#: freppledb/common/report.py:974 freppledb/common/report.py:1172
-#: freppledb/common/report.py:1337 freppledb/common/report.py:2201
-#: freppledb/inventoryplanning/views.py:986
+#: common/report.py:885 common/report.py:1083 common/report.py:1248
+#: common/report.py:2088
 #, python-format
 msgid "Changed %s."
 msgstr "%s se ha modificado."
 
-#: freppledb/common/report.py:974 freppledb/common/report.py:1172
-#: freppledb/common/report.py:1337 freppledb/common/report.py:2201
-#: freppledb/inventoryplanning/views.py:986
+#: common/report.py:885 common/report.py:1083 common/report.py:1248
+#: common/report.py:2088
 msgid "and"
 msgstr "y"
 
-#: freppledb/common/report.py:1034
+#: common/report.py:945
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "Borrado de los datos de %(model)s"
 
-#: freppledb/common/report.py:1053 freppledb/common/report.py:1214
+#: common/report.py:964 common/report.py:1125
 msgid "Invalid upload request"
 msgstr "Solicitud de carga no válida"
 
-#: freppledb/common/report.py:1107 freppledb/common/report.py:1268
-#: freppledb/common/report.py:2136
+#: common/report.py:1018 common/report.py:1179 common/report.py:2023
 #, python-format
 msgid "Incorrect field %(column)s"
 msgstr "Campo incorrecto %(column)s"
 
-#: freppledb/common/report.py:1114 freppledb/common/report.py:1275
-#: freppledb/common/report.py:2146 freppledb/forecast/views.py:320
-#: freppledb/forecast/views.py:476
+#: common/report.py:1025 common/report.py:1186 common/report.py:2033
 #, python-format
 msgid "Missing primary key field %(key)s"
 msgstr "Falta campo de clave principal %(key)s"
 
-#: freppledb/common/report.py:1182 freppledb/common/report.py:1347
-#: freppledb/common/report.py:2211 freppledb/forecast/views.py:408
-#: freppledb/forecast/views.py:564
+#: common/report.py:1093 common/report.py:1258 common/report.py:2098
 #, python-format
 msgid "Row %(rownum)s: %(message)s"
 msgstr "Fila %(rownum)s: %(message)s"
 
-#: freppledb/common/report.py:1188 freppledb/common/report.py:1353
-#: freppledb/common/report.py:2218
+#: common/report.py:1099 common/report.py:1264 common/report.py:2105
 #, python-format
 msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
 msgstr "Fila %(rownum)s campo %(field)s: %(data)s: %(message)s"
 
-#: freppledb/common/report.py:1193 freppledb/common/report.py:1358
+#: common/report.py:1104 common/report.py:1269
 #, python-format
 msgid "Exception during upload: %(message)s"
 msgstr "Excepción durante la subida: %(message)s"
 
-#: freppledb/common/report.py:1197 freppledb/common/report.py:1362
+#: common/report.py:1108 common/report.py:1273
 #, python-format
 msgid ""
 "Uploaded data successfully: changed %(changed)d and added %(added)d records"
@@ -615,31 +460,30 @@ msgstr ""
 "Datos cargados correctamente: cambiado %(changed)d y agregado %(added)d "
 "registros"
 
-#: freppledb/common/report.py:1756 freppledb/common/report.py:1889
-#: freppledb/forecast/views.py:311 freppledb/forecast/views.py:467
+#: common/report.py:1642 common/report.py:1760
 msgid "data field"
 msgstr "campo de datos"
 
-#: freppledb/common/report.py:2041
+#: common/report.py:1928
 msgid "Nothing to export"
 msgstr "Nada para exportar"
 
-#: freppledb/common/report.py:2078
+#: common/report.py:1965
 #, python-format
 msgid "Ignoring data in worksheet: %s"
 msgstr "Ignorando los datos en la hoja de cálculo: %s"
 
-#: freppledb/common/report.py:2081
+#: common/report.py:1968
 #, python-format
 msgid "You don't permissions to add: %s"
 msgstr "Usted no tiene permisos para agregar: %s"
 
-#: freppledb/common/report.py:2102
+#: common/report.py:1989
 #, python-format
 msgid "Processing data in worksheet: %s"
 msgstr "Procesamiento de datos en hoja de cálculo: %s"
 
-#: freppledb/common/report.py:2226
+#: common/report.py:2113
 #, python-format
 msgid ""
 "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
@@ -648,142 +492,138 @@ msgstr ""
 "%(rows)d líneas de datos, cambiado %(changed)d y agregado %(added)d "
 "registros, %(errors)d errores"
 
-#: freppledb/common/report.py:2229
+#: common/report.py:2116
 msgid "Done"
 msgstr "Hecho"
 
 # Translation included with django
-#: freppledb/common/templatetags/base_utils.py:79
+#: common/templatetags/base_utils.py:86
 msgid "Site administration"
 msgstr "Administración del sitio"
 
 # Translation included with django
-#: freppledb/common/views.py:49 freppledb/templates/404.html:4
+#: common/views.py:56 templates/404.html:4 templates/404.html.py:8
 msgid "Page not found"
 msgstr "Página no encontrada"
 
-#: freppledb/common/views.py:69
+#: common/views.py:76
 msgid "Language"
 msgstr "Idioma"
 
-#: freppledb/common/views.py:72
+#: common/views.py:79
 msgid "Language of the user interface"
 msgstr "Idioma de la interfaz de usuario"
 
-#: freppledb/common/views.py:75
+#: common/views.py:82
 msgid "Page size"
 msgstr "Tamaño de página"
 
-#: freppledb/common/views.py:79
+#: common/views.py:86
 msgid "Number of records to display in a single page"
 msgstr "Número de registros que se han de recoger en una sola página."
 
-#: freppledb/common/views.py:83
+#: common/views.py:90
 msgid "Theme"
 msgstr "Tema"
 
-#: freppledb/common/views.py:86
+#: common/views.py:93
 msgid "Theme for the user interface"
 msgstr "Tema para la interfaz de usuario"
 
 # Translation included with django
-#: freppledb/common/views.py:89
+#: common/views.py:96
 msgid "Change password"
 msgstr "Cambiar la contraseña"
 
 # Translation included with django
-#: freppledb/common/views.py:91
+#: common/views.py:98
 msgid "Old password"
 msgstr "Contraseña antigua"
 
 # Translation included with django
-#: freppledb/common/views.py:97
+#: common/views.py:104
 msgid "New password"
 msgstr "Nueva contraseña"
 
-#: freppledb/common/views.py:103
+#: common/views.py:110
 msgid "New password confirmation"
 msgstr "Confirmación de nueva contraseña."
 
-#: freppledb/common/views.py:116
+#: common/views.py:123
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr ""
 "Su contraseña anterior se ha introducido de forma incorrecta. Por favor, "
 "introduzca de nuevo."
 
-#: freppledb/common/views.py:151
+#: common/views.py:158
 msgid "Successfully updated preferences"
 msgstr "Preferencias actualizado correctamente"
 
-#: freppledb/common/views.py:154
+#: common/views.py:161
 msgid "Failure updating preferences"
 msgstr "Error al actualizar preferencias"
 
-#: freppledb/common/views.py:163
+#: common/views.py:170
 msgid "My preferences"
 msgstr "Mis preferencias"
 
-#: freppledb/common/views.py:228
+#: common/views.py:220
 msgid "id"
 msgstr "id"
 
-#: freppledb/common/views.py:229
+#: common/views.py:221
 msgid "username"
 msgstr "Nombre de usuario"
 
 # Translation included with django
-#: freppledb/common/views.py:230
+#: common/views.py:222
 msgid "email address"
 msgstr "dirección de correo electrónico"
 
 # Translation included with django
-#: freppledb/common/views.py:231
+#: common/views.py:223
 msgid "first name"
 msgstr "nombre"
 
-#: freppledb/common/views.py:232
+#: common/views.py:224
 msgid "last name"
 msgstr "apellido"
 
-#: freppledb/common/views.py:233
+#: common/views.py:225
 msgid "active"
 msgstr "activo"
 
-#: freppledb/common/views.py:234
+#: common/views.py:226
 msgid "superuser status"
 msgstr "superusuario"
 
 # Translation included with django
-#: freppledb/common/views.py:235
+#: common/views.py:227
 msgid "date joined"
 msgstr "fecha de ingreso"
 
-#: freppledb/common/views.py:236
+#: common/views.py:228
 msgid "last login"
 msgstr "último acceso"
 
-#: freppledb/common/views.py:245
+#: common/views.py:237
 msgid "groups"
 msgstr "grupos"
 
-#: freppledb/common/views.py:328 freppledb/input/models.py:307
-#: freppledb/input/models.py:429 freppledb/input/models.py:598
-#: freppledb/input/models.py:726 freppledb/input/views.py:87
-#: freppledb/input/views.py:520 freppledb/input/views.py:560
-#: freppledb/input/views.py:775 freppledb/input/views.py:884
-#: freppledb/templates/inventoryplanning/drp.html:1179
-msgid "type"
-msgstr "tipo"
+#: common/views.py:285
+#| msgid "Model:"
+msgid "model"
+msgstr "modelo"
 
-#: freppledb/common/widget.py:26
+#: common/widget.py:33
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: freppledb/common/widget.py:27
+#: common/widget.py:34
 msgid "Some links to get started"
 msgstr "Algunos enlaces para empezar"
 
-#: freppledb/common/widget.py:31
+#: common/widget.py:38
 msgid ""
 "Welcome to frePPLe, the world's leading open source production planning tool!"
 "<br/><br/>\n"
@@ -814,875 +654,459 @@ msgstr ""
 "\"_blank\">Puedes contactarnos</a></span></li>\n"
 "</ol>\n"
 
-#: freppledb/common/widget.py:45
+#: common/widget.py:52
 msgid "News"
 msgstr "Noticias"
 
-#: freppledb/common/widget.py:46
+#: common/widget.py:53
 msgid "Show the latest news items from the frePPLe website"
 msgstr "Mostrar las últimas noticias de la página web frePPLe"
 
 # Translation included with django
-#: freppledb/common/widget.py:57
+#: common/widget.py:64
 msgid "My actions"
 msgstr "Mis acciones"
 
-#: freppledb/common/widget.py:58
+#: common/widget.py:65
 msgid "Display a list of the entities you recently changed"
 msgstr "Mostrar una lista de las entidades ha cambiado recientemente"
 
-#: freppledb/common/widget.py:88 freppledb/common/widget.py:113
+#: common/widget.py:95 common/widget.py:120
 msgid "Unknown content"
 msgstr "Contenido desconocido"
 
 # Translation included with django
-#: freppledb/common/widget.py:89 freppledb/common/widget.py:118
+#: common/widget.py:96 common/widget.py:125
 msgid "None available"
 msgstr "Ninguno disponible"
 
-#: freppledb/common/widget.py:97
+#: common/widget.py:104
 msgid "Display a list of recent comments"
 msgstr "Mostrar una lista de nuevos comentarios"
 
-#: freppledb/execute/menu.py:16 freppledb/execute/widget.py:20
+#: execute/menu.py:22 execute/widget.py:27
 msgid "Execute"
 msgstr "Ejecutar"
 
-#: freppledb/execute/models.py:32 freppledb/execute/models.py:34
-#: freppledb/execute/views.py:58
+#: execute/models.py:39 execute/models.py:41 execute/views.py:63
 msgid "submitted"
 msgstr "enviado"
 
-#: freppledb/execute/models.py:33 freppledb/execute/views.py:59
+#: execute/models.py:40 execute/views.py:64
 msgid "started"
 msgstr "empezó"
 
-#: freppledb/execute/models.py:35 freppledb/execute/views.py:63
+#: execute/models.py:42 execute/views.py:68
 msgid "arguments"
 msgstr "argumentos"
 
-#: freppledb/execute/models.py:37 freppledb/execute/views.py:62
-#: freppledb/planningboard/models.py:23
+#: execute/models.py:44 execute/views.py:67
 msgid "message"
 msgstr "mensaje"
 
-#: freppledb/execute/models.py:45
+#: execute/models.py:52
 msgid "tasks"
 msgstr "tareas"
 
-#: freppledb/execute/models.py:46
+#: execute/models.py:53
 msgid "task"
 msgstr "tarea"
 
-#: freppledb/execute/views.py:46
+#: execute/views.py:51
 msgid "Task status"
 msgstr "Estado de la tarea"
 
-#: freppledb/execute/views.py:60
+#: execute/views.py:65
 msgid "finished"
 msgstr "terminado"
 
-#: freppledb/execute/views.py:187
+#: execute/views.py:132
 #, python-format
 msgid "Failure launching action: %(msg)s"
 msgstr "Error al iniciar acción: %(msg)s"
 
-#: freppledb/execute/views.py:423
+#: execute/views.py:352
 msgid "Displaying only the last 50K from the log file"
 msgstr "Se presentan sólo el último 50K del archivo de registro"
 
-#: freppledb/execute/views.py:432 freppledb/templates/execute/logfrepple.html:6
+#: execute/views.py:361 templates/execute/logfrepple.html:6
 msgid "Log file"
 msgstr "Archivo de registro"
 
-#: freppledb/execute/widget.py:22
+#: execute/widget.py:29
 msgid "Generate a constrained plan"
 msgstr "Crear un plan con restriciones"
 
-#: freppledb/execute/widget.py:35 freppledb/templates/execute/execute.html:239
+#: execute/widget.py:42 templates/execute/execute.html:231
 msgid "Create a plan"
 msgstr "Crear un plan"
 
-#: freppledb/forecast/admin.py:38 freppledb/input/admin.py:199
-#: freppledb/input/admin.py:232 freppledb/input/admin.py:396
-msgid "Planning parameters"
-msgstr "Parámetros de Planteamiento"
-
-#: freppledb/forecast/admin.py:42 freppledb/input/admin.py:121
-#: freppledb/input/admin.py:206 freppledb/input/admin.py:243
-#: freppledb/input/admin.py:306 freppledb/input/admin.py:361
-#: freppledb/input/admin.py:403 freppledb/templates/buffertabs.html:5
-#: freppledb/templates/demandtabs.html:5
-#: freppledb/templates/forecasttabs.html:5 freppledb/templates/itemtabs.html:5
-#: freppledb/templates/operationtabs.html:5
-#: freppledb/templates/resourcetabs.html:5
-msgid "supply path"
-msgstr "ruta de suministro"
-
-#: freppledb/forecast/admin.py:43 freppledb/forecast/views.py:131
-#: freppledb/input/admin.py:123 freppledb/input/admin.py:208
-#: freppledb/input/admin.py:245 freppledb/input/admin.py:308
-#: freppledb/input/admin.py:363 freppledb/input/admin.py:405
-#: freppledb/output/views/buffer.py:50 freppledb/output/views/demand.py:48
-#: freppledb/output/views/operation.py:48 freppledb/output/views/resource.py:56
-#: freppledb/templates/buffertabs.html:7 freppledb/templates/demandtabs.html:7
-#: freppledb/templates/forecasttabs.html:6
-#: freppledb/templates/inventoryplanning/drp.html:1360
-#: freppledb/templates/itemtabs.html:7 freppledb/templates/operationtabs.html:7
-#: freppledb/templates/resourcetabs.html:7
-msgid "plan"
-msgstr "plan"
-
-#: freppledb/forecast/admin.py:44 freppledb/input/admin.py:404
-#: freppledb/templates/demandtabs.html:6
-#: freppledb/templates/forecasttabs.html:7
-#: freppledb/templates/quoting/quote.html:76
-#: freppledb/templates/quoting/quote.html:145
-#: freppledb/templates/quoting/quote.html:260
-#: freppledb/templates/quoting/quote.html:325
-msgid "why short or late?"
-msgstr "Por qué a corto o tarde?"
-
-#: freppledb/forecast/models.py:23 freppledb/inventoryplanning/models.py:20
-msgid "Automatic"
-msgstr "Automático"
-
-#: freppledb/forecast/models.py:24
-msgctxt "forecast method"
-msgid "Constant"
-msgstr "Constante"
-
-#: freppledb/forecast/models.py:25
-msgctxt "forecast method"
-msgid "Trend"
-msgstr "Tendencia"
-
-#: freppledb/forecast/models.py:26
-msgctxt "forecast method"
-msgid "Seasonal"
-msgstr "Temporal"
-
-#: freppledb/forecast/models.py:27
-msgctxt "forecast method"
-msgid "Intermittent"
-msgstr "Intermitente"
-
-#: freppledb/forecast/models.py:28
-msgctxt "forecast method"
-msgid "Moving average"
-msgstr "Media móvil"
-
-#: freppledb/forecast/models.py:29
-msgid "Manual"
-msgstr "Manual"
-
-#: freppledb/forecast/models.py:35 freppledb/forecast/views.py:54
-#: freppledb/forecast/views.py:626 freppledb/input/models.py:36
-#: freppledb/input/models.py:94 freppledb/input/models.py:115
-#: freppledb/input/models.py:131 freppledb/input/models.py:156
-#: freppledb/input/models.py:309 freppledb/input/models.py:427
-#: freppledb/input/models.py:592 freppledb/input/models.py:999
-#: freppledb/input/views.py:514 freppledb/input/views.py:556
-#: freppledb/input/views.py:583 freppledb/input/views.py:603
-#: freppledb/input/views.py:622 freppledb/input/views.py:692
-#: freppledb/input/views.py:803 freppledb/input/views.py:835
-#: freppledb/input/views.py:882 freppledb/output/views/kpi.py:25
-#: freppledb/quoting/views.py:72
-msgid "category"
-msgstr "categoría"
-
-#: freppledb/forecast/models.py:36 freppledb/forecast/views.py:55
-#: freppledb/forecast/views.py:627 freppledb/input/models.py:40
-#: freppledb/input/models.py:95 freppledb/input/models.py:116
-#: freppledb/input/models.py:132 freppledb/input/models.py:157
-#: freppledb/input/models.py:310 freppledb/input/models.py:428
-#: freppledb/input/models.py:595 freppledb/input/models.py:1002
-#: freppledb/input/views.py:515 freppledb/input/views.py:557
-#: freppledb/input/views.py:584 freppledb/input/views.py:604
-#: freppledb/input/views.py:623 freppledb/input/views.py:693
-#: freppledb/input/views.py:804 freppledb/input/views.py:836
-#: freppledb/input/views.py:883 freppledb/quoting/views.py:73
-msgid "subcategory"
-msgstr "subcategoría"
-
-#: freppledb/forecast/models.py:37 freppledb/forecast/views.py:52
-#: freppledb/forecast/views.py:106 freppledb/forecast/views.py:624
-#: freppledb/input/models.py:123 freppledb/input/models.py:1005
-#: freppledb/input/views.py:800 freppledb/output/models.py:136
-#: freppledb/output/views/demand.py:183 freppledb/quoting/views.py:70
-msgid "customer"
-msgstr "cliente"
-
-#: freppledb/forecast/models.py:38 freppledb/forecast/views.py:50
-#: freppledb/forecast/views.py:105 freppledb/forecast/views.py:623
-#: freppledb/input/models.py:148 freppledb/input/models.py:174
-#: freppledb/input/models.py:237 freppledb/input/models.py:434
-#: freppledb/input/models.py:887 freppledb/input/models.py:944
-#: freppledb/input/models.py:1008 freppledb/input/views.py:517
-#: freppledb/input/views.py:640 freppledb/input/views.py:665
-#: freppledb/input/views.py:798 freppledb/input/views.py:964
-#: freppledb/input/views.py:1005 freppledb/inventoryplanning/views.py:202
-#: freppledb/output/models.py:135 freppledb/output/views/buffer.py:34
-#: freppledb/output/views/demand.py:32 freppledb/output/views/demand.py:182
-#: freppledb/output/widget.py:130 freppledb/output/widget.py:170
-#: freppledb/output/widget.py:247 freppledb/quoting/views.py:69
-#: freppledb/templates/inventoryplanning/drp.html:1038
-#: freppledb/templates/inventoryplanning/drp.html:1182
-msgid "item"
-msgstr "artículo"
-
-#: freppledb/forecast/models.py:39 freppledb/forecast/views.py:51
-#: freppledb/forecast/views.py:107 freppledb/input/models.py:107
-#: freppledb/input/models.py:178 freppledb/input/models.py:241
-#: freppledb/input/models.py:312 freppledb/input/models.py:431
-#: freppledb/input/models.py:611 freppledb/input/models.py:952
-#: freppledb/input/models.py:1011 freppledb/input/views.py:86
-#: freppledb/input/views.py:516 freppledb/input/views.py:558
-#: freppledb/input/views.py:641 freppledb/input/views.py:666
-#: freppledb/input/views.py:799 freppledb/input/views.py:885
-#: freppledb/input/views.py:1006 freppledb/inventoryplanning/views.py:203
-#: freppledb/output/views/buffer.py:35 freppledb/output/views/operation.py:33
-#: freppledb/output/views/resource.py:36 freppledb/output/views/resource.py:224
-#: freppledb/templates/inventoryplanning/drp.html:1040
-#: freppledb/templates/inventoryplanning/drp.html:1183
-msgid "location"
-msgstr "ubicación"
-
-#: freppledb/forecast/models.py:41
-msgid "Forecast method"
-msgstr "Método de previsión"
-
-#: freppledb/forecast/models.py:43
-msgid "Method used to generate a base forecast"
-msgstr "Método utilizado para generar una previsión de base"
-
-#: freppledb/forecast/models.py:46 freppledb/forecast/views.py:630
-#: freppledb/input/models.py:134 freppledb/input/models.py:1021
-#: freppledb/input/views.py:807 freppledb/quoting/views.py:76
-msgid "delivery operation"
-msgstr "operación de entrega"
-
-#: freppledb/forecast/models.py:47 freppledb/input/models.py:1023
-msgid "Operation used to satisfy this demand"
-msgstr "Operación utilizada para satisfacer esta demanda"
-
-#: freppledb/forecast/models.py:50 freppledb/forecast/views.py:58
-#: freppledb/forecast/views.py:631 freppledb/input/models.py:21
-#: freppledb/input/models.py:70 freppledb/input/models.py:206
-#: freppledb/input/models.py:269 freppledb/input/models.py:389
-#: freppledb/input/models.py:550 freppledb/input/models.py:689
-#: freppledb/input/models.py:746 freppledb/input/models.py:792
-#: freppledb/input/models.py:1029 freppledb/input/views.py:647
-#: freppledb/input/views.py:672 freppledb/input/views.py:731
-#: freppledb/input/views.py:755 freppledb/input/views.py:781
-#: freppledb/input/views.py:808 freppledb/input/views.py:856
-#: freppledb/input/views.py:912 freppledb/quoting/views.py:77
-msgid "priority"
-msgstr "prioridad"
-
-#: freppledb/forecast/models.py:51 freppledb/input/models.py:1030
-msgid "Priority of the demand (lower numbers indicate more important demands)"
-msgstr ""
-"Prioridad de la demanda (los números más bajos indican las demandas más "
-"importantes)"
-
-#: freppledb/forecast/models.py:54 freppledb/forecast/views.py:60
-#: freppledb/forecast/views.py:635 freppledb/input/models.py:1033
-#: freppledb/input/views.py:811 freppledb/quoting/views.py:80
-msgid "minimum shipment"
-msgstr "envío mínimo"
-
-#: freppledb/forecast/models.py:56 freppledb/input/models.py:1035
-msgid "Minimum shipment quantity when planning this demand"
-msgstr "Cantidad de envío mínima planificando esta demanda"
-
-#: freppledb/forecast/models.py:58 freppledb/forecast/views.py:59
-#: freppledb/forecast/views.py:634 freppledb/input/models.py:1038
-#: freppledb/input/views.py:810 freppledb/quoting/views.py:79
-msgid "maximum lateness"
-msgstr "retraso máximo"
-
-#: freppledb/forecast/models.py:60 freppledb/input/models.py:1040
-msgid "Maximum lateness allowed when planning this demand"
-msgstr "El retraso máximo permitió planificando esta demanda"
-
-#: freppledb/forecast/models.py:63 freppledb/forecast/views.py:61
-msgid "discrete"
-msgstr "discreto"
-
-#: freppledb/forecast/models.py:64
-msgid "Round forecast numbers to integers"
-msgstr "Redondear números de la previsión a números enteros"
-
-#: freppledb/forecast/models.py:67 freppledb/forecast/views.py:62
-msgid "planned"
-msgstr "planteado"
-
-#: freppledb/forecast/models.py:68
-msgid "Use this forecast for planning"
-msgstr "Usa esta previsión en el planteamento"
-
-#: freppledb/forecast/models.py:71 freppledb/forecast/views.py:109
-#: freppledb/templates/inventoryplanning/drp.html:1381
-msgid "estimated forecast error"
-msgstr "error de previsión estimado"
-
-#: freppledb/forecast/models.py:75
-msgid "calculated forecast method"
-msgstr "Método de previsión calculada"
-
-#: freppledb/forecast/models.py:78
-msgid "calculated standard deviation"
-msgstr "desviacion estandar calculada"
-
-#: freppledb/forecast/models.py:84 freppledb/forecast/models.py:841
-#: freppledb/forecast/models.py:858 freppledb/forecast/views.py:43
-#: freppledb/forecast/views.py:80 freppledb/forecast/views.py:104
-#: freppledb/forecast/views.py:299 freppledb/forecast/views.py:455
-#: freppledb/templates/inventoryplanning/drp.html:1359
-msgid "forecast"
-msgstr "previsión"
-
-#: freppledb/forecast/models.py:85
-msgid "forecasts"
-msgstr "previsiones"
-
-#: freppledb/forecast/models.py:844 freppledb/forecast/views.py:83
-#: freppledb/forecast/views.py:629 freppledb/input/models.py:721
-#: freppledb/input/models.py:772 freppledb/input/models.py:841
-#: freppledb/input/models.py:899 freppledb/input/models.py:956
-#: freppledb/input/models.py:1026 freppledb/input/views.py:85
-#: freppledb/input/views.py:750 freppledb/input/views.py:776
-#: freppledb/input/views.py:806 freppledb/input/views.py:933
-#: freppledb/input/views.py:969 freppledb/input/views.py:1010
-#: freppledb/inventoryplanning/models.py:33 freppledb/output/models.py:20
-#: freppledb/output/models.py:98 freppledb/output/models.py:118
-#: freppledb/output/models.py:158 freppledb/output/views/buffer.py:183
-#: freppledb/output/views/demand.py:184 freppledb/output/views/operation.py:149
-#: freppledb/output/views/pegging.py:42 freppledb/output/widget.py:131
-#: freppledb/output/widget.py:171 freppledb/output/widget.py:213
-#: freppledb/output/widget.py:248 freppledb/quoting/views.py:75
-#: freppledb/templates/inventoryplanning/drp.html:1187
-#: freppledb/templates/inventoryplanning/drp.html:1392
-#: freppledb/templates/inventoryplanning/drp.html:1406
-msgid "quantity"
-msgstr "cantidad"
-
-#: freppledb/forecast/models.py:851
-msgid "forecast demand"
-msgstr "pronóstico demanda"
-
-#: freppledb/forecast/models.py:852
-msgid "forecast demands"
-msgstr "pronóstico demandas"
-
-#: freppledb/forecast/models.py:861 freppledb/forecast/models.py:871
-#: freppledb/forecast/views.py:112
-#: freppledb/templates/forecast/forecast.html:181
-#: freppledb/templates/forecast/forecast.html:291
-#: freppledb/templates/inventoryplanning/drp.html:485
-#: freppledb/templates/inventoryplanning/drp.html:496
-#: freppledb/templates/inventoryplanning/drp.html:924
-#: freppledb/templates/inventoryplanning/drp.html:1002
-msgid "total orders"
-msgstr "total de órdenes"
-
-#: freppledb/forecast/models.py:862 freppledb/forecast/models.py:872
-#: freppledb/forecast/views.py:114 freppledb/forecast/views.py:309
-#: freppledb/forecast/views.py:359 freppledb/forecast/views.py:465
-#: freppledb/forecast/views.py:515
-#: freppledb/templates/forecast/forecast.html:185
-#: freppledb/templates/inventoryplanning/drp.html:928
-msgid "orders adjustment"
-msgstr "ajuste órdenes"
-
-#: freppledb/forecast/models.py:863 freppledb/forecast/models.py:873
-#: freppledb/forecast/views.py:113
-#: freppledb/templates/forecast/forecast.html:183
-#: freppledb/templates/forecast/forecast.html:290
-#: freppledb/templates/inventoryplanning/drp.html:486
-#: freppledb/templates/inventoryplanning/drp.html:497
-#: freppledb/templates/inventoryplanning/drp.html:926
-#: freppledb/templates/inventoryplanning/drp.html:1001
-msgid "open orders"
-msgstr "órdenes abiertas"
-
-#: freppledb/forecast/models.py:864 freppledb/forecast/models.py:874
-#: freppledb/forecast/views.py:120
-#: freppledb/templates/forecast/forecast.html:197
-#: freppledb/templates/forecast/forecast.html:293
-msgid "planned orders"
-msgstr "órdenes planteadas"
-
-#: freppledb/forecast/models.py:865 freppledb/forecast/models.py:875
-#: freppledb/forecast/views.py:115
-#: freppledb/templates/forecast/forecast.html:187
-#: freppledb/templates/inventoryplanning/drp.html:487
-#: freppledb/templates/inventoryplanning/drp.html:498
-#: freppledb/templates/inventoryplanning/drp.html:930
-msgid "forecast baseline"
-msgstr "base de previsión"
-
-#: freppledb/forecast/models.py:866 freppledb/forecast/models.py:876
-#: freppledb/forecast/views.py:307 freppledb/forecast/views.py:367
-#: freppledb/forecast/views.py:463 freppledb/forecast/views.py:523
-msgid "forecast adjustment"
-msgstr "ajuste de previsión"
-
-#: freppledb/forecast/models.py:867 freppledb/forecast/models.py:877
-#: freppledb/forecast/views.py:117
-#: freppledb/templates/forecast/forecast.html:191
-#: freppledb/templates/forecast/forecast.html:292
-#: freppledb/templates/inventoryplanning/drp.html:934
-#: freppledb/templates/inventoryplanning/drp.html:1003
-msgid "forecast total"
-msgstr "previsión total"
-
-#: freppledb/forecast/models.py:868 freppledb/forecast/models.py:878
-#: freppledb/forecast/views.py:118
-#: freppledb/templates/forecast/forecast.html:193
-#: freppledb/templates/inventoryplanning/drp.html:936
-msgid "forecast net"
-msgstr "previsión neto"
-
-#: freppledb/forecast/models.py:869 freppledb/forecast/models.py:879
-#: freppledb/forecast/views.py:119
-#: freppledb/templates/forecast/forecast.html:195
-#: freppledb/templates/inventoryplanning/drp.html:938
-msgid "forecast consumed"
-msgstr "previsión consumida"
-
-#: freppledb/forecast/models.py:870 freppledb/forecast/models.py:880
-msgid "planned forecast"
-msgstr "previsión planteada"
-
-#: freppledb/forecast/models.py:889
-msgid "forecast plan"
-msgstr "plan de previsión"
-
-#: freppledb/forecast/models.py:890
-msgid "forecast plans"
-msgstr "planes de previsión"
-
-#: freppledb/forecast/views.py:56
-msgid "method"
-msgstr "método"
-
-#: freppledb/forecast/views.py:57 freppledb/input/models.py:376
-#: freppledb/input/models.py:385 freppledb/input/models.py:713
-#: freppledb/input/models.py:768 freppledb/input/models.py:837
-#: freppledb/input/views.py:84 freppledb/input/views.py:694
-#: freppledb/input/views.py:747 freppledb/input/views.py:773
-#: freppledb/input/views.py:910 freppledb/input/views.py:930
-#: freppledb/output/models.py:19 freppledb/output/views/buffer.py:182
-#: freppledb/output/views/constraint.py:23
-#: freppledb/output/views/operation.py:32
-#: freppledb/output/views/operation.py:148 freppledb/output/views/pegging.py:38
-#: freppledb/output/views/resource.py:194 freppledb/output/widget.py:211
-#: freppledb/planningboard/templates/planningboard/index.html:96
-msgid "operation"
-msgstr "operaciones"
-
-#: freppledb/forecast/views.py:73
-msgid "forecasted demand"
-msgstr "previsión de demanda"
-
-#: freppledb/forecast/views.py:94
-msgid "Forecast Report"
-msgstr "Informe de Previsiones"
-
-#: freppledb/forecast/views.py:108
-#: freppledb/templates/inventoryplanning/drp.html:1380
-msgid "selected forecast method"
-msgstr "Método de previsión seleccionado"
-
-#: freppledb/forecast/views.py:116
-#: freppledb/templates/forecast/forecast.html:189
-#: freppledb/templates/inventoryplanning/drp.html:488
-#: freppledb/templates/inventoryplanning/drp.html:499
-#: freppledb/templates/inventoryplanning/drp.html:932
-msgid "forecast override"
-msgstr "ajuste de previsión"
-
-#: freppledb/forecast/views.py:121
-#: freppledb/templates/forecast/forecast.html:199
-#: freppledb/templates/forecast/forecast.html:294
-msgid "planned net forecast"
-msgstr "pronóstico neto planteado"
-
-#: freppledb/forecast/views.py:324 freppledb/forecast/views.py:328
-#: freppledb/forecast/views.py:480 freppledb/forecast/views.py:484
-msgid "No time field specified"
-msgstr "Campo de tiempo no especificado"
-
-#: freppledb/forecast/views.py:331 freppledb/forecast/views.py:487
-msgid "No adjustment field specified"
-msgstr "Campo de ajuste no especificado"
-
-#: freppledb/forecast/views.py:334 freppledb/forecast/views.py:490
-msgid ""
-"Recognized fields for list layout: forecast, bucket, start date, end date, "
-"forecast adjustment, orders adjustment"
-msgstr ""
-"Campos reconocidos para listado: previsión, intervalo, fecha início, fecha "
-"fin, ajuste de previsión, ajuste de ordenes"
-
-#: freppledb/forecast/views.py:335 freppledb/forecast/views.py:491
-msgid ""
-"Recognized fields for pivot layout: forecast, data field, [bucket names*]"
-msgstr ""
-"Campos reconocidos para listado pivote: previsión, fecha, [bucket names*]"
-
-#: freppledb/forecast/views.py:358 freppledb/forecast/views.py:385
-#: freppledb/forecast/views.py:514 freppledb/forecast/views.py:541
-#, python-format
-msgid "Bucket '%(name)s' not found"
-msgstr "Intervalo '%(name)s' no encontrado"
-
-#: freppledb/forecast/views.py:363 freppledb/forecast/views.py:371
-#: freppledb/forecast/views.py:390 freppledb/forecast/views.py:397
-#: freppledb/forecast/views.py:519 freppledb/forecast/views.py:527
-#: freppledb/forecast/views.py:546 freppledb/forecast/views.py:553
-#, python-format
-msgid "Invalid number: %(value)s"
-msgstr "Número no válido: %(value)s"
-
-#: freppledb/forecast/views.py:402 freppledb/forecast/views.py:558
-msgid "No time bucket specified"
-msgstr "Ningun intervalo de tiempo especificado"
-
-#: freppledb/forecast/views.py:414 freppledb/forecast/views.py:570
-#, python-format
-msgid "Uploaded data successfully: processed %d records"
-msgstr "Los datos descargados con éxito: %d registros procesados"
-
-#: freppledb/forecast/views.py:607
-msgid "Demand List"
-msgstr "Lista de órdenes"
-
-#: freppledb/forecast/views.py:628 freppledb/input/models.py:1013
-#: freppledb/input/views.py:805 freppledb/output/models.py:137
-#: freppledb/output/widget.py:51 freppledb/output/widget.py:92
-#: freppledb/quoting/views.py:74
-msgid "due"
-msgstr "fecha límite"
-
-#: freppledb/input/admin.py:40
+#: input/admin.py:40
 msgid "Repeating pattern"
 msgstr "Patrón repetitivo"
 
-#: freppledb/input/admin.py:122 freppledb/input/admin.py:207
-#: freppledb/input/admin.py:244 freppledb/input/admin.py:307
-#: freppledb/input/admin.py:362 freppledb/templates/buffertabs.html:6
-#: freppledb/templates/itemtabs.html:6 freppledb/templates/operationtabs.html:6
-#: freppledb/templates/resourcetabs.html:6
+#: input/admin.py:121 input/admin.py:206 input/admin.py:243 input/admin.py:306
+#: input/admin.py:360 input/admin.py:402
+msgid "supply path"
+msgstr "ruta de suministro"
+
+#: input/admin.py:122 input/admin.py:207 input/admin.py:244 input/admin.py:307
+#: input/admin.py:361
 msgid "where used"
 msgstr "dónde se utiliza"
 
-#: freppledb/input/admin.py:124 freppledb/input/admin.py:209
-#: freppledb/input/admin.py:246 freppledb/input/admin.py:310
-#: freppledb/input/admin.py:364
-msgid "plandetails"
+#: input/admin.py:123 input/admin.py:208 input/admin.py:245 input/admin.py:308
+#: input/admin.py:362 input/admin.py:404 output/views/buffer.py:57
+#: output/views/demand.py:53 output/views/operation.py:55
+#: output/views/resource.py:63
+msgid "plan"
+msgstr "plan"
+
+#: input/admin.py:124 input/admin.py:209 input/admin.py:246 input/admin.py:309
+#: input/admin.py:363
+msgid "plan detail"
 msgstr "detalle del plan"
 
-#: freppledb/input/admin.py:178 freppledb/input/admin.py:324
-#: freppledb/input/admin.py:342
+#: input/admin.py:178 input/admin.py:323 input/admin.py:341
 msgid "Alternates"
 msgstr "Alternativas"
 
-#: freppledb/input/admin.py:210 freppledb/input/admin.py:247
-#: freppledb/input/admin.py:311 freppledb/templates/buffertabs.html:9
-#: freppledb/templates/operationtabs.html:9
-#: freppledb/templates/resourcetabs.html:10
+#: input/admin.py:199 input/admin.py:232 input/admin.py:395
+msgid "Planning parameters"
+msgstr "Parámetros de Planteamiento"
+
+#: input/admin.py:210 input/admin.py:247 input/admin.py:310
 msgid "constrained demand"
 msgstr "demanda restringida"
 
-#: freppledb/input/admin.py:230 freppledb/menu.py:24
+#: input/admin.py:230 menu.py:31
 msgid "Inventory"
 msgstr "Inventario"
 
-#: freppledb/input/admin.py:235
+#: input/admin.py:235
 msgid "Planning parameters for procurement buffers"
 msgstr "Parámetros de planeación para los colchones de compra"
 
-#: freppledb/input/admin.py:309 freppledb/templates/resourcetabs.html:8
-msgid "gantt chart"
-msgstr "diagrama de gantt"
-
-#: freppledb/input/admin.py:365
+#: input/admin.py:364
 msgid "constrained operation"
 msgstr "opreración restringida"
 
-#: freppledb/input/models.py:22
+#: input/admin.py:403
+msgid "why short or late?"
+msgstr "Por qué a corto o tarde?"
+
+#: input/models.py:28 input/models.py:77 input/models.py:213
+#: input/models.py:276 input/models.py:396 input/models.py:557
+#: input/models.py:696 input/models.py:753 input/models.py:799
+#: input/models.py:1036 input/views.py:654 input/views.py:679
+#: input/views.py:738 input/views.py:762 input/views.py:788 input/views.py:815
+#: input/views.py:863 input/views.py:919
+msgid "priority"
+msgstr "prioridad"
+
+#: input/models.py:29
 msgid "minimum cost"
 msgstr "costo mínimo"
 
-#: freppledb/input/models.py:23
+#: input/models.py:30
 msgid "minimum penalty"
 msgstr "penalización mínima"
 
-#: freppledb/input/models.py:24
+#: input/models.py:31
 msgid "minimum cost plus penalty"
 msgstr "costo mínimo más penalización"
 
-#: freppledb/input/models.py:44 freppledb/input/views.py:837
+#: input/models.py:43 input/models.py:101 input/models.py:122
+#: input/models.py:138 input/models.py:163 input/models.py:316
+#: input/models.py:434 input/models.py:599 input/models.py:1006
+#: input/views.py:521 input/views.py:563 input/views.py:590 input/views.py:610
+#: input/views.py:629 input/views.py:699 input/views.py:810 input/views.py:842
+#: input/views.py:889 output/views/kpi.py:32
+msgid "category"
+msgstr "categoría"
+
+#: input/models.py:47 input/models.py:102 input/models.py:123
+#: input/models.py:139 input/models.py:164 input/models.py:317
+#: input/models.py:435 input/models.py:602 input/models.py:1009
+#: input/views.py:522 input/views.py:564 input/views.py:591 input/views.py:611
+#: input/views.py:630 input/views.py:700 input/views.py:811 input/views.py:843
+#: input/views.py:890
+msgid "subcategory"
+msgstr "subcategoría"
+
+#: input/models.py:51 input/views.py:844
 msgid "default value"
 msgstr "valor por defecto"
 
-#: freppledb/input/models.py:46
+#: input/models.py:53
 msgid "Value to be used when no entry is effective"
 msgstr "El valor para ser usado cuando ninguna entrada es eficaz"
 
-#: freppledb/input/models.py:54 freppledb/input/models.py:63
-#: freppledb/input/views.py:852
+#: input/models.py:61 input/models.py:70 input/views.py:859
 msgid "calendar"
 msgstr "calendario"
 
-#: freppledb/input/models.py:55 freppledb/input/views.py:828
+#: input/models.py:62 input/views.py:835
 msgid "calendars"
 msgstr "calendarios"
 
 # Translation included with django
-#: freppledb/input/models.py:71 freppledb/input/views.py:857
+#: input/models.py:78 input/views.py:864
 msgid "Monday"
 msgstr "Lunes"
 
 # Translation included with django
-#: freppledb/input/models.py:72 freppledb/input/views.py:858
+#: input/models.py:79 input/views.py:865
 msgid "Tuesday"
 msgstr "Martes"
 
 # Translation included with django
-#: freppledb/input/models.py:73 freppledb/input/views.py:859
+#: input/models.py:80 input/views.py:866
 msgid "Wednesday"
 msgstr "Miércoles"
 
 # Translation included with django
-#: freppledb/input/models.py:74 freppledb/input/views.py:860
+#: input/models.py:81 input/views.py:867
 msgid "Thursday"
 msgstr "Jueves"
 
 # Translation included with django
-#: freppledb/input/models.py:75 freppledb/input/views.py:861
+#: input/models.py:82 input/views.py:868
 msgid "Friday"
 msgstr "Viernes"
 
 # Translation included with django
-#: freppledb/input/models.py:76 freppledb/input/views.py:862
+#: input/models.py:83 input/views.py:869
 msgid "Saturday"
 msgstr "Sábado"
 
 # Translation included with django
-#: freppledb/input/models.py:77 freppledb/input/views.py:863
+#: input/models.py:84 input/views.py:870
 msgid "Sunday"
 msgstr "Domingo"
 
-#: freppledb/input/models.py:78 freppledb/input/views.py:864
+#: input/models.py:85 input/views.py:871
 msgid "start time"
 msgstr "hora de inicio"
 
-#: freppledb/input/models.py:79 freppledb/input/views.py:865
+#: input/models.py:86 input/views.py:872
 msgid "end time"
 msgstr "hora de fin"
 
-#: freppledb/input/models.py:87
+#: input/models.py:94
 msgid "calendar bucket"
 msgstr "Calendario del intervalo"
 
-#: freppledb/input/models.py:88 freppledb/input/views.py:846
+#: input/models.py:95 input/views.py:853
 msgid "calendar buckets"
 msgstr "Calendario de intervalos"
 
-#: freppledb/input/models.py:97 freppledb/input/views.py:585
-#: freppledb/output/models.py:81 freppledb/output/views/resource.py:41
-#: freppledb/templates/output/resource.html:142
-#: freppledb/templates/output/resource.html:248
+#: input/models.py:104 input/views.py:592 output/models.py:88
+#: output/views/resource.py:48 templates/output/resource.html:126
 msgid "available"
 msgstr "disponible"
 
-#: freppledb/input/models.py:99
+#: input/models.py:106
 msgid "Calendar defining the working hours and holidays of this location"
 msgstr ""
 "Calendario definir las horas de trabajo y vacaciones de esta ubicación "
 
-#: freppledb/input/models.py:108 freppledb/input/views.py:575
+#: input/models.py:114 input/models.py:185 input/models.py:248
+#: input/models.py:319 input/models.py:438 input/models.py:618
+#: input/models.py:959 input/models.py:1018 input/views.py:93
+#: input/views.py:523 input/views.py:565 input/views.py:648 input/views.py:673
+#: input/views.py:806 input/views.py:892 input/views.py:1013
+#: output/views/buffer.py:42 output/views/operation.py:40
+#: output/views/resource.py:43
+msgid "location"
+msgstr "ubicación"
+
+#: input/models.py:115 input/views.py:582
 msgid "locations"
 msgstr "ubicaciones"
 
-#: freppledb/input/models.py:124 freppledb/input/views.py:595
+#: input/models.py:130 input/models.py:1012 input/views.py:807
+#: output/models.py:143 output/views/demand.py:173
+msgid "customer"
+msgstr "cliente"
+
+#: input/models.py:131 input/views.py:602
 msgid "customers"
 msgstr "clientes"
 
-#: freppledb/input/models.py:135
+#: input/models.py:141 input/models.py:1028 input/views.py:814
+msgid "delivery operation"
+msgstr "operación de entrega"
+
+#: input/models.py:142
 msgid "Default operation used to ship a demand for this item"
 msgstr ""
 "Operación por defecto utilizada para enviar una demanda para este artículo"
 
-#: freppledb/input/models.py:138 freppledb/input/views.py:696
+#: input/models.py:145 input/views.py:703
 msgid "price"
 msgstr "precio"
 
-#: freppledb/input/models.py:140
+#: input/models.py:147
 msgid "Selling price of the item"
 msgstr "Precio de venta del artículo"
 
-#: freppledb/input/models.py:149 freppledb/input/views.py:683
+#: input/models.py:155 input/models.py:181 input/models.py:244
+#: input/models.py:441 input/models.py:894 input/models.py:951
+#: input/models.py:1015 input/views.py:524 input/views.py:647
+#: input/views.py:672 input/views.py:805 input/views.py:971 input/views.py:1012
+#: output/models.py:142 output/views/buffer.py:41 output/views/demand.py:39
+#: output/views/demand.py:172 output/widget.py:137 output/widget.py:177
+#: output/widget.py:254
+msgid "item"
+msgstr "artículo"
+
+#: input/models.py:156 input/views.py:690
 msgid "items"
 msgstr "artículos"
 
-#: freppledb/input/models.py:164 freppledb/input/models.py:182
-#: freppledb/input/models.py:948 freppledb/input/views.py:642
-#: freppledb/input/views.py:1007 freppledb/output/widget.py:130
-#: freppledb/output/widget.py:247
-#: freppledb/planningboard/templates/planningboard/index.html:97
+#: input/models.py:171 input/models.py:189 input/models.py:955
+#: input/views.py:649 input/views.py:1014 output/widget.py:137
+#: output/widget.py:254
 msgid "supplier"
 msgstr "proveedor"
 
-#: freppledb/input/models.py:165 freppledb/input/views.py:614
+#: input/models.py:172 input/views.py:621
 msgid "suppliers"
 msgstr "proveedors"
 
-#: freppledb/input/models.py:186 freppledb/input/models.py:249
-#: freppledb/input/models.py:251 freppledb/input/views.py:643
-#: freppledb/input/views.py:668 freppledb/inventoryplanning/models.py:134
-#: freppledb/inventoryplanning/views.py:204
+#: input/models.py:193 input/models.py:256 input/models.py:258
+#: input/views.py:650 input/views.py:675
 msgid "lead time"
 msgstr "tiempo de espera"
 
-#: freppledb/input/models.py:188
+#: input/models.py:195
 msgid "Purchasing lead time"
 msgstr "Tiempo de espera en compras"
 
-#: freppledb/input/models.py:191 freppledb/input/models.py:254
-#: freppledb/input/models.py:324 freppledb/input/views.py:644
-#: freppledb/input/views.py:669 freppledb/input/views.py:890
+#: input/models.py:198 input/models.py:261 input/models.py:331
+#: input/views.py:651 input/views.py:676 input/views.py:897
 msgid "size minimum"
 msgstr "tamaño "
 
-#: freppledb/input/models.py:193
+#: input/models.py:200
 msgid "A minimum purchasing quantity"
 msgstr "Una cantidad de compra mínima"
 
-#: freppledb/input/models.py:196 freppledb/input/models.py:259
-#: freppledb/input/models.py:329 freppledb/input/views.py:645
-#: freppledb/input/views.py:670 freppledb/input/views.py:891
+#: input/models.py:203 input/models.py:266 input/models.py:336
+#: input/views.py:652 input/views.py:677 input/views.py:898
 msgid "size multiple"
 msgstr "tamaño múltiple"
 
-#: freppledb/input/models.py:198
+#: input/models.py:205
 msgid "A multiple purchasing quantity"
 msgstr "Una cantidad de compra multiple"
 
-#: freppledb/input/models.py:201 freppledb/input/models.py:264
-#: freppledb/input/models.py:339 freppledb/input/models.py:564
-#: freppledb/input/models.py:615 freppledb/input/views.py:563
-#: freppledb/input/views.py:646 freppledb/input/views.py:671
-#: freppledb/input/views.py:893
+#: input/models.py:208 input/models.py:271 input/models.py:346
+#: input/models.py:571 input/models.py:622 input/views.py:570
+#: input/views.py:653 input/views.py:678 input/views.py:900
 msgid "cost"
 msgstr "costo"
 
-#: freppledb/input/models.py:203
+#: input/models.py:210
 msgid "Purchasing cost per unit"
 msgstr "Costo de compra por unidad"
 
-#: freppledb/input/models.py:207 freppledb/input/models.py:270
+#: input/models.py:214 input/models.py:277
 msgid "Priority among all alternates"
 msgstr "Prioridad en un grupo de alternos"
 
-#: freppledb/input/models.py:210 freppledb/input/models.py:273
-#: freppledb/input/models.py:397 freppledb/input/models.py:681
-#: freppledb/input/models.py:730 freppledb/input/models.py:776
-#: freppledb/input/views.py:648 freppledb/input/views.py:673
-#: freppledb/input/views.py:729 freppledb/input/views.py:751
-#: freppledb/input/views.py:777 freppledb/input/views.py:913
+#: input/models.py:217 input/models.py:280 input/models.py:404
+#: input/models.py:688 input/models.py:737 input/models.py:783
+#: input/views.py:655 input/views.py:680 input/views.py:736 input/views.py:758
+#: input/views.py:784 input/views.py:920
 msgid "effective start"
 msgstr "inicio efectivo"
 
-#: freppledb/input/models.py:211 freppledb/input/models.py:274
-#: freppledb/input/models.py:398 freppledb/input/models.py:682
-#: freppledb/input/models.py:731 freppledb/input/models.py:777
+#: input/models.py:218 input/models.py:281 input/models.py:405
+#: input/models.py:689 input/models.py:738 input/models.py:784
 msgid "Validity start date"
 msgstr "Vigencia fecha de inicio"
 
-#: freppledb/input/models.py:214 freppledb/input/models.py:277
-#: freppledb/input/models.py:401 freppledb/input/models.py:685
-#: freppledb/input/models.py:734 freppledb/input/models.py:780
-#: freppledb/input/views.py:649 freppledb/input/views.py:674
-#: freppledb/input/views.py:730 freppledb/input/views.py:752
-#: freppledb/input/views.py:778 freppledb/input/views.py:914
+#: input/models.py:221 input/models.py:284 input/models.py:408
+#: input/models.py:692 input/models.py:741 input/models.py:787
+#: input/views.py:656 input/views.py:681 input/views.py:737 input/views.py:759
+#: input/views.py:785 input/views.py:921
 msgid "effective end"
 msgstr "fin efectivo"
 
-#: freppledb/input/models.py:215 freppledb/input/models.py:278
-#: freppledb/input/models.py:402 freppledb/input/models.py:686
-#: freppledb/input/models.py:735 freppledb/input/models.py:781
+#: input/models.py:222 input/models.py:285 input/models.py:409
+#: input/models.py:693 input/models.py:742 input/models.py:788
 msgid "Validity end date"
 msgstr "Vigencia fecha final"
 
-#: freppledb/input/models.py:228
+#: input/models.py:235
 msgid "item supplier"
 msgstr "articulo proveedor"
 
-#: freppledb/input/models.py:229 freppledb/input/views.py:633
+#: input/models.py:236 input/views.py:640
 msgid "item suppliers"
 msgstr "articulo proveedores"
 
-#: freppledb/input/models.py:245 freppledb/input/models.py:891
-#: freppledb/input/views.py:667 freppledb/input/views.py:965
-#: freppledb/output/widget.py:170
-#: freppledb/templates/inventoryplanning/drp.html:1184
+#: input/models.py:252 input/models.py:898 input/views.py:674
+#: input/views.py:972 output/widget.py:177
 msgid "origin"
 msgstr "origen"
 
-#: freppledb/input/models.py:256
+#: input/models.py:263
 msgid "A minimum shipping quantity"
 msgstr "Cantidad mínima de envío"
 
-#: freppledb/input/models.py:261
+#: input/models.py:268
 msgid "A multiple shipping quantity"
 msgstr "Cantidad multiple de envío"
 
-#: freppledb/input/models.py:266
+#: input/models.py:273
 msgid "Shipping cost per unit"
 msgstr "Costo del envío por unidade"
 
 # Translation included with django
-#: freppledb/input/models.py:291
+#: input/models.py:298
 msgid "item distribution"
 msgstr "articulo distribución"
 
 # Translation included with django
-#: freppledb/input/models.py:292 freppledb/input/views.py:658
+#: input/models.py:299 input/views.py:665
 msgid "item distributions"
 msgstr "articulo distribuciónes"
 
-#: freppledb/input/models.py:298
+#: input/models.py:305
 msgid "fixed_time"
 msgstr "tiempo_fijo"
 
-#: freppledb/input/models.py:299
+#: input/models.py:306
 msgid "time_per"
 msgstr "tiempo_por"
 
-#: freppledb/input/models.py:300
+#: input/models.py:307
 msgid "routing"
 msgstr "ruteo"
 
-#: freppledb/input/models.py:301 freppledb/input/models.py:742
-#: freppledb/input/models.py:788 freppledb/input/views.py:754
-#: freppledb/input/views.py:780
+#: input/models.py:308 input/models.py:749 input/models.py:795
+#: input/views.py:761 input/views.py:787
 msgid "alternate"
 msgstr "alterno"
 
-#: freppledb/input/models.py:302
+#: input/models.py:309
 msgid "split"
 msgstr "división"
 
-#: freppledb/input/models.py:316 freppledb/input/views.py:888
+#: input/models.py:314 input/models.py:436 input/models.py:605
+#: input/models.py:733 input/views.py:94 input/views.py:527 input/views.py:567
+#: input/views.py:782 input/views.py:891
+msgid "type"
+msgstr "tipo"
+
+#: input/models.py:323 input/views.py:895
 msgid "release fence"
 msgstr "Valla de lanzamento"
 
-#: freppledb/input/models.py:317
+#: input/models.py:324
 msgid ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
@@ -1690,75 +1114,80 @@ msgstr ""
 "Se espera que los planes de operaciones, dentro de esta ventana de tiempo "
 "del día en curso, sejan lanzados al ERP de producción"
 
-#: freppledb/input/models.py:320 freppledb/input/views.py:889
+#: input/models.py:327 input/views.py:896
 msgid "post-op time"
 msgstr "tiempo post-op"
 
-#: freppledb/input/models.py:321
+#: input/models.py:328
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
 msgstr ""
 "Un tiempo de retraso a ser respetado como una restricción suave después de "
 "terminar la operación"
 
-#: freppledb/input/models.py:326
+#: input/models.py:333
 msgid "A minimum quantity for operationplans"
 msgstr "Una cantidad mínima para los planes de operación"
 
-#: freppledb/input/models.py:331
+#: input/models.py:338
 msgid "A multiple quantity for operationplans"
 msgstr "Una cantidad múltiple para planes de operación"
 
-#: freppledb/input/models.py:334 freppledb/input/views.py:892
+#: input/models.py:341 input/views.py:899
 msgid "size maximum"
 msgstr "tamaño máximo"
 
-#: freppledb/input/models.py:336
+#: input/models.py:343
 msgid "A maximum quantity for operationplans"
 msgstr "Una cantidad máxima para los planes de operación"
 
-#: freppledb/input/models.py:341
+#: input/models.py:348
 msgid "Cost per operationplan unit"
 msgstr "El costo por unidad de plan de operación"
 
-#: freppledb/input/models.py:344 freppledb/input/models.py:560
-#: freppledb/input/views.py:88 freppledb/input/views.py:886
+#: input/models.py:351 input/models.py:567 input/views.py:95 input/views.py:893
 msgid "duration"
 msgstr "duración"
 
-#: freppledb/input/models.py:346
+#: input/models.py:353
 msgid "A fixed duration for the operation"
 msgstr "Duración fija para la operación"
 
-#: freppledb/input/models.py:349 freppledb/input/views.py:89
-#: freppledb/input/views.py:887
+#: input/models.py:356 input/views.py:96 input/views.py:894
 msgid "duration per unit"
 msgstr "duración por unidad"
 
-#: freppledb/input/models.py:351
+#: input/models.py:358
 msgid "A variable duration for the operation"
 msgstr "Duración variable para la operación"
 
-#: freppledb/input/models.py:354 freppledb/input/models.py:750
-#: freppledb/input/models.py:800 freppledb/input/views.py:757
-#: freppledb/input/views.py:782 freppledb/input/views.py:894
+#: input/models.py:361 input/models.py:757 input/models.py:807
+#: input/views.py:764 input/views.py:789 input/views.py:901
 msgid "search mode"
 msgstr "modo de búsqueda"
 
-#: freppledb/input/models.py:356 freppledb/input/models.py:752
-#: freppledb/input/models.py:802
+#: input/models.py:363 input/models.py:759 input/models.py:809
 msgid "Method to select preferred alternate"
 msgstr "Método para seleccionar preferida alternativa"
 
-#: freppledb/input/models.py:377 freppledb/input/views.py:874
+#: input/models.py:383 input/models.py:392 input/models.py:720
+#: input/models.py:775 input/models.py:844 input/views.py:91 input/views.py:701
+#: input/views.py:754 input/views.py:780 input/views.py:917 input/views.py:937
+#: output/models.py:26 output/views/buffer.py:189 output/views/constraint.py:30
+#: output/views/operation.py:39 output/views/operation.py:155
+#: output/views/pegging.py:45 output/views/resource.py:201 output/widget.py:218
+msgid "operation"
+msgstr "operaciones"
+
+#: input/models.py:384 input/views.py:881
 msgid "operations"
 msgstr "operaciones"
 
-#: freppledb/input/models.py:386
+#: input/models.py:393
 msgid "Parent operation"
 msgstr "Operation padre"
 
-#: freppledb/input/models.py:390
+#: input/models.py:397
 msgid ""
 "Sequence of this operation among the suboperations. Negative values are "
 "ignored."
@@ -1766,1274 +1195,956 @@ msgstr ""
 "Secuencia de esta operación entre las suboperaciones. Se ignoran los valores "
 "negativos."
 
-#: freppledb/input/models.py:393 freppledb/input/models.py:413
-#: freppledb/input/views.py:911
+#: input/models.py:400 input/models.py:420 input/views.py:918
 msgid "suboperation"
 msgstr "suboperación"
 
-#: freppledb/input/models.py:394
+#: input/models.py:401
 msgid "Child operation"
 msgstr "Operación hijo"
 
-#: freppledb/input/models.py:414 freppledb/input/views.py:903
+#: input/models.py:421 input/views.py:910
 msgid "suboperations"
 msgstr "suboperaciones"
 
-#: freppledb/input/models.py:420 freppledb/input/models.py:582
+#: input/models.py:427 input/models.py:589
 msgid "Default"
 msgstr "Por defecto"
 
-#: freppledb/input/models.py:421 freppledb/input/models.py:584
+#: input/models.py:428 input/models.py:591
 msgid "Infinite"
 msgstr "Infinito"
 
-#: freppledb/input/models.py:422
+#: input/models.py:429
 msgid "Procure"
 msgstr "Procurar"
 
-#: freppledb/input/models.py:436 freppledb/input/views.py:518
-#: freppledb/inventoryplanning/models.py:147 freppledb/output/models.py:120
-#: freppledb/output/views/buffer.py:185
+#: input/models.py:443 input/views.py:525 output/models.py:127
+#: output/views/buffer.py:192
 msgid "onhand"
 msgstr "a mano"
 
-#: freppledb/input/models.py:438
+#: input/models.py:445
 msgid "current inventory"
 msgstr "inventario corriente"
 
-#: freppledb/input/models.py:441 freppledb/input/views.py:521
-#: freppledb/templates/inventoryplanning/drp.html:1396
+#: input/models.py:448 input/views.py:528
 msgid "minimum"
 msgstr "mínimo"
 
-#: freppledb/input/models.py:443
+#: input/models.py:450
 msgid "Safety stock"
 msgstr "Inventario de seguridad"
 
-#: freppledb/input/models.py:446 freppledb/input/views.py:522
+#: input/models.py:453 input/views.py:529
 msgid "minimum calendar"
 msgstr "calendario mínimo"
 
-#: freppledb/input/models.py:448
+#: input/models.py:455
 msgid "Calendar storing a time-dependent safety stock profile"
 msgstr ""
 "Calendario que contiene un perfil de inventario de seguridad en función del "
 "tiempo"
 
-#: freppledb/input/models.py:451 freppledb/input/views.py:523
+#: input/models.py:458 input/views.py:530
 msgid "producing"
 msgstr "en producción"
 
-#: freppledb/input/models.py:453
+#: input/models.py:460
 msgid "Operation to replenish the buffer"
 msgstr "Operación para rellenar la reserva"
 
-#: freppledb/input/models.py:457
+#: input/models.py:464
 msgid "leadtime"
 msgstr "Tiempos de espera"
 
-#: freppledb/input/models.py:459
+#: input/models.py:466
 msgid "Leadtime for supplier of a procure buffer"
 msgstr "Plazo de proveedor de una reserva"
 
-#: freppledb/input/models.py:462
+#: input/models.py:469
 msgid "fence"
 msgstr "valla"
 
-#: freppledb/input/models.py:464
+#: input/models.py:471
 msgid "Frozen fence for creating new procurements"
 msgstr "Valla fija para la creación de nuevas adquisiciones"
 
-#: freppledb/input/models.py:467
+#: input/models.py:474
 msgid "min_inventory"
 msgstr "inventario_mínimo"
 
-#: freppledb/input/models.py:469
+#: input/models.py:476
 msgid "Inventory level that triggers replenishment of a procure buffer"
 msgstr "Nivel de inventario que desencadena la reposición de una reserva"
 
-#: freppledb/input/models.py:472
+#: input/models.py:479
 msgid "max_inventory"
 msgstr "inventario_máximo"
 
-#: freppledb/input/models.py:474
+#: input/models.py:481
 msgid "Inventory level to which a procure buffer is replenished"
 msgstr "Nivel de inventario a la que se repone una reserva de adquisición"
 
-#: freppledb/input/models.py:477
+#: input/models.py:484
 msgid "min_interval"
 msgstr "intervalo_mínimo"
 
-#: freppledb/input/models.py:479
+#: input/models.py:486
 msgid "Minimum time interval between replenishments of a procure buffer"
 msgstr ""
 "Intervalo de tiempo mínimo entre reposiciones de una reserva de adquisición"
 
-#: freppledb/input/models.py:482
+#: input/models.py:489
 msgid "max_interval"
 msgstr "intervalo_máximo"
 
-#: freppledb/input/models.py:484
+#: input/models.py:491
 msgid "Maximum time interval between replenishments of a procure buffer"
 msgstr ""
 "Intervalo de tiempo máximo entre reposiciones de una reserva de adquisición"
 
-#: freppledb/input/models.py:487
+#: input/models.py:494
 msgid "size_minimum"
 msgstr "tamaño_mínimo"
 
-#: freppledb/input/models.py:489
+#: input/models.py:496
 msgid "Minimum size of replenishments of a procure buffer"
 msgstr "Tamaño mínimo de los rellenos de una reserva de adquisición"
 
-#: freppledb/input/models.py:492
+#: input/models.py:499
 msgid "size_multiple"
 msgstr "tamaño_múltiple"
 
-#: freppledb/input/models.py:494
+#: input/models.py:501
 msgid "Replenishments of a procure buffer are a multiple of this quantity"
 msgstr "Reposiciones de una reserva son múltiplos de esta cantidad"
 
-#: freppledb/input/models.py:497
+#: input/models.py:504
 msgid "size_maximum"
 msgstr "tamaño_máximo"
 
-#: freppledb/input/models.py:499
+#: input/models.py:506
 msgid "Maximum size of replenishments of a procure buffer"
 msgstr "Tamaño máximo de los rellenos de una reservas procurar"
 
-#: freppledb/input/models.py:522 freppledb/input/models.py:717
-#: freppledb/input/views.py:774 freppledb/inventoryplanning/views.py:156
-#: freppledb/inventoryplanning/views.py:201 freppledb/output/models.py:116
-#: freppledb/output/views/buffer.py:33 freppledb/output/views/buffer.py:181
-#: freppledb/planningboard/templates/planningboard/index.html:95
-#: freppledb/templates/inventoryplanning/drp.html:1036
+#: input/models.py:529 input/models.py:724 input/views.py:781
+#: output/models.py:123 output/views/buffer.py:40 output/views/buffer.py:188
 msgid "buffer"
 msgstr "reserva"
 
-#: freppledb/input/models.py:523 freppledb/input/views.py:506
+#: input/models.py:530 input/views.py:513
 msgid "buffers"
 msgstr "reservas"
 
-#: freppledb/input/models.py:537 freppledb/input/models.py:548
-#: freppledb/input/models.py:624 freppledb/input/views.py:565
+#: input/models.py:544 input/models.py:555 input/models.py:631
+#: input/views.py:572
 msgid "setup matrix"
 msgstr "Matríz de configuración"
 
-#: freppledb/input/models.py:538 freppledb/input/views.py:532
+#: input/models.py:545 input/views.py:539
 msgid "setup matrices"
 msgstr "matrices de configuración"
 
-#: freppledb/input/models.py:552
+#: input/models.py:559
 msgid "from setup"
 msgstr "de configuración"
 
-#: freppledb/input/models.py:553
+#: input/models.py:560
 msgid "Name of the old setup (wildcard characters are supported)"
 msgstr ""
 "Nombre de la configuración anterior (caracteres comodín son compatibles)"
 
-#: freppledb/input/models.py:556
+#: input/models.py:563
 msgid "to setup"
 msgstr "a configuración"
 
-#: freppledb/input/models.py:557
+#: input/models.py:564
 msgid "Name of the new setup (wildcard characters are supported)"
 msgstr "Nombre de la nueva configuración (caracteres comodín son compatibles)"
 
-#: freppledb/input/models.py:561
+#: input/models.py:568
 msgid "Duration of the changeover"
 msgstr "Duración de la transición"
 
-#: freppledb/input/models.py:565
+#: input/models.py:572
 msgid "Cost of the conversion"
 msgstr "Costo de la conversión"
 
-#: freppledb/input/models.py:575
+#: input/models.py:582
 msgid "setup matrix rule"
 msgstr "regla de matríz de configuración"
 
-#: freppledb/input/models.py:576
+#: input/models.py:583
 msgid "setup matrix rules"
 msgstr "reglas de matríz de configuración"
 
-#: freppledb/input/models.py:583
+#: input/models.py:590
 msgid "Buckets"
 msgstr "Intervalos"
 
-#: freppledb/input/models.py:601 freppledb/input/views.py:561
+#: input/models.py:608 input/views.py:568
 msgid "maximum"
 msgstr "máximo"
 
-#: freppledb/input/models.py:603
+#: input/models.py:610
 msgid "Size of the resource"
 msgstr "Tamaño del recurso"
 
-#: freppledb/input/models.py:606 freppledb/input/views.py:562
+#: input/models.py:613 input/views.py:569
 msgid "maximum calendar"
 msgstr "calendario máximo"
 
-#: freppledb/input/models.py:608
+#: input/models.py:615
 msgid "Calendar defining the resource size varying over time"
 msgstr "Calendario que define la variación de tamaño del recurso con el tiempo"
 
-#: freppledb/input/models.py:617
+#: input/models.py:624
 msgid "Cost for using 1 unit of the resource for 1 hour"
 msgstr "Costo para el uso de 1 unidad del recurso durante 1 hora"
 
-#: freppledb/input/models.py:619
+#: input/models.py:626
 msgid "max early"
 msgstr "max temprano"
 
-#: freppledb/input/models.py:621
+#: input/models.py:628
 msgid "Time window before the ask date where we look for available capacity"
 msgstr ""
 "Espacio de tiempo antes de la fecha en que  se solicita la búsqueda de "
 "capacidad disponible"
 
-#: freppledb/input/models.py:626
+#: input/models.py:633
 msgid "Setup matrix defining the conversion time and cost"
 msgstr "Matríz de configuración definiendo el tiempo de conversión y el coste"
 
-#: freppledb/input/models.py:629 freppledb/input/models.py:796
-#: freppledb/input/views.py:566 freppledb/input/views.py:756
-#: freppledb/output/models.py:83 freppledb/output/models.py:102
-#: freppledb/output/views/resource.py:44 freppledb/output/views/resource.py:204
-#: freppledb/templates/output/resource.html:146
-#: freppledb/templates/output/resource.html:250
+#: input/models.py:636 input/models.py:803 input/views.py:573
+#: input/views.py:763 output/models.py:90 output/models.py:109
+#: output/views/resource.py:51 output/views/resource.py:211
+#: templates/output/resource.html:130 templates/output/resource.html.py:233
 msgid "setup"
 msgstr "configuración"
 
-#: freppledb/input/models.py:630
+#: input/models.py:637
 msgid "Setup of the resource at the start of the plan"
 msgstr "Configuración del recurso al inicio del plan"
 
-#: freppledb/input/models.py:648 freppledb/input/models.py:675
-#: freppledb/input/models.py:769 freppledb/input/views.py:727
-#: freppledb/input/views.py:748 freppledb/output/models.py:79
-#: freppledb/output/models.py:97 freppledb/output/views/pegging.py:41
-#: freppledb/output/views/resource.py:35 freppledb/output/views/resource.py:193
-#: freppledb/output/views/resource.py:223 freppledb/output/widget.py:211
-#: freppledb/output/widget.py:277
-#: freppledb/planningboard/templates/planningboard/index.html:94
+#: input/models.py:655 input/models.py:682 input/models.py:776
+#: input/views.py:734 input/views.py:755 output/models.py:86
+#: output/models.py:104 output/views/pegging.py:48 output/views/resource.py:42
+#: output/views/resource.py:200 output/widget.py:218 output/widget.py:284
 msgid "resource"
 msgstr "recurso"
 
-#: freppledb/input/models.py:649 freppledb/input/views.py:548
+#: input/models.py:656 input/views.py:555
 msgid "resources"
 msgstr "recursos"
 
-#: freppledb/input/models.py:666 freppledb/input/models.py:678
-#: freppledb/input/models.py:770 freppledb/input/views.py:728
-#: freppledb/input/views.py:749
+#: input/models.py:673 input/models.py:685 input/models.py:777
+#: input/views.py:735 input/views.py:756
 msgid "skill"
 msgstr "habilidad"
 
-#: freppledb/input/models.py:667 freppledb/input/views.py:705
+#: input/models.py:674 input/views.py:712
 msgid "skills"
 msgstr "habilidades"
 
-#: freppledb/input/models.py:690
+#: input/models.py:697
 msgid "Priority of this skill in a group of alternates"
 msgstr "Prioridad de esta habilidad en un grupo de alternos"
 
-#: freppledb/input/models.py:696
+#: input/models.py:703
 msgid "resource skill"
 msgstr "habilidad de recursos"
 
-#: freppledb/input/models.py:697 freppledb/input/views.py:720
+#: input/models.py:704 input/views.py:727
 msgid "resource skills"
 msgstr "habilidades de los recursos"
 
-#: freppledb/input/models.py:704
+#: input/models.py:711
 msgid "Start"
 msgstr "Inicio"
 
-#: freppledb/input/models.py:705
+#: input/models.py:712
 msgid "End"
 msgstr "Fin"
 
-#: freppledb/input/models.py:706
+#: input/models.py:713
 msgid "Fixed start"
 msgstr "Inicio fijo"
 
-#: freppledb/input/models.py:707
+#: input/models.py:714
 msgid "Fixed end"
 msgstr "Fin fijo"
 
-#: freppledb/input/models.py:723
+#: input/models.py:728 input/models.py:779 input/models.py:848
+#: input/models.py:906 input/models.py:963 input/models.py:1033
+#: input/views.py:92 input/views.py:757 input/views.py:783 input/views.py:813
+#: input/views.py:940 input/views.py:976 input/views.py:1017
+#: output/models.py:27 output/models.py:105 output/models.py:125
+#: output/models.py:165 output/views/buffer.py:190 output/views/demand.py:174
+#: output/views/operation.py:156 output/views/pegging.py:49
+#: output/widget.py:138 output/widget.py:178 output/widget.py:220
+#: output/widget.py:255
+msgid "quantity"
+msgstr "cantidad"
+
+#: input/models.py:730
 msgid "Quantity to consume or produce per operationplan unit"
 msgstr "Cantidad a consumir o producir por unidad de plan de operación"
 
-#: freppledb/input/models.py:727
+#: input/models.py:734
 msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr ""
 "Consumir / producir el material al inicio o al al final del plan de operación"
 
-#: freppledb/input/models.py:739
+#: input/models.py:746
 msgid "Optional name of this flow"
 msgstr "Nombre opcional de este flujo"
 
-#: freppledb/input/models.py:743
+#: input/models.py:750
 msgid "Puts the flow in a group of alternate flows"
 msgstr "Pone el flujo en un grupo de flujos alternativos"
 
-#: freppledb/input/models.py:747
+#: input/models.py:754
 msgid "Priority of this flow in a group of alternates"
 msgstr "Prioridad de este flujo en un grupo de alternos"
 
-#: freppledb/input/models.py:761
+#: input/models.py:768
 msgid "flow"
 msgstr "flujo"
 
-#: freppledb/input/models.py:762 freppledb/input/views.py:766
+#: input/models.py:769 input/views.py:773
 msgid "flows"
 msgstr "flujos"
 
-#: freppledb/input/models.py:785
+#: input/models.py:792
 msgid "Optional name of this load"
 msgstr "Nombre opcional de esta carga"
 
-#: freppledb/input/models.py:789
+#: input/models.py:796
 msgid "Puts the load in a group of alternate loads"
 msgstr "Pone la carga en un grupo de cargas alternas"
 
-#: freppledb/input/models.py:793
+#: input/models.py:800
 msgid "Priority of this load in a group of alternates"
 msgstr "Prioridad de esta carga en un grupo de alternos"
 
-#: freppledb/input/models.py:797
+#: input/models.py:804
 msgid "Setup required on the resource for this operation"
 msgstr "Configuración requerida en el recurso para esta operación"
 
-#: freppledb/input/models.py:811 freppledb/output/models.py:84
-#: freppledb/output/views/resource.py:45
-#: freppledb/templates/output/resource.html:148
-#: freppledb/templates/output/resource.html:251
+#: input/models.py:818 output/models.py:91 output/views/resource.py:52
+#: templates/output/resource.html:132 templates/output/resource.html.py:234
 msgid "load"
 msgstr "carga"
 
-#: freppledb/input/models.py:812 freppledb/input/views.py:740
+#: input/models.py:819 input/views.py:747
 msgid "loads"
 msgstr "cargas"
 
-#: freppledb/input/models.py:818 freppledb/input/models.py:868
-#: freppledb/input/models.py:925
-#: freppledb/templates/inventoryplanning/drp.html:1351
+#: input/models.py:825 input/models.py:875 input/models.py:932
 msgid "proposed"
 msgstr "propuesto"
 
-#: freppledb/input/models.py:819 freppledb/input/models.py:869
-#: freppledb/input/models.py:926
-#: freppledb/templates/inventoryplanning/drp.html:1352
+#: input/models.py:826 input/models.py:876 input/models.py:933
 msgid "confirmed"
 msgstr "confirmado"
 
-#: freppledb/input/models.py:820 freppledb/input/models.py:870
-#: freppledb/input/models.py:927
-#: freppledb/templates/inventoryplanning/drp.html:1353
+#: input/models.py:827 input/models.py:877 input/models.py:934
 msgid "closed"
 msgstr "cerrado"
 
-#: freppledb/input/models.py:826
+#: input/models.py:833
 msgid "Unique identifier of an operationplan"
 msgstr "Identificador único de un plan de operación"
 
-#: freppledb/input/models.py:830 freppledb/input/models.py:884
-#: freppledb/input/models.py:941
+#: input/models.py:837 input/models.py:891 input/models.py:948
 msgid "Status of the order"
 msgstr "Estado de la orden"
 
-#: freppledb/input/models.py:833 freppledb/input/models.py:879
-#: freppledb/input/models.py:936 freppledb/input/views.py:958
-#: freppledb/input/views.py:999
-#: freppledb/templates/inventoryplanning/drp.html:1180
+#: input/models.py:840 input/models.py:886 input/models.py:943
+#: input/views.py:965 input/views.py:1006
 msgid "reference"
 msgstr "referencia"
 
-#: freppledb/input/models.py:834 freppledb/input/models.py:880
-#: freppledb/input/models.py:937
+#: input/models.py:841 input/models.py:887 input/models.py:944
 msgid "External reference of this order"
 msgstr "Referencia externa de esta orden"
 
-#: freppledb/input/models.py:847 freppledb/input/models.py:908
-#: freppledb/input/models.py:962 freppledb/input/views.py:971
-#: freppledb/input/views.py:1011 freppledb/output/models.py:24
-#: freppledb/output/views/buffer.py:186 freppledb/output/views/operation.py:153
-#: freppledb/output/views/resource.py:200 freppledb/output/widget.py:132
-#: freppledb/output/widget.py:172 freppledb/output/widget.py:213
-#: freppledb/output/widget.py:249
-#: freppledb/templates/inventoryplanning/drp.html:1189
+#: input/models.py:854 input/models.py:915 input/models.py:969
+#: input/views.py:978 input/views.py:1018 output/models.py:31
+#: output/views/buffer.py:193 output/views/operation.py:160
+#: output/views/resource.py:207 output/widget.py:139 output/widget.py:179
+#: output/widget.py:220 output/widget.py:256
 msgid "criticality"
 msgstr "criticidad"
 
-#: freppledb/input/models.py:860 freppledb/output/models.py:33
-#: freppledb/output/models.py:101 freppledb/output/models.py:117
-#: freppledb/output/models.py:141 freppledb/output/models.py:157
-#: freppledb/output/views/buffer.py:190 freppledb/output/views/demand.py:188
-#: freppledb/output/views/operation.py:147
-#: freppledb/output/views/resource.py:203
+#: input/models.py:867 output/models.py:40 output/models.py:108
+#: output/models.py:124 output/models.py:148 output/models.py:164
+#: output/views/buffer.py:197 output/views/demand.py:178
+#: output/views/operation.py:154 output/views/resource.py:210
 msgid "operationplan"
 msgstr "plan de operación"
 
-#: freppledb/input/models.py:861 freppledb/input/views.py:923
-#: freppledb/output/models.py:34
+#: input/models.py:868 input/views.py:930 output/models.py:41
 msgid "operationplans"
 msgstr "plan de Operaciones"
 
-#: freppledb/input/models.py:895 freppledb/input/views.py:966
-#: freppledb/output/widget.py:171
+#: input/models.py:902 input/views.py:973 output/widget.py:178
 msgid "destination"
 msgstr "destino"
 
-#: freppledb/input/models.py:904 freppledb/input/views.py:970
+#: input/models.py:911 input/views.py:977
 msgid "consume material"
 msgstr "consumir materiales"
 
-#: freppledb/input/models.py:905
+#: input/models.py:912
 msgid "Consume material at origin location"
 msgstr "Consumir materiales en la ubicación de origen"
 
-#: freppledb/input/models.py:917
+#: input/models.py:924
 msgid "distribution order"
 msgstr "Orden de distributión"
 
-#: freppledb/input/models.py:918 freppledb/input/views.py:951
+#: input/models.py:925 input/views.py:958
 msgid "distribution orders"
 msgstr "órdenes de distributión"
 
-#: freppledb/input/models.py:971
+#: input/models.py:978
 msgid "purchase order"
 msgstr "órdenes de compra"
 
-#: freppledb/input/models.py:972 freppledb/input/views.py:992
+#: input/models.py:979 input/views.py:999
 msgid "purchase orders"
 msgstr "órdenes de compra"
 
-#: freppledb/input/models.py:987 freppledb/input/views.py:817
+#: input/models.py:994 input/views.py:824
 msgid "Inquiry"
 msgstr "Indagación"
 
-#: freppledb/input/models.py:988 freppledb/input/views.py:818
+#: input/models.py:995 input/views.py:825
 msgid "Quote"
 msgstr "Cotización"
 
-#: freppledb/input/models.py:989 freppledb/input/views.py:819
+#: input/models.py:996 input/views.py:826
 msgid "Open"
 msgstr "Abierto"
 
-#: freppledb/input/models.py:990 freppledb/input/views.py:820
-#: freppledb/input/views.py:943 freppledb/input/views.py:984
-#: freppledb/input/views.py:1024
+#: input/models.py:997 input/views.py:827 input/views.py:950 input/views.py:991
+#: input/views.py:1031
 msgid "Closed"
 msgstr "Cerrado"
 
-#: freppledb/input/models.py:991 freppledb/input/views.py:821
+#: input/models.py:998 input/views.py:828
 msgid "Canceled"
 msgstr "Cancelado"
 
-#: freppledb/input/models.py:1013
+#: input/models.py:1020 input/views.py:812 output/models.py:144
+#: output/widget.py:58 output/widget.py:99
+msgid "due"
+msgstr "fecha límite"
+
+#: input/models.py:1020
 msgid "Due date of the demand"
 msgstr "fecha de vencimiento de la demanda"
 
-#: freppledb/input/models.py:1017
+#: input/models.py:1024
 msgid "Status of the demand. Only \"open\" demands are planned"
 msgstr "Estado de la demanda. Sólo órdenes \"abierto\" son planteadas "
 
-#: freppledb/input/models.py:1049
+#: input/models.py:1030
+msgid "Operation used to satisfy this demand"
+msgstr "Operación utilizada para satisfacer esta demanda"
+
+#: input/models.py:1037
+msgid "Priority of the demand (lower numbers indicate more important demands)"
+msgstr ""
+"Prioridad de la demanda (los números más bajos indican las demandas más "
+"importantes)"
+
+#: input/models.py:1040 input/views.py:818
+msgid "minimum shipment"
+msgstr "envío mínimo"
+
+#: input/models.py:1042
+msgid "Minimum shipment quantity when planning this demand"
+msgstr "Cantidad de envío mínima planificando esta demanda"
+
+#: input/models.py:1045 input/views.py:817
+msgid "maximum lateness"
+msgstr "retraso máximo"
+
+#: input/models.py:1047
+msgid "Maximum lateness allowed when planning this demand"
+msgstr "El retraso máximo permitió planificando esta demanda"
+
+#: input/models.py:1056
 msgid "sales order"
 msgstr "orden de venta"
 
-#: freppledb/input/models.py:1050 freppledb/input/views.py:791
+#: input/models.py:1057 input/views.py:798
 msgid "sales orders"
 msgstr "órdenes de venta"
 
-#: freppledb/input/views.py:50
+#: input/views.py:57
 #, python-format
 msgid "%(name)s - %(count)d match"
 msgid_plural "%(name)s - %(count)d matches"
 msgstr[0] "%(name)s - %(count)d igual"
 msgstr[1] "%(name)s - %(count)d iguales"
 
-#: freppledb/input/views.py:76
+#: input/views.py:83
 msgid "Supply path"
 msgstr "Ruta de suministro"
 
-#: freppledb/input/views.py:83 freppledb/output/views/pegging.py:37
+#: input/views.py:90 output/views/pegging.py:44
 msgid "depth"
 msgstr "profundidad"
 
-#: freppledb/input/views.py:121
+#: input/views.py:128
 msgid "Where Used"
 msgstr "Dónde se utiliza"
 
-#: freppledb/input/views.py:121
+#: input/views.py:128
 msgid "Supply Path"
 msgstr "Ruta de Suministro"
 
-#: freppledb/input/views.py:564
+#: input/views.py:571
 msgid "maxearly"
 msgstr "max temprano"
 
-#: freppledb/input/views.py:817 freppledb/input/views.py:818
-#: freppledb/input/views.py:819 freppledb/input/views.py:820
-#: freppledb/input/views.py:821 freppledb/input/views.py:941
-#: freppledb/input/views.py:942 freppledb/input/views.py:943
-#: freppledb/input/views.py:982 freppledb/input/views.py:983
-#: freppledb/input/views.py:984 freppledb/input/views.py:1022
-#: freppledb/input/views.py:1023 freppledb/input/views.py:1024
-#: freppledb/templates/inventoryplanning/drp.html:1351
-#: freppledb/templates/inventoryplanning/drp.html:1352
-#: freppledb/templates/inventoryplanning/drp.html:1353
+#: input/views.py:824 input/views.py:825 input/views.py:826 input/views.py:827
+#: input/views.py:828 input/views.py:948 input/views.py:949 input/views.py:950
+#: input/views.py:989 input/views.py:990 input/views.py:991 input/views.py:1029
+#: input/views.py:1030 input/views.py:1031
 #, python-format
 msgid "change status to %(status)s"
 msgstr "cambiar estado para %(status)s"
 
-#: freppledb/input/views.py:941 freppledb/input/views.py:982
-#: freppledb/input/views.py:1022
+#: input/views.py:948 input/views.py:989 input/views.py:1029
 msgid "Proposed"
 msgstr "Propuesto"
 
-#: freppledb/input/views.py:942 freppledb/input/views.py:983
-#: freppledb/input/views.py:1023
+#: input/views.py:949 input/views.py:990 input/views.py:1030
 msgid "Confirmed"
 msgstr "Confirmado"
 
-#: freppledb/input/views.py:978 freppledb/input/views.py:1018
-#: freppledb/templates/inventoryplanning/drp.html:1349
+#: input/views.py:985 input/views.py:1025
 msgid "incremental export to openbravo"
 msgstr "exportación incremental a openbravo"
 
-#: freppledb/inventoryplanning/admin.py:24
-msgid "Reorder quantity"
-msgstr "Cantidad para nuevas órdenes"
-
-#: freppledb/inventoryplanning/admin.py:31
-msgid "Safety stock quantity"
-msgstr "Cantidad de inventario de seguridad"
-
-#. Translators: Normal statistical distribution, aka Gaussian distribution
-#: freppledb/inventoryplanning/models.py:22
-msgid "Normal"
-msgstr "Normal"
-
-#. Translators: Poisson statistical distribution
-#: freppledb/inventoryplanning/models.py:24
-msgid "Poisson"
-msgstr "Poisson"
-
-#. Translators: Negative binomial statistical distribution
-#: freppledb/inventoryplanning/models.py:26
-msgid "Negative Binomial"
-msgstr "Binomial negativa"
-
-#: freppledb/inventoryplanning/models.py:32
-msgid "calculated"
-msgstr "calculada"
-
-#: freppledb/inventoryplanning/models.py:34
-#: freppledb/templates/inventoryplanning/drp.html:1393
-#: freppledb/templates/inventoryplanning/drp.html:1407
-msgid "period of cover"
-msgstr "período de cobertura"
-
-#: freppledb/inventoryplanning/models.py:40
-#: freppledb/inventoryplanning/views.py:157
-msgid "ROQ type"
-msgstr "CNO tipo"
-
-#: freppledb/inventoryplanning/models.py:43
-#: freppledb/inventoryplanning/views.py:159
-msgid "ROQ minimum quantity"
-msgstr "CNO Cantidad mínima"
-
-#: freppledb/inventoryplanning/models.py:47
-msgid "ROQ maximum quantity"
-msgstr "CNO cantidad máxima"
-
-#: freppledb/inventoryplanning/models.py:51
-msgid "ROQ multiple quantity"
-msgstr "CNO cantidad compra multiple"
-
-#: freppledb/inventoryplanning/models.py:55
-#: freppledb/inventoryplanning/views.py:162
-msgid "ROQ minimum period of cover"
-msgstr "CNO período de cobertura mínimo"
-
-#: freppledb/inventoryplanning/models.py:59
-msgid "ROQ maximum period of cover"
-msgstr "CNO período de cobertura máximo"
-
-#: freppledb/inventoryplanning/models.py:63
-#: freppledb/inventoryplanning/views.py:172
-msgid "lead time deviation"
-msgstr "Desviación del tiempo de espera"
-
-#: freppledb/inventoryplanning/models.py:67
-#: freppledb/inventoryplanning/views.py:173
-msgid "demand deviation"
-msgstr "Desviación de la demanda"
-
-#: freppledb/inventoryplanning/models.py:71
-#: freppledb/inventoryplanning/views.py:174
-msgid "demand distribution"
-msgstr "Distributión de la demanda"
-
-#: freppledb/inventoryplanning/models.py:74
-msgid "safety stock type"
-msgstr "Tipo de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:77
-#: freppledb/inventoryplanning/views.py:171
-#: freppledb/templates/inventoryplanning/drp.html:1395
-msgid "service level"
-msgstr "nivel de servicio"
-
-#: freppledb/inventoryplanning/models.py:81
-#: freppledb/inventoryplanning/views.py:166
-msgid "safety stock minimum quantity"
-msgstr "Cantidad mínima de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:85
-msgid "safety stock maximum quantity"
-msgstr "Cantidad máxima de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:89
-msgid "safety stock multiple quantity"
-msgstr "inventario de seguridad de cantidad multiple"
-
-#: freppledb/inventoryplanning/models.py:93
-#: freppledb/inventoryplanning/views.py:169
-msgid "safety stock minimum period of cover"
-msgstr "período de cobertura mínimo de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:97
-msgid "safety stock maximum period of cover"
-msgstr "período de cobertura máximo de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:101
-#: freppledb/inventoryplanning/views.py:176
-msgid "Do not stock"
-msgstr "No hacer inventário"
-
-#: freppledb/inventoryplanning/models.py:102
-msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
-msgstr "Impone 0 en inventário de seguridad y 1 en cantidad para nueva orden"
-
-#: freppledb/inventoryplanning/models.py:107
-msgid "inventory planning parameter"
-msgstr "parámetros de planeación de inventário"
-
-#: freppledb/inventoryplanning/models.py:108
-#: freppledb/inventoryplanning/views.py:150
-msgid "inventory planning parameters"
-msgstr "parámetros de planeación"
-
-#: freppledb/inventoryplanning/models.py:135
-msgid "calculated reorder quantity"
-msgstr "cantidad calculada para nuevas órdenes "
-
-#: freppledb/inventoryplanning/models.py:136
-msgid "calculated safety stock"
-msgstr "Inventario de seguridad calculado"
-
-#: freppledb/inventoryplanning/models.py:141
-#: freppledb/inventoryplanning/views.py:207
-#: freppledb/templates/inventoryplanning/drp.html:510
-#: freppledb/templates/inventoryplanning/drp.html:523
-#: freppledb/templates/inventoryplanning/drp.html:731
-#: freppledb/templates/inventoryplanning/drp.html:830
-#: freppledb/templates/inventoryplanning/drp.html:1389
-msgid "safety stock"
-msgstr "Inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:142
-#: freppledb/inventoryplanning/views.py:208
-#: freppledb/templates/inventoryplanning/drp.html:508
-#: freppledb/templates/inventoryplanning/drp.html:521
-#: freppledb/templates/inventoryplanning/drp.html:727
-#: freppledb/templates/inventoryplanning/drp.html:829
-#: freppledb/templates/inventoryplanning/drp.html:1388
-msgid "reorder quantity"
-msgstr "cantidad para nuevas órdenes"
-
-#: freppledb/inventoryplanning/models.py:143
-msgid "safety stock value"
-msgstr "valor de inventario de seguridad"
-
-#: freppledb/inventoryplanning/models.py:144
-msgid "reorder quantity value"
-msgstr "cantidad para nuevas órdenes"
-
-#: freppledb/inventoryplanning/models.py:148
-#: freppledb/inventoryplanning/views.py:210
-msgid "overdue sales orders"
-msgstr "órdenes retrasadas"
-
-#: freppledb/inventoryplanning/models.py:149
-#: freppledb/inventoryplanning/views.py:211
-msgid "open sales orders"
-msgstr "órdenes de venta abiertas"
-
-#: freppledb/inventoryplanning/models.py:150
-#: freppledb/inventoryplanning/views.py:214
-msgid "proposed purchases"
-msgstr "compras propuestas"
-
-#: freppledb/inventoryplanning/models.py:151
-#: freppledb/inventoryplanning/views.py:215
-msgid "proposed transfers"
-msgstr "transferencias propuestas"
-
-#: freppledb/inventoryplanning/models.py:152
-#: freppledb/inventoryplanning/views.py:212
-msgid "open purchases"
-msgstr "compras abiertas"
-
-#: freppledb/inventoryplanning/models.py:153
-#: freppledb/inventoryplanning/views.py:213
-msgid "open transfers"
-msgstr "transferencias abiertas"
-
-#: freppledb/inventoryplanning/models.py:154
-msgid "onhand value"
-msgstr "en mano"
-
-#: freppledb/inventoryplanning/models.py:155
-msgid "overdue sales orders value"
-msgstr "valor de ventas retrasadas"
-
-#: freppledb/inventoryplanning/models.py:156
-msgid "open sales orders value"
-msgstr "valor de órdenes de venta abiertas"
-
-#: freppledb/inventoryplanning/models.py:157
-msgid "proposed purchases value"
-msgstr "valor de compras propuestas"
-
-#: freppledb/inventoryplanning/models.py:158
-msgid "proposed transfers value"
-msgstr "valor de transferencias propuestas"
-
-#: freppledb/inventoryplanning/models.py:159
-msgid "open purchases value"
-msgstr "valor de compras abiertas"
-
-#: freppledb/inventoryplanning/models.py:160
-msgid "open transfers value"
-msgstr "valor de transferencias abiertas"
-
-#: freppledb/inventoryplanning/models.py:161
-#: freppledb/inventoryplanning/views.py:205
-msgid "local forecast"
-msgstr "previsión local"
-
-#: freppledb/inventoryplanning/models.py:162
-#: freppledb/inventoryplanning/views.py:206
-#: freppledb/templates/inventoryplanning/drp.html:514
-#: freppledb/templates/inventoryplanning/drp.html:527
-msgid "dependent demand"
-msgstr "demanda dependiente"
-
-#: freppledb/inventoryplanning/models.py:163
-#: freppledb/output/views/demand.py:37
-#: freppledb/templates/inventoryplanning/drp.html:515
-#: freppledb/templates/inventoryplanning/drp.html:528
-msgid "total demand"
-msgstr "total de demanda"
-
-#: freppledb/inventoryplanning/models.py:164
-msgid "local forecast value"
-msgstr "valor de previsión local"
-
-#: freppledb/inventoryplanning/models.py:165
-msgid "dependent demand value"
-msgstr "valor de demanda dependiente"
-
-#: freppledb/inventoryplanning/models.py:166
-msgid "total demand value"
-msgstr "valor total de demanda"
-
-#: freppledb/inventoryplanning/views.py:164
-msgid "Safety stock type"
-msgstr "tipo de inventario de seguridad"
-
-#: freppledb/inventoryplanning/views.py:189
-msgid "Distribution planning"
-msgstr "Planteamento de distribución"
-
-#: freppledb/inventoryplanning/views.py:209
-msgid "on hand"
-msgstr "en mano"
-
-#: freppledb/inventoryplanning/views.py:759
-#: freppledb/inventoryplanning/views.py:762
-#: freppledb/inventoryplanning/views.py:800
-#: freppledb/inventoryplanning/views.py:803
-msgid "Invalid number"
-msgstr "Número no válido"
-
-#: freppledb/menu.py:23
+#: menu.py:30
 msgid "Sales"
 msgstr "Ventas"
 
-#: freppledb/menu.py:25
+#: menu.py:32
 msgid "Capacity"
 msgstr "Capacidad"
 
-#: freppledb/menu.py:26
+#: menu.py:33
 msgid "Purchasing"
 msgstr "Compras"
 
-#: freppledb/menu.py:27
+#: menu.py:34
 msgid "Distribution"
 msgstr "Distribución"
 
-#: freppledb/menu.py:28
+#: menu.py:35
 msgid "Manufacturing"
 msgstr "Produción"
 
-#: freppledb/menu.py:29 freppledb/templates/execute/execute.html:373
+#: menu.py:36 templates/execute/execute.html:343
 msgid "Admin"
 msgstr "Administrador"
 
-#: freppledb/menu.py:30
+#: menu.py:37
 msgid "Help"
 msgstr "Ayuda"
 
-#: freppledb/openbravo/views.py:66
+#: openbravo/views.py:73
 msgid "No proposed data records selected"
 msgstr "No hay propuestas seleccionadas"
 
-#: freppledb/output/models.py:21 freppledb/output/models.py:82
-#: freppledb/output/views/operation.py:155
-#: freppledb/output/views/resource.py:43 freppledb/output/views/resource.py:202
-#: freppledb/templates/output/resource.html:144
-#: freppledb/templates/output/resource.html:249
+#: output/models.py:28 output/models.py:89 output/views/operation.py:162
+#: output/views/resource.py:50 output/views/resource.py:209
+#: templates/output/resource.html:128 templates/output/resource.html.py:232
 msgid "unavailable"
 msgstr "no disponible"
 
-#: freppledb/output/models.py:22 freppledb/output/models.py:80
-#: freppledb/output/models.py:99 freppledb/output/widget.py:212
+#: output/models.py:29 output/models.py:87 output/models.py:106
+#: output/widget.py:219
 msgid "startdate"
 msgstr "fecha de inicio"
 
-#: freppledb/output/models.py:23 freppledb/output/models.py:100
-#: freppledb/output/widget.py:131 freppledb/output/widget.py:212
-#: freppledb/output/widget.py:248
+#: output/models.py:30 output/models.py:107 output/widget.py:138
+#: output/widget.py:219 output/widget.py:255
 msgid "enddate"
 msgstr "fecha de fin"
 
-#: freppledb/output/models.py:25 freppledb/output/views/buffer.py:187
-#: freppledb/output/views/operation.py:154
-#: freppledb/output/views/resource.py:201
+#: output/models.py:32 output/views/buffer.py:194 output/views/operation.py:161
+#: output/views/resource.py:208
 msgid "locked"
 msgstr "bloqueado"
 
-#: freppledb/output/models.py:39 freppledb/output/models.py:60
-#: freppledb/output/views/constraint.py:70 freppledb/output/views/problem.py:46
+#: output/models.py:46 output/models.py:67 output/views/constraint.py:77
+#: output/views/problem.py:53
 msgid "entity"
 msgstr "Entidad"
 
-#: freppledb/output/models.py:45 freppledb/output/models.py:66
-#: freppledb/output/views/constraint.py:76 freppledb/output/views/problem.py:52
-#: freppledb/output/widget.py:278
+#: output/models.py:52 output/models.py:73 output/views/constraint.py:83
+#: output/views/problem.py:59 output/widget.py:285
 msgid "weight"
 msgstr "peso"
 
-#: freppledb/output/models.py:53
+#: output/models.py:60
 msgid "problem"
 msgstr "problema"
 
-#: freppledb/output/models.py:54 freppledb/templates/quoting/quote.html:72
-#: freppledb/templates/quoting/quote.html:141
-#: freppledb/templates/quoting/quote.html:256
-#: freppledb/templates/quoting/quote.html:324
+#: output/models.py:61
 msgid "problems"
 msgstr "problemas"
 
-#: freppledb/output/models.py:59 freppledb/output/models.py:134
-#: freppledb/output/models.py:149 freppledb/output/models.py:155
-#: freppledb/output/views/constraint.py:20
-#: freppledb/output/views/constraint.py:69 freppledb/output/views/demand.py:181
-#: freppledb/planningboard/templates/planningboard/index.html:93
-#: freppledb/templates/output/demand.html:140
-#: freppledb/templates/output/demand.html:216
+#: output/models.py:66 output/models.py:141 output/models.py:156
+#: output/models.py:162 output/views/constraint.py:27
+#: output/views/constraint.py:76 output/views/demand.py:42
+#: output/views/demand.py:171 templates/output/demand.html:125
+#: templates/output/demand.html.py:198
 msgid "demand"
 msgstr "demanda"
 
-#: freppledb/output/models.py:74
+#: output/models.py:81
 msgid "constraint"
 msgstr "restricción"
 
-#: freppledb/output/models.py:75 freppledb/templates/execute/execute.html:264
+#: output/models.py:82 templates/execute/execute.html:249
 msgid "constraints"
 msgstr "restricciones"
 
-#: freppledb/output/models.py:85 freppledb/templates/output/resource.html:252
+#: output/models.py:92 templates/output/resource.html:235
 msgid "free"
 msgstr "libre"
 
-#: freppledb/output/models.py:110
+#: output/models.py:117
 msgid "loadplan"
 msgstr "plan de carga"
 
-#: freppledb/output/models.py:111
+#: output/models.py:118
 msgid "loadplans"
 msgstr "planes de carga"
 
-#: freppledb/output/models.py:119 freppledb/output/views/buffer.py:184
-#: freppledb/templates/inventoryplanning/drp.html:1178
+#: output/models.py:126 output/views/buffer.py:191
 msgid "date"
 msgstr "fecha"
 
-#: freppledb/output/models.py:128
+#: output/models.py:135
 msgid "flowplan"
 msgstr "plan de flujo"
 
-#: freppledb/output/models.py:129
+#: output/models.py:136
 msgid "flowplans"
 msgstr "planes de flujo"
 
-#: freppledb/output/models.py:138 freppledb/output/views/buffer.py:189
-#: freppledb/output/views/operation.py:150
-#: freppledb/output/views/resource.py:198
+#: output/models.py:145 output/views/buffer.py:196
+#: output/views/operation.py:157 output/views/resource.py:205
 msgid "demand quantity"
 msgstr "cantidad de demanda"
 
-#: freppledb/output/models.py:139 freppledb/output/views/demand.py:185
+#: output/models.py:146 output/views/demand.py:175
 msgid "planned quantity"
 msgstr "cantidad planteada"
 
-#: freppledb/output/models.py:140 freppledb/output/views/demand.py:187
-#: freppledb/output/widget.py:52
+#: output/models.py:147 output/views/demand.py:177 output/widget.py:59
 msgid "planned date"
 msgstr "fecha planteada"
 
-#: freppledb/output/models.py:150
+#: output/models.py:157
 msgid "demands"
 msgstr "demandas"
 
-#: freppledb/output/models.py:168
+#: output/models.py:175
 msgid "demand pegging"
 msgstr "origen de la demanda"
 
-#: freppledb/output/models.py:169
+#: output/models.py:176
 msgid "demand peggings"
 msgstr "origenes de la demanda"
 
-#: freppledb/output/views/buffer.py:28
+#: output/views/buffer.py:35
 msgid "Inventory report"
 msgstr "Informe de inventario"
 
-#: freppledb/output/views/buffer.py:38
-#: freppledb/templates/inventoryplanning/drp.html:735
-#: freppledb/templates/inventoryplanning/drp.html:826
-#: freppledb/templates/output/buffer.html:138
-#: freppledb/templates/output/buffer.html:237
+#: output/views/buffer.py:45 templates/output/buffer.html:128
+#: templates/output/buffer.html.py:216
 msgid "start inventory"
 msgstr "inventario al início"
 
-#: freppledb/output/views/buffer.py:39
-#: freppledb/templates/inventoryplanning/drp.html:827
-#: freppledb/templates/output/buffer.html:140
-#: freppledb/templates/output/buffer.html:238
+#: output/views/buffer.py:46 templates/output/buffer.html:130
+#: templates/output/buffer.html.py:214
 msgid "produced"
 msgstr "producido"
 
-#: freppledb/output/views/buffer.py:40
-#: freppledb/templates/inventoryplanning/drp.html:828
-#: freppledb/templates/output/buffer.html:142
-#: freppledb/templates/output/buffer.html:239
+#: output/views/buffer.py:47 templates/output/buffer.html:132
+#: templates/output/buffer.html.py:215
 msgid "consumed"
 msgstr "consumido"
 
-#: freppledb/output/views/buffer.py:41
-#: freppledb/templates/inventoryplanning/drp.html:737
-#: freppledb/templates/output/buffer.html:144
-#: freppledb/templates/output/buffer.html:240
+#: output/views/buffer.py:48 templates/output/buffer.html:134
 msgid "end inventory"
 msgstr "inventario al final"
 
-#: freppledb/output/views/buffer.py:150
+#: output/views/buffer.py:157
 msgid "Inventory detail report"
 msgstr "Informe de detalle de Inventario"
 
-#: freppledb/output/views/buffer.py:188 freppledb/output/views/resource.py:197
+#: output/views/buffer.py:195 output/views/resource.py:204
 msgid "operationplan quantity"
 msgstr "Cantidad en plan de operación"
 
-#: freppledb/output/views/constraint.py:21
+#: output/views/constraint.py:28
 msgid "material"
 msgstr "material"
 
-#: freppledb/output/views/constraint.py:22
+#: output/views/constraint.py:29
 msgid "capacity"
 msgstr "capacidad"
 
-#: freppledb/output/views/constraint.py:27
-#: freppledb/templates/output/resource.html:253
+#: output/views/constraint.py:34 templates/output/resource.html:236
 msgid "overload"
 msgstr "sobrecarga"
 
-#: freppledb/output/views/constraint.py:28
+#: output/views/constraint.py:35
 msgid "underload"
 msgstr "subcarga"
 
-#: freppledb/output/views/constraint.py:29
+#: output/views/constraint.py:36
 msgid "material excess"
 msgstr "exceso de material"
 
-#: freppledb/output/views/constraint.py:30
+#: output/views/constraint.py:37
 msgid "material shortage"
 msgstr "falta de material"
 
-#: freppledb/output/views/constraint.py:31
+#: output/views/constraint.py:38
 msgid "excess"
 msgstr "exceso"
 
-#: freppledb/output/views/constraint.py:32 freppledb/output/widget.py:92
+#: output/views/constraint.py:39 output/widget.py:99
 msgid "short"
 msgstr "corto"
 
-#: freppledb/output/views/constraint.py:33
+#: output/views/constraint.py:40
 msgid "early"
 msgstr "temprano"
 
-#: freppledb/output/views/constraint.py:34
+#: output/views/constraint.py:41
 msgid "late"
 msgstr "tarde"
 
-#: freppledb/output/views/constraint.py:35
+#: output/views/constraint.py:42
 msgid "unplanned"
 msgstr "no planteado"
 
-#: freppledb/output/views/constraint.py:36
+#: output/views/constraint.py:43
 msgid "precedence"
 msgstr "prioridad"
 
-#: freppledb/output/views/constraint.py:37
+#: output/views/constraint.py:44
 msgid "before fence"
 msgstr "antes de valla"
 
-#: freppledb/output/views/constraint.py:38
+#: output/views/constraint.py:45
 msgid "before current"
 msgstr "antes de actual"
 
-#: freppledb/output/views/constraint.py:61
+#: output/views/constraint.py:68
 msgid "Constraint report"
 msgstr "Constraint rapport"
 
-#: freppledb/output/views/demand.py:27
+#: output/views/demand.py:34
 msgid "Demand report"
 msgstr "Informe de órdenes"
 
-#: freppledb/output/views/demand.py:35
-msgid "net forecast"
-msgstr "previsión neto"
+#: output/views/demand.py:43 templates/output/demand.html:127
+#: templates/output/demand.html.py:199
+msgid "supply"
+msgstr "suministro"
 
-#: freppledb/output/views/demand.py:36
-msgid "orders"
-msgstr "órdenes"
-
-#: freppledb/output/views/demand.py:38
-#: freppledb/templates/inventoryplanning/drp.html:518
-#: freppledb/templates/inventoryplanning/drp.html:531
-msgid "total supply"
-msgstr "suministro total"
-
-#: freppledb/output/views/demand.py:39
-#: freppledb/templates/output/demand.html:144
-#: freppledb/templates/output/demand.html:218
+#: output/views/demand.py:44 templates/output/demand.html:129
+#: templates/output/demand.html.py:200
 msgid "backlog"
 msgstr "atraso"
 
-#: freppledb/output/views/demand.py:173
+#: output/views/demand.py:164
 msgid "Demand plan detail"
 msgstr "Detalle de plan de demanda"
 
-#: freppledb/output/views/demand.py:186
+#: output/views/demand.py:176
 msgid "due date"
 msgstr "fecha límite"
 
-#: freppledb/output/views/kpi.py:20
+#: output/views/kpi.py:27
 msgid "Performance Indicators"
 msgstr "Indicadores de rendimiento"
 
-#: freppledb/output/views/operation.py:27
+#: output/views/operation.py:34
 msgid "Operation report"
 msgstr "Informe de operaciones"
 
-#: freppledb/output/views/operation.py:36
-#: freppledb/templates/output/operation.html:140
-#: freppledb/templates/output/operation.html:311
+#: output/views/operation.py:43 templates/output/operation.html:126
+#: templates/output/operation.html:297
 msgid "locked starts"
 msgstr "inicios trabados"
 
-#: freppledb/output/views/operation.py:37
-#: freppledb/templates/output/operation.html:142
+#: output/views/operation.py:44 templates/output/operation.html:128
 msgid "total starts"
 msgstr "total de inicios"
 
-#: freppledb/output/views/operation.py:38
-#: freppledb/templates/output/operation.html:144
-#: freppledb/templates/output/operation.html:313
+#: output/views/operation.py:45 templates/output/operation.html:130
+#: templates/output/operation.html:299
 msgid "locked ends"
 msgstr "fines trabados"
 
-#: freppledb/output/views/operation.py:39
-#: freppledb/templates/output/operation.html:146
+#: output/views/operation.py:46 templates/output/operation.html:132
 msgid "total ends"
 msgstr "total fines"
 
-#: freppledb/output/views/operation.py:115
+#: output/views/operation.py:122
 msgid "Operation detail report"
 msgstr "Informe de detalle de operaciones"
 
-#: freppledb/output/views/pegging.py:28
+#: output/views/pegging.py:35
 msgid "Demand plan"
 msgstr "Plan de demanda"
 
-#: freppledb/output/views/problem.py:38
+#: output/views/problem.py:45
 msgid "Problem report"
 msgstr "Probleem rapport"
 
-#: freppledb/output/views/resource.py:29
+#: output/views/resource.py:36
 msgid "Resource report"
 msgstr "Informe de recursos"
 
-#: freppledb/output/views/resource.py:37 freppledb/output/views/resource.py:46
-#: freppledb/output/views/resource.py:225
+#: output/views/resource.py:44 output/views/resource.py:53
 msgid "utilization %"
 msgstr "utilización %"
 
-#: freppledb/output/views/resource.py:66
+#: output/views/resource.py:73
 msgid "hours"
 msgstr "horas"
 
-#: freppledb/output/views/resource.py:68
-#: freppledb/planningboard/templates/planningboard/index.html:162
-#: freppledb/templates/admin/base_site_grid.html:142
-#: freppledb/templates/admin/base_site_gridpivot.html:141
+#: output/views/resource.py:75 templates/admin/base_site_grid.html:126
+#: templates/admin/base_site_gridpivot.html:119
 msgid "weeks"
 msgstr "semanas"
 
-#: freppledb/output/views/resource.py:70 freppledb/output/views/resource.py:72
-#: freppledb/planningboard/templates/planningboard/index.html:161
-#: freppledb/templates/admin/base_site_grid.html:141
-#: freppledb/templates/admin/base_site_gridpivot.html:140
-#: freppledb/templates/inventoryplanning/drp.html:1393
-#: freppledb/templates/inventoryplanning/drp.html:1405
-#: freppledb/templates/inventoryplanning/drp.html:1407
+#: output/views/resource.py:77 output/views/resource.py:79
+#: templates/admin/base_site_grid.html:125
+#: templates/admin/base_site_gridpivot.html:118
 msgid "days"
 msgstr "días"
 
-#: freppledb/output/views/resource.py:162
+#: output/views/resource.py:169
 msgid "Resource detail report"
 msgstr "Informe de detalle de recursos"
 
-#: freppledb/output/views/resource.py:199
+#: output/views/resource.py:206
 msgid "load quantity"
 msgstr "cantidad de carga"
 
-#: freppledb/output/views/resource.py:213
-msgid "Resource Gantt report"
-msgstr "Informe de Recursos (Gantt)"
-
-#: freppledb/output/widget.py:30
+#: output/widget.py:37
 msgid "Late orders"
 msgstr "Órdenes con retraso"
 
-#: freppledb/output/widget.py:31
+#: output/widget.py:38
 msgid "Shows orders that will be delivered after their due date"
 msgstr ""
 "Muestra las órdenes que se entregarán después de su fecha de vencimiento"
 
-#: freppledb/output/widget.py:52
+#: output/widget.py:59
 msgid "delay"
 msgstr "retardo"
 
-#: freppledb/output/widget.py:69
+#: output/widget.py:76
 msgid "Short orders"
 msgstr "Órdenes cortas"
 
-#: freppledb/output/widget.py:70
+#: output/widget.py:77
 msgid "Shows orders that are not planned completely"
 msgstr "Muestra las órdenes que no estan completamente planificadas"
 
-#: freppledb/output/widget.py:109
+#: output/widget.py:116
 msgid "Purchase queue"
 msgstr "Cola de compras"
 
-#: freppledb/output/widget.py:110
+#: output/widget.py:117
 msgid "Display a list of new purchase orders"
 msgstr "Mostrar una lista de nuevas órdenes de compra"
 
-#: freppledb/output/widget.py:149
+#: output/widget.py:156
 msgid "Shipping queue"
 msgstr "Cola de envíos"
 
-#: freppledb/output/widget.py:150
+#: output/widget.py:157
 msgid "Display a list of new distribution orders"
 msgstr "Mostrar una lista de nuevas órdenes de distribución"
 
-#: freppledb/output/widget.py:190
+#: output/widget.py:197
 msgid "Resource queue"
 msgstr "Cola de recursos"
 
-#: freppledb/output/widget.py:191
+#: output/widget.py:198
 msgid "Display planned activities for the resources"
 msgstr "Mostrar actividades planificadas para los recursos"
 
-#: freppledb/output/widget.py:230
+#: output/widget.py:237
 msgid "Purchase order analysis"
 msgstr "Análisis de órdenes de compra"
 
-#: freppledb/output/widget.py:231
+#: output/widget.py:238
 msgid "Analyse the urgency of existing purchase orders"
 msgstr "Analizar la urgencia de las órdenes de compra existentes"
 
-#: freppledb/output/widget.py:266
+#: output/widget.py:273
 msgid "Alerts"
 msgstr "Alertas"
 
-#: freppledb/output/widget.py:267
+#: output/widget.py:274
 msgid "Overview of all alerts in the plan"
 msgstr "Resumen de todos los alertas en el plan"
 
-#: freppledb/output/widget.py:277
+#: output/widget.py:284
 msgid "count"
 msgstr "cuenta"
 
-#: freppledb/output/widget.py:302
+#: output/widget.py:309
 msgid "Resource utilization"
 msgstr "Utilización de recurso"
 
-#: freppledb/output/widget.py:303
+#: output/widget.py:310
 msgid "Shows the resources with the highest utilization"
 msgstr "Muestra los recursos con la utilización más alta"
 
-#: freppledb/output/widget.py:403
+#: output/widget.py:410
 msgid "Inventory by location"
 msgstr "Inventario por ubicación"
 
-#: freppledb/output/widget.py:404
+#: output/widget.py:411
 msgid "Display the locations with the highest inventory value"
 msgstr "Mostrar las ubicaciones con más alto valor de inventario"
 
-#: freppledb/output/widget.py:492
+#: output/widget.py:499
 msgid "Inventory by item"
 msgstr "Inventario por artículo"
 
-#: freppledb/output/widget.py:493
+#: output/widget.py:500
 msgid "Display the items with the highest inventory value"
 msgstr "Mostrar los artículos con el valor de inventario más alto"
 
-#: freppledb/output/widget.py:581
+#: output/widget.py:588
 msgid "Delivery performance"
 msgstr "Rendimiento de entregas"
 
-#: freppledb/output/widget.py:582
+#: output/widget.py:589
 msgid ""
 "Shows the percentage of demands that are planned to be shipped completely on "
 "time"
@@ -3041,193 +2152,70 @@ msgstr ""
 "Muestra el porcentaje de órdenes que se planeó para ser enviado "
 "completamente a tiempo"
 
-#: freppledb/output/widget.py:621
+#: output/widget.py:628
 msgid "On time delivery"
 msgstr "Entrega sin retraso"
 
-#: freppledb/planningboard/menu.py:15 freppledb/planningboard/views.py:40
-msgid "Planning board"
-msgstr "Tabla de planificación"
-
-#: freppledb/planningboard/models.py:30 freppledb/planningboard/models.py:31
-msgid "chat history"
-msgstr "historial de chat"
-
-#: freppledb/planningboard/templates/planningboard/index.html:80
-#: freppledb/templates/output/pegging.html:87
-#: freppledb/templates/output/resourcegantt.html:89
-msgid "zoom in"
-msgstr "hacer zoom"
-
-#: freppledb/planningboard/templates/planningboard/index.html:81
-#: freppledb/templates/output/pegging.html:88
-#: freppledb/templates/output/resourcegantt.html:90
-msgid "zoom out"
-msgstr "reducir zoom"
-
-#: freppledb/planningboard/templates/planningboard/index.html:82
-#: freppledb/templates/output/pegging.html:89
-#: freppledb/templates/output/resourcegantt.html:91
-msgctxt "Gantt"
-msgid "move in"
-msgstr "moverse para"
-
-#: freppledb/planningboard/templates/planningboard/index.html:83
-#: freppledb/templates/output/pegging.html:90
-#: freppledb/templates/output/resourcegantt.html:92
-msgctxt "Gantt"
-msgid "move out"
-msgstr "salir de"
-
-#: freppledb/planningboard/templates/planningboard/index.html:84
-#: freppledb/templates/output/pegging.html:91
-#: freppledb/templates/output/resourcegantt.html:93
-msgid "reset"
-msgstr "restaurar"
-
-#: freppledb/planningboard/templates/planningboard/index.html:85
-#: freppledb/templates/admin/base_site_gridpivot.html:110
-#: freppledb/templates/output/resourcegantt.html:95
-msgid "configure time buckets"
-msgstr "configurar intervalos de tiempo"
-
-#: freppledb/planningboard/templates/planningboard/index.html:98
-msgid "messages"
-msgstr "mensajes"
-
-#: freppledb/planningboard/templates/planningboard/index.html:99
-msgid "chart"
-msgstr "diagrama"
-
-#: freppledb/planningboard/templates/planningboard/index.html:103
-msgid "clear the plan of selected demands"
-msgstr "limpiar la planificación de las demandas seleccionadas"
-
-#: freppledb/planningboard/templates/planningboard/index.html:104
-msgid "plan selected demands backward from their due date"
-msgstr "planificación de las demandas seleccionadas antes de fecha limite"
-
-#: freppledb/planningboard/templates/planningboard/index.html:105
-msgid "plan selected demands forward from the current date"
-msgstr "planificación de las demandas seleccionadas después de la fecha de hoy"
-
-#: freppledb/planningboard/templates/planningboard/index.html:106
-#: freppledb/planningboard/templates/planningboard/index.html:112
-#: freppledb/planningboard/templates/planningboard/index.html:118
-#: freppledb/planningboard/templates/planningboard/index.html:124
-msgid "add to the graph"
-msgstr "añadir al gráfico"
-
-#: freppledb/planningboard/templates/planningboard/index.html:136
-msgid "send"
-msgstr "enviar"
-
-#: freppledb/planningboard/templates/planningboard/index.html:148
-#: freppledb/templates/admin/base_site_grid.html:128
-#: freppledb/templates/admin/base_site_gridpivot.html:127
-msgid "time buckets"
-msgstr "Intervalos de tiempo"
-
-#: freppledb/planningboard/templates/planningboard/index.html:150
-#: freppledb/templates/admin/base_site_grid.html:130
-#: freppledb/templates/admin/base_site_gridpivot.html:129
-msgid "bucket size"
-msgstr "Tamaño del intervalo"
-
-#: freppledb/planningboard/templates/planningboard/index.html:154
-#: freppledb/templates/admin/base_site_grid.html:134
-#: freppledb/templates/admin/base_site_gridpivot.html:133
-msgid "from"
-msgstr "de"
-
-#: freppledb/planningboard/templates/planningboard/index.html:156
-#: freppledb/templates/admin/base_site_grid.html:136
-#: freppledb/templates/admin/base_site_gridpivot.html:135
-msgid "to"
-msgstr "a"
-
-#: freppledb/planningboard/templates/planningboard/index.html:163
-#: freppledb/templates/admin/base_site_grid.html:143
-#: freppledb/templates/admin/base_site_gridpivot.html:142
-msgid "months"
-msgstr "meses"
-
-#: freppledb/planningboard/templates/planningboard/index.html:164
-#: freppledb/templates/admin/base_site_grid.html:144
-#: freppledb/templates/admin/base_site_gridpivot.html:143
-msgid "after plan current date"
-msgstr "después de fecha planificada corriente"
-
-#: freppledb/quoting/views.py:58
-msgid "Quotes"
-msgstr "Cotizaciones"
-
 # Translation included with django
-#: freppledb/settings.py:102
+#: settings.py:109
 msgid "English"
 msgstr "Inglés"
 
 # Translation included with django
-#: freppledb/settings.py:103
+#: settings.py:110
 msgid "French"
 msgstr "Francés"
 
 # Translation included with django
-#: freppledb/settings.py:104
+#: settings.py:111
 msgid "Italian"
 msgstr "Italiano"
 
 # Translation included with django
-#: freppledb/settings.py:105
+#: settings.py:112
 msgid "Japanese"
 msgstr "Japonés"
 
 # Translation included with django
-#: freppledb/settings.py:106
+#: settings.py:113
 msgid "Dutch"
 msgstr "Holandés"
 
-#: freppledb/settings.py:107
+#: settings.py:114
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: freppledb/settings.py:108
+#: settings.py:115
 msgid "Brazilian Portuguese"
 msgstr "Portugués de Brazil"
 
 # Translation included with django
-#: freppledb/settings.py:109
+#: settings.py:116
 msgid "Simplified Chinese"
 msgstr "Chino Simplificado"
 
 # Translation included with django
-#: freppledb/settings.py:110
+#: settings.py:117
 msgid "Traditional Chinese"
 msgstr "Chino Tradicional"
 
 # Translation included with django
-#: freppledb/templates/404.html:8
-msgctxt "Translation included in Django"
-msgid "Page not found"
-msgstr "Página no encontrada"
-
-# Translation included with django
-#: freppledb/templates/404.html:10
+#: templates/404.html:10
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Lo sentimos, la página solicitada no se pudo encontrar."
 
 # Translation included with django
-#: freppledb/templates/500.html:4
+#: templates/500.html:4
 msgid "Server error (500)"
 msgstr "Error del Servidor (500)"
 
 # Translation included with django
-#: freppledb/templates/500.html:7
+#: templates/500.html:7
 msgid "Server Error <em>(500)</em>"
 msgstr "Error del Servidor <em>(500)</em>"
 
 # Translation included with django
-#: freppledb/templates/500.html:8
+#: templates/500.html:8
 msgid ""
 "There's been an error. It's been reported to the site administrators via "
 "email and should be fixed shortly. Thanks for your patience."
@@ -3236,117 +2224,141 @@ msgstr ""
 "sitio vía correo electrónico, y se debe corregir en breve. Gracias por su "
 "paciencia."
 
-#: freppledb/templates/admin/base_site.html:34
-#: freppledb/templates/admin/index.html:6
+#: templates/admin/base_site.html:31 templates/admin/index.html:5
 msgid "cockpit"
 msgstr "cockpit"
 
-#: freppledb/templates/admin/base_site_grid.html:18
-#: freppledb/templates/admin/base_site_gridpivot.html:26
+#: templates/admin/base_site_grid.html:17
+#: templates/admin/base_site_gridpivot.html:24
 msgid "Error: Missing time buckets or bucket dates"
 msgstr "Error: Falta tiempo o fecha de intervalo"
 
 # Translation included with django
-#: freppledb/templates/admin/base_site_grid.html:60
-#: freppledb/templates/admin/base_site_gridpivot.html:65
+#: templates/admin/base_site_grid.html:52
+#: templates/admin/base_site_gridpivot.html:56
 msgid "Warning: no data found"
 msgstr "Página no encontrada"
 
-#: freppledb/templates/admin/base_site_grid.html:64
-#: freppledb/templates/admin/base_site_gridpivot.html:69
+#: templates/admin/base_site_grid.html:56
+#: templates/admin/base_site_gridpivot.html:60
 msgid "Error retrieving report data"
 msgstr "Error al recuperar datos de informe"
 
-#: freppledb/templates/admin/base_site_grid.html:100
-#: freppledb/templates/admin/base_site_gridpivot.html:109
-#: freppledb/templates/inventoryplanning/drp.html:1333
-#: freppledb/templates/output/resourcegantt.html:94
+#: templates/admin/base_site_grid.html:85
+#: templates/admin/base_site_gridpivot.html:88
 msgid "filter data"
 msgstr "Filtrar datos"
 
-#: freppledb/templates/admin/base_site_grid.html:102
+#: templates/admin/base_site_grid.html:87
 msgid "Create new object"
 msgstr "Crear nuevo objeto"
 
-#: freppledb/templates/admin/base_site_grid.html:103
+#: templates/admin/base_site_grid.html:88
 msgid "Copy selected objects"
 msgstr "Copiar objetos seleccionados"
 
-#: freppledb/templates/admin/base_site_grid.html:104
+#: templates/admin/base_site_grid.html:89
 msgid "Delete selected objects"
 msgstr "Eliminar objetos seleccionados"
 
-#: freppledb/templates/admin/base_site_grid.html:105
-#: freppledb/templates/inventoryplanning/drp.html:1334
+#: templates/admin/base_site_grid.html:90
 msgid "Configure time buckets"
 msgstr "Configurar intervalos de tiempo"
 
-#: freppledb/templates/admin/base_site_grid.html:106
-#: freppledb/templates/admin/base_site_gridpivot.html:111
+#: templates/admin/base_site_grid.html:91
+#: templates/admin/base_site_gridpivot.html:90
 msgid "import CSV or Excel file"
 msgstr "importar archivo CSV o Excel"
 
-#: freppledb/templates/admin/base_site_grid.html:107
-#: freppledb/templates/admin/base_site_gridpivot.html:112
+#: templates/admin/base_site_grid.html:92
 msgid "export as CSV or Excel file"
 msgstr "exportar como CSV o archivo de Excel"
 
-#: freppledb/templates/admin/base_site_grid.html:108
-#: freppledb/templates/admin/base_site_gridpivot.html:113
-#: freppledb/templates/admin/index.html:5
-#: freppledb/templates/inventoryplanning/drp.html:1336
-#: freppledb/templates/output/pegging.html:92
-#: freppledb/templates/output/resourcegantt.html:96
-msgid "customize"
-msgstr "personalizar"
-
-#: freppledb/templates/admin/base_site_grid.html:113
-#: freppledb/templates/admin/base_site_gridpivot.html:118
-#: freppledb/templates/inventoryplanning/drp.html:1341
+#: templates/admin/base_site_grid.html:97
+#: templates/admin/base_site_gridpivot.html:96
 msgid "save changes"
 msgstr "guardar cambios"
 
-#: freppledb/templates/admin/base_site_grid.html:114
-#: freppledb/templates/admin/base_site_gridpivot.html:119
-#: freppledb/templates/inventoryplanning/drp.html:1342
+#: templates/admin/base_site_grid.html:98
+#: templates/admin/base_site_gridpivot.html:97
 msgid "undo changes"
 msgstr "deshacer cambios"
 
-#: freppledb/templates/admin/base_site_grid.html:117
-#: freppledb/templates/inventoryplanning/drp.html:1347
+#: templates/admin/base_site_grid.html:101
 msgid "select action"
 msgstr "seleccionar acción"
 
-#: freppledb/templates/admin/base_site_gridpivot.html:105
+#: templates/admin/base_site_grid.html:112
+#: templates/admin/base_site_gridpivot.html:105
+msgid "time buckets"
+msgstr "Intervalos de tiempo"
+
+#: templates/admin/base_site_grid.html:114
+#: templates/admin/base_site_gridpivot.html:107
+msgid "bucket size"
+msgstr "Tamaño del intervalo"
+
+#: templates/admin/base_site_grid.html:118
+#: templates/admin/base_site_gridpivot.html:111
+msgid "from"
+msgstr "de"
+
+#: templates/admin/base_site_grid.html:120
+#: templates/admin/base_site_gridpivot.html:113
+msgid "to"
+msgstr "a"
+
+#: templates/admin/base_site_grid.html:127
+#: templates/admin/base_site_gridpivot.html:120
+msgid "months"
+msgstr "meses"
+
+#: templates/admin/base_site_grid.html:128
+#: templates/admin/base_site_gridpivot.html:121
+msgid "after plan current date"
+msgstr "después de fecha planificada corriente"
+
+#: templates/admin/base_site_gridpivot.html:84
 msgid "display table"
 msgstr "mostrar la tabla"
 
-#: freppledb/templates/admin/base_site_gridpivot.html:106
+#: templates/admin/base_site_gridpivot.html:85
 msgid "display graph"
 msgstr "mostrar gráfico"
 
+#: templates/admin/base_site_gridpivot.html:89
+msgid "configure time buckets"
+msgstr "configurar intervalos de tiempo"
+
+#: templates/admin/base_site_gridpivot.html:91 templates/output/pegging.html:92
+msgid "customize"
+msgstr "personalizar"
+
+#: templates/admin/base_site_nav.html:9
+#| msgid "search mode"
+msgid "search"
+msgstr "búsqueda"
+
 # Translation included with django
-#: freppledb/templates/admin/change_form.html:26
-#: freppledb/templates/admin/login.html:63
-#: freppledb/templates/auth/change_password.html:18
+#: templates/admin/change_form.html:26 templates/admin/login.html:65
+#: templates/auth/change_password.html:18
 msgid "Please correct the error below."
 msgstr "Por favor corregir el error debajo."
 
 # Translation included with django
-#: freppledb/templates/admin/change_form.html:26
-#: freppledb/templates/admin/login.html:63
-#: freppledb/templates/auth/change_password.html:18
+#: templates/admin/change_form.html:26 templates/admin/login.html:65
+#: templates/auth/change_password.html:18
 msgid "Please correct the errors below."
 msgstr "Por favor corregir los errores debajo."
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:16
-#: freppledb/templates/admin/submit_line.html:6
+#: templates/admin/delete_confirmation.html:16
+#: templates/admin/submit_line.html:6
 msgid "delete"
 msgstr "eliminar"
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:19
+#: templates/admin/delete_confirmation.html:19
 #, python-format
 msgid ""
 "Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
@@ -3358,7 +2370,7 @@ msgstr ""
 "siguientes tipos de objetos:"
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:26
+#: templates/admin/delete_confirmation.html:26
 #, python-format
 msgid ""
 "Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
@@ -3368,7 +2380,7 @@ msgstr ""
 "de objetos protegidos relacionados:"
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:33
+#: templates/admin/delete_confirmation.html:33
 #, python-format
 msgid ""
 "Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
@@ -3378,56 +2390,55 @@ msgstr ""
 "los siguientes artículos relacionados serán eliminados:"
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:35
+#: templates/admin/delete_confirmation.html:35
 msgid "objects"
 msgstr "objetos"
 
 # Translation included with django
-#: freppledb/templates/admin/delete_confirmation.html:42
+#: templates/admin/delete_confirmation.html:42
 msgid "Yes, I'm sure"
 msgstr "Sí estoy seguro"
 
-#: freppledb/templates/admin/delete_confirmation.html:43
+#: templates/admin/delete_confirmation.html:43
 msgid "No, take me back"
 msgstr "No, volver"
 
 # Translation included with django
-#: freppledb/templates/admin/edit_inline/tabular.html:20
+#: templates/admin/edit_inline/tabular.html:20
 msgid "delete?"
 msgstr "¿Eliminar?"
 
-#: freppledb/templates/admin/edit_inline/tabular.html:25
+#: templates/admin/edit_inline/tabular.html:25
 #, python-format
 msgid "More records exists. Only %(limit)s are shown."
 msgstr "Más registros existen. Sólo %(limit)s se muestran."
 
 # Translation included with django
-#: freppledb/templates/admin/edit_inline/tabular.html:35
+#: templates/admin/edit_inline/tabular.html:35
 msgid "View on site"
 msgstr "Ver en el sitio"
 
 # Translation included with django
-#: freppledb/templates/admin/edit_inline/tabular.html:89
+#: templates/admin/edit_inline/tabular.html:89
 #, python-format
 msgid "Add another %(verbose_name)s"
 msgstr "Añadir otro %(verbose_name)s"
 
 # Translation included with django
-#: freppledb/templates/admin/edit_inline/tabular.html:90
+#: templates/admin/edit_inline/tabular.html:90
 msgid "remove"
 msgstr "quitar"
 
-#: freppledb/templates/admin/index.html:76
-#: freppledb/templates/execute/execute.html:42
+#: templates/admin/index.html:66 templates/execute/execute.html:34
 msgid "failed"
 msgstr "ha fracasado"
 
 # Translation included with django
-#: freppledb/templates/admin/login.html:83
+#: templates/admin/login.html:85
 msgid "password:"
 msgstr "contraseña:"
 
-#: freppledb/templates/admin/login.html:103
+#: templates/admin/login.html:105
 msgid ""
 "The user \"admin\" has password \"admin\".<br/>\n"
 "We suggest changing this password."
@@ -3435,22 +2446,22 @@ msgstr ""
 "El usuario \"admin\" tiene la contraseña \"admin\".<br/>\n"
 "Sugerimos cambiar la contraseña."
 
-#: freppledb/templates/admin/object_history.html:4
+#: templates/admin/object_history.html:4
 msgid "change history"
 msgstr "historial de cambios"
 
 # Translation included with django
-#: freppledb/templates/admin/object_history.html:16
+#: templates/admin/object_history.html:16
 msgid "date/time"
 msgstr "fecha/hora"
 
 # Translation included with django
-#: freppledb/templates/admin/object_history.html:18
+#: templates/admin/object_history.html:18
 msgid "action"
 msgstr "acción"
 
 # Translation included with django
-#: freppledb/templates/admin/object_history.html:32
+#: templates/admin/object_history.html:32
 msgid ""
 "This object doesn't have a change history. It probably wasn't added via this "
 "admin site."
@@ -3458,61 +2469,54 @@ msgstr ""
 "Este objeto no tiene un historial de cambios. Es probable que no se añadió a "
 "través de este sitio de administración."
 
-#: freppledb/templates/auth/change_password.html:22
+#: templates/auth/change_password.html:22
 #, python-format
 msgid "Enter a new password for the user <strong>%(username)s</strong>."
 msgstr "Introducir una nueva contraseña <strong>%(username)s</strong>."
 
 # Translation included with django
-#: freppledb/templates/auth/change_password.html:45
+#: templates/auth/change_password.html:45
 msgid "change password"
 msgstr "cambiar la contraseña"
 
-#: freppledb/templates/buffertabs.html:8 freppledb/templates/itemtabs.html:8
-#: freppledb/templates/operationtabs.html:8
-#: freppledb/templates/resourcetabs.html:9
-msgid "plan detail"
-msgstr "detalle del plan"
+#: templates/common/comments.html:20 templates/common/preferences.html:22
+msgctxt "Included in Django translations"
+msgid "Save"
+msgstr ""
 
-#: freppledb/templates/execute/execute.html:40
-#: freppledb/templates/execute/execute.html:44
-msgctxt "Translation included in Django"
-msgid "Cancel"
-msgstr "Cancelar"
+#: templates/execute/execute.html:32 templates/execute/execute.html.py:36
+#| msgid "canceled"
+msgid "cancel"
+msgstr "cancelar"
 
-#: freppledb/templates/execute/execute.html:44
+#: templates/execute/execute.html:36
 msgid "waiting"
 msgstr "esperando"
 
-#: freppledb/templates/execute/execute.html:46
+#: templates/execute/execute.html:38
 msgid "done"
 msgstr "finalizado"
 
-#: freppledb/templates/execute/execute.html:48
+#: templates/execute/execute.html:40
 msgid "canceled"
 msgstr "cancelado"
 
-#: freppledb/templates/execute/execute.html:230
+#: templates/execute/execute.html:222
 msgid "autorefresh"
 msgstr "autoactualizar"
 
-#: freppledb/templates/execute/execute.html:233
+#: templates/execute/execute.html:225
 msgid "launch new tasks"
 msgstr "lanzar nuevas tareas"
 
-#: freppledb/templates/execute/execute.html:243
-#: freppledb/templates/execute/execute.html:317
-#: freppledb/templates/execute/execute.html:360
-#: freppledb/templates/execute/execute.html:369
-#: freppledb/templates/execute/execute.html:380
-#: freppledb/templates/execute/execute.html:395
-#: freppledb/templates/execute/execute.html:402
-#: freppledb/templates/execute/execute.html:410
-#: freppledb/templates/execute/execute.html:429
+#: templates/execute/execute.html:235 templates/execute/execute.html.py:330
+#: templates/execute/execute.html:339 templates/execute/execute.html.py:350
+#: templates/execute/execute.html:365 templates/execute/execute.html.py:372
+#: templates/execute/execute.html:380 templates/execute/execute.html.py:399
 msgid "launch"
 msgstr "lanzar"
 
-#: freppledb/templates/execute/execute.html:244
+#: templates/execute/execute.html:236
 msgid ""
 "\n"
 "Load frePPLe from the database and live data sources...<br>\n"
@@ -3528,89 +2532,52 @@ msgstr ""
 "<br>\n"
 "<b>Tipo de plan</b><br>"
 
-#: freppledb/templates/execute/execute.html:250
+#: templates/execute/execute.html:243
+#| msgid ""
+#| "<span title=\"Generate a manufacturing and distribution plan that "
+#| "respects all constraints.<br>In case of shortages the demand is planned "
+#| "late or short.\">Constrained plan</span>"
 msgid ""
-"<span title = \"Compute the statistical sales forecast\" >Generate forecast</"
-"span>"
-msgstr ""
-"<span title = \"Calcular la previsión estadística de ventas\" >Generar "
-"previsión</span>"
-
-#: freppledb/templates/execute/execute.html:252
-msgid ""
-"<span title=\"Compute the safety stock and reorder points\">Generate "
-"inventory planning parameters</span>"
-msgstr ""
-"<span title=\"Calcular inventario de seguridad y puntos de creacción de "
-"nuevas órdenes\">Generar parametros de planificación de inventario</span>"
-
-#: freppledb/templates/execute/execute.html:254
-msgid "Generate production plan"
-msgstr "Generar un plan de producción"
-
-#: freppledb/templates/execute/execute.html:256
-msgid ""
-"<span title=\"Generate a manufacturing and distribution plan that respects "
-"all constraints.<br>In case of shortages the demand is planned late or short."
-"\">Constrained plan</span>"
+"<span title=\"This plan respects the constraints enabled below.<br>In case "
+"of shortages the demand is planned late or short.\">Constrained plan</span>"
 msgstr ""
 "<span title=\"Generar un plan de producción y distribición que respecta "
-"todas las restriciones.<br>En caso de escasez la demanda es planteada con "
-"retraso o a corto.\">Plan con restriciones</span>"
+"todas las restriciones definidas.<br>En caso de escasez la demanda es "
+"planteada con retraso o a corto.\">Plan con restriciones</span>"
 
-#: freppledb/templates/execute/execute.html:259
+#: templates/execute/execute.html:246
+#| msgid ""
+#| "<span title=\"Generate a manufacturing and distribution plan that shows "
+#| "material, capacity and operation problems that prevent the demand from "
+#| "being planned in time.<br>The demand is always met completely and on time."
+#| "\">Unconstrained plan</span>"
 msgid ""
-"<span title=\"Generate a manufacturing and distribution plan that shows "
-"material, capacity and operation problems that prevent the demand from being "
-"planned in time.<br>The demand is always met completely and on time."
-"\">Unconstrained plan</span>"
+"<span title=\"This plan shows material, capacity and operation problems that "
+"prevent the demand from being planned in time.<br/>The demand is always met "
+"completely and on time.\">Unconstrained plan</span>"
 msgstr ""
 "<span title=\"Generar un plan de producción y distribición que muestra "
 "problemas de materiales, capacidad y operación impeditivos para la "
 "planificación a tiempo de la demanda.<br>La demanda siempre se cumple por "
 "completo y a tiempo.\">Plan sin restriciones</span>"
 
-#: freppledb/templates/execute/execute.html:261
-msgid ""
-"<span title=\"Scan for expected inventory stockouts\">Evaluate stock "
-"position</span>"
-msgstr ""
-"<span title=\"Buscar agotamientos de inventario previstos\">Evaluar posición "
-"de stock</span>"
-
-#: freppledb/templates/execute/execute.html:265
+#: templates/execute/execute.html:250
 msgid "Capacity: respect capacity limits"
 msgstr "Capacidad: respectar límites de capacidad"
 
-#: freppledb/templates/execute/execute.html:266
+#: templates/execute/execute.html:251
 msgid "Material: respect procurement limits"
 msgstr "Material: respectar límites de adquisiciones"
 
-#: freppledb/templates/execute/execute.html:267
+#: templates/execute/execute.html:252
 msgid "Lead time: do not plan in the past"
 msgstr "Plazo de ejecución: no planear en el pasado"
 
-#: freppledb/templates/execute/execute.html:268
+#: templates/execute/execute.html:253
 msgid "Release fence: do not plan within the release time window"
 msgstr "Valla de emisión: no planificar en este intervalo de tiempo"
 
-#: freppledb/templates/execute/execute.html:270
-msgid ""
-"<b title=\"The planning engine is normally shut down after generating the "
-"plan.<br><br>With this option you can keep the plan active in memory as a "
-"web service, which is used for order quoting and interactive planning.\">Web "
-"service</b>"
-msgstr ""
-"<b title = \"El motor de la planificación es normalmente cerrado después de "
-"generar el plan.<br><br>Con esta opción se puede mantener el plan activo en "
-"la memoria como un servicio web, que se utiliza para la cotización de "
-"órdenes y la planificación interactiva.\" > Servicio web </ b>"
-
-#: freppledb/templates/execute/execute.html:272
-msgid "Keep active in memory"
-msgstr "Mantenerse activo en la memoria"
-
-#: freppledb/templates/execute/execute.html:275
+#: templates/execute/execute.html:256
 #, python-format
 msgid ""
 "<b title=\"A live data source allows your frePPLe plan to be 100%% in sync "
@@ -3626,39 +2593,39 @@ msgstr ""
 "guarda una copia de los datos en su propia base de datos para los informes. "
 "\">Fuentes de datos en vivo</ b>"
 
-#: freppledb/templates/execute/execute.html:279
+#: templates/execute/execute.html:260
 msgid "read"
 msgstr "leer"
 
-#: freppledb/templates/execute/execute.html:280
+#: templates/execute/execute.html:261
 msgid "write"
 msgstr "escribir"
 
-#: freppledb/templates/execute/execute.html:286
+#: templates/execute/execute.html:267
 msgid "View log file"
 msgstr "Ver archivo de registro"
 
-#: freppledb/templates/execute/execute.html:292
+#: templates/execute/execute.html:273
 msgid "Export a spreadsheet"
 msgstr "Exportar una hoja de cálculo"
 
-#: freppledb/templates/execute/execute.html:295
+#: templates/execute/execute.html:276
 msgid "export"
 msgstr "exportar"
 
-#: freppledb/templates/execute/execute.html:296
+#: templates/execute/execute.html:277
 msgid "Download all input data in a single spreadsheet."
 msgstr "Descargar todos los datos de entrada en una sola hoja de cálculo."
 
-#: freppledb/templates/execute/execute.html:304
+#: templates/execute/execute.html:285
 msgid "Import a spreadsheet"
 msgstr "Importar una hoja de cálculo"
 
-#: freppledb/templates/execute/execute.html:307
+#: templates/execute/execute.html:288
 msgid "import"
 msgstr "importar"
 
-#: freppledb/templates/execute/execute.html:308
+#: templates/execute/execute.html:289
 msgid ""
 "Import input data from a spreadsheet.<br>The spreadsheet must match the "
 "structure exported with the task above."
@@ -3666,85 +2633,76 @@ msgstr ""
 "Importar datos de entrada de una hoja de cálculo.<br/>La hoja de cálculo "
 "debe coincidir con la estructura exportada de la tarea."
 
-#: freppledb/templates/execute/execute.html:309
+#: templates/execute/execute.html:290
 msgid "Data file"
 msgstr "Archivo de datos"
 
-#: freppledb/templates/execute/execute.html:314
-msgid "web service"
-msgstr "servicio web"
-
-#: freppledb/templates/execute/execute.html:318
-msgid "Stop the web service."
-msgstr "Parar servicio web."
-
-#: freppledb/templates/execute/execute.html:325
+#: templates/execute/execute.html:295
 msgid "scenario management"
 msgstr "gestión de escenario"
 
-#: freppledb/templates/execute/execute.html:332
+#: templates/execute/execute.html:302
 msgid "last refresh"
 msgstr "última actualización"
 
-#: freppledb/templates/execute/execute.html:340
-#: freppledb/templates/execute/execute.html:341
+#: templates/execute/execute.html:310 templates/execute/execute.html.py:311
 msgid "copy"
 msgstr "copiar"
 
-#: freppledb/templates/execute/execute.html:341
+#: templates/execute/execute.html:311
 msgid "into selected scenarios"
 msgstr "en escenarios seleccionados"
 
-#: freppledb/templates/execute/execute.html:344
+#: templates/execute/execute.html:314
 msgid "release"
 msgstr "emitir"
 
-#: freppledb/templates/execute/execute.html:345
+#: templates/execute/execute.html:315
 msgid "release selected scenarios"
 msgstr "emitir escenarios seleccionados"
 
-#: freppledb/templates/execute/execute.html:347
+#: templates/execute/execute.html:317
 msgid "update"
 msgstr "actualización"
 
-#: freppledb/templates/execute/execute.html:348
+#: templates/execute/execute.html:318
 msgid "Update description of selected scenarios"
 msgstr "Actualización de la descripción de los escenarios seleccionados"
 
-#: freppledb/templates/execute/execute.html:357
+#: templates/execute/execute.html:327
 msgid "Back up the database"
 msgstr "Respaldo de la base de datos"
 
-#: freppledb/templates/execute/execute.html:361
+#: templates/execute/execute.html:331
 msgid "Dump the database contents to a file."
 msgstr "Volcar el contenido de bases de datos a un archivo."
 
-#: freppledb/templates/execute/execute.html:365
+#: templates/execute/execute.html:335
 msgid "Empty the database"
 msgstr "Vaciar la base de datos"
 
-#: freppledb/templates/execute/execute.html:370
+#: templates/execute/execute.html:340
 msgid "Erase selected tables in the database."
 msgstr "Borrar tablas seleccionadas en la base de datos."
 
-#: freppledb/templates/execute/execute.html:377
+#: templates/execute/execute.html:347
 msgid "Load a dataset"
 msgstr "Cargar una seria de datos"
 
-#: freppledb/templates/execute/execute.html:381
+#: templates/execute/execute.html:351
 msgid "Load a dataset from a file in the database."
 msgstr "Cargar series de datos de un archivo en la base de datos."
 
-#: freppledb/templates/execute/execute.html:382
+#: templates/execute/execute.html:352
 msgid "Available datasets:"
 msgstr "Series de datos disponibles:"
 
-#: freppledb/templates/execute/execute.html:392
+#: templates/execute/execute.html:362
 #, python-format
 msgid "Import data from %(erp)s"
 msgstr "Importar datos de %(erp)s"
 
-#: freppledb/templates/execute/execute.html:396
+#: templates/execute/execute.html:366
 #, python-format
 msgid ""
 "Import data changes in the last %(delta)s days from the ERP into frePPLe."
@@ -3752,20 +2710,20 @@ msgstr ""
 "Importar los cambios de datos en los últimos  %(delta)s días desde el ERP en "
 "frePPLe."
 
-#: freppledb/templates/execute/execute.html:399
+#: templates/execute/execute.html:369
 #, python-format
 msgid "Export data to %(erp)s"
 msgstr "Exportar datos a %(erp)s"
 
-#: freppledb/templates/execute/execute.html:403
+#: templates/execute/execute.html:373
 msgid "Export frePPLe plan to the ERP."
 msgstr "Exportar plan de frePPLe a ERP."
 
-#: freppledb/templates/execute/execute.html:407
+#: templates/execute/execute.html:377
 msgid "Generate buckets"
 msgstr "Generar intervalos"
 
-#: freppledb/templates/execute/execute.html:411
+#: templates/execute/execute.html:381
 msgid ""
 "Create time buckets for reporting.<br>\n"
 "Start date: <input class=\"date\" name=\"start\" type=\"text\" maxlength="
@@ -3797,11 +2755,11 @@ msgstr ""
 "<option value=\"6\">Sábado</option>\n"
 "</select>\n"
 
-#: freppledb/templates/execute/execute.html:426
+#: templates/execute/execute.html:396
 msgid "Generate model"
 msgstr "Generar modelo"
 
-#: freppledb/templates/execute/execute.html:430
+#: templates/execute/execute.html:400
 msgid ""
 "Create a sample model in the database.<br>\n"
 "The parameters control the size and complexity.<br>\n"
@@ -3878,371 +2836,152 @@ msgstr ""
 "&nbsp;&nbsp;Utilización média expectada de recursos: <span id=\"util\">76.7</"
 "span>&#37;<br>\n"
 
-#: freppledb/templates/execute/execute.html:451
+#: templates/execute/execute.html:421
 msgid "Sorry, You don't have any execute permissions..."
 msgstr "Lo sentimos, usted no tiene permisos para ejecutar..."
 
-#: freppledb/templates/forecast/forecast.html:34
-#: freppledb/templates/inventoryplanning/drp.html:1330
-msgid "display value"
-msgstr "mostrar valor"
-
-#: freppledb/templates/forecast/forecast.html:35
-#: freppledb/templates/inventoryplanning/drp.html:1331
-msgid "display units"
-msgstr "mostrar unidades"
-
-#: freppledb/templates/forecast/forecast.html:40
-#: freppledb/templates/forecast/forecast.html:43
-#: freppledb/templates/forecast/forecast.html:46
-#: freppledb/templates/inventoryplanning/drp.html:1339
-#: freppledb/templates/output/buffer.html:12
-#: freppledb/templates/output/buffer.html:15
-#: freppledb/templates/output/buffer.html:18
-#: freppledb/templates/output/demand.html:12
-#: freppledb/templates/output/demand.html:15
-#: freppledb/templates/output/demand.html:18
-#: freppledb/templates/output/operation.html:12
-#: freppledb/templates/output/operation.html:15
-#: freppledb/templates/output/operation.html:18
-#: freppledb/templates/output/operation.html:21
-#: freppledb/templates/output/resource.html:19
-#: freppledb/templates/output/resourcegantt.html:83
-msgid "detail"
-msgstr "detalle"
-
-#: freppledb/templates/input/path.html:267
+#: templates/input/JJJpath.html:241 templates/input/path.html:267
 msgid "Too many objects to display"
 msgstr "Demasiados objetos para mostrar"
 
-#: freppledb/templates/inventoryplanning/drp.html:29
-msgid "Do you want to save your changes first?"
-msgstr "¿Quieres guardar los cambios primero?"
+#: templates/output/buffer.html:12 templates/output/buffer.html.py:15
+#: templates/output/buffer.html:18 templates/output/demand.html:12
+#: templates/output/demand.html.py:15 templates/output/operation.html:12
+#: templates/output/operation.html.py:15 templates/output/operation.html:18
+#: templates/output/operation.html.py:21 templates/output/resource.html:19
+msgid "detail"
+msgstr "detalle"
 
-#: freppledb/templates/inventoryplanning/drp.html:42
-msgid "no"
-msgstr "no"
-
-#: freppledb/templates/inventoryplanning/drp.html:479
-#: freppledb/templates/inventoryplanning/drp.html:490
-msgid "total orders 3 years ago"
-msgstr "total de órdenes hace 3 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:480
-#: freppledb/templates/inventoryplanning/drp.html:491
-msgid "orders adjustment 3 years ago"
-msgstr "ajuste de órdenes hace 3 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:481
-#: freppledb/templates/inventoryplanning/drp.html:492
-msgid "total orders 2 years ago"
-msgstr "total de órdenes hace 2 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:482
-#: freppledb/templates/inventoryplanning/drp.html:493
-msgid "orders adjustment 2 years ago"
-msgstr "ajuste de órdenes hace 2 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:483
-#: freppledb/templates/inventoryplanning/drp.html:494
-msgid "total orders 1 year ago"
-msgstr "total de órdenes hace 1 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:484
-#: freppledb/templates/inventoryplanning/drp.html:495
-msgid "orders adjustment 1 year ago"
-msgstr "ajuste de órdenes hace 1 años"
-
-#: freppledb/templates/inventoryplanning/drp.html:509
-#: freppledb/templates/inventoryplanning/drp.html:522
-#: freppledb/templates/inventoryplanning/drp.html:729
-msgid "reorder quantity override"
-msgstr "ajuste de cantidad para nuevas órdenes"
-
-#: freppledb/templates/inventoryplanning/drp.html:511
-#: freppledb/templates/inventoryplanning/drp.html:524
-#: freppledb/templates/inventoryplanning/drp.html:733
-msgid "safety stock override"
-msgstr "ajuste de inventario de seguridad"
-
-#: freppledb/templates/inventoryplanning/drp.html:512
-#: freppledb/templates/inventoryplanning/drp.html:525
-msgid "starting inventory"
-msgstr "inventario al inicio"
-
-#: freppledb/templates/inventoryplanning/drp.html:513
-#: freppledb/templates/inventoryplanning/drp.html:526
-msgid "local demand"
-msgstr "demanda local"
-
-#: freppledb/templates/inventoryplanning/drp.html:516
-#: freppledb/templates/inventoryplanning/drp.html:529
-msgid "confirmed supply"
-msgstr "suministro confirmado"
-
-#: freppledb/templates/inventoryplanning/drp.html:517
-#: freppledb/templates/inventoryplanning/drp.html:530
-msgid "proposed supply"
-msgstr "suministro propuesto"
-
-#: freppledb/templates/inventoryplanning/drp.html:519
-#: freppledb/templates/inventoryplanning/drp.html:532
-msgid "ending inventory"
-msgstr "inventario al final"
-
-#: freppledb/templates/inventoryplanning/drp.html:1324
-msgid "no grouping"
-msgstr "sin agrupación"
-
-#: freppledb/templates/inventoryplanning/drp.html:1325
-msgid "group by item"
-msgstr "agrupación por articulo"
-
-#: freppledb/templates/inventoryplanning/drp.html:1326
-msgid "group by location"
-msgstr "agrupación por ubicación"
-
-#: freppledb/templates/inventoryplanning/drp.html:1335
-msgid "Export as CSV or Excel file"
-msgstr "Exportar como CSV o archivo de Excel"
-
-#: freppledb/templates/inventoryplanning/drp.html:1343
-msgid "Recalculate"
-msgstr "Recalcular"
-
-#: freppledb/templates/inventoryplanning/drp.html:1343
-msgid "simulate changes without saving"
-msgstr "simular sin guardar cambios"
-
-# Translation included with django
-#: freppledb/templates/inventoryplanning/drp.html:1361
-msgid "transactions"
-msgstr "transacciones"
-
-#: freppledb/templates/inventoryplanning/drp.html:1371
-msgid "forecast method"
-msgstr "método de previsión"
-
-#: freppledb/templates/inventoryplanning/drp.html:1372
-#: freppledb/templates/inventoryplanning/drp.html:1399
-msgid "automatic"
-msgstr "automático"
-
-#: freppledb/templates/inventoryplanning/drp.html:1373
-msgctxt "forecast method"
-msgid "constant"
-msgstr "constante"
-
-#: freppledb/templates/inventoryplanning/drp.html:1374
-msgctxt "forecast method"
-msgid "trend"
-msgstr "tendencia"
-
-#: freppledb/templates/inventoryplanning/drp.html:1375
-msgctxt "forecast method"
-msgid "seasonal"
-msgstr "temporal"
-
-#: freppledb/templates/inventoryplanning/drp.html:1376
-msgctxt "forecast method"
-msgid "intermittent"
-msgstr "intermitente"
-
-#: freppledb/templates/inventoryplanning/drp.html:1377
-msgctxt "forecast method"
-msgid "moving average"
-msgstr "média móvil"
-
-#: freppledb/templates/inventoryplanning/drp.html:1378
-msgctxt "forecast method"
-msgid "manual"
-msgstr "manual"
-
-#: freppledb/templates/inventoryplanning/drp.html:1391
-msgid "economic order quantity"
-msgstr "cantidad economica de órden"
-
-#: freppledb/templates/inventoryplanning/drp.html:1391
-#: freppledb/templates/inventoryplanning/drp.html:1392
-#: freppledb/templates/inventoryplanning/drp.html:1395
-#: freppledb/templates/inventoryplanning/drp.html:1404
-#: freppledb/templates/inventoryplanning/drp.html:1406
-msgid "units"
-msgstr "unidades"
-
-#: freppledb/templates/inventoryplanning/drp.html:1397
-msgid "statistical distribution"
-msgstr "distribución estadística"
-
-#: freppledb/templates/inventoryplanning/drp.html:1400
-msgctxt "statistical distribution"
-msgid "normal"
-msgstr "normal"
-
-#: freppledb/templates/inventoryplanning/drp.html:1401
-msgctxt "statistical distribution"
-msgid "poisson"
-msgstr "poisson"
-
-#: freppledb/templates/inventoryplanning/drp.html:1402
-msgctxt "statistical distribution"
-msgid "negative binomial"
-msgstr "binomial negativa"
-
-#: freppledb/templates/inventoryplanning/drp.html:1404
-msgid "demand standard deviation"
-msgstr "desviación estándar de demanda"
-
-#: freppledb/templates/inventoryplanning/drp.html:1405
-msgid "lead time standard deviation"
-msgstr "desviación estándar de tiempo de espera"
-
-#: freppledb/templates/inventoryplanning/drp.html:1410
-msgid "don't stock"
-msgstr "no hacer inventario"
-
-#: freppledb/templates/inventoryplanning/drp.html:1417
-msgid "new item comment"
-msgstr "comentario de nuevo articulo"
-
-#: freppledb/templates/inventoryplanning/drp.html:1419
-msgid "new item-location comment"
-msgstr "comentario de nuevo articulo-ubicación"
-
-#: freppledb/templates/inventoryplanning/drp.html:1421
-msgid "new location comment"
-msgstr "comentario de nueva ubicación"
-
-#: freppledb/templates/inventoryplanning/drp.html:1424
-msgid "no comments yet"
-msgstr "Aún no hay comentarios"
-
-#: freppledb/templates/output/demand.html:142
-#: freppledb/templates/output/demand.html:217
-msgid "supply"
-msgstr "suministro"
-
-#: freppledb/templates/output/operation.html:312
+#: templates/output/operation.html:298
 msgid "new starts"
 msgstr "nuevas inicias"
 
-#: freppledb/templates/output/operation.html:314
+#: templates/output/operation.html:300
 msgid "new ends"
 msgstr "nuevos fines"
 
-#: freppledb/templates/output/resourcegantt.html:84
-msgid "pegging"
-msgstr "fijación "
+#: templates/output/pegging.html:87
+msgid "zoom in"
+msgstr "hacer zoom"
 
-#: freppledb/templates/quoting/quote.html:68
-#: freppledb/templates/quoting/quote.html:137
-#: freppledb/templates/quoting/quote.html:252
-#: freppledb/templates/quoting/quote.html:323
-msgid "deliveries"
-msgstr "entregas"
+#: templates/output/pegging.html:88
+msgid "zoom out"
+msgstr "reducir zoom"
 
-#: freppledb/templates/quoting/quote.html:309
-#: freppledb/templates/quoting/quote.html:318
-msgid "quote"
-msgstr "cotización"
+#: templates/output/pegging.html:89
+msgctxt "Gantt"
+msgid "move in"
+msgstr "moverse para"
 
-#: freppledb/templates/quoting/quote.html:317
-msgid "inquiry"
-msgstr "indagación"
+#: templates/output/pegging.html:90
+msgctxt "Gantt"
+msgid "move out"
+msgstr "salir de"
 
-#: freppledb/templates/quoting/quote.html:319
-msgctxt "Included in Django"
-msgid "Cancel"
-msgstr "cancelar"
-
-#: freppledb/templates/quoting/quote.html:320
-msgid "confirm"
-msgstr "confirmar"
+#: templates/output/pegging.html:91
+msgid "reset"
+msgstr "restaurar"
 
 # Translation included with django
-#: freppledb/templates/registration/password_change_form.html:9
+#: templates/registration/password_change_form.html:9
 msgid "Home"
 msgstr "Inicio"
 
-#: freppledb/templates/rest_framework/api.html:25
+#: templates/registration/password_change_form.html:11
+#: templates/registration/password_change_form.html:15
+msgid "Password change"
+msgstr ""
+
+#: templates/rest_framework/api.html:25
 msgid "HTTP request"
 msgstr ""
 
-#: freppledb/templates/rest_framework/api.html:30
+#: templates/rest_framework/api.html:30
 msgid "HTTP response headers"
 msgstr ""
 
-#: freppledb/templates/rest_framework/api.html:40
+#: templates/rest_framework/api.html:41
 msgid "HTTP response content"
 msgstr ""
 
-#: freppledb/templates/rest_framework/api.html:48
+#: templates/rest_framework/api.html:48
 #, python-format
 msgid "Make a GET request to read %(model)s object(s)"
 msgstr "Hacer pedido GET para ler objeto(s) %(model)s"
 
-#: freppledb/templates/rest_framework/api.html:54
-#: freppledb/templates/rest_framework/api.html:62
-#: freppledb/templates/rest_framework/api.html:72
-#: freppledb/templates/rest_framework/api.html:87
-#: freppledb/templates/rest_framework/api.html:99
-#: freppledb/templates/rest_framework/api.html:112
-#: freppledb/templates/rest_framework/api.html:123
-#: freppledb/templates/rest_framework/api.html:126
-#: freppledb/templates/rest_framework/api.html:138
+#: templates/rest_framework/api.html:54 templates/rest_framework/api.html:62
+#: templates/rest_framework/api.html:72 templates/rest_framework/api.html:87
+#: templates/rest_framework/api.html:99 templates/rest_framework/api.html:112
+#: templates/rest_framework/api.html:123 templates/rest_framework/api.html:126
+#: templates/rest_framework/api.html:138
 #, python-format
 msgid "%(http_method)s request"
 msgstr "pedido %(http_method)s"
 
-#: freppledb/templates/rest_framework/api.html:56
+#: templates/rest_framework/api.html:56
 #, python-format
 msgid ""
 "Make a GET request on the %(model)s object with the format set to "
 "%(rqformat)s"
 msgstr "Hacer pedido GET en el objeto %(model)s con formato %(rqformat)s"
 
-#: freppledb/templates/rest_framework/api.html:61
+#: templates/rest_framework/api.html:61
 #, python-format
 msgid "Make a GET request on the %(model)s object"
 msgstr "Hacer pedido GET para ler objeto(s) %(model)s"
 
-#: freppledb/templates/rest_framework/api.html:69
+#: templates/rest_framework/api.html:69
 #, python-format
 msgid "Make an OPTIONS request to see all fields on the %(model)s object"
 msgstr "Hacer pedido OPTIONS para ver los campos de objeto(s) %(model)s"
 
-#: freppledb/templates/rest_framework/api.html:80
+#: templates/rest_framework/api.html:80
 #, python-format
 msgid "Make a POST request using a HTML form to create a new %(model)s object"
 msgstr ""
 "Hacer pedido POST com um formulario HTML para criar un nuevo objeto %(model)s"
 
-#: freppledb/templates/rest_framework/api.html:93
+#: templates/rest_framework/api.html:93
 #, python-format
-msgid "Make a POST request in raw format to create a new %(model)s object"
-msgstr "Hacer pedido POST en formato RAW para criar un nuevo objeto %(model)s"
-
-#: freppledb/templates/rest_framework/api.html:107
-#, python-format
+#| msgid "Make a POST request in raw format to create a new %(model)s object"
 msgid ""
-"Make a PUT request using a HTML form to update an existing %(model)s object"
+"Make a POST request in raw format to create one or more new %(model)s objects"
+msgstr ""
+"Hacer pedido POST en formato RAW para criar uno o mas nuevos objetos "
+"%(model)s"
+
+#: templates/rest_framework/api.html:107
+#, python-format
+#| msgid ""
+#| "Make a PUT request using a HTML form to update an existing %(model)s "
+#| "object"
+msgid "Make a PUT request using a HTML form to update one %(model)s object"
 msgstr ""
 "Hacer pedido PUT com um formulario HTML para modificar el objeto %(model)s"
 
-#: freppledb/templates/rest_framework/api.html:116
+#: templates/rest_framework/api.html:116
 #, python-format
+#| msgid ""
+#| "Make a PUT or PATCH request in raw format to update an existing %(model)s "
+#| "object"
 msgid ""
-"Make a PUT or PATCH request in raw format to update an existing %(model)s "
-"object"
+"Make a PUT or PATCH request in raw format to update an existing or more "
+"existing %(model)s objects"
 msgstr ""
-"Hacer pedido PUT o Patch en formato RAW para modificar el objeto %(model)s"
+"Hacer pedido PUT o Patch en formato RAW para modificar uno o mas objetos "
+"%(model)s"
 
-#: freppledb/templates/rest_framework/api.html:135
+#: templates/rest_framework/api.html:135
 #, python-format
-msgid "Make a DELETE request to delete an existing %(model)s object"
-msgstr "Hacer un pedido DELETE para borrar el objeto %(model)s"
+#| msgid "Make a DELETE request to delete an existing %(model)s object"
+msgid ""
+"Make a DELETE request to delete one or more existing %(model)s objects "
+"(requires filtering)"
+msgstr ""
+"Hacer un pedido DELETE para borrar uno o mas objetos %(model)s (requiere "
+"filtración)"
 
-#: freppledb/templates/rest_framework/index.html:8
+#: templates/rest_framework/index.html:8
 msgid ""
 "\n"
 "\tThis page helps developers to learn and experiment with the\n"
@@ -4271,8 +3010,8 @@ msgid ""
 msgstr ""
 "\n"
 "\tEsta página ayuda a los desarrolladores de aprender y experimentar con la\n"
-"\t<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
-"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"\t<a style=\"text-decoration:underline\" target=\"_blank\" href=\""
+"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
 "\tAPI de frePPLe.<br>\n"
 "\tEsta API permite  a una aplicación intercambiar información con frePPLe  "
 "de forma eficiente y directa.<br>\n"
@@ -4295,13 +3034,606 @@ msgstr ""
 "http://127.0.0.1:8000/api/input/demand/?format=json</pre>\n"
 "\t"
 
-#: freppledb/templates/rest_framework/index.html:29
+#: templates/rest_framework/index.html:29
 msgid "List API"
 msgstr "Listado API"
 
-#: freppledb/templates/rest_framework/index.html:29
+#: templates/rest_framework/index.html:29
 msgid "Detail API"
 msgstr "API detalle"
+
+#, fuzzy
+#~| msgid "time buckets"
+#~ msgid "time buckets|capfirst"
+#~ msgstr "Intervalos de tiempo"
+
+#~ msgid "Automatic"
+#~ msgstr "Automático"
+
+#~ msgctxt "forecast method"
+#~ msgid "Constant"
+#~ msgstr "Constante"
+
+#~ msgctxt "forecast method"
+#~ msgid "Trend"
+#~ msgstr "Tendencia"
+
+#~ msgctxt "forecast method"
+#~ msgid "Seasonal"
+#~ msgstr "Temporal"
+
+#~ msgctxt "forecast method"
+#~ msgid "Intermittent"
+#~ msgstr "Intermitente"
+
+#~ msgctxt "forecast method"
+#~ msgid "Moving average"
+#~ msgstr "Media móvil"
+
+#~ msgid "Manual"
+#~ msgstr "Manual"
+
+#~ msgid "Forecast method"
+#~ msgstr "Método de previsión"
+
+#~ msgid "Method used to generate a base forecast"
+#~ msgstr "Método utilizado para generar una previsión de base"
+
+#~ msgid "discrete"
+#~ msgstr "discreto"
+
+#~ msgid "Round forecast numbers to integers"
+#~ msgstr "Redondear números de la previsión a números enteros"
+
+#~ msgid "planned"
+#~ msgstr "planteado"
+
+#~ msgid "Use this forecast for planning"
+#~ msgstr "Usa esta previsión en el planteamento"
+
+#~ msgid "estimated forecast error"
+#~ msgstr "error de previsión estimado"
+
+#~ msgid "calculated forecast method"
+#~ msgstr "Método de previsión calculada"
+
+#~ msgid "calculated standard deviation"
+#~ msgstr "desviacion estandar calculada"
+
+#~ msgid "forecast"
+#~ msgstr "previsión"
+
+#~ msgid "forecasts"
+#~ msgstr "previsiones"
+
+#~ msgid "forecast demand"
+#~ msgstr "pronóstico demanda"
+
+#~ msgid "forecast demands"
+#~ msgstr "pronóstico demandas"
+
+#~ msgid "total orders"
+#~ msgstr "total de órdenes"
+
+#~ msgid "orders adjustment"
+#~ msgstr "ajuste órdenes"
+
+#~ msgid "open orders"
+#~ msgstr "órdenes abiertas"
+
+#~ msgid "planned orders"
+#~ msgstr "órdenes planteadas"
+
+#~ msgid "forecast baseline"
+#~ msgstr "base de previsión"
+
+#~ msgid "forecast adjustment"
+#~ msgstr "ajuste de previsión"
+
+#~ msgid "forecast total"
+#~ msgstr "previsión total"
+
+#~ msgid "forecast net"
+#~ msgstr "previsión neto"
+
+#~ msgid "forecast consumed"
+#~ msgstr "previsión consumida"
+
+#~ msgid "planned forecast"
+#~ msgstr "previsión planteada"
+
+#~ msgid "forecast plan"
+#~ msgstr "plan de previsión"
+
+#~ msgid "forecast plans"
+#~ msgstr "planes de previsión"
+
+#~ msgid "method"
+#~ msgstr "método"
+
+#~ msgid "forecasted demand"
+#~ msgstr "previsión de demanda"
+
+#~ msgid "Forecast Report"
+#~ msgstr "Informe de Previsiones"
+
+#~ msgid "selected forecast method"
+#~ msgstr "Método de previsión seleccionado"
+
+#~ msgid "forecast override"
+#~ msgstr "ajuste de previsión"
+
+#~ msgid "planned net forecast"
+#~ msgstr "pronóstico neto planteado"
+
+#~ msgid "No time field specified"
+#~ msgstr "Campo de tiempo no especificado"
+
+#~ msgid "No adjustment field specified"
+#~ msgstr "Campo de ajuste no especificado"
+
+#~ msgid ""
+#~ "Recognized fields for list layout: forecast, bucket, start date, end "
+#~ "date, forecast adjustment, orders adjustment"
+#~ msgstr ""
+#~ "Campos reconocidos para listado: previsión, intervalo, fecha início, "
+#~ "fecha fin, ajuste de previsión, ajuste de ordenes"
+
+#~ msgid ""
+#~ "Recognized fields for pivot layout: forecast, data field, [bucket names*]"
+#~ msgstr ""
+#~ "Campos reconocidos para listado pivote: previsión, fecha, [bucket names*]"
+
+#~ msgid "Bucket '%(name)s' not found"
+#~ msgstr "Intervalo '%(name)s' no encontrado"
+
+#~ msgid "Invalid number: %(value)s"
+#~ msgstr "Número no válido: %(value)s"
+
+#~ msgid "No time bucket specified"
+#~ msgstr "Ningun intervalo de tiempo especificado"
+
+#~ msgid "Uploaded data successfully: processed %d records"
+#~ msgstr "Los datos descargados con éxito: %d registros procesados"
+
+#~ msgid "Demand List"
+#~ msgstr "Lista de órdenes"
+
+#~ msgid "plandetails"
+#~ msgstr "detalle del plan"
+
+#~ msgid "gantt chart"
+#~ msgstr "diagrama de gantt"
+
+#~ msgid "Reorder quantity"
+#~ msgstr "Cantidad para nuevas órdenes"
+
+#~ msgid "Safety stock quantity"
+#~ msgstr "Cantidad de inventario de seguridad"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Poisson"
+#~ msgstr "Poisson"
+
+#~ msgid "Negative Binomial"
+#~ msgstr "Binomial negativa"
+
+#~ msgid "calculated"
+#~ msgstr "calculada"
+
+#~ msgid "period of cover"
+#~ msgstr "período de cobertura"
+
+#~ msgid "ROQ type"
+#~ msgstr "CNO tipo"
+
+#~ msgid "ROQ minimum quantity"
+#~ msgstr "CNO Cantidad mínima"
+
+#~ msgid "ROQ maximum quantity"
+#~ msgstr "CNO cantidad máxima"
+
+#~ msgid "ROQ multiple quantity"
+#~ msgstr "CNO cantidad compra multiple"
+
+#~ msgid "ROQ minimum period of cover"
+#~ msgstr "CNO período de cobertura mínimo"
+
+#~ msgid "ROQ maximum period of cover"
+#~ msgstr "CNO período de cobertura máximo"
+
+#~ msgid "lead time deviation"
+#~ msgstr "Desviación del tiempo de espera"
+
+#~ msgid "demand deviation"
+#~ msgstr "Desviación de la demanda"
+
+#~ msgid "demand distribution"
+#~ msgstr "Distributión de la demanda"
+
+#~ msgid "safety stock type"
+#~ msgstr "Tipo de inventario de seguridad"
+
+#~ msgid "service level"
+#~ msgstr "nivel de servicio"
+
+#~ msgid "safety stock minimum quantity"
+#~ msgstr "Cantidad mínima de inventario de seguridad"
+
+#~ msgid "safety stock maximum quantity"
+#~ msgstr "Cantidad máxima de inventario de seguridad"
+
+#~ msgid "safety stock multiple quantity"
+#~ msgstr "inventario de seguridad de cantidad multiple"
+
+#~ msgid "safety stock minimum period of cover"
+#~ msgstr "período de cobertura mínimo de inventario de seguridad"
+
+#~ msgid "safety stock maximum period of cover"
+#~ msgstr "período de cobertura máximo de inventario de seguridad"
+
+#~ msgid "Do not stock"
+#~ msgstr "No hacer inventário"
+
+#~ msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
+#~ msgstr ""
+#~ "Impone 0 en inventário de seguridad y 1 en cantidad para nueva orden"
+
+#~ msgid "inventory planning parameter"
+#~ msgstr "parámetros de planeación de inventário"
+
+#~ msgid "inventory planning parameters"
+#~ msgstr "parámetros de planeación"
+
+#~ msgid "calculated reorder quantity"
+#~ msgstr "cantidad calculada para nuevas órdenes "
+
+#~ msgid "calculated safety stock"
+#~ msgstr "Inventario de seguridad calculado"
+
+#~ msgid "safety stock"
+#~ msgstr "Inventario de seguridad"
+
+#~ msgid "reorder quantity"
+#~ msgstr "cantidad para nuevas órdenes"
+
+#~ msgid "safety stock value"
+#~ msgstr "valor de inventario de seguridad"
+
+#~ msgid "reorder quantity value"
+#~ msgstr "cantidad para nuevas órdenes"
+
+#~ msgid "overdue sales orders"
+#~ msgstr "órdenes retrasadas"
+
+#~ msgid "open sales orders"
+#~ msgstr "órdenes de venta abiertas"
+
+#~ msgid "proposed purchases"
+#~ msgstr "compras propuestas"
+
+#~ msgid "proposed transfers"
+#~ msgstr "transferencias propuestas"
+
+#~ msgid "open purchases"
+#~ msgstr "compras abiertas"
+
+#~ msgid "open transfers"
+#~ msgstr "transferencias abiertas"
+
+#~ msgid "onhand value"
+#~ msgstr "en mano"
+
+#~ msgid "overdue sales orders value"
+#~ msgstr "valor de ventas retrasadas"
+
+#~ msgid "open sales orders value"
+#~ msgstr "valor de órdenes de venta abiertas"
+
+#~ msgid "proposed purchases value"
+#~ msgstr "valor de compras propuestas"
+
+#~ msgid "proposed transfers value"
+#~ msgstr "valor de transferencias propuestas"
+
+#~ msgid "open purchases value"
+#~ msgstr "valor de compras abiertas"
+
+#~ msgid "open transfers value"
+#~ msgstr "valor de transferencias abiertas"
+
+#~ msgid "local forecast"
+#~ msgstr "previsión local"
+
+#~ msgid "dependent demand"
+#~ msgstr "demanda dependiente"
+
+#~ msgid "total demand"
+#~ msgstr "total de demanda"
+
+#~ msgid "local forecast value"
+#~ msgstr "valor de previsión local"
+
+#~ msgid "dependent demand value"
+#~ msgstr "valor de demanda dependiente"
+
+#~ msgid "total demand value"
+#~ msgstr "valor total de demanda"
+
+#~ msgid "Safety stock type"
+#~ msgstr "tipo de inventario de seguridad"
+
+#~ msgid "Distribution planning"
+#~ msgstr "Planteamento de distribución"
+
+#~ msgid "on hand"
+#~ msgstr "en mano"
+
+#~ msgid "Invalid number"
+#~ msgstr "Número no válido"
+
+#~ msgid "net forecast"
+#~ msgstr "previsión neto"
+
+#~ msgid "orders"
+#~ msgstr "órdenes"
+
+#~ msgid "total supply"
+#~ msgstr "suministro total"
+
+#~ msgid "Resource Gantt report"
+#~ msgstr "Informe de Recursos (Gantt)"
+
+#~ msgid "Planning board"
+#~ msgstr "Tabla de planificación"
+
+#~ msgid "chat history"
+#~ msgstr "historial de chat"
+
+#~ msgid "messages"
+#~ msgstr "mensajes"
+
+#~ msgid "chart"
+#~ msgstr "diagrama"
+
+#~ msgid "clear the plan of selected demands"
+#~ msgstr "limpiar la planificación de las demandas seleccionadas"
+
+#~ msgid "plan selected demands backward from their due date"
+#~ msgstr "planificación de las demandas seleccionadas antes de fecha limite"
+
+#~ msgid "plan selected demands forward from the current date"
+#~ msgstr ""
+#~ "planificación de las demandas seleccionadas después de la fecha de hoy"
+
+#~ msgid "add to the graph"
+#~ msgstr "añadir al gráfico"
+
+#~ msgid "send"
+#~ msgstr "enviar"
+
+#~ msgid "Quotes"
+#~ msgstr "Cotizaciones"
+
+# Translation included with django
+#~ msgctxt "Translation included in Django"
+#~ msgid "Page not found"
+#~ msgstr "Página no encontrada"
+
+#~ msgctxt "Translation included in Django"
+#~ msgid "Cancel"
+#~ msgstr "Cancelar"
+
+#~ msgid ""
+#~ "<span title = \"Compute the statistical sales forecast\" >Generate "
+#~ "forecast</span>"
+#~ msgstr ""
+#~ "<span title = \"Calcular la previsión estadística de ventas\" >Generar "
+#~ "previsión</span>"
+
+#~ msgid ""
+#~ "<span title=\"Compute the safety stock and reorder points\">Generate "
+#~ "inventory planning parameters</span>"
+#~ msgstr ""
+#~ "<span title=\"Calcular inventario de seguridad y puntos de creacción de "
+#~ "nuevas órdenes\">Generar parametros de planificación de inventario</span>"
+
+#~ msgid "Generate production plan"
+#~ msgstr "Generar un plan de producción"
+
+#~ msgid ""
+#~ "<span title=\"Scan for expected inventory stockouts\">Evaluate stock "
+#~ "position</span>"
+#~ msgstr ""
+#~ "<span title=\"Buscar agotamientos de inventario previstos\">Evaluar "
+#~ "posición de stock</span>"
+
+#~ msgid ""
+#~ "<b title=\"The planning engine is normally shut down after generating the "
+#~ "plan.<br><br>With this option you can keep the plan active in memory as a "
+#~ "web service, which is used for order quoting and interactive planning."
+#~ "\">Web service</b>"
+#~ msgstr ""
+#~ "<b title = \"El motor de la planificación es normalmente cerrado después "
+#~ "de generar el plan.<br><br>Con esta opción se puede mantener el plan "
+#~ "activo en la memoria como un servicio web, que se utiliza para la "
+#~ "cotización de órdenes y la planificación interactiva.\" > Servicio web </ "
+#~ "b>"
+
+#~ msgid "Keep active in memory"
+#~ msgstr "Mantenerse activo en la memoria"
+
+#~ msgid "web service"
+#~ msgstr "servicio web"
+
+#~ msgid "Stop the web service."
+#~ msgstr "Parar servicio web."
+
+#~ msgid "display value"
+#~ msgstr "mostrar valor"
+
+#~ msgid "display units"
+#~ msgstr "mostrar unidades"
+
+#~ msgid "Do you want to save your changes first?"
+#~ msgstr "¿Quieres guardar los cambios primero?"
+
+#~ msgid "no"
+#~ msgstr "no"
+
+#~ msgid "total orders 3 years ago"
+#~ msgstr "total de órdenes hace 3 años"
+
+#~ msgid "orders adjustment 3 years ago"
+#~ msgstr "ajuste de órdenes hace 3 años"
+
+#~ msgid "total orders 2 years ago"
+#~ msgstr "total de órdenes hace 2 años"
+
+#~ msgid "orders adjustment 2 years ago"
+#~ msgstr "ajuste de órdenes hace 2 años"
+
+#~ msgid "total orders 1 year ago"
+#~ msgstr "total de órdenes hace 1 años"
+
+#~ msgid "orders adjustment 1 year ago"
+#~ msgstr "ajuste de órdenes hace 1 años"
+
+#~ msgid "reorder quantity override"
+#~ msgstr "ajuste de cantidad para nuevas órdenes"
+
+#~ msgid "safety stock override"
+#~ msgstr "ajuste de inventario de seguridad"
+
+#~ msgid "starting inventory"
+#~ msgstr "inventario al inicio"
+
+#~ msgid "local demand"
+#~ msgstr "demanda local"
+
+#~ msgid "confirmed supply"
+#~ msgstr "suministro confirmado"
+
+#~ msgid "proposed supply"
+#~ msgstr "suministro propuesto"
+
+#~ msgid "ending inventory"
+#~ msgstr "inventario al final"
+
+#~ msgid "no grouping"
+#~ msgstr "sin agrupación"
+
+#~ msgid "group by item"
+#~ msgstr "agrupación por articulo"
+
+#~ msgid "group by location"
+#~ msgstr "agrupación por ubicación"
+
+#~ msgid "Export as CSV or Excel file"
+#~ msgstr "Exportar como CSV o archivo de Excel"
+
+#~ msgid "Recalculate"
+#~ msgstr "Recalcular"
+
+#~ msgid "simulate changes without saving"
+#~ msgstr "simular sin guardar cambios"
+
+# Translation included with django
+#~ msgid "transactions"
+#~ msgstr "transacciones"
+
+#~ msgid "forecast method"
+#~ msgstr "método de previsión"
+
+#~ msgid "automatic"
+#~ msgstr "automático"
+
+#~ msgctxt "forecast method"
+#~ msgid "constant"
+#~ msgstr "constante"
+
+#~ msgctxt "forecast method"
+#~ msgid "trend"
+#~ msgstr "tendencia"
+
+#~ msgctxt "forecast method"
+#~ msgid "seasonal"
+#~ msgstr "temporal"
+
+#~ msgctxt "forecast method"
+#~ msgid "intermittent"
+#~ msgstr "intermitente"
+
+#~ msgctxt "forecast method"
+#~ msgid "moving average"
+#~ msgstr "média móvil"
+
+#~ msgctxt "forecast method"
+#~ msgid "manual"
+#~ msgstr "manual"
+
+#~ msgid "economic order quantity"
+#~ msgstr "cantidad economica de órden"
+
+#~ msgid "units"
+#~ msgstr "unidades"
+
+#~ msgid "statistical distribution"
+#~ msgstr "distribución estadística"
+
+#~ msgctxt "statistical distribution"
+#~ msgid "normal"
+#~ msgstr "normal"
+
+#~ msgctxt "statistical distribution"
+#~ msgid "poisson"
+#~ msgstr "poisson"
+
+#~ msgctxt "statistical distribution"
+#~ msgid "negative binomial"
+#~ msgstr "binomial negativa"
+
+#~ msgid "demand standard deviation"
+#~ msgstr "desviación estándar de demanda"
+
+#~ msgid "lead time standard deviation"
+#~ msgstr "desviación estándar de tiempo de espera"
+
+#~ msgid "don't stock"
+#~ msgstr "no hacer inventario"
+
+#~ msgid "new item comment"
+#~ msgstr "comentario de nuevo articulo"
+
+#~ msgid "new item-location comment"
+#~ msgstr "comentario de nuevo articulo-ubicación"
+
+#~ msgid "new location comment"
+#~ msgstr "comentario de nueva ubicación"
+
+#~ msgid "no comments yet"
+#~ msgstr "Aún no hay comentarios"
+
+#~ msgid "pegging"
+#~ msgstr "fijación "
+
+#~ msgid "deliveries"
+#~ msgstr "entregas"
+
+#~ msgid "quote"
+#~ msgstr "cotización"
+
+#~ msgid "inquiry"
+#~ msgstr "indagación"
+
+#~ msgctxt "Included in Django"
+#~ msgid "Cancel"
+#~ msgstr "cancelar"
+
+#~ msgid "confirm"
+#~ msgstr "confirmar"
 
 #~ msgid "Constraint Report"
 #~ msgstr "Informe de restricciones"
@@ -4394,9 +3726,6 @@ msgstr "API detalle"
 
 #~ msgid "Bucket Detail List"
 #~ msgstr "Detalle de lista intervalo"
-
-#~ msgid "Model:"
-#~ msgstr "Modelo:"
 
 #~ msgid "Forecast List"
 #~ msgstr "Lista de pronósticos"

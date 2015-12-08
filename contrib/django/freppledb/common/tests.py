@@ -204,21 +204,16 @@ class freppleREST(APITestCase):
 
   # REST API framework
   def test_api_listpages_getapi(self):
-    print("# REST API framework")
     response = self.client.get('/api/')
     self.assertEqual(response.status_code, 200)
 
     #Demand tests
   def test_api_demand(self):
-    print("#Demand tests")
     response = self.client.get('/api/input/demand/')
     self.assertEqual(response.status_code, 200)
-    #print(response)
-    #self.assertContains(response, '"records":24,')
     response = self.client.options('/api/input/demand/')
     self.assertEqual(response.status_code, 200)
     recordsnumber = input.models.Demand.objects.count()
-    print("#Demand POST json")
     data = {
           "name": "Order UFO 25",
            "description": None,
@@ -238,7 +233,6 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 1)
     self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 25').count(), 1)
-    print("#Demand POST JSON")
     data = {
           "name": "Order UFO 26",
           "description": None,
@@ -259,7 +253,6 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 2)
     self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 26').count(), 1)
 
-    print("#Demand bulk POST JSON")
     data = [{
           "name": "Order UFO 27",
           "description": None,
@@ -295,9 +288,7 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 4)
     self.assertEqual(input.models.Demand.objects.filter(category = 'TEST DELETE').count(), 2)
     
-
     #Demand GET MULTIPART
-    print("#Demand GET MULTIPART")
     response = self.client.get('/api/input/demand/Order UFO 25/')
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 25').count(), 1)
@@ -309,7 +300,6 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 26').count(), 1)
     #Demand PUT MULTIPART tests
-    print("#Demand PUT JSON ")
     data = {
           "name": "Order UFO 25",
           "description": "Put multipart",
@@ -330,7 +320,6 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Demand.objects.count(), 18)
     self.assertEqual(input.models.Demand.objects.filter(description = 'Put multipart').count(), 1)
     #Demand PUT JSON tests
-    print("#Demand PUT JSON ")
     data = {
           "name": "Order UFO 26",
           "description": "Put json",
@@ -351,7 +340,6 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Demand.objects.count(), 18)
     self.assertEqual(input.models.Demand.objects.filter(description = 'Put json').count(), 1)
     #Demand PUT FORM tests
-    print("#Demand FORM ")
     data = {
           "name": "Order UFO 26",
           "description": "Put form",
@@ -373,21 +361,17 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Demand.objects.filter(description = 'Put form').count(), 1)
 
     #Demand DELETE tests
-    print("#Demand DELETE ")
     response = self.client.delete('/api/input/demand/Order UFO 26/', format='form')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/Order UFO 25/', format='json')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/Demand 1/', format='api')
     self.assertEqual(response.status_code, 204)
-    print("#Demand bulk DELETE ")
     response = self.client.delete('/api/input/demand/?category=TEST DELETE', format='api')
     self.assertEqual(response.status_code, 204)
     self.assertEqual(input.models.Customer.objects.filter(category = 'TEST DELETE').count(), 0)
 
   def test_api_customer(self):
-
-    print("#Customer POST tests")
     response = self.client.get('/api/input/customer/')
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Customer.objects.count(), 2)
@@ -400,7 +384,6 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Customer.objects.count(), 3)
     self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 51').count(), 1)
-    print("#Customer POST JSON")
     data = {
     "name": "Customer near Area 52"
     }
@@ -408,7 +391,6 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Customer.objects.count(), 4)
     self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 52').count(), 1)
-    print("#Customer bulk POST JSON")
     data = [{
     "name": "Customer near Area 99",
     "source": "TEST DELETE"
@@ -423,7 +405,6 @@ class freppleREST(APITestCase):
 
 
     #Customer GET MULTIPART
-    print("#Customer GET/OPTIONS MULTIPART/JSON ")
     response = self.client.get('/api/input/customer/Customer near Area 51/')
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 51').count(), 1)
@@ -435,7 +416,6 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 52').count(), 1)
     #Customer PUT MULTIPART tests
-    print("#Customer PATCH MULTIPART ")
     data = {
       "name": "Customer near Area 51",
       "description": "Patch multipart"
@@ -445,7 +425,6 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Customer.objects.count(), 6)
     self.assertEqual(input.models.Customer.objects.filter(description = 'Patch multipart').count(), 1)
     #Customer PUT JSON tests
-    print("#Customer PATCH JSON ")
     data = {
       "name": "Customer near Area 52",
       "description": "Patch json"
@@ -456,7 +435,6 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Customer.objects.filter(description = 'Patch json').count(), 1)
 
     #Customer PUT FORM tests
-    print("#Customer PATCH JSON ")
     data = {
             "name":"Customer near Area 52",
             "description":"Patch json",
@@ -472,21 +450,12 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Customer.objects.filter(source = 'Put json').count(), 1)
 
     #Customer DELETE tests
-    print("#Customer DELETE ")
     response = self.client.delete('/api/input/customer/Customer near Area 52/', format='form')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/customer/Customer near Area 51/',  format='json')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/customer/Customer near factory 1/', format='api')
     self.assertEqual(response.status_code, 204)
-    print("#Customer bulk DELETE ")
     response = self.client.delete('/api/input/customer/?source=TEST DELETE', format='json')
     self.assertEqual(response.status_code, 204)
     self.assertEqual(input.models.Customer.objects.filter(source = 'TEST DELETE').count(), 0)
-    
-
-
-
-
-
-

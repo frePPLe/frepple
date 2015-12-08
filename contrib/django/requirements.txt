@@ -5,3 +5,4 @@ jdcal >= 1.0
 openpyxl >= 2.3.0-b2
 https://github.com/frePPLe/django/tarball/frepple_3.0
 djangorestframework >= 3.3.1
+djangorestframework-filters >= 0.6.0

@@ -108,6 +108,7 @@ Here are the steps to get a fully working environment.
       openpyxl >= 2.3.0-b2
       https://github.com/frePPLe/django/tarball/frepple_3.0
       djangorestframework >= 3.3.1
+      djangorestframework-filters >= 0.6.0
 
    Next, install these modules with a pip3 command:
    ::

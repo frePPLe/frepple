@@ -73,7 +73,7 @@ class OutputTest(TestCase):
   def test_output_operation(self):
     response = self.client.get('/operation/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":14,')
+    self.assertContains(response, '"records":9,')
     response = self.client.get('/operation/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))

@@ -11,7 +11,10 @@ svg {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+  minimum-height: 350px;
 }
+
+
 
 path.flow {
   fill: none;
@@ -352,6 +355,14 @@ $(function(){
   $("#graph").resizable({handles: "s"});
   $("body").click(hideContext);
 });
+
+$(window).bind('resize', function() {
+  var width = $("#graph").width();
+  d3.select('#svggraph')
+  .attr('width', width)
+  .attr('viewBox','0 0 ' + width + ' 400');
+});
+
 
 </script>
 {% endblock %}

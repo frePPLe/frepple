@@ -58,7 +58,7 @@ $(function() {
     multiselect: true,
     onSelectRow: grid.markSelectedRow,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
+    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
@@ -70,9 +70,11 @@ $(function() {
 });
 
 $(window).bind('resize', function() {
+  var h = $(window).height() - $("#grid").offset().top - 63;
+  if (h < 150) h = 150;
   $("#grid")
    .setGridWidth($('#content-main').width()){% if not reportclass.height %}
-   .setGridHeight($(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}){% endif %};
+   .setGridHeight(h){% endif %};
 });
 
 </script>
@@ -104,7 +106,7 @@ $(window).bind('resize', function() {
 </div>{% endif %}
 {% endblock save_undo_buttons %}
 
-<div id="content-main" style="margin-right: 15px;">
+<div id="content-main" style="margin-right: 15px; min-height: 150px">
 <table id="grid"></table>
 <div id="gridpager"></div>
 {% block after_table %}{% endblock %}

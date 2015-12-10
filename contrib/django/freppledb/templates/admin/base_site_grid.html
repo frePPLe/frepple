@@ -5,6 +5,9 @@
 
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
+var editrow;
+var editcol;
+
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}
 
@@ -56,7 +59,13 @@ $(function() {
         $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
-    onSelectRow: grid.markSelectedRow,{% endif %}
+    onSelectRow: grid.markSelectedRow,
+    formatCell: function(rowid, cellname, value, iRow, iCol) {
+      console.log(iRow, iCol);
+      editrow = iRow;
+      editcol = iCol;
+      return value;
+    }, {% endif %}
     {% block extra_grid %}{% endblock %}
     height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
@@ -67,6 +76,7 @@ $(function() {
      handles: 's', minHeight: {{reportclass.height}}
      });
   {% endif %}{% endif %}
+  $("#grid").on('input', function() {console.log("dirty");$("#save").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active");$("#undo").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active")});
 });
 
 $(window).bind('resize', function() {

@@ -42,7 +42,7 @@ runserver:
 international:
 	cd freppledb; django-admin.py makemessages -a -d django
 	cd freppledb; django-admin.py makemessages -a -d djangojs
-	find .  -name '*.po' -exec msggrep --comment --ignore-case -e '[Tt]ranslation included with [Dd]jango' --invert-match  {} -o tmp.po \; -exec mv tmp.po {} \;
+	find .  -name '*.po' -exec msggrep -X -e 'Translators: Translation included with Django' --invert-match  {} -o tmp.po \; -exec mv tmp.po {} \;
 	cd freppledb; django-admin.py compilemessages
 
 pep8:

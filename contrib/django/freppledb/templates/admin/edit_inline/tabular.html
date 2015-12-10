@@ -88,6 +88,7 @@
   $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
     prefix: "{{ inline_admin_formset.formset.prefix }}",
     adminStaticPrefix: '{% static "admin/" %}',
+    {% comment %}Translators: Translation included with Django {% endcomment %}
     addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}",
     {% comment %}Translators: Translation included with Django {% endcomment %}
     deleteText: "{% trans 'Remove'|capfirst %}"

@@ -106,14 +106,23 @@ TIME_ZONE = 'Europe/Brussels'
 #    https://github.com/django/django/blob/master/django/conf/global_settings.py
 ugettext = lambda s: s
 LANGUAGES = (
+  # Translators: Translation included with Django
   ('en', ugettext('English')),
+  # Translators: Translation included with Django
   ('fr', ugettext('French')),
+  # Translators: Translation included with Django
   ('it', ugettext('Italian')),
+  # Translators: Translation included with Django
   ('jp', ugettext('Japanese')),
+  # Translators: Translation included with Django
   ('nl', ugettext('Dutch')),
+  # Translators: Translation included with Django
   ('pt', ugettext('Portuguese')),
+  # Translators: Translation included with Django
   ('pt-br', ugettext('Brazilian Portuguese')),
+  # Translators: Translation included with Django
   ('zh-cn', ugettext('Simplified Chinese')),
+  # Translators: Translation included with Django
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 

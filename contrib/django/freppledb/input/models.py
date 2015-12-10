@@ -34,6 +34,7 @@ searchmode = (
 
 class Calendar(AuditModel):
   # Database fields
+  #. Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, primary_key=True)
   description = models.CharField(
     _('description'), max_length=500, null=True,
@@ -58,8 +59,10 @@ class Calendar(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'calendar'
-    verbose_name = _('calendar')
-    verbose_name_plural = _('calendars')
+    #. Translators: Translation included with Django
+    verbose_name = _('Calendar')
+    #. Translators: Translation included with Django
+    verbose_name_plural = _('Calendars')
     ordering = ['name']
 
 
@@ -67,7 +70,8 @@ class CalendarBucket(AuditModel):
 
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
+  #. Translators: Translation included with Django
+  calendar = models.ForeignKey(Calendar, verbose_name=_('Calendar'), related_name='buckets')
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030, 12, 31))
   value = models.DecimalField(
@@ -75,12 +79,20 @@ class CalendarBucket(AuditModel):
     max_digits=15, decimal_places=4
     )
   priority = models.IntegerField(_('priority'), default=0, blank=True, null=True)
+
+  #. Translators: Translation included with Django
   monday = models.BooleanField(_('Monday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   tuesday = models.BooleanField(_('Tuesday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   wednesday = models.BooleanField(_('Wednesday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   thursday = models.BooleanField(_('Thursday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   friday = models.BooleanField(_('Friday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   saturday = models.BooleanField(_('Saturday'), blank=True, default=True)
+  #. Translators: Translation included with Django
   sunday = models.BooleanField(_('Sunday'), blank=True, default=True)
   starttime = models.TimeField(_('start time'), blank=True, null=True, default=time(0, 0, 0))
   endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23, 59, 59))
@@ -310,6 +322,7 @@ class Operation(AuditModel):
   )
 
   # Database fields
+  #. Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, primary_key=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='fixed_time')
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
@@ -660,6 +673,7 @@ class Resource(AuditModel, HierarchyModel):
 class Skill(AuditModel):
   # Database fields
   name = models.CharField(
+    #. Translators: Translation included with Django
     _('name'), max_length=300, primary_key=True,
     help_text=_('Unique identifier')
     )
@@ -742,6 +756,7 @@ class Flow(AuditModel):
     help_text=_('Validity end date')
     )
   name = models.CharField(
+    #. Translators: Translation included with Django
     _('name'), max_length=300, null=True, blank=True,
     help_text=_('Optional name of this flow')
     )
@@ -788,6 +803,7 @@ class Load(AuditModel):
     help_text=_('Validity end date')
     )
   name = models.CharField(
+    #. Translators: Translation included with Django
     _('name'), max_length=300, null=True, blank=True,
     help_text=_('Optional name of this load')
     )
@@ -991,11 +1007,11 @@ class Demand(AuditModel, HierarchyModel):
 
   # Status
   demandstatus = (
-    ('inquiry', _('Inquiry')),
-    ('quote', _('Quote')),
-    ('open', _('Open')),
-    ('closed', _('Closed')),
-    ('canceled', _('Canceled')),
+    ('inquiry', _('inquiry')),
+    ('quote', _('quote')),
+    ('open', _('open')),
+    ('closed', _('closed')),
+    ('canceled', _('canceled')),
     )
 
   # Database fields

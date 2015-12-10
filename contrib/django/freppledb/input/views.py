@@ -522,6 +522,7 @@ class BufferList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/buffer'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -548,6 +549,7 @@ class SetupMatrixList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/setupmatrix'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
@@ -564,6 +566,7 @@ class ResourceList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/resource'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -591,6 +594,7 @@ class LocationList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/location'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -611,6 +615,7 @@ class CustomerList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/customer'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -630,6 +635,7 @@ class SupplierList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/supplier'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -700,6 +706,7 @@ class ItemList(GridReport):
   editable = True
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/item'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -721,6 +728,7 @@ class SkillList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/skill'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
@@ -763,6 +771,7 @@ class LoadList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name')),
     GridFieldText('alternate', title=_('alternate')),
     GridFieldNumber('priority', title=_('priority')),
@@ -789,6 +798,7 @@ class FlowList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name')),
     GridFieldText('alternate', title=_('alternate')),
     GridFieldNumber('priority', title=_('priority')),
@@ -807,6 +817,7 @@ class DemandList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra="role:'input/item'"),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
@@ -827,11 +838,11 @@ class DemandList(GridReport):
     )
 
   actions = [
-    {"name": 'inquiry', "label": _("change status to %(status)s") % {'status': _("Inquiry")}, "function": "grid.setStatus('inquiry')"},
-    {"name": 'quote', "label": _("change status to %(status)s") % {'status': _("Quote")}, "function": "grid.setStatus('quote')"},
-    {"name": 'open', "label": _("change status to %(status)s") % {'status': _("Open")}, "function": "grid.setStatus('open')"},
-    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
-    {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("Canceled")}, "function": "grid.setStatus('canceled')"},
+    {"name": 'inquiry', "label": _("change status to %(status)s") % {'status': _("inquiry")}, "function": "grid.setStatus('inquiry')"},
+    {"name": 'quote', "label": _("change status to %(status)s") % {'status': _("quote")}, "function": "grid.setStatus('quote')"},
+    {"name": 'open', "label": _("change status to %(status)s") % {'status': _("open")}, "function": "grid.setStatus('open')"},
+    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
+    {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("canceled")}, "function": "grid.setStatus('canceled')"},
     ]
 
 class CalendarList(GridReport):
@@ -843,6 +854,7 @@ class CalendarList(GridReport):
   model = Calendar
   frozenColumns = 1
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/calendar'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -867,12 +879,19 @@ class CalendarBucketList(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('value', title=_('value')),
     GridFieldInteger('priority', title=_('priority')),
+    #. Translators: Translation included with Django
     GridFieldBool('monday', title=_('Monday')),
+    #. Translators: Translation included with Django
     GridFieldBool('tuesday', title=_('Tuesday')),
+    #. Translators: Translation included with Django
     GridFieldBool('wednesday', title=_('Wednesday')),
+    #. Translators: Translation included with Django
     GridFieldBool('thursday', title=_('Thursday')),
+    #. Translators: Translation included with Django
     GridFieldBool('friday', title=_('Friday')),
+    #. Translators: Translation included with Django
     GridFieldBool('saturday', title=_('Saturday')),
+    #. Translators: Translation included with Django
     GridFieldBool('sunday', title=_('Sunday')),
     GridFieldTime('starttime', title=_('start time')),
     GridFieldTime('endtime', title=_('end time')),
@@ -890,6 +909,7 @@ class OperationList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/operation'"),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
@@ -951,9 +971,9 @@ class OperationPlanList(GridReport):
     )
 
   actions = [
-    {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
-    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
-    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+    {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
+    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
     ]
 
 
@@ -992,9 +1012,9 @@ class DistributionOrderList(GridReport):
     ]
   else:
     actions = [
-      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
-      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
-      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
+      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]
 
 
@@ -1032,7 +1052,7 @@ class PurchaseOrderList(GridReport):
     ]
   else:
     actions = [
-      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("Proposed")}, "function": "grid.setStatus('proposed')"},
-      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("Confirmed")}, "function": "grid.setStatus('confirmed')"},
-      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("Closed")}, "function": "grid.setStatus('closed')"},
+      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
+      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]

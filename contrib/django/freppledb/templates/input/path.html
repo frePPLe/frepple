@@ -11,10 +11,7 @@ svg {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  minimum-height: 350px;
 }
-
-
 
 path.flow {
   fill: none;
@@ -63,15 +60,9 @@ var width_level = 100;
 var minlevel = 0;
 var maxlevel = 0;
 
-function hideContext()
-{
-  $('#operationcontext, #buffercontext, #resourcecontext, #itemsupplier, #resourcecontext, #itemsupplier, #itemdistribution').css('display','none');
-}
 
 function clickedShaped(event)
 {
-  // Hide previous context menu
-  $('#operationcontext, #buffercontext, #resourcecontext, #itemsupplier, #resourcecontext, #itemsupplier, #itemdistribution').css('display','none');
 
   // Analyze where we have clicked
   var type = $(this).children("use").prop("href").baseVal;
@@ -330,8 +321,8 @@ console.log(jsondata);
        }
        else
          return '';
-       })
-    .call(force.drag);
+       });
+    //.call(force.drag);
 
   // Show node IDs
   g.filter( function(d, i) {return d.type != 'operation' || d.suboperindex <= 0;} )
@@ -353,15 +344,15 @@ $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);
   $("#graph").resizable({handles: "s"});
-  $("body").click(hideContext);
 });
 
 $(window).bind('resize', function() {
-  var width = $("#graph").width();
-  d3.select('#svggraph')
-  .attr('width', width)
-  .attr('viewBox','0 0 ' + width + ' 400');
+   var width = $("#graph").width();
+   d3.select('#svggraph')
+   .attr('width', width)
+   .attr('viewBox','0 0 ' + width + ' 400');
 });
+
 
 
 </script>

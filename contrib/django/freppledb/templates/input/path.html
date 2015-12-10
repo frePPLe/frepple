@@ -340,10 +340,26 @@ console.log(jsondata);
 }
 
 
+
+
+
+
 $(function(){
   if ($("#graph").height() > $(window).height() - 350)
     $("#graph").height($(window).height() - 350);
   $("#graph").resizable({handles: "s"});
+});
+
+$(window).resize(function() {
+  var parentheight = $("#content-main").height
+  setTimeout(function(){$(".ui-jqgrid").setGridHeight(parentheight)},300);
+
+if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
+if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
+$("#graph").resizable({handles: "s"});
+$("#content-main").resizable({handles: "s"});
+$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
+console.log("resize windowheight:",$(window).height(),"px graphheight",$("#graph").height(),"px gridheight");
 });
 
 $(window).bind('resize', function() {

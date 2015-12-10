@@ -22,11 +22,13 @@ $(function() {
 
 <div id="request-info">
 <br>
+{% comment %}Translators: Translation included with Django {% endcomment %}
 {% trans "HTTP request" %}:<b><br>
 &nbsp;&nbsp;{{ request.method }}</b> {{request.prefix}}{{ request.get_full_path }}<br><br>
 </div>
 
 <div class="response-info">
+{% comment %}Translators: Translation included with Django {% endcomment %}
 {% trans "HTTP response headers" %}:<br>
 &nbsp;&nbsp;<b>HTTP {{ response.status_code }} {{ response.status_text }}</b>
 <br>
@@ -38,6 +40,7 @@ $(function() {
 
 <div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
 
+{% comment %}Translators: Translation included with Django {% endcomment %}
 {% trans "HTTP response content" %}:<br>
 <textarea id="records" rows="20" style="width:100%">{{ content|urlize_quoted_links }}</textarea>
 {% endautoescape %}

@@ -106,8 +106,9 @@ $(window).bind('resize', function() {
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
 <div id="save_undo" style="float:left">
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" context "Translation included with Django" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" context "Translation included with Django" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
+{% comment %}Translators: Translation included with Django {% endcomment %}
+&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}&nbsp;&nbsp;
     <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class=" ui-corner-all ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive" >
     <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}

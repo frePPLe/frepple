@@ -24,7 +24,8 @@
 {% block branding %}{% endblock %}{% block nav-global %}{% endblock %}
 </div>
 <!-- END Header -->
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' context "Translation included with Django" %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}
 {% endif %}
 
  {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul>{% endif %}

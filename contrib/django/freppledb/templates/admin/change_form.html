@@ -23,7 +23,10 @@
 {% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
 {% if errors %}
     <p class="errornote">
-    {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+    {% comment %}Translators: Translation included with Django {% endcomment %}
+    {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}
+    {% comment %}Translators: Translation included with Django {% endcomment %}
+    {% trans "Please correct the errors below." %}{% endif %}
     </p>
     {{ adminform.form.non_field_errors }}
 {% endif %}

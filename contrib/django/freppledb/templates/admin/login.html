@@ -62,7 +62,10 @@ $(function() {
 {% block content %}
 {% if form.errors and not form.non_field_errors and not form.this_is_the_login_form.errors %}
 <p class="errornote">
-{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% trans "Please correct the errors below." %}{% endif %}
 </p>
 {% endif %}
 
@@ -82,12 +85,14 @@ $(function() {
   </div>
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
-    <label for="id_password" class="required">{% trans 'password:'|capfirst %}</label> {{ form.password }}
+    {% comment %}Translators: Translation included with Django {% endcomment %}
+    <label for="id_password" class="required">{% trans 'Password'|capfirst %}</label> {{ form.password }}
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
   </div>
   <div class="submit-row">
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' context "Translation included with Django" %}"/>
+    {% comment %}Translators: Translation included with Django {% endcomment %}
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
   </div>
 </form>
 

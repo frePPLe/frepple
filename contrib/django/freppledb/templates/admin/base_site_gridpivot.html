@@ -93,8 +93,9 @@ $(window).bind('resize', function() {
 {% if reportclass.editable and haschangeperm %}
 {% block save_undo_buttons %}
 <div id="save_undo" style="float:left">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" context "Translation included with Django" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" context "Translation included with Django" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
+{% comment %}Translators: Translation included with Django {% endcomment %}
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
 {% endblock save_undo_buttons %}
 {% endif %}
 <div id="content-main" style="margin-right: 15px;">

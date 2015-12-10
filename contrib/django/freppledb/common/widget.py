@@ -30,6 +30,7 @@ from freppledb.common.models import Comment
 
 class WelcomeWidget(Widget):
   name = "welcome"
+  #. Translators: Translation included with Django
   title = _("Welcome")
   tooltip = _("Some links to get started")
   asynchronous = False
@@ -61,7 +62,8 @@ Dashboard.register(NewsWidget)
 
 class RecentActionsWidget(Widget):
   name = "recent_actions"
-  title = _("My actions")
+  #. Translators: Translation included with Django
+  title = _("My Actions")
   tooltip = _("Display a list of the entities you recently changed")
   asynchronous = False
   limit = 10
@@ -93,6 +95,7 @@ class RecentActionsWidget(Widget):
         result.append('<span class="mini">%s</span><br/>' % capfirst(force_text(_(entry.content_type.name))) )
       else:
         result.append('<span class="mini">%s</span><br/>' % force_text(_('Unknown content')))
+    #. Translators: Translation included with Django
     return result and '\n'.join(result) or force_text(_('None available'))
 
 Dashboard.register(RecentActionsWidget)
@@ -122,6 +125,7 @@ class RecentCommentsWidget(Widget):
         formats.date_format(c.lastmodified, 'SHORT_DATETIME_FORMAT'),
         escape(c.comment)
         ))
+    #. Translators: Translation included with Django
     return '\n'.join(result) if result else force_text(_('None available'))
 
 Dashboard.register(RecentCommentsWidget)

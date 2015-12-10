@@ -53,6 +53,7 @@ def handler404(request):
   '''
   messages.add_message(
     request, messages.ERROR,
+    #. Translators: Translation included with Django
     force_text(_('Page not found') + ": " + request.prefix + request.get_full_path())
     )
   return HttpResponseRedirect(request.prefix + "/admin/")
@@ -93,20 +94,24 @@ class PreferencesForm(forms.Form):
     help_text=_('Theme for the user interface'),
     )
   cur_password = forms.CharField(
+    #. Translators: Translation included with Django
     label = _("Change password"),
     required=False,
+    #. Translators: Translation included with Django
     help_text=_('Old password'),
     widget = forms.PasswordInput()
     )
   new_password1 = forms.CharField(
     label = "",
     required=False,
+    #. Translators: Translation included with Django
     help_text=_('New password'),
     widget = forms.PasswordInput()
     )
   new_password2 = forms.CharField(
     label = "",
     required = False,
+    #. Translators: Translation included with Django
     help_text = _('New password confirmation'),
     widget = forms.PasswordInput()
     )
@@ -209,6 +214,7 @@ class UserList(GridReport):
   '''
   A list report to show users.
   '''
+  #. Translators: Translation included with Django
   title = _("users")
   basequeryset = User.objects.all()
   model = User
@@ -217,14 +223,23 @@ class UserList(GridReport):
   permissions = (("change_user", "Can change user"),)
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra="role:'common/user'"),
+    #. Translators: Translation included with Django
     GridFieldText('username', title=_('username')),
+    #. Translators: Translation included with Django
     GridFieldText('email', title=_('email address'), formatter='email', width=200),
+    #. Translators: Translation included with Django
     GridFieldText('first_name', title=_('first name')),
+    #. Translators: Translation included with Django
     GridFieldText('last_name', title=_('last name')),
+    #. Translators: Translation included with Django
     GridFieldBool('is_active', title=_('active')),
+    #. Translators: Translation included with Django
     GridFieldBool('is_superuser', title=_('superuser status'), width=120),
+    #. Translators: Translation included with Django
     GridFieldDateTime('date_joined', title=_('date joined'), editable=False),
+    #. Translators: Translation included with Django
     GridFieldDateTime('last_login', title=_('last login'), editable=False)
     )
 
@@ -234,6 +249,7 @@ class GroupList(GridReport):
   A list report to show groups.
   '''
   template = 'admin/base_site_grid.html'
+  #. Translators: Translation included with Django
   title = _("groups")
   basequeryset = Group.objects.all()
   model = Group
@@ -243,6 +259,7 @@ class GroupList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, width=200),
     )
 
@@ -258,6 +275,7 @@ class ParameterList(GridReport):
   frozenColumns = 1
 
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/parameter'"),
     GridFieldText('value', title=_('value')),
     GridFieldText('description', title=_('description')),
@@ -281,9 +299,10 @@ class CommentList(GridReport):
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
     GridFieldLastModified('lastmodified'),
+    #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center', width=80),
     GridFieldText('model', title=_('model'), field_name='content_type__model', editable=False, align='center'),
-    GridFieldText('object_pk', title=_('object ID'), field_name='object_pk', editable=False, align='center', extra='formatter:objectfmt'),
+    GridFieldText('object_pk', title=_('object id'), field_name='object_pk', editable=False, align='center', extra='formatter:objectfmt'),
     GridFieldText('comment', title=_('comment'), width=400, editable=False, align='center'),
     GridFieldText('app', title="app", hidden=True, field_name='content_type__app_label')
     )
@@ -298,6 +317,7 @@ class BucketList(GridReport):
   model = Bucket
   frozenColumns = 1
   rows = (
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/bucket'"),
     GridFieldText('description', title=_('description')),
     GridFieldInteger('level', title=_('level')),
@@ -318,6 +338,7 @@ class BucketDetailList(GridReport):
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra="role:'common/bucket'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

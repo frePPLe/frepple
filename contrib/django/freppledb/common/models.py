@@ -40,6 +40,7 @@ class HierarchyModel(models.Model):
   lft = models.PositiveIntegerField(db_index=True, editable=False, null=True, blank=True)
   rght = models.PositiveIntegerField(null=True, editable=False, blank=True)
   lvl = models.PositiveIntegerField(null=True, editable=False, blank=True)
+  # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, primary_key=True,
                           help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
@@ -177,6 +178,7 @@ class AuditModel(models.Model):
 
 class Parameter(AuditModel):
   # Database fields
+  # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=60, primary_key=True)
   value = models.CharField(_('value'), max_length=1000, null=True, blank=True)
   description = models.CharField(_('description'), max_length=1000, null=True, blank=True)
@@ -205,6 +207,7 @@ class Scenario(models.Model):
   )
 
   # Database fields
+  # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, primary_key=True)
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   status = models.CharField(
@@ -380,7 +383,9 @@ class User(AbstractUser):
 
   class Meta:
     db_table = "common_user"
+    # Translators: Translation included with Django
     verbose_name = _('user')
+    # Translators: Translation included with Django
     verbose_name_plural = _('users')
 
 
@@ -390,12 +395,15 @@ def delete_user(sender, instance, **kwargs):
 class Comment(models.Model):
   id = models.AutoField(_('identifier'), primary_key=True)
   content_type = models.ForeignKey(
+    # Translators: Translation included with Django
     ContentType, verbose_name=_('content type'),
     related_name="content_type_set_for_%(class)s"
     )
-  object_pk = models.TextField(_('object ID'))
+  # Translators: Translation included with Django
+  object_pk = models.TextField(_('object id'))
   content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
   comment = models.TextField(_('comment'), max_length=3000)
+  # Translators: Translation included with Django
   user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
   lastmodified = models.DateTimeField(_('last modified'), default=timezone.now, editable=False)
 
@@ -430,6 +438,7 @@ class Bucket(AuditModel):
   extra_strings = ( _('day'), _('week'), _('month'), _('quarter'), _('year') )
 
   # Database fields
+  # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, primary_key=True)
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   level = models.IntegerField(_('level'), help_text=_('Higher values indicate more granular time buckets'))
@@ -447,6 +456,7 @@ class BucketDetail(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
+  # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, db_index=True)
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))

@@ -43,6 +43,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.encoding import smart_text
 
 from freppledb.common.models import Comment
+from freppledb.common.views import CommentList
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -183,6 +184,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     model = self.model
     obj = self.get_object(request, unquote(object_id))
     if obj is None:
+      # Translators: Translation included with Django
       raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {
         'name': force_text(model._meta.verbose_name),
         'key': escape(object_id),
@@ -243,6 +245,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         })
 
     elif "_continue" in request.POST:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       if post_url_continue is None:
@@ -258,6 +261,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(post_url_continue)
 
     elif "_addanother" in request.POST:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was added successfully. You may add another %(name)s below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       redirect_url = request.prefix + request.path
@@ -265,6 +269,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(redirect_url)
 
     else:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was added successfully.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       # Redirect to previous url
@@ -294,6 +299,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
     if "_continue" in request.POST:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was changed successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       redirect_url = request.prefix + request.path
@@ -301,6 +307,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(redirect_url)
 
     elif "_saveasnew" in request.POST:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       redirect_url = request.prefix + reverse(
@@ -312,7 +319,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(redirect_url)
 
     elif "_addanother" in request.POST:
-      msg = _('The %(name)s "%(obj)s" was changed successfully. You may add another %(name)s below.') % msg_dict
+      # Translators: Translation included with Django
+      msg = _('The %(name)s "%(obj)s" was added successfully. You may add another %(name)s below.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       redirect_url = request.prefix + reverse(
         'admin:%s_%s_add' % (opts.app_label, opts.model_name),
@@ -322,6 +330,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       return HttpResponseRedirect(redirect_url)
 
     else:
+      # Translators: Translation included with Django
       msg = _('The %(name)s "%(obj)s" was changed successfully.') % msg_dict
       self.message_user(request, msg, messages.SUCCESS)
       # Redirect to previous url
@@ -393,6 +402,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       })
 
     self.message_user(request,
+      # Translators: Translation included with Django
       _('The %(name)s "%(obj)s" was deleted successfully.') % {
           'name': force_text(opts.verbose_name),
           'obj': force_text(obj_display),
@@ -424,6 +434,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       raise PermissionDenied
 
     if obj is None:
+      # Translators: Translation included with Django
       raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': escape(object_id)})
 
     # frePPLe specific selection of the database

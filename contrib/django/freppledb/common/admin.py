@@ -39,6 +39,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
 
   fieldsets = (
     (None, {'fields': ('username', 'password')}),
+    # Translators: Translation included with Django
     (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
     (_('Permissions in this scenario'), {'fields': ('is_active', 'is_superuser',
                                    'groups', 'user_permissions')}),
@@ -48,7 +49,8 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_user_change", "permission": 'common.change_user'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_user_comment"},
-    {"name": 'history', "label": _("history"), "view": "admin:common_user_history"},
+    # Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:common_user_history"},
     ]
 
   def get_readonly_fields(self, request, obj=None):
@@ -68,7 +70,8 @@ class MyGroupAdmin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_group_change", "permission": 'auth.change_group'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_group_comment"},
-    {"name": 'history', "label": _("history"), "view": "admin:common_group_history"},
+    # Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:common_group_history"},
     ]
 data_site.register(Group, MyGroupAdmin)
 
@@ -100,7 +103,8 @@ class Parameter_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_parameter_change", "permission": 'common.change_parameter'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_parameter_comment"},
-    {"name": 'history', "label": _("history"), "view": "admin:common_parameter_history"},
+    # Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:common_parameter_history"},
     ]
 data_site.register(Parameter, Parameter_admin)
 
@@ -125,7 +129,8 @@ class BucketDetail_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_bucketdetail_change", "permission": 'common.change_bucketdetail'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_bucketdetail_comment"},
-    {"name": 'history', "label": _("history"), "view": "admin:common_bucketdetail_history"},
+    # Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:common_bucketdetail_history"},
     ]
 data_site.register(BucketDetail, BucketDetail_admin)
 
@@ -138,6 +143,7 @@ class Bucket_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_bucket_change", "permission": 'common.change_bucket'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_bucket_comment"},
-    {"name": 'history', "label": _("history"), "view": "admin:common_group_history"},
+    # Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:common_group_history"},
     ]
 data_site.register(Bucket, Bucket_admin)

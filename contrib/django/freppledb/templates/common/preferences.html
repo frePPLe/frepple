@@ -19,7 +19,8 @@
 <div id="content-main">
 <form action="." method="post" class="form">{% csrf_token %}
 <table>{{form.as_table}}
-<tr><td><input type="submit" value="{% filter force_escape %}{% trans 'Save' context "Included in Django translations" %}{% endfilter %}"/></td></tr>
+{% comment %}Translators: Translation included with Django {% endcomment %}  
+<tr><td><input type="submit" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}"/></td></tr>
 </table></form>
 
 </div>

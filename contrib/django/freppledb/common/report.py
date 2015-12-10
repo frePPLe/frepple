@@ -882,6 +882,7 @@ class GridReport(View):
                   object_id=obj.pk,
                   object_repr=force_text(obj),
                   action_flag=CHANGE,
+                  #. Translators: Translation included with Django
                   change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
                 ).save(using=request.database)
           except reportclass.model.DoesNotExist:
@@ -1022,7 +1023,8 @@ class GridReport(View):
             if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
               # The primary key is not an auto-generated id and it is not mapped in the input...
               errors = True
-              yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
+              # Translators: Translation included with Django
+              yield force_text(_('Some keys were missing: %(keys)s') % {'keys': reportclass.model._meta.pk.name}) + '\n '
             # Abort when there are errors
             if errors:
               break
@@ -1080,6 +1082,7 @@ class GridReport(View):
                       object_id=obj.pk,
                       object_repr=force_text(obj),
                       action_flag=it and CHANGE or ADDITION,
+                      #. Translators: Translation included with Django
                       change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
                     ).save(using=request.database)
                     if it:
@@ -1183,7 +1186,8 @@ class GridReport(View):
           if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
             # The primary key is not an auto-generated id and it is not mapped in the input...
             errors = True
-            yield force_text(_('Missing primary key field %(key)s') % {'key': reportclass.model._meta.pk.name}) + '\n '
+            #. Translators: Translation included with Django
+            yield force_text(_('Some keys were missing: %(keys)s') % {'keys': reportclass.model._meta.pk.name}) + '\n '
           # Abort when there are errors
           if errors > 0:
             break
@@ -1245,6 +1249,7 @@ class GridReport(View):
                     object_id=obj.pk,
                     object_repr=force_text(obj),
                     action_flag=it and CHANGE or ADDITION,
+                    #. Translators: Translation included with Django
                     change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
                   ).save(using=request.database)
                   if it:
@@ -2030,7 +2035,8 @@ def importWorkbook(request):
               # The primary key is not an auto-generated id and it is not mapped in the input...
               header_ok = False
               yield force_text(string_concat(
-                model._meta.verbose_name, ': ', _('Missing primary key field %(key)s') % {'key': model._meta.pk.name}
+                # Translators: Translation included with django
+                model._meta.verbose_name, ': ', _('Some keys were missing: %(keys)s') % {'keys': model._meta.pk.name}
                 )) + '\n'
               numerrors += 1
             if not header_ok:
@@ -2085,6 +2091,7 @@ def importWorkbook(request):
                     object_id=obj.pk,
                     object_repr=force_text(obj),
                     action_flag=it and CHANGE or ADDITION,
+                    #. Translators: Translation included with Django
                     change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
                   ).save(using=request.database)
                   if it:

@@ -125,8 +125,10 @@ class PreferencesForm(forms.Form):
     newdata = super(PreferencesForm, self).clean()
     if newdata['cur_password']:
       if not self.user.check_password(newdata['cur_password']):
+        #. Translators: Translation included with Django
         raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
       if newdata['new_password1'] != newdata['new_password2']:
+        #. Translators: Translation included with Django
         raise forms.ValidationError("The two password fields didn't match.")
 
 

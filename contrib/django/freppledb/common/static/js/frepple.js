@@ -72,7 +72,6 @@ var upload = {
 
     // Pick up all changed cells. If a function "getData" is defined on the
     // page we use that, otherwise we use the standard functionality of jqgrid.
-    console.log(editrow, editcol);
     $("#grid").saveCell(editrow, editcol);
     if (typeof getDirtyData == 'function')
       var rows = getDirtyData();

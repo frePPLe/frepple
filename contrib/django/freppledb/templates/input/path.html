@@ -358,7 +358,6 @@ if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window
 $("#graph").resizable({handles: "s"});
 $("#content-main").resizable({handles: "s"});
 $(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
-console.log("resize windowheight:",$(window).height(),"px graphheight",$("#graph").height(),"px gridheight");
 });
 
 $(window).bind('resize', function() {

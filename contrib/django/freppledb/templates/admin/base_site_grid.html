@@ -61,7 +61,6 @@ $(function() {
     multiselect: true,
     onSelectRow: grid.markSelectedRow,
     formatCell: function(rowid, cellname, value, iRow, iCol) {
-      console.log(iRow, iCol);
       editrow = iRow;
       editcol = iCol;
       return value;
@@ -76,7 +75,7 @@ $(function() {
      handles: 's', minHeight: {{reportclass.height}}
      });
   {% endif %}{% endif %}
-  $("#grid").on('input', function() {console.log("dirty");$("#save").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active");$("#undo").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active")});
+  $("#grid").on('input', function() {$("#save").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active");$("#undo").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active")});
 });
 
 $(window).bind('resize', function() {

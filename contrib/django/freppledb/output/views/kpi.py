@@ -30,6 +30,7 @@ class Report(GridReport):
   permissions = (("view_kpi_report", "Can view kpi report"),)
   rows = (
     GridFieldText('category', title=_('category'), sortable=False, editable=False, align='center'),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), sortable=False, editable=False, align='center'),
     GridFieldInteger('value', title=_('value'), sortable=False, editable=False, align='center'),
     )

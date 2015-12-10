@@ -45,6 +45,7 @@ class Problem(models.Model):
   # Database fields
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
   owner = models.CharField(_('owner'), max_length=300, db_index=True)
+  #. Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=20, db_index=True)
   description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)
@@ -66,6 +67,7 @@ class Constraint(models.Model):
   demand = models.CharField(_('demand'), max_length=300, db_index=True)
   entity = models.CharField(_('entity'), max_length=15, db_index=True)
   owner = models.CharField(_('owner'), max_length=300, db_index=True)
+  #. Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=20, db_index=True)
   description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)

@@ -51,6 +51,7 @@ class Report(GridReport):
   multiselect = False
   rows = (
     GridFieldText('entity', title=_('entity'), editable=False, align='center'),  # TODO choices=getEntities
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
     GridFieldText('owner', title=_('owner'), editable=False, extra='formatter:probfmt'),
     GridFieldText('description', title=_('description'), editable=False, width=350),

@@ -29,11 +29,13 @@
         && !('finished' in rowdata)
         && cellvalue.charAt(cellvalue.length-1) == "%"
         )
-      return cellvalue + "&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% trans 'cancel'|capfirst %}</button>";
+      {% comment %}Translators: Translation included with Django {% endcomment %}
+      return cellvalue + "&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     if (cellvalue == 'Failed')
       return "<span class='taskfailed'>{% trans 'failed'|capfirst %}</span>";
     else if (cellvalue == 'Waiting')
-      return "{% trans 'waiting'|capfirst %}&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% trans 'cancel'|capfirst %}</button>";
+    {% comment %}Translators: Translation included with Django{% endcomment %} 
+      return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     else if (cellvalue == 'Done')
       return "{% trans 'done'|capfirst %}";
     else if (cellvalue == 'Canceled')
@@ -296,6 +298,7 @@ and export results.<br>
 <div>
 <table id="scenarios">
 <form method="post" action="{{request.prefix}}/execute/launch/frepple_copy/">{% csrf_token %}<tr>
+{% comment %}Translators: Translation included with Django {% endcomment %}
 <th>{% trans 'name'|capfirst %}</th>
 <th>{% trans 'status'|capfirst %}</th>
 <th>{% trans 'description'|capfirst %}</th>

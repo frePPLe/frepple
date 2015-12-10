@@ -59,6 +59,7 @@ class TaskReport(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
+    #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), editable=False, align='center'),
     GridFieldDateTime('submitted', title=_('submitted'), editable=False, align='center'),
     GridFieldDateTime('started', title=_('started'), editable=False, align='center'),
@@ -66,6 +67,7 @@ class TaskReport(GridReport):
     GridFieldText('status', title=_('status'), editable=False, align='center', extra="formatter:status"),
     GridFieldText('message', title=_('message'), editable=False, width=500),
     GridFieldText('arguments', title=_('arguments'), editable=False),
+    #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
     )
 

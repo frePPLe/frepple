@@ -253,6 +253,7 @@ LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','admin')),
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','messages')),
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
+    ([x for x in sys.path if 'site-packages' in x][0] + os.path.sep + 'django'+ os.path.sep + 'contrib' + os.path.sep + 'admindocs' + os.path.sep + 'locale'),
 )
 
 TEMPLATE_DIRS = (

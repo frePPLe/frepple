@@ -244,6 +244,7 @@ REST_FRAMEWORK = {
   )
 }
 
+import django.contrib.admindocs
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','auth')),
@@ -252,7 +253,7 @@ LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','admin')),
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','messages')),
     os.path.normpath(os.path.join(FREPPLE_APP,'freppledb','locale')),
-    ([x for x in sys.path if 'site-packages' in x][0] + os.path.sep + 'django'+ os.path.sep + 'contrib' + os.path.sep + 'admindocs' + os.path.sep + 'locale'),
+    os.path.normpath(os.path.join(os.path.dirname(django.contrib.admindocs.__file__),'locale')),
 )
 
 TEMPLATE_DIRS = (

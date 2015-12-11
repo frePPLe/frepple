@@ -183,7 +183,7 @@ class Load_inline(MultiDBTabularInline):
   fields = ('resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup')
   sfieldsets = (
     (None, {'fields': ['resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup']}),
-    (_('Alternates'), {'fields': ('name', 'alternate', 'priority', 'search')}),
+    (_('Alternates'), {'fields': ('name', 'priority', 'search')}),
     )
   extra = 0
   exclude = ('source',)
@@ -334,9 +334,7 @@ class Flow_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('thebuffer', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
-    (_('Alternates'), {
-       'fields': ('name', 'alternate', 'priority', 'search'),
-       }),
+    (_('Alternates'), {'fields': ('name', 'priority', 'search'),}),
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_flow_change", "permissions": "input.change_flow"},
@@ -353,9 +351,7 @@ class Load_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
-    (_('Alternates'), {
-       'fields': ('name', 'alternate', 'priority', 'search'),
-       }),
+    (_('Alternates'), {'fields': ('name', 'priority', 'search'),}),
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_load_change", "permissions": "input.change_load"},

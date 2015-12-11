@@ -4924,7 +4924,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, double q)
-      : quantity(q), hasAlts(false), altFlow(NULL), search(PRIORITY)
+      : quantity(q), search(PRIORITY)
     {
       setOperation(o);
       setBuffer(b);
@@ -4941,7 +4941,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Constructor. */
     explicit Flow(Operation* o, Buffer* b, double q, DateRange e)
-      : quantity(q), hasAlts(false), altFlow(NULL), search(PRIORITY)
+      : quantity(q), search(PRIORITY)
     {
       setOperation(o);
       setBuffer(b);
@@ -5015,33 +5015,32 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       if (b) setPtrB(b,b->getFlows());
     }
 
-    /** Returns true if there are alternates for this flow. */
-    bool hasAlternates() const
-    {
-      return hasAlts;
-    }
-
-    /** Returns the flow of which this one is an alternate.<br>
-      * NULL is return where there is none.
+    /** Return the leading flow of this group.
+      * When the flow has no alternate or if the flow is itself leading
+      * then NULL is returned.
       */
     Flow* getAlternate() const
     {
-      return altFlow;
+      if (getName().empty() || !getOperation())
+        return NULL;
+      for (Operation::flowlist::const_iterator h=getOperation()->getFlows().begin();
+        h!=getOperation()->getFlows().end() && this != &*h; ++h)
+        if (getName() == h->getName())
+          return const_cast<Flow*>(&*h);
+      return NULL;
     }
 
-    /** Define the flow of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternate(Flow *);
-
-    /** Returns the load of which this one is an alternate.<br>
-      * NULL is return where there is none.
-      */
-    string getAlternateName() const
+    /** Return whether the flow has alternates. */
+    bool hasAlternates() const
     {
-      return altFlow ? altFlow->getName() : "";
+      if (getName().empty() || !getOperation())
+        return false;
+      for (Operation::flowlist::const_iterator h=getOperation()->getFlows().begin();
+        h!=getOperation()->getFlows().end(); ++h)
+        if (getName() == h->getName() && this != &*h)
+          return true;
+      return false;
     }
-
-    /** Define the flow of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternateName(const string&);
 
     /** Return the search mode. */
     SearchMode getSearch() const
@@ -5088,8 +5087,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
-      m->addPointerField<Cls, Flow>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -5102,8 +5099,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit DECLARE_EXPORT Flow() : quantity(0.0), hasAlts(false),
-      altFlow(NULL), search(PRIORITY)
+    explicit DECLARE_EXPORT Flow() : quantity(0.0), search(PRIORITY)
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -5117,12 +5113,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Quantity of the flow. */
     double quantity;
-
-    /** Flag that is set to true when a flow has alternates. */
-    bool hasAlts;
-
-    /** A flow representing the main flow of a set of alternate flows. */
-    Flow* altFlow;
 
     /** Mode to select the preferred alternates. */
     SearchMode search;
@@ -6220,7 +6210,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
+      : search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -6238,7 +6228,7 @@ class Load
 
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u, DateRange e)
-      : hasAlts(false), altLoad(NULL), search(PRIORITY), skill(NULL)
+      : search(PRIORITY), skill(NULL)
     {
       setOperation(o);
       setResource(r);
@@ -6297,34 +6287,32 @@ class Load
       qty = f;
     }
 
-    /** Returns true if there are alternates for this load. */
-    bool hasAlternates() const
-    {
-      return hasAlts;
-    }
-
-    /** Returns the load for which this one is an alternate.<br>
-      * NULL is returned where there is none.
+    /** Return the leading load of this group.
+      * When the load has no alternate or if the flow is itself leading
+      * then NULL is returned.
       */
     Load* getAlternate() const
     {
-      return altLoad;
+      if (getName().empty() || !getOperation())
+        return NULL;
+      for (Operation::loadlist::const_iterator h=getOperation()->getLoads().begin();
+        h!=getOperation()->getLoads().end() && this != &*h; ++h)
+        if (getName() == h->getName())
+          return const_cast<Load*>(&*h);
+      return NULL;
     }
 
-    /** Define the load of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternate(Load *);
-
-    /** Returns the name of the load for which this one
-      * is an alternate. An empty string is returned when
-      * there is none.
-      */
-    string getAlternateName() const
+    /** Return whether the load has alternates. */
+    bool hasAlternates() const
     {
-      return altLoad ? altLoad->getName() : "";
+      if (getName().empty() || !getOperation())
+        return false;
+      for (Operation::loadlist::const_iterator h=getOperation()->getLoads().begin();
+        h!=getOperation()->getLoads().end(); ++h)
+        if (getName() == h->getName() && this != &*h)
+          return true;
+      return false;
     }
-
-    /** Define the load of which this one is an alternate. */
-    DECLARE_EXPORT void setAlternateName(const string&);
 
     /** Update the required resource setup. */
     DECLARE_EXPORT void setSetup(const string&);
@@ -6366,8 +6354,7 @@ class Load
     static DECLARE_EXPORT const MetaCategory* metadata;
 
     /** Default constructor. */
-    Load() : qty(1.0), hasAlts(false), altLoad(NULL),
-      search(PRIORITY), skill(NULL)
+    Load() : qty(1.0), search(PRIORITY), skill(NULL)
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -6392,8 +6379,6 @@ class Load
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity, 1.0);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
-      m->addPointerField<Cls, Load>(Tags::alternate, &Cls::getAlternate, &Cls::setAlternate, DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::alternate_name, &Cls::getAlternateName, &Cls::setAlternateName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
@@ -6412,12 +6397,6 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty;
-
-    /** Flag that is set to true when a load has alternates. */
-    bool hasAlts;
-
-    /** A load representing the main load of a set of alternates. */
-    Load* altLoad;
 
     /** Required setup. */
     string setup;

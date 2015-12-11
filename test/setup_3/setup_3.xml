@@ -71,19 +71,25 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>red</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>red</setup>
           </load>
         </loads>
         <suboperations>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+          <suboperation>
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
         </suboperations>
       </producing>
       <item name="red product" />
@@ -109,19 +115,25 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>green</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>green</setup>
           </load>
         </loads>
         <suboperations>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+          <suboperation>
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
+          <suboperation>
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+          </suboperation>
+          <suboperation>
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+          </suboperation>
         </suboperations>
       </producing>
       <item name="green product" />
@@ -147,24 +159,24 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>white</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>white</setup>
           </load>
         </loads>
         <suboperations>
           <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
         </suboperations>
       </producing>
@@ -191,24 +203,24 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>blue</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>blue</setup>
           </load>
         </loads>
         <suboperations>
           <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
         </suboperations>
       </producing>
@@ -235,24 +247,24 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>black</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>black</setup>
           </load>
         </loads>
         <suboperations>
           <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
           <suboperation>          
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
         </suboperations>
       </producing>
@@ -279,24 +291,24 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>yellow</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>yellow</setup>
           </load>
         </loads>
         <suboperations>
           <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
         </suboperations>
       </producing>
@@ -322,22 +334,22 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
           </load>
         </loads>
         <suboperations>
           <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
+            <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
+            <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
         </suboperations>
       </producing>

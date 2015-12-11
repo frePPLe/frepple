@@ -133,85 +133,6 @@ DECLARE_EXPORT Load::~Load()
     getOperation()->loaddata.erase(this);
   if (getResource())
     getResource()->loads.erase(this);
-
-  // Clean up alternate loads
-  if (hasAlts)
-  {
-    // The load has alternates.
-    // Make a new load the leading one. Or if there is only one alternate
-    // present it is not marked as an alternate any more.
-    unsigned short cnt = 0;
-    int minprio = INT_MAX;
-    Load* newLeader = NULL;
-    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-        i != getOperation()->loaddata.end(); ++i)
-      if (i->altLoad == this)
-      {
-        cnt++;
-        if (i->priority < minprio)
-        {
-          newLeader = &*i;
-          minprio = i->priority;
-        }
-      }
-    if (cnt < 1)
-      throw LogicException("Alternate loads update failure");
-    else if (cnt == 1)
-      // No longer an alternate any more
-      newLeader->altLoad = NULL;
-    else
-    {
-      // Mark a new leader load
-      newLeader->hasAlts = true;
-      newLeader->altLoad = NULL;
-      for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-          i != getOperation()->loaddata.end(); ++i)
-        if (i->altLoad == this) i->altLoad = newLeader;
-    }
-  }
-  if (altLoad)
-  {
-    // The load is an alternate of another one.
-    // If it was the only alternate, then the hasAlts flag on the parent
-    // load needs to be set back to false
-    bool only_one = true;
-    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
-        i != getOperation()->loaddata.end(); ++i)
-      if (i->altLoad == altLoad)
-      {
-        only_one = false;
-        break;
-      }
-    if (only_one) altLoad->hasAlts = false;
-  }
-}
-
-
-DECLARE_EXPORT void Load::setAlternate(Load *f)
-{
-  // Can't be an alternate to oneself.
-  // No need to flag as an exception.
-  if (f == this) return;
-
-  // Validate the argument
-  if (!f)
-    throw DataException("Setting NULL alternate load");
-  if (hasAlts || f->altLoad)
-    throw DataException("Nested alternate loads are not allowed");
-
-  // Update both flows
-  f->hasAlts = true;
-  altLoad = f;
-}
-
-
-DECLARE_EXPORT void Load::setAlternateName(const string& n)
-{
-  if (!getOperation())
-    throw LogicException("Can't set an alternate load before setting the operation");
-  Load *x = getOperation()->loaddata.find(n);
-  if (!x) throw DataException("Can't find load with name '" + n + "'");
-  setAlternate(x);
 }
 
 
@@ -224,9 +145,7 @@ DECLARE_EXPORT void Load::setOperation(Operation* o)
     // Alternates of that load can have a setup as well.
     for (Operation::loadlist::iterator i = o->loaddata.begin();
         i != o->loaddata.end(); ++i)
-      if (&*i != this && !i->setup.empty()
-          && i->getAlternate() != this && getAlternate() != &*i
-          && i->getAlternate() != getAlternate())
+      if (&*i != this && !i->setup.empty() && i->getName() != getName())
         throw DataException("Only a single load of an operation can specify a setup");
   }
 
@@ -245,9 +164,7 @@ DECLARE_EXPORT void Load::setSetup(const string& n)
     // Alternates of that load can have a setup as well.
     for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
         i != getOperation()->loaddata.end(); ++i)
-      if (&*i != this && !i->setup.empty()
-          && i->getAlternate() != this && getAlternate() != &*i
-          && i->getAlternate() != getAlternate())
+      if (&*i != this && !i->setup.empty() && i->getName() != getName())
         throw DataException("Only a single load of an operation can specify a setup");
   }
 

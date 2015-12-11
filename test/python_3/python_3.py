@@ -167,12 +167,12 @@ makeoper = frepple.operation_routing(name="make item")
 frepple.suboperation(
   owner = makeoper,
   operation = frepple.operation_fixed_time(name="make item - step 1", duration=4*86400),
-  priority = 2
+  priority = 1
   )
 frepple.suboperation(
   owner = makeoper,
   operation = frepple.operation_fixed_time(name="make item - step 2", duration=3*86400),
-  priority = 1
+  priority = 2
   )
 buyoper = frepple.operation_fixed_time(name="buy item", duration=86400)
 frepple.suboperation(
@@ -187,7 +187,7 @@ frepple.suboperation(
   )
 
 ###
-#print("\nCreating calendars")
+print("\nCreating calendars")
 c = frepple.calendar(name="Cal1", default=4.56)
 c.setValue(datetime.datetime(2009,1,1), datetime.datetime(2009,3,1), 1)
 c.setValue(datetime.datetime(2009,2,1), datetime.datetime(2009,5,1), 2)
@@ -348,6 +348,7 @@ print(opplan.toXML())
 print(item.toXML())
 print(order1.toXML())
 print(buf1.toXML())
+print(buf2.toXML())
 print(makeoper.toXML())
 for i in frepple.problems():
   print(i.toXML())

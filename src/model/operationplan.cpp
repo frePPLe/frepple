@@ -473,8 +473,9 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
     for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
         h!=oper->getFlows().end(); ++h)
     {
-      if (h->getAlternate()) continue; // Only the primary flow is instantiated
-      if (h->getQuantity() > 0 ? prod : cons)
+      if (!h->getAlternate() && (h->getQuantity() > 0 ? prod : cons))
+        // Only the primary flow is instantiated.
+        // Flow creation can also be explicitly switched off.
         new FlowPlan(this, &*h);
     }
 }

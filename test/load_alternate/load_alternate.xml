@@ -33,7 +33,7 @@
           <load>
             <resource name="Resource B"/>
             <quantity>2</quantity>
-            <alternate>group1</alternate>
+            <name>group1</name>
             <priority>2</priority>
           </load>
           <load>
@@ -50,7 +50,7 @@
             <resource name="Resource D"/>
             <quantity>1</quantity>
             <priority>2</priority>
-            <alternate>group2</alternate>
+            <name>group2</name>
             <!--
             <effective_start>2009-01-10T00:00:00</effective_start>
             <effective_end>2009-01-20T00:00:00</effective_end>

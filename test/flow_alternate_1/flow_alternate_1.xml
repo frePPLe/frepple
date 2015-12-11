@@ -83,7 +83,7 @@
             <buffer name="component B" />
             <quantity>-2</quantity>
             <priority>2</priority>
-            <alternate>group1</alternate>
+            <name>group1</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="component C" />
@@ -96,14 +96,14 @@
             <quantity>-1</quantity>
             <!-- TODO <effective_end>2009-02-01T00:00:00</effective_end>-->
             <priority>2</priority>
-            <alternate>group2</alternate>
+            <name>group2</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="component E" />
             <quantity>-1</quantity>
             <!-- TODO <effective_start>2009-01-10T00:00:00</effective_start>-->
             <priority>3</priority>
-            <alternate>group2</alternate>
+            <name>group2</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="component F" />
@@ -117,7 +117,7 @@
             <!-- TODO <effective_start>2009-02-01T00:00:00</effective_start>-->
             <quantity>-1</quantity>
             <priority>2</priority>
-            <alternate>group3</alternate>
+            <name>group3</name>
           </flow>
         </flows>
       </producing>

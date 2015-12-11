@@ -711,7 +711,6 @@
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
       <xsd:element name="name" type="non-empty-string" />
-      <xsd:element name="alternate" type="non-empty-string" />
       <xsd:element name="search" type="search" />
       <xsd:element name="booleanproperty" type="booleanproperty" />
       <xsd:element name="stringproperty" type="stringproperty" />
@@ -724,7 +723,6 @@
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="name" type="non-empty-string" />
-    <xsd:attribute name="alternate" type="non-empty-string" />
     <xsd:attribute name="search" type="search" />
     <xsd:attribute name="action" type="action" />
     <xsd:attribute name="source" type="xsd:normalizedString" />
@@ -792,7 +790,6 @@
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
       <xsd:element name="name" type="non-empty-string" />
-      <xsd:element name="alternate" type="non-empty-string" />
       <xsd:element name="search" type="search" />
       <xsd:element name="setup" type="non-empty-string" />
       <xsd:element name="skill" type="skill" />
@@ -807,7 +804,6 @@
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="name" type="non-empty-string" />
-    <xsd:attribute name="alternate" type="non-empty-string" />
     <xsd:attribute name="search" type="search" />
     <xsd:attribute name="setup" type="non-empty-string" />
     <xsd:attribute name="action" type="action" />

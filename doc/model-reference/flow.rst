@@ -47,12 +47,8 @@ priority        integer           | Priority of the flow, used in case of altern
                                   | The default is 1.
                                   | Lower numbers indicate more preferred flows.
 name            non-empty string  | Optional name of the flow.
-                                  | A name is only useful when using alternate flows.
-                                    Otherwise leave it empty.
-alternate       non-empty string  | Name of the flow of which this is an alternate.
-                or flow           | When using the Python API the argument can be a flow
-                                    or a string.
-                                  | When using the XML data format the argument is a string.
+                                  | All flows with the same name are considered to be
+                                    alternates of each other.
 search          string            | Defines the order of preference among the alternate flows.
                                   | The valid choices are:
 

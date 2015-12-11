@@ -579,10 +579,9 @@ class loadData(object):
       SELECT
         operation_id, thebuffer_id, quantity, type, effective_start,
         effective_end, name, priority, search, source
-      FROM flow
-      WHERE (alternate IS NULL OR alternate = '') %s
+      FROM flow %s
       ORDER BY operation_id, thebuffer_id
-      ''' % self.filter_and)
+      ''' % self.filter_where)
     curbufname = None
     for i in self.cursor.fetchall():
       cnt += 1
@@ -604,35 +603,12 @@ class loadData(object):
       except Exception as e:
         print("Error:", e)
     self.cursor.execute('''
-      SELECT
-        operation_id, thebuffer_id, quantity, type, effective_start,
-        effective_end, name, alternate, priority, search, source
+      SELECT count(*)
       FROM flow
-      WHERE (alternate IS NOT NULL AND alternate <> '') %s
-      ORDER BY operation_id, thebuffer_id
-      ''' % self.filter_and)
-    curbufname = None
-    for i in self.cursor.fetchall():
-      cnt += 1
-      try:
-        if i[1] != curbufname:
-          curbufname = i[1]
-          curbuf = frepple.buffer(name=curbufname)
-        curflow = frepple.flow(operation=frepple.operation(name=i[0]), type=i[3], buffer=curbuf, quantity=i[2], source=i[10])
-        if i[4]:
-          curflow.effective_start = i[4]
-        if i[5]:
-          curflow.effective_end = i[5]
-        if i[6]:
-          curflow.name = i[6]
-        if i[7]:
-          curflow.alternate = i[7]
-        if i[8]:
-          curflow.priority = i[8]
-        if i[9]:
-          curflow.search = i[9]
-      except Exception as e:
-        print("Error:", e)
+      WHERE alternate IS NOT NULL AND alternate <> ''
+      ''')
+    if self.cursor.fetchone()[0]:
+      raise ValueError("Flow.alternate field is not used any longer. Use only flow.name")
     print('Loaded %d flows in %.2f seconds' % (cnt, time() - starttime))
 
 
@@ -646,10 +622,9 @@ class loadData(object):
       SELECT
         operation_id, resource_id, quantity, effective_start, effective_end, name,
         priority, setup, search, skill_id, source
-      FROM resourceload
-      WHERE (alternate IS NULL OR alternate = '') %s
+      FROM resourceload %s
       ORDER BY operation_id, resource_id
-      ''' % self.filter_and)
+      ''' % self.filter_where)
     curresname = None
     for i in self.cursor.fetchall():
       cnt += 1
@@ -675,39 +650,12 @@ class loadData(object):
       except Exception as e:
         print("Error:", e)
     self.cursor.execute('''
-      SELECT
-        operation_id, resource_id, quantity, effective_start, effective_end,
-        name, alternate, priority, setup, search, skill_id, source
+      SELECT count(*)
       FROM resourceload
-      WHERE (alternate IS NOT NULL AND alternate <> '') %s
-      ORDER BY operation_id, resource_id
-      ''' % self.filter_and)
-    curresname = None
-    for i in self.cursor.fetchall():
-      cnt += 1
-      try:
-        if i[1] != curresname:
-          curresname = i[1]
-          curres = frepple.resource(name=curresname)
-        curload = frepple.load(operation=frepple.operation(name=i[0]), resource=curres, quantity=i[2], source=i[11])
-        if i[3]:
-          curload.effective_start = i[3]
-        if i[4]:
-          curload.effective_end = i[4]
-        if i[5]:
-          curload.name = i[5]
-        if i[6]:
-          curload.alternate = i[6]
-        if i[7]:
-          curload.priority = i[7]
-        if i[8]:
-          curload.setup = i[8]
-        if i[9]:
-          curload.search = i[9]
-        if i[10]:
-          curload.skill = frepple.skill(name=i[10])
-      except Exception as e:
-        print("Error:", e)
+      WHERE alternate IS NOT NULL AND alternate <> ''
+      ''')
+    if self.cursor.fetchone()[0]:
+      raise ValueError("Load.alternate field is not used any longer. Use only load.name")
     print('Loaded %d loads in %.2f seconds' % (cnt, time() - starttime))
 
 

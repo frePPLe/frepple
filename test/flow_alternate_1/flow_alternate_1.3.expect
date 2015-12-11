@@ -236,6 +236,7 @@
 					</buffer>
 					<quantity>-2</quantity>
 					<priority>2</priority>
+					<name>group1</name>
 				</flow>
 				<flow>
 					<buffer xsi:type="buffer_procure">
@@ -250,6 +251,7 @@
 					</buffer>
 					<quantity>-1</quantity>
 					<priority>2</priority>
+					<name>group2</name>
 				</flow>
 				<flow>
 					<buffer xsi:type="buffer_procure">
@@ -257,6 +259,7 @@
 					</buffer>
 					<quantity>-1</quantity>
 					<priority>3</priority>
+					<name>group2</name>
 				</flow>
 				<flow>
 					<buffer xsi:type="buffer_procure">
@@ -271,6 +274,7 @@
 					</buffer>
 					<quantity>-1</quantity>
 					<priority>2</priority>
+					<name>group3</name>
 				</flow>
 			</flows>
 			<duration>P1D</duration>
@@ -372,23 +376,41 @@
 			<end>2009-01-04T00:00:00</end>
 			<quantity>1</quantity>
 		</operationplan>
-		<operationplan id="10" operation="assembly">
+		<operationplan>
+			<id>10</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
 			<start>2008-12-25T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
 		</operationplan>
-		<operationplan id="11" operation="assembly">
+		<operationplan>
+			<id>11</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
 			<start>2008-12-27T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
 		</operationplan>
-		<operationplan id="12" operation="assembly">
+		<operationplan>
+			<id>12</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
 			<start>2008-12-29T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>5</quantity>
 		</operationplan>
-		<operationplan id="13" operation="deliver product">
-			<demand name="order 1"/>
+		<operationplan>
+			<id>13</id>
+			<operation>
+				<name>deliver product</name>
+			</operation>
+			<demand>
+				<name>order 1</name>
+			</demand>
 			<start>2009-01-04T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>10</quantity>

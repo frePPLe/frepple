@@ -1,6 +1,8 @@
-<customer name="client">
+<customer>
+	<name>client</name>
 </customer>
-<location name="locA">
+<location>
+	<name>locA</name>
 </location>
 <operationplan id="19" operation="make item">
 	<start>2010-12-25T00:00:00</start>
@@ -29,7 +31,8 @@
 		</operationplan>
 	</operationplans>
 </demand>
-<buffer name="buffer1" xsi:type="buffer_procure">
+<buffer xsi:type="buffer_procure">
+	<name>buffer1</name>
 	<category>My category</category>
 	<description>My description</description>
 	<members>

@@ -119,13 +119,13 @@
             <buffer name="A2" />
             <quantity>-1</quantity>
             <priority>2</priority>
-            <alternate>groupA</alternate>
+            <name>groupA</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="A3" />
             <quantity>-1</quantity>
             <priority>3</priority>
-            <alternate>groupA</alternate>
+            <name>groupA</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="B1" />
@@ -137,19 +137,19 @@
             <buffer name="B2" />
             <quantity>-1</quantity>
             <priority>2</priority>
-            <alternate>groupB</alternate>
+            <name>groupB</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="B3" />
             <quantity>-1</quantity>
             <priority>3</priority>
-            <alternate>groupB</alternate>
+            <name>groupB</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="B4" />
             <quantity>-1</quantity>
             <priority>4</priority>
-            <alternate>groupB</alternate>
+            <name>groupB</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="C1" />
@@ -161,19 +161,19 @@
             <buffer name="C2" />
             <quantity>-1</quantity>
             <priority>2</priority>
-            <alternate>groupC</alternate>
+            <name>groupC</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="C3" />
             <quantity>-1</quantity>
             <priority>3</priority>
-            <alternate>groupC</alternate>
+            <name>groupC</name>
           </flow>
           <flow xsi:type="flow_start">
             <buffer name="C4" />
             <quantity>-1</quantity>
             <priority>4</priority>
-            <alternate>groupC</alternate>
+            <name>groupC</name>
           </flow>
         </flows>
       </producing>

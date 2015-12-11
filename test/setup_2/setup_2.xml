@@ -74,12 +74,12 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>red</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>red</setup>
           </load>
         </loads>
@@ -107,12 +107,12 @@
           </load>
           <load>
             <resource name="Painting line B"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>green</setup>
           </load>
           <load>
             <resource name="Painting line C"/>
-            <alternate>paint</alternate>
+            <name>paint</name>
             <setup>green</setup>
           </load>
         </loads>

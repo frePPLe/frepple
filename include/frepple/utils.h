@@ -6215,8 +6215,9 @@ template <class A, class B, class C> class Association
           return effectivity;
         }
 
-        /** Sets an optional name for the association.<br>
-          * There is no garantuee of the uniqueness of this name.
+        /** Sets an optional, non-unique name for the association.<br>
+          * All associations with the same name are considered alternates
+          * of each other.
           */
         void setName(const string& x)
         {

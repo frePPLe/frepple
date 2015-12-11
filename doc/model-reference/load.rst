@@ -26,12 +26,8 @@ priority        integer           | Priority of the load, used in case of altern
                                   | The default is 1. Lower numbers indicate more preferred
                                     loads.
 name            non-empty string  | Optional name of the load.
-                                  | A name is only useful when using alternate loads.
-                                    Otherwise leave it empty.
-alternate       non-empty string  | Name of the load of which this is an alternate.
-                or load           | When using the Python API the argument can be a load or a
-                                    string.
-                                  | When using the XML data format the argument is a string.
+                                  | All loads with the same name are considered to be
+                                    alternates of each other.
 setup           non-empty string  Name of the required setup on the resource.
 search          string            | Defines the order of preference among the alternate loads.
                                   | The valid choices are:

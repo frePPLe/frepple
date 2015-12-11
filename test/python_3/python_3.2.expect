@@ -176,14 +176,14 @@
 			<name>make item</name>
 			<suboperations>
 				<suboperation>
-				<operation>
+					<operation>
 						<name>make item - step 2</name>
-				</operation>
+					</operation>
 				</suboperation>
 				<suboperation>
-				<operation>
+					<operation>
 						<name>make item - step 1</name>
-				</operation>
+					</operation>
 					<priority>2</priority>
 				</suboperation>
 			</suboperations>

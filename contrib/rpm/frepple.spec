@@ -14,9 +14,6 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-%{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-
 Summary: Free Production PLanning
 Name: frepple
 Version: 3.0.beta
@@ -80,11 +77,11 @@ sed -i -e 's| -shared | -Wl,--as-needed\0|g' libtool
 # Compile
 make %{?_smp_mflags} all
 
-%check
+#%check
 # Run test suite, skipping some long and less interesting tests
-TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1 -e wip"
-export TESTARGS
-make check
+#TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1 -e wip"
+#export TESTARGS
+#make check
 
 %install
 rm -rf %{buildroot}
@@ -130,7 +127,8 @@ rm -rf /var/log/frepple
 #%dir %{_libdir}/frepple
 %{_datadir}/frepple
 %attr(0770,-,frepple) %dir %{_localstatedir}/log/frepple
-%{python_sitelib}/frepple*
+%{python3_sitelib}/*
+%{python3_sitearch}/*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
 %doc COPYING

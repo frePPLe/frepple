@@ -56,7 +56,7 @@ def handler404(request):
     #. Translators: Translation included with Django
     force_text(_('Page not found') + ": " + request.prefix + request.get_full_path())
     )
-  return HttpResponseRedirect(request.prefix + "/admin/")
+  return HttpResponseRedirect(request.prefix + "/data/")
 
 
 def handler500(request):

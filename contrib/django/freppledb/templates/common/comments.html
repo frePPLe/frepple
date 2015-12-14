@@ -5,6 +5,9 @@
   $(function() {
     $("input:submit").button();
   });
+  $(document).ready(function() {
+    $('#submit')removeClass('ui-button ui-state-default');
+  });
 </script>
 {% endblock %}
 
@@ -16,9 +19,9 @@
 <div class="module">
 {% if perms.common.add_comment %}<form method="post">
   {% csrf_token %}
-  <textarea id="comment" name="comment" rows="10" style="width:100%" ></textarea>
+  <textarea id="comment" name="comment" rows="10" style="width:100%" oninput="$('#submit').addClass('save_undo_button_active').removeClass('save_undo_button_inactive');"></textarea>
   {% comment %}Translators: Translation included with Django {% endcomment %}  
-  <input id="submit" type="submit" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}"/>
+  <input id="submit" type="submit" class="button ui-corner-all save_undo_button_inactive" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}"/>
 </form>{% endif%}
 
 {% for c in comments %}

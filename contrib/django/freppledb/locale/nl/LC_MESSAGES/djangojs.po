@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 3.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-10 14:43+0100\n"
+"POT-Creation-Date: 2015-12-14 08:53+0100\n"
 "PO-Revision-Date: 2015-12-11 09:40+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -34,190 +34,191 @@ msgstr ""
 msgid "There are unsaved changes on this page."
 msgstr "Er zijn onbewaarde wijzigingen op deze pagina."
 
-#: common/static/js/frepple.js:92
+#: common/static/js/frepple.js:93
 msgid "Error saving data"
 msgstr "Foutmelding tijdens wegschrijven gegevens"
 
-#: common/static/js/frepple.js:113
+#: common/static/js/frepple.js:114
 msgid "Save or cancel your changes first"
 msgstr "Bewaar of annuleer eerst de wijzigingen"
 
-#: common/static/js/frepple.js:120
+#: common/static/js/frepple.js:121
 msgid "Save"
 msgstr "Bewaar"
 
-#: common/static/js/frepple.js:127 common/static/js/frepple.js:405
-#: common/static/js/frepple.js:611 common/static/js/frepple.js:672
-#: common/static/js/frepple.js:732 common/static/js/frepple.js:789
-#: common/static/js/frepple.js:1035 common/static/js/frepple.js:1207
-#: common/static/js/frepple.js:1450
+#: common/static/js/frepple.js:128 common/static/js/frepple.js:418
+#: common/static/js/frepple.js:624 common/static/js/frepple.js:685
+#: common/static/js/frepple.js:745 common/static/js/frepple.js:802
+#: common/static/js/frepple.js:1048 common/static/js/frepple.js:1220
+#: common/static/js/frepple.js:1463
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: common/static/js/frepple.js:251
+#: common/static/js/frepple.js:264
 msgid "Select"
 msgstr "Selecteer"
 
-#: common/static/js/frepple.js:342 common/static/js/frepple.js:1123
+#: common/static/js/frepple.js:355 common/static/js/frepple.js:1136
 msgid "Customize"
 msgstr "Personaliseer"
 
-#: common/static/js/frepple.js:348 common/static/js/frepple.js:638
-#: common/static/js/frepple.js:1130
+#: common/static/js/frepple.js:361 common/static/js/frepple.js:651
+#: common/static/js/frepple.js:1143
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:409 common/static/js/frepple.js:1177
+#: common/static/js/frepple.js:422 common/static/js/frepple.js:1190
 msgid "Reset"
 msgstr "Herstel"
 
-#: common/static/js/frepple.js:425 common/static/js/frepple.js:530
-#: common/static/js/frepple.js:1090 common/static/js/frepple.js:1195
-#: planningboard/static/planningboard/js/planningboard.js:652
-#: planningboard/static/planningboard/js/planningboard.js:1039
+#: common/static/js/frepple.js:438 common/static/js/frepple.js:543
+#: common/static/js/frepple.js:1103 common/static/js/frepple.js:1208
+#: planningboard/static/planningboard/js/planningboard.js:667
+#: planningboard/static/planningboard/js/planningboard.js:1054
 msgid "Error saving report settings"
 msgstr "Foutmelding tijdens wegschrijven rapportconfiguratie"
 
-#: common/static/js/frepple.js:572 common/static/js/frepple.js:578
+#: common/static/js/frepple.js:585 common/static/js/frepple.js:591
 msgid "Export format"
 msgstr "Export  formaat"
 
-#: common/static/js/frepple.js:573 common/static/js/frepple.js:580
+#: common/static/js/frepple.js:586 common/static/js/frepple.js:593
 msgid "Spreadsheet list"
 msgstr "Spreadsheet lijst"
 
-#: common/static/js/frepple.js:574 common/static/js/frepple.js:582
+#: common/static/js/frepple.js:587 common/static/js/frepple.js:595
 msgid "CSV list"
 msgstr "CSV Lijst"
 
-#: common/static/js/frepple.js:579
+#: common/static/js/frepple.js:592
 msgid "Spreadsheet table"
 msgstr "Spreadsheet tabel"
 
-#: common/static/js/frepple.js:581
+#: common/static/js/frepple.js:594
 msgid "CSV table"
 msgstr "CSV tabel"
 
-#: common/static/js/frepple.js:585
+#: common/static/js/frepple.js:598
 msgid "Export CSV or Excel file"
 msgstr "Exporteer CSV of Excel bestand"
 
-#: common/static/js/frepple.js:589 common/static/js/frepple.js:990
-#: common/static/js/frepple.js:994
+#: common/static/js/frepple.js:602 common/static/js/frepple.js:1003
+#: common/static/js/frepple.js:1007
 msgid "Export"
 msgstr "Exporteer"
 
-#: common/static/js/frepple.js:692
+#: common/static/js/frepple.js:705
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr ""
+"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
-#: common/static/js/frepple.js:694
+#: common/static/js/frepple.js:707
 msgid "Delete data"
 msgstr "Verwijder gegevens"
 
-#: common/static/js/frepple.js:701 common/static/js/frepple.js:758
+#: common/static/js/frepple.js:714 common/static/js/frepple.js:771
 msgid "Confirm"
 msgstr "Bevestig"
 
-#: common/static/js/frepple.js:719
+#: common/static/js/frepple.js:732
 msgid "Error deleting data"
 msgstr "Foutmelding tijdens verwijderen gegevens"
 
-#: common/static/js/frepple.js:749
+#: common/static/js/frepple.js:762
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "U staat op het punt %s objecten te kopieren"
 
-#: common/static/js/frepple.js:751
+#: common/static/js/frepple.js:764
 msgid "Copy data"
 msgstr "Kopieer gegevens"
 
-#: common/static/js/frepple.js:776
+#: common/static/js/frepple.js:789
 msgid "Error copying data"
 msgstr "Foutmelding tijdens kopieren gegevens"
 
-#: common/static/js/frepple.js:813 common/static/js/frepple.js:819
+#: common/static/js/frepple.js:826 common/static/js/frepple.js:832
 msgid "Filtered where"
 msgstr "Gefilterd waar"
 
-#: common/static/js/frepple.js:988
+#: common/static/js/frepple.js:1001
 msgid "Export selected records to openbravo"
 msgstr "Exporteer geselecteerde records naar openbravo"
 
-#: common/static/js/frepple.js:998
+#: common/static/js/frepple.js:1011
 msgid "Connecting to openbravo..."
 msgstr "Connecting to openbravo"
 
-#: common/static/js/frepple.js:1008
+#: common/static/js/frepple.js:1021
 msgid "Export successful"
 msgstr "Export geslaagd"
 
-#: common/static/js/frepple.js:1016
+#: common/static/js/frepple.js:1029
 msgid "Close"
 msgstr "Sluit"
 
-#: common/static/js/frepple.js:1028
+#: common/static/js/frepple.js:1041
 msgid "Error during export"
 msgstr "Error tijdens exporteren"
 
-#: common/static/js/frepple.js:1029
+#: common/static/js/frepple.js:1042
 msgid "Retry"
 msgstr "Probeer opnieuw"
 
-#: common/static/js/frepple.js:1116
+#: common/static/js/frepple.js:1129
 msgid "Add"
 msgstr "Toevoegen"
 
-#: common/static/js/frepple.js:1413
+#: common/static/js/frepple.js:1426
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Laad een Excel bestand of een tekst bestand in CSV-formaat."
 
-#: common/static/js/frepple.js:1414
+#: common/static/js/frepple.js:1427
 msgid "The first row should contain the field names."
 msgstr "De eerste rij moet de veldnamen bevatten."
 
-#: common/static/js/frepple.js:1415
+#: common/static/js/frepple.js:1428
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Verwijder eerst alle huidige records EN ALL GERELATEERDE TABELLEN"
 
-#: common/static/js/frepple.js:1416
+#: common/static/js/frepple.js:1429
 msgid "Data file"
 msgstr "Gegevensbestand"
 
-#: common/static/js/frepple.js:1419
+#: common/static/js/frepple.js:1432
 msgid "Import CSV or Excel file"
 msgstr "Importeer CSV of Excel bestand"
 
-#: common/static/js/frepple.js:1423
+#: common/static/js/frepple.js:1436
 msgid "Import"
 msgstr "Importeer gegevens"
 
-#: common/static/js/frepple.js:1893
+#: common/static/js/frepple.js:1906
 msgid "Guided tour"
 msgstr "Rondleiding"
 
-#: common/static/js/frepple.js:1917
+#: common/static/js/frepple.js:1930
 msgid "Previous"
 msgstr "Vorige"
 
-#: common/static/js/frepple.js:1922 common/static/js/frepple.js:2055
+#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2068
 msgid "Stop"
 msgstr "Stop"
 
-#: common/static/js/frepple.js:1922 common/static/js/frepple.js:2046
+#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2059
 msgid "Play"
 msgstr "Play"
 
-#: common/static/js/frepple.js:1928
+#: common/static/js/frepple.js:1941
 msgid "Next"
 msgstr "Volgende"
 
-#: common/static/js/frepple.js:2021
+#: common/static/js/frepple.js:2034
 msgid "out of"
 msgstr "van de"
 
-#: planningboard/static/planningboard/js/planningboard.js:598
+#: planningboard/static/planningboard/js/planningboard.js:613
 #, javascript-format
 msgid "%s allocated out of %s"
 msgstr "%s allocated out of %s"

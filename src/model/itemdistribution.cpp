@@ -536,6 +536,9 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     opplan->setStatus(status);
   if (ref)
     opplan->setReference(ref);
+  // Reset quantity after the status update to assure that
+  // also non-valid quantities are getting accepted.
+  opplan->setQuantity(qty);
   if (!consume)
     opplan->setConsumeMaterial(false);
   opplan->activate();

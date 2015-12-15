@@ -672,11 +672,15 @@ class loadData(object):
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
-      frepple.operationplan(
+      opplan = frepple.operationplan(
         operation=frepple.operation(name=i[0]),
-        id=i[1], quantity=i[2], start=i[3], end=i[4],
-        status=i[5], source=i[6]
+        id=i[1], quantity=i[2], source=i[6]
         )
+      if i[3]:
+        opplan.start = i[3]
+      if i[4]:
+        opplan.end = i[4]
+      opplan.status = i[5]
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, status, owner_id, source
@@ -686,12 +690,16 @@ class loadData(object):
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt += 1
-      frepple.operationplan(
+      opplan = frepple.operationplan(
         operation=frepple.operation(name=i[0]),
-        id=i[1], start=i[3], end=i[4], quantity=i[2],
-        status=i[5], source=i[7],
+        id=i[1], quantity=i[2], source=i[7],
         owner=frepple.operationplan(id=i[6])
         )
+      if i[3]:
+        opplan.start = i[3]
+      if i[4]:
+        opplan.end = i[4]
+      opplan.status = i[5]
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 

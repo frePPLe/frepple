@@ -505,6 +505,9 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     opplan->setIdentifier(id);
   if (status)
     opplan->setStatus(status);
+  // Reset quantity after the status update to assure that
+  // also non-valid quantities are getting accepted.
+  opplan->setQuantity(qty);
   if (ref)
     opplan->setReference(ref);
   opplan->activate();

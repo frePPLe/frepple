@@ -123,6 +123,11 @@ class SolverMRP : public Solver
       */
     bool propagate;
 
+    /** Copy the user exit functions from the custom dictionary into the
+      * internal fields.
+      */
+    DECLARE_EXPORT void update_user_exits();
+
     /** Behavior of this solver method is:
       *  - It will ask the consuming flows for the required quantity.
       *  - The quantity asked for takes into account the quantity_per of the
@@ -665,11 +670,6 @@ class SolverMRP : public Solver
       m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
-      m->addPythonFunctionField<Cls>(Tags::userexit_flow, &Cls::getUserExitFlow, &Cls::setUserExitFlow);
-      m->addPythonFunctionField<Cls>(Tags::userexit_demand, &Cls::getUserExitDemand, &Cls::setUserExitDemand);
-      m->addPythonFunctionField<Cls>(Tags::userexit_buffer, &Cls::getUserExitBuffer, &Cls::setUserExitBuffer);
-      m->addPythonFunctionField<Cls>(Tags::userexit_resource, &Cls::getUserExitResource, &Cls::setUserExitResource);
-      m->addPythonFunctionField<Cls>(Tags::userexit_operation, &Cls::getUserExitOperation, &Cls::setUserExitOperation);
     }
 
   private:

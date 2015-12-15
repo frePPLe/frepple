@@ -71,9 +71,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
         // Update the attribute
         fmeta->setField(s, field);
       else
-        PyErr_Format(PyExc_AttributeError,
-            "attribute '%S' on '%s' can't be updated",
-            key, Py_TYPE(s)->tp_name);
+        s->setProperty(attr.getName(), value);;
     };
 
     // Return the object

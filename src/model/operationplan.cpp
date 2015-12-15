@@ -1003,9 +1003,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
             // Update the attribute
             fmeta->setField(x, field);
           else
-            PyErr_Format(PyExc_AttributeError,
-                "attribute '%S' on '%s' can't be updated",
-                key, Py_TYPE(x)->tp_name);
+            x->setProperty(attr.getName(), value);;
         }
       };
     }

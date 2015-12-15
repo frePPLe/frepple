@@ -645,6 +645,23 @@ DECLARE_EXPORT void Object::setProperty(const string& name, const DataValue& val
 }
 
 
+DECLARE_EXPORT void Object::setProperty(
+  const string& name, PyObject* value
+  )
+{
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
+  {
+    dict = PyDict_New();
+    Py_INCREF(dict);
+  }
+  // Adding the new key-value pair to the dictionary.
+  // The reference count of the referenced object is increased.
+  PyDict_SetItemString(dict, name.c_str(), value);
+  PyGILState_Release(pythonstate);
+}
+
+
 DECLARE_EXPORT bool Object::getBoolProperty(const string& name, bool def) const
 {
   if (!dict)
@@ -702,6 +719,24 @@ DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) 
   double result = val.getDouble();
   PyGILState_Release(pythonstate);
   return result;
+}
+
+
+DECLARE_EXPORT PyObject* Object::getPyObjectProperty(const string& name) const
+{
+  if (!dict)
+    // Not a single property has been defined
+    return NULL;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  if (!lkp)
+  {
+    // Value not found in the dictionary
+    PyGILState_Release(pythonstate);
+    return NULL;
+  }
+  PyGILState_Release(pythonstate);
+  return lkp;
 }
 
 

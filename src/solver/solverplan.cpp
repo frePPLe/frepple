@@ -99,9 +99,7 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
         // Update the attribute
         fmeta->setField(s, field);
       else
-        PyErr_Format(PyExc_AttributeError,
-            "attribute '%S' on '%s' can't be updated",
-            key, Py_TYPE(s)->tp_name);
+        s->setProperty(attr.getName(), value);
     };
 
     // Return the object. The reference count doesn't need to be increased
@@ -258,8 +256,21 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 }
 
 
+DECLARE_EXPORT void SolverMRP::update_user_exits()
+{
+  setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
+  setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
+  setUserExitFlow(getPyObjectProperty(Tags::userexit_flow.getName()));
+  setUserExitOperation(getPyObjectProperty(Tags::userexit_operation.getName()));
+  setUserExitResource(getPyObjectProperty(Tags::userexit_resource.getName()));
+}
+
+
 DECLARE_EXPORT void SolverMRP::solve(void *v)
 {
+  // Configure user exits
+  update_user_exits();
+
   // Count how many clusters we have to plan
   int cl = HasLevel::getNumberOfClusters() + 1;
 
@@ -328,6 +339,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
     {
       // Incrementally plan a single demand
       sol->setAutocommit(false);
+      sol->update_user_exits();
       static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
     }
   }

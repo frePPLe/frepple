@@ -211,7 +211,6 @@ template<class T> class MetaFieldString;
 template<class T, class u> class MetaFieldEnum;
 template<class T, class U> class MetaFieldPointer;
 template<class T> class MetaFieldUnsignedLong;
-template<class T> class MetaFieldPythonFunction;
 template<class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterator;
 template<class T> class MetaFieldInt;
 template<class T> class MetaFieldShort;
@@ -1973,16 +1972,6 @@ class MetaClass : public NonCopyable
       fields.push_back( new MetaFieldUnsignedLong<Cls>(k, getfunc, setfunc, d, c) );
 		}
 
-    template <class Cls> inline void addPythonFunctionField(
-      const Keyword& k,
-      PythonFunction (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(PythonFunction) = NULL,
-      unsigned int c = DONT_SERIALIZE
-      )
-		{
-      fields.push_back( new MetaFieldPythonFunction<Cls>(k, getfunc, setfunc, c) );
-		}
-
     template <class Cls> inline void addDoubleField(
       const Keyword& k,
       double (Cls::*getfunc)(void) const,
@@ -3621,6 +3610,11 @@ class Object : public PyObject
       const string& name, const DataValue& value, short type
       );
 
+    /** Set a custom property referring to a python object. */
+    DECLARE_EXPORT void setProperty(
+      const string& name, PyObject* value
+      );
+
     /** Retrieve a boolean property. */
     DECLARE_EXPORT bool getBoolProperty(const string&, bool=true) const;
 
@@ -3629,6 +3623,9 @@ class Object : public PyObject
 
     /** Retrieve a double property. */
     DECLARE_EXPORT double getDoubleProperty(const string&, double=0.0) const;
+
+    /** Retrieve a double property. */
+    DECLARE_EXPORT PyObject* getPyObjectProperty(const string&) const;
 
     /** Retrieve a string property.
       * This method needs to be defined inline. On windows the function
@@ -3727,9 +3724,7 @@ class Object : public PyObject
               // Update the attribute
               fmeta->setField(x, field);
             else
-              PyErr_Format(PyExc_AttributeError,
-                  "attribute '%S' on '%s' can't be updated",
-                  key, Py_TYPE(x)->tp_name);
+              x->setProperty(attr.getName(), value);
           }
         };
         Py_INCREF(x);
@@ -6640,56 +6635,6 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
 
     /** Defaut value. */
     unsigned long def;
-};
-
-
-template <class Cls> class MetaFieldPythonFunction : public MetaFieldBase
-{
-  public:
-    typedef void (Cls::*setFunction)(PythonFunction);
-
-    typedef PythonFunction (Cls::*getFunction)(void) const;
-
-    MetaFieldPythonFunction(const Keyword& n,
-        getFunction getfunc,
-        setFunction setfunc = NULL,
-        unsigned int c = DONT_SERIALIZE
-        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
-    {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
-    };
-
-    virtual void setField(Object* me, const DataValue& el) const
-    {
-      if (setf == NULL)
-      {
-        ostringstream o;
-        o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
-        throw DataException(o.str());
-      }
-      // XXX JDT(static_cast<Cls*>(me)->*setf)(el.getUnsignedLong());
-    }
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      // XXX el.setObject((static_cast<Cls*>(me)->*getf)());
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      if (getFlag(DONT_SERIALIZE))
-        return;
-      // XXX JDT int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      //output.writeElement(getName(), tmp);
-    }
-
-  protected:
-    /** Get function. */
-    getFunction getf;
-
-    /** Set function. */
-    setFunction setf;
 };
 
 

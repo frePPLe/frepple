@@ -194,9 +194,7 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
             // Update the attribute
             fmeta->setField(l, field);
           else
-            PyErr_Format(PyExc_AttributeError,
-                "attribute '%S' on '%s' can't be updated",
-                key, Py_TYPE(l)->tp_name);
+            l->setProperty(attr.getName(), value);
         }
       };
     }

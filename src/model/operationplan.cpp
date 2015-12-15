@@ -1003,7 +1003,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
             // Update the attribute
             fmeta->setField(x, field);
           else
-            x->setProperty(attr.getName(), value);;
+            x->setProperty(attr.getName(), value);
         }
       };
     }

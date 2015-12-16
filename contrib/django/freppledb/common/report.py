@@ -867,6 +867,9 @@ class GridReport(View):
             with transaction.atomic(using=request.database, savepoint=False):
               obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
               del rec['id']
+              for i in rec:
+                if rec[i] == '\xa0':   # Workaround for Jqgrid issue: date field can't be set to blank
+                  rec[i] = None
               UploadForm = modelform_factory(
                 reportclass.model,
                 fields=tuple(rec.keys()),

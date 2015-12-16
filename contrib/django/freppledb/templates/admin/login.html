@@ -26,6 +26,9 @@ The changes are:
     background: #838d11;
     color: #fff;
     padding: 10px 20px 10px 20px;
+    margin: 0px auto;
+    display:block;
+    margin-top: 13px;
   }
 </style>
 {% endblock %}
@@ -81,7 +84,7 @@ $(function() {
 <form action="{{request.prefix}}{{app_path}}" method="post" id="login-form">{% csrf_token %}
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
-    <label for="id_username" class="required">{{ form.username.label }}:</label> {{ form.username }}
+    <label for="id_username" class="required">{{ form.username.label }}</label> {{ form.username }}
   </div>
   <div class="form-row">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
@@ -89,10 +92,8 @@ $(function() {
     <label for="id_password" class="required">{% trans 'Password'|capfirst %}</label> {{ form.password }}
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
-  </div>
-  <div class="submit-row">
     {% comment %}Translators: Translation included with Django {% endcomment %}
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
+    <input type="submit" value="{% trans 'Log in' %}"/>
   </div>
 </form>
 

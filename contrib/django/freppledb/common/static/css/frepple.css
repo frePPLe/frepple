@@ -848,26 +848,23 @@ body.popup .submit-row {
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
-    border: 1px solid #EBEBEB;
-    background: #FF5656;
     font-size: 10px;
     font-weight: bold;
     color: white;
 }
 
-.submit-row input.default,  .submit-row input[type=submit],  a.deletelink:link, a.deletelink:visited {
+.submit-row input.default, .submit-row input[type=submit],  a.deletelink:link, a.deletelink:visited {
 	  margin-left: 5px;
     padding-bottom: 4px;
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 4px;
-    border: 1px solid #EBEBEB;
-    background: #FF5656;
     font-size: 10px;
     font-weight: bold;
     color: white;
     float: left;
 }
+
 p.deletelink-box {
 	  line-height: normal;
     padding-bottom: 0px;

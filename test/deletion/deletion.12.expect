@@ -10,17 +10,20 @@
   </description>
 	<current>2009-01-01T00:00:00</current>
 	<locations>
-		<location name="All places">
-			<members>
-				<location name="Sublocation 1"/>
-				<location name="Sublocation 2"/>
-			</members>
+		<location>
+			<name>All places</name>
 		</location>
-		<location name="Sublocation 1">
-			<owner name="All places"/>
+		<location>
+			<name>Sublocation 1</name>
+			<owner>
+				<name>All places</name>
+			</owner>
 		</location>
-		<location name="Sublocation 2">
-			<owner name="All places"/>
+		<location>
+			<name>Sublocation 2</name>
+			<owner>
+				<name>All places</name>
+			</owner>
 		</location>
 	</locations>
 	<customers>
@@ -29,46 +32,50 @@
 		</customer>
 	</customers>
 	<calendars>
-		<calendar name="months">
+		<calendar>
+      <name>months</name>
 			<buckets>
-				<bucket id="2" start="2009-02-01T00:00:00" end="2009-02-01T00:00:00">
+        <bucket>
+					<id>2</id>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
 				</bucket>
-				<bucket id="3" start="2009-03-01T00:00:00" end="2009-03-01T00:00:00">
+				<bucket>
+					<id>3</id>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
 				</bucket>
-				<bucket id="4" start="2009-04-01T00:00:00" end="2009-04-01T00:00:00">
+				<bucket>
+					<id>4</id>
+					<start>2009-04-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
 				</bucket>
-				<bucket id="6" start="2009-06-01T00:00:00" end="2009-06-01T00:00:00">
+				<bucket>
+					<id>6</id>
+					<start>2009-06-01T00:00:00</start>
+					<end>2009-06-01T00:00:00</end>
 				</bucket>
-				<bucket id="7" start="2009-07-01T00:00:00" end="2009-07-01T00:00:00">
+				<bucket>
+					<id>7</id>
+					<start>2009-07-01T00:00:00</start>
+					<end>2009-07-01T00:00:00</end>
 				</bucket>
-				<bucket id="8" start="2009-08-01T00:00:00" end="2009-08-01T00:00:00">
+				<bucket>
+					<id>8</id>
+					<start>2009-08-01T00:00:00</start>
+					<end>2009-08-01T00:00:00</end>
 				</bucket>
 			</buckets>
 		</calendar>
 	</calendars>
-	<operations>
-		<operation name="delivery 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply component A" xsi:type="operation_alternate">
-			<alternates>
-				<alternate>
-					<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time"/>
-					<priority>1</priority>
-				</alternate>
-				<alternate>
-					<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time"/>
-					<priority>2</priority>
-				</alternate>
-			</alternates>
-		</operation>
-		<operation name="supply component A from supplier 1" xsi:type="operation_fixed_time">
-			<duration>P1D</duration>
-		</operation>
-		<operation name="supply component A from supplier 2" xsi:type="operation_fixed_time">
-			<duration>P2D</duration>
-		</operation>
-	</operations>
+	<resources>
+		<resource>
+			<name>transport</name>
+			<location>
+				<name>Sublocation 1</name>
+			</location>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>component A</name>
@@ -78,88 +85,75 @@
 		</item>
 	</items>
 	<buffers>
-		<buffer name="buffer 1">
+		<buffer>
+			<name>buffer 1</name>
 		</buffer>
-		<buffer name="buffer B">
+		<buffer>
+			<name>buffer B</name>
 			<item>
 				<name>component B</name>
 			</item>
 		</buffer>
 	</buffers>
+	<operations>
+		<operation>
+			<name>delivery 1</name>
+			<flows>
+				<flow>
+					<buffer>
+						<name>buffer 1</name>
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_alternate">
+			<name>supply component A</name>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 1</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>supply component A from supplier 2</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 1</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>supply component A from supplier 2</name>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
 	<demands>
-		<demand name="order 1">
+		<demand>
+			<name>order 1</name>
 			<quantity>1</quantity>
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 2">
+		<demand>
+			<name>order 2</name>
 			<quantity>1</quantity>
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-		<demand name="order 3">
+		<demand>
+			<name>order 3</name>
+			<quantity>1</quantity>
 			<customer>
 				<name>Customer 2</name>
 			</customer>
-			<quantity>1</quantity>
 			<due>2009-04-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
-	<resources>
-		<resource name="transport">
-			<location name="Sublocation 1"/>
-		</resource>
-	</resources>
-	<flows>
-		<flow xsi:type="flow_start">
-			<operation name="delivery 1" xsi:type="operation_fixed_time"/>
-			<buffer name="buffer 1"/>
-			<quantity>-1</quantity>
-		</flow>
-	</flows>
-	<problems>
-		<problem>
-			<name>invalid data</name>
-			<description>Demand &apos;order 1&apos; has no delivery operation</description>
-			<start>2009-03-01T00:00:00</start>
-			<end>2009-03-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 1&apos; is not planned</description>
-			<start>2009-03-01T00:00:00</start>
-			<end>2009-03-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>invalid data</name>
-			<description>Demand &apos;order 2&apos; has no delivery operation</description>
-			<start>2009-02-01T00:00:00</start>
-			<end>2009-02-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 2&apos; is not planned</description>
-			<start>2009-02-01T00:00:00</start>
-			<end>2009-02-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>invalid data</name>
-			<description>Demand &apos;order 3&apos; has no delivery operation</description>
-			<start>2009-04-01T00:00:00</start>
-			<end>2009-04-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-		<problem>
-			<name>unplanned</name>
-			<description>Demand &apos;order 3&apos; is not planned</description>
-			<start>2009-04-01T00:00:00</start>
-			<end>2009-04-01T00:00:00</end>
-			<weight>1</weight>
-		</problem>
-	</problems>
 </plan>

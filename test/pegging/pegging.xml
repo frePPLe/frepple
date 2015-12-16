@@ -265,10 +265,31 @@
 
 <?python
 frepple.solver_mrp(constraints=15,loglevel=1).solve()
-# Note that it is NOT common to save the complete plan with all pegging detail.
-# The output file gets very big and full of redundant data.
-# Pegging info is normally extracted for a small subset of data.
-frepple.saveXMLfile("output.1.xml","DETAIL")
+with open("output.1.xml","wt") as output:
+  for dmd in frepple.demands():
+    print ("Pegging of demand %s with quantity %s:" % (dmd.name, dmd.quantity), file=output)
+    for j in dmd.pegging:
+      print("\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity
+        ), file=output)
+  for opplan in frepple.operationplans():
+    print ("Upstream pegging of operationplan with id %s with quantity %s of '%s':" % (
+      opplan.id, opplan.quantity, opplan.operation.name
+      ), file=output)
+    for j in opplan.pegging_upstream:
+      print("\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity
+        ), file=output)
+    print ("Downstream pegging of operationplan with id %s with quantity %s of '%s':" % (
+      opplan.id, opplan.quantity, opplan.operation.name
+      ), file=output)
+    for j in opplan.pegging_downstream:
+      print("\t%s\t%s\t%s\t%s" % (
+        j.level, j.operationplan.id,
+        j.operationplan.operation.name, j.quantity
+        ), file=output)
 ?>
 
 </plan>

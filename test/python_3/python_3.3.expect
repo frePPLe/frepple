@@ -4,80 +4,60 @@
 <location>
 	<name>locA</name>
 </location>
-<operationplan id="19" operation="make item">
+<operationplan>
+	<id>19</id>
+	<operation xsi:type="operation_routing">
+		<name>make item</name>
+	</operation>
 	<start>2010-12-25T00:00:00</start>
 	<end>2011-01-01T00:00:00</end>
 	<quantity>9</quantity>
-	<criticality>999</criticality>
-	<locked>true</locked>
+	<status>confirmed</status>
 </operationplan>
-<item name="end item">
-	<operation name="delivery end item" xsi:type="operation_fixed_time"/>
+<item>
+	<name>end item</name>
+	<operation>
+		<name>delivery end item</name>
+	</operation>
 </item>
-<demand name="order 1">
-	<customer name="client"/>
+<demand>
+	<name>order 1</name>
 	<quantity>10</quantity>
-	<item name="end item"/>
+	<item>
+		<name>end item</name>
+	</item>
+	<customer>
+		<name>client</name>
+	</customer>
 	<due>2009-03-02T09:00:00</due>
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>
-	<operationplans>
-		<operationplan id="14" operation="delivery end item">
-			<demand name="order 1"/>
-			<start>2009-03-01T09:00:00</start>
-			<end>2009-03-02T09:00:00</end>
-			<quantity>10</quantity>
-			<criticality>0</criticality>
-		</operationplan>
-	</operationplans>
 </demand>
 <buffer xsi:type="buffer_procure">
 	<name>buffer1</name>
 	<category>My category</category>
 	<description>My description</description>
-	<members>
-		<buffer name="buffer2"/>
-	</members>
-	<item name="item 1"/>
-	<location name="locA"/>
+	<item>
+		<name>item 1</name>
+	</item>
+	<location>
+		<name>locA</name>
+	</location>
 	<stringproperty name="myfield" value="my custom field"/>
 </buffer>
-<operation name="make item" xsi:type="operation_routing">
-	<operationplans>
-		<operationplan id="16" operation="make item">
-			<start>2009-02-08T09:00:00</start>
-			<end>2009-02-15T09:00:00</end>
-			<quantity>10</quantity>
-			<criticality>13.9792</criticality>
-			<owner id="10" operation="make or buy item"/>
-		</operationplan>
-		<operationplan id="17" operation="make item">
-			<start>2009-02-15T09:00:00</start>
-			<end>2009-02-22T09:00:00</end>
-			<quantity>10</quantity>
-			<criticality>7</criticality>
-			<owner id="11" operation="make or buy item"/>
-		</operationplan>
-		<operationplan id="18" operation="make item">
-			<start>2009-02-22T09:00:00</start>
-			<end>2009-03-01T09:00:00</end>
-			<quantity>10</quantity>
-			<criticality>0.458333</criticality>
-			<owner id="13" operation="make or buy item"/>
-		</operationplan>
-		<operationplan id="19" operation="make item">
-			<start>2010-12-25T00:00:00</start>
-			<end>2011-01-01T00:00:00</end>
-			<quantity>9</quantity>
-			<criticality>999</criticality>
-			<locked>true</locked>
-		</operationplan>
-	</operationplans>
-	<steps>
-		<operation name="make item - step 1" xsi:type="operation_fixed_time"/>
-		<operation name="make item - step 2" xsi:type="operation_fixed_time"/>
-	</steps>
+<operation xsi:type="operation_routing">
+	<name>make item</name>
 </operation>
+<problem>
+	<name>invalid data</name>
+	<description>no replenishment defined</description>
+	<weight>1</weight>
+</problem>
+<problem>
+	<name>invalid data</name>
+	<description>no replenishment defined</description>
+	<weight>1</weight>
+</problem>
 <problem>
 	<name>material excess</name>
 	<description>Buffer &apos;end item&apos; has material excess of 20</description>

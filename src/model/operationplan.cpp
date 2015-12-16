@@ -74,9 +74,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   if (!val && action==ADD)
     // Operation name required
     throw DataException("Missing operation field");
-  Object *oper = val->getObject();
-  if (oper && oper->getType().category != Operation::metadata)
-    throw DataException("Operation field on operationplan must be of type operation");
+  Object *oper = NULL;
+  if (val)
+  {
+    oper = val->getObject();
+    if (oper && oper->getType().category != Operation::metadata)
+      throw DataException("Operation field on operationplan must be of type operation");
+  }
 
   // Decode the operationplan identifier
   unsigned long id = 0;
@@ -612,7 +616,7 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
     for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
     {
       if (i->getOperation() == OperationSetup::setupoperation) break;
-      if (i->getDates().getEnd() > d)
+      if (!i->getDates().getEnd() || i->getDates().getEnd() > d)
       {
         i->setEnd(d);
         d = i->getDates().getStart();
@@ -950,6 +954,8 @@ DECLARE_EXPORT void OperationPlan::setStatus(const string& s)
   }
   else
     throw DataException("invalid operationplan status:" + s);
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setStatus(s);
 }
 
 

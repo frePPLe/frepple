@@ -78,10 +78,10 @@ sed -i -e 's| -shared | -Wl,--as-needed\0|g' libtool
 make %{?_smp_mflags} all
 
 #%check
-# Run test suite, skipping some long and less interesting tests
-#TESTARGS="--regression -e setup_1 -e setup_2 -e setup_3 -e operation_routing -e constraints_combined_1 -e wip"
-#export TESTARGS
-#make check
+# Run test suite. We skip some long, broken or less interesting tests.
+TESTARGS="--regression -e operation_routing -e constraints_combined_1 -e wip"
+export TESTARGS
+make check
 
 %install
 rm -rf %{buildroot}

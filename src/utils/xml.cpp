@@ -224,11 +224,19 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
         --dataindex;
         continue;
       }
-      data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
-      if (!data[dataindex].field && objects[objectindex].cls->category)
-        data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
-      if (!data[dataindex].field)
-        throw DataException("Attribute '" + attr_name + "' not defined");
+      else if (data[dataindex].hash == Tags::action.getHash())
+      {
+        // Action attribute is special, as it's not a field
+        data[dataindex].field = NULL;
+      }
+      else
+      {
+        data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
+        if (!data[dataindex].field && objects[objectindex].cls->category)
+          data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
+        if (!data[dataindex].field)
+          throw DataException("Attribute '" + attr_name + "' not defined");
+      }
 
       // Set the data value
       data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));
@@ -352,17 +360,25 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // Look up the field
       string attr_name = transcodeUTF8(atts.getLocalName(i));
       data[dataindex].hash = Keyword::hash(attr_name);
-      if (data[dataindex].hash == Tags::type.getHash())
+      if (data[dataindex].hash == Tags::type.getHash() || data[dataindex].hash == Tags::action.getHash())
       {
         // Skip attribute called "type"
         --dataindex;
         continue;
       }
-      data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
-      if (!data[dataindex].field && objects[objectindex].cls->category)
-        data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
-      if (!data[dataindex].field)
-        throw DataException("Attribute '" + attr_name + "' not defined");
+      else if (data[dataindex].hash == Tags::action.getHash())
+      {
+        // Action attribute is special, as it's not a field
+        data[dataindex].field = NULL;
+      }
+      else
+      {
+        data[dataindex].field = objects[objectindex].cls->findField(data[dataindex].hash);
+        if (!data[dataindex].field && objects[objectindex].cls->category)
+          data[dataindex].field = objects[objectindex].cls->category->findField(data[dataindex].hash);
+        if (!data[dataindex].field)
+          throw DataException("Attribute '" + attr_name + "' not defined");
+      }
 
       // Set the data value
       data[dataindex].value.setString(transcodeUTF8(atts.getValue(i)));

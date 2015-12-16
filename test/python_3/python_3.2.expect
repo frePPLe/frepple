@@ -177,12 +177,12 @@
 			<suboperations>
 				<suboperation>
 					<operation>
-						<name>make item - step 2</name>
+						<name>make item - step 1</name>
 					</operation>
 				</suboperation>
 				<suboperation>
 					<operation>
-						<name>make item - step 1</name>
+						<name>make item - step 2</name>
 					</operation>
 					<priority>2</priority>
 				</suboperation>
@@ -357,10 +357,10 @@
 			<start>2010-12-25T00:00:00</start>
 			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
-			<locked>true</locked>
+			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>2</id>
+			<id>4</id>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -372,20 +372,19 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<id>6</id>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-19T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>7</criticality>
 			<owner>
 				<id>17</id>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>6</id>
+			<id>8</id>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -397,33 +396,32 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>8</id>
+			<id>2</id>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
 			<start>2010-12-25T00:00:00</start>
 			<end>2010-12-29T00:00:00</end>
 			<quantity>9</quantity>
-			<locked>true</locked>
+			<status>confirmed</status>
 			<owner>
 				<id>19</id>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<id>5</id>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
 			<start>2009-02-12T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
-			<criticality>13.9792</criticality>
 			<owner>
 				<id>16</id>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<id>7</id>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -435,7 +433,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>7</id>
+			<id>9</id>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -447,14 +445,14 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>9</id>
+			<id>3</id>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
 			<start>2010-12-29T00:00:00</start>
 			<end>2011-01-01T00:00:00</end>
 			<quantity>9</quantity>
-			<locked>true</locked>
+			<status>confirmed</status>
 			<owner>
 				<id>19</id>
 			</owner>

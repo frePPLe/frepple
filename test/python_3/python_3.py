@@ -249,7 +249,7 @@ opplan = frepple.operationplan(
   quantity = 9,
   end = datetime.datetime(2011,1,1)
   )
-opplan.locked = True
+opplan.status = 'confirmed'
 
 ###
 print("\nCreating items")
@@ -330,6 +330,7 @@ order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
 
 ###
 print("\nCreating a solver and running it")
+printModel("output.10.xml")
 frepple.solver_mrp(constraints=7, loglevel=0).solve()
 
 ###

@@ -418,16 +418,19 @@ DECLARE_EXPORT Buffer::~Buffer()
   // Association list class.
 
   // Unlink from the item
-  if (it->firstItemBuffer == this)
-    it->firstItemBuffer = nextItemBuffer;
-  else
+  if (it)
   {
-    Buffer* buf = it->firstItemBuffer;
-    while (buf && buf->nextItemBuffer != this)
-      buf = buf->nextItemBuffer;
-    if (!buf)
-      throw LogicException("corrupted buffer list for an item");
-    buf->nextItemBuffer = nextItemBuffer;
+    if (it->firstItemBuffer == this)
+      it->firstItemBuffer = nextItemBuffer;
+    else
+    {
+      Buffer* buf = it->firstItemBuffer;
+      while (buf && buf->nextItemBuffer != this)
+        buf = buf->nextItemBuffer;
+      if (!buf)
+        throw LogicException("corrupted buffer list for an item");
+      buf->nextItemBuffer = nextItemBuffer;
+    }
   }
 
   // Remove the inventory operation

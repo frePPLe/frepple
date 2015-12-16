@@ -494,13 +494,13 @@ DECLARE_EXPORT Date PythonData::getDate() const
         );
   else if (obj == Py_None)
     return Date();
-  else if (!PyUnicode_Check(obj))
+  else if (PyUnicode_Check(obj))
   {
     // Replace the unicode object with a string encoded in UTF-8.
     PyObject* tmp = obj;
     const_cast<PyObject*&>(obj) = PyUnicode_AsEncodedString(obj, "UTF-8", "ignore");
     Py_DECREF(tmp);
-    return Date(PyBytes_AsString(PyObject_Str(obj)));
+    return Date(PyBytes_AsString(obj));
   }
   else
     throw DataException(

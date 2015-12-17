@@ -1703,11 +1703,11 @@ class OperationPlan
 
     /** Returns an iterator pointing to the first flowplan. */
     inline FlowPlanIterator beginFlowPlans() const;
-    inline flowplanlist::const_iterator getFlowPlans() const;
+    inline FlowPlanIterator getFlowPlans() const;
 
     /** Returns an iterator pointing beyond the last flowplan. */
     inline FlowPlanIterator endFlowPlans() const;
-    inline loadplanlist::const_iterator getLoadPlans() const;
+    inline LoadPlanIterator getLoadPlans() const;
 
     /** Returns how many flowplans are created on an operationplan. */
     int sizeFlowPlans() const;
@@ -2240,8 +2240,8 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, DONT_SERIALIZE);
-      m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
-      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
@@ -8716,6 +8716,14 @@ class OperationPlan::FlowPlanIterator
       curflowplan = curflowplan->nextFlowPlan;
       delete tmp;
     }
+
+    FlowPlan* next()
+    {
+      prevflowplan = curflowplan;
+      if (curflowplan)
+        curflowplan = curflowplan->nextFlowPlan;
+      return prevflowplan;
+    }
 };
 
 
@@ -8731,15 +8739,9 @@ inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const
 }
 
 
-inline OperationPlan::flowplanlist::const_iterator OperationPlan::getFlowPlans() const
+inline OperationPlan::FlowPlanIterator OperationPlan::getFlowPlans() const
 {
-  return OperationPlan::flowplanlist::const_iterator(firstflowplan);
-}
-
-
-inline OperationPlan::loadplanlist::const_iterator OperationPlan::getLoadPlans() const
-{
-  return OperationPlan::loadplanlist::const_iterator(firstloadplan);
+  return OperationPlan::FlowPlanIterator(firstflowplan);
 }
 
 
@@ -8813,6 +8815,14 @@ class OperationPlan::LoadPlanIterator
       curloadplan = curloadplan->nextLoadPlan;
       delete tmp;
     }
+
+    LoadPlan* next()
+    {
+      prevloadplan = curloadplan;
+      if (curloadplan)
+        curloadplan = curloadplan->nextLoadPlan;
+      return prevloadplan;
+    }
 };
 
 
@@ -8825,6 +8835,12 @@ inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const
 inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const
 {
   return OperationPlan::LoadPlanIterator(NULL);
+}
+
+
+inline OperationPlan::LoadPlanIterator OperationPlan::getLoadPlans() const
+{
+  return OperationPlan::LoadPlanIterator(firstloadplan);
 }
 
 

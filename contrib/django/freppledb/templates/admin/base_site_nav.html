@@ -2,10 +2,13 @@
 {% load i18n %}
 {% block nav-global %}
 {% getMenu as menu %}<nav id=nav-menu><ul>
-{% for group in menu %}<li><a href="#">{{ group.0 }}</a><ul class="xui-menu xui-widget xui-widget-content xui-corner-all">
+{% for group in menu %}<li><a href="#" onmouseover="this.focus();">{{ group.0 }}</a><ul>
 {% for item in group.1 %}{% if item.1.separator %}<li class="separator"></li>{% else %}<li><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></li>{% endif %}
 {% endfor %}</ul></li>
 {% endfor %}
+
 {% comment %}Translators: Translation included with Django {% endcomment %}
-<li><input type="search" id="search" class="ui-corner-all" size="17" placeholder="{% trans 'Search' %}"/></li></ul></nav>
+<li>
+  <input id="search" class="typeahead" type="text" placeholder="{% trans 'Search' %}"></li>
+</ul></nav>
 {% endblock %}

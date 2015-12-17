@@ -97,12 +97,26 @@ nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
   color: #222222 !important;
 }
 
-nav ul li:hover a, nav ul ul, .ui-autocomplete {/* Copy from the Jquery UI style ".ui-widget-header". */
+nav ul li:hover a, nav ul ul, .tt-menu {/* Copy from the Jquery UI style ".ui-widget-header". */
   background: #FF7373; /* Color green 2 */
   color: #222222;
 }
 
-nav ul ul li a:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
+.tt-menu div *:hover {/* Copy from the Jquery UI style ".ui-widget-header". */
+  background: #FF5050; /* Color gray2 */
+  color: #222222;
+}
+
+nav ul li span .twiter-type-ahead input.typeahead.tt-hint {
+ margin: 0px;
+}
+
+div .tt-menu {
+ left: 10px;
+ top: 5%;
+}
+
+nav ul ul li a:hover, a.tt-suggestion.tt-selectable:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
   background: #FF5050; /* Color gray2 */
   color: #111111;
 }
@@ -161,21 +175,3 @@ input.ui-button:hover {
 ui-widget-content .jqgrow.ui-row-ltr {
     color: #222222; //grid font color
 }
-
-.ui-autocomplete .ui-menu-item, .ui-autocomplete-category, .ui-autocomplete a {
-  color: #222222;
-  background: #FF7373;
-}
-
-.ui-autocomplete li:hover,
-.ui-autocomplete .ui-menu-item *:hover {
-  background: #FF5050;
-  border: 0;
-}
-
-.ui-autocomplete .ui-state-focus,
-.ui-autocomplete .ui-menu-item * .ui-state-focus {
-  background: #FF5050;
-  border: 0;
-}
-

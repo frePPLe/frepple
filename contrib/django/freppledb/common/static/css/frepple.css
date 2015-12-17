@@ -68,7 +68,7 @@ a:link, a:visited {
 
 
 /* separator style in nav menus */
-nav ul ul li.separator {
+nav ul ul li.separator,  nav ul tt-menu li.separator {
     display: block;
     margin-top: 0.4em;
     margin-bottom: 0.4em;
@@ -76,6 +76,20 @@ nav ul ul li.separator {
     margin-right: auto;
     border-style: none;
     border-width: 1px;
+}
+
+.tt-menu {
+	top: 2.1em !important;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.tt-menu p {
+	margin: 0px;
+}
+
+.twitter-typeahead, .tt-hint, .tt-input, .tt-menu {
+	width: 100%;
 }
 
 .separator::after {
@@ -109,6 +123,13 @@ nav ul ul li.separator {
 }
 
 .ui-state-disabled {
+    background: transparent;
+    opacity: 1;
+    border: none;
+    color: #555555;
+}
+
+.disabled {  /*bootstrap*/
     background: transparent;
     opacity: 1;
     border: none;
@@ -478,7 +499,12 @@ nav ul {
 }
 
 nav ul li input {
-  margin-left: 10px;
+  margin-left: 0px;
+}
+
+nav ul li .twitter-typeahead {
+	margin-left: 10px;
+	top: 5px;
 }
 
 nav ul ul {
@@ -517,7 +543,7 @@ nav ul ul li {
   position: relative;
 }
 
-nav ul ul li a {
+nav ul ul li a, .tt-menu a, .tt-menu p {
   padding-top: 0px;
   padding-right: 5px;
   padding-bottom: 0px;

@@ -30,7 +30,10 @@ DECLARE_EXPORT const MetaClass* LoadDefault::metadata;
 int Load::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Load>("load", "loads", MetaCategory::ControllerDefault);
+  metadata = MetaCategory::registerCategory<Load>(
+    "load", "loads",
+    Association<Operation,Resource,Load>::reader, finder
+    );
   registerFields<Load>(const_cast<MetaCategory*>(metadata));
   LoadDefault::metadata = MetaClass::registerClass<LoadDefault>(
     "load", "load", Object::create<LoadDefault>, true
@@ -46,69 +49,6 @@ int Load::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
   return x.typeReady();
-}
-
-
-DECLARE_EXPORT void Load::validate(Action action)
-{
-  // Catch null operation and resource pointers
-  Operation *oper = getOperation();
-  Resource *res = getResource();
-  if (!oper || !res)
-  {
-    // Invalid load model
-    if (!oper && !res)
-      throw DataException("Missing operation and resource on a load");
-    else if (!oper)
-      throw DataException("Missing operation on a load on resource '"
-          + res->getName() + "'");
-    else if (!res)
-      throw DataException("Missing resource on a load on operation '"
-          + oper->getName() + "'");
-  }
-
-  // Check if a load with 1) identical resource, 2) identical operation and
-  // 3) overlapping effectivity dates already exists
-  Operation::loadlist::const_iterator i = oper->getLoads().begin();
-  for (; i != oper->getLoads().end(); ++i)
-    if (i->getResource() == res
-        && i->getEffective().overlap(getEffective())
-        && &*i != this)
-      break;
-
-  // Apply the appropriate action
-  switch (action)
-  {
-    case ADD:
-      if (i != oper->getLoads().end())
-      {
-        throw DataException("Load of '" + oper->getName() + "' and '"
-            + res->getName() + "' already exists");
-      }
-      break;
-    case CHANGE:
-      throw DataException("Can't update a load");
-    case ADD_CHANGE:
-      // ADD is handled in the code after the switch statement
-      if (i == oper->getLoads().end()) break;
-      throw DataException("Can't update a load");
-    case REMOVE:
-      // This load was only used temporarily during the reading process
-      delete this;
-      if (i == oper->getLoads().end())
-        // Nothing to delete
-        throw DataException("Can't remove nonexistent load of '"
-            + oper->getName() + "' and '" + res->getName() + "'");
-      delete &*i;
-      // Set a flag to make sure the level computation is triggered again
-      HasLevel::triggerLazyRecomputation();
-      return;
-  }
-
-  // The statements below should be executed only when a new load is created.
-
-  // Set a flag to make sure the level computation is triggered again
-  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -256,5 +196,55 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   }
 }
 
+
+DECLARE_EXPORT Object* Load::finder(const DataValueDict& d)
+{
+  // Check operation
+  const DataValue* tmp = d.get(Tags::operation);
+  if (!tmp)
+    return NULL;
+  Operation* oper = static_cast<Operation*>(tmp->getObject());
+
+  // Check resource field
+  tmp = d.get(Tags::resource);
+  if (!tmp)
+    return NULL;
+  Resource* res = static_cast<Resource*>(tmp->getObject());
+
+  // Walk over all loads of the operation, and return
+  // the first one with matching
+  const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
+  Date effective_start;
+  if (hasEffectiveStart)
+    effective_start = hasEffectiveStart->getDate();
+  const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
+  Date effective_end;
+  if (hasEffectiveEnd)
+    effective_end = hasEffectiveEnd->getDate();
+  const DataValue* hasPriority = d.get(Tags::priority);
+  int priority;
+  if (hasPriority)
+    priority = hasPriority->getInt();
+  const DataValue* hasName = d.get(Tags::name);
+  string name;
+  if (hasName)
+    name = hasName->getString();
+  for (Operation::loadlist::const_iterator fl = oper->getLoads().begin();
+    fl != oper->getLoads().end(); ++fl)
+  {
+    if (fl->getResource() != res)
+      continue;
+    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+      continue;
+    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end)
+      continue;
+    if (hasPriority && fl->getPriority() != priority)
+      continue;
+    if (hasName && fl->getName() != name)
+      continue;
+    return const_cast<Load*>(&*fl);
+  }
+  return NULL;
+}
 
 } // end namespace

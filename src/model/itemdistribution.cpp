@@ -33,7 +33,8 @@ int ItemDistribution::initialize()
 {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<ItemDistribution>(
-	  "itemdistribution", "itemdistributions", MetaCategory::ControllerDefault
+	  "itemdistribution", "itemdistributions",
+    Association<Location,Location,ItemDistribution>::reader, finder
 	  );
   metadata = MetaClass::registerClass<ItemDistribution>(
     "itemdistribution", "itemdistribution", Object::create<ItemDistribution>, true
@@ -208,54 +209,6 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
     PythonType::evalException();
     return NULL;
   }
-}
-
-
-DECLARE_EXPORT void ItemDistribution::validate(Action action)
-{
-  // Catch null supplier and item pointers
-  Item *it = getItem();
-  if (!it)
-    throw DataException("Missing item on a ItemDistribution");
-
-  /* XXX
-  // Check if an ItemDistribution with 1) identical item, 2) identical origin
-  // 3) identical destination, and 4) overlapping effectivity dates already exists
-  Location::distributionoriginlist::const_iterator i = sup->getItems().begin();
-  for (; i != sup->getItems().end(); ++i)
-    if (i->getItem() == it
-        && i->getEffective().overlap(getEffective())
-        && i->getLocation() == loc
-        && &*i != this)
-      break;
-
-  // Apply the appropriate action
-  switch (action)
-  {
-    case ADD:
-      if (i != sup->getItems().end())
-      {
-        throw DataException("ItemSupplier of '" + sup->getName() + "' and '"
-            + it->getName() + "' already exists");
-      }
-      break;
-    case CHANGE:
-      throw DataException("Can't update a ItemSupplier");
-    case ADD_CHANGE:
-      // ADD is handled in the code after the switch statement
-      if (i == sup->getItems().end()) break;
-      throw DataException("Can't update a ItemSupplier");
-    case REMOVE:
-      // This ItemSupplier was only used temporarily during the reading process
-      delete this;
-      if (i == sup->getItems().end())
-        // Nothing to delete
-        throw DataException("Can't remove nonexistent ItemSupplier of '"
-            + sup->getName() + "' and '" + it->getName() + "'");
-      delete &*i;
-      return;
-  }
-  */
 }
 
 
@@ -548,5 +501,57 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   return opplan;
 }
 
+
+DECLARE_EXPORT Object* ItemDistribution::finder(const DataValueDict& d)
+{
+  // Check item field
+  const DataValue* tmp = d.get(Tags::item);
+  if (!tmp)
+    return NULL;
+  Item* item = static_cast<Item*>(tmp->getObject());
+
+  // Check origin field
+  tmp = d.get(Tags::origin);
+  if (!tmp)
+    return NULL;
+  Location* origin = static_cast<Location*>(tmp->getObject());
+
+  // Check destination field
+  tmp = d.get(Tags::destination);
+  if (!tmp)
+    return NULL;
+  Location* destination = static_cast<Location*>(tmp->getObject());
+
+  // Walk over all suppliers of the item, and return
+  // the first one with matching
+  const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
+  Date effective_start;
+  if (hasEffectiveStart)
+    effective_start = hasEffectiveStart->getDate();
+  const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
+  Date effective_end;
+  if (hasEffectiveEnd)
+    effective_end = hasEffectiveEnd->getDate();
+  const DataValue* hasPriority = d.get(Tags::priority);
+  int priority;
+  if (hasPriority)
+    priority = hasPriority->getInt();
+  Item::distributionIterator itemdist_iter = item->getDistributionIterator();
+  while (ItemDistribution *i = itemdist_iter.next())
+  {
+    if (i->getOrigin() != origin)
+      continue;
+    if (i->getDestination() != destination)
+      continue;
+    if (hasEffectiveStart && i->getEffectiveStart() != effective_start)
+      continue;
+    if (hasEffectiveEnd && i->getEffectiveEnd() != effective_end)
+      continue;
+    if (hasPriority && i->getPriority() != priority)
+      continue;
+    return const_cast<ItemDistribution*>(&*i);
+  }
+  return NULL;
+}
 
 }

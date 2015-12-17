@@ -33,7 +33,8 @@ int ItemSupplier::initialize()
 {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<ItemSupplier>(
-	  "itemsupplier", "itemsuppliers", MetaCategory::ControllerDefault
+	  "itemsupplier", "itemsuppliers",
+    Association<Supplier,Item,ItemSupplier>::reader, finder
 	  );
   metadata = MetaClass::registerClass<ItemSupplier>(
     "itemsupplier", "itemsupplier", Object::create<ItemSupplier>, true
@@ -186,64 +187,6 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
   {
     PythonType::evalException();
     return NULL;
-  }
-}
-
-
-DECLARE_EXPORT void ItemSupplier::validate(Action action)
-{
-  // Catch null supplier and item pointers
-  Supplier *sup = getSupplier();
-  Item *it = getItem();
-  Location *loc = getLocation();
-  if (!sup || !it)
-  {
-    // Invalid ItemSupplier model
-    if (!sup && !it)
-      throw DataException("Missing supplier and item on a itemsupplier");
-    else if (!sup)
-      throw DataException("Missing supplier on a itemsupplier on item '"
-          + it->getName() + "'");
-    else if (!it)
-      throw DataException("Missing item on a itemsupplier on supplier '"
-          + sup->getName() + "'");
-  }
-
-  // Check if a ItemSupplier with 1) identical supplier, 2) identical item
-  // 3) identical location, and 4) overlapping effectivity dates already exists
-  Supplier::itemlist::const_iterator i = sup->getItems().begin();
-  for (; i != sup->getItems().end(); ++i)
-    if (i->getItem() == it
-        && i->getEffective().overlap(getEffective())
-        && i->getLocation() == loc
-        && &*i != this)
-      break;
-
-  // Apply the appropriate action
-  switch (action)
-  {
-    case ADD:
-      if (i != sup->getItems().end())
-      {
-        throw DataException("ItemSupplier of '" + sup->getName() + "' and '"
-            + it->getName() + "' already exists");
-      }
-      break;
-    case CHANGE:
-      throw DataException("Can't update a itemsupplier");
-    case ADD_CHANGE:
-      // ADD is handled in the code after the switch statement
-      if (i == sup->getItems().end()) break;
-      throw DataException("Can't update a itemsupplier");
-    case REMOVE:
-      // This ItemSupplier was only used temporarily during the reading process
-      delete this;
-      if (i == sup->getItems().end())
-        // Nothing to delete
-        throw DataException("Can't remove nonexistent itemsupplier of '"
-            + sup->getName() + "' and '" + it->getName() + "'");
-      delete &*i;
-      return;
   }
 }
 
@@ -515,6 +458,51 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   // Return result
   Py_INCREF(opplan);
   return opplan;
+}
+
+
+DECLARE_EXPORT Object* ItemSupplier::finder(const DataValueDict& d)
+{
+  // Check item
+  const DataValue* tmp = d.get(Tags::item);
+  if (!tmp)
+    return NULL;
+  Item* item = static_cast<Item*>(tmp->getObject());
+
+  // Check supplier field
+  tmp = d.get(Tags::supplier);
+  if (!tmp)
+    return NULL;
+  Supplier* sup = static_cast<Supplier*>(tmp->getObject());
+
+  // Walk over all suppliers of the item, and return
+  // the first one with matching
+  const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
+  Date effective_start;
+  if (hasEffectiveStart)
+    effective_start = hasEffectiveStart->getDate();
+  const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
+  Date effective_end;
+  if (hasEffectiveEnd)
+    effective_end = hasEffectiveEnd->getDate();
+  const DataValue* hasPriority = d.get(Tags::priority);
+  int priority;
+  if (hasPriority)
+    priority = hasPriority->getInt();
+  for (Item::supplierlist::const_iterator fl = item->getSuppliers().begin();
+    fl != item->getSuppliers().end(); ++fl)
+  {
+    if (fl->getSupplier() != sup)
+      continue;
+    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+      continue;
+    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end)
+      continue;
+    if (hasPriority && fl->getPriority() != priority)
+      continue;
+    return const_cast<ItemSupplier*>(&*fl);
+  }
+  return NULL;
 }
 
 }

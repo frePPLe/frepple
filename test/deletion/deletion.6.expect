@@ -162,15 +162,15 @@
 		<operation>
 			<name>make item 1</name>
 			<flows>
-				<flow>
+				<flow xsi:type="flow_end">
 					<buffer>
-						<name>buffer A</name>
+						<name>buffer 1</name>
 					</buffer>
-					<quantity>-1</quantity>
+					<quantity>1</quantity>
 				</flow>
 				<flow>
 					<buffer>
-						<name>buffer B</name>
+						<name>buffer A</name>
 					</buffer>
 					<quantity>-1</quantity>
 				</flow>

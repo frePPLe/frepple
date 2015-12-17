@@ -2180,8 +2180,8 @@ class OperationPlan
 
     static DECLARE_EXPORT const MetaCategory* metacategory;
 
-    /** Lookup a operationplan given its primary key. */
-    static DECLARE_EXPORT Object* finder(const string&);
+    /** Lookup a operationplan. */
+    static DECLARE_EXPORT Object* finder(const DataValueDict&);
 
     /** Comparison of 2 OperationPlans.
       * To garantuee that the problems are sorted in a consistent and stable
@@ -3575,16 +3575,14 @@ class ItemDistribution : public Object,
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
-    /** This method is called to check the validity of the object.<br>
-      * An exception is thrown if the ItemSupplier is invalid.
-      */
-    DECLARE_EXPORT void validate(Action action);
-
     /** Constructor. */
     explicit DECLARE_EXPORT ItemDistribution();
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~ItemDistribution();
+
+    /** Search an existing object. */
+    DECLARE_EXPORT static Object* finder(const DataValueDict& k);
 
     /** Remove all shipping operationplans. */
     DECLARE_EXPORT void deleteOperationPlans(bool deleteLockedOpplans = false);
@@ -3924,6 +3922,9 @@ class ItemSupplier : public Object,
     /** Destructor. */
     DECLARE_EXPORT ~ItemSupplier();
 
+    /** Search an existing object. */
+    DECLARE_EXPORT static Object* finder(const DataValueDict&);
+
     /** Initialize the class. */
     static int initialize();
     static void writer(const MetaCategory*, Serializer*);
@@ -4060,11 +4061,6 @@ class ItemSupplier : public Object,
   private:
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-
-    /** This method is called to check the validity of the object.<br>
-      * An exception is thrown if the ItemSupplier is invalid.
-      */
-    DECLARE_EXPORT void validate(Action action);
 
     /** Location where the supplier item applies to. */
     Location* loc;
@@ -4929,14 +4925,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       setOperation(o);
       setBuffer(b);
       initType(metadata);
-      try { validate(ADD); }
-      catch (...)
-      {
-        if (getOperation()) getOperation()->flowdata.erase(this);
-        if (getBuffer()) getBuffer()->flows.erase(this);
-        resetReferenceCount();
-        throw;
-      }
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Constructor. */
@@ -4947,15 +4936,11 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       setBuffer(b);
       setEffective(e);
       initType(metadata);
-      try { validate(ADD); }
-      catch (...)
-      {
-        if (getOperation()) getOperation()->flowdata.erase(this);
-        if (getBuffer()) getBuffer()->flows.erase(this);
-        resetReferenceCount();
-        throw;
-      }
+      HasLevel::triggerLazyRecomputation();
     }
+
+    /** Search an existing object. */
+    DECLARE_EXPORT static Object* finder(const DataValueDict&);
 
     /** Returns the operation. */
     Operation* getOperation() const
@@ -5106,11 +5091,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     }
 
   private:
-    /** Verifies whether a flow meets all requirements to be valid. <br>
-      * An exception is thrown if the flow is invalid.
-      */
-    DECLARE_EXPORT void validate(Action action);
-
     /** Quantity of the flow. */
     double quantity;
 
@@ -6139,6 +6119,9 @@ class ResourceSkill : public Object,
     /** Initialize the class. */
     static int initialize();
 
+    /** Search an existing object. */
+    DECLARE_EXPORT static Object* finder(const DataValueDict&);
+
     /** Returns the resource. */
     Resource* getResource() const
     {
@@ -6179,11 +6162,6 @@ class ResourceSkill : public Object,
   private:
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
-
-    /** This method is called to check the validity of the object.<br>
-      * An exception is thrown if the resourceskill is invalid.
-      */
-    DECLARE_EXPORT void validate(Action action);
 };
 
 
@@ -6216,14 +6194,7 @@ class Load
       setResource(r);
       setQuantity(u);
       initType(metadata);
-      try { validate(ADD); }
-      catch (...)
-      {
-        if (getOperation()) getOperation()->loaddata.erase(this);
-        if (getResource()) getResource()->loads.erase(this);
-        resetReferenceCount();
-        throw;
-      }
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Constructor. */
@@ -6235,18 +6206,14 @@ class Load
       setQuantity(u);
       setEffective(e);
       initType(metadata);
-      try { validate(ADD); }
-      catch (...)
-      {
-        if (getOperation()) getOperation()->loaddata.erase(this);
-        if (getResource()) getResource()->loads.erase(this);
-        resetReferenceCount();
-        throw;
-      }
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Destructor. */
     DECLARE_EXPORT ~Load();
+
+    /** Search an existing object. */
+    DECLARE_EXPORT static Object* finder(const DataValueDict& k);
 
     /** Returns the operation consuming the resource capacity. */
     Operation* getOperation() const
@@ -6389,11 +6356,6 @@ class Load
     }
 
   private:
-    /** This method is called to check the validity of the object.<br>
-      * An exception is thrown if the load is invalid.
-      */
-    DECLARE_EXPORT void validate(Action action);
-
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty;

@@ -188,7 +188,6 @@ DECLARE_EXPORT const Keyword Tags::userexit_demand("userexit_demand");
 DECLARE_EXPORT const Keyword Tags::userexit_flow("userexit_flow");
 DECLARE_EXPORT const Keyword Tags::userexit_operation("userexit_operation");
 DECLARE_EXPORT const Keyword Tags::userexit_resource("userexit_resource");
-DECLARE_EXPORT const Keyword Tags::validate("validate");
 DECLARE_EXPORT const Keyword Tags::value("value");
 DECLARE_EXPORT const Keyword Tags::variable("variable");
 DECLARE_EXPORT const Keyword Tags::verbose("verbose");

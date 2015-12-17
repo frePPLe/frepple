@@ -32,7 +32,8 @@ int ResourceSkill::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<ResourceSkill>(
-    "resourceskill", "resourceskills", MetaCategory::ControllerDefault
+    "resourceskill", "resourceskills",
+    Association<Resource,Skill,ResourceSkill>::reader, finder
     );
   registerFields<ResourceSkill>(const_cast<MetaCategory*>(metadata));
   ResourceSkillDefault::metadata = MetaClass::registerClass<ResourceSkillDefault>(
@@ -58,14 +59,6 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u)
   setResource(r);
   setPriority(u);
   initType(metadata);
-  try { validate(ADD); }
-  catch (...)
-  {
-    if (getSkill()) getSkill()->resources.erase(this);
-    if (getResource()) getResource()->skills.erase(this);
-    resetReferenceCount();
-    throw;
-  }
 }
 
 
@@ -76,14 +69,6 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRa
   setPriority(u);
   setEffective(e);
   initType(metadata);
-  try { validate(ADD); }
-  catch (...)
-  {
-    if (getSkill()) getSkill()->resources.erase(this);
-    if (getResource()) getResource()->skills.erase(this);
-    resetReferenceCount();
-    throw;
-  }
 }
 
 
@@ -182,61 +167,54 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 }
 
 
-DECLARE_EXPORT void ResourceSkill::validate(Action action)
+DECLARE_EXPORT Object* ResourceSkill::finder(const DataValueDict& d)
 {
-  // Catch null operation and resource pointers
-  Skill *skill = getSkill();
-  Resource *res = getResource();
-  if (!skill || !res)
-  {
-    // Invalid load model
-    if (!skill && !res)
-      throw DataException("Missing resource and kill on a resourceskill");
-    else if (!skill)
-      throw DataException("Missing skill on a resourceskill on resource '"
-          + res->getName() + "'");
-    else if (!res)
-      throw DataException("Missing resource on a resourceskill on skill '"
-          + skill->getName() + "'");
-  }
+  // Check resource
+  const DataValue* tmp = d.get(Tags::resource);
+  if (!tmp)
+    return NULL;
+  Resource* res = static_cast<Resource*>(tmp->getObject());
 
-  // Check if a resourceskill with 1) identical resource, 2) identical skill and
-  // 3) overlapping effectivity dates already exists
-  Skill::resourcelist::const_iterator iter = skill->getResources();
-  ResourceSkill *resskill = NULL;
-  while (resskill = iter.next())
-    if (resskill->getResource() == res
-        && resskill->getEffective().overlap(getEffective())
-        && resskill != this)
-      break;
+  // Check skill field
+  tmp = d.get(Tags::skill);
+  if (!tmp)
+    return NULL;
+  Skill* skill = static_cast<Skill*>(tmp->getObject());
 
-  // Apply the appropriate action
-  switch (action)
+  // Walk over all skills of the resurce, and return
+  // the first one with matching
+  const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
+  Date effective_start;
+  if (hasEffectiveStart)
+    effective_start = hasEffectiveStart->getDate();
+  const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
+  Date effective_end;
+  if (hasEffectiveEnd)
+    effective_end = hasEffectiveEnd->getDate();
+  const DataValue* hasPriority = d.get(Tags::priority);
+  int priority;
+  if (hasPriority)
+    priority = hasPriority->getInt();
+  const DataValue* hasName = d.get(Tags::name);
+  string name;
+  if (hasName)
+    name = hasName->getString();
+  Resource::skilllist::const_iterator s = res->getSkills();
+  while (ResourceSkill *i = s.next())
   {
-    case ADD:
-      if (resskill)
-      {
-        throw DataException("Resourceskill of '" + res->getName() + "' and '"
-            + skill->getName() + "' already exists");
-      }
-      break;
-    case CHANGE:
-      throw DataException("Can't update a resourceskill");
-    case ADD_CHANGE:
-      // ADD is handled in the code after the switch statement
-      if (!resskill) break;
-      throw DataException("Can't update a resourceskill");
-    case REMOVE:
-      // This resourceskill was only used temporarily during the reading process
-      delete this;
-      if (!resskill)
-        // Nothing to delete
-        throw DataException("Can't remove nonexistent resourceskill of '"
-            + res->getName() + "' and '" + skill->getName() + "'");
-      delete resskill;
-      return;
+    if (i->getSkill() != skill)
+      continue;
+    if (hasEffectiveStart && i->getEffectiveStart() != effective_start)
+      continue;
+    if (hasEffectiveEnd && i->getEffectiveEnd() != effective_end)
+      continue;
+    if (hasPriority && i->getPriority() != priority)
+      continue;
+    if (hasName && i->getName() != name)
+      continue;
+    return const_cast<ResourceSkill*>(&*i);
   }
+  return NULL;
 }
-
 
 }

@@ -188,7 +188,6 @@ class Tags
     static DECLARE_EXPORT const Keyword userexit_flow;
     static DECLARE_EXPORT const Keyword userexit_operation;
     static DECLARE_EXPORT const Keyword userexit_resource;
-    static DECLARE_EXPORT const Keyword validate;
     static DECLARE_EXPORT const Keyword value;
     static DECLARE_EXPORT const Keyword variable;
     static DECLARE_EXPORT const Keyword verbose;

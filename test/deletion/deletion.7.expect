@@ -158,18 +158,6 @@
 		</operation>
 		<operation>
 			<name>make item 1</name>
-			<loads>
-				<load>
-					<resource>
-						<name>assemble</name>
-					</resource>
-				</load>
-				<load>
-					<resource>
-						<name>assemble</name>
-					</resource>
-				</load>
-			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
 					<buffer>
@@ -182,17 +170,6 @@
 						<name>buffer A</name>
 					</buffer>
 					<quantity>-1</quantity>
-				</flow>
-				<flow>
-					<buffer>
-						<name>buffer B</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-				<flow>
-					<buffer>
-						<name>buffer B</name>
-					</buffer>
 				</flow>
 			</flows>
 			<duration>P1D</duration>

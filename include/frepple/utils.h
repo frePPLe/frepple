@@ -2131,7 +2131,7 @@ class MetaCategory : public MetaClass
     const Keyword* grouptag;
 
     /** Type definition for the find control function. */
-    typedef Object* (*findController)(const string&);
+    typedef Object* (*findController)(const DataValueDict&);
 
     /** Type definition for the read control function. */
     typedef Object* (*readController)(const MetaClass*, const DataValueDict&);
@@ -2185,8 +2185,8 @@ class MetaCategory : public MetaClass
       */
     DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
 
-    /** Find an object given its primary key. */
-    Object* find(const string& key) const
+    /** Find an object given a dictionary of values. */
+    Object* find(const DataValueDict& key) const
     {
       return findFunction ? findFunction(key) : NULL;
     }
@@ -2197,6 +2197,10 @@ class MetaCategory : public MetaClass
       */
     readController readFunction;
 
+    /** Compute the hash for "default" once and store it in this variable for
+      * efficiency. */
+    static DECLARE_EXPORT const hashtype defaultHash;
+
   private:
     /** Private constructor, called by registerCategory. */
     DECLARE_EXPORT MetaCategory(const string&, const string&, size_t,
@@ -2204,10 +2208,6 @@ class MetaCategory : public MetaClass
 
     /** A map of all classes registered for this category. */
     ClassMap classes;
-
-    /** Compute the hash for "default" once and store it in this variable for
-      * efficiency. */
-    static DECLARE_EXPORT const hashtype defaultHash;
 
     /** This is the root for a linked list of all categories.
       * Categories are chained to the list in the order of their registration.
@@ -5323,9 +5323,12 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
 
     /** Find an entity given its name. In case it can't be found, a NULL
       * pointer is returned. */
-    static Object* finder(const string& k)
+    static Object* finder(const DataValueDict& k)
     {
-      Tree::TreeNode *i = st.find(k);
+      const DataValue* val = k.get(Tags::name);
+      if (!val)
+        return NULL;
+      Tree::TreeNode *i = st.find(val->getString());
       return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : NULL);
     }
 };
@@ -6237,6 +6240,65 @@ template <class A, class B, class C> class Association
           return priority;
         }
     };
+
+    static Object* reader(const MetaClass* cat, const DataValueDict& in)
+    {
+      // Pick up the action attribute
+      Action act = MetaClass::decodeAction(in);
+      Object* obj = C::finder(in);
+
+      switch (act)
+      {
+        case REMOVE:
+          if (!obj)
+            throw DataException("Can't find object for removal");
+          delete obj;
+          return NULL;
+        case CHANGE:
+          if (!obj)
+            throw DataException("Object doesn't exist");
+          return obj;
+        case ADD:
+          if (obj)
+            throw DataException("Object already exists");
+        default:
+          /* Lookup the class in the map of registered classes. */
+          const MetaClass* j;
+          if (cat->category)
+            // Class metadata passed: we already know what type to create
+            j = cat;
+          else
+          {
+            // Category metadata passed: we need to look up the type
+            const DataValue* type = in.get(Tags::type);
+            j = static_cast<const MetaCategory&>(*cat).findClass(
+              type ? Keyword::hash(type->getString()) : MetaCategory::defaultHash
+              );
+            if (!j)
+            {
+              string t(type ? type->getString() : "default");
+              throw LogicException("No type " + t + " registered for category " + cat->type);
+            }
+          }
+
+          // Call the factory method
+          assert(j->factoryMethod);
+          Object* result = j->factoryMethod();
+
+          // Run the callback methods
+          if (!result->getType().raiseEvent(result, SIG_ADD))
+          {
+            // Creation denied
+            delete result;
+            throw DataException("Can't create object");
+          }
+
+          // Creation accepted
+          return result;
+      }
+      throw LogicException("Unreachable code reached");
+      return NULL;
+    }
 };
 
 

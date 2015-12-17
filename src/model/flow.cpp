@@ -34,7 +34,8 @@ int Flow::initialize()
 {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<Flow>(
-    "flow", "flows", MetaCategory::ControllerDefault
+    "flow", "flows",
+    Association<Operation,Buffer,Flow>::reader, finder
     );
   registerFields<Flow>(const_cast<MetaCategory*>(metadata));
   FlowStart::metadata = MetaClass::registerClass<FlowStart>(
@@ -60,66 +61,6 @@ int Flow::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
-}
-
-
-DECLARE_EXPORT void Flow::validate(Action action)
-{
-  // Catch null operation and buffer pointers
-  Operation* oper = getOperation();
-  Buffer* buf = getBuffer();
-  if (!oper || !buf)
-  {
-    // This flow is not a valid one since it misses essential information
-    if (!oper && !buf)
-      throw DataException("Missing operation and buffer on a flow");
-    else if (!oper)
-      throw DataException("Missing operation on a flow with buffer '"
-          + buf->getName() + "'");
-    else
-      throw DataException("Missing buffer on a flow with operation '"
-          + oper->getName() + "'");
-  }
-
-  // Check if a flow with 1) identical buffer, 2) identical operation and
-  // 3) overlapping effectivity dates already exists, and 4) same
-  // flow type.
-  Operation::flowlist::const_iterator i = oper->getFlows().begin();
-  for (; i != oper->getFlows().end(); ++i)
-    if (i->getBuffer() == buf
-        && i->getEffective().overlap(getEffective())
-        && i->getType() == getType()
-        && &*i != this)
-      break;
-
-  // Apply the appropriate action
-  switch (action)
-  {
-    case ADD:
-      if (i != oper->getFlows().end())
-        throw DataException("Flow of '" + oper->getName() + "' and '" +
-            buf->getName() + "' already exists");
-      break;
-    case CHANGE:
-      throw DataException("Can't update a flow");
-    case ADD_CHANGE:
-      // ADD is handled in the code after the switch statement
-      if (i == oper->getFlows().end()) break;
-      throw DataException("Can't update a flow between '" +
-        oper->getName() + "' and '" + buf->getName() + "')");
-    case REMOVE:
-      // Delete the temporary flow object
-      delete this;
-      // Nothing to delete
-      if (i == oper->getFlows().end())
-        throw DataException("Can't remove nonexistent flow of '"
-            + oper->getName() + "' and '" + buf->getName() + "'");
-      // Delete
-      delete &*i;
-  }
-
-  // Set a flag to make sure the level computation is triggered again
-  HasLevel::triggerLazyRecomputation();
 }
 
 
@@ -262,5 +203,55 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   }
 }
 
+
+DECLARE_EXPORT Object* Flow::finder(const DataValueDict& d)
+{
+  // Check operation
+  const DataValue* tmp = d.get(Tags::operation);
+  if (!tmp)
+    return NULL;
+  Operation* oper = static_cast<Operation*>(tmp->getObject());
+
+  // Check buffer field
+  tmp = d.get(Tags::buffer);
+  if (!tmp)
+    return NULL;
+  Buffer* buf = static_cast<Buffer*>(tmp->getObject());
+
+  // Walk over all flows of the operation, and return
+  // the first one with matching
+  const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
+  Date effective_start;
+  if (hasEffectiveStart)
+    effective_start = hasEffectiveStart->getDate();
+  const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
+  Date effective_end;
+  if (hasEffectiveEnd)
+    effective_end = hasEffectiveEnd->getDate();
+  const DataValue* hasPriority = d.get(Tags::priority);
+  int priority;
+  if (hasPriority)
+    priority = hasPriority->getInt();
+  const DataValue* hasName = d.get(Tags::name);
+  string name;
+  if (hasName)
+    name = hasName->getString();
+  for (Operation::flowlist::const_iterator fl = oper->getFlows().begin();
+    fl != oper->getFlows().end(); ++fl)
+  {
+    if (fl->getBuffer() != buf)
+      continue;
+    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+      continue;
+    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end)
+      continue;
+    if (hasPriority && fl->getPriority() != priority)
+      continue;
+    if (hasName && fl->getName() != name)
+      continue;
+    return const_cast<Flow*>(&*fl);
+  }
+  return NULL;
+}
 
 } // end namespace

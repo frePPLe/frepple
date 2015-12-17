@@ -863,10 +863,12 @@ DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
 }
 
 
-DECLARE_EXPORT Object* OperationPlan::finder(const string& key)
+DECLARE_EXPORT Object* OperationPlan::finder(const DataValueDict& key)
 {
-  unsigned long id = strtoul(key.c_str(), NULL, 0);
-  return OperationPlan::findId(id);
+  const DataValue* val = key.get(Tags::id);
+  return val ?
+    OperationPlan::findId(val->getUnsignedLong()) :
+    NULL;
 }
 
 

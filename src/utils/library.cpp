@@ -519,7 +519,7 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 
 Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDict& in)
 {
-  Action act = ADD;
+  Action act = MetaClass::decodeAction(in);
   switch (act)
   {
     case REMOVE:

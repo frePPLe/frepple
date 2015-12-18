@@ -57,7 +57,7 @@ can conveniently perform the following actions:
 
   - | The third tab shows the **planned and ongoing transactions** that are
       currently ongoing or proposed by frePPLe. The list shows purchase orders, 
-      incoming distribution orders and outgoing distrbution orders.
+      incoming distribution orders and outgoing distribution orders.
       
     | Date, quantity, item and supplier can be edited for proposed transactions.
     | When one or more rows are selected, the action list becomes active which is

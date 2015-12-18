@@ -428,10 +428,19 @@ class GridReport(View):
       end = pref.horizonend
       if end:
         if end < start:
-          # Swap start and end to assure the start is before the end
-          tmp = start
-          start = end
-          end = tmp
+          if reportclass.showOnlyFutureTimeBuckets and end < current:
+            # Special case to assure a minimum number of future buckets
+            if pref.horizonunit == 'day':
+              end = start + timedelta(days=pref.horizonlength or 60)
+            elif pref.horizonunit == 'week':
+              end = start + timedelta(weeks=pref.horizonlength or 8)
+            else:
+              end = start + timedelta(weeks=pref.horizonlength or 8)
+          else:
+            # Swap start and end to assure the start is before the end
+            tmp = start
+            start = end
+            end = tmp
       else:
         if pref.horizonunit == 'day':
           end = start + timedelta(days=pref.horizonlength or 60)

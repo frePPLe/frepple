@@ -4,9 +4,9 @@
 {% block title %}{% if title %}{{title|capfirst}} - {% endif %}frePPLe{% endblock %}
 {% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 {% block extrastyle %}{{block.super}}
-<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/ui.jqgrid.css" />
-<link type="text/css" src="{{STATIC_URL}}css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/custom.css" />
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
@@ -14,11 +14,10 @@
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/data/jsi18n/"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
-<!-- <script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.min.js"></script>   -->
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/typeahead.bundle.js"></script>
-<script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
-<script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqGrid.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 <script type="text/javascript">
 

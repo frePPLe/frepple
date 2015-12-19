@@ -2,9 +2,10 @@
 <html lang="{{LANGUAGE_CODE|default:"en"}}">
 <head>
 <title>{% block title %}{% endblock %}</title>
-<meta http-equiv="Content-Type" content="text/html; charset={{request.charset}}" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="robots" content="NONE,NOARCHIVE" />
+<meta charset="{{request.charset}}">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="NONE,NOARCHIVE">
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>

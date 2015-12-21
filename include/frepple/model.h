@@ -1158,7 +1158,7 @@ class Plannable : public HasProblems, public Solvable
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL);
+      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, DETAIL + PLAN);
       HasProblems::registerFields<Cls>(m);
     }
 
@@ -7395,7 +7395,6 @@ class Plan : public Plannable, public Object
       m->addIteratorField<Plan, Item::supplierlist::iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier); // Only for XML import
       m->addIteratorField<Plan, Location::distributionoriginlist::iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans);
-      m->addIteratorField<Plan, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Plan::getProblems, PLAN + DETAIL);
     }
 };
 

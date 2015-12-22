@@ -72,38 +72,22 @@ div.breadcrumbs, ul.messagelist li {
   background-color: #EBEBEB; /* Color gray1 */
 }
 
-/*
- * Header bar and navigation styles.
- */
-nav ul ul {
-  list-style: none;
-  padding: 2px;
-  margin: 0;
-  outline: none;
-}
-
-/* separator color in nav menus */
-nav .separator::after {
-    background: #222222;
-}
-
 #headerbar, div.breadcrumbs {
   background: #C1C688; /* Color green1 */
   color: #222222;
 }
 
-nav ul li a:link, nav ul li a:visited, div.breadcrumbs a {
+div.breadcrumbs a {
   color: #222222 !important;
 }
 
-nav ul li:hover a, nav ul ul, .tt-menu {/* Copy from the Jquery UI style ".ui-widget-header". */
-  background: #9CA441; /* Color green2 */
-  color: #222222;
+
+.navbar {
+    margin-bottom: 0px;
 }
 
-.tt-menu div *:hover {/* Copy from the Jquery UI style ".ui-widget-header". */
-  background: #9CA441; /* Color green2 */
-  color: #222222;
+div.breadcrumbs {
+	margin-bottom: 20px;
 }
 
 nav ul li span .twiter-type-ahead input.typeahead.tt-hint {
@@ -115,10 +99,6 @@ div .tt-menu {
 	top: 5%;
 }
 
-nav ul ul li a:hover, a.tt-suggestion.tt-selectable:hover {                          /* Copy from the Jquery UI style ".ui-state-hover". */
-  background: #838d11; /* Color green3 */
-  color: #111111;
-}
 
 
 /* Style for highlighted rows in a grid. */

@@ -256,7 +256,11 @@ div.selectdb select {
     position: relative;
     width: 100%;
     padding: 0;
-    min-width: 800px;
+    /* min-width: 800px;  IMPOSE MIN WIDT OR NOT??? */
+}
+
+.tooltip-inner {
+    white-space:pre-wrap;
 }
 
 #content {
@@ -467,15 +471,7 @@ span.context {
 
 /* Styles for the navigation header. */
 
-#user-tools {
-  height: 40px;
-  line-height: 40px;
-  float: right;
-  font-size: 13px;
-  text-align: right;
-  padding: 0;
-}
-
+/*
 #headerbar {
   position: relative;
   z-index: 3;
@@ -483,65 +479,19 @@ span.context {
   padding: 10px 15px 5px 15px;
 }
 
-nav {
-  display: inline;
-  z-index: 10000;
-  font-size: 13px;
-}
-
-nav ul {
-  padding: 0 0 0 20px;
-  margin: 0;
-  list-style: none;
-  position: relative;
-  display: inline-table;
-  line-height: 40px;
-}
-
-nav ul li input {
-  margin-left: 0px;
-}
 
 nav ul li .twitter-typeahead {
 	margin-left: 10px;
 	top: 5px;
 }
 
-nav ul ul {
-  display: none;
-}
+
 
 nav ul li:hover > ul {
   display: block;
 }
 
-nav ul li {
-  float: left;
-  list-style: none;
-  padding: 0;
-}
 
-nav ul li a {
-  display: block;
-  padding: 0 8px 0 8px;
-  line-height: 40px;
-  font-size: 13px;
-  color: #555555;
-  text-decoration: none;
-}
-
-nav ul ul {
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 100%;
-}
-
-nav ul ul li {
-  float: none;
-  position: relative;
-}
 
 nav ul ul li a, .tt-menu a, .tt-menu p {
   padding-top: 0px;
@@ -552,12 +502,8 @@ nav ul ul li a, .tt-menu a, .tt-menu p {
   line-height: 2em;
   height: 2em;
 }
+*/
 
-nav ul ul ul {
-  position: absolute;
-  left: 100%;
-  top:0;
-}
 
 /* Styles for the tabs. */
 .frepple-tabs {
@@ -882,7 +828,7 @@ body.popup .submit-row {
 }
 
 .submit-row input.default,  .submit-row input[type=submit],  a.deletelink:link, a.deletelink:visited {
-	  margin-left: 5px;
+	  margin-left: 5px;/*
     padding-bottom: 4px;
     padding-left: 6px;
     padding-right: 6px;
@@ -892,7 +838,7 @@ body.popup .submit-row {
     font-size: 10px;
     font-weight: bold;
     color: white;
-    float: left;
+    float: left;*/
 }
 p.deletelink-box {
 	  line-height: normal;

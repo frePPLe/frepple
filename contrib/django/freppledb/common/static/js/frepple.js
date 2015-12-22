@@ -3,6 +3,7 @@
 window.__admin_media_prefix__ = "/static/admin/";
 
 
+
 // Adjust the breadcrumbs such that it fits on a single line.
 // This function is called when the window is resized.
 function breadcrumbs_reflow()
@@ -48,17 +49,17 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
-    $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
-    .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+    $('#actions').addClass("disabled change_status_selectmenu_inactive")
+    .removeClass("change_status_selectmenu_active")
     .prop('disabled', 'disabled');
 
-    $('#filter').removeClass("ui-state-disabled");
+    $('#filter').removeClass("disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
 
   select : function ()
   {
-    $('#filter').addClass("ui-state-disabled");
+    $('#filter').addClass("disabled");
     $.jgrid.hideModal("#searchmodfbox_grid");
     $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
     $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
@@ -249,7 +250,7 @@ var grid = {
      if (grid.selected != undefined)
        $(this).jqGrid('setCell', grid.selected, 'select', null);
      grid.selected = id;
-     $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text" style="font-size:66%">'+gettext('Select')+'</span></button>');
+     $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="btn"><span class="" style="font-size:66%">'+gettext('Select')+'</span></button>');
    },
 
    runAction: function(next_action) {
@@ -427,7 +428,7 @@ var grid = {
   //Display dialog for copying or deleting records
   showDelete : function()
   {
-    if ($('#delete_selected').hasClass("ui-state-disabled")) return;
+    if ($('#delete_selected').hasClass("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
     if (sel.length == 1)
     {
@@ -454,8 +455,8 @@ var grid = {
                  type: "POST",
                  contentType: "application/json",
                  success: function () {
-                   $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
-                   $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $("#delete_selected").addClass("disabled").removeClass("bold");
+                   $("#copy_selected").addClass("disabled").removeClass("bold");
                    $('.cbox').prop("checked", false);
                    $('#cb_grid.cbox').prop("checked", false);
                    $("#grid").trigger("reloadGrid");
@@ -489,7 +490,7 @@ var grid = {
 
   showCopy: function()
   {
-   if ($('#copy_selected').hasClass("ui-state-disabled")) return;
+   if ($('#copy_selected').hasClass("disabled")) return;
    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
    if (sel.length > 0)
    {
@@ -511,8 +512,8 @@ var grid = {
                  type: "POST",
                  contentType: "application/json",
                  success: function () {
-                   $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
-                   $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
+                   $("#delete_selected").addClass("disabled").removeClass("bold");
+                   $("#copy_selected").addClass("disabled").removeClass("bold");
                    $('.cbox').prop("checked", false);
                    $('#cb_grid.cbox').prop("checked", false);
                    $("#grid").trigger("reloadGrid");
@@ -547,8 +548,9 @@ var grid = {
   // Display filter dialog
   showFilter: function()
   {
-    if ($('#filter').hasClass("ui-state-disabled")) return;
-    $('#timebuckets,#popup').dialog().dialog('close');
+    if ($('#filter').hasClass("disabled")) return;
+ //   $('#timebuckets,#popup').dialog().dialog('close');
+    $('.modal').modal('hide');
     jQuery("#grid").jqGrid('searchGrid', {
       closeOnEscape: true,
       multipleSearch:true,
@@ -650,19 +652,19 @@ var grid = {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
     if (sel > 0)
     {
-      $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
-      $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
-      $("#actions").removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
-      .addClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      $("#copy_selected").removeClass("disabled").addClass("bold");
+      $("#delete_selected").removeClass("disabled").addClass("bold");
+      $("#actions").removeClass("disabled change_status_selectmenu_inactive")
+      .addClass("change_status_selectmenu_active")
       .prop('disabled', false);
     }
     else
     {
-      $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-      $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+      $("#copy_selected").addClass("disabled").removeClass("bold");
+      $("#delete_selected").removeClass("disabled").addClass("bold");
       $("#actions")
-      .addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
-      .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
+      .addClass("disabled change_status_selectmenu_inactive")
+      .removeClass("change_status_selectmenu_active")
       .prop('disabled', 'disabled');
     }
   },
@@ -671,20 +673,20 @@ var grid = {
   {
     if ($(this).is(':checked'))
     {
-      $("#copy_selected").removeClass("ui-state-disabled").addClass("bold");
-      $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
-      $("#actions").removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
-      .removeClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      $("#copy_selected").removeClass("disabled").addClass("bold");
+      $("#delete_selected").removeClass("disabled").addClass("bold");
+      $("#actions").removeClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
+      .removeClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
       .addClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
       .prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
-      $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-      $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
+      $("#copy_selected").addClass("disabled").removeClass("bold");
+      $("#delete_selected").addClass("disabled").removeClass("bold");
       $("#actions")
-      .addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
+      .addClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
       .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
       .prop('disabled', 'disabled');
       $('.cbox').prop("checked", false);
@@ -760,7 +762,7 @@ var openbravo = {
 	                     model: false
 	                   });
 	                 $('#button_close').find('.ui-button-text').text(gettext('close'));
-	                 $('#button_export').removeClass("ui-state-default").addClass("ui-state-disabled").prop('disabled', 'disabled');
+	                 $('#button_export').removeClass("ui-state-default").addClass("disabled").prop('disabled', 'disabled');
 	                 // Mark selected rows as "approved" if the original status was "proposed".
 	                 for (var i in sel)
 	                 {
@@ -794,7 +796,7 @@ var openbravo = {
 // items.
 //----------------------------------------------------------------------------
 
-$.widget( "custom.catcomplete", $.ui.autocomplete, {
+/*$.widget( "custom.catcomplete", $.ui.autocomplete, {
   _renderItem: function( ul, item) {
     if (item.value == undefined)
       return $( "<li class='ui-autocomplete-category' style='border-top: 1px; border-top-style: solid; border-top-color: #222; text-align:center;'>" + item.label + "</li>" ).appendTo( ul );
@@ -804,10 +806,7 @@ $.widget( "custom.catcomplete", $.ui.autocomplete, {
       .append( $( "<a></a>" ).text( item.value ) )
       .appendTo( ul );
   },
-
-
-
-});
+});*/
 
 
 //----------------------------------------------------------------------------
@@ -872,13 +871,36 @@ $(function() {
   // Autocomplete search functionality
   var database = $('#database').val();
   database = (database===undefined || database==='default') ? '' : '/' + database;
-  $("#search").catcomplete({
-    source: database + "/search/",
-    minLength: 2,
-    select: function( event, ui ) {
-      window.location.href = database + ui.item.url + admin_escape(ui.item.value) + "/";
+  
+  var searchsource = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //prefetch: '/search/',
+    remote: {
+      url: '/search/?term=%QUERY',
+      wildcard: '%QUERY'
     }
   });
+  $('#search').typeahead({minLength: 2}, {
+    limit:100, 
+    highlight: true,
+    name: 'search',
+    display: 'value',
+    source: searchsource,
+    templates: {
+      suggestion: function(data){
+        if (data.value === null)
+          return '<span><div class="separator"></div><p>' + data.label + '</p></span>';
+        else
+          return '<a href="'+ database + data.url + admin_escape(data.value) + '/" >' + data.value + '</a>';
+      },
+    }
+  });
+      
+//    select: function( event, ui ) {
+//      window.location.href = database + ui.item.url + admin_escape(ui.item.value) + "/";
+//    }
+//  );
 
 });
 

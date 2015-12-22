@@ -1,7 +1,11 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
-{% if args.0 or mode == 'graph' %}<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
+{% if args.0 or mode == 'graph' %}
+<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js">
+	var editrow;
+	var editcol;
+</script>
 {% endif %}<script type="text/javascript">
 
 {% block crosses %}function crosses (cellvalue, options, rowdata) {
@@ -22,8 +26,7 @@ var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.fi
 $(function() {
   $("#toolicons").tooltip({show: {effect: "fade", delay: 500} });{% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
-{% else %}{% if reportclass.hasTimeBuckets %}$("#displaymode").buttonset();
-{% endif %}
+{% else %}
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
       + (location.search.length > 0 ? "&format=json" : "?format=json"),
@@ -38,6 +41,10 @@ $(function() {
     editurl: location.pathname,
     beforeSaveCell: upload.select,{% else %}
     onSelectRow: function() {$(this).resetSelection();},
+    formatCell: function(rowid, cellname, value, iRow, iCol) {
+      editrow = iRow;
+      editcol = iCol;
+      return value;
     {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
     viewrecords: true,
@@ -65,8 +72,8 @@ $(function() {
 	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}jQuery("#radio1").click(function() {grid.displayMode("table");});
-  jQuery("#radio2").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
+  {% endif %}jQuery("#gridmode").on("click", function() {grid.displayMode("table");});
+  jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% endif %}});
 
@@ -80,10 +87,12 @@ $(window).bind('resize', function() {
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div id="toolicons">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
-<input type="radio" id="gridmode" name="mode" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="gridmode"><span title="{% trans "display table"|capfirst|force_escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
-<input type="radio" id="graphmode" name="mode" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="graphmode"><span title="{% trans "display graph"|capfirst|force_escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
-</span></form>&nbsp;&nbsp;
+{% block before_table %}{% endblock %}<div id="toolicons">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
+<div class="btn-group" role="group" aria-label="TGmode">
+<form style="display: inline"><span id="displaymode">
+<button class="btn" type="button" id="gridmode" name="mode" {% if mode == 'table' %}checked{% endif %}><label for="gridmode" title="{% trans "display table"|capfirst|force_escape %}"  class="fa fa-table fa-lg" style="color:#4c3000"></label></button>
+<button class="btn" type="button" id="graphmode" name="mode" {% if mode == 'graph' %}checked{% endif %}><label for="graphmode" title="{% trans "display graph"|capfirst|force_escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></label></button>
+</span></form>&nbsp;&nbsp;</div>
 {% endif %}
 {% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
 {% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
@@ -94,8 +103,8 @@ $(window).bind('resize', function() {
 {% block save_undo_buttons %}
 <div id="save_undo" style="float:left">
 {% comment %}Translators: Translation included with Django {% endcomment %}
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="btn save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="btn save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
 {% endblock save_undo_buttons %}
 {% endif %}
 <div id="content-main" style="margin-right: 15px;">

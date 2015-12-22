@@ -22,21 +22,17 @@ The changes are:
   .login #container {
     border: none;
   }
-  input[type=submit] {
-    background: #838d11;
-    color: #fff;
-    padding: 10px 20px 10px 20px;
-  }
+
 </style>
 {% endblock %}
 
 {% block extrahead %}
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 <script type="text/javascript">
 $(function() {
   $('#id_username').focus();
-  $("input:submit").button();
+
 });
 </script>
 <!--[if lte IE 9]>
@@ -78,21 +74,21 @@ $(function() {
 {% endif %}
 
 <div id="content-main">
-<form action="{{request.prefix}}{{app_path}}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
+<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form">{% csrf_token %}
+  <div class="form-group">
     {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
     <label for="id_username" class="required">{{ form.username.label }}:</label> {{ form.username }}
   </div>
-  <div class="form-row">
+  <div class="form-group">
     {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
     {% comment %}Translators: Translation included with Django {% endcomment %}
     <label for="id_password" class="required">{% trans 'Password'|capfirst %}</label> {{ form.password }}
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
   </div>
-  <div class="submit-row">
+  <div class="form-group">
     {% comment %}Translators: Translation included with Django {% endcomment %}
-    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
+    <input type="submit" class="btn btn-lg btn-primary" value="{% trans 'Log in' %}"/>
   </div>
 </form>
 
@@ -103,10 +99,9 @@ Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Sa
 <script type="text/javascript">
 document.getElementById('id_username').focus()
 </script>
-
+<div id='tourtooltip' class='tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front' style='display: none; position: relative; top: 20px; font-weight: normal'>
 </div>
 {% checkPassword "admin" "admin" as recommend_reset %}{% if recommend_reset %}
-<div id='tourtooltip' class='tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front' style='position: relative; top: 20px; font-weight: normal'>
 {% blocktrans %}The user "admin" has password "admin".<br/>
 We suggest changing this password.{% endblocktrans %}</div>{% endif %}
 {% endblock %}

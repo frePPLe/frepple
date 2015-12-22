@@ -7,7 +7,6 @@
 <script type="text/javascript">
 
 $(function() {
-  $("input:submit, .button").button().addClass("btn btn-primary").tooltip({show: {effect: "fade", delay: 500} });
   $('form').ajaxForm();
 });
 
@@ -61,15 +60,15 @@ $(function() {
   {% if api_settings.URL_FORMAT_OVERRIDE %}
     {% for format in available_formats %}
               <td>
-							  <input type="submit"
+							  <button  class="btn btn-primary" role="button" type="submit" 
 							    value="{{ format|upper }} {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}"
-							    onclick="window.location.href = '{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}'"
-							    title="{% blocktrans with model=name rqformat=format|upper %}Make a GET request on the {{ model }} object with the format set to {{ rqformat }}{% endblocktrans %}">
+							    onclick="window.location.href = '{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}'">{{ format|upper }} {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}
+							  </button>
               <td>
     {% endfor %}
   {% else %}
               <td>
-					    <a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow" title="{% blocktrans with model=name %}Make a GET request on the {{ model }} object{% endblocktrans %}">
+					    <a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow">
 					    {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}
               </a>
               </td>
@@ -93,7 +92,10 @@ $(function() {
     <div id="options_get" class="panel-collapse collapse" role="tabpanel" aria-labelledby="twedeHeading">
       <div class="panel-body">
 		  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="OPTIONS">
-		    <input type="submit" value="{% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}">
+		    <button  class="btn btn-primary" role="button" type="submit"
+		      value="{% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}">
+		      {% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}
+		    </button>
 		  </form>
       </div>
     </div>
@@ -102,8 +104,8 @@ $(function() {
 
 
 {% if display_edit_forms %}
-  {% if post_form or raw_data_post_form %}
-    {% if post_form %}
+{% if post_form or raw_data_post_form %}
+{% if post_form %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="derdeHeading">
       <h4 class="panel-title">
@@ -119,15 +121,43 @@ $(function() {
 	        {% csrf_token %}
           {{ post_form }}
 	        <div class="form-actions">
-	          <input type="submit" value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
+	          <button  class="btn btn-primary" role="button" type="submit" 
+	             value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
+	             {% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}
+	          </button>
 	        </div>
         </form>
         {% endwith %}
      </div>
    </div>
    </div>
-    {% endif %}
-
+{% endif %}
+    
+    <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="zevendeHeading">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#post_form_raw" aria-expanded="true" aria-controls="post_form_raw">
+              {% blocktrans with model=name %}Make a POST request in raw format to create a new {{ model }} object{% endblocktrans %}
+        </a>
+      </h4>
+    </div>
+    <div id="post_form_raw" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zevendeHeading">
+      <div class="panel-body">
+        {% with form=raw_data_post_form %}
+       <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
+        {% include "rest_framework/raw_data_form.html" %}
+        <div class="form-actions">
+          <button  class="btn btn-primary" role="button" type="submit"
+            value="{% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}">
+            {% blocktrans with http_method='POST' %}{{ http_method }} request{% endblocktrans %}
+          </button>
+        </div>
+       </form>
+       {% endwith %}
+     </div>
+   </div>
+   </div>
+ {% endif %}
 
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="vierdeHeading">
@@ -142,13 +172,17 @@ $(function() {
 	      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
           {{ put_form }}
 	        <div class="form-actions">
-	          <input type="submit" value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
+	          <button  class="btn btn-primary" role="button" type="submit" 
+	           value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
+	           {% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}
+	          </button>
 	        </div>
 	      </form>     
       </div>
     </div>
   </div>
   
+  {% if put_form or raw_data_put_form or raw_data_patch_form %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="vijfdeHeading">
       <h4 class="panel-title">
@@ -164,10 +198,16 @@ $(function() {
 	    {% include "rest_framework/raw_data_form.html" %}
 	        <div class="form-actions">
 	      {% if raw_data_put_form %}
-	            <input type="submit" value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
+	            <button  class="btn btn-primary" role="button" type="submit" 
+	               value="{% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}">
+	               {% blocktrans with http_method='PUT' %}{{ http_method }} request{% endblocktrans %}
+	            </button>
 	      {% endif %}
 	      {% if raw_data_patch_form %}
-	            <input type="submit" data-method="PATCH" value="{% blocktrans with http_method='PATCH' %}{{ http_method }} request{% endblocktrans %}">
+	            <button  class="btn btn-primary" role="button" type="submit" data-method="PATCH" 
+	               value="{% blocktrans with http_method='PATCH' %}{{ http_method }} request{% endblocktrans %}">
+	               {% blocktrans with http_method='PATCH' %}{{ http_method }} request{% endblocktrans %}
+	            </button>
 	      {% endif %}
 	        </div>
 	      </form>
@@ -189,7 +229,10 @@ $(function() {
     <div id="delete_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
       <div class="panel-body">
           <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
-            <input type="submit" value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">
+            <button  class="btn btn-primary" role="button" type="submit" data-method="PATCH" 
+                value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">
+                {% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}
+            </button>
         </form>
       </div>
     </div>

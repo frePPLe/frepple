@@ -17,7 +17,7 @@ var editcol;
    };{% endif %}
 
 $(function() {
-  $("#toolicons").tooltip({show: {effect: "fade", delay: 500}});{% if reportclass.hasTimeBuckets and not bucketnames %}
+  {% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
   jQuery("#grid").jqGrid({

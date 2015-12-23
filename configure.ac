@@ -23,7 +23,7 @@
 # Initialization
 #
 AC_PREREQ(2.60)
-AC_INIT([frepple], [3.0])
+AC_INIT([frepple], [3.1.beta])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9 tar-ustar])
@@ -175,7 +175,7 @@ AC_CHECK_LIB([xerces-c], [main], [],
   Check out http://xml.apache.org/xerces-c for more information.
 ])])
 
-AC_CHECKING([for xerces-c version >= 3.0 ])
+AC_CHECKING([for xerces-c version >= 3.1.beta ])
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   #include "xercesc/util/XercesVersion.hpp"
   #if XERCES_VERSION_MAJOR==3
@@ -185,7 +185,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   #endif
   ])], [],
   [AC_MSG_ERROR([
-  This package requires Xerces-C 3.0 or later.
+  This package requires Xerces-C 3.1.beta or later.
   ])])
 
 #

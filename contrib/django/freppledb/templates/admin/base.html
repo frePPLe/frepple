@@ -1,31 +1,25 @@
 {% load i18n %}{% load firstof from future %}<!DOCTYPE html>
 <html lang="{{LANGUAGE_CODE|default:"en"}}">
 <head>
-<title>{% block title %}{% endblock %}</title>
-<meta charset="{{request.charset}}">
+<meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="NONE,NOARCHIVE">
+<title>{% block title %}{% endblock %}</title>
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 
-<!-- Container -->
-<div id="container">
-
 {% if not is_popup %}
-<!-- Header -->
-<div id="headerbar" >
-{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}
-</div>
-<!-- END Header -->
-{% comment %}Translators: Translation included with Django {% endcomment %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}
+{% block nav-global %}{% endblock %}
 {% endif %}
 
  {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul>{% endif %}
+
+<!-- Container -->
+<div id="container">
 
 <!-- Content -->
 <div id="content"><span style="display:block; padding-top:7px"></span>

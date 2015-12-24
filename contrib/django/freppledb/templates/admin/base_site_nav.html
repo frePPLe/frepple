@@ -1,9 +1,8 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
-{% block branding %}{% endblock %}
 {% block nav-global %}
 {% getMenu as menu %}
-<nav id=nav-menu-header class="navbar navbar-default">
+<nav id="nav-menu-header" class="navbar navbar-fixed-top">
 	<div class="container-fluid">
 	  <div class="navbar-header">
 	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-menu" aria-expanded="false">
@@ -12,9 +11,9 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="#"><img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}"></a>
+	      {% block branding %}<a class="navbar-brand" href="#" style="padding-top:5px; padding-bottom: 5px"><img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}"></a>{% endblock %}
 	  </div>
-	  
+
 		<div id="nav-menu" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 			  {% for group in menu %}
@@ -30,18 +29,28 @@
 			  </li>
 			  {% endfor %}
 			</ul>
-	
+
 			{% comment %}Translators: Translation included with Django{% endcomment %}
 			<form class="navbar-form navbar-left" role="search">
 				<div class="form-group">
 				  <input id="search" class="typeahead" type="text" placeholder="{% trans 'Search' %}">
 				</div>
 			</form>
+
 		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right" id="user-toolsxxxx">
-				<li><a href="{{request.prefix}}/preferences/"><span class="fa fa-wrench fa-lg"></span></a></li>
-				<li><a href="/data/logout/?next=/"><span class="fa fa-sign-out fa-lg"></span></a></li></ul>
-			{% endif %}   
+		    <li class="dropdown">
+		    {% comment %}Translators: Translation included with Django{% endcomment %}
+		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
+				  {% comment %}Translators: Translation included with Django{% endcomment %}
+				  <li><a href="/data/logout/?next=/">{% trans 'log out'|capfirst %}</a></li>
+				</ul>
+			  </li></ul>
+			{% endif %}
 		</div>
 	</div>
+<div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a><span id="breadcrumbs">{% crumbs %}</span></div>
 </nav>
+
 {% endblock %}

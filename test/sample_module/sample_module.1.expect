@@ -162,7 +162,7 @@
 		<operation xsi:type="operation_transport">
 			<name>transport supply from factory 1</name>
 			<flows>
-				<flow xsi:type="flow">
+				<flow>
 					<buffer>
 						<name>product in factory 1</name>
 					</buffer>
@@ -186,7 +186,7 @@
 		<operation xsi:type="operation_transport">
 			<name>transport supply from factory 2</name>
 			<flows>
-				<flow xsi:type="flow">
+				<flow>
 					<buffer>
 						<name>product in factory 2</name>
 					</buffer>

@@ -357,13 +357,13 @@ DEFAULT_PAGESIZE = 100
 
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
-  {'width':'50%', 'widgets':[
+  {'width':'col-md-6 col-sm-12', 'widgets':[
     ("welcome",{}),
     ("resource_queue",{"limit":20}),
     ("purchase_queue",{"limit":20}),
     ("shipping_queue",{"limit":20}),
   ]},
-  {'width':'25%', 'widgets':[
+  {'width':'col-md-3 col-sm-12', 'widgets':[
     ("recent_actions",{"limit":10}),
     ("recent_comments",{"limit":10}),
     ("execute",{}),
@@ -372,7 +372,7 @@ DEFAULT_DASHBOARD = [
     ("short_orders",{"limit":20}),
     ("purchase_order_analysis",{"limit":20}),
   ]},
-  {'width':'25%', 'widgets':[
+  {'width':'col-md-3 col-sm-12', 'widgets':[
     ("news",{}),
     ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
     ("delivery_performance",{"green": 90, "yellow": 80}),

@@ -1,9 +1,32 @@
 
+body {
+  padding-top: 70px;
+}
+
+nav {
+  background-color: white;
+}
+
+/* Cockpit styles. */
+
+.cockpitcolumn {
+  padding-bottom: 200px;
+}
+
+.cockpitcolumn .panel-placeholder {
+  height: 50px;
+  background: #f5f5f5;  /* bootstrap variable @panel-default-heading-bg */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+/* ------------- STYLES ABOVE THIS LINE ARE STYLES WHICH WE REQUIRE IN BOOTSTRAP. --------------- */
+
 /* GLOBAL DEFAULTS */
 
 body {
   margin: 0;
-  padding: 0;
   color: #555555;
   background: white;
 }
@@ -234,7 +257,7 @@ div.breadcrumbs {
 }
 
 div.breadcrumbs a {
-  color: #555555;
+  /*color: #555555;*/
   text-align: left;
 }
 
@@ -624,58 +647,6 @@ div.calendarbox
   width: 100%;
   min-height: 48px;
   height: 100%;
-}
-
-/* DASHBOARD WIDGETS */
-
-.portlet {
-  margin: 0 1em 1em 0;
-}
-
-.portlet-header {
-  padding: 0.2em 0.3em;
-  margin-bottom: 0.5em;
-  position: relative;
-  font-weight: normal;
-}
-
-.portlet-export {
-  position: absolute;
-  top: 50%;
-  right: 32px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-toggle {
-  position: absolute;
-  top: 50%;
-  right: 17px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-close {
-  position: absolute;
-  top: 50%;
-  right: 2px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-content {
-  padding: 0 0.8em 0.8em 0.8em;
-  overflow: hidden;
-}
-
-.portlet-placeholder {
-  border: 1px dotted black;
-  margin: 0 1em 1em 0;
-  height: 50px;
-}
-
-.portlet-content table {
-  line-height: 2em;
 }
 
 /* TASK EXECUTION SCREEN */

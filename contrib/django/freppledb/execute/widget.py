@@ -37,7 +37,7 @@ class ExecuteWidget(Widget):
       <input type="hidden" name="csrfmiddlewaretoken" value="%s">
       <input type="hidden" name="plantype" value="1"/>
       <input type="hidden" name="constraint" value="15"/>
-      <input class="button" type="submit" value="%s"/>
+      <input class="btn btn-primary" type="submit" value="%s"/>
       </form></div>
       ''' % (_thread_locals.request.prefix, get_token(_thread_locals.request), force_text(_("Create a plan")))
 

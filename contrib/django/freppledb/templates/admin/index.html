@@ -6,52 +6,42 @@
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/static/js/d3.min.js"></script>
-<style>
-  .column {
-    float: left;
-    padding-bottom: 200px;
-  }
-  table {
-    border-spacing: 0px;
-  }
-</style>
+<script type="text/javascript" src="/static/js/jquery-ui-1.11.4.min.js"></script>
 <script>
   $(function() {
-    $(".column").sortable({
-      connectWith: ".column",
-      handle: ".portlet-header",
-      cancel: ".portlet-toggle",
-      placeholder: "portlet-placeholder ui-corner-all"
+    $(".cockpitcolumn").sortable({
+      connectWith: ".cockpitcolumn",
+      handle: ".panel-heading",
+      cancel: ".panel-toggle",
+      placeholder: "panel-placeholder"
     });
-    $(".portlet-toggle").click(function() {
+    $(".panel-toggle").click(function() {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");
-      icon.closest(".portlet").find(".portlet-content").toggle();
+      icon.closest(".panel").find(".panel-body").toggle();
     });
-    $(".portlet-close").click(function() {
-      $(this).closest(".portlet").remove();
+    $(".panel-close").click(function() {
+      $(this).closest(".panel").remove();
     });
-    $(".button").button();
     $("#toolicons").tooltip({show: {effect: "fade", delay: 500}});
   });
 </script>
 {% endblock %}
 
-{% block content %}
-{% getDashboard as dashboard %}
-{% for col in dashboard %}
-<div class="column" style="width:{{col.width}}">
-{% for widget in col.widgets %}
-  <div class="ui-widget ui-widget-content ui-helper-clearfix ui-corner-all portlet">
-    <div class="portlet-header ui-widget-header ui-corner-all" data-toggle="tooltip" data-placement="top"  title="{{widget.tooltip|escape}}">{% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet">
-    <span class='fa fa-arrow-down portlet-export'></span></a>{% endif %}
-    <span class='fa fa-times portlet-close'></span>
-    <span class='fa fa-minus portlet-toggle'></span>{% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>{% else %}{{widget.title|upper}}{% endif %}</div>
-    <div class="portlet-content">{% if widget.asynchronous %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
+{% block content %}{% getDashboard as dashboard %}<div class="row">
+{% for col in dashboard %}<div class="cockpitcolumn {{col.width}}">
+{% for widget in col.widgets %}<div class="panel panel-default">
+  <div class="panel-heading" data-toggle="tooltip" data-placement="top" title="{{widget.tooltip|escape}}">
+    <span class='fa fa-times pull-right panel-close'></span>
+    <span class='fa fa-minus pull-right panel-toggle'></span>
+    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down pull-right portlet-export'></span></a>{% endif %}
+    {% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>{% else %}{{widget.title|upper}}{% endif %}
+  </div>
+  <div class="panel-body">{% if widget.asynchronous %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
   </div>
 {% endfor %}
 </div>
-{% endfor %}
+{% endfor %}</div>
 
 {% for col in dashboard %}{% if forloop.first %}<script>{% endif %}
 {% for widget in col.widgets %}{% if widget.asynchronous %}$.ajax({

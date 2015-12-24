@@ -72,24 +72,6 @@ div.breadcrumbs, ul.messagelist li {
   background-color: #EBEBEB; /* Color gray1 */
 }
 
-#headerbar, div.breadcrumbs {
-  background: #C1C688; /* Color green1 */
-  color: #222222;
-}
-
-div.breadcrumbs a {
-  color: #222222 !important;
-}
-
-
-.navbar {
-    margin-bottom: 0px;
-}
-
-div.breadcrumbs {
-	margin-bottom: 20px;
-}
-
 nav ul li span .twiter-type-ahead input.typeahead.tt-hint {
 	margin: 0px;
 }

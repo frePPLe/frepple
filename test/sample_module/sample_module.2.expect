@@ -128,17 +128,17 @@
 		<operation xsi:type="operation_transport">
 			<name>transport from factories 1 to factory 2</name>
 			<flows>
-				<flow xsi:type="flow">
-					<buffer>
-						<name>product in factory 1</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
 				<flow xsi:type="flow_end">
 					<buffer>
 						<name>product in factory 2</name>
 					</buffer>
 					<quantity>1</quantity>
+				</flow>
+				<flow>
+					<buffer>
+						<name>product in factory 1</name>
+					</buffer>
+					<quantity>-1</quantity>
 				</flow>
 			</flows>
 			<duration>P1D</duration>

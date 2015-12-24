@@ -2,9 +2,9 @@ Create the model with callbacks:
   Calendar 'test' receives signal ADD
   OperationFixedTime 'make end item' receives signal ADD
   Operation 'make end item' receives signal ADD
-  Item 'end item' receives signal ADD
   OperationFixedTime 'delivery end item' receives signal ADD
   Operation 'delivery end item' receives signal ADD
+  Item 'end item' receives signal ADD
   BufferDefault 'end item' receives signal ADD
   Buffer 'end item' receives signal ADD
   Calendar 'Capacity' receives signal ADD

@@ -6,9 +6,13 @@
 {% block extrastyle %}{{block.super}}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+{% if request.theme == 'grass2' %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
+{% else %}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/custom.css" />
+{% endif %}
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
 {% endblock %}
 {% block extrahead %}{{block.super}}

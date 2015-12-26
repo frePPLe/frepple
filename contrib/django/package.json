@@ -1,0 +1,22 @@
+{
+  "name": "frepplejs",
+  "version": "3.1.0",
+  "description": "Javascript package for the frePPLe user interface.",
+  "homepage": "http://frepple.com",
+  "author": "frePPLe bvba",
+  "license": "AGPL-3.0",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "bootstrap": "^3.3.6",
+    "grunt": "^0.4.5",
+    "grunt-contrib-less": "^1.1.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "less": "^2.5.3",
+    "less-plugin-autoprefix": "^1.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frePPLe/frePPLe.git"
+  }
+}

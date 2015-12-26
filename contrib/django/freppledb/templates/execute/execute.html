@@ -181,13 +181,7 @@
       $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
-    });/*
-/*    $(document).tooltip({
-      show: {effect: "fade", delay: 500},
-      content: function() {
-        return $(this).attr("title");
-        }
-      });*/
+    });
 
   var models = {% getModelDependencies %};
 </script>
@@ -405,11 +399,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			      {% endif %}
 			      {% if perms.execute.release_scenario %}
 			      <tr>
-			        <td><button  class="btn btn-primary" role="button" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%"/>{% trans "release"|capfirst %}</button></td>
+			        <td><button class="btn btn-primary" role="button" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
 			        <td colspan="2">{% trans "release selected scenarios"|capfirst %}</td>
 			      </tr>
 			      <tr>
-			        <td><button  class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%"/>{% trans "update"|capfirst %}</button></td>
+			        <td><button class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
 			        <td colspan="2">{% trans "Update description of selected scenarios" %}<br><input name="description" type="text" size="40" /></td>
 			      </tr>
 			      {% endif %}

@@ -24,6 +24,7 @@ customize or extend the user interface.
    :maxdepth: 3
 
    creating-an-extension-app
+   creating-a-custom-theme
    adding-or-customizing-a-report
    translating-the-user-interface
    unit-tests

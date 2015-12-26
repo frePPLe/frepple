@@ -93,7 +93,7 @@ $(window).bind('resize', function() {
 {% block before_table %}{% endblock %}
 
 
-<div id="toolicons">{% block actions %}{% if reportclass.filterable %}
+<div id="toolicons" class="pull-right">{% block actions %}{% if reportclass.filterable %}
 <span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span>{% endif %}
 
 {% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
@@ -107,8 +107,8 @@ $(window).bind('resize', function() {
 {% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
 <div id="save_undo" style="float:left">
 {% comment %}Translators: Translation included with Django {% endcomment %}
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary btn-lg save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary btn-lg save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}&nbsp;&nbsp;
     <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class="form-control change_status_selectmenu_inactive" >
     <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}

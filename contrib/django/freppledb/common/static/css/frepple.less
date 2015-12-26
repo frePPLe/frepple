@@ -1,0 +1,128 @@
+/*!
+ FrePPLe v3.1.0
+*/
+
+/* Customized bootstrap configuration */
+@import "variables.less";
+
+/*** Compile bootstrap ***/
+
+/*!
+ * Bootstrap v3.3.6 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+// Core variables and mixins
+@import "mixins.less";
+
+// Reset and dependencies
+@import "normalize.less";
+@import "print.less";
+@import "glyphicons.less";
+
+// Core CSS
+@import "scaffolding.less";
+@import "type.less";
+@import "code.less";
+@import "grid.less";
+@import "tables.less";
+@import "forms.less";
+@import "buttons.less";
+
+// Components
+@import "component-animations.less";
+@import "dropdowns.less";
+@import "button-groups.less";
+@import "input-groups.less";
+@import "navs.less";
+@import "navbar.less";
+@import "breadcrumbs.less";
+@import "pagination.less";
+@import "pager.less";
+@import "labels.less";
+@import "badges.less";
+@import "jumbotron.less";
+@import "thumbnails.less";
+@import "alerts.less";
+@import "progress-bars.less";
+@import "media.less";
+@import "list-group.less";
+@import "panels.less";
+@import "responsive-embed.less";
+@import "wells.less";
+@import "close.less";
+
+// Components w/ JavaScript
+@import "modals.less";
+@import "tooltip.less";
+@import "popovers.less";
+@import "carousel.less";
+
+// Utility classes
+@import "utilities.less";
+@import "responsive-utilities.less";
+
+/*** FrePPLe styles and overrides start here. ***/
+
+/* Navigation bar */
+body {
+  padding-top: @navbar-height;
+}
+
+.navbar {
+  background-color: @navbar-default-bg;
+}
+
+.navbar .dropdown-menu {
+  background-color: darken(@navbar-default-bg, 15%);
+}
+
+.navbar ul.dropdown-menu li a:hover {
+  background-color: darken(@navbar-default-bg, 25%);
+}
+
+/* Cockpit styles. */
+
+.cockpitcolumn {
+  padding-bottom: 200px;
+}
+
+.cockpitcolumn .panel-placeholder {
+  height: 50px;
+  background: @panel-default-heading-bg;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* GANTT CHARTS */
+
+.opplan {
+  vector-effect: non-scaling-stroke;
+  fill: rgb(111,111,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
+}
+
+.opplan_locked {
+  vector-effect: non-scaling-stroke;
+  fill: rgb(0,0,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
+}
+
+.time {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+  stroke: rgb(0,0,0);
+}
+
+.axis path, .axis line, .miniaxis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.graphline {
+  stroke-width: 2;
+  fill: none;
+}

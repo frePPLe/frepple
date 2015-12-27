@@ -21,7 +21,6 @@ in the following formats:
   * Windows installer
   * Ubuntu .deb package
   * Red Hat .rpm package
-  * VMWare appliance
   * Source tarball
 
 Documentation

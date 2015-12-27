@@ -26,8 +26,13 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
 Requires: xerces-c, openssl, httpd, mod_wsgi, python3, python3-cherrypy
 Requires(pre): shadow-utils
-BuildRequires: python3-devel, automake, autoconf, libtool, xerces-c-devel
-BuildRequires: python3-sphinx
+BuildRequires: python3-devel, automake, autoconf, libtool, xerces-c-devel, python3-sphinx
+# Note: frePPLe requires a custom install of django and also some
+# additional python modules. Users install all these using the python packager "pip3"
+# BEFORE compiling frePPLe.
+# The next line list the minimal set of python packages required to build
+# in an environment where you can't install these upfront. Eg when using "mock".
+#BuildRequires: python3-django, python3-django-rest-framework, python3-psycopg2
 
 %description
 FrePPLe stands for "Free Production PLanning". It is an application for

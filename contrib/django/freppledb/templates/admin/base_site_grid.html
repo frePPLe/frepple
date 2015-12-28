@@ -42,8 +42,6 @@ $(function() {
     page: {{page}},
     hidegrid: false,
     scrollRows: true,
-    altRows: true,
-    altclass:'altRow',
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns
     autowidth: true,{% if filters %}
@@ -76,7 +74,10 @@ $(function() {
      handles: 's', minHeight: {{reportclass.height}}
      });
   {% endif %}{% endif %}
-  $("#grid").on('input', function() {$("#save").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active");$("#undo").removeClass("save_undo_button_inactive save_undo_button_active").addClass("save_undo_button_active")});
+  $("#grid").on('input', function() {
+	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger");
+	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger");
+	  });
 });
 
 $(window).bind('resize', function() {
@@ -92,36 +93,43 @@ $(window).bind('resize', function() {
 {% block content %}
 {% block before_table %}{% endblock %}
 
+<div class="row">
 
-<div id="toolicons" class="pull-right">{% block actions %}{% if reportclass.filterable %}
+<div id="save_undo" class="col-md-8 form-inline">
+{% block save_undo_buttons %}
+{% if not is_popup and reportclass.editable and haschangeperm %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary btn-primary" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary btn-primary" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
+{% if actions %}
+    <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class="form-control">
+    <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}
+    <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>{% endfor %}
+    </select>{% endif %}
+{% endif %}
+{% endblock save_undo_buttons %}
+</div>
+
+<div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block actions %}{% if reportclass.filterable %}
 <span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span>{% endif %}
-
 {% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
 {% if not is_popup %}<span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="disabled fa fa-copy fa-lg"></span>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span>
 {% endif %}{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span>
 {% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
-{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}</div>
-
-{% block save_undo_buttons %}
-{% if not is_popup and reportclass.editable and haschangeperm %}&nbsp;&nbsp;
-<div id="save_undo" style="float:left">
-{% comment %}Translators: Translation included with Django {% endcomment %}
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
-{% if actions %}&nbsp;&nbsp;
-    <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class="form-control change_status_selectmenu_inactive" >
-    <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}
-    <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>{% endfor %}
-    </select>{% endif %}
-</div>{% endif %}
-{% endblock save_undo_buttons %}
-
-<div id="content-main" style="margin-right: 15px; min-height: 150px">
-<table id="grid"></table>
-<div id="gridpager"></div>
-{% block after_table %}{% endblock %}
+{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}
 </div>
+
+</div>
+
+<div class="row">
+<div id="content-main" class="col-md-12" style="min-height: 150px">
+<table id="grid" class="table table-striped" style="background-color: white"></table>
+<div id="gridpager"></div>
+</div>
+</div>
+{% block after_table %}{% endblock %}
+
 {% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'time buckets'|capfirst %}">
 <form method="get" action="">
 {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">

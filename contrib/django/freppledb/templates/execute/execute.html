@@ -206,6 +206,9 @@
   margin-left: 20px;
   margin-right: 20px;
 }
+label {
+  font-weight: normal;
+}
 </style>
 {% endblock %}
 {% block actions %}
@@ -213,9 +216,12 @@
 	</span>&nbsp;&nbsp;
 {{block.super}}{% endblock %}
 {% block after_table %}
-<br><h1>{% trans "launch new tasks"|capfirst %}</h1>
-
-	<div id="tasks" class="panel-group" role="tablist" aria-multiselectable="true" style="max-width:700px">
+<div class="row">
+<div class="col-md-12">
+  <h1>{% trans "launch new tasks"|capfirst %}</h1>
+</div></div>
+<div class="row">
+	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px">
 	
 	{% if perms.execute %}
 	  {% if perms.execute.generate_plan %}
@@ -233,7 +239,7 @@
 			      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_run/">{% csrf_token %}
 			      <tr>
 			        <td style="vertical-align:top; padding: 15px">
-			            <button type="submit" class="btn btn-primary" autocomplete="off">{% trans "launch"|capfirst %}</button>
+			            <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
 			        </td>
 			        <td>
 				        {% blocktrans %}
@@ -340,7 +346,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				    <table>
 				      <tr>
 				        <td style="vertical-align:top; padding: 15px">
-				          <button type="submit" class="btn btn-primary" autocomplete="off" id="import" onclick="importWorkbook()" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+				          <button type="submit" class="btn btn-primary" id="import" onclick="importWorkbook()" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
 				        </td>
 				        <td>
 				          {% trans "Import input data from a spreadsheet.<br>The spreadsheet must match the structure exported with the task above." %}<br>
@@ -629,7 +635,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}
-	
+	</div> <!-- end row -->
 	
 	<div id="uploadSpreadsheet" style="display:none">
 	  <div style="margin: 5px 0">

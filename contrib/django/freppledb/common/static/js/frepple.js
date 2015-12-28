@@ -46,14 +46,11 @@ var upload = {
 
   undo : function ()
   {
-    if ($('#undo').hasClass("save_undo_button_inactive")) return;
+    if ($('#undo').hasClass("btn-primary")) return;
     $("#grid").trigger("reloadGrid");
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
-    $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
-    $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
-    $('#actions').addClass("disabled change_status_selectmenu_inactive")
-    .removeClass("change_status_selectmenu_active")
-    .prop('disabled', 'disabled');
+    $('#save, #undo').addClass("btn-primary").removeClass("btn-danger");
+    $('#actions').addClass("disabled").prop('disabled', 'disabled');
 
     $('#filter').removeClass("disabled");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
@@ -63,15 +60,14 @@ var upload = {
   {
     $('#filter').addClass("disabled");
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
-    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
+    $('#save, #undo').removeClass("btn-primary").addClass("btn-danger");
     $(window).off('beforeunload', upload.warnUnsavedChanges);
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
 
   save : function()
   {
-    if ($('#save').hasClass("save_undo_button_inactive")) return;
+    if ($('#save').hasClass("btn-primary")) return;
 
     // Pick up all changed cells. If a function "getData" is defined on the
     // page we use that, otherwise we use the standard functionality of jqgrid.
@@ -108,7 +104,7 @@ var upload = {
   validateSort: function(event)
   {
     if ($(this).attr('id') == 'grid_cb') return;
-    if ($('#save').hasClass("save_undo_button_inactive"))
+    if ($('#save').hasClass("btn-primary"))
       jQuery("#grid").jqGrid('resetSelection');
     else
     {
@@ -269,8 +265,8 @@ var grid = {
     };
 
     $("#actions").prop("selectedIndex",0);
-    $('#save').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
-    $('#undo').removeClass("save_undo_button_inactive").addClass("save_undo_button_active");
+    $('#save').removeClass("btn-primary").addClass("btn-danger");
+    $('#undo').removeClass("btn-primary").addClass("btn-danger");
    },
 
   // Renders the cross list in a pivot grid
@@ -656,18 +652,13 @@ var grid = {
     {
       $("#copy_selected").removeClass("disabled").addClass("bold");
       $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions").removeClass("disabled change_status_selectmenu_inactive")
-      .addClass("change_status_selectmenu_active")
-      .prop('disabled', false);
+      $("#actions").removeClass("disabled").prop('disabled', false);
     }
     else
     {
       $("#copy_selected").addClass("disabled").removeClass("bold");
       $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions")
-      .addClass("disabled change_status_selectmenu_inactive")
-      .removeClass("change_status_selectmenu_active")
-      .prop('disabled', 'disabled');
+      $("#actions").addClass("disabled").prop('disabled', 'disabled');
     }
   },
 
@@ -677,20 +668,14 @@ var grid = {
     {
       $("#copy_selected").removeClass("disabled").addClass("bold");
       $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions").removeClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
-      .removeClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
-      .addClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
-      .prop('disabled', false);
+      $("#actions").removeClass("disabled").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
       $("#copy_selected").addClass("disabled").removeClass("bold");
       $("#delete_selected").addClass("disabled").removeClass("bold");
-      $("#actions")
-      .addClass("ui-selectmenu-disabled disabled change_status_selectmenu_inactive")
-      .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
-      .prop('disabled', 'disabled');
+      $("#actions").addClass("disabled").prop('disabled', 'disabled');
       $('.cbox').prop("checked", false);
     }
   },

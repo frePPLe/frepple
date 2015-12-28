@@ -49,8 +49,8 @@
 			  </li></ul>
 			{% endif %}
 		</div>
+  <div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a><span id="breadcrumbs">{% crumbs %}</span></div>
 	</div>
-<div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a><span id="breadcrumbs">{% crumbs %}</span></div>
 </nav>
 
 {% endblock %}

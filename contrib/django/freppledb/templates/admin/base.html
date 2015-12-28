@@ -16,18 +16,20 @@
 {% block nav-global %}{% endblock %}
 {% endif %}
 
-{% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul>{% endif %}
+<div class="container-fluid">
 
-{% block content_title %}<div class="page-header">{% if title %}<h1 style="float: left">{{title|capfirst|force_escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div>{% endblock %}
+{% if messages %}<div class="row"><div class="col-md-12"><ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul></div></div>{% endif %}
 
-<div id="content" class="container-fluid">
-    {% block content %}
-    {% block object-tools %}{% endblock %}
-    {{content}}
-    {% endblock %}
-    <br class="clear" />
-</div>
+{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1 style="float: left">{{title|capfirst|force_escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div></div>{% endblock %}
+
+{% block content %}<div id="content" class="row">
+{% block object-tools %}{% endblock %}
+{{content}}
+</div>{% endblock %}
+
 {% block footer %}<div id="popup" class="hidden-lg"></div>{% endblock %}
+
+</div> <!-- end container -->
 
 </body>
 </html>

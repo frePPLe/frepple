@@ -65,11 +65,12 @@
 /*** FrePPLe styles and overrides start here. ***/
 
 /* Navigation bar */
+
 body {
-  padding-top: @navbar-height;
+  padding-top: (@navbar-height + 18);
 }
 
-.navbar {
+.navbar, .breadcrumb {
   background-color: @navbar-default-bg;
 }
 
@@ -89,12 +90,12 @@ body {
 
 .cockpitcolumn .panel-placeholder {
   height: 50px;
-  background: @panel-default-heading-bg;
+  background: lighten(@panel-default-heading-bg, 15%);
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-/* GANTT CHARTS */
+/* Gantt charts */
 
 .opplan {
   vector-effect: non-scaling-stroke;
@@ -125,4 +126,80 @@ body {
 .graphline {
   stroke-width: 2;
   fill: none;
+}
+
+/* Context menu. */
+
+div.ContextMenu {
+  display: none;
+  position: absolute;
+  z-index: 100;
+}
+
+div.ContextMenu ul {
+  position: absolute;
+  list-style-type: none;
+  z-index: 100;
+}
+
+div.ContextMenu li a {
+  display: block;
+}
+
+div.ContextMenu ul li {
+  list-style-type: none;
+}
+
+/* Raw id fields are too small by default. */
+
+.vForeignKeyRawIdAdminField {
+    width: 20em;
+}
+
+/* Marking of edited and selected items. */
+
+.dirty-cell {
+  background: @brand-danger;
+}
+
+tr.ui-state-highlight {
+  border: 1px solid @brand-danger !important;
+  background: lighten(@brand-danger, 15%) !important;
+}
+
+/* Helper styles */
+
+.hor-align-right {
+		text-align: right;
+}
+
+.ver-align-middle {
+		vertical-align: middle;
+}
+
+.alignleft
+{
+  text-align: left;
+}
+
+.aligncenter
+{
+  text-align: center;
+}
+
+.underline
+{
+  text-decoration: underline;
+}
+
+.leftpadding
+{
+  padding-left: 5px;
+}
+
+/* Graph cell in pivot grid */
+
+.graphcell {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }

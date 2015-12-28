@@ -18,7 +18,8 @@
 // Reset and dependencies
 @import "normalize.less";
 @import "print.less";
-@import "glyphicons.less";
+// Not using the bootstrap icons:
+// @import "glyphicons.less";
 
 // Core CSS
 @import "scaffolding.less";
@@ -36,7 +37,24 @@
 @import "input-groups.less";
 @import "navs.less";
 @import "navbar.less";
-@import "breadcrumbs.less";
+
+// Customized breadcrumb code
+//@import "breadcrumbs.less";
+.breadcrumb {
+  padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
+  margin-bottom: 0;
+  list-style: none;
+  background-color: @breadcrumb-bg;
+  > li {
+    display: inline-block;
+    + li:before {
+      content: "\00a0\00a0@{breadcrumb-separator}\00a0\00a0"; // Unicode space added since inline-block means non-collapsing white-space
+      font-family: @icon-font-name;
+      color: @breadcrumb-color;
+    }
+  }
+}
+
 @import "pagination.less";
 @import "pager.less";
 @import "labels.less";
@@ -67,11 +85,19 @@
 /* Navigation bar */
 
 body {
-  padding-top: (@navbar-height + 18);
+  padding-top: (@navbar-height + 2 * @breadcrumb-padding-vertical + @line-height-computed);
 }
 
-.navbar, .breadcrumb {
+.navbar {
   background-color: @navbar-default-bg;
+}
+
+.breadcrumbrow {
+  border-top: 1px solid darken(@navbar-default-bg, 15%);
+}
+
+div.selectdb {
+  padding-top: @breadcrumb-padding-vertical;
 }
 
 .navbar .dropdown-menu {
@@ -174,26 +200,22 @@ tr.ui-state-highlight {
 }
 
 .ver-align-middle {
-		vertical-align: middle;
+	vertical-align: middle;
 }
 
-.alignleft
-{
+.alignleft {
   text-align: left;
 }
 
-.aligncenter
-{
+.aligncenter {
   text-align: center;
 }
 
-.underline
-{
+.underline {
   text-decoration: underline;
 }
 
-.leftpadding
-{
+.leftpadding {
   padding-left: 5px;
 }
 

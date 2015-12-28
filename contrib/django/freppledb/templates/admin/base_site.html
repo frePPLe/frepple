@@ -27,11 +27,10 @@
 
   var url_prefix = '{{request.prefix}}';
 
-$(function() {/*
+$(function() {
     breadcrumbs_reflow();
     $(window).resize(breadcrumbs_reflow);{% if request.GET.tour %}
-    tour.start("{{request.GET.tour}}");{%endif%}*/
-        // Tooltips
+    tour.start("{{request.GET.tour}}");{%endif%}
     $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
   });
 </script>

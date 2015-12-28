@@ -37,7 +37,7 @@
 				</div>
 			</form>
 
-		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right" id="user-toolsxxxx">
+		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
 		    <li class="dropdown">
 		    {% comment %}Translators: Translation included with Django{% endcomment %}
 		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}<span class="caret"></span></a>
@@ -49,8 +49,13 @@
 			  </li></ul>
 			{% endif %}
 		</div>
-  <div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a><span id="breadcrumbs">{% crumbs %}</span></div>
-	</div>
+
+  <div class="row breadcrumbrow"><div class="col-md-12">
+  <div class="selectdb pull-right">{% selectDatabase %}</div>
+  <span><ol class="breadcrumb" id="breadcrumbs"><li><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a></li>{% crumbs %}</ol></span>
+  </div></div>
+
+	</div> <!--  end of container -->
 </nav>
 
 {% endblock %}

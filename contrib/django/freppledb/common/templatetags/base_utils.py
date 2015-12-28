@@ -56,8 +56,6 @@ class CrumbsNode(Node):
   {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
   '''
 
-  separator = '&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-caret-right"></i>&nbsp;&nbsp;&nbsp;&nbsp;'
-
   def render(self, context):
     try:
       req = context['request']
@@ -201,7 +199,7 @@ class ModelTabs(Node):
         return ''
 
       # Render the admin class
-      result = ['<div class="frephhhple-tabs" id="tabs"><ul class="nav nav-tabs">']
+      result = ['<div id="tabs"><ul class="nav nav-tabs">']
       obj = context['object_id']
       active_tab = context.get('active_tab', 'edit')
       for tab in admn.tabs:

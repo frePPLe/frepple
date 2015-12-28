@@ -104,8 +104,8 @@ class CrumbsNode(Node):
           # Add the current URL to the stack
           cur.append( (
             title,
-            '<span>%s<a href="%s%s%s">%s</a></span>' % (
-              self.separator, req.prefix, urlquote(req.path),
+            '<li><a href="%s%s%s">%s</a></li>' % (
+              req.prefix, urlquote(req.path),
               req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
               str(escape(capfirst(title)))
               ),
@@ -201,7 +201,7 @@ class ModelTabs(Node):
         return ''
 
       # Render the admin class
-      result = ['<div class="frepple-tabs" id="tabs"><ul role="tablist">']
+      result = ['<div class="frephhhple-tabs" id="tabs"><ul class="nav nav-tabs">']
       obj = context['object_id']
       active_tab = context.get('active_tab', 'edit')
       for tab in admn.tabs:
@@ -221,8 +221,8 @@ class ModelTabs(Node):
               continue
         # Append to the results
         result.append(
-          '<li %srole="tab"><a class="ui-tabs-anchor" href="%s%s">%s</a></li>' % (
-          'class="frepple-tabs-active" ' if active_tab == tab['name'] else '',
+          '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s">%s</a></li>' % (
+          'class="active" ' if active_tab == tab['name'] else '',
           context['request'].prefix,
           reverse(tab['view'], args=(obj,)),
           force_text(tab['label']).capitalize()

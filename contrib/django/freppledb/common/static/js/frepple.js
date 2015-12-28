@@ -9,12 +9,14 @@ window.__admin_media_prefix__ = "/static/admin/";
 function breadcrumbs_reflow()
 {
   var crumbs = $("#breadcrumbs");
-  var height_one_line = Math.ceil($("#cockpitcrumb").height()) + 1;
+  var height_one_line = Math.ceil($("#cockpitcrumb").height()) *2;
   // Show all elements previously hidden
-  crumbs.children("span:hidden").show();
+  crumbs.children("li:hidden").show();
   // Hide the first crumbs till it all fits on a single line.
-  crumbs.children("span").each(function() {
-    if (crumbs.height() > height_one_line) $(this).hide();
+  var first = true;
+  crumbs.children("li").each(function() {
+    if (crumbs.height() > height_one_line && !first) $(this).hide();
+    first = false;
   });
 }
 

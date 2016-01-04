@@ -10,7 +10,7 @@ function breadcrumbs_reflow()
 {
   var crumbs = $("#breadcrumbs");
   var height_one_line = Math.ceil($("#cockpitcrumb").height()) + 16;
-  console.log(height_one_line, "   ", crumbs.height())
+
   // Show all elements previously hidden
   crumbs.children("li:hidden").show();
   // Hide the first crumbs till it all fits on a single line.

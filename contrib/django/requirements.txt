@@ -7,4 +7,4 @@ html5lib >= 0.999
 jdcal >= 1.0
 Markdown >= 2.6.4
 openpyxl >= 2.3.0-b2
-https://github.com/frePPLe/django/tarball/frepple_3.0
+https://github.com/frePPLe/django/tarball/frepple_3.1

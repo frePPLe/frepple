@@ -138,7 +138,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       obj.save(using=request.database)
       # b) All linked fields need updating.
       for related in obj._meta.get_all_related_objects():
-        related.model._base_manager.using(request.database) \
+        related.related_model._base_manager.using(request.database) \
           .filter(**{related.field.name: old_pk}) \
           .update(**{related.field.name: obj})
       # c) Move the comments and audit trail to the new key
@@ -149,8 +149,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       LogEntry.objects.using(request.database) \
         .filter(content_type__pk=model_type.id, object_id=old_pk) \
         .update(object_id=obj.pk)
-      # e) Delete the old record
-      self.queryset(request).get(pk=old_pk).delete()
+      # d) Delete the old record
+      obj.pk = old_pk
+      obj.delete(using=request.database)
+      obj.pk = obj.new_pk
     LogEntry(
       user_id=request.user.pk,
       content_type_id=ContentType.objects.get_for_model(obj).pk,

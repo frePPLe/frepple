@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
 {% else %}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap-datetimepicker.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/custom.css" />
 {% endif %}
@@ -19,6 +20,8 @@
 <script type="text/javascript" src="/data/jsi18n/"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/typeahead.bundle.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqGrid.min.js"></script>

@@ -313,115 +313,92 @@ var grid = {
 
   showExport: function(only_list)
   {
+    $('#timebuckets').modal('hide');
+    $.jgrid.hideModal("#searchmodfbox_grid");
     // The argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list)
-      $('#popup').html(
-        gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
-        '<option value="spreadsheetlist" selected="selected">' + gettext("Spreadsheet list") + '</option>' +
-        '<option value="csvlist">' + gettext("CSV list") +'</option></select>'
-        );
+      $('#popup').html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
+              '<option value="spreadsheetlist" selected="selected">' + gettext("Spreadsheet list") + '</option>' +
+              '<option value="csvlist">' + gettext("CSV list") +'</option></select>' +
+            '</div>'+
+            '<div class="modal-footer">'+
+              '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '</div>'+
+          '</div>'+
+      '</div>' )
+      .modal('show');
     else
-        $('#popup').html(
-        gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
-        '<option value="spreadsheettable" selected="selected">' + gettext("Spreadsheet table") + '</option>' +
-        '<option value="spreadsheetlist">' + gettext("Spreadsheet list") + '</option>' +
-        '<option value="csvtable">' + gettext("CSV table") +'</option>'+
-        '<option value="csvlist">' + gettext("CSV list") +'</option></select>'
-        );
-    $('#popup').dialog({
-        title: gettext("Export CSV or Excel file"),
-        autoOpen: true, resizable: false, width: 390, height: 'auto',
-        buttons: [
-          {
-            text: gettext("Export"),
-            click: function() {
-              // Fetch the report data
-              var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
-              if (location.search.length > 0)
-                // URL already has arguments
-                url += "&format=" + $('#csvformat').val();
-              else if (url.charAt(url.length - 1) == '?')
-                // This is the first argument for the URL, but we already have a question mark at the end
-                url += "format=" + $('#csvformat').val();
-              else
-                // This is the first argument for the URL
-                url += "?format=" + $('#csvformat').val();
-              // Append current filter and sort settings to the URL
-              var postdata = $("#grid").jqGrid('getGridParam', 'postData');
-              url +=  "&" + jQuery.param(postdata);
-              // Open the window
-              window.open(url,'_blank');
-              $('#popup').dialog().dialog('close');
-            }
-          },
-          {
-            text: gettext("Cancel"),
-            click: function() { $(this).dialog("close"); }
-          }
-          ]
-        });
-    $('#timebuckets').dialog().dialog('close');
-    $.jgrid.hideModal("#searchmodfbox_grid");
-  },
+      $('#popup').html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;'+
+              '<select name="csvformat" id="csvformat">' +
+                '<option value="spreadsheettable" selected="selected">' + gettext("Spreadsheet table") + '</option>' +
+                '<option value="spreadsheetlist">' + gettext("Spreadsheet list") + '</option>' +
+                '<option value="csvtable">' + gettext("CSV table") +'</option>'+
+                '<option value="csvlist">' + gettext("CSV list") +'</option>'+
+              '</select>' +
+            '</div>'+
+            '<div class="modal-footer">'+
+              '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '</div>'+
+          '</div>'+
+      '</div>' )
+      .modal('show');      
+    $('#exportbutton').on('click', function() {
+      // Fetch the report data
+      var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+      if (location.search.length > 0)
+        // URL already has arguments
+        url += "&format=" + $('#csvformat').val();
+      else if (url.charAt(url.length - 1) == '?')
+        // This is the first argument for the URL, but we already have a question mark at the end
+        url += "format=" + $('#csvformat').val();
+      else
+        // This is the first argument for the URL
+        url += "?format=" + $('#csvformat').val();
+      // Append current filter and sort settings to the URL
+      var postdata = $("#grid").jqGrid('getGridParam', 'postData');
+      url +=  "&" + jQuery.param(postdata);
+      // Open the window
+      window.open(url,'_blank');
+      $('#popup').modal('hide');
+    })
+  },          
+
 
   // Display time bucket selection dialog
   showBucket: function()
   {
     // Show popup
-    $('#popup').dialog().dialog('close');
+    $('#popup').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $( "#horizonstart" ).datepicker({
-        showOtherMonths: true, selectOtherMonths: true,
-        changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
-      });
-    $( "#horizonend" ).datepicker({
-        showOtherMonths: true, selectOtherMonths: true,
-        changeMonth:true, changeYear:true, yearRange: "c-1:c+5", dateFormat: 'yy-mm-dd'
-      });
-    $('#timebuckets').dialog({
-       autoOpen: true, resizable: false, width: 390,
-       buttons: [
-         {
-           text: gettext("OK"),
-           click: function() {
-            // Compare old and new parameters
-            var params = $('#horizonbuckets').val() + '|' +
-              $('#horizonstart').val() + '|' +
-              $('#horizonend').val() + '|' +
-              ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
-              $('#horizonlength').val() + '|' +
-              $('#horizonunit').val();
-            if (params == $('#horizonoriginal').val())
-              // No changes to the settings. Close the popup.
-              $(this).dialog('close');
-            else {
-              // Ajax request to update the horizon preferences
-              $.ajax({
-                  type: 'POST',
-                  url: '/horizon/',
-                  data: {
-                    horizonbuckets: $('#horizonbuckets').val(),
-                    horizonstart: $('#horizonstart').val(),
-                    horizonend: $('#horizonend').val(),
-                    horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
-                    horizonlength: $('#horizonlength').val(),
-                    horizonunit: $('#horizonunit').val()
-                    },
-                  dataType: 'text/html',
-                  async: false  // Need to wait for the update to be processed!
-                });
-            // Reload the report
-            window.location.href = window.location.href;
-            }
-           }
-         },
-         {
-           text: gettext("Cancel"),
-           click: function() { $(this).dialog("close"); }
-         }
-         ]
-      });
+    icons = {
+      time: 'fa fa-time',
+      date: 'fa fa-calendar',
+      up: 'fa fa-clock-o',
+      down: 'fa fa-chevron-down',
+      previous: 'fa fa-chevron-left',
+      next: 'fa fa-chevron-right',
+      today: 'fa fa-bullseye',
+      clear: 'fa fa-trash',
+      close: 'fa fa-remove'
+    };
+    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
+    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
+    $('#timebuckets').modal('show');
   },
 
   //Display dialog for copying or deleting records
@@ -436,55 +413,45 @@ var grid = {
     }
     else if (sel.length > 0)
     {
-     $('#popup').html(
-       interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)
-       ).dialog({
-         title: gettext("Delete data"),
-         autoOpen: true,
-         resizable: false,
-         width: 'auto',
-         height: 'auto',
-         buttons: [
-           {
-             text: gettext("Confirm"),
-             click: function() {
-               $.ajax({
-                 url: location.pathname,
-                 data: JSON.stringify([{'delete': sel}]),
-                 type: "POST",
-                 contentType: "application/json",
-                 success: function () {
-                   $("#delete_selected").addClass("disabled").removeClass("bold");
-                   $("#copy_selected").addClass("disabled").removeClass("bold");
-                   $('.cbox').prop("checked", false);
-                   $('#cb_grid.cbox').prop("checked", false);
-                   $("#grid").trigger("reloadGrid");
-                   $('#popup').dialog('close');
-                   },
-                 error: function (result, stat, errorThrown) {
-                   $('#popup').html(result.responseText)
-                     .dialog({
-                       title: gettext("Error deleting data"),
-                       autoOpen: true,
-                       resizable: true,
-                       width: 'auto',
-                       height: 'auto'
-                     });
-                   $('#timebuckets').dialog('close');
-                   $.jgrid.hideModal("#searchmodfbox_grid");
-                   }
-               });
-             }
-           },
-           {
-             text: gettext("Cancel"),
-             click: function() { $(this).dialog("close"); }
-           }
-           ]
-       });
-     $('#timebuckets').dialog().dialog('close');
+     $('#timebuckets').modal('hide');
      $.jgrid.hideModal("#searchmodfbox_grid");
-   }
+     $('#popup').html('<div class="modal-dialog">'+
+             '<div class="modal-content">'+
+               '<div class="modal-header">'+
+                 '<h4 class="modal-title">'+gettext('Delete data')+'</h4>'+
+               '</div>'+
+               '<div class="modal-body">'+
+                 '<p>'+interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)+'</p>'+
+               '</div>'+
+               '<div class="modal-footer">'+
+                 '<input type="submit" id="delbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+                 '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+               '</div>'+
+             '</div>'+
+         '</div>' )
+         .modal('show');
+     $('#delbutton').on('click', function() {
+           $.ajax({
+             url: location.pathname,
+             data: JSON.stringify([{'delete': sel}]),
+             type: "POST",
+             contentType: "application/json",
+             success: function () {
+               $("#delete_selected").prop("disabled", true).removeClass("bold");
+               $("#copy_selected").prop("disabled", true).removeClass("bold");
+               $('.cbox').prop("checked", false);
+               $('#cb_grid.cbox').prop("checked", false);
+               $("#grid").trigger("reloadGrid");
+               $('#popup').modal('hide');
+             },
+             error: function (result, stat, errorThrown) {
+               $('#popup .modal-body p').html(result.responseText);
+               $('#popup .modal-title').html(gettext("Error deleting data"));
+               $('#delbutton').prop("disabled", true).hide();
+             }
+           })
+         })
+     }
   },
 
   showCopy: function()
@@ -493,55 +460,45 @@ var grid = {
    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
    if (sel.length > 0)
    {
-     $('#popup').html(
-       interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)
-       ).dialog({
-         title: gettext("Copy data"),
-         autoOpen: true,
-         resizable: false,
-         width: 'auto',
-         height: 'auto',
-         buttons: [
-           {
-             text: gettext("Confirm"),
-             click: function() {
-               $.ajax({
-                 url: location.pathname,
-                 data: JSON.stringify([{'copy': sel}]),
-                 type: "POST",
-                 contentType: "application/json",
-                 success: function () {
-                   $("#delete_selected").addClass("disabled").removeClass("bold");
-                   $("#copy_selected").addClass("disabled").removeClass("bold");
-                   $('.cbox').prop("checked", false);
-                   $('#cb_grid.cbox').prop("checked", false);
-                   $("#grid").trigger("reloadGrid");
-                   $('#popup').dialog().dialog('close');
-                   },
-                 error: function (result, stat, errorThrown) {
-                   $('#popup').html(result.responseText)
-                     .dialog({
-                       title: gettext("Error copying data"),
-                       autoOpen: true,
-                       resizable: true,
-                       width: 'auto',
-                       height: 'auto'
-                     });
-                   $('#timebuckets').dialog().dialog('close');
-                   $.jgrid.hideModal("#searchmodfbox_grid");
-                   }
-               });
-             }
-           },
-           {
-             text: gettext("Cancel"),
-             click: function() { $(this).dialog("close"); }
-           }
-           ]
-       });
-     $('#timebuckets').dialog().dialog('close');
+     $('#timebuckets').modal('hide');
      $.jgrid.hideModal("#searchmodfbox_grid");
-   }
+     $('#popup').html('<div class="modal-dialog">'+
+             '<div class="modal-content">'+
+               '<div class="modal-header">'+
+                 '<h4 class="modal-title">'+gettext("Copy data")+'</h4>'+
+                 '</div>'+
+                 '<div class="modal-body">'+
+                   '<p>'+interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)+'</p>'+
+                   '</div>'+
+                   '<div class="modal-footer">'+
+                     '<input type="submit" id="copybutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                   '</div>'+
+                 '</div>'+
+             '</div>' )
+     .modal('show');
+     $('#copybutton').on('click', function() {
+       $.ajax({         
+         url: location.pathname,
+         data: JSON.stringify([{'copy': sel}]),
+         type: "POST",
+         contentType: "application/json",
+         success: function () {
+           $("#delete_selected").prop("disabled", true).removeClass("bold");
+           $("#copy_selected").prop("disabled", true).removeClass("bold");
+           $('.cbox').prop("checked", false);
+           $('#cb_grid.cbox').prop("checked", false);
+           $("#grid").trigger("reloadGrid");
+           $('#popup').modal('hide');
+         },
+         error: function (result, stat, errorThrown) {
+           $('#popup .modal-body p').html(result.responseText);
+           $('#popup .modal-title').html(gettext("Error copying data"));
+           $('#copybutton').prop("disabled", true).hide();
+         }
+       })
+     })
+    }
   },
 
   // Display filter dialog
@@ -994,53 +951,57 @@ function sameOrigin(url) {
 
 function import_show(url)
 {
-  $('#popup').html(
-    '<form id="uploadform">' +
-    gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
-    gettext('The first row should contain the field names.') + '<br/><br/>' +
-    '<input type="checkbox" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
-    gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/></form>' +
-    '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'
-    ).dialog({
-      title: gettext("Import CSV or Excel file"),
-      autoOpen: true, resizable: false, width: 450, height: 'auto',
-      buttons: [
-        {
-          text: gettext("Import"),
-          click: function() {
-            if ($("#csv_file").val() == "") return;
-            $('#uploadResponse').css('display','block');
-            $.ajax({
-              type: 'post',
-              url: typeof(url) != 'undefined' ? url : '',
-              cache: false,
-              data: new FormData($("#uploadform")[0]),
-              success: function (data) {
-                var el = $('#uploadResponse');
-                el.val(data);
-                el.scrollTop(el[0].scrollHeight - el.height());
-              },
-              xhrFields: {
-                onprogress: function (e) {
-                  var el = $('#uploadResponse');
-                  el.val(e.currentTarget.response);
-                  el.scrollTop(el[0].scrollHeight - el.height());
-                }
-              },
-              processData: false,
-              contentType: false
-              });
-          }
-        },
-        {
-          text: gettext("Cancel"),
-          click: function() { $(this).dialog("close"); }
-        }
-        ]
-    });
-  $('#timebuckets').dialog().dialog('close');
+  $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
+  $('#popup').html('<div class="modal-dialog">'+
+      '<div class="modal-content">'+
+        '<div class="modal-header">'+
+          '<h4 class="modal-title">'+ gettext("Import CSV or Excel file") +'</h4>'+
+        '</div>'+
+        '<div class="modal-body">'+
+          '<form id="uploadform">' +
+            '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
+              gettext('The first row should contain the field names.') + '<br/><br/>' +
+            '</p>'+
+            '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
+            gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
+          '</form>' +
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +       
+        '</div>'+
+        '<div class="modal-footer">'+
+            '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+        '</div>'+
+      '</div>'+
+    '</div>' )
+  .modal('show');
+  $('#importbutton').on('click', function() {
+    if ($("#csv_file").val() == "") return;
+    $('#uploadResponse').css('display','block');
+    $.ajax({
+      type: 'post',
+      url: typeof(url) != 'undefined' ? url : '',
+      cache: false,
+      data: new FormData($("#uploadform")[0]),
+      success: function (data) {
+        var el = $('#uploadResponse');
+        el.val(data);
+        el.scrollTop(el[0].scrollHeight - el.height());
+      },
+      xhrFields: {
+        onprogress: function (e) {
+          var el = $('#uploadResponse');
+          el.val(e.currentTarget.response);
+          el.scrollTop(el[0].scrollHeight - el.height());
+        }
+      },
+      processData: false,
+      contentType: false
+      });
+   }
+  )
 }
+
 
 //----------------------------------------------------------------------------
 // This function returns all arguments in the current URL as a dictionary.

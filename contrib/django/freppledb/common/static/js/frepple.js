@@ -398,6 +398,36 @@ var grid = {
     };
     $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
     $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
+    $( "#okbutton" ).on('click', function() {
+      // Compare old and new parameters
+            var params = $('#horizonbuckets').val() + '|' +
+              $('#horizonstart').val() + '|' +
+              $('#horizonend').val() + '|' +
+              ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
+              $('#horizonlength').val() + '|' +
+              $('#horizonunit').val();
+            if (params == $('#horizonoriginal').val())
+              // No changes to the settings. Close the popup.
+              $(this).dialog('close');
+            else {
+              // Ajax request to update the horizon preferences
+              $.ajax({
+                  type: 'POST',
+                  url: '/horizon/',
+                  data: {
+                    horizonbuckets: $('#horizonbuckets').val(),
+                    horizonstart: $('#horizonstart').val(),
+                    horizonend: $('#horizonend').val(),
+                    horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
+                    horizonlength: $('#horizonlength').val(),
+                    horizonunit: $('#horizonunit').val()
+                    },
+                  dataType: 'text/html',
+                  async: false  // Need to wait for the update to be processed!
+                });
+            // Reload the report
+            window.location.href = window.location.href;
+            }})
     $('#timebuckets').modal('show');
   },
 

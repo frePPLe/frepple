@@ -1,4 +1,4 @@
-Technical guide
+Developer guide
 ###############
 
 This chapter discusses some topics of interest to developers working on

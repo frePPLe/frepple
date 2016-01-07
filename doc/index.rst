@@ -32,11 +32,11 @@ To get started we suggest the following **introduction trail**:
 .. toctree::
    :maxdepth: 4
 
-   cookbook/index
    user-guide/index
-   model-reference/index
    installation-guide/index
    extension-modules/index
-   technical-guide/index
+   cookbook/index
+   model-reference/index
+   developer-guide/index
    faq
    license

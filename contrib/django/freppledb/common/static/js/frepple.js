@@ -292,20 +292,24 @@ var grid = {
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
   var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
+  icons = {
+      time: 'fa fa-clock-o',
+      date: 'fa fa-calendar',
+      up: 'fa fa-chevron-up',
+      down: 'fa fa-chevron-down',
+      previous: 'fa fa-chevron-left',
+      next: 'fa fa-chevron-right',
+      today: 'fa fa-bullseye',
+      clear: 'fa fa-trash',
+      close: 'fa fa-remove'
+    };
+
   if (colmodel.formatter == 'date')
   {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
-      $("#" + iRow + '_' + cellname).datepicker({
-        showOtherMonths: true, selectOtherMonths: true,
-        dateFormat: "yy-mm-dd", changeMonth:true,
-        changeYear:true, yearRange: "c-1:c+5"
-        });
+      $("#" + iRow + '_' + cellname).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
     else
-      $("#" + iRow + '_' + cellname).datepicker({
-        showOtherMonths: true, selectOtherMonths: true,
-        dateFormat: "yy-mm-dd 00:00:00", changeMonth:true,
-        changeYear:true, yearRange: "c-1:c+5"
-        });
+      $("#" + iRow + '_' + cellname).datetimepicker({format: 'YYYY-MM-DD HH:mm:ss', calendarWeeks: true, icons, locale: document.documentElement.lang});
   }
   else
 	$("#" + iRow + '_' + cellname).select();
@@ -386,7 +390,7 @@ var grid = {
     $('#popup').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
     icons = {
-      time: 'fa fa-time',
+      time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-clock-o',
       down: 'fa fa-chevron-down',
@@ -396,8 +400,11 @@ var grid = {
       clear: 'fa fa-trash',
       close: 'fa fa-remove'
     };
-    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
-    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons});
+    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+    $("#horizonstart").on("dp.change", function (selected) {
+      $("#horizonend").data("DateTimePicker").minDate(selected.date);
+    });
     $( "#okbutton" ).on('click', function() {
       // Compare old and new parameters
             var params = $('#horizonbuckets').val() + '|' +
@@ -408,7 +415,7 @@ var grid = {
               $('#horizonunit').val();
             if (params == $('#horizonoriginal').val())
               // No changes to the settings. Close the popup.
-              $(this).dialog('close');
+              $(this).modal('hide');
             else {
               // Ajax request to update the horizon preferences
               $.ajax({

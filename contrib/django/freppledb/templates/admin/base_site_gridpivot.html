@@ -155,8 +155,8 @@ $(window).bind('resize', function() {
 				</form>
 			</div>
 			<div class="modal-footer">
-				<input type="submit" id="okbutton" role="button" class="btn btn-primary pull-left" value="OK">
-				<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="Cancel">
+				<input type="submit" id="okbutton" role="button" class="btn btn-primary pull-left" value="{% trans 'OK' %}">
+				<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans 'cancel'|capfirst %}">
 			</div>
 		</div>
 	</div>

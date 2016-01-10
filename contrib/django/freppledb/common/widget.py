@@ -24,6 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
+from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import Comment
 
@@ -36,14 +37,15 @@ class WelcomeWidget(Widget):
   asynchronous = False
 
   def render(self, request=None):
+    versionnumber = VERSION.split('.', 2)
     return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br/><br/>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
-<li>Check out the <span class="underline"><a href="/static/doc/index.html" target="_blank">documentation</a></span></li>
+<li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank">documentation</a></span></li>
 <li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank">user community</a></span></li>
-<li><span class="underline"><a href="http://frepple.com/contact/" target="_blank">Contact us</a></span></li>
+<li><span class="underline"><a href="https://frepple.com/contact/" target="_blank">Contact us</a></span></li>
 </ol>
-''')
+''') % {'docurl': "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])}
 
 Dashboard.register(WelcomeWidget)
 
@@ -55,7 +57,7 @@ class NewsWidget(Widget):
   asynchronous = False
 
   def render(self, request=None):
-    return '<iframe style="width:100%; border:none;" src="http://frepple.com/news-summary/"></iframe>'
+    return '<iframe style="width:100%; border:none;" src="https://frepple.com/news-summary/"></iframe>'
 
 Dashboard.register(NewsWidget)
 

@@ -30,7 +30,6 @@ from freppledb.common.models import Comment
 
 class WelcomeWidget(Widget):
   name = "welcome"
-  #. Translators: Translation included with Django
   title = _("Welcome")
   tooltip = _("Some links to get started")
   asynchronous = False

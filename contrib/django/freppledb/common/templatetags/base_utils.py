@@ -465,9 +465,16 @@ class DashboardNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
+
     reg = Dashboard.buildList()
-    context[self.varname] = [ {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if reg[j[0]].has_permission(req.user)]} for i in settings.DEFAULT_DASHBOARD ]
+    context[self.varname] = [
+                                        { 'rowname': rown['rowname'], 'cols': [
+                                            {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if reg[j[0]].has_permission(req.user)]} for i in rown['cols']
+                                          ]
+                                        } for rown in settings.DEFAULT_DASHBOARD
+                                      ]
     return ''
+
 
   def __repr__(self):
     return "<getDashboard Node>"

@@ -21,7 +21,7 @@
 			    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }} <span class="caret"></span></a>
 			    <ul class="dropdown-menu">
 			      {% for item in group.1 %}
-			        {% if item.1.separator %}<li class="divider"></li>
+			        {% if item.1.separator %}<li role="separator" class="divider"></li>
 			        {% else %}<li><a {% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %}>{{ item.0 }}</a></li>
 			        {% endif %}
 			      {% endfor %}

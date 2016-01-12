@@ -55,6 +55,7 @@ class loadData(object):
 
   def loadParameter(self):
     print('Importing parameters...')
+    # Current date
     try:
       self.cursor.execute("SELECT value FROM common_parameter where name='currentdate'")
       d = self.cursor.fetchone()
@@ -63,6 +64,20 @@ class loadData(object):
       frepple.settings.current = datetime.now().replace(microsecond=0)
       print('Using system clock as current date: %s' % frepple.settings.current)
     print('Current date: %s' % frepple.settings.current)
+    # Assure the operationplan ids will be unique
+    self.cursor.execute('''
+      select
+        coalesce(max(ids.max_id), 1) + 1
+      from (
+        select max(id) as max_id from purchase_order
+        union all
+        select max(id) as max_id from distribution_order
+        union all
+        select max(id) as max_id from operationplan
+        ) ids
+      ''')
+    d = self.cursor.fetchone()
+    frepple.settings.id = d[0]
 
 
   def loadLocations(self):

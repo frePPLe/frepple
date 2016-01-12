@@ -2041,6 +2041,22 @@ class OperationPlan
       return id;
     }
 
+    /** Update the next-id number.
+      * Only increases are allowed to avoid duplicate id assignments.
+      */
+    static void setIDCounter(unsigned long l)
+    {
+      if (l < counterMin)
+        throw DataException("Can't decrement the operationplan id counter");
+      counterMin = l;
+    }
+
+    /** Return the next-id number. */
+    static unsigned long getIDCounter()
+    {
+      return counterMin;
+    }
+
     /** Return the external identifier. */
     string getReference() const
     {
@@ -7368,6 +7384,16 @@ class Plan : public Plannable, public Object
       return OperationPlan::iterator();
     }
 
+    unsigned long getOperationPlanID() const
+    {
+      return OperationPlan::getIDCounter();
+    }
+
+    void setOperationPlanID(unsigned long l)
+    {
+      OperationPlan::setIDCounter(l);
+    }
+
     const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
@@ -7377,6 +7403,7 @@ class Plan : public Plannable, public Object
       m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
       m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
       m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, "", DONT_SERIALIZE);
+      m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanID, &Plan::setOperationPlanID, 0, DONT_SERIALIZE);
       Plannable::registerFields<Plan>(m);
       m->addIteratorField<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations);
       m->addIteratorField<Plan, Customer::iterator, Customer>(Tags::customers, Tags::customer, &Plan::getCustomers);

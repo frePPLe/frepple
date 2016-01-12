@@ -11,14 +11,14 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      {% block branding %}<a class="navbar-brand" href="#" style="padding-top:5px; padding-bottom: 5px"><img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}"></a>{% endblock %}
+	      <a class="navbar-brand" href="#" style="padding-top:5px; padding-bottom: 5px">{% block branding %}{{ block.super }}{% endblock %}</a>
 	  </div>
 
 		<div id="nav-menu" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 			  {% for group in menu %}
 			  <li class="dropdown">
-			    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }} <span class="caret"></span></a>
+			    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }}</a>
 			    <ul class="dropdown-menu">
 			      {% for item in group.1 %}
 			        {% if item.1.separator %}<li role="separator" class="divider"></li>
@@ -40,7 +40,7 @@
 		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
 		    <li class="dropdown">
 		    {% comment %}Translators: Translation included with Django{% endcomment %}
-		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}<span class="caret"></span></a>
+		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
 				  {% comment %}Translators: Translation included with Django{% endcomment %}

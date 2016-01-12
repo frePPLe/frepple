@@ -45,7 +45,11 @@
   margin-bottom: 0;
   list-style: none;
   background-color: @breadcrumb-bg;
+  color: @breadcrumb-color;
   > li {
+    line-height: @line-height-base;
+    color: @breadcrumb-color;
+    font-size: @font-size-base;
     display: inline-block;
     + li:before {
       content: "\00a0\00a0@{breadcrumb-separator}\00a0\00a0"; // Unicode space added since inline-block means non-collapsing white-space
@@ -110,6 +114,37 @@ div.selectdb {
     margin: 7px 0; //the default is 8px but would not show in chrome
 }
 
+.navbar .dropdown-menu>li>a { /*fix django admin*/
+    font-size: @font-size-base;
+}
+
+div.selectdb select { /*fix django admin*/
+  padding: 0px;
+  border-color: @input-border;
+}
+
+ul li { /*fix django admin*/
+    list-style-type: none;
+}
+
+input[type=text] { /*search fix django admin*/
+    padding: inherit;
+    border-color: @input-border;
+    border: none;
+    padding: 0px;
+}
+
+form.navbar.navbar-left , .navbar-form {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin: 0;
+}
+
+a:link, a:visited {
+    color: @navbar-default-link-color;
+    text-decoration: none;
+}
+
 /* Tabs styles. */
 .nav-tabs {
   float: right;
@@ -120,6 +155,12 @@ div.selectdb {
 #toolicons, #save_undo {
   margin-top: 15px;
   line-height: 2.2em;
+}
+
+/* fixes for django admin forms */
+.nav>li {
+    font-size: @font-size-base;
+    line-height: @line-height-base;
 }
 
 /* Cockpit styles. */

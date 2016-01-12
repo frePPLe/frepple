@@ -350,7 +350,7 @@ THEMES = [
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme
-DEFAULT_THEME = 'grass'
+DEFAULT_THEME = 'grass2'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

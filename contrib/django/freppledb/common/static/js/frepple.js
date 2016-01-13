@@ -872,9 +872,9 @@ $(function() {
     templates: {
       suggestion: function(data){
         if (data.value === null)
-          return '<span><div class="separator"></div><p>' + data.label + '</p></span>';
+          return '<span><p style="margin-top: 5px; margin-bottom: 1px;">'+data.label+'</p><li  role="separator" class="divider"></li></span>';
         else
-          return '<a href="'+ database + data.url + admin_escape(data.value) + '/" >' + data.value + '</a>';
+          return '<li><a href="'+ database + data.url + admin_escape(data.value) + '/" >' + data.value + '</a></li>';
       },
     }
   });

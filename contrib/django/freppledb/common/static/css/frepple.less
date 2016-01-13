@@ -129,6 +129,12 @@ div.selectdb {
     font-size: @font-size-base;
 }
 
+form.navbar.navbar-left , .navbar-form {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin: 0;
+}
+
 div.selectdb select { /*fix django admin*/
   padding: 0px;
   border-color: @input-border;
@@ -138,17 +144,46 @@ ul li { /*fix django admin*/
     list-style-type: none;
 }
 
-input[type=text] { /*search fix django admin*/
-    padding: inherit;
-    border-color: @input-border;
-    border: none;
-    padding: 0px;
+div.tt-menu.tt-open {
+  width: 100%;
 }
 
-form.navbar.navbar-left , .navbar-form {
-    padding-top: 16px;
-    padding-bottom: 16px;
-    margin: 0;
+div.tt-dataset.tt-dataset-search {
+  background-color: darken(@navbar-default-bg, 15%);
+  padding-bottom: 5px;
+}
+
+div.tt-dataset.tt-dataset-search * {
+  line-height: @line-height-base;
+  display: block;
+}
+
+div.tt-dataset.tt-dataset-search a {
+  font-size: @font-size-base; /* fix django admin form problems */
+  padding-left: 16px;
+  text-align: left;
+}
+
+div.tt-dataset.tt-dataset-search a:hover {
+  background-color: darken(@navbar-default-bg, 25%);
+  color: @navbar-default-link-hover-color;
+  padding-left: 16px;
+  text-align: left;
+}
+
+div.tt-dataset.tt-dataset-search span p {
+  margin-top: 5px;
+  margin-bottom: 1px;
+  text-align: center;
+  background-color: darken(@navbar-default-bg, 15%);
+}
+
+div.tt-dataset.tt-dataset-search span li.divider {
+  height:1px;
+  margin-bottom: 2px;
+  margin-top: 1px;
+  overflow:hidden;
+  background-color: @dropdown-divider-bg;
 }
 
 a:link, a:visited {

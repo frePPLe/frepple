@@ -689,13 +689,14 @@ class loadData(object):
       cnt += 1
       opplan = frepple.operationplan(
         operation=frepple.operation(name=i[0]),
-        id=i[1], quantity=i[2], source=i[6]
+        id=i[1], quantity=i[2], source=i[6],
+        start=i[3], end=i[4], status=i[5]
         )
-      if i[3]:
-        opplan.start = i[3]
-      if i[4]:
-        opplan.end = i[4]
-      opplan.status = i[5]
+      if opplan.start <= frepple.settings.current:
+        # We assume that locked operationplans with a start date in the past
+        # have already consumed all materials.
+        # TODO Specifying this explicitly may be more appropriate
+        opplan.consume_material = False
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, status, owner_id, source
@@ -708,13 +709,14 @@ class loadData(object):
       opplan = frepple.operationplan(
         operation=frepple.operation(name=i[0]),
         id=i[1], quantity=i[2], source=i[7],
-        owner=frepple.operationplan(id=i[6])
+        owner=frepple.operationplan(id=i[6]),
+        start=i[3], end=i[4], status=i[5]
         )
-      if i[3]:
-        opplan.start = i[3]
-      if i[4]:
-        opplan.end = i[4]
-      opplan.status = i[5]
+      if opplan.start <= frepple.settings.current:
+        # We assume that locked operationplans with a start date in the past
+        # have already consumed all materials.
+        # TODO Specifying this explicitly may be more appropriate
+        opplan.consume_material=False
     print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
 
 

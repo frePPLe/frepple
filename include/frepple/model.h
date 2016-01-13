@@ -1804,8 +1804,15 @@ class OperationPlan
       */
     DECLARE_EXPORT string getStatus() const;
 
-    /** Return the status of the operationplan. */
+    /** Update the status of the operationplan. */
     DECLARE_EXPORT void setStatus(const string&);
+
+    /** Enforce a specific start date, end date and quantity. There is
+      * no validation whether the values are consistent with the operation
+      * parameters.
+      * This method only works for locked operationplans.
+      */
+    DECLARE_EXPORT void freezeStatus(Date, Date, double);
 
     /** Returns whether the operationplan is locked, ie the status is APPROVED
       * or confirmed. A locked operationplan is never changed.
@@ -1881,6 +1888,7 @@ class OperationPlan
         flags &= ~CONSUME_MATERIAL;
       else
         flags |= CONSUME_MATERIAL;
+      resizeFlowLoadPlans();
     }
 
     /** Update flag which allow/disallows material production. */
@@ -1890,6 +1898,7 @@ class OperationPlan
         flags &= ~PRODUCE_MATERIAL;
       else
         flags |= PRODUCE_MATERIAL;
+      resizeFlowLoadPlans();
     }
 
     /** Update flag which allow/disallows capacity consumption. */
@@ -1899,6 +1908,7 @@ class OperationPlan
         flags &= ~CONSUME_CAPACITY;
       else
         flags |= CONSUME_CAPACITY;
+      resizeFlowLoadPlans();
     }
 
     /** Returns a pointer to the operation being instantiated. */
@@ -2315,6 +2325,11 @@ class OperationPlan
     static const short STATUS_CONFIRMED = 2;
     static const short IS_SETUP = 4;
     static const short HAS_SETUP = 8;
+    // TODO Conceptually this may not ideal: Rather than a
+    // quantity-based distinction (between CONSUME_MATERIAL and
+    // PRODUCE_MATERIAL) having a time-based distinction may be more
+    // appropriate (between PROCESS_MATERIAL_AT_START and
+    // PROCESS_MATERIAL_AT_END).
     static const short CONSUME_MATERIAL = 16;
     static const short PRODUCE_MATERIAL = 32;
     static const short CONSUME_CAPACITY = 64;
@@ -5356,6 +5371,19 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
 inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 {
+  if (fl->getOperationPlan()->getLocked())
+  {
+    if (getQuantity() < 0)
+    {
+      if (!fl->getOperationPlan()->getConsumeMaterial())
+        return 0.0;
+    }
+    else
+    {
+      if (!fl->getOperationPlan()->getProduceMaterial())
+        return 0.0;
+    }
+  }
   return getEffective().within(fl->getDate()) ?
     fl->getOperationPlan()->getQuantity() * getQuantity() :
     0.0;
@@ -5364,6 +5392,19 @@ inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 
 inline double FlowFixedStart::getFlowplanQuantity(const FlowPlan* fl) const
 {
+  if (fl->getOperationPlan()->getLocked())
+  {
+    if (getQuantity() < 0)
+    {
+      if (!fl->getOperationPlan()->getConsumeMaterial())
+        return 0.0;
+    }
+    else
+    {
+      if (!fl->getOperationPlan()->getProduceMaterial())
+        return 0.0;
+    }
+  }
   return getEffective().within(fl->getDate()) ?
     getQuantity() :
     0.0;
@@ -5372,6 +5413,19 @@ inline double FlowFixedStart::getFlowplanQuantity(const FlowPlan* fl) const
 
 inline double FlowFixedEnd::getFlowplanQuantity(const FlowPlan* fl) const
 {
+  if (fl->getOperationPlan()->getLocked())
+  {
+    if (getQuantity() < 0)
+    {
+      if (!fl->getOperationPlan()->getConsumeMaterial())
+        return 0.0;
+    }
+    else
+    {
+      if (!fl->getOperationPlan()->getProduceMaterial())
+        return 0.0;
+    }
+  }
   return getEffective().within(fl->getDate()) ?
     getQuantity() :
     0.0;
@@ -6984,6 +7038,9 @@ inline Date Load::getLoadplanDate(const LoadPlan* lp) const
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
+  if (lp->getOperationPlan()->getLocked() && !lp->getOperationPlan()->getConsumeCapacity())
+    // No capacity consumption required
+    return 0.0;
   if (!lp->getOperationPlan()->getQuantity())
     // Operationplan has zero size, and so should the capacity it needs
     return 0.0;

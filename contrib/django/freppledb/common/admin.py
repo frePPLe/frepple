@@ -18,7 +18,7 @@
 from datetime import datetime
 
 from django import forms
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
@@ -65,13 +65,12 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
 data_site.register(User, MyUserAdmin)
 
 
-class MyGroupAdmin(MultiDBModelAdmin):
-  pass
+class MyGroupAdmin(GroupAdmin, MultiDBModelAdmin):
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view": "admin:common_group_change", "permission": 'auth.change_group'},
-    {"name": 'comments', "label": _("comments"), "view": "admin:common_group_comment"},
+    {"name": 'edit', "label": _("edit"), "view": "admin:auth_group_change", "permission": 'auth.change_group'},
+    {"name": 'comments', "label": _("comments"), "view": "admin:auth_group_comment"},
     # Translators: Translation included with Django
-    {"name": 'history', "label": _("History"), "view": "admin:common_group_history"},
+    {"name": 'history', "label": _("History"), "view": "admin:auth_group_history"},
     ]
 data_site.register(Group, MyGroupAdmin)
 

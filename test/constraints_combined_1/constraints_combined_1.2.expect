@@ -1,8 +1,8 @@
 BUFFER	box @ factory 1	1971-01-01T00:00:00	30	30
 BUFFER	box @ factory 1	2008-12-30T00:00:00	-100	-70
-BUFFER	box @ factory 1	2009-01-02T00:00:00	100	30
+BUFFER	box @ factory 1	2009-01-02T00:00:00	400	330
 BUFFER	box @ factory 2	1971-01-01T00:00:00	40	40
-BUFFER	box @ factory 2	2009-01-09T00:00:00	100	140
+BUFFER	box @ factory 2	2009-01-09T00:00:00	400	440
 BUFFER	fabric @ factory 1	2008-12-30T00:00:00	100	100
 BUFFER	fabric @ factory 1	2008-12-30T00:00:00	-100	0
 BUFFER	ink @ factory 1	2008-12-25T20:00:00	200	200
@@ -14,7 +14,7 @@ BUFFER	product @ factory 2	1971-01-01T00:00:00	10	10
 BUFFER	thread @ factory 1	1971-01-01T00:00:00	50	50
 BUFFER	thread @ factory 1	2008-12-25T20:00:00	500	550
 BUFFER	thread @ factory 1	2008-12-25T20:00:00	-300	250
-BUFFER	thread @ factory 1	2009-01-02T00:00:00	100	350
+BUFFER	thread @ factory 1	2009-01-02T00:00:00	500	750
 DEMAND	Demand 1	2009-01-01T00:00:00	100
 RESOURCE	pack in factory 1	2008-12-30T00:00:00	1	1
 RESOURCE	pack in factory 1	2008-12-31T00:00:00	-1	0
@@ -24,16 +24,16 @@ OPERATION	Deliver product from factory 1 - 1 day	2008-12-31T00:00:00	2009-01-01T
 OPERATION	Deliver product from factory 1 or 2	2008-12-31T00:00:00	2009-01-01T00:00:00	100
 OPERATION	Make fabric @ factory 1	2008-12-25T20:00:00	2008-12-30T00:00:00	100
 OPERATION	Pack product @ factory 1	2008-12-30T00:00:00	2008-12-31T00:00:00	100
-OPERATION	Purchase box @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100
-OPERATION	Purchase box @ factory 2	2009-01-09T00:00:00	2009-01-09T00:00:00	100
+OPERATION	Purchase box @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	400	locked
+OPERATION	Purchase box @ factory 2	2008-12-31T00:00:00	2009-01-09T00:00:00	400	locked
 OPERATION	Purchase ink @ factory 1	2008-12-18T20:00:00	2008-12-25T20:00:00	200
-OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100
+OPERATION	Purchase ink @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	100	locked
 OPERATION	Purchase thread @ factory 1	2008-12-11T20:00:00	2008-12-25T20:00:00	500
-OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100
+OPERATION	Purchase thread @ factory 1	2008-12-19T00:00:00	2009-01-02T00:00:00	500	locked
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 100	2009-01-02T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'product @ factory 2' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 350	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Deliver product from factory 1 or 2' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
+PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 750	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Make fabric @ factory 1' planned in the past	2008-12-25T20:00:00 / 2008-12-30T00:00:00
 PROBLEM	before current	Operation 'Pack product @ factory 1' planned in the past	2008-12-30T00:00:00 / 2008-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-18T20:00:00 / 2008-12-25T20:00:00

@@ -1,14 +1,14 @@
 BUFFER	box @ factory 1	1971-01-01T00:00:00	30	30
-BUFFER	box @ factory 1	2009-01-02T00:00:00	100	130
-BUFFER	box @ factory 1	2009-01-02T01:00:00	-1	129
-BUFFER	box @ factory 1	2009-01-05T01:00:00	-24	105
-BUFFER	box @ factory 1	2009-01-06T01:00:00	-24	81
-BUFFER	box @ factory 1	2009-01-07T01:00:00	-1	80
-BUFFER	box @ factory 1	2009-01-21T01:00:00	-1	79
-BUFFER	box @ factory 1	2009-01-22T01:00:00	-24	55
-BUFFER	box @ factory 1	2009-01-23T01:00:00	-15	40
+BUFFER	box @ factory 1	2009-01-02T00:00:00	400	430
+BUFFER	box @ factory 1	2009-01-02T01:00:00	-1	429
+BUFFER	box @ factory 1	2009-01-05T01:00:00	-24	405
+BUFFER	box @ factory 1	2009-01-06T01:00:00	-24	381
+BUFFER	box @ factory 1	2009-01-07T01:00:00	-1	380
+BUFFER	box @ factory 1	2009-01-12T01:00:00	-1	379
+BUFFER	box @ factory 1	2009-01-13T01:00:00	-24	355
+BUFFER	box @ factory 1	2009-01-14T01:00:00	-15	340
 BUFFER	box @ factory 2	1971-01-01T00:00:00	40	40
-BUFFER	box @ factory 2	2009-01-09T00:00:00	100	140
+BUFFER	box @ factory 2	2009-01-09T00:00:00	400	440
 BUFFER	fabric @ factory 1	2009-01-02T01:00:00	1	1
 BUFFER	fabric @ factory 1	2009-01-02T01:00:00	-1	0
 BUFFER	fabric @ factory 1	2009-01-05T01:00:00	24	24
@@ -17,22 +17,22 @@ BUFFER	fabric @ factory 1	2009-01-06T01:00:00	24	24
 BUFFER	fabric @ factory 1	2009-01-06T01:00:00	-24	0
 BUFFER	fabric @ factory 1	2009-01-07T01:00:00	1	1
 BUFFER	fabric @ factory 1	2009-01-07T01:00:00	-1	0
-BUFFER	fabric @ factory 1	2009-01-21T01:00:00	1	1
-BUFFER	fabric @ factory 1	2009-01-21T01:00:00	-1	0
-BUFFER	fabric @ factory 1	2009-01-22T01:00:00	24	24
-BUFFER	fabric @ factory 1	2009-01-22T01:00:00	-24	0
-BUFFER	fabric @ factory 1	2009-01-23T01:00:00	15	15
-BUFFER	fabric @ factory 1	2009-01-23T01:00:00	-15	0
+BUFFER	fabric @ factory 1	2009-01-12T01:00:00	1	1
+BUFFER	fabric @ factory 1	2009-01-12T01:00:00	-1	0
+BUFFER	fabric @ factory 1	2009-01-13T01:00:00	24	24
+BUFFER	fabric @ factory 1	2009-01-13T01:00:00	-24	0
+BUFFER	fabric @ factory 1	2009-01-14T01:00:00	15	15
+BUFFER	fabric @ factory 1	2009-01-14T01:00:00	-15	0
 BUFFER	ink @ factory 1	2009-01-02T00:00:00	100	100
 BUFFER	ink @ factory 1	2009-01-02T00:00:00	-2	98
 BUFFER	ink @ factory 1	2009-01-02T01:00:00	-48	50
 BUFFER	ink @ factory 1	2009-01-05T01:00:00	-48	2
 BUFFER	ink @ factory 1	2009-01-07T00:00:00	-2	0
-BUFFER	ink @ factory 1	2009-01-21T00:00:00	50	50
-BUFFER	ink @ factory 1	2009-01-21T00:00:00	-2	48
-BUFFER	ink @ factory 1	2009-01-21T01:00:00	-48	0
-BUFFER	ink @ factory 1	2009-01-22T10:00:00	50	50
-BUFFER	ink @ factory 1	2009-01-22T10:00:00	-30	20
+BUFFER	ink @ factory 1	2009-01-10T00:00:00	50	50
+BUFFER	ink @ factory 1	2009-01-12T00:00:00	-2	48
+BUFFER	ink @ factory 1	2009-01-12T01:00:00	-48	0
+BUFFER	ink @ factory 1	2009-01-13T10:00:00	50	50
+BUFFER	ink @ factory 1	2009-01-13T10:00:00	-30	20
 BUFFER	product @ factory 1	2009-01-05T01:00:00	1	1
 BUFFER	product @ factory 1	2009-01-05T01:00:00	-1	0
 BUFFER	product @ factory 1	2009-01-06T01:00:00	24	24
@@ -41,28 +41,27 @@ BUFFER	product @ factory 1	2009-01-07T01:00:00	24	24
 BUFFER	product @ factory 1	2009-01-07T01:00:00	-24	0
 BUFFER	product @ factory 1	2009-01-08T01:00:00	1	1
 BUFFER	product @ factory 1	2009-01-08T01:00:00	-1	0
-BUFFER	product @ factory 1	2009-01-22T01:00:00	1	1
-BUFFER	product @ factory 1	2009-01-22T01:00:00	-1	0
-BUFFER	product @ factory 1	2009-01-23T01:00:00	24	24
-BUFFER	product @ factory 1	2009-01-23T01:00:00	-24	0
-BUFFER	product @ factory 1	2009-01-26T01:00:00	15	15
-BUFFER	product @ factory 1	2009-01-26T01:00:00	-15	0
+BUFFER	product @ factory 1	2009-01-13T01:00:00	1	1
+BUFFER	product @ factory 1	2009-01-13T01:00:00	-1	0
+BUFFER	product @ factory 1	2009-01-14T01:00:00	24	24
+BUFFER	product @ factory 1	2009-01-14T01:00:00	-24	0
+BUFFER	product @ factory 1	2009-01-15T01:00:00	15	15
+BUFFER	product @ factory 1	2009-01-15T01:00:00	-15	0
 BUFFER	product @ factory 2	1971-01-01T00:00:00	10	10
 BUFFER	product @ factory 2	2009-01-01T00:00:00	-10	0
 BUFFER	thread @ factory 1	1971-01-01T00:00:00	50	50
-BUFFER	thread @ factory 1	2009-01-02T00:00:00	100	150
-BUFFER	thread @ factory 1	2009-01-02T00:00:00	-3	147
-BUFFER	thread @ factory 1	2009-01-02T01:00:00	-72	75
-BUFFER	thread @ factory 1	2009-01-05T01:00:00	-72	3
-BUFFER	thread @ factory 1	2009-01-07T00:00:00	-3	0
-BUFFER	thread @ factory 1	2009-01-21T00:00:00	500	500
-BUFFER	thread @ factory 1	2009-01-21T00:00:00	-3	497
-BUFFER	thread @ factory 1	2009-01-21T01:00:00	-72	425
-BUFFER	thread @ factory 1	2009-01-22T10:00:00	-45	380
-DEMAND	Demand 1	2009-01-27T01:00:00	15
-DEMAND	Demand 1	2009-01-26T01:00:00	24
-DEMAND	Demand 1	2009-01-23T01:00:00	1
-DEMAND	Demand 1	2009-01-10T00:00:00	10  TODO THESE RESULTS ARE NOT CORRECT YET!
+BUFFER	thread @ factory 1	2009-01-02T00:00:00	500	550
+BUFFER	thread @ factory 1	2009-01-02T00:00:00	-3	547
+BUFFER	thread @ factory 1	2009-01-02T01:00:00	-72	475
+BUFFER	thread @ factory 1	2009-01-05T01:00:00	-72	403
+BUFFER	thread @ factory 1	2009-01-07T00:00:00	-3	400
+BUFFER	thread @ factory 1	2009-01-12T00:00:00	-3	397
+BUFFER	thread @ factory 1	2009-01-12T01:00:00	-72	325
+BUFFER	thread @ factory 1	2009-01-13T10:00:00	-45	280
+DEMAND	Demand 1	2009-01-16T01:00:00	15
+DEMAND	Demand 1	2009-01-15T01:00:00	24
+DEMAND	Demand 1	2009-01-14T01:00:00	1
+DEMAND	Demand 1	2009-01-10T00:00:00	10
 DEMAND	Demand 1	2009-01-09T01:00:00	1
 DEMAND	Demand 1	2009-01-08T01:00:00	24
 DEMAND	Demand 1	2009-01-07T01:00:00	24
@@ -75,12 +74,12 @@ RESOURCE	pack in factory 1	2009-01-06T01:00:00	-1	1
 RESOURCE	pack in factory 1	2009-01-07T01:00:00	1	2
 RESOURCE	pack in factory 1	2009-01-07T01:00:00	-1	1
 RESOURCE	pack in factory 1	2009-01-08T01:00:00	-1	0
-RESOURCE	pack in factory 1	2009-01-21T01:00:00	1	1
-RESOURCE	pack in factory 1	2009-01-22T01:00:00	1	2
-RESOURCE	pack in factory 1	2009-01-22T01:00:00	-1	1
-RESOURCE	pack in factory 1	2009-01-23T01:00:00	1	2
-RESOURCE	pack in factory 1	2009-01-23T01:00:00	-1	1
-RESOURCE	pack in factory 1	2009-01-26T01:00:00	-1	0
+RESOURCE	pack in factory 1	2009-01-12T01:00:00	1	1
+RESOURCE	pack in factory 1	2009-01-13T01:00:00	1	2
+RESOURCE	pack in factory 1	2009-01-13T01:00:00	-1	1
+RESOURCE	pack in factory 1	2009-01-14T01:00:00	1	2
+RESOURCE	pack in factory 1	2009-01-14T01:00:00	-1	1
+RESOURCE	pack in factory 1	2009-01-15T01:00:00	-1	0
 RESOURCE	weave in factory 1	2009-01-02T00:00:00	1	1
 RESOURCE	weave in factory 1	2009-01-02T01:00:00	1	2
 RESOURCE	weave in factory 1	2009-01-02T01:00:00	-1	1
@@ -89,59 +88,56 @@ RESOURCE	weave in factory 1	2009-01-05T01:00:00	-1	1
 RESOURCE	weave in factory 1	2009-01-06T01:00:00	-1	0
 RESOURCE	weave in factory 1	2009-01-07T00:00:00	1	1
 RESOURCE	weave in factory 1	2009-01-07T01:00:00	-1	0
-RESOURCE	weave in factory 1	2009-01-21T00:00:00	1	1
-RESOURCE	weave in factory 1	2009-01-21T01:00:00	1	2
-RESOURCE	weave in factory 1	2009-01-21T01:00:00	-1	1
-RESOURCE	weave in factory 1	2009-01-22T01:00:00	-1	0
-RESOURCE	weave in factory 1	2009-01-22T10:00:00	1	1
-RESOURCE	weave in factory 1	2009-01-23T01:00:00	-1	0
+RESOURCE	weave in factory 1	2009-01-12T00:00:00	1	1
+RESOURCE	weave in factory 1	2009-01-12T01:00:00	1	2
+RESOURCE	weave in factory 1	2009-01-12T01:00:00	-1	1
+RESOURCE	weave in factory 1	2009-01-13T01:00:00	-1	0
+RESOURCE	weave in factory 1	2009-01-13T10:00:00	1	1
+RESOURCE	weave in factory 1	2009-01-14T01:00:00	-1	0
 OPERATION	Deliver product from factory 1 - 1 day	2009-01-05T01:00:00	2009-01-06T01:00:00	1
 OPERATION	Deliver product from factory 1 - 1 day	2009-01-06T01:00:00	2009-01-07T01:00:00	24
 OPERATION	Deliver product from factory 1 - 1 day	2009-01-07T01:00:00	2009-01-08T01:00:00	24
 OPERATION	Deliver product from factory 1 - 1 day	2009-01-08T01:00:00	2009-01-09T01:00:00	1
-OPERATION	Deliver product from factory 1 - 1 day	2009-01-22T01:00:00	2009-01-23T01:00:00	1
-OPERATION	Deliver product from factory 1 - 1 day	2009-01-23T01:00:00	2009-01-26T01:00:00	24
-OPERATION	Deliver product from factory 1 - 1 day	2009-01-26T01:00:00	2009-01-27T01:00:00	15
+OPERATION	Deliver product from factory 1 - 1 day	2009-01-13T01:00:00	2009-01-14T01:00:00	1
+OPERATION	Deliver product from factory 1 - 1 day	2009-01-14T01:00:00	2009-01-15T01:00:00	24
+OPERATION	Deliver product from factory 1 - 1 day	2009-01-15T01:00:00	2009-01-16T01:00:00	15
 OPERATION	Deliver product from factory 1 or 2	2009-01-01T00:00:00	2009-01-10T00:00:00	10
 OPERATION	Deliver product from factory 1 or 2	2009-01-05T01:00:00	2009-01-06T01:00:00	1
 OPERATION	Deliver product from factory 1 or 2	2009-01-06T01:00:00	2009-01-07T01:00:00	24
 OPERATION	Deliver product from factory 1 or 2	2009-01-07T01:00:00	2009-01-08T01:00:00	24
 OPERATION	Deliver product from factory 1 or 2	2009-01-08T01:00:00	2009-01-09T01:00:00	1
-OPERATION	Deliver product from factory 1 or 2	2009-01-22T01:00:00	2009-01-23T01:00:00	1
-OPERATION	Deliver product from factory 1 or 2	2009-01-23T01:00:00	2009-01-26T01:00:00	24
-OPERATION	Deliver product from factory 1 or 2	2009-01-26T01:00:00	2009-01-27T01:00:00	15
+OPERATION	Deliver product from factory 1 or 2	2009-01-13T01:00:00	2009-01-14T01:00:00	1
+OPERATION	Deliver product from factory 1 or 2	2009-01-14T01:00:00	2009-01-15T01:00:00	24
+OPERATION	Deliver product from factory 1 or 2	2009-01-15T01:00:00	2009-01-16T01:00:00	15
 OPERATION	Deliver product from factory 2 - 7 day	2009-01-01T00:00:00	2009-01-10T00:00:00	10
 OPERATION	Make fabric @ factory 1	2009-01-02T00:00:00	2009-01-02T01:00:00	1
 OPERATION	Make fabric @ factory 1	2009-01-02T01:00:00	2009-01-05T01:00:00	24
 OPERATION	Make fabric @ factory 1	2009-01-05T01:00:00	2009-01-06T01:00:00	24
 OPERATION	Make fabric @ factory 1	2009-01-07T00:00:00	2009-01-07T01:00:00	1
-OPERATION	Make fabric @ factory 1	2009-01-21T00:00:00	2009-01-21T01:00:00	1
-OPERATION	Make fabric @ factory 1	2009-01-21T01:00:00	2009-01-22T01:00:00	24
-OPERATION	Make fabric @ factory 1	2009-01-22T10:00:00	2009-01-23T01:00:00	15
+OPERATION	Make fabric @ factory 1	2009-01-12T00:00:00	2009-01-12T01:00:00	1
+OPERATION	Make fabric @ factory 1	2009-01-12T01:00:00	2009-01-13T01:00:00	24
+OPERATION	Make fabric @ factory 1	2009-01-13T10:00:00	2009-01-14T01:00:00	15
 OPERATION	Pack product @ factory 1	2009-01-02T01:00:00	2009-01-05T01:00:00	1
 OPERATION	Pack product @ factory 1	2009-01-05T01:00:00	2009-01-06T01:00:00	24
 OPERATION	Pack product @ factory 1	2009-01-06T01:00:00	2009-01-07T01:00:00	24
 OPERATION	Pack product @ factory 1	2009-01-07T01:00:00	2009-01-08T01:00:00	1
-OPERATION	Pack product @ factory 1	2009-01-21T01:00:00	2009-01-22T01:00:00	1
-OPERATION	Pack product @ factory 1	2009-01-22T01:00:00	2009-01-23T01:00:00	24
-OPERATION	Pack product @ factory 1	2009-01-23T01:00:00	2009-01-26T01:00:00	15
-OPERATION	Purchase box @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	locked
-OPERATION	Purchase box @ factory 2	2009-01-09T00:00:00	2009-01-09T00:00:00	100	locked
-OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	locked
-OPERATION	Purchase ink @ factory 1	2009-01-12T00:00:00	2009-01-21T00:00:00	50
-OPERATION	Purchase ink @ factory 1	2009-01-13T10:00:00	2009-01-22T10:00:00	50
-OPERATION	Purchase thread @ factory 1	2009-01-01T00:00:00	2009-01-21T00:00:00	500
-OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	locked
+OPERATION	Pack product @ factory 1	2009-01-12T01:00:00	2009-01-13T01:00:00	1
+OPERATION	Pack product @ factory 1	2009-01-13T01:00:00	2009-01-14T01:00:00	24
+OPERATION	Pack product @ factory 1	2009-01-14T01:00:00	2009-01-15T01:00:00	15
+OPERATION	Purchase box @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	400	locked
+OPERATION	Purchase box @ factory 2	2008-12-31T00:00:00	2009-01-09T00:00:00	400	locked
+OPERATION	Purchase ink @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	100	locked
+OPERATION	Purchase ink @ factory 1	2009-01-01T00:00:00	2009-01-10T00:00:00	50
+OPERATION	Purchase ink @ factory 1	2009-01-02T10:00:00	2009-01-13T10:00:00	50
+OPERATION	Purchase thread @ factory 1	2008-12-19T00:00:00	2009-01-02T00:00:00	500	locked
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 98	2009-01-02T00:00:00 / 2009-01-07T00:00:00
-PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 48	2009-01-21T00:00:00 / 2009-01-21T01:00:00
-PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 20	2009-01-22T10:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 50	2009-01-10T00:00:00 / 2009-01-12T01:00:00
+PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 20	2009-01-13T10:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'product @ factory 2' has material excess of 10	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 147	1971-01-01T00:00:00 / 2009-01-07T00:00:00
-PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 497	2009-01-21T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	Demand 'Demand 1' planned P26DT1H after its due date	2009-01-01T00:00:00 / 2009-01-27T01:00:00
+PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 547	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	late	Demand 'Demand 1' planned P15DT1H after its due date	2009-01-01T00:00:00 / 2009-01-16T01:00:00
 DEMAND CONSTRAINT	Demand 1	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Operation 'Pack product @ factory 1' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Operation 'Make fabric @ factory 1' planned in the past	2008-12-27T20:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Operation 'Purchase ink @ factory 1' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Resource 'pack in factory 1' has capacity shortage of 1	2009-01-02T01:00:00 / 2009-01-05T01:00:00	
-DEMAND CONSTRAINT	Demand 1	Operation 'Purchase thread @ factory 1' planned in the past	2008-12-25T00:00:00 / 2009-01-10T00:00:00	

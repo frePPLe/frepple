@@ -18,7 +18,6 @@
 from datetime import datetime, timedelta
 import importlib
 from optparse import make_option
-import random
 
 from django.conf import settings
 from django.core import management
@@ -29,8 +28,9 @@ from django.db.models import Sum, Max, Count, F
 from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
 from freppledb.input.models import PurchaseOrder, DistributionOrder, Buffer, Demand, Item
-from freppledb.input.models import OperationPlan, Location, Operation
-from freppledb.output.models import OperationPlan as OperationPlanOut
+from freppledb.input.models import OperationPlan, Location
+from django.db.migrations.operations.base import Operation
+from freppledb.input.serializers import FlowSerializer
 
 
 def load_class(full_class_string):
@@ -106,7 +106,7 @@ class Command(BaseCommand):
      j. Receive material from distribution orders
      k. Ship open sales orders to customers
      l. Call a custom function "end_bucket"
-     
+
   To allow easy customization of the simulation process, these steps are
   coded in a dedicated simulation class. A default implementation is
   provided, which can easily be extended in a subclass.
@@ -226,7 +226,7 @@ class Command(BaseCommand):
         simulator.buckets += 1
 
         if verbosity > 0:
-          print("\nStart simulating bucket from %s to %s (%s out of %s)" % (strt, nd, idx, bckt_list_len))
+          print("\nStart simulating bucket from %s to %s (%s out of %s)" % (strt, nd, idx, verbosity))#bckt_list_len))
 
         # Update currentdate parameter
         param.value = strt.strftime("%Y-%m-%d %H:%M:%S")
@@ -252,7 +252,7 @@ class Command(BaseCommand):
         if options['pause']:
           print("\nYou can analyze the plan in the bucket in the user interface now...")
           input("\nPress Enter to continue the simulation...\n")
-         
+
         # Release new purchase orders
         if verbosity > 1:
           print("  Create new purchase orders")
@@ -348,12 +348,12 @@ class Simulator(object):
 
     # Metrics for work in progress
     self.wip_quantity = 0
-    
+
     # Metrics for demand
     self.demand_quantity = 0
     self.demand_value = 0
     self.demand_count = 0
-    
+
 
   def start_bucket(self, strt, nd):
     '''
@@ -362,7 +362,7 @@ class Simulator(object):
     It can be used to gather performance metrics, or initialize some variables.
     '''
     return
-        
+
 
   def end_bucket(self, strt, nd):
     '''
@@ -372,7 +372,7 @@ class Simulator(object):
     '''
     if self.verbosity > 2:
       self.printStatus()
-       
+
     # Measure the current inventory
     inv = Buffer.objects.all().using(self.database).filter(onhand__gt=0).aggregate(
       val=Sum(F('onhand') * F('item__price')),
@@ -385,7 +385,7 @@ class Simulator(object):
 
     # Measure the current work-in-progress
     wip = OperationPlan.objects.all().using(self.database).filter(status='confirmed').aggregate(
-      qty=Sum(F('quantity'))                                                                                          
+      qty=Sum(F('quantity'))
       )
     if wip['qty']:
       self.wip_quantity += wip['qty']
@@ -394,7 +394,7 @@ class Simulator(object):
     dmd = Demand.objects.all().using(self.database).filter(status='open').aggregate(
       val=Sum(F('quantity') * F('item__price')),
       qty=Sum(F('quantity')),
-      cnt=Count(F('name'))                                                                                         
+      cnt=Count(F('name'))
       )
     if dmd['val']:
       self.demand_value += dmd['val']
@@ -437,40 +437,21 @@ class Simulator(object):
     '''
     Find proposed operationplans within the time bucket.
     For each of these operationplans:
-      - create an operationplan in the status "confirmed"
+      - change the status to "confirmed"
       - execute all material flows at the start of the operation
     '''
-    for op in OperationPlanOut.objects.using(self.database).filter(locked=0, startdate__lte=nd):
-      try:
-        oper = Operation.objects.all().using(self.database).get(name=op.operation)
-        buf = None
-        for fl in oper.flows.all():
-          if fl.quantity > 0:
-            buf = fl.thebuffer
-            break
-        if not buf:
-          continue
-        self.mo_number += 1
-        mo = OperationPlan.objects.using(self.database).create(
-          id=op.id,
-          operation=oper,
-          quantity=op.quantity,
-          startdate=op.startdate,
-          enddate=op.enddate,
-          status="confirmed"
-          )
-        for fl in oper.flows.all():
-          if fl.type == 'start':
-            fl.thebuffer.onhand += fl.quantity * op.quantity
-            fl.thebuffer.save(using=self.database)
-          elif fl.type == 'fixed_start':
-            fl.thebuffer.onhand += fl.quantity
-            fl.thebuffer.save(using=self.database)
-        if self.verbosity > 2:
-          print("      Opening MO %s - %d of %s ending on %s" % (mo.id, mo.quantity, mo.operation.name, mo.enddate))
-      except Operation.DoesNotExist:
-        # We have operationplans in the table which are not relevant
-        pass
+    for op in OperationPlan.objects.select_for_update().using(self.database).filter(status="proposed", startdate__lte=nd):
+      if self.verbosity > 2:
+        print("      Opening MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
+      for fl in op.operation.flows.all():
+        if fl.type == 'start':
+          fl.thebuffer.onhand += fl.quantity * op.quantity
+          fl.thebuffer.save(using=self.database)
+        elif fl.type == 'fixed_start':
+          fl.thebuffer.onhand += fl.quantity
+          fl.thebuffer.save(using=self.database)
+      op.status = 'confirmed'
+      op.save(using=self.database)
 
 
   def receive_purchase_orders(self, strt, nd):
@@ -550,19 +531,22 @@ class Simulator(object):
     '''
     Simulate new customers orders being received.
     This function creates new records in the demand table.
-    
-    TODO We have hardcoded the demand generation here.  Ideally this 
-    should be more configurable.    
-    Eg  use some "template records" in the demand table which we use to 
+
+    The default implementation doesn't create any new demands. We only
+    simulate the execution of the current open sales orders.
+
+    A simplistic, hardcoded example of creating demands is shown.
+    TODO A more generic mechanism to have a data-driven automatic demand generation would be nice.
+    Eg use some "template records" in the demand table which we use to
     automatically create new demands with a specific frequency.
     '''
+    return
+
     self.demand_number += 1
-    if self.demand_number > 1:
-      return
     dmd = Demand.objects.using(self.database).create(
       name="Demand #%s" % self.demand_number,
-      item=Item.objects.all().using(self.database).get(name='product'), 
-      location=Location.objects.all().using(self.database).get(name='factory 1'), 
+      item=Item.objects.all().using(self.database).get(name='product'),
+      location=Location.objects.all().using(self.database).get(name='factory 1'),
       quantity=100,
       status='open',
       due=strt + timedelta(days=14)
@@ -584,35 +568,68 @@ class Simulator(object):
       - if yes:
           - change the demand status to 'closed'
           - reduce the inventory of the product
-            TODO We need to execute all flows on the delivery operation to be 100% correct
 
     We don't account for partial deliveries.
     We assume the customer order waits for late orders - an alternative would be
     to assume we lose the order if we can't ship on time.
+
+    TODO logic doesn't recognize alternate delivery operations
     '''
     for dmd in Demand.objects.using(self.database).filter(due__lt=nd, status='open').order_by('priority', 'due'):
-      try:
-        buf = Buffer.objects.select_for_update().using(self.database).get(item=dmd.item, location=dmd.location)
-        if buf.onhand >= dmd.quantity:
-          # We can satisfy this order
+      oper = dmd.operation
+      if not oper:
+        oper = dmd.item.operation
+      if oper:
+        # Case 1: Delivery operation specified
+        ok = True
+        for fl in oper.flows.all():
+          if fl.quantity > 0:
+            continue
+          if fl.type in ('start', 'end') and fl.thebuffer.onhand < fl.quantity * dmd.quantity:
+            ok = False
+            break
+          if fl.type in ('fixed_start', 'fixed_end') and fl.thebuffer.onhand < dmd.quantity:
+            ok = False
+            break
+        if ok:
+          # Execute all flows on the delivery operation
+          for fl in oper.flows.all():
+            if fl.type in ('start', 'end'):
+              fl.thebuffer.onhand += dmd.quantity * fl.quantity
+            elif fl.type in ('fixed_start', 'fixed_end'):
+              fl.thebuffer.onhand += dmd.quantity
+            fl.thebuffer.save(using=self.database)
+        else:
+          # We can't ship the order
+          continue
+      else:
+        # Case 2: Automatically generated delivery operation
+        try:
+          buf = Buffer.objects.select_for_update().using(self.database).get(item=dmd.item, location=dmd.location)
+        except Buffer.DoesNotExist:
+          continue
+        if buf.onhand < dmd.quantity:
+          # We can't ship the order
+          continue
+        else:
           buf.onhand -= dmd.quantity
-          dmd.status = 'closed'
           buf.save(using=self.database)
-          self.demand_shipped += 1
-          if strt > dmd.due.date():
-            self.demand_late += 1
-            self.demand_lateness += strt - dmd.due.date()
-            dmd.category = 'delivered late on %s' % strt
-          else:
-            dmd.category = 'delivered on time on %s' % dmd.due
-          if self.verbosity > 2:
-            print("      Closing demand %s - %d of %s@%s due on %s - delay %s" % (
-              dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due,
-              max(strt - dmd.due.date(), timedelta(0))
-              ))
-          dmd.save(using=self.database)
-      except Buffer.DoesNotExist:
-        print("        ERROR: can't find the buffer to ship the demand from")
+
+        # We can satisfy this order
+        dmd.status = 'closed'
+        self.demand_shipped += 1
+        if strt > dmd.due.date():
+          self.demand_late += 1
+          self.demand_lateness += strt - dmd.due.date()
+          dmd.category = 'delivered late on %s' % strt
+        else:
+          dmd.category = 'delivered on time on %s' % dmd.due
+        if self.verbosity > 2:
+          print("      Closing demand %s - %d of %s@%s due on %s - delay %s" % (
+            dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due,
+            max(strt - dmd.due.date(), timedelta(0))
+            ))
+        dmd.save(using=self.database)
 
 
   def printStatus(self):
@@ -650,6 +667,8 @@ class Simulator(object):
 
 
   def show_metrics(self):
+    if not self.verbosity:
+      return
     print("   Average open demands: %.2f for %.2f units with value %.2f" % (
       self.demand_count/self.buckets, self.demand_quantity/self.buckets, self.demand_quantity/self.buckets
       ))

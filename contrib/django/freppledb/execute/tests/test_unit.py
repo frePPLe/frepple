@@ -20,6 +20,7 @@ import os
 from django.conf import settings
 from django.core import management, serializers
 from django.db import DEFAULT_DB_ALIAS, transaction
+from django.db.models import Sum, Count, Q
 from django.test import TransactionTestCase, TestCase
 from django.test.utils import override_settings
 
@@ -161,3 +162,36 @@ class FixtureTest(TestCase):
         True
     except Exception as e:
       self.fail("Invalid fixture: %s" % e)
+
+
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
+class execute_simulation(TransactionTestCase):
+
+  fixtures = ["demo"]
+
+  def setUp(self):
+    # Make sure the test database is used
+    os.environ['FREPPLE_TEST'] = "YES"
+
+  def tearDown(self):
+    del os.environ['FREPPLE_TEST']
+
+  def test_run_cmd(self):
+    # Run the plan and measure the lateness
+    management.call_command('frepple_run', plantype=1, constraint=15)
+    initial_planned_late = output.models.Problem.objects.all().filter(name="late").aggregate(
+      count = Count('id'),
+      lateness = Sum('weight')
+      )
+
+    # Run the simulation.
+    # The default implementation assumes the actual execution is exactly
+    # matching the specified leadtime.
+    management.call_command('frepple_simulation', step=7, horizon=120, verbosity=0)
+
+    # Verify that the simulated execution is matching the original plan
+    self.assertEqual(
+      input.models.Demand.objects.all().filter(~Q(status='closed')).count(), 0,
+      "Some demands weren't shipped"
+      )
+    # TODO add comparison with initial_planned_late

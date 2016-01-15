@@ -382,8 +382,8 @@ and export results.<br>
 <form method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}<tr>
 <td style="vertical-align:top; padding: 15px"><input type="submit" value="{% trans "launch"|capfirst %}"/></td>
 <td>{% blocktrans %}Create time buckets for reporting.<br>
-Start date: <input class="date" name="start" type="text" maxlength="5" size="12"/><br>
-End date: <input class="date" name="end" type="text" maxlength="5" size="12"/><br>
+Start date: <input class="date" name="start" type="text" size="12"/><br>
+End date: <input class="date" name="end" type="text" size="12"/><br>
 Week starts on: <select name="weekstart">
 <option value="0">Sunday</option>
 <option value="1" selected="selected">Monday</option>

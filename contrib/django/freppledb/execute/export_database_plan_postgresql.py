@@ -51,6 +51,7 @@ def truncate(process):
   process.stdin.write('truncate table out_demand;\n'.encode(encoding))
   process.stdin.write("delete from purchase_order where status='proposed' or status is null;\n".encode(encoding))
   process.stdin.write("delete from distribution_order where status='proposed' or status is null;\n".encode(encoding))
+  process.stdin.write("delete from operationplan where status='proposed' or status is null;\n".encode(encoding))
   print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
@@ -88,18 +89,37 @@ def exportConstraints(process):
 def exportOperationplans(process):
   print("Exporting operationplans...")
   starttime = time()
+  excluded_operations = (
+    frepple.operation_itemsupplier,
+    frepple.operation_itemdistribution,
+    frepple.operation_routing,
+    frepple.operation_alternate
+    )
+  # TODO: the first part of the export is a redundant duplicate. We still need it for the pegging information... for now.
+  # TODO: also run an update for the criticality of the existing, locked operationplan records
+  # TODO: export of owner, export of demand delivery
   process.stdin.write('COPY out_operationplan (id,operation,quantity,startdate,enddate,criticality,locked,unavailable,owner) FROM STDIN;\n'.encode(encoding))
   for i in frepple.operations():
-    #if isinstance(i, (frepple.operation_itemsupplier, frepple.operation_itemdistribution)):
-    #  # TODO Purchase orders and distribution orders are exported separately
-    #  continue
+    opname = i.name[0:300]
     for j in i.operationplans:
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-        j.id, i.name[0:300],
-        round(j.quantity, 4), str(j.start), str(j.end),
+        j.id, opname, round(j.quantity, 4), str(j.start), str(j.end),
         round(j.criticality, 4), j.locked, j.unavailable,
         j.owner and j.owner.id or "\\N"
         )).encode(encoding))
+  process.stdin.write('\\.\n'.encode(encoding))
+  process.stdin.write('COPY operationplan (id,operation_id,status,quantity,startdate,enddate,criticality,lastmodified) FROM STDIN;\n'.encode(encoding))
+  for i in frepple.operations():
+    if isinstance(i, excluded_operations):
+      continue
+    opname = i.name[0:300]
+    for j in i.operationplans:
+      if not j.locked and not (j.demand or (j.owner and j.owner.demand)):
+        process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+          j.id, opname, j.status, round(j.quantity, 4),
+          str(j.start), str(j.end), round(j.criticality, 4),
+          timestamp
+          )).encode(encoding))
   process.stdin.write('\\.\n'.encode(encoding))
   print('Exported operationplans in %.2f seconds' % (time() - starttime))
 

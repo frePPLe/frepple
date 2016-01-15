@@ -70,10 +70,13 @@ class loadData(object):
         coalesce(max(ids.max_id), 1) + 1
       from (
         select max(id) as max_id from purchase_order
+          where status is not null and status <> 'proposed'
         union all
         select max(id) as max_id from distribution_order
+          where status is not null and status <> 'proposed'
         union all
         select max(id) as max_id from operationplan
+          where status is not null and status <> 'proposed'
         ) ids
       ''')
     d = self.cursor.fetchone()

@@ -29,8 +29,6 @@ from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
 from freppledb.input.models import PurchaseOrder, DistributionOrder, Buffer, Demand, Item
 from freppledb.input.models import OperationPlan, Location
-from django.db.migrations.operations.base import Operation
-from freppledb.input.serializers import FlowSerializer
 
 
 def load_class(full_class_string):
@@ -205,6 +203,10 @@ class Command(BaseCommand):
       else:
         simulator = Simulator(database=database, verbosity=verbosity)
       simulator.buckets = 1
+
+      # The simulation only support complete shipments for the full quantity.
+      # We enforce that the generated plan respects this as well.
+      Demand.objects.all().using(database).update(minshipment=F('quantity'))
 
       # Loop over all dates in the simulation horizon
       idx = 0
@@ -555,6 +557,43 @@ class Simulator(object):
       print("      Opening demand %s - %d of %s@%s due on %s" % (dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due))
 
 
+  def checkAvailable(self, qty, oper, consume):
+    '''
+    Verify whether an operationplan of a given quantity is material-feasible.
+    '''
+    for fl in oper.flows.all():
+      if fl.quantity > 0 and not consume:
+        continue
+      if fl.type in ('start', 'end'):
+        if consume:
+          fl.thebuffer.onhand += qty * fl.quantity
+          fl.thebuffer.save(using=self.database)
+        elif fl.thebuffer.onhand < - fl.quantity * qty:
+          return False
+      if fl.type in ('fixed_start', 'fixed_end'):
+        if consume:
+          fl.thebuffer.onhand += qty
+          fl.thebuffer.save(using=self.database)
+        elif fl.thebuffer.onhand < - qty:
+          return False
+    if oper.type == 'routing':
+      # All routing suboperations must return an ok
+      for suboper in oper.suboperations.all().order_by("priority"):
+        if not self.checkAvailable(qty, suboper.suboperation, consume):
+          return False
+    elif oper.type == 'alternate':
+      # An ok from a single suboperation suffices
+      for suboper in oper.suboperations.all().order_by("priority"):
+        if consume:
+          if self.checkAvailable(qty, suboper.suboperation, False):
+            self.checkAvailable(qty, suboper.suboperation, True)
+            return True
+        elif self.checkAvailable(qty, suboper.suboperation, consume):
+          return True
+      return False
+    return True
+
+
   def ship_customer_demand(self, strt, nd):
     '''
     Deliver customer orders to customers.
@@ -569,11 +608,7 @@ class Simulator(object):
           - change the demand status to 'closed'
           - reduce the inventory of the product
 
-    We don't account for partial deliveries.
-    We assume the customer order waits for late orders - an alternative would be
-    to assume we lose the order if we can't ship on time.
-
-    TODO logic doesn't recognize alternate delivery operations
+    We don't account for partial deliveries and max_lateness.
     '''
     for dmd in Demand.objects.using(self.database).filter(due__lt=nd, status='open').order_by('priority', 'due'):
       oper = dmd.operation
@@ -581,24 +616,9 @@ class Simulator(object):
         oper = dmd.item.operation
       if oper:
         # Case 1: Delivery operation specified
-        ok = True
-        for fl in oper.flows.all():
-          if fl.quantity > 0:
-            continue
-          if fl.type in ('start', 'end') and fl.thebuffer.onhand < fl.quantity * dmd.quantity:
-            ok = False
-            break
-          if fl.type in ('fixed_start', 'fixed_end') and fl.thebuffer.onhand < dmd.quantity:
-            ok = False
-            break
-        if ok:
+        if self.checkAvailable(dmd.quantity, oper, False):
           # Execute all flows on the delivery operation
-          for fl in oper.flows.all():
-            if fl.type in ('start', 'end'):
-              fl.thebuffer.onhand += dmd.quantity * fl.quantity
-            elif fl.type in ('fixed_start', 'fixed_end'):
-              fl.thebuffer.onhand += dmd.quantity
-            fl.thebuffer.save(using=self.database)
+          self.checkAvailable(dmd.quantity, oper, True)
         else:
           # We can't ship the order
           continue
@@ -615,21 +635,22 @@ class Simulator(object):
           buf.onhand -= dmd.quantity
           buf.save(using=self.database)
 
-        # We can satisfy this order
-        dmd.status = 'closed'
-        self.demand_shipped += 1
-        if strt > dmd.due.date():
-          self.demand_late += 1
-          self.demand_lateness += strt - dmd.due.date()
-          dmd.category = 'delivered late on %s' % strt
-        else:
-          dmd.category = 'delivered on time on %s' % dmd.due
-        if self.verbosity > 2:
-          print("      Closing demand %s - %d of %s@%s due on %s - delay %s" % (
-            dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due,
-            max(strt - dmd.due.date(), timedelta(0))
-            ))
-        dmd.save(using=self.database)
+      # We can satisfy this order
+      dmd.status = 'closed'
+      self.demand_shipped += 1
+      if strt > dmd.due.date():
+        self.demand_late += 1
+        self.demand_lateness += strt - dmd.due.date()
+        dmd.category = 'delivered late on %s' % strt
+      else:
+        dmd.category = 'delivered on time on %s' % dmd.due
+      if self.verbosity > 2:
+        print("      Closing demand %s - %d of %s@%s due on %s - delay %s" % (
+          dmd.name, dmd.quantity, dmd.item.name,
+          dmd.location.name if dmd.location else None, dmd.due,
+          max(strt - dmd.due.date(), timedelta(0))
+          ))
+      dmd.save(using=self.database)
 
 
   def printStatus(self):

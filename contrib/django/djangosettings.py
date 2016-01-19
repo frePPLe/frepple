@@ -20,6 +20,7 @@ r'''
 Main Django configuration file.
 '''
 import os, sys, locale
+from django.contrib import messages #bootstrap
 
 try:
   DEBUG = 'runserver' in sys.argv
@@ -75,6 +76,29 @@ DATABASES = {
       }
     },
   'scenario3': {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'scenario3',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
+    'HOST': '',     # Set to empty string for localhost.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default.
+    'TEST': {
+      'NAME': 'test_scenario3' # Database name used when running the test suite.
+      }
+    },  'scenario4': {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'scenario3',
+    'USER': 'frepple',
+    'PASSWORD': 'frepple',
+    'HOST': '',     # Set to empty string for localhost.
+    'OPTIONS': {},  # Backend specific configuration parameters.
+    'PORT': '',     # Set to empty string for default.
+    'TEST': {
+      'NAME': 'test_scenario3' # Database name used when running the test suite.
+      }
+    },
+   'scenario5': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'NAME': 'scenario3',
     'USER': 'frepple',
@@ -182,12 +206,14 @@ CURRENCY=("","$")    # Prefix and suffix for currency strings
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
     'freppledb.boot',
-    'freppledb.odoo',
-    'freppledb.openbravo',
+    #'freppledb.odoo',
+    #'freppledb.openbravo',
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',
@@ -242,6 +268,14 @@ REST_FRAMEWORK = {
     'rest_framework.renderers.JSONRenderer',
     'freppledb.common.api.renderers.freppleBrowsableAPI',
   )
+}
+
+#bootstrap
+DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
+MESSAGE_TAGS = {
+            messages.SUCCESS: 'alert-success success',
+            messages.WARNING: 'alert-warning warning',
+            messages.ERROR: 'alert-danger error'
 }
 
 import django.contrib.admindocs

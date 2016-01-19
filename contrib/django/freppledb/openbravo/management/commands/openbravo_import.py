@@ -1129,6 +1129,7 @@ class Command(BaseCommand):
         sizeminimum = elem.find("minimumOrderQty").text
         sizemultiple = elem.find("quantityPerPackage").text
         cost = elem.find("listPrice").text
+        vendoritemname = elem.find("VendorProductNo").text
 
         priority = elem.find("currentVendor").text
         if priority:
@@ -1147,9 +1148,9 @@ class Command(BaseCommand):
         key = (item_id, supplier_id, None)
         unused_keys.discard(key)
         if key in frepple_keys:
-          update.append( (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
+          update.append( (vendoritemname, source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
         else:
-          insert.append( (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
+          insert.append( (vendoritemname, source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id) )
 
         # Clean the XML hierarchy
         root.clear()
@@ -1185,13 +1186,13 @@ class Command(BaseCommand):
       # Create or update purchasing operations
       cursor.executemany(
           "insert into itemsupplier \
-            (source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id, lastmodified) \
-            values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%%s',%s)" % self.date,
+            (vendoritemname, source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id, lastmodified) \
+            values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%%s',%s)" % self.date,
           insert
         )
       cursor.executemany(
           "update itemsupplier \
-            set source=%%s, leadtime=%%s, sizeminimum=%%s, sizemultiple=%%s, cost=%%s, priority=%%s, effective_end=%%s,\
+            set vendoritemname=%%s, source=%%s, leadtime=%%s, sizeminimum=%%s, sizemultiple=%%s, cost=%%s, priority=%%s, effective_end=%%s,\
              lastmodified='%s' where item_id=%%s and location_id=%%s and supplier_id=%%s" % self.date,
           update
         )

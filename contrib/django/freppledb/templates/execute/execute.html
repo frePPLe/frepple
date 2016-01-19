@@ -189,6 +189,7 @@
       $(this).parent().css('position', 'relative');
       $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
     });
+
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
@@ -621,7 +622,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			  </div>
 		  </div>
 		  {% endif %}
-		</div>
+
 	
 	  {% if perms.execute.run_db %}
 	  <div class="panel panel-default">
@@ -666,14 +667,14 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				</div>
 		  </div>
 		</div>
-	
+
 	{% endif %}
 	
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}
 	</div> <!-- end row -->
-	
+
 	<div id="uploadSpreadsheet" style="display:none">
 	  <div style="margin: 5px 0">
 	    <textarea id="uploadResponse" rows="20" style="width:100%; background-color: inherit; border: none" readonly="readonly"></textarea>

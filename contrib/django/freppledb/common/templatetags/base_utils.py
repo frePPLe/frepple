@@ -261,19 +261,12 @@ class SelectDatabaseNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
-    if len(req.user.scenarios) <= 1:
-      return ''
-    s = ['<select id="database" name="%s" onchange="selectDatabase()">' % req.database ]
-    for i in req.user.scenarios:
-      if i == req.database:
-        s.append('<option value="%s" selected="selected">%s</option>' % (i, i))
-      else:
-        s.append('<option value="%s">%s</option>' % (i, i))
-    s.append('</select>')
+    s = [ '<li><a href="#">%s</a></li>' % i for i in req.user.scenarios]
     return ''.join(s)
 
   def __repr__(self):
     return "<SelectDatabase Node>"
+
 
 
 def selectDatabase(parser, token):

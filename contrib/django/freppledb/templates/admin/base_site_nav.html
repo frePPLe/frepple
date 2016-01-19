@@ -1,5 +1,15 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+$(function() {
+   $(".selectdb li a").click(selectDatabase);
+});
+
+</script>
+{% endblock %}
+
 {% block nav-global %}
 {% getMenu as menu %}
 <nav id="nav-menu-header" class="navbar navbar-static-top navbar-default">
@@ -33,14 +43,15 @@
 			{% comment %}Translators: Translation included with Django{% endcomment %}
 			<form class="navbar-form navbar-left" role="search">
 				<div class="form-group">
-				  <input id="search" class="typeahead" type="text" placeholder="{% trans 'Search' %}">
+				  <input id="search" class="form-control typeahead" type="text" placeholder="{% trans 'Search' %}">
 				</div>
 			</form>
 
 		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
 		    <li class="dropdown">
 		    {% comment %}Translators: Translation included with Django{% endcomment %}
-		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
+		    <a href="#" class="dropdown-toggle" style="
+    padding-right: 20px;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
 				  {% comment %}Translators: Translation included with Django{% endcomment %}
@@ -50,10 +61,23 @@
 			{% endif %}
 		</div>
 
-  <div class="row breadcrumbrow"><div class="col-md-12">
-  <div class="selectdb pull-right">{% selectDatabase %}</div>
-  <span><ol class="breadcrumb" id="breadcrumbs"><li><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a></li>{% crumbs %}</ol></span>
-  </div></div>
+  <div class="row breadcrumbrow">
+	  <div class="col-md-10">
+	   <span>
+	     <ol class="breadcrumb" id="breadcrumbs">
+	       <li><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a></li>
+	       {% crumbs %}
+	     </ol>
+	   </span>
+	  </div>
+	  <div class="col-md-2">
+	     <div class="selectdb pull-right">{% if user.scenarios|length > 1 %}<button class="btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
+	     {{ request.database }}
+    <span class="caret"></span>
+
+  </button><ul class="dropdown-menu" aria-labelledby="database">{% for db in user.scenarios %}<li><a href="#">{{ db }}</a></li>{% endfor %}</ul>{% endif %}
+	     </div>
+  </div>
 
 	</div> <!--  end of container -->
 </nav>

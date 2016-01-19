@@ -110,7 +110,8 @@ padding-right: 10px;
 }
 
 div.selectdb {
-  padding-top: @breadcrumb-padding-vertical;
+  padding-top: 2px;
+  padding-bottom: 2px
 }
 
 .navbar .dropdown-menu {
@@ -127,12 +128,6 @@ div.selectdb {
 
 .navbar .dropdown-menu>li>a { /*fix django admin*/
     font-size: @font-size-base;
-}
-
-form.navbar.navbar-left , .navbar-form {
-    padding-top: 16px;
-    padding-bottom: 16px;
-    margin: 0;
 }
 
 div.selectdb select { /*fix django admin*/
@@ -191,6 +186,10 @@ a:link, a:visited {
     text-decoration: none;
 }
 
+label{
+  font-weight: normal;
+}
+
 /* Tabs styles. */
 .nav-tabs {
   float: right;
@@ -201,6 +200,10 @@ a:link, a:visited {
 #toolicons, #save_undo {
   margin-top: 15px;
   line-height: 2.2em;
+}
+
+#toolicons .fa {
+  cursor: pointer;
 }
 
 /* fixes for django admin forms */
@@ -318,6 +321,24 @@ tr.ui-state-highlight {
 
 .leftpadding {
   padding-left: 5px;
+}
+
+/* to style file upload button */
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.spreadsheet {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
 }
 
 /* Graph cell in pivot grid */

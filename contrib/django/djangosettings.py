@@ -357,19 +357,32 @@ DEFAULT_PAGESIZE = 100
 
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
-  { 'rowname': 'WelcomeRow', 'cols': [ 
+  { 'rowname': 'Welcome', 'cols': [
     {'width':'col-md-6 col-sm-12', 'widgets':[
       ("welcome",{}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
       ("news",{}),
+      ("execute",{}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
       ("alerts",{}),
+      ("recent_comments",{"limit":10}),
+      ("recent_actions",{"limit":10}),
     ]},
   ]},
-  { 'rowname': 'PurchaseRow', 'cols': [ 
+  { 'rowname': 'Sales', 'cols': [
+    {'width':'col-md-9 col-sm-12', 'widgets':[
+      ("late_orders",{"limit":20}),
+      ("short_orders",{"limit":20}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("delivery_performance",{"green": 90, "yellow": 80}),
+    ]},
+  ]},
+  { 'rowname': 'Purchasing', 'cols': [
     {'width':'col-md-6 col-sm-12', 'widgets':[
+      ("purchase_orders",{"fence1": 7, "fence2": 30}),
       ("purchase_queue",{"limit":20}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
@@ -380,38 +393,20 @@ DEFAULT_DASHBOARD = [
       ("inventory_by_item",{"limit":10}),
     ]},
   ]},
-  { 'rowname': 'SalesRow', 'cols': [ 
-    {'width':'col-md-6 col-sm-12', 'widgets':[
+  { 'rowname': 'Distribution', 'cols': [
+    {'width':'col-md-12 col-sm-12', 'widgets':[
+      ("distribution_orders",{"fence1":7, "fence2": 30}),
       ("shipping_queue",{"limit":20}),
     ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-      ("delivery_performance",{"green": 90, "yellow": 80}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-      ("short_orders",{"limit":20}),
-      ("late_orders",{"limit":20}),
-    ]},
   ]},
-  { 'rowname': 'ManufacturingRow', 'cols': [ 
-    {'width':'col-md-6 col-sm-12', 'widgets':[
+
+  { 'rowname': 'Manufacturing', 'cols': [
+    {'width':'col-md-9 col-sm-12', 'widgets':[
+      ("manufacturing_orders",{"fence1":7, "fence2": 30}),
       ("resource_queue",{"limit":20}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
       ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-      ("execute",{}),
-    ]},
-  ]},
-    { 'rowname': 'AnotherRow', 'cols': [ 
-    {'width':'col-md-6 col-sm-12', 'widgets':[
-      ("recent_comments",{"limit":10}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-      ("recent_actions",{"limit":10}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-
     ]},
   ]},
 ]

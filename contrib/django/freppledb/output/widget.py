@@ -15,8 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.encoding import force_text
@@ -26,6 +28,7 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.middleware import _thread_locals
+from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport
 from freppledb.input.models import PurchaseOrder, DistributionOrder
@@ -111,6 +114,561 @@ class ShortOrdersWidget(Widget):
 Dashboard.register(ShortOrdersWidget)
 
 
+class ManufacturingOrderWidget(Widget):
+  name = "manufacturing_orders"
+  title = _("Manufacturing orders")
+  tooltip = _("Shows manufacturing orders by start date")
+  permissions = (("view_problem_report", "Can view problem report"),)
+  asynchronous = True
+  url = '/data/input/operationplan/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  exporturl = True
+  fence1 = 7
+  fence2 = 30
+
+  def args(self):
+    return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
+
+  javascript = '''
+    var margin_y = 70;  // Width allocated for the Y-axis
+    var margin_x = 60;  // Height allocated for the X-axis
+    var svg = d3.select("#mo_chart");
+    var width = $("#mo_chart").width();
+    var height = $("#mo_chart").height();
+
+    // Collect the data
+    var domain_x = [];
+    var data = [];
+    var max_value = 0.0;
+    var max_count = 0.0;
+    $("#mo_overview").find("tr").each(function() {
+      var name = $(this).children('td').first();
+      var count = name.next();
+      var value = count.next()
+      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      data.push(el);
+      domain_x.push(el[0]);
+      if (el[1] > max_count) max_count = el[1];
+      if (el[2] > max_value) max_value = el[2];
+      });
+
+    // Define axis domains
+    var x = d3.scale.ordinal()
+      .domain(domain_x)
+      .rangeRoundBands([0, width - margin_y - 10], 0);
+    var y_value = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_value + 5]);
+    var y_count = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_count + 5]);
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", height - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) { $("#mo_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + "<br>" + d[2]) })
+      .on("mousemove", function(){ $("#mo_tooltip").css("top", (event.pageY-10)+"px").css("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(){ $("#mo_tooltip").css("display", "none") });
+
+    // Draw x-axis
+    var xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y  + ", " + (height - margin_x) +" )")
+      .attr("class", "x axis")
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.75em")
+      .attr("dy", "-.25em")
+      .attr("transform", "rotate(-90)" );
+
+    // Draw y-axis
+    var yAxis = d3.svg.axis().scale(y_value)
+        .orient("left")
+        .ticks(5)
+        .tickFormat(d3.format(".0f%"));
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Draw the lines
+    var line_value = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_value(d[2]); });
+    var line_count = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_count(d[1]); });
+
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#8BBA00")
+      .attr("d", line_value(data));
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#FFC000")
+      .attr("d", line_count(data));
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    fence1 = int(request.GET.get('fence1', cls.fence1))
+    fence2 = int(request.GET.get('fence2', cls.fence2))
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+    try:
+      current = datetime.strptime(
+        Parameter.objects.using(db).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current = datetime.now()
+      current = current.replace(microsecond=0)
+    request.database = db
+    GridReport.getBuckets(request)
+    cursor = connections[db].cursor()
+    query = '''
+      select
+         0, common_bucketdetail.name, common_bucketdetail.startdate,
+         count(*), coalesce(round(sum(quantity)),0)
+      from common_bucketdetail
+      left outer join operationplan
+        on operationplan.startdate >= common_bucketdetail.startdate
+        and operationplan.startdate < common_bucketdetail.enddate
+        and status in ('confirmed', 'proposed')
+      where bucket_id = %%s and common_bucketdetail.enddate > %%s
+        and common_bucketdetail.startdate < %%s
+      group by common_bucketdetail.name, common_bucketdetail.startdate
+      union all
+      select 1, null, null, count(*), coalesce(round(sum(quantity)),0)
+      from operationplan
+      where status = 'confirmed'
+      union all
+      select 2, null, null, count(*), coalesce(round(sum(quantity)),0)
+      from operationplan
+      where status = 'proposed' and startdate < %%s + interval '%s day'
+      union all
+      select 3, null, null, count(*), coalesce(round(sum(quantity)),0)
+      from operationplan
+      where status = 'proposed' and startdate < %%s + interval '%s day'
+      order by 1, 3
+      ''' % (fence1, fence2)
+    cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))
+    result = [
+      '<svg class="chart" id="mo_chart" style="width:100%; height: 150px;"></svg>',
+      '<table id="mo_overview" style="display: none">',
+      ]
+    for rec in cursor.fetchall():
+      if rec[0] == 0:
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+      elif rec[0] == 1:
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s <small>units</small></h2><small>confirmed orders</small></div>' % (
+          rec[3], rec[4]
+          ))
+      elif rec[0] == 2 and fence1:
+        result.append('<div class="col-xs-4"><h2>%s / %s <small>units</small>&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days<small></div>' % (
+          rec[3], rec[4], fence1
+          ))
+      elif fence2:
+        result.append('<div class="col-xs-4"><h2>%s / %s <small>units</small>&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], rec[4], fence2
+          ))
+    result.append('</div><div id="mo_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(ManufacturingOrderWidget)
+
+
+class DistributionOrderWidget(Widget):
+  name = "distribution_orders"
+  title = _("Distribution orders")
+  tooltip = _("Shows distribution orders by start date")
+  permissions = (("view_problem_report", "Can view problem report"),)
+  asynchronous = True
+  url = '/data/input/distributionorder/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  exporturl = True
+  fence1 = 7
+  fence2 = 30
+
+  def args(self):
+    return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
+
+  javascript = '''
+    var margin_y = 70;  // Width allocated for the Y-axis
+    var margin_x = 60;  // Height allocated for the X-axis
+    var svg = d3.select("#do_chart");
+    var width = $("#do_chart").width();
+    var height = $("#do_chart").height();
+
+    // Collect the data
+    var domain_x = [];
+    var data = [];
+    var max_value = 0.0;
+    var max_count = 0.0;
+    $("#do_overview").find("tr").each(function() {
+      var name = $(this).children('td').first();
+      var count = name.next();
+      var value = count.next()
+      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      data.push(el);
+      domain_x.push(el[0]);
+      if (el[1] > max_count) max_count = el[1];
+      if (el[2] > max_value) max_value = el[2];
+      });
+
+    // Define axis domains
+    var x = d3.scale.ordinal()
+      .domain(domain_x)
+      .rangeRoundBands([0, width - margin_y - 10], 0);
+    var y_value = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_value + 5]);
+    var y_count = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_count + 5]);
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", height - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) { $("#do_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + "<br>" + d[2]) })
+      .on("mousemove", function(){ $("#do_tooltip").css("top", (event.pageY-10)+"px").css("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(){ $("#do_tooltip").css("display", "none") });
+
+    // Draw x-axis
+    var xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y  + ", " + (height - margin_x) +" )")
+      .attr("class", "x axis")
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.75em")
+      .attr("dy", "-.25em")
+      .attr("transform", "rotate(-90)" );
+
+    // Draw y-axis
+    var yAxis = d3.svg.axis().scale(y_value)
+        .orient("left")
+        .ticks(5)
+        .tickFormat(d3.format(".0f%"));
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Draw the lines
+    var line_value = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_value(d[2]); });
+    var line_count = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_count(d[1]); });
+
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#8BBA00")
+      .attr("d", line_value(data));
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#FFC000")
+      .attr("d", line_count(data));
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    fence1 = int(request.GET.get('fence1', cls.fence1))
+    fence2 = int(request.GET.get('fence2', cls.fence2))
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+    try:
+      current = datetime.strptime(
+        Parameter.objects.using(db).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current = datetime.now()
+      current = current.replace(microsecond=0)
+    request.database = db
+    GridReport.getBuckets(request)
+    cursor = connections[db].cursor()
+    query = '''
+      select
+         0, common_bucketdetail.name, common_bucketdetail.startdate,
+         count(*), coalesce(round(sum(item.price * quantity)),0)
+      from common_bucketdetail
+      left outer join distribution_order
+        on distribution_order.startdate >= common_bucketdetail.startdate
+        and distribution_order.startdate < common_bucketdetail.enddate
+        and status in ('confirmed', 'proposed')
+      left outer join item
+        on distribution_order.item_id = item.name
+      where bucket_id = %%s and common_bucketdetail.enddate > %%s
+        and common_bucketdetail.startdate < %%s
+      group by common_bucketdetail.name, common_bucketdetail.startdate
+      union all
+      select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from distribution_order
+      inner join item
+      on distribution_order.item_id = item.name
+      where status = 'confirmed'
+      union all
+      select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from distribution_order
+      inner join item
+      on distribution_order.item_id = item.name
+      where status = 'proposed' and startdate < %%s + interval '%s day'
+      union all
+      select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from distribution_order
+      inner join item
+      on distribution_order.item_id = item.name
+      where status = 'proposed' and startdate < %%s + interval '%s day'
+      order by 1, 3
+      ''' % (fence1, fence2)
+    cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))
+    result = [
+      '<svg class="chart" id="do_chart" style="width:100%; height: 150px;"></svg>',
+      '<table id="do_overview" style="display: none">',
+      ]
+    for rec in cursor.fetchall():
+      if rec[0] == 0:
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+      elif rec[0] == 1:
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
+          ))
+      elif rec[0] == 2 and fence1:
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence1
+          ))
+      elif fence2:
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence2
+          ))
+    result.append('</div><div id="do_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(DistributionOrderWidget)
+
+
+class PurchaseOrderWidget(Widget):
+  name = "purchase_orders"
+  title = _("Purchase orders")
+  tooltip = _("Shows purchase orders by ordering date")
+  permissions = (("view_problem_report", "Can view problem report"),)
+  asynchronous = True
+  url = '/data/input/purchaseorder/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  exporturl = True
+  fence1 = 7
+  fence2 = 30
+  supplier = None
+
+  def args(self):
+    if self.supplier:
+      return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2, 'supplier': self.supplier})
+    else:
+      return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
+
+  javascript = '''
+    var margin_y = 70;  // Width allocated for the Y-axis
+    var margin_x = 60;  // Height allocated for the X-axis
+    var svg = d3.select("#po_chart");
+    var width = $("#po_chart").width();
+    var height = $("#po_chart").height();
+
+    // Collect the data
+    var domain_x = [];
+    var data = [];
+    var max_value = 0.0;
+    var max_count = 0.0;
+    $("#po_overview").find("tr").each(function() {
+      var name = $(this).children('td').first();
+      var count = name.next();
+      var value = count.next()
+      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      data.push(el);
+      domain_x.push(el[0]);
+      if (el[1] > max_count) max_count = el[1];
+      if (el[2] > max_value) max_value = el[2];
+      });
+
+    // Define axis domains
+    var x = d3.scale.ordinal()
+      .domain(domain_x)
+      .rangeRoundBands([0, width - margin_y - 10], 0);
+    var y_value = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_value + 5]);
+    var y_count = d3.scale.linear()
+      .range([height - margin_x - 10, 0])
+      .domain([0, max_count + 5]);
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", height - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) { $("#po_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + "<br>" + d[2]) })
+      .on("mousemove", function(){ $("#po_tooltip").css("top", (event.pageY-10)+"px").css("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(){ $("#po_tooltip").css("display", "none") });
+
+    // Draw x-axis
+    var xAxis = d3.svg.axis().scale(x)
+        .orient("bottom").ticks(5);
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y  + ", " + (height - margin_x) +" )")
+      .attr("class", "x axis")
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.75em")
+      .attr("dy", "-.25em")
+      .attr("transform", "rotate(-90)" );
+
+    // Draw y-axis
+    var yAxis = d3.svg.axis().scale(y_value)
+        .orient("left")
+        .ticks(5)
+        .tickFormat(d3.format(".0f%"));
+    svg.append("g")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Draw the lines
+    var line_value = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_value(d[2]); });
+    var line_count = d3.svg.line()
+      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+      .y(function(d) { return y_count(d[1]); });
+
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#8BBA00")
+      .attr("d", line_value(data));
+    svg.append("svg:path")
+      .attr("transform", "translate(" + margin_y + ", 10 )")
+      .attr('class', 'graphline')
+      .attr("stroke","#FFC000")
+      .attr("d", line_count(data));
+    '''
+
+  @classmethod
+  def render(cls, request=None):
+    fence1 = int(request.GET.get('fence1', cls.fence1))
+    fence2 = int(request.GET.get('fence2', cls.fence2))
+    supplier = request.GET.get('supplier', cls.supplier)
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+    try:
+      current = datetime.strptime(
+        Parameter.objects.using(db).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current = datetime.now()
+      current = current.replace(microsecond=0)
+    request.database = db
+    GridReport.getBuckets(request)
+    supplierfilter = 'and supplier_id = %s' if supplier else ''
+    cursor = connections[db].cursor()
+    query = '''
+      select
+         0, common_bucketdetail.name, common_bucketdetail.startdate,
+         count(*), coalesce(round(sum(item.price * quantity)),0)
+      from common_bucketdetail
+      left outer join purchase_order
+        on purchase_order.startdate >= common_bucketdetail.startdate
+        and purchase_order.startdate < common_bucketdetail.enddate
+        and status in ('confirmed', 'proposed') %s
+      left outer join item
+        on purchase_order.item_id = item.name
+      where bucket_id = %%s and common_bucketdetail.enddate > %%s
+        and common_bucketdetail.startdate < %%s
+      group by common_bucketdetail.name, common_bucketdetail.startdate
+      union all
+      select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from purchase_order
+      inner join item
+      on purchase_order.item_id = item.name
+      where status = 'confirmed' %s
+      union all
+      select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from purchase_order
+      inner join item
+      on purchase_order.item_id = item.name
+      where status = 'proposed' and startdate < %%s + interval '%s day' %s
+      union all
+      select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      from purchase_order
+      inner join item
+      on purchase_order.item_id = item.name
+      where status = 'proposed' and startdate < %%s + interval '%s day' %s
+      order by 1, 3
+      ''' % (
+        supplierfilter, supplierfilter, fence1, supplierfilter, fence2, supplierfilter
+        )
+    if supplier:
+      cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, supplier, supplier, current, supplier, current, supplier))
+    else:
+      cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))
+    result = [
+      '<svg class="chart" id="po_chart" style="width:100%; height: 150px;"></svg>',
+      '<table id="po_overview" style="display: none">',
+      ]
+    for rec in cursor.fetchall():
+      if rec[0] == 0:
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+      elif rec[0] == 1:
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
+          ))
+      elif rec[0] == 2 and fence1:
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence1
+          ))
+      elif fence2:
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<button type="button" class="btn btn-success btn-xs">Review</button></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence2
+          ))
+    result.append('</div><div id="po_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(PurchaseOrderWidget)
+
+
 class PurchaseQueueWidget(Widget):
   name = "purchase_queue"
   title = _("Purchase queue")
@@ -149,6 +707,47 @@ class PurchaseQueueWidget(Widget):
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchaseQueueWidget)
+
+
+
+class DistributionQueueWidget(Widget):
+  name = "distribution_queue"
+  title = _("Distribution queue")
+  tooltip = _("Display a list of new distribution orders")
+  permissions = (("view_distributionorder", "Can view distribution orders"),)
+  asynchronous = True
+  url = '/data/input/distributionorder/?status=proposed&sidx=startdate&sord=asc'
+  exporturl = True
+  limit = 20
+
+  def args(self):
+    return "?%s" % urlencode({'limit': self.limit})
+
+  @classmethod
+  def render(cls, request=None):
+    limit = int(request.GET.get('limit', cls.limit))
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+    result = [
+      '<table style="width:100%">',
+      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
+        capfirst(force_text(_("item"))), capfirst(force_text(_("origin"))),
+        capfirst(force_text(_("destination"))), capfirst(force_text(_("enddate"))),
+        capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
+        )
+      ]
+    alt = False
+    for po in DistributionOrder.objects.using(db).filter(status='proposed').order_by('startdate')[:limit]:
+      result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+        alt and ' class="altRow"' or '', escape(po.item.name), escape(po.origin.name if po.origin else ''), escape(po.destination.name), po.enddate.date(), int(po.quantity), int(po.criticality)
+        ))
+      alt = not alt
+    result.append('</table>')
+    return HttpResponse('\n'.join(result))
+
+Dashboard.register(DistributionQueueWidget)
 
 
 class ShippingQueueWidget(Widget):

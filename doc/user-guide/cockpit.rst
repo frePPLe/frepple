@@ -20,13 +20,28 @@ customize interactively.
 
 The following widgets are currently available:
 
-* | **Resource queue**
-  | This is the list of operations that are about to be started on each
-    resource.
+* | **Purchase orders**
+  | Provides a high level overview of the open purchase orders, and new
+    orders that will need to be created soon.
 
 * | **Purchase queue**
   | Displays a list of new purchase orders that should be placed on your
     suppliers.
+
+* | **Distribution orders**
+  | Provides a high level overview of the open distribution orders, and new
+    orders that will need to be created soon.
+
+* | **Distribution queue**
+  | Displays a list of new distribution orders that should be placed.
+
+* | **Manufacturing orders**
+  | Provides a high level overview of the open manufacturing orders, and new
+    orders that will need to be created soon.
+
+* | **Resource queue**
+  | This is the list of operations that are about to be started on each
+    resource.
 
 * | **Shipping queue**
   | Displays a list of customer orders that are about to be shipped.
@@ -90,6 +105,9 @@ The following widgets are currently available:
     DEFAULT_DASHBOARD = [
       {'width':'50%', 'widgets':[
         ("welcome",{}),
+        ("purchase_orders", {"fence1": 7, "fence2": 30}),
+        ("distribution_orders", {"fence1": 7, "fence2": 30}),
+        ("manufacturing_orders", {"fence1": 7, "fence2": 30}),
         ("resource_queue",{"limit":20}),
         ("purchase_queue",{"limit":20}),
         ("shipping_queue",{"limit":20}),

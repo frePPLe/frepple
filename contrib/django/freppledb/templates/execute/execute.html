@@ -11,7 +11,7 @@
     {
        // Disable the refresh which is currently active
        clearInterval(refresh);
-       $('#autorefresh').addClass("ui-state-disabled");
+       $('#autorefresh').addClass("disabled");
        refresh = null;
     }
     else
@@ -20,7 +20,7 @@
       refresh = setInterval(function() {
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
-      $('#autorefresh').removeClass("ui-state-disabled");
+      $('#autorefresh').removeClass("disabled");
     }
   }
 
@@ -30,12 +30,12 @@
         && cellvalue.charAt(cellvalue.length-1) == "%"
         )
       {% comment %}Translators: Translation included with Django {% endcomment %}
-      return cellvalue + "&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
+      return cellvalue + "&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     if (cellvalue == 'Failed')
       return "<span class='taskfailed'>{% trans 'failed'|capfirst %}</span>";
     else if (cellvalue == 'Waiting')
     {% comment %}Translators: Translation included with Django{% endcomment %} 
-      return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='ui-button ui-widget ui-state-default ui-corner-all' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
+      return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     else if (cellvalue == 'Done')
       return "{% trans 'done'|capfirst %}";
     else if (cellvalue == 'Canceled')
@@ -44,90 +44,80 @@
       return cellvalue;
   }
 
-  function cancelTask(id)
-  {
-    $('#popup').html(
-      interpolate(gettext('You are about to cancel task %s'), [id])
-      ).dialog({
-        title: gettext('Cancel task'),
-        autoOpen: true,
-        resizable: false,
-        width: 'auto',
-        height: 'auto',
-        buttons: [
-          {
-            text: gettext("Confirm"),
-            click: function() {
-              $.ajax({
-                url: "{{request.prefix}}/execute/cancel/" + id + "/",
-                type: "POST",
-                success: function () {
-                  $('#popup').dialog().dialog('close');
-                  },
-                error: function (result, stat, errorThrown) {
-                  $('#popup').html(result.responseText)
-                    .dialog({
-                      title: gettext("Error canceling data"),
-                      autoOpen: true,
-                      resizable: true,
-                      width: 'auto',
-                      height: 'auto'
-                    });
-                  }
-              });
-            }
-          },
-          {
-            text: gettext("Cancel"),
-            click: function() { $(this).dialog("close"); }
-          }
-          ]
-      });
+  function cancelTask(id) {   
     $.jgrid.hideModal("#searchmodfbox_grid");
-  }
-
-  function calcUtil()
-  {
-    var clusters = parseInt($("#create0").val());
-    var fcst = parseInt($("#create1").val());
-    var demands = parseInt($("#create2").val());
-    var levels = parseInt($("#create3").val());
-    var rsrc_number = parseInt($("#create8").val());
-    var rsrc_size = parseInt($("#create9").val());
-    // Available capacity:  rsrc_number * rsrc_size * 365 days/year
-    // Required capacity: clusters * fcst * 12 months/day * 1 day/unit
-    // Levels has no influence since we load a resource only at 1 step
-    // Demands also has no influence, as we assume that the forecast quantity is bigger than the orders.
-    // * 7 / 5: to account for non-working weekends
-    var util = (clusters * fcst * 12) / (rsrc_number * rsrc_size * 365) * 7.0 / 5.0
-	  $("#util").html( (util * 100).toFixed(1) );
+    
+    $("#popup").html('<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h4 class="modal-title">'+gettext('Cancel task')+'</h4>'+
+          '</div>'+
+          '<div class="modal-body"><p>'+
+            (gettext('You are about to cancel task %s'), [id]) +
+          '</p></div>'+
+          '<div class="modal-footer">'+
+            '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+          '</div>'+
+        '</div>'+
+    '</div>' )
+    .modal('show');
+    $('#confirmbutton').on('click', function() {
+        $.ajax({
+          url: "{{request.prefix}}/execute/cancel/" + id + "/",
+          type: "POST",
+          success: function () {
+            $('#popup').modal('hide');
+          },
+          error: function (result, stat, errorThrown) {
+            $('#popup .modal-body p').html(result.responseText);
+            $('#popup .modal-title').html(gettext("Error canceling data"));
+            $('#confirmbutton').prop("disabled", true).hide();
+            }
+        })
+      })
   }
 
   function checkChildren(id)
   {
     var m = id.substring(6,100);
     $("#" + id.replace(".","\\.")).prop("checked",true);  // Jquery has issues with dots in identifiers
-    console.log($("#" + id.replace(".","\\.")), "+++++");
     for (var child in models[m])
       checkChildren("empty_" + models[m][child]);
   }
 
   function importWorkbook()
   {
-    // Nothing to import
     if ($('#spreadsheet').val() == "")
       return;
-
+    
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    
     // Create dialog box
     $('#uploadResponse').val("");
-    $("#uploadSpreadsheet").dialog({
-      title: gettext("Uploading spreadsheet"),
-      autoOpen: true,
-      resizable: false,
-      width: 600,
-      height: 'auto',
-      modal: true
-      });
+    
+    $("#uploadSpreadsheet").html('<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h4 class="modal-title">'+gettext("Uploading spreadsheet")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+          '<form id="uploadform">' +
+            '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
+              gettext('The first row should contain the field names.') + '<br/><br/>' +
+            '</p>'+
+            '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
+            gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
+          '</form>' +
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +       
+        '</div>'+
+        '<div class="modal-footer">'+
+            '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+        '</div>'+
+        '</div>'+
+    '</div>' )
+    .modal('show');
 
     // Upload the file
     var data = new FormData();
@@ -153,14 +143,52 @@
       contentType: false
       });
   }
-
+  {
+    // Nothing to import
+    $('#importbutton').on('click', function() {
+      if ($("#csv_file").val() == "") return;
+      $('#uploadResponse').css('display','block');
+      $.ajax({
+        type: 'post',
+        url: '{{request.prefix}}/execute/launch/importworkbook/',
+        cache: false,
+        data: new FormData($("#uploadform")[0]),
+        success: function (data) {
+          var el = $('#uploadResponse');
+          el.val(data);
+          el.scrollTop(el[0].scrollHeight - el.height());
+        },
+        xhrFields: {
+          onprogress: function (e) {
+            var el = $('#uploadResponse');
+            el.val(e.currentTarget.response);
+            el.scrollTop(el[0].scrollHeight - el.height());
+          }
+        },
+        processData: false,
+        contentType: false
+        });
+     }
+    )
+  }
+  
   $(function() {
+    icons = {
+        time: 'fa fa-clock-o',
+        date: 'fa fa-calendar',
+        up: 'fa fa-chevron-up',
+        down: 'fa fa-chevron-down',
+        previous: 'fa fa-chevron-left',
+        next: 'fa fa-chevron-right',
+        today: 'fa fa-bullseye',
+        clear: 'fa fa-trash',
+        close: 'fa fa-remove'
+      };
     // Date picker
-/*    $(".date").datepicker({
-        showOtherMonths: true, selectOtherMonths: true,
-        dateFormat: "yy-mm-dd", changeMonth:true,
-        changeYear:true, yearRange: "c-5:c+5"
-        });*/
+    $(".vDateField").on('focusin', function() {
+      $(this).parent().css('position', 'relative');
+      $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+    });
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
@@ -181,6 +209,24 @@
       $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
+    
+    $("#sourceul li a").click(function(){
+      $("#source").html($(this).text() + ' <span class="caret"></span>');
+      $("#sourcescenario").val($(this).text());
+    });
+    
+    $("#entityul li a").click(function(){
+      console.log($(this).text());
+      $("#entity").html($(this).text() + ' <span class="caret"></span>');
+      $("#loaddatafile").val($(this).text());
+    });
+
+    $("#weekstartul li a").click(function(){
+      console.log($(this).parent().index());
+      $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
+      $("#weekstart").val($(this).parent().index());
+    });
+    
     });
 
   var models = {% getModelDependencies %};
@@ -192,10 +238,6 @@
   white-space: nowrap;
   vertical-align: middle;
 }
-.ui-jqgrid tr.jqgrow td
-{
-  padding: 0;
-}
 #grid tr td {
   line-height: 22px;
 }
@@ -206,22 +248,23 @@
   margin-left: 20px;
   margin-right: 20px;
 }
-label {
-  font-weight: normal;
-}
+
 </style>
 {% endblock %}
+
 {% block actions %}
-	<span id="autorefresh" onclick="updateRefresh()" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} ui-state-disabled{% endif %}" data-toggle="tooltip" title="{% trans 'autorefresh'|capfirst|force_escape %}">
+	<span id="autorefresh" onclick="updateRefresh()" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} disabled{% endif %}" data-toggle="tooltip" title="{% trans 'autorefresh'|capfirst|force_escape %}">
 	</span>&nbsp;&nbsp;
 {{block.super}}{% endblock %}
 {% block after_table %}
-<div class="row">
+
+
+<div class="row container" id="accordion">
 <div class="col-md-12">
   <h1>{% trans "launch new tasks"|capfirst %}</h1>
 </div></div>
 <div class="row">
-	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px">
+	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px; min-width: 600px">
 	
 	{% if perms.execute %}
 	  {% if perms.execute.generate_plan %}
@@ -241,31 +284,38 @@ label {
 			        <td style="vertical-align:top; padding: 15px">
 			            <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
 			        </td>
-			        <td>
+			        <td  style="padding: 15px;">
 				        {% blocktrans %}
 										Load frePPLe from the database and live data sources...<br>
 										and create a plan in frePPLe...<br>
 										and export results.<br><br>
-									<b>Plan type</b><br>
+								<p><b>Plan type</b><br>
 				        {% endblocktrans %}
-				        <input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
-				        {% blocktrans %}
+				        <label>
+						        <input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
+						        {% blocktrans %}
 				            <span data-toggle="tooltip" data-placement="top" title="This plan respects the constraints enabled below.
 In case of shortages the demand is planned late or short.">Constrained plan</span>
-				        {% endblocktrans %}
-				        <span class="fa fa-question-circle" style="display:inline-block;"></span><br>
-				        <input type="radio" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
-				        {% blocktrans %}
+                    {% endblocktrans %}<span class="fa fa-question-circle" style="display:inline-block;"></span>
+                </label>
+				        <br>
+				        
+				        <label><input type="radio" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
+				            {% blocktrans %}
 				            <span data-toggle="tooltip" data-placement="bottom"  title="This plan shows material, capacity and operation problems that prevent the demand from being planned in time.
 The demand is always met completely and on time.">Unconstrained plan</span>
-				        {% endblocktrans %}
-				        <span class="fa fa-question-circle" style="display:inline-block;"></span><br><br>
+				            {% endblocktrans %}<span class="fa fa-question-circle" style="display:inline-block;"></span>
+				        </label>
+				        </p>
+				        <p>
 				        <b>{% trans "constraints"|capfirst %}</b><br>
-								<input type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/><label for="cb4">&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}</label><br>
-								<input type="checkbox" name="constraint" {% if materialconstrained %}checked {% endif %}value="2" id="cb2"/><label for="cb2">&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}</label><br>
-								<input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/><label for="cb1">&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br>
-								<input type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/><label for="cb8">&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br>
+								<label for="cb4"><input type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/>&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}</label><br>
+								<label for="cb2"><input type="checkbox" name="constraint" {% if materialconstrained %}checked {% endif %}value="2" id="cb2"/>&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}</label><br>
+								<label for="cb1"><input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/>&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br>
+								<label for="cb8"><input type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/>&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br>
 				        <br>
+				        </p>
+				        <p>
 				        {% if odoo %}
 				          {% blocktrans %}
 				              <b data-toggle="tooltip" title="A live data source allows your frePPLe plan to be 100% in sync with data in an external system.
@@ -285,7 +335,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				              <td style="text-align:center"><input type="checkbox" name="odoo_write" {% if odoo_write %}checked {% endif %}value="1"/></td></tr>
 				          </table><br>
 				        {% endif %}
-				        <a id="logfile" class="btn btn-primary active" role="button" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a>
+				        <a id="logfile" class="btn btn-info" role="button" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a>
+				        </p>
 				      </td>
 			      </tr>
 			      </form>
@@ -311,9 +362,12 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			        <td style="vertical-align:top; padding: 15px">
 			            <button type="submit" class="btn btn-primary" id="export" value="{% trans "export"|capfirst %}" >{% trans "export"|capfirst %}</button>
 			        </td>
-			        <td>
-			          {% trans "Download all input data in a single spreadsheet." %}<br><br>
+			        <td style="padding: 15px;">
+			         <p>
+			          {% trans "Download all input data in a single spreadsheet." %}
+			         </p>
 			          {% getMenu as menu %}
+			          <p>
 			          <input class="chck_all check" type="checkbox" name="all" value="1" checked=""><br>
 			          {% for group in menu %}
 			            {% for item in group.1 %}
@@ -324,7 +378,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			                </label><br>
 			              {% endif %}
 			            {% endfor %}
-			          {% endfor %}		                
+			          {% endfor %}
+			          </p>		                
 			        </td>
 			      </tr>
 			      </form>
@@ -348,9 +403,12 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				        <td style="vertical-align:top; padding: 15px">
 				          <button type="submit" class="btn btn-primary" id="import" onclick="importWorkbook()" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
 				        </td>
-				        <td>
-				          {% trans "Import input data from a spreadsheet.<br>The spreadsheet must match the structure exported with the task above." %}<br>
-				          {% trans "Data file" %}:<input class="btn btn-primary" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+				        <td style="padding: 15px;">
+				          <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
+		              <label>{% trans "Data file" %}:
+                  
+                    <input class="btn btn-info form-control" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+</label>
 				        </td>
 				      </tr>      
 				    </table>
@@ -369,52 +427,60 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  </div>
 		  <div id="vierdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vierdeHeading">
 		    <div class="panel-body">
-			    <table id="scenarios">
-			      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_copy/">{% csrf_token %}
-			      <tr>
-			        {% comment %}Translators: Translation included with Django {% endcomment %}
-							<th>{% trans 'name'|capfirst %}</th>
-							<th>{% trans 'status'|capfirst %}</th>
-							<th>{% trans 'description'|capfirst %}</th>
-							<th>{% trans 'last refresh'|capfirst %}</th>
-			      </tr>
-			      {% for j in scenarios %}{% ifnotequal j.name 'default' %}
-			      <tr>
-							<td><input type=checkbox name="{{j.name}}" id="sc{{j.name}}"/>
-							  <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
-							  </label>
-							</td>
-							<td>{{j.status}}</td>
-							<td>{{j.description}}</td>
-							<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>       
-			      </tr>
-			      {% endifnotequal %}{% endfor %}
-			      {% if perms.execute.copy_scenario %}
-			      <tr>
-			        <td><button  class="btn btn-primary" role="button" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
-			        </td>
-			        <td colspan="2">{% trans "copy"|capfirst %}
-			          <select name="source">
-			            {% for j in scenarios %}{% ifequal j.status 'In use' %}
-			              <option value="{{j.name}}">{{j.name}}</option>
-			            {% endifequal %}{% endfor %}
-			          </select> 
-			          {% trans "into selected scenarios" %}
-			        </td>       
-			      </tr>
-			      {% endif %}
-			      {% if perms.execute.release_scenario %}
-			      <tr>
-			        <td><button class="btn btn-primary" role="button" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
-			        <td colspan="2">{% trans "release selected scenarios"|capfirst %}</td>
-			      </tr>
-			      <tr>
-			        <td><button class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
-			        <td colspan="2">{% trans "Update description of selected scenarios" %}<br><input name="description" type="text" size="40" /></td>
-			      </tr>
-			      {% endif %}
-			    </form>
-			    </table>
+				    <table id="scenarios">
+				      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_copy/">{% csrf_token %}
+					      <tr>
+					        {% comment %}Translators: Translation included with Django {% endcomment %}
+									<th style="padding: 0px 15px;">{% trans 'scenario'|capfirst %}</th>
+									<th style="padding: 0px 15px;">{% trans 'status'|capfirst %}</th>
+									<th>{% trans 'description'|capfirst %}</th>
+									<th>{% trans 'last refresh'|capfirst %}</th>
+					      </tr>
+					      {% for j in scenarios %}{% ifnotequal j.name 'default' %}
+					      <tr>
+									<td style="padding: 0px 15px;"><input type=checkbox name="{{j.name}}" id="sc{{j.name}}"/>
+									  <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
+									  </label>
+									</td>
+									<td  style="padding: 0px 15px;">{{j.status}}</td>
+									<td>{{j.description}}</td>
+									<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>       
+					      </tr>
+					      {% endifnotequal %}{% endfor %}		      
+					      {% if perms.execute.copy_scenario %}
+					      <tr>
+					        <td><button  class="btn btn-primary" role="button" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
+					        </td>
+					        <td  style="padding: 0px 15px;" colspan="3">
+                    <span  style="display: inline-block;">{% trans "copy"|capfirst %}
+                      <div class="dropdown dropdown-submit-input" style="display:inline">
+	                      <button class="btn btn-default dropdown-toggle" id="source" value="" type="button" data-toggle="dropdown" style="min-width: 160px">-&nbsp;&nbsp;<span class="caret"></span></button>
+	                      <ul class="dropdown-menu" aria-labelledby="source" id="sourceul" style="top: auto">
+	                      {% for j in scenarios %}
+	                        {% ifequal j.status 'In use' %}
+	                          <li><a href="#" value="{{j.name}}">{{j.name}}</a></li>
+	                        {% endifequal %}
+	                      {% endfor %}
+	                      </ul>
+	                    </div>
+                    {% trans "into selected scenarios" %}
+                    </span>
+					        </td>       
+					      </tr>
+					      {% endif %}
+					      {% if perms.execute.release_scenario %}
+					      <tr>
+					        <td><button class="btn btn-primary" role="button" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
+					        <td  style="padding: 0px 15px;" colspan="2">{% trans "release selected scenarios"|capfirst %}</td>
+					      </tr>
+					      <tr>
+					        <td><button class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
+					        <td  style="padding: 0px 15px;" colspan="3"><input class="form-control" name="description" type="text" size="40" placeholder="{% trans "Update description of selected scenarios" %}"/></td>
+					      </tr>
+					      {% endif %}
+					      <input type="hidden" name="source" id="sourcescenario" value="">
+				    </form>
+				  </table>
         </div>
 		  </div>
 		</div>
@@ -434,8 +500,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			    <table>
 						<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}
 						<tr>
-							<td><button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-							<td>{% trans "Dump the database contents to a file." %}</td>
+							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+							<td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
 						</tr>
 						</form>
 					</table>
@@ -456,8 +522,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			    <table>
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
 					  <tr>
-							<td><button  class="btn btn-primary" role="button" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-							<td>{% trans "Erase selected tables in the database." %}<br><br>
+							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+							<td  style="padding: 0px 15px;">{% trans "Erase selected tables in the database." %}<br><br>
 								<input class="empty_all" type="checkbox" name="all" value="1"><br>
 								{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
 								<label for="empty_{{ item.1.model | model_name }}">
@@ -483,17 +549,23 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  <div id="zevendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zevendeHeading">
 		    <div class="panel-body">
 					<table>
-					<form role="form" method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
+					<form class="form-control" role="form" method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
 					 <tr>
-						<td><button  class="btn btn-primary" role="button" id="load" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-				  	<td>{% trans "Load a dataset from a file in the database." %}<br>
-				    	{% trans "Available datasets:" %}
-				    	<select name="datafile" id="entity">
-				    	 <option value="-" selected="selected">-</option>
-				        {% for i in fixtures %}<option value="{{i}}">{{i}}</option>{% endfor %}
-					    </select>
-					   </td>
+						<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" id="load" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+				  	<td>
+               <div class="dropdown dropdown-submit-input">	
+		               <label>
+		                   {% trans "Load one of the available datasets to the current database." %}                 
+		                   <button class="btn btn-default dropdown-toggle form-control"  id="entity" value="" type=button data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
+		                   </button>
+                       <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">  
+                          {% for i in fixtures %}<li><a href="#" value="{{i}}">{{i}}</a></li>{% endfor %}
+                       </ul>
+                   </label>
+               </div>
+            </td>
 					 </tr>
+					 <input type="hidden" name="datafile" id="loaddatafile" value="">
 					</form>
 					</table>
 				</div>
@@ -518,7 +590,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				      <td style="vertical-align:top; padding: 15px">
 				         <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
 				      </td>
-				      <td>{% blocktrans with delta="<input name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
+				      <td  style="padding: 0px 15px;">{% blocktrans with delta="<input class='form-control' name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
 			        </td>
 			      </tr>
 			    </form>
@@ -542,7 +614,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			      <tr>
 			        <td style="vertical-align:top; padding: 15px">
 			          <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-			        <td>{% trans "Export frePPLe plan to the ERP." %}</td>
+			        <td  style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %}</td>
 			      </tr>
 			    </form>
 			    </table>
@@ -556,7 +628,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  <div class="panel-heading" role="tab" id="tiendeHeading">
 		    <h4 class="panel-title">
 		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#tiendeAccord" aria-expanded="true" aria-controls="tiendeAccord">
-		          {% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}
+		          {% blocktrans %}Generate buckets{% endblocktrans %}
 		      </a>
 		    </h4>
 		  </div>
@@ -568,67 +640,32 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 							<td style="vertical-align:top; padding: 15px">
 							  <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
 							</td>
-							<td>{% blocktrans %}Create time buckets for reporting.<br>
-								Start date: <input class="date" name="start" type="text" maxlength="5" size="12"/><br>
-								End date: <input class="date" name="end" type="text" maxlength="5" size="12"/><br>
-								Week starts on:
-								<select name="weekstart">
-									<option value="0">Sunday</option>
-									<option value="1" selected="selected">Monday</option>
-									<option value="2">Tuesday</option>
-									<option value="3">Wednesday</option>
-									<option value="4">Thursday</option>
-									<option value="5">Friday</option>
-									<option value="6">Saturday</option>
-								</select>
+							<td  style="padding: 0px 15px;">
+							<p>{% blocktrans %}Create time buckets for reporting.</p>
+								<label class="control-label">Start date: <input class="vDateField form-control" id="start" name="start" type="text" size="12"/></label>
+								<label class="control-label">End date: <input class="vDateField form-control" id="end" name="end" type="text" size="12"/></label><br>
+               <label class="control-label" for="weekstart1">Week starts on:</label>
+               <div class="dropdown dropdown-submit-input"> 
+                       <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span>
+                       </button>
+                       <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">  
+                          <li><a href="#">Sunday</a></li>
+                          <li><a href="#">Monday</a></li>
+                          <li><a href="#">Tuesday</a></li>
+                          <li><a href="#">Wednesday</a></li>
+                          <li><a href="#">Thursday</a></li>
+                          <li><a href="#">Friday</a></li>
+                          <li><a href="#">Saturday</a></li>
+                       </ul>
+               </div>
+
 							{% endblocktrans %}</td>
-					  </tr>
+					  </tr><input type="hidden" name="weekstart" id="weekstart" value="">
 					</form>
 					</table>
 				</div>
 		  </div>
 		</div>
-	
-	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="elfdeHeading">
-		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#elfdeAccord" aria-expanded="true" aria-controls="elfdeAccord">
-		          {% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}
-		      </a>
-		    </h4>
-		  </div>
-		  <div id="elfdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="elfdeHeading">
-		    <div class="panel-body">
-					<table>
-					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createmodel/">{% csrf_token %}
-					<tr>
-						<td style="vertical-align:top; padding: 15px">
-						   <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-						</td>
-						<td>{% blocktrans %}Create a sample model in the database.<br>
-						The parameters control the size and complexity.<br>
-						Number of end items: <input id="create0" name="clusters" type="text" maxlength="5" size="5" value="100" onchange="calcUtil()"/><br>
-						<b>Demand:</b><br>
-						&nbsp;&nbsp;Monthly forecast per end item: <input id="create1" name="fcst" type="text" maxlength="4" size="4" value="50" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Demands per end item: <input id="create2" name="demands" type="text" maxlength="4" size="4" value="30" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Average delivery lead time: <input id="create3" name="deliver_lt" type="text" maxlength="4" size="4" value="30" onchange="calcUtil()"/> days<br>
-						<b>Raw Materials:</b><br>
-						&nbsp;&nbsp;Depth of bill-of-material: <input id="create4" name="levels" type="text" maxlength="2" size="2" value="5" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Total number of components: <input id="create5" name="components" type="text" maxlength="5" size="5" value="200" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Number of components per end item: <input id="create6" name="components_per" type="text" maxlength="5" size="5" value="4" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Average procurement lead time: <input id="create7" name="procure_lt" type="text" maxlength="4" size="4" value="40" onchange="calcUtil()"/> days<br>
-						<b>Capacity:</b><br>
-						&nbsp;&nbsp;Number of resources: <input id="create8" name="rsrc_number" type="text" maxlength="3" size="3" value="60" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Size of each resource: <input id="create9" name="rsrc_size" type="text" maxlength="3" size="3" value="5" onchange="calcUtil()"/><br>
-						&nbsp;&nbsp;Expected average resource utilization: <span id="util">76.7</span>&#37;<br>
-						{% endblocktrans %}</td>
-					</tr>
-					</form>
-					</table>
-				</div>
-		  </div>
-		</div>
-	</div>
 	
 	{% endif %}
 	

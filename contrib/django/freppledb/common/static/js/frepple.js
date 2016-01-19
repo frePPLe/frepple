@@ -144,7 +144,7 @@ var upload = {
 //----------------------------------------------------------------------------
 
 function opendetail(event) {
-  var database = $('#database').val();
+  var database = $('#database').prop('name');
   database = (database===undefined || database==='default') ? '' : '/' + database;
   var curlink = $(event.target).parent().attr('href');
   var objectid = $(event.target).parent().parent().text();
@@ -878,11 +878,6 @@ $(function() {
       },
     }
   });
-      
-//    select: function( event, ui ) {
-//      window.location.href = database + ui.item.url + admin_escape(ui.item.value) + "/";
-//    }
-//  );
 
 });
 
@@ -1065,9 +1060,9 @@ function getURLparameters()
 function selectDatabase()
 {
   // Find new database and current database
-  var el = $('#database');
-  var db = el.val();
-  var cur = el.attr('name');
+  var db = $(this).text();
+  var cur = $('#database').attr('name');
+  console.log(db, cur);
   // Change the location
   if (cur == db)
     return;

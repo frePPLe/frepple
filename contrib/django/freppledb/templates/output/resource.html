@@ -120,7 +120,7 @@ function drawGraphs(jsondata)
         })
       .on("mouseenter", function(d) {
          graph.showTooltip(
-           '<div style="text-align:center; font-weight:bold">'
+           '<div class="panel-heading" style="text-align:center; font-weight:bold">'
            + timebuckets[d['bucket']]['name'] + "&nbsp;"
            + (Math.round(d['perc']*10)/10) + '%</div>'
            + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'

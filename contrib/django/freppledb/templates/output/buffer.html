@@ -123,7 +123,7 @@ function drawGraphs(jsondata)
         })
       .on("mouseenter", function(d) {
         graph.showTooltip(
-          '<div style="text-align:center; font-weight:bold">'
+          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
           + timebuckets[d['bucket']]['name'] + '</div>'
           + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
           + (Math.round(d['startinv']*10)/10)

@@ -1137,11 +1137,11 @@ var graph = {
         .append("div")
         .attr("id", "tooltip")
         .attr("role", "tooltip")
-        .attr("class", "ui-tooltip ui-widget ui-corner-all ui-widget-content")
+        .attr("class", "panel panel-info")
         .style("position", "absolute");
 
     // Update content and display
-    tt.html('<div class="ui-tooltip-content">' + txt + '</div>')
+    tt.html('' + txt + '')
       .style('display', 'block');
     graph.moveTooltip();
   },

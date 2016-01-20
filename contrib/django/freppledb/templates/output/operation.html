@@ -121,7 +121,7 @@ function drawGraphs(jsondata)
         })
       .on("mouseenter", function(d) {
         graph.showTooltip(
-          '<div style="text-align:center; font-weight:bold">'
+          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
           + timebuckets[d['bucket']]['name'] + '</div>'
           + '<table><tr><td>{{_('locked starts')|capfirst}}</td><td style="text-align:center">'
           + (Math.round(d['locked_start']*10)/10)

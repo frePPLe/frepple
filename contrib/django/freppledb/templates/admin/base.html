@@ -18,7 +18,7 @@
 
 <div class="container-fluid">
 
-{% if messages %}<div class="row"><div class="col-md-12"><ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul></div></div>{% endif %}
+{% if messages %}<div class="row"><div class="col-md-12">{% for message in messages %}<ul class="alert alert-{{message.tags}}"><li >{{message}}</li></ul>{% endfor %}</div></div>{% endif %}
 
 {% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1 style="float: left">{{title|capfirst|force_escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div></div>{% endblock %}
 

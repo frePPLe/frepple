@@ -487,7 +487,7 @@
 		},
 		guiStyles: {
 			jQueryUI: {
-				gBox: "ui-widget ui-widget-content ui-corner-all",  // ui-widget-content??? for the children of gbox
+				gBox: "panel panel-body",  // ui-widget-content??? for the children of gbox
 				overlay: "ui-widget-overlay",
 				loading: "ui-state-default ui-state-active",
 				hDiv: "ui-state-default ui-corner-top",

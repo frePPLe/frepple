@@ -71,27 +71,21 @@ def handler500(request):
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
   return HttpResponseServerError(template.render(RequestContext(request)))
 
-
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
     label=_("Language"),
     initial="auto",
-    choices=User.languageList,
-    help_text=_("Language of the user interface"),
+    choices=User.languageList
     )
   pagesize = forms.IntegerField(
     label=_('Page size'),
     required=False,
-    initial=100,
-    min_value=25,
-    help_text=_('Number of records to display in a single page'),
+    initial=100
     )
-
   theme = forms.ChoiceField(
     label=_('Theme'),
     required=False,
     choices=[ (i, capfirst(i)) for i in settings.THEMES ],
-    help_text=_('Theme for the user interface'),
     )
   cur_password = forms.CharField(
     #. Translators: Translation included with Django
@@ -123,6 +117,10 @@ class PreferencesForm(forms.Form):
 
   def clean(self):
     newdata = super(PreferencesForm, self).clean()
+    if newdata.get('pagesize',0) > 10000:
+      raise forms.ValidationError("Maximum page size is 10000.")
+    if newdata.get('pagesize',25) < 25:
+      raise forms.ValidationError("Minimum page size is 25.")
     if newdata['cur_password']:
       if not self.user.check_password(newdata['cur_password']):
         #. Translators: Translation included with Django
@@ -139,9 +137,11 @@ def preferences(request):
   if request.method == 'POST':
     form = PreferencesForm(request.POST)
     form.user = request.user
+    print("raw:", request.POST)
     if form.is_valid():
       try:
         newdata = form.cleaned_data
+        print("cleaned:", newdata)
         request.user.language = newdata['language']
         if 'theme' in newdata:
           request.user.theme = newdata['theme']
@@ -173,11 +173,18 @@ def preferences(request):
       'theme': pref.theme,
       'pagesize': pref.pagesize,
       })
+  LANGUAGE = User.languageList[0][1]
+  for l in User.languageList:
+    if l[0] == request.user.language:
+      LANGUAGE = l[1]
   return render_to_response('common/preferences.html', {
      'title': _('My preferences'),
      'form': form,
      },
-     context_instance=RequestContext(request))
+     context_instance=RequestContext(request, {
+        'THEMES': settings.THEMES,
+        "LANGUAGE": LANGUAGE
+        }))
 
 
 class HorizonForm(forms.Form):

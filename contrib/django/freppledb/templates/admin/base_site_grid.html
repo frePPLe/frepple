@@ -111,13 +111,13 @@ $(window).bind('resize', function() {
 </div>
 
 <div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block actions %}{% if reportclass.filterable %}
-<span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span>{% endif %}
-{% if hasaddperm %}<span onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span>
-{% if not is_popup %}<span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="disabled fa fa-copy fa-lg"></span>
-{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span>
-{% endif %}{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span>
-{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
-{% endif %}<span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>{% endblock %}
+<button class="btn btn-primary"><span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span></button>{% endif %}
+{% if hasaddperm %}<button class="btn btn-primary"><span onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span></button>
+{% if not is_popup %}<button class="btn btn-primary"><span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="disabled fa fa-copy fa-lg"></span></button>
+{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-primary"><span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span></button>
+{% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-primary"><span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span></button>
+{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<button class="btn btn-primary"><span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span></button>
+{% endif %}<button class="btn btn-primary"><span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span></button>{% endblock %}
 </div>
 
 </div>

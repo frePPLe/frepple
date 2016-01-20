@@ -102,16 +102,36 @@ $(window).bind('resize', function() {
 </div>
 
 <div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
-<div class="btn-group" role="group">
-<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-default{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode"><label for="gridmode" class="fa fa-table fa-lg"></label></button>
-<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-default{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode"><label for="graphmode" class="fa fa-image fa-lg"></label></button>
-</div>&nbsp;&nbsp;
-{% endif %}
-{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
-{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
-{% endif %}{% if reportclass.editable and haschangeperm %}<span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
-{% endif %}<span onclick="grid.showExport(false)" data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>
-</div>
+	<div class="btn-group" role="group">
+
+		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
+		  <label for="gridmode" class="fa fa-table fa-lg"></label>
+		</button>
+		<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
+		  <label class="fa fa-image fa-lg"></label>
+		</button>
+
+	</div>&nbsp;&nbsp;
+	{% endif %}
+	{% if reportclass.filterable and not args.0 %}
+	  <button class="btn btn-primary">
+	    <span onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search fa-lg"></span>
+	  </button>
+	{% endif %}
+	{% if reportclass.hasTimeBuckets %}
+	  <button class="btn btn-primary">
+	    <span onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o fa-lg"></span>
+	  </button>
+  {% endif %}
+  {% if reportclass.editable and haschangeperm %}
+	    <button class="btn btn-primary">
+        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
+	    </button>
+  {% endif %}
+  <button class="btn btn-primary">
+    <span onclick="grid.showExport(false)" data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>
+  </button>
+	</div>
 
 </div>
 

@@ -48,7 +48,8 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     // Less compilation
     less: {
-      grass2: themeconfig('grass2')
+      grass2: themeconfig('grass2'),
+      grass3: themeconfig('grass3')
     },
     // When any .less file changes we automatically run the "less"-task.
     watch: {

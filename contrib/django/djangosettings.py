@@ -377,14 +377,14 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'earth', 'grass', 'grass2', 'lemon', 'snow', 'strawberry', 'water'
+  'earth', 'grass', 'grass2', 'grass3', 'lemon', 'snow', 'strawberry', 'water'
   ]
 
 # A default user-group to which new users are automatically added
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme
-DEFAULT_THEME = 'grass2'
+DEFAULT_THEME = 'grass3'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100

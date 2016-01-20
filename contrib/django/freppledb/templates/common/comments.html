@@ -29,7 +29,7 @@
 {% if perms.common.add_comment %}
       <form method="post">
 {% csrf_token %}
-        <textarea id="comment" name="comment" rows="10" style="width:100%" oninput="$('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');"></textarea>
+        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%" oninput="$('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');"></textarea>
 {% comment %}Translators: Translation included with Django {% endcomment %}  
         <button id="submit" type="submit" class="btn btn-primary" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button>
       </form>{% endif%}

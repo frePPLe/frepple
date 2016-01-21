@@ -50,18 +50,18 @@ var upload = {
     if ($('#undo').hasClass("btn-primary")) return;
     $("#grid").trigger("reloadGrid");
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
-    $('#save, #undo').addClass("btn-primary").removeClass("btn-danger");
-    $('#actions').addClass("disabled").prop('disabled', 'disabled');
+    $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
+    $('#actions').prop('disabled', true);
 
-    $('#filter').removeClass("disabled");
+    $('#filter').prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
 
   select : function ()
   {
-    $('#filter').addClass("disabled");
+    $('#filter').prop('disabled', true);
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#save, #undo').removeClass("btn-primary").addClass("btn-danger");
+    $('#save, #undo').removeClass("btn-primary").addClass("btn-danger").prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
@@ -266,8 +266,8 @@ var grid = {
     };
 
     $("#actions").prop("selectedIndex",0);
-    $('#save').removeClass("btn-primary").addClass("btn-danger");
-    $('#undo').removeClass("btn-primary").addClass("btn-danger");
+    $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
+    $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
    },
 
   // Renders the cross list in a pivot grid
@@ -645,15 +645,15 @@ var grid = {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
     if (sel > 0)
     {
-      $("#copy_selected").removeClass("disabled").addClass("bold");
-      $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions").removeClass("disabled").prop('disabled', false);
+      $("#copy_selected").prop('disabled', false).addClass("bold");
+      $("#delete_selected").prop('disabled', false).addClass("bold");
+      $("#actions").prop('disabled', false);
     }
     else
     {
-      $("#copy_selected").addClass("disabled").removeClass("bold");
-      $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions").addClass("disabled").prop('disabled', 'disabled');
+      $("#copy_selected").prop('disabled', true).removeClass("bold");
+      $("#delete_selected").prop('disabled', true).removeClass("bold");
+      $("#actions").prop('disabled', true);
     }
   },
 
@@ -661,16 +661,16 @@ var grid = {
   {
     if ($(this).is(':checked'))
     {
-      $("#copy_selected").removeClass("disabled").addClass("bold");
-      $("#delete_selected").removeClass("disabled").addClass("bold");
-      $("#actions").removeClass("disabled").prop('disabled', false);
+      $("#copy_selected").prop('disabled', false).addClass("bold");
+      $("#delete_selected").prop('disabled', false).addClass("bold");
+      $("#actions").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
-      $("#copy_selected").addClass("disabled").removeClass("bold");
-      $("#delete_selected").addClass("disabled").removeClass("bold");
-      $("#actions").addClass("disabled").prop('disabled', 'disabled');
+      $("#copy_selected").prop('disabled', true).removeClass("bold");
+      $("#delete_selected").prop('disabled', true).removeClass("bold");
+      $("#actions").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
   },
@@ -744,7 +744,7 @@ var openbravo = {
 	                     model: false
 	                   });
 	                 $('#button_close').find('.ui-button-text').text(gettext('close'));
-	                 $('#button_export').removeClass("ui-state-default").addClass("disabled").prop('disabled', 'disabled');
+	                 $('#button_export').removeClass("ui-state-default").addClass("disabled").prop('disabled', true);
 	                 // Mark selected rows as "approved" if the original status was "proposed".
 	                 for (var i in sel)
 	                 {

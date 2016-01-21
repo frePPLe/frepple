@@ -75,8 +75,8 @@ $(function() {
      });
   {% endif %}{% endif %}
   $("#grid").on('input', function() {
-	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger");
-	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger");
+	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 	  });
 });
 
@@ -99,10 +99,10 @@ $(window).bind('resize', function() {
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}
-    <select disabled='disabled' name="actions" id="actions" onchange="grid.runAction($(this).val());" class="form-control">
+    <select disabled='true' name="actions" id="actions" onchange="grid.runAction($(this).val());" class="form-control disabled">
     <option value="no_action">{% trans "select action"|capfirst %}</option>{% for i in  actions %}
     <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>{% endfor %}
     </select>{% endif %}
@@ -110,14 +110,15 @@ $(window).bind('resize', function() {
 {% endblock save_undo_buttons %}
 </div>
 
-<div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block actions %}{% if reportclass.filterable %}
-<button class="btn btn-primary"><span id="filter" onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape %}" class="fa fa-search fa-lg"></span></button>{% endif %}
-{% if hasaddperm %}<button class="btn btn-primary"><span onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" title="{% trans "Create new object"|escape %}" class="fa fa-plus fa-lg"></span></button>
-{% if not is_popup %}<button class="btn btn-primary"><span id="copy_selected" onclick="grid.showCopy()" title="{% trans 'Copy selected objects'|escape %}" class="disabled fa fa-copy fa-lg"></span></button>
-{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-primary"><span id="delete_selected" title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" class="ui-state-disabled fa fa-minus fa-lg"></span></button>
-{% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-primary"><span onclick="grid.showBucket()" title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig" class="fa fa-clock-o fa-lg"></span></button>
-{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<button class="btn btn-primary"><span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span></button>
-{% endif %}<button class="btn btn-primary"><span onclick="grid.showExport(true)" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span></button>{% endblock %}
+<div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block actions %}
+{% if reportclass.filterable %}
+<button class="btn btn-primary" id="filter" onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'filter data'|capfirst|force_escape %}" ><label class="fa fa-search fa-lg"></label></button>{% endif %}
+{% if hasaddperm %}<button class="btn btn-primary" onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Create new object"|escape %}" ><label class="fa fa-plus fa-lg"></label></button>
+{% if not is_popup %}<button class="btn btn-primary"  disabled id="copy_selected" onclick="grid.showCopy()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy selected objects'|escape %}" ><label class="fa fa-copy fa-lg"></label></button>
+{% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-primary" id="delete_selected" disabled data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" ><label class="fa fa-minus fa-lg"></label></button>
+{% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig"><label class="fa fa-clock-o fa-lg"></label></button>
+{% endif %}&nbsp;&nbsp;{% if hasaddperm %}<button class="btn btn-primary" id="csvimport" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()"><label class="fa fa-arrow-up fa-lg"></label></button>
+{% endif %}<button class="btn btn-primary" onclick="grid.showExport(true)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><label class="fa fa-arrow-down fa-lg"></label></button>{% endblock %}
 </div>
 
 </div>

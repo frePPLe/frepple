@@ -41,7 +41,7 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'frepple',
+    'NAME': 'bootstrap1',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost.
@@ -53,7 +53,7 @@ DATABASES = {
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'scenario1',
+    'NAME': 'bootstrap2',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost.

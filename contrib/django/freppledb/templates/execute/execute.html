@@ -11,7 +11,7 @@
     {
        // Disable the refresh which is currently active
        clearInterval(refresh);
-       $('#autorefresh span').removeClass("fa-ban").addClass("fa-refresh");
+       $('#autorefresh span').removeClass("fa-pause").addClass("fa-refresh");
        refresh = null;
     }
     else
@@ -20,7 +20,7 @@
       refresh = setInterval(function() {
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
-      $('#autorefresh span').removeClass("fa-refresh").addClass("fa-ban");
+      $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
     }
   }
 
@@ -255,7 +255,7 @@
 
 {% block actions %}
 	<button class="btn btn-xs btn-primary" id="autorefresh" onclick="updateRefresh()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
-	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-ban{% endif %}"></span>
+	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-pause{% endif %}"></span>
 	</button>
 {{block.super}}{% endblock %}
 {% block after_table %}
@@ -561,7 +561,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		                   <button class="btn btn-default dropdown-toggle form-control"  id="entity" value="" type=button data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
 		                   </button>
                        <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">  
-                          {% for i in fixtures %}<li><a href="#" value="{{i}}">{{i}}</a></li>{% endfor %}
+                          {% for i in fixtures %}<li><a value="{{i}}">{{i}}</a></li>{% endfor %}
                        </ul>
                    </label>
                </div>

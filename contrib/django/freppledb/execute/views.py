@@ -254,7 +254,9 @@ def wrapTask(request, action):
     # Task not recognized
     raise Exception('Invalid launching task')
 
-  # Launch a worker process
+  # Launch a worker process, making sure it inherits the right
+  # environment variables from this parent
+  os.environ['FREPPLE_CONFIGDIR'] = settings.FREPPLE_CONFIGDIR
   if task and not checkActive(worker_database):
     if os.path.isfile(os.path.join(settings.FREPPLE_APP, "frepplectl.py")):
       if "python" in sys.executable:

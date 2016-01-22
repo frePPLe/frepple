@@ -14,13 +14,11 @@
 <script type="text/javascript">
   $(function() {
     $("#id_languageul li a").click(function(){
-      console.log($(this).prop('name'));
       $("#id_language").html($(this).text() + ' <span class="caret"></span>');
       $("#language").val($(this).prop('name'));
     });
 
     $("#id_themeul li a").click(function(){
-      console.log($(this).prop('name'));
       $("#id_theme").html($(this).text() + ' <span class="caret"></span>');
       $("#theme").val($(this).prop('name'));
     });

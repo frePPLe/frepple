@@ -157,44 +157,7 @@ class Command(BaseCommand):
       self.idcounter = cursor.fetchone()[0] or 1
 
       # Sequentially load all data
-      self.import_organizations(cursor)
-      self.import_customers(cursor)
-      task.status = '10%'
-      self.import_suppliers(cursor)
-      task.status = '15%'
-      task.save(using=self.database)
-      self.import_products(cursor)
-      task.status = '20%'
-      task.save(using=self.database)
-      self.import_locations(cursor)
-      task.status = '30%'
-      task.save(using=self.database)
-      self.import_salesorders(cursor)
-      task.status = '40%'
-      task.save(using=self.database)
-      self.import_machines(cursor)
-      task.status = '50%'
-      task.save(using=self.database)
-      self.import_onhand(cursor)
-      task.status = '60%'
-      task.save(using=self.database)
-      self.import_itemsupplier(cursor)
-      task.status = '70%'
-      task.save(using=self.database)
-      self.import_purchaseorders(cursor)
-      exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
-      if exportPurchasingPlan == "true":
-        task.status = '75%'
-        task.save(using=self.database)
-        self.import_purchasingplan(cursor)
-      task.status = '80%'
-      task.save(using=self.database)
-      self.import_productbom(cursor)
-      task.status = '90%'
-      task.save(using=self.database)
-      task.status = '95%'
-      task.save(using=self.database)
-      self.import_workInProgress(cursor)
+      self.importData(task, cursor)
 
       # Log success
       task.status = 'Done'
@@ -243,6 +206,47 @@ class Command(BaseCommand):
       else:
         # Prepare for the next loop
         firstResult += self.openbravo_pagesize
+
+
+  def importData(self, task, cursor):
+    self.import_organizations(cursor)
+    self.import_customers(cursor)
+    task.status = '10%'
+    self.import_suppliers(cursor)
+    task.status = '15%'
+    task.save(using=self.database)
+    self.import_products(cursor)
+    task.status = '20%'
+    task.save(using=self.database)
+    self.import_locations(cursor)
+    task.status = '30%'
+    task.save(using=self.database)
+    self.import_salesorders(cursor)
+    task.status = '40%'
+    task.save(using=self.database)
+    self.import_machines(cursor)
+    task.status = '50%'
+    task.save(using=self.database)
+    self.import_onhand(cursor)
+    task.status = '60%'
+    task.save(using=self.database)
+    self.import_itemsupplier(cursor)
+    task.status = '70%'
+    task.save(using=self.database)
+    self.import_purchaseorders(cursor)
+    exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
+    if exportPurchasingPlan == "true":
+      task.status = '75%'
+      task.save(using=self.database)
+      self.import_purchasingplan(cursor)
+    task.status = '80%'
+    task.save(using=self.database)
+    self.import_productbom(cursor)
+    task.status = '90%'
+    task.save(using=self.database)
+    task.status = '95%'
+    task.save(using=self.database)
+    self.import_workInProgress(cursor)
 
 
   # Load a mapping of Openbravo organizations to their search key.

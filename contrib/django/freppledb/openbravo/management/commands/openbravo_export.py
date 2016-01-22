@@ -148,18 +148,7 @@ class Command(BaseCommand):
         raise CommandError("Can't find organization id in Openbravo")
 
       # Upload all data
-      # We have two modes of bringing the results to openbravo:
-      #  - generate purchase requisitions and manufacturing work orders
-      #  - generate purchasing plans (which is the object where
-      #    openbravo's MRP stores its results as well)
-      # The first one is the recommended approach
-      exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
-      if exportPurchasingPlan == "true":
-        self.export_purchasingplan(cursor)
-      else:
-        self.export_procurement_order(cursor)
-        self.export_work_order(cursor)
-        self.export_sales_order(cursor)
+      self.exportData(task, cursor)
 
       # Log success
       task.status = 'Done'
@@ -176,6 +165,21 @@ class Command(BaseCommand):
       if task:
         task.save(using=self.database)
       settings.DEBUG = tmp_debug
+
+
+  # We have two modes of bringing the results to openbravo:
+  #  - generate purchase requisitions and manufacturing work orders
+  #  - generate purchasing plans (which is the object where
+  #    openbravo's MRP stores its results as well)
+  # The first one is the recommended approach
+  def exportData(self, task, cursor):
+    exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
+    if exportPurchasingPlan == "true":
+      self.export_purchasingplan(cursor)
+    else:
+      self.export_procurement_order(cursor)
+      self.export_work_order(cursor)
+      self.export_sales_order(cursor)
 
 
   # Update the committed date of sales orders

@@ -202,10 +202,10 @@ def horizon(request):
   if request.method != 'POST':
     raise Http404('Only post requests allowed')
   form = HorizonForm(request.POST)
+  print(request.POST)
   if not form.is_valid():
     raise Http404('Invalid form data')
   try:
-    request.user.horizonstart = form.cleaned_data['horizonstart']
     request.user.horizonbuckets = form.cleaned_data['horizonbuckets']
     request.user.horizonstart = form.cleaned_data['horizonstart']
     request.user.horizonend = form.cleaned_data['horizonend']

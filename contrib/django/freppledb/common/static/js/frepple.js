@@ -51,7 +51,7 @@ var upload = {
     $("#grid").trigger("reloadGrid");
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
-    $('#actions').prop('disabled', true);
+    $('#actions1').prop('disabled', true);
 
     $('#filter').prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
@@ -265,7 +265,7 @@ var grid = {
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
 
-    $("#actions").prop("selectedIndex",0);
+    $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
     $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
     $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
    },
@@ -413,6 +413,8 @@ var grid = {
               ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
               $('#horizonlength').val() + '|' +
               $('#horizonunit').val();
+            console.log(params);
+            console.log($('#horizonoriginal').val());
             if (params == $('#horizonoriginal').val())
               // No changes to the settings. Close the popup.
               $(this).modal('hide');
@@ -433,8 +435,9 @@ var grid = {
                   async: false  // Need to wait for the update to be processed!
                 });
             // Reload the report
+              console.log("going to refresh screen" + window.location.href);
             window.location.href = window.location.href;
-            }})
+            }});
     $('#timebuckets').modal('show');
   },
 
@@ -647,13 +650,13 @@ var grid = {
     {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      $("#actions").prop('disabled', false);
+      $("#actions1").prop('disabled', false);
     }
     else
     {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      $("#actions").prop('disabled', true);
+      $("#actions1").prop('disabled', true);
     }
   },
 
@@ -663,14 +666,14 @@ var grid = {
     {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      $("#actions").prop('disabled', false);
+      $("#actions1").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      $("#actions").prop('disabled', true);
+      $("#actions1").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
   },

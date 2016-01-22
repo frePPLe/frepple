@@ -11,7 +11,7 @@
     {
        // Disable the refresh which is currently active
        clearInterval(refresh);
-       $('#autorefresh').addClass("disabled");
+       $('#autorefresh span').removeClass("fa-ban").addClass("fa-refresh");
        refresh = null;
     }
     else
@@ -20,7 +20,7 @@
       refresh = setInterval(function() {
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
-      $('#autorefresh').removeClass("disabled");
+      $('#autorefresh span').removeClass("fa-refresh").addClass("fa-ban");
     }
   }
 
@@ -254,8 +254,9 @@
 {% endblock %}
 
 {% block actions %}
-	<span id="autorefresh" onclick="updateRefresh()" class="fa fa-refresh{% if "refresh" in preferences and not preferences.refresh %} disabled{% endif %}" data-toggle="tooltip" title="{% trans 'autorefresh'|capfirst|force_escape %}">
-	</span>&nbsp;&nbsp;
+	<button class="btn btn-xs btn-primary" id="autorefresh" onclick="updateRefresh()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
+	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-ban{% endif %}"></span>
+	</button>
 {{block.super}}{% endblock %}
 {% block after_table %}
 

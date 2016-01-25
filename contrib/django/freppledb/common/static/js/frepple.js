@@ -48,6 +48,8 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
     $('#undo').addClass("save_undo_button_inactive").removeClass("save_undo_button_active");
+    $('#delete_selected').addClass("ui-state-disabled").removeClass("bold");
+    $('#copy_selected').addClass("ui-state-disabled").removeClass("bold");
     $('#actions').addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
     .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")
     .prop('disabled', 'disabled');
@@ -659,7 +661,7 @@ var grid = {
     else
     {
       $("#copy_selected").addClass("ui-state-disabled").removeClass("bold");
-      $("#delete_selected").removeClass("ui-state-disabled").addClass("bold");
+      $("#delete_selected").addClass("ui-state-disabled").removeClass("bold");
       $("#actions")
       .addClass("ui-selectmenu-disabled ui-state-disabled change_status_selectmenu_inactive")
       .removeClass("change_status_selectmenu_active ui-state-enabled ui-selectmenu-enabled")

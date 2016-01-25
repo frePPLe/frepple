@@ -88,16 +88,22 @@ var upload = {
             upload.undo();
             },
           error: function (result, stat, errorThrown) {
-            $('#popup').html(result.responseText)
-              .dialog({
-                title: gettext("Error saving data"),
-                autoOpen: true,
-                resizable: false,
-                width: 'auto',
-                height: 'auto'
-              });
-            $('#timebuckets').dialog('close');
-            $.jgrid.hideModal("#searchmodfbox_grid");
+              $('#timebuckets').modal('hide');
+              $.jgrid.hideModal("#searchmodfbox_grid");
+              $('#popup').html('<div class="modal-dialog">'+
+                      '<div class="modal-content">'+
+                        '<div class="modal-header">'+
+                          '<h4 class="modal-title alert alert-danger">'+ gettext("Error saving data")+'</h4>'+
+                        '</div>'+
+                        '<div class="modal-body">'+
+                          '<p>'+interpolate(result.responseText)+'</p>'+
+                        '</div>'+
+                        '<div class="modal-footer">'+
+                          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+                        '</div>'+
+                      '</div>'+
+                  '</div>' )
+                  .modal('show');
             }
         });
   },
@@ -109,35 +115,35 @@ var upload = {
       jQuery("#grid").jqGrid('resetSelection');
     else
     {
-      $('#popup').html("")
-        .dialog({
-          title: gettext("Save or cancel your changes first"),
-          autoOpen: true,
-          resizable: false,
-          width: 'auto',
-          height: 'auto',
-          buttons: [
-            {
-              text: gettext("Save"),
-              click: function() {
-                upload.save();
-                $('#popup').dialog('close');
-                }
-            },
-            {
-              text: gettext("Cancel"),
-              click: function() {
-                upload.undo();
-                $('#popup').dialog('close');
-                }
-            }
-            ]
-        });
+      $('#timebuckets').modal('hide');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      $('#popup').html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h4 class="modal-title alert-warning">'+ gettext("Save or cancel your changes first") +'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+            '<p>'+""+'</p>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<input type="submit" id="savebutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Save')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Cancel')+'">'+
+          '</div>'+
+        '</div>'+
+      '</div>' )
+      .modal('show');
+      $('#savebutton').on('click', function() {
+        upload.save();
+        $('#popup').modal('hide');
+      });
+      $('#cancelbutton').on('click', function() {
+        upload.undo();
+        $('#popup').modal('hide');
+      });
       event.stopPropagation();
     }
   }
 }
-
 
 //----------------------------------------------------------------------------
 // Custom formatter functions for the grid cells.
@@ -264,7 +270,6 @@ var grid = {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
-
     $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
     $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
     $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
@@ -413,8 +418,7 @@ var grid = {
               ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
               $('#horizonlength').val() + '|' +
               $('#horizonunit').val();
-            console.log(params);
-            console.log($('#horizonoriginal').val());
+
             if (params == $('#horizonoriginal').val())
               // No changes to the settings. Close the popup.
               $(this).modal('hide');
@@ -435,7 +439,6 @@ var grid = {
                   async: false  // Need to wait for the update to be processed!
                 });
             // Reload the report
-              console.log("going to refresh screen" + window.location.href);
             window.location.href = window.location.href;
             }});
     $('#timebuckets').modal('show');
@@ -486,7 +489,7 @@ var grid = {
              },
              error: function (result, stat, errorThrown) {
                $('#popup .modal-body p').html(result.responseText);
-               $('#popup .modal-title').html(gettext("Error deleting data"));
+               $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error deleting data"));
                $('#delbutton').prop("disabled", true).hide();
              }
            })
@@ -533,7 +536,7 @@ var grid = {
          },
          error: function (result, stat, errorThrown) {
            $('#popup .modal-body p').html(result.responseText);
-           $('#popup .modal-title').html(gettext("Error copying data"));
+           $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error copying data"));
            $('#copybutton').prop("disabled", true).hide();
          }
        })
@@ -716,62 +719,54 @@ var openbravo = {
 	  if (data == [])
 		  return;
 
-	  // Send to the server for upload into openbravo
-	  $('#popup')
-	  .html(gettext("export selected records to openbravo"))
-	  .dialog({
-	    title: gettext("export"),
-	    autoOpen: true, resizable: false, width: 390, height: 'auto', modal: true,
-	    buttons: [
-	      {
-	        text: gettext("export"),
-	        id: 'button_export',
-	        click: function() {
-
-	          $('#popup').html(gettext("connecting to openbravo..."));
-	          // Send the update to the server
-	          var database = $('#database').val();
-	          database = (database===undefined || database==='default') ? '' : '/' + database;
-	          $.ajax({
-	               url: database + "/openbravo/upload/",
-	               data: JSON.stringify(data),
-	               type: "POST",
-	               contentType: "application/json",
-	               success: function () {
-	                 $('#popup').html(gettext("Export successful"))
-	                   .dialog({
-	                     autoOpen: true,
-	                     resizable: false,
-	                     width: 'auto',
-	                     height: 'auto',
-	                     model: false
-	                   });
-	                 $('#button_close').find('.ui-button-text').text(gettext('close'));
-	                 $('#button_export').removeClass("ui-state-default").addClass("disabled").prop('disabled', true);
-	                 // Mark selected rows as "approved" if the original status was "proposed".
-	                 for (var i in sel)
-	                 {
-	                   var cur = grid.jqGrid('getCell', sel[i], 'status');
-	                   if (cur == 'proposed')
-	                     grid.jqGrid('setCell', sel[i], 'status', 'approved');
-	                 }
-	               },
-	               error: function (result, stat, errorThrown) {
-                     fmts = ngettext("Error during export")
-	                 $('#popup').html(gettext("Error during export") + ':' + result.responseText);
-	                 $('#button_export').find('.ui-button-text').text(gettext('retry'));
-	               }
-	           });
-	        }
-	      },
-	      {
-	        text: gettext("cancel"),
-	        id: 'button_close',
-	        click: function() { $(this).dialog("close"); }
-	      }
-	      ]
-	  });
-	  $("#actions").prop("selectedIndex",0);
+     // Send to the server for upload into openbravo
+     $('#timebuckets').modal('hide');
+     $.jgrid.hideModal("#searchmodfbox_grid");
+     $('#popup').html('<div class="modal-dialog">'+
+           '<div class="modal-content">'+
+             '<div class="modal-header">'+
+               '<h4 class="modal-title">'+gettext("export")+'</h4>'+
+             '</div>'+
+             '<div class="modal-body">'+
+               '<p>'+interpolate(gettext("export selected records to openbravo"))+'</p>'+
+             '</div>'+
+             '<div class="modal-footer">'+
+               '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+               '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+             '</div>'+
+           '</div>'+
+       '</div>' )
+       .modal('show');
+      $('#button_export').on('click', function() {
+      $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
+      var database = $('#database').val();
+      database = (database===undefined || database==='default') ? '' : '/' + database;
+      $.ajax({
+           url: database + "/openbravo/upload/",
+           data: JSON.stringify(data),
+           type: "POST",
+           contentType: "application/json",
+           success: function () {
+             $('#popup .modal-body p').html(gettext("Export successful"))
+             $('#cancelbutton').val(gettext('Close'));
+             $('#button_export').removeClass("btn-primary").prop('disabled', true);
+             // Mark selected rows as "approved" if the original status was "proposed".
+             for (var i in sel)
+             {
+               var cur = grid.jqGrid('getCell', sel[i], 'status');
+               if (cur == 'proposed')
+                 grid.jqGrid('setCell', sel[i], 'status', 'approved');
+             }
+           },
+           error: function (result, stat, errorThrown) {
+               fmts = ngettext("Error during export");
+               $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+             $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+             $('#button_export').text(gettext('retry'));
+             }
+        });
+     });
+     $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
   }
 };
 
@@ -1046,7 +1041,7 @@ function selectDatabase()
   // Find new database and current database
   var db = $(this).text();
   var cur = $('#database').attr('name');
-  console.log(db, cur);
+
   // Change the location
   if (cur == db)
     return;
@@ -1478,18 +1473,18 @@ var tour = {
         {
           id: "tourprevious",
           text: gettext("Previous"),
-          icons: { primary: "ui-icon-seek-prev" },
+          icons: { primary: "fa-step-backward" },
           click: tour.prev
         },
         {
           text: (tour.autoplay != 0) ? gettext("Stop") : gettext("Play"),
-          icons: { primary: (tour.autoplay != 0) ? "ui-icon-pause" : "ui-icon-play" },
+          icons: { primary: (tour.autoplay != 0) ? "fa-pause" : "fa-play" },
           click: tour.toggleAutoplay
         },
         {
           id: "tournext",
           text: gettext("Next"),
-          icons: { primary: "ui-icon-seek-next" },
+          icons: { primary: "fa-step-forward" },
           click: tour.next
         }
         ]
@@ -1604,8 +1599,8 @@ var tour = {
   {
     if (tour.autoplay > 0)
     {
-      var icn = $(".ui-icon-pause");
-      icn.toggleClass("ui-icon-pause ui-icon-play");
+      var icn = $(".fa-pause");
+      icn.toggleClass("fa-pause fa-play");
       icn.next().html(gettext("Play"));
       tour.autoplay = 0;
       clearTimeout(tour.timeout);
@@ -1613,8 +1608,8 @@ var tour = {
     }
     else
     {
-      var icn = $(".ui-icon-play");
-      icn.toggleClass("ui-icon-play ui-icon-pause");
+      var icn = $(".fa-play");
+      icn.toggleClass("fa-play fa-pause");
       icn.next().html(gettext("Stop"));
       tour.autoplay = 1;
       tour.next();

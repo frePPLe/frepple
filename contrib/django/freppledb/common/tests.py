@@ -29,9 +29,7 @@ import freppledb.common as common
 import freppledb.input as input
 
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
-from rest_framework import status, renderers, parsers
-from django.core.urlresolvers import reverse
-from django.utils.six import BytesIO
+
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):

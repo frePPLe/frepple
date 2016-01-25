@@ -61,7 +61,7 @@
 		        </button>
 		        <ul class="dropdown-menu col-xs-12" aria-labelledby="id_language" id="id_languageul">
 		        {% for i,j in request.user.languageList %}
-		          <li><a href="#" name="{{ i }}">{{ j }}</a></li>
+		          <li><a name="{{ i }}">{{ j }}</a></li>
 		        {% endfor %}
 		        </ul>
 		      </div>
@@ -89,7 +89,7 @@
 			      </button>
 			      <ul class="dropdown-menu col-xs-12" aria-labelledby="id_theme" id="id_themeul">
 			        {% for j in THEMES %}
-			          <li><a href="#" name="{{j}}">{% filter capfirst %}{{j}}{%endfilter%}</a></li>
+			          <li><a name="{{j}}">{% filter capfirst %}{{j}}{%endfilter%}</a></li>
 			        {% endfor %}
 			      </ul>
 			    </div>

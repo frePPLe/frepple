@@ -127,9 +127,9 @@ $(function() {
       {% trans "select action"|capfirst %}&nbsp;&nbsp;<span class="caret"></span>
       </button>
       <ul class="dropdown-menu" name="actionsul" id="actionsul" aria-labelledby="actions1" style="top: auto;">
-        <li><a name="no_action" "href="#">{% trans "select action"|capfirst %}</a></li>
+        <li><a name="no_action">{% trans "select action"|capfirst %}</a></li>
       {% for i in  actions %}
-        <li><a href="#" onclick="" name="{{ i.name|escape }}" onchange="grid.runAction({{ i.name|escape }});">{% trans i.label|capfirst %}</a></li>
+        <li><a onclick="" name="{{ i.name|escape }}" onchange="grid.runAction({{ i.name|escape }});">{% trans i.label|capfirst %}</a></li>
       {% endfor %}
       </ul>
   </div>

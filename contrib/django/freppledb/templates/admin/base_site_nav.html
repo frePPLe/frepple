@@ -21,14 +21,14 @@ $(function() {
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="#" style="padding-top:5px; padding-bottom: 5px">{% block branding %}{{ block.super }}{% endblock %}</a>
+	      <a class="navbar-brand" style="padding-top:5px; padding-bottom: 5px">{% block branding %}{{ block.super }}{% endblock %}</a>
 	  </div>
 
 		<div id="nav-menu" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
 			  {% for group in menu %}
 			  <li class="dropdown">
-			    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }}</a>
+			    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }}</a>
 			    <ul class="dropdown-menu">
 			      {% for item in group.1 %}
 			        {% if item.1.separator %}<li role="separator" class="divider"></li>
@@ -70,14 +70,18 @@ $(function() {
 	     </ol>
 	   </span>
 	  </div>
-	  <div class="col-md-2">
-	     <div class="selectdb pull-right">{% if user.scenarios|length > 1 %}<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
-	     {{ request.database }}
-    <span class="caret"></span>
-
-  </button><ul class="dropdown-menu" aria-labelledby="database">{% for db in user.scenarios %}<li><a href="#">{{ db }}</a></li>{% endfor %}</ul>{% endif %}
-	     </div>
-  </div>
+<div class="col-md-2">
+  <div class="selectdb pull-right">
+	{% if user.scenarios|length > 1 %}
+		<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
+		{{ request.database }}<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" aria-labelledby="database">
+		{% for db in user.scenarios %}<li><a>{{ db }}</a></li>{% endfor %}
+		</ul>
+	{% endif %}
+	</div>
+</div>
 
 	</div> <!--  end of container -->
 </nav>

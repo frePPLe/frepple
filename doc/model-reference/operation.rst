@@ -33,87 +33,87 @@ Different operation types exist:
 
 **Fields**
 
-================ ================= ===========================================================
-Field            Type              Description
-================ ================= ===========================================================
-name             non-empty string  | Name of the operation.
-                                   | This is the key field and a required attribute.
-description      string            Free format description.
-category         string            Free format category.
-subcategory      string            Free format subcategory.
-location         location          | Location of the operation.
-                                   | Default is null.
-                                   | The working hours and holidays for the operation are
-                                     taken from the ‘available’ calendar of the location.
-fence            duration          | Time window from the current date of the plan during
-                                     which all operationplans are expected to be
-                                     frozen/released.
-                                   | When the “FENCE” constraint is enabled in the solver, it
-                                     won’t create any new operation plans in this time fence.
-                                     Only the externally supplied and locked operationplans will
-                                     then exist in this time window.
-size_minimum     positive double   | A minimum quantity for operationplans.
-                                   | The default value is 1.
-                                   | A request for a lower, non-zero quantity will be rounded up.
-size_minimum_    calendar          | A calendar to define the minimum size of operationplans
- calendar                            when this value varies over time. The end date of the
-                                     operationplan determines which date we use as lookup in the
-                                     calendar.
-                                   | If this field is used, the size_minimum field is ignored.
-size_multiple    positive double   A lotsize quantity for operationplans.
-size_maximum     positive double   | The maximum quantity for operationplans.
-                                   | Note that this value limits the size of individual
-                                     operationplans. The solver can create multiple operationplans
-                                     of this maximum size, so this value does NOT constrain the
-                                     total planned quantity on the operation. The field is
-                                     useful to break big operationplans in smaller ones.
-cost             double            | The cost of executing this operation, per unit of the
-                                     operation_plan.
-                                   | Depending on what the operation models, this
-                                     represents transportation costs, manufacturing costs,
-                                     procurement costs, delivery costs, etc...
-                                   | The raw material cost and the resource usage cost are added
-                                     to this cost and should not be included in this value.
-                                   | The default value is 0.
-posttime         duration          | A post-operation time, used as a buffer for uncertain
-                                     capacity or operation duration.
-                                   | The solver will try to respect this time as a soft
-                                     constraint. Ie when required to meet demand on time the
-                                     post-operation time can be violated.
-                                   | Resources are not loaded during the post-operation time.
-                                   | This field is used to model time-based safety stock
-                                     targets, aka days of inventory. It is then set for the
-                                     producing operation of a certain buffer.
-                                   | If you want to model a safety stock quantity, you can use
-                                     the minimum or minimum_calendar fields on the buffer.
-detectproblems   boolean           | Set this field to false to skip problem detection on
-                                     this operation.
-                                   | The default value is true.
-loads            list of load      A list of all resources loaded by this operation.
-flows            list of flow      A list of all buffers where material is consumed from or
-                                   produced into.
-level            integer           | Indication of how upstream/downstream this entity is
-                                     situated in the supply chain.
-                                   | Lower numbers indicate the entity is close to the end
-                                     item, while a high number will be shown for components
-                                     nested deep in a bill of material.
-                                   | The field is export-only.
-cluster          integer           | The network of entities can be partitioned in completely
-                                     independent parts. This field gives the index for the
-                                     partition this entity belongs to.
-                                   | The field is export-only.
-hidden           boolean           Marks entities that are considered hidden and are normally
-                                   not shown to the end user.
-action           A/C/AC/R          | Type of action to be executed:
-                                   | A: Add an new entity, and report an error if the entity
-                                     already exists.
-                                   | C: Change an existing entity, and report an error if the
-                                     entity doesn’t exist yet.
-                                   | AC: Change an entity or create a new one if it doesn’t
-                                     exist yet. This is the default.
-                                   | R: Remove an entity, and report an error if the entity
-                                     doesn’t exist.
-================ ================= ===========================================================
+====================== ================= ===========================================================
+Field                  Type              Description
+====================== ================= ===========================================================
+name                   non-empty string  | Name of the operation.
+                                         | This is the key field and a required attribute.
+description            string            Free format description.
+category               string            Free format category.
+subcategory            string            Free format subcategory.
+location               location          | Location of the operation.
+                                         | Default is null.
+                                         | The working hours and holidays for the operation are
+                                           taken from the ‘available’ calendar of the location.
+fence                  duration          | Time window from the current date of the plan during
+                                           which all operationplans are expected to be
+                                           frozen/released.
+                                         | When the “FENCE” constraint is enabled in the solver, it
+                                           won’t create any new operation plans in this time fence.
+                                           Only the externally supplied and locked operationplans will
+                                           then exist in this time window.
+size_minimum           positive double   | A minimum quantity for operationplans.
+                                         | The default value is 1.
+                                         | A request for a lower, non-zero quantity will be rounded up.
+size_minimum_calendar  calendar          | A calendar to define the minimum size of operationplans
+                                           when this value varies over time. The end date of the
+                                           operationplan determines which date we use as lookup in the
+                                           calendar.
+                                         | If this field is used, the size_minimum field is ignored.
+size_multiple          positive double   A lotsize quantity for operationplans.
+size_maximum           positive double   | The maximum quantity for operationplans.
+                                         | Note that this value limits the size of individual
+                                           operationplans. The solver can create multiple operationplans
+                                           of this maximum size, so this value does NOT constrain the
+                                           total planned quantity on the operation. The field is            
+                                           useful to break big operationplans in smaller ones.
+cost                   double            | The cost of executing this operation, per unit of the
+                                           operation_plan.
+                                         | Depending on what the operation models, this
+                                           represents transportation costs, manufacturing costs,
+                                           procurement costs, delivery costs, etc...
+                                         | The raw material cost and the resource usage cost are added
+                                           to this cost and should not be included in this value.
+                                         | The default value is 0.
+posttime               duration          | A post-operation time, used as a buffer for uncertain
+                                           capacity or operation duration.
+                                         | The solver will try to respect this time as a soft
+                                           constraint. Ie when required to meet demand on time the
+                                           post-operation time can be violated.
+                                         | Resources are not loaded during the post-operation time.
+                                         | This field is used to model time-based safety stock
+                                           targets, aka days of inventory. It is then set for the
+                                           producing operation of a certain buffer.
+                                         | If you want to model a safety stock quantity, you can use
+                                           the minimum or minimum_calendar fields on the buffer.
+detectproblems         boolean           | Set this field to false to skip problem detection on
+                                           this operation.
+                                         | The default value is true.
+loads                  list of load      A list of all resources loaded by this operation.
+flows                  list of flow      A list of all buffers where material is consumed from or
+                                         produced into.
+level                  integer           | Indication of how upstream/downstream this entity is
+                                           situated in the supply chain.
+                                         | Lower numbers indicate the entity is close to the end
+                                           item, while a high number will be shown for components
+                                           nested deep in a bill of material.
+                                         | The field is export-only.
+cluster                integer           | The network of entities can be partitioned in completely
+                                           independent parts. This field gives the index for the
+                                           partition this entity belongs to.
+                                         | The field is export-only.
+hidden                 boolean           Marks entities that are considered hidden and are normally
+                                         not shown to the end user.
+action                 A/C/AC/R          | Type of action to be executed:
+                                         | A: Add an new entity, and report an error if the entity
+                                           already exists.
+                                         | C: Change an existing entity, and report an error if the
+                                           entity doesn’t exist yet.
+                                         | AC: Change an entity or create a new one if it doesn’t
+                                           exist yet. This is the default.
+                                         | R: Remove an entity, and report an error if the entity
+                                           doesn’t exist.
+====================== ================= ===========================================================
 
 Operation_fixed_time
 --------------------

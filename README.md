@@ -16,6 +16,7 @@ The latest stable release can be downloaded from [http://sourceforge.net](https:
 * Ubuntu .deb package
 * Red Hat .rpm package
 * Source tarball
+* Docker container https://github.com/taghubnet/frepple-docker (experimental)
 
 ## Documentation
 
@@ -26,4 +27,4 @@ Visit [http://frepple.com](http://frepple.com) for documentation, screencasts an
 The *Community Edition* is released under the [GNU Affero General
 Public License v3 or later](http://www.gnu.org/licenses/).
 
-The *Enterprise Edition* can be purchased from frePPLe bvba. It provides some additional functionality and professional support.
+The *Professional and Enterprise Editions* can be purchased from frePPLe bvba. They provide additional functionality and professional support.

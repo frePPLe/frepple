@@ -361,10 +361,10 @@ Function Databaseleave
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
      StrCpy $1 '$1Update the parameters or:$\r$\n'
      StrCpy $1 '$1  1) Install PostgreSQL 9.4$\r$\n'
-     StrCpy $1 '$1  2) Configure it to till you can successfully connect from the commands:$\r$\n'
+     StrCpy $1 '$1  2) Add the PostgreSQL bin folder to the PATH environment variable$\r$\n'
+     StrCpy $1 '$1  3) Test the connection with the commands:$\r$\n'
      StrCpy $1 '$1        set PGPASSWORD=$4$\r$\n'
-     StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"$\r$\n'
-     StrCpy $1 '$1  3) Assure psql is on the PATH environment variable'
+     StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
      MessageBox MB_OK $1
      ; Return to the page
      Abort

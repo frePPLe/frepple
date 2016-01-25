@@ -776,25 +776,6 @@ var openbravo = {
 };
 
 //----------------------------------------------------------------------------
-// Code for customized autocomplete widget.
-// The customization creates unselectable categories and selectable list
-// items.
-//----------------------------------------------------------------------------
-
-/*$.widget( "custom.catcomplete", $.ui.autocomplete, {
-  _renderItem: function( ul, item) {
-    if (item.value == undefined)
-      return $( "<li class='ui-autocomplete-category' style='border-top: 1px; border-top-style: solid; border-top-color: #222; text-align:center;'>" + item.label + "</li>" ).appendTo( ul );
-    else
-      return $( "<li></li>" )
-      .data( "item.autocomplete", item )
-      .append( $( "<a></a>" ).text( item.value ) )
-      .appendTo( ul );
-  },
-});*/
-
-
-//----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.
 //----------------------------------------------------------------------------
 
@@ -854,7 +835,7 @@ $(function() {
   $.ajaxSetup({ cache: false });
 
   // Autocomplete search functionality
-  var database = $('#database').val();
+  var database = $('#database').attr('name');
   database = (database===undefined || database==='default') ? '' : '/' + database;
   
   var searchsource = new Bloodhound({
@@ -862,7 +843,7 @@ $(function() {
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     //prefetch: '/search/',
     remote: {
-      url: '/search/?term=%QUERY',
+      url: database+'/search/?term=%QUERY',
       wildcard: '%QUERY'
     }
   });

@@ -101,6 +101,7 @@ $(function() {
   $("#actionsul li a").click(function(){
     $("#actions1").html($(this).text() + ' <span class="caret"></span>');
     $("#actions").val($(this).prop('name'));
+    grid.runAction($(this).prop('name'));
   });
 
 });
@@ -129,7 +130,7 @@ $(function() {
       <ul class="dropdown-menu" name="actionsul" id="actionsul" aria-labelledby="actions1" style="top: auto;">
         <li><a name="no_action">{% trans "select action"|capfirst %}</a></li>
       {% for i in  actions %}
-        <li><a onclick="" name="{{ i.name|escape }}" onchange="grid.runAction({{ i.name|escape }});">{% trans i.label|capfirst %}</a></li>
+        <li><a onclick="" name="{{ i.name|escape }}">{% trans i.label|capfirst %}</a></li>
       {% endfor %}
       </ul>
   </div>

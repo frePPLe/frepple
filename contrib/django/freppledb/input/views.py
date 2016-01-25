@@ -957,7 +957,7 @@ class OperationPlanList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationplan'"),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
@@ -985,7 +985,7 @@ class DistributionOrderList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/distributionorder'"),
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
@@ -1026,7 +1026,7 @@ class PurchaseOrderList(GridReport):
   frozenColumns = 1
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/purchaseorder'"),
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),

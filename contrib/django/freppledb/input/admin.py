@@ -366,17 +366,9 @@ class OperationPlan_admin(MultiDBModelAdmin):
   model = OperationPlan
   raw_id_fields = ('operation', 'owner',)
   save_on_top = True
-  exclude = ('source', 'criticality')
+  exclude = ('id', 'source', 'criticality')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operationplan_change", "permissions": "input.change_operationplan"},
-    {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
-    {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
-    {"name": 'plan', "label": _("plan"), "view": "output_operation_plan"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "output_operation_plandetail"},
-    {"name": 'constraint', "label": _("constrained operation"), "view": "output_constraint_operationplan"},
-    {"name": 'comments', "label": _("comments"), "view": "admin:input_operationplan_comment"},
-    #. Translators: Translation included with Django
-    {"name": 'history', "label": _("History"), "view": "admin:input_operationplan_history"},
     ]
 data_site.register(OperationPlan, OperationPlan_admin)
 
@@ -385,7 +377,10 @@ class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
   raw_id_fields = ('item',)
   save_on_top = True
-  exclude = ('source', 'criticality')
+  exclude = ('id', 'source', 'criticality')
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_distributionorder_change", "permissions": "input.change_distributionorder"},
+    ]
 data_site.register(DistributionOrder, DistributionOrder_admin)
 
 
@@ -393,7 +388,10 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
   model = PurchaseOrder
   raw_id_fields = ('item', 'supplier',)
   save_on_top = True
-  exclude = ('source', 'criticality')
+  exclude = ('id', 'source', 'criticality')
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_purchaseorder_change", "permissions": "input.change_purchaseorder"},
+    ]
 data_site.register(PurchaseOrder, PurchaseOrder_admin)
 
 

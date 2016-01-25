@@ -17,7 +17,8 @@
 
 from datetime import datetime, time
 
-from django.db import models
+from django.db import models, DEFAULT_DB_ALIAS
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.fields import DurationField
@@ -878,6 +879,18 @@ class OperationPlan(AuditModel):
   def __str__(self):
     return str(self.id)
 
+  def save(self, *args, **kwargs):
+    if not self.id:
+      if 'using' in kwargs:
+        db = kwargs['using']
+      else:
+        state = getattr(self, '_state', None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+      self.id = OperationPlan.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+
+    # Call the real save() method
+    super(OperationPlan, self).save(*args, **kwargs)
+
   class Meta(AuditModel.Meta):
     db_table = 'operationplan'
     verbose_name = _('operationplan')
@@ -935,6 +948,18 @@ class DistributionOrder(AuditModel):
   def __str__(self):
     return str(self.id)
 
+  def save(self, *args, **kwargs):
+    if not self.id:
+      if 'using' in kwargs:
+        db = kwargs['using']
+      else:
+        state = getattr(self, '_state', None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+      self.id = DistributionOrder.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+
+    # Call the real save() method
+    super(DistributionOrder, self).save(*args, **kwargs)
+
   class Meta(AuditModel.Meta):
     db_table = 'distribution_order'
     verbose_name = _('distribution order')
@@ -988,6 +1013,18 @@ class PurchaseOrder(AuditModel):
 
   def __str__(self):
     return str(self.id)
+
+  def save(self, *args, **kwargs):
+    if not self.id:
+      if 'using' in kwargs:
+        db = kwargs['using']
+      else:
+        state = getattr(self, '_state', None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+      self.id = PurchaseOrder.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+
+    # Call the real save() method
+    super(PurchaseOrder, self).save(*args, **kwargs)
 
   class Meta(AuditModel.Meta):
     db_table = 'purchase_order'

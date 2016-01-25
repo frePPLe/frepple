@@ -261,7 +261,7 @@ class SelectDatabaseNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
-    s = [ '<li><a href="#">%s</a></li>' % i for i in req.user.scenarios]
+    s = [ '<li><a>%s</a></li>' % i for i in req.user.scenarios]
     return ''.join(s)
 
   def __repr__(self):

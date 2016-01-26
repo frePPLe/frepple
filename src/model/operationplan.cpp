@@ -63,7 +63,6 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 }
 
 
-// TODO Consistently handle the fields start, end, quantity and status in this method
 DECLARE_EXPORT Object* OperationPlan::createOperationPlan
 (const MetaClass* cat, const DataValueDict& in)
 {
@@ -168,8 +167,18 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
   else
   {
     // Create an operationplan
+    const DataValue* startfld = in.get(Tags::start);
+    Date start;
+    if (startfld)
+      start = startfld->getDate();
+    const DataValue* endfld = in.get(Tags::end);
+    Date end;
+    if (endfld)
+      end = endfld->getDate();
+    const DataValue* quantityfld = in.get(Tags::quantity);
+    double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-      0.0, Date::infinitePast, Date::infinitePast, NULL, NULL, id, false
+      quantity, start, end, NULL, NULL, id, false
       );
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -184,40 +193,14 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
     if (statusfld && statusfld->getString() != "proposed")
     {
       string status = statusfld->getString();
-      const DataValue* startfld = in.get(Tags::start);
-      Date start;
-      if (startfld)
-        start = startfld->getDate();
-      const DataValue* endfld = in.get(Tags::end);
-      Date end;
-      if (endfld)
-        end = endfld->getDate();
-      const DataValue* quantityfld = in.get(Tags::quantity);
-      double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
       if (start && end)
       {
         // Any start date, end date and quantity combination will be accepted
         opplan->setStatus(status);
         opplan->freezeStatus(start, end, quantity);
       }
-      else if (start)
-      {
-        // Compute the end date and then lock
-        opplan->setQuantity(quantity);
-        opplan->setStart(start);
-        end = opplan->getEnd();
+      else 
         opplan->setStatus(status);
-        opplan->freezeStatus(start, end, quantity);
-      }
-      else if (end)
-      {
-        // Compute the start date and then lock
-        opplan->setQuantity(quantity);
-        opplan->setEnd(end);
-        start = opplan->getStart();
-        opplan->setStatus(status);
-        opplan->freezeStatus(start, end, quantity);
-      }
     }
     opplan->activate();
     return opplan;

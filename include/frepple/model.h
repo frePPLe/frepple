@@ -7452,7 +7452,8 @@ class Plan : public Plannable, public Object
     }
 
     const MetaClass& getType() const {return *metadata;}
-    static DECLARE_EXPORT const MetaCategory* metadata;
+    static DECLARE_EXPORT const MetaClass* metadata;
+    static DECLARE_EXPORT const MetaCategory* metacategory;
 
     template<class Cls>static inline void registerFields(MetaClass* m)
     {

@@ -148,7 +148,7 @@ $(function() {
 </div>
 
 <div class="row">
-	<div id="content-main" class="col-md-12">
+	<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
 	 <table id="grid" class="table table-striped pivotgrid"></table>
 	</div>
 <div id="gridpager" class="col-md-12"></div>
@@ -172,7 +172,7 @@ $(function() {
 		          {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
 		          <div class="dropdown dropdown-submit-input" style="display:inline">
 		              <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-		                {% trans request.user.horizonbuckets %}&nbsp;&nbsp;<span class="caret"></span>
+		                {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
 		              </button>
 		              <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" name="horizonbucketsul" style="top: auto;">
 		              {% for i in bucketnames %}
@@ -193,7 +193,6 @@ $(function() {
 							<br/>
            </div>
           </div>
-
 
           <div class="row">
             <div class="col-xs-12 form-inline">

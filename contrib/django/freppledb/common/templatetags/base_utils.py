@@ -249,33 +249,6 @@ register.tag('tabs', get_modeltabs)
 
 
 #
-# A tag to return HTML code for a database selector
-#
-
-class SelectDatabaseNode(Node):
-  r'''
-  A tag to return HTML code for a database selector.
-  '''
-  def render(self, context):
-    try:
-      req = context['request']
-    except:
-      return ''  # No request found in the context
-    s = [ '<li><a>%s</a></li>' % i for i in req.user.scenarios]
-    return ''.join(s)
-
-  def __repr__(self):
-    return "<SelectDatabase Node>"
-
-
-
-def selectDatabase(parser, token):
-    return SelectDatabaseNode()
-
-register.tag('selectDatabase', selectDatabase)
-
-
-#
 # A simple tag returning the frePPLe version
 #
 

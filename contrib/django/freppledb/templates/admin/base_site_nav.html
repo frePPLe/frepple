@@ -74,7 +74,7 @@ $(function() {
   <div class="selectdb pull-right">
 	{% if user.scenarios|length > 1 %}
 		<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
-		{{ request.database }}<span class="caret"></span>
+		{{ request.database }}&nbsp;<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu" aria-labelledby="database">
 		{% for db in user.scenarios %}<li><a>{{ db }}</a></li>{% endfor %}

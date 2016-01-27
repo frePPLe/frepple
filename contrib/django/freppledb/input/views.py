@@ -217,7 +217,7 @@ class PathReport(GridReport):
       result.extend([
         (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
         for i in ItemSupplier.objects.using(db).filter(
-          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.rght
+          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
           )
         ])
     return result

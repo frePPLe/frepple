@@ -32,7 +32,7 @@
       {% comment %}Translators: Translation included with Django {% endcomment %}
       return cellvalue + "&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     if (cellvalue == 'Failed')
-      return "<span class='taskfailed'>{% trans 'failed'|capfirst %}</span>";
+      return "<span class='bg-danger' style='display:block'>{% trans 'failed'|capfirst %}</span>";
     else if (cellvalue == 'Waiting')
     {% comment %}Translators: Translation included with Django{% endcomment %} 
       return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";

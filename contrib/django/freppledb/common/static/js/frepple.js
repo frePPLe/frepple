@@ -365,7 +365,7 @@ var grid = {
             '</div>'+
           '</div>'+
       '</div>' )
-      .modal('show');      
+      .modal('show');
     $('#exportbutton').on('click', function() {
       // Fetch the report data
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
@@ -385,7 +385,7 @@ var grid = {
       window.open(url,'_blank');
       $('#popup').modal('hide');
     })
-  },          
+  },
 
 
   // Display time bucket selection dialog
@@ -521,7 +521,7 @@ var grid = {
              '</div>' )
      .modal('show');
      $('#copybutton').on('click', function() {
-       $.ajax({         
+       $.ajax({
          url: location.pathname,
          data: JSON.stringify([{'copy': sel}]),
          type: "POST",
@@ -832,7 +832,7 @@ $(function() {
   // Autocomplete search functionality
   var database = $('#database').attr('name');
   database = (database===undefined || database==='default') ? '' : '/' + database;
-  
+
   var searchsource = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -843,7 +843,7 @@ $(function() {
     }
   });
   $('#search').typeahead({minLength: 2}, {
-    limit:100, 
+    limit:100,
     highlight: true,
     name: 'search',
     display: 'value',
@@ -977,7 +977,7 @@ function import_show(url)
             '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
             gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
           '</form>' +
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +       
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
@@ -1445,54 +1445,51 @@ var tour = {
   init: function()
   {
      // Display the main dialog of the tour
-     $("body").append( '<div id="tour" style="padding-bottom:20px; display:none">' +
-         tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
-     $("#tour").dialog({
-      title: gettext("Guided tour"),
-      autoOpen: true,
-      resizable: false,
-      width: 390,
-      height: 'auto',
-      position: "right bottom",
-      modal: false,
-      dialogClass: "tourguide",
-      close: function() {
-          $('#tour').remove();
-          $('#tourtooltip').remove();
-          tour.tooltip.css({ 'display' : 'none' }).html('');
-          tour.chapter = 0;
-          tour.step = 0;
-          tour.autoplay = false;
-          if (tour.timeout)
-          {
-            clearTimeout(tour.timeout);
-            tour.timeout = null;
-          }
-        },
-      buttons: [
-        {
-          id: "tourprevious",
-          text: gettext("Previous"),
-          icons: { primary: "fa-step-backward" },
-          click: tour.prev
-        },
-        {
-          text: (tour.autoplay != 0) ? gettext("Stop") : gettext("Play"),
-          icons: { primary: (tour.autoplay != 0) ? "fa-pause" : "fa-play" },
-          click: tour.toggleAutoplay
-        },
-        {
-          id: "tournext",
-          text: gettext("Next"),
-          icons: { primary: "fa-step-forward" },
-          click: tour.next
-        }
-        ]
-      });
 
-     // Create the tooltip
-     tour.tooltip = $('<div>',{id:'tourtooltip', class:'tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front', html:''}).css({
-       'display': 'none', 'overflow': 'visible'
+    $('#timebuckets').modal('hide');
+    $.jgrid.hideModal("#searchmodfbox_grid");
+
+    $('#popup').removeClass("fade in").addClass("tourguide").html('<div class="modal-dialog" id="tourModal" role="dialog" style="width: 390px; position: absolute; bottom: 10px; left: auto; right: 15px;">'+
+        '<div class="modal-content">'+
+        '<div class="modal-header">'+
+          '<h4 id="modalTitle" class="modal-title alert alert-info">'+ gettext("Guided tour") +
+          '<button type="button" id="tourcancelbutton" class="close" data-dismiss="modal" aria-hidden="true">×</button>'+'</h4>'+
+        '</div>'+
+        '<div class="modal-body" id="tourmodalbody" style="padding-bottom:20px;">'+
+            tourdata[tour.chapter]['description']+
+        '</div>'+
+        '<div class="modal-footer"><div class="btn-group control-form" role="group" aria-label="tour buttons">'+
+          '<button type="submit" id="tourprevious" role="button" class="btn btn-primary">'+'<span class="fa fa-step-backward"></span>&nbsp;'+gettext('Previous')+'</button>'+
+          '<button type="submit" id="playbutton" role="button" class="btn btn-primary">'+ gettext(tour.autoplay === 0 ? 'Play' : 'Pause')+ '&nbsp;<span class= ' + ((tour.autoplay === 0) ? '"fa fa-play"' : '"fa fa-pause"') + '></span></button>'+
+          '<button type="submit" id="tournext" role="button" class="btn btn-primary">'+gettext('Next')+'&nbsp;<span class="fa fa-step-forward"></span></button>'+
+        '</div></div>'+
+      '</div>'+
+    '</div>' )
+    .modal({
+      backdrop: 'static',
+      keyboard: false
+    })
+    .modal('show');
+    $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
+        tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
+    $('#tourprevious').on('click', function() {
+      tour.prev();
+    });
+    $('#playbutton').on('click', function() {
+      tour.toggleAutoplay();
+    });
+    $('#tournext').on('click', function() {
+      tour.next();
+    });
+    $('#tourcancelbutton').on('click', function() {
+      $('#tourtooltip').remove();
+      $('#tourModal').modal('hide');
+    });
+
+   // Create the tooltip
+     tour.tooltip = $('<div>',{id:'tourtooltip', class:'popover', html:'<div class="popover" role="tooltip" style="margin-top:10px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'})
+     .css({
+        'placement': 'top','display': 'none', 'overflow': 'visible'
      });
      $("body").append(tour.tooltip);
 
@@ -1579,14 +1576,15 @@ var tour = {
     $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
     // Previous button
     if (tour.chapter == 0 && tour.step == 0)
-      $("#tourprevious").button("disable");
+      $("#tourprevious").prop('disabled', true);
     else
-      $("#tourprevious").button("enable");
+      $("#tourprevious").prop('disabled', false);
     // Next button
     if ((tour.chapter >= tourdata.length-1) && (tour.step >= tourdata[tour.chapter]['steps'].length-1))
-      $("#tournext").button("disable");
+      {$("#tournext").prop('disabled', true);
+    console.log("chapter");}
     else
-      $("#tournext").button("enable");
+      $("#tournext").prop('disabled', false);
     // Autoplay
     if (tour.autoplay)
       tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
@@ -1599,18 +1597,14 @@ var tour = {
   {
     if (tour.autoplay > 0)
     {
-      var icn = $(".fa-pause");
-      icn.toggleClass("fa-pause fa-play");
-      icn.next().html(gettext("Play"));
+      $("#playbutton").html(gettext('Play')+'&nbsp;<span class="fa fa-play"></span>');
       tour.autoplay = 0;
       clearTimeout(tour.timeout);
       tour.timeout = null;
     }
     else
     {
-      var icn = $(".fa-play");
-      icn.toggleClass("fa-play fa-pause");
-      icn.next().html(gettext("Stop"));
+      $("#playbutton").html(gettext('Pause')+'&nbsp;<span class="fa fa-pause"></span>');
       tour.autoplay = 1;
       tour.next();
     }
@@ -1694,8 +1688,8 @@ var tour = {
         break;
 
       case 'L'  :
-        position = { 'left'  : (el - tw) - 10, 'top' : et + eh/2 - th/2 };
-        rightArrow.css({ right: '-9px' });
+        position = { 'left'  : (el - tw) - 17, 'top' : et + eh/2 - th/2 };
+        rightArrow.css({ top: '40%', right: '-9px' });
         tour.tooltip.prepend(rightArrow);
         break;
 
@@ -1707,7 +1701,7 @@ var tour = {
 
       case 'R'  :
         position = { 'left'  : (el + ew) + 10, 'top' : et + eh/2 - th/2 };
-        leftArrow.css({ left: '-9px' });
+        leftArrow.css({ top: '40%', left: '-9px' });
         tour.tooltip.prepend(leftArrow);
         break;
 

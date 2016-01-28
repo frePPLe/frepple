@@ -217,13 +217,11 @@
     });
     
     $("#entityul li a").click(function(){
-      console.log($(this).text());
       $("#entity").html($(this).text() + ' <span class="caret"></span>');
       $("#loaddatafile").val($(this).text());
     });
 
     $("#weekstartul li a").click(function(){
-      console.log($(this).parent().index());
       $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
       $("#weekstart").val($(this).parent().index());
     });

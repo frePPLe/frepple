@@ -55,26 +55,18 @@ $(function() {
     </div>
       <div id="html_raw" class="panel-collapse collapse" role="tabpanel" aria-labelledby="eersteHeading">
         <div class="panel-body">
-          <table>
-            <tr>
   {% if api_settings.URL_FORMAT_OVERRIDE %}
     {% for format in available_formats %}
-              <td>
 							  <button  class="btn btn-primary" role="button" type="submit" 
 							    value="{{ format|upper }} {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}"
 							    onclick="window.location.href = '{{request.prefix}}{% add_query_param request api_settings.URL_FORMAT_OVERRIDE format %}'">{{ format|upper }} {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}
 							  </button>
-              <td>
     {% endfor %}
   {% else %}
-              <td>
 					    <a href="{{request.prefix}}{{ request.get_full_path }}" rel="nofollow">
 					    {% blocktrans with http_method='GET' %}{{ http_method }} request{% endblocktrans %}
               </a>
-              </td>
   {% endif %}
-          </tr>
-        </table>
       </div>
     </div>
   </div>

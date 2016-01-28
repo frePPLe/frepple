@@ -3,8 +3,7 @@
 {% load i18n %}
 
 {% block content %}
-<div id="content-summary" style="margin-top: 20px; margin-bottom: 20px">
-  <br><br>
+<div id="content-summary" class="row"><div class="col-md-12">
 	{% blocktrans %}
 	This page helps developers to learn and experiment with the
 	<a style="text-decoration:underline" target="_blank" href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>
@@ -18,15 +17,17 @@
 	The results can shown in JSON format or as HTML in your browser.<br>
 	<br>
 	Using a tool like 'wget' or 'curl' you can access the API from the command line.<br>
-	For instance, to return the list of all sales orders in JSON format:<br>
-	<pre>    wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
-	<pre>    curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json</pre>
+	For instance, to return the list of all sales orders in JSON format:<br><br>
+	<div class="well well-sm" style="display: inline-block">
+	wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json<br><br>
+	curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
+	</div>
 	{% endblocktrans %}
-</div>
+</div></div>
 
-<div>
-	<table>
-	<tr><td></td><td><strong>{% trans 'List API' %}</strong></td><td><strong>{% trans 'Detail API' %}</strong></td></tr>
+<div class="row"><div class="col-md-12" style="max-width:900px">
+	<table class="table table-striped">
+	<tr><th></th><th>{% trans 'List API' %}</th><th>{% trans 'Detail API' %}</th></tr>
 	{% getMenu as menu %}
 	{% for group in menu %}
 	  {% for item in group.1 %}
@@ -48,8 +49,7 @@
 	    {% endif %}
 	  {% endfor %}
 	{% endfor %}
-
 	</table>
-</div>
+</div></div>
 
 {% endblock %}

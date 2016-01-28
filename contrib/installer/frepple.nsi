@@ -359,13 +359,17 @@ Function Databaseleave
   ExecWait 'psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
   IfErrors 0 ok
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
-     StrCpy $1 '$1Update the parameters or:$\r$\n'
-     StrCpy $1 '$1  1) Install PostgreSQL 9.4$\r$\n'
+     StrCpy $1 '$1Correct the connection parameters or:$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL 9.4 or 9.5$\r$\n'
      StrCpy $1 '$1  2) Add the PostgreSQL bin folder to the PATH environment variable$\r$\n'
-     StrCpy $1 '$1  3) Test the connection with the commands:$\r$\n'
+     StrCpy $1 '$1  3) Create the login role "$3"$\r$\n'
+     StrCpy $1 '$1  4) Create the database "$2" with owner "$3"$\r$\n'
+     StrCpy $1 '$1  5) Test the connection with the commands:$\r$\n'
      StrCpy $1 '$1        set PGPASSWORD=$4$\r$\n'
-     StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
-     MessageBox MB_OK $1
+     StrCpy $1 '$1        psql -d $2 -U $3 -h $5 -p $6 -c "select version();"$\r$\n$\r$\n'
+     StrCpy $1 '$1  Continue despite failed connection? May not be a good idea...$\r$\n'
+     MessageBox MB_YESNO $1 IDYES ok IDNO retry
+  retry:
      ; Return to the page
      Abort
   ok:

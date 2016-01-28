@@ -13,31 +13,37 @@ license agreement, the installer will guide you to select:
 
 The installer has been tested on Windows XP, Windows 7 and Windows 8.
 
-#. **A prerequisite is to have PostgreSQL installed.**
+#. **Prerequisite: install and configure the PostgreSQL database.**
 
-   Install postgreSQL 9.0 or higher, the world's most advanced open source database.
+   Install postgreSQL 9.4 or higher, the world's most advanced open source database.
 
-   FrePPLe assumes that the database uses UTF-8 encoding.
+   #. Download and run the postgreSQL installer.
 
-   FrePPLe needs the following settings for its database connections. If these
-   values are configured as default for the database (in the file postgresql.conf)
-   or the database role (using the 'alter role' command), a small performance
-   optimization is achieved:
-   ::
+   #. | Use the PgAdmin administration tool to create a login role for frePPLe.
+      | If you intend to use the default login role "postgres", you can skip this step.
 
-       client_encoding: 'UTF8',
-       default_transaction_isolation: 'read committed',
-       timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
+   #. Use the PgAdmin administration tool to create a database for frePPLe.
+      Make sure to assign the login role created in the previous step as the owner.
 
-   The default installation of PostgreSQL is not configured right for
-   intensive use. We highly recommend using the pgtune utility (or its online
-   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
-   hardware.
+   | Advanced administrators can further fine-tune the database instance.
+   | For a simple trial installation, you want to skip this.
 
-#. **Create a PostgreSQL database and a database user**
+   - | FrePPLe assumes that the database uses UTF-8 encoding.
+     | FrePPLe needs the following settings for its database connections. If these
+       values are configured as default for the database (in the file postgresql.conf)
+       or the database role (using the 'alter role' command), a small performance
+       optimization is achieved:
+     ::
 
-   After the installation of the database, create a user and a database for
-   frePPLe.
+         client_encoding: 'UTF8',
+         default_transaction_isolation: 'read committed',
+         timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
+
+   - | The default configuration of PostgreSQL is not configured right for
+       intensive use.
+     | We highly recommend using the pgtune utility (or its online
+       version at http://pgtune.leopard.in.ua/) to optimize the configuration
+       for your hardware.
 
 #. Prior to the installation, it is recommended to **uninstall any previous
    version**.

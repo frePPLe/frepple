@@ -93,10 +93,6 @@ padding-left: 10px;
 padding-right: 10px;
 }
 
-.navbar {
-  background-color: @navbar-default-bg;
-}
-
 .breadcrumbrow {
   border-top: 1px solid darken(@navbar-default-bg, 15%);
 }
@@ -198,12 +194,7 @@ label{
 
 /* Toolicons styles. */
 #toolicons, #save_undo {
-  margin-top: 15px;
   line-height: 2.2em;
-}
-
-#toolicons .fa {
-  cursor: pointer;
 }
 
 /* fixes for django admin forms */
@@ -367,4 +358,9 @@ background: none;
     border-left: 2px solid red;
     border-right: 2px solid red;
     border-bottom: 2px solid red;
+}
+
+/* enable scrollbar on page body while modal is open */
+.modal-open {
+    overflow: auto;
 }

@@ -364,3 +364,116 @@ background: none;
 .modal-open {
     overflow: auto;
 }
+/*+++++++++++++++++++++++++++++++++++++*/
+/* jqgrid styles */
+.ui-jqgrid.ui-jqgrid-bootstrap .custom-title-div,
+.ui-jqdialog .custom-dlg-header {
+  background-color: @table-bg;
+  }
+  
+  .table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: @table-bg-accent;
+  }
+  
+.ui-jqgrid > .ui-jqgrid-view {
+  font-size: @font-size-base;
+}
+.ui-jqgrid .ui-jqgrid-titlebar,
+.ui-jqgrid .ui-jqgrid-errorbar,
+.ui-jqdialog .ui-jqdialog-titlebar {
+  padding: .3em .3em .3em .3em;
+  position: relative;
+  font-size: @font-size-base;
+  border-left: 0 none;
+  border-right: 0 none;
+  border-top: 0 none;
+}
+.ui-jqgrid tr.jqgrow > td,
+.ui-jqgrid tr.jqgroup > td,
+.ui-jqgrid tr.jqfoot > td,
+.ui-jqgrid tr.ui-subgrid > td {
+  overflow: hidden;
+  white-space: nowrap; //disable wrap
+  height: 22px;
+  border-top: 0 none;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.ui-jqgrid-labels .ui-th-column-header,
+.ui-jqgrid .ui-jqgrid-labels th.ui-th-column {
+  background-color: lighten(@gray-light, 20%);
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
+.ui-jqgrid .ui-separator {
+  height: 12px;
+  border-left: 1px solid @table-border-color;
+  border-right: 1px solid @table-border-color;
+  margin: -1px;
+  float: right;
+}
+/* Bootstrap style support */
+.ui-jqgrid.ui-jqgrid-bootstrap { //table border
+  border: 1px solid @table-border-color;
+  border-radius: 6px;
+}
+.ui-jqgrid-view > .ui-userdata {
+  background-color: @gray-lighter;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .custom-hdiv {
+  background-color: @gray-light;
+}
+.ui-jqgrid-view > .ui-jqgrid-sdiv td {
+  background-color: @gray-lighter;
+}
+.ui-jqdialog {
+  font-size: @font-size-base;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-titlebar,
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-errorbar,
+.ui-jqdialog.ui-jqgrid-bootstrap .ui-jqdialog-titlebar {
+  font-size: @font-size-h4;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-view {
+  font-size: @font-size-base;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .custom-title-div,
+.ui-jqdialog .custom-dlg-header {
+  background-color: lighten(@gray-light, 20%);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.ui-jqdialog-content,
+.ui-jqdialog .ui-jqdialog-content {
+  border: 0;
+  padding: .3em .2em;
+  background: @modal-content-bg;
+  height: auto;
+}
+.ui-jqgrid-bootstrap.ui-jqgrid-resize-mark {
+  border: 1px solid @gray;
+  background-color: inherit;
+  color: @gray-darker;
+  font-weight: bold;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .sgbutton-div .sgbutton.btn:focus,
+.ui-jqgrid.ui-jqgrid-bootstrap .sgbutton-div .sgbutton.btn:hover {
+  border: 1px solid @gray-darker;
+}
+.ui-pager-control .ui-pg-input {
+  display: inline-block;
+  font-size: @font-size-base;
+  padding: .3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-pager {
+  font-size: @font-size-base;
+}
+.ui-pager-control .ui-pg-selbox {
+  font-size: @font-size-base;
+  padding: 0;
+}
+
+.modal .custom-dlg-window .ui-jqgrid-bootstrap .ui-jqdialog {
+  z-index: @zindex-modal;
+}

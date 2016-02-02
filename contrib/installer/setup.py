@@ -44,7 +44,7 @@ packages = [# Required for django standalone deployment
             # Required for reading and writing spreadsheets
             'openpyxl',
             # Required for REST API
-            'rest_framework',
+            'rest_framework', 'rest_framework_bulk', 'rest_framework_filters',
             # Added to package a more complete python library with frePPLe
             'urllib', 'multiprocessing', 'asyncio', 'pip',
             # Added for unicode and internationalization

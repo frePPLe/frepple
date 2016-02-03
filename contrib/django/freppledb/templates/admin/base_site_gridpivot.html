@@ -65,8 +65,8 @@ $(function() {
 	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}jQuery("#radio1").click(function() {grid.displayMode("table");});
-  jQuery("#radio2").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
+  {% endif %}jQuery("#gridmode").click(function() {grid.displayMode("table");});
+  jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% endif %}});
 

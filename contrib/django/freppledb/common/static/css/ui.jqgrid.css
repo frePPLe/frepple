@@ -1,6 +1,6 @@
 /**
  * jqGrid 4.12.2-pre - free jqGrid: https://github.com/free-jqgrid/jqGrid 
- * Date: 2016-01-31
+ * Date: 2016-02-02
  */
 
 /* Grid */
@@ -1242,6 +1242,14 @@ a.clearsearchclass {
 .ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-pager {
 	font-size: 12px;
 }
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-bootstrap-corner-top {
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-bootstrap-corner-bottom {
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
 .ui-pager-control .ui-pg-selbox {
 	font-size: 12px;
 	padding: 0;
@@ -1263,4 +1271,7 @@ a.clearsearchclass {
 .searchFilter .form-control {
 	padding: .1em;
 	height: 22px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-th-column .cbox {
+	margin-top: -2px;
 }

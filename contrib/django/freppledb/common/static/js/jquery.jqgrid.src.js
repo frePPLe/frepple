@@ -8,7 +8,7 @@
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
- * Date: 2016-01-31
+ * Date: 2016-02-02
  */
 //jsHint options
 /*jshint eqnull:true */
@@ -671,8 +671,8 @@
 					operButton: "btn btn-xs btn-default",
 					clearButton: "btn btn-xs btn-default"
 				},
-				top: "",
-				bottom: "",
+				top: "ui-jqgrid-bootstrap-corner-top",
+				bottom: "ui-jqgrid-bootstrap-corner-bottom",
 				resizer: "ui-jqgrid-bootstrap"
 			}
 		},
@@ -7855,7 +7855,7 @@
 					o.zIndex = parseInt(parentZ, 10) + 2;
 					o.toTop = true;
 				} else {
-					o.zIndex = 1050;
+					o.zIndex = 950;
 				}
 			}
 			// ONE NEEDS correction of left position in case of RTL, but the current code places
@@ -10057,7 +10057,7 @@
 			this.createTableForGroup = function (group, parentgroup) {
 				var that = this, i;
 				// this table will hold all the group (tables) and rules (rows)
-				var table = $("<table class='" + getGuiStyles("searchDialog.operationGroup", "group ") +
+				var table = $("<table class='" + getGuiStyles("searchDialog.operationGroup", "group") +
 						"' style='border:0px none;'><tbody></tbody></table>"), align = "left";
 				// create error message row
 				if (p.direction === "rtl") {

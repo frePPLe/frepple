@@ -36,6 +36,7 @@ $(function() {
     onSelectRow: function() {$(this).resetSelection();},{% endif %}
     pager: '#gridpager',
     iconSet: "fontAwesome",
+    guiStyle: "bootstrap",
     viewrecords: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
@@ -48,6 +49,17 @@ $(function() {
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     shrinkToFit: false,
+    searching: {
+      multipleSearch: true,
+      multipleGroup: true,
+      closeOnEscape: true,
+      searchOnEnter: true,
+      searchOperators: true,
+      zIndex: 5000,
+      width: 550,
+      height: 300
+    },
+
     loadError: function(xhr,st,err) {
       if (xhr.status == 200)
       {
@@ -78,7 +90,6 @@ $(function() {
 	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 	  });
-
 
 	$(window).bind('resize', function() {
 	  var h = $(window).height() - $("#grid").offset().top - 63;
@@ -154,7 +165,7 @@ $(function() {
 </div>
 
 <div class="row">
-<div id="content-main" class="col-md-12" style="min-height: 150px">
+<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
 <table id="grid" class="table table-striped" style="background-color: white"></table>
 <div id="gridpager"></div>
 </div>
@@ -182,7 +193,7 @@ $(function() {
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
               <div class="dropdown dropdown-submit-input" style="display:inline">
                   <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    {% trans request.user.horizonbuckets %}&nbsp;&nbsp;<span class="caret"></span>
+                    {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" name="horizonbucketsul" style="top: auto;">
                   {% for i in bucketnames %}
@@ -203,7 +214,6 @@ $(function() {
               <br/>
            </div>
           </div>
-
 
           <div class="row">
             <div class="col-xs-12 form-inline">

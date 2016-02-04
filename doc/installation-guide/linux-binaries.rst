@@ -105,6 +105,7 @@ Here are the steps to get a fully working environment.
       djangorestframework >= 3.3.1
       djangorestframework-bulk >= 0.2.1
       djangorestframework-filters >= 0.6.0
+      django-admin-bootstrapped
       et-xmlfile >= 1.0.0
       html5lib >= 0.999
       jdcal >= 1.0

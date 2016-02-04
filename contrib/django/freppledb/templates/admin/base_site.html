@@ -32,8 +32,11 @@
 
 $(function() {
     breadcrumbs_reflow();
-    $(window).resize(breadcrumbs_reflow);{% if request.GET.tour %}
-    tour.start("{{request.GET.tour}}");{%endif%}
+    $(window).resize(breadcrumbs_reflow);
+    $('[data-toggle="popover"]').popover();
+    {% if request.GET.tour %}
+    tour.start("{{request.GET.tour}}");
+    {%endif%}
     $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
   });
 </script>

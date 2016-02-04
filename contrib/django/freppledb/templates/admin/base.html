@@ -20,14 +20,19 @@
 
 {% if messages %}<div class="row"><div class="col-md-12">{% for message in messages %}<ul class="alert alert-{{message.tags}}"><li >{{message}}</li></ul>{% endfor %}</div></div>{% endif %}
 
-{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1 style="float: left">{{title|capfirst|force_escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div></div>{% endblock %}
+{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|capfirst|force_escape}}{{post_title}}<small>&nbsp;&nbsp;<span id="curfilter"></span></small></h1>{% block tools %}{% endblock %}{% endif %}</div></div>{% endblock %}
 
 {% block content %}<div id="content" class="row">
 {% block object-tools %}{% endblock %}
 {{content}}
-</div>{% endblock %}
+</div>
+{% endblock %}
 
-{% block footer %}<div id="popup" class="modal fade" role="dialog" aria-labelledby="popupLabel"></div>{% endblock %}
+{% block footer %}
+
+<div id="popup" class="modal fade in" role="dialog" aria-labelledby="popupLabel"></div>
+
+{% endblock %}
 
 </div> <!-- end container -->
 

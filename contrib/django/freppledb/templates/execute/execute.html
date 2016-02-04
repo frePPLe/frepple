@@ -32,7 +32,7 @@
       {% comment %}Translators: Translation included with Django {% endcomment %}
       return cellvalue + "&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     if (cellvalue == 'Failed')
-      return "<span class='taskfailed'>{% trans 'failed'|capfirst %}</span>";
+      return "<span class='bg-danger' style='display:block'>{% trans 'failed'|capfirst %}</span>";
     else if (cellvalue == 'Waiting')
     {% comment %}Translators: Translation included with Django{% endcomment %} 
       return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
@@ -219,6 +219,7 @@
     $("#entityul li a").click(function(){
       $("#entity").html($(this).text() + ' <span class="caret"></span>');
       $("#loaddatafile").val($(this).text());
+      $("#entity").attr('aria-expanded', 'false');
     });
 
     $("#weekstartul li a").click(function(){
@@ -458,7 +459,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	                      <ul class="dropdown-menu" aria-labelledby="source" id="sourceul" style="top: auto">
 	                      {% for j in scenarios %}
 	                        {% ifequal j.status 'In use' %}
-	                          <li><a value="{{j.name}}">{{j.name}}</a></li>
+	                          <li><a name="{{j.name}}">{{j.name}}</a></li>
 	                        {% endifequal %}
 	                      {% endfor %}
 	                      </ul>
@@ -549,17 +550,22 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  <div id="zevendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zevendeHeading">
 		    <div class="panel-body">
 					<table>
-					<form class="form-control" role="form" method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
+					<form class="form" role="form" method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
 					 <tr>
-						<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" id="load" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+						<td  style="padding: 0px 15px;">
+						  <button  class="btn btn-primary" role="button" id="load" type="submit" value="{% trans "launch"|capfirst %}">
+						    {% trans "launch"|capfirst %}
+						  </button>
+						</td>
 				  	<td>
                <div class="dropdown dropdown-submit-input">	
 		               <label>
 		                   {% trans "Load one of the available datasets to the current database." %}                 
-		                   <button class="btn btn-default dropdown-toggle form-control"  id="entity" value="" type=button data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
+		                   <button class="btn btn-default dropdown-toggle form-control"  id="entity" name="entity" type="button" data-toggle="dropdown">
+		                      -&nbsp;&nbsp;<span class="caret"></span>
 		                   </button>
-                       <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">  
-                          {% for i in fixtures %}<li><a value="{{i}}">{{i}}</a></li>{% endfor %}
+                       <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul" name="entityul">
+                          {% for i in fixtures %}<li><a name="{{i}}">{{i}}</a></li>{% endfor %}
                        </ul>
                    </label>
                </div>
@@ -620,7 +626,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			    </table>
 			  </div>
 		  </div>
-		  {% endif %}
+	  </div>
+	  {% endif %}
 
 	
 	  {% if perms.execute.run_db %}
@@ -636,6 +643,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
   		  <div class="panel-body">
 					<table>
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}
+					<input type="hidden" name="weekstart" id="weekstart" value="1">
 					  <tr>
 							<td style="vertical-align:top; padding: 15px">
 							  <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
@@ -660,7 +668,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
                </div>
 
 							{% endblocktrans %}</td>
-					  </tr><input type="hidden" name="weekstart" id="weekstart" value="1">
+					  </tr>
 					</form>
 					</table>
 				</div>
@@ -672,6 +680,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}
+	</div>
 	</div> <!-- end row -->
 
 	<div id="uploadSpreadsheet" style="display:none">

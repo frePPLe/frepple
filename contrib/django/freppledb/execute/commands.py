@@ -108,7 +108,7 @@ def createPlan(database=DEFAULT_DB_ALIAS):
     lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
     allowsplits=(Parameter.getValue('allowsplits', database, 'true') == "true"),
     rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true') == "true"),
-    plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false') == "false"),
+    plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false') != "false"),
     iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0'))
     #userexit_resource=debugResource,
     #userexit_demand=debugDemand

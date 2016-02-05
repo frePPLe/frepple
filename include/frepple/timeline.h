@@ -482,9 +482,21 @@ template <class type> class TimeLine
     {
       logger << "Inspecting  " << this << ": \"" << name << "\":" << endl;
       for (const_iterator oo=begin(); oo!=end(); ++oo)
+      {
         logger << "  " << oo->getDate() << "   "
             << oo->getQuantity() << "    " << oo->getOnhand()
-            << "    " << oo->getCumulativeProduced() <<  "    " << &*oo << endl;
+            << "    " << oo->getCumulativeProduced();
+        const FlowPlan* flpl = dynamic_cast<const FlowPlan*>(&*oo);
+        if (flpl)
+          logger <<  "    " << flpl->getOperationPlan()->getOperation();
+        else
+        {
+          const LoadPlan* ldpl = dynamic_cast<const LoadPlan*>(&*oo);
+          if (ldpl)
+            logger <<  "    " << flpl->getOperationPlan()->getOperation();
+        }
+        logger << endl;
+      }
     }
 
     /** This functions returns the mimimum valid at a certain date. */

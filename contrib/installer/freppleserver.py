@@ -72,6 +72,11 @@ def OpenBrowser(sysTrayIcon):
   webbrowser.open_new_tab("http://%s:%s" % (address=='0.0.0.0' and '127.0.0.1' or address, port))
 
 
+def OpenCommandWindow(sysTrayIcon):
+  import subprocess
+  subprocess.Popen('cmd', cwd=settings.FREPPLE_HOME)
+
+
 # Running a program in the system tray
 # The following code is inspired on:
 #    http://www.brunningonline.net/simon/blog/archives/SysTrayIcon.py.html
@@ -329,6 +334,7 @@ if __name__=='__main__':
       ('Open browser', None, OpenBrowser),
       ('Show log directory', None, ShowLogDirectory),
       ('Show configuration directory', None, ShowConfigDirectory),
+      ('Open command window', None, OpenCommandWindow),
     ),
     on_quit = on_quit,      # Method called when quitting the application
     default_menu_index = 0, # Double clicking on icon opens this menu option

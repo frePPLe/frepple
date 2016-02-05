@@ -210,6 +210,7 @@ Section "Application" SecAppl
   ; Copy application, dll and libraries
   SetOutPath "$INSTDIR\bin"
   File "..\bin\frepple.exe"
+  File "..\bin\frepple.pyd"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
   ; Copy modules
@@ -236,6 +237,8 @@ Section "Application" SecAppl
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start frePPLe server.lnk" "$INSTDIR\bin\freppleserver.exe"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk" "$INSTDIR\bin\custom"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  SetOutPath "$INSTDIR\bin"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
 
   ; Pick up the installation parameters
   ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
@@ -566,6 +569,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk"
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk"
+  Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk"
 
   ; Remove the folder in start menu
   RMDir "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"

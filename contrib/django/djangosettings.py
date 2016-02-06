@@ -41,7 +41,7 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'bootstrap1',
+    'NAME': 'frepple',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost.
@@ -53,7 +53,7 @@ DATABASES = {
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'bootstrap2',
+    'NAME': 'scenario1',
     'USER': 'frepple',
     'PASSWORD': 'frepple',
     'HOST': '',     # Set to empty string for localhost.
@@ -377,7 +377,7 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'earth', 'grass', 'grass2', 'grass3', 'lemon', 'snow', 'strawberry', 'water'
+  'earth2', 'grass2', 'grass3', 'lemon2', 'snow2', 'strawberry2', 'water2','orange2'
   ]
 
 # A default user-group to which new users are automatically added

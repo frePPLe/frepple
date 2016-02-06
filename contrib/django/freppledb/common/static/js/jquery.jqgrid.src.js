@@ -8,7 +8,7 @@
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
- * Date: 2016-02-02
+ * Date: 2016-02-04
  */
 //jsHint options
 /*jshint eqnull:true */
@@ -6098,7 +6098,7 @@
 				}
 				this.each(function () {
 					var t = this, p = t.p, datalen = rdata.length, $self = $(t), rows = t.rows, k = 0,
-						getGridRowById = base.getGridRowById, colModel = p.colModel, lcdata = {},// cna,
+						getGridRowById = base.getGridRowById, colModel = p.colModel, lcdata,
 						additionalProperties = p.additionalProperties;
 					if (!aradd) {
 						if (rowid !== undefined) {
@@ -6127,6 +6127,7 @@
 							//cna = p.altRows === true ? (rows.length - 1) % 2 === 0 ? cn : "" : "";
 						}
 						id = rowid;
+						lcdata = {};
 						for (i = 0; i < colModel.length; i++) {
 							cm = colModel[i];
 							nm = cm.name;

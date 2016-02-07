@@ -1,16 +1,16 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'change history'|capfirst|force_escape %}</h1>
-{% tabs opts %}
-</div>{% endblock %}
+{% block content_title %}<div class="row"><div class="col-md-12">{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'change history'|capfirst|force_escape %}</h1>
+</div></div>{% tabs opts %}
+{% endblock %}
 
 {% block content %}
-<div id="content-main">
-<div class="module">
+  <div id="content-main" class="row">
+    <div class="col-md-12">
 
 {% if action_list %}
-    <table id="change-history">
+      <table id="change-history">
         <thead>
         <tr>
             {% comment %}Translators: Translation included with Django {% endcomment %}
@@ -30,7 +30,7 @@
         </tr>
         {% endfor %}
         </tbody>
-    </table>
+      </table>
 {% else %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
     <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>

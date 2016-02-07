@@ -182,9 +182,11 @@ CURRENCY=("","$")    # Prefix and suffix for currency strings
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
     'freppledb.boot',
     #'freppledb.odoo',
     #'freppledb.openbravo',
@@ -343,46 +345,73 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'earth', 'grass', 'lemon', 'snow', 'strawberry', 'water'
+  'earth2', 'grass2', 'grass3', 'lemon2', 'snow2', 'strawberry2', 'water2','orange2'
   ]
 
 # A default user-group to which new users are automatically added
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme
-DEFAULT_THEME = 'grass'
+DEFAULT_THEME = 'grass3'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100
 
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
-  {'width':'50%', 'widgets':[
-    ("welcome",{}),
-    #("purchase_orders", {"fence1": 7, "fence2": 30}),
-    #("distribution_orders", {"fence1": 7, "fence2": 30}),
-    #("manufacturing_orders", {"fence1": 7, "fence2": 30}),
-    ("resource_queue",{"limit":20}),
-    ("purchase_queue",{"limit":20}),
-    ("shipping_queue",{"limit":20}),
+  { 'rowname': 'Welcome', 'cols': [
+    {'width':'col-md-6 col-sm-12', 'widgets':[
+      ("welcome",{}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("news",{}),
+      ("execute",{}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("alerts",{}),
+      ("recent_comments",{"limit":10}),
+      ("recent_actions",{"limit":10}),
+    ]},
   ]},
-  {'width':'25%', 'widgets':[
-    ("recent_actions",{"limit":10}),
-    ("recent_comments",{"limit":10}),
-    ("execute",{}),
-    ("alerts",{}),
-    ("late_orders",{"limit":20}),
-    ("short_orders",{"limit":20}),
-    ("purchase_order_analysis",{"limit":20}),
+  { 'rowname': 'Sales', 'cols': [
+    {'width':'col-md-9 col-sm-12', 'widgets':[
+      ("late_orders",{"limit":20}),
+      ("short_orders",{"limit":20}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("delivery_performance",{"green": 90, "yellow": 80}),
+    ]},
   ]},
-  {'width':'25%', 'widgets':[
-    ("news",{}),
-    ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
-    ("delivery_performance",{"green": 90, "yellow": 80}),
-    ("inventory_by_location",{"limit":5}),
-    ("inventory_by_item",{"limit":10}),
+  { 'rowname': 'Purchasing', 'cols': [
+    {'width':'col-md-6 col-sm-12', 'widgets':[
+      ("purchase_orders",{"fence1": 7, "fence2": 30}),
+      ("purchase_queue",{"limit":20}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("purchase_order_analysis",{"limit":20}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("inventory_by_location",{"limit":5}),
+      ("inventory_by_item",{"limit":10}),
+    ]},
   ]},
-  ]
+  { 'rowname': 'Distribution', 'cols': [
+    {'width':'col-md-12 col-sm-12', 'widgets':[
+      ("distribution_orders",{"fence1":7, "fence2": 30}),
+      ("shipping_queue",{"limit":20}),
+    ]},
+  ]},
+
+  { 'rowname': 'Manufacturing', 'cols': [
+    {'width':'col-md-9 col-sm-12', 'widgets':[
+      ("manufacturing_orders",{"fence1":7, "fence2": 30}),
+      ("resource_queue",{"limit":20}),
+    ]},
+    {'width':'col-md-3 col-sm-12', 'widgets':[
+      ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
+    ]},
+  ]},
+]
 
 # Port number for the CherryPy web server
 PORT = 8000

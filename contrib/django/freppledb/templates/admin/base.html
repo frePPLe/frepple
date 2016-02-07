@@ -1,50 +1,40 @@
 {% load i18n %}{% load firstof from future %}<!DOCTYPE html>
 <html lang="{{LANGUAGE_CODE|default:"en"}}">
 <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="NONE,NOARCHIVE">
 <title>{% block title %}{% endblock %}</title>
-<meta http-equiv="Content-Type" content="text/html; charset={{request.charset}}" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="robots" content="NONE,NOARCHIVE" />
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 
-<!-- Container -->
-<div id="container">
-
 {% if not is_popup %}
-<!-- Header -->
-<div id="headerbar" >
-{% if user.is_authenticated and user.is_staff %}<div id="user-tools">
-{% firstof user.first_name user.username %}&nbsp;&nbsp;
-<span onclick="window.location='{{request.prefix}}/preferences/'" class="fa fa-wrench fa-lg"></span>&nbsp;&nbsp;
-<span onclick="window.location='/data/logout/?next=/'" class="fa fa-sign-out fa-lg"></span></div>{% endif %}
-{% block branding %}{% endblock %}{% block nav-global %}{% endblock %}
-</div>
-<!-- END Header -->
-{% comment %}Translators: Translation included with Django {% endcomment %}
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="{{request.prefix}}/">{% trans 'Home' %}</a>{% if title %} &rsaquo; {{title}}{% endif %}</div>{% endblock %}
+{% block nav-global %}{% endblock %}
 {% endif %}
 
- {% if messages %}<ul class="messagelist">{% for message in messages %}<li>{{message}}</li>{% endfor %}</ul>{% endif %}
+<div class="container-fluid">
 
-<!-- Content -->
-<div id="content"><span style="display:block; padding-top:7px"></span>
-    {% block content_title %}<div>{% if title %}<h1 style="float: left">{{title|capfirst|force_escape}}{{post_title}}</h1>{% block tools %}{% endblock %}<span id="curfilter"></span>{% endif %}</div>{% endblock %}
-    {% block content %}
-    {% block object-tools %}{% endblock %}
-    {{content}}
-    {% endblock %}
-    <br class="clear" />
+{% if messages %}<div class="row"><div class="col-md-12">{% for message in messages %}<ul class="alert alert-{{message.tags}}"><li >{{message}}</li></ul>{% endfor %}</div></div>{% endif %}
+
+{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|capfirst|force_escape}}{{post_title}}<small>&nbsp;&nbsp;<span id="curfilter"></span></small></h1>{% block tools %}{% endblock %}{% endif %}</div></div>{% endblock %}
+
+{% block content %}<div id="content" class="row">
+{% block object-tools %}{% endblock %}
+{{content}}
 </div>
-<!-- END Content -->
+{% endblock %}
 
-{% block footer %}<div id="popup" class="ui-helper-hidden"></div>{% endblock %}
+{% block footer %}
 
-</div>
-<!-- END Container -->
+<div id="popup" class="modal fade in" role="dialog" aria-labelledby="popupLabel"></div>
+
+{% endblock %}
+
+</div> <!-- end container -->
 
 </body>
 </html>

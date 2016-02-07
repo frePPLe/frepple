@@ -1,8 +1,13 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block extrahead %}{{block.super}}
-{% if args.0 or mode == 'graph' %}<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
-{% endif %}<script type="text/javascript">
+{% if args.0 or mode == 'graph' %}
+<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js">
+	var editrow;
+	var editcol;
+</script>
+{% endif %}
+<script type="text/javascript">
 
 {% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
@@ -20,10 +25,9 @@ var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.fi
 ];
 
 $(function() {
-  $("#toolicons").tooltip({show: {effect: "fade", delay: 500} });{% if reportclass.hasTimeBuckets and not bucketnames %}
+  {% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
-{% else %}{% if reportclass.hasTimeBuckets %}$("#displaymode").buttonset();
-{% endif %}
+{% else %}
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
       + (location.search.length > 0 ? "&format=json" : "?format=json"),
@@ -38,17 +42,31 @@ $(function() {
     editurl: location.pathname,
     beforeSaveCell: upload.select,{% else %}
     onSelectRow: function() {$(this).resetSelection();},
+    formatCell: function(rowid, cellname, value, iRow, iCol) {
+      editrow = iRow;
+      editcol = iCol;
+      return value;
+    },
     {% endif %}rowNum: {{request.pagesize}},
    	pager: '#gridpager',
     viewrecords: true,
     sortorder: "asc",
     iconSet: "fontAwesome",
+    guiStyle: "bootstrap",
     hidegrid: false,
     scrollRows: true,
-    altRows: true,
-    altclass:'altRow',
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
+    searching: {
+      multipleSearch: true,
+      multipleGroup: true,
+      closeOnEscape: true,
+      searchOnEnter: true,
+      searchOperators: true,
+      zIndex: 5000,
+      width: 550
+    },
+
 	  loadError: function(xhr,st,err) {
 	    $('#load_grid').show();
 	    if (xhr.status == 200)
@@ -65,63 +83,159 @@ $(function() {
 	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}jQuery("#gridmode").click(function() {grid.displayMode("table");});
+  {% endif %}
+  jQuery("#gridmode").click(function() {grid.displayMode("table");});
   jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
-  {% endif %}});
+  {% endif %}
 
+	$(window).bind('resize', function() {
+	  $("#grid")
+	   .setGridWidth($('#content-main').width())
+	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	});
 
-$(window).bind('resize', function() {
-  $("#grid")
-   .setGridWidth($('#content-main').width())
-   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	$("#horizonbucketsul li a").click(function(){
+	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
+	  $("#horizonbuckets").val($(this).prop('name'));
+	});
+
+  $("#horizonunitul li a").click(function(){
+    $("#horizonunit1").html($(this).text() + '  <span class="caret"></span>');
+    $("#horizonunit").val($(this).prop('name'));
+  });
+
 });
 
 </script>
 {% endblock %}
 {% block content %}
-{% block before_table %}{% endblock %}<div id="toolicons">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}<form style="display: inline"><span id="displaymode">
-<input type="radio" id="gridmode" name="mode" value="grid" {% if mode == 'table' %}checked{% endif %}><label for="gridmode"><span title="{% trans "display table"|capfirst|force_escape %}" class="fa fa-table fa-lg" style="color:#4c3000"></span></label>
-<input type="radio" id="graphmode" name="mode" value="graph" {% if mode == 'graph' %}checked{% endif %}><label for="graphmode"><span title="{% trans "display graph"|capfirst|force_escape %}" class="fa fa-image fa-lg" style="color:#4c3000"></span></label>
-</span></form>&nbsp;&nbsp;
-{% endif %}
-{% if reportclass.filterable and not args.0 %}<span onclick="grid.showFilter()" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search fa-lg"></span>&nbsp;&nbsp;{% endif %}
-{% if reportclass.hasTimeBuckets %}<span onclick="grid.showBucket()" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o fa-lg"></span>&nbsp;&nbsp;
-{% endif %}{% if reportclass.editable and haschangeperm %}<span id="csvimport" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa-lg"></span>
-{% endif %}<span onclick="grid.showExport(false)" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-arrow-down fa-lg"></span>
-</div>
+{% block before_table %}{% endblock %}
+
+<div class="row">
+
+<div class="col-md-8">
 {% if reportclass.editable and haschangeperm %}
 {% block save_undo_buttons %}
 <div id="save_undo" style="float:left">
 {% comment %}Translators: Translation included with Django {% endcomment %}
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="button ui-corner-all save_undo_button_inactive" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
 {% endblock save_undo_buttons %}
 {% endif %}
-<div id="content-main" style="margin-right: 15px;">
-<table id="grid" class="pivotgrid"></table>
-<div id="gridpager"></div>
+</div>
+
+<div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
+	<div class="btn-group" role="group">
+
+		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
+		  <label for="gridmode" class="fa fa-table fa"></label>
+		</button>
+		<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
+		  <label class="fa fa-image fa"></label>
+		</button>
+
+	</div>
+	{% endif %}
+	{% if reportclass.filterable and not args.0 %}
+	  <button class="btn btn-xs btn-primary">
+	    <span onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search fa"></span>
+	  </button>
+	{% endif %}
+	{% if reportclass.hasTimeBuckets %}
+	  <button class="btn btn-xs btn-primary">
+	    <span onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o fa"></span>
+	  </button>
+  {% endif %}
+  {% if reportclass.editable and haschangeperm %}
+	    <button class="btn btn-xs btn-primary">
+        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up fa"></span>
+	    </button>
+  {% endif %}
+		  <button class="btn btn-xs btn-primary">
+		    <span onclick="grid.showExport(false)" data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down fa"></span>
+		  </button>
+	</div>
+</div>
+
+<div class="row">
+	<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
+	 <table id="grid" class="table table-striped pivotgrid"></table>
+	</div>
+<div id="gridpager" class="col-md-12"></div>
 </div>
 {% block after_table %}{% endblock %}
-{% if reportclass.hasTimeBuckets %}<div id="timebuckets" style="display:none" title="{% trans 'time buckets'|capfirst %}">
-<form method="get" action="#">
-{% trans 'bucket size'|capfirst %}&nbsp;&nbsp;<select name="horizonbuckets" id="horizonbuckets">
-{% for i in bucketnames %}<option value="{{i}}"{% ifequal i request.user.horizonbuckets %} selected="selected"{% endifequal %}>{% trans i %}</option>
-{% endfor %}</select><br/>
-<input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
-{% trans 'from'|capfirst %}&nbsp;
-<input id="horizonstart" type="text" size="9" class="vDateField" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
-{% trans 'to' %}&nbsp;
-<input id="horizonend" type="text" size="9" class="vDateField" value="{{request.user.horizonend|date:"Y-m-d"}}"/><br/>
-<input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
-<input id="horizonlength" name="horizonlength" type="text" size="2" value="{{request.user.horizonlength}}"/>&nbsp;
-<select name="horizonunit" id="horizonunit">
-<option value="day"{% ifequal request.user.horizonunit 'day' %} selected="selected"{% endifequal %}>{% trans 'days' %}</option>
-<option value="week"{% ifequal request.user.horizonunit 'week' %} selected="selected"{% endifequal %}>{% trans 'weeks' %}</option>
-<option value="month"{% ifequal request.user.horizonunit 'month' %} selected="selected"{% endifequal %}>{% trans 'months' %}</option>
-</select>&nbsp;{% trans 'after plan current date' %}
-<input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
-</form>
-</div>{% endif %}
+{% if reportclass.hasTimeBuckets %}
+<div  id="timebuckets" class="modal fade" role="dialog" aria-labelledby="timebucketsLabel">
+  <div class="modal-dialog">
+    <div class="modal-content" style="width: 500px;">
+      <div class="modal-header">
+       <h4 class="modal-title">{% trans 'time buckets'|capfirst %}</h4>
+      </div>
+      <div class="modal-body">
+
+      <form method="get" action="#">
+      <input type="hidden" name="horizonbuckets" id="horizonbuckets" value="{{request.user.horizonbuckets}}">
+      <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
+      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
+          <div class="row" style="padding-bottom: 15px">
+            <div class="col-xs-12">
+		          {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
+		          <div class="dropdown dropdown-submit-input" style="display:inline">
+		              <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+		                {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
+		              </button>
+		              <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" name="horizonbucketsul" style="top: auto;">
+		              {% for i in bucketnames %}
+		                <li><a onclick="" name="{{ i }}">{% trans i %}</a></li>
+		              {% endfor %}
+		              </ul>
+		          </div>
+            </div>
+          </div>
+
+          <div class="row" style="padding-bottom: 15px">
+            <div class="col-xs-12 form-inline">
+							<input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
+							&nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
+							<input id="horizonstart"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+							&nbsp;{% trans 'to' %}&nbsp;
+							<input id="horizonend"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+							<br/>
+           </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 form-inline">
+              <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
+              <input id="horizonlength" name="horizonlength" type="number" class="form-control" min="1" max="99" maxlength="2" value="{{request.user.horizonlength}}"/>&nbsp;
+              <div class="dropdown dropdown-submit-input" style="display:inline">
+	              <button class="btn btn-default dropdown-toggle form-control" type="button" name="horizonunit1" id="horizonunit1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+	                {% if request.user.horizonunit == "day" %}{% trans 'days' %}{% endif %}
+	                {% if request.user.horizonunit == "week" %}{% trans 'weeks' %}{% endif %}
+	                {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}
+	                &nbsp;&nbsp;<span class="caret"></span>
+	              </button>
+	              <ul class="dropdown-menu" aria-labelledby="horizonunit1" id="horizonunitul" name="horizonunitul" style="top: auto;">
+	                <li><a name="day">{% trans 'days' %}</a></li>
+	                <li><a name="week">{% trans 'weeks' %}</a></li>
+	                <li><a name="month">{% trans 'months' %}</a></li>
+	              </ul>
+		          </div>
+		          &nbsp;{% trans 'after plan current date' %}
+            </div>
+          </div>
+
+      </form>
+			</div>
+			<div class="modal-footer">
+				<input type="submit" id="okbutton" role="button" class="btn btn-primary pull-left" value="{% trans 'OK' %}">
+				<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans 'cancel'|capfirst %}">
+			</div>
+
+		</div>
+	</div>
+</div>
+{% endif %}
 {% block contextmenus %}{% endblock %}
 {% endblock %}

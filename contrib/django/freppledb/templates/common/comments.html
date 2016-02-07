@@ -2,33 +2,32 @@
 {% load i18n %}
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
-  $(function() {
-    $("input:submit").button();
-  });
   $(document).ready(function() {
-    $('#submit')removeClass('ui-button ui-state-default');
+    $('#submit').addClass('disabled');
   });
 </script>
 {% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'comments'|capfirst|force_escape %}</h1>{% endif %}
-{% tabs opts %}</div>{% endblock %}
+{% block content_title %}<div class="row"><div class="col-md-12">{% block tools %}{% endblock %}{% if title %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'comments'|capfirst|force_escape %}</h1>{% endif %}
+</div></div>{% tabs opts %}{% endblock %}
 
 {% block content %}
-<div id="content-main">
-<div class="module">
-{% if perms.common.add_comment %}<form method="post">
-  {% csrf_token %}
-  <textarea id="comment" name="comment" rows="10" style="width:100%" oninput="$('#submit').addClass('save_undo_button_active').removeClass('save_undo_button_inactive');"></textarea>
-  {% comment %}Translators: Translation included with Django {% endcomment %}  
-  <input id="submit" type="submit" class="button ui-corner-all save_undo_button_inactive" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}"/>
-</form>{% endif%}
-
+  <div id="content-main" class="row" style="min-height: 150px">
+    <div class="col-md-12">
+{% if perms.common.add_comment %}
+      <form method="post">
+{% csrf_token %}
+        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%" oninput="$('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');"></textarea>
+{% comment %}Translators: Translation included with Django {% endcomment %}  
+        <div style="margin-top: 0.7em"><button id="submit" type="submit" class="btn btn-primary" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button></div>
+      </form>{% endif%}
+	
 {% for c in comments %}
-<hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
-<pre>{{c.comment}}</pre>
+	    <hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
+	    <pre>{{c.comment}}</pre>
 {% endfor %}
-
-</div>
+	
+	   </div>
+	</div>
 </div>
 {% endblock %}

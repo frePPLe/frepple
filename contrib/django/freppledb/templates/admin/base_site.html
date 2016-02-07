@@ -1,32 +1,44 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
+
 {% block title %}{% if title %}{{title|capfirst}} - {% endif %}frePPLe{% endblock %}
-{% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" height="40" width="124" alt="frePPLe&nbsp;{% version %}">{% endblock %}
-{% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/{{request.theme}}/jquery-ui.min.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+{% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
+{% block extrastyle %}{{block.super}}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+{% if request.theme == 'grass2' or 'grass3' %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap-datetimepicker.css" />
+{% else %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/frepple.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/custom.css" />
+{% endif %}
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
 {% endblock %}
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/data/jsi18n/"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/i18n/jquery.ui.datepicker-{{LANGUAGE_CODE|default:"en"}}.js"></script>
-<script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js" type="text/javascript"></script>
-<script src="{{STATIC_URL}}js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/typeahead.bundle.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqgrid.src.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 <script type="text/javascript">
 
   var url_prefix = '{{request.prefix}}';
 
-  $(function() {
+$(function() {
     breadcrumbs_reflow();
-    $(window).resize(breadcrumbs_reflow);{% if request.GET.tour %}
-    tour.start("{{request.GET.tour}}");{%endif%}
+    $(window).resize(breadcrumbs_reflow);
+    $('[data-toggle="popover"]').popover();
+    {% if request.GET.tour %}
+    tour.start("{{request.GET.tour}}");
+    {%endif%}
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
   });
 </script>
 {% endblock %}
-{% block breadcrumbs %}<div class="breadcrumbs"><div class="selectdb">{% selectDatabase %}</div><a id="cockpitcrumb" href="{{request.prefix}}/data/">{% trans 'cockpit'|capfirst %}</a><span id="breadcrumbs">{% crumbs %}</span></div>{% endblock %}
 {% block nav-global %}{% endblock %}

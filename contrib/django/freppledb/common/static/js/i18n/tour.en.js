@@ -11,7 +11,7 @@ var tourdata = [
      steps: [
              {
                url: "/data/",
-               element : '.tourguide',
+               element : '#tourModal',
                description : "Welcome to frePPLe.<br/>" +
                  "This guided tour will show you around.<br/><br/>" +
                  "During the first 5 days of use this page<br/>" +
@@ -31,7 +31,7 @@ var tourdata = [
         [
          {
            url: "/data/",
-           element : 'h1',
+           element : '#popup',
            description : 'The main screen is organized as a dashboard with widgets<br/>' +
                 'for the most common activities, such as:<br/>' +
                 '&nbsp;&nbsp;- A list of planned operations on each resource<br/>' +
@@ -41,7 +41,7 @@ var tourdata = [
                 '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
                 'The widgets and layout of the dashboard are fully configurable.<br/>' +
                 'In the Enterprise Edition every user can customize his own cockpit.',
-           position : 'B'
+           position : 'C'
          },
          {
            url: "/data/",
@@ -60,10 +60,10 @@ var tourdata = [
          },
          {
            url: "/data/",
-           element : '.breadcrumbs a',
+           element : '#breadcrumbs',
            description : 'A breadcrumb trail shows the history of screens you have accessed.<br/>' +
                    'You can easily step back and forth.',
-           position : 'R'
+           position : 'B'
          }
        ]
     },
@@ -89,11 +89,11 @@ var tourdata = [
          },
          {
            url: "/data/input/demand/",
-           element : "#jqgh_grid_customer",
+           element : "#content-main",
            description : "We selected the demand table as an example.<br/>" +
              "Click a column header to sort the data.<br/>" +
              "Clicking a second time will reverse the sorting order.",
-           position : 'BL'
+           position : 'T'
          },
          {
            url: "/data/input/demand/",
@@ -109,7 +109,7 @@ var tourdata = [
            description : "You can define filters to see a subset of the data.<br/>" +
              "The filter expression can use all attributes from<br/>" +
              "the table and combine them using AND and OR criteria.",
-           position : 'L'
+           position : 'B'
          },
          {
            url: "/data/input/demand/",
@@ -123,7 +123,7 @@ var tourdata = [
            url: "/data/input/demand/",
            element : ".fa-plus",
            description : "Clicking 'add' (+ sign) opens a form where you can enter data for a new record.",
-           position : 'B'
+           position : 'L'
          },
          {
            url: "/data/input/demand/",
@@ -131,21 +131,21 @@ var tourdata = [
            description : "You can select some rows with the checkbox at the start of the row.<br/>" +
              "Click 'copy' to duplicate the records.<br/>" +
              "Click 'delete' to remove the selected records.",
-           position : 'B'
+           position : 'L'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-arrow-down",
            description : "Click 'export' to export all data from the grid<br/>" +
               "to a CSV-file or an Excel spreadsheet.",
-           position : 'B'
+           position : 'L'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-arrow-up",
            description : "Spreadsheets and CSV-files can also be imported again.<br/>" +
              "The data is validated and any errors are reported.",
-           position : 'B'
+           position : 'L'
          },
          {
            url: "/data/input/demand/",
@@ -182,7 +182,7 @@ var tourdata = [
          },
          {
            url: "/supplypath/item/product/",
-           element : "#graph",
+           element : ".container-fluid h1",
            description : "This report shows the bill of material of a particular item.<br/>" +
              "The top section visualizes the data as a network graph.<br/>" +
              "The bottom section displays the data as hierarchical tree.<br/><br/>" +
@@ -200,10 +200,8 @@ var tourdata = [
          {
            url: "/whereused/buffer/thread%20%40%20factory%201/",
            element : "#tabs ul li:nth-child(1)",
-           description : "The supply path report displays the structure upstream,<br/>" +
-             "ie walking from end item towards the raw materials.<br/><br/>" +
-             "The where-used report displays the structure downstream,<br/>" +
-             "ie walking from the raw material towards the end items.<br/>" +
+           description : "The <strong>supply path</strong> report displayed the structure upstream, i.e. walking from end item towards the raw materials.<br/><br/>" +
+             "The <strong>where-used</strong> report displays the structure downstream, i.e. walking from the raw material towards the end items.<br/>" +
              "It thus displays which end items the selected entity is used for.",
            position : 'BL'
          },
@@ -219,100 +217,98 @@ var tourdata = [
         [
          {
            url: "/data/",
-           element : '.ui-menu:eq(2) .ui-menu-item',
+           element : '#popup',
            beforestep: '$(".menuButton:eq(2)").click()',
-           description : "Once you have loaded all data, you are now<br/>" +
-             "ready to generate the plan.",
-           position : 'R'
+           description : "<strong>Once you have loaded all data, you are now ready to generate the plan.</strong>",
+           position : 'C'
          },
          {
            url: "/execute/",
-           element : '#content h1',
-           beforestep: '$("#tasks").accordion({active:false,animate:false})',
+           element : '#content-main',
            description : "The top section show the log and status of all tasks.",
-           position : 'R'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : '#content-main h1',
+           element : '#tasks',
            description : "The bottom section allows you to interactively launch new tasks.<br/><br/>" +
              "To automate tasks they can also be launched from the command line.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#plan"]',
-           beforestep: '$("a[href=\\"#plan\\"]").parent().click()',
+           element : '#eersteHeading',
+           beforestep: '$("#eersteAccord").addClass("in")',
            description : "You can generate constrained or unconstrained plans<br/>" +
              "and select which constraints to consider.<br/><br/>" +
              "A constrained plan will respect all constraints<br/>" +
              "but some demands can be planned late or incomplete.<br/><br/>" +
              "In an unconstrained plan all demand will be met at its due date<br/>" +
              "but some constraints can be violated.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#exportworkbook"]',
-           beforestep: '$("a[href=\\"#exportworkbook\\"]").parent().click()',
+           element : '#tweedeHeading',
+           beforestep: '$("#eersteAccord").removeClass("in"); $("#tweedeAccord").addClass("in")',
            description : "You can export all input data in single spreadsheet<br/>" +
              "Each entity gets a seperate tab.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#importworkbook"]',
-           beforestep: '$("a[href=\\"#importworkbook\\"]").parent().click()',
+           element : '#derdeHeading',
+           beforestep: '$("#tweedeAccord").removeClass("in"); $("#derdeAccord").addClass("in")',
            description : "With this option you can import a spreadsheet.<br/>" +
              "The spreadsheet must match the structure exported with the task above.<br/><br/>" +
              "You can thus export all data, edit in Excel and then reload the updated spreasheet.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#scenarios"]',
-           beforestep: '$("a[href=\\"#scenarios\\"]").parent().click()',
+           element : '#vierdeHeading',
+           beforestep: '$("#derdeAccord").removeClass("in"); $("#vierdeAccord").addClass("in")',
            description : "Here you can copy your dataset into a whatif scenario.<br/><br/>" +
              "A scenario is a complete copy of all data in a separate database.<br/>" +
              "All data and plans can thus be vary independently.<br/><br/>" +
              "Once a scenario has been copied, a dropdown list shows up in the upper right corner<br/>" +
              "of the screen. Here you select the scenario you want to work with.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#backup"]',
-           beforestep: '$("a[href=\\"#backup\\"]").parent().click()',
+           element : '#vijfdeHeading',
+           beforestep: '$("#vierdeAccord").removeClass("in"); $("#vijfdeAccord").addClass("in")',
            description : "You can create a backup of the database.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#empty"]',
-           beforestep: '$("a[href=\\"#empty\\"]").parent().click()',
+           element : '#zesdeHeading',
+           beforestep: '$("#vijfdeAccord").removeClass("in"); $("#zesdeAccord").addClass("in")',
            description : "This task erases the content from the selected tables.<br/><br/>" +
              "When you mark a certain entities for erasing, all entities which<br/>" +
              "depend on it will automatically also be selected.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : 'a[href="#load"]',
-           beforestep: '$("a[href=\\"#load\\"]").parent().click()',
+           element : '#zevendeHeading',
+           beforestep: '$("#zesdeAccord").removeClass("in"); $("#zevendeAccord").addClass("in")',
            description : "We provide some sample datasets.<br/>" +
              "With this action you can load them into your database.<br/><br/>" +
              "A dataset is loaded incrementally, without erasing the existing data.<br/>" +
              "In most cases you'll want to erase the database contents before loading a new dataset.",
-           position : 'TL'
+           position : 'T'
          },
          {
            url: "/execute/",
-           element : '#content-main h1',
-           beforestep: '$("#tasks").accordion({active:false})',
+           element : '#tasks',
+           beforestep: '$("#zevendeAccord").removeClass("in")',
            description : "There are some additional tasks which are less commonly used.<br/>" +
               "See the documentation for more info.<br/><br/>" +
               "Custom tasks can also be added in an extension app.",
-           position : 'TL'
+           position : 'T'
          }
         ]
       },
@@ -333,16 +329,16 @@ var tourdata = [
           [
            {
              url: "/data/",
-             element : '.ui-menu:eq(1)',
+             element : '#popup',
              beforestep: '$(".menuButton:eq(1)").click()',
              description : "Once you have loaded all data and generated<br/>" +
                "the plan, you are now ready to review and<br/>" +
                "analyze the results.",
-             position : 'R'
+             position : 'C'
            },
            {
              url: "/data/",
-             element : 'h1',
+             element : '#popup',
              description : 'In their day to day usage planners will be using the main<br/>' +
                   'cockpit screen for the common analysis tasks.<br/><br/>' +
                   'The main screen is organized as a dashboard with widgets<br/>' +
@@ -355,7 +351,7 @@ var tourdata = [
                   '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
                   'The widgets and layout of the dashboard are fully configurable.<br/>' +
                   'In the Enterprise Edition every user can customize his own cockpit.',
-             position : 'B'
+             position : 'C'
            },
            {
              url: "/resource/",

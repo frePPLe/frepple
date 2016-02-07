@@ -5,14 +5,6 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
 {{block.super}}{% endblock %}
 
-{% block extrahead %}{{block.super}}
-<script type="text/javascript">
- $(function() {
-    $("input:submit").button();
- });
-</script>
-{% endblock %}
-
 {% comment %}Translators: Translation included with Django {% endcomment %}
 {% block content_title %}<div><h1 style="color:#333">{{title|escape}}: {% trans "Delete"|capfirst|force_escape %}</h1>{% block tools %}{% endblock %}</div>{% endblock %}
 {% block content %}
@@ -45,9 +37,9 @@
     {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
     {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
     {% comment %}Translators: Translation included with Django {% endcomment %}
-    <input type="submit" value="{% trans "Yes, I'm sure" %}" />
+    <input type="submit" class="btn btn-danger" value="{% trans "Yes, I'm sure" %}" />
     {% comment %}Translators: Translation included with Django {% endcomment %}
-    <a href="#" onclick="window.history.back(); return false;" class="button cancel-link">{% trans "No, take me back" %}</a>
+    <a href="#" onclick="window.history.back(); return false;" class="btn btn-info">{% trans "No, take me back" %}</a>
     </div>
     </form>
 {% endif %}

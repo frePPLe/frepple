@@ -1,0 +1,562 @@
+/*!
+ FrePPLe v3.1.0
+*/
+
+/* Customized bootstrap configuration */
+@import "variables.less";
+
+/*** Compile bootstrap ***/
+
+/*!
+ * Bootstrap v3.3.6 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+// Core variables and mixins
+@import "mixins.less";
+
+// Reset and dependencies
+@import "normalize.less";
+@import "print.less";
+// Not using the bootstrap icons:
+// @import "glyphicons.less";
+
+// Core CSS
+@import "scaffolding.less";
+@import "type.less";
+@import "code.less";
+@import "grid.less";
+@import "tables.less";
+@import "forms.less";
+@import "buttons.less";
+
+// Components
+@import "component-animations.less";
+@import "dropdowns.less";
+@import "button-groups.less";
+@import "input-groups.less";
+@import "navs.less";
+@import "navbar.less";
+
+// Customized breadcrumb code
+//@import "breadcrumbs.less";
+.breadcrumb {
+  padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
+  margin-bottom: 0;
+  list-style: none;
+  background-color: @breadcrumb-bg;
+  color: @breadcrumb-color;
+  > li {
+    line-height: @line-height-base;
+    color: @breadcrumb-color;
+    font-size: @font-size-base;
+    display: inline-block;
+    + li:before {
+      content: "\00a0\00a0@{breadcrumb-separator}\00a0\00a0"; // Unicode space added since inline-block means non-collapsing white-space
+      font-family: @icon-font-name;
+      color: @breadcrumb-color;
+    }
+  }
+}
+
+@import "pagination.less";
+@import "pager.less";
+@import "labels.less";
+@import "badges.less";
+@import "jumbotron.less";
+@import "thumbnails.less";
+@import "alerts.less";
+@import "progress-bars.less";
+@import "media.less";
+@import "list-group.less";
+@import "panels.less";
+@import "responsive-embed.less";
+@import "wells.less";
+@import "close.less";
+
+// Components w/ JavaScript
+@import "modals.less";
+@import "tooltip.less";
+@import "popovers.less";
+@import "carousel.less";
+
+// Utility classes
+@import "utilities.less";
+@import "responsive-utilities.less";
+
+/*** FrePPLe styles and overrides start here. ***/
+
+/* Navigation bar */
+
+.nav li a {
+padding-left: 10px;
+padding-right: 10px;
+}
+
+.breadcrumbrow {
+  border-top: 1px solid darken(@navbar-default-bg, 15%);
+}
+
+.navbar-brand img {
+  height: (@navbar-height - 10px);
+}
+
+.login img {
+  width: 100%;
+}
+
+div.selectdb {
+  padding-top: 2px;
+  padding-bottom: 2px
+}
+
+#nav-menu .dropdown-menu {
+  background-color: darken(@navbar-default-bg, 15%);
+}
+
+#nav-menu ul.dropdown-menu li a:hover {
+  background-color: darken(@navbar-default-bg, 25%);
+}
+
+.navbar .dropdown-menu .divider {
+    margin: 7px 0; //the default is 8px but would not show in chrome
+}
+
+.navbar .dropdown-menu>li>a { /*fix django admin*/
+    font-size: @font-size-base;
+}
+
+div.selectdb select { /*fix django admin*/
+  padding: 0px;
+  border-color: @input-border;
+}
+
+ul li { /*fix django admin*/
+    list-style-type: none;
+}
+
+div.tt-menu.tt-open {
+  width: 100%;
+}
+
+div.tt-dataset.tt-dataset-search {
+  background-color: darken(@navbar-default-bg, 15%);
+  padding-bottom: 5px;
+}
+
+div.tt-dataset.tt-dataset-search * {
+  line-height: @line-height-base;
+  display: block;
+}
+
+div.tt-dataset.tt-dataset-search a {
+  font-size: @font-size-base; /* fix django admin form problems */
+  padding-left: 16px;
+  text-align: left;
+}
+
+div.tt-dataset.tt-dataset-search a:hover {
+  background-color: darken(@navbar-default-bg, 25%);
+  color: @navbar-default-link-hover-color;
+  padding-left: 16px;
+  text-align: left;
+}
+
+div.tt-dataset.tt-dataset-search span p {
+  margin-top: 5px;
+  margin-bottom: 1px;
+  text-align: center;
+  background-color: darken(@navbar-default-bg, 15%);
+}
+
+div.tt-dataset.tt-dataset-search span li.divider {
+  height:1px;
+  margin-bottom: 2px;
+  margin-top: 1px;
+  overflow:hidden;
+  background-color: @dropdown-divider-bg;
+}
+
+a:link, a:visited {
+    color: @navbar-default-link-color;
+    text-decoration: none;
+}
+
+label{
+  font-weight: normal;
+}
+
+/* Tabs styles. */
+.nav-tabs {
+  float: right;
+  margin-top: 15px;
+}
+
+/* Toolicons styles. */
+#toolicons, #save_undo {
+  line-height: 2.2em;
+}
+
+/* fixes for django admin forms */
+.nav>li {
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+}
+
+/* Cockpit styles. */
+
+.cockpitcolumn {
+  padding-bottom: 0px;
+}
+
+.cockpitcolumn .panel-placeholder {
+  height: 50px;
+  background: lighten(@panel-default-heading-bg, 15%);
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.panel {
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Modals */
+.modal-content {
+     box-shadow: 0 3px 9px rgba(0,0,0,0.5);
+}
+
+
+/* Gantt charts */
+
+.opplan {
+  vector-effect: non-scaling-stroke;
+  fill: rgb(111,111,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
+}
+
+.opplan_locked {
+  vector-effect: non-scaling-stroke;
+  fill: rgb(0,0,255);
+  stroke-width: 1px;
+  stroke: rgb(0,0,0)
+}
+
+.time {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+  stroke: rgb(0,0,0);
+}
+
+.axis path, .axis line, .miniaxis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.graphline {
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Context menu. */
+
+div.ContextMenu {
+  display: none;
+  position: absolute;
+  z-index: 100;
+}
+
+div.ContextMenu ul {
+  position: absolute;
+  list-style-type: none;
+  z-index: 100;
+}
+
+div.ContextMenu li a {
+  display: block;
+}
+
+div.ContextMenu ul li {
+  list-style-type: none;
+}
+
+/* Raw id fields are too small by default. */
+
+.vForeignKeyRawIdAdminField {
+    width: 20em;
+}
+
+/* Marking of edited and selected items. */
+
+.dirty-cell {
+  background: @brand-danger;
+}
+
+tr.ui-state-highlight {
+  border: 1px solid @brand-danger !important;
+  background: lighten(@brand-danger, 15%) !important;
+}
+
+/* Helper styles */
+
+.hor-align-right {
+		text-align: right;
+}
+
+.ver-align-middle {
+	vertical-align: middle;
+}
+
+.alignleft {
+  text-align: left;
+}
+
+.aligncenter {
+  text-align: center;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.leftpadding {
+  padding-left: 5px;
+}
+
+/* to style file upload button */
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.spreadsheet {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+/* Graph cell in pivot grid */
+
+.graphcell {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.dropdown-menu li a {
+  cursor: pointer;
+}
+
+/* disable dark background in tour modal dialog */
+.modal-backdrop {
+background: none;
+}
+
+/* tour styles */
+.popover, #tourModal div.modal-content {
+    border-top: 2px solid red;
+    border-left: 2px solid red;
+    border-right: 2px solid red;
+    border-bottom: 2px solid red;
+}
+
+/* enable scrollbar on page body while modal is open */
+.modal-open {
+    overflow: auto;
+}
+/*+++++++++++++++++++++++++++++++++++++*/
+/* jqgrid styles */
+
+.ui-jqdialog {
+  position: absolute !important;
+  font-size: @font-size-base;
+  padding: @padding-base-vertical @padding-base-horizontal;
+  .custom-dlg-header {
+    background-color: @table-bg;
+    background-color: @modal-content-bg;
+    border-top-left-radius: @border-radius-large;
+    border-top-right-radius:@border-radius-large;
+  };
+  .ui-jqdialog-titlebar {
+    padding: @modal-title-padding;
+    position: relative;
+    font-size: @font-size-base;
+    border-left: 0 none;
+    border-right: 0 none;
+    border-top: 0 none;
+    > .ui-jqdialog-titlebar-close {
+      .close
+    };
+  };
+  .custom-dlg-header {
+    background-color: @modal-content-bg;
+    border-top-left-radius: @border-radius-large;
+    border-top-right-radius:@border-radius-large;
+  };
+  .ui-jqdialog-content {
+    .ui-jqdialog-content;
+  }
+}
+
+.ui-jqdialog.ui-jqgrid-bootstrap .ui-jqdialog-titlebar {
+  font-size: @font-size-h4;
+  font-family: inherit;
+  font-weight: 500;
+  color: inherit;
+}
+
+.ui-jqdialog-content {
+  border: 0;
+  background: @modal-content-bg;
+  height: auto;
+  .CaptionTD {
+    padding: @modal-inner-padding;
+  };
+}
+
+/* ----------------------- */
+
+.ui-jqgrid {
+  .ui-separator {
+    height: 12px;
+    border-left: 1px solid @table-border-color;
+    border-right: 1px solid @table-border-color;
+    margin: -1px;
+    float: right;
+  };
+
+  .ui-jqgrid-labels th.ui-th-column {
+    .ui-jqgrid-labels .ui-th-column-header;
+  };
+
+  > .ui-jqgrid-view {
+    font-size: @font-size-base;
+  };
+  .ui-jqgrid-errorbar, .ui-jqgrid-titlebar {
+    .ui-jqdialog .ui-jqdialog-titlebar;
+  };
+  tr.jqgrow, tr.jqgroup, tr.jqfoot, tr.ui-subgrid {
+    > td {
+        overflow: hidden;
+        white-space: nowrap; //disable wrap
+        height: @input-height-small ;
+        border-top: 0 none;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+    };
+  };
+  .ui-jqgrid-btable td.jqgrid-rownum {
+    padding: @table-condensed-cell-padding @table-condensed-cell-padding;
+  };
+}
+
+.ui-jqgrid.ui-jqgrid-bootstrap{
+  border: 1px solid @table-border-color;
+  border-radius: @border-radius-large;
+
+  tr.jqgfirstrow {
+    > td {
+      padding: 0 @table-cell-padding;
+    };
+  }
+
+  tr.jqgrow, tr.jqgroup, tr.jqfoot {
+    > td {
+      padding: @table-condensed-cell-padding @table-condensed-cell-padding;
+    };
+  }
+
+  .custom-title-div {
+    background-color: @table-bg;
+    .ui-jqdialog .custom-dlg-header;
+  };
+  .custom-hdiv {
+    background-color: @gray-light;
+  };
+  .ui-jqgrid-titlebar, ui-jqgrid-errorbar {
+    font-size: @font-size-h4;
+    font-family: inherit;
+    font-weight: 500;
+    color: inherit;
+  };
+  > .ui-jqgrid-view {
+    font-size: @font-size-base;
+  };
+  sgbutton-div {
+    .sgbutton.btn:focus, .sgbutton.btn:hover {
+      border: 1px solid darken(@btn-default-border, 20%);
+    };
+  };
+  > .ui-jqgrid-pager {
+    font-size: @font-size-base;
+  };
+
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+background-color: @table-bg-accent;
+}
+
+.ui-jqgrid-labels .ui-th-column-header {
+  background-color: lighten(@gray-light, 20%);
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ui-jqgrid-view {
+  > .ui-userdata {
+    background-color: @gray-lighter;
+  };
+  > .ui-jqgrid-sdiv td {
+    background-color: @gray-lighter;
+  };
+}
+
+.ui-jqgrid-bootstrap.ui-jqgrid-resize-mark {
+  border: 1px solid @gray;
+  background-color: inherit;
+  color: @gray-darker;
+  font-weight: bold;
+}
+
+.ui-pager-control{
+  .ui-pg-input {
+    display: inline-block;
+    font-size: @font-size-base;
+    padding: @padding-base-vertical @padding-base-horizontal;
+  };
+  .ui-pg-selbox {
+    font-size: @font-size-base;
+    padding: 0;
+  };
+}
+
+
+
+.fm-button .fm-button-text {
+  padding: @padding-xs-vertical @padding-xs-horizontal;
+}
+
+.delmsg {
+  padding: @alert-padding;
+}
+
+.modal .custom-dlg-window .ui-jqgrid-bootstrap .ui-jqdialog {
+  z-index: @zindex-modal;
+}
+
+.ui-jqgrid .ui-resizable-se.fa {
+  font-size: @font-size-base;
+  opacity: 0.8;
+}
+.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close {
+  .close
+}
+

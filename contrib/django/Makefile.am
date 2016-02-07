@@ -5,13 +5,13 @@
 pkgsysconfdir = $(sysconfdir)/frepple
 pkgsysconf_DATA = djangosettings.py
 
-EXTRA_DIST = freppledb README.txt frepplectl.py setup.py djangosettings.py requirements.txt
+EXTRA_DIST = freppledb README.txt frepplectl.py setup.py djangosettings.py requirements.txt package.json Gruntfile.js
 
 install-data-local: setup.py
 	echo "Installing Django web application"; \
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) $(PYFLAGS)
 	-mkdir static
-	$(PYTHON) frepplectl.py collectstatic --noinput --clear
+	$(PYTHON) frepplectl.py collectstatic --noinput --clear --ignore '*.less'
 	find static -type d -exec $(mkinstalldirs) "$(DESTDIR)$(datadir)/frepple/{}" \;; \
 	for p in `find static -type f`; do \
 	  $(INSTALL_DATA) $$p "$(DESTDIR)$(datadir)/frepple/$$p"; \
@@ -24,7 +24,7 @@ uninstall-local:
 
 clean-local:
 	-rm -rf `find . -name '__pycache__'`
-	-rm -rf build dist doc static *.log
+	-rm -rf build dist doc static *.log node_modules
 
 # Avoid packaging python bytecode files from the subdirectories
 dist-hook:

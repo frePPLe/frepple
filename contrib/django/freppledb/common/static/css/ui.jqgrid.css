@@ -1,4 +1,9 @@
-/*Grid*/
+/**
+ * jqGrid 4.12.2-pre - free jqGrid: https://github.com/free-jqgrid/jqGrid 
+ * Date: 2016-02-02
+ */
+
+/* Grid */
 .ui-jqgrid {
 	position: relative;
 	-moz-box-sizing: content-box;
@@ -37,8 +42,9 @@
 	box-sizing: inherit;
 }
 
-/* caption of grid and title of ui-jqdialog */
+/* Caption of grid and title of ui-jqdialog */
 .ui-jqgrid .ui-jqgrid-titlebar,
+.ui-jqgrid .ui-jqgrid-errorbar,
 .ui-jqdialog .ui-jqdialog-titlebar {
 	padding: .3em .3em .3em .3em;
 	position: relative;
@@ -47,13 +53,19 @@
 	border-right: 0 none;
 	border-top: 0 none;
 }
-.ui-jqgrid .ui-jqgrid-caption {
+.ui-jqgrid-errorbar {
+    max-height: 100px;
+    overflow: auto;
+}
+.ui-jqgrid .ui-jqgrid-caption,
+.ui-jqgrid .ui-jqgrid-errorbar-ltr {
 	text-align: left;
 }
-.ui-jqgrid .ui-jqgrid-caption-rtl {
+.ui-jqgrid .ui-jqgrid-caption-rtl,
+.ui-jqgrid .ui-jqgrid-errorbar-rtl {
 	text-align: right;
 }
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close ,
+.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close,
 .ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close {
 	vertical-align: middle;
 	text-align: center;
@@ -61,50 +73,55 @@
 	position: absolute;
 	top: 50%;
 	width: 18px;
-	margin: -10px 0 0 0;
-	padding: 1px;
+	margin: -8px 0 0 0;
+	padding: 0;
+	border: 1px solid transparent;
 	height: 18px;
 	cursor: pointer;
 }
 .ui-jqgrid  .ui-jqgrid-caption .ui-jqgrid-titlebar-close,
 .ui-jqdialog  .ui-jqdialog-titlebar-ltr .ui-jqdialog-titlebar-close {
-	right: 2px;
+	right: .3em;
 }
 .ui-jqgrid  .ui-jqgrid-caption-rtl .ui-jqgrid-titlebar-close,
 .ui-jqdialog  .ui-jqdialog-titlebar-rtl .ui-jqdialog-titlebar-close {
 	left: 2px;
 }
+.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close span {
+	margin-top: 0;
+	margin-left: 0;
+}
+
+.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close span.fa {
+	margin-top: 2px;
+}
+
 .ui-jqgrid  .ui-jqgrid-caption .ui-jqgrid-title,
+.ui-jqgrid  .ui-jqgrid-errorbar-ltr .ui-jqgrid-error,
 .ui-jqdialog  .ui-jqdialog-titlebar-ltr .ui-jqdialog-title {
 	position: relative;
 	left: .1em;
 }
 .ui-jqgrid  .ui-jqgrid-caption-rtl .ui-jqgrid-title,
+.ui-jqgrid  .ui-jqgrid-errorbar-rtl .ui-jqgrid-error,
 .ui-jqdialog  .ui-jqdialog-titlebar-rtl .ui-jqdialog-title {
 	position: relative;
 	right: .1em;
 }
 .ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close span,
 .ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close span {
-	vertical-align: middle;
-	text-align: center;
 	display: block;
-	margin: 1px;
 }
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:hover,
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:focus,
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:hover,
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:focus {
-	padding: 0;
+.ui-jqdialog .ui-resizable-handle {
+	right: -3px;
+	bottom: -3px;
 }
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:hover > span,
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:focus > span,
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:hover > span,
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:focus > span {
-	margin: 1px 0 0 1px;
+.ui-jqdialog .ui-resizable-handle.fa {
+	bottom: 1px;
+	right: -2px;
 }
 
-/* header*/
+/* Header */
 .ui-jqgrid > .ui-jqgrid-view > .ui-jqgrid-hdiv {
 	position: relative;
 	margin: 0;
@@ -127,11 +144,17 @@
 	height: auto;
 	padding: 0 2px 0 2px;
 }
+.ui-jqgrid .ui-jqgrid-htable th.jqgh_cbox {
+	padding: 0;
+}
 .ui-jqgrid .ui-jqgrid-htable .ui-jqgrid-labels th div {
 	overflow: hidden;
 	position: relative;
 	height: auto;
 	margin: 2px 2px;
+}
+.ui-jqgrid .ui-jqgrid-htable .ui-jqgrid-labels .jqgh_cbox > div {
+	margin: 0;
 }
 .ui-jqgrid-labels .ui-th-column-header,
 .ui-jqgrid .ui-jqgrid-labels th.ui-th-column {
@@ -174,7 +197,7 @@
 	margin-right: -1px;
 }
 .ui-jqgrid .ui-jqgrid-labels > .ui-th-column > .ui-jqgrid-resize {
-	height: 21px;
+	height: 22px;
 	width: .3em;
 	position: relative;
 	cursor: col-resize;
@@ -205,7 +228,7 @@
 	cursor: pointer;
 }
 .ui-state-disabled.ui-grid-ico-sort {
-	cursor: pointer !important;/*to overwrite .ui-state-disabled { cursor: default !important; } from jQuery UI */
+	cursor: pointer !important; /* to overwrite .ui-state-disabled { cursor: default !important; } from jQuery UI */
 }
 .ui-jqgrid .s-ico {
 	position: relative;
@@ -213,6 +236,7 @@
 	height: 1.125em;
 	display: inline-block;
 	vertical-align: middle;
+	margin: 0 .1em
 }
 .ui-jqgrid .s-ico > .ui-grid-ico-sort {
 	display: block;
@@ -261,8 +285,9 @@
 	margin: 1px 0 0 0;
 }
 
-/* body */ 
+/* Grig body */ 
 .ui-jqgrid .ui-jqgrid-bdiv {
+	min-height: 1px;
 	position: relative;
 	margin: 0;
 	padding: 0;
@@ -281,19 +306,22 @@
 .ui-jqgrid tr.jqgrow > td,
 .ui-jqgrid tr.jqgroup > td,
 .ui-jqgrid tr.jqfoot > td,
-.ui-jqgrid tr.jqfoot > td,
 .ui-jqgrid tr.ui-subgrid > td {
 	overflow: hidden;
 	white-space: pre;
 	height: 22px;
 	border-top: 0 none;
 	border-bottom-width: 1px;
-	border-bottom-color: inherit;
 	border-bottom-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.jqgrow > td,
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.jqgroup > td,
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.jqfoot > td,
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.ui-subgrid > td {
+	border-bottom-color: inherit;
 }
 .ui-jqgrid tr.jqgrow > td,
 .ui-jqgrid tr.jqgroup > td,
-.ui-jqgrid tr.jqfoot > td,
 .ui-jqgrid tr.jqfoot > td {
 	padding: 0 2px 0 2px;
 }
@@ -302,8 +330,10 @@
 }
 .ui-jqgrid tr.jqgfirstrow > td {
 	padding: 0 2px 0 2px;
+	border-top: 0 none;
 	border-left: 0 none;
 	border-right: 1px solid;
+	border-bottom: 0 none;
 }
 .ui-jqgrid tr.jqgrow > td,
 .ui-jqgrid tr.jqgroup > td,
@@ -315,26 +345,35 @@
 }
 .ui-jqgrid .ui-jqgrid-bdiv tr.ui-row-ltr > td {
 	text-align: left;
-	border-left: 0 none;
+	border-left-width: 0;
+	border-left-style: none;
 	border-right-width: 1px;
-	border-right-color: inherit;
 	border-right-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid .ui-jqgrid-bdiv tr.ui-row-ltr > td {
+	border-color: inherit;
 }
 .ui-jqgrid .ui-jqgrid-bdiv tr.ui-row-rtl > td {
 	text-align: right;
-	border-right: 0 none;
+	border-right-width: 0;
+	border-right-style: none;
 	border-left-width: 1px;
-	border-left-color: inherit;
 	border-left-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid .ui-jqgrid-bdiv tr.ui-row-rtl > td {
+	border-color: inherit;
 }
 .ui-jqgrid .ui-jqgrid-btable td.jqgrid-rownum {
 	padding: 0 2px 0 2px;
 	margin: 0;
-	border: 0 none;
+	border-width: 0;
+	border-style: none;
 }
 .ui-jqgrid .ui-jqgrid-btable td.jqgrid-rownum {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid .ui-jqgrid-btable td.jqgrid-rownum {
 	border-bottom-color: inherit;
 }
 .ui-jqgrid .jqgrow > td.td_cbox {
@@ -363,7 +402,6 @@ body > .ui-jqgrid-resize-mark {
 	user-select: none;
 	position: absolute;
 	top: 0;
-	/*height: 100px;*/
 	overflow: hidden;
 	display: none;
 	border-left-width: 1px;
@@ -376,7 +414,7 @@ span.ui-jqgrid-cell-wrapper {
 	padding: 0 !important;
 }
 
-/* footer */
+/* Footer */
 .ui-jqgrid > .ui-jqgrid-view > .ui-jqgrid-sdiv {
 	position: relative;
 	margin: 0;
@@ -397,28 +435,36 @@ span.ui-jqgrid-cell-wrapper {
 	height: 21px;
 	padding: 0 2px 0 2px;
 	border-top-width: 1px;
-	border-top-color: inherit;
 	border-top-style: solid;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.footrow td {
+	border-top-color: inherit;
 	border-bottom-color: inherit;
 }
 .ui-jqgrid tr.footrow-ltr td {
 	text-align: left;
-	border-left: 0 none;
+	border-left-width: 0;
+	border-left-style: none;
 	border-right-width: 1px;
-	border-right-color: inherit;
 	border-right-style: solid;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.footrow-ltr td {
+	border-color: inherit;
 }
 .ui-jqgrid tr.footrow-rtl td {
 	text-align: right;
 	border-left-width: 1px;
-	border-left-color: inherit;
 	border-left-style: solid;
-	border-right: 0 none;
+	border-right-width: 0;
+	border-right-style: none;
+}
+.ui-jqgrid-jquery-ui.ui-jqgrid tr.footrow-rtl td {
+	border-color: inherit;
 }
 
-/* Pager*/
+/* Pager */
 .ui-jqgrid > .ui-jqgrid-pager {
 	border: 0 none;
 	margin: 0;
@@ -451,6 +497,26 @@ span.ui-jqgrid-cell-wrapper {
 	padding: 0;
 	width: auto;
 	margin: 0;
+}
+.jqgrow .ui-jqgrid-actions  {
+	background: inherit;
+	border-style: none;
+}
+.ui-jqgrid  .ui-pg-button:not(.ui-state-hover),
+.jqgrow .ui-jqgrid-actions .ui-pg-div:not(.ui-state-hover) {
+	border: 1px solid transparent;
+}
+.ui-pager-control .ui-pg-table {
+	border-color: inherit;
+}
+.ui-jqgrid  .ui-pg-button:hover,
+.ui-jqgrid  .ui-pg-button.ui-state-hover,
+.ui-jqgrid  .ui-pg-button:focus,
+.jqgrow .ui-jqgrid-actions .ui-pg-div:hover,
+.jqgrow .ui-jqgrid-actions .ui-pg-div.ui-state-hover,
+.jqgrow .ui-jqgrid-actions .ui-pg-div:focus {
+	border-style: solid;
+	border-color: inherit;
 }
 .ui-jqgrid .ui-pg-table td {
 	font-weight: normal;
@@ -535,24 +601,7 @@ span.ui-jqgrid-cell-wrapper {
 	margin: 0 2px;
 }
 
-/* navigator buttons */
-.ui-jqgrid .ui-pg-table .ui-pg-button.ui-state-disabled:hover {
-	margin: 1px;
-	padding: 2px;
-}
-.ui-jqgrid .navtable .ui-pg-button.ui-state-disabled:hover {
-	margin: 0;
-	padding: 2px;
-}
-.ui-jqgrid .ui-pg-table .ui-pg-button:hover {
-	font-weight: normal;
-	padding: -1px;
-	margin: 1px;
-}
-.ui-jqgrid .ui-pg-table .ui-pg-button.ui-state-disabled:hover > .ui-separator {
-	margin: -1px 1px;
-	padding: 0 0;
-}
+/* Navigator buttons */
 .ui-jqgrid .ui-pg-table .ui-pg-button {
 	margin: 2px;
 	vertical-align: middle;
@@ -573,7 +622,7 @@ span.ui-jqgrid-cell-wrapper {
 	float: none;
 }
 
-/*subgrid*/
+/* Subgrid */
 .ui-jqgrid .ui-jqgrid-btable .jqgrow > .ui-sgcollapsed {
 	text-align: center;
 	vertical-align: middle;
@@ -585,6 +634,9 @@ span.ui-jqgrid-cell-wrapper {
 	margin: 0;
 	padding: 0;
 	width: 100%;
+}
+.sgbuton {
+	cursor: pointer;
 }
 .ui-jqgrid .ui-subgrid table {
 	table-layout: fixed;
@@ -606,7 +658,7 @@ span.ui-jqgrid-cell-wrapper {
 	float: left;
 }
 
-/* loading */
+/* Loading */
 .ui-jqgrid > .loading {
 	position: absolute;
 	top: 45%;
@@ -632,7 +684,7 @@ span.ui-jqgrid-cell-wrapper {
 	z-index: -1;
 }
 
-/* toolbar */
+/* Toolbar */
 .ui-jqgrid > .ui-jqgrid-view > .ui-userdata {
 	border-left: 0 none;
 	border-right: 0 none;
@@ -640,7 +692,7 @@ span.ui-jqgrid-cell-wrapper {
 	overflow: hidden;
 }
 
-/*Modal Window */
+/* Modal Window */
 .ui-jqgrid .ui-jqdialog {
 	font-size: 11px;
 }
@@ -762,9 +814,6 @@ span.ui-jqgrid-cell-wrapper {
 	text-align: center;
 	zoom: 1;
 }
-.ui-jqdialog .fm-button.ui-state-disabled:hover {
-	padding: .4em .5em;
-}
 .ui-jqdialog .fm-button > span {
 	display: inline-block;
 	vertical-align: middle;
@@ -784,22 +833,21 @@ span.ui-jqgrid-cell-wrapper {
 .ui-jqdialog .EditButton-rtl .fm-button-icon-left .fm-button-icon {
     margin-left: .2em;
 }
+.delmsg {
+	padding: .5em;
+}
 
-/*.ui-jqgrid .edit-cell {}*/
 .ui-jqgrid .selected-row,
 .ui-jqgrid .selected-row td {
 	font-style: normal;
 	border-left: 0 none;
 }
 
-/* inline edit actions button*/
+/* Inline edit actions button */
 .ui-jqgrid  .jqgrow .ui-jqgrid-actions {
 	display: inline-block;
 	vertical-align: middle;
 	margin: 0;
-}
-.ui-jqgrid  .jqgrow  .ui-jqgrid-actions > .ui-pg-div.ui-state-hover {
-	margin: -1px 0 -1px 0;
 }
 .jqgrow .ui-jqgrid-actions .ui-pg-div {
 	cursor: pointer;
@@ -808,35 +856,20 @@ span.ui-jqgrid-cell-wrapper {
 }
 /* Tree Grid */
 .ui-jqgrid .tree-wrap {
-	float: left;
-	position: relative;
-	height: 18px;
+	display: inline-block;
+	vertical-align: middle;
 	white-space: nowrap;
-	overflow: hidden;
-}
-.ui-jqgrid .tree-minus {
-	position: absolute;
-	height: 18px;
-	width: 18px;
-	overflow: hidden;
-}
-.ui-jqgrid .tree-plus {
-	position: absolute;
-	height: 18px;
-	width: 18px;
-	overflow: hidden;
-}
-.ui-jqgrid .tree-leaf {
-	position: absolute;
-	height: 18px;
-	width: 18px;
 	overflow: hidden;
 }
 .ui-jqgrid .treeclick {
 	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+	width: 18px;
+	overflow: hidden;
 }
 
-/* modal dialog */
+/* Modal dialog */
 * iframe.jqm {
 	position: absolute;
 	top: 0;
@@ -869,11 +902,10 @@ span.ui-jqgrid-cell-wrapper {
 .ui-jqgrid .ui-sort-rtl {
 	left: 0;
 }
-.ui-jqgrid .tree-wrap-ltr {
-	float: left;
-}
-.ui-jqgrid .tree-wrap-rtl {
-	float: right;
+.ui-jqgrid .cell-wrapperleaf,
+.ui-jqgrid .cell-wrapper {
+	display: inline-block;
+	vertical-align: middle;
 }
 .ui-jqgrid .ui-ellipsis {
 	-moz-text-overflow: ellipsis;
@@ -883,7 +915,7 @@ span.ui-jqgrid-cell-wrapper {
 /* Toolbar Search Menu */
 .ui-search-menu {
 	position: absolute;
-	padding: 2px 5px;
+	padding: .2em;
 }
 .ui-search-menu.ui-menu .ui-menu-item {
 	list-style-image: none;
@@ -894,24 +926,64 @@ span.ui-jqgrid-cell-wrapper {
 	text-decoration: none;
 	display: block;
 }
-.ui-search-menu.ui-menu .ui-menu-item a.g-menu-item:hover {
-	margin: -1px;
-	font-weight: normal;
+.ui-search-toolbar > .ui-th-column > div {
+	position: relative;
+	height: auto;
+	overflow: hidden;
 }
-.ui-jqgrid .ui-search-table {
+.ui-search-toolbar .ui-search-table {
 	padding: 0;
 	border: 0 none;
 	height: 20px;
 	width: 100%;
 }
-.ui-jqgrid .ui-search-table .ui-search-oper {
+.ui-jqgrid .ui-jqgrid-htable .ui-search-toolbar th {
+	padding: 0 .1em;
+}
+.ui-search-toolbar .ui-search-table .ui-search-oper {
 	width: 20px;
+	text-align: center;
+}
+.ui-search-toolbar .ui-th-column .ui-search-table .ui-search-input {
+	padding: 0 .1em;
+}
+.ui-search-input input {
+	width: 100%;
 }
 a.g-menu-item,
 a.soptclass,
 a.clearsearchclass {
 	text-decoration: none;
 	cursor: pointer;
+}
+.ui-search-menu .ui-menu-item .g-menu-item {
+	padding: .2em;
+}
+.ui-menu-jqueryui  .ui-menu-item .g-menu-item:not(.ui-state-hover) {
+	border: 1px solid transparent;
+}
+.ui-menu-jqueryui .ui-menu-item .g-menu-item:hover {
+	font-weight: normal;
+}
+ 
+.ui-search-oper  {
+	padding: 0;
+}
+.ui-search-clear {
+	text-align: center;
+	padding: 0;
+}
+.ui-search-oper .soptclass,
+.ui-search-clear .clearsearchclass {
+	padding: .1em;
+	line-height: 1em;
+}
+.ui-jqgrid-jquery-ui .ui-search-oper .soptclass:not(.ui-state-hover),
+.ui-jqgrid-jquery-ui .ui-search-clear .clearsearchclass:not(.ui-state-hover) {
+	border: 1px solid transparent;
+}
+.ui-search-clear .clearsearchclass span {
+	position: relative;
 }
 .ui-jqgrid .ui-search-table .ui-search-input > input,
 .ui-jqgrid .ui-search-table .ui-search-input > select {
@@ -927,23 +999,9 @@ a.clearsearchclass {
 	font-size: 11px;
 }
 
-/* support of fontAwesome */
+/* Support of Font Awesome */
 .ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close > span.fa {
 	font-size: 16px;
-	display: inline-block;
-}
-.ui-jqdialog .ui-jqdialog-titlebar-close > span.fa {
-	margin-top: 4px;
-}
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:hover,
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:hover  {
-	margin-top: -9px;
-}
-.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close:hover > span.fa {
-	margin-top: 1px;
-}
-.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close:hover > span.fa {
-	margin-top: 3px;
 }
 .ui-jqgrid .s-ico > .ui-grid-ico-sort.fa {
 	width: .63em;
@@ -1010,7 +1068,7 @@ a.clearsearchclass {
 	bottom: 1px;
 }
 
-/* classes for jquery.contextmenu-ui.js plugin we included here */
+/* Classes for jquery.contextmenu-ui.js plugin we included here */
 .jqContextMenu .ui-menu .ui-menu-item a.ui-state-hover {
 	font-weight: normal;
 	margin: -1px;
@@ -1022,10 +1080,198 @@ a.clearsearchclass {
 .jqContextMenu .ui-menu-icons > .ui-menu-item {
 	font-size: 11px;
 }
-/* classes for jQuery.jqGrid.showHideColumnMenu.js plugin */
+/* Classes for jQuery.jqGrid.showHideColumnMenu.js plugin */
 .ui-jqgrid-showHideColumnMenu .ui-menu-item:hover {
 	font-weight: normal;
 }
 .ui-jqgrid-disablePointerEvents {
 	pointer-events: none;
+}
+/* Bootstrap style support */
+.ui-jqgrid.ui-jqgrid-bootstrap {
+	border: 1px solid #ddd;
+	border-radius: 6px;
+}
+.ui-jqgrid-view > .ui-jqgrid-toppager {
+	border-bottom-radius: 0;
+}
+.ui-jqgrid-view > .ui-userdata {
+	background-color: #f0f0f0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .custom-hdiv {
+	background-color: #e5e5e5;
+}
+.ui-jqgrid-view > .ui-jqgrid-sdiv td {
+	background-color: #f9f9f9
+}
+.ui-jqdialog {
+	font-size: 14px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-titlebar,
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-errorbar,
+.ui-jqdialog.ui-jqgrid-bootstrap .ui-jqdialog-titlebar {
+	font-size: 16px;
+}
+.ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close,
+.ui-jqdialog-titlebar > .ui-jqdialog-titlebar-close {
+	border-radius: .5em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close  {
+	margin-top: -9px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-titlebar > .ui-jqgrid-titlebar-close  > span {
+	margin-top: 1px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-view {
+	font-size: 12px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-view .fa {
+	font-size: 14px;
+}
+.ui-jqdialog-content .CaptionTD {
+	padding: .5em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqgfirstrow > td,
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqgrow > td,
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqgroup > td,
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqfoot > td {
+	padding: .2em .3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqgfirstrow > td {
+	padding: 0 .3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-btable td.jqgrid-rownum {
+	padding: .2em .3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .custom-title-div,
+.ui-jqdialog .custom-dlg-header {
+	background-color: #cacaca;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+.modal-backdrop.jqgrid-overlay {
+	opacity: .35;
+	filter:Alpha(Opacity=35);
+}
+.ui-jqdialog-content,
+.ui-jqdialog .ui-jqdialog-content {
+	border: 0;
+	padding: .3em .2em;
+	background: white;
+	height: auto;
+}
+.ui-jqdialog .modal-dialog {
+	width: auto;
+}
+.ui-jqdialog.ui-widget {
+	overflow: hidden;
+}
+.ui-jqdialog .modal-content > .ui-resizable-handle {
+	bottom: 1px;
+	right: 1px;
+	cursor: se-resize;
+	height: 12px;
+	width: 12px;
+	position: absolute;
+	touch-action: none;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .disabled {
+	opacity: .35;
+	filter:Alpha(Opacity=35);
+}
+.ui-jqgrid-bootstrap.ui-jqgrid-resize-mark {
+	border: 1px solid #aaaaaa;
+	background-color: #cccccc;
+	color: #222222;
+	font-weight: bold;
+}
+.ui-jqgrid .jqgfirstrow {
+	border: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .jqgfirstrow td {
+	border: none;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-pg-table .ui-pg-button.ui-state-disabled:hover {
+	margin: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .navtable .ui-pg-button.ui-state-disabled:hover {
+	margin: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-pg-table .ui-pg-button {
+	margin: .2em 0;
+	padding: .2em 0;
+	border-radius: .4em;
+}
+.ui-search-input .form-control {
+	height: 18px;
+}
+.ui-search-input input[type="text"] {
+	padding: 0;
+}
+.ui-search-input input[type="text"].form-control {
+	padding: .3em;
+}
+.ui-search-input select.form-control {
+	padding: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-pg-table .ui-pg-button:hover {
+	margin: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-actions .ui-pg-div.btn {
+	padding: 0;
+	margin: 0;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap tr.jqgrow .sgbutton-div .sgbutton.btn {
+	padding: 0;
+	border: 1px solid transparent;
+	margin: -.3em -.3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .sgbutton-div .sgbutton.btn:focus,
+.ui-jqgrid.ui-jqgrid-bootstrap .sgbutton-div .sgbutton.btn:hover {
+	border: 1px solid #333;
+}
+.ui-jqdialog .ui-jqdialog-content {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+.ui-pager-control .ui-pg-input {
+	display: inline-block;
+	font-size: 12px;
+	padding: .3em;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap > .ui-jqgrid-pager {
+	font-size: 12px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-bootstrap-corner-top {
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-jqgrid-bootstrap-corner-bottom {
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+.ui-pager-control .ui-pg-selbox {
+	font-size: 12px;
+	padding: 0;
+}
+.FormData .DataTD {
+	vertical-align: middle;
+}
+.FormData .DataTD input[type="checkbox"] {
+	vertical-align: middle;
+}
+.DelTable .delmsg {
+}
+.queryresult {
+	margin-bottom: 1em;
+}
+.group.modal-content tr td {
+	padding: .2em .1em;
+}
+.searchFilter .form-control {
+	padding: .1em;
+	height: 22px;
+}
+.ui-jqgrid.ui-jqgrid-bootstrap .ui-th-column .cbox {
+	margin-top: -2px;
 }

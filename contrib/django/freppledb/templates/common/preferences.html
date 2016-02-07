@@ -1,6 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n admin_list %}
 {% block extrahead %}{{block.super}}
+
 <style>
 #content-main td {
   padding-bottom: 1em;
@@ -9,20 +10,120 @@
   line-height: 2em;
 }
 </style>
+
 <script type="text/javascript">
   $(function() {
-    $("input:submit").button();
-  });
-</script>
-{% endblock %}
-{% block content %}
-<div id="content-main">
-<form action="." method="post" class="form">{% csrf_token %}
-<table>{{form.as_table}}
-{% comment %}Translators: Translation included with Django {% endcomment %}  
-<tr><td><input type="submit" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}"/></td></tr>
-</table></form>
+    $("#id_languageul li a").click(function(){
+      $("#id_language").html($(this).text() + ' <span class="caret"></span>');
+      $("#language").val($(this).prop('name'));
+    });
 
-</div>
+    $("#id_themeul li a").click(function(){
+      $("#id_theme").html($(this).text() + ' <span class="caret"></span>');
+      $("#theme").val($(this).prop('name'));
+    });
+  });
+
+</script>
+
+{% endblock %}
+
+  {% block content_title %}
+    <div class="row">
+    <div class="col-xs-12">
+  {% if title %}
+      <h1>{{ title }}</h1>
+  {% endif %}
+    </div></div>
+  {% endblock %}
+
+{% block content %}
+
+  <div id="content-main">
+    <form action="." method="post" class="form">
+
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <input type="hidden" name="language" id="language" value="{{ request.user.language }}">
+      <input type="hidden" name="theme" id="theme" value="{{ request.user.theme }}">
+
+
+      {% if form.non_field_errors  %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="row" style="padding-bottom: 20px;">
+	      <div class="col-xs-3" style="max-width:150px; text-align: right">
+	       <label class="control-label" for="id_language">Language:</label>
+	      </div>
+	      <div class="col-xs-9" style="max-width:260px">
+		      <div class="dropdown dropdown-submit-input">
+		        <button class="btn btn-default dropdown-toggle form-control"  id="id_language" name="language" value="" type="button" data-toggle="dropdown">{{ LANGUAGE }}&nbsp;&nbsp;<span class="caret"></span>
+		        </button>
+		        <ul class="dropdown-menu col-xs-12" aria-labelledby="id_language" id="id_languageul">
+		        {% for i,j in request.user.languageList %}
+		          <li><a name="{{ i }}">{{ j }}</a></li>
+		        {% endfor %}
+		        </ul>
+		      </div>
+	      </div>
+      </div>
+
+      <div class="row" style="padding-bottom: 20px;">
+	      <div class="col-xs-3" style="max-width:150px; text-align: right">
+		      <label class="control-label" for="id_pagesize">Page size:</label>
+		    </div>
+	      <div class="col-xs-9" style="max-width:260px">
+			    <input class="form-control" id="id_pagesize" min="-7" max="10009999" name="pagesize" type="number" value="{{ request.user.pagesize }}">
+			    <span class="text-muted">{% trans "Number of records per page" %}</span>
+		    </div>
+	    </div>
+
+
+      <div class="row" style="padding-bottom: 20px;">
+	      <div class="col-xs-3" style="max-width:150px; text-align: right">
+		      <label class="control-label" for="id_theme">Theme:</label>
+	      </div>
+	      <div class="col-xs-9" style="max-width:260px">
+			    <div class="dropdown dropdown-submit-input">
+			      <button class="btn btn-default dropdown-toggle form-control"  id="id_theme" name="theme" value="" type="button" data-toggle="dropdown">{% filter capfirst %}{{ request.user.theme }}{%endfilter%}&nbsp;&nbsp;<span class="caret"></span>
+			      </button>
+			      <ul class="dropdown-menu col-xs-12" aria-labelledby="id_theme" id="id_themeul">
+			        {% for j in THEMES %}
+			          <li><a name="{{j}}">{% filter capfirst %}{{j}}{%endfilter%}</a></li>
+			        {% endfor %}
+			      </ul>
+			    </div>
+		    </div>
+	    </div><br>
+
+
+      <div class="row" style="padding-bottom: 20px;">
+	      <div class="col-xs-3" style="max-width:150px; text-align: right">
+			    {% comment %}Translators: Translation included with Django {% endcomment %}
+			    <label class="control-label" for="id_cur_password">Change password:</label>
+		    </div>
+	      <div class="col-xs-9" style="max-width:260px">
+
+	       {% comment %}Translators: Translation included with Django {% endcomment %}
+		     <input class="form-control" id="id_cur_password" name="cur_password" type="password" placeholder="{% trans "Old password"|escape %}" style="margin-bottom: 10px;">
+
+		     {% comment %}Translators: Translation included with Django {% endcomment %}
+		     <input class="form-control" id="id_new_password1" name="new_password1" type="password" placeholder="{% trans "New password"|escape %}" style="margin-bottom: 10px;">
+
+		     {% comment %}Translators: Translation included with Django {% endcomment %}
+		     <input class="form-control" id="id_new_password2" name="new_password2" type="password" placeholder="{% trans "New password confirmation"|escape %}" style="margin-bottom: 10px;">
+
+		    </div>
+	    </div>
+
+      <div class="row" style="padding-bottom: 20px;">
+        <div class="col-xs-3" style="max-width:150px; text-align: right">
+        </div>
+        <div class="col-xs-9" style="max-width:260px">
+    <input type="submit" value="Save" class="btn btn-primary">
+    </div>
+   </form>
+  </div>
+
 
 {% endblock %}

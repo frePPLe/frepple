@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -120,7 +120,7 @@ class ManufacturingOrderWidget(Widget):
   tooltip = _("Shows manufacturing orders by start date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
-  url = '/data/input/operationplan/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  url = '/data/input/operationplan/?sord=asc&sidx=startdate&status__in=proposed,confirmed'
   exporturl = True
   fence1 = 7
   fence2 = 30
@@ -273,19 +273,21 @@ class ManufacturingOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><table><tr><td width="33%%"><strong>%s / %s units</strong><br>confirmed orders</td>' % (
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s <small>units</small></h2><small>confirmed orders</small></div>' % (
           rec[3], rec[4]
           ))
-      elif rec[0] == 2:
-        result.append('<td width="33%%"><strong>%s / %s units</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], rec[4], fence1
+      elif rec[0] == 2 and fence1:
+        limit_fence1 = current + timedelta(days=fence1)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
           ))
-      else:
-        result.append('<td width="34%%"><strong>%s / %s units</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], rec[4], fence2
+      elif fence2:
+        limit_fence2 = current + timedelta(days=fence2)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</tr></table>')
-    result.append('<div id="mo_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+
+    result.append('</div><div id="mo_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ManufacturingOrderWidget)
@@ -297,7 +299,7 @@ class DistributionOrderWidget(Widget):
   tooltip = _("Shows distribution orders by start date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
-  url = '/data/input/distributionorder/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  url = '/data/input/distributionorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed'
   exporturl = True
   fence1 = 7
   fence2 = 30
@@ -458,19 +460,20 @@ class DistributionOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><table><tr><td width="33%%"><strong>%s / %s %s %s</strong><br>confirmed orders</td>' % (
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
           ))
-      elif rec[0] == 2:
-        result.append('<td width="33%%"><strong>%s / %s %s %s</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence1
+      elif rec[0] == 2 and fence1:
+        limit_fence1 = current + timedelta(days=fence1)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed\'" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
           ))
-      else:
-        result.append('<td width="34%%"><strong>%s / %s %s %s</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence2
+      elif fence2:
+        limit_fence2 = current + timedelta(days=fence2)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed\'" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</tr></table>')
-    result.append('<div id="do_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+    result.append('</div><div id="do_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(DistributionOrderWidget)
@@ -482,7 +485,7 @@ class PurchaseOrderWidget(Widget):
   tooltip = _("Shows purchase orders by ordering date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
-  url = '/data/input/purchaseorder/?sord=asc&sidx=startdate&status_in=proposed,confirmed'
+  url = '/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed'
   exporturl = True
   fence1 = 7
   fence2 = 30
@@ -654,19 +657,20 @@ class PurchaseOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><table><tr><td width="33%%"><strong>%s / %s %s %s</strong><br>confirmed orders</td>' % (
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
           ))
-      elif rec[0] == 2:
-        result.append('<td width="33%%"><strong>%s / %s %s %s</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence1
+      elif rec[0] == 2 and fence1:
+        limit_fence1 = current + timedelta(days=fence1)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
           ))
-      else:
-        result.append('<td width="34%%"><strong>%s / %s %s %s</strong> REVIEW<br>proposed orders within %s days</td>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], fence2
+      elif fence2:
+        limit_fence2 = current + timedelta(days=fence2)
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</tr></table>')
-    result.append('<div id="po_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
+    result.append('</div><div id="po_tooltip" style="display: none; z-index:10; position:absolute; color:black"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchaseOrderWidget)

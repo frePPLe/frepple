@@ -8,7 +8,7 @@ The changes are:
 {% endcomment %}
 {% load i18n %}
 
-{% block extrastyle %}{{block.super}}<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/login.css" />
+{% block extrastyle %}{{block.super}}
 <style>
   #headerbar {
     background-color: transparent;
@@ -22,24 +22,15 @@ The changes are:
   .login #container {
     border: none;
   }
-  input[type=submit] {
-    background: #838d11;
-    color: #fff;
-    padding: 10px 20px 10px 20px;
-    margin: 0px auto;
-    display:block;
-    margin-top: 13px;
-  }
+
 </style>
 {% endblock %}
 
 {% block extrahead %}
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript">
 $(function() {
   $('#id_username').focus();
-  $("input:submit").button();
 });
 </script>
 <!--[if lte IE 9]>
@@ -52,7 +43,7 @@ $(function() {
 
 {% endblock %}
 
-{% block branding %}<img style="display:block; margin-left:auto; margin-right:auto" src="{{STATIC_URL}}img/frepple_logo.svg" height="94" width="240" alt="frePPLe&nbsp;{% version %}">{% endblock %}
+
 
 {% block bodyclass %}login{% endblock %}
 
@@ -80,22 +71,38 @@ $(function() {
 {% endfor %}
 {% endif %}
 
-<div id="content-main">
-<form action="{{request.prefix}}{{app_path}}" method="post" id="login-form">{% csrf_token %}
-  <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
-    <label for="id_username" class="required">{{ form.username.label }}</label> {{ form.username }}
-  </div>
-  <div class="form-row">
-    {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
-    {% comment %}Translators: Translation included with Django {% endcomment %}
-    <label for="id_password" class="required">{% trans 'Password'|capfirst %}</label> {{ form.password }}
-    <input type="hidden" name="this_is_the_login_form" value="1" />
-    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
-    {% comment %}Translators: Translation included with Django {% endcomment %}
-    <input type="submit" value="{% trans 'Log in' %}"/>
-  </div>
-</form>
+
+
+<div class="row" style="padding-bottom: 30px; padding-top: 50px;">
+	<div class=" col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+	 {% block branding %}{{ block.super }}{% endblock %}
+	</div>
+</div>
+
+
+<div class="row" id="content-main" >
+  <div  class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+		<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form" >{% csrf_token %}
+		  <div class="form-group">
+		    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
+		    <label for="id_username" class="required">{{ form.username.label }}:</label>
+		    <input id="id_username" class="form-control" maxlength="254" name="username" type="text">
+		  </div>
+		  <div class="form-group">
+		    {% if not form.this_is_the_login_form.errors %}{{ form.password.errors }}{% endif %}
+		    {% comment %}Translators: Translation included with Django {% endcomment %}
+		    <label for="id_password" class="required">{% trans 'Password'|capfirst %}:</label>
+		    <input id="id_password" class="form-control" name="password" type="password">
+		    <input type="hidden" name="this_is_the_login_form" value="1" />
+		    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
+		  </div>
+		  <div class="form-group text-center">
+		    {% comment %}Translators: Translation included with Django {% endcomment %}
+		    <input type="submit" class="btn btn-lg btn-primary" value="{% trans 'Log in' %}"/>
+		  </div>
+		</form>
+	</div>
+</div>
 
 <!--[if lte IE 9]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer <= 9!</span><br/><br/>
 Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Safari or Opera.
@@ -105,9 +112,16 @@ Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Sa
 document.getElementById('id_username').focus()
 </script>
 
+<div class="row">
+  <div id='tourtooltip' class='col-md-12 tourtooltip' style='display: none; position: relative; top: 20px; font-weight: normal'>
+  </div>
 </div>
-{% checkPassword "admin" "admin" as recommend_reset %}{% if recommend_reset %}
-<div id='tourtooltip' class='tourtooltip ui-dialog ui-widget ui-widget-content ui-corner-all ui-front' style='position: relative; top: 20px; font-weight: normal'>
-{% blocktrans %}The user "admin" has password "admin".<br/>
-We suggest changing this password.{% endblocktrans %}</div>{% endif %}
-{% endblock %}
+<div class="row center-block">
+		<div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 alert alert-danger" role="alert" style="text-align:center; ">
+				{% checkPassword "admin" "admin" as recommend_reset %}
+				{% if recommend_reset %}
+				    {% blocktrans %}The user "admin" has password "admin".<br/>
+				We suggest changing this password.{% endblocktrans %}{% endif %}
+				{% endblock %}
+		</div>
+</div>

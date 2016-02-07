@@ -1,233 +1,21 @@
+/* Cockpit styles. */
+
+.cockpitcolumn {
+  padding-bottom: 200px;
+}
+
+.cockpitcolumn .panel-placeholder {
+  height: 50px;
+  background: #f5f5f5;  /* bootstrap variable @panel-default-heading-bg */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+/* ------------- STYLES ABOVE THIS LINE ARE STYLES WHICH WE REQUIRE IN BOOTSTRAP. --------------- */
 
 /* GLOBAL DEFAULTS */
 
-body {
-  margin: 0;
-  padding: 0;
-  color: #555555;
-  background: white;
-}
-
-h1,h2,h3,h4,h5 {
-    font-weight: bold;
-}
-
-h1 {
-    font-size: 18px;
-    padding: 0 6px 0 0;
-    margin: 0 0 .2em 0;
-}
-
-h2 {
-    font-size: 16px;
-    margin: 1em 0 .5em 0;
-}
-
-h2.subhead {
-    font-weight: normal;
-    margin-top: 0;
-}
-
-h3 {
-    font-size: 14px;
-    margin: .8em 0 .3em 0;
-    font-weight: bold;
-}
-
-h4 {
-    font-size: 12px;
-    margin: 1em 0 .8em 0;
-    padding-bottom: 3px;
-}
-
-h5 {
-    font-size: 10px;
-    margin: 1.5em 0 .5em 0;
-}
-
-a {
-  white-space: nowrap;
-}
-
-a:link, a:visited {
-  color: #555555;
-  text-decoration: none;
-}
-
-.clear {
-  clear: both;
-}
-
-.mini {
-    font-size: 9px;
-}
-
-.reduced {
-    font-size: 75%;
-}
-
-
-/* separator style in nav menus */
-nav ul ul li.separator {
-    display: block;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: none;
-    border-width: 1px;
-}
-
-.separator::after {
-    content: "";
-    display: block;
-    height: 1px;
-    width: 100%;
-    margin: 0px;
-}
-
-/* hr {
-    clear: both;
-    color: #eee;
-    background-color: #eee;
-    height: 1px;
-    border: none;
-    margin: 0;
-    padding: 0;
-    font-size: 1px;
-    line-height: 1px;
-} */
-
-/* FORM DEFAULTS */
-
-.button.default, input[type=submit].default, .submit-row input.default {
-    border: 1px solid #EBEBEB;
-    background: #EBEBEB;
-    font-weight: normal;
-    color: #555555;
-    float: right;
-}
-
-.ui-state-disabled {
-    background: transparent;
-    opacity: 1;
-    border: none;
-    color: #555555;
-}
-
-.save_undo_button_active {
-    padding-bottom: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    border: 1px solid #EBEBEB;
-    background: #FF5656;
-    font-size: 10px;
-    font-weight: bold;
-    color: white;
-}
-
-.save_undo_button_inactive {
-    padding-bottom: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    border: 1px solid #EBEBEB;
-    background-color: #EBEBEB;
-    background-image: none;
-    font-size: 10px;
-    font-weight: bold;
-    color: #B3B3B3;
-}
-
-.change_status_selectmenu_active {
-    padding-bottom: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    font-size: 10px;
-    font-weight: bold;
-    color: #555555;
-}
-
-.change_status_selectmenu_inactive {
-    padding-bottom: 4px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 4px;
-    border: 1px solid #EBEBEB;
-    background-color: #EBEBEB;
-    background-image: none;
-    font-size: 10px;
-    font-weight: bold;
-    color: #B3B3B3;
-}
-
-.comment_button_active {
-    font-weight: bold;
-    color: #555555;
-}
-
-*.ui-state-highlight.edit-cell {
-  background: transparent;
-}
-
-button:hover {
-        border: 1px solid black;
-        background: #EBEBEB;
-        color: black;
-}
-
-form {
-  margin: 0;
-  padding: 0;
-}
-
-input, textarea, select, .form-row p {
-    margin: 2px 0;
-    padding: 2px 3px;
-    vertical-align: middle;
-}
-
-textarea {
-    vertical-align: top !important;
-}
-
-input[type=text], input[type=password], textarea, select, .vTextField {
-    border: 1px solid #B3B3B3;
-}
-
-div #tabs  {
-    float: right;
-    font-size: 1em;
-}
-
-/* BREADCRUMBS */
-
-div.breadcrumbs {
-  padding: 0 15px 0 15px;
-  text-align: left;
-  font-size: 13px;
-  background: none;
-  line-height: 2em;
-}
-
-div.breadcrumbs a {
-  color: #555555;
-  text-align: left;
-}
-
-div.selectdb {
-  padding: 0 0 0 30px;
-  float: right;
-  line-height: 2em;
-  height: 2em;
-}
-
-div.selectdb select {
-  margin: 0;
-  padding: 0 0 0 0;
-}
 
 /* PAGE STRUCTURE */
 
@@ -235,7 +23,11 @@ div.selectdb select {
     position: relative;
     width: 100%;
     padding: 0;
-    min-width: 800px;
+    /* min-width: 800px;  IMPOSE MIN WIDT OR NOT??? */
+}
+
+.tooltip-inner {
+    white-space:pre-wrap;
 }
 
 #content {
@@ -444,94 +236,8 @@ span.context {
 }
 
 
-/* Styles for the navigation header. */
 
-#user-tools {
-  height: 40px;
-  line-height: 40px;
-  float: right;
-  font-size: 13px;
-  text-align: right;
-  padding: 0;
-}
 
-#headerbar {
-  position: relative;
-  z-index: 3;
-  overflow: visible;
-  padding: 10px 15px 5px 15px;
-}
-
-nav {
-  display: inline;
-  z-index: 10000;
-  font-size: 13px;
-}
-
-nav ul {
-  padding: 0 0 0 20px;
-  margin: 0;
-  list-style: none;
-  position: relative;
-  display: inline-table;
-  line-height: 40px;
-}
-
-nav ul li input {
-  margin-left: 10px;
-}
-
-nav ul ul {
-  display: none;
-}
-
-nav ul li:hover > ul {
-  display: block;
-}
-
-nav ul li {
-  float: left;
-  list-style: none;
-  padding: 0;
-}
-
-nav ul li a {
-  display: block;
-  padding: 0 8px 0 8px;
-  line-height: 40px;
-  font-size: 13px;
-  color: #555555;
-  text-decoration: none;
-}
-
-nav ul ul {
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 100%;
-}
-
-nav ul ul li {
-  float: none;
-  position: relative;
-}
-
-nav ul ul li a {
-  padding-top: 0px;
-  padding-right: 5px;
-  padding-bottom: 0px;
-  padding-left: 5px;
-  font-size: 13px;
-  line-height: 2em;
-  height: 2em;
-}
-
-nav ul ul ul {
-  position: absolute;
-  left: 100%;
-  top:0;
-}
 
 /* Styles for the tabs. */
 .frepple-tabs {
@@ -584,10 +290,6 @@ table thead th.sorted {
   background: #B3B3B3;
 }
 
-#toolicons span.ui-button-text {
-  padding: 0.2em;
-}
-
 .smallpadding {
   padding: 0 3px;
   text-align: center;
@@ -622,26 +324,6 @@ div.calendarbox
   z-index: 10;
 }
 
-.uzi-autocomplete-loading
-{
-  background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
-}
-
-.uzi-autocomplete
-{
-  max-height: 200px;
-  overflow-y: auto;
-  /* prevent horizontal scrollbar */
-  overflow-x: hidden;
-  /* add padding to account for vertical scrollbar */
-  padding-right: 20px;
-}
-
-.ui-autocomplete-category {
-  font-weight:normal;
-  list-style-type: none;
-}
-
 .float_right {
   float: right;
 }
@@ -652,58 +334,6 @@ div.calendarbox
   width: 100%;
   min-height: 48px;
   height: 100%;
-}
-
-/* DASHBOARD WIDGETS */
-
-.portlet {
-  margin: 0 1em 1em 0;
-}
-
-.portlet-header {
-  padding: 0.2em 0.3em;
-  margin-bottom: 0.5em;
-  position: relative;
-  font-weight: normal;
-}
-
-.portlet-export {
-  position: absolute;
-  top: 50%;
-  right: 32px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-toggle {
-  position: absolute;
-  top: 50%;
-  right: 17px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-close {
-  position: absolute;
-  top: 50%;
-  right: 2px;
-  margin-top: -8px;
-  color: #555555;
-}
-
-.portlet-content {
-  padding: 0 0.8em 0.8em 0.8em;
-  overflow: hidden;
-}
-
-.portlet-placeholder {
-  border: 1px dotted black;
-  margin: 0 1em 1em 0;
-  height: 50px;
-}
-
-.portlet-content table {
-  line-height: 2em;
 }
 
 /* TASK EXECUTION SCREEN */
@@ -843,25 +473,17 @@ body.popup .submit-row {
   overflow: auto;
 }
 
-.save_undo_button_active {
+.submit-row input.default,  .submit-row input[type=submit],  a.deletelink:link, a.deletelink:visited {
+	  margin-left: 5px;/*
   padding: 4px 6px 4px 6px;
   border: 1px solid #EBEBEB;
   background: #FF5656;
   font-size: 10px;
   font-weight: bold;
   color: white;
+    float: left;*/
 }
 
-.submit-row input.default, .submit-row input[type=submit],  a.deletelink:link, a.deletelink:visited {
-	margin-left: 5px;
-  padding: 4px 6px 4px 6px;
-  border: 1px solid #EBEBEB;
-  background: #FF5656;
-  font-size: 10px;
-  font-weight: bold;
-  color: white;
-  float: left;
-}
 
 p.deletelink-box {
 	line-height: normal;

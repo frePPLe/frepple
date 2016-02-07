@@ -15,10 +15,10 @@
 @gray-lighter:           lighten(@gray-base, 93.5%); // #eee
 
 @brand-primary:         darken(#428bca, 6.5%); // #337ab7
-@brand-success:         #5cb85c;
-@brand-info:            #5bc0de;
-@brand-warning:         #f0ad4e;
-@brand-danger:          #d9534f;
+@brand-success:         #8bc34a;
+@brand-info:            #03a9f4;
+@brand-warning:         #ffeb3b;
+@brand-danger:          #ff5252;
 
 
 //== Scaffolding
@@ -497,19 +497,19 @@
 //## Define colors for form feedback states and, by default, alerts.
 
 @state-success-text:             #3c763d;
-@state-success-bg:               #dff0d8;
+@state-success-bg:               lighten(@brand-success, 10%);
 @state-success-border:           darken(spin(@state-success-bg, -10), 5%);
 
 @state-info-text:                #31708f;
-@state-info-bg:                  #d9edf7;
+@state-info-bg:                  lighten(@brand-info, 10%);
 @state-info-border:              darken(spin(@state-info-bg, -10), 7%);
 
 @state-warning-text:             #8a6d3b;
-@state-warning-bg:               #fcf8e3;
+@state-warning-bg:               lighten(@brand-warning, 10%);
 @state-warning-border:           darken(spin(@state-warning-bg, -10), 5%);
 
 @state-danger-text:              #a94442;
-@state-danger-bg:                #f2dede;
+@state-danger-bg:                lighten(@brand-danger, 10%);
 @state-danger-border:            darken(spin(@state-danger-bg, -10), 5%);
 
 
@@ -714,7 +714,7 @@
 
 @panel-default-text:          @gray-dark;
 @panel-default-border:        #ddd;
-@panel-default-heading-bg:    #C1C688;
+@panel-default-heading-bg:    #F47A00;
 
 @panel-primary-text:          #fff;
 @panel-primary-border:        @brand-primary;

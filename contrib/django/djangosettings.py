@@ -20,7 +20,6 @@ r'''
 Main Django configuration file.
 '''
 import os, sys, locale
-from django.contrib import messages #bootstrap
 
 try:
   DEBUG = 'runserver' in sys.argv
@@ -268,14 +267,6 @@ REST_FRAMEWORK = {
     'rest_framework.renderers.JSONRenderer',
     'freppledb.common.api.renderers.freppleBrowsableAPI',
   )
-}
-
-#bootstrap
-DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
-MESSAGE_TAGS = {
-            messages.SUCCESS: 'alert-success success',
-            messages.WARNING: 'alert-warning warning',
-            messages.ERROR: 'alert-danger error'
 }
 
 import django.contrib.admindocs

@@ -137,11 +137,9 @@ def preferences(request):
   if request.method == 'POST':
     form = PreferencesForm(request.POST)
     form.user = request.user
-    print("raw:", request.POST)
     if form.is_valid():
       try:
         newdata = form.cleaned_data
-        print("cleaned:", newdata)
         request.user.language = newdata['language']
         if 'theme' in newdata:
           request.user.theme = newdata['theme']

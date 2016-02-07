@@ -27,6 +27,7 @@ import os
 import sys
 import types
 import freppledb
+from django.contrib import messages
 
 # FREPPLE_APP directory
 if 'FREPPLE_APP' in os.environ:
@@ -218,6 +219,14 @@ DEFAULT_PAGESIZE = 100
 
 # Port number for the CherryPy web server
 PORT = 8000
+
+# Bootstrap
+DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
+MESSAGE_TAGS = {
+  messages.SUCCESS: 'alert-success success',
+  messages.WARNING: 'alert-warning warning',
+  messages.ERROR: 'alert-danger error'
+  }
 
 # Override any of the above settings from a separate file
 if os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):

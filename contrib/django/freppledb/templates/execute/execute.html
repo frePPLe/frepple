@@ -34,7 +34,7 @@
     if (cellvalue == 'Failed')
       return "<span class='bg-danger' style='display:block'>{% trans 'failed'|capfirst %}</span>";
     else if (cellvalue == 'Waiting')
-    {% comment %}Translators: Translation included with Django{% endcomment %} 
+    {% comment %}Translators: Translation included with Django{% endcomment %}
       return "{% trans 'waiting'|capfirst|force_escape %}&nbsp;&nbsp;<button class='btn btn-primary btn-default' style='padding:0 0.5em 0 0.5em; font-size:66%' onclick='cancelTask(" + rowdata['id'] + ")'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>";
     else if (cellvalue == 'Done')
       return "{% trans 'done'|capfirst %}";
@@ -44,9 +44,9 @@
       return cellvalue;
   }
 
-  function cancelTask(id) {   
+  function cancelTask(id) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-    
+
     $("#popup").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header">'+
@@ -90,12 +90,12 @@
   {
     if ($('#spreadsheet').val() == "")
       return;
-    
+
     $.jgrid.hideModal("#searchmodfbox_grid");
-    
+
     // Create dialog box
     $('#uploadResponse').val("");
-    
+
     $("#uploadSpreadsheet").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header">'+
@@ -109,7 +109,7 @@
             '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
             gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
           '</form>' +
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +       
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
@@ -171,7 +171,7 @@
      }
     )
   }
-  
+
   $(function() {
     icons = {
         time: 'fa fa-clock-o',
@@ -210,23 +210,22 @@
       $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
-    
+
     $("#sourceul li a").click(function(){
       $("#source").html($(this).text() + ' <span class="caret"></span>');
       $("#sourcescenario").val($(this).text());
     });
-    
+
     $("#entityul li a").click(function(){
       $("#entity").html($(this).text() + ' <span class="caret"></span>');
       $("#loaddatafile").val($(this).text());
-      $("#entity").attr('aria-expanded', 'false');
     });
 
     $("#weekstartul li a").click(function(){
       $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
       $("#weekstart").val($(this).parent().index());
     });
-    
+
     });
 
   var models = {% getModelDependencies %};
@@ -266,13 +265,13 @@
 </div></div>
 <div class="row">
 	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px; min-width: 600px">
-	
+
 	{% if perms.execute %}
 	  {% if perms.execute.generate_plan %}
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="eersteHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="eersteHeading" data-toggle="collapse" data-target="#eersteAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#eersteAccord" aria-expanded="true" aria-controls="eersteAccord">
+		      <a role="button">
 		          {% trans 'Create a plan' %}
 		      </a>
 		    </h4>
@@ -300,7 +299,7 @@ In case of shortages the demand is planned late or short.">Constrained plan</spa
                     {% endblocktrans %}<span class="fa fa-question-circle" style="display:inline-block;"></span>
                 </label>
 				        <br>
-				        
+
 				        <label><input type="radio" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
 				            {% blocktrans %}
 				            <span data-toggle="tooltip" data-placement="bottom"  title="This plan shows material, capacity and operation problems that prevent the demand from being planned in time.
@@ -346,13 +345,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  </div>
 		</div>
 	  {% endif %}
-	
+
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="tweedeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="tweedeHeading"  data-toggle="collapse" data-target="#tweedeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#tweedeAccord" aria-expanded="true" aria-controls="tweedeAccord">
-		          {% trans "Export a spreadsheet" %}
-		      </a>
+		      <a role="button">{% trans "Export a spreadsheet" %}</a>
 		    </h4>
 		  </div>
 		  <div id="tweedeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tweedeHeading">
@@ -380,7 +377,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			              {% endif %}
 			            {% endfor %}
 			          {% endfor %}
-			          </p>		                
+			          </p>
 			        </td>
 			      </tr>
 			      </form>
@@ -388,13 +385,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		    </div>
 		  </div>
 	  </div>
-	  
+
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="derdeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="derdeHeading" data-toggle="collapse" data-target="#derdeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#derdeAccord" aria-expanded="true" aria-controls="derdeAccord">
-		          {% trans "Import a spreadsheet" %}
-		      </a>
+		      <a role="button">{% trans "Import a spreadsheet" %}</a>
 		    </h4>
 		  </div>
 		  <div id="derdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="derdeHeading">
@@ -407,23 +402,21 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				        <td style="padding: 15px;">
 				          <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
 		              <label>{% trans "Data file" %}:
-                  
+
                     <input class="btn btn-info form-control" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
 </label>
 				        </td>
-				      </tr>      
+				      </tr>
 				    </table>
 			    </div>
 		  </div>
 		</div>
-	
+
 	  {% if scenarios.count > 1 %}
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="vierdeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="vierdeHeading" data-toggle="collapse" data-target="#vierdeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#vierdeAccord" aria-expanded="true" aria-controls="vierdeAccord">
-		          {% trans "scenario management"|capfirst %}
-		      </a>
+		      <a role="button">{% trans "scenario management"|capfirst %}</a>
 		    </h4>
 		  </div>
 		  <div id="vierdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vierdeHeading">
@@ -445,9 +438,9 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 									</td>
 									<td  style="padding: 0px 15px;">{{j.status}}</td>
 									<td>{{j.description}}</td>
-									<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>       
+									<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
 					      </tr>
-					      {% endifnotequal %}{% endfor %}		      
+					      {% endifnotequal %}{% endfor %}
 					      {% if perms.execute.copy_scenario %}
 					      <tr>
 					        <td><button  class="btn btn-primary" role="button" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
@@ -466,7 +459,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	                    </div>
                     {% trans "into selected scenarios" %}
                     </span>
-					        </td>       
+					        </td>
 					      </tr>
 					      {% endif %}
 					      {% if perms.execute.release_scenario %}
@@ -486,14 +479,12 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  </div>
 		</div>
 	  {% endif %}
-	
+
 	  <div class="panel panel-default">
 		  {% if perms.execute.run_db %}
-		  <div class="panel-heading" role="tab" id="vijfdeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="vijfdeHeading" data-toggle="collapse" data-target="#vijfdeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#vijfdeAccord" aria-expanded="true" aria-controls="vijfdeAccord">
-		          {% trans "Back up the database" %}
-		      </a>
+		      <a role="button">{% trans "Back up the database" %}</a>
 		    </h4>
 		  </div>
 		  <div id="vijfdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vijfdeHeading">
@@ -509,13 +500,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				</div>
 		  </div>
 		</div>
-	
+
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="zesdeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="zesdeHeading" data-toggle="collapse" data-target="#zesdeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#zesdeAccord" aria-expanded="true" aria-controls="zesdeAccord">
-		          {% trans "Empty the database" %}
-		      </a>
+		      <a role="button">{% trans "Empty the database" %}</a>
 		    </h4>
 		  </div>
 		  <div id="zesdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
@@ -538,13 +527,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				</div>
 		  </div>
 		</div>
-	
+
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="zevendeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="zevendeHeading" data-toggle="collapse" data-target="#zevendeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#zevendeAccord" aria-expanded="true" aria-controls="zevendeAccord">
-		          {% trans "Load a dataset" %}
-		      </a>
+		      <a role="button">{% trans "Load a dataset" %}</a>
 		    </h4>
 		  </div>
 		  <div id="zevendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zevendeHeading">
@@ -558,16 +545,14 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 						  </button>
 						</td>
 				  	<td>
-               <div class="dropdown dropdown-submit-input">	
-		               <label>
-		                   {% trans "Load one of the available datasets to the current database." %}                 
-		                   <button class="btn btn-default dropdown-toggle form-control"  id="entity" name="entity" type="button" data-toggle="dropdown">
-		                      -&nbsp;&nbsp;<span class="caret"></span>
+	               <div class="dropdown dropdown-submit-input">
+		               {% trans "Load one of the available datasets to the current database." %}
+		                   <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
 		                   </button>
-                       <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul" name="entityul">
-                          {% for i in fixtures %}<li><a name="{{i}}">{{i}}</a></li>{% endfor %}
+                       <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">
+                          {% for i in fixtures %}<li><a>{{i}}</a></li>{% endfor %}
                        </ul>
-                   </label>
+
                </div>
             </td>
 					 </tr>
@@ -578,14 +563,12 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  </div>
 		</div>
 	  {% endif %}
-	
+
 	  {% if openbravo %}
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="achtsteHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="achtsteHeading" data-toggle="collapse" data-target="#achtsteAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#achtsteAccord" aria-expanded="true" aria-controls="achtsteAccord">
-		          {% blocktrans with erp="Openbravo" %}Import data from {{ erp }}{% endblocktrans %}
-		      </a>
+		      <a role="button">{% blocktrans with erp="Openbravo" %}Import data from {{ erp }}{% endblocktrans %}</a>
 		    </h4>
 		  </div>
 		  <div id="achtsteAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="achtsteHeading">
@@ -604,13 +587,11 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			  </div>
 		  </div>
 		</div>
-	  
+
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="negendeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="negendeHeading" data-toggle="collapse" data-target="#negendeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#negendeAccord" aria-expanded="true" aria-controls="negendeAccord">
-		          {% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}
-		      </a>
+		      <a role="button" >{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a>
 		    </h4>
 		  </div>
 		  <div id="negendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="negendeHeading">
@@ -629,14 +610,12 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	  </div>
 	  {% endif %}
 
-	
+
 	  {% if perms.execute.run_db %}
 	  <div class="panel panel-default">
-		  <div class="panel-heading" role="tab" id="tiendeHeading">
+		  <div class="panel-heading" data-parent="#tasks" role="tab" id="tiendeHeading" data-toggle="collapse" data-target="#tiendeAccord">
 		    <h4 class="panel-title">
-		      <a role="button" data-toggle="collapse" data-parent="#tasks" href="#tiendeAccord" aria-expanded="true" aria-controls="tiendeAccord">
-		          {% blocktrans %}Generate buckets{% endblocktrans %}
-		      </a>
+		      <a role="button">{% blocktrans %}Generate buckets{% endblocktrans %}</a>
 		    </h4>
 		  </div>
 		  <div id="tiendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tiendeHeading">
@@ -653,10 +632,10 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 								<label class="control-label">Start date: <input class="vDateField form-control" id="start" name="start" type="text" size="12"/></label>
 								<label class="control-label">End date: <input class="vDateField form-control" id="end" name="end" type="text" size="12"/></label><br>
                <label class="control-label" for="weekstart1">Week starts on:</label>
-               <div class="dropdown dropdown-submit-input"> 
+               <div class="dropdown dropdown-submit-input">
                        <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span>
                        </button>
-                       <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">  
+                       <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
                           <li><a>Sunday</a></li>
                           <li><a>Monday</a></li>
                           <li><a>Tuesday</a></li>
@@ -676,7 +655,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		</div>
 
 	{% endif %}
-	
+
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}

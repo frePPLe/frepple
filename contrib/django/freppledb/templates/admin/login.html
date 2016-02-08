@@ -74,14 +74,14 @@ $(function() {
 
 
 <div class="row" style="padding-bottom: 30px; padding-top: 50px;">
-	<div class=" col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+	<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none;">
 	 {% block branding %}{{ block.super }}{% endblock %}
 	</div>
 </div>
 
 
 <div class="row" id="content-main" >
-  <div  class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+  <div  class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:left;">
 		<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form" >{% csrf_token %}
 		  <div class="form-group">
 		    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
@@ -116,8 +116,8 @@ document.getElementById('id_username').focus()
   <div id='tourtooltip' class='col-md-12 tourtooltip' style='display: none; position: relative; top: 20px; font-weight: normal'>
   </div>
 </div>
-<div class="row center-block">
-		<div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 alert alert-danger" role="alert" style="text-align:center; ">
+<div class="row">
+		<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
 				{% checkPassword "admin" "admin" as recommend_reset %}
 				{% if recommend_reset %}
 				    {% blocktrans %}The user "admin" has password "admin".<br/>

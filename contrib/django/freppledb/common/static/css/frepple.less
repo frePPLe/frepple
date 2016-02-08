@@ -88,17 +88,42 @@
 
 /* Navigation bar */
 
-.nav li a {
-padding-left: 10px;
-padding-right: 10px;
+.nav {
+  li a {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .nav>li {/* fixes for django admin forms */
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+  }
 }
 
-.breadcrumbrow {
-  border-top: 1px solid darken(@navbar-default-bg, 15%);
+#nav-menu{
+  .dropdown-menu {
+    background-color: darken(@navbar-default-bg, 15%);
+  }
+  ul.dropdown-menu li a:hover {
+    background-color: darken(@navbar-default-bg, 25%);
+  }
+}
+
+.navbar {
+  margin-bottom: 0px;
+  .dropdown-menu .divider {
+    margin: 7px 0; //the default is 8px but would not show in chrome
+  }
+  .navbar .dropdown-menu>li>a { /*fix django admin*/
+    font-size: @font-size-base;
+  }
 }
 
 .navbar-brand img {
   height: (@navbar-height - 10px);
+}
+
+.breadcrumbrow {
+  border-top: 1px solid darken(@navbar-default-bg, 15%);
 }
 
 .login img {
@@ -107,28 +132,11 @@ padding-right: 10px;
 
 div.selectdb {
   padding-top: 2px;
-  padding-bottom: 2px
-}
-
-#nav-menu .dropdown-menu {
-  background-color: darken(@navbar-default-bg, 15%);
-}
-
-#nav-menu ul.dropdown-menu li a:hover {
-  background-color: darken(@navbar-default-bg, 25%);
-}
-
-.navbar .dropdown-menu .divider {
-    margin: 7px 0; //the default is 8px but would not show in chrome
-}
-
-.navbar .dropdown-menu>li>a { /*fix django admin*/
-    font-size: @font-size-base;
-}
-
-div.selectdb select { /*fix django admin*/
-  padding: 0px;
-  border-color: @input-border;
+  padding-bottom: 2px;
+  select { /*fix django admin*/
+    padding: 0px;
+    border-color: @input-border;
+  }
 }
 
 ul li { /*fix django admin*/
@@ -139,42 +147,41 @@ div.tt-menu.tt-open {
   width: 100%;
 }
 
-div.tt-dataset.tt-dataset-search {
-  background-color: darken(@navbar-default-bg, 15%);
-  padding-bottom: 5px;
-}
-
-div.tt-dataset.tt-dataset-search * {
-  line-height: @line-height-base;
-  display: block;
-}
-
-div.tt-dataset.tt-dataset-search a {
-  font-size: @font-size-base; /* fix django admin form problems */
-  padding-left: 16px;
-  text-align: left;
-}
-
-div.tt-dataset.tt-dataset-search a:hover {
-  background-color: darken(@navbar-default-bg, 25%);
-  color: @navbar-default-link-hover-color;
-  padding-left: 16px;
-  text-align: left;
-}
-
-div.tt-dataset.tt-dataset-search span p {
-  margin-top: 5px;
-  margin-bottom: 1px;
-  text-align: center;
-  background-color: darken(@navbar-default-bg, 15%);
-}
-
-div.tt-dataset.tt-dataset-search span li.divider {
-  height:1px;
-  margin-bottom: 2px;
-  margin-top: 1px;
-  overflow:hidden;
-  background-color: @dropdown-divider-bg;
+div.tt-dataset {
+  .tt-dataset-search {
+    background-color: darken(@navbar-default-bg, 15%);
+    padding-bottom: 5px;
+    * {
+        line-height: @line-height-base;
+        display: block;
+    }
+    a {
+      font-size: @font-size-base; /* fix django admin form problems */
+      padding-left: 16px;
+      text-align: left;
+    }
+    a:hover {
+      background-color: darken(@navbar-default-bg, 25%);
+      color: @navbar-default-link-hover-color;
+      padding-left: 16px;
+      text-align: left;
+    }
+    span {
+      p {
+        margin-top: 5px;
+        margin-bottom: 1px;
+        text-align: center;
+        background-color: darken(@navbar-default-bg, 15%);
+      }
+      li.divider {
+        height:1px;
+        margin-bottom: 2px;
+        margin-top: 1px;
+        overflow:hidden;
+        background-color: @dropdown-divider-bg;
+      }
+    }
+  }
 }
 
 a:link, a:visited {
@@ -197,11 +204,7 @@ label{
   line-height: 2.2em;
 }
 
-/* fixes for django admin forms */
-.nav>li {
-    font-size: @font-size-base;
-    line-height: @line-height-base;
-}
+
 
 /* Cockpit styles. */
 

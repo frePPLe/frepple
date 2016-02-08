@@ -4,7 +4,19 @@
 
 /*jslint white: true */
 /*global jQuery */
-(function ($) {
+(function (factory) {
+	"use strict";
+	if (typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else if (typeof exports === "object") {
+		// Node/CommonJS
+		factory(require("jquery"));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
 "use strict";
 var locInfo = {
 	isRTL: false,
@@ -26,27 +38,31 @@ var locInfo = {
 		Find: "Cerca",
 		Reset: "Pulisci",
 		odata: [
-			{ oper: 'eq', text: "uguale" },
-			{ oper: 'ne', text: "diverso" },
-			{ oper: 'lt', text: "minore" },
-			{ oper: 'le', text: "minore o uguale" },
-			{ oper: 'gt', text: "maggiore" },
-			{ oper: 'ge', text: "maggiore o uguale" },
-			{ oper: 'bw', text: "inizia con" },
-			{ oper: 'bn', text: "non inizia con" },
-			{ oper: 'in', text: "in" },
-			{ oper: 'ni', text: "non in" },
-			{ oper: 'ew', text: "termina con" },
-			{ oper: 'en', text: "non termina con" },
-			{ oper: 'cn', text: "contiene" },
-			{ oper: 'nc', text: "non contiene" },
-			{ oper: 'nu', text: 'is null' },
-			{ oper: 'nn', text: 'is not null' }
+			{ oper: "eq", text: "uguale" },
+			{ oper: "ne", text: "diverso" },
+			{ oper: "lt", text: "minore" },
+			{ oper: "le", text: "minore o uguale" },
+			{ oper: "gt", text: "maggiore" },
+			{ oper: "ge", text: "maggiore o uguale" },
+			{ oper: "bw", text: "inizia con" },
+			{ oper: "bn", text: "non inizia con" },
+			{ oper: "in", text: "in" },
+			{ oper: "ni", text: "non in" },
+			{ oper: "ew", text: "termina con" },
+			{ oper: "en", text: "non termina con" },
+			{ oper: "cn", text: "contiene" },
+			{ oper: "nc", text: "non contiene" },
+			{ oper: "nu", text: "is null" },
+			{ oper: "nn", text: "is not null" }
 		],
 		groupOps: [
 			{ op: "AND", text: "tutto" },
 			{ op: "OR", text: "almeno uno" }
 		],
+		addGroupTitle: "Add subgroup",
+		deleteGroupTitle: "Delete group",
+		addRuleTitle: "Add rule",
+		deleteRuleTitle: "Delete rule",
 		operandTitle: "Click to select search operation.",
 		resetTitle: "Reset Search Value"
 	},
@@ -99,7 +115,11 @@ var locInfo = {
 		alertcap: "Attenzione",
 		alerttext: "Per favore, seleziona un record",
 		viewtext: "",
-		viewtitle: "Visualizza riga selezionata"
+		viewtitle: "Visualizza riga selezionata",
+		savetext: "",
+		savetitle: "Salva riga",
+		canceltext: "",
+		canceltitle: "Annulla modifica riga"
 	},
 	col: {
 		caption: "Mostra/Nascondi Colonne",
@@ -154,4 +174,4 @@ $.extend(true, $.jgrid, {
 		"it-IT": $.extend({}, locInfo, { name: "italiano (Italia)", nameEnglish: "Italian (Italy)" })
 	}
 });
-}(jQuery));
+}));

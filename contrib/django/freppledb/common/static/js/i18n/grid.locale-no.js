@@ -4,7 +4,19 @@
 
 /*jslint white: true */
 /*global jQuery */
-(function ($) {
+(function (factory) {
+	"use strict";
+	if (typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else if (typeof exports === "object") {
+		// Node/CommonJS
+		factory(require("jquery"));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
 	"use strict";
 	var locInfo = {
 		name: "norsk",
@@ -28,18 +40,22 @@
 			Find: "Finn",
 			Reset: "Nullstill",
 			odata: [
-				{ oper: 'eq', text: "lik" },
-				{ oper: 'ne', text: "forskjellig fra" },
-				{ oper: 'lt', text: "mindre enn" },
-				{ oper: 'le', text: "mindre eller lik" },
-				{ oper: 'gt', text: "større enn" },
-				{ oper: 'ge', text: "større eller lik" },
-				{ oper: 'bw', text: "starter med" },
-				{ oper: 'ew', text: "slutter med" },
-				{ oper: 'cn', text: "inneholder" },
-				{ oper: 'nu', text: 'is null' },
-				{ oper: 'nn', text: 'is not null' }
+				{ oper: "eq", text: "lik" },
+				{ oper: "ne", text: "forskjellig fra" },
+				{ oper: "lt", text: "mindre enn" },
+				{ oper: "le", text: "mindre eller lik" },
+				{ oper: "gt", text: "større enn" },
+				{ oper: "ge", text: "større eller lik" },
+				{ oper: "bw", text: "starter med" },
+				{ oper: "ew", text: "slutter med" },
+				{ oper: "cn", text: "inneholder" },
+				{ oper: "nu", text: "is null" },
+				{ oper: "nn", text: "is not null" }
 			],
+			addGroupTitle: "Add subgroup",
+			deleteGroupTitle: "Delete group",
+			addRuleTitle: "Add rule",
+			deleteRuleTitle: "Delete rule",
 			operandTitle: "Click to select search operation.",
 			resetTitle: "Reset Search Value"
 		},
@@ -90,7 +106,11 @@
 			alertcap: "Advarsel",
 			alerttext: "Velg rad",
 			viewtext: "",
-			viewtitle: "Åpne valgt rad"
+			viewtitle: "Åpne valgt rad",
+			savetext: "",
+			savetitle: "Save row",
+			canceltext: "",
+			canceltitle: "Cancel row editing"
 		},
 		col: {
 			caption: "Vis/skjul kolonner",
@@ -145,4 +165,4 @@
 			no: locInfo
 		}
 	});
-}(jQuery));
+}));

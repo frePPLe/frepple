@@ -1,7 +1,7 @@
 ﻿/**
- * jqGrid Japanese Translation
+ * @license jqGrid Japanese Translation
  * OKADA Yoshitada okada.dev@sth.jp
- * http://trirand.com/blog/ 
+ * http://trirand.com/blog/
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -9,7 +9,19 @@
 
 /*jslint white: true */
 /*global jQuery */
-(function ($) {
+(function (factory) {
+	"use strict";
+	if (typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else if (typeof exports === "object") {
+		// Node/CommonJS
+		factory(require("jquery"));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
 "use strict";
 var locInfo = {
 	isRTL: false,
@@ -44,6 +56,10 @@ var locInfo = {
 			{ op: "AND", text: "すべての" },
 			{ op: "OR", text: "いずれかの" }
 		],
+		addGroupTitle: "Add subgroup",
+		deleteGroupTitle: "Delete group",
+		addRuleTitle: "Add rule",
+		deleteRuleTitle: "Delete rule",
 		operandTitle: "検索操作をクリックして選択する",
 		resetTitle: "値の検索のリセット"
 	},
@@ -96,7 +112,11 @@ var locInfo = {
 		alertcap: "警告",
 		alerttext: "行を選択して下さい。",
 		viewtext: "",
-		viewtitle: "選択した行を表示"
+		viewtitle: "選択した行を表示",
+		savetext: "",
+		savetitle: "Save row",
+		canceltext: "",
+		canceltitle: "Cancel row editing"
 	},
 	col: {
 		caption: "列を表示／隠す",
@@ -168,4 +188,4 @@ $.extend(true, $.jgrid, {
 		"ja-JP": $.extend({}, locInfo, { name: "日本語 (日本)", nameEnglish: "Japanese (Japan)" })
 	}
 });
-}(jQuery));
+}));

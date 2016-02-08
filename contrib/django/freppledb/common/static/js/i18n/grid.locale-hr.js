@@ -1,8 +1,8 @@
 /**
- * jqGrid Croatian Translation
+ * @license jqGrid Croatian Translation
  * Version 1.0.1 (developed for jQuery Grid 4.4)
  * msajko@gmail.com
- * 
+ *
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -10,69 +10,105 @@
 
 /*jslint white: true */
 /*global jQuery */
-(function($){
+(function (factory) {
+	"use strict";
+	if (typeof define === "function" && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(["jquery"], factory);
+	} else if (typeof exports === "object") {
+		// Node/CommonJS
+		factory(require("jquery"));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
 "use strict";
 var locInfo = {
 	isRTL: false,
-	defaults : {
+	defaults: {
 		recordtext: "Pregled {0} - {1} od {2}",
 		emptyrecords: "Nema zapisa",
 		loadtext: "Učitavam...",
-		pgtext : "Stranica {0} od {1}",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
+		pgtext: "Stranica {0} od {1}",
+		pgfirst: "First Page",
+		pglast: "Last Page",
+		pgnext: "Next Page",
+		pgprev: "Previous Page",
+		pgrecs: "Records per Page",
 		showhide: "Toggle Expand Collapse Grid",
 		savetext: "Spremanje..."
 	},
-	search : {
+	search: {
 		caption: "Traži...",
 		Find: "Pretraživanje",
 		Reset: "Poništi",
-		odata: [{ oper:'eq', text:"jednak"},{ oper:'ne', text:"nije identičan"},{ oper:'lt', text:"manje"},{ oper:'le', text:"manje ili identično"},{ oper:'gt', text:"veće"},{ oper:'ge', text:"veće ili identično"},{ oper:'bw', text:"počinje sa"},{ oper:'bn', text:"ne počinje sa "},{ oper:'in', text:"je u"},{ oper:'ni', text:"nije u"},{ oper:'ew', text:"završava sa"},{ oper:'en', text:"ne završava sa"},{ oper:'cn', text:"sadrži"},{ oper:'nc', text:"ne sadrži"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
-		groupOps: [	{ op: "I", text: "sve" },	{ op: "ILI",  text: "bilo koji" }	],
-		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value"
+		odata: [
+			{ oper: "eq", text: "jednak" },
+			{ oper: "ne", text: "nije identičan" },
+			{ oper: "lt", text: "manje" },
+			{ oper: "le", text: "manje ili identično" },
+			{ oper: "gt", text: "veće" },
+			{ oper: "ge", text: "veće ili identično" },
+			{ oper: "bw", text: "počinje sa" },
+			{ oper: "bn", text: "ne počinje sa " },
+			{ oper: "in", text: "je u" },
+			{ oper: "ni", text: "nije u" },
+			{ oper: "ew", text: "završava sa" },
+			{ oper: "en", text: "ne završava sa" },
+			{ oper: "cn", text: "sadrži" },
+			{ oper: "nc", text: "ne sadrži" },
+			{ oper: "nu", text: "is null" },
+			{ oper: "nn", text: "is not null" }
+		],
+		groupOps: [
+			{ op: "I", text: "sve" },
+			{ op: "ILI",  text: "bilo koji" }
+		],
+		addGroupTitle: "Add subgroup",
+		deleteGroupTitle: "Delete group",
+		addRuleTitle: "Add rule",
+		deleteRuleTitle: "Delete rule",
+		operandTitle: "Click to select search operation.",
+		resetTitle: "Reset Search Value"
 	},
-	edit : {
+	edit: {
 		addCaption: "Dodaj zapis",
 		editCaption: "Promijeni zapis",
 		bSubmit: "Preuzmi",
 		bCancel: "Odustani",
 		bClose: "Zatvri",
 		saveData: "Podaci su promijenjeni! Preuzmi promijene?",
-		bYes : "Da",
-		bNo : "Ne",
-		bExit : "Odustani",
+		bYes: "Da",
+		bNo: "Ne",
+		bExit: "Odustani",
 		msg: {
-			required:"Polje je obavezno",
-			number:"Molim, unesite ispravan broj",
-			minValue:"Vrijednost mora biti veća ili identična ",
-			maxValue:"Vrijednost mora biti manja ili identična",
+			required: "Polje je obavezno",
+			number: "Molim, unesite ispravan broj",
+			minValue: "Vrijednost mora biti veća ili identična ",
+			maxValue: "Vrijednost mora biti manja ili identična",
 			email: "neispravan e-mail",
 			integer: "Molim, unjeti ispravan cijeli broj (integer)",
 			date: "Molim, unjeti ispravan datum ",
 			url: "neispravan URL. Prefiks je obavezan ('http://' or 'https://')",
-			nodefined : " nije definiran!",
-			novalue : " zahtjevan podatak je obavezan!",
-			customarray : "Opcionalna funkcija trebala bi bili polje (array)!",
-			customfcheck : "Custom function should be present in case of custom checking!"
-			
+			nodefined: " nije definiran!",
+			novalue: " zahtjevan podatak je obavezan!",
+			customarray: "Opcionalna funkcija trebala bi bili polje (array)!",
+			customfcheck: "Custom function should be present in case of custom checking!"
+
 		}
 	},
-	view : {
+	view: {
 		caption: "Otvori zapis",
 		bClose: "Zatvori"
 	},
-	del : {
+	del: {
 		caption: "Obriši",
 		msg: "Obriši označen zapis ili više njih?",
 		bSubmit: "Obriši",
 		bCancel: "Odustani"
 	},
-	nav : {
+	nav: {
 		edittext: "",
 		edittitle: "Promijeni obilježeni red",
 		addtext: "",
@@ -86,24 +122,28 @@ var locInfo = {
 		alertcap: "Upozorenje",
 		alerttext: "Molim, odaberi red",
 		viewtext: "",
-		viewtitle: "Pregled obilježenog reda"
+		viewtitle: "Pregled obilježenog reda",
+		savetext: "",
+		savetitle: "Save row",
+		canceltext: "",
+		canceltitle: "Cancel row editing"
 	},
-	col : {
+	col: {
 		caption: "Obilježi kolonu",
 		bSubmit: "Uredu",
 		bCancel: "Odustani"
 	},
-	errors : {
-		errcap : "Greška",
-		nourl : "Nedostaje URL",
+	errors: {
+		errcap: "Greška",
+		nourl: "Nedostaje URL",
 		norecords: "Bez zapisa za obradu",
-		model : "colNames i colModel imaju različitu duljinu!"
+		model: "colNames i colModel imaju različitu duljinu!"
 	},
-	formatter : {
-		integer : {thousandsSeparator: ".", defaultValue: '0'},
-		number : {decimalSeparator:",", thousandsSeparator: ".", decimalPlaces: 2, defaultValue: '0,00'},
-		currency : {decimalSeparator:",", thousandsSeparator: ".", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0,00'},
-		date : {
+	formatter: {
+		integer: { thousandsSeparator: ".", defaultValue: "0" },
+		number: { decimalSeparator: ",", thousandsSeparator: ".", decimalPlaces: 2, defaultValue: "0,00" },
+		currency: { decimalSeparator: ",", thousandsSeparator: ".", decimalPlaces: 2, prefix: "", suffix: "", defaultValue: "0,00" },
+		date: {
 			dayNames:   [
 				"Ned", "Pon", "Uto", "Sri", "Čet", "Pet", "Sub",
 				"Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"
@@ -112,11 +152,11 @@ var locInfo = {
 				"Sij", "Velj", "Ožu", "Tra", "Svi", "Lip", "Srp", "Kol", "Ruj", "Lis", "Stu", "Pro",
 				"Siječanj", "Veljača", "Ožujak", "Travanj", "Svibanj", "Lipanj", "Srpanj", "Kolovoz", "Rujan", "Listopad", "Studeni", "Prosinac"
 			],
-			AmPm : ["am","pm","AM","PM"],
-			S: function () {return '';},
-			srcformat: 'Y-m-d',
-			newformat: 'd.m.Y.',
-			masks : {
+			AmPm: ["am", "pm", "AM", "PM"],
+			S: function () { return ""; },
+			srcformat: "Y-m-d",
+			newformat: "d.m.Y.",
+			masks: {
 				// see http://php.net/manual/en/function.date.php for PHP format used in jqGrid
 				// and see http://docs.jquery.com/UI/Datepicker/formatDate
 				// and https://github.com/jquery/globalize#dates for alternative formats used frequently
@@ -176,4 +216,4 @@ $.extend(true, $.jgrid, {
 		"hr-HR": $.extend({}, locInfo, { name: "hrvatski (Hrvatska)", nameEnglish: "Croatian (Croatia)" })
 	}
 });
-}(jQuery));
+}));

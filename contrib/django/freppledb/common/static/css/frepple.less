@@ -228,6 +228,17 @@ label{
      box-shadow: 0 3px 9px rgba(0,0,0,0.5);
 }
 
+/* disable dark background in tour modal dialog */
+.modal-backdrop {
+    background: none;
+}
+
+/* enable scrollbar on page body while modal is open */
+.modal-open {
+    overflow: auto;
+    padding-right: 0!important; /*to fix the left shifting of the entire body of the page*/
+}
+
 
 /* Gantt charts */
 
@@ -356,11 +367,6 @@ tr.ui-state-highlight {
   cursor: pointer;
 }
 
-/* disable dark background in tour modal dialog */
-.modal-backdrop {
-background: none;
-}
-
 /* tour styles */
 .popover, #tourModal div.modal-content {
     border-top: 2px solid red;
@@ -369,10 +375,6 @@ background: none;
     border-bottom: 2px solid red;
 }
 
-/* enable scrollbar on page body while modal is open */
-.modal-open {
-    overflow: auto;
-}
 /*+++++++++++++++++++++++++++++++++++++*/
 /* jqgrid styles */
 

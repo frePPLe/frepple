@@ -77,3 +77,15 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright Twitter, Inc.
     Licensed under the MIT license
     See https://twitter.github.io/typeahead.js/
+
+* contrib\django\freppledb\common\static\bootstrap-datetimepicker.js
+    Redistributed datetimepicker.js
+    Copyright (c) 2015 Jonathan Peterson
+    Licensed under the MIT license
+    See https://github.com/Eonasdan/bootstrap-datetimepicker/
+
+* contrib\django\freppledb\common\static\moment-with-locales.js
+    Redistributed moment-with-locales.js
+    Copyright (c) 2011-2016 Tim Wood, Iskren Chernev, Moment.js contributors
+    Free to Use and Distribute (https://github.com/moment/moment/blob/develop/LICENSE)
+    See http://http://momentjs.com/

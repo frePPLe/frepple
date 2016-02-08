@@ -117,7 +117,7 @@ document.getElementById('id_username').focus()
   </div>
 </div>
 <div class="row">
-		<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+		<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
 				{% checkPassword "admin" "admin" as recommend_reset %}
 				{% if recommend_reset %}
 				    {% blocktrans %}The user "admin" has password "admin".<br/>

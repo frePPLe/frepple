@@ -1046,7 +1046,12 @@ function selectDatabase()
   if (cur == db)
     return;
   else if (cur == 'default')
-    window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
+  {
+    if (window.location.pathname == '/')
+      window.location.href = "/"+db+"/";
+    else
+      window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
+  }
   else if (db == 'default')
     window.location.href = window.location.href.replace("/"+cur+"/", "/");
   else

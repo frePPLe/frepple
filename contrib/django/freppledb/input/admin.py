@@ -172,6 +172,7 @@ class SubOperation_inline(MultiDBTabularInline):
 
 class Flow_inline(MultiDBTabularInline):
   model = Flow
+  fields = ('thebuffer', 'operation', 'quantity', 'type', 'effective_start', 'effective_end')
   raw_id_fields = ('operation', 'thebuffer',)
   extra = 0
   exclude = ('source',)
@@ -206,7 +207,6 @@ class Operation_admin(MultiDBModelAdmin):
     (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
     (_('Planning parameters'), {
       'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
-        'classes': ('collapse',)
        }),
     )
   tabs = [
@@ -235,15 +235,16 @@ class Buffer_admin(MultiDBModelAdmin):
   raw_id_fields = ('location', 'item', 'minimum_calendar', 'producing', 'owner', )
   fieldsets = (
     (None, {
-      'fields': (('name'), ('item', 'location'), 'description', 'owner', ('category', 'subcategory'))}),
+      'fields': ('name', 'item', 'location', 'description', 'owner', 'category', 'subcategory')}),
     (_('Inventory'), {
-      'fields': ('onhand',)}),
+      'fields': ('onhand',)
+      }),
     (_('Planning parameters'), {
       'fields': ('type', 'minimum', 'minimum_calendar', 'producing'),
-      'classes': ('collapse',)},),
+      }),
     (_('Planning parameters for procurement buffers'), {
       'fields': ('leadtime', 'fence', 'min_inventory', 'max_inventory', 'min_interval', 'max_interval', 'size_minimum', 'size_multiple', 'size_maximum'),
-      'classes': ('collapse',)},),
+      }),
     )
   save_on_top = True
   inlines = [ Flow_inline, ]
@@ -405,7 +406,7 @@ class Demand_admin(MultiDBModelAdmin):
       )}),
     (_('Planning parameters'), {'fields': (
       'operation', 'minshipment', 'maxlateness'
-      ), 'classes': ('collapse') }),
+      )}),
     )
   save_on_top = True
   tabs = [

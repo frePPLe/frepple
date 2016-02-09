@@ -1,16 +1,20 @@
 {% load i18n admin_urls %}
-<div class="submit-row">
+<div class="row" style="padding-bottom:5px; padding-top:5px">
+<div class="col-md-6"><div class="pull-left">
 {% comment %}Translators: Translation included with Django {% endcomment %}
-{% if show_save %}<input type="submit" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}" class="default" name="_save" />{% endif %}
-{% if show_delete_link %}
-    {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
-    {% comment %}Translators: Translation included with Django {% endcomment %}
-    <p class="deletelink-box"><a href="{{request.prefix}}{% add_preserved_filters delete_url %}" class="deletelink">{% trans "Delete"|capfirst %}</a></p>
-{% endif %}
+{% if show_save %}<input type="submit" value="{% trans 'Save' %}" class="btn btn-primary default" name="_save" {{ onclick_attrib }}/>{% endif %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-{% if show_save_as_new %}<input type="submit" value="{% trans 'Save as new' %}" name="_saveasnew" />{%endif%}
+{% if show_save_as_new %}<input type="submit" value="{% trans 'Save as new' %}" class="btn btn-default" name="_saveasnew" {{ onclick_attrib }}/>{% endif %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-{% if show_save_and_add_another %}<input type="submit" value="{% trans 'Save and add another' %}" name="_addanother" />{% endif %}
+{% if show_save_and_add_another %}<input type="submit" value="{% trans 'Save and add another' %}" class="btn btn-default" name="_addanother" {{ onclick_attrib }} />{% endif %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-{% if show_save_and_continue %}<input type="submit" value="{% trans 'Save and continue editing' %}" name="_continue" />{% endif %}
+{% if show_save_and_continue %}<input type="submit" value="{% trans 'Save and continue editing' %}" class="btn btn-default" name="_continue" {{ onclick_attrib }}/>{% endif %}
+</div></div>
+<div class="col-md-6"><div class="pull-right">
+    {% if show_delete_link %}
+        {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+        {% comment %}Translators: Translation included with Django {% endcomment %}
+        <a class="btn btn-danger deletelink" href="{% add_preserved_filters delete_url %}">{% trans "Delete" %}</a>
+    {% endif %}
+</div></div>
 </div>

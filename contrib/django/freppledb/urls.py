@@ -31,8 +31,8 @@ urlpatterns = patterns(
   # Prefix
   '',
 
-  # Root url redirects to the admin index page
-  (r'^$', RedirectView.as_view(url='/data/')),
+  # Kept for backward compatibility - redirect /data/ to /
+  (r'^data/$', RedirectView.as_view(url='/')),
 
   # Handle browser icon and robots.txt
   (r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),

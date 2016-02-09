@@ -6,29 +6,85 @@
 {% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
+<style>
+
+li, dt, dd {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+#content-main .form-control {
+  width: calc(100% - 45px);
+  display: inline-block;
+}
+
+#content-main .form-control-inline {
+  width: 100%;
+}
+
+#content-main select.form-control {
+  width: auto;
+  display: inline-block;
+}
+
+#content-main .vDateField, .row .vTimeField {
+  width: calc(100% - 100px);
+  max-width: 150px;
+}
+
+#content-main input[type=number] {
+  max-width: 150px;
+}
+
+.form-row p, td, th {
+  font-family: inherit
+}
+
+.inline-related fieldset {
+  background: none;
+}
+
+fieldset th {
+  font-weight: normal;
+}
+
+._inline-group .form-control {
+  width: 100% !important;
+  font-weight: normal;
+}
+
+._inline-group input[type=number], ._inline-group .vDateField, ._inline-group .vTimeField {
+  width: 100% !important;
+  max-width: 400px !important;
+}
+
+@media (min-width: 992px) {
+  #content-main .control-label {
+    text-align: right;
+  }
+}
+</style>
 {{block.super}}{% endblock %}
 
-{% block coltype %}change-form{% endblock %}
+{% block content_title %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|escape}}: {% trans "edit"|capfirst|force_escape %}</h1>{% endif %}
+{% if object_id %}{% tabs opts %}{% endif %}</div></div>{% endblock %}
 
-{% block content_title %}<div>{% block tools %}{% endblock %}{% if title %}<h1 style="float:left; color:#333">{{title|escape}}: {% trans "edit"|capfirst|force_escape %}</h1>{% endif %}
-{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
-
-{% block content %}<div id="content-main">
+{% block content %}<div id="content-main" class="row"><div class="col-md-12">
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
-<div>
 {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
 {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
 {% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
 {% if errors %}
-    <p class="alert alert-danger">
+    <div class="row"><div class="col-md-12"><div class="alert alert-danger">
     {% comment %}Translators: Translation included with Django {% endcomment %}
     {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}
     {% comment %}Translators: Translation included with Django {% endcomment %}
     {% trans "Please correct the errors below." %}{% endif %}
-    </p>
-    {{ adminform.form.non_field_errors }}
+    {{ adminform.form.non_field_errors }}sdsdsds
+    </div></div></div>
 {% endif %}
 
 {% block field_sets %}
@@ -46,8 +102,6 @@
 {% endblock %}
 
 {% block after_related_objects %}{% endblock %}
-
-{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
 
 {% block admin_change_form_document_ready %}
     <script type="text/javascript">
@@ -73,5 +127,6 @@
 {% prepopulated_fields_js %}
 
 </div>
-</form></div>
+</form>
+</div></div>
 {% endblock %}

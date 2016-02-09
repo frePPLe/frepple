@@ -143,6 +143,6 @@ class Bucket_admin(MultiDBModelAdmin):
     {"name": 'edit', "label": _("edit"), "view": "admin:common_bucket_change", "permission": 'common.change_bucket'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_bucket_comment"},
     # Translators: Translation included with Django
-    {"name": 'history', "label": _("History"), "view": "admin:common_group_history"},
+    {"name": 'history', "label": _("History"), "view": "admin:common_bucket_history"},
     ]
 data_site.register(Bucket, Bucket_admin)

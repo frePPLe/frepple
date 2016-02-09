@@ -1,19 +1,25 @@
-{% load i18n admin_static admin_modify %}{% load cycle from future %}
+{% load i18n admin_static admin_urls admin_modify bootstrapped_goodies_tags %}
 {% comment %}
+  Starting point is the template at https://github.com/django-admin-bootstrapped/django-admin-bootstrapped/blob/master/django_admin_bootstrapped/templates/admin/edit_inline/tabular.html
   FrePPLe limits the number of related objects for performance reasons.
 {% endcomment %}
-<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
+<div class="_inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
   <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
 {{ inline_admin_formset.formset.management_form }}
-<fieldset class="module">
-   <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
-   {{ inline_admin_formset.formset.non_form_errors }}
-   <table>
+<fieldset>
+   <legend>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</legend>
+   {% if inline_admin_formset.formset.non_form_errors %}
+   <div class="alert alert-danger">
+       {{ inline_admin_formset.formset.non_form_errors }}
+   </div>
+   {% endif %}
+
+   <table class="table table-striped table-bordered">
      <thead><tr>
      {% for field in inline_admin_formset.fields %}
        {% if not field.widget.is_hidden %}
          <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}
-         {% if field.help_text %}&nbsp;<img src="{% static "admin/img/icon-unknown.gif" %}" class="help help-tooltip" width="10" height="10" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}" />{% endif %}
+         {% if field.help_text %}<i data-toggle="tooltip" data-placement="top" class="fa fa-question-circle help help-tooltip" style="margin-left: 4px;" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}"></i>{% endif %}
          </th>
        {% endif %}
      {% endfor %}
@@ -23,18 +29,25 @@
 
      <tbody>
      {% for inline_admin_form in inline_admin_formset %}{% if forloop.counter == 21 %}
-     <tr><td colspan="{{ inline_admin_form|cell_count }}"><h2>{% blocktrans with limit=20 %}More records exists. Only {{limit}} are shown.{% endblocktrans %}</h2></td></tr>
+     <tr><td colspan="{{ inline_admin_form|cell_count }}"><div class="alert alert-warning" role="alert">{% blocktrans with limit=20 %}More records exists. Only {{limit}} are shown.{% endblocktrans %}</div></td></tr>
      {% elif forloop.counter <= 20 %}
         {% if inline_admin_form.form.non_field_errors %}
-        <tr><td colspan="{{ inline_admin_form|cell_count }}">{{ inline_admin_form.form.non_field_errors }}</td></tr>
+        <tr><td colspan="{{ inline_admin_form|cell_count }}">
+        <div class="alert alert-danger">{{ inline_admin_form.form.non_field_errors }}</div>
+        </td></tr>
         {% endif %}
         <tr class="form-row {% cycle "row1" "row2" %} {% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% if forloop.last %} empty-form{% endif %}"
              id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
         <td class="original">
           {% if inline_admin_form.original or inline_admin_form.show_url %}<p>
-          {% if inline_admin_form.original %} {{ inline_admin_form.original }}{% endif %}
+          {% if inline_admin_form.original %} {{ inline_admin_form.original }}
           {% comment %}Translators: Translation included with Django {% endcomment %}
-          {% if inline_admin_form.show_url %}<a href="{% url 'admin:view_on_site' inline_admin_form.original_content_type_id inline_admin_form.original.pk %}">{% trans "View on site" %}</a>{% endif %}
+          {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}<a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="inlinechangelink">{% trans "Change" %}</a>{% endif %}
+
+          {% endif %}
+          {% if inline_admin_form.show_url %}
+          {% comment %}Translators: Translation included with Django {% endcomment %}
+          <a href="{{ inline_admin_form.absolute_url }}">{% trans "View on site" %}</a>{% endif %}
             </p>{% endif %}
           {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
           {{ inline_admin_form.fk_field.field }}
@@ -42,7 +55,7 @@
           {% for fieldset in inline_admin_form %}
             {% for line in fieldset %}
               {% for field in line %}
-                {% if field.is_hidden %} {{ field.field }} {% endif %}
+                {% if field.field.is_hidden %} {{ field.field }} {% endif %}
               {% endfor %}
             {% endfor %}
           {% endfor %}
@@ -51,21 +64,25 @@
         {% for fieldset in inline_admin_form %}
           {% for line in fieldset %}
             {% for field in line %}
+              {% if not field.field.is_hidden %}
               <td{% if field.field.name %} class="field-{{ field.field.name }}"{% endif %}>
               {% if field.is_readonly %}
-                  <p>{{ field.contents|linebreaksbr }}</p>
+                  <p>{{ field.contents }}</p>
               {% else %}
-                  {{ field.field.errors.as_ul }}
-                  {{ field.field }}
+                  {% if field.errors %}
+                  <div class="alert alert-danger">{{ field.errors|striptags }}</div>
+                  {% endif %}
+                  {% dab_field_rendering field.field %}
               {% endif %}
               </td>
+              {% endif %}
             {% endfor %}
           {% endfor %}
         {% endfor %}
         {% if inline_admin_formset.formset.can_delete %}
           <td class="delete">{% if inline_admin_form.original %}{{ inline_admin_form.deletion_field.field }}{% endif %}</td>
         {% endif %}
-        </tr>      
+        </tr>
      {% endif %}{% endfor %}
      </tbody>
    </table>
@@ -74,24 +91,66 @@
 </div>
 
 <script type="text/javascript">
-
 (function($) {
-  var initial = $("#id_{{ inline_admin_formset.formset.prefix }}-INITIAL_FORMS");
-  var count = parseInt(initial.attr('value'));
-  if (count > 20)
-  {
-     initial.attr('value','20');
-     var total = $("#id_{{ inline_admin_formset.formset.prefix }}-TOTAL_FORMS");
-     var totalcount = parseInt(total.attr('value'));
-     total.attr('value', totalcount - count + 20);
-  }
-  $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
-    prefix: "{{ inline_admin_formset.formset.prefix }}",
-    adminStaticPrefix: '{% static "admin/" %}',
-    {% comment %}Translators: Translation included with Django {% endcomment %}
-    addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|title as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}",
-    {% comment %}Translators: Translation included with Django {% endcomment %}
-    deleteText: "{% trans 'Remove'|capfirst %}"
-  });
+    $(document).ready(function($) {
+        var rows = "#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr";
+        var alternatingRows = function(row) {
+            $(rows).not(".add-row").removeClass("row1 row2")
+                .filter(":even").addClass("row1").end()
+                .filter(rows + ":odd").addClass("row2");
+        }
+        var reinitDateTimeShortCuts = function() {
+            // Reinitialize the calendar and clock widgets by force
+            if (typeof DateTimeShortcuts != "undefined") {
+                $(".datetimeshortcuts").remove();
+                DateTimeShortcuts.init();
+            }
+        }
+        var updateSelectFilter = function() {
+            // If any SelectFilter widgets are a part of the new form,
+            // instantiate a new SelectFilter instance for it.
+            if (typeof SelectFilter != "undefined"){
+                $(".selectfilter").each(function(index, value){
+                  var namearr = value.name.split('-');
+                  SelectFilter.init(value.id, namearr[namearr.length-1], false, "{% static "admin/" %}");
+                });
+                $(".selectfilterstacked").each(function(index, value){
+                  var namearr = value.name.split('-');
+                  SelectFilter.init(value.id, namearr[namearr.length-1], true, "{% static "admin/" %}");
+                });
+            }
+        }
+        var initPrepopulatedFields = function(row) {
+            row.find('.prepopulated_field').each(function() {
+                var field = $(this);
+                var input = field.find('input, select, textarea');
+                var dependency_list = input.data('dependency_list') || [];
+                var dependencies = [];
+                $.each(dependency_list, function(i, field_name) {
+                  dependencies.push('#' + row.find('.field-' + field_name).find('input, select, textarea').attr('id'));
+                });
+                if (dependencies.length) {
+                    input.prepopulate(dependencies, input.attr('maxlength'));
+                }
+            });
+        }
+        $(rows).formset({
+            prefix: "{{ inline_admin_formset.formset.prefix }}",
+            {% comment %}Translators: Translation included with Django {% endcomment %}
+            addText: "{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktrans %}",
+            formCssClass: "dynamic-{{ inline_admin_formset.formset.prefix }}",
+            deleteCssClass: "inline-deletelink",
+            {% comment %}Translators: Translation included with Django {% endcomment %}
+            deleteText: "{% trans "Remove" %}",
+            emptyCssClass: "empty-form",
+            removed: alternatingRows,
+            added: (function(row) {
+                initPrepopulatedFields(row);
+                reinitDateTimeShortCuts();
+                updateSelectFilter();
+                alternatingRows(row);
+            })
+        });
+    });
 })(django.jQuery);
 </script>

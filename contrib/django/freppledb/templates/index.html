@@ -36,7 +36,6 @@
     $(".panel-close").click(function() {
       $(this).closest(".panel").remove();
     });
-    $("#toolicons").tooltip({show: {effect: "fade", delay: 500}});
 
     $("#horizonbucketsul li a").click(function(){
       $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
@@ -46,12 +45,6 @@
     $("#horizonunitul li a").click(function(){
       $("#horizonunit1").html($(this).text() + '  <span class="caret"></span>');
       $("#horizonunit").val($(this).prop('name'));
-    });
-
-    $("#actionsul li a").click(function(){
-      $("#actions1").html($(this).text() + ' <span class="caret"></span>');
-      $("#actions").val($(this).prop('name'));
-      grid.runAction($(this).prop('name'));
     });
   });
 </script>

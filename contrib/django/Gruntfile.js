@@ -48,6 +48,7 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     // Less compilation
     less: {
+      odoo: themeconfig('odoo'),
       grass2: themeconfig('grass2'),
       grass3: themeconfig('grass3'),
       earth2: themeconfig('earth2'),

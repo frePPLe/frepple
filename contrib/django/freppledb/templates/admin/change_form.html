@@ -8,6 +8,69 @@
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
+<style>
+
+.submit-row {
+  background: none;
+  border: none;
+}
+
+li, dt, dd {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+#content-main .form-control {
+  width: calc(100% - 45px);
+  display: inline-block;
+}
+
+#content-main .form-control-inline {
+  width: 100%;
+}
+
+#content-main select.form-control {
+  width: auto;
+  display: inline-block;
+}
+
+#content-main .vDateField, .row .vTimeField {
+  width: calc(100% - 100px);
+  max-width: 150px;
+}
+
+#content-main input[type=number] {
+  max-width: 150px;
+}
+
+.form-row p, td, th {
+  font-family: inherit
+}
+
+.inline-related fieldset {
+  background: none;
+}
+
+._inline-group .form-control {
+  width: 100% !important;
+  font-weight: normal;
+}
+
+._inline-group input[type=number], ._inline-group .vDateField, ._inline-group .vTimeField {
+  width: 100% !important;
+  max-width: 400px !important;
+}
+
+@media (min-width: 992px) {
+  #content-main .control-label {
+    text-align: right;
+  }
+}
+
+//div.submit-row input[type=submit] {
+//  background: none;
+//}
+</style>
 {{block.super}}{% endblock %}
 
 {% block coltype %}change-form{% endblock %}

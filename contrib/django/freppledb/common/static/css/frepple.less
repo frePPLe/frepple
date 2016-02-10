@@ -161,39 +161,58 @@ div.tt-menu.tt-open {
   width: 100%;
 }
 
-div.tt-dataset {
-  .tt-dataset-search {
-    background-color: darken(@navbar-default-bg, 15%);
+.tt-menu {
+  .dropdown-menu;
+/*  background-color: @dropdown-bg;
+  -webkit-border-radius: @border-radius-base;
+  -moz-border-radius: @border-radius-base;
+  border-radius:@border-radius-base;
+  padding-top: 5px;
+  margin-top: 5px;
+*/  max-height: 500px;
+  overflow-y: auto;
+}
+
+div.tt-dataset.tt-dataset-search {
+  background-color: @dropdown-bg;
+  li.tt-suggestion.tt-selectable {
     padding-bottom: 5px;
-    * {
-        line-height: @line-height-base;
-        display: block;
-    }
-    a {
+    background-color: @dropdown-bg;
+    line-height: @line-height-base;
+    display: block;
+    list-style-type: none;
+    
+    a:link, a:visited {
+      background-color: inherit;
+      color: @dropdown-link-color;
       font-size: @font-size-base; /* fix django admin form problems */
       padding-left: 16px;
       text-align: left;
-    }
-    a:hover {
- /*     background-color: darken(@navbar-default-bg, 25%);
-      color: @navbar-default-link-hover-color;                          */
+    }   
+  }
+  
+  li.tt-suggestion.tt-selectable:hover {
+    background-color: @dropdown-link-hover-bg;
+    a:link:hover {
+      background-color: inherit;
+      color: @dropdown-link-hover-color;
       padding-left: 16px;
       text-align: left;
     }
-    span {
-      p {
-        margin-top: 5px;
-        margin-bottom: 1px;
-        text-align: center;
-/*        background-color: darken(@navbar-default-bg, 15%); */
-      }
-      li.divider {
-        height:1px;
-        margin-bottom: 2px;
-        margin-top: 1px;
-        overflow:hidden;
-        background-color: @dropdown-divider-bg;
-      }
+  }
+  span.tt-suggestion.tt-selectable {
+    p {
+      margin-top: 5px;
+      margin-bottom: 1px;
+      text-align: center;
+      background-color: @input-bg;
+    }
+    li.divider {
+      height:1px;
+      margin-bottom: 2px;
+      margin-top: 1px;
+      overflow:hidden;
+      background-color: @dropdown-divider-bg;
     }
   }
 }

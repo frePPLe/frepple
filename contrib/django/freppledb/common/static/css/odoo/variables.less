@@ -420,22 +420,23 @@
 
 //=== Shared nav styles
 @nav-link-padding:                          5px 15px 10px 15px;
-@nav-link-hover-bg:                         darken(@navbar-default-bg, 15%);
+@nav-link-hover-bg:                         inherit;
 
-@nav-disabled-link-color:                   @gray-light;
-@nav-disabled-link-hover-color:             @gray-light;
+@nav-disabled-link-color:                   #aaa;
+@nav-disabled-link-hover-color:          #aaa;
 
 //== Tabs
-@nav-tabs-border-color:                     #ddd;
+@nav-tabs-border-color:                     #aaa;
 
-@nav-tabs-link-hover-border-color:          @gray-lighter;
+@nav-tabs-link-hover-border-color:          #666;
 
-@nav-tabs-active-link-hover-bg:             darken(@navbar-default-bg, 25%);
-@nav-tabs-active-link-hover-color:          @gray-base;
-@nav-tabs-active-link-hover-border-color:   #ddd;
+@nav-tabs-active-link-hover-bg:             transparent;
+@nav-tabs-active-link-hover-color:          @nav-tabs-link-hover-border-color;
+@nav-tabs-active-link-hover-border-color:   @navbar-default-link-active-bg;
 
-@nav-tabs-justified-link-border-color:            #ddd;
-@nav-tabs-justified-active-link-border-color:     @body-bg;
+@nav-tabs-justified-link-border-color:            #666;
+@nav-tabs-justified-active-link-border-color:     @navbar-default-link-active-bg;
+
 
 //== Pills
 @nav-pills-border-radius:                   @border-radius-base;

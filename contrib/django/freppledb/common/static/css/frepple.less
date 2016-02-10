@@ -99,6 +99,7 @@
   }
 }
 
+/* Commented because it collides with odoo theme
 #nav-menu{
   .dropdown-menu {
     background-color: darken(@navbar-default-bg, 15%);
@@ -107,14 +108,19 @@
     background-color: darken(@navbar-default-bg, 25%);
   }
 }
+*/
 
 .navbar {
   margin-bottom: 0px;
   .dropdown-menu .divider {
     margin: 7px 0; //the default is 8px but would not show in chrome
   }
-  .navbar .dropdown-menu>li>a { /*fix django admin*/
+  .dropdown-menu>li>a { /*fix django admin*/
     font-size: @font-size-base;
+  }
+  .navbar-nav>li>.dropdown-menu {
+    margin-top: 2px;
+    border-radius: @border-radius-base;
   }
 }
 
@@ -124,6 +130,10 @@
 
 .breadcrumbrow {
   border-top: 1px solid darken(@navbar-default-bg, 15%);
+}
+
+.fa-caret-right {
+  color: @text-color;
 }
 
 .login img {
@@ -141,6 +151,10 @@ div.selectdb {
 
 ul li { /*fix django admin*/
     list-style-type: none;
+}
+
+li, dt, dd {
+    font-size: @font-size-base; /* fix django admin form problems */
 }
 
 div.tt-menu.tt-open {
@@ -161,8 +175,8 @@ div.tt-dataset {
       text-align: left;
     }
     a:hover {
-      background-color: darken(@navbar-default-bg, 25%);
-      color: @navbar-default-link-hover-color;
+ /*     background-color: darken(@navbar-default-bg, 25%);
+      color: @navbar-default-link-hover-color;                          */
       padding-left: 16px;
       text-align: left;
     }
@@ -171,7 +185,7 @@ div.tt-dataset {
         margin-top: 5px;
         margin-bottom: 1px;
         text-align: center;
-        background-color: darken(@navbar-default-bg, 15%);
+/*        background-color: darken(@navbar-default-bg, 15%); */
       }
       li.divider {
         height:1px;
@@ -194,10 +208,41 @@ label{
 }
 
 /* Tabs styles. */
-.nav-tabs {
+ul.nav.nav-tabs {
   float: right;
   margin-top: 15px;
+  border-width: 0px 0px 1px 0px;
+  border-color-bottom: @nav-tabs-border-color;
+  li {
+    margin: -1px;
+    > a {
+      border-radius: 0px;
+      border-width: 2px 0px 1px 0px;
+      color: @nav-tabs-border-color;
+      border-bottom-color: @nav-tabs-border-color;
+      background: transparent;
+    }
+    > a:hover {
+      color: @nav-tabs-link-hover-border-color;
+      border-bottom-color: @nav-tabs-link-hover-border-color;
+      background: transparent;
+    }
+  }
+  li.active {
+    > a {
+      border-width: 2px 0px 1px 0px;
+      color: @nav-tabs-active-link-hover-color;
+      border-top-color: @nav-tabs-active-link-hover-border-color;
+      border-bottom-color: @nav-tabs-active-link-hover-border-color;
+    }
+    > a:hover {
+      color: @nav-tabs-active-link-hover-color;
+      border-top-color: @nav-tabs-active-link-hover-border-color;
+      border-bottom-color: @nav-tabs-active-link-hover-border-color;
+    }
+  }
 }
+
 
 /* Toolicons styles. */
 #toolicons, #save_undo {
@@ -363,8 +408,11 @@ tr.ui-state-highlight {
   margin-bottom: 2px;
 }
 
-.dropdown-menu li a {
-  cursor: pointer;
+.dropdown-menu {
+
+  li a {
+    cursor: pointer;
+  }
 }
 
 /* tour styles */

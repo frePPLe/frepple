@@ -2045,6 +2045,11 @@ class OperationPlan
       assignIdentifier();
     }
 
+    void setRawIdentifier(unsigned long i)
+    {
+      id = i;
+    }
+
     /** Return the identifier. This method can return the lazy identifier 1. */
     unsigned long getRawIdentifier() const
     {
@@ -2056,9 +2061,8 @@ class OperationPlan
       */
     static void setIDCounter(unsigned long l)
     {
-      if (l < counterMin)
-        throw DataException("Can't decrement the operationplan id counter");
-      counterMin = l;
+      if (l > counterMin)
+        counterMin = l;
     }
 
     /** Return the next-id number. */

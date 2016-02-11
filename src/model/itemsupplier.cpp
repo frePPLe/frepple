@@ -445,7 +445,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   // Finally, create the operationplan
   OperationPlan *opplan = oper->createOperationPlan(qty, start, end);
   if (id)
-    opplan->setIdentifier(id);
+    opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
   if (status)
     opplan->setStatus(status);
   // Reset quantity after the status update to assure that

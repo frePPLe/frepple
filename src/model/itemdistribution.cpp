@@ -484,7 +484,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   // Finally, create the operationplan
   OperationPlan *opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
   if (id)
-    opplan->setIdentifier(id);
+    opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
   if (status)
     opplan->setStatus(status);
   if (ref)

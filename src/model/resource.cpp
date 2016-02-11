@@ -86,6 +86,26 @@ int ResourceBuckets::initialize()
 }
 
 
+DECLARE_EXPORT void Resource::inspect(const string msg) const
+{
+  logger << "Inspecting resource " << getName() << ": ";
+  if (!msg.empty()) logger  << msg;
+  logger << endl;
+
+  for (loadplanlist::const_iterator oo = getLoadPlans().begin();
+    oo != getLoadPlans().end();
+    ++oo)
+  {
+    logger << "  " << oo->getDate()
+      << " qty:" << oo->getQuantity()
+      << ", oh:" << oo->getOnhand();
+    if (oo->getEventType() == 1)
+      logger <<  ", oper:" << static_cast<const LoadPlan*>(&*oo)->getOperationPlan()->getOperation();
+    logger << endl;
+  }
+}
+
+
 DECLARE_EXPORT void Resource::setMaximum(double m)
 {
   if (m < 0)

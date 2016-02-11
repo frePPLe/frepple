@@ -322,6 +322,59 @@ DECLARE_EXPORT Buffer* OperationItemSupplier::getBuffer() const
 }
 
 
+DECLARE_EXPORT void OperationItemSupplier::trimExcess() const
+{
+  // This method can only trim operations not loading a resource
+  if (getLoads().begin() != getLoads().end())
+    return;
+
+  for (Operation::flowlist::const_iterator fliter = getFlows().begin();
+    fliter != getFlows().end(); ++fliter)
+  {
+    if (fliter->getQuantity() <= 0)
+      // Strange, shouldn't really happen
+      continue;
+    FlowPlan* candidate = NULL;
+    double curmin = 0;
+    double oh = 0;
+
+    for (Buffer::flowplanlist::const_iterator flplniter = fliter->getBuffer()->getFlowPlans().begin();
+      flplniter != fliter->getBuffer()->getFlowPlans().end();
+      ++flplniter)
+    {
+      // For any operationplan we get the onhand when its successor
+      // replenishment arrives. If that onhand is higher than the minimum
+      // onhand value we can resize it.
+      // This is only valid in unconstrained plans and when there are
+      // no upstream activities.
+      if (flplniter->getEventType() == 3)
+        curmin = flplniter->getMin();
+      else if (flplniter->getEventType() == 1)
+      {
+        const FlowPlan* flpln = static_cast<const FlowPlan*>(&*flplniter);
+        if (flpln->getQuantity() > 0 && !flpln->getOperationPlan()->getLocked() && (!candidate || candidate->getDate() != flpln->getDate()))
+        {
+          if (candidate && oh > curmin)
+          {
+            // This candidate can now be resized
+            candidate->setQuantity(candidate->getQuantity() - oh + curmin, false);
+            candidate = NULL;
+          }
+          else if (flpln->getOperation() == this)
+            candidate = const_cast<FlowPlan*>(flpln);
+          else
+            candidate = NULL;
+        }
+      }
+      oh = flplniter->getOnhand();
+    }
+    if (candidate && oh > curmin)
+      // Resize the last candidate at the end of the horizon
+      candidate->setQuantity(candidate->getQuantity() - oh + curmin, false);
+  }
+}
+
+
 extern "C" PyObject* OperationItemSupplier::createOrder(
   PyObject *self, PyObject *args, PyObject *kwdict
   )

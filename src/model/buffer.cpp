@@ -94,6 +94,30 @@ int BufferProcure::initialize()
 }
 
 
+DECLARE_EXPORT void Buffer::inspect(const string msg) const
+{
+  logger << "Inspecting buffer " << getName() << ": ";
+  if (!msg.empty()) logger  << msg;
+  logger << endl;
+
+  double curmin = 0.0;
+  for (flowplanlist::const_iterator oo = getFlowPlans().begin();
+    oo != getFlowPlans().end();
+    ++oo)
+  {
+    if (oo->getEventType() == 3)
+      curmin = oo->getMin();
+    logger << "  " << oo->getDate()
+      << " qty:" << oo->getQuantity()
+      << ", oh:" << oo->getOnhand()
+      << ", min:" << curmin;
+    if (oo->getEventType() == 1)
+      logger <<  ", oper:" << static_cast<const FlowPlan*>(&*oo)->getOperationPlan()->getOperation();
+    logger << endl;
+  }
+}
+
+
 DECLARE_EXPORT void Buffer::setItem(Item* i)
 {
   if (it == i)

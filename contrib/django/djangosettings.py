@@ -360,15 +360,12 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
   { 'rowname': 'Welcome', 'cols': [
-    {'width':'col-md-6 col-sm-12', 'widgets':[
+    {'width':'col-md-8 col-sm-12', 'widgets':[
       ("welcome",{}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
       ("news",{}),
-      ("execute",{}),
     ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
-      ("alerts",{}),
+    {'width':'col-md-4 col-sm-12', 'widgets':[
+      #("execute",{}),
       ("recent_comments",{"limit":10}),
       ("recent_actions",{"limit":10}),
     ]},
@@ -379,13 +376,14 @@ DEFAULT_DASHBOARD = [
       ("short_orders",{"limit":20}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
+      ("demand_alerts", {}),
       ("delivery_performance",{"green": 90, "yellow": 80}),
     ]},
   ]},
   { 'rowname': 'Purchasing', 'cols': [
     {'width':'col-md-6 col-sm-12', 'widgets':[
       ("purchase_orders",{"fence1": 7, "fence2": 30}),
-      ("purchase_queue",{"limit":20}),
+      #("purchase_queue",{"limit":20}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
       ("purchase_order_analysis",{"limit":20}),
@@ -398,16 +396,17 @@ DEFAULT_DASHBOARD = [
   { 'rowname': 'Distribution', 'cols': [
     {'width':'col-md-12 col-sm-12', 'widgets':[
       ("distribution_orders",{"fence1":7, "fence2": 30}),
-      ("shipping_queue",{"limit":20}),
+      #("shipping_queue",{"limit":20}),
     ]},
   ]},
 
   { 'rowname': 'Manufacturing', 'cols': [
     {'width':'col-md-9 col-sm-12', 'widgets':[
       ("manufacturing_orders",{"fence1":7, "fence2": 30}),
-      ("resource_queue",{"limit":20}),
+      #("resource_queue",{"limit":20}),
     ]},
     {'width':'col-md-3 col-sm-12', 'widgets':[
+      ('capacity_alerts',{}),
       ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
     ]},
   ]},

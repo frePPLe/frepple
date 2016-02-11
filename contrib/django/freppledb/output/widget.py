@@ -902,23 +902,30 @@ class AlertsWidget(Widget):
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
   url = '/problem/'
+  entities = 'material,capacity,demand'
 
   @classmethod
   def render(cls, request=None):
+    entities = request.GET.get('entities', cls.entities).split(',')
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
-        capfirst(force_text(_("resource"))), capfirst(force_text(_("count"))),
+        capfirst(force_text(_("type"))), capfirst(force_text(_("count"))),
         capfirst(force_text(_("weight")))
         )
       ]
-    cursor = connections[request.database].cursor()
+    cursor = connections[db].cursor()
     query = '''select name, count(*), sum(weight)
       from out_problem
+      where entity in (%s)
       group by name
       order by name
-      '''
-    cursor.execute(query)
+      ''' % (', '.join(['%s']*len(entities)))
+    cursor.execute(query, entities)
     alt = False
     for res in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>' % (
@@ -929,6 +936,33 @@ class AlertsWidget(Widget):
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(AlertsWidget)
+
+
+class DemandAlertsWidget(AlertsWidget):
+  name = "demand_alerts"
+  title = _("Demand alerts")
+  url = '/problem/?entity=demand'
+  entities = 'demand'
+
+Dashboard.register(DemandAlertsWidget)
+
+
+class CapacityAlertsWidget(AlertsWidget):
+  name = "capacity_alerts"
+  title = _("Capacity alerts")
+  url = '/problem/?entity=capacity'
+  entities = 'capacity'
+
+Dashboard.register(CapacityAlertsWidget)
+
+
+class MaterialAlertsWidget(AlertsWidget):
+  name = "material_alerts"
+  title = _("Material alerts")
+  url = '/problem/?entity=material'
+  entities = 'material'
+
+Dashboard.register(MaterialAlertsWidget)
 
 
 class ResourceLoadWidget(Widget):

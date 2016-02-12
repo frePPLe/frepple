@@ -1,13 +1,10 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block content %}
-<div id="content-main">
-
-<p><b>{% trans "Log file" %}:</b></p>
-
-<blockquote><pre>
+<div class="row">
+<div class="col-md-12">
+<pre>
 {{logdata}}
-</pre></blockquote>
-
-</div>
+</pre>
+</div></div>
 {% endblock %}

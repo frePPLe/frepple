@@ -81,8 +81,7 @@ class CrumbsNode(Node):
       title = variable_title.resolve(context)
     except:
       title = req.get_full_path()
-    #. Translators: Translation included with Django
-    if title != _('Site administration'):
+    if title != _('Cockpit'):
       # Don't handle the cockpit screen in the crumbs
       try:
         # Check if the same title is already in the crumbs.

@@ -294,7 +294,7 @@
 				        <label>
 						        <input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
 						        {% blocktrans %}
-				            <span data-toggle="tooltip" data-placement="top" title="This plan respects the constraints enabled below.
+				            <span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="This plan respects the constraints enabled below.<br>
 In case of shortages the demand is planned late or short.">Constrained plan</span>
                     {% endblocktrans %}<span class="fa fa-question-circle" style="display:inline-block;"></span>
                 </label>
@@ -302,7 +302,7 @@ In case of shortages the demand is planned late or short.">Constrained plan</spa
 
 				        <label><input type="radio" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
 				            {% blocktrans %}
-				            <span data-toggle="tooltip" data-placement="bottom"  title="This plan shows material, capacity and operation problems that prevent the demand from being planned in time.
+				            <span data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="This plan shows material, capacity and operation problems that prevent the demand from being planned in time.<br>
 The demand is always met completely and on time.">Unconstrained plan</span>
 				            {% endblocktrans %}<span class="fa fa-question-circle" style="display:inline-block;"></span>
 				        </label>
@@ -318,9 +318,9 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 				        <p>
 				        {% if odoo %}
 				          {% blocktrans %}
-				              <b data-toggle="tooltip" title="A live data source allows your frePPLe plan to be 100% in sync with data in an external system.
-FrePPLe will read data from them before planning.
-And after the plan is generated frePPLe directly exports the results to them.
+				              <b data-toggle="tooltip" data-html="true" data-original-title="A live data source allows your frePPLe plan to be 100% in sync with data in an external system.<br>
+FrePPLe will read data from them before planning.<br>
+And after the plan is generated frePPLe directly exports the results to them.<br>
 FrePPLe also saves a copy of the data in its own database for reporting.">Live data sources</b>
 				          {% endblocktrans %}
 				          <span class="fa fa-question-circle" style="display:inline-block;"></span><br>

@@ -428,7 +428,7 @@ DECLARE_EXPORT Buffer::~Buffer()
       while (buf && buf->nextItemBuffer != this)
         buf = buf->nextItemBuffer;
       if (!buf)
-        throw LogicException("corrupted buffer list for an item");
+        logger << "Error: Corrupted buffer list for an item";
       buf->nextItemBuffer = nextItemBuffer;
     }
   }

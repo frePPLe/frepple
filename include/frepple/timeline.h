@@ -904,7 +904,7 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     e->cum_prod = theNext->cum_prod;
     if (oldqty > 0) theNext->cum_prod -= oldqty;
   }
-  while ( e->prev && !(*e->prev<*e) )
+  while ( e->prev && !(*(e->prev) < *e) )
   {
     // Move to an earlier date
     Event *thePrev = e->prev;

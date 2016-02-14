@@ -308,7 +308,7 @@ OperationItemSupplier::~OperationItemSupplier()
       while (i->nextOperation != this && i->nextOperation)
         i = i->nextOperation;
       if (!i)
-        throw LogicException("ItemSupplier operation list corrupted");
+        logger << "Error: ItemSupplier operation list corrupted" << endl;
       else
         i->nextOperation = nextOperation;
     }

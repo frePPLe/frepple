@@ -60,6 +60,12 @@
 #endif
 #include "datetime.h"
 
+// A dummy function to suppress warnings about the unused variable PyDateTimeAPI.
+// Some of our source files do use it, some don't.
+inline bool unused_function() {
+  return PyDateTimeAPI;
+}
+
 // For compatibility with earlier Python releases
 #if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
 typedef int Py_ssize_t;

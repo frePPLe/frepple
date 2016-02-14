@@ -143,11 +143,11 @@ astyle:
 #  * The  first 2 arguments need to be integers.
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 3
-old2 = 1
-old3 = .beta
+old2 = 0
+old3 = .1
 new1 = 3
 new2 = 0
-new3 = .1
+new3 = .2
 set_release:
 	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "contrib/django/freppledb/__init__.py" "contrib/django/freppledb/locale/nl/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/nl/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/it/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/fr/LC_MESSAGES/djangojs.po" "contrib/django/freppledb/locale/ja/LC_MESSAGES/django.po" "contrib/django/freppledb/locale/zh_CN/LC_MESSAGES/djangojs.po" "bin/frepple.xsd" "bin/frepple_core.xsd" "contrib/debian/changelog" "doc/conf.py"; do \
 		sed 's/$(old1)\.$(old2)$(old3)/$(new1).$(new2)$(new3)/g' $$i >out.tmp; \

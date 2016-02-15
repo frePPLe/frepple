@@ -32,7 +32,7 @@ from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport
 from freppledb.input.models import PurchaseOrder, DistributionOrder
-from freppledb.output.models import LoadPlan, Problem, OperationPlan, Demand
+from freppledb.output.models import LoadPlan, Problem
 
 
 class LateOrdersWidget(Widget):
@@ -45,6 +45,19 @@ class LateOrdersWidget(Widget):
   exporturl = True
   limit = 20
 
+  query = '''
+    select
+      out_problem.owner, out_problem.weight,
+      out_problem.startdate, out_problem.enddate
+    from out_problem
+    left outer join demand
+      on out_problem.owner = demand.name
+    where out_problem.name = 'late' and out_problem.entity = 'demand'
+      and demand.name is not null
+    order by out_problem.startdate, out_problem.weight desc
+    limit %s
+    '''
+
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
@@ -55,6 +68,7 @@ class LateOrdersWidget(Widget):
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
       db = DEFAULT_DB_ALIAS
+    cursor = connections[db].cursor()
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -63,9 +77,10 @@ class LateOrdersWidget(Widget):
         )
       ]
     alt = False
-    for prob in Problem.objects.using(db).filter(name='late', entity='demand').order_by('startdate', '-weight')[:limit]:
+    cursor.execute(cls.query % limit)
+    for rec in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), escape(prob.owner), prob.startdate.date(), prob.enddate.date(), int(prob.weight)
+        alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), rec[3].date(), int(rec[1])
         ))
       alt = not alt
     result.append('</table>')
@@ -86,6 +101,18 @@ class ShortOrdersWidget(Widget):
   exporturl = True
   limit = 20
 
+  query = '''
+    select
+      out_problem.owner, out_problem.weight, out_problem.startdate
+    from out_problem
+    left outer join demand
+      on out_problem.owner = demand.name
+    where out_problem.name in ('short', 'unplanned') and out_problem.entity = 'demand'
+      and demand.name is not null
+    order by out_problem.startdate desc
+    limit %s
+    '''
+
   def args(self):
     return "?%s" % urlencode({'limit': self.limit})
 
@@ -96,6 +123,7 @@ class ShortOrdersWidget(Widget):
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
       db = DEFAULT_DB_ALIAS
+    cursor = connections[db].cursor()
     result = [
       '<table style="width:100%">',
       '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th></tr>' % (
@@ -103,9 +131,10 @@ class ShortOrdersWidget(Widget):
         )
       ]
     alt = False
-    for prob in Problem.objects.using(db).filter(name__gte='short', entity='demand').order_by('startdate')[:limit]:
+    cursor.execute(cls.query % limit)
+    for rec in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(prob.owner), escape(prob.owner), prob.startdate.date(), int(prob.weight)
+        alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), int(rec[1])
         ))
       alt = not alt
     result.append('</table>')
@@ -280,8 +309,8 @@ class ManufacturingOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s <small>units</small></h2><small>confirmed orders</small></div>' % (
-          rec[3], rec[4]
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
@@ -473,17 +502,17 @@ class DistributionOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed\'" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed\'" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
     result.append('</div><div id="do_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:absolute;"></div>')
@@ -677,8 +706,8 @@ class PurchaseOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s</h2><small>confirmed orders</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1]
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)

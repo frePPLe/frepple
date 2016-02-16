@@ -85,17 +85,17 @@ class RecentActionsWidget(Widget):
     result = []
     for entry in q:
       if entry.is_change():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
+        result.append('<span style="display: inline-block;" class="fa fa-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_addition():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-plusthick"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
+        result.append('<span style="display: inline-block;" class="fa fa-plus"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_deletion():
-        result.append('<span style="display: inline-block;" class="ui-icon ui-icon-minusthick"></span>%s' % escape(entry.object_repr))
+        result.append('<span style="display: inline-block;" class="fa fa-minus"></span>%s' % escape(entry.object_repr))
       else:
         raise "Unexpected log entry type"
       if entry.content_type:
-        result.append('<span class="mini">%s</span><br/>' % capfirst(force_text(_(entry.content_type.name))) )
+        result.append('<span class="small">%s</span><br/>' % capfirst(force_text(_(entry.content_type.name))) )
       else:
-        result.append('<span class="mini">%s</span><br/>' % force_text(_('Unknown content')))
+        result.append('<span class="small">%s</span><br/>' % force_text(_('Unknown content')))
     #. Translators: Translation included with Django
     return result and '\n'.join(result) or force_text(_('None available'))
 

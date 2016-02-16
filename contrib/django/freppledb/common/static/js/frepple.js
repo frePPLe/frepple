@@ -330,6 +330,7 @@ var grid = {
       $('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
               '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
@@ -967,6 +968,7 @@ function import_show(url)
   $('#popup').html('<div class="modal-dialog">'+
       '<div class="modal-content">'+
         '<div class="modal-header">'+
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
           '<h4 class="modal-title">'+ gettext("Import CSV or Excel file") +'</h4>'+
         '</div>'+
         '<div class="modal-body">'+

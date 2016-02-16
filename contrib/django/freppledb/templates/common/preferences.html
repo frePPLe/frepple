@@ -53,11 +53,11 @@
 
       <div class="row" style="padding-bottom: 20px;">
 	      <div class="col-xs-3" style="max-width:150px; text-align: right">
-	       <label class="control-label" for="id_language">Language:</label>
+	       <label class="control-label" for="id_language">{% trans 'language'|capfirst%}:</label>
 	      </div>
 	      <div class="col-xs-9" style="max-width:260px">
 		      <div class="dropdown dropdown-submit-input">
-		        <button class="btn btn-default dropdown-toggle form-control"  id="id_language" name="language" value="" type="button" data-toggle="dropdown">{{ LANGUAGE }}&nbsp;&nbsp;<span class="caret"></span>
+		        <button class="btn btn-default dropdown-toggle form-control" id="id_language" name="language" value="" type="button" data-toggle="dropdown">{{ LANGUAGE }}&nbsp;&nbsp;<span class="caret"></span>
 		        </button>
 		        <ul class="dropdown-menu col-xs-12" aria-labelledby="id_language" id="id_languageul">
 		        {% for i,j in request.user.languageList %}
@@ -70,7 +70,7 @@
 
       <div class="row" style="padding-bottom: 20px;">
 	      <div class="col-xs-3" style="max-width:150px; text-align: right">
-		      <label class="control-label" for="id_pagesize">Page size:</label>
+		      <label class="control-label" for="id_pagesize">{% trans 'page size'|capfirst%}:</label>
 		    </div>
 	      <div class="col-xs-9" style="max-width:260px">
 			    <input class="form-control" id="id_pagesize" min="-7" max="10009999" name="pagesize" type="number" value="{{ request.user.pagesize }}">
@@ -81,7 +81,7 @@
 
       <div class="row" style="padding-bottom: 20px;">
 	      <div class="col-xs-3" style="max-width:150px; text-align: right">
-		      <label class="control-label" for="id_theme">Theme:</label>
+		      <label class="control-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
 	      </div>
 	      <div class="col-xs-9" style="max-width:260px">
 			    <div class="dropdown dropdown-submit-input">
@@ -96,11 +96,10 @@
 		    </div>
 	    </div><br>
 
-
       <div class="row" style="padding-bottom: 20px;">
 	      <div class="col-xs-3" style="max-width:150px; text-align: right">
 			    {% comment %}Translators: Translation included with Django {% endcomment %}
-			    <label class="control-label" for="id_cur_password">Change password:</label>
+			    <label class="control-label" for="id_cur_password">{% trans 'Change password'|capfirst%}:</label>
 		    </div>
 	      <div class="col-xs-9" style="max-width:260px">
 

@@ -53,7 +53,7 @@
             '<h4 class="modal-title">'+gettext('Cancel task')+'</h4>'+
           '</div>'+
           '<div class="modal-body"><p>'+
-            (gettext('You are about to cancel task %s'), [id]) +
+          interpolate(gettext('You are about to cancel task %s'), [id]) +
           '</p></div>'+
           '<div class="modal-footer">'+
             '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+

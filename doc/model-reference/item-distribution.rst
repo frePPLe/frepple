@@ -39,6 +39,11 @@ priority        integer           | Priority of this shipment among all other me
                                   | A lower number indicates that this shipment is preferred
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
+resource        resource          | Optionally, it refers to a resource that represents the 
+                                    distribution capacity.
+                                  | The referenced resource will typically be of type 
+                                    'buckets'.
+resource_qty    positive double   | Resource capacity consumed per distributed unit.
 action          A/C/AC/R          | Type of action to be executed:
                                   | A: Add an new entity, and report an error if the entity
                                     already exists.

@@ -230,6 +230,19 @@ DECLARE_EXPORT Resource::~Resource()
 
   // The Load and ResourceSkill objects are automatically deleted by the
   // destructor of the Association list class.
+
+  // Clean up references on the itemsupplier and itemdistribution models
+  for (Item::iterator itm_iter = Item::begin(); itm_iter != Item::end(); ++itm_iter)
+  {
+    Item::supplierlist::const_iterator itmsup_iter = itm_iter->getSupplierIterator();
+    while (ItemSupplier* itmsup = itmsup_iter.next())
+      if (itmsup->getResource() == this)
+        itmsup->setResource(NULL);
+    Item::distributionIterator  itmdist_iter = itm_iter->getDistributionIterator();
+    while (ItemDistribution* itmdist = itmdist_iter.next())
+      if (itmdist->getResource() == this)
+        itmdist->setResource(NULL);
+  }
 }
 
 

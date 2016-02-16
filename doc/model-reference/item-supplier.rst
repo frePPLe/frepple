@@ -33,6 +33,11 @@ size_multiple   positive double   | All procurements must be a multiple of this 
                                   | The default is 0, i.e. no multiple to be considered.
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
+resource        resource          | Optionally, it refers to a resource that represents the 
+                                    supplier capacity.
+                                  | The referenced resource will typically be of type 
+                                    'buckets'.
+resource_qty    positive double   | Resource capacity consumed per purchased unit.                                                                        
 priority        integer           | Priority of this supplier among all suppliers from which
                                     this item can be procured.
                                   | A lower number indicates that this supplier is preferred

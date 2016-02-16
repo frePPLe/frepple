@@ -141,17 +141,15 @@ class Tags
     static DECLARE_EXPORT const Keyword problems;
     static DECLARE_EXPORT const Keyword produce_material;
     static DECLARE_EXPORT const Keyword producing;
-    static DECLARE_EXPORT const Keyword producing_date;
     static DECLARE_EXPORT const Keyword property;
     static DECLARE_EXPORT const Keyword proposed;
     static DECLARE_EXPORT const Keyword quantity;
-    static DECLARE_EXPORT const Keyword quantity_buffer;
-    static DECLARE_EXPORT const Keyword quantity_demand;
     static DECLARE_EXPORT const Keyword reference;
     static DECLARE_EXPORT const Keyword resource;
     static DECLARE_EXPORT const Keyword resources;
     static DECLARE_EXPORT const Keyword resourceskill;
     static DECLARE_EXPORT const Keyword resourceskills;
+    static DECLARE_EXPORT const Keyword resource_qty;
     static DECLARE_EXPORT const Keyword rule;
     static DECLARE_EXPORT const Keyword rules;
     static DECLARE_EXPORT const Keyword search;

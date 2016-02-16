@@ -56,7 +56,7 @@ int ItemDistribution::initialize()
 
 DECLARE_EXPORT ItemDistribution::ItemDistribution() : it(NULL),
   size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL),
-  next(NULL)
+  next(NULL), res(NULL), res_qty(1.0)
 {
   initType(metadata);
 
@@ -262,6 +262,10 @@ DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
   new FlowEnd(this, dest, 1);
   new FlowStart(this, src, -1);
   initType(metadata);
+
+  // Optionally, create a load
+  if (i->getResource())
+    new LoadDefault(this, i->getResource(), i->getResourceQuantity());
 
   // Insert in the list of ItemDistribution operations.
   // We keep the list sorted by the operation name.

@@ -63,7 +63,7 @@
 // A dummy function to suppress warnings about the unused variable PyDateTimeAPI.
 // Some of our source files do use it, some don't.
 inline bool unused_function() {
-  return PyDateTimeAPI;
+  return PyDateTimeAPI == NULL;
 }
 
 // For compatibility with earlier Python releases

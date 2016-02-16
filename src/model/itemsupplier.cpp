@@ -71,8 +71,9 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier() : loc(NULL),
-  size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+DECLARE_EXPORT ItemSupplier::ItemSupplier() :
+  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   initType(metadata);
 
@@ -81,8 +82,9 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier() : loc(NULL),
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
-  : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) :
+  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   setSupplier(s);
   setItem(r);
@@ -94,8 +96,9 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
-  : loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0), firstOperation(NULL)
+DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) :
+  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   setSupplier(s);
   setItem(r);
@@ -266,6 +269,10 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
   setHidden(true);
   FlowEnd* fl = new FlowEnd(this, b, 1);
   initType(metadata);
+
+  // Optionally, create a load
+  if (i->getResource())
+    new LoadDefault(this, i->getResource(), i->getResourceQuantity());
 
   // Insert in the list of ItemSupplier operations.
   // We keep the list sorted by the operation name.

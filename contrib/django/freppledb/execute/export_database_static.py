@@ -505,13 +505,14 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into itemsupplier \
         (supplier_id,item_id,location_id,leadtime,sizeminimum,sizemultiple, \
-         cost,priority,effective_start,effective_end,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+         cost,priority,effective_start,effective_end,resource_id,resource_qty,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (i.supplier.name, i.item.name, i.location.name if i.location else None,
            i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
            i.effective_start if i.effective_start != default_start else None,
            i.effective_end if i.effective_end != default_end else None,
+           i.resource.name if i.resource else None, i.resource_qty,
            i.source, self.timestamp)
           for i in itemsuppliers()
           if (i.supplier.name, i.item.name, i.location.name if i.location else None, i.effective_start) not in primary_keys and (not self.source or self.source == i.source)
@@ -566,7 +567,7 @@ class exportStaticModel(object):
         "insert into itemdistribution \
         (origin_id,item_id,location_id,leadtime,sizeminimum,sizemultiple, \
          cost,priority,effective_start,effective_end,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (i.origin.name, i.item.name, i.destination.name if i.destination else None,
            i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
@@ -973,6 +974,7 @@ class exportStaticModel(object):
           self.exportCustomers(cursor)
           self.exportSuppliers(cursor)
           self.exportItemSuppliers(cursor)
+          self.exportItemDistributions(cursor),
           self.exportDemands(cursor)
         except:
           traceback.print_exc()
@@ -986,10 +988,12 @@ class exportStaticModel(object):
           self.exportLocations(cursor)
           self.exportOperations(cursor)
           self.exportItems(cursor)
+          self.exportSetupMatrices(cursor)
+          self.exportResources(cursor)
           tasks = (
             DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
             DatabaseTask(self, self.exportBuffers, self.exportFlows, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
-            DatabaseTask(self, self.exportSetupMatrices, self.exportSetupMatricesRules, self.exportResources, self.exportSkills, self.exportResourceSkills, self.exportLoads),
+            DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportLoads),
             DatabaseTask(self, self.exportCustomers, self.exportDemands),
             )
           # Start all threads

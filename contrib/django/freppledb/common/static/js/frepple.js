@@ -255,7 +255,7 @@ var grid = {
      if (grid.selected != undefined)
        $(this).jqGrid('setCell', grid.selected, 'select', null);
      grid.selected = id;
-     $(this).jqGrid('setCell', id, 'select', '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="btn"><span class="" style="font-size:66%">'+gettext('Select')+'</span></button>');
+     $(this).jqGrid('setCell', id, 'select', '<input type="checkbox" onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="btn btn-primary" style="width: 18px; height: 18px;" data-toggle="tooltip" title="'+gettext('Click to select record')+'"></input>');
    },
 
    runAction: function(next_action) {

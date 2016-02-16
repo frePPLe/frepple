@@ -666,6 +666,8 @@ class ItemSupplierList(GridReport):
     GridFieldInteger('priority', title=_('priority')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('resource', title=_('resource'), formatter='detail', extra="role:'input/resource'"),
+    GridFieldNumber('resource_qty', title=_('resource quantity')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -691,6 +693,8 @@ class ItemDistributionList(GridReport):
     GridFieldInteger('priority', title=_('priority')),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
+    GridFieldText('resource', title=_('resource'), formatter='detail', extra="role:'input/resource'"),
+    GridFieldNumber('resource_qty', title=_('resource quantity')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

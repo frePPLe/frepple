@@ -95,10 +95,9 @@ data_site.register(Customer, Customer_admin)
 class ItemSupplier_inline(MultiDBTabularInline):
   model = ItemSupplier
   fk_name = 'item'
-  raw_id_fields = ('supplier','location')
+  raw_id_fields = ('supplier', 'location', 'resource')
   extra = 0
   exclude = ('source',)
-
 
 
 class Supplier_admin(MultiDBModelAdmin):
@@ -137,7 +136,7 @@ data_site.register(Item, Item_admin)
 class ItemSupplier_admin(MultiDBModelAdmin):
   model = ItemSupplier
   save_on_top = True
-  raw_id_fields = ('item', 'supplier')
+  raw_id_fields = ('item', 'supplier', 'resource')
   exclude = ('source',)
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_itemsupplier_change", "permissions": "input.change_itemsupplier"},
@@ -151,7 +150,7 @@ data_site.register(ItemSupplier, ItemSupplier_admin)
 class ItemDistribution_admin(MultiDBModelAdmin):
   model = ItemDistribution
   save_on_top = True
-  raw_id_fields = ('item',)
+  raw_id_fields = ('item', 'resource')
   exclude = ('source',)
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_itemdistribution_change", "permissions": "input.change_itemdistribution"},

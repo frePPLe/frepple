@@ -45,7 +45,7 @@ function reslistfmt(cellvalue, options, row)
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
   for (var i in cellvalue)
-    result += "<span>" + cellvalue[i][0] + "<span class='context fa fa-caret-right' role='resource'></span></span><br/>";
+    result += "<span>" + cellvalue[i][0] + "<span class='context fa fa-arrow-circle-right' role='resource'></span></span><br/>";
   return result;
 }
 
@@ -377,9 +377,9 @@ treeGrid: true,
 treeGridModel: 'adjacency',
 ExpandColumn: 'depth',
 treeIcons: {
-  plus:'ui-icon-circle-triangle-e',
-  minus:'ui-icon-circle-triangle-s',
-  leaf:'ui-icon-radio-off'
+  plus:'fa-caret-right',
+  minus:'fa-caret-left',
+  leaf:'fa-leaf'
   },
 tree_root_level: 0,
 treeReader: {

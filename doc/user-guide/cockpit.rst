@@ -96,41 +96,66 @@ The following widgets are currently available:
 * **Default dashboard**
 
   The default dashboard is configured in the file djangosettings.py.
-  The setting DEFAULT_DASHBOARD specifies a) the number and width of each
-  column, b) the widgets displayed in each column, and c) configuration
-  values for the widget.
+  The setting DEFAULT_DASHBOARD specifies the rows shown in the cockpit.
+  Each row specifies a) its name and b) the colums it displays.
+  Each column in a row specifies a) its width and b) the widgets displayed
+  on it. Some widgets are configurable with parameters.
 
   ::
-
     DEFAULT_DASHBOARD = [
-      {'width':'50%', 'widgets':[
-        ("welcome",{}),
-        ("purchase_orders", {"fence1": 7, "fence2": 30}),
-        ("distribution_orders", {"fence1": 7, "fence2": 30}),
-        ("manufacturing_orders", {"fence1": 7, "fence2": 30}),
-        ("resource_queue",{"limit":20}),
-        ("purchase_queue",{"limit":20}),
-        ("shipping_queue",{"limit":20}),
-      ]},
-      {'width':'25%', 'widgets':[
-        ("recent_actions",{"limit":10}),
-        ("execute",{}),
-        ("alerts",{}),
-        ("late_orders",{"limit":20}),
-        ("short_orders",{"limit":20}),
-      ]},
-      {'width':'25%', 'widgets':[
-        ("news",{}),
-        ('resource_utilization',{"limit":5}),
-        ("delivery_performance",{"green": 90, "yellow": 80}),
-        ("inventory_by_location",{"limit":5}),
-       ("inventory_by_item",{"limit":10}),
-      ]},
-      ]
+     { 'rowname': 'Welcome', 'cols': [
+       {'width':'col-md-8 col-sm-12', 'widgets':[
+         ("welcome",{}),
+         ("news",{}),
+       ]},
+       {'width':'col-md-4 col-sm-12', 'widgets':[
+         ("recent_comments",{"limit":10}),
+         ("recent_actions",{"limit":10}),
+       ]},
+     ]},
+     { 'rowname': 'Sales', 'cols': [
+       {'width':'col-md-9 col-sm-12', 'widgets':[
+         ("late_orders",{"limit":20}),
+         ("short_orders",{"limit":20}),
+       ]},
+       {'width':'col-md-3 col-sm-12', 'widgets':[
+         ("demand_alerts", {}),
+         ("delivery_performance",{"green": 90, "yellow": 80}),
+       ]},
+     ]},
+     { 'rowname': 'Purchasing', 'cols': [
+       {'width':'col-md-6 col-sm-12', 'widgets':[
+         ("purchase_orders",{"fence1": 7, "fence2": 30}),
+       ]},
+       {'width':'col-md-3 col-sm-12', 'widgets':[
+         ("purchase_order_analysis",{"limit":20}),
+       ]},
+       {'width':'col-md-3 col-sm-12', 'widgets':[
+         ("inventory_by_location",{"limit":5}),
+         ("inventory_by_item",{"limit":10}),
+       ]},
+     ]},
+     { 'rowname': 'Distribution', 'cols': [
+       {'width':'col-md-12 col-sm-12', 'widgets':[
+         ("distribution_orders",{"fence1":7, "fence2": 30}),
+       ]},
+     ]},
+
+     { 'rowname': 'Manufacturing', 'cols': [
+       {'width':'col-md-9 col-sm-12', 'widgets':[
+         ("manufacturing_orders",{"fence1":7, "fence2": 30}),
+       ]},
+       {'width':'col-md-3 col-sm-12', 'widgets':[
+         ('capacity_alerts',{}),
+         ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
+       ]},
+     ]},
+    ]
+
 
 * **Customized dashboards**
 
   In the Enterprise Edition users can drag and drop the widgets to a
   different location. New widgets can be added by clicking on the wrench
   icon in the upper right corner of the screen. The new settings are
-  automatically saved to the server.
+  automatically saved.

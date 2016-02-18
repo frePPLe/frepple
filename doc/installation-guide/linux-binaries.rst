@@ -38,7 +38,7 @@ Here are the steps to get a fully working environment.
 
 #. **Install and tune the PostgreSQL database**
 
-   Install postgreSQL 9.0 or higher, the world's most advanced open source database.
+   Install postgreSQL 9.3 or higher, the world's most advanced open source database.
 
    FrePPLe assumes that the database uses UTF-8 encoding.
 
@@ -52,8 +52,12 @@ Here are the steps to get a fully working environment.
        default_transaction_isolation: 'read committed',
        timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
 
-   See the Django documentation at http://docs.djangoproject.com/en/dev/ref/databases/
-   for more details.
+   FrePPLe can communicate with the PostgreSQL server using either a) Unix
+   domain sockets ('local' in pg_hba.conf) or b) TCP IP4 or IP6 sockets.
+
+   FrePPLe can authenticate on the PostgreSQL database using either a) a
+   password ('md5' in pg_hba.conf) or b) OS username ('peer' and 'ident'
+   in pg_hba.conf).
 
 #. **Tune the database**
 
@@ -143,10 +147,43 @@ Here are the steps to get a fully working environment.
    now need to review and edit:
 
    #. | **/etc/frepple/djangosettings.py**
-      | Edit the "TIMEZONE" variable to your local setting.
-      | Edit the "DATABASES" with your database parameters.
-      | Change "SECRET_KEY" to some arbitrary value - important for security reasons.
-      | Optionally, you can define custom attributes in this file: see below.
+      | Edit the "TIMEZONE" variable to your local setting:
+      ::
+
+          TIME_ZONE = 'Europe/Brussels'
+
+      Edit the "DATABASES" with your database parameters. Make sure the
+      settings match the connection and authentication configured in the
+      file pg_hba.conf of the PostgreSQL database.
+      ::
+
+        DATABASES = {
+          'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'frepple',
+            'USER': 'frepple',     # Role name when using md5 authentication.
+                                   # Leave as an empty string when using peer or
+                                   # ident authencation.
+            'PASSWORD': 'frepple', # Role password when using md5 authentication.
+                                   # Leave as an empty string when using peer or
+                                   # ident authencation.
+            'HOST': '',            # When using TCP sockets specify the hostname,
+                                   # the ip4 address or the ip6 address here.
+                                   # Leave as an empty string to use Unix domain
+                                   # socket ("local" lines in pg_hba.conf).
+            'PORT': '',            # Leave to empty string when using Unix domain sockets.
+                                   # Specify the port number when using a TCP socket.
+            'OPTIONS': {},         # Backend specific configuration parameters.
+            'TEST': {
+              'NAME': 'test_frepple' # Database name used when running the test suite.
+              }
+            },
+         ...
+
+      Change the "SECRET_KEY" to some arbitrary value - important for security reasons.
+      ::
+
+         SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
    #. | **/etc/frepple/license.xml**
       | No license file is required for the Community Edition.
@@ -280,9 +317,9 @@ inspiration for your own deployments.
   psql template1 -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario3 encoding 'utf-8' owner frepple"
   exit
-  # Allow local connections to the database using a username and password.
-  # The default peer authentication isn't good for frepple.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
+  # The default frePPLe configuration uses md5 authentication on unix domain
+  # sockets to communicate with the PostgreSQL database.
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   sudo service postgresql restart
 
   # Install python3 and required python modules
@@ -334,9 +371,9 @@ inspiration for your own deployments.
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
   exit
-  # Allow local connections to the database using a username and password.
-  # The default peer authentication isn't good for frepple.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
+  # The default frePPLe configuration uses md5 authentication on unix domain
+  # sockets to communicate with the PostgreSQL database.
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
   sudo service postgresql restart
 
   # Install python3 and required python modules

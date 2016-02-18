@@ -312,7 +312,7 @@ Section "Application" SecAppl
   FileWrite $R4 "    'NAME': '$1',  # Database name $\r$\n"
   FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
   FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
-  FileWrite $R4 "    'HOST': '$4',     # Set to empty string for localhost.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
   FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
   FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
   FileWrite $R4 "    'TEST': {$\r$\n"

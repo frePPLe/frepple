@@ -1123,7 +1123,7 @@ var graph = {
         .append("div")
         .attr("id", "tooltip")
         .attr("role", "tooltip")
-        .attr("class", "panel panel-info")
+        .attr("class", "popover fade right in")
         .style("position", "absolute");
 
     // Update content and display

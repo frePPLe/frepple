@@ -1,0 +1,73 @@
+{% load i18n %}
+
+<div  id="timebuckets" class="modal fade" role="dialog" aria-labelledby="timebucketsLabel">
+  <div class="modal-dialog">
+    <div class="modal-content" style="width: 500px;">
+      <div class="modal-header">
+       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>
+       <h4 class="modal-title">{% trans 'time buckets'|capfirst %}</h4>
+      </div>
+      <div class="modal-body">
+
+      <form method="get" action="#">
+      <input type="hidden" name="horizonbuckets" id="horizonbuckets" value="{{request.user.horizonbuckets}}">
+      <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
+      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
+          <div class="row" style="padding-bottom: 15px">
+            <div class="col-xs-12">
+              {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
+              <div class="dropdown dropdown-submit-input" style="display:inline">
+                  <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" name="horizonbucketsul" style="top: auto;">
+                  {% for i in bucketnames %}
+                    <li><a onclick="" name="{{ i }}">{% trans i %}</a></li>
+                  {% endfor %}
+                  </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="padding-bottom: 15px">
+            <div class="col-xs-12 form-inline">
+              <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
+              &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
+              <input id="horizonstart"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+              &nbsp;{% trans 'to' %}&nbsp;
+              <input id="horizonend"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <br/>
+           </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 form-inline">
+              <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
+              <input id="horizonlength" name="horizonlength" type="number" class="form-control" min="1" max="99" maxlength="2" value="{{request.user.horizonlength}}"/>&nbsp;
+              <div class="dropdown dropdown-submit-input" style="display:inline">
+                <button class="btn btn-default dropdown-toggle form-control" type="button" name="horizonunit1" id="horizonunit1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  {% if request.user.horizonunit == "day" %}{% trans 'days' %}{% endif %}
+                  {% if request.user.horizonunit == "week" %}{% trans 'weeks' %}{% endif %}
+                  {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}
+                  &nbsp;&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="horizonunit1" id="horizonunitul" name="horizonunitul" style="top: auto;">
+                  <li><a name="day">{% trans 'days' %}</a></li>
+                  <li><a name="week">{% trans 'weeks' %}</a></li>
+                  <li><a name="month">{% trans 'months' %}</a></li>
+                </ul>
+              </div>
+              &nbsp;{% trans 'after plan current date' %}
+            </div>
+          </div>
+
+      </form>
+      </div>
+      <div class="modal-footer">
+        <input type="submit" id="okbutton" role="button" class="btn btn-primary pull-left" value="{% trans 'OK' %}">
+        <input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans 'cancel'|capfirst %}">
+      </div>
+
+    </div>
+  </div>
+</div>

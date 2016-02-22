@@ -84,23 +84,26 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
     SolverMRP *s = new SolverMRP();
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    PyObject *key, *value;
-    Py_ssize_t pos = 0;
-    while (PyDict_Next(kwds, &pos, &key, &value))
+    if (kwds)
     {
-      PythonData field(value);
-      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-      DataKeyword attr(PyBytes_AsString(key_utf8));
-      Py_DECREF(key_utf8);
-      const MetaFieldBase* fmeta = SolverMRP::metadata->findField(attr.getHash());
-      if (!fmeta)
-        fmeta = Solver::metadata->findField(attr.getHash());
-      if (fmeta)
-        // Update the attribute
-        fmeta->setField(s, field);
-      else
-        s->setProperty(attr.getName(), value);
-    };
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        const MetaFieldBase* fmeta = SolverMRP::metadata->findField(attr.getHash());
+        if (!fmeta)
+          fmeta = Solver::metadata->findField(attr.getHash());
+        if (fmeta)
+          // Update the attribute
+          fmeta->setField(s, field);
+        else
+          s->setProperty(attr.getName(), value);
+      };
+    }
 
     // Return the object. The reference count doesn't need to be increased
     // as we do with other objects, because we want this object to be available

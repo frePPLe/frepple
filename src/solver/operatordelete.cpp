@@ -56,23 +56,26 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
     OperatorDelete *s = new OperatorDelete();
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    PyObject *key, *value;
-    Py_ssize_t pos = 0;
-    while (PyDict_Next(kwds, &pos, &key, &value))
+    if (kwds)
     {
-      PythonData field(value);
-      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-      DataKeyword attr(PyBytes_AsString(key_utf8));
-      Py_DECREF(key_utf8);
-      const MetaFieldBase* fmeta = OperatorDelete::metadata->findField(attr.getHash());
-      if (!fmeta)
-        fmeta = Solver::metadata->findField(attr.getHash());
-      if (fmeta)
-        // Update the attribute
-        fmeta->setField(s, field);
-      else
-        s->setProperty(attr.getName(), value);;
-    };
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        const MetaFieldBase* fmeta = OperatorDelete::metadata->findField(attr.getHash());
+        if (!fmeta)
+          fmeta = Solver::metadata->findField(attr.getHash());
+        if (fmeta)
+          // Update the attribute
+          fmeta->setField(s, field);
+        else
+          s->setProperty(attr.getName(), value);;
+      };
+    }
 
     // Return the object
     //Py_INCREF(s);  // XXX TODO SHOULD the ref count be set to one? Or do we prevent the opbject from being garbage collected

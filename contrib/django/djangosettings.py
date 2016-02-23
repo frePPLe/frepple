@@ -80,6 +80,7 @@ DATABASES = {
     },
   'scenario2': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'scenario2',
     'USER': 'frepple',     # Role name when using md5 authentication.
                            # Leave as an empty string when using peer or
                            # ident authencation.
@@ -391,52 +392,49 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
   { 'rowname': 'Welcome', 'cols': [
-    {'width':'col-md-8 col-sm-12', 'widgets':[
+    {'width':8, 'widgets':[
       ("welcome",{}),
       ("news",{}),
     ]},
-    {'width':'col-md-4 col-sm-12', 'widgets':[
+    {'width':4, 'widgets':[
       #("execute",{}),
       ("recent_comments",{"limit":10}),
       ("recent_actions",{"limit":10}),
     ]},
   ]},
   { 'rowname': 'Sales', 'cols': [
-    {'width':'col-md-9 col-sm-12', 'widgets':[
+    {'width':9, 'widgets':[
       ("late_orders",{"limit":20}),
       ("short_orders",{"limit":20}),
     ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
+    {'width':3, 'widgets':[
       ("demand_alerts", {}),
       ("delivery_performance",{"green": 90, "yellow": 80}),
     ]},
   ]},
   { 'rowname': 'Purchasing', 'cols': [
-    {'width':'col-md-6 col-sm-12', 'widgets':[
+    {'width':9, 'widgets':[
       ("purchase_orders",{"fence1": 7, "fence2": 30}),
       #("purchase_queue",{"limit":20}),
-    ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
       ("purchase_order_analysis",{"limit":20}),
     ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
+    {'width':3, 'widgets':[
       ("inventory_by_location",{"limit":5}),
       ("inventory_by_item",{"limit":10}),
     ]},
   ]},
   { 'rowname': 'Distribution', 'cols': [
-    {'width':'col-md-12 col-sm-12', 'widgets':[
+    {'width':12, 'widgets':[
       ("distribution_orders",{"fence1":7, "fence2": 30}),
       #("shipping_queue",{"limit":20}),
     ]},
   ]},
-
   { 'rowname': 'Manufacturing', 'cols': [
-    {'width':'col-md-9 col-sm-12', 'widgets':[
+    {'width':9, 'widgets':[
       ("manufacturing_orders",{"fence1":7, "fence2": 30}),
       #("resource_queue",{"limit":20}),
     ]},
-    {'width':'col-md-3 col-sm-12', 'widgets':[
+    {'width':3, 'widgets':[
       ('capacity_alerts',{}),
       ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
     ]},

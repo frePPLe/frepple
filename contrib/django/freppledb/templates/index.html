@@ -10,7 +10,7 @@
 	  </h1>
 	  <h1 style="float: right;">
 		  <button class="btn btn-xs btn-primary"  onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}">
-		    <span class="fa fa-clock-o fa"></span>
+		    <span class="fa fa-clock-o"></span>
 		  </button>
 	  </h1>
 	</div>
@@ -53,11 +53,13 @@
 {% block content %}
 {% getDashboard as dashboard %}
 {% for row in dashboard %}
-    <div class="row"><div class="col-md-6 col-sm-12 ui-sortable"><h1 style="float: left">{{ row.rowname }}</h1></div></div>
+    <div class="row">
+    <div class="col-md-12 col-sm-12 ui-sortable"><h1 style="float: left">{{ row.rowname }}</h1></div>
+    </div>
     <div class="row" id="{{ row.rowname }}">
 				{% for cols in row.cols %}
-				<div class="cockpitcolumn {{cols.width}}">
-					  {% for widget in cols.widgets %}<div class="panel panel-default">
+				<div class="cockpitcolumn col-md-{{cols.width}} col-sm-12">
+					  {% for widget in cols.widgets %}<div class="panel panel-default" data-cockpit-widget="{{widget.name}}">
 					  <div class="panel-heading" data-toggle="tooltip" data-placement="top" title="{{widget.tooltip|escape}}">
 						    <span class='fa fa-times pull-right panel-close'></span>
 						    <span class='fa fa-minus pull-right panel-toggle'></span>

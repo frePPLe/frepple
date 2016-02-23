@@ -258,6 +258,7 @@ DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
   setLocation(dest->getLocation());
   setSource(i->getSource());
   setCost(i->getCost());
+  setFence(i->getFence());
   setHidden(true);
   new FlowEnd(this, dest, 1);
   new FlowStart(this, src, -1);

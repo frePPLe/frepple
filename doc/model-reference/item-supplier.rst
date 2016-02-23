@@ -38,6 +38,9 @@ resource        resource          | Optionally, it refers to a resource that rep
                                   | The referenced resource will typically be of type 
                                     'buckets'.
 resource_qty    positive double   | Resource capacity consumed per purchased unit.                                                                        
+fence           duration          | Release fence for the distribution operation.
+                                  | New shipments cannot be proposed within this time fence
+                                    after the plan current date.
 priority        integer           | Priority of this supplier among all suppliers from which
                                     this item can be procured.
                                   | A lower number indicates that this supplier is preferred

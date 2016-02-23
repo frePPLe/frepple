@@ -44,6 +44,9 @@ resource        resource          | Optionally, it refers to a resource that rep
                                   | The referenced resource will typically be of type 
                                     'buckets'.
 resource_qty    positive double   | Resource capacity consumed per distributed unit.
+fence           duration          | Release fence for the purchasing operations.
+                                  | New purchases cannot be proposed within this time fence
+                                    after the plan current date.
 action          A/C/AC/R          | Type of action to be executed:
                                   | A: Add an new entity, and report an error if the entity
                                     already exists.

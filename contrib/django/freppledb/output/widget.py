@@ -928,7 +928,7 @@ class AlertsWidget(Widget):
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
   url = '/problem/'
-  entities = 'material,capacity,demand'
+  entities = 'material,capacity,demand,operation'
 
   @classmethod
   def render(cls, request=None):

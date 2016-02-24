@@ -21,7 +21,6 @@ import json
 from django.db import models
 from django.contrib.admin.utils import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
-from django.template.loader import get_template
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
@@ -433,11 +432,11 @@ class DashboardNode(Node):
 
     reg = Dashboard.buildList()
     context[self.varname] = [
-                                        { 'rowname': rown['rowname'], 'cols': [
-                                            {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if reg[j[0]].has_permission(req.user)]} for i in rown['cols']
-                                          ]
-                                        } for rown in settings.DEFAULT_DASHBOARD
-                                      ]
+      { 'rowname': rown['rowname'], 'cols': [
+          {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if j[0] in reg and reg[j[0]].has_permission(req.user)]} for i in rown['cols']
+        ]
+      } for rown in settings.DEFAULT_DASHBOARD
+      ]
     return ''
 
 

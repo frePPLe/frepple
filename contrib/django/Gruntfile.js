@@ -49,14 +49,13 @@ module.exports = function (grunt) {
     // Less compilation
     less: {
       odoo: themeconfig('odoo'),
-      grass2: themeconfig('grass2'),
-      grass3: themeconfig('grass3'),
-      earth2: themeconfig('earth2'),
-      lemon2: themeconfig('lemon2'),
-      snow2: themeconfig('snow2'),
-      strawberry2: themeconfig('strawberry2'),
-      water2: themeconfig('water2'),
-      orange2: themeconfig('orange2')
+      grass: themeconfig('grass'),
+      earth: themeconfig('earth'),
+      lemon: themeconfig('lemon'),
+      snow: themeconfig('snow'),
+      strawberry: themeconfig('strawberry'),
+      water: themeconfig('water'),
+      orange: themeconfig('orange')
     },
     // When any .less file changes we automatically run the "less"-task.
     watch: {

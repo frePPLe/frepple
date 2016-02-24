@@ -1147,13 +1147,20 @@ class InventoryByLocationWidget(Widget):
     var yAxis = d3.svg.axis()
       .scale(y)
       .ticks(4)
-      .orient("left");
+      .orient("left")
+      .tickFormat(d3.format("s"));
     d3.select("#invByLoc")
       .append("g")
       .attr("transform", "translate(" + margin + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
     '''
+
+  query = '''select location_id, coalesce(sum(buffer.onhand * item.price),0)
+             from buffer
+             inner join item on buffer.item_id = item.name
+             group by location_id
+             order by 2 desc'''
 
   @classmethod
   def render(cls, request=None):
@@ -1163,13 +1170,7 @@ class InventoryByLocationWidget(Widget):
       '<table style="display:none">'
       ]
     cursor = connections[request.database].cursor()
-    query = '''select location_id, coalesce(sum(buffer.onhand * item.price),0)
-               from buffer
-               inner join item on buffer.item_id = item.name
-               group by location_id
-               order by 2 desc
-              '''
-    cursor.execute(query)
+    cursor.execute(cls.query)
     for res in cursor.fetchall():
       limit -= 1
       if limit < 0:
@@ -1237,7 +1238,8 @@ class InventoryByItemWidget(Widget):
     var yAxis = d3.svg.axis()
       .scale(y)
       .ticks(4)
-      .orient("left");
+      .orient("left")
+      .tickFormat(d3.format("s"));
     d3.select("#invByItem")
       .append("g")
       .attr("transform", "translate(" + margin + ", 10 )")

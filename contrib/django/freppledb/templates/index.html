@@ -19,20 +19,22 @@
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/static/js/d3.min.js"></script>
-<script type="text/javascript" src="/static/js/jquery-ui-1.11.4.min.js"></script>
+
 <script>
   $(function() {
-    $(".cockpitcolumn").sortable({
-      connectWith: ".cockpitcolumn",
-      handle: ".panel-heading",
-      cancel: ".panel-toggle",
-      placeholder: "panel-placeholder"
-    });
+    $(".cockpitcolumn").each( function() {
+        Sortable.create($(this)[ 0 ], {
+          group: "test",
+          animation: 100
+        });
+      });
+
     $(".panel-toggle").click(function() {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");
       icon.closest(".panel").find(".panel-body").toggle();
     });
+
     $(".panel-close").click(function() {
       $(this).closest(".panel").remove();
     });
@@ -47,6 +49,7 @@
       $("#horizonunit").val($(this).prop('name'));
     });
   });
+
 </script>
 {% endblock %}
 
@@ -54,7 +57,7 @@
 {% getDashboard as dashboard %}
 {% for row in dashboard %}
     <div class="row">
-    <div class="col-md-12 col-sm-12 ui-sortable"><h1 style="float: left">{{ row.rowname }}</h1></div>
+    <div class="col-md-12 col-sm-12"><h1 style="float: left">{{ row.rowname }}</h1></div>
     </div>
     <div class="row" id="{{ row.rowname }}">
 				{% for cols in row.cols %}

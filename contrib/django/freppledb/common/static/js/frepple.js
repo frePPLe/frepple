@@ -327,16 +327,19 @@ var grid = {
     // The argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list)
-      $('#popup').html('<div class="modal-dialog">'+
+      $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
               '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
-              gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;<select name="csvformat" id="csvformat">' +
-              '<option value="spreadsheetlist" selected="selected">' + gettext("Spreadsheet list") + '</option>' +
-              '<option value="csvlist">' + gettext("CSV list") +'</option></select>' +
+              '<label class="control-label">' + gettext("Export format") + 
+                '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label></br>' +
+                '</div>' +
+              '</label>' +
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
@@ -346,20 +349,21 @@ var grid = {
       '</div>' )
       .modal('show');
     else
-      $('#popup').html('<div class="modal-dialog">'+
+      $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
               '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
-              gettext("Export format") + '&nbsp;&nbsp;:&nbsp;&nbsp;'+
-              '<select name="csvformat" id="csvformat">' +
-                '<option value="spreadsheettable" selected="selected">' + gettext("Spreadsheet table") + '</option>' +
-                '<option value="spreadsheetlist">' + gettext("Spreadsheet list") + '</option>' +
-                '<option value="csvtable">' + gettext("CSV table") +'</option>'+
-                '<option value="csvlist">' + gettext("CSV list") +'</option>'+
-              '</select>' +
+              '<label class="control-label">' + gettext("Export format") + 
+                '<div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label></br>' +
+                '</div>' +
+              '</label>' +
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
@@ -376,10 +380,10 @@ var grid = {
         url += "&format=" + $('#csvformat').val();
       else if (url.charAt(url.length - 1) == '?')
         // This is the first argument for the URL, but we already have a question mark at the end
-        url += "format=" + $('#csvformat').val();
+        url += "format=" + $('#csvformat input:radio:checked').val();
       else
         // This is the first argument for the URL
-        url += "?format=" + $('#csvformat').val();
+        url += "?format=" + $('#csvformat input:radio:checked').val();
       // Append current filter and sort settings to the URL
       var postdata = $("#grid").jqGrid('getGridParam', 'postData');
       url +=  "&" + jQuery.param(postdata);

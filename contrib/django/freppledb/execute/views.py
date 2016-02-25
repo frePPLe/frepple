@@ -308,7 +308,7 @@ def CancelTask(request, taskid):
         fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database)
       try:
         # The second line in the log file has the id of the frePPLe process
-        with open(fname, 'rb') as f:
+        with open(fname, 'r') as f:
           t = 0
           for line in f:
             if t >= 1:

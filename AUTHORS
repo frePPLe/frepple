@@ -39,12 +39,11 @@ FrePPLe redistributes parts of the following third party software components:
     Dual licensed under the MIT and GPL Version 2 licenses
     See https://github.com/free-jqgrid/jqGrid
 
-* contrib\django\freppledb\common\static\js\jquery.uix.multiselect.*js
-  contrib\django\freppledb\common\static\css\uix.multiselect.css
-   Redistributed from jquery.uix.multiselect
-   Copyright Yanick Rochon
+* contrib\django\freppledb\common\static\js\Sortable.*.js
+   Redistributed from Sortable minimalist JavaScript library for reorderable drag-and-drop lists.
+   Copyright Lebedev Konstantin
    Licensed under the MIT license.
-   See http://mind2soft.com/labs/jquery/multiselect/
+   See http://rubaxa.github.io/Sortable/
 
 * contrib\django\freppledb\common\static\js\d3.js
   contrib\django\freppledb\common\static\js\d3.min.js
@@ -89,3 +88,10 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright (c) 2011-2016 Tim Wood, Iskren Chernev, Moment.js contributors
     Free to Use and Distribute (https://github.com/moment/moment/blob/develop/LICENSE)
     See http://http://momentjs.com/
+
+* This product includes software developed by the OpenSSL Project
+  for use in the OpenSSL Toolkit.
+    Copyright The OpenSSL Project and Eric Young
+    License http://www.openssl.org/source/license.html
+    See http://www.openssl.org/
+

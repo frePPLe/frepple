@@ -16,7 +16,7 @@
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="3.0.1">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="3.1.beta">
   <!--
     This schema has no target namespace defined. It will adopt the namespace
     of the schema that is using it with an "include" statement.

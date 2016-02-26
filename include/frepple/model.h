@@ -3783,7 +3783,7 @@ class ItemDistribution : public Object,
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
-      m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity);
+      m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity, 1.0);
       m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
       m->addIteratorField<Cls, OperationIterator, OperationItemDistribution>(Tags::operations, Tags::operation, &Cls::getOperations, DONT_SERIALIZE);
       HasSource::registerFields<Cls>(m);
@@ -4175,7 +4175,7 @@ class ItemSupplier : public Object,
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
-      m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity);
+      m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity, 1.0);
       m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
       HasSource::registerFields<Cls>(m);
     }

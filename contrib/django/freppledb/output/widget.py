@@ -204,8 +204,7 @@ class ManufacturingOrderWidget(Widget):
         $("#mo_tooltip").css("display", "block").html(d[0] + "<br>" + + d[1] + " / %s " + d[2] + "%s");
         })
       .on("mousemove", function(){
-        var pos = $("#mo_chart").offset();
-        $("#mo_tooltip").css("top", (event.pageY-pos.top)+"px").css("left",(event.pageX-pos.left)+"px");
+        $("#mo_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){
         $("#mo_tooltip").css("display", "none")
@@ -321,7 +320,7 @@ class ManufacturingOrderWidget(Widget):
         result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</div><div id="mo_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:absolute;"></div>')
+    result.append('</div><div id="mo_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed;"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ManufacturingOrderWidget)
@@ -388,8 +387,7 @@ class DistributionOrderWidget(Widget):
         $("#do_tooltip").css("display", "block").html(d[0] + "<br>"+ d[1] + " / %s " + d[2] + "%s");
         })
       .on("mousemove", function(){
-        var pos = $("#do_chart").offset();
-        $("#do_tooltip").css("top", (event.pageY-pos.top)+"px").css("left",(event.pageX-pos.left)+"px");
+        $("#do_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){
         $("#do_tooltip").css("display", "none");
@@ -513,7 +511,7 @@ class DistributionOrderWidget(Widget):
         result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</div><div id="do_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:absolute;"></div>')
+    result.append('</div><div id="do_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(DistributionOrderWidget)
@@ -584,8 +582,7 @@ class PurchaseOrderWidget(Widget):
         $("#po_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + " / %s " + d[2] + "%s")
         })
       .on("mousemove", function(){
-        var pos = $("#po_chart").offset();
-        $("#po_tooltip").css("top", (event.pageY-pos.top)+"px").css("left",(event.pageX-pos.left)+"px");
+        $("#po_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){
         $("#po_tooltip").css("display", "none");
@@ -716,7 +713,7 @@ class PurchaseOrderWidget(Widget):
         result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
           ))
-    result.append('</div><div id="po_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:absolute;"></div>')
+    result.append('</div><div id="po_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchaseOrderWidget)

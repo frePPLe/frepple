@@ -112,16 +112,13 @@ Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Sa
 document.getElementById('id_username').focus()
 </script>
 
+{% checkPassword "admin" "admin" as recommend_reset %}
+{% if recommend_reset %}
 <div class="row">
-  <div id='tourtooltip' class='col-md-12 tourtooltip' style='display: none; position: relative; top: 20px; font-weight: normal'>
-  </div>
+<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+{% blocktrans %}The user "admin" has password "admin".<br/>
+We suggest changing this password.{% endblocktrans %}
 </div>
-<div class="row">
-		<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
-				{% checkPassword "admin" "admin" as recommend_reset %}
-				{% if recommend_reset %}
-				    {% blocktrans %}The user "admin" has password "admin".<br/>
-				We suggest changing this password.{% endblocktrans %}{% endif %}
-				{% endblock %}
-		</div>
 </div>
+{% endif %}
+{% endblock %}

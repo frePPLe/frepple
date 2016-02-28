@@ -89,6 +89,12 @@ FrePPLe redistributes parts of the following third party software components:
     Free to Use and Distribute (https://github.com/moment/moment/blob/develop/LICENSE)
     See http://http://momentjs.com/
 
+* contrib\django\freppledb\common\static\js\Sortable.min.js
+    Redistributed sortable
+    Copyright Copyright 2013-2016 Lebedev Konstantin
+    License under the MIT license
+    See https://github.com/RubaXa/Sortable
+
 * This product includes software developed by the OpenSSL Project
   for use in the OpenSSL Toolkit.
     Copyright The OpenSSL Project and Eric Young

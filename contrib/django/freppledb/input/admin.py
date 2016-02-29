@@ -203,7 +203,7 @@ class Operation_admin(MultiDBModelAdmin):
   save_on_top = True
   inlines = [ SubOperation_inline, Flow_inline, Load_inline, ]
   fieldsets = (
-    (None, {'fields': ('name', 'type', 'location', 'description', ('category', 'subcategory'))}),
+    (None, {'fields': ('name', 'type', 'location', 'description', 'category', 'subcategory')}),
     (_('Planning parameters'), {
       'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
        }),

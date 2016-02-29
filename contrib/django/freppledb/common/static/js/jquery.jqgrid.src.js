@@ -669,7 +669,7 @@
 				gBox: "ui-jqgrid-bootstrap",
 				gView: "panel-info",
 				overlay: "modal-backdrop",
-				loading: "",
+				loading: "alert alert-info",
 				hDiv: "",
 				hTable: "table table-hover table-condensed table-bordered",
 				colHeaders: "",

@@ -25,6 +25,7 @@
     $(".cockpitcolumn").each( function() {
         Sortable.create($(this)[ 0 ], {
           group: "widgets",
+          handle: ".panel-heading",
           animation: 100
         });
       });
@@ -32,6 +33,7 @@
     $(".container-fluid").each( function() {
         Sortable.create($(this)[ 0 ], {
           group: "cockpit",
+          handle: "h1",
           animation: 100
         });
       });

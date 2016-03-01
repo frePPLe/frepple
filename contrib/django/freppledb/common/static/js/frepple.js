@@ -312,9 +312,15 @@ var grid = {
   if (colmodel.formatter == 'date')
   {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
-      $("#" + iRow + '_' + cellname).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+      $("#" + iRow + '_' + cellname).on('focusin', function() {
+        $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
+        $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
+      });
     else
-      $("#" + iRow + '_' + cellname).datetimepicker({format: 'YYYY-MM-DD HH:mm:ss', calendarWeeks: true, icons, locale: document.documentElement.lang});
+      $("#" + iRow + '_' + cellname).on('focusin', function() {
+        $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
+        $(this).datetimepicker({format: 'YYYY-MM-DD HH:mm:ss', calendarWeeks: true, icons, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
+      });
   }
   else
 	$("#" + iRow + '_' + cellname).select();

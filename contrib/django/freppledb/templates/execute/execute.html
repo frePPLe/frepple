@@ -94,26 +94,18 @@
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     // Create dialog box
-    $('#uploadResponse').val("");
 
-    $("#uploadSpreadsheet").html('<div class="modal-dialog">'+
+    $("#popup").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
             '<h4 class="modal-title">'+gettext("Uploading spreadsheet")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
-          '<form id="uploadform">' +
-            '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
-              gettext('The first row should contain the field names.') + '<br/><br/>' +
-            '</p>'+
-            '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
-            gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
-          '</form>' +
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="display: none; width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
         '</div>'+
         '<div class="modal-footer">'+
-            '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
         '</div>'+
         '</div>'+
     '</div>' )
@@ -226,7 +218,22 @@
       $("#weekstart").val($(this).parent().index());
     });
 
+    var resizeoptions={
+        handleSelector: "#resize-handle",
+        resizeWidth: false,
+        resizeHeight: true,
+        onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);},
+    }
+    $("#resize-handle").css({'visibility':'visible', 'transform':'scale(3,0.8)', 'position':'relative'});
+    $("#content-main").resizable({
+      handleSelector: "#resize-handle",
+      resizeWidth: false,
+      resizeHeight: true,
+      onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);},
+      onDragEnd: function (e, $el, opt) {}
     });
+
+  });
 
   var models = {% getModelDependencies %};
 </script>
@@ -255,10 +262,9 @@
 	<button class="btn btn-xs btn-primary" id="autorefresh" onclick="updateRefresh()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
 	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-pause{% endif %}"></span>
 	</button>
-{{block.super}}{% endblock %}
+{{block.super}}
+{% endblock %}
 {% block after_table %}
-
-
 <div class="row" id="accordion">
 <div class="col-md-12">
   <h1>{% trans "launch new tasks"|capfirst %}</h1>
@@ -661,11 +667,4 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 	{% endif %}
 	</div>
 	</div> <!-- end row -->
-
-	<div id="uploadSpreadsheet" style="display:none">
-	  <div style="margin: 5px 0">
-	    <textarea id="uploadResponse" rows="20" style="width:100%; background-color: inherit; border: none" readonly="readonly"></textarea>
-	  </div>
-	</div>
-
 {% endblock %}

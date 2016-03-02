@@ -307,18 +307,27 @@ class ManufacturingOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix,
+          force_text(_("Review")),
+          force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence1.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence2.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
     result.append('</div><div id="mo_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed;"></div>')
     return HttpResponse('\n'.join(result))
@@ -498,18 +507,27 @@ class DistributionOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4],
+          settings.CURRENCY[1], request.prefix,
+          force_text(_("Review")),
+          force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence1.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence2.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
     result.append('</div><div id="do_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
     return HttpResponse('\n'.join(result))
@@ -700,18 +718,27 @@ class PurchaseOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">Review</a></h2><small>confirmed orders</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4],
+          settings.CURRENCY[1], request.prefix,
+          force_text(_("Review")),
+          force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence1.strftime("%Y-%m-%d"), fence1
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence1.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">Review</a></h2><small>proposed orders within %s days</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1], request.prefix, limit_fence2.strftime("%Y-%m-%d"), fence2
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+          request.prefix, limit_fence2.strftime("%Y-%m-%d"),
+          force_text(_("Review")),
+          force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
     result.append('</div><div id="po_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
     return HttpResponse('\n'.join(result))

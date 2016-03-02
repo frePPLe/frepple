@@ -164,11 +164,13 @@ $(function() {
 
 </div>
 
-<div class="row">
+<div class="row" id="main-row" style="text-align: center;">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
 <table id="grid" class="table table-striped" style="background-color: white"></table>
 <div id="gridpager"></div>
+
 </div>
+<span id="resize-handle" class="fa fa-bars small" style="position: absolute; cursor: ns-resize; visibility: hidden;"></span>
 </div>
 
 {% block after_table %}{% endblock %}

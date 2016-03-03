@@ -7418,7 +7418,7 @@ class Plan : public Plannable, public Object
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
       */
-    Plan() : cur_Date(Date::now())
+    Plan() : cur_Date(Date::now()), cal(NULL)
     {
       initType(metadata);
     }

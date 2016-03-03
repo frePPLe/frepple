@@ -268,7 +268,7 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
   setCost(i->getCost());
   setFence(i->getFence());
   setHidden(true);
-  FlowEnd* fl = new FlowEnd(this, b, 1);
+  new FlowEnd(this, b, 1);
   initType(metadata);
 
   // Optionally, create a load

@@ -326,7 +326,7 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
   newMethod->ml_doc = leakingDoc->c_str();
 
   // Lock the interpreter
-  PyGILState_STATE state;
+  PyGILState_STATE state = PyGILState_LOCKED;
   if (lock) state = PyGILState_Ensure();
 
   // Register a new C function in Python

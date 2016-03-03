@@ -881,7 +881,7 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
 DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
 {
   Duration x;
-  DateRange y = getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
+  getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
   return dates.getDuration() - x;
 }
 

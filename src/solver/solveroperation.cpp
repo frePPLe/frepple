@@ -40,7 +40,6 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
   bool backuplogconstraints = data.logConstraints;
   bool backupForceLate = data.state->forceLate;
   bool recheck, first;
-  double loadqty = 1.0;
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
@@ -59,7 +58,6 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
       data.state->q_operationplan = opplan;
       data.state->q_loadplan = &*h;
       data.state->q_qty = h->getQuantity();
-      loadqty = h->getQuantity();
       data.state->q_date = h->getDate();
       h->getLoad()->solve(*this,&data);
       if (opplan->getDates()!=orig)
@@ -893,11 +891,10 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   while (a_qty > 0)
   {
     // Evaluate all alternates
-    bool plannedAlternate = false;
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
     Operation* bestAlternateSelection = NULL;
-    double bestFlowPer;
+    double bestFlowPer = 1.0;
     Date bestQDate;
     for (Operation::Operationlist::const_iterator altIter
         = oper->getSubOperations().begin();
@@ -1069,7 +1066,6 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
         // Prepare for the next loop
         a_qty -= data->state->a_qty;
-        plannedAlternate = true;
 
         // As long as we get a positive reply we replan on this alternate
         if (data->state->a_qty > 0) nextalternate = false;

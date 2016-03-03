@@ -291,7 +291,7 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
         const_cast<Demand*>(this)->oper = new OperationFixedTime();
         oper->setName(o.str());
         oper->setHidden(true);
-        FlowStart* fl = new FlowStart(oper, buf, -1);
+        new FlowStart(oper, buf, -1);
       }
 
       // Success!

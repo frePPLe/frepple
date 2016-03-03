@@ -624,7 +624,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     total += memsize + c_memsize;
 
     // Operationplans
-    size_t countloadplans(0), countflowplans(0), memloadplans(0), memflowplans(0);
+    size_t countloadplans(0), countflowplans(0);
     memsize = count = 0;
     for (OperationPlan::iterator j = OperationPlan::begin();
         j!=OperationPlan::end(); ++j)

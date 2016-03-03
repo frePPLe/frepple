@@ -55,15 +55,26 @@ class loadData(object):
 
   def loadParameter(self):
     print('Importing parameters...')
-    # Current date
-    try:
-      self.cursor.execute("SELECT value FROM common_parameter where name='currentdate'")
-      d = self.cursor.fetchone()
-      frepple.settings.current = datetime.strptime(d[0], "%Y-%m-%d %H:%M:%S")
-    except:
+    self.cursor.execute('''
+      SELECT name, value
+      FROM common_parameter
+      where name in ('currentdate', 'plan.calendar')
+      ''')
+    default_current_date = True
+    for rec in self.cursor.fetchall():
+      if rec[0] == 'currentdate':
+        try:
+          frepple.settings.current = datetime.strptime(rec[1], "%Y-%m-%d %H:%M:%S")
+          default_current_date = False
+        except:
+          pass
+      elif rec[0] == 'plan.calendar' and rec[1]:
+        frepple.settings.calendar = frepple.calendar(name=rec[1])
+        print('Bucketized planning using calendar %s' % rec[1])
+    if default_current_date:
       frepple.settings.current = datetime.now().replace(microsecond=0)
-      print('Using system clock as current date: %s' % frepple.settings.current)
     print('Current date: %s' % frepple.settings.current)
+
 
   def finalize(self):
     # Assure the operationplan ids will be unique.

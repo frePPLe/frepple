@@ -1,6 +1,7 @@
 [
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "days", "description": "Time units to be used for the resourceloading report: hours, days, weeks"}},
+{"pk": "plan.calendar", "model": "common.parameter", "fields": {"value": "", "description": "Specifies a calendar with dates to which the plan is aligned"}},
 {"pk": "The job shop", "model": "input.location", "fields": {}},
 {"pk": "My customer", "model": "input.customer", "fields": {}},
 {"pk": "Machine 00", "model": "input.resource", "fields": {"maximum": "1", "location": "The job shop", "type":"default"}},

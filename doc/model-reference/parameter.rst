@@ -35,6 +35,13 @@ plan.loglevel       | Controls the verbosity of the planning log file.
                       2 (verbose).
 loading_time_units  | Time units to be used for the resource report.
                     | Accepted values are: hours, days, weeks.
+calendar            | Name of a calendar to align new operationplans with.
+                    | When this parameter is used, the plan results are
+                      effectively grouped in the time buckets defined in this
+                      calendar.
+                    | This feature is typically used for medium and long term
+                      plans. Such plans are reviewed in monthly or weekly
+                      buckets rather than at individual dates.
 =================== =============================================================
 
 **Example XML structures**
@@ -51,6 +58,9 @@ Global initialization section
      <description>A demo model demonstrating frePPLe</description>
      <current>2013-01-01T00:00:00</current>
      <logfile>frepple.log</logfile>
+     <calendar>
+       <name>Planning buckets</name>
+     </calendar>
    </plan>
 
 **Example Python code**
@@ -66,3 +76,4 @@ Global initialization section
     frepple.settings.description = "Plan description"
     frepple.settings.current = datetime.datetime(2013,1,1)
     frepple.settings.logfile = "frepple.log"
+    frepple.settings.calendar = frepple.calendar(name="Planning buckets")

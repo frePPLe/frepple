@@ -7409,6 +7409,9 @@ class Plan : public Plannable, public Object
     /** A getDescription of this plan. */
     string descr;
 
+    /** A calendar to which all operationplans will align. */
+    Calendar* cal;
+
     /** Pointer to the singleton plan object. */
     static DECLARE_EXPORT Plan* thePlan;
 
@@ -7461,6 +7464,18 @@ class Plan : public Plannable, public Object
       * detection for BeforeCurrent problems needs to be rerun.
       */
     DECLARE_EXPORT void setCurrent(Date);
+
+    /** Return the calendar to which operationplans are aligned. */
+    Calendar* getCalendar() const
+    {
+      return cal;
+    }
+
+    /** Set a calendar to align operationplans to. */
+    void setCalendar(Calendar* c)
+    {
+      cal = c;
+    }
 
     /** Returns the description of the plan. */
     string getDescription() const
@@ -7578,6 +7593,7 @@ class Plan : public Plannable, public Object
       m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
       m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, "", DONT_SERIALIZE);
       m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanID, &Plan::setOperationPlanID, 0, DONT_SERIALIZE);
+      m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, DONT_SERIALIZE);
       Plannable::registerFields<Plan>(m);
       m->addIteratorField<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations);
       m->addIteratorField<Plan, Customer::iterator, Customer>(Tags::customers, Tags::customer, &Plan::getCustomers);

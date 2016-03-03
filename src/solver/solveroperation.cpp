@@ -534,10 +534,23 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
     data->planningDemand->getConstraints().top() :
     NULL;
 
-  // Subtract the post-operation time
+  // Subtract the post-operation time.
+  // Note that we subtract it BEFORE we have snapped the requirement date
+  // to our calendar.
   Date prev_q_date_max = data->state->q_date_max;
   data->state->q_date_max = data->state->q_date;
   data->state->q_date -= oper->getPostTime();
+
+  // Align the date to the specified calendar .
+  // This alignment is a soft constraint: q_date_max is already set earlier and
+  // remains unchanged at the true requirement date.
+  Calendar* alignment_cal = Plan::instance().getCalendar();
+  if (alignment_cal && !data->state->curDemand)
+  {
+    // Find the calendar event "at" or "just before" the requirement date
+    Calendar::EventIterator evt(alignment_cal, data->state->q_date + Duration(1L), false);
+    data->state->q_date = (--evt).getDate();
+  }
 
   // Create the operation plan.
   if (data->state->curOwnerOpplan)

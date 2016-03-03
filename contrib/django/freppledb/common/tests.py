@@ -43,7 +43,7 @@ class DataLoadTest(TestCase):
     if not isinstance(response, StreamingHttpResponse):
       raise Exception("expected a streaming response")
     for i in response.streaming_content:
-      if b'"records":5,' in i:
+      if b'"records":6,' in i:
         return
     self.fail("Didn't find expected number of parameters")
 

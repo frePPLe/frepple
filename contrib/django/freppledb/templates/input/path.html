@@ -341,36 +341,38 @@ function drawGraph(jsondata)
   force.start();
 }
 
-
-
-
-
+$(window).bind('resize', function() {
+  var width = $("#graph").width();
+  d3.select('#svggraph')
+  .attr('width', width)
+  .attr('viewBox','0 0 ' + width + ' 400');
+});
 
 $(function(){
-  if ($("#graph").height() > $(window).height() - 350)
-    $("#graph").height($(window).height() - 350);
-  $("#graph").resizable({handles: "s"});
+  if ($("#graph").height() > $(window).height() - 340) $("#graph").height($(window).height() - 340);
+
+  $("#graph-resize-handle").css({'transform':'scale(3,0.8)', 'bottom':'0'});
+  $("#graph").resizable({
+    handleSelector: "#graph-resize-handle",
+    resizeWidth: false,
+    resizeHeight: true,
+    onDrag: function (e, $el, opt) {
+      var width = $("#graph").width();
+      var height = $("#graph").height();
+      d3.select('#svggraph').attr('width', width).attr('viewBox','0 0 ' + width +' '+ height );
+    }
+  });
+
 });
 
 $(window).resize(function() {
   var parentheight = $("#content-main").height
   setTimeout(function(){$(".ui-jqgrid").setGridHeight(parentheight)},300);
 
-if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
-if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
-$("#graph").resizable({handles: "s"});
-$("#content-main").resizable({handles: "s"});
-$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
+	if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
+	if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
+	$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
 });
-
-$(window).bind('resize', function() {
-   var width = $("#graph").width();
-   d3.select('#svggraph')
-   .attr('width', width)
-   .attr('viewBox','0 0 ' + width + ' 400');
-});
-
-
 
 </script>
 {% endblock %}
@@ -397,7 +399,8 @@ ExpandColClick: true,
 {% block tools %}{% tabs model %}{% endblock %}
 
 {% block before_table %}
-<div id="graph" style="clear: both; height: 400px; overflow: hidden;">
+<div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
+<div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 345px; overflow: hidden;">
 <svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet">
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
@@ -430,6 +433,7 @@ ExpandColClick: true,
   </circle>
 </defs>
 </svg>
+</div><span id="graph-resize-handle" class="fa fa-bars" style=""></span>
 </div>
 {% endblock %}
 

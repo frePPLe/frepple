@@ -17,22 +17,16 @@
 #
 
 from distutils.core import setup
-import django
 import os
 import os.path
 import py2exe
 import sys
 
 sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
-import freppledb
 
 # Add default command lines
 if len(sys.argv) == 1:
   sys.argv.append("py2exe")
-
-# Figure out where the django and frepple directories are
-djangodirectory = django.__path__[0]
-freppledirectory = freppledb.__path__[0]
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
@@ -44,14 +38,14 @@ packages = [# Required for django standalone deployment
             # Required for reading and writing spreadsheets
             'openpyxl',
             # Required for REST API
-            'rest_framework', 'rest_framework_bulk', 'rest_framework_filters',
+            'rest_framework_bulk', 'rest_framework_filters', 'markdown',
             # Added to package a more complete python library with frePPLe
             'urllib', 'multiprocessing', 'asyncio', 'pip',
             # Added for unicode and internationalization
             'encodings',
            ]
 includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib', '_sitebuiltins']
-excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb']
+excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework']
 ignores = [# Not using docutils
            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
            # Not using psycopg (using psycopg2 instead)
@@ -62,8 +56,6 @@ ignores = [# Not using docutils
            'mod_python', 'mod_python.util',
            # Not using memcache
            'cmemcache', 'memcache',
-           # Not using markdown tags of django
-           'markdown', 'textile',
            # Not using WSCGI
            'flup', 'flup.server.fcgi', 'flup.server.fcgi_fork',
            # Not using ImageFields
@@ -84,17 +76,22 @@ ignores = [# Not using docutils
            'frepple',
            ]
 
-# Add django and frepple.
-# Both are added in uncompiled format
 from distutils.command.install import INSTALL_SCHEMES
-for scheme in INSTALL_SCHEMES.values(): scheme['data'] = scheme['purelib']
+for scheme in INSTALL_SCHEMES.values():
+  scheme['data'] = scheme['purelib']
 data_files = []
 import site
 data_files.append( ['custom', [site.__file__,]] )
-for srcdir, targetdir in [
-   (djangodirectory, os.path.join('custom','django')),
-   (freppledirectory, os.path.join('custom','freppledb')),
-   ]:
+
+# Add all modules that need to be added in uncompiled format
+import django
+import freppledb
+import django_admin_bootstrapped
+import bootstrap3
+import rest_framework
+for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework]:
+   srcdir = mod.__path__[0]
+   targetdir = os.path.join('custom', mod.__name__)
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
      # Ignore dirnames that start with '.'

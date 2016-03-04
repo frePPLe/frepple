@@ -156,7 +156,14 @@ button:active, button:focus, input:active, input:focus { outline: none; }
 
 .red {
   color: red;
- }
+}
+
+.handle {
+  color:  @nav-tabs-border-color;
+  cursor: ns-resize;
+  transform : scale(3,0.8);
+  bottom: 0px;
+}
 
 div.selectdb {
   padding-top: 2px;
@@ -199,16 +206,16 @@ div.tt-dataset.tt-dataset-search {
     line-height: @line-height-base;
     display: block;
     list-style-type: none;
-    
+
     a:link, a:visited {
       background-color: inherit;
       color: @dropdown-link-color;
       font-size: @font-size-base; /* fix django admin form problems */
       padding-left: 16px;
       text-align: left;
-    }   
+    }
   }
-  
+
   li.tt-suggestion.tt-selectable:hover {
     background-color: @dropdown-link-hover-bg;
     a:link:hover {

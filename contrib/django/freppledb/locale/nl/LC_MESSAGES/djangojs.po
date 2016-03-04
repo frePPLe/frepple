@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: 3.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-02-29 17:21+0100\n"
+"PO-Revision-Date: 2016-03-04 16:49+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.2\n"
 
 #: common/static/js/frepple.js:172 common/static/js/freppleJJJ.js:45
 msgid "There are unsaved changes on this page."
@@ -59,7 +59,7 @@ msgstr "Annuleer"
 
 #: common/static/js/frepple.js:385 common/static/js/freppleJJJ.js:266
 msgid "Click to select record"
-msgstr ""
+msgstr "Klik om een record te selecteren"
 
 #: common/static/js/frepple.js:467 common/static/js/frepple.js:489
 #: common/static/js/freppleJJJ.js:342 common/static/js/freppleJJJ.js:360
@@ -101,8 +101,7 @@ msgstr "Verwijder gegevens"
 #: common/static/js/frepple.js:607 common/static/js/freppleJJJ.js:549
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr ""
-"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
 #: common/static/js/frepple.js:610 common/static/js/frepple.js:658
 #: common/static/js/frepple.js:876 common/static/js/freppleJJJ.js:552
@@ -171,7 +170,7 @@ msgstr "De eerste rij moet de veldnamen bevatten."
 
 #: common/static/js/frepple.js:1120 common/static/js/freppleJJJ.js:1060
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "Verwijder eerst alle huidige records EN ALL GERELATEERDE TABELLEN"
+msgstr "Verwijder eerst alle huidige records EN ALLE GERELATEERDE TABELLEN"
 
 #: common/static/js/frepple.js:1121 common/static/js/freppleJJJ.js:1061
 msgid "Data file"
@@ -204,37 +203,35 @@ msgstr "van de"
 
 #: common/static/js/frepple.js:1754 common/static/js/freppleJJJ.js:1695
 msgid "Pause"
-msgstr ""
+msgstr "Pauze"
 
 #: common/static/js/freppleJJJ.js:424
 msgid "Time buckets"
-msgstr ""
+msgstr "Tijdseenheiden"
 
 #: common/static/js/freppleJJJ.js:433
 msgid "Bucket size"
-msgstr ""
+msgstr "Tijdseenheid"
 
 #: common/static/js/freppleJJJ.js:452
-#, fuzzy
-#| msgid "Stop"
 msgid "to"
-msgstr "Stop"
+msgstr ""
 
 #: common/static/js/freppleJJJ.js:464 common/static/js/freppleJJJ.js:470
 msgid "days"
-msgstr ""
+msgstr "dagen"
 
 #: common/static/js/freppleJJJ.js:465 common/static/js/freppleJJJ.js:471
 msgid "weeks"
-msgstr ""
+msgstr "weken"
 
 #: common/static/js/freppleJJJ.js:466 common/static/js/freppleJJJ.js:472
 msgid "months"
-msgstr ""
+msgstr "maanden"
 
 #: common/static/js/freppleJJJ.js:475
 msgid "After plan current date"
-msgstr ""
+msgstr "Na de startdatum van het plan"
 
 #: common/static/js/freppleJJJ.js:482
 msgid "OK"

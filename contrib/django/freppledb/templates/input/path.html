@@ -351,7 +351,6 @@ $(window).bind('resize', function() {
 $(function(){
   if ($("#graph").height() > $(window).height() - 340) $("#graph").height($(window).height() - 340);
 
-  $("#graph-resize-handle").css({'transform':'scale(3,0.8)', 'bottom':'0'});
   $("#graph").resizable({
     handleSelector: "#graph-resize-handle",
     resizeWidth: false,
@@ -433,7 +432,7 @@ ExpandColClick: true,
   </circle>
 </defs>
 </svg>
-</div><span id="graph-resize-handle" class="fa fa-bars" style=""></span>
+</div><span id="graph-resize-handle" class="fa fa-bars handle"></span>
 </div>
 {% endblock %}
 

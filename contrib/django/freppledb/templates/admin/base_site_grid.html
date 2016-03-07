@@ -33,7 +33,9 @@ $(function() {
     editurl: location.pathname,
     afterEditCell: grid.afterEditCell,
     beforeSaveCell: upload.select,{% else %}
-    onSelectRow: function() {$(this).resetSelection();},{% endif %}
+    onSelectRow: null,
+    singleSelectClickMode: "toggle",
+    multiselect: false, {% endif %}
     pager: '#gridpager',
     iconSet: "fontAwesome",
     guiStyle: "bootstrap",

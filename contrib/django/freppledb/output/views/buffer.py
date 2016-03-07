@@ -185,7 +185,8 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    GridFieldText('thebuffer', title=_('buffer'), key=True, editable=False, formatter='detail', extra="role:'input/buffer'"),
+    GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
+    GridFieldText('thebuffer', title=_('buffer'), editable=False, formatter='detail', extra="role:'input/buffer'"),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),

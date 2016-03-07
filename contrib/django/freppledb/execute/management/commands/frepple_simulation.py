@@ -564,7 +564,7 @@ class Simulator(object):
     for fl in oper.flows.all():
       if fl.quantity > 0 and not consume:
         continue
-      if fl.type in ('start', 'end'):
+      if fl.type in ('start', 'end') or not fl.type:
         if consume:
           fl.thebuffer.onhand += qty * fl.quantity
           fl.thebuffer.save(using=self.database)

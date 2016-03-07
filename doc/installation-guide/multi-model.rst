@@ -27,9 +27,11 @@ This setup can be useful for the following very typical use cases:
 
 The following steps are required to configure a multi-model setup.
 
-* **Create additional database schemas**
+* **Create additional databases**
 
-  The database administrator needs to create an additional schema in the database for each model.
+  The database administrator needs to create a PostgreSQL database for each model.
+
+  See http://www.postgresqltutorial.com/postgresql-create-database/ for detailed steps.
 
 * **Update the djangosettings.py configuration file**
 
@@ -76,10 +78,10 @@ The following steps are required to configure a multi-model setup.
       Since the names will be used as a prefix in the URLs they should be short
       and can't contain any special characters.
 
-      Good examples: ‘scenario1′, ‘plant1′...
+      Good examples: 'scenario1', 'plant1'...
 
-      Bad examples: ‘admin’, ‘buffer’, ‘scenario/1′, names with
-      non-ASCII characters, names with spaces...
+      Bad examples: 'scenario/1', names with non-ASCII characters,
+      names with spaces...
 
     * The databases can be located on different database servers or database
       instances, but this is not required.

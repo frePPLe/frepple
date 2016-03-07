@@ -87,11 +87,11 @@ resizeStop: gantt.redraw,
 {% endblock %}
 
 {% block actions %}
-<span id="zoom_in" onclick="gantt.zoom(0.5,0)" title="{% trans 'zoom in'|capfirst|force_escape %}" class="fa fa-search-plus fa-lg"></span>&nbsp;&nbsp;
-<span id="zoom_out" onclick="gantt.zoom(1.5,0)" title="{% trans 'zoom out'|capfirst|force_escape %}" class="fa fa-search-minus fa-lg"></span>&nbsp;&nbsp;
-<span id="move_in" onclick="gantt.zoom(1,-86400000)" title="{% filter capfirst|force_escape %}{% trans 'move in' context 'Gantt' %}{% endfilter %}" class="fa fa-backward fa-lg"></span>&nbsp;&nbsp;
-<span id="move_out" onclick="gantt.zoom(1,86400000)" title="{% filter capfirst|force_escape %}{% trans 'move out' context 'Gantt' %}{% endfilter %}" class="fa fa-forward fa-lg"></span>&nbsp;&nbsp;
-<span id="reset" onclick="gantt.reset()" title="{% trans 'reset'|capfirst|force_escape %}" class="fa fa-stop fa-lg"></span>
+<button class="btn btn-xs btn-primary" id="zoom_in" onclick="gantt.zoom(0.5,0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
+<button class="btn btn-xs btn-primary" id="zoom_out" onclick="gantt.zoom(1.5,0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
+<button class="btn btn-xs btn-primary" id="move_in" onclick="gantt.zoom(1,-86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'earlier' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-backward"></span></button>
+<button class="btn btn-xs btn-primary" id="move_out" onclick="gantt.zoom(1,86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'later' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-forward"></span></button>
+<button class="btn btn-xs btn-primary" id="reset" onclick="gantt.reset()" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'reset' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-undo"></span></button>
 {% endblock %}
 
 {% block tools %}{% tabs "input.demand" %}{% endblock %}

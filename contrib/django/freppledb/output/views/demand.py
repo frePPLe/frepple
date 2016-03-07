@@ -163,6 +163,7 @@ class DetailReport(GridReport):
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
   model = Demand
+  basequeryset = Demand.objects.all()
   permissions = (("view_demand_report", "Can view demand report"),)
   frozenColumns = 0
   editable = False

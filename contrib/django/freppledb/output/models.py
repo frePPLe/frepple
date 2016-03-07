@@ -150,7 +150,7 @@ class Demand(models.Model):
   operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
 
   def __str__(self):
-    return self.demand.name
+    return self.demand
 
   class Meta:
     db_table = 'out_demand'

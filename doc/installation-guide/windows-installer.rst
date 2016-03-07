@@ -21,9 +21,12 @@ The installer has been tested on Windows XP, Windows 7 and Windows 8.
 
    #. | Use the PgAdmin administration tool to create a login role for frePPLe.
       | If you intend to use the default login role "postgres", you can skip this step.
+      | See http://www.postgresqltutorial.com/postgresql-roles/ for detailed steps.
 
-   #. Use the PgAdmin administration tool to create a database for frePPLe.
-      Make sure to assign the login role created in the previous step as the owner.
+   #. | Use the PgAdmin administration tool to create a database for frePPLe.
+      | Make sure to assign the login role created in the previous step as the owner.
+      | See http://www.postgresqltutorial.com/postgresql-create-database/ for
+        detailed steps.
 
    | Advanced administrators can further fine-tune the database instance.
    | For a simple trial installation, you want to skip this.

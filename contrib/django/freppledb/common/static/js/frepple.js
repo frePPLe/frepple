@@ -349,7 +349,7 @@ jQuery.extend($.fn.fmatter, {
     {
       var detail = dmds[i].split(" : ");
       if (result != '') result += ', ';
-      result += detail[0] + " : <span>" + detail[1] + "<span class='context fa fa-caret-right' role='demand'></span></span>"
+      result += detail[0] + " : <span>" + detail[1] + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a></span>"
     }
     return result;
   },

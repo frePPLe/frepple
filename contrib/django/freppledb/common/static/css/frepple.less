@@ -303,13 +303,13 @@ ul.nav.nav-tabs {
 .cockpitcolumn {
   padding-bottom: 0px;
   min-height: 10px;
-}
 
-.cockpitcolumn .panel-placeholder {
-  height: 50px;
-  background: lighten(@panel-default-heading-bg, 15%);
-  margin-top: 10px;
-  margin-bottom: 10px;
+  .panel-placeholder {
+    height: 50px;
+    background: lighten(@panel-default-heading-bg, 15%);
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 }
 
 .panel {
@@ -468,7 +468,7 @@ tr.ui-state-highlight {
 }
 
 /* tour styles */
-#tourguide.popover, #tourModal div.modal-content {
+#tourguide.popover, #tourModal div.modal-content, #tourtooltip {
     border-top: 2px solid red;
     border-left: 2px solid red;
     border-right: 2px solid red;

@@ -7,17 +7,6 @@ $(function(){ graph.header(); })
 </script>{% endif %}
 {% endblock %}
 
-{% block contextmenus %}
-<div id="detail0context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan/{value}/?flowdate__gte={startdate}&amp;flowdate__lt={enddate}&amp;quantity__gte=0">{% trans 'detail'|capfirst %}</a></li>
-</ul></div>
-<div id="detail1context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan/{value}/?flowdate__gte={startdate}&amp;flowdate__lt={enddate}&amp;quantity__lt=0">{% trans 'detail'|capfirst %}</a></li>
-</ul></div>
-<div id="detail2context" class="ContextMenu"><ul class="ui-menu ui-widget ui-widget-content ui-corner-all ui-state-default">
-<li class="ui-menu-item"><a id="{{request.prefix}}/flowplan/{value}/?flowdate__gte={startdate}&amp;flowdate__lt={enddate}">{% trans 'detail'|capfirst %}</a></li>
-</ul></div>{% endblock %}
-
 {% block tools %}{% if args.0 %}{% tabs "input.buffer" %}{% endif %}{{block.super}}{% endblock %}
 
 {% block before_table %}{% if args.0 %}
@@ -238,15 +227,27 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<span class='context cross fa fa-caret-right' role='detail0'></span><br/>";
+    result += cellvalue[1] + "<a href='{{request.prefix}}/flowplan/" +  admin_escape(rowdata['buffer']) +
+                                          "/?flowdate__gte=" + options['colModel']['startdate'] +"&amp;flowdate__lt=" +
+                                          options['colModel']['enddate'] +
+                                          "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
   else
     result += '0.0<br/>';
   if (cellvalue[2] != 0.0)
-    result += cellvalue[2] + "<span class='context cross fa fa-caret-right' role='detail1'></span><br/>";
+    result += cellvalue[2] + "<a href='{{request.prefix}}/flowplan/" +  admin_escape(rowdata['buffer']) +
+                                            "/?flowdate__gte=" + options['colModel']['startdate'] +"&amp;flowdate__lt=" +
+                                            options['colModel']['enddate'] +
+                                            "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
   else
     result += '0.0<br/>';
   if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
-    result += cellvalue[3] + "<span class='context cross fa fa-caret-right' role='detail2'></span>";
+    result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
+                                            admin_escape(rowdata['buffer']) +
+                                            "/?flowdate__gte=" +
+                                            options['colModel']['startdate'] +
+                                            "&amp;flowdate__lt=" +
+                                            options['colModel']['enddate'] +
+                                            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
   else
     result += cellvalue[3];
   return result;

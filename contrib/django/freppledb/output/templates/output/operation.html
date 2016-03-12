@@ -320,7 +320,7 @@ function crosses (cellvalue, options, rowdata)
   if (cellvalue[1] != 0.0)
     result += cellvalue[1] +  '<a href="{{request.prefix}}/operationplan/' +
                                                             admin_escape(rowdata['operation']) +
-                                                            '/?o=5a&amp;startdate__gte=' + options['colModel']['startdate'] +
+                                                            '/?startdate__gte=' + options['colModel']['startdate'] +
                                                             '&amp;startdate__lt=' + options['colModel']['enddate'] +
                                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
@@ -329,7 +329,7 @@ function crosses (cellvalue, options, rowdata)
   if (cellvalue[2] != 0.0)
     result += cellvalue[2] +  '<a href="{{request.prefix}}/operationplan/' +
                                                             admin_escape(rowdata['operation']) +
-                                                            '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
+                                                            '/?enddate__gte=' + options['colModel']['startdate'] +
                                                             '&amp;enddate__lt=' + options['colModel']['enddate'] +
                                                             '&amp;locked=1">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else

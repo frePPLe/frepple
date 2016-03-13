@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-03-03 18:25+0200\n"
+"PO-Revision-Date: 2016-03-13 17:31+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"X-Generator: Poedit 1.8.7\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -1818,19 +1818,17 @@ msgstr "Mostra ordens de produção por data de início"
 #: output/widget.py:513 output/widget.py:521 output/widget.py:529
 #: output/widget.py:724 output/widget.py:732 output/widget.py:740
 msgid "Review"
-msgstr ""
+msgstr "Rever"
 
 #: output/widget.py:314 output/widget.py:514 output/widget.py:725
-#, fuzzy
-#| msgid "confirmed"
 msgid "confirmed orders"
-msgstr "confirmado"
+msgstr "ordens confirmadas"
 
 #: output/widget.py:322 output/widget.py:330 output/widget.py:522
 #: output/widget.py:530 output/widget.py:733 output/widget.py:741
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr ""
+msgstr "ordens porpostas dentro de %(fence)s dias"
 
 #: output/widget.py:340
 msgid "Distribution orders"
@@ -2095,10 +2093,12 @@ msgid ""
 "First, enter a username and password. Then, you'll be able to edit more user "
 "optionsTTT."
 msgstr ""
+"Primeiro, introduzir utilizador e password. De seguida será possível editar "
+"mais opções do utilizador."
 
 #: templates/admin/user/add_form.html:8
 msgid "Enter a username and password."
-msgstr ""
+msgstr "Introduzir ‪utilizador e password."
 
 #: templates/common/preferences.html:77
 msgid "Number of records per page"
@@ -2227,8 +2227,8 @@ msgstr ""
 "\t\t\t\t              <b data-toggle=\"tooltip\" data-html=\"true\" data-"
 "original-title=\"Uma fonte de dados externa permite que os planos gerados "
 "pelo frePPLe estejam 100% sincronizados com dados de sistemas externos.<br>\n"
-"O frePPLe vai ler os dados destes sistemas antes de iniciar o "
-"planeamento.<br>\n"
+"O frePPLe vai ler os dados destes sistemas antes de iniciar o planeamento."
+"<br>\n"
 "E depois de o plano ser gerado o frePPLe exporta os dados para os outros "
 "sistemas.<br>\n"
 "O frePPLe também guarda uma cópia dos dados na sua própria base de dados "

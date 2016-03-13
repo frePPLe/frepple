@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-02-29 18:25+0100\n"
+"PO-Revision-Date: 2016-03-13 17:23+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -163,8 +163,7 @@ msgstr "A primeira linha deve conter os nomes dos campos."
 
 #: common/static/js/frepple.js:1120 common/static/js/freppleJJJ.js:1060
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr ""
-"Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
+msgstr "Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
 
 #: common/static/js/frepple.js:1121 common/static/js/freppleJJJ.js:1061
 msgid "Data file"
@@ -201,33 +200,31 @@ msgstr "Pausa"
 
 #: common/static/js/freppleJJJ.js:424
 msgid "Time buckets"
-msgstr ""
+msgstr "Intervalos de tempo"
 
 #: common/static/js/freppleJJJ.js:433
 msgid "Bucket size"
-msgstr ""
+msgstr "Dimensão do intervalo"
 
 #: common/static/js/freppleJJJ.js:452
-#, fuzzy
-#| msgid "Stop"
 msgid "to"
-msgstr "Stop"
+msgstr "até"
 
 #: common/static/js/freppleJJJ.js:464 common/static/js/freppleJJJ.js:470
 msgid "days"
-msgstr ""
+msgstr "dias"
 
 #: common/static/js/freppleJJJ.js:465 common/static/js/freppleJJJ.js:471
 msgid "weeks"
-msgstr ""
+msgstr "semanas"
 
 #: common/static/js/freppleJJJ.js:466 common/static/js/freppleJJJ.js:472
 msgid "months"
-msgstr ""
+msgstr "meses"
 
 #: common/static/js/freppleJJJ.js:475
 msgid "After plan current date"
-msgstr ""
+msgstr "Após a data corrente do plano"
 
 #: common/static/js/freppleJJJ.js:482
 msgid "OK"

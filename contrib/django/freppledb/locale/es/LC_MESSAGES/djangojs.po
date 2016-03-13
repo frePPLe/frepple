@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: 2.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-03-03 15:32+0200\n"
+"PO-Revision-Date: 2016-03-13 17:36+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: common/static/js/frepple.js:172 common/static/js/freppleJJJ.js:45
 msgid "There are unsaved changes on this page."
@@ -220,7 +220,7 @@ msgstr "Tamaño del intervalo"
 #: common/static/js/freppleJJJ.js:452
 #| msgid "Stop"
 msgid "to"
-msgstr "a"
+msgstr "hasta"
 
 #: common/static/js/freppleJJJ.js:464 common/static/js/freppleJJJ.js:470
 msgid "days"

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-02-29 18:24+0100\n"
+"PO-Revision-Date: 2016-03-13 17:20+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -418,8 +418,8 @@ msgstr ""
 "<li>Ver a <span class=\"underline\"><a href=\"%(docurl)s\" target=\"_blank"
 "\">documentação</a></span></li>\n"
 "<li>Visitar e aderir à <span class=\"underline\"><a href=\"http://groups."
-"google.com/group/frepple-users\" target=\"_blank\">comunidade de "
-"utilizadores</a></span></li>\n"
+"google.com/group/frepple-users\" target=\"_blank\">comunidade de usuários</"
+"a></span></li>\n"
 "<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" target="
 "\"_blank\">Contactar-nos</a></span></li>\n"
 "</ol>\n"
@@ -1819,19 +1819,17 @@ msgstr "Mostra ordens de produção por data de início"
 #: output/widget.py:513 output/widget.py:521 output/widget.py:529
 #: output/widget.py:724 output/widget.py:732 output/widget.py:740
 msgid "Review"
-msgstr ""
+msgstr "Rever"
 
 #: output/widget.py:314 output/widget.py:514 output/widget.py:725
-#, fuzzy
-#| msgid "confirmed"
 msgid "confirmed orders"
-msgstr "confirmado"
+msgstr "ordens confirmadas"
 
 #: output/widget.py:322 output/widget.py:330 output/widget.py:522
 #: output/widget.py:530 output/widget.py:733 output/widget.py:741
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr ""
+msgstr "ordens porpostas dentro de %(fence)s dias"
 
 #: output/widget.py:340
 msgid "Distribution orders"
@@ -2044,15 +2042,11 @@ msgid "More records exists. Only %(limit)s are shown."
 msgstr "Existem mais registos. Apenas %(limit)s são mostrados."
 
 #: templates/admin/login.html:119
-#, fuzzy
-#| msgid ""
-#| "The user \"admin\" has password \"admin\".<br/>\n"
-#| "\t\t\t\tWe suggest changing this password."
 msgid ""
 "The user \"admin\" has password \"admin\".<br/>\n"
 "We suggest changing this password."
 msgstr ""
-"O utilizador \"admin\" tem a password \"admin\".<br/>\n"
+"O usuário \"admin\" tem a password \"admin\".<br/>\n"
 "É sugerido alterar esta password."
 
 #: templates/admin/object_history.html:4
@@ -2097,10 +2091,12 @@ msgid ""
 "First, enter a username and password. Then, you'll be able to edit more user "
 "optionsTTT."
 msgstr ""
+"Primeiro, introduzir usuário e palavra chave. De seguida será possivel "
+"editar mais opções do usuário."
 
 #: templates/admin/user/add_form.html:8
 msgid "Enter a username and password."
-msgstr ""
+msgstr "Introduzir usuário e palavra chave."
 
 #: templates/common/preferences.html:77
 msgid "Number of records per page"
@@ -2146,12 +2142,6 @@ msgstr ""
 "<p><b>Tipo de Plano</b><br>"
 
 #: templates/execute/execute.html:302
-#, fuzzy
-#| msgid ""
-#| "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#| "data-original-title=\"Generate a manufacturing and distribution plan that "
-#| "respects all constraints.<br>In case of shortages the demand is planned "
-#| "late or short.\">Constrained plan</span>"
 msgid ""
 "\n"
 "\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"top\" "
@@ -2161,19 +2151,14 @@ msgid ""
 "plan</span>\n"
 "                    "
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Gerar um plano de produção e distribuição que respeita "
-"todas as restrições.<br>Em caso de carência a demanda é planejada atrasada "
-"ou insuficiente.\">Plano com restrições</span>"
+"\n"
+"\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"top\" "
+"data-html=\"true\" data-original-title=\"Este plano respeita todas as "
+"restrições configuradas abaixo.<br>\n"
+"Em caso de carência a demanda é planejada atrasada ou insuficiente.\">Plano "
+"com restrições</span>"
 
 #: templates/execute/execute.html:310
-#, fuzzy
-#| msgid ""
-#| "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#| "data-original-title=\"Generate a manufacturing and distribution plan that "
-#| "shows material, capacity and operation problems that prevent the demand "
-#| "from being planned in time.<br>The demand is always met completely and on "
-#| "time.\">Unconstrained plan</span>"
 msgid ""
 "\n"
 "\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"bottom\" "
@@ -2184,11 +2169,12 @@ msgid ""
 "span>\n"
 "\t\t\t\t            "
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Gerar um plano de produção e distribuição que mostra os "
-"problemas de material, capacidade e operação que impedem a resposta atempada "
-"à Procura.<br>A Procura é sempre satisfeita na quantidade e no tempo."
-"\">Plano sem restrições</span>"
+"\n"
+"\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"top\" "
+"data-html=\"true\" data-original-title=\"Este plano mostra os problemas de "
+"material, capacidade e operação que impedem a resposta atempada à Procura."
+"<br>A Procura é sempre satisfeita na quantidade e no tempo.\">Plano sem "
+"restrições</span>"
 
 #: templates/execute/execute.html:318
 msgid "Capacity: respect capacity limits"

@@ -4,7 +4,12 @@
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 $(function() {
-   $(".selectdb li a").click(selectDatabase);
+  $(".selectdb li a").click(selectDatabase);
+
+  $("#nav-menu li.dropdown").hover(
+      function() { if (window.innerWidth >= 768) $('.dropdown-toggle', this).trigger('click'); }
+  );
+
 });
 
 </script>

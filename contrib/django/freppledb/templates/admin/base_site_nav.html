@@ -7,7 +7,10 @@ $(function() {
   $(".selectdb li a").click(selectDatabase);
 
   $("#nav-menu li.dropdown").mouseenter(
-      function() { if (window.innerWidth >= 768) $('.dropdown-toggle', this).trigger('click');}
+      function() { if ( !$(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
+  );
+  $("#nav-menu li.dropdown").mouseleave(
+      function() { if ($(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
   );
 
 });

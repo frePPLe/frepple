@@ -6,8 +6,8 @@
 $(function() {
   $(".selectdb li a").click(selectDatabase);
 
-  $("#nav-menu li.dropdown").hover(
-      function() { if (window.innerWidth >= 768) $('.dropdown-toggle', this).trigger('click'); }
+  $("#nav-menu li.dropdown").mouseenter(
+      function() { if (window.innerWidth >= 768) $('.dropdown-toggle', this).trigger('click');}
   );
 
 });

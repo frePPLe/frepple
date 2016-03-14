@@ -1141,6 +1141,9 @@ function import_show(url)
         var el = $('#uploadResponse');
         el.val(data);
         el.scrollTop(el[0].scrollHeight - el.height());
+        $('#cancelbutton').val(gettext('Close'));
+        $('#importbutton').hide();
+        $("#grid").trigger("reloadGrid");
       },
       xhrFields: {
         onprogress: function (e) {
@@ -1151,7 +1154,7 @@ function import_show(url)
       },
       processData: false,
       contentType: false
-      });
+    });
    }
   )
 }

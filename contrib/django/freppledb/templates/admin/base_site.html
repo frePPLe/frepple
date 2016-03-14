@@ -5,7 +5,7 @@
 {% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 {% block extrastyle %}{{block.super}}
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap-datetimepicker.css" />
 
@@ -19,7 +19,7 @@
 <script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/typeahead.bundle.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqgrid.src.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqgrid.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/frepple.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}js/Sortable.min.js"></script>
 <script type="text/javascript">

@@ -1132,6 +1132,7 @@ function import_show(url)
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
     $('#uploadResponse').css('display','block');
+    $('#uploadform').css('display','none');
     $.ajax({
       type: 'post',
       url: typeof(url) != 'undefined' ? url : '',

@@ -85,11 +85,11 @@ class RecentActionsWidget(Widget):
     result = []
     for entry in q:
       if entry.is_change():
-        result.append('<span style="display: inline-block;" class="fa fa-pencil"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
+        result.append('<span style="display: inline-block;" class="fa fa-pencil"></span><a href="%s%s">&nbsp;%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_addition():
-        result.append('<span style="display: inline-block;" class="fa fa-plus"></span><a href="%s%s">%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
+        result.append('<span style="display: inline-block;" class="fa fa-plus"></span><a href="%s%s">&nbsp;%s</a>' % (_thread_locals.request.prefix, entry.get_admin_url(), escape(entry.object_repr)))
       elif entry.is_deletion():
-        result.append('<span style="display: inline-block;" class="fa fa-minus"></span>%s' % escape(entry.object_repr))
+        result.append('<span style="display: inline-block;" class="fa fa-minus"></span>&nbsp;%s' % escape(entry.object_repr))
       else:
         raise "Unexpected log entry type"
       if entry.content_type:
@@ -106,7 +106,7 @@ class RecentCommentsWidget(Widget):
   name = "recent_comments"
   title = _("comments")
   tooltip = _("Display a list of recent comments")
-  url = '/admin/common/comment/?sord=desc&sidx=lastmodified'
+  url = '/data/common/comment/?sord=desc&sidx=lastmodified'
   asynchronous = False
   limit = 10
 
@@ -118,14 +118,16 @@ class RecentCommentsWidget(Widget):
       db = DEFAULT_DB_ALIAS
     cmts = Comment.objects.using(db).order_by('-lastmodified').select_related('content_type', 'user')[:self.limit]
     result = []
+    result.append('<div class="table-responsive"><table class="table table-condensed"><tbody>');
     for c in cmts:
-      result.append('<a href="%s%s">%s</a>&nbsp;<span class="mini">%s</span><div class="float_right mini">%s&nbsp;&nbsp;%s</div><br/>%s<br/>' % (
+      result.append('<tr><td><a href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div></br><p style="padding-left: 10px; display: inline-block;">%s</p>' % (
         _thread_locals.request.prefix, c.get_admin_url(), escape(c.object_pk),
         escape(capfirst(force_text(_(c.content_type.name))) if c.content_type else force_text(_('Unknown content'))),
         escape(c.user.username if c.user else ''),
         formats.date_format(c.lastmodified, 'SHORT_DATETIME_FORMAT'),
         escape(c.comment)
-        ))
+        )+'</td></tr>')
+    result.append('</tbody></table></div>')
     #. Translators: Translation included with Django
     return '\n'.join(result) if result else force_text(_('None available'))
 

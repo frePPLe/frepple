@@ -94,7 +94,7 @@ resizeStop: gantt.redraw,
 <button class="btn btn-xs btn-primary" id="reset" onclick="gantt.reset()" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'reset' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-undo"></span></button>
 {% endblock %}
 
-{% block tools %}{% tabs "input.demand" %}{% endblock %}
+{% block before_table %}{% tabs "input.demand" %}{{block.super}}{% endblock %}
 
 {% comment %}
 TODO operation can be hidden and have no link

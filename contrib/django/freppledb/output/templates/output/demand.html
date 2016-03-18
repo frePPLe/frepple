@@ -4,8 +4,9 @@
 {% block extrahead %}{{block.super}}
 {% if mode == "graph" %}
 <script type="text/javascript">
-$(function(){ 
+$(function(){
   graph.header();
+
   $(window).resize(function() {
     $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
     //available height for graph and grid
@@ -24,14 +25,13 @@ $(function(){
 
     //$("#grid").setGridHeight(100);
     $("#graph").height(300);
-    $("#grid").setGridWidth($('#content-main').width()); 
-    console.log('xxx');
+    $("#grid").setGridWidth($('#content-main').width());
+
     // height available for graph
-    $("#grid").setGridHeight('100%');
     $("#main-row").height('initial');
     var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
     $("#graph").height(h);
-    
+
 
 })
 </script>
@@ -50,10 +50,12 @@ $(function(){
 {% block crosses %}
 {% if args.0 %}$(function(){
   // Resize top graph
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
   $("#graph").width($(window).width()-60).height( h<300 ? 300 : h-60);
     setTimeout(function() {$("#grid").setGridHeight('100%'); $("#main-row").height('initial');},1000); //setgridheight only works with this timeout here
-});{% endif %}
+});
+{% endif %}
 
 {% if args.0 or mode == "graph" %}
 function drawGraphs(jsondata)

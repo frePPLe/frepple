@@ -15,7 +15,6 @@ $(function(){
     var height = h-20;
     $("#graph").height(height);
     $("#grid").setGridWidth($('#content-main').width()).setGridHeight('100%');
-    console.log("fff");
   });
 
 
@@ -24,7 +23,6 @@ $(function(){
 
   //$("#grid").setGridHeight(100);
   $("#graph").height(300);
-  console.log('aqui');
   $("#grid").setGridWidth($('#content-main').width()); //the timeout is for the case when many records cause a window scroolbar
   
   // height available for graph
@@ -57,12 +55,13 @@ $(function(){
   // Resize top graph
   //var h = $(window).height();
   //$("#graph").width($(window).width()-60).height(h>800 || h<480 ? 400 : h-380);
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   $("#grid").setGridWidth($('#content-main').width());
 
-  console.log("&&&");
   $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
   $("#graph").width($(window).width()-60).height(h<300 ? 300 : h-60);
+  setTimeout(function() {$("#grid").setGridHeight('100%'); $("#main-row").height('initial');},1000); //setgridheight only works with this timeout here
   
 });
 {% endif %}

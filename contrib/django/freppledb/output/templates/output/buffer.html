@@ -48,8 +48,10 @@ $(function(){
 {% block crosses %}
 {% if args.0 %}$(function(){
   // Resize top graph
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
-  $("#graph").width($(window).width()-55).height(h>800 || h<480 ? 400 : h-120);
+  $("#graph").width($(window).width()-60).height( h<300 ? 300 : h-120);
+  setTimeout(function() {$("#grid").setGridHeight('100%'); $("#main-row").height('initial');},1000); //setgridheight only works with this timeout here
 });{% endif %}
 
 {% if args.0 or mode == "graph" %}

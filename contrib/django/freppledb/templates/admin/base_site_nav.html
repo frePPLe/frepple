@@ -12,7 +12,7 @@ $(function() {
   $("#nav-menu li.dropdown").mouseleave(
       function() { if ($(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
   );
-
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() - 10);
 });
 
 </script>

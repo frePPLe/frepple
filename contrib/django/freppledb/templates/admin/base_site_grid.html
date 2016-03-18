@@ -79,7 +79,7 @@ $(function() {
       return value;
     }, {% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
+    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}$("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height()-85{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
@@ -94,11 +94,14 @@ $(function() {
 	  });
 
 	$(window).bind('resize', function() {
-	  var h = $(window).height() - $("#grid").offset().top - 63;
-	  if (h < 150) h = 150;
-	  $("#grid")
-	   .setGridWidth($('#content-main').width()){% if not reportclass.height %}
-	   .setGridHeight(h){% endif %};
+	  if (!$("#graphrow").height()) {
+	    $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
+		  var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height();
+		  if (h < 150) h = 150;
+		  $("#grid")
+		   .setGridWidth($('#content-main').width()){% if not reportclass.height %}
+		   .setGridHeight(h-85){% endif %};
+	  }
 	});
 
 	$("#horizonbucketsul li a").click(function(){
@@ -123,7 +126,7 @@ $(function() {
 {% block content %}
 {% block before_table %}{% endblock %}
 
-<div class="row">
+<div class="row" id="toolsrow">
 
 <div id="save_undo" class="col-xs-5 form-inline">
 
@@ -167,7 +170,7 @@ $(function() {
 </div>
 
 <div class="row" id="main-row" style="text-align: center;">
-<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
+<div id="content-main" class="col-md-12" style="min-height: 100px; margin-top: 0.7em">
 <table id="grid" class="table table-striped" style="background-color: white"></table>
 <div id="gridpager"></div>
 

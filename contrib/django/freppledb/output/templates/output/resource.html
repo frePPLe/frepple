@@ -2,8 +2,36 @@
 {% load i18n %}
 
 {% block extrahead %}{{block.super}}
-{% if mode == "graph" and not args.0 %}<script type="text/javascript">
-$(function(){ graph.header(); })
+{% if mode == "graph" and not args.0 %}
+<script type="text/javascript">
+$(function(){ 
+  graph.header();
+  
+  $(window).resize(function() {
+    $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
+    //available height for graph and grid
+    var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
+    var width = $("#graph").width();
+    var height = h-20;
+    $("#graph").height(height);
+    $("#grid").setGridWidth($('#content-main').width()).setGridHeight('100%');
+    console.log("fff");
+  });
+
+
+  //calculate available space
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
+
+  //$("#grid").setGridHeight(100);
+  $("#graph").height(300);
+  console.log('aqui');
+  $("#grid").setGridWidth($('#content-main').width()); //the timeout is for the case when many records cause a window scroolbar
+  
+  // height available for graph
+  var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
+  $("#graph").height(h);
+  $("#main-row").height('initial');
+})
 </script>{% endif %}
 <style type="text/css">
 .highutil
@@ -14,18 +42,30 @@ $(function(){ graph.header(); })
 </style>
 {% endblock %}
 
-{% block tools %}{% if args.0 %}{% tabs "input.resource" %}{% endif %}{{block.super}}{% endblock %}
+{% block tools %}{{block.super}}{% endblock %}
 
-{% block before_table %}{% if args.0 %}
-<div id="graph" style="clear: both; height: 400px; padding: 10px"></div>
+{% block before_table %}{% if args.0 %}{% tabs "input.resource" %}
+<div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
+  <div id="graph" style="clear: both; height: 300px; padding: 10px; ">
+  </div>
+</div>
 {% endif %}{% endblock %}
 
 {% block crosses %}
-{% if args.0 %}$(function(){
+{% if args.0 %}
+$(function(){
   // Resize top graph
-  var h = $(window).height();
-  $("#graph").width($(window).width()-55).height(h>800 || h<480 ? 400 : h-380);
-});{% endif %}
+  //var h = $(window).height();
+  //$("#graph").width($(window).width()-60).height(h>800 || h<480 ? 400 : h-380);
+  $("#grid").setGridWidth($('#content-main').width());
+
+  console.log("&&&");
+  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
+  var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
+  $("#graph").width($(window).width()-60).height(h<300 ? 300 : h-60);
+  
+});
+{% endif %}
 
 {% if args.0 or mode == "graph" %}
 function drawGraphs(jsondata)

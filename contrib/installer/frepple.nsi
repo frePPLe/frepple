@@ -213,6 +213,9 @@ Section "Application" SecAppl
   File "..\bin\frepple.pyd"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
+  ; Redistribrute a DLL for the Visual Studio 2010 C++ runtime
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "c:\windows\system32\MSVCR100.DLL" "$INSTDIR\bin\MSVCR100.dll" "$SYSDIR"
+
   ; Copy modules
   File /nonfatal "..\bin\mod_*.so"
 

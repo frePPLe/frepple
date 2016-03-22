@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: 3.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2016-02-29 17:16+0100\n"
+"PO-Revision-Date: 2016-03-22 13:54+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -216,6 +216,7 @@ msgstr "niveau"
 #: common/models.py:444
 msgid "Higher values indicate more granular time buckets"
 msgstr ""
+"De grandes valeurs indiquent plus de granularité dans les maillages temporels"
 
 #: common/models.py:450 common/models.py:458 common/report.py:1662
 #: common/report.py:1780 common/views.py:353
@@ -294,7 +295,7 @@ msgstr "Requête d'import incorrecte"
 #: common/report.py:1037
 #, python-format
 msgid "Skipping field %(column)s"
-msgstr ""
+msgstr "Omission du champ %(column)s"
 
 #: common/report.py:1114 common/report.py:1281 common/report.py:2122
 #, python-format
@@ -322,11 +323,11 @@ msgstr ""
 #: common/report.py:1200 common/report.py:2045
 #, python-format
 msgid "Skipping unknown field %(column)s"
-msgstr ""
+msgstr "Omission du champ inconnu %(column)s"
 
 #: common/report.py:1665 common/report.py:1783
 msgid "data field"
-msgstr ""
+msgstr "champ de donnée"
 
 #: common/report.py:1951
 msgid "Nothing to export"
@@ -345,7 +346,7 @@ msgstr "Vous n'avez pas l'autorisation d'ajouter : %s"
 #: common/report.py:2012
 #, python-format
 msgid "Processing data in worksheet: %s"
-msgstr ""
+msgstr "Traitement des données dans l'onglet: %s"
 
 #: common/report.py:2137
 #, python-format
@@ -450,7 +451,7 @@ msgstr "Contenu inconnu"
 
 #: common/widget.py:108
 msgid "Display a list of recent comments"
-msgstr ""
+msgstr "Afficher une liste des commentaires récents"
 
 #: execute/menu.py:22 execute/widget.py:27
 msgid "Execute"
@@ -503,7 +504,7 @@ msgstr "Fichier journal"
 
 #: execute/widget.py:29
 msgid "Generate a constrained plan"
-msgstr ""
+msgstr "Générer un plan contraint"
 
 #: execute/widget.py:42 templates/execute/execute.html:281
 msgid "Create a plan"
@@ -520,7 +521,7 @@ msgstr "chemin d'approvisionnement"
 
 #: input/admin.py:126 input/admin.py:214 input/admin.py:253 input/admin.py:320
 msgid "where used"
-msgstr ""
+msgstr "Où est-ce utilisé"
 
 #: input/admin.py:127 input/admin.py:215 input/admin.py:254 input/admin.py:321
 #: input/admin.py:415 output/views/buffer.py:57 output/views/demand.py:53
@@ -783,7 +784,7 @@ msgstr "Durée variable pour l'opération"
 #: input/models.py:233 input/models.py:631 input/models.py:682
 #: input/views.py:782 input/views.py:807 input/views.py:929
 msgid "search mode"
-msgstr ""
+msgstr "Mode de recherche"
 
 #: input/models.py:235 input/models.py:633 input/models.py:684
 msgid "Method to select preferred alternate"
@@ -796,7 +797,7 @@ msgstr "Algorithme de sélection des alternatives préférées"
 #: output/views/operation.py:39 output/views/operation.py:155
 #: output/views/pegging.py:45 output/views/resource.py:201 output/widget.py:894
 msgid "operation"
-msgstr ""
+msgstr "opération"
 
 #: input/models.py:256 input/views.py:908
 msgid "operations"
@@ -877,7 +878,7 @@ msgstr "minimum"
 
 #: input/models.py:322
 msgid "Safety stock"
-msgstr ""
+msgstr "Stock de sécurité"
 
 #: input/models.py:325 input/views.py:536
 msgid "minimum calendar"
@@ -1108,11 +1109,11 @@ msgstr "Fin"
 
 #: input/models.py:586
 msgid "Fixed start"
-msgstr ""
+msgstr "Début fixé"
 
 #: input/models.py:587
 msgid "Fixed end"
-msgstr ""
+msgstr "Fin fixée"
 
 #: input/models.py:601 input/models.py:653 input/models.py:895
 #: input/models.py:965 input/models.py:1034 input/models.py:1116
@@ -1183,11 +1184,11 @@ msgstr "charges"
 #: input/views.py:661 input/views.py:1042 output/widget.py:772
 #: output/widget.py:930
 msgid "supplier"
-msgstr ""
+msgstr "fournisseur"
 
 #: input/models.py:709 input/views.py:632
 msgid "suppliers"
-msgstr ""
+msgstr "fournisseurs"
 
 #: input/models.py:730 input/models.py:808 input/models.py:810
 #: input/views.py:662 input/views.py:689
@@ -1196,27 +1197,27 @@ msgstr "délai d'obtention"
 
 #: input/models.py:732
 msgid "Purchasing lead time"
-msgstr ""
+msgstr "Délai d'achat"
 
 #: input/models.py:737
 msgid "A minimum purchasing quantity"
-msgstr ""
+msgstr "Une quantité d'achat minimale"
 
 #: input/models.py:742
 msgid "A multiple purchasing quantity"
-msgstr ""
+msgstr "Une quantité d'achat multiple"
 
 #: input/models.py:747
 msgid "Purchasing cost per unit"
-msgstr ""
+msgstr "Coût d'achat par unité"
 
 #: input/models.py:751 input/models.py:829
 msgid "Priority among all alternates"
-msgstr ""
+msgstr "Priorité entre les alternatifs"
 
 #: input/models.py:764
 msgid "Resource to model the supplier capacity"
-msgstr ""
+msgstr "Ressource pour modéliser la capacité du fournisseur"
 
 #: input/models.py:767 input/models.py:845 input/views.py:670
 #: input/views.py:697
@@ -1225,62 +1226,62 @@ msgstr "quantité du ressource"
 
 #: input/models.py:769
 msgid "Resource capacity consumed per purchased unit"
-msgstr ""
+msgstr "Capacité de ressource consommée par unité achetée"
 
 #: input/models.py:787
 msgid "item supplier"
-msgstr ""
+msgstr "fournisseur de l'article"
 
 #: input/models.py:788 input/views.py:652
 msgid "item suppliers"
-msgstr ""
+msgstr "fournisseurs de l'article"
 
 #: input/models.py:804 input/models.py:957 input/views.py:688
 #: input/views.py:1000 output/widget.py:813 output/widget.py:853
 msgid "origin"
-msgstr ""
+msgstr "origine"
 
 #: input/models.py:815
 msgid "A minimum shipping quantity"
-msgstr ""
+msgstr "Une quantité d'expédition minimum"
 
 #: input/models.py:820
 msgid "A multiple shipping quantity"
-msgstr ""
+msgstr "Une quantité d'expédition multiple"
 
 #: input/models.py:825
 msgid "Shipping cost per unit"
-msgstr ""
+msgstr "Coût d'expédition par unité"
 
 #: input/models.py:842
 msgid "Resource to model the distribution capacity"
-msgstr ""
+msgstr "Ressource pour modéliser la capacité de distribution"
 
 #: input/models.py:847
 msgid "Resource capacity consumed per distributed unit"
-msgstr ""
+msgstr "Capacité de ressource consommée par unité distribuée"
 
 #: input/models.py:852
 msgid "Frozen fence for creating new shipments"
-msgstr ""
+msgstr "Période gélée pour créer de nouvelles expéditions"
 
 #: input/models.py:865
 msgid "item distribution"
-msgstr ""
+msgstr "distribution de l'article"
 
 #: input/models.py:866 input/views.py:679
 msgid "item distributions"
-msgstr ""
+msgstr "distributions de l'article"
 
 #: input/models.py:872 input/models.py:934 input/models.py:1003
 #: input/views.py:976 input/views.py:1017 input/views.py:1057
 msgid "proposed"
-msgstr ""
+msgstr "proposé"
 
 #: input/models.py:873 input/models.py:935 input/models.py:1004
 #: input/views.py:977 input/views.py:1018 input/views.py:1058
 msgid "confirmed"
-msgstr ""
+msgstr "confirmé"
 
 #: input/models.py:874 input/models.py:936 input/models.py:1005
 #: input/models.py:1080 input/views.py:846 input/views.py:978
@@ -1294,16 +1295,16 @@ msgstr "Identifiant unique d'une opération"
 
 #: input/models.py:884 input/models.py:950 input/models.py:1019
 msgid "Status of the order"
-msgstr ""
+msgstr "Statut de la commande"
 
 #: input/models.py:887 input/models.py:945 input/models.py:1014
 #: input/views.py:993 input/views.py:1034
 msgid "reference"
-msgstr ""
+msgstr "référence"
 
 #: input/models.py:888 input/models.py:946 input/models.py:1015
 msgid "External reference of this order"
-msgstr ""
+msgstr "Référence externe de cette commande"
 
 #: input/models.py:901 input/models.py:974 input/models.py:1040
 #: input/views.py:1006 input/views.py:1046 output/models.py:31
@@ -1327,23 +1328,23 @@ msgstr "opérations planifiées"
 #: input/models.py:961 input/views.py:1001 output/widget.py:814
 #: output/widget.py:854
 msgid "destination"
-msgstr ""
+msgstr "destination"
 
 #: input/models.py:970 input/views.py:1005
 msgid "consume material"
-msgstr ""
+msgstr "Consommer du matériel"
 
 #: input/models.py:971
 msgid "Consume material at origin location"
-msgstr ""
+msgstr "Consommer du matériel à l'emplacement d'origine"
 
 #: input/models.py:995
 msgid "distribution order"
-msgstr ""
+msgstr "ordre de distribution"
 
 #: input/models.py:996 input/views.py:986
 msgid "distribution orders"
-msgstr ""
+msgstr "ordres de distribution"
 
 #: input/models.py:1061
 msgid "purchase order"
@@ -1363,11 +1364,11 @@ msgstr "citation"
 
 #: input/models.py:1079 input/views.py:845
 msgid "open"
-msgstr ""
+msgstr "ouvert"
 
 #: input/models.py:1081 input/views.py:847 templates/execute/execute.html:42
 msgid "canceled"
-msgstr ""
+msgstr "annulé"
 
 #: input/models.py:1103 input/views.py:831 output/models.py:146
 #: output/widget.py:75 output/widget.py:130
@@ -1376,7 +1377,7 @@ msgstr "date d'échéance"
 
 #: input/models.py:1103
 msgid "Due date of the demand"
-msgstr ""
+msgstr "Date d'échéance de la demande"
 
 #: input/models.py:1107
 msgid "Status of the demand. Only \"open\" demands are planned"
@@ -1410,11 +1411,11 @@ msgstr "Retard maximal autorisé de la demande planifiée"
 
 #: input/models.py:1139
 msgid "sales order"
-msgstr ""
+msgstr "Demande client"
 
 #: input/models.py:1140 input/views.py:816
 msgid "sales orders"
-msgstr ""
+msgstr "Demandes client"
 
 #: input/views.py:57
 #, python-format
@@ -1449,7 +1450,7 @@ msgstr "maximum au plus tôt"
 #: input/views.py:1057 input/views.py:1058 input/views.py:1059
 #, python-format
 msgid "change status to %(status)s"
-msgstr ""
+msgstr "Change le statut à %(status)s"
 
 #: input/views.py:854
 msgid "calendars"
@@ -1461,11 +1462,11 @@ msgstr "calendrier"
 
 #: input/views.py:1013 input/views.py:1053
 msgid "incremental export to openbravo"
-msgstr ""
+msgstr "export incrémental vers openbravo"
 
 #: menu.py:30
 msgid "Sales"
-msgstr ""
+msgstr "Demandes"
 
 #: menu.py:32
 msgid "Capacity"
@@ -1473,15 +1474,15 @@ msgstr "Capacité"
 
 #: menu.py:33
 msgid "Purchasing"
-msgstr ""
+msgstr "Achats"
 
 #: menu.py:34
 msgid "Distribution"
-msgstr ""
+msgstr "Distribution"
 
 #: menu.py:35
 msgid "Manufacturing"
-msgstr ""
+msgstr "Fabrication"
 
 #: menu.py:36 templates/execute/execute.html:526
 msgid "Admin"
@@ -1493,11 +1494,11 @@ msgstr "Aide"
 
 #: openbravo/attributes.py:23
 msgid "vendor item name"
-msgstr ""
+msgstr "Nom du vendeur de l'article"
 
 #: openbravo/views.py:73
 msgid "No proposed data records selected"
-msgstr ""
+msgstr "Aucun enregistrement proposé n'a été sélectionné"
 
 #: output/models.py:28 output/models.py:91 output/views/operation.py:162
 #: output/views/resource.py:50 output/views/resource.py:209
@@ -1710,7 +1711,7 @@ msgstr "backlog"
 
 #: output/views/demand.py:164
 msgid "Demand plan detail"
-msgstr ""
+msgstr "Détail du plan de demande"
 
 #: output/views/demand.py:176
 msgid "due date"
@@ -1783,7 +1784,7 @@ msgstr "Rapport de capacité détaillé"
 
 #: output/views/resource.py:206
 msgid "load quantity"
-msgstr ""
+msgstr "Quantité de charge"
 
 #: output/widget.py:40
 msgid "Late orders"
@@ -1807,37 +1808,35 @@ msgstr "Afficher les commandes qui ne sont pas planifiées complètement"
 
 #: output/widget.py:148
 msgid "Manufacturing orders"
-msgstr ""
+msgstr "Ordres de fabrication"
 
 #: output/widget.py:149
 msgid "Shows manufacturing orders by start date"
-msgstr ""
+msgstr "Affiche les ordres de fabrication par date de début"
 
 #: output/widget.py:313 output/widget.py:321 output/widget.py:329
 #: output/widget.py:513 output/widget.py:521 output/widget.py:529
 #: output/widget.py:724 output/widget.py:732 output/widget.py:740
 msgid "Review"
-msgstr ""
+msgstr "Réviser"
 
 #: output/widget.py:314 output/widget.py:514 output/widget.py:725
-#, fuzzy
-#| msgid "planned orders"
 msgid "confirmed orders"
-msgstr "commandes planifiées"
+msgstr "Ordres confirmés"
 
 #: output/widget.py:322 output/widget.py:330 output/widget.py:522
 #: output/widget.py:530 output/widget.py:733 output/widget.py:741
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr ""
+msgstr "ordres proposés dans les %(fence)s jours à venir"
 
 #: output/widget.py:340
 msgid "Distribution orders"
-msgstr ""
+msgstr "Ordres de distribution"
 
 #: output/widget.py:341
 msgid "Shows distribution orders by start date"
-msgstr ""
+msgstr "Affiche les ordres de distribution par date de début"
 
 #: output/widget.py:540
 msgid "Purchase orders"
@@ -1845,7 +1844,7 @@ msgstr "Ordres d'achat"
 
 #: output/widget.py:541
 msgid "Shows purchase orders by ordering date"
-msgstr ""
+msgstr "Affiche les ordres d'achat par date de commande"
 
 #: output/widget.py:751
 msgid "Purchase queue"
@@ -1857,11 +1856,11 @@ msgstr "Affiche la liste des nouveaux ordres d'achat"
 
 #: output/widget.py:792
 msgid "Distribution queue"
-msgstr ""
+msgstr "Queue de distribution"
 
 #: output/widget.py:793 output/widget.py:833
 msgid "Display a list of new distribution orders"
-msgstr ""
+msgstr "Afficher une liste des nouveaux ordres de distribution"
 
 #: output/widget.py:832
 msgid "Shipping queue"
@@ -1897,15 +1896,15 @@ msgstr "compter"
 
 #: output/widget.py:993
 msgid "Demand alerts"
-msgstr ""
+msgstr "Alertes sur la demande"
 
 #: output/widget.py:1002
 msgid "Capacity alerts"
-msgstr ""
+msgstr "Alertes sur la capacité"
 
 #: output/widget.py:1011
 msgid "Material alerts"
-msgstr ""
+msgstr "Alertes sur le matériel"
 
 #: output/widget.py:1020
 msgid "Resource utilization"
@@ -1954,7 +1953,7 @@ msgstr "Erreur : mailles temporelles ou dates manquantes"
 #: templates/admin/base_site_grid.html:66
 #: templates/admin/base_site_gridpivot.html:74
 msgid "Warning: no data found"
-msgstr ""
+msgstr "Avertissement: Aucune donnée trouvée"
 
 #: templates/admin/base_site_grid.html:70
 #: templates/admin/base_site_gridpivot.html:78
@@ -1969,7 +1968,7 @@ msgstr "enregistrer les modifications"
 #: templates/admin/base_site_grid.html:133
 #: templates/admin/base_site_gridpivot.html:123
 msgid "Undo"
-msgstr ""
+msgstr "Annuler"
 
 #: templates/admin/base_site_grid.html:133
 #: templates/admin/base_site_gridpivot.html:123
@@ -1979,7 +1978,7 @@ msgstr "annuler les modifications"
 #: templates/admin/base_site_grid.html:139
 #: templates/admin/base_site_grid.html:142
 msgid "select action"
-msgstr ""
+msgstr "Sélectionner une action"
 
 #: templates/admin/base_site_grid.html:156
 #: templates/admin/base_site_gridpivot.html:142
@@ -2026,7 +2025,7 @@ msgstr "configure les périodes temporelles"
 
 #: templates/admin/base_site_nav.html:46
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: templates/admin/base_site_nav.html:56
 msgid "preferences"
@@ -2049,10 +2048,12 @@ msgid ""
 "The user \"admin\" has password \"admin\".<br/>\n"
 "We suggest changing this password."
 msgstr ""
+"L'utilisateur \"admin\" a pour mot de passe \"admin\".<br/>\n"
+"Nous vous suggérons de changer ce mot de passe."
 
 #: templates/admin/object_history.html:4
 msgid "change history"
-msgstr ""
+msgstr "changer l'historique"
 
 #: templates/admin/subtemplate_timebuckets.html:8
 msgid "time buckets"
@@ -2060,7 +2061,7 @@ msgstr "période temporelle"
 
 #: templates/admin/subtemplate_timebuckets.html:18
 msgid "bucket size"
-msgstr ""
+msgstr "Taille de la maille temporellle"
 
 #: templates/admin/subtemplate_timebuckets.html:35
 msgid "from"
@@ -2081,33 +2082,35 @@ msgstr "après la date actuelle"
 
 #: templates/admin/subtemplate_timebuckets.html:67
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: templates/admin/subtemplate_timebuckets.html:68
 msgid "cancel"
-msgstr ""
+msgstr "annuler"
 
 #: templates/admin/user/add_form.html:6
 msgid ""
 "First, enter a username and password. Then, you'll be able to edit more user "
 "optionsTTT."
 msgstr ""
+"Entrez d'abord un nom d'utilisateur et un mot de passe. Vous serez alors en "
+"mesure d'éditer plus d'options utilisateurTTT."
 
 #: templates/admin/user/add_form.html:8
 msgid "Enter a username and password."
-msgstr ""
+msgstr "Entrez un nom d'utilisateur et un mot de passe."
 
 #: templates/common/preferences.html:77
 msgid "Number of records per page"
-msgstr ""
+msgstr "Nombre d'enregistrments par page"
 
 #: templates/execute/execute.html:35 templates/index.html:101
 msgid "failed"
-msgstr ""
+msgstr "échoué"
 
 #: templates/execute/execute.html:40
 msgid "done"
-msgstr ""
+msgstr "effectué"
 
 #: templates/execute/execute.html:262
 msgid "autorefresh"
@@ -2151,6 +2154,12 @@ msgid ""
 "plan</span>\n"
 "                    "
 msgstr ""
+"\n"
+"\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"top\" "
+"data-html=\"true\" data-original-title=\"Ce plan respecte les contraintes "
+"actives ci-dessous.<br>\n"
+"En cas de pénuries la demande sera planifiée en retard ou incomplète."
+"\">Constrained plan</span>"
 
 #: templates/execute/execute.html:310
 msgid ""
@@ -2163,6 +2172,14 @@ msgid ""
 "span>\n"
 "\t\t\t\t            "
 msgstr ""
+"\n"
+"\t\t\t\t            <span data-toggle=\"tooltip\" data-placement=\"bottom\" "
+"data-html=\"true\" data-original-title=\"Ce plan montre les problèmes de "
+"matériel, de capacité et d'opérations qui empêche la demande d'être "
+"planifiée à temps..<br>\n"
+"La demande sera toujours complètement planifiée à temps.\">Plan non "
+"contraint</span>\n"
+"\t\t\t\t   "
 
 #: templates/execute/execute.html:318
 msgid "Capacity: respect capacity limits"
@@ -2194,10 +2211,21 @@ msgid ""
 "\">Live data sources</b>\n"
 "\t\t\t\t          "
 msgstr ""
+"\n"
+"\t\t\t\t              <b data-toggle=\"tooltip\" data-html=\"true\" data-"
+"original-title=\"Une source de données live permet à votre plan frePPLE "
+"d'être à 100%% synchronisé avec les données de votre système externe.<br>\n"
+"FrePPLe va lire les données de votre système externe avant de planifier."
+"<br>\n"
+"Et une fois le plan généré, frePPLe va directement exporter les résultats "
+"dans votre système externe.<br>\n"
+"FrePPLe sauvegarde égalemnt une copie des données dans sa propre base de "
+"donneés pour pouvoir faire des rapports.\">Source de données Live</b>\n"
+"\t\t\t\t          "
 
 #: templates/execute/execute.html:336
 msgid "read"
-msgstr ""
+msgstr "lire"
 
 #: templates/execute/execute.html:337
 msgid "write"
@@ -2249,7 +2277,7 @@ msgstr "dernière mise à jour"
 
 #: templates/execute/execute.html:452 templates/execute/execute.html.py:455
 msgid "copy"
-msgstr ""
+msgstr "copier"
 
 #: templates/execute/execute.html:466
 msgid "into selected scenarios"
@@ -2351,6 +2379,33 @@ msgid ""
 "\n"
 "\t\t\t\t\t\t\t"
 msgstr ""
+"Créer des mailles temporelles pour les rapports.</p>\n"
+"\t\t\t\t\t\t\t\t<label class=\"control-label\">Date de début: <input class="
+"\"vDateField form-control\" id=\"start\" name=\"start\" type=\"text\" size="
+"\"12\"/></label>\n"
+"\t\t\t\t\t\t\t\t<label class=\"control-label\">Date de fin: <input class="
+"\"vDateField form-control\" id=\"end\" name=\"end\" type=\"text\" size="
+"\"12\"/></label><br>\n"
+"               <label class=\"control-label\" for=\"weekstart1\">La semaine "
+"débute un:</label>\n"
+"               <div class=\"dropdown dropdown-submit-input\">\n"
+"                       <button class=\"btn btn-default dropdown-toggle form-"
+"control\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle="
+"\"dropdown\">Lundi&nbsp;&nbsp;<span class=\"caret\"></span>\n"
+"                       </button>\n"
+"                       <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
+"\"weekstart1\" id=\"weekstartul\">\n"
+"                          <li><a>Dimanche</a></li>\n"
+"                          <li><a>Lundi</a></li>\n"
+"                          <li><a>Mardi</a></li>\n"
+"                          <li><a>Mercredi</a></li>\n"
+"                          <li><a>Jeudi</a></li>\n"
+"                          <li><a>Vendredi</a></li>\n"
+"                          <li><a>Samedi</a></li>\n"
+"                       </ul>\n"
+"               </div>\n"
+"\n"
+"\t\t\t\t\t\t\t"
 
 #: templates/execute/execute.html:666
 msgid "Sorry, You don't have any execute permissions..."
@@ -2387,12 +2442,12 @@ msgstr "zoom arrière"
 #: templates/output/pegging.html:92
 msgctxt "Gantt"
 msgid "move in"
-msgstr ""
+msgstr "Approcher"
 
 #: templates/output/pegging.html:93
 msgctxt "Gantt"
 msgid "move out"
-msgstr ""
+msgstr "Reculer"
 
 #: templates/output/pegging.html:94
 msgid "reset"
@@ -2430,11 +2485,15 @@ msgstr "Make a POST request using a HTML form to create a new %(model)s object"
 #, python-format
 msgid "Make a POST request in raw format to create a new %(model)s object"
 msgstr ""
+"Effectuer une requête POST en format brut pour créer un nouvel object "
+"%(model)s"
 
 #: templates/rest_framework/api.html:158
 #, python-format
 msgid "Make a PUT request using a HTML form to update one %(model)s object"
 msgstr ""
+"Effectuer une requête PUT en utilisant un formulaire HTML pour mettre à jour "
+"un objet %(model)s"
 
 #: templates/rest_framework/api.html:182
 #, python-format
@@ -2442,6 +2501,8 @@ msgid ""
 "Make a PUT or PATCH request in raw format to update an existing or more "
 "existing %(model)s objects"
 msgstr ""
+"Effectuer une requête PUT ou PATCH en format brut pour mettre à jour un ou "
+"plusieurs objets existants %(model)s"
 
 #: templates/rest_framework/api.html:217
 #, python-format
@@ -2449,6 +2510,8 @@ msgid ""
 "Make a DELETE request to delete one or more existing %(model)s objects "
 "(requires filtering)"
 msgstr ""
+"Effectuer une requête DELETE pour supprimer un ou plusieurs objets existants "
+"%(model)s (nécessite un filtre)"
 
 #: templates/rest_framework/index.html:7
 msgid ""
@@ -2480,6 +2543,34 @@ msgid ""
 "\t</div>\n"
 "\t"
 msgstr ""
+"\n"
+"\tCette page aide les développeurs à apprendre et mettre en pratique\n"
+"\t<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
+"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"\tl'API de frePPLe.<br>\n"
+"\tCette API permet à votre application d'échanger de l'information avec "
+"frePPLe de façon directe et efficace.<br>\n"
+"\t<br>\n"
+"\tLe lien \"list API\" vous dirige vers la page de l'objet.<br>\n"
+"\tEt le lien \"detail API\" vous dirige vers un objet spécifique lorsque "
+"vous entrez dans la clé primaire de votre objet.<br>\n"
+"\tDans ces pages, vous allez pouvoir effectuer des requêtes HTTP avec les "
+"méthodes GET, POST, OPTIONS, PUT,\n"
+"\tPATCH et DELETE.<br>\n"
+"\tLes résultats peuvent être affichés dans un format JSON ou en HTML dans "
+"votre browser.<br>\n"
+"\t<br>\n"
+"\tEn utilisant un outil comme 'wget' ou 'curl' vous pouvez accéder à l'API à "
+"partir de la ligne de commande.<br>\n"
+"\tPar exemple, pour renvoyer la liste de toutes les demandes client dans le "
+"format JSON:<br><br>\n"
+"\t<div class=\"well well-sm\" style=\"display: inline-block\">\n"
+"\twget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/"
+"input/demand/?format=json<br><br>\n"
+"\tcurl -H 'Accept: application/json; indent=4' -u admin:admin "
+"http://127.0.0.1:8000/api/input/demand/?format=json\n"
+"\t</div>\n"
+"\t"
 
 #: templates/rest_framework/index.html:30
 msgid "List API"

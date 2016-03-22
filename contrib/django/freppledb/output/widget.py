@@ -1161,11 +1161,14 @@ class InventoryByLocationWidget(Widget):
       .attr("width", x_width - 2)
       .style("fill", "#828915");
 
+// Location label
     bar.append("text")
-      .attr("y", y_zero - 3)
+      .attr("y", y_zero)
+      .attr("x", x_width/2)
       .text(function(d,i) { return d[0]; })
       .style("text-anchor", "end")
-      .attr("transform","rotate(90 " + (x_width/2 - 5) + "," + y_zero + ")");
+      .attr("transform","rotate(90 " + (x_width/2) + " " + y_zero + ")  ");
+
 
     // Draw the Y-axis
     var yAxis = d3.svg.axis()

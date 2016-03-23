@@ -341,28 +341,15 @@ function drawGraph(jsondata)
   force.start();
 }
 
-$(window).resize(function() {
-  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
-  setTimeout(function(){ $("#grid").setGridHeight('100%');$("#main-row").height('initial'); }, 300);
-
-  setTimeout(function(){ var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height(); $("#graph").height(h-20); },100);
-
+$(window).bind('resize', function() {
   var width = $("#graph").width();
-  d3.select('#svggraph').attr('width', width).attr('viewBox','0 0 ' + width + ' 400');
-
+  d3.select('#svggraph')
+  .attr('width', width)
+  .attr('viewBox','0 0 ' + width + ' 400');
 });
 
 $(function(){
-  //calculate available space
-  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
-//fit all records in grid
-  $("#grid").setGridHeight('100%');
-  $("#main-row").height('initial');
-  setTimeout(function(){ $("#grid").setGridWidth($('#content-main').width()); },2000); //the timeout is for the case when many records cause a window scroolbar
-
-  // height available for graph
-  setTimeout(function(){ var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#main-row").height();
-                                                     $("#graph").height(h);},300);
+  if ($("#graph").height() > $(window).height() - 340) $("#graph").height($(window).height() - 340);
 
   $("#graph").resizable({
     handleSelector: "#graph-resize-handle",
@@ -377,11 +364,19 @@ $(function(){
 
 });
 
+$(window).resize(function() {
+  var parentheight = $("#content-main").height
+  setTimeout(function(){$(".ui-jqgrid").setGridHeight(parentheight)},300);
+
+	if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
+	if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
+	$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
+});
+
 </script>
 {% endblock %}
 
-{% block extra_grid %}
-loadComplete: drawGraph,
+{% block extra_grid %}loadComplete: drawGraph,
 treeGrid: true,
 treeGridModel: 'adjacency',
 ExpandColumn: 'depth',
@@ -400,11 +395,11 @@ treeReader: {
 ExpandColClick: true,
 {% endblock %}
 
-{% block tools %}{% endblock %}
+{% block tools %}{% tabs model %}{% endblock %}
 
-{% block before_table %}{% tabs model %}
+{% block before_table %}
 <div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
-<div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 250px; overflow: hidden;">
+<div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 345px; overflow: hidden;">
 <svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet">
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">

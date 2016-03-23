@@ -25,7 +25,6 @@ var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.fi
 ];
 
 $(function() {
-  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   {% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
@@ -81,7 +80,7 @@ $(function() {
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{{reportclass.height}}{% else %}$("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height() - $("#graphrow").height() - 85{% endif %}
+	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
   {% endif %}
@@ -90,21 +89,13 @@ $(function() {
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% endif %}
 
-  $(window).bind('resize', function() {
-    if (!$("#graphrow").height()) {
-	    $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
-	    var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height();
-		  $("#grid").setGridWidth($('#content-main').width())
+	$(window).bind('resize', function() {
+	  $("#grid")
+	   .setGridWidth($('#content-main').width())
+	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	});
 
-	    if (h < 150) h = 150;
-		  {% if not reportclass.height %}setTimeout(function () {$("#grid").setGridHeight(h - 85).setGridWidth($('#content-main').width());},100);{% endif %};
-    };
-    $("#grid").setGridWidth($('#content-main').width());
-
-  });
-
-
- 	$("#horizonbucketsul li a").click(function(){
+	$("#horizonbucketsul li a").click(function(){
 	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
 	  $("#horizonbuckets").val($(this).prop('name'));
 	});
@@ -121,7 +112,7 @@ $(function() {
 {% block content %}
 {% block before_table %}{% endblock %}
 
-<div class="row" id="toolsrow">
+<div class="row">
 
 <div class="col-md-8">
 {% if reportclass.editable and haschangeperm %}
@@ -167,8 +158,8 @@ $(function() {
 	</div>
 </div>
 
-<div class="row" id="main-row" style="height=300px;">
-	<div id="content-main" class="col-md-12" style="min-height: 150px; height: 150px; margin-top: 0.7em">
+<div class="row">
+	<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
 	 <table id="grid" class="table table-striped pivotgrid"></table>
 	</div>
 <div id="gridpager" class="col-md-12"></div>

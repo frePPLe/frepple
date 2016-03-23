@@ -25,7 +25,6 @@ var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.fi
 ];
 
 $(function() {
-  $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
   {% if reportclass.hasTimeBuckets and not bucketnames %}
   $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
@@ -89,21 +88,21 @@ $(function() {
   jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% endif %}
-
+  
   $(window).bind('resize', function() {
     if (!$("#graphrow").height()) {
 	    $("#workarea").height($(window).height() - $("#nav-menu-header").height() -10);
 	    var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - $("#tabsrow").height();
 		  $("#grid").setGridWidth($('#content-main').width())
-
+		  
 	    if (h < 150) h = 150;
-		  {% if not reportclass.height %}setTimeout(function () {$("#grid").setGridHeight(h - 85).setGridWidth($('#content-main').width());},100);{% endif %};
+	    $("#grid")
+	     .setGridWidth($('#content-main').width())
+	     {% if not reportclass.height %}.setGridHeight(h - 85){% endif %};
     };
-    $("#grid").setGridWidth($('#content-main').width());
-
   });
-
-
+  
+  
  	$("#horizonbucketsul li a").click(function(){
 	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
 	  $("#horizonbuckets").val($(this).prop('name'));
@@ -168,7 +167,7 @@ $(function() {
 </div>
 
 <div class="row" id="main-row" style="height=300px;">
-	<div id="content-main" class="col-md-12" style="min-height: 150px; height: 150px; margin-top: 0.7em">
+	<div id="content-main" class="col-md-12" style="min-height: 150px; height: 300px; margin-top: 0.7em">
 	 <table id="grid" class="table table-striped pivotgrid"></table>
 	</div>
 <div id="gridpager" class="col-md-12"></div>

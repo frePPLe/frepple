@@ -197,7 +197,7 @@ class ModelTabs(Node):
         return ''
 
       # Render the admin class
-      result = ['<div class="row"><div id="tabs" class="col-md-12 form-inline hor-align-right"><ul class="nav nav-tabs">']
+      result = ['<div class="row" id="tabsrow"><div id="tabs" class="col-md-12 form-inline hor-align-right"><ul class="nav nav-tabs">']
       obj = context['object_id']
       active_tab = context.get('active_tab', 'edit')
       for tab in admn.tabs:

@@ -80,7 +80,7 @@ $(function() {
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
-	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
+	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - 40 - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
   {% endif %}
@@ -90,9 +90,11 @@ $(function() {
   {% endif %}
 
 	$(window).bind('resize', function() {
+	  $("#workarea").height($(window).height() - $("#nav-menu-header").height()-10);
+    var h = $("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height();
 	  $("#grid")
 	   .setGridWidth($('#content-main').width())
-	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$("#workarea").height() - $("#titlerow").height() - $("#toolsrow").height() - 40 - {{reportclass.heightmargin}}{% endif %});
 	});
 
 	$("#horizonbucketsul li a").click(function(){

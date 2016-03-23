@@ -16,225 +16,206 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 3.1.beta\n"
+"Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-03 14:34+0100\n"
-"PO-Revision-Date: 2009-06-23 22:38+0100\n"
+"POT-Creation-Date: 2015-12-14 08:53+0100\n"
+"PO-Revision-Date: 2016-03-20 22:41+0800\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
-"Language: \n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
 
-#: common/static/js/frepple.js:172 common/static/js/freppleJJJ.js:45
+#: common/static/js/frepple.js:41
 msgid "There are unsaved changes on this page."
-msgstr ""
+msgstr "此頁面有未保存的變動。"
 
-#: common/static/js/frepple.js:223 common/static/js/freppleJJJ.js:104
+#: common/static/js/frepple.js:93
 msgid "Error saving data"
-msgstr ""
+msgstr "保存資料出錯。"
 
-#: common/static/js/frepple.js:229 common/static/js/frepple.js:893
-#: common/static/js/freppleJJJ.js:110 common/static/js/freppleJJJ.js:833
-msgid "Close"
-msgstr ""
-
-#: common/static/js/frepple.js:250 common/static/js/freppleJJJ.js:131
+#: common/static/js/frepple.js:114
 msgid "Save or cancel your changes first"
-msgstr ""
+msgstr "先保存或取消你的變動。"
 
-#: common/static/js/frepple.js:256 common/static/js/freppleJJJ.js:137
+#: common/static/js/frepple.js:121
 msgid "Save"
-msgstr ""
+msgstr "保存"
 
-#: common/static/js/frepple.js:257 common/static/js/frepple.js:479
-#: common/static/js/frepple.js:503 common/static/js/frepple.js:611
-#: common/static/js/frepple.js:659 common/static/js/frepple.js:877
-#: common/static/js/frepple.js:1127 common/static/js/freppleJJJ.js:138
-#: common/static/js/freppleJJJ.js:351 common/static/js/freppleJJJ.js:373
-#: common/static/js/freppleJJJ.js:483 common/static/js/freppleJJJ.js:553
-#: common/static/js/freppleJJJ.js:600 common/static/js/freppleJJJ.js:817
-#: common/static/js/freppleJJJ.js:1067
+#: common/static/js/frepple.js:128 common/static/js/frepple.js:418
+#: common/static/js/frepple.js:624 common/static/js/frepple.js:685
+#: common/static/js/frepple.js:745 common/static/js/frepple.js:802
+#: common/static/js/frepple.js:1048 common/static/js/frepple.js:1220
+#: common/static/js/frepple.js:1463
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
-#: common/static/js/frepple.js:385 common/static/js/freppleJJJ.js:266
-msgid "Click to select record"
-msgstr ""
+#: common/static/js/frepple.js:264
+msgid "Select"
+msgstr "選擇"
 
-#: common/static/js/frepple.js:467 common/static/js/frepple.js:489
-#: common/static/js/freppleJJJ.js:342 common/static/js/freppleJJJ.js:360
-msgid "Export CSV or Excel file"
-msgstr ""
+#: common/static/js/frepple.js:355 common/static/js/frepple.js:1136
+msgid "Customize"
+msgstr "定制"
 
-#: common/static/js/frepple.js:470 common/static/js/frepple.js:492
-#: common/static/js/freppleJJJ.js:345 common/static/js/freppleJJJ.js:363
+#: common/static/js/frepple.js:361 common/static/js/frepple.js:651
+#: common/static/js/frepple.js:1143
+msgid "OK"
+msgstr "確定"
+
+#: common/static/js/frepple.js:422 common/static/js/frepple.js:1190
+msgid "Reset"
+msgstr "重置"
+
+#: common/static/js/frepple.js:438 common/static/js/frepple.js:543
+#: common/static/js/frepple.js:1103 common/static/js/frepple.js:1208
+#: planningboard/static/planningboard/js/planningboard.js:667
+#: planningboard/static/planningboard/js/planningboard.js:1054
+msgid "Error saving report settings"
+msgstr "保存報表設置出錯"
+
+#: common/static/js/frepple.js:585 common/static/js/frepple.js:591
 msgid "Export format"
-msgstr ""
+msgstr "匯出格式"
 
-#: common/static/js/frepple.js:472 common/static/js/frepple.js:495
-#: common/static/js/freppleJJJ.js:346 common/static/js/freppleJJJ.js:366
+#: common/static/js/frepple.js:586 common/static/js/frepple.js:593
 msgid "Spreadsheet list"
-msgstr ""
+msgstr "試算表列表"
 
-#: common/static/js/frepple.js:473 common/static/js/frepple.js:497
-#: common/static/js/freppleJJJ.js:347 common/static/js/freppleJJJ.js:368
+#: common/static/js/frepple.js:587 common/static/js/frepple.js:595
 msgid "CSV list"
-msgstr ""
+msgstr "CSV列表"
 
-#: common/static/js/frepple.js:478 common/static/js/frepple.js:502
-#: common/static/js/freppleJJJ.js:350 common/static/js/freppleJJJ.js:372
-msgid "Export"
-msgstr ""
-
-#: common/static/js/frepple.js:494 common/static/js/freppleJJJ.js:365
+#: common/static/js/frepple.js:592
 msgid "Spreadsheet table"
-msgstr ""
+msgstr "試算表表"
 
-#: common/static/js/frepple.js:496 common/static/js/freppleJJJ.js:367
+#: common/static/js/frepple.js:594
 msgid "CSV table"
-msgstr ""
+msgstr "CSV表"
 
-#: common/static/js/frepple.js:604 common/static/js/freppleJJJ.js:546
-msgid "Delete data"
-msgstr ""
+#: common/static/js/frepple.js:598
+msgid "Export CSV or Excel file"
+msgstr "出口CSV或Excel文件"
 
-#: common/static/js/frepple.js:607 common/static/js/freppleJJJ.js:549
+#: common/static/js/frepple.js:602 common/static/js/frepple.js:1003
+#: common/static/js/frepple.js:1007
+msgid "Export"
+msgstr "輸出"
+
+#: common/static/js/frepple.js:705
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr ""
+msgstr "你將會刪除 %s 對象和所有相關的數據記錄！"
 
-#: common/static/js/frepple.js:610 common/static/js/frepple.js:658
-#: common/static/js/frepple.js:876 common/static/js/freppleJJJ.js:552
-#: common/static/js/freppleJJJ.js:599 common/static/js/freppleJJJ.js:816
+#: common/static/js/frepple.js:707
+msgid "Delete data"
+msgstr "刪除資料"
+
+#: common/static/js/frepple.js:714 common/static/js/frepple.js:771
 msgid "Confirm"
-msgstr ""
+msgstr "確定"
 
-#: common/static/js/frepple.js:632 common/static/js/freppleJJJ.js:574
+#: common/static/js/frepple.js:732
 msgid "Error deleting data"
-msgstr ""
+msgstr "刪除數據錯誤"
 
-#: common/static/js/frepple.js:652 common/static/js/freppleJJJ.js:593
-msgid "Copy data"
-msgstr ""
-
-#: common/static/js/frepple.js:655 common/static/js/freppleJJJ.js:596
+#: common/static/js/frepple.js:762
 #, javascript-format
 msgid "You are about to duplicate %s objects"
-msgstr ""
+msgstr "你將會複製% s對象"
 
-#: common/static/js/frepple.js:680 common/static/js/freppleJJJ.js:621
+#: common/static/js/frepple.js:764
+msgid "Copy data"
+msgstr "複製數據"
+
+#: common/static/js/frepple.js:789
 msgid "Error copying data"
-msgstr ""
+msgstr "複製數據出錯"
 
-#: common/static/js/frepple.js:702 common/static/js/frepple.js:708
-#: common/static/js/freppleJJJ.js:643 common/static/js/freppleJJJ.js:649
+#: common/static/js/frepple.js:826 common/static/js/frepple.js:832
 msgid "Filtered where"
-msgstr ""
+msgstr "過濾哪裡"
 
-#: common/static/js/frepple.js:870 common/static/js/freppleJJJ.js:810
-msgid "export"
-msgstr ""
+#: common/static/js/frepple.js:1001
+msgid "Export selected records to openbravo"
+msgstr "出口所選記錄到OPENBRAVO"
 
-#: common/static/js/frepple.js:873 common/static/js/freppleJJJ.js:813
-msgid "export selected records to openbravo"
-msgstr ""
+#: common/static/js/frepple.js:1011
+msgid "Connecting to openbravo..."
+msgstr "現在連接到openbravo..."
 
-#: common/static/js/frepple.js:883 common/static/js/freppleJJJ.js:823
-msgid "connecting to openbravo..."
-msgstr ""
-
-#: common/static/js/frepple.js:892 common/static/js/freppleJJJ.js:832
+#: common/static/js/frepple.js:1021
 msgid "Export successful"
-msgstr ""
+msgstr "輸出成功"
 
-#: common/static/js/frepple.js:905 common/static/js/frepple.js:906
-#: common/static/js/freppleJJJ.js:845 common/static/js/freppleJJJ.js:846
+#: common/static/js/frepple.js:1029
+msgid "Close"
+msgstr "關閉"
+
+#: common/static/js/frepple.js:1041
 msgid "Error during export"
-msgstr ""
+msgstr "误差在输出时候"
 
-#: common/static/js/frepple.js:907 common/static/js/freppleJJJ.js:847
-msgid "retry"
-msgstr ""
+#: common/static/js/frepple.js:1042
+msgid "Retry"
+msgstr "重審"
 
-#: common/static/js/frepple.js:1113 common/static/js/freppleJJJ.js:1053
-msgid "Import CSV or Excel file"
-msgstr ""
+#: common/static/js/frepple.js:1129
+msgid "Add"
+msgstr "增加"
 
-#: common/static/js/frepple.js:1117 common/static/js/freppleJJJ.js:1057
+#: common/static/js/frepple.js:1426
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr ""
+msgstr "載入一個Excel檔或CSV-formatted文字檔。"
 
-#: common/static/js/frepple.js:1118 common/static/js/freppleJJJ.js:1058
+#: common/static/js/frepple.js:1427
 msgid "The first row should contain the field names."
-msgstr ""
+msgstr "第一行包含了欄位名。"
 
-#: common/static/js/frepple.js:1120 common/static/js/freppleJJJ.js:1060
+#: common/static/js/frepple.js:1428
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr ""
+msgstr "首先刪除所有存在的記錄和所有相關的表。"
 
-#: common/static/js/frepple.js:1121 common/static/js/freppleJJJ.js:1061
+#: common/static/js/frepple.js:1429
 msgid "Data file"
-msgstr ""
+msgstr "資料檔案"
 
-#: common/static/js/frepple.js:1126 common/static/js/freppleJJJ.js:1066
+#: common/static/js/frepple.js:1432
+msgid "Import CSV or Excel file"
+msgstr "導入CSV或Excel文件"
+
+#: common/static/js/frepple.js:1436
 msgid "Import"
-msgstr ""
+msgstr "導入"
 
-#: common/static/js/frepple.js:1603 common/static/js/freppleJJJ.js:1543
+#: common/static/js/frepple.js:1906
 msgid "Guided tour"
-msgstr ""
+msgstr "指引行動"
 
-#: common/static/js/frepple.js:1610 common/static/js/freppleJJJ.js:1550
+#: common/static/js/frepple.js:1930
 msgid "Previous"
-msgstr ""
+msgstr "前一個"
 
-#: common/static/js/frepple.js:1611 common/static/js/frepple.js:1747
-#: common/static/js/freppleJJJ.js:1551 common/static/js/freppleJJJ.js:1688
+#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2068
+msgid "Stop"
+msgstr "停止"
+
+#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2059
 msgid "Play"
-msgstr ""
+msgstr "播放"
 
-#: common/static/js/frepple.js:1612 common/static/js/freppleJJJ.js:1552
+#: common/static/js/frepple.js:1941
 msgid "Next"
-msgstr ""
+msgstr "下一個"
 
-#: common/static/js/frepple.js:1724 common/static/js/freppleJJJ.js:1664
+#: common/static/js/frepple.js:2034
 msgid "out of"
-msgstr ""
+msgstr "分配出"
 
-#: common/static/js/frepple.js:1754 common/static/js/freppleJJJ.js:1695
-msgid "Pause"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:424
-msgid "Time buckets"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:433
-msgid "Bucket size"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:452
-msgid "to"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:464 common/static/js/freppleJJJ.js:470
-msgid "days"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:465 common/static/js/freppleJJJ.js:471
-msgid "weeks"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:466 common/static/js/freppleJJJ.js:472
-msgid "months"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:475
-msgid "After plan current date"
-msgstr ""
-
-#: common/static/js/freppleJJJ.js:482
-msgid "OK"
-msgstr ""
+#: planningboard/static/planningboard/js/planningboard.js:613
+#, javascript-format
+msgid "%s allocated out of %s"
+msgstr "%s分配出 %s"

@@ -154,6 +154,7 @@ function tick(e)
 
 function drawGraph(jsondata)
 {
+  $("#grid").setGridHeight('100%').setGridWidth($("#content-main").width());
   var count = -1;
   for (var oper in jsondata['rows'])
   {
@@ -349,7 +350,7 @@ $(window).bind('resize', function() {
 });
 
 $(function(){
-  if ($("#graph").height() > $(window).height() - 340) $("#graph").height($(window).height() - 340);
+  if ($("#graph").height() > $(window).height() - 380) $("#graph").height($(window).height() - 380);
 
   $("#graph").resizable({
     handleSelector: "#graph-resize-handle",
@@ -364,14 +365,7 @@ $(function(){
 
 });
 
-$(window).resize(function() {
-  var parentheight = $("#content-main").height
-  setTimeout(function(){$(".ui-jqgrid").setGridHeight(parentheight)},300);
 
-	if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});
-	if ($("#graph").height() > $(window).height() - 350) $("#graph").height($(window).height() - 350);
-	$(".ui-jqgrid").css({height: ($(".ui-jqgrid-view").height() + $(".ui-jqgrid-pager").height()) + "px"});
-});
 
 </script>
 {% endblock %}

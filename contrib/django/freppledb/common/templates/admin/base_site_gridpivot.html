@@ -93,6 +93,7 @@ $(function() {
 	  $("#grid")
 	   .setGridWidth($('#content-main').width())
 	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	 {% if args.0 %}$("#grid").setGridHeight('100%');{% endif %}
 	});
 
 	$("#horizonbucketsul li a").click(function(){

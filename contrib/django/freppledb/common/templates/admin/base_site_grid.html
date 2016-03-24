@@ -38,7 +38,7 @@ $(function() {
     multiselect: false, {% endif %}
     pager: '#gridpager',
     iconSet: "fontAwesome",
-    guiStyle: "bootstrap",
+    guiStyle: "bootstrapPrimary",
     viewrecords: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
@@ -94,11 +94,11 @@ $(function() {
 	  });
 
 	$(window).bind('resize', function() {
-	  var h = $(window).height() - $("#grid").offset().top - 63;
-	  if (h < 150) h = 150;
-	  $("#grid")
-	   .setGridWidth($('#content-main').width()){% if not reportclass.height %}
-	   .setGridHeight(h){% endif %};
+    var h = $(window).height() - $("#grid").offset().top - 63;
+    if (h < 150) h = 150;
+    $("#grid")
+     .setGridWidth($('#content-main').width()){% if not reportclass.height %}
+     .setGridHeight(h){% endif %};
 	  {% if args.0 %}$("#grid").setGridHeight('100%'){% endif %};
 	});
 
@@ -127,11 +127,9 @@ $(function() {
 <div class="row">
 
 <div id="save_undo" class="col-xs-5 form-inline">
-
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-
 <input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
 <input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}

@@ -52,7 +52,7 @@ $(function() {
     viewrecords: true,
     sortorder: "asc",
     iconSet: "fontAwesome",
-    guiStyle: "bootstrap",
+    guiStyle: "bootstrapPrimary",
     hidegrid: false,
     scrollRows: true,
     autowidth: true,
@@ -90,10 +90,10 @@ $(function() {
   {% endif %}
 
 	$(window).bind('resize', function() {
-	  $("#grid")
-	   .setGridWidth($('#content-main').width())
-	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
-	 {% if args.0 %}$("#grid").setGridHeight('100%');{% endif %}
+    $("#grid")
+     .setGridWidth($('#content-main').width())
+     .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+	  {% if args.0 %}$("#grid").setGridHeight('100%');{% endif %}
 	});
 
 	$("#horizonbucketsul li a").click(function(){
@@ -115,18 +115,17 @@ $(function() {
 
 <div class="row">
 
-<div class="col-md-8">
-{% if reportclass.editable and haschangeperm %}
+<div id="save_undo" class="col-xs-5 form-inline">
 {% block save_undo_buttons %}
-<div id="save_undo" style="float:left">
+{% if not is_popup and reportclass.editable and haschangeperm %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary" role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-&nbsp;&nbsp;<input type="submit" value="{% filter upper|force_escape %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary" role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}"></div>
-{% endblock save_undo_buttons %}
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
+<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% endif %}
+{% endblock save_undo_buttons %}
 </div>
 
-<div id="toolicons" class="col-md-4 hor-align-right ver-align-middle">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
+<div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
 	<div class="btn-group" role="group">
 
 		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">

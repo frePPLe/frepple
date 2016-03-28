@@ -416,7 +416,7 @@ class Simulator(object):
     '''
     for op in OperationPlan.objects.select_for_update().using(self.database).filter(status="confirmed", enddate__lte=nd):
       buf = None
-      for fl in op.operation.flows.all():
+      for fl in op.operation.flows.all().using(self.database):
         if fl.quantity > 0:
           buf = fl.thebuffer
           break
@@ -426,7 +426,7 @@ class Simulator(object):
         print("      Closing MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
       op.status = "closed"
       op.save(using=self.database)
-      for fl in op.operation.flows.all():
+      for fl in op.operation.flows.all().using(self.database):
         if fl.type == 'end':
           fl.thebuffer.onhand += fl.quantity * op.quantity
           fl.thebuffer.save(using=self.database)
@@ -445,7 +445,7 @@ class Simulator(object):
     for op in OperationPlan.objects.select_for_update().using(self.database).filter(status="proposed", startdate__lte=nd):
       if self.verbosity > 2:
         print("      Opening MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
-      for fl in op.operation.flows.all():
+      for fl in op.operation.flows.all().using(self.database):
         if fl.type == 'start':
           fl.thebuffer.onhand += fl.quantity * op.quantity
           fl.thebuffer.save(using=self.database)
@@ -561,7 +561,7 @@ class Simulator(object):
     '''
     Verify whether an operationplan of a given quantity is material-feasible.
     '''
-    for fl in oper.flows.all():
+    for fl in oper.flows.all().using(self.database):
       if fl.quantity > 0 and not consume:
         continue
       if fl.type in ('start', 'end') or not fl.type:
@@ -578,12 +578,12 @@ class Simulator(object):
           return False
     if oper.type == 'routing':
       # All routing suboperations must return an ok
-      for suboper in oper.suboperations.all().order_by("priority"):
+      for suboper in oper.suboperations.all().using(self.database).order_by("priority"):
         if not self.checkAvailable(qty, suboper.suboperation, consume):
           return False
     elif oper.type == 'alternate':
       # An ok from a single suboperation suffices
-      for suboper in oper.suboperations.all().order_by("priority"):
+      for suboper in oper.suboperations.all().using(self.database).order_by("priority"):
         if consume:
           if self.checkAvailable(qty, suboper.suboperation, False):
             self.checkAvailable(qty, suboper.suboperation, True)

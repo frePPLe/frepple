@@ -59,7 +59,7 @@ Here are the steps to get a fully working environment.
    password ('md5' in pg_hba.conf) or b) OS username ('peer' and 'ident'
    in pg_hba.conf).
 
-   In case of error "Postgres PG::Error: ERROR: new encoding (UTF8) is incompatible":
+   In case of error (while creating the databases) "Postgres PG::Error: ERROR: new encoding (UTF8) is incompatible":
    ::
       UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
       DROP DATABASE template1;

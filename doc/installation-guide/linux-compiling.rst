@@ -135,6 +135,33 @@ need the following steps to replace the first point in the section above.
      cd <project_directory>
      git pull
 
+#. Example Suse Enterprise 12 SP1 build script to create RPMs:
+   ::
+
+      export GITURL="https://github.com/frePPLe/frePPLe.git"
+      export GITBRANCH=master
+
+      # Basics
+      sudo zypper update
+      sudo zypper --non-interactive install --force-resolution libxerces-c-3_1 libxerces-c-devel openssl openssl-devel libtool make automake autoconf doxygen python3 python3-devel gcc-c++ graphviz rpm-build git libpq5 postgresql-devel
+
+      #create rpm tree
+      mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+      # GIT
+      git clone $GITURL -b $GITBRANCH frepple-$RELEASE/
+
+      # PIP and PIP requirements
+      sudo python3 -m ensurepip
+      sudo pip3 install -r ~/frepple-$RELEASE/contrib/django/requirements.txt
+      sudo pip3 install psycopg2 Sphinx
+
+      # FREPPLE
+      cd ~/frepple-$RELEASE
+      make -f Makefile.dist prep config
+      cd contrib/rpm
+      make suse
+
 **************************************
 Compiling from a debian source package
 **************************************

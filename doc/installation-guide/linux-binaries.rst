@@ -59,6 +59,15 @@ Here are the steps to get a fully working environment.
    password ('md5' in pg_hba.conf) or b) OS username ('peer' and 'ident'
    in pg_hba.conf).
 
+   In case of error "Postgres PG::Error: ERROR: new encoding (UTF8) is incompatible":
+   ::
+      UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
+      DROP DATABASE template1;
+      CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UNICODE';
+      UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
+       \c template1
+      VACUUM FREEZE;
+
 #. **Tune the database**
 
    The default installation of PostgreSQL is not configured right for
@@ -99,8 +108,8 @@ Here are the steps to get a fully working environment.
 #. **Install the Python modules**
 
    The python3 modules used by frePPLe are listed in the file "requirements.txt". You can download
-   it from https://raw.githubusercontent.com/frepple/frepple/3.0/contrib/django/requirements.txt
-   (make sure to replace 3.0 with the appropriate version number!)
+   it from https://raw.githubusercontent.com/frepple/frepple/3.1/contrib/django/requirements.txt
+   (make sure to replace 3.1 with the appropriate version number!)
 
    Alternatively you can create the file yourself with the following content:
    ::
@@ -116,7 +125,7 @@ Here are the steps to get a fully working environment.
       jdcal >= 1.0
       Markdown >= 2.6.4
       openpyxl >= 2.3.0-b2
-      https://github.com/frePPLe/django/tarball/frepple_3.0
+      https://github.com/frePPLe/django/tarball/frepple_3.1
 
    Next, install these modules with a pip3 command:
    ::
@@ -405,8 +414,17 @@ You can use it as a guideline and inspiration for your own deployments.
 
   # Install the PostgreSQL database
   # tip: "sudo zypper se PACKAGENAME" to look for the correct package names
-  sudo zypper install postgresql postgresql-server postgres-devel
+  sudo zypper install postgresql94 postgresql94-server postgres94-devel
 
+  # Note: frePPLe requires packages that may not be present in the basic Suse Enterprise Server repositories so you may need to add these repositories and install:
+  sudo zypper addrepo http://download.opensuse.org/repositories/Apache:Modules/SLE_12_SP1/Apache:Modules.repo
+  sudo zypper refresh
+  sudo zypper install apache2-mod_wsgi-python3
+  sudo zypper addrepo http://download.opensuse.org/repositories/devel:languages:python3/SLE_12_SP1/devel:languages:python3.repo
+  sudo zypper refresh
+  sudo zypper install python3-psycopg2
+
+  # Create user, create databases, configure access
   sudo su
   rcpostgresql start
   su - postgres
@@ -424,7 +442,7 @@ You can use it as a guideline and inspiration for your own deployments.
   exit
   # Allow local connections to the database using a username and password.
   # The default peer authentication isn't good for frepple.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /var/lib/pgsql/data/pg_hba.conf
   rcpostgrsql restart
 
   # Install python3 and required python modules
@@ -432,10 +450,16 @@ You can use it as a guideline and inspiration for your own deployments.
   sudo python3 -m ensure pip
   sudo pip3 install -r requirements.txt
 
+  #install Apache2 modules:
+  sudo a2enmod enable mod_access_compat mod_deflate
+  sudo systemctl restart apache2
+
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.
   # Normally you only need to install the frepple package.
   sudo rpm -i *.rpm
+  or
+  sudo zypper install *.rpm
 
   # Create frepple database schema
   frepplectl migrate --noinput

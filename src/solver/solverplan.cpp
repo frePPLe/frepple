@@ -189,27 +189,36 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
       o != purchase_operations.end(); ++o
       )
     {
+      // TODO This code assumes the buffer is ONLY replenished through these purchases.
+      // When it is replenished through an alternate, it will not give the results we expect.
+
       // Erase existing proposed purchases
       const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
-      // Create new proposed purchases, unless they can be recreated when
-      // we solve for the safety stock a few lines below
-      if (solver->getPlanSafetyStockFirst())
+      // Create new proposed purchases
+      try
       {
-        try
-        {
-          (*o)->getBuffer()->solve(*solver, this);
-          CommandManager::commit();
-        }
-        catch(...)
-        {
-          CommandManager::rollback();
-        }
+        safety_stock_planning = true;
+        state->curBuffer = NULL;
+        state->q_qty = -1.0;
+        state->q_date = Date::infinitePast;
+        state->a_cost = 0.0;
+        state->a_penalty = 0.0;
+        state->curDemand = NULL;
+        state->curOwnerOpplan = NULL;
+        state->a_qty = 0;
+        (*o)->getBuffer()->solve(*solver, this);
+        CommandManager::commit();
+      }
+      catch(...)
+      {
+        CommandManager::rollback();
       }
     }
     purchase_operations.clear();
 
     // Solve for safety stock in buffers.
-    if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
+    if (!solver->getPlanSafetyStockFirst())
+      solveSafetyStock(solver);
   }
   catch (...)
   {

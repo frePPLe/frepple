@@ -395,9 +395,10 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
 
   // Find or create the destination buffer.
   Buffer* destbuffer = NULL;
-  for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
+  Item::bufferIterator buf_iter(item);
+  while (Buffer* tmpbuf = buf_iter.next())
   {
-    if (bufiter->getLocation() == dest && bufiter->getItem() == item)
+    if (tmpbuf->getLocation() == dest)
     {
       if (destbuffer)
       {
@@ -405,7 +406,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
         o << "Multiple buffers found for item '" << item << "'' and location'" << dest << "'";
         throw DataException(o.str());
       }
-      destbuffer = &*bufiter;
+      destbuffer = tmpbuf;
     }
   }
   if (!destbuffer)

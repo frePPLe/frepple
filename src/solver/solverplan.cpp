@@ -194,7 +194,17 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
       // Create new proposed purchases, unless they can be recreated when
       // we solve for the safety stock a few lines below
       if (solver->getPlanSafetyStockFirst())
-        (*o)->getBuffer()->solve(*solver, this);
+      {
+        try
+        {
+          (*o)->getBuffer()->solve(*solver, this);
+          CommandManager::commit();
+        }
+        catch(...)
+        {
+          CommandManager::rollback();
+        }
+      }
     }
     purchase_operations.clear();
 

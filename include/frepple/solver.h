@@ -137,6 +137,8 @@ class SolverMRP : public Solver
       */
     DECLARE_EXPORT void solve(const Operation*, void* = NULL);
 
+    DECLARE_EXPORT void solve(const OperationItemSupplier*, void* = NULL);
+
     /** Behavior of this solver method is:
       *  - Asks each of the routing steps for the requested quantity, starting
       *    with the last routing step.<br>
@@ -967,6 +969,9 @@ class SolverMRP : public Solver
 
         /** Count the number of asks. */
         unsigned long iteration_count;
+
+        /** Collect all purchase operations. */
+        set<const OperationItemSupplier*> purchase_operations;
 
       public:
         /** Pointer to the current solver status. */

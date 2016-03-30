@@ -4333,7 +4333,7 @@ class OperationItemSupplier : public OperationFixedTime
     /** Scan and trim operationplans creating excess inventory in the
       * buffer.
       */
-    DECLARE_EXPORT void trimExcess() const;
+    DECLARE_EXPORT void trimExcess(bool zero_or_minimum) const;
 };
 
 

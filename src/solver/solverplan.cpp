@@ -184,6 +184,20 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
     // Clean the list of demands of this cluster
     demands->clear();
 
+    // Completely recreate all purchasing operation plans
+    for (set<const OperationItemSupplier*>::iterator o = purchase_operations.begin();
+      o != purchase_operations.end(); ++o
+      )
+    {
+      // Erase existing proposed purchases
+      const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
+      // Create new proposed purchases, unless they can be recreated when
+      // we solve for the safety stock a few lines below
+      if (solver->getPlanSafetyStockFirst())
+        (*o)->getBuffer()->solve(*solver, this);
+    }
+    purchase_operations.clear();
+
     // Solve for safety stock in buffers.
     if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
   }
@@ -221,7 +235,8 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 {
   OperatorDelete cleanup(this);
   safety_stock_planning = true;
-  if (getLogLevel()>0) logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
+  if (getLogLevel() > 0)
+    logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
@@ -254,7 +269,9 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
       {
         CommandManager::rollback();
       }
-  if (getLogLevel()>0) logger << "Finished safety stock replenishment pass" << endl;
+
+  if (getLogLevel() > 0)
+    logger << "Finished safety stock replenishment pass" << endl;
   safety_stock_planning = false;
 }
 

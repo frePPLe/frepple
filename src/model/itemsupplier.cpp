@@ -330,7 +330,7 @@ DECLARE_EXPORT Buffer* OperationItemSupplier::getBuffer() const
 }
 
 
-DECLARE_EXPORT void OperationItemSupplier::trimExcess() const
+DECLARE_EXPORT void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
 {
   // This method can only trim operations not loading a resource
   if (getLoads().begin() != getLoads().end())
@@ -345,6 +345,7 @@ DECLARE_EXPORT void OperationItemSupplier::trimExcess() const
     FlowPlan* candidate = NULL;
     double curmin = 0;
     double oh = 0;
+    double excess_min = DBL_MAX;
 
     for (Buffer::flowplanlist::const_iterator flplniter = fliter->getBuffer()->getFlowPlans().begin();
       flplniter != fliter->getBuffer()->getFlowPlans().end();
@@ -355,30 +356,45 @@ DECLARE_EXPORT void OperationItemSupplier::trimExcess() const
       // onhand value we can resize it.
       // This is only valid in unconstrained plans and when there are
       // no upstream activities.
-      if (flplniter->getEventType() == 3)
+      if (flplniter->getEventType() == 3 && zero_or_minimum)
         curmin = flplniter->getMin();
       else if (flplniter->getEventType() == 1)
       {
         const FlowPlan* flpln = static_cast<const FlowPlan*>(&*flplniter);
+        if (oh - curmin < excess_min)
+        {
+          excess_min = oh - curmin;
+          if (excess_min < 0)
+            excess_min = 0;
+        }
         if (flpln->getQuantity() > 0 && !flpln->getOperationPlan()->getLocked() && (!candidate || candidate->getDate() != flpln->getDate()))
         {
-          if (candidate && oh > curmin)
+          if (candidate
+            && excess_min > ROUNDING_ERROR
+            && candidate->getQuantity() > excess_min + ROUNDING_ERROR
+            && candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR
+            )
           {
             // This candidate can now be resized
-            candidate->setQuantity(candidate->getQuantity() - oh + curmin, false);
+            candidate->setQuantity(candidate->getQuantity() - excess_min, false);
             candidate = NULL;
           }
           else if (flpln->getOperation() == this)
             candidate = const_cast<FlowPlan*>(flpln);
           else
             candidate = NULL;
+          excess_min = DBL_MAX;
         }
       }
       oh = flplniter->getOnhand();
     }
-    if (candidate && oh > curmin)
+    if (candidate
+      && excess_min > ROUNDING_ERROR
+      && candidate->getQuantity() > excess_min + ROUNDING_ERROR
+      && candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR
+      )
       // Resize the last candidate at the end of the horizon
-      candidate->setQuantity(candidate->getQuantity() - oh + curmin, false);
+      candidate->setQuantity(candidate->getQuantity() - excess_min, false);
   }
 }
 

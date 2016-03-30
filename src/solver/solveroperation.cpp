@@ -628,6 +628,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 }
 
 
+DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
+{
+  if (v)
+    static_cast<SolverMRPdata*>(v)->purchase_operations.insert(o);
+  solve(static_cast<const Operation*>(o), v);
+}
+
+
 // No need to take post- and pre-operation times into account
 DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 {

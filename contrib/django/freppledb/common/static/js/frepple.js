@@ -985,7 +985,7 @@ $(function() {
     }
   });
   $('#search').typeahead({minLength: 2}, {
-    limit:100,
+    limit:1000,
     highlight: true,
     name: 'search',
     display: 'value',

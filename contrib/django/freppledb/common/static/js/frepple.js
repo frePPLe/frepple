@@ -1106,6 +1106,7 @@ function import_show(url)
 {
   $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
+  $('#popup').modal({keyboard: false, backdrop:'static'});
   $('#popup').html('<div class="modal-dialog">'+
       '<div class="modal-content">'+
         '<div class="modal-header">'+
@@ -1124,14 +1125,17 @@ function import_show(url)
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
         '</div>'+
       '</div>'+
     '</div>' )
   .modal('show');
+
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
     $('#uploadResponse').css('display','block');
+    $('#uploadResponse').text(gettext('Importing... pressing Close button will not stop the process.'));
+    $('#importbutton').css('display','none');
     $('#uploadform').css('display','none');
     $.ajax({
       type: 'post',

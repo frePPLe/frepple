@@ -17,7 +17,7 @@ $(function(){ graph.header(); })
 {% if args.0 %}$(function(){
   // Resize top graph
   var h = $(window).height();
-  $("#graph").width($(window).width()-60).height(h>800 || h<480 ? 400 : h-380);
+  $("#graph").width($(window).width()-60).height(h>800 || h<480 ? 400 : h-420);
 });{% endif %}
 
 {% if args.0 or mode == "graph" %}

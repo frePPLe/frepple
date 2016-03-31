@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2012 by Johan De Taeye, frePPLe bvba
+# Copyright (C) 2007-2012 by frePPLe bvba
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
@@ -9,10 +9,9 @@
 # General Public License for more details.
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# Joao Ranita <jranita@frepple.com>, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: 3.1.beta\n"
+"Project-Id-Version: 3.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
 "PO-Revision-Date: 2016-03-04 16:11+0100\n"

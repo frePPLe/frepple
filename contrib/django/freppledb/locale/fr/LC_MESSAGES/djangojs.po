@@ -1,4 +1,4 @@
-# Copyright (C) 2013 by Johan De Taeye, Guy Ollagnon, Gilles Manon
+# Copyright (C) 2013-2016 by frePPLe bvba
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
@@ -9,13 +9,9 @@
 # General Public License for more details.
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# file : $URL: https://frepple.svn.sourceforge.net/svnroot/frepple/trunk/contrib/django/freppledb/locale/fr/LC_MESSAGES/djangojs.po $
-# revision : $LastChangedRevision: 1358 $  $LastChangedBy: jdetaeye $
-# date : $LastChangedDate: 2010-09-17 22:28:46 +0200 (Fri, 17 Sep 2010, 2012) $.
-# Joao Ranita <jranita@frepple.com>, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: 3.1.beta\n"
+"Project-Id-Version: 3.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
 "PO-Revision-Date: 2016-02-29 14:40+0200\n"

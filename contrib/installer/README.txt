@@ -27,11 +27,11 @@ To create the installer, the following steps are required:
    with Cygwin.
    Adjust the path appropriately, if required.
 
-6) Install the following Python extensions:
+6) Install the following Python extensions.
+   First, install the normal dependencies:
+     pip3 install -r requirements
+   The installer uses 2 additional packages
       - py2exe, for Python 3, >= 0.9.2.2
-      - django (needs patching!)
-      - cherrypy
-      - psycopg2
       - pywin32
    The installer uses py2exe to create a directory containing the Python
    language (with its libraries and extensions) and the frePPLe web user

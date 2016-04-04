@@ -7,7 +7,8 @@ Forecast module
    This module is only available in the Enterprise Edition.
 
 This module provides the functionality to manage the forecasted
-customer demand.
+customer demand. An overview presentation of the module is
+available at http://frepple.com/frePPLe_forecasting.pdf
 
 .. image:: _images/forecasting-process.png
    :alt: Forecasting process
@@ -42,6 +43,19 @@ in your company:
 
   The algorithm also automatically selects the most appropriate forecasting
   method. The user has the ability to override this automatic selection.
+
+  .. Hint::
+
+     The M3 competition is an industry recognized benchmark for forecasting algorithms.
+     It provides 3003 time series from different domains and industries. Competing
+     forecasting tools compute the forecasted values, and the forecast error with
+     the actuals is used as a score.
+
+     Details, results and findings can be found in this excellent paper:
+     http://forecastingprinciples.com/files/Makridakia-The%20M3%20Competition.pdf
+
+     FrePPLe’s planning algorithm scores among the top, as can be seen from our
+     benchmark results: http://frepple.com/frePPLe_m3_forecast_benchmark.xlsx
 
   The statistical base forecast is normally computed in batch mode.
 
@@ -93,130 +107,7 @@ in your company:
 
 **Module configuration**
 
-The module support the following configuration parameters:
-
-* | *DueWithinBucket*:
-  | Specifies whether forecasted demand is due at the 'start', 'middle' or
-    'end' of the bucket.
-  | Using the middle of the bucket gives the most realistic approximation and
-    is the recommended default value.
-  | Using the start date of the bucket is a more conservative setting: it
-    assures that all forecast supply is already available at the start of the
-    month.
-
-* | *Net_CustomerThenItemHierarchy*:
-  | As part of the forecast netting a demand is assiociated with a certain
-    forecast. When no matching forecast is found for the customer and item of
-    the demand, frePPLe looks for forecast at higher level customers and items.
-  | This flag allows us to control whether we first search the customer
-    hierarchy and then the item hierarchy, or the other way around.
-  | The default value is true, ie search higher customer levels before
-    searching higher levels of the item.
-
-* | *Net_MatchUsingDeliveryOperation*:
-  | Specifies whether or not a demand and a forecast require to have the same
-    delivery operation to be a match.
-  | The default value is true.
-
-* | *Net_NetEarly*:
-  | Defines how much time before the due date of an order we are allowed to
-    search for a forecast bucket to net from.
-  | The default value is 0, meaning that we can net only from the bucket where
-    the demand is due.
-
-* | *Net_NetLate*:
-  | Defines how much time after the due date of an order we are allowed to
-    search for a forecast bucket to net from.
-  | The default value is 0, meaning that we can net only from the bucket where
-    the demand is due.
-
-* | *Forecast_Iterations*:
-  | Specifies the maximum number of iterations allowed for a forecast method to
-    tune its parameters.
-  | Only positive values are allowed and the default value is 10.
-  | Set the parameter to 1 to disable the tuning and generate a forecast based
-    on the user-supplied parameters.
-
-* | *Forecast_smapeAlfa*:
-  | Specifies how the sMAPE forecast error is weighted for different time
-    buckets. The sMPAPE value in the most recent bucket is 1.0, and the weight
-    decreases exponentially for earlier buckets.
-  | Acceptable values are in the interval 0.5 and 1.0, and the default is 0.95.
-
-* | *Forecast_Skip*:
-  | Specifies the number of time series values used to initialize the
-    forecasting method. The forecast error in these bucket isn’t counted.
-
-* | *Forecast_MovingAverage_buckets*:
-  | This parameter controls the number of buckets to be averaged by the moving
-    average forecast method.
-
-* | *Forecast_SingleExponential_initialAlfa, Forecast_SingleExponential_minAlfa,*
-    *Forecast_SingleExponential_maxAlfa*:
-  | Specifies the initial value and the allowed range of the smoothing parameter
-    in the single exponential forecasting method.
-  | The allowed range is between 0 and 1. Values lower than about 0.05 are not
-    advisable.
-
-* | *Forecast_DoubleExponential_initialAlfa, Forecast_DoubleExponential_minAlfa,*
-    *Forecast_DoubleExponential_maxAlfa*:
-  | Specifies the initial value and the allowed range of the smoothing parameter
-    in the double exponential forecasting method.
-  | The allowed range is between 0 and 1. Values lower than about 0.05 are not
-    advisible.
-
-* | *Forecast_DoubleExponential_initialGamma, Forecast_DoubleExponential_minGamma,*
-    *Forecast_DoubleExponential_maxGamma*:
-  | Specifies the initial value and the allowed range of the trend smoothing
-    parameter in the double exponential forecasting method.
-  | The allowed range is between 0 and 1.
-
-* | *Forecast_DoubleExponential_dampenTrend*:
-  | Specifies how the trend is dampened for future buckets.
-  | The allowed range is between 0 and 1, and the default value is 0.8.
-
-* | *Forecast_Seasonal_initialAlfa, Forecast_Seasonal_minAlfa,*
-    *Forecast_Seasonal_maxAlfa*:
-  | Specifies the initial value and the allowed range of the smoothing parameter
-    in the seasonal forecasting method.
-  | The allowed range is between 0 and 1. Values lower than about 0.05 are not
-    advisible.
-
-* | *Forecast_Seasonal_initialBeta, Forecast_Seasonal_minBeta,*
-    *Forecast_Seasonal_maxBeta*:
-  | Specifies the initial value and the allowed range of the trend smoothing
-    parameter in the seasonal forecasting method.
-  | The allowed range is between 0 and 1.
-
-* | *Forecast_Seasonal_initialGamma, Forecast_Seasonal_minGamma,*
-    *Forecast_Seasonal_maxGamma*:
-  | Specifies the initial value and the allowed range of the seasonal
-    smoothing parameter in the seasonal forecasting method.
-  | The allowed range is between 0 and 1.
-
-* | *Forecast_Seasonal_minPeriod, Forecast_Seasonal_maxPeriod*:
-  | Specifies the periodicity of the seasonal cycles to check for.
-  | The interval of cycles we try to detect should be broad enough. For
-    instance, if we expect to find a yearly cycle use a minimum period of 10
-    and maximum period of 14.
-
-* | *Forecast_Seasonal_dampenTrend*:
-  | Specifies how the trend is dampened for future buckets.
-  | The allowed range is between 0 and 1, and the default value is 0.8.
-
-* | *Forecast_Croston_initialAlfa, Forecast_Croston_minAlfa,*
-    *Forecast_Croston_maxAlfa*:
-  | Specifies the initial value and the allowed range of the smoothing
-    parameter in the Croston forecasting method.
-  | The allowed range is between 0 and 1. Values lower than about 0.05 are
-    not advisable.
-
-* | *Forecast_Croston_minIntermittence*:
-  | Minimum intermittence (defined as the percentage of zero demand buckets)
-    before the Croston method is applied.
-  | When the intermittence exceeds this value, only Croston and moving average
-    are considered suitable forecast methods.
-  | The default value is 0.33.
+Detailed documentation of the module and its configuration parameters is available on our customer portal.
 
 **Example Python code**
 

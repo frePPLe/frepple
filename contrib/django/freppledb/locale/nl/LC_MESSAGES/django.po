@@ -11,7 +11,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
-"Project-Id-Version: 3.1\n"
+"Project-Id-Version: 3.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-03 14:34+0100\n"
 "PO-Revision-Date: 2016-03-04 16:11+0100\n"

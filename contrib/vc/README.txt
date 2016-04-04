@@ -12,14 +12,16 @@ Using more recent versions of Visual Studio will NOT work: Python and its
 extension modules are all compiled with Visual C++ 2010, and frePPle
 needs to use the same compiler and C runtime libraries.
 
+FrePPLe can be compiled in 64-bit or 32-bit. However, we are not actively
+testing and developing on the 32-bit version any longer.
 
 PREREQUISITES
 -------------
 
 1. Install Visual Studio 2010 SP1 (aka vc10)
 2. Install xerces-c 3.1.1*
-   Installing the 32-bit pre-compiled binaries for vc10 are easiest.
-3. Install Python 3.2 or higher
+   Installing the pre-compiled binaries for vc10 are easiest.
+3. Install Python 3.4 or higher
 
 
 BUILD INSTRUCTIONS FROM THE COMMAND LINE

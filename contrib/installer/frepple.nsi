@@ -145,9 +145,15 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "frePPLe community edition installer"
 
+!ifdef 64BIT
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+!else
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION} 32bit"
+OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_32bit_setup.exe"
+BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} 32bit"
+!endif
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show

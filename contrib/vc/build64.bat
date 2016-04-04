@@ -3,8 +3,8 @@ rem Build frePPLe with Microsoft Visual C++ 2010 (vc10)
 setlocal
 
 rem EDIT THIS SECTION TO MATCH YOUR INSTALLATION
-set PYTHON=C:\develop\python34
-set XERCES=C:\develop\xerces-c-3.1.1-x86-windows-vc-10.0
+set PYTHON=C:\develop\python34_64bit
+set XERCES=C:\develop\xerces-c-3.1.1-x86_64-windows-vc-10.0
 set DOTNET=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
 
 rem DETECT VISUAL STUDIO C++ 10.0
@@ -27,8 +27,8 @@ if "%1"=="-r" (set build="/t:rebuild") & shift & goto CheckOpts
 if "%1"=="-d" (set conf=Debug) & shift & goto CheckOpts
 
 rem BUILD THE PROJECT
-call "%VC%\vcvarsall"
+call "%VC%\vcvarsall" x86_amd64
 set INCLUDE=%PYTHON%\include;%XERCES%\include;%INCLUDE%
 set LIB=%PYTHON%\libs;%XERCES%\lib;%LIB%
 
-"%DOTNET%\msbuild.exe" %build% /m /p:useenv=true /p:showenv=true frepple.sln "/p:Configuration=%conf%"
+"%DOTNET%\msbuild.exe" %build% /m /p:useenv=true /p:showenv=true frepple.sln "/p:Configuration=%conf%" /p:Platform=x64

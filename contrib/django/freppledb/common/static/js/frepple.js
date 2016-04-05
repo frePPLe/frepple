@@ -424,7 +424,7 @@ var grid = {
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
   var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
-  icons = {
+  iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-chevron-up',
@@ -441,12 +441,12 @@ var grid = {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $("#" + iRow + '_' + cellname).on('focusin', function() {
         $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
-        $(this).datetimepicker({format: 'YYYY-MM-DD', useCurrent: false, calendarWeeks: true, icons, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
+        $(this).datetimepicker({format: 'YYYY-MM-DD', useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
       });
     else
       $("#" + iRow + '_' + cellname).on('focusin', function() {
         $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
-        $(this).datetimepicker({format: 'YYYY-MM-DD HH:mm:ss', useCurrent: false, calendarWeeks: true, icons, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
+        $(this).datetimepicker({format: 'YYYY-MM-DD HH:mm:ss', useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: {horizontal: 'auto', vertical: (iRow < 11 ?'bottom':'auto')}});
       });
   }
   else
@@ -533,7 +533,7 @@ var grid = {
     // Show popup
     $('#popup').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    icons = {
+    iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-clock-o',
@@ -544,8 +544,8 @@ var grid = {
       clear: 'fa fa-trash',
       close: 'fa fa-remove'
     };
-    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
-    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
+    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
     $("#horizonstart").on("dp.change", function (selected) {
       $("#horizonend").data("DateTimePicker").minDate(selected.date);
     });

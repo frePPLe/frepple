@@ -409,12 +409,12 @@ You can use it as a guideline and inspiration for your own deployments.
 ::
 
   # Update and Upgrade
+  sudo zypper refresh
   sudo zypper update
-  sudo zypper upgrade
 
   # Install the PostgreSQL database
   # tip: "sudo zypper se PACKAGENAME" to look for the correct package names
-  sudo zypper install postgresql94 postgresql94-server postgres94-devel
+  sudo zypper install postgresql94 postgresql94-server postgresql94-devel
 
   # Note: frePPLe requires packages that may not be present in the basic Suse Enterprise Server repositories so you may need to add these repositories and install:
   sudo zypper addrepo http://download.opensuse.org/repositories/Apache:Modules/SLE_12_SP1/Apache:Modules.repo
@@ -426,13 +426,13 @@ You can use it as a guideline and inspiration for your own deployments.
 
   # Create user, create databases, configure access
   sudo su
-  rcpostgresql start
+  sudo systemctl start postgresql
   su - postgres
   psql
   postgres=# ALTER USER postgres WITH PASSWORD 'postgres';
   postgres=# \q
   exit
-  rcpostgresql restart
+  sudo systemctl restart postgresql
   su - postgres
   psql -dpostgres -c "create user frepple with password 'frepple'"
   psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
@@ -442,8 +442,8 @@ You can use it as a guideline and inspiration for your own deployments.
   exit
   # Allow local connections to the database using a username and password.
   # The default peer authentication isn't good for frepple.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)md5/local\1all\2all\3\md5/g' /var/lib/pgsql/data/pg_hba.conf
-  rcpostgrsql restart
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /var/lib/pgsql/data/pg_hba.conf
+  sudo systemctl restart postgresql
 
   # Install python3 and required python modules
   sudo zypper install python3 python3-pip
@@ -451,8 +451,14 @@ You can use it as a guideline and inspiration for your own deployments.
   sudo pip3 install -r requirements.txt
 
   #install Apache2 modules:
-  sudo a2enmod enable mod_access_compat mod_deflate
+  sudo a2enmod mod_access_compat mod_deflate
   sudo systemctl restart apache2
+  #for some reason some modules may not be loading in apache
+  #use "sudo httpd -t" to check is the syntax is ok
+  #is there are errors you may need to edit  "/etc/apache2/loadmodule.conf" and add the modules:
+  # LoadModule wsgi_module                               /usr/lib64/apache2/mod_wsgi.so
+  # LoadModule access_compat_module                 /usr/lib64/apache2/mod_access_compat.so
+  # LoadModule deflate_module                            /usr/lib64/apache2/mod_deflate.so
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.
@@ -462,4 +468,4 @@ You can use it as a guideline and inspiration for your own deployments.
   sudo zypper install *.rpm
 
   # Create frepple database schema
-  frepplectl migrate --noinput
+  sudo frepplectl migrate --noinput

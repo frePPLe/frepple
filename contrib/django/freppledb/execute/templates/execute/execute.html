@@ -165,7 +165,7 @@
   }
 
   $(function() {
-    icons = {
+    iconslist = {
         time: 'fa fa-clock-o',
         date: 'fa fa-calendar',
         up: 'fa fa-chevron-up',
@@ -179,7 +179,7 @@
     // Date picker
     $(".vDateField").on('focusin', function() {
       $(this).parent().css('position', 'relative');
-      $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons, locale: document.documentElement.lang});
+      $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
     });
 
     {% if not "refresh" in preferences or preferences.refresh %}

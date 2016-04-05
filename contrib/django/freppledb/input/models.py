@@ -307,10 +307,9 @@ class Buffer(AuditModel, HierarchyModel):
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   type = models.CharField(_('type'), max_length=20, null=True, blank=True, choices=types, default='default')
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), null=True,
-    blank=True, db_index=True
+    Location, verbose_name=_('location'), db_index=True
     )
-  item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True, null=True)
+  item = models.ForeignKey(Item, verbose_name=_('item'), db_index=True)
   onhand = models.DecimalField(
     _('onhand'), null=True, blank=True,
     max_digits=15, decimal_places=4,
@@ -401,6 +400,7 @@ class Buffer(AuditModel, HierarchyModel):
     verbose_name = _('buffer')
     verbose_name_plural = _('buffers')
     ordering = ['name']
+    unique_together = (('item', 'location'),)
 
 
 class SetupMatrix(AuditModel):
@@ -1092,13 +1092,13 @@ class Demand(AuditModel, HierarchyModel):
     _('subcategory'), max_length=300, null=True, blank=True, db_index=True
     )
   customer = models.ForeignKey(
-    Customer, verbose_name=_('customer'), null=True, blank=True, db_index=True
+    Customer, verbose_name=_('customer'), db_index=True
     )
   item = models.ForeignKey(
-    Item, verbose_name=_('item'), null=True, blank=True, db_index=True
+    Item, verbose_name=_('item'), db_index=True
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), null=True, blank=True, db_index=True
+    Location, verbose_name=_('location'), db_index=True
     )
   due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
   status = models.CharField(

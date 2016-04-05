@@ -129,31 +129,31 @@ $(function() {
 	<div class="btn-group" role="group">
 
 		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
-		  <label for="gridmode" class="fa fa-table"></label>
+		  <span for="gridmode" class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
 		</button>
 		<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
-		  <label class="fa fa-image"></label>
+		  <span class="fa fa-picture-o fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
 		</button>
 
 	</div>
 	{% endif %}
 	{% if reportclass.filterable and not args.0 %}
-	  <button class="btn btn-xs btn-primary">
-	    <span onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search"></span>
+	  <button class="btn btn-xs btn-primary" onclick="grid.showFilter()">
+	    <span data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search"></span>
 	  </button>
 	{% endif %}
 	{% if reportclass.hasTimeBuckets %}
-	  <button class="btn btn-xs btn-primary">
-	    <span onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o"></span>
+	  <button class="btn btn-xs btn-primary" onclick="grid.showBucket()">
+	    <span data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o"></span>
 	  </button>
   {% endif %}
   {% if reportclass.editable and haschangeperm %}
-	    <button class="btn btn-xs btn-primary">
-        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()" class="fa fa-arrow-up"></span>
+	    <button class="btn btn-xs btn-primary" onclick="import_show()" >
+        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-up"></span>
 	    </button>
   {% endif %}
-		  <button class="btn btn-xs btn-primary">
-		    <span onclick="grid.showExport(false)" data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
+		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false)" >
+		    <span data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 		  </button>
 	</div>
 </div>

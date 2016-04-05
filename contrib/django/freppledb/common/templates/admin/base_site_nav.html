@@ -69,29 +69,30 @@ $(function() {
 			{% endif %}
 		</div>
 
-  <div class="row breadcrumbrow">
-	  <div class="col-md-10">
-	   <span>
-	     <ol class="breadcrumb" id="breadcrumbs">
-	       <li><a id="cockpitcrumb" href="{{request.prefix}}/">{% trans 'cockpit'|capfirst %}</a></li>
-	       {% crumbs %}
-	     </ol>
-	   </span>
-	  </div>
-<div class="col-md-2">
-  <div class="selectdb pull-right">
-	{% if user.scenarios|length > 1 %}
-		<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
-		{{ request.database }}&nbsp;<span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" aria-labelledby="database">
-		{% for db in user.scenarios %}<li><a>{{ db }}</a></li>{% endfor %}
-		</ul>
-	{% endif %}
-	</div>
-</div>
+	  <div class="row breadcrumbrow">
+		  <div class="col-sm-10">
+		   <span>
+		     <ol class="breadcrumb" id="breadcrumbs">
+		       <li><a id="cockpitcrumb" href="{{request.prefix}}/">{% trans 'cockpit'|capfirst %}</a></li>
+		       {% crumbs %}
+		     </ol>
+		   </span>
+		  </div>
 
-	</div> <!--  end of container -->
+			<div class="col-sm-2 pull-right">
+			  <div class="selectdb ">
+				{% if user.scenarios|length > 1 %}
+					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
+					{{ request.database }}&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="database">
+					{% for db in user.scenarios %}<li><a>{{ db }}</a></li>{% endfor %}
+					</ul>
+				{% endif %}
+				</div>
+			</div>
+	  </div>
+  </div> <!--  end of container -->
 </nav>
 
 {% endblock %}

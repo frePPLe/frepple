@@ -1112,7 +1112,7 @@ function about_show()
       $('#timebuckets').modal('hide');
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').modal({keyboard: false, backdrop:'static'});
-      var content = '<div class="modal-dialog" style="width: 400px;">'+
+      var content = '<div class="modal-dialog" style="width: 450px;">'+
          '<div class="modal-content">'+
            '<div class="modal-header">'+
              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -1122,15 +1122,15 @@ function about_show()
              '<div class="row">';
       content += '' +
                '<div class="col-sm-5"><br/><br/>' +
-                 '<p><a href="https://frepple.com/"><strong>frePPLe website</strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/docs/3.1/license.html"><strong>License information</strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/documentation/"><strong>Documentation</strong></a></p>' +
+                 '<p><a href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+                 '<p><a href="https://frepple.com/docs/' + data.version + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+                 '<p><a href="https://frepple.com/docs/' + data.version + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
                '</div>' +
 
-               '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong><br/>&nbsp;&nbsp;";
+               '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
       for (var i in data.apps)
-          content += data.apps[i] + '<br>&nbsp;&nbsp;';
-      content += '<br/>' + '</p>' + '</div>' +
+          content += '<br>&nbsp;&nbsp;' + data.apps[i];
+      content += '</div>' +
              '</div>'+
            '</div>'+
          '</div>'+

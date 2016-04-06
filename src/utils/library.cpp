@@ -517,7 +517,9 @@ DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
 }
 
 
-Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDict& in)
+Object* MetaCategory::ControllerDefault (
+  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
+  )
 {
   Action act = MetaClass::decodeAction(in);
   switch (act)
@@ -559,6 +561,10 @@ Object* MetaCategory::ControllerDefault (const MetaClass* cat, const DataValueDi
         delete result;
         throw DataException("Can't create object");
       }
+
+      // Report the creation to the manager
+      if (mgr)
+        mgr->add(new CommandCreateObject(result));
 
       // Creation accepted
       return result;

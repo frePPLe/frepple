@@ -63,8 +63,9 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 }
 
 
-DECLARE_EXPORT Object* OperationPlan::createOperationPlan
-(const MetaClass* cat, const DataValueDict& in)
+DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
+  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
+  )
 {
   // Pick up the action attribute
   Action action = MetaClass::decodeAction(in);
@@ -203,6 +204,11 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan
         opplan->setStatus(status);
     }
     opplan->activate();
+
+    // Report the operationplan creation to the manager
+    if (mgr)
+        mgr->add(new CommandCreateObject(opplan));
+
     return opplan;
   }
 }

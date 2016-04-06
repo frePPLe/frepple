@@ -426,7 +426,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
     #ifdef PARSE_DEBUG
     logger << "Updating field " << data[dataindex].field->getName().getName() << " on the root object" << endl;
     #endif
-    data[dataindex].field->setField(objects[objectindex].object, data[dataindex].value);
+    data[dataindex].field->setField(objects[objectindex].object, data[dataindex].value, getCommandManager());
     --dataindex;
   }
 
@@ -488,7 +488,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 objects[objectindex-1].object =
                   objects[objectindex-1].cls->category->readFunction(
                     objects[objectindex-1].cls,
-                    dict_parent
+                    dict_parent,
+                    getCommandManager()
                     );
               }
               else
@@ -497,7 +498,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 objects[objectindex-1].object =
                   static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction(
                     objects[objectindex-1].cls,
-                    dict_parent
+                    dict_parent,
+                    getCommandManager()
                     );
               }
               // Set fields already available now on the parent object
@@ -507,7 +509,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                   continue;
                 if (data[idx].field && !data[idx].field->isGroup())
                 {
-                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
+                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value, getCommandManager());
                     data[idx].field = NULL; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
@@ -558,7 +560,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 objects[objectindex-1].object =
                   objects[objectindex-1].cls->category->readFunction(
                     objects[objectindex-1].cls,
-                    dict_parent
+                    dict_parent,
+                    getCommandManager()
                     );
               }
               else
@@ -567,7 +570,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 objects[objectindex-1].object =
                   static_cast<const MetaCategory*>(objects[objectindex-1].cls)->readFunction(
                     objects[objectindex-1].cls,
-                    dict_parent
+                    dict_parent,
+                    getCommandManager()
                     );
               }
               // Set fields already available now on the parent object
@@ -577,7 +581,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                   continue;
                 if (data[idx].field && !data[idx].field->isGroup())
                 {
-                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value);
+                    data[idx].field->setField(objects[objectindex-1].object, data[idx].value, getCommandManager());
                     data[idx].field = NULL; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
@@ -622,7 +626,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         objects[objectindex].object =
           objects[objectindex].cls->category->readFunction(
             objects[objectindex].cls,
-            dict
+            dict,
+            getCommandManager()
             );
       }
       else
@@ -631,7 +636,8 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         objects[objectindex].object =
           static_cast<const MetaCategory*>(objects[objectindex].cls)->readFunction(
             objects[objectindex].cls,
-            dict
+            dict,
+            getCommandManager()
             );
       }
     }
@@ -644,7 +650,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         if (data[idx].hash == Tags::type.getHash() || data[idx].hash == Tags::action.getHash())
           continue;
         if (data[idx].field && !data[idx].field->isGroup())
-          data[idx].field->setField(objects[objectindex].object, data[idx].value);
+          data[idx].field->setField(objects[objectindex].object, data[idx].value, getCommandManager());
         else if (data[idx].hash == Tags::booleanproperty.getHash())
           objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
         else if (data[idx].hash == Tags::dateproperty.getHash())

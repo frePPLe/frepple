@@ -180,7 +180,9 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     /** This is a factory method that creates a new bucket in a calendar.<br>
       * It uses the calendar and id fields to identify existing buckets.
       */
-    static DECLARE_EXPORT Object* createBucket(const MetaClass*, const DataValueDict&);
+    static DECLARE_EXPORT Object* createBucket(
+      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      );
 
     /** Update the calendar owning the bucket.<br>
       * TODO You cannot reassign a bucket once it's assigned to a calendar.
@@ -1740,7 +1742,9 @@ class OperationPlan
 
     /** This is a factory method that creates an operationplan pointer based
       * on the operation and id. */
-    static DECLARE_EXPORT Object* createOperationPlan(const MetaClass*, const DataValueDict&);
+    static DECLARE_EXPORT Object* createOperationPlan(
+      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      );
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();

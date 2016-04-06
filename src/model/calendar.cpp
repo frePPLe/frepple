@@ -322,7 +322,7 @@ DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
 
 
 DECLARE_EXPORT Object* CalendarBucket::createBucket(
-  const MetaClass* cat, const DataValueDict& atts
+  const MetaClass* cat, const DataValueDict& atts, CommandManager* mgr
   )
 {
   // Pick up the calendar and id fields
@@ -349,7 +349,10 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
       }
       result = new CalendarBucket();
       result->setId(id);
-      if (cal) result->setCalendar(cal);
+      if (cal)
+        result->setCalendar(cal);
+      if (mgr)
+        mgr->add(new CommandCreateObject(result));
       return result;
     case CHANGE:
       // Only changes are allowed
@@ -382,7 +385,10 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
         // Adding a new bucket
         result = new CalendarBucket();
         result->setId(id);
-        if (cal) result->setCalendar(cal);
+        if (cal)
+          result->setCalendar(cal);
+        if (mgr)
+          mgr->add(new CommandCreateObject(result));
       }
       return result;
   }

@@ -208,6 +208,7 @@ class PythonFunction;
 template<class T, class U> class PythonIterator;
 class DataValueDict;
 class MetaClass;
+class CommandManager;
 template<class T> class MetaFieldDate;
 template<class T> class MetaFieldDouble;
 template<class T> class MetaFieldBool;
@@ -1678,7 +1679,7 @@ class MetaFieldBase
     }
 
     /** Function to update a field given a data value. */
-    virtual void setField(Object*, const DataValue&) const = 0;
+    virtual void setField(Object*, const DataValue&, CommandManager* = NULL) const = 0;
 
     /** Function to retrieve a field value. */
     virtual void getField(Object*, DataValue&) const = 0;
@@ -2140,12 +2141,14 @@ class MetaCategory : public MetaClass
     typedef Object* (*findController)(const DataValueDict&);
 
     /** Type definition for the read control function. */
-    typedef Object* (*readController)(const MetaClass*, const DataValueDict&);
+    typedef Object* (*readController)(const MetaClass*, const DataValueDict&, CommandManager*);
 
     /** This template method is available as a object creation factory for
       * classes without key fields and which rely on a default constructor.
       */
-    static Object* ControllerDefault (const MetaClass*, const DataValueDict&);
+    static Object* ControllerDefault (
+      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      );
 
     /** Destructor. */
     virtual ~MetaCategory() {}
@@ -2877,6 +2880,14 @@ class XMLData : public DataValue
     /** Constructor. */
     XMLData(const string& v) : m_strData(v), m_obj(NULL) {}
 
+    /** Copy constructor from DataValue base class. */
+    XMLData(const DataValue& d)
+    {
+      m_obj = d.getObject();
+      if (!m_obj)
+        m_strData = d.getString();
+    }
+
     /** Destructor. */
     virtual ~XMLData() {}
 
@@ -2968,34 +2979,42 @@ class XMLData : public DataValue
       return m_obj;
     }
 
-    virtual void setLong(const long)
+    virtual void setLong(const long l)
     {
-      throw LogicException("Not implemented on XMLData");
+      std::ostringstream o;
+      o << l;
+      m_strData = o.str();
     }
 
-    virtual void setUnsignedLong(const unsigned long)
+    virtual void setUnsignedLong(const unsigned long l)
     {
-      throw LogicException("Not implemented on XMLData");
+      std::ostringstream o;
+      o << l;
+      m_strData = o.str();
     }
 
-    virtual void setDuration(const Duration)
+    virtual void setDuration(const Duration d)
     {
-      throw LogicException("Not implemented on XMLData");
+      m_strData = d;
     }
 
-    virtual void setInt(const int)
+    virtual void setInt(const int i)
     {
-      throw LogicException("Not implemented on XMLData");
+      std::ostringstream o;
+      o << i;
+      m_strData = o.str();
     }
 
-    virtual void setDouble(const double)
+    virtual void setDouble(const double d)
     {
-      throw LogicException("Not implemented on XMLData");
+      std::ostringstream o;
+      o << d;
+      m_strData = o.str();
     }
 
-    virtual void setDate(const Date)
+    virtual void setDate(const Date d)
     {
-      throw LogicException("Not implemented on XMLData");
+      m_strData = d;
     }
 
     virtual void setString(const string& v)
@@ -3004,9 +3023,9 @@ class XMLData : public DataValue
       m_obj = NULL;
     }
 
-    virtual void setBool(const bool)
+    virtual void setBool(const bool b)
     {
-      throw LogicException("Not implemented on XMLData");
+      m_strData = b ? "true" : "false";
     }
 
     virtual void setObject(Object* o)
@@ -4543,9 +4562,13 @@ class Command
       */
     virtual void redo() {};
 
-    /** Destructor. */
+    /** Virtual destructor. */
     virtual ~Command() {};
 
+    Command* getNext() const
+    {
+      return next;
+    }
   private:
     /** Points to the commandlist which owns this command. The default value
       * is NULL, meaning there is no owner. */
@@ -4558,6 +4581,143 @@ class Command
     /** Points to the previous command in the owner command list.<br>
       * The commands are chained in a double linked list data structure. */
     Command *prev;
+};
+
+
+/** @brief A command to update a field on an object. */
+class CommandSetField : public Command
+{
+  private:
+    Object* obj;
+    const MetaFieldBase *fld;
+    XMLData olddata;
+    XMLData newdata;
+  public:
+    /** Constructor. */
+    DECLARE_EXPORT CommandSetField(Object *o, const MetaFieldBase *f, const DataValue& d)
+      : obj(o), fld(f), newdata(d)
+    {
+      if (!obj || !fld)
+        return;
+      fld->getField(obj, olddata);
+    }
+
+    /** Destructor. */
+    virtual ~CommandSetField()
+    {
+      if (obj && fld)
+        fld->setField(obj, olddata);
+    }
+
+    /** Undoes the field change. */
+    virtual DECLARE_EXPORT void rollback()
+    {
+      if (!obj || !fld)
+        return;
+      fld->setField(obj, olddata);
+      obj = NULL;
+      fld = NULL;
+    }
+
+    /** Committing the change - nothing to be done as the change
+      * is realized when creating the command. */
+    virtual DECLARE_EXPORT void commit()
+    {
+      obj = NULL;
+      fld = NULL;
+    }
+
+    /** Undoes the field change. */
+    virtual DECLARE_EXPORT void undo()
+    {
+      if (!obj || !fld)
+        return;
+      fld->setField(obj, olddata);
+    }
+
+    /** Redo the field change. */
+    virtual DECLARE_EXPORT void redo()
+    {
+      if (!obj || !fld)
+        return;
+      fld->setField(obj, newdata);
+    }
+
+    void clearObject()
+    {
+      obj = NULL;
+    }
+
+    Object* getObject()
+    {
+      return obj;
+    }
+};
+
+
+/** @brief A command to create a new object.
+  *
+  * The object is already created when the command is created. This command
+  * then allows to undo that creation.
+  * It doesn't support recreation of the object at a later stage.
+  */
+class CommandCreateObject : public Command
+{
+  private:
+    Object* obj;
+  public:
+    /** Constructor. */
+    DECLARE_EXPORT CommandCreateObject(Object *o) : obj(o) { logger << " create command " << o << endl; }
+
+    /** Destructor. */
+    virtual ~CommandCreateObject()
+    {
+      if (obj) undo();
+    }
+
+    /** Undoes the creation change. */
+    virtual DECLARE_EXPORT void rollback()
+    {
+      if (obj) undo();
+    }
+
+    /** Committing the change - nothing to be done as the change
+      * is realized before the command is created.
+      */
+    virtual DECLARE_EXPORT void commit()
+    {
+      obj = NULL;
+    }
+
+    /** Undoes the creation. */
+    virtual DECLARE_EXPORT void undo()
+    {
+      if (!obj)
+        return;
+
+      // Check for setfield commands on this object, and invalidate them.
+      //
+      // TODO: The undo is limited to the current command list. If there
+      // are multiple bookmarks in the command manager we only undo a
+      // part of the commands. For most practical purposes the current
+      // behavior will be sufficient.
+      for (Command* cmd = getNext(); cmd; cmd = cmd->getNext())
+      {
+        CommandSetField *cmd_set = dynamic_cast<CommandSetField*>(cmd);
+        if (cmd_set && cmd_set->getObject() == obj)
+          cmd_set->clearObject();
+      }
+
+      // Actual deletion
+      delete obj;
+      obj = NULL;
+    }
+
+    /** Redoing the creation isn't possible and throws an exception. */
+    virtual DECLARE_EXPORT void redo()
+    {
+      throw DataException("Can't redo a create command");
+    }
 };
 
 
@@ -4945,7 +5105,19 @@ class DataInput
 {
   public:
     /** Default constructor. */
-    explicit DataInput() : user_exit_cpp(NULL) {}
+    explicit DataInput() : user_exit_cpp(NULL), cmds(NULL) {}
+
+    /** Update the command manager used to track all changes. */
+    void setCommandManager(CommandManager* c)
+    {
+      cmds = c;
+    }
+
+    /** Return the command manager used to track all changes. */
+    CommandManager *getCommandManager() const
+    {
+      return cmds;
+    }
 
     /** Return the source field that will be populated on each object created
       * or updated from the XML data.
@@ -5003,6 +5175,9 @@ class DataInput
 
     /** A second type of callback function. This time called from C++. */
     callback user_exit_cpp;
+
+    /** A command manager used to track changes applied from the input. */
+    CommandManager* cmds;
 };
 
 
@@ -5231,7 +5406,9 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       *   'add_change' is the default value.
       * @see HasName
       */
-    static Object* reader (const MetaClass* cat, const DataValueDict& in)
+    static Object* reader (
+      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
+      )
     {
       // Pick up the action attribute
       Action act = MetaClass::decodeAction(in);
@@ -5323,6 +5500,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         delete x;
         throw DataException("Can't create object " + name);
       }
+
+      // Report the creation of the object with the manager
+      if (mgr)
+        mgr->add(new CommandCreateObject(x));
 
       return x;
     }
@@ -6247,7 +6428,9 @@ template <class A, class B, class C> class Association
         }
     };
 
-    static Object* reader(const MetaClass* cat, const DataValueDict& in)
+    static Object* reader(
+      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
+      )
     {
       // Pick up the action attribute
       Action act = MetaClass::decodeAction(in);
@@ -6299,6 +6482,10 @@ template <class A, class B, class C> class Association
             throw DataException("Can't create object");
           }
 
+          // Report the object creation to the manager
+          if (mgr)
+            mgr->add(new CommandCreateObject(result));
+
           // Creation accepted
           return result;
       }
@@ -6334,7 +6521,7 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6342,6 +6529,8 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getString());
     }
 
@@ -6394,7 +6583,7 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6402,6 +6591,8 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getBool());
     }
 
@@ -6449,7 +6640,7 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6457,6 +6648,8 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getDouble());
     }
 
@@ -6504,7 +6697,7 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6512,6 +6705,8 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getInt());
     }
 
@@ -6559,7 +6754,7 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6567,6 +6762,8 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getString());
     }
 
@@ -6614,7 +6811,7 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6622,6 +6819,8 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getInt());
     }
 
@@ -6669,7 +6868,7 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6677,6 +6876,8 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getUnsignedLong());
     }
 
@@ -6724,7 +6925,7 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6732,6 +6933,8 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getDuration());
     }
 
@@ -6779,7 +6982,7 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6787,6 +6990,8 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(Duration::parse2double(el.getString().c_str()));
     }
 
@@ -6838,7 +7043,7 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6846,6 +7051,8 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
+      if (cmd)
+        cmd->add(new CommandSetField(me, this, el));
       (static_cast<Cls*>(me)->*setf)(el.getDate());
     }
 
@@ -6892,7 +7099,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
       if (setf == NULL)
       {
@@ -6905,7 +7112,11 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         (obj->getType().category && *(obj->getType().category) == *(Ptr::metadata))
         || obj->getType() == *(Ptr::metadata)))
         )
+      {
+        if (cmd)
+          cmd->add(new CommandSetField(me, this, el));
         (static_cast<Cls*>(me)->*setf)(obj);
+      }
       else
       {
         ostringstream o;
@@ -6967,7 +7178,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         unsigned int c = BASE
         ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
-    virtual void setField(Object* me, const DataValue& el) const {}
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const {}
 
     virtual void getField(Object* me, DataValue& el) const
     {
@@ -7064,7 +7275,7 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
         throw DataException("Getter function can't be NULL");
     };
 
-    virtual void setField(Object* me, const DataValue& el) const {}
+    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const {}
 
     virtual void getField(Object* me, DataValue& el) const
     {

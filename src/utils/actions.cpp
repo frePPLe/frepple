@@ -63,6 +63,7 @@ DECLARE_EXPORT void CommandList::rollback()
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
     i = i->prev;
+    t->next = NULL;
     delete t; // The delete is expected to also revert the change!
   }
 
@@ -91,6 +92,7 @@ DECLARE_EXPORT void CommandList::commit()
     Command *t = i;  // Temporarily store the pointer to be deleted
     i->commit();
     i = i->next;
+    t->prev = NULL;
     delete t;
   }
 
@@ -148,7 +150,9 @@ DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
       i->active = false;
     }
   }
-  if (!i) throw LogicException("Can't find bookmark to undo");
+  if (!i)
+    throw LogicException("Can't find bookmark to undo");
+  i->undo();
   currentBookmark = b->parent;
 }
 
@@ -159,7 +163,7 @@ DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 
   for (Bookmark* i = b; i; i = i->nextBookmark)
   {
-    if (i->isChildOf(b) && !i->active)
+    if (i->isChildOf(b) && i->active)
     {
       i->redo();
       i->active = true;

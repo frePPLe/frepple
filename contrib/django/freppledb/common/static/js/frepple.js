@@ -1097,7 +1097,64 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+//----------------------------------------------------------------------------
+//Display About dialog
+//----------------------------------------------------------------------------
 
+function about_show()
+{
+
+  $.ajax({
+    url: "/about/",
+    type: "GET",
+    contentType: "application/json",
+    success: function (data) {
+      $('#timebuckets').modal('hide');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      $('#popup').modal({keyboard: false, backdrop:'static'});
+      var content = '<div class="modal-dialog" style="width: 400px;">'+
+         '<div class="modal-content">'+
+           '<div class="modal-header">'+
+             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+             '<h4 class="modal-title">About frePPLe ' + data.version + '</h4>'+
+           '</div>'+
+           '<div class="modal-body">'+
+             '<div class="row">';
+      content += '' +
+               '<div class="col-sm-5"><br/><br/>' +
+                 '<p><a href="https://frepple.com/"><strong>frePPLe website</strong></a></p><br/>' +
+                 '<p><a href="https://frepple.com/docs/3.1/license.html"><strong>License information</strong></a></p><br/>' +
+                 '<p><a href="https://frepple.com/documentation/"><strong>Documentation</strong></a></p>' +
+               '</div>' +
+
+               '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong><br/>&nbsp;&nbsp;";
+      for (var i in data.apps)
+          content += data.apps[i] + '<br>&nbsp;&nbsp;';
+      content += '<br/>' + '</p>' + '</div>' +
+             '</div>'+
+           '</div>'+
+         '</div>'+
+       '</div>';
+       $('#popup').html(content).modal('show');
+      },
+    error: function (result, stat, errorThrown) {
+        $('#timebuckets').modal('hide');
+        $.jgrid.hideModal("#searchmodfbox_grid");
+        $('#popup').html('<div class="modal-dialog style="width: 400px;">'+
+                '<div class="modal-content">'+
+                  '<div class="modal-header">'+
+                    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                    '<h4 class="modal-title">About frePPLe ' + data.version + '</h4>'+
+                  '</div>'+
+                  '<div class="modal-body">'+
+                    '<p>'+'<h4 class="modal-title alert alert-danger">'+ gettext("Error reading version information")+'</h4>'+'</p>'+
+                  '</div>'+
+                '</div>'+
+            '</div>' )
+            .modal('show');
+      }
+  });
+}
 //----------------------------------------------------------------------------
 // Display import dialog for CSV-files
 //----------------------------------------------------------------------------

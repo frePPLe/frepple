@@ -70,4 +70,6 @@ urlpatterns = patterns(
   (r'^api/common/parameter/(?P<pk>(.+))/$', freppledb.common.serializers.ParameterdetailAPI.as_view()),
   (r'^api/common/comment/(?P<pk>(.+))/$', freppledb.common.serializers.CommentdetailAPI.as_view()),
   (r'^api/$', APIIndexView),
+
+  url(r'^about/$', freppledb.common.views.AboutView, name="about"),
 )

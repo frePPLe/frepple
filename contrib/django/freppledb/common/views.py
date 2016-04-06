@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
+
 from django.shortcuts import render_to_response
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -39,9 +41,18 @@ from freppledb.common.report import GridReport, GridFieldLastModified, GridField
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 
 from freppledb.admin import data_site
+from freppledb import VERSION
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+@staff_member_required
+def AboutView(request):
+  return HttpResponse(
+     content=json.dumps({'version': VERSION, 'apps': settings.INSTALLED_APPS }),
+     content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET
+     )
 
 
 @staff_member_required
@@ -208,7 +219,6 @@ def horizon(request):
   if request.method != 'POST':
     raise Http404('Only post requests allowed')
   form = HorizonForm(request.POST)
-  print(request.POST)
   if not form.is_valid():
     raise Http404('Invalid form data')
   try:
@@ -401,3 +411,4 @@ def detail(request, app, model, object_id):
 
   # Open the tab
   return newtab['viewfunc'](request, object_id)
+

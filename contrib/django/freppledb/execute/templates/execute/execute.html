@@ -94,7 +94,7 @@
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     // Create dialog box
-
+    $('#popup').modal({keyboard: false, backdrop:'static'});
     $("#popup").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header">'+
@@ -102,7 +102,7 @@
             '<h4 class="modal-title">'+gettext("Uploading spreadsheet")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" rows="10" style="width:100%; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
+          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" class="form-control" rows="10" style="resize: vertical; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
@@ -114,6 +114,8 @@
     // Upload the file
     var data = new FormData();
     data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
+    $('#uploadResponse').css('display','block');
+    $('#uploadResponse').text(gettext('Importing... pressing Close button will not stop the process.'));
     $.ajax({
       type: 'post',
       url: '{{request.prefix}}/execute/launch/importworkbook/',
@@ -410,7 +412,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		              <label>{% trans "Data file" %}:
 
                     <input class="btn btn-info form-control" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-</label>
+                  </label>
 				        </td>
 				      </tr>
 				    </table>

@@ -72,7 +72,7 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier() :
-  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
   firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   initType(metadata);
@@ -83,7 +83,7 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier() :
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) :
-  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
   firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   setSupplier(s);
@@ -97,7 +97,7 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) :
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) :
-  loc(NULL), size_minimum(1.0), size_multiple(0.0), cost(0.0),
+  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
   firstOperation(NULL), res(NULL), res_qty(1.0)
 {
   setSupplier(s);

@@ -140,31 +140,18 @@ class PathReport(GridReport):
   @classmethod
   def findDeliveries(reportclass, item, location, db):
     # Automatically detect delivery operations. This is done by looking for
-    # a buffer for this item and location combination. (Special case is when
-    # there is only a single location in the model, in which case only a match
-    # on the item is sufficient.)
-    # If this buffer results in a single buffer, we call the method to pick up
-    # its replenishing operations.
+    # a buffer for this item and location combination.
     buf = None
-    if location:
-      for b in Buffer.objects.using(db).filter(item=item, location=location):
-        if buf:
-          # More than 1 buffer found
-          return []
-        else:
-          # First buffer found
-          buf = b
-    else:
-      if Location.objects.using(db).count() > 1:
-        return []
-      # Special case: only 1 location exists, and a match on the item is enough
-      for b in Buffer.objects.using(db).filter(item=item):
-        if buf:
-          # More than 1 buffer found
-          return []
-        else:
-          # First buffer found
-          buf = b
+    # Find a buffer record
+    for b in Buffer.objects.using(db).filter(item=item, location=location):
+      buf = b
+    if not buf:
+      # Create a buffer record
+      buf = Buffer(
+        name='%s @ %s' % (item, location), 
+        item=Item.objects.using(db).get(name=item), 
+        location=Location.objects.using(db).get(name=location)
+        )
     return reportclass.findReplenishment(buf, db, 0, 1, 0, False)
 
 
@@ -197,29 +184,35 @@ class PathReport(GridReport):
     result = []
     if Location.objects.using(db).count() > 1:
       # Multiple locations
-      result.extend([
-        (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
-        for i in ItemSupplier.objects.using(db).filter(
-          Q(location__isnull=True) | (Q(location__lft__lte=buffer.location.lft) & Q(location__rght__gt=buffer.location.lft)),
-          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
-          )
-        ])
+      for i in ItemSupplier.objects.using(db).filter(
+        Q(location__isnull=True) | (Q(location__lft__lte=buffer.location.lft) & Q(location__rght__gt=buffer.location.lft)),
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
+        ):
+          i.item = buffer.item
+          i.location = buffer.location
+          result.append(
+            (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
+            )
       # TODO if the itemdistribution is at an aggregate location level, we should loop over all child locations
-      result.extend([
-        (level, None, i, curqty, 0, None, realdepth, pushsuper, i.origin.name if i.origin else None)
-        for i in ItemDistribution.objects.using(db).filter(
-          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
-          location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
-          )
-        ])
+      for i in ItemDistribution.objects.using(db).filter(
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
+        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
+        ):
+          i.item = buffer.item
+          i.location = buffer.location
+          result.append(
+            (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
+            )
     else:
       # Single location, and itemdistributions obviously aren't defined here
-      result.extend([
-        (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
-        for i in ItemSupplier.objects.using(db).filter(
-          item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
+      for i in ItemSupplier.objects.using(db).filter(
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
+        ):
+        i.item = buffer.item
+        i.location = buffer.location        
+        result.append(
+          (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
           )
-        ])
     return result
 
 
@@ -228,13 +221,13 @@ class PathReport(GridReport):
     '''
     A function that recurses upstream or downstream in the supply chain.
     '''
-    entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)[1]
-    entity = entity[0]
-    root = reportclass.getRoot(request, entity)
-
     # Update item and location hierarchies
     Item.rebuildHierarchy(database=request.database)
     Location.rebuildHierarchy(database=request.database)
+
+    entity = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)[1]
+    entity = entity[0]
+    root = reportclass.getRoot(request, entity)
 
     # Recurse over all operations
     # TODO the current logic isn't generic enough. A lot of buffers may not be explicitly
@@ -283,7 +276,8 @@ class PathReport(GridReport):
             downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False, location) )
           except Buffer.DoesNotExist:
-            pass
+            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.location.name), item=curoperation.item, location=curoperation.location)
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False, location) )
         elif isinstance(curoperation, ItemDistribution):
           name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
           optype = "distribution"
@@ -333,7 +327,8 @@ class PathReport(GridReport):
             upstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
           except Buffer.DoesNotExist:
-            pass
+            upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
+            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
         else:
           curprodflow = None
           name = curoperation.name

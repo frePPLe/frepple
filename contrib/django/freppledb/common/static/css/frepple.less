@@ -461,7 +461,6 @@ tr.ui-state-highlight {
 }
 
 .dropdown-menu {
-
   li a {
     cursor: pointer;
   }
@@ -664,6 +663,7 @@ background-color: @table-bg-accent;
   .close
 }
 
+// fix for django admin bootstraped wrong class name
 .col-md- {
     width: 100%;
     position: relative;
@@ -671,4 +671,9 @@ background-color: @table-bg-accent;
     padding-left: 15px;
     padding-right: 15px;
  }
+
+// fix for ui-jqgrid style
+.bootstrap-datetimepicker-widget {
+    white-space: initial;
+}
 

@@ -1116,7 +1116,7 @@ function about_show()
          '<div class="modal-content">'+
            '<div class="modal-header">'+
              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-             '<h4 class="modal-title">About frePPLe ' + data.version + '</h4>'+
+             '<h4 class="modal-title">About frePPLe ' + data.version + ' Community Edition</h4>'+
            '</div>'+
            '<div class="modal-body">'+
              '<div class="row">';

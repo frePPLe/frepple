@@ -518,8 +518,8 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			    <table>
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
 					  <tr>
-							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-							<td  style="padding: 0px 15px;">{% trans "Erase selected tables in the database." %}<br><br>
+							<td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" role="button" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+							<td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
 								<input class="empty_all" type="checkbox" name="all" value="1"><br>
 								{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
 								<label for="empty_{{ item.1.model | model_name }}">

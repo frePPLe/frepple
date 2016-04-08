@@ -112,6 +112,7 @@ class Command(BaseCommand):
       try:
         logger.info("starting task %d at %s" % (task.id, datetime.now()))
         background = False
+        task.started = datetime.now()
         # A
         if task.name == 'generate plan':
           kwargs = {}

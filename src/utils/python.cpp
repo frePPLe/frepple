@@ -606,8 +606,14 @@ DECLARE_EXPORT void Object::writeProperties(Serializer& o) const
 }
 
 
-DECLARE_EXPORT void Object::setProperty(const string& name, const DataValue& value, short type)
+DECLARE_EXPORT void Object::setProperty(
+  const string& name, const DataValue& value, short type, CommandManager* mgr
+  )
 {
+  // Report the change to the manager
+  if (mgr)
+    mgr->add( new CommandSetProperty(this, name, value, type));
+
   // Adding the new key-value pair to the dictionary.
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   if (!dict)
@@ -645,6 +651,74 @@ DECLARE_EXPORT void Object::setProperty(const string& name, const DataValue& val
 }
 
 
+DECLARE_EXPORT void Object::setBoolProperty(
+  const string& name, bool value
+  )
+{
+  // Adding the new key-value pair to the dictionary.
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
+  {
+    dict = PyDict_New();
+    Py_INCREF(dict);
+  }
+  PythonData val(value);
+  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT void Object::setDateProperty(
+  const string& name, Date value
+  )
+{
+  // Adding the new key-value pair to the dictionary.
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
+  {
+    dict = PyDict_New();
+    Py_INCREF(dict);
+  }
+  PythonData val(value);
+  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT void Object::setDoubleProperty(
+  const string& name, double value
+  )
+{
+  // Adding the new key-value pair to the dictionary.
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
+  {
+    dict = PyDict_New();
+    Py_INCREF(dict);
+  }
+  PythonData val(value);
+  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT void Object::setStringProperty(
+  const string& name, string value
+  )
+{
+  // Adding the new key-value pair to the dictionary.
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  if (!dict)
+  {
+    dict = PyDict_New();
+    Py_INCREF(dict);
+  }
+  PythonData val(value);
+  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  PyGILState_Release(pythonstate);
+}
+
+
 DECLARE_EXPORT void Object::setProperty(
   const string& name, PyObject* value
   )
@@ -658,6 +732,28 @@ DECLARE_EXPORT void Object::setProperty(
   // Adding the new key-value pair to the dictionary.
   // The reference count of the referenced object is increased.
   PyDict_SetItemString(dict, name.c_str(), value);
+  PyGILState_Release(pythonstate);
+}
+
+
+DECLARE_EXPORT bool Object::hasProperty(const string& name) const
+{
+  if (!dict)
+    return false;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
+  bool result = lkp ? true : false;
+  PyGILState_Release(pythonstate);
+  return result;
+}
+
+
+DECLARE_EXPORT void Object::deleteProperty(const string& name)
+{
+  if (!dict)
+    return;
+  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  PyDict_DelItemString(dict, name.c_str());
   PyGILState_Release(pythonstate);
 }
 

@@ -513,13 +513,21 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                     data[idx].field = NULL; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 1, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::dateproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 2, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::doubleproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 3, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::stringproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 4, getCommandManager()
+                    );
               }
 
             }
@@ -585,13 +593,21 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                     data[idx].field = NULL; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 1, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::dateproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 2, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::doubleproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 3, getCommandManager()
+                    );
                 else if (data[idx].hash == Tags::stringproperty.getHash())
-                  objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
+                  objects[objectindex].object->setProperty(
+                    data[idx].name, data[idx].value, 4, getCommandManager()
+                    );
               }
             }
             // Add reference to parent to the current dict
@@ -652,13 +668,21 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
         if (data[idx].field && !data[idx].field->isGroup())
           data[idx].field->setField(objects[objectindex].object, data[idx].value, getCommandManager());
         else if (data[idx].hash == Tags::booleanproperty.getHash())
-          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 1);
+          objects[objectindex].object->setProperty(
+            data[idx].name, data[idx].value, 1, getCommandManager()
+            );
         else if (data[idx].hash == Tags::dateproperty.getHash())
-          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 2);
+          objects[objectindex].object->setProperty(
+            data[idx].name, data[idx].value, 2, getCommandManager()
+            );
         else if (data[idx].hash == Tags::doubleproperty.getHash())
-          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 3);
+          objects[objectindex].object->setProperty(
+            data[idx].name, data[idx].value, 3, getCommandManager()
+            );
         else if (data[idx].hash == Tags::stringproperty.getHash())
-          objects[objectindex].object->setProperty(data[idx].name, data[idx].value, 4);
+          objects[objectindex].object->setProperty(
+            data[idx].name, data[idx].value, 4, getCommandManager()
+            );
       }
     }
 

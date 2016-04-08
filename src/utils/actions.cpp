@@ -242,6 +242,172 @@ DECLARE_EXPORT void CommandManager::rollback()
 
 
 //
+// COMMAND SETPROPERTY
+//
+
+
+DECLARE_EXPORT CommandSetProperty::CommandSetProperty(
+  Object *o, const string& nm, const DataValue& value, short tp
+  ) : obj(o), name(nm), type(tp)
+{
+  if (!o || nm.empty())
+    return;
+
+  // Store old value
+  old_exists = o->hasProperty(name);
+  if (old_exists)
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        old_bool = obj->getBoolProperty(name);
+        break;
+      case 2: // Date
+        old_date = obj->getDateProperty(name);
+        break;
+      case 3: // Double
+        old_double = obj->getDoubleProperty(name);
+        break;
+      case 4: // String
+        old_string = obj->getStringProperty(name);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+
+DECLARE_EXPORT void CommandSetProperty::undo()
+{
+  if (!obj || name.empty())
+    return;
+
+  if (old_exists)
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        {
+        bool tmp_bool = obj->getBoolProperty(name);
+        obj->setBoolProperty(name, old_bool);
+        old_bool = tmp_bool;
+        }
+        break;
+      case 2: // Date
+        {
+        Date tmp_date = obj->getDateProperty(name);
+        obj->setDateProperty(name, old_date);
+        old_date = tmp_date;
+        }
+        break;
+      case 3: // Double
+        {
+        double tmp_double = obj->getDateProperty(name);
+        obj->setDoubleProperty(name, old_double);
+        old_double = tmp_double;
+        }
+        break;
+      case 4: // String
+        {
+        string tmp_string = obj->getStringProperty(name);
+        obj->setStringProperty(name, old_string);
+        old_string = tmp_string;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  else
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        old_bool = obj->getBoolProperty(name);
+        break;
+      case 2: // Date
+        old_date = obj->getDateProperty(name);
+        break;
+      case 3: // Double
+        old_double = obj->getDoubleProperty(name);
+        break;
+      case 4: // String
+        old_string = obj->getStringProperty(name);
+        break;
+      default:
+        break;
+    }
+    obj->deleteProperty(name);
+  }
+}
+
+
+DECLARE_EXPORT void CommandSetProperty::redo()
+{
+  if (!obj || name.empty())
+    return;
+
+  if (old_exists)
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        {
+        bool tmp_bool = obj->getBoolProperty(name);
+        obj->setBoolProperty(name, old_bool);
+        old_bool = tmp_bool;
+        }
+        break;
+      case 2: // Date
+        {
+        Date tmp_date = obj->getDateProperty(name);
+        obj->setDateProperty(name, old_date);
+        old_date = tmp_date;
+        }
+        break;
+      case 3: // Double
+        {
+        double tmp_double = obj->getDateProperty(name);
+        obj->setDoubleProperty(name, old_double);
+        old_double = tmp_double;
+        }
+        break;
+      case 4:
+        {
+        string tmp_string = obj->getStringProperty(name);
+        obj->setStringProperty(name, old_string);
+        old_string = tmp_string;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  else
+  {
+    switch (type)
+    {
+      case 1: // Boolean
+        obj->setBoolProperty(name, old_bool);
+        break;
+      case 2: // Date
+        obj->setDateProperty(name, old_date);
+        break;
+      case 3: // Double
+        obj->setDoubleProperty(name, old_double);
+        break;
+      case 4: // String
+        obj->setStringProperty(name, old_string);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+
+//
 // THREAD GROUP
 //
 

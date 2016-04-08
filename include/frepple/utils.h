@@ -3632,13 +3632,28 @@ class Object : public PyObject
       *   4: string
       */
     DECLARE_EXPORT void setProperty(
-      const string& name, const DataValue& value, short type
+      const string& name, const DataValue& value, short type, CommandManager* mgr = NULL
       );
 
     /** Set a custom property referring to a python object. */
     DECLARE_EXPORT void setProperty(
       const string& name, PyObject* value
       );
+
+    /** Update a boolean property. */
+    DECLARE_EXPORT void setBoolProperty(const string&, bool);
+
+    /** Update a date property. */
+    DECLARE_EXPORT void setDateProperty(const string&, Date);
+
+    /** Update a double property. */
+    DECLARE_EXPORT void setDoubleProperty(const string&, double);
+
+    /** Update a string property. */
+    DECLARE_EXPORT void setStringProperty(const string&, string);
+
+    /** Check whether a property with a certain name is set. */
+    DECLARE_EXPORT bool hasProperty(const string&) const;
 
     /** Retrieve a boolean property. */
     DECLARE_EXPORT bool getBoolProperty(const string&, bool=true) const;
@@ -3651,6 +3666,9 @@ class Object : public PyObject
 
     /** Retrieve a double property. */
     DECLARE_EXPORT PyObject* getPyObjectProperty(const string&) const;
+
+    /** Delete a property if it is set. */
+    DECLARE_EXPORT void deleteProperty(const string&);
 
     /** Retrieve a string property.
       * This method needs to be defined inline. On windows the function
@@ -4592,6 +4610,7 @@ class CommandSetField : public Command
     const MetaFieldBase *fld;
     XMLData olddata;
     XMLData newdata;
+
   public:
     /** Constructor. */
     DECLARE_EXPORT CommandSetField(Object *o, const MetaFieldBase *f, const DataValue& d)
@@ -4648,7 +4667,69 @@ class CommandSetField : public Command
       obj = NULL;
     }
 
-    Object* getObject()
+    Object* getObject() const
+    {
+      return obj;
+    }
+};
+
+
+
+/** @brief A command to update a property on an object. */
+class CommandSetProperty : public Command
+{
+  private:
+    Object* obj;
+    string name;
+    short type;
+    bool old_exists;
+    bool old_bool;
+    Date old_date;
+    double old_double;
+    string old_string;
+
+  public:
+    /** Constructor. */
+    DECLARE_EXPORT CommandSetProperty(Object*, const string&, const DataValue&, short);
+
+    /** Destructor. */
+    virtual ~CommandSetProperty()
+    {
+      if (obj && !name.empty())
+        undo();
+    }
+
+    /** Undoes the field change. */
+    virtual DECLARE_EXPORT void rollback()
+    {
+      if (obj && !name.empty())
+        undo();
+      obj = NULL;
+      name = "";
+    }
+
+    /** Committing the change - nothing to be done as the change
+      * is realized when creating the command. */
+    virtual DECLARE_EXPORT void commit()
+    {
+      obj = NULL;
+      name = "";
+    }
+
+    /** Undoes the property change. */
+    virtual DECLARE_EXPORT void undo();
+
+    /** Redo the property change.
+      * We assume the change was undone before.
+      */
+    virtual DECLARE_EXPORT void redo();
+
+    void clearObject()
+    {
+      obj = NULL;
+    }
+
+    Object* getObject() const
     {
       return obj;
     }
@@ -4703,9 +4784,18 @@ class CommandCreateObject : public Command
       // behavior will be sufficient.
       for (Command* cmd = getNext(); cmd; cmd = cmd->getNext())
       {
-        CommandSetField *cmd_set = dynamic_cast<CommandSetField*>(cmd);
-        if (cmd_set && cmd_set->getObject() == obj)
-          cmd_set->clearObject();
+        CommandSetField *cmd_setfield = dynamic_cast<CommandSetField*>(cmd);
+        if (cmd_setfield)
+        {
+          if (cmd_setfield->getObject() == obj)
+            cmd_setfield->clearObject();
+        }
+        else
+        {
+          CommandSetProperty *cmd_setproperty = dynamic_cast<CommandSetProperty*>(cmd);
+          if (cmd_setproperty && cmd_setproperty->getObject() == obj)
+            cmd_setproperty->clearObject();
+        }
       }
 
       // Actual deletion

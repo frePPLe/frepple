@@ -274,7 +274,7 @@ class loadData(object):
           x.fence = i[1]
         if i[2]:
           x.posttime = i[2]
-        if i[3]:
+        if i[3] is not None:
           x.size_minimum = i[3]
         if i[4]:
           x.size_multiple = i[4]

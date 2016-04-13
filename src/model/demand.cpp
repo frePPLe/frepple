@@ -51,6 +51,7 @@ int DemandDefault::initialize()
     "demand",
     "demand_default",
     Object::create<DemandDefault>, true);
+  registerFields<DemandDefault>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
   return FreppleClass<DemandDefault,Demand>::initialize();
@@ -292,6 +293,10 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
         oper->setName(o.str());
         oper->setHidden(true);
         new FlowStart(oper, buf, -1);
+        // When we set the size minimum to 0 for the automatically created
+        // delivery operations, they will constrained by the minimum shipment
+        // size specified on the demand.
+        oper->setSizeMinimum(0.0);
       }
 
       // Success!

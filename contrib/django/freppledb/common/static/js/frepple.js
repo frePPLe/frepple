@@ -238,6 +238,7 @@ var upload = {
   validateSort: function(event)
   {
     if ($(this).attr('id') == 'grid_cb') return;
+    if ($("body").hasClass("popup"))  return;
     if ($('#save').hasClass("btn-primary"))
       jQuery("#grid").jqGrid('resetSelection');
     else

@@ -68,6 +68,8 @@ Licensed under MIT License
             var startPos, startTransition;
 
             var $el = $(this);
+            if ($(this).hasClass("ui-jqgrid")) return; //fix for Firefox bug that adds resize to the grid, we want only to resize the grid parent div ex: "content-main"
+
             var $handle = opt.handleSelector ? $(opt.handleSelector) : $el;
 
             if (opt.touchActionNone)

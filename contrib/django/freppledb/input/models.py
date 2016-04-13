@@ -916,7 +916,11 @@ class OperationPlan(AuditModel):
       else:
         state = getattr(self, '_state', None)
         db = state.db if state else DEFAULT_DB_ALIAS
-      self.id = OperationPlan.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+      self.id = OperationPlan.objects.all().using(db).aggregate(Max('id'))['id__max']
+      if self.id:
+        self.id += 1
+      else:
+        self.id = 1
 
     # Call the real save() method
     super(OperationPlan, self).save(*args, **kwargs)

@@ -989,7 +989,12 @@ class DistributionOrder(AuditModel):
       else:
         state = getattr(self, '_state', None)
         db = state.db if state else DEFAULT_DB_ALIAS
-      self.id = DistributionOrder.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+      self.id = DistributionOrder.objects.all().using(db).aggregate(Max('id'))['id__max']
+      if self.id:
+        self.id += 1
+      else:
+        self.id = 1
+
 
     # Call the real save() method
     super(DistributionOrder, self).save(*args, **kwargs)
@@ -1055,7 +1060,11 @@ class PurchaseOrder(AuditModel):
       else:
         state = getattr(self, '_state', None)
         db = state.db if state else DEFAULT_DB_ALIAS
-      self.id = PurchaseOrder.objects.all().using(db).aggregate(Max('id'))['id__max'] + 1
+      self.id = PurchaseOrder.objects.all().using(db).aggregate(Max('id'))['id__max']
+      if self.id:
+        self.id += 1
+      else:
+        self.id = 1
 
     # Call the real save() method
     super(PurchaseOrder, self).save(*args, **kwargs)

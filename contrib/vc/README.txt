@@ -1,27 +1,25 @@
 
                BUILD INSTRUCTIONS ON WINDOWS
                -----------------------------
-              USING MICROSOFT VISUAL C++ 2010
+              USING MICROSOFT VISUAL C++ 2015
               -------------------------------
 
 The frePPLe source distribution comes with Microsoft Visual C++ projects and
 workspaces to build the package. This document contains instructions on how to
 use these workspaces and some notes specific to the use of this compiler.
 
-Using more recent versions of Visual Studio will NOT work: Python and its
-extension modules are all compiled with Visual C++ 2010, and frePPle
+Using a different version of Visual Studio will NOT work: Python and its
+extension modules are all compiled with Visual C++ 2015, and frePPle
 needs to use the same compiler and C runtime libraries.
 
-FrePPLe can be compiled in 64-bit or 32-bit. However, we are not actively
-testing and developing on the 32-bit version any longer.
 
 PREREQUISITES
 -------------
 
-1. Install Visual Studio 2010 SP1 (aka vc10)
-2. Install xerces-c 3.1.1*
-   Installing the pre-compiled binaries for vc10 are easiest.
-3. Install Python 3.4 or higher
+1. Install Visual Studio 2015 (aka vc14)
+2. Install xerces-c 3.1.3*
+   Compile the project before compiling frePPLe.
+3. Install Python 3.5 or higher
 
 
 BUILD INSTRUCTIONS FROM THE COMMAND LINE

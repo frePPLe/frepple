@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E0E5751-80B4-47D1-8CB8-246C7A8FA23C}</ProjectGuid>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>main</RootNamespace>
   </PropertyGroup>
@@ -31,12 +31,14 @@
     <CLRSupport>false</CLRSupport>
     <CharacterSet>
     </CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>false</CLRSupport>
     <CharacterSet />
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -44,12 +46,14 @@
     <CLRSupport>false</CLRSupport>
     <CharacterSet>
     </CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>false</CLRSupport>
     <CharacterSet />
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -84,7 +88,7 @@
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <OutDir>main\$(Configuration)\$(Platform)\output\</OutDir>
     <IntDir>main\$(Configuration)\$(Platform)\</IntDir>
     <TargetName>frepple</TargetName>
@@ -92,7 +96,7 @@
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <OutDir>main\$(Configuration)\$(Platform)\output\</OutDir>
     <IntDir>main\$(Configuration)\$(Platform)\</IntDir>
     <TargetName>frepple</TargetName>
@@ -118,6 +122,7 @@
       <AdditionalDependencies>
       </AdditionalDependencies>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AdditionalOptions>/ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" ..\..\bin</Command>
@@ -145,6 +150,7 @@
       <AdditionalDependencies>
       </AdditionalDependencies>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AdditionalOptions>/ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" ..\..\bin</Command>
@@ -171,6 +177,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>
       </AdditionalDependencies>
+      <AdditionalOptions>/ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" ..\..\bin</Command>
@@ -197,6 +204,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>
       </AdditionalDependencies>
+      <AdditionalOptions>/ignore:4006 /ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" ..\..\bin</Command>

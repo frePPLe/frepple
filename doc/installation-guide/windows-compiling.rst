@@ -19,22 +19,24 @@ compile the source code.
 
 You will also need to install:
 
-* **Visual Studio C++ 2010**.
+* **Visual Studio C++ 2015**.
 
   The express edition is sufficient.
 
-  Using more recent versions of Visual Studio will NOT work: Python3 and
-  its extension modules are all compiled with Visual C++ 2010, and frePPle
+  Using a different version of Visual Studio will NOT work: Python and its
+  extension modules are all compiled with Visual C++ 2015, and frePPle
   needs to use the same compiler and C runtime libraries.
 
-* **Python 3.2, 3.3 or 3.4**
-  Python 3.5 is NOT supported yet on Windows, as it requires a different
-  compiler version. (Note that Python 3.5 is supported for the linux version)
+* **Python 3.5 or higher**
 
-* **Xerces-C 3.1**
+  Install the 64-bit version of Python 3.
 
-  Best is to install the precompiled binaries for vc9.
+* **Xerces-C 3.1.3**
 
+  You will have to compile this package from source. The xerces-c team
+  provides a Visual Studio file that can be used to create a 64-bit static
+  library.  
+  
 The solution file is *contrib/vc/frepple.sln*. The include and library
 directories of Python and Xerces-C will need to configured in Visual Studio.
 
@@ -57,5 +59,5 @@ is available free of charge from http://www.cygwin.com.
 The build instructions on Cygwin are identical to the Linux platforms.
 
 The Cygwin executables are considerably slower than the native Windows binaries.
-The Cygwin build is not recommended for production environments, but should be
+The Cygwin build is not intended for production environments, but should be
 seen as a test and development setup for a Linux environment.

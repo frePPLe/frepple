@@ -52,7 +52,7 @@ def registerAttribute(model, attrlist):
 
 
 def getAttributes(model):
-  return _register.get(model, [])
+  return _register.get("%s.%s" % (model.__module__, model.__name__), [])
 
 
 _first = True

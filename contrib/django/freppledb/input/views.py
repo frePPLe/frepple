@@ -873,7 +873,7 @@ class CalendarBucketList(GridReport):
     GridFieldInteger('id', title=_('identifier'), formatter='detail', extra="role:'input/calendarbucket'"),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='detail', extra="role:'input/calendar'"),
     GridFieldDateTime('startdate', title=_('start date')),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('value', title=_('value')),
     GridFieldInteger('priority', title=_('priority')),
     #. Translators: Translation included with Django

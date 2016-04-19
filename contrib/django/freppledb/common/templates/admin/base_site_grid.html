@@ -79,7 +79,7 @@ $(function() {
       return value;
     }, {% endif %}
     {% block extra_grid %}{% endblock %}
-    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% elif args.0 %}'100%'{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
+    height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
@@ -99,7 +99,6 @@ $(function() {
     $("#grid")
      .setGridWidth($('#content-main').width()){% if not reportclass.height %}
      .setGridHeight(h){% endif %};
-	  {% if args.0 %}$("#grid").setGridHeight('100%'){% endif %};
 	});
 
 	$("#horizonbucketsul li a").click(function(){

@@ -528,7 +528,7 @@ class GridReport(View):
   @classmethod
   def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
     # Create a workbook
-    wb = Workbook(optimized_write=True)
+    wb = Workbook(write_only=True)
     title = force_text(reportclass.model and reportclass.model._meta.verbose_name or reportclass.title)
     ws = wb.create_sheet(title=title)
 
@@ -1758,7 +1758,7 @@ class GridPivot(GridReport):
   @classmethod
   def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
     # Create a workbook
-    wb = Workbook(optimized_write=True)
+    wb = Workbook(write_only=True)
     ws = wb.create_sheet(title=force_text(reportclass.model._meta.verbose_name))
 
     # Prepare the query
@@ -1886,7 +1886,7 @@ def _getCellValue(data):
 
 def exportWorkbook(request):
   # Create a workbook
-  wb = Workbook(optimized_write=True)
+  wb = Workbook(write_only=True)
 
   # Loop over all selected entity types
   ok = False

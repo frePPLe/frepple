@@ -5838,6 +5838,12 @@ template <class T> class HasHierarchy : public HasName<T>
       return this;
     }
 
+    /** Return the first child. */
+    T* getFirstChild() const
+    {
+      return first_child;
+    }
+
     /** Return true if an object is part of the children of a second object. */
     bool isMemberOf(T* p) const
     {

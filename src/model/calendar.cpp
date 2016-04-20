@@ -827,7 +827,7 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
     // Parse the arguments
     PyObject* pystart = NULL;
     PyObject* pydirection = NULL;
-    if (!PyArg_ParseTuple(args, "|OO:setvalue", &pystart, &pydirection))
+    if (!PyArg_ParseTuple(args, "|OO:getEvents", &pystart, &pydirection))
       return NULL;
     Date startdate = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
     bool forward = pydirection ? PythonData(pydirection).getBool() : true;

@@ -38,4 +38,4 @@ Features:
 
 .. raw:: html
 
-   <iframe width="640" height="360" src="http://www.youtube.com/embed/0vSkR1a3e5w" frameborder="0" allowfullscreen=""></iframe>
+   <iframe width="640" height="360" src="https://www.youtube.com/embed/0vSkR1a3e5w" frameborder="0" allowfullscreen=""></iframe>

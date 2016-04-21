@@ -4,7 +4,7 @@ Odoo connector
 
 .. raw:: html
 
-   <iframe width="640" height="360" src="http://www.youtube.com/embed/XmbF7b34_sc" frameborder="0" allowfullscreen=""></iframe>
+   <iframe width="640" height="360" src="https://www.youtube.com/embed/XmbF7b34_sc" frameborder="0" allowfullscreen=""></iframe>
 
 FrePPLe provides an integration with the Odoo (formerly known as OpenERP),
 a leading open source ERP.
@@ -35,7 +35,7 @@ in June 2014.
 
 .. raw:: html
 
-   <iframe src="http://www.slideshare.net/slideshow/embed_code/35555795" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe>
+   <iframe src="https://www.slideshare.net/slideshow/embed_code/35555795" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen=""> </iframe>
 
 **Overview**
 

@@ -480,7 +480,7 @@ class GridReport(View):
     # Add attributes if not done already
     if not self._attributes_added and self.model:
       self.__class__._attributes_added = True
-      for field_name, label, fieldtype in getAttributes("%s.%s" % (self.model.__module__, self.model.__name__)):
+      for field_name, label, fieldtype in getAttributes(self.model):
         if fieldtype == 'string':
           self.__class__.rows += (GridFieldText(field_name, title=label),)
         elif fieldtype == 'boolean':

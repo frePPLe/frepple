@@ -2,12 +2,11 @@
 {% load i18n %}
 {% block extrahead %}{{block.super}}
 {% if args.0 or mode == 'graph' %}
-<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js">
-	var editrow;
-	var editcol;
-</script>
+<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
 {% endif %}
 <script type="text/javascript">
+var editrow;
+var editcol;
 
 {% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
@@ -128,7 +127,7 @@ $(function() {
 	<div class="btn-group" role="group">
 
 		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
-		  <span for="gridmode" class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
+		  <span class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
 		</button>
 		<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
 		  <span class="fa fa-picture-o fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>

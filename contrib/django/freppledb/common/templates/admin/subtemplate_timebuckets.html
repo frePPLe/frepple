@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div  id="timebuckets" class="modal fade" role="dialog" aria-labelledby="timebucketsLabel">
+<div  id="timebuckets" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content" style="width: 500px;">
       <div class="modal-header">
@@ -20,7 +20,7 @@
                   <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" name="horizonbucketsul" style="top: auto;">
+                  <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" style="top: auto;">
                   {% for i in bucketnames %}
                     <li><a onclick="" name="{{ i }}">{% trans i %}</a></li>
                   {% endfor %}
@@ -51,7 +51,7 @@
                   {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}
                   &nbsp;&nbsp;<span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="horizonunit1" id="horizonunitul" name="horizonunitul" style="top: auto;">
+                <ul class="dropdown-menu" aria-labelledby="horizonunit1" id="horizonunitul" style="top: auto;">
                   <li><a name="day">{% trans 'days' %}</a></li>
                   <li><a name="week">{% trans 'weeks' %}</a></li>
                   <li><a name="month">{% trans 'months' %}</a></li>

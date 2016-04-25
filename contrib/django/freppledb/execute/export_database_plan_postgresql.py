@@ -371,7 +371,9 @@ class DatabasePipe(Thread):
       for f in self.functions:
         f(process)
     finally:
-      print(process.communicate()[1])
+      msg = process.communicate()[1]
+      if msg:
+        print(msg)
       # Close the pipe and PSQL process
       if process.returncode is None:
         # PSQL session is still running.
@@ -459,7 +461,9 @@ def exportfrepple_sequential():
     exportPegging(process)
   finally:
     # Print any error messages
-    print(process.communicate()[1])
+    msg = process.communicate()[1]
+    if msg:
+      print(msg)
     # Close the pipe and PSQL process
     if process.returncode is None:
       # PSQL session is still running.

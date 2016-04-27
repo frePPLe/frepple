@@ -2995,7 +2995,7 @@ class XMLData : public DataValue
 
     virtual void setDuration(const Duration d)
     {
-      m_strData = d;
+      m_strData = string(d);
     }
 
     virtual void setInt(const int i)
@@ -3014,7 +3014,7 @@ class XMLData : public DataValue
 
     virtual void setDate(const Date d)
     {
-      m_strData = d;
+      m_strData = string(d);
     }
 
     virtual void setString(const string& v)

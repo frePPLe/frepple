@@ -701,16 +701,29 @@ var grid = {
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
         var s = grid.getFilterGroup(jQuery("#fbox_grid").jqFilter('filterData'), true);
-        $('#curfilter').html( s ? gettext("Filtered where") + " " + s : "" );
+        if (s)
+        {
+          $('#curfilter').html(gettext("Filtered where") + " " + s);
+          $('#filter').addClass("btn-danger").removeClass("btn-primary");
+        }
+        else
+        {
+          $('#filter').removeClass("btn-danger").addClass("btn-primary");
+          $('#curfilter').html("");
+        }
         },
       onReset : function() {
         if (typeof initialfilter !== 'undefined' )
         {
           $("#grid").jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
           $('#curfilter').html(gettext("Filtered where") + " " + grid.getFilterGroup(initialfilter, true) );
+          $('#filter').addClass("btn-danger").removeClass("btn-primary");
         }
         else
+        {
           $('#curfilter').html("");
+          $('#filter').removeClass("btn-danger").addClass("btn-primary");
+        }
         return true;
         }
       });

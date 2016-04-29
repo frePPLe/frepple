@@ -6,7 +6,7 @@ django-admin-bootstrapped
 django-bootstrap3
 et-xmlfile == 1.0.0
 html5lib == 0.999
-jdcal == 1.0
+jdcal == 1.0.1
 Markdown == 2.6.4
 openpyxl == 2.3.4
 https://github.com/frePPLe/django/tarball/frepple_3.1

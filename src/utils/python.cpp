@@ -616,36 +616,44 @@ DECLARE_EXPORT void Object::setProperty(
 
   // Adding the new key-value pair to the dictionary.
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (!dict)
+  try
   {
-    dict = PyDict_New();
-    Py_INCREF(dict);
-  }
-  switch (type)
-  {
+    if (!dict)
+    {
+      dict = PyDict_New();
+      Py_INCREF(dict);
+    }
+    switch (type)
+    {
     case 1: // Boolean
-      {
+    {
       PythonData val(value.getBool());
       PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
       break;
-      }
+    }
     case 2: // Date
-      {
+    {
       PythonData val(value.getDate());
       PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
       break;
-      }
+    }
     case 3: // Double
-      {
+    {
       PythonData val(value.getDouble());
       PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
       break;
-      }
+    }
     default: // String
-      {
+    {
       PythonData val(value.getString());
       PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
-      }
+    }
+    }
+  }
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
   }
   PyGILState_Release(pythonstate);
 }
@@ -657,13 +665,21 @@ DECLARE_EXPORT void Object::setBoolProperty(
 {
   // Adding the new key-value pair to the dictionary.
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (!dict)
+  try
   {
-    dict = PyDict_New();
-    Py_INCREF(dict);
+    if (!dict)
+    {
+      dict = PyDict_New();
+      Py_INCREF(dict);
+    }
+    PythonData val(value);
+    PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
   }
-  PythonData val(value);
-  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
   PyGILState_Release(pythonstate);
 }
 
@@ -674,13 +690,21 @@ DECLARE_EXPORT void Object::setDateProperty(
 {
   // Adding the new key-value pair to the dictionary.
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (!dict)
+  try
   {
-    dict = PyDict_New();
-    Py_INCREF(dict);
+    if (!dict)
+    {
+      dict = PyDict_New();
+      Py_INCREF(dict);
+    }
+    PythonData val(value);
+    PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
   }
-  PythonData val(value);
-  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
   PyGILState_Release(pythonstate);
 }
 
@@ -691,13 +715,21 @@ DECLARE_EXPORT void Object::setDoubleProperty(
 {
   // Adding the new key-value pair to the dictionary.
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (!dict)
+  try
   {
-    dict = PyDict_New();
-    Py_INCREF(dict);
+    if (!dict)
+    {
+      dict = PyDict_New();
+      Py_INCREF(dict);
+    }
+    PythonData val(value);
+    PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
   }
-  PythonData val(value);
-  PyDict_SetItemString(dict, name.c_str(), static_cast<PyObject*>(val));
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
   PyGILState_Release(pythonstate);
 }
 
@@ -724,14 +756,22 @@ DECLARE_EXPORT void Object::setProperty(
   )
 {
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  if (!dict)
+  try
   {
-    dict = PyDict_New();
-    Py_INCREF(dict);
+    if (!dict)
+    {
+      dict = PyDict_New();
+      Py_INCREF(dict);
+    }
+    // Adding the new key-value pair to the dictionary.
+    // The reference count of the referenced object is increased.
+    PyDict_SetItemString(dict, name.c_str(), value);
   }
-  // Adding the new key-value pair to the dictionary.
-  // The reference count of the referenced object is increased.
-  PyDict_SetItemString(dict, name.c_str(), value);
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
   PyGILState_Release(pythonstate);
 }
 
@@ -771,10 +811,18 @@ DECLARE_EXPORT bool Object::getBoolProperty(const string& name, bool def) const
     PyGILState_Release(pythonstate);
     return def;
   }
-  PythonData val(lkp);
-  bool result = val.getBool();
-  PyGILState_Release(pythonstate);
-  return result;
+  try
+  {
+    PythonData val(lkp);
+    bool result = val.getBool();
+    PyGILState_Release(pythonstate);
+    return result;
+  }
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
 }
 
 
@@ -791,10 +839,18 @@ DECLARE_EXPORT Date Object::getDateProperty(const string& name, Date def) const
     PyGILState_Release(pythonstate);
     return def;
   }
-  PythonData val(lkp);
-  Date result = val.getDate();
-  PyGILState_Release(pythonstate);
-  return result;
+  try
+  {
+    PythonData val(lkp);
+    Date result = val.getDate();
+    PyGILState_Release(pythonstate);
+    return result;
+  }
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
 }
 
 
@@ -811,10 +867,18 @@ DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) 
     PyGILState_Release(pythonstate);
     return def;
   }
-  PythonData val(lkp);
-  double result = val.getDouble();
-  PyGILState_Release(pythonstate);
-  return result;
+  try
+  {
+    PythonData val(lkp);
+    double result = val.getDouble();
+    PyGILState_Release(pythonstate);
+    return result;
+  }
+  catch (...)
+  {
+    PyGILState_Release(pythonstate);
+    throw;
+  }
 }
 
 

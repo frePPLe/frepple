@@ -316,7 +316,8 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    demands_per_cluster[i->getCluster()].push_back(&*i);
+    if (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE)
+      demands_per_cluster[i->getCluster()].push_back(&*i);
 
   // Delete of operationplans of the affected clusters
   // This deletion is not multi-threaded... But on the other hand we need to

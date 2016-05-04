@@ -6593,6 +6593,10 @@ class Demand
   : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
   public:
+    enum status {
+      QUOTE, OPEN, CLOSED, CANCELED
+    };
+
     typedef slist<OperationPlan*> OperationPlanList;
 
     class DeliveryIterator
@@ -6620,7 +6624,7 @@ class Demand
     /** Default constructor. */
     explicit DECLARE_EXPORT Demand() :
       it(NULL), loc(NULL), oper(uninitializedDelivery), cust(NULL), qty(0.0),
-      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false)
+      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false), state(OPEN)
       {}
 
     /** Destructor.
@@ -6747,6 +6751,46 @@ class Demand
     DeliveryIterator getOperationPlans() const
     {
       return DeliveryIterator(this);
+    }
+
+    /** Return the status. */
+    status getStatus() const
+    {
+      return state;
+    }
+
+    /** Update the status. */
+    void setStatus(status s)
+    {
+      state = s;
+    }
+
+    /** Return the status as a string. */
+    string getStatusString() const
+    {
+      switch (state)
+      {
+        case QUOTE: return "quote";
+        case OPEN: return "open";
+        case CLOSED: return "closed";
+        case CANCELED: return "canceled";
+        default: throw LogicException("Demand status not recognized");
+      }
+    }
+
+    /** Update the demand status from a string. */
+    void setStatusString(const string& s)
+    {
+      if (s == "open" || s.empty())
+        state = OPEN;
+      else if (s == "closed")
+        state = CLOSED;
+      else if (s == "quote")
+        state = QUOTE;
+      else if (s == "canceled")
+        state = CANCELED;
+      else
+        throw DataException("Demand status not recognized");
     }
 
     /** Returns the latest delivery operationplan. */
@@ -6895,6 +6939,7 @@ class Demand
       m->addDateField<Cls>(Tags::due, &Cls::getDue, &Cls::setDue);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
       m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
+      m->addStringField<Cls>(Tags::status, &Cls::getStatusString, &Cls::setStatusString, "open");
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_FULL);
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
@@ -6943,6 +6988,9 @@ class Demand
     /** A list of constraints preventing this demand from being planned in
       * full and on time. */
     Problem::List constraints;
+
+    /** Status of the demand. */
+    status state;
 };
 
 

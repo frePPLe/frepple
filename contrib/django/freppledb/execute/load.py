@@ -814,7 +814,7 @@ class loadData(object):
       SELECT
         name, due, quantity, priority, item_id,
         operation_id, customer_id, owner_id, minshipment, maxlateness,
-        category, subcategory, source, location_id
+        category, subcategory, source, location_id, status
       FROM demand
       WHERE (status IS NULL OR status ='open' OR status = 'quote') %s
       ''' % self.filter_and)
@@ -822,8 +822,9 @@ class loadData(object):
       cnt += 1
       try:
         x = frepple.demand(
-          name=i[0], due=i[1], quantity=i[2], priority=i[3],
-          item=frepple.item(name=i[4]), category=i[10], subcategory=i[11], source=i[12]
+          name=i[0], due=i[1], quantity=i[2], priority=i[3], status=i[14],
+          item=frepple.item(name=i[4]), category=i[10], subcategory=i[11],
+          source=i[12]
           )
         if i[5]:
           x.operation = frepple.operation(name=i[5])

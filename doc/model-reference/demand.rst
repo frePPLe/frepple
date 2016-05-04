@@ -38,6 +38,9 @@ operation      operation         | Operation to be used to satisfy the demand.
                                    a delivery operation for the requested item and location.
                                    A data error is created when we this isn't possible.
 customer       customer          Customer placing the demand.
+status         string            Status of the demand.
+                                 Possible values are "open" (default), "closed", "canceled"
+                                 and "quote".
 detectproblems boolean           | Set this field to false to supress problem detection on
                                    this demand.
                                  | Default is true.

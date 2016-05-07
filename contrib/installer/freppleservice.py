@@ -35,17 +35,63 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         # Stop CherryPy server
         self.server.stop()
+
+        # Using the included postgres database?
+        if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+          # Check if the database is running. If so, stop it.
+          from subprocess import call, DEVNULL
+          status = call([
+            os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+            "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+            "--silent",
+            "status"
+            ],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+            )
+          if not status:
+            print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "Shutting down the database")
+            call([
+              os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+              "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+              "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+              "-w", # Wait till it's down
+              "stop"
+              ],
+              stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+              )
+
         # Log stop event
         msg = "frePPLe web server stopped"
         servicemanager.LogInfoMsg(msg)
         print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg)
-
+        
     def SvcDoRun(self):
         # Environment settings (which are used in the Django settings file and need
         # to be updated BEFORE importing the settings)
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
         os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
         os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
+
+        if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+          # Using the included postgres database
+          # Check if the database is running. If not, start it.
+          from subprocess import call, DEVNULL
+          status = call([
+            os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+            "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+            "--silent",
+            "status"
+            ],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+            )
+          if status:
+            print("Starting the PostgreSQL database now", settings.FREPPLE_LOGDIR)
+            call([
+              os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+              "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+              "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+              "start"
+              ])
 
         # Add the custom directory to the Python path.
         sys.path = [ os.environ['FREPPLE_APP'], sys.path[0] ]

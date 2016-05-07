@@ -11,7 +11,7 @@ license agreement, the installer will guide you to select:
 * The language and database connection parameters
 * Whether or not to register the server as a service
 
-The installer has been tested on Windows XP, Windows 7 and Windows 8.
+The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
 #. **Prerequisite: install and configure the PostgreSQL database.**
 

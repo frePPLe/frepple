@@ -170,6 +170,29 @@ class SysTrayIcon:
       win32gui.Shell_NotifyIcon(win32gui.NIM_DELETE, nid)
       win32gui.PostQuitMessage(0) # Terminate the app.
 
+      # Using the included postgres database?
+      if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+        # Check if the database is running. If so, stop it.
+        from subprocess import call, DEVNULL
+        status = call([
+          os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+          "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+          "--silent",
+          "status"
+          ],
+          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+          )
+        if not status:
+          call([
+            os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+            "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+            "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+            "-w", # Wait till it's down
+            "stop"
+            ],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+            )
+      
     def notify(self, hwnd, msg, wparam, lparam):
       if lparam==win32con.WM_LBUTTONDBLCLK:
         self.execute_menu_option(self.default_menu_index + self.FIRST_ID)
@@ -267,6 +290,29 @@ if __name__=='__main__':
   parser.add_argument('--port', type=int, help="Port number of the server.")
   parser.add_argument('--address', help="IP address to listen on.")
   options = parser.parse_args()
+
+  # Using the included postgres database?
+  if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+    # Check if the database is running. If not, start it.
+    from subprocess import call, DEVNULL
+    status = call([
+      os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+      "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+      "--silent",
+      "status"
+      ],
+      stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+      )
+    if status:
+      call([
+        os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+        "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+        "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+        "-w", # Wait till it's up
+        "start"
+        ],
+        stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+        )
 
   # Import modules
   from django.conf import settings

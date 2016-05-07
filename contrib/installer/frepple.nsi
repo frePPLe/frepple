@@ -1,7 +1,7 @@
 ;
 ; Nullsoft script for creating a windows installer for frePPLe
 ;
-; Copyright (C) 2007-2014 by frePPLe bvba
+; Copyright (C) 2007-2016 by frePPLe bvba
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Affero General Public License as published
@@ -22,12 +22,6 @@
 ; then selects subdirectories of this distribution tree to be installed.
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
-
-; Make sure that this variable points to the windows version of Python, not
-; the one that is part of cygwin.
-!ifndef PYTHON
-!define PYTHON "python3.exe"
-!endif
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
@@ -145,15 +139,9 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "frePPLe community edition installer"
 
-!ifdef 64BIT
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-!else
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION} 32bit"
-OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_32bit_setup.exe"
-BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} 32bit"
-!endif
 CRCcheck on
 ShowInstDetails show
 ShowUnInstDetails show
@@ -174,12 +162,12 @@ ReserveFile "finish.bmp"
 
 
 Function .onInit
-  ;Extract some files used by the installer
+  ; Extract some files used by the installer
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.bmp"
 
-  ;Write image paths to the INI file
+  ; Write image paths to the INI file
   WriteINIStr "$PLUGINSDIR\finish.ini" "Field 7" "Text" "$PLUGINSDIR\finish.bmp"
 
   !insertmacro MULTIUSER_INIT
@@ -188,20 +176,14 @@ FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
-  !system '${PYTHON} setup.py'
+  !system 'rmdir /s /q dist'
+  !system 'python34 setup.py'
 
-  ; Build the documentation if it doesn't exist yet
-  !cd "../../doc"
-  !system "bash -c 'if (test ! -f _build/html/index.html ); then pwd; fi'"
-
-  ; Create a distribution if none exists yet
-  !cd ".."
-  !system "bash -c 'if (test ! -f frepple-${PRODUCT_VERSION}.tar.gz ); then make dist; fi'"
-
-  ; Expand the distribution
-  !system "bash -c 'rm -rf frepple-${PRODUCT_VERSION}'"
-  !system "bash -c 'tar -xzf frepple-${PRODUCT_VERSION}.tar.gz'"
-  !cd "frepple-${PRODUCT_VERSION}"
+  ; Rebuild the documentation
+  !cd '../../doc'
+  !system 'rmdir /s /q _build'
+  !system 'sphinx-build -a -E -b html -d _build/doctrees . _build/html'
+  !cd '..'
 SectionEnd
 
 
@@ -215,29 +197,26 @@ Section "Application" SecAppl
 
   ; Copy application, dll and libraries
   SetOutPath "$INSTDIR\bin"
-  File "..\bin\frepple.exe"
-  File "..\bin\frepple.pyd"
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
-
-  ; Redistribrute a DLL for the Visual Studio 2010 C++ runtime
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "c:\windows\system32\MSVCR100.DLL" "$INSTDIR\bin\MSVCR100.dll" "$SYSDIR"
+  File "bin\frepple.exe"
+  File "bin\frepple.pyd"
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
   ; Copy modules
-  File /nonfatal "..\bin\mod_*.so"
+  File /nonfatal "bin\mod_*.so"
 
    ; Copy configuration files
-  File "..\bin\*.xsd"
-  File "..\bin\init.xml"
+  File "bin\*.xsd"
+  File "bin\init.xml"
 
   ; Copy the license file the user specified
-  File "..\bin\license.xml"
+  File "bin\license.xml"
 
   ; Copy the django and python redistributables created by py2exe
-  File /r "..\contrib\installer\dist\*.*"
+  File /r "contrib\installer\dist\*.*"
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"
-  File "..\contrib\django\djangosettings.py"
+  File "contrib\django\djangosettings.py"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -248,107 +227,48 @@ Section "Application" SecAppl
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   SetOutPath "$INSTDIR\bin"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
+SectionEnd
 
-  ; Pick up the installation parameters
-  ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
-  StrCmp $6 "English" 0 +3
-    StrCpy $6 "en-us"
-    Goto ok2
-  StrCmp $6 "Dutch" 0 +3
-    StrCpy $6 "nl"
-    Goto ok2
-  StrCmp $6 "French" 0 +3
-    StrCpy $6 "fr"
-    Goto ok2
-  StrCmp $6 "Italian" 0 +3
-    StrCpy $6 "it"
-    Goto ok2
-  StrCmp $6 "Japanese" 0 +3
-    StrCpy $6 "ja"
-    Goto ok2
-  StrCmp $6 "Portuguese" 0 +3
-    StrCpy $6 "pt"
-    Goto ok2
-  StrCmp $6 "Brazilian Portuguese" 0 +3
-    StrCpy $6 "pt-br"
-    Goto ok2
-  StrCmp $6 "Simplified Chinese" 0 +3
-    StrCpy $6 "zh_cn"
-    Goto ok2
-  StrCmp $6 "Spanish" 0 +3
-    StrCpy $6 "es"
-    Goto ok2
-  StrCmp $6 "Traditional Chinese" 0 +3
-    StrCpy $6 "zh_tw"
-    Goto ok2
-  MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
-  ok2:
-  ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
-  ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"  # DB user
-  ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
-  ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
-  ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
 
-  ; Update the settings.py file
-  SetOutPath "$INSTDIR\bin\custom"
-  FileOpen $R2 "djangosettings.py" "r"
-  GetTempFileName $R3
-  FileOpen $R4 $R3 "w"
-  ; Read the first section in settings.py and write unmodified to the output file
-  read1_loop:
-    FileRead $R2 $R5
-    IfErrors end_loop
-    FileWrite $R4 "$R5"
-    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
-    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
-  Goto read1_loop
-  ; Read the second section in settings.py and write a different text to the output file
-  read2_loop:
-    FileRead $R2 $R5
-    IfErrors end_loop
-    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
-    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
-  Goto read2_loop
-  ${GetTime} "" "L" $day $month $year $day_name $hours $minutes $seconds
-  FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
-  FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
-  FileWrite $R4 "$\r$\n"
-  FileWrite $R4 "# FrePPLe only supports the 'postgresql_psycopg2' database.$\r$\n"
-  FileWrite $R4 "# Create additional entries in this dictionary to define scenario schemas.$\r$\n"
-  FileWrite $R4 "DATABASES = {$\r$\n"
-  FileWrite $R4 "  'default': {$\r$\n"
-  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
-  FileWrite $R4 "    'NAME': '$1',  # Database name $\r$\n"
-  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
-  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
-  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
-  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
-  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
-  FileWrite $R4 "    'TEST': {$\r$\n"
-  FileWrite $R4 "      'NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
-  FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    },$\r$\n"
-  FileWrite $R4 "  }$\r$\n$\r$\n"
-  FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
-  FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
-  ; Read the third section in settings.py and write unmodified to the output file
-  read3_loop:
-    FileWrite $R4 "$R5"
-    FileRead $R2 $R5
-    IfErrors end_loop
-  Goto read3_loop
-  end_loop:
-    FileClose $R2
-    FileClose $R4
-    Rename "djangosettings.py" "djangosettings.py.old"
-    Rename "$R3" "djangosettings.py"
-    ClearErrors
+Section "PostgreSQL" SecPostgres
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  File /r /x .gitignore "contrib\installer\pgsql"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\PostgreSQL 9.5.2"
+  ; SetOutPath is used to set the working directory for the shortcut
+  SetOutPath "$INSTDIR\pgsql\bin"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\PostgreSQL 9.5.2\pgAdmin III.lnk" "$INSTDIR\pgsql\bin\pgAdmin3.exe"
+SectionEnd
+
+
+Section "Documentation" SecDoc
+  SetOutPath "$INSTDIR"
+  SetOverwrite ifnewer
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\index.html"
+  File /r "doc\_build\html"
+SectionEnd
+
+
+Section -AdditionalIcons
+  WriteIniStr "$INSTDIR\${PRODUCT_NAME} web site.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\frePPLe web site.lnk" "${PRODUCT_WEB_SITE}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe" "/$MultiUser.InstallMode"
 SectionEnd
 
 
 Function DatabaseOpen
-  !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
-  !insertmacro INSTALLOPTIONS_DISPLAY "parameters.ini"
+  SectionGetFlags ${SecPostgres} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  ${If} $R0 == ${SF_SELECTED}
+    ; Don't show the database configuration page when using the integrated postgresql database
+    Abort
+  ${Else}
+    ; Show the database configuration page - you installed the database yourself
+    !insertmacro MUI_HEADER_TEXT "Language selection and database configuration" "Specify the installation parameters."
+    !insertmacro INSTALLOPTIONS_DISPLAY "parameters.ini"
+  ${EndIf}
 FunctionEnd
 
 
@@ -365,7 +285,7 @@ Function Databaseleave
     MessageBox MB_OK "Missing a mandatory field"
     ; Return to the page
     Abort
-  ${endif}
+  ${EndIf}}
   ClearErrors
   System::Call 'Kernel32::SetEnvironmentVariable(t, t)i ("PGPASSWORD", "$4").r0'
   ExecWait 'psql -d $2 -U $3 -h $5 -p $6 -c "select version();"'
@@ -441,64 +361,148 @@ Function FinishLeave
 FunctionEnd
 
 
-Section "Documentation" SecDoc
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\html\index.html"
-  File /r "..\doc\_build\html"   ; Pick up doc from build folder, not dist folder
-SectionEnd
-
-Section "Examples" SecEx
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-  File /r "test"
-  SetOutPath "$INSTDIR\test"
-SectionEnd
-
-SubSection /E "Development" SecDev
-
-Section /O "Header files" SecLib
-  SetOutPath "$INSTDIR"
-  SetOverwrite ifnewer
-  File /r "include"
-SectionEnd
-
-Section /O "Source code" SecSrc
-  SetOutPath "$INSTDIR"
-  File /r "src"
-SectionEnd
-
-Section /O "Modules code" SecMod
-  SetOutPath "$INSTDIR"
-  File /r "modules"
-SectionEnd
-
-Section /O "Add-ons" SecContrib
-  SetOutPath "$INSTDIR"
-  File /r "contrib"
-SectionEnd
-
-SubSectionEnd
-
-
-Section -AdditionalIcons
-  WriteIniStr "$INSTDIR\${PRODUCT_NAME} web site.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\frePPLe web site.lnk" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk" "$INSTDIR\uninst.exe" "/$MultiUser.InstallMode"
-SectionEnd
-
-
 Section -Post
-  ; Clean up the distribution directory
-  !cd ".."
-  !system "sh -c 'rm -rf frepple-${PRODUCT_VERSION}'"
+  ; Pick up the installation parameters
+  DetailPrint ""
+  DetailPrint "Configuring djangosettings.py file"
+  SectionGetFlags ${SecPostgres} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  ${If} $R0 == ${SF_SELECTED}  
+    ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
+    StrCmp $6 "English" 0 +3
+      StrCpy $6 "en-us"
+      Goto ok2
+    StrCmp $6 "Dutch" 0 +3
+      StrCpy $6 "nl"
+      Goto ok2
+    StrCmp $6 "French" 0 +3
+      StrCpy $6 "fr"
+      Goto ok2
+    StrCmp $6 "Italian" 0 +3
+      StrCpy $6 "it"
+      Goto ok2
+    StrCmp $6 "Japanese" 0 +3
+      StrCpy $6 "ja"
+      Goto ok2
+    StrCmp $6 "Portuguese" 0 +3
+      StrCpy $6 "pt"
+      Goto ok2
+    StrCmp $6 "Brazilian Portuguese" 0 +3
+      StrCpy $6 "pt-br"
+      Goto ok2
+    StrCmp $6 "Simplified Chinese" 0 +3
+      StrCpy $6 "zh_cn"
+      Goto ok2
+    StrCmp $6 "Spanish" 0 +3
+      StrCpy $6 "es"
+      Goto ok2
+    StrCmp $6 "Traditional Chinese" 0 +3
+      StrCpy $6 "zh_tw"
+      Goto ok2
+    MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
+    ok2:
+    ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
+    ReadINIStr $2 "$PLUGINSDIR\parameters.ini" "Field 11" "State"  # DB user
+    ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
+    ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
+    ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
+  ${Else}
+    ; Database parameters for the included database
+    StrCpy $1 "frepple"
+    StrCpy $2 ""
+    StrCpy $3 ""
+    StrCpy $4 ""
+    StrCpy $5 "8002"
+    StrCpy $6 "en-us"
+  ${EndIf}
+  
+  ; Update the djangosettings.py file
+  SetOutPath "$INSTDIR\bin\custom"
+  FileOpen $R2 "djangosettings.py" "r"
+  GetTempFileName $R3
+  FileOpen $R4 $R3 "w"
+  ; Read the first section and write unmodified to the output file
+  read1_loop:
+    FileRead $R2 $R5
+    IfErrors end_loop
+    DetailPrint "AAA $R3 $R5"
+    FileWrite $R4 "$R5"
+    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
+    StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
+  Goto read1_loop
+  ; Read the second section in settings.py and write a different text to the output file
+  read2_loop:
+    FileRead $R2 $R5
+    DetailPrint "BBB $R5"
+    IfErrors end_loop
+    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
+    StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
+  Goto read2_loop
+  ${GetTime} "" "L" $day $month $year $day_name $hours $minutes $seconds
+  FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
+  FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
+  FileWrite $R4 "$\r$\n"
+  FileWrite $R4 "# FrePPLe only supports the 'postgresql_psycopg2' database.$\r$\n"
+  FileWrite $R4 "# Create additional entries in this dictionary to define scenario schemas.$\r$\n"
+  FileWrite $R4 "DATABASES = {$\r$\n"
+  FileWrite $R4 "  'default': {$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
+  FileWrite $R4 "    'NAME': '$1',  # Database name $\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
+  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    'TEST': {$\r$\n"
+  FileWrite $R4 "      'NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
+  FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    },$\r$\n"
+  FileWrite $R4 "  }$\r$\n$\r$\n"
+  FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
+  FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
+  ; Read the third section in settings.py and write unmodified to the output file
+  read3_loop:
+    FileWrite $R4 "$R5"
+    FileRead $R2 $R5
+    DetailPrint "CCC $R5"
+    IfErrors end_loop
+  Goto read3_loop
+  end_loop:
+  FileClose $R2
+  FileClose $R4
+  Rename "djangosettings.py" "djangosettings.py.old"
+  Rename "$R3" "djangosettings.py"
+  ClearErrors
 
   ; Create the log directory
   CreateDirectory "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
 
+  ; Initialize the included PostgreSQL database, if selected
+  SectionGetFlags ${SecPostgres} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  ${If} $R0 == ${SF_SELECTED}
+    DetailPrint ""
+    DetailPrint "Initializing the PostgreSQL database"
+    CreateDirectory "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\initdb" \
+      --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+      --auth=ident \
+      --encoding=UTF8'
+    Rename "$INSTDIR\pgsql\pg_hba.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_hba.conf"          ; TODO NOT WORKING
+    Rename "$INSTDIR\pgsql\pg_ident.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_ident.conf"      ; TODO NOT WORKING
+    Rename "$INSTDIR\pgsql\postgresql.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\postgresql.conf"  ; TODO NOT WORKING
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\pg_ctl" \
+      --pgdata "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+      --log "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
+      -w start'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 frepple'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario1'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario2'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario3'
+  ${EndIf}
+
   ; Create the database schema
+  DetailPrint ""
   DetailPrint "Creating database schema"
   nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" migrate --noinput'
   Pop $0
@@ -539,14 +543,10 @@ SectionEnd
 
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAppl} "Installation of the compiled executables"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDoc} "Installation of the documentation"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecEx} "Installation of example datasets and tests"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDev} "Installation for development purposes"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecLib} "Header files and libraries"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Installation of the core source code"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMod} "Installation of the source code of optional modules"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Installation of a number of optional add-ons and utilities"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAppl} "Installation of the core application."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDoc} "Installation of the documentation."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPostgres} "Installation of the Postgresql  database server.$\r$\n\
+    $\r$\nAlternatively, you can install, configure and tune PostgreSQL 9.5.2 seperately."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

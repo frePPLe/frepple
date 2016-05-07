@@ -1,6 +1,6 @@
 
 This is a script for creating a windows installer for frePPLe.
-To create the installer, the following steps are required:
+The following steps are required:
 
 1) Install NSIS v3.0 or higher (Nullsoft Scriptable Install System)
    This is a free package to create installers.
@@ -11,37 +11,28 @@ To create the installer, the following steps are required:
      - AccessControl
      - InstallOptions
 
-3) Install Cygwin environment and run "make dist"
-   This is because the creation of the installer starts by making the same
-   distribution tar-ball as for *nix environments.
-   It is recommended to create the distribution file manually from a Cygwin
-   shell. The installer will create the distribution too but I found this
-   method is not reliable.
-
-4) Compile the executables with Microsoft C++ compiler.
-   We distribute the executables created by the Microsoft compilers.
+3) Compile the executables with Microsoft C++ compiler.
    You'll need to compile before creating the installer.
 
-5) Install Python
-   Make sure to use the Windows version of Python, rather than the one included
-   with Cygwin.
+4) Install Python 3
    Adjust the path appropriately, if required.
 
-6) Install the following Python extensions.
+5) Install the following Python extensions.
    First, install the normal dependencies:
      pip3 install -r requirements
    The installer uses 2 additional packages
-      - py2exe, for Python 3, >= 0.9.2.2
+      - py2exe for Python 3, >= 0.9.2.2
       - pywin32
    The installer uses py2exe to create a directory containing the Python
-   language (with its libraries and extensions) and the frePPLe web user
+   language (with its libraries and extensions) and the frePPLe user
    interface.
    As the standalone web server we use WSGIServer that is provided by the
    CherryPy project. It is a bit more scalable and robust than the Django
    development server.
 
-7) Before building the installer script you'll need to update the frepple.nsi
-   script to point to the directory where the xerces-c dll is stored.
+6) Download the PostgreSQL binaries for 64-bit windows from:
+     http://www.enterprisedb.com/products-services-training/pgbindownload
+   Unzip the zip-file in the folder pgsql before running the installer.
 
 CONSIDERING ALL THE ABOVE, BUILDING THE INSTALLER ISN'T FOR BEGINNERS.
-IT REQUIRES PROPER UNDERSTANDING OF ALL COMPONENTS AND THE FREPPLE BUILD PROCESS...
+IT REQUIRES PROPER UNDERSTANDING OF ALL COMPONENTS AND THE BUILD PROCESS...

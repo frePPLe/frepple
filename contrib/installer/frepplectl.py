@@ -36,34 +36,27 @@ from django.core.management import execute_from_command_line, call_command
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
-# Create the database if it doesn't exist yet
-noDatabaseSchema = False
-if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-  # PostgreSQL:
-  # Try connecting and check for a table called 'parameter'.
-  from django.db import connection
-  try: cursor = connection.cursor()
-  except Exception as e:
-    print("Aborting: Can't connect to the database")
-    print("   %s" % e)
-    input("Hit any key to continue...")
-    sys.exit(1)
-  try: cursor.execute("SELECT 1 FROM common_parameter")
-  except: noDatabaseSchema = True
-else:
-  print('Aborting: Unknown database engine %s' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])
-  input("Hit any key to continue...")
-  sys.exit(1)
-
-if noDatabaseSchema and len(sys.argv)>1 and sys.argv[1]!='migrate':
-  print("\nDatabase schema has not been initialized yet.")
-  confirm = input("Do you want to do that now? (yes/no): ")
-  while confirm not in ('yes', 'no'):
-    confirm = input('Please enter either "yes" or "no": ')
-  if confirm == 'yes':
-    # Create the database
-    print("\nCreating database scheme")
-    call_command('migrate', verbosity=1)
+if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+  # Using the included postgres database
+  # Check if the database is running. If not, start it.
+  from subprocess import call, DEVNULL
+  status = call([
+    os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+    "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+    "--silent",
+    "status"
+    ],
+    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+    )
+  if status:
+    print("Starting the PostgreSQL database now", settings.FREPPLE_LOGDIR)
+    call([
+      os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+      "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+      "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+      "-w", # Wait till it's up
+      "start"
+      ])
 
 # Execute the command
 execute_from_command_line(sys.argv)

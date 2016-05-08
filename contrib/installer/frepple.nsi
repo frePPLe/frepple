@@ -176,8 +176,8 @@ FunctionEnd
 
 Section -Start
   ; Create the python distribution and django server
-  !system 'rmdir /s /q dist'
-  !system 'python34 setup.py'
+  !system 'rmdir /s /q build'
+  !system 'python3 setup.py build'
 
   ; Rebuild the documentation
   !cd '../../doc'
@@ -211,8 +211,8 @@ Section "Application" SecAppl
   ; Copy the license file the user specified
   File "bin\license.xml"
 
-  ; Copy the django and python redistributables created by py2exe
-  File /r "contrib\installer\dist\*.*"
+  ; Copy the django and python redistributables created by cx_freeze
+  File /r "contrib\installer\build\exe.win-amd64-3.5\*.*"
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"
@@ -488,12 +488,13 @@ Section -Post
       --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
       --auth=ident \
       --encoding=UTF8'
-    Rename "$INSTDIR\pgsql\pg_hba.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_hba.conf"          ; TODO NOT WORKING
-    Rename "$INSTDIR\pgsql\pg_ident.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_ident.conf"      ; TODO NOT WORKING
-    Rename "$INSTDIR\pgsql\postgresql.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\postgresql.conf"  ; TODO NOT WORKING
+    SetOutPath "$INSTDIR\pgsql"
+    Rename "pg_hba.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_hba.conf"       
+    Rename "pg_ident.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_ident.conf"     
+    Rename "postgresql.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\postgresql.conf"
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\pg_ctl" \
-      --pgdata "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
-      --log "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
+      --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+      --log="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
       -w start'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 frepple'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario1'

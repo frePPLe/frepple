@@ -45,7 +45,7 @@ elif os.sep == '/' and os.path.isfile('/usr/local/share/frepple/frepple.xsd'):
   # Linux installation layout with prefix /usr/local
   FREPPLE_HOME = '/usr/local/share/frepple'
 elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP, '..', 'frepple.xsd'))):
-  # Py2exe layout
+  # Cx_freeze layout
   FREPPLE_HOME = os.path.abspath(os.path.join(FREPPLE_APP, '..'))
 elif os.path.isfile(os.path.abspath(os.path.join(FREPPLE_APP, '..', '..', 'bin', 'frepple.xsd'))):
   # Development layout
@@ -229,15 +229,17 @@ MESSAGE_TAGS = {
   }
 
 # Override any of the above settings from a separate file
-if os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
-  with open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')) as mysettingfile:
-    exec(mysettingfile.read(), globals())
-  if DEBUG:
-    # Add a dummy module to sys.modules to make the development server
-    # autoreload when the configuration file changes.
-    module = types.ModuleType('djangosettings')
-    module.__file__ = os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')
-    sys.modules['djangosettings'] = module
+if not os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
+  print("\nError: Can't locate djangosettings.py configuration file")
+  sys.exit(1)
+with open(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')) as mysettingfile:
+  exec(mysettingfile.read(), globals())
+if DEBUG:
+  # Add a dummy module to sys.modules to make the development server
+  # autoreload when the configuration file changes.
+  module = types.ModuleType('djangosettings')
+  module.__file__ = os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py')
+  sys.modules['djangosettings'] = module
 
 # Some Django settings we don't like to be overriden
 TEMPLATE_DEBUG = DEBUG

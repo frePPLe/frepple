@@ -69,7 +69,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
         # Environment settings (which are used in the Django settings file and need
         # to be updated BEFORE importing the settings)
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-        os.environ['FREPPLE_APP'] = os.path.join(os.path.split(sys.path[0])[0],'custom')
+        os.environ['FREPPLE_APP'] = os.path.join(sys.path[0],'custom')
         os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
 
         if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
@@ -94,7 +94,7 @@ class frePPLeService(win32serviceutil.ServiceFramework):
               ])
 
         # Add the custom directory to the Python path.
-        sys.path = [ os.environ['FREPPLE_APP'], sys.path[0] ]
+        sys.path += [ os.environ['FREPPLE_APP'] ]
 
         # Import modules
         from django.conf import settings

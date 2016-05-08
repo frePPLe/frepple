@@ -19,9 +19,9 @@ from stat import S_ISDIR, ST_MODE
 
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
-os.environ.setdefault('FREPPLE_HOME', os.path.split(sys.path[0])[0])
+os.environ.setdefault('FREPPLE_HOME', sys.path[0])
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
-os.environ.setdefault('FREPPLE_APP', os.path.join(os.path.split(sys.path[0])[0],'custom'))
+os.environ.setdefault('FREPPLE_APP', os.path.join(sys.path[0],'custom'))
 
 # Sys.path contains the zip file with all packages. We need to put the
 # application directory into the path as well.

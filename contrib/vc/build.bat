@@ -4,8 +4,8 @@ setlocal
 
 rem EDIT THIS SECTION TO MATCH YOUR INSTALLATION
 set PYTHON=C:\develop\python35
-set XERCES=C:\develop\xerces-c-3.1.3-x86_64-windows-vc-14.0
-set DOTNET=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
+set XERCES=C:\develop\xerces-c-3.1.3-x86_64-windows-vc14.0
+set MSBUILD=C:\Program Files (x86)\MSBuild\14.0
 
 rem EDIT THIS SECTION WHEN NON_DEFAULT INSTALLATION FOLDER WAS CHOSEN
 if exist "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC" (
@@ -30,4 +30,4 @@ call "%VC%\vcvarsall" x86_amd64
 set INCLUDE=%PYTHON%\include;%XERCES%\include;%INCLUDE%
 set LIB=%PYTHON%\libs;%XERCES%\lib;%LIB%
 
-"%DOTNET%\msbuild.exe" %build% /m /p:useenv=true /p:showenv=true frepple.sln "/p:Configuration=%conf%" /p:Platform=x64
+"%MSBUILD%\bin\msbuild.exe" %build% /m /p:useenv=true /p:showenv=true frepple.sln "/p:Configuration=%conf%" /p:Platform=x64

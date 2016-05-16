@@ -204,10 +204,6 @@ class Command(BaseCommand):
         simulator = Simulator(database=database, verbosity=verbosity)
       simulator.buckets = 1
 
-      # The simulation only support complete shipments for the full quantity.
-      # We enforce that the generated plan respects this as well.
-      Demand.objects.all().using(database).update(minshipment=F('quantity'))
-
       # Loop over all dates in the simulation horizon
       idx = 0
       strt = None
@@ -557,7 +553,7 @@ class Simulator(object):
       print("      Opening demand %s - %d of %s@%s due on %s" % (dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due))
 
 
-  def checkAvailable(self, qty, oper, consume):
+  def checkAvailable(self, qty, min_qty, oper, consume):
     '''
     Verify whether an operationplan of a given quantity is material-feasible.
     '''
@@ -568,30 +564,80 @@ class Simulator(object):
         if consume:
           fl.thebuffer.onhand += qty * fl.quantity
           fl.thebuffer.save(using=self.database)
-        elif fl.thebuffer.onhand < - fl.quantity * qty:
-          return False
+        elif fl.thebuffer.onhand < - fl.quantity * min_qty:
+          # Even the minimum isn't available
+          return 0
+        else:
+          if qty > min_qty:
+            ship_qty = min(- fl.thebuffer.onhand / fl.quantity, qty - min_qty)
+          else:
+            ship_qty = - fl.thebuffer.onhand / fl.quantity
+          if ship_qty < min_qty:
+            # Remaining open quantity after an ok would be less than the minimum
+            return 0
+          elif ship_qty >= qty:
+            # ok for the full requested quantity
+            continue
+          else:
+            # Partial satisfying is possible
+            qty = ship_qty
       if fl.type in ('fixed_start', 'fixed_end'):
         if consume:
           fl.thebuffer.onhand += qty
           fl.thebuffer.save(using=self.database)
-        elif fl.thebuffer.onhand < - qty:
-          return False
+        elif fl.thebuffer.onhand < - min_qty:
+          # Even the minimum isn't available
+          return 0
+        else:
+          if qty > min_qty:
+            ship_qty = min(- fl.thebuffer.onhand, qty - min_qty)
+          else:
+            ship_qty = - fl.thebuffer.onhand
+          if ship_qty < min_qty:
+            # Remaining open quantity after an ok would be less than the minimum
+            return 0
+          elif ship_qty >= qty:
+            # ok for the full requested quantity
+            continue
+          else:
+            # Partial satisfying is possible
+            qty = ship_qty
     if oper.type == 'routing':
       # All routing suboperations must return an ok
       for suboper in oper.suboperations.all().using(self.database).order_by("priority"):
-        if not self.checkAvailable(qty, suboper.suboperation, consume):
-          return False
+        ship_qty = self.checkAvailable(qty, min_qty, suboper.suboperation, consume)
+        if not ship_qty:
+          return 0
+          qty = ship_qty
     elif oper.type == 'alternate':
-      # An ok from a single suboperation suffices
+      # An ok from a single suboperation suffices.
+      # We only use a single alternate for satisfying the requested quantity.
       for suboper in oper.suboperations.all().using(self.database).order_by("priority"):
         if consume:
-          if self.checkAvailable(qty, suboper.suboperation, False):
-            self.checkAvailable(qty, suboper.suboperation, True)
-            return True
-        elif self.checkAvailable(qty, suboper.suboperation, consume):
-          return True
-      return False
-    return True
+          if self.checkAvailable(qty, min_qty, suboper.suboperation, False):
+            ship_qty = self.checkAvailable(qty, min_qty, suboper.suboperation, True)
+            if ship_qty:
+              return ship_qty
+        else:
+          ship_qty = self.checkAvailable(qty, min_qty, suboper.suboperation, consume)
+          if ship_qty:
+            return ship_qty
+      return 0
+    return qty
+
+
+  def checkDemandExpired(self, dmd, nd):
+    if dmd.maxlateness is not None and (dmd.due + timedelta(0, int(dmd.maxlateness))).date() <= nd:
+      # We're beyond the last possible delivery of the demand.
+      # The order will unfortunately expire.
+      dmd.status = 'closed'
+      dmd.category = 'demand unsatisfied and expired'
+      if self.verbosity > 2:
+        print("      Closing demand %s - %d of %s@%s due on %s - unsatisfied quantity" % (
+          dmd.name, dmd.quantity, dmd.item.name,
+          dmd.location.name if dmd.location else None, dmd.due
+          ))
+      dmd.save(using=self.database)
 
 
   def ship_customer_demand(self, strt, nd):
@@ -601,14 +647,16 @@ class Simulator(object):
     We search for open demand records with a due date earlier than the end of the bucket.
     The records found are ordered by priority and due date.
     For each record found:
-      - we check if the order can be shipped from end item inventory
+      - we check if the order can be (completely or partially) shipped from end item inventory
       - if no:
-          - skip the demand (hopefully we can ship it when simulating the next bucket...)
-      - if yes:
+          - skip the demand
+            Hopefully we can ship it when simulating the next bucket...
+      - if the remaining quantity can be completely shipped:
           - change the demand status to 'closed'
           - reduce the inventory of the product
-
-    We don't account for partial deliveries and max_lateness.
+      - if the remaining quantity can be partially shipped:
+          - reduce the quantity of the demand
+          - reduce the inventory of the product
     '''
     for dmd in Demand.objects.using(self.database).filter(due__lt=nd, status='open').order_by('priority', 'due'):
       oper = dmd.operation
@@ -616,24 +664,58 @@ class Simulator(object):
         oper = dmd.item.operation
       if oper:
         # Case 1: Delivery operation specified
-        if self.checkAvailable(dmd.quantity, oper, False):
+        ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)
+        if ship_qty > 0:
           # Execute all flows on the delivery operation
-          self.checkAvailable(dmd.quantity, oper, True)
+          self.checkAvailable(ship_qty, 0, oper, True)
+          if dmd.quantity > ship_qty:
+            # Partial shipment
+            dmd.quantity -= ship_qty
+            dmd.save(using=self.database)
+            self.checkDemandExpired(dmd, nd)
+            continue
         else:
           # We can't ship the order
+          self.checkDemandExpired(dmd, nd)
           continue
       else:
         # Case 2: Automatically generated delivery operation
         try:
           buf = Buffer.objects.select_for_update().using(self.database).get(item=dmd.item, location=dmd.location)
         except Buffer.DoesNotExist:
+          self.checkDemandExpired(dmd, nd)
           continue
-        if buf.onhand < dmd.quantity:
-          # We can't ship the order
+        if buf.onhand < dmd.minshipment:
+          # Not sufficient to ship something
+          self.checkDemandExpired(dmd, nd)
           continue
-        else:
+        elif buf.onhand > dmd.quantity:
+          # Shipping the complete remaining quantity
           buf.onhand -= dmd.quantity
           buf.save(using=self.database)
+        else:
+          if dmd.quantity > dmd.minshipment:
+            ship_qty = min(buf.onhand, dmd.quantity - dmd.minshipment)
+          else:
+            ship_qty = buf.onhand
+          if ship_qty <= dmd.minshipment:
+            # Remaining open quantity after a partial shipment would be less than the minimum shipment
+            self.checkDemandExpired(dmd, nd)
+            continue
+          else:
+            # Partial shipment is possible
+            dmd.quantity -= ship_qty
+            dmd.save(using=self.database)
+            buf.onhand -= ship_qty
+            buf.save(using=self.database)
+            if self.verbosity > 2:
+              print("      Partially shipping demand %s - %d of %s@%s due on %s - delay %s" % (
+                dmd.name, dmd.quantity, dmd.item.name,
+                dmd.location.name if dmd.location else None, dmd.due,
+                max(strt - dmd.due.date(), timedelta(0))
+                ))
+            self.checkDemandExpired(dmd, nd)
+            continue
 
       # We can satisfy this order
       dmd.status = 'closed'

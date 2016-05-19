@@ -152,7 +152,7 @@ if __name__ == "__main__":
   #exportStaticModel(database=db, source=None).run()
 
   print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
-  exportPlan(db)
+  exportPlan()
 
   #print("\nStart saving the plan to flat files at", datetime.now().strftime("%H:%M:%S"))
   #from freppledb.execute.export_file_plan import exportfrepple as export_plan_to_file

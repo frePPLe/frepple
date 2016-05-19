@@ -316,13 +316,12 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    if (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE)
+    if (i->getQuantity() > 0 && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
       demands_per_cluster[i->getCluster()].push_back(&*i);
 
-  // Delete of operationplans of the affected clusters
+  // Delete of operationplans
   // This deletion is not multi-threaded... But on the other hand we need to
-  // loop through the operations only once (rather than as many times as there
-  // are clusters)
+  // loop through the operations only once
   if (getErasePreviousFirst())
   {
     if (getLogLevel()>0) logger << "Deleting previous plan" << endl;

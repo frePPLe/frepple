@@ -9,11 +9,11 @@
   "dependencies": {},
   "devDependencies": {
     "bootstrap": "^3.3.6",
-    "grunt": "^0.4.5",
-    "grunt-contrib-less": "^1.1.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "less": "^2.5.3",
-    "less-plugin-autoprefix": "^1.5.1"
+    "grunt": ">=1.0.1",
+    "grunt-contrib-less": ">=1.1.0",
+    "grunt-contrib-watch": ">=0.6.1",
+    "less": ">=2.5.3",
+    "less-plugin-autoprefix": ">=1.5.1"
   },
   "repository": {
     "type": "git",

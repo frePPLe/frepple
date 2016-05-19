@@ -197,7 +197,7 @@ class exportStaticModel(object):
             i.description, i.category, i.subcategory, i.source, self.timestamp
           )
           for i in frepple.operations()
-          if i.name not in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
+          if i.name not in primary_keys and not i.hidden and not isinstance(i, frepple.operation_itemsupplier) and i.name != 'setup operation' and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
         '''update operation
@@ -218,7 +218,7 @@ class exportStaticModel(object):
             i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
           )
           for i in frepple.operations()
-          if i.name in primary_keys and not i.hidden and i.name != 'setup operation' and (not self.source or self.source == i.source)
+          if i.name in primary_keys and not i.hidden and not isinstance(i, frepple.operation_itemsupplier) and i.name != 'setup operation' and (not self.source or self.source == i.source)
         ])
       print('Exported operations in %.2f seconds' % (time() - starttime))
 

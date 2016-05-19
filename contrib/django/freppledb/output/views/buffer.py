@@ -22,7 +22,7 @@ from django.utils.encoding import force_text
 
 from freppledb.input.models import Buffer
 from freppledb.output.models import FlowPlan
-from freppledb.common.db import sql_max, sql_min, python_date, string_agg
+from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -96,8 +96,8 @@ class OverviewReport(GridPivot):
     query = '''
       select buf.name as row1, buf.item_id as row2, buf.location_id as row3,
              d.bucket as col1, d.startdate as col2, d.enddate as col3,
-             coalesce(sum(%s),0.0) as consumed,
-             coalesce(-sum(%s),0.0) as produced
+             coalesce(sum(greatest(out_flowplan.quantity, 0)),0) as consumed,
+             coalesce(-sum(least(out_flowplan.quantity, 0)),0) as produced
         from (%s) buf
         -- Multiply with buckets
         cross join (
@@ -119,7 +119,6 @@ class OverviewReport(GridPivot):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (
-        sql_max('out_flowplan.quantity', '0.0'), sql_min('out_flowplan.quantity', '0.0'),
         basesql, request.report_bucket, request.report_startdate, request.report_enddate,
         request.report_startdate, request.report_enddate, sortsql
       )
@@ -170,12 +169,11 @@ class DetailReport(GridReport):
     return base.select_related() \
       .extra(select={
         'operation_in': "select name from operation where out_operationplan.operation = operation.name",
-        'demand': ("select %s(q || ' : ' || d, ', ') from ("
-                   "select round(sum(quantity)) as q, demand as d "
-                   "from out_demandpegging "
-                   "where out_demandpegging.operationplan = out_flowplan.operationplan_id "
-                   "group by demand order by 1 desc, 2) peg"
-                   % string_agg())
+        'demand': "select string_agg(q || ' : ' || d, ', ') from ("
+                  "select round(sum(quantity)) as q, demand as d "
+                  "from out_demandpegging "
+                  "where out_demandpegging.operationplan = out_flowplan.operationplan_id "
+                  "group by demand order by 1 desc, 2) peg"
         })
 
   @classmethod

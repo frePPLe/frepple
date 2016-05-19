@@ -49,9 +49,6 @@ from django.db import DEFAULT_DB_ALIAS
 # Functions for POSTGRESQL
 if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
 
-  def sql_true():
-    return 'true'
-
   def sql_datediff(d1, d2):
     return '(extract(epoch from (cast(%s as timestamp) - cast(%s as timestamp))) / 86400)' % (d1, d2)
 
@@ -65,18 +62,8 @@ if settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'] == 'django.db.backends.postgre
       '(least(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)) ' \
       ' - greatest(cast(%s as timestamp),cast(%s as timestamp),cast(%s as timestamp)))) / 86400)' % (e1, e2, e3, s1, s2, s3)
 
-  def sql_max(d1, d2):
-    return "greatest(%s,%s)" % (d1, d2)
-
-  def sql_min(d1, d2):
-    return "least(%s,%s)" % (d1, d2)
-
   def python_date(d):
     return d.date()
-
-  def string_agg():
-    return 'string_agg'
-
 
 else:
   raise NameError('The %s database is not support by frePPLe' % settings.DATABASES[DEFAULT_DB_ALIAS]['ENGINE'])

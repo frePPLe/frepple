@@ -229,10 +229,10 @@ DECLARE_EXPORT void Environment::setLogFile(const string& x)
 }
 
 
-DECLARE_EXPORT void Environment::loadModule(string lib, ParameterList& parameters)
+DECLARE_EXPORT void Environment::loadModule(string lib)
 {
   // Type definition of the initialization function
-  typedef const char* (*func)(const ParameterList&);
+  typedef const char* (*func)();
 
   // Validate
   if (lib.empty())
@@ -305,7 +305,7 @@ DECLARE_EXPORT void Environment::loadModule(string lib, ParameterList& parameter
 #endif
 
   // Call the initialization routine with the parameter list
-  string x = (inithandle)(parameters);
+  string x = (inithandle)();
   if (x.empty()) throw DataException("Invalid module");
 
   // Insert the new module in the registry

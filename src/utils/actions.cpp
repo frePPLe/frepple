@@ -591,16 +591,6 @@ DECLARE_EXPORT PyObject* loadModule
   int ok = PyArg_ParseTuple(args, "s:loadmodule", &data);
   if (!ok) return NULL;
 
-  // Load parameters for the module
-  Environment::ParameterList params;
-  if (kwds)
-  {
-    PyObject *key, *value;
-    Py_ssize_t pos = 0;
-    while (PyDict_Next(kwds, &pos, &key, &value))
-      params[PythonData(key).getString()] = PythonData(value).getString();
-  }
-
   // Free Python interpreter for other threads.
   // This is important since the module may also need access to Python
   // during its initialization...
@@ -608,7 +598,7 @@ DECLARE_EXPORT PyObject* loadModule
   try
   {
     // Load the library
-    Environment::loadModule(data, params);
+    Environment::loadModule(data);
   }
   catch(...)
   {

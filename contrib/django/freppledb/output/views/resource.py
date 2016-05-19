@@ -23,7 +23,7 @@ from django.utils.text import capfirst
 from freppledb.input.models import Resource
 from freppledb.output.models import LoadPlan
 from freppledb.common.models import Parameter
-from freppledb.common.db import python_date, sql_max, string_agg
+from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -120,7 +120,7 @@ class OverviewReport(GridPivot):
                 select
                   theresource,
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
-                   * 100.0 / coalesce(%s,1) as avg_util
+                   * 100.0 / coalesce(greatest(sum(out_resourceplan.available), 0.0001),1) as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'
@@ -136,7 +136,6 @@ class OverviewReport(GridPivot):
         request.report_enddate,
         connections[basequery.db].ops.quote_name('resource'),
         request.report_startdate, request.report_enddate,
-        sql_max('sum(out_resourceplan.available)', '0.0001'),
         request.report_startdate, request.report_enddate, sortsql
       )
     cursor.execute(query, baseparams)
@@ -182,12 +181,11 @@ class DetailReport(GridReport):
     return base.select_related() \
       .extra(select={
         'operation_in': "select name from operation where out_operationplan.operation = operation.name",
-        'demand': ("select %s(q || ' : ' || d, ', ') from ("
-                   "select round(sum(quantity)) as q, demand as d "
-                   "from out_demandpegging "
-                   "where out_demandpegging.operationplan = out_loadplan.operationplan_id "
-                   "group by demand order by 1 desc, 2) peg"
-                   % string_agg())
+        'demand': "select string_agg(q || ' : ' || d, ', ') from ("
+                  "select round(sum(quantity)) as q, demand as d "
+                  "from out_demandpegging "
+                  "where out_demandpegging.operationplan = out_loadplan.operationplan_id "
+                  "group by demand order by 1 desc, 2) peg"
         })
 
   @classmethod

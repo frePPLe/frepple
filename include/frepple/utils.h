@@ -169,7 +169,7 @@ using namespace std;
   * function is exported appropriately when running on Windows.<br>
   * A module will need to define a function with the following prototype:
   * @code
-  * MODULE_EXPORT string initialize(const CommandLoadLibrary::ParameterList&);
+  * MODULE_EXPORT string initialize();
   * @endcode
   */
 #undef DECLARE_EXPORT
@@ -183,8 +183,14 @@ using namespace std;
     #define DECLARE_EXPORT __declspec (dllimport)
   #endif
   #define MODULE_EXPORT  extern "C" __declspec (dllexport)
+  #ifndef MODULE_IMPORT
+    #define MODULE_FUNCTION  __declspec (dllexport)
+  #else
+    #define MODULE_FUNCTION  __declspec (dllimport)
+  #endif
 #else
   #define DECLARE_EXPORT
+  #define MODULE_FUNCTION
   #define MODULE_EXPORT extern "C"
 #endif
 
@@ -515,7 +521,7 @@ class NonCopyable
   *       - solvers()
   *   - <b>printsize()</b>:<br>
   *     Prints information about the memory consumption.
-  *   - <b>loadmodule(string [,parameter=value, ...])</b>:<br>
+  *   - <b>loadmodule(string)</b>:<br>
   *     Dynamically load a module in memory.
   *   - <b>readXMLdata(string [,bool] [,bool])</b>:<br>
   *     Processes an XML string passed as argument.
@@ -1331,7 +1337,8 @@ class Keyword : public NonCopyable
 
     /** Store different preprocessed variations of the name of the tag.
       * These are all stored in memory for improved performance. */
-    string strName, strStartElement, strEndElement, strElement, strAttribute;
+    string strName, strStartElement, strEndElement, strElement,
+      strAttribute, strQuoted;
 
     /** A function to verify the uniquess of our hashes. */
     void check();
@@ -1364,6 +1371,12 @@ class Keyword : public NonCopyable
     const string& getName() const
     {
       return strName;
+    }
+
+    /** Returns the quoted name of the tag: "TAG": */
+    const string& getQuoted() const
+    {
+      return strQuoted;
     }
 
     /** Returns a string to start an XML element with this tag: \<TAG */
@@ -3103,7 +3116,7 @@ class Environment
       *  - Unix systems supporting the dlopen function in the standard way.
       *    Some unix systems have other or deviating APIs. A pretty messy story :-<
       */
-    static DECLARE_EXPORT void loadModule(string lib, ParameterList& parameters); //@todo replace argument with a DataValueDict instead
+    static DECLARE_EXPORT void loadModule(string lib);
 
     /** Print all modules that have been loaded. */
     static DECLARE_EXPORT void printModules();
@@ -4031,6 +4044,7 @@ class PythonIterator : public Object
 /** @brief This class is a wrapper around platform specific mutex functions. */
 class Mutex: public NonCopyable
 {
+  friend class ConditionVariable;
   public:
 #if defined(HAVE_PTHREAD_H)
     // Pthreads
@@ -4100,6 +4114,78 @@ class ScopeMutexLock: public NonCopyable
     {
       mtx.unlock();
     }
+};
+
+
+/** @brief This class is a wrapper around the platform specific
+  * implementation condition variable.
+  *
+  * A condition variable is a mechanism to synchronize execution threads.
+  * It is used to block one or more threads until another thread both
+  * modifies a shared variable (the condition), and notifies the condition
+  * variable.
+  *
+  * The typical usage will follow this pattern:
+  *   - For the thread that is waiting for a condition:
+  *        mutex.lock();
+  *        while (condition is not true)
+  *          condition_variable.wait(mutex);
+  *        update the condition;
+  *        mutex.unlock();
+  *   - For the thread updating the condition:
+  *        mutex.lock();
+  *        update condition;
+  *        waiting.signal();
+  *        mutex.unlock();
+  *   - The wait method is used to delay the thread.
+  *   - The signal method is used to flag all waiting threads of a condition
+  *     change.
+  *   - A mutex is required to control single-threaded access to the condition.
+  */
+class ConditionVariable: public NonCopyable
+{
+  public:
+#if defined(HAVE_PTHREAD_H)
+    // Pthreads
+    ConditionVariable()
+    {
+      pthread_cond_init (&cond, NULL);
+    }
+
+    ~ConditionVariable()
+    {
+      pthread_cond_destroy(&cond);
+    }
+
+    void wait(Mutex& x)
+    {
+      pthread_cond_wait(&cond, &(x.mtx));
+    }
+
+    void signal()
+    {
+      pthread_cond_signal(&cond);
+    }
+  private:
+    pthread_cond_t cond;
+#else
+    // Windows
+    ConditionVariable() {}
+
+    ~ConditionVariable() {}
+
+    void wait(Mutex& x)
+    {
+      SleepConditionVariableCS(&cond, &x.critsec, INFINITE);
+    }
+
+    void signal()
+    {
+      WakeAllConditionVariable(&cond);
+    }
+  private:
+    CONDITION_VARIABLE cond;
+#endif
 };
 
 
@@ -5155,6 +5241,14 @@ class CommandManager
       currentBookmark->add(c);
     }
 
+    /** Add new setField command to the active bookmark. */
+    DECLARE_EXPORT void addCommandSetField(
+      Object* o, const MetaFieldBase* f, const DataValue& d
+      )
+    {
+      add(new CommandSetField(o, f, d));
+    }
+
     /** Create a new bookmark. */
     DECLARE_EXPORT Bookmark* setBookmark();
 
@@ -5496,7 +5590,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       *   'add_change' is the default value.
       * @see HasName
       */
-    static Object* reader (
+    static DECLARE_EXPORT Object* reader (
       const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
       )
     {
@@ -6167,8 +6261,6 @@ template <class A, class B, class C> class Association
         /** Constructor. */
         ListB() {};
 
-        // TODO Add a copy constructor as well?
-
         /** @brief An iterator over the associated objects. */
         class iterator
         {
@@ -6524,7 +6616,7 @@ template <class A, class B, class C> class Association
         }
     };
 
-    static Object* reader(
+    static DECLARE_EXPORT Object* reader(
       const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
       )
     {
@@ -6626,7 +6718,7 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getString());
     }
 
@@ -6688,7 +6780,7 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getBool());
     }
 
@@ -6745,7 +6837,7 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getDouble());
     }
 
@@ -6802,7 +6894,7 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getInt());
     }
 
@@ -6859,7 +6951,7 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getString());
     }
 
@@ -6916,7 +7008,7 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getInt());
     }
 
@@ -6973,7 +7065,7 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getUnsignedLong());
     }
 
@@ -7030,7 +7122,7 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getDuration());
     }
 
@@ -7087,7 +7179,7 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(Duration::parse2double(el.getString().c_str()));
     }
 
@@ -7148,7 +7240,7 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
         throw DataException(o.str());
       }
       if (cmd)
-        cmd->add(new CommandSetField(me, this, el));
+        cmd->addCommandSetField(me, this, el);
       (static_cast<Cls*>(me)->*setf)(el.getDate());
     }
 
@@ -7210,7 +7302,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         )
       {
         if (cmd)
-          cmd->add(new CommandSetField(me, this, el));
+          cmd->addCommandSetField(me, this, el);
         (static_cast<Cls*>(me)->*setf)(obj);
       }
       else

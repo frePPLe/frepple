@@ -118,7 +118,7 @@ def createPlan(database=DEFAULT_DB_ALIAS):
   solver.solve()
 
 
-def exportPlan(database=DEFAULT_DB_ALIAS):
+def exportPlan():
   from freppledb.execute.export_database_plan_postgresql import exportfrepple
   exportfrepple()
 

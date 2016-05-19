@@ -128,7 +128,7 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
   // Pick up arguments
   char *filename;
   char *content = NULL;
-  int ok = PyArg_ParseTuple(args, "s|s:save", &filename, &content);
+  int ok = PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content);
   if (!ok) return NULL;
 
   // Execute and catch exceptions

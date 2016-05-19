@@ -16,7 +16,7 @@
 {% block nav-global %}{% endblock %}
 {% endif %}
 
-<div class="container-fluid" id="workarea">
+<div class="container-fluid" id="workarea" {% block extracontainer %}{% endblock %}>
 
 {% if messages %}<div class="row"><div class="col-md-12">{% for message in messages %}<ul class="alert {{message.tags}}"><li >{{message}}</li></ul>{% endfor %}</div></div>{% endif %}
 
@@ -35,6 +35,6 @@
 {% endblock %}
 
 </div> <!-- end container -->
-
+{% block modal %}{% endblock %}
 </body>
 </html>

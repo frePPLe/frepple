@@ -222,10 +222,11 @@ var upload = {
               $('#popup').html('<div class="modal-dialog">'+
                       '<div class="modal-content">'+
                         '<div class="modal-header">'+
+                          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
                           '<h4 class="modal-title alert alert-danger">'+ gettext("Error saving data")+'</h4>'+
                         '</div>'+
                         '<div class="modal-body">'+
-                          '<p>'+interpolate(result.responseText)+'</p>'+
+                          '<p>'+result.responseText+'</p>'+
                         '</div>'+
                         '<div class="modal-footer">'+
                           '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
@@ -240,6 +241,7 @@ var upload = {
   validateSort: function(event)
   {
     if ($(this).attr('id') == 'grid_cb') return;
+    if ($("body").hasClass("popup"))  return;
     if ($('#save').hasClass("btn-primary"))
       jQuery("#grid").jqGrid('resetSelection');
     else
@@ -691,7 +693,6 @@ var grid = {
   showFilter: function()
   {
     if ($('#filter').hasClass("disabled")) return;
- //   $('#timebuckets,#popup').dialog().dialog('close');
     $('.modal').modal('hide');
     jQuery("#grid").jqGrid('searchGrid', {
       closeOnEscape: true,
@@ -885,7 +886,7 @@ var openbravo = {
                '<h4 class="modal-title">'+gettext("export")+'</h4>'+
              '</div>'+
              '<div class="modal-body">'+
-               '<p>'+interpolate(gettext("export selected records to openbravo"))+'</p>'+
+               '<p>'+gettext("export selected records to openbravo")+'</p>'+
              '</div>'+
              '<div class="modal-footer">'+
                '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+

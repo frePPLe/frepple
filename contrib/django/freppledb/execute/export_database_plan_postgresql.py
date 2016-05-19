@@ -354,9 +354,10 @@ class DatabasePipe(Thread):
 
     # Start a PSQL process
     my_env = os.environ
-    my_env['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-    process = Popen("psql -q -w -U%s %s%s%s" % (
-        settings.DATABASES[database]['USER'],
+    if settings.DATABASES[database]['PASSWORD']:
+      my_env['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
+    process = Popen("psql -q -w %s%s%s%s" % (
+       settings.DATABASES[database]['USER'] and ("-U %s " % settings.DATABASES[database]['USER']) or '',
        settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
        settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
        settings.DATABASES[database]['TEST']['NAME'] if test else settings.DATABASES[database]['NAME'],
@@ -435,8 +436,8 @@ def exportfrepple_sequential():
   # Start a PSQL process
   my_env = os.environ
   my_env['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-  process = Popen("psql -q -w -U%s %s%s%s" % (
-      settings.DATABASES[database]['USER'],
+  process = Popen("psql -q -w %s%s%s%s" % (
+     settings.DATABASES[database]['USER'] and ("-U %s " % settings.DATABASES[database]['USER']) or '',
      settings.DATABASES[database]['HOST'] and ("-h %s " % settings.DATABASES[database]['HOST']) or '',
      settings.DATABASES[database]['PORT'] and ("-p %s " % settings.DATABASES[database]['PORT']) or '',
      test and settings.DATABASES[database]['TEST']['NAME'] or settings.DATABASES[database]['NAME'],

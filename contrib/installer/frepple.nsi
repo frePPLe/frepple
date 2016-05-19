@@ -241,6 +241,13 @@ Section "PostgreSQL" SecPostgres
 SectionEnd
 
 
+Section "Demo data" SecDemoData
+  ; Nothing to install for this option. After creating the database schema we check
+  ; whether this option was selected or not. If yes, we run the command to load the
+  ; demo dataset.
+SectionEnd
+
+
 Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
@@ -292,7 +299,7 @@ Function Databaseleave
   IfErrors 0 ok
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
      StrCpy $1 '$1Correct the connection parameters or:$\r$\n'
-     StrCpy $1 '$1  1) Install PostgreSQL 9.4 or 9.5$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL 9.5$\r$\n'
      StrCpy $1 '$1  2) Add the PostgreSQL bin folder to the PATH environment variable$\r$\n'
      StrCpy $1 '$1  3) Create the login role "$3"$\r$\n'
      StrCpy $1 '$1  4) Create the database "$2" with owner "$3"$\r$\n'
@@ -367,7 +374,16 @@ Section -Post
   DetailPrint "Configuring djangosettings.py file"
   SectionGetFlags ${SecPostgres} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
-  ${If} $R0 == ${SF_SELECTED}  
+  ${If} $R0 == ${SF_SELECTED}
+    ; Database parameters for the included database
+    StrCpy $1 "frepple"
+    StrCpy $2 ""
+    StrCpy $3 ""
+    StrCpy $4 ""
+    StrCpy $5 "8002"
+    StrCpy $6 "en-us"
+  ${Else}
+    ;
     ReadINIStr $6 "$PLUGINSDIR\parameters.ini" "Field 8" "State"  # Language
     StrCmp $6 "English" 0 +3
       StrCpy $6 "en-us"
@@ -406,16 +422,8 @@ Section -Post
     ReadINIStr $3 "$PLUGINSDIR\parameters.ini" "Field 12" "State"  # DB password
     ReadINIStr $4 "$PLUGINSDIR\parameters.ini" "Field 13" "State"  # DB host
     ReadINIStr $5 "$PLUGINSDIR\parameters.ini" "Field 14" "State"  # DB port
-  ${Else}
-    ; Database parameters for the included database
-    StrCpy $1 "frepple"
-    StrCpy $2 ""
-    StrCpy $3 ""
-    StrCpy $4 ""
-    StrCpy $5 "8002"
-    StrCpy $6 "en-us"
   ${EndIf}
-  
+
   ; Update the djangosettings.py file
   SetOutPath "$INSTDIR\bin\custom"
   FileOpen $R2 "djangosettings.py" "r"
@@ -425,7 +433,6 @@ Section -Post
   read1_loop:
     FileRead $R2 $R5
     IfErrors end_loop
-    DetailPrint "AAA $R3 $R5"
     FileWrite $R4 "$R5"
     StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
     StrCmp "$R5" "# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
@@ -433,7 +440,6 @@ Section -Post
   ; Read the second section in settings.py and write a different text to the output file
   read2_loop:
     FileRead $R2 $R5
-    DetailPrint "BBB $R5"
     IfErrors end_loop
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\n" +3 0
     StrCmp "$R5" "# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================$\r$\n" +2 0
@@ -457,6 +463,44 @@ Section -Post
   FileWrite $R4 "      'NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
   FileWrite $R4 "    },$\r$\n"
+  ${If} $R0 == ${SF_SELECTED}
+  FileWrite $R4 "  'scenario1': {$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
+  FileWrite $R4 "    'NAME': 'scenario1',  # Database name $\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
+  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    'TEST': {$\r$\n"
+  FileWrite $R4 "      'NAME': 'test_scenario1',  # Database used when running the test suite.$\r$\n"
+  FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    },$\r$\n"
+  FileWrite $R4 "  'scenario2': {$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
+  FileWrite $R4 "    'NAME': 'scenario2',  # Database name $\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
+  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    'TEST': {$\r$\n"
+  FileWrite $R4 "      'NAME': 'test_scenario2',  # Database used when running the test suite.$\r$\n"
+  FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    },$\r$\n"
+  FileWrite $R4 "  'scenario3': {$\r$\n"
+  FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
+  FileWrite $R4 "    'NAME': 'scenario3',  # Database name $\r$\n"
+  FileWrite $R4 "    'USER': '$2',  # Database user.$\r$\n"
+  FileWrite $R4 "    'PASSWORD': '$3', # Password of the database user.$\r$\n"
+  FileWrite $R4 "    'HOST': '$4',     # Set to 'localhost' if the database is running on this machine.$\r$\n"
+  FileWrite $R4 "    'PORT': '$5',     # Set to empty string for default port number.$\r$\n"
+  FileWrite $R4 "    'OPTIONS': {},  # Backend specific configuration parameters.$\r$\n"
+  FileWrite $R4 "    'TEST': {$\r$\n"
+  FileWrite $R4 "      'NAME': 'test_scenario3',  # Database used when running the test suite.$\r$\n"
+  FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    },$\r$\n"
+  ${Endif}
   FileWrite $R4 "  }$\r$\n$\r$\n"
   FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
@@ -464,7 +508,6 @@ Section -Post
   read3_loop:
     FileWrite $R4 "$R5"
     FileRead $R2 $R5
-    DetailPrint "CCC $R5"
     IfErrors end_loop
   Goto read3_loop
   end_loop:
@@ -488,10 +531,8 @@ Section -Post
       --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
       --auth=ident \
       --encoding=UTF8'
-    SetOutPath "$INSTDIR\pgsql"
-    Rename "pg_hba.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_hba.conf"       
-    Rename "pg_ident.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\pg_ident.conf"     
-    Rename "postgresql.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\postgresql.conf"
+    CopyFiles "$INSTDIR\pgsql\*.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
+    Delete "$INSTDIR\pgsql\*.conf"
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\pg_ctl" \
       --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
       --log="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
@@ -508,10 +549,14 @@ Section -Post
   nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" migrate --noinput'
   Pop $0
   ${If} $0 == "0"
-    DetailPrint "Loading demo data"
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
-    DetailPrint "Generating initial plan"
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
+    SectionGetFlags ${SecPostgres} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 == ${SF_SELECTED}
+      DetailPrint "Loading demo data"
+      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
+      DetailPrint "Generating initial plan"
+      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
+    ${EndIf}
   ${else}
     DetailPrint "x $0 x"
     DetailPrint "ERROR CREATING DATABASE SCHEMA!!!"
@@ -545,9 +590,10 @@ SectionEnd
 ; Section descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAppl} "Installation of the core application."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDemoData} "Installation of a demo dataset."
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDoc} "Installation of the documentation."
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecPostgres} "Installation of the Postgresql  database server.$\r$\n\
-    $\r$\nAlternatively, you can install, configure and tune PostgreSQL 9.5.2 seperately."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPostgres} "FrePPLe requires a PostgreSQL database.$\r$\n\
+    $\r$\nYou can use the one included in this installer, or you can install and configure PostgreSQL 9.5.2 seperately."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 
@@ -569,6 +615,11 @@ Section Uninstall
   nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" stop'
   sleep 3
   nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" remove'
+
+  ; Stop the postgresql database
+  nsExec::Exec '"$INSTDIR\pgsql\bin\pg_ctl" \
+    --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+    -w stop'
 
   ; Remove the entries from the start menu
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Uninstall.lnk"

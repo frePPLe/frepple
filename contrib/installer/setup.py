@@ -43,41 +43,12 @@ packages = [# Required for django standalone deployment
             # Added for unicode and internationalization
             'encodings',
            ]
-includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib', '_sitebuiltins']
-excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework']#,
-#            # Not using docutils
-#            'docutils', 'docutils.core', 'docutils.nodes', 'docutils.parsers.rst.roles',
-#            # Not using psycopg (using psycopg2 instead)
-#            'psycopg',
-#            # Not using pysqlite2
-#            'pysqlite2',
-#            # Not using mod_python
-#            'mod_python', 'mod_python.util',
-#            # Not using memcache
-#            'cmemcache', 'memcache',
-#            # Not using WSCGI
-#            'flup', 'flup.server.fcgi', 'flup.server.fcgi_fork',
-#            # Not using ImageFields
-#            'PIL', 'ImageFile',
-#            # Not needing special datetime handling
-#            'mx', 'mx.TextTools',
-#            # Not using yaml serialization
-#            'yaml',
-#            # Not storing templates in python eggs
-#            'pkg_resources', 'resource',
-#            # Not using the python interactive interpreter
-#            'IPython',
-#            # Not sure where django references these...
-#            'crypt',
-#            # Not using SSL
-#            'OpenSSL',
-#            # Not needed to include frePPLe's own python interface
-#            'frepple',
-#            ]
+includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib', '_sitebuiltins', 'cx_Logging']
+excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework']
 
-#from distutils.command.install import INSTALL_SCHEMES
-#for scheme in INSTALL_SCHEMES.values():
-#  scheme['data'] = scheme['purelib']
+from distutils.command.install import INSTALL_SCHEMES
+for scheme in INSTALL_SCHEMES.values():
+  scheme['data'] = scheme['purelib']
 
 # Add all modules that need to be added in uncompiled format
 import django
@@ -85,15 +56,10 @@ import freppledb
 import django_admin_bootstrapped
 import bootstrap3
 import rest_framework
-data_files = [ ]
+data_files = [ ("freppleservice.py", "freppleservice.py") ]
 for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework]:
    srcdir = mod.__path__[0]
    targetdir = os.path.join('custom', mod.__name__)
-#    data_files.append(( 
-#      srcdir,
-#      os.path.join('custom', mod.__name__)
-#      ))
-#    continue
    root_path_length = len(srcdir) + 1
    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
      # Ignore dirnames that start with '.'
@@ -126,7 +92,7 @@ cx_Freeze.setup(
       "excludes": excludes,
       "includes": includes,
       "include_files": data_files,
-      "include_msvcr": True,
+      "include_msvcr": True,      
       },
     },
   executables = [
@@ -136,7 +102,7 @@ cx_Freeze.setup(
        base='Console', 
        icon=os.path.join("..","..","src","frepple.ico")
        ),         
-    # A Windows service - not supported by cx_freeze in Python3
+    # A Windows service
     cx_Freeze.Executable(
       'freppleservice.py',
       base='Win32Service',

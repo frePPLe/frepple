@@ -135,12 +135,12 @@ class Command(BaseCommand):
       # Copying the data
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
       os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-      ret = os.system("pg_dump -c -U%s -Fp %s%s%s | psql -U%s %s%s%s" % (
-        settings.DATABASES[source]['USER'],
+      ret = os.system("pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s" % (
+        settings.DATABASES[source]['USER'] and ("-U %s " % settings.DATABASES[source]['USER']) or '',
         settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
         settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
         test and settings.DATABASES[source]['TEST']['NAME'] or settings.DATABASES[source]['NAME'],
-        settings.DATABASES[destination]['USER'],
+        settings.DATABASES[destination]['USER'] and ("-U %s " % settings.DATABASES[destination]['USER']) or '',
         settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
         settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
         test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],

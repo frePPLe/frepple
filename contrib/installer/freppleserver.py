@@ -173,6 +173,7 @@ class SysTrayIcon:
       # Using the included postgres database?
       if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
         # Check if the database is running. If so, stop it.
+        os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
         from subprocess import call, DEVNULL
         status = call([
           os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),

@@ -39,6 +39,7 @@ from django.db import DEFAULT_DB_ALIAS
 if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
   # Using the included postgres database
   # Check if the database is running. If not, start it.
+  os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
   from subprocess import call, DEVNULL
   status = call([
     os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),

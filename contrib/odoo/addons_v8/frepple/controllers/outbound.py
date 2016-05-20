@@ -356,7 +356,6 @@ mrp.workcenter.capacity_per_cycle / mrp.workcenter.time_cycle -> resource.maximu
                 )
             yield '</resources>\n'
 
-
     def export_items(self):
         '''
 Send the list of products to frePPLe, based on the product.product model.

@@ -317,6 +317,7 @@ res.partner.id res.partner.name -> customer.name
             yield '</customers>\n'
             
 #         import supplier here
+        self.map_suppliers = {}
         s_ids = m.search([('supplier', '=', True)], context=self.req.session.context)
         if s_ids:
             yield '<!-- suppliers -->\n'
@@ -396,7 +397,7 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
         m = self.req.session.model('product.product')
         ids = m.search([], context=self.req.session.context)
         s = self.req.session.model('product.supplierinfo')
-        s_fields=['name', 'delay', 'min_qty','priority']
+        s_fields=['name', 'delay', 'min_qty']
         supplier = {}
         if ids:
             yield '<!-- products -->\n'
@@ -418,21 +419,15 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
                     self.uom_categories[self.uom[tmpl['uom_id'][0]]['category']], i['id']
                 )
                 
-                delay = 0
                 if tmpl['seller_ids']:
                     yield '<itemsuppliers>\n'
                     for sup in s.read(tmpl['seller_ids'], s_fields, self.req.session.context):
-                        delay = delay + sup['delay']
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier>\n'
-                        yield '<supplier name="%s"/><leadtime>P%dD</leadtime><priority>%d</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
-                            (str(name)), sup['delay'], sup['priority'], sup['min_qty'], tmpl['standard_price'])
+                        yield '<supplier name="%s"/><leadtime>P%dD</leadtime><priority>1</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
+                            (str(name)), sup['delay'], sup['min_qty'], tmpl['standard_price'])
                         yield '</itemsupplier>\n'
-                    
-                    if i['id'] in supplier:
-                        supplier[i['id']].append(delay)
-                    else:
-                        supplier[i['id']] = delay
+                   
                     
                     yield '</itemsuppliers>\n'
                 yield '</item>\n'
@@ -460,7 +455,7 @@ Exports mrp.routings, mrp.routing.workcenter and mrp.bom records into
 frePPLe operations, flows, buffers and loads.
 
 Not supported yet: a) parent boms, b) phantom boms, c) subproducts,
-d) multiple boms for the same product, e) routing steps.
+d) routing steps.
 
 Mapping:
 '''
@@ -480,14 +475,12 @@ Mapping:
         mrp_routing_workcenters = {}
         m = self.req.session.model('mrp.routing.workcenter')
         ids = m.search([], context=self.req.session.context)
-        fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr', 'duration_per', 'type']
+        fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr']
         for i in m.read(ids, fields, self.req.session.context):
-#             duration_hour = duration_hour + i['hour_nbr']
             if i['routing_id'][0] in mrp_routing_workcenters:
-                mrp_routing_workcenters[i['routing_id'][0]].append((i['workcenter_id'][1], i['cycle_nbr'], i['hour_nbr'], i['duration_per'], i['type']))
+                mrp_routing_workcenters[i['routing_id'][0]].append((i['workcenter_id'][1], i['cycle_nbr'],))
             else:
-                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],i['hour_nbr'], i['duration_per'], i['type'])]
-                
+                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],)]  
         # Loop over all "producing" bom records
         m = self.req.session.model('mrp.bom')
         m_lines = self.req.session.model('mrp.bom.line')
@@ -495,7 +488,7 @@ Mapping:
         fields = [
             'name', 'product_qty', 'product_uom', 'date_start', 'date_stop',
             'product_efficiency', 'product_tmpl_id', 'routing_id', 'type',
-            'product_rounding', 'bom_line_ids', 'id', 'priority'
+            'product_rounding', 'bom_line_ids'
         ]
         fields2 = [
             'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
@@ -509,6 +502,7 @@ Mapping:
         operation_bom = {}
         buffer_bom = {}
         for i in product.read(product_ids, product_field, self.req.session.context):
+#             store product_id that have more than one BOM to create an alternate operation
             if len(i['bom_ids']) > 1:
                 if i['id'] in product_bom:
                     product_bom[i['id']].append((i['bom_ids'], i['name']))
@@ -520,14 +514,8 @@ Mapping:
             duration_per = 0
             type = ""
             producing = ""
-            priority = i['priority']
             # Determine the location
             if i['routing_id']:
-                for d in mrp_routing_workcenters[i['routing_id'][0]]:
-                    duration_hour = duration_hour + d[2] * 3600.0
-                    duration_per = duration_per + d[3] * 3600.0
-                    type = d[4]
-                    
                 location = mrp_routings.get(i['routing_id'][0], None)
                 if not location:
                     location = self.mfg_location
@@ -549,22 +537,15 @@ Mapping:
             yield '<buffer name=%s><item name=%s/><location name=%s/>\n' % (
                 quoteattr(buf_name), quoteattr(product_buf['name']), quoteattr(location)
             )
-            if type == "operation_fixed_time":
-                yield '<producing name="%s" size_multiple="%s" duration="PT%dS" posttime="P%dD" xsi:type="operation_fixed_time"><location name="%s"/>\n' % (
-                    (str(operation)), (i['product_rounding'] * uom_factor) or 1,
-                    int(float(str(duration_hour))), #use complicate convert to avoid reduction when use direct int
-                    self.manufacturing_lead,
-                    (str(location)),
-                )
-            elif type == "operation_time_per":
-                yield '<producing name=%s size_multiple="%s" duration="PT%dS" duration_per="PT%dS" posttime="P%dD" xsi:type="operation_time_per"><location name="%s"/>\n' % (
-                    quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                    int(float(str(duration_hour))),int(float(str(duration_per))), #use complicate convert to avoid reduction when use direct int
-                    self.manufacturing_lead,
-                    (str(location)),
-                )
+            yield '<producing name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
+                quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
+                int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
+                self.manufacturing_lead,
+                quoteattr(location)
+            )
             yield '<flows>\n'
             if i['product_tmpl_id'][0] not in product_bom:
+#                 if the operation is suboperation of alternate operation, the current operation doesn't need flow_end
                 yield '<flow xsi:type="flow_end" quantity="%f"%s%s><buffer name=%s/></flow>\n' % (
                     i['product_qty'] * i['product_efficiency'] * uom_factor,
                     i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
@@ -607,11 +588,13 @@ Mapping:
             # Footer
             yield '</producing>\n'
             if i['product_tmpl_id'][0] in product_bom:
+#                 here to store all needed field value in alternate operations, 
+#                 because alternate operation will create outside of this loop
                 if i['id'] in product_bom[i['product_tmpl_id'][0]][0][0]:
                     if i['product_tmpl_id'][0] in operation_bom:
-                        operation_bom[i['product_tmpl_id'][0]].append((str(operation), priority))
+                        operation_bom[i['product_tmpl_id'][0]].append(str(operation))
                     else :
-                        operation_bom[i['product_tmpl_id'][0]] = [(str(operation), priority)]
+                        operation_bom[i['product_tmpl_id'][0]] = [str(operation)]
                     
                     buffer_bom[i['product_tmpl_id'][0]] = [(str(buf_name), product_buf['name'], location)]
             yield '</buffer>\n'
@@ -628,7 +611,7 @@ Mapping:
             yield '<quantity>1</quantity></flow></flows>\n'
             yield '<suboperations>\n'
             for o in operation_bom[i]:
-                yield '<suboperation><operation name="%s"/><priority>%d</priority></suboperation>\n' % (o[0], int(o[1]))
+                yield '<suboperation><operation name="%s"/><priority>1</priority></suboperation>\n' % (o)
             yield '</suboperations>\n'
             yield '</producing>\n'
             yield '</buffer>\n'
@@ -716,7 +699,7 @@ product.product.name @ stock.warehouse.name -> buffer.name
             minship = j['picking_policy'] == 'one' and qty or 1.0
             priority = 1
             deliveries.update([(operation, buf, product['name'], location,)])
-            status = ''
+#             export draft sale order
             if i['state'] == 'draft':
                 yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" ><stringproperty name="status" value="quote"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
                     quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
@@ -724,6 +707,10 @@ product.product.name @ stock.warehouse.name -> buffer.name
                     quoteattr(customer),quoteattr(operation)
                 )
             if j['picking_ids'] :
+#                 here to export sale order line based on DO line status, 
+#                 if DO line is done then demand status is closed
+#                 if DO line is cancel, it will skip the current DO line
+#                 else demand status is open
                 pick_number = 0
                 state = {}
                 for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):

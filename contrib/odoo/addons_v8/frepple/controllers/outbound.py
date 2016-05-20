@@ -182,10 +182,9 @@ hr.holidays.public.line.start + 1 day -> calendar_bucket.end
         yield '<!-- calendar -->\n'
         yield '<calendars>\n'
         try:
-            m_calendar = self.req.session.model('resource.calendar')
-            ids_calendar = m_calendar.search([], context=self.req.session.context)
-            fields_calendar = ['name']
-            c = m_calendar.read(ids_calendar, ['attendance_ids'], self.req.session.context)
+            m = self.req.session.model('resource.calendar')
+            ids = m.search([('name', '=', self.calendar)], context=self.req.session.context)
+            c = m.read(ids, ['attendance_ids'], self.req.session.context)
             m = self.req.session.model('resource.calendar.attendance')
             fields = ['dayofweek', 'date_from', 'hour_from', 'hour_to']
             buckets = []
@@ -198,62 +197,35 @@ hr.holidays.public.line.start + 1 day -> calendar_bucket.end
                                     # In odoo, monday = 0. In frePPLe, sunday = 0.
                                     'PT%dM' % round(i['hour_from'] * 60), 'PT%dM' % round(i['hour_to'] * 60)
                                 )))
-            for i in m_calendar.read(ids_calendar, fields_calendar, self.req.session.context):
-                if len(buckets) > 0:
-                    # Sort by start date.
-                    # Required to assure that records with a later start date get a
-                    # lower priority in frePPLe.
-                    buckets.sort(key=itemgetter(0))
-                    priority = 1000
-                    yield '<calendar name="%s" default="0"><buckets>\n' % (i['name'])
-                    for i in buckets:
-                        yield i[1] % priority
-                        priority -= 1
-                    try:
-                        m = self.req.session.model('hr.holidays.public.line')
-                        ids = m.search([], context=self.req.session.context)
-                        fields = ['date']
-                        for i in m.read(ids, fields, self.req.session.context):
-                            nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
-                            yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
-                                i['date'], nd.strftime("%Y-%m-%d"))
-                    except:
-                        # Exception happens if the hr module is not installed
-                        yield '<!-- No holidays since the HR module is not installed -->\n'
-                    yield '</buckets></calendar>\n'
-                else:
-                    # No entries. We'll assume 24*7 availability.
-                    yield '<calendar name="%s" default="1"><buckets>\n' % (i['name'])
-                    try:
-                        m = self.req.session.model('hr.holidays.public.line')
-                        ids = m.search([], context=self.req.session.context)
-                        fields = ['date']
-                        for i in m.read(ids, fields, self.req.session.context):
-                            nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
-                            yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
-                                i['date'], nd.strftime("%Y-%m-%d"))
-                    except:
-                        # Exception happens if the hr module is not installed
-                        yield '<!-- No holidays since the HR module is not installed -->\n'
-                    yield '</buckets></calendar>\n'
+            if len(buckets) > 0:
+                # Sort by start date.
+                # Required to assure that records with a later start date get a
+                # lower priority in frePPLe.
+                buckets.sort(key=itemgetter(0))
+                priority = 1000
+                yield '<calendar name=%s default="0"><buckets>\n' % quoteattr(self.calendar)
+                for i in buckets:
+                    yield i[1] % priority
+                    priority -= 1
+            else:
+                # No entries. We'll assume 24*7 availability.
+                yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
         except:
             # Exception happens if the resource module isn't installed.
-            for i in m_calendar.read(ids_calendar, fields_calendar, self.req.session.context):
-                yield '<!-- Working hours are assumed to be 24*7. -->\n'
-                yield '<calendar name="%s" default="1"><buckets>\n' % (i['name'])
-                try:
-                    m = self.req.session.model('hr.holidays.public.line')
-                    ids = m.search([], context=self.req.session.context)
-                    fields = ['date']
-                    for i in m.read(ids, fields, self.req.session.context):
-                        nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
-                        yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
-                            i['date'], nd.strftime("%Y-%m-%d"))
-                except:
-                    # Exception happens if the hr module is not installed
-                    yield '<!-- No holidays since the HR module is not installed -->\n'
-                yield '</buckets></calendar>\n'
-        yield '</calendars>\n'
+            yield '<!-- Working hours are assumed to be 24*7. -->\n'
+            yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
+        try:
+            m = self.req.session.model('hr.holidays.public.line')
+            ids = m.search([], context=self.req.session.context)
+            fields = ['date']
+            for i in m.read(ids, fields, self.req.session.context):
+                nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
+                yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
+                    i['date'], nd.strftime("%Y-%m-%d"))
+        except:
+            # Exception happens if the hr module is not installed
+            yield '<!-- No holidays since the HR module is not installed -->\n'
+        yield '</buckets></calendar></calendars>\n'
 
 
     def export_locations(self):
@@ -332,7 +304,6 @@ Mapping:
 res.partner.id res.partner.name -> customer.name
 '''
         self.map_customers = {}
-        self.map_suppliers = {}
         m = self.req.session.model('res.partner')
         ids = m.search([('customer', '=', True)], context=self.req.session.context)
         if ids:
@@ -344,7 +315,9 @@ res.partner.id res.partner.name -> customer.name
                 yield '<customer name=%s/>\n' % quoteattr(name)
                 self.map_customers[i['id']] = name
             yield '</customers>\n'
-        
+            
+#         import supplier here
+        self.map_suppliers = {}
         s_ids = m.search([('supplier', '=', True)], context=self.req.session.context)
         if s_ids:
             yield '<!-- suppliers -->\n'
@@ -355,7 +328,6 @@ res.partner.id res.partner.name -> customer.name
                 yield '<supplier name="%s"/>\n' % (str(name))
                 self.map_suppliers[i['id']] = name
             yield '</suppliers>\n'
-
 
     def export_workcenters(self):
         '''
@@ -425,7 +397,7 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
         m = self.req.session.model('product.product')
         ids = m.search([], context=self.req.session.context)
         s = self.req.session.model('product.supplierinfo')
-        s_fields=['name', 'delay', 'min_qty','priority']
+        s_fields=['name', 'delay', 'min_qty']
         supplier = {}
         if ids:
             yield '<!-- products -->\n'
@@ -447,21 +419,15 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
                     self.uom_categories[self.uom[tmpl['uom_id'][0]]['category']], i['id']
                 )
                 
-                delay = 0
                 if tmpl['seller_ids']:
                     yield '<itemsuppliers>\n'
                     for sup in s.read(tmpl['seller_ids'], s_fields, self.req.session.context):
-                        delay = delay + sup['delay']
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier>\n'
-                        yield '<supplier name="%s"/><leadtime>P%dD</leadtime><priority>%d</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
-                            (str(name)), sup['delay'], sup['priority'], sup['min_qty'], tmpl['standard_price'])
+                        yield '<supplier name="%s"/><leadtime>P%dD</leadtime><priority>1</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
+                            (str(name)), sup['delay'], sup['min_qty'], tmpl['standard_price'])
                         yield '</itemsupplier>\n'
-                    
-                    if i['id'] in supplier:
-                        supplier[i['id']].append(delay)
-                    else:
-                        supplier[i['id']] = delay
+                   
                     
                     yield '</itemsuppliers>\n'
                 yield '</item>\n'
@@ -509,14 +475,12 @@ Mapping:
         mrp_routing_workcenters = {}
         m = self.req.session.model('mrp.routing.workcenter')
         ids = m.search([], context=self.req.session.context)
-        fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr', 'duration_per', 'size_min', 'size_multi', 'size_max', 'post_op']
+        fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr']
         for i in m.read(ids, fields, self.req.session.context):
-#             duration_hour = duration_hour + i['hour_nbr']
             if i['routing_id'][0] in mrp_routing_workcenters:
-                mrp_routing_workcenters[i['routing_id'][0]].append((i['workcenter_id'][1], i['cycle_nbr'], i['hour_nbr'], i['duration_per'], i['size_min'], i['size_multi'], i['size_max'], i['post_op']))
+                mrp_routing_workcenters[i['routing_id'][0]].append((i['workcenter_id'][1], i['cycle_nbr'],))
             else:
-                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],i['hour_nbr'], i['duration_per'], i['size_min'], i['size_multi'], i['size_max'], i['post_op'])]
-                
+                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],)]  
         # Loop over all "producing" bom records
         m = self.req.session.model('mrp.bom')
         m_lines = self.req.session.model('mrp.bom.line')
@@ -524,7 +488,7 @@ Mapping:
         fields = [
             'name', 'product_qty', 'product_uom', 'date_start', 'date_stop',
             'product_efficiency', 'product_tmpl_id', 'routing_id', 'type',
-            'product_rounding', 'bom_line_ids', 'id', 'priority'
+            'product_rounding', 'bom_line_ids'
         ]
         fields2 = [
             'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
@@ -538,6 +502,7 @@ Mapping:
         operation_bom = {}
         buffer_bom = {}
         for i in product.read(product_ids, product_field, self.req.session.context):
+#             store product_id that have more than one BOM to create an alternate operation
             if len(i['bom_ids']) > 1:
                 if i['id'] in product_bom:
                     product_bom[i['id']].append((i['bom_ids'], i['name']))
@@ -549,18 +514,8 @@ Mapping:
             duration_per = 0
             type = ""
             producing = ""
-            priority = i['priority']
             # Determine the location
             if i['routing_id']:
-                for d in mrp_routing_workcenters[i['routing_id'][0]]:
-                    duration_hour = duration_hour + d[2] * 3600.0
-                    duration_per = duration_per + d[3] * 3600.0
-#                     type = d[4]
-                    size_min = d[4]
-                    size_multi = d[5]
-                    size_max = d[6]
-                    post_op = d[7]
-                    
                 location = mrp_routings.get(i['routing_id'][0], None)
                 if not location:
                     location = self.mfg_location
@@ -582,13 +537,15 @@ Mapping:
             yield '<buffer name=%s><item name=%s/><location name=%s/>\n' % (
                 quoteattr(buf_name), quoteattr(product_buf['name']), quoteattr(location)
             )
-            yield '<producing name=%s size_multiple="%s" duration="PT%dS" duration_per="PT%dS" posttime="P%dD" xsi:type="operation_time_per"><location name="%s"/>\n' % (
+            yield '<producing name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
                 quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                int(float(str(duration_hour))),int(float(str(duration_per))), #use complicate convert to avoid reduction when use direct int
+                int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
                 self.manufacturing_lead,
-                (str(location)),)
+                quoteattr(location)
+            )
             yield '<flows>\n'
             if i['product_tmpl_id'][0] not in product_bom:
+#                 if the operation is suboperation of alternate operation, the current operation doesn't need flow_end
                 yield '<flow xsi:type="flow_end" quantity="%f"%s%s><buffer name=%s/></flow>\n' % (
                     i['product_qty'] * i['product_efficiency'] * uom_factor,
                     i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
@@ -631,11 +588,13 @@ Mapping:
             # Footer
             yield '</producing>\n'
             if i['product_tmpl_id'][0] in product_bom:
+#                 here to store all needed field value in alternate operations, 
+#                 because alternate operation will create outside of this loop
                 if i['id'] in product_bom[i['product_tmpl_id'][0]][0][0]:
                     if i['product_tmpl_id'][0] in operation_bom:
-                        operation_bom[i['product_tmpl_id'][0]].append((str(operation), priority))
+                        operation_bom[i['product_tmpl_id'][0]].append(str(operation))
                     else :
-                        operation_bom[i['product_tmpl_id'][0]] = [(str(operation), priority)]
+                        operation_bom[i['product_tmpl_id'][0]] = [str(operation)]
                     
                     buffer_bom[i['product_tmpl_id'][0]] = [(str(buf_name), product_buf['name'], location)]
             yield '</buffer>\n'
@@ -652,7 +611,7 @@ Mapping:
             yield '<quantity>1</quantity></flow></flows>\n'
             yield '<suboperations>\n'
             for o in operation_bom[i]:
-                yield '<suboperation><operation name="%s"/><priority>%d</priority></suboperation>\n' % (o[0], int(o[1]))
+                yield '<suboperation><operation name="%s"/><priority>1</priority></suboperation>\n' % (o)
             yield '</suboperations>\n'
             yield '</producing>\n'
             yield '</buffer>\n'
@@ -740,7 +699,7 @@ product.product.name @ stock.warehouse.name -> buffer.name
             minship = j['picking_policy'] == 'one' and qty or 1.0
             priority = 1
             deliveries.update([(operation, buf, product['name'], location,)])
-            status = ''
+#             export draft sale order
             if i['state'] == 'draft':
                 yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" ><stringproperty name="status" value="quote"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
                     quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
@@ -748,6 +707,10 @@ product.product.name @ stock.warehouse.name -> buffer.name
                     quoteattr(customer),quoteattr(operation)
                 )
             if j['picking_ids'] :
+#                 here to export sale order line based on DO line status, 
+#                 if DO line is done then demand status is closed
+#                 if DO line is cancel, it will skip the current DO line
+#                 else demand status is open
                 pick_number = 0
                 state = {}
                 for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
@@ -782,7 +745,6 @@ product.product.name @ stock.warehouse.name -> buffer.name
                 yield '<operation name=%s posttime="P%sD"><flows><flow xsi:type="flow_start" quantity="-1"><buffer name=%s><item name=%s/><location name=%s/></buffer></flow></flows></operation>\n' % (
                     quoteattr(i[0]), self.security_lead, quoteattr(i[1]), quoteattr(i[2]), quoteattr(i[3]))
             yield '</operations>\n'
-
 
 
     def export_purchaseorders(self):
@@ -827,7 +789,7 @@ purchase.order.date_planned -> operationplan.start
             j = po[i['order_id'][0]]
             location = j['location_id'] and self.map_locations.get(j['location_id'][0], None) or None
             if location and item and j['state'] == 'approved' and not j['shipped']:
-                operation = u'Purchase of %s @ %s' % (item['name'], location)
+                operation = u'Purchase %s @ %s' % (item['name'], location)
                 buf = u'%s @ %s' % (item['name'], location)
                 due = i['date_planned']
                 qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
@@ -880,7 +842,7 @@ mrp.production.date_planned -> operationplan.start
                 if not location or not operation in self.operations:
                     continue
                 qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-                yield '<operationplan><operation name=%s/><start>%s</start><end>%s</end><quantity>%s</quantity><status>confirmed</status></operationplan>\n' % (
+                yield '<operationplan operation=%s start="%s" end="%s" quantity="%s" locked="true"/>\n' % (
                     quoteattr(operation), startdate, startdate, qty
                 )
         yield '</operationplans>\n'
@@ -959,4 +921,3 @@ sum(stock.report.prodlots.qty) -> buffer.onhand
         finally:
             cr.close()
         yield '</buffers>\n'
-        

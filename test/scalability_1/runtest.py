@@ -17,6 +17,7 @@
 #
 import os
 import sys
+import subprocess
 
 runtimes = {}
 
@@ -120,14 +121,8 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
 
   # Run the execution
   starttime = os.times()
-  out = os.popen(os.environ['EXECUTABLE'] + "  ./commands.xml")
-  while True:
-    i = out.readline()
-    if not i: break
-    print(i.strip())
-  if out.close() != None:
-    print("Planner exited abnormally\n")
-    sys.exit(1)
+  with open(os.devnull, "w") as f:
+    subprocess.call(os.environ['EXECUTABLE'] + "  ./commands.xml", stdout=f)
 
   # Measure the time
   endtime = os.times()

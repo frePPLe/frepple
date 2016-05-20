@@ -371,6 +371,7 @@ class Command(BaseCommand):
             Demand.objects.using(database).create(
               name='Dmd %05d %05d' % (i, j),
               item=it,
+              location=loc,
               quantity=int(random.uniform(1, 6)),
               # Exponential distribution of due dates, with an average of deliver_lt days.
               due=startdate + timedelta(days=round(random.expovariate(float(1) / deliver_lt / 24)) / 24),
@@ -414,9 +415,16 @@ class Command(BaseCommand):
             Flow(operation=oper, thebuffer=buf, quantity=1, type="end").save(using=database)
             if k != level - 1:
               # Consume from the next level in the bill of material
+              it_tmp = Item.objects.using(database).create(
+                name='Itm %05d L%02d' % (i, k+1),
+                operation=oper,
+                category=random.choice(categories),
+                price=str(round(random.uniform(100, 200)))
+                )
+              it_tmp.save(using=database)
               buf = Buffer.objects.using(database).create(
-                name='Buf %05d L%02d' % (i, k + 1),
-                item=it,
+                name='%s @ %s' % (it_tmp.name, loc.name),
+                item=it_tmp,
                 location=loc,
                 category='%02d' % (k + 1)
                 )

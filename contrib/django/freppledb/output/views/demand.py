@@ -15,13 +15,18 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
+
+from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Item
-from freppledb.output.models import Demand
+from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
+from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan
+from freppledb.output.models import Demand, DemandPegging
 from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
@@ -185,3 +190,67 @@ class DetailReport(GridReport):
     if args and args[0]:
       request.session['lasttab'] = 'plandetail'
     return {'active_tab': 'plandetail'}
+
+
+@staff_member_required
+def OperationPlans(request):
+  # Check permissions
+  if request.method != "GET" or not request.is_ajax(): 
+    return HttpResponseBadRequest('Only ajax get requests allowed')  
+  if not request.user.has_perm("view_demand_report"):
+    return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+  
+  # Collect list of selected sales orders
+  so_list = [ request.GET['demand'], ]
+  
+  # Find proposed associated with this sales order
+  result = []
+  id_list = [
+    peg.operationplan
+    for peg in DemandPegging.objects.all().using(request.database).filter(demand__in=so_list)
+    ]
+  for o in PurchaseOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
+    result.append({
+      'id': o.id,
+      'type': "PO",
+      'item': o.item.name,
+      'location': o.location.name,    
+      'origin': o.supplier.name,
+      'startdate': str(o.startdate.date()),
+      'enddate': str(o.enddate.date()),
+      'quantity': float(o.quantity),
+      'value': float(o.quantity * o.item.price),
+      'criticality': float(o.criticality)
+    })
+  for o in DistributionOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
+    result.append({
+      'id': o.id,
+      'type': "DO",
+      'item': o.item.name,
+      'location': o.location.name,    
+      'origin': o.origin.name,
+      'startdate': str(o.startdate),
+      'enddate': str(o.enddate),
+      'quantity': float(o.quantity),
+      'value': float(o.quantity * o.item.price),
+      'criticality': float(o.criticality)
+    })
+  for o in OperationPlan.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
+    result.append({
+      'id': o.id,
+      'type': "MO",
+      'item': '',
+      'location': o.operation.location.name,    
+      'origin': o.operation.name,
+      'startdate': str(o.startdate.date()),
+      'enddate': str(o.enddate.date()),
+      'quantity': float(o.quantity),
+      'value': '',
+      'criticality': float(o.criticality)
+    })
+  
+  return HttpResponse(
+    content=json.dumps(result),
+    content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET
+    )
+  

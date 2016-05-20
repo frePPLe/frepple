@@ -297,7 +297,7 @@ def wrapTask(request, action):
 @csrf_protect
 def CancelTask(request, taskid):
   # Allow only post
-  if request.method != 'POST'or not request.is_ajax():
+  if request.method != 'POST' or not request.is_ajax():
     raise Http404('Only ajax post requests allowed')
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)

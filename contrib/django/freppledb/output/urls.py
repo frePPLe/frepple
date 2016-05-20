@@ -33,6 +33,7 @@ urlpatterns = patterns(
   '',  # Prefix
   url(r'^buffer/(.+)/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plandetail"),
   url(r'^buffer/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plan"),
+  url(r'^demand/operationplans/$', freppledb.output.views.demand.OperationPlans, name="output_demand_operationplans"),
   url(r'^demand/(.+)/$', freppledb.output.views.demand.OverviewReport.as_view(), name="output_demand_plandetail"),
   url(r'^demand/$', freppledb.output.views.demand.OverviewReport.as_view(), name="output_demand_plan"),
   url(r'^resource/(.+)/$', freppledb.output.views.resource.OverviewReport.as_view(), name="output_resource_plandetail"),

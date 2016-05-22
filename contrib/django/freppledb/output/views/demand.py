@@ -201,7 +201,7 @@ def OperationPlans(request):
     return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
   
   # Collect list of selected sales orders
-  so_list = [ request.GET['demand'], ]
+  so_list = request.GET.getlist('demand')
   
   # Find proposed associated with this sales order
   result = []

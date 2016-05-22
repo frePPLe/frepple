@@ -39,11 +39,13 @@ packages = [# Required for django standalone deployment
             # Required for REST API
             'rest_framework_bulk', 'rest_framework_filters', 'markdown',
             # Added to package a more complete python library with frePPLe
-            'urllib', 'multiprocessing', 'asyncio', 'pip',
+            'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
+            'poplib', 'imaplib', 'telnetlib',
             # Added for unicode and internationalization
             'encodings',
+            # Added for cx_freeze binaries
+            'cx_Logging'
            ]
-includes = ['html.parser', 'csv', 'poplib', 'imaplib', 'telnetlib', '_sitebuiltins', 'cx_Logging']
 excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework']
 
 from distutils.command.install import INSTALL_SCHEMES
@@ -56,7 +58,12 @@ import freppledb
 import django_admin_bootstrapped
 import bootstrap3
 import rest_framework
-data_files = [ ("freppleservice.py", "freppleservice.py") ]
+from distutils.sysconfig import get_python_lib
+data_files = [
+  ('freppleservice.py', 'freppleservice.py'),
+  (os.path.join(get_python_lib(), 'win32', 'lib', 'pywintypes.py'), 'pywintypes.py'),
+  (os.path.join(get_python_lib(), 'pythoncom.py'), 'pythoncom.py')
+  ]
 for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework]:
    srcdir = mod.__path__[0]
    targetdir = os.path.join('custom', mod.__name__)
@@ -68,8 +75,8 @@ for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_frame
          del dirnames[i]
      # Append data files for this subdirectory
      for f in filenames:
-       if not f.endswith(".pyc") and not f.endswith(".pyo"):         
-         data_files.append((           
+       if not f.endswith(".pyc") and not f.endswith(".pyo"):
+         data_files.append((
            os.path.join(dirpath, f),
            os.path.join(targetdir, dirpath[root_path_length:], f),
            ))
@@ -90,18 +97,17 @@ cx_Freeze.setup(
       "optimize": 2,
       "packages": packages,
       "excludes": excludes,
-      "includes": includes,
       "include_files": data_files,
-      "include_msvcr": True,      
+      "include_msvcr": True,
       },
     },
   executables = [
     # A console application
     cx_Freeze.Executable(
-       'frepplectl.py', 
-       base='Console', 
+       'frepplectl.py',
+       base='Console',
        icon=os.path.join("..","..","src","frepple.ico")
-       ),         
+       ),
     # A Windows service
     cx_Freeze.Executable(
       'freppleservice.py',
@@ -110,7 +116,7 @@ cx_Freeze.setup(
       ),
     # A system tray application
     cx_Freeze.Executable(
-      'freppleserver.py', 
+      'freppleserver.py',
       base='Win32GUI',
       icon=os.path.join("..","..","src","frepple.ico")
       )

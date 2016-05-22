@@ -359,11 +359,11 @@ Function FinishLeave
   ; Install the service
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 6" "State"
   ${If} $0 == 1
-    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --startup auto install'
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --install default'
     sleep 2
-    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" start'
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "$INSTDIR\bin\freppleservice.exe" "start"
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "$INSTDIR\bin\freppleservice.exe" "stop"
+    nsExec::Exec 'net start frePPLe_default'
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "net" "start" "frePPLe_default"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "net" "stop" "frePPLe_default"
   ${EndIf}
 FunctionEnd
 
@@ -612,9 +612,9 @@ FunctionEnd
 
 Section Uninstall
   ; Remove the service
-  nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" stop'
+  nsExec::Exec 'net stop frePPLe_default'
   sleep 3
-  nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" remove'
+  nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --uninstall default'
 
   ; Stop the postgresql database
   nsExec::Exec '"$INSTDIR\pgsql\bin\pg_ctl" \

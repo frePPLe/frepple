@@ -16,6 +16,8 @@
 #
 import sys, os, os.path
 from stat import S_ISDIR, ST_MODE
+from subprocess import call, DEVNULL
+from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
 
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
@@ -40,14 +42,14 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
   # Using the included postgres database
   # Check if the database is running. If not, start it.
   os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
-  from subprocess import call, DEVNULL
   status = call([
     os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
     "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
     "--silent",
     "status"
     ],
-    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+    creationflags=CREATE_NO_WINDOW
     )
   if status:
     print("Starting the PostgreSQL database now", settings.FREPPLE_LOGDIR)
@@ -57,7 +59,10 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
       "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
       "-w", # Wait till it's up
       "start"
-      ])
+      ],
+      stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+      creationflags=CREATE_NO_WINDOW
+      )
 
 # Execute the command
 execute_from_command_line(sys.argv)

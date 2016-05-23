@@ -16,12 +16,13 @@
 #
 import argparse
 import cx_Logging
+from cherrypy.wsgiserver import CherryPyWSGIServer
 from datetime import datetime
 import os
 import socket
+from subprocess import call, DEVNULL
 import sys
 from threading import Thread
-from cherrypy.wsgiserver import CherryPyWSGIServer
 import win32api
 import win32con
 import win32gui_struct
@@ -29,6 +30,7 @@ try:
   import winxpgui as win32gui
 except ImportError:
   import win32gui
+from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
 
 
 def log(msg):
@@ -182,7 +184,8 @@ class SysTrayIcon:
           "--silent",
           "status"
           ],
-          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+          creationflags=CREATE_NO_WINDOW
           )
         if not status:
           call([
@@ -192,7 +195,8 @@ class SysTrayIcon:
             "-w", # Wait till it's down
             "stop"
             ],
-            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+            creationflags=CREATE_NO_WINDOW
             )
 
     def notify(self, hwnd, msg, wparam, lparam):
@@ -304,14 +308,14 @@ options = parser.parse_args()
 # Using the included postgres database?
 if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
   # Check if the database is running. If not, start it.
-  from subprocess import call, DEVNULL
   status = call([
     os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
     "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
     "--silent",
     "status"
     ],
-    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+    creationflags=CREATE_NO_WINDOW
     )
   if status:
     cx_Logging.Info("Starting the PostgreSQL database")
@@ -322,7 +326,8 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
       "-w", # Wait till it's up
       "start"
       ],
-      stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+      stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+      creationflags=DETACHED_PROCESS
       )
 
 cx_Logging.Info("Starting the web server")

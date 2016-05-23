@@ -56,13 +56,16 @@ class ServiceHandler(object):
   # stop the service
   def Run(self):
     # Import modules
-    from django.conf import settings
     import cherrypy
     from cherrypy.wsgiserver import CherryPyWSGIServer
+    from stat import S_ISDIR, ST_MODE
+    from subprocess import call, DEVNULL
+    from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
+
     import django
+    from django.conf import settings
     from django.core.handlers.wsgi import WSGIHandler
     from django.contrib.staticfiles.handlers import StaticFilesHandler
-    from stat import S_ISDIR, ST_MODE
 
     # Initialize logging
     cx_Logging.StartLogging(
@@ -75,15 +78,15 @@ class ServiceHandler(object):
     try:
       # Using the included postgres database
       # Check if the database is running. If not, start it.
-      if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
-        from subprocess import call, DEVNULL
+      if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):        
         status = call([
           os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
           "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
           "--silent",
           "status"
           ],
-          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+          creationflags=CREATE_NO_WINDOW
           )
         if status:
           cx_Logging.Info("Starting the PostgreSQL database")
@@ -92,7 +95,10 @@ class ServiceHandler(object):
             "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
             "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
             "start"
-            ])
+            ],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+            creationflags=DETACHED_PROCESS
+            )
 
       # Override the debugging settings
       settings.DEBUG = False
@@ -128,7 +134,8 @@ class ServiceHandler(object):
           "--silent",
           "status"
           ],
-          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+          stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+          creationflags=CREATE_NO_WINDOW
           )
         if not status:
           cx_Logging.Info("Shutting down the database")
@@ -139,7 +146,8 @@ class ServiceHandler(object):
             "-w", # Wait till it's down
             "stop"
             ],
-            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+            creationflags=CREATE_NO_WINDOW
             )
 
       # Notify the manager

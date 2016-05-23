@@ -1313,209 +1313,48 @@ var grid = {
 //----------------------------------------------------------------------------
 
 var ERPconnection = {
-  IncrementalExport: function(grid, transactiontype, ERPsystem) {
-	// Collect all selected rows in the status 'proposed'
-  var sel = grid.jqGrid('getGridParam','selarrrow');
-  if (sel === null || sel.length == 0)
-    return;
-  var data = [];
+    IncrementalExport: function(grid, transactiontype, ERPsystem) {
+      // Collect all selected rows in the status 'proposed'
+      var sel = grid.jqGrid('getGridParam','selarrrow');
+      if (sel === null || sel.length == 0)
+        return;
+      var data = [];
 
-  for (var i in sel)
-  {
-	  var r = grid.jqGrid('getRowData', sel[i]);
-	  if (r.type === undefined)
-		  r.type = transactiontype;
-	  if (r.status == 'proposed')
-	    data.push(r);
-  }
-  console.log(data);
-  if (data == [])
-	  return;
+      for (var i in sel)
+      {
+        var r = grid.jqGrid('getRowData', sel[i]);
+        if (r.type === undefined)
+          r.type = transactiontype;
+        if (r.status == 'proposed')
+          data.push(r);
+      }
+      console.log(data);
+      if (data == [])
+        return;
 
-  // Send to the server for upload into openbravo
-  $('#timebuckets').modal('hide');
-  $.jgrid.hideModal("#searchmodfbox_grid");
-  $('#popup').html(''+
-    '<div class="modal-dialog">'+
-      '<div class="modal-content">'+
-        '<div class="modal-header">'+
+      // Send to the server for upload into openbravo
+      $('#timebuckets').modal('hide');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      $('#popup').html(''+
+          '<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+          '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
           '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
-        '</div>'+
-        '<div class="modal-body">'+
-        '<p class="text-capitalize">'+gettext("export selected records to ")+ ERPsystem + '</p>'+
-        '</div>'+
-        '<div class="modal-footer">'+
+          '</div>'+
+          '<div class="modal-body">'+
+          '<p class="text-capitalize">'+gettext("export selected records to ")+ ERPsystem + '</p>'+
+          '</div>'+
+          '<div class="modal-footer">'+
           '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
           '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-        '</div>'+
-      '</div>'+
-    '</div>' ).modal('show');
-
-    $('#button_export').on('click', function() {
-      $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
-      var database = $('#database').val();
-      database = (database===undefined || database==='default') ? '' : '/' + database;
-      $.ajax({
-        url: database + "/"+ERPsystem+"/upload/",
-        data: JSON.stringify(data),
-        type: "POST",
-        contentType: "application/json",
-        success: function () {
-          $('#popup .modal-body p').html(gettext("Export successful"));
-          $('#cancelbutton').val(gettext('Close'));
-          $('#button_export').removeClass("btn-primary").prop('disabled', true);
-          // Mark selected rows as "approved" if the original status was "proposed".
-          for (var i in sel) {
-            var cur = grid.jqGrid('getCell', sel[i], 'status');
-            if (cur == 'proposed')
-              grid.jqGrid('setCell', sel[i], 'status', 'approved');
-          };
-        },
-        error: function (result, stat, errorThrown) {
-          fmts = ngettext("Error during export");
-          $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
-          $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
-          $('#button_export').text(gettext('retry'));
-        }
-      });
-    });
-    $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
-  },
-
-
-//----------------------------------------------------------------------------
-//Sales Orders dependencies export
-//----------------------------------------------------------------------------
-
-
-  SODepExport: function(grid, transactiontype, ERPsystem) {
-  // Collect all selected rows in the status 'proposed'
-  var sel = grid.jqGrid('getGridParam','selarrrow');
-  if (sel === null || sel.length == 0)
-   return;
-  var data = [];
-
-  for (var i in sel)
-  {
-   var r = grid.jqGrid('getRowData', sel[i]);
-   if (r.type === undefined)
-     r.type = transactiontype;
-   if (r.status == 'proposed')
-     data.push(r);
-  }
-  if (data == [])
-   return;
-
-  $('#timebuckets').modal('hide');
-  $.jgrid.hideModal("#searchmodfbox_grid");
-  $('#popup').html(''+
-   '<div class="modal-dialog" style="max-height: 80%; width: 90%; visibility: hidden">'+
-     '<div class="modal-content">'+
-       '<div class="modal-header">'+
-         '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-         '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
-       '</div>'+
-       '<div class="modal-body">'+
-
-       '</div>'+
-       '<div class="modal-footer">'+
-         '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-         '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-       '</div>'+
-     '</div>'+
-    '</div>' );
-
-//compose url
-  var database = $('#database').attr('name');
-  database = (database===undefined || database==='default') ? '' : '/' + database;
-  var components='?demand=';
-  for (i=0; i<sel.length; i++) {
-    var r = grid.jqGrid('getRowData', sel[i]);
-    if (r.type === undefined)
-      r.type = transactiontype;
-//    if (r.status == 'proposed')
-      if (i==0) components+=encodeURIComponent(sel[i]);
-      else components+='&demand='+encodeURIComponent(sel[i]);
-  };
-
-  //get demandplans
-  $.ajax({
-    url: database + "/demand/operationplans/" + components,
-    type: "GET",
-    contentType: "application/json",
-    success: function (data) {
-      console.log(data[0]);
-
-      $('#popup .modal-body').html('<div class="table-responsive">'+
-          '<table class="table-condensed table-hover" id="forecastexporttable">'+
-            '<thead class="thead-default">'+
-            '</thead>'+
-          '</table>'+
-        '</div>');
-
-      labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
-
-      var bodycontent='';
-      if (transactiontype == 'SO') {
-        var tableheadercontent = $('<tr/>');
-
-        tableheadercontent.append($('<th/>').html('<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'));
-        for (i = 0; i<labels.length; i++) {
-          tableheadercontent.append( $('<th/>').addClass('text-capitalize').text(gettext(labels[i])) );
-        };
-
-        var tablebodycontent = $('<tbody/>');
-        for (i = 0; i<data.length; i++) {
-          var row = $('<tr/>');
-          var td = $('<td/>');
-
-          td.append( $('<input/>').attr({'id':"cb_modaltable-"+i, 'class':"cbox", 'type':"checkbox", 'aria-checked':"false"}));
-          row.append(td);
-          for (j = 0; j<labels.length; j++) {
-            row.append( $('<td/>').text(data[i][labels[j]]) );
-          };
-          tablebodycontent.append( row );
-        };
-
-      };
-
-      $('#popup table').append(tablebodycontent);
-      $('#popup thead').append(tableheadercontent);
-
-      $('#popup').on('shown.bs.modal', function () {
-        $(this).find('.modal-dialog').css({
-          'max-width': 50+$('#forecastexporttable').width()+'px',
-          'visibility': 'visible'
-        });
-      }).modal('show');
+          '</div>'+
+          '</div>'+
+      '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        //get selected row data
-        data=[];
-        var row1 = [];
-        var row1data = {};
-        var rows=$('#forecastexporttable tr.selected');
-        console.log(rows);
-        $.each(rows, function( key, value ) {
-          row1=value.children;
-          row1data['id'] = row1[1].textContent;
-          row1data['type'] = row1[2].textContent;
-          row1data['item'] = row1[3].textContent;
-          row1data['value'] = row1[4].textContent;
-          row1data['quantity'] = row1[5].textContent;
-          row1data['location'] = row1[6].textContent;
-          row1data['origin'] = row1[7].textContent;
-          row1data['startdate'] = row1[8].textContent;
-          row1data['enddate'] = row1[9].textContent;
-          row1data['criticality'] = row1[10].textContent;
-          data.push(row1data);
-        });
-        console.log(JSON.stringify(data));
-
-        ERPsystem='openbravo';
-        $('#popup .modal-body').html(gettext("connecting to openbravo..."));
-        var database = $('#database').attr('name');
+        $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
+        var database = $('#database').val();
         database = (database===undefined || database==='default') ? '' : '/' + database;
         $.ajax({
           url: database + "/"+ERPsystem+"/upload/",
@@ -1536,55 +1375,195 @@ var ERPconnection = {
           error: function (result, stat, errorThrown) {
             fmts = ngettext("Error during export");
             $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
-            $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
-            $('#button_export').val(gettext('Retry'));
-            $('#popup .modal-dialog').css({'visibility':'visible'})
-            $('#popup').modal('show');
+            $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+            $('#button_export').text(gettext('retry'));
           }
         });
       });
-
-      $("#cb_modaltableall").click( function() {
-        $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
-      });
-      $("#forecastexporttable tbody input[type=checkbox]").click( function() {
-        $(this).parent().parent().addClass('selected');
-        $("#cb_modaltableall").prop("checked",$("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
-      });
       $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
     },
-    error: function (result, stat, errorThrown) {
-      fmts = gettext("Error getting data");
-      $('#popup .modal-title').addClass('alert alert-danger').html(fmts);
-      $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
-      $('#button_export').val(gettext('Retry'));
-      $('#popup .modal-dialog').css({'visibility':'visible'})
-      $('#popup').modal('show');
+
+
+//  ----------------------------------------------------------------------------
+//  Sales Orders dependencies export
+//  ----------------------------------------------------------------------------
+
+
+    SODepExport: function(grid, transactiontype, ERPsystem) {
+      // Collect all selected rows in the status 'proposed'
+      var sel = grid.jqGrid('getGridParam','selarrrow');
+      if (sel === null || sel.length == 0)
+        return;
+      var data = [];
+
+      for (var i in sel)
+      {
+        var r = grid.jqGrid('getRowData', sel[i]);
+        if (r.type === undefined)
+          r.type = transactiontype;
+        if (r.status == 'proposed')
+          data.push(r);
+      }
+      if (data == [])
+        return;
+
+      $('#timebuckets').modal('hide');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      $('#popup').html(''+
+          '<div class="modal-dialog" style="max-height: 80%; width: 90%; visibility: hidden">'+
+          '<div class="modal-content">'+
+          '<div class="modal-header">'+
+          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+          '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+
+          '</div>'+
+          '<div class="modal-footer">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+          '</div>'+
+          '</div>'+
+      '</div>' );
+
+//    compose url
+      var database = $('#database').attr('name');
+      database = (database===undefined || database==='default') ? '' : '/' + database;
+      var components='?demand=';
+      for (i=0; i<sel.length; i++) {
+        var r = grid.jqGrid('getRowData', sel[i]);
+        if (r.type === undefined)
+          r.type = transactiontype;
+//      if (r.status == 'proposed')
+        if (i==0) components+=encodeURIComponent(sel[i]);
+        else components+='&demand='+encodeURIComponent(sel[i]);
+      };
+
+      //get demandplans
+      $.ajax({
+        url: database + "/demand/operationplans/" + components,
+        type: "GET",
+        contentType: "application/json",
+        success: function (data) {
+          console.log(data[0]);
+
+          $('#popup .modal-body').html('<div class="table-responsive">'+
+              '<table class="table-condensed table-hover" id="forecastexporttable">'+
+              '<thead class="thead-default">'+
+              '</thead>'+
+              '</table>'+
+          '</div>');
+
+          labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
+
+          var bodycontent='';
+          if (transactiontype == 'SO') {
+            var tableheadercontent = $('<tr/>');
+
+            tableheadercontent.append($('<th/>').html('<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'));
+            for (i = 0; i<labels.length; i++) {
+              tableheadercontent.append( $('<th/>').addClass('text-capitalize').text(gettext(labels[i])) );
+            };
+
+            var tablebodycontent = $('<tbody/>');
+            for (i = 0; i<data.length; i++) {
+              var row = $('<tr/>');
+              var td = $('<td/>');
+
+              td.append( $('<input/>').attr({'id':"cb_modaltable-"+i, 'class':"cbox", 'type':"checkbox", 'aria-checked':"false"}));
+              row.append(td);
+              for (j = 0; j<labels.length; j++) {
+                row.append( $('<td/>').text(data[i][labels[j]]) );
+              };
+              tablebodycontent.append( row );
+            };
+
+          };
+
+          $('#popup table').append(tablebodycontent);
+          $('#popup thead').append(tableheadercontent);
+
+          $('#popup').on('shown.bs.modal', function () {
+            $(this).find('.modal-dialog').css({
+              'max-width': 50+$('#forecastexporttable').width()+'px',
+              'visibility': 'visible'
+            });
+          }).modal('show');
+
+          $('#button_export').on('click', function() {
+            //get selected row data
+            data=[];
+            var row1 = [];
+            var row1data = {};
+            var rows=$('#forecastexporttable tr.selected');
+            console.log(rows);
+            $.each(rows, function( key, value ) {
+              row1=value.children;
+              row1data['id'] = row1[1].textContent;
+              row1data['type'] = row1[2].textContent;
+              row1data['item'] = row1[3].textContent;
+              row1data['value'] = row1[4].textContent;
+              row1data['quantity'] = row1[5].textContent;
+              row1data['location'] = row1[6].textContent;
+              row1data['origin'] = row1[7].textContent;
+              row1data['startdate'] = row1[8].textContent;
+              row1data['enddate'] = row1[9].textContent;
+              row1data['criticality'] = row1[10].textContent;
+              data.push(row1data);
+            });
+            console.log(JSON.stringify(data));
+
+            //ERPsystem='openbravo';
+            $('#popup .modal-body').html(gettext("connecting to odoo..."));
+            var database = $('#database').attr('name');
+            database = (database===undefined || database==='default') ? '' : '/' + database;
+            $.ajax({
+              url: database + "/"+ERPsystem+"/upload/",
+              data: JSON.stringify(data),
+              type: "POST",
+              contentType: "application/json",
+              success: function () {
+                $('#popup .modal-body p').html(gettext("Export successful"));
+                $('#cancelbutton').val(gettext('Close'));
+                $('#button_export').removeClass("btn-primary").prop('disabled', true);
+                // Mark selected rows as "approved" if the original status was "proposed".
+                for (var i in sel) {
+                  var cur = grid.jqGrid('getCell', sel[i], 'status');
+                  if (cur == 'proposed')
+                    grid.jqGrid('setCell', sel[i], 'status', 'approved');
+                };
+              },
+              error: function (result, stat, errorThrown) {
+                fmts = ngettext("Error during export");
+                $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+                $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+                $('#button_export').val(gettext('Retry'));
+                $('#popup .modal-dialog').css({'visibility':'visible'})
+                $('#popup').modal('show');
+              }
+            });
+          });
+
+          $("#cb_modaltableall").click( function() {
+            $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
+          });
+          $("#forecastexporttable tbody input[type=checkbox]").click( function() {
+            $(this).parent().parent().addClass('selected');
+            $("#cb_modaltableall").prop("checked",$("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
+          });
+          $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+        },
+        error: function (result, stat, errorThrown) {
+          fmts = gettext("Error getting data");
+          $('#popup .modal-title').addClass('alert alert-danger').html(fmts);
+          $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+          $('#button_export').val(gettext('Retry'));
+          $('#popup .modal-dialog').css({'visibility':'visible'})
+          $('#popup').modal('show');
+        }
+      });
+
     }
-  });
-
-  /*//test purposes
-  data=[
-   { "value": 2000.0, "criticality": 0.0, "quantity": 200.0, "origin": "Raw material supplier",
-     "type": "PO", "enddate": "2014-01-21", "item": "ink", "id": 1008, "location": "factory 1", "startdate": "2014-01-10"},
-   { "value": 15000.0, "criticality": 0.0, "quantity": 500.0, "origin": "Raw material supplier",
-     "type": "PO", "enddate": "2014-01-21", "item": "thread", "id": 1025, "location": "factory 1", "startdate": "2014-01-01"},
-   { "value": "", "criticality": 2.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
-     "enddate": "2014-01-03", "item": "", "id": 1082, "location": "factory 1", "startdate": "2014-01-02"},
-   { "value": "", "criticality": 2.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
-     "enddate": "2014-01-03", "item": "", "id": 1083, "location": "factory 1", "startdate": "2014-01-02"},
-   { "value": "", "criticality": 0.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
-     "enddate": "2014-01-22", "item": "", "id": 1085, "location": "factory 1", "startdate": "2014-01-21"},
-   { "value": "", "criticality": 0.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
-     "enddate": "2014-01-22", "item": "", "id": 1086, "location": "factory 1", "startdate": "2014-01-21"},
-   { "value": "", "criticality": 2.0, "quantity": 48.0, "origin": "Pack product @ factory 1", "type": "MO",
-     "enddate": "2014-01-04", "item": "", "id": 1116, "location": "factory 1", "startdate": "2014-01-03"},
-   { "value": "", "criticality": 0.0, "quantity": 42.0, "origin": "Pack product @ factory 1", "type": "MO",
-     "enddate": "2014-01-23", "item": "", "id": 1117, "location": "factory 1", "startdate": "2014-01-22"}
-  ]
-  //end test*/
-
-  }
 } //end Code for ERP integration
 
 //----------------------------------------------------------------------------

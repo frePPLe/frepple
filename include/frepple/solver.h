@@ -123,6 +123,9 @@ class SolverMRP : public Solver
       */
     bool propagate;
 
+    /** Index of the cluster to replan selectively. */
+    int cluster;
+
     /** Copy the user exit functions from the custom dictionary into the
       * internal fields.
       */
@@ -319,7 +322,7 @@ class SolverMRP : public Solver
 
     /** Constructor. */
     DECLARE_EXPORT SolverMRP() : constrts(15), allowSplits(true), rotateResources(true),
-      propagate(true), plantype(1), lazydelay(86400L), iteration_threshold(1),
+      propagate(true), cluster(-1), plantype(1), lazydelay(86400L), iteration_threshold(1),
       iteration_accuracy(0.01), iteration_max(0), autocommit(true),
       planSafetyStockFirst(false), erasePreviousFirst(true)
     {
@@ -366,6 +369,16 @@ class SolverMRP : public Solver
       * @see LEADTIME
       */
     static const short FENCE = 8;
+
+    int getCluster() const
+    {
+      return cluster;
+    }
+
+    void setCluster(int i)
+    {
+      cluster = i;
+    }
 
     /** Update the constraints to be considered by this solver. This field may
       * not be applicable for all solvers. */
@@ -672,6 +685,7 @@ class SolverMRP : public Solver
       m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
     }
 
   private:

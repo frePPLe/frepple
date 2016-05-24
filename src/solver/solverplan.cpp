@@ -311,13 +311,21 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   update_user_exits();
 
   // Count how many clusters we have to plan
-  int cl = HasLevel::getNumberOfClusters() + 1;
+  int cl = (cluster == -1 ? HasLevel::getNumberOfClusters() + 1 : 1);
 
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
-  for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-    if (i->getQuantity() > 0 && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
-      demands_per_cluster[i->getCluster()].push_back(&*i);
+  if (cluster == -1)
+    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+      if (i->getQuantity() > 0 
+        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+          demands_per_cluster[i->getCluster()].push_back(&*i);
+  else
+    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+      if (i->getCluster() == cluster 
+        && i->getQuantity() > 0 
+        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+          demands_per_cluster[0].push_back(&*i);
 
   // Delete of operationplans
   // This deletion is not multi-threaded... But on the other hand we need to
@@ -326,7 +334,8 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   {
     if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
     for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
-      e->deleteOperationPlans();
+      if (cluster == -1 || e->getCluster() == cluster)
+        e->deleteOperationPlans();
   }
 
   // Solve in parallel threads.
@@ -334,7 +343,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   // solver thread.
   // Otherwise we use as many worker threads as processor cores.
   ThreadGroup threads;
-  if (getLogLevel()>0 || !getAutocommit())
+  if (getLogLevel()>0 || !getAutocommit() || cluster != -1)
     threads.setMaxParallel(1);
 
   // Register all clusters to be solved
@@ -348,8 +357,10 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   threads.execute();
 
   // @todo Check the resource setups that were broken - needs to be removed
-  for (Resource::iterator gres = Resource::begin(); gres != Resource::end(); ++gres)
-    if (gres->getSetupMatrix()) gres->updateSetups();
+  for (Resource::iterator res = Resource::begin(); res != Resource::end(); ++res)
+    if (res->getSetupMatrix() 
+      && (cluster == -1 || res->getCluster() == cluster)) 
+        res->updateSetups();
 }
 
 

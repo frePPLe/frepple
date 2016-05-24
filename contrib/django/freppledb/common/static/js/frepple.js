@@ -1420,7 +1420,7 @@ var ERPconnection = {
 
           '</div>'+
           '<div class="modal-footer">'+
-          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left disabled" value="'+gettext('Confirm')+'">'+
           '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
           '</div>'+
           '</div>'+
@@ -1483,7 +1483,7 @@ var ERPconnection = {
           $('#popup table').append(tablebodycontent);
           $('#popup thead').append(tableheadercontent);
 
-          $('#popup').on('shown.bs.modal', function () {
+          $('#popup').modal({backdrop: 'static', keyboard: false}).on('shown.bs.modal', function () {
             $(this).find('.modal-dialog').css({
               'max-width': 50+$('#forecastexporttable').width()+'px',
               'visibility': 'visible'
@@ -1513,7 +1513,7 @@ var ERPconnection = {
             });
             console.log(JSON.stringify(data));
 
-            //ERPsystem='openbravo';
+            //ERPsystem='openbravo'; //for tests
             $('#popup .modal-body').html(gettext("connecting to odoo..."));
             var database = $('#database').attr('name');
             database = (database===undefined || database==='default') ? '' : '/' + database;
@@ -1523,9 +1523,9 @@ var ERPconnection = {
               type: "POST",
               contentType: "application/json",
               success: function () {
-                $('#popup .modal-body p').html(gettext("Export successful"));
+                $('#popup .modal-body').html(gettext("Export successful"));
                 $('#cancelbutton').val(gettext('Close'));
-                $('#button_export').removeClass("btn-primary").prop('disabled', true);
+                $('#button_export').toggleClass("btn-primary disabled");
                 // Mark selected rows as "approved" if the original status was "proposed".
                 for (var i in sel) {
                   var cur = grid.jqGrid('getCell', sel[i], 'status');
@@ -1546,10 +1546,17 @@ var ERPconnection = {
 
           $("#cb_modaltableall").click( function() {
             $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
+            $("#forecastexporttable tbody tr").toggleClass('selected');
+            $('#button_export').toggleClass("disabled active");
           });
           $("#forecastexporttable tbody input[type=checkbox]").click( function() {
-            $(this).parent().parent().addClass('selected');
+            $(this).parent().parent().toggleClass('selected');
             $("#cb_modaltableall").prop("checked",$("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
+            if ( $("#forecastexporttable tbody input[type=checkbox]:checked").length > 0 ) {
+              $('#button_export').removeClass("disabled active").addClass("active");
+            } else {
+              $('#button_export').removeClass("disabled active").addClass("disabled");
+            };
           });
           $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
         },

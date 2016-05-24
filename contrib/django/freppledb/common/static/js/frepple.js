@@ -1328,7 +1328,6 @@ var ERPconnection = {
         if (r.status == 'proposed')
           data.push(r);
       }
-      console.log(data);
       if (data == [])
         return;
 
@@ -1445,8 +1444,6 @@ var ERPconnection = {
         type: "GET",
         contentType: "application/json",
         success: function (data) {
-          console.log(data[0]);
-
           $('#popup .modal-body').html('<div class="table-responsive">'+
               '<table class="table-condensed table-hover" id="forecastexporttable">'+
               '<thead class="thead-default">'+
@@ -1496,7 +1493,7 @@ var ERPconnection = {
             var row1 = [];
             var row1data = {};
             var rows=$('#forecastexporttable tr.selected');
-            console.log(rows);
+
             $.each(rows, function( key, value ) {
               row1=value.children;
               row1data['id'] = row1[1].textContent;
@@ -1511,7 +1508,6 @@ var ERPconnection = {
               row1data['criticality'] = row1[10].textContent;
               data.push(row1data);
             });
-            console.log(JSON.stringify(data));
 
             //ERPsystem='openbravo'; //for tests
             $('#popup .modal-body').html(gettext("connecting to odoo..."));
@@ -1869,7 +1865,6 @@ var dashboard = {
 	while ($("[data-cockpit-row='" + newname + "']").length >= 1)
       newname = $("#id_name").val() + ' - ' + (cnt++);
 
-	  console.log($("[data-cockpit-row='" + newname + "']").length +" "+newname);
     // Build new content
     var newelements = '<div class="row" data-cockpit-row="' + newname + '">' +
       '<div class="col-md-11"><h1 style="float: left">' + newname + '</h1></div>' +

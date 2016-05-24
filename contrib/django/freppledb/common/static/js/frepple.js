@@ -1400,7 +1400,7 @@ var ERPconnection = {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-        if (r.status == 'proposed')
+        if (r.status == 'open' || r.status == 'proposed')
           data.push(r);
       }
       if (data == [])
@@ -1433,9 +1433,10 @@ var ERPconnection = {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-//      if (r.status == 'proposed')
-        if (i==0) components+=encodeURIComponent(sel[i]);
-        else components+='&demand='+encodeURIComponent(sel[i]);
+        if (r.status == 'open' || r.status == 'proposed') {
+          if (i==0) components+=encodeURIComponent(sel[i]);
+          else components+='&demand='+encodeURIComponent(sel[i]);
+        };
       };
 
       //get demandplans
@@ -1543,7 +1544,11 @@ var ERPconnection = {
           $("#cb_modaltableall").click( function() {
             $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
             $("#forecastexporttable tbody tr").toggleClass('selected');
-            $('#button_export').toggleClass("active").prop('disabled', !$('#button_export').prop('disabled') );
+            if ( $("#forecastexporttable tbody input[type=checkbox]:checked").length > 0 ) {
+              $('#button_export').removeClass("active").addClass("active").prop('disabled', false );;
+            } else {
+              $('#button_export').removeClass("active").prop('disabled', true );
+            };
           });
           $("#forecastexporttable tbody input[type=checkbox]").click( function() {
             $(this).parent().parent().toggleClass('selected');

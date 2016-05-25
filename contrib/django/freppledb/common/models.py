@@ -47,7 +47,10 @@ class HierarchyModel(models.Model):
                             related_name='xchildren', help_text=_('Hierarchical parent'))
 
   def save(self, *args, **kwargs):
-    # Trigger recalculation of the hieracrhy
+    # Trigger recalculation of the hieracrhy.
+    # TODO this triggers the recalculation in too many cases, including a lot
+    # of changes which don't require it. Alternative solution is to use the 
+    # pre-save signal which has more information.
     self.lft = None
     self.rght = None
     self.lvl = None
@@ -55,6 +58,23 @@ class HierarchyModel(models.Model):
     # Call the real save() method
     super(HierarchyModel, self).save(*args, **kwargs)
 
+  def delete(self, *args, **kwargs):
+    try:
+      # Update an arbitrary other object to trigger recalculation of the hierarchy
+      obj = self.__class__.objects.using(self._state.db).exclude(pk=self.pk)[0]
+      obj.lft = None
+      obj.rght = None
+      obj.lvl = None
+      obj.save(
+        update_fields=['lft', 'rght', 'lvl'],
+        using=self._state.db
+        )
+    except:
+      # Failure can happen when eg we delete the last record
+      pass  
+    # Call the real save() method
+    super(HierarchyModel, self).delete(*args, **kwargs)
+    
   class Meta:
     abstract = True
 

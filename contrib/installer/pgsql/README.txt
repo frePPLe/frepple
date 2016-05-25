@@ -13,7 +13,7 @@ always free to redo the initialisation to meet your needs:
 
 The database server set up by the frePPLe installer has the following
 settings:
-  - runs port 8002
+  - runs port 8001
   - accepts only local connections, and trusts all of them
   - runs with default memory and performance parameters
 You can tune these parameters to fit your needs. For performance

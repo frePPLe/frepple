@@ -380,7 +380,7 @@ Section -Post
     StrCpy $2 ""
     StrCpy $3 ""
     StrCpy $4 ""
-    StrCpy $5 "8002"
+    StrCpy $5 "8001"
     StrCpy $6 "en-us"
   ${Else}
     ;
@@ -537,10 +537,10 @@ Section -Post
       --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
       --log="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
       -w start'
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 frepple'
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario1'
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario2'
-    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8002 scenario3'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 frepple'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario1'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario2'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario3'
   ${EndIf}
 
   ; Create the database schema

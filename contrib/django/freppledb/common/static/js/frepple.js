@@ -1352,7 +1352,7 @@ var ERPconnection = {
       '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
+        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');
         var database = $('#database').val();
         database = (database===undefined || database==='default') ? '' : '/' + database;
         $.ajax({
@@ -1511,7 +1511,7 @@ var ERPconnection = {
             });
 
             //ERPsystem='openbravo'; //for tests
-            $('#popup .modal-body').html(gettext("connecting to odoo..."));
+            $('#popup .modal-body').html(gettext('connecting to ')+ERPsystem+'...');
             var database = $('#database').attr('name');
             database = (database===undefined || database==='default') ? '' : '/' + database;
             $.ajax({

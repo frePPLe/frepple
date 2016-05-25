@@ -48,6 +48,10 @@ class Command(BaseCommand):
       '--task', dest='task', type='int',
       help='Task identifier (generated automatically if not provided)'
       ),
+    make_option(
+      '--filter', action="store_true", dest='filter', default = False,
+      help='Use filter set for automated exports'
+      ),
     )
 
   requires_system_checks = False
@@ -69,6 +73,7 @@ class Command(BaseCommand):
       self.database = DEFAULT_DB_ALIAS
     if self.database not in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
+    self.filteredexport = 'filter' in options
 
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)
@@ -191,14 +196,23 @@ class Command(BaseCommand):
       starttime = time()
       if self.verbosity > 0:
         print("Exporting expected delivery date of sales orders...")
+
+      if self.filteredexport:
+        filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_sales_order', self.database, "")
+      else:
+        filter_expression = ""
+
       cursor.execute('''select demand.source, max(plandate)
           from demand
+          inner join item on demand.item_id = item.name
+          inner join location on demand.location_id = location.name
+          inner join customer on demand.customer_id = customer.name
           left outer join out_demand
             on demand.name = out_demand.demand
           where demand.subcategory = 'openbravo'
-            and status = 'open'
+            and status = 'open' %s
           group by source
-         ''')
+         ''' % filter_expression)
       count = 0
       body = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -289,7 +303,14 @@ class Command(BaseCommand):
       count = 0
       now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
       identifier = uuid4().hex
+
+      if self.filteredexport:
+        filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+      else:
+        filter_expression = ""
+
       body = [requisition % (identifier, self.organization_id, now, now, self.openbravo_user_id, self.openbravo_user)]
+
       cursor.execute('''select item.source, location.source, enddate, sum(out_operationplan.quantity)
          FROM out_operationplan
          inner join out_flowplan
@@ -307,9 +328,9 @@ class Command(BaseCommand):
            and location.source is not null
            and location.subcategory = 'openbravo'
          where out_operationplan.operation like 'Purchase %'
-           and out_operationplan.locked = 'f'
+           and out_operationplan.locked = 'f' %s
          group by location.source, item.source, enddate
-         ''')
+         ''' % filter_expression)
       for i in cursor.fetchall():
         body.append(requisitionline % (identifier, i[0], i[3], i[2].strftime("%Y-%m-%dT%H:%M:%S"), count))
         count += 1
@@ -348,6 +369,12 @@ class Command(BaseCommand):
   #   - mapped fields frePPLe -> Openbravo ManufacturingWorkRequirement
   #        -
   def export_work_order(self, cursor):
+
+    if self.filteredexport:
+      filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_manufacturing_order', self.database, "")
+    else:
+      filter_expression = ""
+
     try:
       starttime = time()
       if self.verbosity > 0:
@@ -358,8 +385,7 @@ class Command(BaseCommand):
         inner join operation
           on out_operationplan.operation = operation.name
           and operation.type = 'routing'
-        where operation like 'Process%'
-        ''')
+        where operation like 'Process%' %s ''' % filter_expression)
       count = 0
       body = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -442,6 +468,11 @@ class Command(BaseCommand):
         self.openbravo_password
         )
 
+      if self.filteredexport:
+        filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+      else:
+        filter_expression = ""
+
       # Create new purchase plan
       starttime = time()
       if self.verbosity > 0:
@@ -467,9 +498,9 @@ class Command(BaseCommand):
            and location.source is not null
            and location.subcategory = 'openbravo'
          where out_operationplan.operation like 'Purchase %'
-           and out_operationplan.locked = 'f'
+           and out_operationplan.locked = 'f' %s
          group by location.source, item.source, enddate
-         ''')
+         ''' % filter_expression)
       for i in cursor.fetchall():
         body.append(purchasingplanline % (identifier, i[0], i[3], i[2].strftime("%Y-%m-%dT%H:%M:%S"), count))
         count += 1

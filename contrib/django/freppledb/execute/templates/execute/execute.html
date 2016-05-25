@@ -287,7 +287,7 @@
 		  <div id="eersteAccord" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="eersteHeading">
 		    <div class="panel-body">
 			    <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_run/">{% csrf_token %}
-			      <table>			      
+			      <table>
 			      <tr>
 			        <td style="vertical-align:top; padding: 15px">
 			            <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
@@ -479,7 +479,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 					        <td><button class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
 					        <td  style="padding: 0px 15px;" colspan="3"><input class="form-control" name="description" type="text" size="40" placeholder="{% trans "Update description of selected scenarios" %}"/></td>
 					      </tr>
-					      {% endif %}					      
+					      {% endif %}
 					  </table>
 					  <input type="hidden" name="source" id="sourcescenario" value="">
 			    </form>
@@ -502,7 +502,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 						<tr>
 							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
 							<td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
-						</tr>						
+						</tr>
 						</table>
 					</form>
 				</div>
@@ -563,7 +563,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 
                </div>
             </td>
-					 </tr>					 
+					 </tr>
 					</table>
 					<input type="hidden" name="datafile" id="loaddatafile" value="">
 					</form>
@@ -596,28 +596,40 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 		  </div>
 		</div>
 
-	  <div class="panel panel-default">
-		  <div class="panel-heading" data-parent="#tasks" role="tab" id="negendeHeading" data-toggle="collapse" data-target="#negendeAccord">
-		    <h4 class="panel-title">
-		      <a role="button" >{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a>
-		    </h4>
-		  </div>
-		  <div id="negendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="negendeHeading">
-			  <div class="panel-body">
-			    <form role="form" method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">{% csrf_token %}
-			    <table>
-			      <tr>
-			        <td style="vertical-align:top; padding: 15px">
-			          <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-			        <td  style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %}</td>
-			      </tr>
-			    </table>
-			    </form>
-			  </div>
-		  </div>
-	  </div>
-	  {% endif %}
-
+		<div class="panel panel-default">
+			<div class="panel-heading" data-parent="#tasks" role="tab" id="negendeHeading" data-toggle="collapse" data-target="#negendeAccord">
+				<h4 class="panel-title">
+					<a role="button">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a>
+				</h4>
+			</div>
+			<div id="negendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="negendeHeading">
+				<div class="panel-body">
+					<form role="form" method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">
+						{% csrf_token %}
+						<table>
+							<tr>
+								<td style="vertical-align: top; padding: 15px">
+									<button class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">
+									{% trans "launch"|capfirst %}
+									</button>
+								</td>
+								<td style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %} </br>
+								</br>
+								{% blocktrans %}
+								<label data-toggle="tooltip" data-placement="bottom" data-original-title="These filters are defined in the parameters and can be used to export specific changes (ex: changes from last 24h in a certain location)">
+								{% endblocktrans %}
+								  <input type="checkbox" name="filter_export" value="SO" id="filter_export" style="margin-left: 8px;">
+								  <span> {% trans "Apply filter parameters." %} </span>
+								  <span class="fa fa-question-circle" style="display: inline-block;"></span>
+								</label>
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+		{% endif %}
 
 	  {% if perms.execute.run_db %}
 	  <div class="panel panel-default">
@@ -630,7 +642,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
   		  <div class="panel-body">
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}
 					<input type="hidden" name="weekstart" id="weekstart" value="1">
-					<table>					
+					<table>
 					  <tr>
 							<td style="vertical-align:top; padding: 15px">
 							  <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>

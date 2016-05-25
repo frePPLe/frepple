@@ -249,6 +249,8 @@ def wrapTask(request, action):
   # I
   elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
     task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
+    if 'filter_export' in request.POST:
+      task.arguments = "--filter"
     task.save(using=request.database)
   else:
     # Task not recognized

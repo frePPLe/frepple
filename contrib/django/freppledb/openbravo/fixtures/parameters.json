@@ -5,5 +5,8 @@
 {"pk": "openbravo.organization", "model": "common.parameter", "fields": {"value": "F&B Espa\u00f1a - Regi\u00f3n Norte", "description": "Openbravo connector: organization used for uploading requisitions"}},
 {"pk": "openbravo.pagesize", "model": "common.parameter", "fields": {"value": "1000", "description": "Openbravo connector: Number of records to pull with a single request to the web service"}},
 {"pk": "openbravo.exportPurchasingPlan", "model": "common.parameter", "fields": {"value": "false", "description": "Openbravo connector: By default we export purchase requisitions and manufacturing work orders. By switching this flag to true, we will export to the purchaseplan object instead, which is where the openbravo MRP run normally stores its results."}},
-{"pk": "openbravo.date_format", "model": "common.parameter", "fields": {"value": "%Y-%m-%d", "description": "Openbravo connector: Date format for openbravo webservice filter. Default is %Y-%m-%d"}}
+{"pk": "openbravo.filter_export_sales_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter sales orders for automatic exports"}},
+{"pk": "openbravo.filter_export_purchase_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter purchase orders for automatic exports"}},
+{"pk": "openbravo.filter_export_manufacturing_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter manufacturing orders for automatic exports"}},
+{"pk": "openbravo.filter_export_distribution_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter distribution orders for automatic exports"}},
 ]

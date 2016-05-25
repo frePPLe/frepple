@@ -834,13 +834,23 @@ class DemandList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-  actions = [
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','openbravo')"},
+      ]
+  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','odoo')"},
+      ]
+  else:
+    actions = [
     {"name": 'inquiry', "label": _("change status to %(status)s") % {'status': _("inquiry")}, "function": "grid.setStatus('inquiry')"},
     {"name": 'quote', "label": _("change status to %(status)s") % {'status': _("quote")}, "function": "grid.setStatus('quote')"},
     {"name": 'open', "label": _("change status to %(status)s") % {'status': _("open")}, "function": "grid.setStatus('open')"},
     {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
     {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("canceled")}, "function": "grid.setStatus('canceled')"},
     ]
+
 
 class CalendarList(GridReport):
   '''
@@ -966,13 +976,21 @@ class OperationPlanList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
-
-  actions = [
-    {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
-    {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
-    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
-    ]
-
+  print(settings.INSTALLED_APPS)
+  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','openbravo')"},
+      ]
+  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','odoo')"},
+      ]
+  else:
+    actions = [
+      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
+      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
+      ]
 
 class DistributionOrderList(GridReport):
   '''
@@ -1005,14 +1023,19 @@ class DistributionOrderList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "openbravo.IncrementalExport(jQuery('#grid'),'DO')"},
+      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','openbravo')"},
+    ]
+  if 'freppledb.odoo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
     ]
   else:
     actions = [
       {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
-      ]
+      {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("canceled")}, "function": "grid.setStatus('canceled')"},
+    ]
 
 
 class PurchaseOrderList(GridReport):
@@ -1045,8 +1068,12 @@ class PurchaseOrderList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("incremental export to openbravo"), "function": "openbravo.IncrementalExport(jQuery('#grid'),'PO')"},
-    ]
+      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','openbravo')"},
+      ]
+  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+    actions = [
+      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','odoo')"},
+      ]
   else:
     actions = [
       {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},

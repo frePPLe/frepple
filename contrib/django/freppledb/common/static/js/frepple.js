@@ -218,11 +218,11 @@ var upload = {
             },
           error: function (result, stat, errorThrown) {
               $('#timebuckets').modal('hide');
-              $.jgrid.hideModal("#searchmodfbox_grid");
+            $.jgrid.hideModal("#searchmodfbox_grid");
               $('#popup').html('<div class="modal-dialog">'+
                       '<div class="modal-content">'+
                         '<div class="modal-header">'+
-                          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
                           '<h4 class="modal-title alert alert-danger">'+ gettext("Error saving data")+'</h4>'+
                         '</div>'+
                         '<div class="modal-body">'+
@@ -264,13 +264,13 @@ var upload = {
       '</div>' )
       .modal('show');
       $('#savebutton').on('click', function() {
-        upload.save();
+                upload.save();
         $('#popup').modal('hide');
       });
       $('#cancelbutton').on('click', function() {
-        upload.undo();
+                upload.undo();
         $('#popup').modal('hide');
-      });
+        });
       event.stopPropagation();
     }
   }
@@ -381,6 +381,18 @@ var grid = {
    // popup is closed and the selected id is passed to the calling page.
    selected: undefined,
 
+   // Function used to summarize by returning the last value
+   summary_last: function(val, name, record)
+   {
+     return record[name];
+   },
+
+   // Function used to summarize by returning the first value
+   summary_first: function(val, name, record)
+   {
+     return val || record[name];
+   },
+
    setSelectedRow: function(id)
    {
      if (grid.selected != undefined)
@@ -410,15 +422,373 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (i in cross)
+    for (i in cross_idx)
     {
       if (result != '') result += '<br/>';
-      if (cross[i]['editable'])
-        result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
+      if (cross[cross_idx[i]]['editable'])
+        result += '<span class="editablepivotcol">' + cross[cross_idx[i]]['name'] + '</span>';
       else
-        result += cross[i]['name'];
+        result += cross[cross_idx[i]]['name'];
     }
     return result;
+  },
+
+  // Render the customization popup window
+  showCustomize: function (pivot)
+  {
+    var colModel = $("#grid")[0].p.colModel;
+    var maxfrozen = 0;
+    var skipped = 0;
+    var graph = false;
+
+    var row0 = ""+
+      '<div class="row">' +
+      '<div class="col-xs-6">' +
+        '<div class="panel panel-default"><div class="panel-heading">'+ gettext("Selected options") + '</div>' +
+          '<div class="panel-body">' +
+            '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+          '</div>' +
+        '</div>'+
+      '</div>' +
+      '<div class="col-xs-6">' +
+        '<div class="panel panel-default"><div class="panel-heading">' + gettext("Available options") + '</div>' +
+          '<div class="panel-body">' +
+            '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    row1= "";
+    row2= "";
+
+    var val0s = ""; //selected columns
+    var val0a = ""; //available columns
+    var val1s = ""; //selected columns
+    var val1a = ""; //available columns
+
+    for (var i in colModel)
+    {
+      if (colModel[i].name == 'graph')
+        graph = true;
+      else if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '' && !('alwayshidden' in colModel[i]))
+      {
+        if (colModel[i].frozen) maxfrozen = parseInt(i,10) + 1 - skipped;
+        if (!colModel[i].hidden) {
+          val0s += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
+        } else {
+          val0a += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
+        }
+      }
+      else
+        skipped++;
+    }
+
+    if (pivot)
+    {
+      // Add list of crosses
+      var row1 = ''+
+      '<div class="row">' +
+        '<div class="col-xs-6">' +
+          '<div class="panel panel-default">' +
+            '<div class="panel-heading">' +
+              gettext('Selected Cross') +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="col-xs-6">' +
+          '<div class="panel panel-default">' +
+            '<div class="panel-heading">' +
+              gettext('Available Cross') +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+      for (var j in cross_idx)
+      {
+        val1s += '<li class="list-group-item" id="' + (100+parseInt(cross_idx[j],10)) + '" style="cursor: move;">' + cross[cross_idx[j]]['name'] + '</li>';
+      }
+      for (var j in cross)
+      {
+        if (cross_idx.indexOf(parseInt(j,10)) > -1) continue;
+        val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + cross[j]['name'] + '</li>';
+      }
+    }
+    else
+    {
+      // Add selection of number of frozen columns
+      row2 = '<div class="row"><div class="col-xs-12">' +
+        gettext("Frozen columns") +
+        '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center;" min="0" max="4" step="1" value="' + maxfrozen + '">' +
+       '</div></div>';
+    }
+
+    row0 = row0.replace('placeholder0',val0s);
+    row0 = row0.replace('placeholder1',val0a);
+    if (pivot) {
+      row1 = row1.replace('placeholder0',val1s);
+      row1 = row1.replace('placeholder1',val1a);
+    }
+
+    $('#popup').html(''+
+      '<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-label=' + gettext("Close") + '>' +
+              '<span aria-hidden="true">&times;</span>' +
+            '</button>'+
+            '<h4 class="modal-title">'+gettext("Customize")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+            row0 +
+            row1 +
+            row2 +
+          '</div>' +
+          '<div class="modal-footer">'+
+            '<input type="submit" id="okCustbutton" role="button" class="btn btn-danger pull-left" value="'+gettext("OK")+'">'+
+            '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Reset')+'">'+
+          '</div>'+
+        '</div>'+
+      '</div>' )
+    .modal('show');
+
+    var Rows = document.getElementById("Rows");
+    var DroppointRows = document.getElementById("DroppointRows");
+    Sortable.create(Rows, {
+      group: {
+        name: 'Rows',
+        put: ['DroppointRows']
+      },
+      animation: 100
+    });
+    Sortable.create(DroppointRows, {
+      group: {
+        name: 'DroppointRows',
+        put: ['Rows']
+      },
+      animation: 100
+    });
+
+    if (pivot) {
+      var Crosses = document.getElementById("Crosses");
+      var DroppointCrosses = document.getElementById("DroppointCrosses");
+      Sortable.create(Crosses, {
+        group: {
+          name: 'Crosses',
+          put: ['DroppointCrosses']
+        },
+        animation: 100
+      });
+      Sortable.create(DroppointCrosses, {
+        group: {
+          name: 'DroppointCrosses',
+          put: ['Crosses']
+        },
+        animation: 100
+      });
+    }
+
+    $('#resetCustbutton').on('click', function() {
+      var result = {};
+      result[reportkey] = null;
+      if (typeof url_prefix != 'undefined')
+        var url = url_prefix + '/settings/';
+      else
+        var url = '/settings/';
+      $.ajax({
+       url: url,
+       type: 'POST',
+       contentType: 'application/json; charset=utf-8',
+       data: JSON.stringify(result),
+       success: function() {window.location.href = window.location.href;},
+       error: function (result, stat, errorThrown) {
+         $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+             '<div class="modal-content">'+
+             '<div class="modal-header">'+
+               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+               '<h4 class="modal-title">{% trans "Error retrieving data" %}</h4>'+
+             '</div>'+
+             '<div class="modal-body">'+
+               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+             '</div>'+
+             '<div class="modal-footer">'+
+             '</div>'+
+           '</div>'+
+           '</div>' ).modal('show');
+         }
+       });
+     });
+
+    $('#okCustbutton').on('click', function() {
+      var colModel = $("#grid")[0].p.colModel;
+      var perm = [];
+      var hiddenrows = [];
+      if (colModel[0].name == "cb") perm.push(0);
+      cross_idx = [];
+      if (!graph)
+        $("#grid").jqGrid('destroyFrozenColumns');
+
+      $('#Rows li').each(function() {
+        val = parseInt(this.id,10);
+        if (val < 100)
+        {
+            $("#grid").jqGrid("showCol", colModel[val].name);
+            perm.push(val);
+         }
+      });
+
+      $('#DroppointRows li').each(function() {
+        val = parseInt(this.id,10);
+        if (val < 100)
+        {
+          hiddenrows.push(val);
+          if (pivot)
+            $("#grid").jqGrid('setColProp', colModel[val].name, {frozen:false});
+          $("#grid").jqGrid("hideCol", colModel[val].name);
+         }
+      });
+
+      $('#Crosses li').each(function() {
+        val = parseInt(this.id,10);
+        if (val >= 100)
+        {
+          cross_idx.push(val-100);
+         }
+      });
+
+      var numfrozen = 0;
+      if (pivot)
+      {
+        var firstnonfrozen = 0;
+        for (var i in colModel)
+          if ("counter" in colModel[i])
+            numfrozen = i+1;
+          else
+            perm.push(parseInt(i,10));
+      }
+      else
+        numfrozen = parseInt($("#frozen").val())
+      for (var i in hiddenrows)
+        perm.push(hiddenrows[i]);
+      $("#grid").jqGrid("remapColumns", perm, true);
+      var skipped = 0;
+      for (var i in colModel)
+        if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null)
+          $("#grid").jqGrid('setColProp', colModel[i].name, {frozen:i-skipped<numfrozen});
+        else
+          skipped++;
+      if (!graph)
+        $("#grid").jqGrid('setFrozenColumns');
+      $("#grid").trigger('reloadGrid');
+      grid.saveColumnConfiguration();
+      $('#popup').modal("hide");
+    });
+  },
+
+  // Save the customized column configuration
+  saveColumnConfiguration : function(pgButton, indx)
+  {
+    // This function can be called with different arguments:
+    //   - no arguments, when called from our code
+    //   - paging button string, when called from jqgrid paging event
+    //   - number argument, when called from jqgrid resizeStop event
+    var colArray = new Array();
+    var colModel = $("#grid")[0].p.colModel;
+    var maxfrozen = 0;
+    var pivot = false;
+    var skipped = 0;
+    var page = $('#grid').getGridParam('page');
+    if (typeof pgButton === 'string')
+    {
+      // JQgrid paging gives only the current page
+      if (pgButton.indexOf("next") >= 0)
+        ++page;
+      else if (pgButton.indexOf("prev") >= 0)
+        --page;
+      else if (pgButton.indexOf("last") >= 0)
+        page = $("#grid").getGridParam('lastpage');
+      else if (pgButton.indexOf("first") >= 0)
+        page = 1;
+      else if (pgButton.indexOf("user") >= 0)
+        page = $('input.ui-pg-input').val();
+    }
+    else if (typeof indx != 'undefined' && colModel[indx].name == "operationplans")
+      // We're resizing a Gantt chart column. Not too clean to trigger the redraw here, but so be it...
+      gantt.redraw();
+    for (var i in colModel)
+    {
+      if (colModel[i].name != "rn" && colModel[i].name != "cb" && "counter" in colModel[i] && !('alwayshidden' in colModel[i]))
+      {
+        colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
+        if (colModel[i].frozen) maxfrozen = parseInt(i) + 1 - skipped;
+      }
+      else if (colModel[i].name == 'columns' || colModel[i].name == 'graph')
+        pivot = true;
+      else
+        skipped++;
+    }
+    var result = {};
+    var filter = $('#grid').getGridParam("postData").filters;
+    if (typeof filter !== 'undefined' && filter.rules != [])
+      result[reportkey] = {
+        "rows": colArray,
+        "page": page,
+        "filter": filter
+        };
+    else
+      result[reportkey] = {
+        "rows": colArray,
+        "page": page,
+        };
+    var sidx = $('#grid').getGridParam('sortname');
+    if (sidx !== '')
+    {
+      // Report is sorted
+      result[reportkey]['sidx'] = sidx;
+      result[reportkey]['sord'] = $('#grid').getGridParam('sortorder');
+    }
+    if (pivot)
+      result[reportkey]['crosses'] = cross_idx;
+    else
+      result[reportkey]['frozen'] = maxfrozen;
+    if(typeof extraPreference == 'function')
+    {
+      var extra = extraPreference();
+      for (var idx in extra)
+        result[reportkey][idx] = extra[idx];
+    }
+    if (typeof url_prefix != 'undefined')
+      var url = url_prefix + '/settings/';
+    else
+      var url = '/settings/';
+    $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(result),
+      error: function (result, stat, errorThrown) {
+        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+            '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '</div>'+
+          '</div>'+
+          '</div>' ).modal('show');
+      }
+    });
   },
 
   //This function is called when a cell is just being selected in an editable
@@ -467,7 +837,7 @@ var grid = {
       $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
-              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
               '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
@@ -489,7 +859,6 @@ var grid = {
       $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
-              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
               '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
@@ -552,9 +921,9 @@ var grid = {
     $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
     $("#horizonstart").on("dp.change", function (selected) {
       $("#horizonend").data("DateTimePicker").minDate(selected.date);
-    });
+      });
     $( "#okbutton" ).on('click', function() {
-      // Compare old and new parameters
+            // Compare old and new parameters
             var params = $('#horizonbuckets').val() + '|' +
               $('#horizonstart').val() + '|' +
               $('#horizonend').val() + '|' +
@@ -564,7 +933,7 @@ var grid = {
 
             if (params == $('#horizonoriginal').val())
               // No changes to the settings. Close the popup.
-              $('#timebuckets').modal('hide');
+              $("#timebuckets").modal('hide');
             else {
               // Ajax request to update the horizon preferences
               $.ajax({
@@ -585,7 +954,7 @@ var grid = {
             window.location.href = window.location.href;
             }});
     $('#timebuckets').modal('show');
-  },
+         },
 
   //Display dialog for copying or deleting records
   showDelete : function()
@@ -604,7 +973,7 @@ var grid = {
      $('#popup').html('<div class="modal-dialog">'+
              '<div class="modal-content">'+
                '<div class="modal-header">'+
-                 '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                 '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
                  '<h4 class="modal-title">'+gettext('Delete data')+'</h4>'+
                '</div>'+
                '<div class="modal-body">'+
@@ -618,28 +987,28 @@ var grid = {
          '</div>' )
          .modal('show');
      $('#delbutton').on('click', function() {
-           $.ajax({
-             url: location.pathname,
-             data: JSON.stringify([{'delete': sel}]),
-             type: "POST",
-             contentType: "application/json",
-             success: function () {
+               $.ajax({
+                 url: location.pathname,
+                 data: JSON.stringify([{'delete': sel}]),
+                 type: "POST",
+                 contentType: "application/json",
+                 success: function () {
                $("#delete_selected").prop("disabled", true).removeClass("bold");
                $("#copy_selected").prop("disabled", true).removeClass("bold");
-               $('.cbox').prop("checked", false);
-               $('#cb_grid.cbox').prop("checked", false);
-               $("#grid").trigger("reloadGrid");
+                   $('.cbox').prop("checked", false);
+                   $('#cb_grid.cbox').prop("checked", false);
+                   $("#grid").trigger("reloadGrid");
                $('#popup').modal('hide');
-             },
-             error: function (result, stat, errorThrown) {
+                   },
+                 error: function (result, stat, errorThrown) {
                $('#popup .modal-body p').html(result.responseText);
                $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error deleting data"));
                $('#delbutton').prop("disabled", true).hide();
-             }
+                   }
            })
          })
-     }
-  },
+             }
+           },
 
   showCopy: function()
   {
@@ -652,7 +1021,7 @@ var grid = {
      $('#popup').html('<div class="modal-dialog">'+
              '<div class="modal-content">'+
                '<div class="modal-header">'+
-                 '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                 '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
                  '<h4 class="modal-title">'+gettext("Copy data")+'</h4>'+
                  '</div>'+
                  '<div class="modal-body">'+
@@ -666,27 +1035,110 @@ var grid = {
              '</div>' )
      .modal('show');
      $('#copybutton').on('click', function() {
-       $.ajax({
-         url: location.pathname,
-         data: JSON.stringify([{'copy': sel}]),
-         type: "POST",
-         contentType: "application/json",
-         success: function () {
+               $.ajax({
+                 url: location.pathname,
+                 data: JSON.stringify([{'copy': sel}]),
+                 type: "POST",
+                 contentType: "application/json",
+                 success: function () {
            $("#delete_selected").prop("disabled", true).removeClass("bold");
            $("#copy_selected").prop("disabled", true).removeClass("bold");
-           $('.cbox').prop("checked", false);
-           $('#cb_grid.cbox').prop("checked", false);
-           $("#grid").trigger("reloadGrid");
+                   $('.cbox').prop("checked", false);
+                   $('#cb_grid.cbox').prop("checked", false);
+                   $("#grid").trigger("reloadGrid");
            $('#popup').modal('hide');
-         },
-         error: function (result, stat, errorThrown) {
+                   },
+                 error: function (result, stat, errorThrown) {
            $('#popup .modal-body p').html(result.responseText);
            $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error copying data"));
            $('#copybutton').prop("disabled", true).hide();
-         }
+                   }
        })
      })
-    }
+   }
+  },
+
+  showPlanExportModal: function ()
+  {
+      //test purposes
+      var data = {
+	  'labels': ['name', 'type', 'quantity', 'value', 'startdate', 'enddate', 'criticality'],
+	  'values': [['somename0', 'atype', '1000', '1000000', '2015-02-31', '2016-04-31', '1'],['some very long name that almost has no end', 'atype', '1000', '1000000', '2015-02-31', '2016-04-31', '1']]
+        };
+      //end test
+	  
+      $('#timebuckets').modal('hide');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      var tableheadercontent = '';
+      var tablebodycontent = '';
+      for (i = 0; i<data.labels.length; i++) {
+	    tableheadercontent += '<th>'+gettext(data.labels[i])+'</th>';
+          };
+      for (i = 0; i<data.values.length; i++) {
+	  tablebodycontent += '<tr><td><input id="cb_modaltable-'+i+'" class="cbox" type="checkbox" aria-checked="false"></td>';
+	  for (j = 0; j<data.values[i].length; j++) {
+	        tablebodycontent += '<td>'+gettext(data.values[i][j])+'</td>';
+	      };
+          tablebodycontent += '</tr>';
+          };
+      
+      $('#popup').html('<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+            '<h4 class="modal-title">'+gettext("Export Plan")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+            '<div class="table-responsive">'+
+              '<table class="table-condensed table-hover" id="forecastexporttable">'+
+                '<thead class="thead-default">'+
+                  '<tr>'+
+                    '<th>'+
+                      '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'+
+                    '</th>'+
+                    tableheadercontent+
+                  '</tr>'+
+                '</thead>'+
+                '<tbody>'+
+                  '<tr>'+
+                    tablebodycontent+
+                  '</tr>'+
+                '</tbody>'+
+              '</table>'+
+            '</div>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+          '</div>'+
+          '</div>'+
+          '</div>' ).modal('show');
+    $('#exportbutton').on('click', function() {
+      console.log('export');
+      $('#popup').modal('hide');
+    });
+    $('#cancelbutton').on('click', function() {
+      $('#popup').modal('hide');
+    });
+    $('#cb_modaltableall').on('click', function() {
+      console.log('checkall');
+      if ($("#cb_modaltableall").is(':checked')) {
+          $("#forecastexporttable input[type=checkbox]").each(function () {
+              $(this).prop("checked", true);
+          });
+          $("#forecastexporttable tr").each(function () {
+              $(this).addClass("selected");
+          });
+      } else {
+	  $("#forecastexporttable input[type=checkbox]").each(function () {
+              $(this).prop("checked", false);
+          });
+	  $("#forecastexporttable tr.selected").each(function () {
+              $(this).removeClass("selected");
+          });
+      };
+      
+    });
   },
 
   // Display filter dialog
@@ -701,6 +1153,7 @@ var grid = {
       overlay: 0,
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
+        grid.saveColumnConfiguration();
         var s = grid.getFilterGroup(jQuery("#fbox_grid").jqFilter('filterData'), true);
         if (s)
         {
@@ -722,9 +1175,10 @@ var grid = {
         }
         else
         {
-          $('#curfilter').html("");
+          $('#curfilter').html("");        
           $('#filter').removeClass("btn-danger").addClass("btn-primary");
         }
+        grid.saveColumnConfiguration();
         return true;
         }
       });
@@ -855,78 +1309,608 @@ var grid = {
 }
 
 //----------------------------------------------------------------------------
-// Code for Openbravo integration
+// Code for ERP integration
 //----------------------------------------------------------------------------
 
-var openbravo = {
-  IncrementalExport: function(grid, transactiontype) {
+var ERPconnection = {
+  IncrementalExport: function(grid, transactiontype, ERPsystem) {
 	// Collect all selected rows in the status 'proposed'
-	  var sel = grid.jqGrid('getGridParam','selarrrow');
-	  if (sel === null || sel.length == 0)
-	    return;
-	  var data = [];
-	  for (var i in sel)
-	  {
-		  var r = grid.jqGrid('getRowData', sel[i]);
-		  if (r.type === undefined)
-			  r.type = transactiontype;
-		  if (r.status == 'proposed')
-		    data.push(r);
-	  }
-	  if (data == [])
-		  return;
-
-     // Send to the server for upload into openbravo
-     $('#timebuckets').modal('hide');
-     $.jgrid.hideModal("#searchmodfbox_grid");
-     $('#popup').html('<div class="modal-dialog">'+
-           '<div class="modal-content">'+
-             '<div class="modal-header">'+
-               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-               '<h4 class="modal-title">'+gettext("export")+'</h4>'+
-             '</div>'+
-             '<div class="modal-body">'+
-               '<p>'+gettext("export selected records to openbravo")+'</p>'+
-             '</div>'+
-             '<div class="modal-footer">'+
-               '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-               '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-             '</div>'+
-           '</div>'+
-       '</div>' )
-       .modal('show');
-      $('#button_export').on('click', function() {
+  var sel = grid.jqGrid('getGridParam','selarrrow');
+  if (sel === null || sel.length == 0)
+    return;
+  var data = [];
+  
+  for (var i in sel)
+  {
+	  var r = grid.jqGrid('getRowData', sel[i]);
+	  if (r.type === undefined)
+		  r.type = transactiontype;
+	  if (r.status == 'proposed')
+	    data.push(r);
+  }
+  console.log(data);
+  if (data == [])
+	  return;
+  
+  // Send to the server for upload into openbravo
+  $('#timebuckets').modal('hide');
+  $.jgrid.hideModal("#searchmodfbox_grid");
+  $('#popup').html(''+
+    '<div class="modal-dialog">'+
+      '<div class="modal-content">'+
+        '<div class="modal-header">'+
+          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+          '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
+        '</div>'+
+        '<div class="modal-body">'+
+        '<p class="text-capitalize">'+gettext("export selected records to ")+ ERPsystem + '</p>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+        '</div>'+
+      '</div>'+
+    '</div>' ).modal('show');
+  
+    $('#button_export').on('click', function() {
       $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
       var database = $('#database').val();
       database = (database===undefined || database==='default') ? '' : '/' + database;
       $.ajax({
-           url: database + "/openbravo/upload/",
-           data: JSON.stringify(data),
-           type: "POST",
-           contentType: "application/json",
-           success: function () {
-             $('#popup .modal-body p').html(gettext("Export successful"))
-             $('#cancelbutton').val(gettext('Close'));
-             $('#button_export').removeClass("btn-primary").prop('disabled', true);
-             // Mark selected rows as "approved" if the original status was "proposed".
-             for (var i in sel)
-             {
-               var cur = grid.jqGrid('getCell', sel[i], 'status');
-               if (cur == 'proposed')
-                 grid.jqGrid('setCell', sel[i], 'status', 'approved');
-             }
-           },
-           error: function (result, stat, errorThrown) {
-               fmts = ngettext("Error during export");
-               $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
-             $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
-             $('#button_export').text(gettext('retry'));
-             }
+        url: database + "/"+ERPsystem+"/upload/",
+        data: JSON.stringify(data),
+        type: "POST",
+        contentType: "application/json",
+        success: function () {
+          $('#popup .modal-body p').html(gettext("Export successful"));
+          $('#cancelbutton').val(gettext('Close'));
+          $('#button_export').removeClass("btn-primary").prop('disabled', true);
+          // Mark selected rows as "approved" if the original status was "proposed".
+          for (var i in sel) {
+            var cur = grid.jqGrid('getCell', sel[i], 'status');
+            if (cur == 'proposed')
+              grid.jqGrid('setCell', sel[i], 'status', 'approved');
+          };
+        },
+        error: function (result, stat, errorThrown) {
+          fmts = ngettext("Error during export");
+          $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+          $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+          $('#button_export').text(gettext('retry'));
+        }
+      });
+    });
+    $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+  },
+
+
+//----------------------------------------------------------------------------
+//Sales Orders dependencies export
+//----------------------------------------------------------------------------
+
+
+  SODepExport: function(grid, transactiontype, ERPsystem) {
+  // Collect all selected rows in the status 'proposed'
+  var sel = grid.jqGrid('getGridParam','selarrrow');
+  if (sel === null || sel.length == 0)
+   return;
+  var data = [];
+
+  /* todo
+  var database = $('#database').val();
+  database = (database===undefined || database==='default') ? '' : '/' + database;
+  $.ajax({
+    url: database + "/"+ERPsystem+"/upload/",
+    data: JSON.stringify(data),
+    type: "POST",
+    contentType: "application/json",
+    success: function () {
+      $('#popup .modal-body p').html(gettext("Export successful"));
+      $('#cancelbutton').val(gettext('Close'));
+      $('#button_export').removeClass("btn-primary").prop('disabled', true);
+      // Mark selected rows as "approved" if the original status was "proposed".
+      for (var i in sel) {
+        var cur = grid.jqGrid('getCell', sel[i], 'status');
+        if (cur == 'proposed')
+          grid.jqGrid('setCell', sel[i], 'status', 'approved');
+      };
+    },
+    error: function (result, stat, errorThrown) {
+      fmts = ngettext("Error during export");
+      $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+      $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+      $('#button_export').text(gettext('retry'));
+    }
+  });
+  */
+  
+  //test purposes
+  data=[
+   { "value": 2000.0, "criticality": 0.0, "quantity": 200.0, "origin": "Raw material supplier", 
+     "type": "PO", "enddate": "2014-01-21", "item": "ink", "id": 1008, "location": "factory 1", "startdate": "2014-01-10"},
+   { "value": 15000.0, "criticality": 0.0, "quantity": 500.0, "origin": "Raw material supplier", 
+     "type": "PO", "enddate": "2014-01-21", "item": "thread", "id": 1025, "location": "factory 1", "startdate": "2014-01-01"},
+   { "value": "", "criticality": 2.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO", 
+     "enddate": "2014-01-03", "item": "", "id": 1082, "location": "factory 1", "startdate": "2014-01-02"},
+   { "value": "", "criticality": 2.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
+     "enddate": "2014-01-03", "item": "", "id": 1083, "location": "factory 1", "startdate": "2014-01-02"},
+   { "value": "", "criticality": 0.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
+     "enddate": "2014-01-22", "item": "", "id": 1085, "location": "factory 1", "startdate": "2014-01-21"},
+   { "value": "", "criticality": 0.0, "quantity": 24.0, "origin": "Make fabric @ factory 1", "type": "MO",
+     "enddate": "2014-01-22", "item": "", "id": 1086, "location": "factory 1", "startdate": "2014-01-21"},
+   { "value": "", "criticality": 2.0, "quantity": 48.0, "origin": "Pack product @ factory 1", "type": "MO",
+     "enddate": "2014-01-04", "item": "", "id": 1116, "location": "factory 1", "startdate": "2014-01-03"},
+   { "value": "", "criticality": 0.0, "quantity": 42.0, "origin": "Pack product @ factory 1", "type": "MO",
+     "enddate": "2014-01-23", "item": "", "id": 1117, "location": "factory 1", "startdate": "2014-01-22"}
+  ]
+  //end test
+  
+  for (var i in sel)
+  {
+   var r = grid.jqGrid('getRowData', sel[i]);
+   if (r.type === undefined)
+     r.type = transactiontype;
+   if (r.status == 'proposed')
+     data.push(r);
+  }
+  if (data == [])
+   return;
+
+  labels = Object.keys(data[0]);
+  labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
+  
+  var bodycontent='';
+  if (transactiontype == 'SO') {
+    var tableheadercontent = $('<tr/>');
+
+    tableheadercontent.append($('<th/>').html('<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'));
+    for (i = 0; i<labels.length; i++) {
+      tableheadercontent.append( $('<th/>').addClass('text-capitalize').text(gettext(labels[i])) );
+    };
+
+    var tablebodycontent = $('<tbody/>');
+    for (i = 0; i<data.length; i++) {
+      var row = $('<tr/>');
+      var td = $('<td/>');
+
+//      tablebodycontent.append( $('<td>') );
+      td.append( $('<input/>').attr({'id':"cb_modaltable-"+i, 'class':"cbox", 'type':"checkbox", 'aria-checked':"false"}));
+      row.append(td);
+      for (j = 0; j<labels.length; j++) {
+        row.append( $('<td/>').text(data[i][labels[j]]) );
+      };
+      tablebodycontent.append( row );
+    };
+   
+  };
+  
+  
+  // Send to the server for upload into openbravo
+  $('#timebuckets').modal('hide');
+  $.jgrid.hideModal("#searchmodfbox_grid");
+  $('#popup').html(''+
+   '<div class="modal-dialog" style="max-height: 80%; width: 100%; visibility: hidden">'+
+     '<div class="modal-content">'+
+       '<div class="modal-header">'+
+         '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+         '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
+       '</div>'+
+       '<div class="modal-body">'+
+         '<div class="table-responsive">'+
+           '<table class="table-condensed table-hover" id="forecastexporttable">'+
+             '<thead class="thead-default">'+
+             '</thead>'+
+           '</table>'+
+         '</div>'+
+       '</div>'+
+       '<div class="modal-footer">'+
+         '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+         '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+       '</div>'+
+     '</div>'+
+    '</div>' );
+  
+  $('#popup table').append(tablebodycontent);
+  $('#popup thead').append(tableheadercontent);
+    
+    $('#popup').on('shown.bs.modal', function () {
+      $(this).find('.modal-dialog').css({
+        'max-width': 50+$('#forecastexporttable').width()+'px',
+        'visibility': 'visible'
+      });
+    }).modal('show');
+  
+  $('#button_export').on('click', function() {
+    $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
+    var database = $('#database').val();
+    database = (database===undefined || database==='default') ? '' : '/' + database;
+    $.ajax({
+      url: database + "/"+ERPsystem+"/upload/",
+      data: JSON.stringify(data),
+      type: "POST",
+      contentType: "application/json",
+      success: function () {
+        $('#popup .modal-body p').html(gettext("Export successful"));
+        $('#cancelbutton').val(gettext('Close'));
+        $('#button_export').removeClass("btn-primary").prop('disabled', true);
+        // Mark selected rows as "approved" if the original status was "proposed".
+        for (var i in sel) {
+          var cur = grid.jqGrid('getCell', sel[i], 'status');
+          if (cur == 'proposed')
+            grid.jqGrid('setCell', sel[i], 'status', 'approved');
+        };
+      },
+      error: function (result, stat, errorThrown) {
+        fmts = ngettext("Error during export");
+        $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+        $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+        $('#button_export').text(gettext('retry'));
+      }
+    });
+  });
+  if (transactiontype == 'SO' ) {/*
+    $('#cb_modaltableall').on('click', function() {
+      if ($("#cb_modaltableall").is(':checked')) {
+        $("#forecastexporttable input[type=checkbox]").each(function () {
+          $(this).prop("checked", true);
         });
-     });
-     $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+        $("#forecastexporttable tr").each(function () {
+          $(this).addClass("selected");
+        });
+      } else {
+        $("#forecastexporttable input[type=checkbox]").each(function () {
+          $(this).prop("checked", false);
+        });
+        $("#forecastexporttable tr.selected").each(function () {
+          $(this).removeClass("selected");
+        });
+      };
+    });
+    $("#forecastexporttable input[type=checkbox]").on('click', function() {*/
+      $("#cb_modaltableall").click( function() {
+        $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
+        });
+      $("#forecastexporttable tbody input[type=checkbox]").click( function() {
+        $("#cb_modaltableall").prop("checked",$("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
+        });
+  };
+  $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
   }
 };
+
+//----------------------------------------------------------------------------
+// Code for sending dashboard configuration to the server.
+//----------------------------------------------------------------------------
+
+var dashboard = {
+  dragAndDrop: function() {
+
+    $(".cockpitcolumn").each( function() {
+      Sortable.create($(this)[ 0 ], {
+        group: "widgets",
+        handle: ".panel-heading",
+        animation: 100,
+        onEnd: function (e) { dashboard.save();}
+      });
+    });
+
+    $("#workarea").each( function() {
+      Sortable.create($(this)[ 0 ], {
+        group: "cockpit",
+        handle: "h1",
+        animation: 100,
+        onEnd: function (e) { dashboard.save();}
+      });
+    });
+
+      //stop: dashboard.save
+    $(".panel-toggle").click(function() {
+      var icon = $(this);
+      icon.toggleClass("fa-minus fa-plus");
+      icon.closest(".panel").find(".panel-body").toggle();
+      });
+    $(".panel-close").click(function() {
+      $(this).closest(".panel").remove();
+      dashboard.save();
+      });
+  },
+
+  save : function(reload)
+  {
+    // Loop over all rows
+    var results = [];
+    $("[data-cockpit-row]").each(function() {
+      var rowname = $(this).attr("data-cockpit-row");
+      var cols = [];
+      // Loop over all columns in the row
+      $(".cockpitcolumn", this).each(function() {
+        var width = 12;
+        if ($(this).hasClass("col-md-12"))
+          width = 12;
+        else if ($(this).hasClass("col-md-11"))
+          width = 11;
+        else if ($(this).hasClass("col-md-10"))
+          width = 10;
+        else if ($(this).hasClass("col-md-9"))
+          width = 9;
+        else if ($(this).hasClass("col-md-8"))
+          width = 8;
+        else if ($(this).hasClass("col-md-7"))
+          width = 7;
+        else if ($(this).hasClass("col-md-6"))
+          width = 6;
+        else if ($(this).hasClass("col-md-5"))
+          width = 5;
+        else if ($(this).hasClass("col-md-4"))
+          width = 4;
+        else if ($(this).hasClass("col-md-3"))
+          width = 3;
+        else if ($(this).hasClass("col-md-2"))
+          width = 2;
+        // Loop over all widgets in the column
+        var widgets = [];
+        $("[data-cockpit-widget]", this).each(function() {
+          widgets.push( [$(this).attr("data-cockpit-widget"),{}] );
+        });
+        cols.push( {'width': width, 'widgets': widgets});
+      });
+      if (cols.length > 0)
+        results.push( {'rowname': rowname, 'cols': cols});
+    });
+
+    // Send to the server
+    if (typeof url_prefix != 'undefined')
+        var url = url_prefix + '/settings/';
+      else
+        var url = '/settings/';
+    $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({"freppledb.common.cockpit": results}),
+      success: function () {
+        if ($.type(reload) === "string")
+          window.location.href = window.location.href;
+      },
+      error: function (result, stat, errorThrown) {
+        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+            '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '</div>'+
+          '</div>'+
+          '</div>' ).modal('show');
+      }
+      });
+  },
+
+  customize: function(rowname)
+  {
+    // Detect the current layout of this row
+    var layout = "";
+    $("[data-cockpit-row='" + rowname + "'] .cockpitcolumn").each(function() {
+      if (layout != "")
+        layout += " - ";
+      if ($(this).hasClass("col-md-12"))
+        layout += "100%";
+      else if ($(this).hasClass("col-md-11"))
+        layout += "92%";
+      else if ($(this).hasClass("col-md-10"))
+        layout += "83%";
+      else if ($(this).hasClass("col-md-9"))
+        layout += "75%";
+      else if ($(this).hasClass("col-md-8"))
+        layout += "67%";
+      else if ($(this).hasClass("col-md-7"))
+        layout += "58%";
+      else if ($(this).hasClass("col-md-6"))
+        layout += "50%";
+      else if ($(this).hasClass("col-md-5"))
+        layout += "42%";
+      else if ($(this).hasClass("col-md-4"))
+        layout += "33%";
+      else if ($(this).hasClass("col-md-3"))
+        layout += "25%";
+      else if ($(this).hasClass("col-md-2"))
+        layout += "17%";
+      });
+
+    var txt = '<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+        '<div class="modal-header">' +
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+          '<h4 class="modal-title">' + gettext("Customize a dashboard row") + '</h4>' +
+        '</div>' +
+      '<div class="modal-body">' +
+        '<form class="form-horizontal">' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_name">' + gettext("Name") + ':</label>' +
+       '<div class="col-md-9">' +
+       '<input id="id_name" class="form-control" type="text" value="' + rowname + '">' +
+         '</div></div>' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_layout2">' + gettext("Layout") + ':</label>' +
+       '<div class="col-md-9 dropdown dropdown-submit-input">' +
+     '<button class="btn btn-default dropdown-toggle" id="id_layout2" name="layout" type="button" data-toggle="dropdown" aria-haspopup="true">' +
+       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
+     '</button>' +
+     '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
+     '<li class="dropdown-header">' + gettext("Single column") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">100%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Two columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">67% - 33%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">50% - 50%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">33% - 67%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">25% - 75%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Three columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">50% - 25% - 25%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">33% - 33% - 33%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Four columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">25% - 25% - 25% - 25%</a></li>' +
+     '</ul></div>' +
+       '</div>' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_widget2">' + gettext("Add widget") + ':</label>' +
+       '<div class="col-md-9 dropdown dropdown-submit-input">' +
+     '<button class="btn btn-default dropdown-toggle" id="id_widget2" type="button" data-toggle="dropdown">' +
+     '<span id="id_widget">-</span>&nbsp;<span class="caret"></span>' +
+     '</button>' +
+     '<ul class="dropdown-menu col-sm-9" aria-labelledby="id_widget2" id="id_widgetul">';
+
+       var numwidgets = hiddenwidgets.length;
+       for (var i = 0; i < numwidgets; i++)
+         txt += '<li><a onclick="dashboard.setwidget(' + i + ')">' + hiddenwidgets[i][1] + '</a></li>';
+
+       txt +=
+     '</ul></div><span id="newwidgetname" style="display:none"></span>' +
+       '</div>' +
+
+     '</form></div>' +
+     '<div class="modal-footer">' +
+       '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Delete') + '">' +
+       '<input type="submit" role="button" onclick=\'$("#popup").modal("hide")\' class="btn btn-primary pull-right" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
+     '</div>' +
+
+     '</div></div></div>';
+
+      $('#popup').html(txt).modal('show');
+  },
+
+  setlayout: function(elem) {
+    $("#id_layout").text($(elem).text());
+  },
+
+  setwidget: function(idx) {
+    $("#id_widget").text(hiddenwidgets[idx][1]);
+    $("#newwidgetname").text(hiddenwidgets[idx][0]);
+  },
+
+  saveCustomization: function(rowname) {
+	// Update the name
+    var newname = $("#id_name").val();
+    if (rowname != newname)
+    {
+      // Make sure name is unique
+      var cnt = 2;
+      while ($("[data-cockpit-row='" + newname + "']").length > 1)
+        newname = $("#id_name").val() + ' - ' + (cnt++);
+
+      // Update
+      $("[data-cockpit-row='" + rowname + "'] .col-md-11 h1").text(newname);
+      $("[data-cockpit-row='" + rowname + "'] h1 button").attr("onclick", "dashboard.customize('" + newname + "')");
+      $("[data-cockpit-row='" + rowname + "'] .horizontal-form").attr("id", newname);
+      $("[data-cockpit-row='" + rowname + "']").attr("data-cockpit-row", newname);
+    }
+
+    // Update the layout
+    var newlayout = $("#id_layout").text().split("-");
+    var colindex = 0;
+    var lastcol = null;
+    // Loop over existing columns
+    $("[id='" + rowname + "'] .cockpitcolumn").each(function() {
+      if (colindex < newlayout.length)
+      {
+        // Resize existing column
+        lastcol = this;
+        $(this).removeClass("col-md-1 col-md-2 col-md-3 col-md-4 col-md-5 col-md-6 col-md-7 col-md-8 col-md-9 col-md-10 col-md-11 col-md-12");
+        $(this).addClass("col-md-" + Math.round(0.12 * parseInt(newlayout[colindex])));
+      }
+      else
+      {
+        // Remove this column, after moving all widgets to the previous column
+        $("[data-cockpit-widget]", this).appendTo(lastcol);
+        $(this).remove();
+      }
+      colindex++;
+    });
+    while(colindex < newlayout.length)
+    {
+      // Adding extra columns
+      lastcol = $('<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[colindex])) + ' col-sm-12"></div>').insertAfter(lastcol);
+      colindex++;
+    }
+
+    // Adding new widget
+    var newwidget = $("#newwidgetname").text();
+    if (newwidget != '')
+    {
+      $('<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>').appendTo(lastcol);
+      dashboard.save("true"); // Force reload of the page
+    }
+    else
+      dashboard.save();
+
+    // Almost done
+    dashboard.dragAndDrop();
+    $('#popup').modal('hide');
+  },
+
+  deleteRow: function(rowname) {
+    $("[data-cockpit-row='" + rowname + "']").remove();
+    dashboard.save();
+    $('#popup').modal('hide');
+  },
+
+  addRow: function(rowname, position_above) {
+	// Make sure name is unique
+	var newname = $("#id_name").val();
+	var cnt = 2;
+	while ($("[data-cockpit-row='" + newname + "']").length >= 1)
+      newname = $("#id_name").val() + ' - ' + (cnt++);
+
+	  console.log($("[data-cockpit-row='" + newname + "']").length +" "+newname);
+    // Build new content
+    var newelements = '<div class="row" data-cockpit-row="' + newname + '">' +
+      '<div class="col-md-11"><h1 style="float: left">' + newname + '</h1></div>' +
+      '<div class="col-md-1"><h1 class="pull-right">' +
+        '<button class="btn btn-xs btn-primary" onclick="dashboard.customize(\'' + newname + '\')" data-toggle="tooltip" data-placement="top" data-original-title="' + gettext("customize") + '"><span class="fa fa-wrench"></span></button>' +
+      '</h1></div>' +
+
+      '<div class="horizontal-form" id="' + newname + '">';
+    var newlayout = $("#id_layout").text().split("-");
+    var newwidget = $("#newwidgetname").text();
+    for (var i = 0; i < newlayout.length; i++)
+    {
+      newelements += '<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[i])) + ' col-sm-12">';
+      if (i == 0 && newwidget != '')
+        newelements += '<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>';
+      newelements += '</div>';
+    }
+    newelements += '</div></div></div>';
+
+    // Insert in page
+    if (position_above)
+      $("[data-cockpit-row='" + rowname + "']").first().before($(newelements));
+    else
+      $("[data-cockpit-row='" + rowname + "']").last().after($(newelements));
+
+    // Almost done
+    if (newwidget != '')
+      // Force reload of the page when adding a widget
+      dashboard.save("true");
+    else
+      dashboard.save();
+    dashboard.dragAndDrop();
+    $('#popup').modal('hide');
+  }
+
+}
 
 //----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.
@@ -1132,7 +2116,7 @@ function about_show()
          '<div class="modal-content">'+
            '<div class="modal-header">'+
              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-             '<h4 class="modal-title">About frePPLe ' + data.version + ' Community Edition</h4>'+
+             '<h4 class="modal-title">About frePPLe ' + data.version + ' Enterprise Edition</h4>'+
            '</div>'+
            '<div class="modal-body">'+
              '<div class="row">';
@@ -1183,13 +2167,13 @@ function import_show(url)
   $('#popup').html('<div class="modal-dialog">'+
       '<div class="modal-content">'+
         '<div class="modal-header">'+
-          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
           '<h4 class="modal-title">'+ gettext("Import CSV or Excel file") +'</h4>'+
         '</div>'+
         '<div class="modal-body">'+
-          '<form id="uploadform">' +
+    '<form id="uploadform">' +
             '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
-              gettext('The first row should contain the field names.') + '<br/><br/>' +
+    gettext('The first row should contain the field names.') + '<br/><br/>' +
             '</p>'+
             '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
             gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
@@ -1345,7 +2329,7 @@ var graph = {
         .append("div")
         .attr("id", "tooltip")
         .attr("role", "tooltip")
-        .attr("class", "panel panel-info")
+        .attr("class", "popover fade right in")
         .style("position", "absolute");
 
     // Update content and display
@@ -1700,7 +2684,7 @@ var tour = {
     })
     .modal('show');
     $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
-        tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
+         tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
     $('#tourprevious').on('click', function() {
       tour.prev();
     });
@@ -1711,11 +2695,11 @@ var tour = {
       tour.next();
     });
     $('#tourcancelbutton').on('click', function() {
-      $('#tourtooltip').remove();
+          $('#tourtooltip').remove();
       $('#tourModal').modal('hide');
-    });
+      });
 
-   // Create the tooltip
+     // Create the tooltip
      tour.tooltip = $('<div>',{id:'tourtooltip', class:'popover', html:'<div class="popover" role="tooltip" style="margin-top:10px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'})
      .css({
         'placement': 'top','display': 'none', 'overflow': 'visible'

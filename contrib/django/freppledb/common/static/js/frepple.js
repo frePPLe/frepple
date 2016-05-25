@@ -1400,7 +1400,7 @@ var ERPconnection = {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-        if (r.status == 'proposed')
+        if if (r.status == 'open' || r.status == 'proposed')
           data.push(r);
       }
       if (data == [])
@@ -1419,7 +1419,7 @@ var ERPconnection = {
 
           '</div>'+
           '<div class="modal-footer">'+
-          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left disabled" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" disabled value="'+gettext('Confirm')+'">'+
           '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
           '</div>'+
           '</div>'+
@@ -1433,9 +1433,10 @@ var ERPconnection = {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-//      if (r.status == 'proposed')
-        if (i==0) components+=encodeURIComponent(sel[i]);
-        else components+='&demand='+encodeURIComponent(sel[i]);
+        if (r.status == 'open' || r.status == 'proposed') {
+          if (i==0) components+=encodeURIComponent(sel[i]);
+          else components+='&demand='+encodeURIComponent(sel[i]);
+        };
       };
 
       //get demandplans
@@ -1521,7 +1522,7 @@ var ERPconnection = {
               success: function () {
                 $('#popup .modal-body').html(gettext("Export successful"));
                 $('#cancelbutton').val(gettext('Close'));
-                $('#button_export').toggleClass("btn-primary disabled");
+                $('#button_export').toggleClass("btn-primary").prop('disabled', true );
                 // Mark selected rows as "approved" if the original status was "proposed".
                 for (var i in sel) {
                   var cur = grid.jqGrid('getCell', sel[i], 'status');
@@ -1543,15 +1544,19 @@ var ERPconnection = {
           $("#cb_modaltableall").click( function() {
             $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
             $("#forecastexporttable tbody tr").toggleClass('selected');
-            $('#button_export').toggleClass("disabled active");
+            if ( $("#forecastexporttable tbody input[type=checkbox]:checked").length > 0 ) {
+              $('#button_export').removeClass("active").addClass("active").prop('disabled', false );;
+            } else {
+              $('#button_export').removeClass("active").prop('disabled', true );
+            };
           });
           $("#forecastexporttable tbody input[type=checkbox]").click( function() {
             $(this).parent().parent().toggleClass('selected');
             $("#cb_modaltableall").prop("checked",$("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
             if ( $("#forecastexporttable tbody input[type=checkbox]:checked").length > 0 ) {
-              $('#button_export').removeClass("disabled active").addClass("active");
+              $('#button_export').removeClass("active").addClass("active").prop('disabled', false );;
             } else {
-              $('#button_export').removeClass("disabled active").addClass("disabled");
+              $('#button_export').removeClass("active").prop('disabled', true );
             };
           });
           $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');

@@ -41,9 +41,6 @@ The panel is split in two areas:
 ==================== ==============================================================================
 Field                Description
 ==================== ==============================================================================
-Forecast             Name of the forecast
-Item                 Forecasted item.
-Customer             Customer forecasted for.
 Total Orders         Quantity of orders in the time bucket, includes both open and closed
                      orders.
 Open Orders          Quantity of open orders in the time bucket.

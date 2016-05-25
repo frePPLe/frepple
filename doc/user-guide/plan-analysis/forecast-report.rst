@@ -14,7 +14,8 @@ Field                Description
 ==================== ==============================================================================
 Forecast             Name of the forecast
 Item                 Forecasted item.
-Customer             Customer forecasted for.
+Customer             Forecasted customer.
+Location             Forecasted location.
 Total Orders         Quantity of orders in the time bucket, includes both open and closed
                      orders.
 Open Orders          Quantity of open orders in the time bucket.

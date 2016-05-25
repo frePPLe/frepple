@@ -1352,7 +1352,7 @@ var ERPconnection = {
       '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        $('#popup .modal-body p').html(gettext("connecting to openbravo..."));
+        $('#popup .modal-body p').html(interpolate(gettext('connecting to %s...'), ERPsystem, false));
         var database = $('#database').val();
         database = (database===undefined || database==='default') ? '' : '/' + database;
         $.ajax({
@@ -1400,7 +1400,6 @@ var ERPconnection = {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-        if (r.status == 'open' || r.status == 'proposed')
           data.push(r);
       }
       if (data == [])
@@ -1511,7 +1510,7 @@ var ERPconnection = {
             });
 
             //ERPsystem='openbravo'; //for tests
-            $('#popup .modal-body').html(gettext("connecting to odoo..."));
+            $('#popup .modal-body').html(interpolate(gettext('connecting to %s...'), ERPsystem, false));
             var database = $('#database').attr('name');
             database = (database===undefined || database==='default') ? '' : '/' + database;
             $.ajax({

@@ -61,12 +61,13 @@ Here are the steps to get a fully working environment.
 
    In case of error (while creating the databases) "Postgres PG::Error: ERROR: new encoding (UTF8) is incompatible":
    ::
-      UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
-      DROP DATABASE template1;
-      CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UNICODE';
-      UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
+
+       UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
+       DROP DATABASE template1;
+       CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UNICODE';
+       UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
        \c template1
-      VACUUM FREEZE;
+       VACUUM FREEZE;
 
 #. **Tune the database**
 
@@ -155,8 +156,10 @@ Here are the steps to get a fully working environment.
    The previous step installed a number of configuration files, which you
    now need to review and edit:
 
-   #. | **/etc/frepple/djangosettings.py**
+   #. **/etc/frepple/djangosettings.py**
+
       | Edit the "TIMEZONE" variable to your local setting:
+
       ::
 
           TIME_ZONE = 'Europe/Brussels'

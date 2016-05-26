@@ -21,4 +21,5 @@ This series of screens is used to review the planning results.
    demand-detail-report
    demand-gantt-report
    forecast-report
+   forecast-editor
    performance-indicator-report

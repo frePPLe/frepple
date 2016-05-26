@@ -145,13 +145,3 @@ This tasks allows you to populate these tables in an easy way.
 
 .. image:: _images/execution-buckets.png
    :alt: Execution screen - generate time buckets
-
-Generate a model
-----------------
-
-For testing and benchmarking purposes it is extremely useful to be able to
-generate datasets with varying sizes and complexity. A few key parameters allow
-you to create a sample model for such test purposes.
-
-.. image:: _images/execution-generator.png
-   :alt: Execution screen - model generation

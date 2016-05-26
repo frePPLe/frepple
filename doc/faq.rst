@@ -18,7 +18,7 @@ User interface
 * **I want frePPLe in my own language**
 
   FrePPLe is ready to plug in translations for additional languages. Follow
-  the instructions :doc:`on this page <technical-guide/user-interface/translating-the-user-interface>`
+  the instructions :doc:`on this page <developer-guide/user-interface/translating-the-user-interface>`
   to create you own translations and submit them to the frePPLe team.
 
   It’ll take you only a few hours to come up with the translations.
@@ -109,7 +109,7 @@ Modelling and solver algorithm
   When the due date is set to tomorrow, the plan will show the forward planning
   mode.
 
-  A more detailed description can be found :doc:`here <technical-guide/planning-engine/planning-algorithm>`.
+  A more detailed description can be found :doc:`here <developer-guide/planning-engine/planning-algorithm>`.
 
   FrePPLe also allows external solvers to be implemented as plugins. For
   specific planning problems additional solvers can be developed.

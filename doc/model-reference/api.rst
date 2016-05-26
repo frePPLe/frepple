@@ -10,7 +10,7 @@ core planning engine:
   The user interface exposes a rich set of REST web services to created,
   read, update and delete objects from the frePPLe database.
 
-  More detail is available on :doc:`this page </technical-guide/rest-api/index>`.
+  More detail is available on :doc:`this page </developer-guide/rest-api/index>`.
 
 * **XML**:
 

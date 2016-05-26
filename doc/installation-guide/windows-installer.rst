@@ -36,6 +36,7 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
        values are configured as default for the database (in the file postgresql.conf)
        or the database role (using the 'alter role' command), a small performance
        optimization is achieved:
+
      ::
 
          client_encoding: 'UTF8',

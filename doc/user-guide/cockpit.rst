@@ -101,7 +101,8 @@ The following widgets are currently available:
   Each column in a row specifies a) its width and b) the widgets displayed
   on it. Some widgets are configurable with parameters.
 
-  ::
+   ::
+
     DEFAULT_DASHBOARD = [
      { 'rowname': 'Welcome', 'cols': [
        {'width':'col-md-8 col-sm-12', 'widgets':[

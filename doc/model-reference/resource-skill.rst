@@ -40,15 +40,21 @@ Adding or changing resource skills
 .. code-block:: XML
 
     <plan>
-      <skills>
+       <skills>
          <skill name="Qualified operator">
-           <resourceskills >
-             <resourceskill resource name="John" />
-             <resourceskill resource name="Paul" />
-             <resourceskill resource name="Neil" />
-           </resourceskills>
-        </skill>
-      </skills>
+            <resourceskills >
+               <resourceskill>
+                  <resource name="John" />
+               </resourceskill>
+               <resourceskill>
+                  <resource name="Paul" />
+               </resourceskill>
+               <resourceskill>
+                  <resource name="Neil" />
+               </resourceskill>
+            </resourceskills>
+         </skill>
+       </skills>
     </plan>
 
 Deleting a resource skill
@@ -57,9 +63,11 @@ Deleting a resource skill
 
     <plan>
        <skills>
-         <skill>
+         <skill name="Qualified operator">
             <resourceskills>
-               <resourceskill name="Qualified operator" action="R"/>
+               <resourceskill action="R">
+                  <resource name="John" />
+               </resourceskill>
             </resourceskills>
          <skill>
        </skills>

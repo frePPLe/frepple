@@ -24,8 +24,8 @@ The panel is split in two areas:
       are other records inside it (or collapse if it is already expanded), then the panels
       to the right will reset their selections.
 
-.. image:: ../_images/forecast-editor-top.png
-   :alt: Forecast editor selection panels
+    .. image:: ../_images/forecast-editor-top.png
+       :alt: Forecast editor selection panels
 
   - | The bottom of the screen has 4 tabs.
     | The Attributes tab will present addicional information about the current selections of
@@ -37,6 +37,21 @@ The panel is split in two areas:
     | The Comments tab allows comments to be added for the currently selected Item, or Location, or Customer
       or Item-Location.
     | The History tab shows the changes that were made to the current selections.
+
+    .. image:: ../_images/forecast-editor-tabAttributes.png
+       :alt: Attributes of selections
+   
+    .. image:: ../_images/forecast-editor-tabForecast.png
+       :alt: Forecast graph and table
+   
+    .. image:: ../_images/forecast-editor-tabComments.png
+       :alt: Comments for selections
+   
+    .. image:: ../_images/ forecast-editor-tabHistory.png
+       :alt: History of changes in selection
+
+The table in the Forecast tab is for forecast tunning. Adjustments can be made and will have an immediate impact on the graph above the table.
+Here a description of the forecast table fields can be found:
 
 ==================== ==============================================================================
 Field                Description
@@ -61,15 +76,4 @@ Planned Orders       Quantity of orders planned in this time bucket.
 Planned Net Forecast Quantity of net forecast planned in this time bucket.
 ==================== ==============================================================================
 
-.. image:: ../_images/forecast-editor-tabAttributes.png
-   :alt: Attributes of selections
-
-.. image:: ../_images/forecast-editor-tabForecast.png
-   :alt: Forecast graph and table
-
-.. image:: ../_images/forecast-editor-tabComments.png
-   :alt: Comments for selections
-
-.. image:: ../_images/ forecast-editor-tabHistory.png
-   :alt: History of changes in selection
 

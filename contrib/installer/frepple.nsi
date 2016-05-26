@@ -177,7 +177,7 @@ FunctionEnd
 Section -Start
   ; Create the python distribution and django server
   !system 'rmdir /s /q build'
-  !system 'python3 setup.py build'
+  !system 'python setup.py build'
 
   ; Rebuild the documentation
   !cd '../../doc'

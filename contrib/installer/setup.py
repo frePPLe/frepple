@@ -46,7 +46,7 @@ packages = [# Required for django standalone deployment
             # Added for cx_freeze binaries
             'cx_Logging'
            ]
-excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework']
+excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework', 'tkinter']
 
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values():

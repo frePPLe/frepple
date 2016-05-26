@@ -72,7 +72,7 @@ class HierarchyModel(models.Model):
     except:
       # Failure can happen when eg we delete the last record
       pass
-    # Call the real save() method
+    # Call the real delete() method
     super(HierarchyModel, self).delete(*args, **kwargs)
 
   class Meta:

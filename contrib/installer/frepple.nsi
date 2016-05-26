@@ -269,6 +269,19 @@ Function DatabaseOpen
   SectionGetFlags ${SecPostgres} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
   ${If} $R0 == ${SF_SELECTED}
+    ; Verify the availability of the Visual Studio redistributable
+    ReadRegDword $R1 HKLM "SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0\VC\Runtimes\x64" "Installed"
+    ${If} $R1 != "1"
+       StrCpy $1 'The PostgreSQL 9.5 database server requires the Visual C++ 2013 redistributable $\r$\n'
+       StrCpy $1 '$1to be installed on your computer.$\r$\n$\r$\n'
+       StrCpy $1 '$1  1) This installation process will now abort.$\r$\n'
+       StrCpy $1 '$1  2) Download vcredist_x64.exe from$\r$\n'
+       StrCpy $1 '$1       https://www.microsoft.com/en-us/download/details.aspx?id=40784$\r$\n'
+       StrCpy $1 '$1  3) Run the Microsoft installer$\r$\n'
+       StrCpy $1 '$1  4) Restart the frePPLe installation from the start.$\r$\n'
+       MessageBox MB_OK $1
+       Quit
+    ${EndIf}
     ; Don't show the database configuration page when using the integrated postgresql database
     Abort
   ${Else}

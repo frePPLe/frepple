@@ -42,7 +42,7 @@ def printWelcome(prefix='frepple', database=DEFAULT_DB_ALIAS):
   print("FrePPLe with processid %s on %s using database '%s'" % (
     os.getpid(),
     sys.platform,
-    settings.DATABASES[database].get('NAME', '')
+    database
     ))
 
 

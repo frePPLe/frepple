@@ -8,5 +8,5 @@
 {"pk": "openbravo.filter_export_sales_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter sales orders for automatic exports"}},
 {"pk": "openbravo.filter_export_purchase_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter purchase orders for automatic exports"}},
 {"pk": "openbravo.filter_export_manufacturing_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter manufacturing orders for automatic exports"}},
-{"pk": "openbravo.filter_export_distribution_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter distribution orders for automatic exports"}},
+{"pk": "openbravo.filter_export_distribution_order", "model": "common.parameter", "fields": {"value": "", "description": "Openbravo connector: filter distribution orders for automatic exports"}}
 ]

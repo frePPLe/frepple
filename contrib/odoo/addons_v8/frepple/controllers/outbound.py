@@ -67,6 +67,8 @@ class exporter(object):
             yield i
         for i in self.export_customers():
             yield i
+        for i in self.export_suppliers():
+            yield i
         for i in self.export_workcenters():
             yield i
         for i in self.export_items():
@@ -316,6 +318,26 @@ res.partner.id res.partner.name -> customer.name
                 self.map_customers[i['id']] = name
             yield '</customers>\n'
 
+    def export_suppliers(self):            
+        '''
+Generate a list of suppliers for frePPLe, based on the res.partner model.
+We filter on res.supplier where supplier = True.
+
+Mapping:
+res.partner.id res.partner.name -> supplier.name
+'''
+        self.map_suppliers = {}
+        m = self.req.session.model('res.partner')
+        s_ids = m.search([('supplier', '=', True)], context=self.req.session.context)
+        if s_ids:
+            yield '<!-- suppliers -->\n'
+            yield '<suppliers>\n'
+            fields = ['name']
+            for i in m.read(s_ids, fields, self.req.session.context):
+                name = '%d %s' % (i['id'], i['name'])
+                yield '<supplier name=%s/>\n' % quoteattr(name)
+                self.map_suppliers[i['id']] = name
+            yield '</suppliers>\n'
 
     def export_workcenters(self):
         '''
@@ -367,7 +389,7 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
         self.procured_buffers = set()
         m = self.req.session.model('product.template')
         # fields = ['purchase_ok', 'procure_method', 'supply_method', 'produce_delay', 'list_price', 'uom_id']
-        fields = ['purchase_ok', 'route_ids', 'produce_delay', 'list_price', 'uom_id']
+        fields = ['purchase_ok', 'route_ids', 'produce_delay', 'list_price', 'uom_id', 'seller_ids', 'standard_price']
         ids = m.search([], context=self.req.session.context)
         self.product_templates = {}
         for i in m.read(ids, fields, self.req.session.context):
@@ -384,10 +406,13 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
         # Read the products
         m = self.req.session.model('product.product')
         ids = m.search([], context=self.req.session.context)
+        s = self.req.session.model('product.supplierinfo')
+        s_fields=['name', 'delay', 'min_qty']
+        supplier = {}
         if ids:
             yield '<!-- products -->\n'
             yield '<items>\n'
-            fields = ['name', 'code', 'product_tmpl_id']
+            fields = ['id','name', 'code', 'product_tmpl_id', 'seller_ids']
             data = [i for i in m.read(ids, fields, self.req.session.context)]
             for i in data:
                 tmpl = self.product_templates[i['product_tmpl_id'][0]]
@@ -398,14 +423,27 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
                 prod_obj = {'name': name, 'template': i['product_tmpl_id'][0]}
                 self.product_product[i['id']] = prod_obj
                 self.product_template_product[i['product_tmpl_id'][0]] = prod_obj
-                yield '<item name=%s price="%f" subcategory="%s,%s"/>\n' % (
+                yield '<item name=%s price="%f" subcategory="%s,%s">\n' % (
                     quoteattr(name),
                     (tmpl['list_price'] or 0) / self.convert_qty_uom(1.0, tmpl['uom_id'][0], i['id']),
                     self.uom_categories[self.uom[tmpl['uom_id'][0]]['category']], i['id']
                 )
+                
+                if tmpl['seller_ids']:
+                    yield '<itemsuppliers>\n'
+                    for sup in s.read(tmpl['seller_ids'], s_fields, self.req.session.context):
+                        name = '%d %s' % (sup['name'][0], sup['name'][1])
+                        yield '<itemsupplier>\n'
+                        yield '<supplier name=%s/><leadtime>P%dD</leadtime><priority>1</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
+                            quoteattr(name), sup['delay'], sup['min_qty'], tmpl['standard_price'])
+                        yield '</itemsupplier>\n'
+                   
+                    
+                    yield '</itemsuppliers>\n'
+                yield '</item>\n'
             yield '</items>\n'
-
             # Create procurement buffers for procured items
+            # NEW : change buffer product into default product
             yield '<buffers>\n'
             for i in data:
                 tmpl = self.product_templates[i['product_tmpl_id'][0]]
@@ -413,6 +451,7 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
                 if tmpl['purchase_ok'] and supply_buy: # tmpl['supply_method'] == 'buy':  # odoo now uses routes
                     for j in self.warehouses:
                         buf = u'%s @ %s' % (self.product_product[i['id']]['name'], j)
+                        operation = u'%d %s @ %s' % (i['id'], i['name'], str(j))
                         self.procured_buffers.add(buf)
                         yield '<buffer name=%s leadtime="P%sD" xsi:type="buffer_procure"><item name=%s/><location name=%s/></buffer>\n' % (
                             quoteattr(buf), int(tmpl['produce_delay'] + self.po_lead),
@@ -426,7 +465,7 @@ Exports mrp.routings, mrp.routing.workcenter and mrp.bom records into
 frePPLe operations, flows, buffers and loads.
 
 Not supported yet: a) parent boms, b) phantom boms, c) subproducts,
-d) multiple boms for the same product, e) routing steps.
+d) routing steps.
 
 Mapping:
 '''
@@ -451,8 +490,7 @@ Mapping:
             if i['routing_id'][0] in mrp_routing_workcenters:
                 mrp_routing_workcenters[i['routing_id'][0]].append((i['workcenter_id'][1], i['cycle_nbr'],))
             else:
-                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],)]
-
+                mrp_routing_workcenters[i['routing_id'][0]] = [(i['workcenter_id'][1], i['cycle_nbr'],)]  
         # Loop over all "producing" bom records
         m = self.req.session.model('mrp.bom')
         m_lines = self.req.session.model('mrp.bom.line')
@@ -466,39 +504,65 @@ Mapping:
             'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
             'routing_id', 'type', 'product_rounding'
         ]
+        
+        product = self.req.session.model('product.template')
+        product_ids = product.search([('bom_ids','!=',False)], context=self.req.session.context)
+        product_field = ['bom_ids', 'id', 'name']
+        product_bom = {}
+        operation_bom = {}
+        buffer_bom = {}
+        for i in product.read(product_ids, product_field, self.req.session.context):
+#             store product_id that have more than one BOM to create an alternate operation
+            if len(i['bom_ids']) > 1:
+                if i['id'] in product_bom:
+                    product_bom[i['id']].append((i['bom_ids'], i['name']))
+                else :
+                    product_bom[i['id']] = [(i['bom_ids'], i['name'])]
+                    
         for i in m.read(ids, fields, self.req.session.context):
+            duration_hour = 0
+            duration_per = 0
+            type = ""
+            producing = ""
             # Determine the location
             if i['routing_id']:
-                location = mrp_routings.get(i['routing_id'][0], None) or self.mfg_location
+                location = mrp_routings.get(i['routing_id'][0], None)
+                if not location:
+                    location = self.mfg_location
+                else:
+                    location = location[1]
             else:
                 location = self.mfg_location
 
             # Determine operation name and item
             operation = u'%d %s @ %s' % (i['id'], i['name'], location)
             self.operations.add(operation)
-            product = self.product_template_product.get(i['product_tmpl_id'][0], None) # TODO avoid multiple bom on single template
-            if not product:
+            product_buf = self.product_template_product.get(i['product_tmpl_id'][0], None) # TODO avoid multiple bom on single template
+            if not product_buf:
                 continue
-            buf = u'%s @ %s' % (product['name'], location)
+            buf_name = u'%s @ %s' % (product_buf['name'], location)
             uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_tmpl_id'][0])
 
             # Build buffer and its producing operation
             yield '<buffer name=%s><item name=%s/><location name=%s/>\n' % (
-                quoteattr(buf), quoteattr(product['name']), quoteattr(location)
+                quoteattr(buf_name), quoteattr(product_buf['name']), quoteattr(location)
             )
-            yield '<producing name=%s size_multiple="%s" duration="P%dD" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
+            yield '<producing name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
                 quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
                 int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
                 self.manufacturing_lead,
                 quoteattr(location)
             )
-            yield '<flows><flow xsi:type="flow_end" quantity="%f"%s%s><buffer name=%s/></flow>\n' % (
-                i['product_qty'] * i['product_efficiency'] * uom_factor,
-                i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
-                i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
-                quoteattr(buf)
-            )
-
+            yield '<flows>\n'
+            if i['product_tmpl_id'][0] not in product_bom:
+#                 if the operation is suboperation of alternate operation, the current operation doesn't need flow_end
+                yield '<flow xsi:type="flow_end" quantity="%f"%s%s><buffer name=%s/></flow>\n' % (
+                    i['product_qty'] * i['product_efficiency'] * uom_factor,
+                    i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
+                    i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
+                    quoteattr(buf_name)
+                )
+ 
             # Build consuming flows. If the same component is consumed multiple times in the same
             # BOM we sum up all quantities in a single flow.
             fl = {}
@@ -532,7 +596,36 @@ Mapping:
                 yield '</loads>\n'
 
             # Footer
-            yield '</producing></buffer>\n'
+            yield '</producing>\n'
+            if i['product_tmpl_id'][0] in product_bom:
+#                 here to store all needed field value in alternate operations, 
+#                 because alternate operation will create outside of this loop
+                if i['id'] in product_bom[i['product_tmpl_id'][0]][0][0]:
+                    if i['product_tmpl_id'][0] in operation_bom:
+                        operation_bom[i['product_tmpl_id'][0]].append(str(operation))
+                    else :
+                        operation_bom[i['product_tmpl_id'][0]] = [str(operation)]
+                    
+                    buffer_bom[i['product_tmpl_id'][0]] = [(str(buf_name), product_buf['name'], location)]
+            yield '</buffer>\n'
+        
+        yield '<!-- alternate operations -->\n'
+        for i in product_bom:
+            yield '<buffer name="%s">\n' % (buffer_bom[i][0][0])
+            yield '<item name="%s"/>' % (buffer_bom[i][0][1])
+            yield '<location name="%s"/>' % (buffer_bom[i][0][2])
+            yield '<producing name="alternate of %s" xsi:type="operation_alternate" search="PRIORITY">\n' % (product_bom[i][0][1])
+            yield '<location name="%s"/>' % (buffer_bom[i][0][2])
+            yield '<flows><flow xsi:type="flow_end">\n'
+            yield '<buffer name="%s"/>\n' % (buffer_bom[i][0][0])
+            yield '<quantity>1</quantity></flow></flows>\n'
+            yield '<suboperations>\n'
+            for o in operation_bom[i]:
+                yield '<suboperation><operation name="%s"/><priority>1</priority></suboperation>\n' % (o)
+            yield '</suboperations>\n'
+            yield '</producing>\n'
+            yield '</buffer>\n'
+            
         yield '</buffers>\n'
 
 
@@ -574,16 +667,21 @@ product.product.name @ stock.warehouse.name -> buffer.name
 
         # Get all sales order lines
         m = self.req.session.model('sale.order.line')
-        ids = m.search([('state', '=', 'confirmed')], context=self.req.session.context)
-        fields = ['state', 'type', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
+        ids = m.search([('state', 'in', ['draft', 'confirmed'])], context=self.req.session.context)
+        fields = ['state', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
         so_line = [i for i in m.read(ids, fields, self.req.session.context)]
 
         # Get all sales orders
         m = self.req.session.model('sale.order')
         ids = [i['order_id'][0] for i in so_line]
-        fields = ['partner_id', 'requested_date', 'date_order', 'picking_policy', 'warehouse_id']
+        fields = ['partner_id', 'requested_date', 'date_order', 'picking_policy', 'warehouse_id', 'picking_ids']
         # for python 2.7:
         # so = { j['id']: j for j in m.read(ids, fields, self.req.session.context) }
+        pick = self.req.session.model('stock.picking')
+        p_fields = ['move_lines', 'sale_id', 'state']
+        
+        move = self.req.session.model('stock.move')
+        m_fields = ['product_id', 'product_uom_qty']
         so = {}
         for i in m.read(ids, fields, self.req.session.context):
             so[i['id']] = i
@@ -592,15 +690,18 @@ product.product.name @ stock.warehouse.name -> buffer.name
         deliveries = set()
         yield '<!-- sales order lines -->\n'
         yield '<demands>\n'
+        
         for i in so_line:
             name = u'%s %d' % (i['order_id'][1], i['id'])
             product = self.product_product.get(i['product_id'][0], None)
             j = so[i['order_id'][0]]
+#             print j['picking_ids']
             location = j['warehouse_id'][1] # index 1 is a wild guess, it seems to work
             customer = self.map_customers.get(j['partner_id'][0], None)
             if not customer or not location or not product:
                 # Not interested in this sales order...
                 continue
+            
             operation = u'Ship %s @ %s' % (product['name'], location)
             buf = u'%s @ %s' % (product['name'], location)
             due = j.get('requested_date', False) or j['date_order']
@@ -608,11 +709,42 @@ product.product.name @ stock.warehouse.name -> buffer.name
             minship = j['picking_policy'] == 'one' and qty or 1.0
             priority = 1
             deliveries.update([(operation, buf, product['name'], location,)])
-            yield '<demand name=%s quantity="%f" due="%s" priority="%s" minshipment="%s"><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
-                quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
-                priority, minship,quoteattr(product['name']),
-                quoteattr(customer),quoteattr(operation)
-            )
+#             export draft sale order
+            if i['state'] == 'draft':
+                yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" ><stringproperty name="status" value="quote"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
+                    quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
+                    priority, minship, quoteattr(product['name']),
+                    quoteattr(customer),quoteattr(operation)
+                )
+            if j['picking_ids'] :
+#                 here to export sale order line based on DO line status, 
+#                 if DO line is done then demand status is closed
+#                 if DO line is cancel, it will skip the current DO line
+#                 else demand status is open
+                pick_number = 0
+                state = {}
+                for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
+                    p_ids = p['move_lines']
+                    product_id = i['product_id'][0]
+                    mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)], context=self.req.session.context)
+                    
+                    status = ''
+                    if p['state'] == 'done':
+                        status = 'closed'
+                    elif p['state'] == 'cancel':
+                        continue
+                    else:
+                        status = 'open'
+                    
+                    for mv in move.read(mv_ids, m_fields, self.req.session.context):
+                        pick_number = pick_number + 1
+                        name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
+                        yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D"><stringproperty name="status" value="%s"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
+                            quoteattr(name), mv['product_uom_qty'], due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
+                            priority, minship,status, quoteattr(product['name']),
+                            quoteattr(customer),quoteattr(operation)
+                        )
+                    
         yield '</demands>\n'
 
         # Create delivery operations

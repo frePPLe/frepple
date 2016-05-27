@@ -67,6 +67,8 @@ class exporter(object):
             yield i
         for i in self.export_customers():
             yield i
+        for i in self.export_suppliers():
+            yield i
         for i in self.export_workcenters():
             yield i
         for i in self.export_items():
@@ -315,9 +317,17 @@ res.partner.id res.partner.name -> customer.name
                 yield '<customer name=%s/>\n' % quoteattr(name)
                 self.map_customers[i['id']] = name
             yield '</customers>\n'
-            
-#         import supplier here
+
+    def export_suppliers(self):            
+        '''
+Generate a list of suppliers for frePPLe, based on the res.partner model.
+We filter on res.supplier where supplier = True.
+
+Mapping:
+res.partner.id res.partner.name -> supplier.name
+'''
         self.map_suppliers = {}
+        m = self.req.session.model('res.partner')
         s_ids = m.search([('supplier', '=', True)], context=self.req.session.context)
         if s_ids:
             yield '<!-- suppliers -->\n'
@@ -325,7 +335,7 @@ res.partner.id res.partner.name -> customer.name
             fields = ['name']
             for i in m.read(s_ids, fields, self.req.session.context):
                 name = '%d %s' % (i['id'], i['name'])
-                yield '<supplier name="%s"/>\n' % (str(name))
+                yield '<supplier name=%s/>\n' % quoteattr(name)
                 self.map_suppliers[i['id']] = name
             yield '</suppliers>\n'
 
@@ -424,8 +434,8 @@ product.product.product_tmpl_id.produce_delay -> buffer.leadtime
                     for sup in s.read(tmpl['seller_ids'], s_fields, self.req.session.context):
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier>\n'
-                        yield '<supplier name="%s"/><leadtime>P%dD</leadtime><priority>1</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
-                            (str(name)), sup['delay'], sup['min_qty'], tmpl['standard_price'])
+                        yield '<supplier name=%s/><leadtime>P%dD</leadtime><priority>1</priority><size_minimum>%f</size_minimum><cost>%f</cost>\n' %(
+                            quoteattr(name), sup['delay'], sup['min_qty'], tmpl['standard_price'])
                         yield '</itemsupplier>\n'
                    
                     

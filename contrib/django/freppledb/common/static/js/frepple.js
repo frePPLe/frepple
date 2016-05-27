@@ -2446,6 +2446,8 @@ var tour = {
     var pos = tour.getTooltipPosition(tooltipPos, stepData['element']);
     tour.tooltip.css({ 'top': pos.top+'px', 'left': pos.left+'px' });
     tour.tooltip.show('fast');
+    pos.top = (pos.top<0) ? 1 : pos.top;
+    if (pos.top < window.pageYOffset || pos.top > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,pos.top-window.innerHeight/2);
     // Update tour dialog
     $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
     // Previous button

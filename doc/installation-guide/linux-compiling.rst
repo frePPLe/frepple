@@ -24,17 +24,12 @@ The instructions on this page describe how you compile the frePPLe source code
 into binaries. After compilation you need to return to the installation and
 configuration steps outlined on the previous page.
 
-*******************************
-Compiling from a source tarball
-*******************************
+************************************************
+Compiling from the github source code repository
+************************************************
 
-This section describes the generic steps you need to build frePPLe from the source code.
-FrePPLe uses a very standard build process, based on the automake suite.
-
-#. Download the source code from http://sourceforge.net/projects/frepple/files/
-
-   If you want to use source code directly from the github repository, you'll
-   need to replace this step with the instructions from the following section.
+To work with the source code directly from the github repository you will
+need the following steps:
 
 #. Update your system with the development software packages.
 
@@ -48,10 +43,38 @@ FrePPLe uses a very standard build process, based on the automake suite.
      | Xerces is a validating XML parser provided by the Apache Foundation.
      | You need to install the libraries as well as the development libraries.
 
-   * | python 3.3 or higher
+   * | python 3.4 or higher
      | Python is a modern, easy to learn interpreted programming language.
      | You need to install the language as well as the development libraries.
-     | Note: FrePPLe versions < 3.0 required Python 2.7.
+
+   * | git
+     | Distributed version control tool.
+
+   * | autoconf, v2.59 or later
+     | Gnu Autoconf produces shell scripts to automatically configure software
+        source code packages. This makes the source code easier to port across
+        platforms.
+
+   * | automake, v1.9.5 or later
+     | Gnu Automake is a tool for automatically generating make-files.
+
+   * | libtool, v1.5 or later
+     | Libtool hides the complexity of developing and using shared libraries
+        for different platforms behind a consistent and portable interface.
+
+   * | python-sphinx (optional)
+     | A modern documentation generation tool.
+
+#. Pick up the latest code from the repository with the command:
+   ::
+
+     git clone https://github.com/frePPLe/frePPLe.git <project_directory>
+
+#. Initialize the automake/autoconf/libtool scripts:
+   ::
+
+     cd <project_directory>
+     make -f Makefile.dist prep
 
 #. Configure the build with the following command:
    ::
@@ -86,48 +109,6 @@ FrePPLe uses a very standard build process, based on the automake suite.
    ::
 
      make clean
-
-
-************************************************
-Compiling from the github source code repository
-************************************************
-
-To work with the source code directly from the github repository you will
-need the following steps to replace the first point in the section above.
-
-#. Update your machine with the following packages
-
-   #. | git
-      | Distributed version control tool.
-
-   #. | autoconf, v2.59 or later
-      | Gnu Autoconf produces shell scripts to automatically configure software
-        source code packages. This makes the source code easier to port across
-        platforms.
-
-   #. | automake, v1.9.5 or later
-      | Gnu Automake is a tool for automatically generating make-files.
-
-   #. | libtool, v1.5 or later
-      | Libtool hides the complexity of developing and using shared libraries
-        for different platforms behind a consistent and portable interface.
-
-   #. | python-sphinx (optional)
-      | A modern documentation generation tool.
-
-#. Pick up the latest code from the repository with the command:
-   ::
-
-     git clone https://github.com/frePPLe/frePPLe.git <project_directory>
-
-#. Initialize the automake/autoconf/libtool scripts:
-   ::
-
-     cd <project_directory>
-     make -f Makefile.dist prep
-
-#. Now the configure script is up to date and you can follow the same steps as in
-   the section above.
 
 #. To sync your environment with the latest changes from the repository:
    ::

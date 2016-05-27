@@ -976,7 +976,7 @@ class OperationPlanList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
-  print(settings.INSTALLED_APPS)
+
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','openbravo')"},

@@ -110,7 +110,7 @@ class Command(BaseCommand):
       cmdline = [ '"%s"' % i for i in args ]
       cmdline.insert(0, 'frepple')
       cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP, 'freppledb', 'execute', 'loadxml.py') )
-      ret = os.system(' '.join(cmdline))
+      (out,ret) = subprocess.run(' '.join(cmdline))
       if ret:
         raise Exception('Exit code of the batch run is %d' % ret)
 

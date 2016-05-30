@@ -16,6 +16,7 @@
 #
 
 import os
+import subprocess
 from optparse import make_option
 from datetime import datetime
 
@@ -136,7 +137,7 @@ class Command(BaseCommand):
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
       if settings.DATABASES[source]['PASSWORD']:
         os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-      ret = os.system("pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s" % (
+      commandline = "pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s" % (
         settings.DATABASES[source]['USER'] and ("-U %s " % settings.DATABASES[source]['USER']) or '',
         settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
         settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
@@ -145,7 +146,10 @@ class Command(BaseCommand):
         settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
         settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
         test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
-        ))
+        )
+
+      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL , stderr=subprocess.STDOUT)
+
       if ret:
         raise Exception('Exit code of the database copy command is %d' % ret)
 

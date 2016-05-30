@@ -1973,7 +1973,7 @@ def importWorkbook(request):
   all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
   with transaction.atomic(using=request.database):
     # Find all models in the workbook
-    wb = load_workbook(filename=request.FILES['spreadsheet'], use_iterators=True, data_only=True)
+    wb = load_workbook(filename=request.FILES['spreadsheet'], read_only=True, data_only=True)
     models = []
     for ws_name in wb.get_sheet_names():
       # Find the model

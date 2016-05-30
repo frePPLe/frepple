@@ -43,7 +43,7 @@ class DataLoadTest(TestCase):
     if not isinstance(response, StreamingHttpResponse):
       raise Exception("expected a streaming response")
     for i in response.streaming_content:
-      if b'"records":6,' in i:
+      if b'"records":' in i:
         return
     self.fail("Didn't find expected number of parameters")
 
@@ -64,7 +64,7 @@ class ExcelTest(TransactionTestCase):
 
   def run_workbook(self, language):
     # Change the language preference
-    self.client.post('/preferences/', {'pagesize': 100, 'language': language, 'theme': 'sunny'})
+    self.client.post('/preferences/', {'pagesize': 100, 'language': language, 'theme': 'orange'})
 
     # Initial size
     countBuffer = input.models.Buffer.objects.count()
@@ -214,11 +214,12 @@ class freppleREST(APITestCase):
     recordsnumber = input.models.Demand.objects.count()
     data = {
           "name": "Order UFO 25",
-           "description": None,
-           "category": None,
-           "subcategory": None,
+          "description": None,
+          "category": None,
+          "subcategory": None,
           "item": "product",
-
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -237,7 +238,8 @@ class freppleREST(APITestCase):
           "category": None,
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -257,7 +259,8 @@ class freppleREST(APITestCase):
           "category": "TEST DELETE",
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "location": "factory 1",
+          "customer": "Customer near factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -272,7 +275,8 @@ class freppleREST(APITestCase):
           "category": "TEST DELETE",
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -304,7 +308,8 @@ class freppleREST(APITestCase):
           "category": None,
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -324,7 +329,8 @@ class freppleREST(APITestCase):
           "category": None,
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -344,7 +350,8 @@ class freppleREST(APITestCase):
           "category": None,
           "subcategory": None,
           "item": "product",
-          "location": None,
+          "customer": "Customer near factory 1",
+          "location": "factory 1",
           "due": "2013-12-01T00:00:00",
           "status": "closed",
           "operation": None,
@@ -363,7 +370,7 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/Order UFO 25/', format='json')
     self.assertEqual(response.status_code, 204)
-    response = self.client.delete('/api/input/demand/Demand 1/', format='api')
+    response = self.client.delete('/api/input/demand/Demand 01/', format='api')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/?category=TEST DELETE', format='api')
     self.assertEqual(response.status_code, 204)

@@ -4,11 +4,8 @@ Compiling on Linux
 
 This page describes 3 different methods:
 
-* | `Compiling from a source tarball`_
-  | Generic instructions, which doesn’t include any deployment related actions.
-
-* | `Compiling from the github source code repository`_
-  | Extra instructions when you compile from the latest source code.
+* | `Compiling from the github source code repository or source tarball`_
+  | Instructions for compilation from the latest source code.
 
 * | `Compiling from a Debian source package`_
   | This is the **recommended method for all Debian based distributions**.
@@ -24,9 +21,9 @@ The instructions on this page describe how you compile the frePPLe source code
 into binaries. After compilation you need to return to the installation and
 configuration steps outlined on the previous page.
 
-************************************************
-Compiling from the github source code repository
-************************************************
+******************************************************************
+Compiling from the github source code repository or source tarball
+******************************************************************
 
 To work with the source code directly from the github repository you will
 need the following steps:

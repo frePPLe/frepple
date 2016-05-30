@@ -618,15 +618,15 @@ class exportStaticModel(object):
       cursor.executemany(
         '''insert into demand
         (name,due,quantity,priority,item_id,location_id,operation_id,customer_id,
-         minshipment,maxlateness,category,subcategory,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+         minshipment,maxlateness,category,subcategory,source,lastmodified,status)
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
             i.name, str(i.due), round(i.quantity, 4), i.priority, i.item.name,
             i.location.name if i.location else None, i.operation.name if i.operation else None,
             i.customer.name if i.customer else None,
             round(i.minshipment, 4), round(i.maxlateness, 4),
-            i.category, i.subcategory, i.source, self.timestamp
+            i.category, i.subcategory, i.source, self.timestamp, i.status
           )
           for i in frepple.demands()
           if i.name not in primary_keys and isinstance(i, frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
@@ -635,7 +635,7 @@ class exportStaticModel(object):
         '''update demand
          set due=%s, quantity=%s, priority=%s, item_id=%s, location_id=%s,
          operation_id=%s, customer_id=%s, minshipment=%s, maxlateness=%s,
-         category=%s, subcategory=%s, source=%s, lastmodified=%s
+         category=%s, subcategory=%s, source=%s, lastmodified=%s, status=%s
          where name=%s''',
         [
           (
@@ -645,7 +645,8 @@ class exportStaticModel(object):
             i.customer.name if i.customer else None,
             round(i.minshipment, 4),
             round(i.maxlateness, 4),
-            i.category, i.subcategory, i.source, self.timestamp, i.name
+            i.category, i.subcategory, i.source, self.timestamp, 
+            i.status, i.name
           )
           for i in frepple.demands()
           if i.name in primary_keys and isinstance(i, frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)

@@ -936,6 +936,7 @@ class DistributionOrder(AuditModel):
   # Possible status
   orderstatus = (
     ('proposed', _('proposed')),
+    ('approved', _('approved')),
     ('confirmed', _('confirmed')),
     ('closed', _('closed')),
   )
@@ -1010,6 +1011,7 @@ class PurchaseOrder(AuditModel):
   # Possible status
   orderstatus = (
     ('proposed', _('proposed')),
+    ('approved', _('approved')),
     ('confirmed', _('confirmed')),
     ('closed', _('closed')),
   )

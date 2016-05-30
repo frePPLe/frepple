@@ -121,8 +121,6 @@ Licensed under MIT License
 
                 if (opt.onDrag)
                     opt.onDrag(e, $el, opt);
-
-                //console.log('dragging', e, pos, newWidth, newHeight);
             }
 
             function stopDragging(e) {
@@ -1114,14 +1112,12 @@ var grid = {
           '</div>'+
           '</div>' ).modal('show');
     $('#exportbutton').on('click', function() {
-      console.log('export');
       $('#popup').modal('hide');
     });
     $('#cancelbutton').on('click', function() {
       $('#popup').modal('hide');
     });
     $('#cb_modaltableall').on('click', function() {
-      console.log('checkall');
       if ($("#cb_modaltableall").is(':checked')) {
           $("#forecastexporttable input[type=checkbox]").each(function () {
               $(this).prop("checked", true);
@@ -1353,7 +1349,7 @@ var ERPconnection = {
 
       $('#button_export').on('click', function() {
         $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');
-        var database = $('#database').val();
+        var database = $('#database').attr('name');
         database = (database===undefined || database==='default') ? '' : '/' + database;
         $.ajax({
           url: database + "/"+ERPsystem+"/upload/",

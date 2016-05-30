@@ -124,7 +124,7 @@ LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
-OODO_PASSWORDS = {
+ODOO_PASSWORDS = {
   'default': '',
   'scenario1': '',
   'scenario2': '',

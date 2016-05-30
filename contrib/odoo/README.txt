@@ -1,7 +1,8 @@
 
-This directory contains an addon for odoo v7 that provides an interface for frePPLe.
+This directory contains an addon for Odoo v8 that provides a 2-way integration
+between frePPLe and Odoo.
 
-The module provides the following functionality:
+The module adds the following functionality in Odoo:
 
  - Web interface called by the frePPLe planning engine.
    It is accessible at the URL:
@@ -27,14 +28,17 @@ The module provides the following functionality:
 
  - Scheduler cron job to generate a plan.
 
-Full documentation on the installation, configuration and data mapping is available at:
-  http://frepple.com/documentation/extension-modules/openerp-connector-module/
+Full documentation on the installation, configuration and data mapping is 
+available at:
+  https://frepple.com/documentation/3.2/extension-modules/odoo-connector-module/
 
-The module does not support v8 yet.
-Here's the list of open migration tasks (the list is not necessarily complete...):
+Here's the list of open issues for the connector (the list is not 
+necessarily complete...):
   - use the stock.routes introduced by the new warehouse module
-  - mrp.bom is now split over the 2 tables mrp.bom and mrp.bom_lines.
-  - mrp.bom now refers to a product.template.
+  - mrp.bom is now split over the 2 tables mrp.bom and mrp.bom_lines
+  - mrp.bom now refers to a product.template
+  - authentication issue when there are multiple databases in odoo 
   - v7 web controller allowed a streaming response, which is apparantly not possible
     any longer with v8. As a result the connector will be slower and consume more
     memory.
+

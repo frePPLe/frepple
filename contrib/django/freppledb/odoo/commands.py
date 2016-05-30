@@ -18,10 +18,7 @@ import base64
 import email
 import os
 from datetime import datetime
-try:
-  from urllib2 import urlopen, HTTPError, Request
-except:
-  from urllib.request import urlopen, HTTPError, Request
+from urllib.request import urlopen, HTTPError, Request
 from xml.sax.saxutils import quoteattr
 
 from django.utils.http import urlencode
@@ -35,19 +32,28 @@ from freppledb.execute.commands import printWelcome, logProgress, createPlan, ex
 import frepple
 
 
-def odoo_read(db=DEFAULT_DB_ALIAS):
+def odoo_read(db=DEFAULT_DB_ALIAS, mode=1):
   '''
   This function connects to a URL, authenticates itself using HTTP basic
   authentication, and then reads data from the URL.
   The data from the source must adhere to frePPLe's official XML schema,
   as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
+  
+  The mode is pass as an argument:
+    - Mode 1:
+      This mode returns all data that is loaded with every planning run.
+    - Mode 2:
+      This mode returns data that is loaded that changes infrequently and 
+      can be transferred during automated scheduled runs at a quiet moment.
+  Which data elements belong to each category is determined in the odoo 
+  addon module and can vary between implementations.
   '''
   odoo_user = Parameter.getValue("odoo.user", db)
 
-  if settings.OODO_PASSWORDS.get(db) == '':
+  if settings.ODOO_PASSWORDS.get(db) == '':
     odoo_password = Parameter.getValue("odoo.password", db)
   else:
-    odoo_password = settings.OODO_PASSWORDS.get(db)
+    odoo_password = settings.ODOO_PASSWORDS.get(db)
   
   odoo_db = Parameter.getValue("odoo.db", db)
   odoo_url = Parameter.getValue("odoo.url", db)
@@ -74,15 +80,19 @@ def odoo_read(db=DEFAULT_DB_ALIAS):
 
   # Connect to the odoo URL to GET data
   f = None
+  url = "%sfrepple/xml?%s" % (odoo_url, urlencode({
+      'database': odoo_db, 
+      'language': odoo_language, 
+      'company': odoo_company,
+      'mode': mode
+      }))
   try:
-    request = Request("%sfrepple/xml/?%s" % (odoo_url, urlencode({
-      'database': odoo_db, 'language': odoo_language, 'company': odoo_company
-      })))
+    request = Request(url)
     encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))[:-1]
     request.add_header("Authorization", "Basic %s" % encoded.decode('ascii'))
     f = urlopen(request)
   except HTTPError as e:
-    print("Error connecting to odoo", e)
+    print("Error connecting to odoo at %s: %s" % (url, e))
     raise e
 
   # Download and parse XML data
@@ -176,7 +186,7 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
       for j in i.flowplans:
         if j.quantity > 0:
           b = j.flow.buffer
-      if not b or b.source != 'odoo' or i.locked:
+      if not b or not b.source.startswith('odoo') or i.locked:
         continue
       yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
         i.id, quoteattr(i.operation.name),
@@ -191,14 +201,18 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
 
   # Connect to the odoo URL to POST data
   try:
-    req = Request("%s/frepple/xml/" % odoo_url.encode('ascii'))
     body = '\n'.join(publishPlan()).encode('utf-8')
     size = len(body)
-    encoded = base64.encodestring('%s:%s' % (odoo_user, odoo_password)).replace('\n', '')
-    req.add_header("Authorization", "Basic %s" % encoded)
-    req.add_header("Content-Type", 'multipart/form-data; boundary=%s' % boundary)
-    req.add_header('Content-length', size)
-    req.add_data(body)
+    encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))[:-1]
+    req = Request(
+      "%sfrepple/xml/" % odoo_url.encode('ascii'),
+      data=body,
+      headers={
+        'Authorization': "Basic %s" % encoded,
+        'Content-Type': 'multipart/form-data; boundary=%s' % boundary,
+        'Content-length': size
+        }
+      )
 
     # Posting the data
     print("Uploading %d bytes of planning results to odoo" % size)
@@ -230,14 +244,23 @@ if __name__ == "__main__":
   logProgress(1, db)
   from freppledb.execute.load import loadData
   frepple.printsize()
-  if 'odoo_read' in os.environ:
+  if 'odoo_read_1' in os.environ:
     # Use input data from the frePPLe database and Odoo
-    print("\nStart loading data from the database with filter \"source <> 'odoo'\" at", datetime.now().strftime("%H:%M:%S"))
-    loadData(database=db, filter="source is null or source<>'odoo'").run()
+    print("\nStart loading data from the database with filter \"source <> 'odoo_1'\" at", datetime.now().strftime("%H:%M:%S"))
+    loadData(database=db, filter="source is null or source<>'odoo_1'").run()
     frepple.printsize()
     logProgress(10, db)
     print("\nStart loading data from odoo at", datetime.now().strftime("%H:%M:%S"))
-    odoo_read(db)
+    odoo_read(db, mode=1)
+    frepple.printsize()
+  elif 'odoo_read_2' in os.environ:
+    # Use input data from the frePPLe database and Odoo
+    print("\nStart loading data from the database with filter \"source <> 'odoo_2'\" at", datetime.now().strftime("%H:%M:%S"))
+    loadData(database=db, filter="source is null or source<>'odoo_2'").run()
+    frepple.printsize()
+    logProgress(10, db)
+    print("\nStart loading data from odoo at", datetime.now().strftime("%H:%M:%S"))
+    odoo_read(db, mode=2)
     frepple.printsize()
   else:
     # Use input data from the frePPLe database
@@ -246,10 +269,14 @@ if __name__ == "__main__":
     frepple.printsize()
   logProgress(33, db)
 
-  if 'odoo_read' in os.environ:
-    print("\nStart exporting static model to the database with filter \"source = 'odoo'\" at", datetime.now().strftime("%H:%M:%S"))
+  if 'odoo_read_1' in os.environ:
+    print("\nStart exporting static model to the database with filter \"source = 'odoo_1'\" at", datetime.now().strftime("%H:%M:%S"))
     from freppledb.execute.export_database_static import exportStaticModel
-    exportStaticModel(database=db, source='odoo').run()
+    exportStaticModel(database=db, source='odoo_1').run()
+  elif 'odoo_read_2' in os.environ:
+    print("\nStart exporting static model to the database with filter \"source = 'odoo_2'\" at", datetime.now().strftime("%H:%M:%S"))
+    from freppledb.execute.export_database_static import exportStaticModel
+    exportStaticModel(database=db, source='odoo_2').run()
 
   print("\nStart plan generation at", datetime.now().strftime("%H:%M:%S"))
   createPlan(db)

@@ -164,7 +164,7 @@ def wrapTask(request, action):
     task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
     env = []
     if request.POST.get('odoo_read', None) == '1':
-      env.append("odoo_read")
+      env.append("odoo_read_1")
       request.session['odoo_read'] = True
     else:
       request.session['odoo_read'] = False

@@ -42,6 +42,23 @@ class exporter(object):
             # If not set we use the default language of the user
             self.req.session.context['lang'] = kwargs['language']
         self.company = kwargs.get('company', None)
+        
+        # The mode argument defines differen types of runs:
+        #  - Mode 1:
+        #    This mode returns all data that is loaded with every planning run.
+        #    Currently this mode transfers all objects, except closed sales orders.
+        #  - Mode 2:
+        #    This mode returns data that is loaded that changes infrequently and 
+        #    can be transferred during automated scheduled runs at a quiet moment.
+        #    Currently this mode transfers only closed sales orders.
+        #
+        # Normally an Odoo object should be exported by only a single mode. 
+        # Exporting a certain object with BOTH modes 1 and 2 will only create extra
+        # processing time for the connector without adding any benefits. On the other
+        # hand it won't break things either.
+        #
+        # Which data elements belong to each mode can vary between implementations.
+        self.mode = kwargs.get('mode', 1)
 
 
     def run(self):
@@ -50,10 +67,10 @@ class exporter(object):
         self.load_uom()
 
         # Header.
-        # The source attribute is set to 'odoo', such that all objects created or
+        # The source attribute is set to 'odoo_<mode>', such that all objects created or
         # updated from the data are also marked as from originating from odoo.
         yield '<?xml version="1.0" encoding="UTF-8" ?>\n'
-        yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" source="odoo">\n'
+        yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" source="odoo_%s">\n' % self.mode
 
         # Main content.
         # The order of the entities is important. First one needs to create the
@@ -61,30 +78,34 @@ class exporter(object):
         # If multiple types of an entity exists (eg operation_time_per,
         # operation_alternate, operation_alternate, etc) the reference would
         # automatically create an object, potentially of the wrong type.
-        for i in self.export_calendar():
-            yield i
+        if self.mode == 1:
+            for i in self.export_calendar():
+                yield i
         for i in self.export_locations():  # tuyo
             yield i
         for i in self.export_customers():
             yield i
-        for i in self.export_suppliers():
-            yield i
-        for i in self.export_workcenters():
-            yield i
+        if self.mode == 1:
+            for i in self.export_suppliers():
+                yield i
+            for i in self.export_workcenters():
+                yield i
         for i in self.export_items():
             yield i
-        for i in self.export_boms():
-            yield i
+        if self.mode == 1:
+            for i in self.export_boms():
+                yield i
         for i in self.export_salesorders():
             yield i
-        for i in self.export_purchaseorders():
-            yield i
-        for i in self.export_manufacturingorders():
-            yield i
-        for i in self.export_orderpoints():
-            yield i
-        for i in self.export_onhand():
-            yield i
+        if self.mode == 1:
+            for i in self.export_purchaseorders():
+                yield i
+            for i in self.export_manufacturingorders():
+                yield i
+            for i in self.export_orderpoints():
+                yield i
+            for i in self.export_onhand():
+                yield i
 
         # Footer
         yield '</plan>\n'
@@ -695,7 +716,6 @@ product.product.name @ stock.warehouse.name -> buffer.name
             name = u'%s %d' % (i['order_id'][1], i['id'])
             product = self.product_product.get(i['product_id'][0], None)
             j = so[i['order_id'][0]]
-#             print j['picking_ids']
             location = j['warehouse_id'][1] # index 1 is a wild guess, it seems to work
             customer = self.map_customers.get(j['partner_id'][0], None)
             if not customer or not location or not product:
@@ -711,10 +731,10 @@ product.product.name @ stock.warehouse.name -> buffer.name
             deliveries.update([(operation, buf, product['name'], location,)])
 #             export draft sale order
             if i['state'] == 'draft':
-                yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" ><stringproperty name="status" value="quote"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
+                yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" status="quote"><item name=%s/><customer name=%s/><location name=%s/><operation name=%s/></demand>\n' % (
                     quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
                     priority, minship, quoteattr(product['name']),
-                    quoteattr(customer),quoteattr(operation)
+                    quoteattr(customer), quoteattr(location), quoteattr(operation)
                 )
             if j['picking_ids'] :
 #                 here to export sale order line based on DO line status, 
@@ -730,6 +750,9 @@ product.product.name @ stock.warehouse.name -> buffer.name
                     
                     status = ''
                     if p['state'] == 'done':
+                        if self.mode == 1:
+                          # Closed orders aren't transferred during a small run of mode 1
+                          continue
                         status = 'closed'
                     elif p['state'] == 'cancel':
                         continue
@@ -739,10 +762,10 @@ product.product.name @ stock.warehouse.name -> buffer.name
                     for mv in move.read(mv_ids, m_fields, self.req.session.context):
                         pick_number = pick_number + 1
                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
-                        yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D"><stringproperty name="status" value="%s"/><item name=%s/><customer name=%s/><operation name=%s/></demand>\n' % (
+                        yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" maxlateness="P0D" status="%s"><item name=%s/><customer name=%s/><location name=%s/><operation name=%s/></demand>\n' % (
                             quoteattr(name), mv['product_uom_qty'], due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
                             priority, minship,status, quoteattr(product['name']),
-                            quoteattr(customer),quoteattr(operation)
+                            quoteattr(customer), quoteattr(location), quoteattr(operation)
                         )
                     
         yield '</demands>\n'
@@ -814,8 +837,8 @@ purchase.order.date_planned -> operationplan.start
         # Create purchasing operationplans
         yield '<!-- open purchase order lines -->\n'
         yield '<operationplans>\n'
-        for i in dd:
-            yield '<operationplan operation=%s start="%sT00:00:00" end="%sT00:00:00" quantity="%f" locked="true"/>\n' % i
+        #for i in dd:
+        #    yield '<operationplan operation=%s start="%sT00:00:00" end="%sT00:00:00" quantity="%f" locked="true"/>\n' % i
         yield '</operationplans>\n'
 
 

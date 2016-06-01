@@ -966,6 +966,19 @@ DECLARE_EXPORT string OperationPlan::getStatus() const
 }
 
 
+DECLARE_EXPORT bool OperationPlan::isConstrained() const
+{
+  for (PeggingIterator p(this); p; ++p)
+  {
+    const OperationPlan* m = p.getOperationPlan();
+    Demand* dmd = m ? m->getTopOwner()->getDemand() : NULL;
+    if (dmd && dmd->getDue() < m->getEnd())
+      return true;
+  }
+  return false;
+}
+
+
 DECLARE_EXPORT void OperationPlan::setStatus(const string& s)
 {
   if (s == "approved")

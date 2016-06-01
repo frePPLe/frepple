@@ -1798,6 +1798,11 @@ class OperationPlan
       */
     DECLARE_EXPORT Duration getUnavailable() const;
 
+    /** Returns whether or not this operationplan is linked to a demand that
+      * is planned late or not.
+      */
+    DECLARE_EXPORT bool isConstrained() const;
+
     /** Return the status of the operationplan.
       * The status string is one of the following:
       *   - proposed

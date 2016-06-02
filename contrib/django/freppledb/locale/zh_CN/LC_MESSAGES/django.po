@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 3.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-01 15:28+0200\n"
-"PO-Revision-Date: 2016-06-02 10:56+0200\n"
+"PO-Revision-Date: 2016-06-02 13:32+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -101,7 +101,7 @@ msgstr "父类"
 #: input/views.py:1011 input/views.py:1056 input/views.py:1120
 #: inventoryplanning/views.py:192
 msgid "source"
-msgstr "来源"
+msgstr ""
 
 #: common/models.py:179 common/models.py:288 common/models.py:464
 #: common/report.py:177 common/report.py:2059 planningboard/models.py:27

@@ -420,7 +420,7 @@ class Command(BaseCommand):
           continue
         searchkey = elem.find("searchKey").text
         name = elem.find("name").text
-        unique_name = u'%s %s' % (searchkey, name)
+        unique_name = u'%s - %s' % (searchkey, name)
         objectid = elem.get('id')
         description = elem.find("description").text
         if description: description = description[0:500]
@@ -1133,7 +1133,9 @@ class Command(BaseCommand):
         sizeminimum = elem.find("minimumOrderQty").text
         sizemultiple = elem.find("quantityPerPackage").text
         cost = elem.find("listPrice").text
-        vendoritemname = elem.find("VendorProductNo").text
+        vendoritemname = ""
+        if(elem.find("VendorProductNo") is not None):
+          vendoritemname = elem.find("VendorProductNo").text
 
         priority = elem.find("currentVendor").text
         if priority:
@@ -1191,7 +1193,7 @@ class Command(BaseCommand):
       cursor.executemany(
           "insert into itemsupplier \
             (vendoritemname, source, leadtime, sizeminimum, sizemultiple, cost, priority, effective_end, item_id, location_id, supplier_id, lastmodified) \
-            values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%%s',%s)" % self.date,
+            values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'%s')" % self.date,
           insert
         )
       cursor.executemany(
@@ -1483,7 +1485,7 @@ class Command(BaseCommand):
         )
       cursor.executemany(
         "update distribution_order \
-            set reference=%%s, item_id=%%s, destination_id=%%s, quantity=%%s, enddate=%s, status='approved', \
+            set reference=%%s, item_id=%%s, destination_id=%%s, quantity=%%s, enddate=%%s, status='approved', \
             consume_material=false, lastmodified='%s'  \
           where source=%%s" % self.date,
         update_do

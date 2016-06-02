@@ -118,9 +118,9 @@ def createPlan(database=DEFAULT_DB_ALIAS):
   solver.solve()
 
 
-def exportPlan():
-  from freppledb.execute.export_database_plan_postgresql import exportfrepple
-  exportfrepple()
+def exportPlan(database=DEFAULT_DB_ALIAS):
+  from freppledb.execute.export_database_plan import export
+  export(database=database).run()
 
 
 if __name__ == "__main__":
@@ -152,7 +152,7 @@ if __name__ == "__main__":
   #exportStaticModel(database=db, source=None).run()
 
   print("\nStart exporting plan to the database at", datetime.now().strftime("%H:%M:%S"))
-  exportPlan()
+  exportPlan(db)
 
   #print("\nStart saving the plan to flat files at", datetime.now().strftime("%H:%M:%S"))
   #from freppledb.execute.export_file_plan import exportfrepple as export_plan_to_file

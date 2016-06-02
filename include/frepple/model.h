@@ -1744,6 +1744,9 @@ class OperationPlan
       const MetaClass*, const DataValueDict&, CommandManager* = NULL
       );
 
+    /** Shortcut method to the cluster. */
+    int getCluster() const;
+
     /** Destructor. */
     virtual DECLARE_EXPORT ~OperationPlan();
 
@@ -2282,6 +2285,7 @@ class OperationPlan
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
     }
 
     DECLARE_EXPORT static PyObject* createIterator(PyObject* self, PyObject* args);
@@ -2908,6 +2912,12 @@ inline double OperationPlan::setQuantity(double f, bool roundDown,
   return oper ?
     oper->setOperationPlanQuantity(this, f, roundDown, update, execute, end) :
     f;
+}
+
+
+inline int OperationPlan::getCluster() const 
+{ 
+  return oper ? oper->getCluster() : 0; 
 }
 
 
@@ -3939,6 +3949,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     static int initialize();
 
+    /** Return the cluster of this item. */
+    int getCluster() const;
+
     /** Destructor. */
     virtual DECLARE_EXPORT ~Item();
 
@@ -3955,6 +3968,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
     }
 
   private:
@@ -4756,6 +4770,12 @@ class Item::bufferIterator
 inline Item::bufferIterator Item::getBufferIterator() const
 {
   return this;
+}
+
+
+inline int Item::getCluster() const
+{
+  return firstItemBuffer ? firstItemBuffer->getCluster() : 0;
 }
 
 
@@ -6742,7 +6762,7 @@ class Demand
     DECLARE_EXPORT Operation* getDeliveryOperation() const;
 
     /** Returns the cluster which this demand belongs to. */
-    unsigned int getCluster() const
+    int getCluster() const
     {
       Operation* o = getDeliveryOperation();
       return o ? o->getCluster() : 0;
@@ -6947,6 +6967,7 @@ class Demand
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_FULL);
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
     }
 
   private:

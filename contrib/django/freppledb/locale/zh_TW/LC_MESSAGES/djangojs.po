@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-14 08:53+0100\n"
+"POT-Creation-Date: 2016-06-01 15:28+0200\n"
 "PO-Revision-Date: 2016-03-20 22:41+0800\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -28,194 +28,317 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.7\n"
 
-#: common/static/js/frepple.js:41
+#: common/static/js/frepple.js:174
 msgid "There are unsaved changes on this page."
 msgstr "此頁面有未保存的變動。"
 
-#: common/static/js/frepple.js:93
+#: common/static/js/frepple.js:226
 msgid "Error saving data"
 msgstr "保存資料出錯。"
 
-#: common/static/js/frepple.js:114
+#: common/static/js/frepple.js:232 common/static/js/frepple.js:543
+#: common/static/js/frepple.js:1365 common/static/js/frepple.js:1523
+#: common/static/js/frepple.js:2179 common/static/js/frepple.js:2200
+#: planningboard/static/planningboard/js/planningboard.js:657
+#: planningboard/static/planningboard/js/planningboard.js:1057
+msgid "Close"
+msgstr "關閉"
+
+#: common/static/js/frepple.js:254
 msgid "Save or cancel your changes first"
 msgstr "先保存或取消你的變動。"
 
-#: common/static/js/frepple.js:121
+#: common/static/js/frepple.js:260 common/static/js/frepple.js:1778
 msgid "Save"
 msgstr "保存"
 
-#: common/static/js/frepple.js:128 common/static/js/frepple.js:418
-#: common/static/js/frepple.js:624 common/static/js/frepple.js:685
-#: common/static/js/frepple.js:745 common/static/js/frepple.js:802
-#: common/static/js/frepple.js:1048 common/static/js/frepple.js:1220
-#: common/static/js/frepple.js:1463
+#: common/static/js/frepple.js:261 common/static/js/frepple.js:555
+#: common/static/js/frepple.js:853 common/static/js/frepple.js:876
+#: common/static/js/frepple.js:984 common/static/js/frepple.js:1032
+#: common/static/js/frepple.js:1112 common/static/js/frepple.js:1349
+#: common/static/js/frepple.js:1422 common/static/js/frepple.js:1780
 msgid "Cancel"
 msgstr "取消"
 
-#: common/static/js/frepple.js:264
-msgid "Select"
+#: common/static/js/frepple.js:401
+msgid "Click to select record"
+msgstr ""
+
+#: common/static/js/frepple.js:447
+msgid "Selected options"
+msgstr ""
+
+#: common/static/js/frepple.js:454
+msgid "Available options"
+msgstr ""
+
+#: common/static/js/frepple.js:495
+#, fuzzy
+#| msgid "Select"
+msgid "Selected Cross"
 msgstr "選擇"
 
-#: common/static/js/frepple.js:355 common/static/js/frepple.js:1136
+#: common/static/js/frepple.js:505
+msgid "Available Cross"
+msgstr ""
+
+#: common/static/js/frepple.js:527
+msgid "Frozen columns"
+msgstr ""
+
+#: common/static/js/frepple.js:546
 msgid "Customize"
 msgstr "定制"
 
-#: common/static/js/frepple.js:361 common/static/js/frepple.js:651
-#: common/static/js/frepple.js:1143
+#: common/static/js/frepple.js:554
 msgid "OK"
 msgstr "確定"
 
-#: common/static/js/frepple.js:422 common/static/js/frepple.js:1190
+#: common/static/js/frepple.js:556
 msgid "Reset"
 msgstr "重置"
 
-#: common/static/js/frepple.js:438 common/static/js/frepple.js:543
-#: common/static/js/frepple.js:1103 common/static/js/frepple.js:1208
-#: planningboard/static/planningboard/js/planningboard.js:667
-#: planningboard/static/planningboard/js/planningboard.js:1054
-msgid "Error saving report settings"
-msgstr "保存報表設置出錯"
-
-#: common/static/js/frepple.js:585 common/static/js/frepple.js:591
-msgid "Export format"
-msgstr "匯出格式"
-
-#: common/static/js/frepple.js:586 common/static/js/frepple.js:593
-msgid "Spreadsheet list"
-msgstr "試算表列表"
-
-#: common/static/js/frepple.js:587 common/static/js/frepple.js:595
-msgid "CSV list"
-msgstr "CSV列表"
-
-#: common/static/js/frepple.js:592
-msgid "Spreadsheet table"
-msgstr "試算表表"
-
-#: common/static/js/frepple.js:594
-msgid "CSV table"
-msgstr "CSV表"
-
-#: common/static/js/frepple.js:598
+#: common/static/js/frepple.js:841 common/static/js/frepple.js:862
 msgid "Export CSV or Excel file"
 msgstr "出口CSV或Excel文件"
 
-#: common/static/js/frepple.js:602 common/static/js/frepple.js:1003
-#: common/static/js/frepple.js:1007
+#: common/static/js/frepple.js:844 common/static/js/frepple.js:865
+msgid "Export format"
+msgstr "匯出格式"
+
+#: common/static/js/frepple.js:846 common/static/js/frepple.js:868
+msgid "Spreadsheet list"
+msgstr "試算表列表"
+
+#: common/static/js/frepple.js:847 common/static/js/frepple.js:870
+msgid "CSV list"
+msgstr "CSV列表"
+
+#: common/static/js/frepple.js:852 common/static/js/frepple.js:875
+#: common/static/js/frepple.js:1111
 msgid "Export"
 msgstr "輸出"
 
-#: common/static/js/frepple.js:705
+#: common/static/js/frepple.js:867
+msgid "Spreadsheet table"
+msgstr "試算表表"
+
+#: common/static/js/frepple.js:869
+msgid "CSV table"
+msgstr "CSV表"
+
+#: common/static/js/frepple.js:977
+msgid "Delete data"
+msgstr "刪除資料"
+
+#: common/static/js/frepple.js:980
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "你將會刪除 %s 對象和所有相關的數據記錄！"
 
-#: common/static/js/frepple.js:707
-msgid "Delete data"
-msgstr "刪除資料"
-
-#: common/static/js/frepple.js:714 common/static/js/frepple.js:771
+#: common/static/js/frepple.js:983 common/static/js/frepple.js:1031
+#: common/static/js/frepple.js:1348 common/static/js/frepple.js:1421
 msgid "Confirm"
 msgstr "確定"
 
-#: common/static/js/frepple.js:732
+#: common/static/js/frepple.js:1005
 msgid "Error deleting data"
 msgstr "刪除數據錯誤"
 
-#: common/static/js/frepple.js:762
+#: common/static/js/frepple.js:1025
+msgid "Copy data"
+msgstr "複製數據"
+
+#: common/static/js/frepple.js:1028
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "你將會複製% s對象"
 
-#: common/static/js/frepple.js:764
-msgid "Copy data"
-msgstr "複製數據"
-
-#: common/static/js/frepple.js:789
+#: common/static/js/frepple.js:1053
 msgid "Error copying data"
 msgstr "複製數據出錯"
 
-#: common/static/js/frepple.js:826 common/static/js/frepple.js:832
+#: common/static/js/frepple.js:1089
+#, fuzzy
+#| msgid "Export"
+msgid "Export Plan"
+msgstr "輸出"
+
+#: common/static/js/frepple.js:1160 common/static/js/frepple.js:1173
 msgid "Filtered where"
 msgstr "過濾哪裡"
 
-#: common/static/js/frepple.js:1001
-msgid "Export selected records to openbravo"
+#: common/static/js/frepple.js:1342 common/static/js/frepple.js:1415
+#, fuzzy
+#| msgid "Export"
+msgid "export"
+msgstr "輸出"
+
+#: common/static/js/frepple.js:1345
+#, fuzzy
+#| msgid "Export selected records to openbravo"
+msgid "export selected records to "
 msgstr "出口所選記錄到OPENBRAVO"
 
-#: common/static/js/frepple.js:1011
-msgid "Connecting to openbravo..."
+#: common/static/js/frepple.js:1355 common/static/js/frepple.js:1513
+#, fuzzy
+#| msgid "Connecting to openbravo..."
+msgid "connecting to "
 msgstr "現在連接到openbravo..."
 
-#: common/static/js/frepple.js:1021
+#: common/static/js/frepple.js:1364 common/static/js/frepple.js:1522
 msgid "Export successful"
 msgstr "輸出成功"
 
-#: common/static/js/frepple.js:1029
-msgid "Close"
-msgstr "關閉"
-
-#: common/static/js/frepple.js:1041
+#: common/static/js/frepple.js:1376 common/static/js/frepple.js:1377
+#: common/static/js/frepple.js:1534
 msgid "Error during export"
 msgstr "误差在输出时候"
 
-#: common/static/js/frepple.js:1042
+#: common/static/js/frepple.js:1378
+#, fuzzy
+#| msgid "Retry"
+msgid "retry"
+msgstr "重審"
+
+#: common/static/js/frepple.js:1535 common/static/js/frepple.js:1566
+msgid "The database returned"
+msgstr ""
+
+#: common/static/js/frepple.js:1536 common/static/js/frepple.js:1567
 msgid "Retry"
 msgstr "重審"
 
-#: common/static/js/frepple.js:1129
-msgid "Add"
-msgstr "增加"
+#: common/static/js/frepple.js:1564
+#, fuzzy
+#| msgid "Error deleting data"
+msgid "Error getting data"
+msgstr "刪除數據錯誤"
 
-#: common/static/js/frepple.js:1426
-msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "載入一個Excel檔或CSV-formatted文字檔。"
+#: common/static/js/frepple.js:1723
+msgid "Customize a dashboard row"
+msgstr ""
 
-#: common/static/js/frepple.js:1427
-msgid "The first row should contain the field names."
-msgstr "第一行包含了欄位名。"
+#: common/static/js/frepple.js:1729
+msgid "Name"
+msgstr ""
 
-#: common/static/js/frepple.js:1428
-msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "首先刪除所有存在的記錄和所有相關的表。"
+#: common/static/js/frepple.js:1735
+msgid "Layout"
+msgstr ""
 
-#: common/static/js/frepple.js:1429
-msgid "Data file"
-msgstr "資料檔案"
+#: common/static/js/frepple.js:1741
+msgid "Single column"
+msgstr ""
 
-#: common/static/js/frepple.js:1432
+#: common/static/js/frepple.js:1744
+msgid "Two columns"
+msgstr ""
+
+#: common/static/js/frepple.js:1751
+msgid "Three columns"
+msgstr ""
+
+#: common/static/js/frepple.js:1755
+msgid "Four columns"
+msgstr ""
+
+#: common/static/js/frepple.js:1761
+msgid "Add widget"
+msgstr ""
+
+#: common/static/js/frepple.js:1779
+#, fuzzy
+#| msgid "Delete data"
+msgid "Delete"
+msgstr "刪除資料"
+
+#: common/static/js/frepple.js:1781
+msgid "Add new below"
+msgstr ""
+
+#: common/static/js/frepple.js:1782
+msgid "Add new above"
+msgstr ""
+
+#: common/static/js/frepple.js:1876
+#, fuzzy
+#| msgid "Customize"
+msgid "customize"
+msgstr "定制"
+
+#: common/static/js/frepple.js:2124
+msgid "Installed apps"
+msgstr ""
+
+#: common/static/js/frepple.js:2144
+msgid "Error reading version information"
+msgstr ""
+
+#: common/static/js/frepple.js:2165
 msgid "Import CSV or Excel file"
 msgstr "導入CSV或Excel文件"
 
-#: common/static/js/frepple.js:1436
+#: common/static/js/frepple.js:2169
+msgid "Load an Excel file or a CSV-formatted text file."
+msgstr "載入一個Excel檔或CSV-formatted文字檔。"
+
+#: common/static/js/frepple.js:2170
+msgid "The first row should contain the field names."
+msgstr "第一行包含了欄位名。"
+
+#: common/static/js/frepple.js:2172
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr "首先刪除所有存在的記錄和所有相關的表。"
+
+#: common/static/js/frepple.js:2173
+msgid "Data file"
+msgstr "資料檔案"
+
+#: common/static/js/frepple.js:2178
 msgid "Import"
 msgstr "導入"
 
-#: common/static/js/frepple.js:1906
+#: common/static/js/frepple.js:2188
+msgid "Importing... pressing Close button will not stop the process."
+msgstr ""
+
+#: common/static/js/frepple.js:2662
 msgid "Guided tour"
 msgstr "指引行動"
 
-#: common/static/js/frepple.js:1930
+#: common/static/js/frepple.js:2669
 msgid "Previous"
 msgstr "前一個"
 
-#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2068
-msgid "Stop"
-msgstr "停止"
-
-#: common/static/js/frepple.js:1935 common/static/js/frepple.js:2059
+#: common/static/js/frepple.js:2670 common/static/js/frepple.js:2806
 msgid "Play"
 msgstr "播放"
 
-#: common/static/js/frepple.js:1941
+#: common/static/js/frepple.js:2671
 msgid "Next"
 msgstr "下一個"
 
-#: common/static/js/frepple.js:2034
+#: common/static/js/frepple.js:2783
 msgid "out of"
 msgstr "分配出"
 
-#: planningboard/static/planningboard/js/planningboard.js:613
+#: common/static/js/frepple.js:2813
+msgid "Pause"
+msgstr ""
+
+#: planningboard/static/planningboard/js/planningboard.js:595
 #, javascript-format
 msgid "%s allocated out of %s"
 msgstr "%s分配出 %s"
+
+#: planningboard/static/planningboard/js/planningboard.js:651
+#: planningboard/static/planningboard/js/planningboard.js:1051
+msgid "Error saving report settings"
+msgstr "保存報表設置出錯"
+
+#~ msgid "Add"
+#~ msgstr "增加"
+
+#~ msgid "Stop"
+#~ msgstr "停止"

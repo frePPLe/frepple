@@ -34,6 +34,9 @@ interface to your favourite language.
    Highly recommended is the poedit tool, which can be downloaded from
    http://www.poedit.net/
 
+#. If you intend only to improve a translation you can edit the language PO files
+   in contrib\django\freppledb\locale\ folder.
+
 #. Copy the directory contrib\django\freppledb\locale\en to a new subdirectory
    with the name of your language code.
 
@@ -53,3 +56,12 @@ interface to your favourite language.
 
    The files contrib\installer\parameters.ini and contrib\installer\frepple.nsi
    need straightforward editing.
+
+#. Interactive modules.
+
+   If you have the more advanced interactive planning modules these may have
+   their own translation files (ex: contrib\django\freppledb\forecast\static\po folder).
+   These files will then need to be compiled into the translation.js file, requiring Grunt
+   and angular-gettext installed.
+   Optionaly you may send us the updated PO file and we will send you the compiled
+   translation.js file back.

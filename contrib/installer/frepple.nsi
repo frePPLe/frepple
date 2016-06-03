@@ -31,6 +31,9 @@
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
+!define POSTGRESQL_VERSION "POSTGRESQL 9.5.2"
+!define POSTGRESFOLDER "c:\develop\pgsql"
+
 ; Select compressor
 SetCompressor /SOLID lzma
 
@@ -229,15 +232,23 @@ Section "Application" SecAppl
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
 SectionEnd
 
-
 Section "PostgreSQL" SecPostgres
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File /r /x .gitignore "contrib\installer\pgsql"
-  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\PostgreSQL 9.5.2"
+  SetOutPath "$INSTDIR\pgsql"
+  File /r "${POSTGRESFOLDER}\bin"
+  File /r "${POSTGRESFOLDER}\doc"
+  File /r "${POSTGRESFOLDER}\include"
+  File /r "${POSTGRESFOLDER}\lib"
+  File /r "${POSTGRESFOLDER}\pgAdmin III"
+  File /r "${POSTGRESFOLDER}\share"
+  File /r "${POSTGRESFOLDER}\StackBuilder"
+  File /r "${POSTGRESFOLDER}\symbols"
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}"
   ; SetOutPath is used to set the working directory for the shortcut
   SetOutPath "$INSTDIR\pgsql\bin"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\PostgreSQL 9.5.2\pgAdmin III.lnk" "$INSTDIR\pgsql\bin\pgAdmin3.exe"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}\pgAdmin III.lnk" "$INSTDIR\pgsql\bin\pgAdmin3.exe"
 SectionEnd
 
 

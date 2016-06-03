@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 3.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-01 15:28+0200\n"
-"PO-Revision-Date: 2016-06-02 10:44+0200\n"
+"PO-Revision-Date: 2016-06-02 15:07+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt\n"
@@ -1537,7 +1537,7 @@ msgstr "ajuste de ordens"
 #: inventoryplanning/templates/inventoryplanning/drp.html:980
 #: inventoryplanning/templates/inventoryplanning/drp.html:1056
 msgid "open orders"
-msgstr "abrir ordens"
+msgstr "ordens abertas"
 
 #: forecast/models.py:855 forecast/models.py:865
 #: forecast/templates/forecast/forecast.html:187

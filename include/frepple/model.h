@@ -177,6 +177,9 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       initType(metadata);
     }
 
+    /** Destructor. */
+    ~CalendarBucket();
+
     /** This is a factory method that creates a new bucket in a calendar.<br>
       * It uses the calendar and id fields to identify existing buckets.
       */

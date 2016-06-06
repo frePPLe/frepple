@@ -175,7 +175,28 @@ DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt)
     bkt->nextBucket->prevBucket = bkt->prevBucket;
 
   // Delete the bucket
+  bkt->nextBucket = NULL;
+  bkt->prevBucket = NULL;
+  bkt->cal = NULL;
   delete bkt;
+}
+
+
+CalendarBucket::~CalendarBucket()
+{
+  if (!cal)
+    return;
+
+  // Update the list
+  if (prevBucket)
+    // Previous bucket links to a new next bucket
+    prevBucket->nextBucket = nextBucket;
+  else
+    // New head for the bucket list
+    cal->firstBucket = nextBucket;
+  if (nextBucket)
+    // Update the reference prevBucket of the next bucket
+    nextBucket->prevBucket = prevBucket;
 }
 
 

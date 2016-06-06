@@ -59,8 +59,8 @@ interface to your favourite language.
 
 #. Interactive modules.
 
-   If you have the more advanced interactive planning modules these may have
-   their own translation files (ex: contrib\django\freppledb\forecast\static\po folder).
+   If you have the more advanced interactive planning modules intalled, these may have
+   their own translation files (ex: contrib\django\freppledb\forecast\static\forecast\po folder).
    These files will then need to be compiled into the translation.js file, requiring Grunt
    and angular-gettext installed.
    Optionaly you may send us the updated PO file and we will send you the compiled

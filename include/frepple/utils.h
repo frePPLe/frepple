@@ -4834,7 +4834,7 @@ class CommandCreateObject : public Command
     Object* obj;
   public:
     /** Constructor. */
-    DECLARE_EXPORT CommandCreateObject(Object *o) : obj(o) { logger << " create command " << o << endl; }
+    DECLARE_EXPORT CommandCreateObject(Object *o) : obj(o) { }
 
     /** Destructor. */
     virtual ~CommandCreateObject()

@@ -392,7 +392,7 @@ class GridReport(View):
         if reportclass.maxBucketLevel:
           bucket = Bucket.objects.using(request.database).filter(level__lte=reportclass.maxBucketLevel).order_by('-level')[0].name
         else:
-          bucket = Bucket.objects.using(request.database).order_by('-level')[0].name
+          bucket = Bucket.objects.using(request.database).order_by('-level')[2].name
       except:
         bucket = None
 

@@ -658,7 +658,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk"
 
   ; Remove the folder in start menu
-  RMDir "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
+  RMDir /r "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
   ; Remove the log directory
   ; Version subdirectory is always removed.

@@ -536,6 +536,11 @@ Section -Post
   FileClose $R4
   Rename "djangosettings.py" "djangosettings.py.old"
   Rename "$R3" "djangosettings.py"
+  ${If} $MultiUser.InstallMode != "CurrentUser"
+    AccessControl::GrantOnFile \
+      "djangosettings.py" "(BU)" "GenericRead + GenericWrite"
+  ${EndIf}
+
   ClearErrors
 
   ; Create the log directory

@@ -204,9 +204,6 @@ Section "Application" SecAppl
   File "bin\frepple.pyd"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
-  ; Copy modules
-  File /nonfatal "bin\mod_*.so"
-
    ; Copy configuration files
   File "bin\*.xsd"
   File "bin\init.xml"

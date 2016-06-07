@@ -86,6 +86,7 @@ FunctionEnd
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !define MULTIUSER_MUI
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
+!define MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER
 !define MULTIUSER_INSTALLMODE_INSTDIR "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !include MultiUser.nsh
 !include MUI2.nsh
@@ -108,7 +109,6 @@ FunctionEnd
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
-!insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
 Page custom DatabaseOpen DatabaseLeave
@@ -338,7 +338,10 @@ FunctionEnd
 
 Function FinishOpen
   ; Display the page
-  ${If} $MultiUser.InstallMode == "CurrentUser"
+  UserInfo::GetAccountType
+  pop $7
+
+  ${If} $7 != "Admin"
     WriteIniStr "$PLUGINSDIR\finish.ini" "Field 6" "Flags" "DISABLED"
   ${EndIf}
   !insertmacro MUI_HEADER_TEXT "Completing the installation" "frePPLe has been installed on your computer"
@@ -536,10 +539,6 @@ Section -Post
   FileClose $R4
   Rename "djangosettings.py" "djangosettings.py.old"
   Rename "$R3" "djangosettings.py"
-  ${If} $MultiUser.InstallMode != "CurrentUser"
-    AccessControl::GrantOnFile \
-      "djangosettings.py" "(BU)" "GenericRead + GenericWrite"
-  ${EndIf}
 
   ClearErrors
 

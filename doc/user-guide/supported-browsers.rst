@@ -9,7 +9,7 @@ the following web browsers:
 
 * **Firefox** 11 and higher.
 
-* | **Internet Explorer** 10 and higher.
+* | **Internet Explorer** 10 and higher, Edge.
   | Make sure NOT to run in “compatibility mode”.
 
 * **Safari** 5 and higher.

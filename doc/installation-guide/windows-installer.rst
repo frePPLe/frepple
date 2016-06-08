@@ -26,21 +26,9 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
    .. image:: _images/wininstall1.png
      :scale: 50 %
 
-#. **Select the type of installation**
-
-   If you have administrator rights on your computer, the installer will allow you
-   choose to install frePPLe for your account only or for anybody logging in on
-   the machine.
-
-   If you don’t have administrator rights, this screen will automatically be
-   skipped. Nothing to worry about.
-
-   .. image:: _images/wininstall2.png
-     :scale: 50 %
-
 #. **Select the installation directory**
 
-   A default location is selected depending on the installation type.
+   A different location is selected depending on the user name.
 
    .. image:: _images/wininstall3.png
      :scale: 50 %
@@ -115,20 +103,20 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 #. **Select the installation parameters**
 
    If you chose to install the database from the frePPLe installer,
-   two types of parameters need to be specified during the installation:
+   two types of parameters will be specified during the installation:
 
    #. Default language for the user interface
 
    #. Database connection parameters
 
       You will not be able to the next screen when a test connection to the
-      database fails.
-
-   Your selections are saved in the file custom/djangosettings.py. The file can
-   later be edited with a text editor.
+      database fails, or if you followed the regular install.
 
    .. image:: _images/wininstall6.png
      :scale: 50 %
+     
+   Your selections are saved in the file custom/djangosettings.py. The file can
+   later be edited with a text editor.
 
 #. **Installation**
 
@@ -146,7 +134,8 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
    a system tray application.
 
    For an installation in production mode AND when you have administrator rights on
-   your computer, you can chose to register and start a service instead.
+   your computer, you can chose to register and start a service instead (currently 
+   in development).
 
    .. image:: _images/wininstall8.png
      :scale: 50 %

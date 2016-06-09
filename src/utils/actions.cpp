@@ -303,7 +303,7 @@ DECLARE_EXPORT void CommandSetProperty::undo()
         break;
       case 3: // Double
         {
-        double tmp_double = obj->getDateProperty(name);
+        double tmp_double = obj->getDoubleProperty(name);
         obj->setDoubleProperty(name, old_double);
         old_double = tmp_double;
         }

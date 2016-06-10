@@ -748,7 +748,7 @@ class ResourceSkillList(GridReport):
     GridFieldText('skill', title=_('skill'), formatter='detail', extra="role:'input/skill'"),
     GridFieldDateTime('effective_start', title=_('effective start')),
     GridFieldDateTime('effective_end', title=_('effective end')),
-    GridFieldNumber('priority', title=_('priority')),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -772,7 +772,7 @@ class LoadList(GridReport):
     GridFieldDateTime('effective_end', title=_('effective end')),
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name')),
-    GridFieldNumber('priority', title=_('priority')),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldText('setup', title=_('setup')),
     GridFieldChoice('search', title=_('search mode'), choices=searchmode),
     GridFieldText('source', title=_('source')),
@@ -798,7 +798,7 @@ class FlowList(GridReport):
     GridFieldDateTime('effective_end', title=_('effective end')),
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name')),
-    GridFieldNumber('priority', title=_('priority')),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldChoice('search', title=_('search mode'), choices=searchmode),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

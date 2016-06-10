@@ -615,9 +615,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 								</td>
 								<td style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %} </br>
 								</br>
-								{% blocktrans %}
-								<label data-toggle="tooltip" data-placement="bottom" data-original-title="These filters are defined in the parameters and can be used to export specific changes (ex: changes from last 24h in a certain location)">
-								{% endblocktrans %}
+								{% blocktrans %}<label data-toggle="tooltip" data-placement="bottom" data-original-title="Filter parameters define which transactions are getting exported">{% endblocktrans %}
 								  <input type="checkbox" name="filter_export" value="SO" id="filter_export" style="margin-left: 8px;">
 								  <span> {% trans "Apply filter parameters." %} </span>
 								  <span class="fa fa-question-circle" style="display: inline-block;"></span>

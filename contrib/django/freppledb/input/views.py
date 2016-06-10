@@ -836,11 +836,11 @@ class DemandList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','openbravo')"},
+      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','openbravo')"},
       ]
   elif 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','odoo')"},
+      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','odoo')"},
       ]
   else:
     actions = [
@@ -979,11 +979,11 @@ class OperationPlanList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','openbravo')"},
+      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','openbravo')"},
       ]
   elif 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','odoo')"},
+      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','odoo')"},
       ]
   else:
     actions = [
@@ -1023,11 +1023,11 @@ class DistributionOrderList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','openbravo')"},
+      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','openbravo')"},
     ]
   if 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
+      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
     ]
   else:
     actions = [
@@ -1068,11 +1068,11 @@ class PurchaseOrderList(GridReport):
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to openbravo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','openbravo')"},
+      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','openbravo')"},
       ]
   elif 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
-      {"name": 'odoo_incr_export', "label": _("export to odoo"), "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','odoo')"},
+      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','odoo')"},
       ]
   else:
     actions = [

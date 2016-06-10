@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 3.2.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-01 15:28+0200\n"
-"PO-Revision-Date: 2016-06-02 10:56+0200\n"
+"PO-Revision-Date: 2016-06-10 16:52+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.2\n"
 
 #: common/static/js/frepple.js:174
 msgid "There are unsaved changes on this page."
@@ -63,12 +63,12 @@ msgstr "Klik om een record te selecteren"
 #: common/static/js/frepple.js:447
 #| msgid "Selected Cross"
 msgid "Selected options"
-msgstr ""
+msgstr "Geselecteerde opties"
 
 #: common/static/js/frepple.js:454
 #| msgid "Available Cross"
 msgid "Available options"
-msgstr ""
+msgstr "Beschikbare opties"
 
 #: common/static/js/frepple.js:495
 msgid "Selected Cross"
@@ -80,7 +80,7 @@ msgstr "Beschikbare kruis"
 
 #: common/static/js/frepple.js:527
 msgid "Frozen columns"
-msgstr ""
+msgstr "Vastgepinde kolommen"
 
 #: common/static/js/frepple.js:546
 msgid "Customize"
@@ -157,7 +157,7 @@ msgstr "Foutmelding tijdens kopieren gegevens"
 #: common/static/js/frepple.js:1089
 #| msgid "Export"
 msgid "Export Plan"
-msgstr ""
+msgstr "Exporteer plan"
 
 #: common/static/js/frepple.js:1160 common/static/js/frepple.js:1173
 msgid "Filtered where"
@@ -170,12 +170,12 @@ msgstr "exporteer"
 #: common/static/js/frepple.js:1345
 #| msgid "export selected records to openbravo"
 msgid "export selected records to "
-msgstr ""
+msgstr "exporter geselecteerde records naar "
 
 #: common/static/js/frepple.js:1355 common/static/js/frepple.js:1513
 #| msgid "connecting to openbravo..."
 msgid "connecting to "
-msgstr ""
+msgstr "connecting to "
 
 #: common/static/js/frepple.js:1364 common/static/js/frepple.js:1522
 msgid "Export successful"
@@ -192,49 +192,49 @@ msgstr "probeer opnieuw"
 
 #: common/static/js/frepple.js:1535 common/static/js/frepple.js:1566
 msgid "The database returned"
-msgstr ""
+msgstr "The database returned"
 
 #: common/static/js/frepple.js:1536 common/static/js/frepple.js:1567
 #| msgid "retry"
 msgid "Retry"
-msgstr ""
+msgstr "Probeer opnieuw"
 
 #: common/static/js/frepple.js:1564
 #| msgid "Error deleting data"
 msgid "Error getting data"
-msgstr ""
+msgstr "Fout tijdens ophalen van gegevens"
 
 #: common/static/js/frepple.js:1723
 msgid "Customize a dashboard row"
-msgstr ""
+msgstr "Personaliseer een dashboardrij"
 
 #: common/static/js/frepple.js:1729
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: common/static/js/frepple.js:1735
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: common/static/js/frepple.js:1741
 msgid "Single column"
-msgstr ""
+msgstr "Enkele kolom"
 
 #: common/static/js/frepple.js:1744
 msgid "Two columns"
-msgstr ""
+msgstr "Twee kolommen"
 
 #: common/static/js/frepple.js:1751
 msgid "Three columns"
-msgstr ""
+msgstr "Drie kolommen"
 
 #: common/static/js/frepple.js:1755
 msgid "Four columns"
-msgstr ""
+msgstr "Vier kolommen"
 
 #: common/static/js/frepple.js:1761
 msgid "Add widget"
-msgstr ""
+msgstr "Voeg widget toe"
 
 #: common/static/js/frepple.js:1779
 msgid "Delete"
@@ -242,11 +242,11 @@ msgstr "Verwijder"
 
 #: common/static/js/frepple.js:1781
 msgid "Add new below"
-msgstr ""
+msgstr "Voeg onderaan toe"
 
 #: common/static/js/frepple.js:1782
 msgid "Add new above"
-msgstr ""
+msgstr "Voeg bovenaan toe"
 
 #: common/static/js/frepple.js:1876
 msgid "customize"
@@ -254,11 +254,11 @@ msgstr "personaliseer"
 
 #: common/static/js/frepple.js:2124
 msgid "Installed apps"
-msgstr ""
+msgstr "Geïnstalleerde apps"
 
 #: common/static/js/frepple.js:2144
 msgid "Error reading version information"
-msgstr ""
+msgstr "Fout tijdens lezen versie informatie"
 
 #: common/static/js/frepple.js:2165
 msgid "Import CSV or Excel file"
@@ -286,7 +286,7 @@ msgstr "Importeer gegevens"
 
 #: common/static/js/frepple.js:2188
 msgid "Importing... pressing Close button will not stop the process."
-msgstr ""
+msgstr "Importeren... Het indrukken van de Sluit-knop zal de import niet onderbreken."
 
 #: common/static/js/frepple.js:2662
 msgid "Guided tour"

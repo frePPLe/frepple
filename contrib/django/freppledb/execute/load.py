@@ -144,45 +144,47 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
        SELECT
-         calendar_id, startdate, enddate, id, priority, value,
+         calendar_id, startdate, enddate, priority, value,
          sunday, monday, tuesday, wednesday, thursday, friday, saturday,
          starttime, endtime, source
       FROM calendarbucket %s
       ORDER BY calendar_id, startdate desc
       ''' % self.filter_where)
+    prevcal = None
     for i in self.cursor.fetchall():
       cnt += 1
       try:
         days = 0
-        if i[6]:
+        if i[5]:
           days += 1
-        if i[7]:
+        if i[6]:
           days += 2
-        if i[8]:
+        if i[7]:
           days += 4
-        if i[9]:
+        if i[8]:
           days += 8
-        if i[10]:
+        if i[9]:
           days += 16
-        if i[11]:
+        if i[10]:
           days += 32
-        if i[12]:
+        if i[11]:
           days += 64
-        b = frepple.calendar(name=i[0]).addBucket(i[3])
-        b.value = i[5]
-        b.days = days
+        if i[0] != prevcal:
+          cal = frepple.calendar(name=i[0])
+          prevcal = i[0]
+        b = frepple.bucket(
+          calendar=cal,
+          start=i[1],
+          end=i[2],
+          priority=i[3],
+          source=i[14],
+          value=i[4],
+          days=days
+          )
+        if i[12]:
+          b.starttime = i[12].hour * 3600 + i[12].minute * 60 + i[12].second
         if i[13]:
-          b.starttime = i[13].hour * 3600 + i[13].minute * 60 + i[13].second
-        if i[14]:
-          b.endtime = i[14].hour * 3600 + i[14].minute * 60 + i[14].second + 1
-        if i[4]:
-          b.priority = i[4]
-        if i[1]:
-          b.start = i[1]
-        if i[2]:
-          b.end = i[2]
-        if i[15]:
-          b.source = i[15]
+          b.endtime = i[13].hour * 3600 + i[13].minute * 60 + i[13].second + 1
       except Exception as e:
         print("Error:", e)
     print('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))

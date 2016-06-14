@@ -40,7 +40,6 @@
 			<default>1</default>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2009-01-01T00:00:00</start>
 					<value>2</value>
 				</bucket>
@@ -50,42 +49,34 @@
 			<name>months</name>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2009-01-01T00:00:00</start>
 					<end>2009-01-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>2</id>
 					<start>2009-02-01T00:00:00</start>
 					<end>2009-02-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>3</id>
 					<start>2009-03-01T00:00:00</start>
 					<end>2009-03-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>4</id>
 					<start>2009-04-01T00:00:00</start>
 					<end>2009-04-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>5</id>
 					<start>2009-05-01T00:00:00</start>
 					<end>2009-05-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>6</id>
 					<start>2009-06-01T00:00:00</start>
 					<end>2009-06-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>7</id>
 					<start>2009-07-01T00:00:00</start>
 					<end>2009-07-01T00:00:00</end>
 				</bucket>
 				<bucket>
-					<id>8</id>
 					<start>2009-08-01T00:00:00</start>
 					<end>2009-08-01T00:00:00</end>
 				</bucket>

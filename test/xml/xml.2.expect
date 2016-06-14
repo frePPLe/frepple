@@ -14,7 +14,6 @@
 			<name>weeks</name>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2009-01-01T00:00:00</start>
 				</bucket>
 			</buckets>

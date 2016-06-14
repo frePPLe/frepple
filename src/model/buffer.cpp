@@ -330,6 +330,7 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
   // Null pointer passed. Change back to time independent min.
   if (!cal)
   {
+    min_cal = NULL;
     setMinimum(min_val);
     return;
   }

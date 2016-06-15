@@ -99,9 +99,21 @@ DECLARE_EXPORT void Resource::inspect(const string msg) const
     logger << "  " << oo->getDate()
       << " qty:" << oo->getQuantity()
       << ", oh:" << oo->getOnhand();
-    if (oo->getEventType() == 1)
-      logger <<  ", oper:" << static_cast<const LoadPlan*>(&*oo)->getOperationPlan()->getOperation();
-    logger << endl;
+    switch (oo->getEventType())
+    {
+    case 1:
+      logger << ", oper:" << static_cast<const LoadPlan*>(&*oo)->getOperationPlan()->getOperation() << endl;
+      break;
+    case 2:
+      logger << ", event set-onhand" << endl;
+      break;
+    case 3:
+      logger << ", event update-minimum" << endl;
+      break;
+    case 4:
+      logger << ", event update-maximum" << endl;
+      break;
+    }
   }
 }
 
@@ -187,13 +199,16 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(Calendar* c)
   setChanged();
 
   // Remove the current set-onhand events.
-  for (loadplanlist::iterator oo=loadplans.begin(); oo!=loadplans.end(); )
-    if (oo->getEventType() == 2)
+  for (loadplanlist::iterator oo = loadplans.begin(); oo != loadplans.end(); )
+  {
+    loadplanlist::Event *tmp = &*oo;
+    ++oo;
+    if (tmp->getEventType() == 2)
     {
-      loadplans.erase(&(*oo));
-      delete &(*(oo++));
+      loadplans.erase(tmp);
+      delete tmp;
     }
-    else ++oo;
+  }
 
   // Create timeline structures for every bucket.
   size_max_cal = c;

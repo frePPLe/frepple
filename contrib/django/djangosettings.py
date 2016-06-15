@@ -56,7 +56,8 @@ DATABASES = {
     'OPTIONS': {},         # Backend specific configuration parameters.
     'TEST': {
       'NAME': 'test_frepple' # Database name used when running the test suite.
-      }
+      },
+    'FILEUPLOADFOLDER': 'C:\\develop'
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',

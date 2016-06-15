@@ -70,7 +70,7 @@ $(function() {
       }
       else
         $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
-    },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
+    },{% if reportclass.editable and not is_popup and haschangeperm %}
     multiselect: true,
     onSelectRow: grid.markSelectedRow,
     formatCell: function(rowid, cellname, value, iRow, iCol) {

@@ -22,21 +22,18 @@
 			<default>4.56</default>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2009-01-01T00:00:00</start>
 					<end>2009-03-01T00:00:00</end>
 					<priority>-1</priority>
 					<value>1</value>
 				</bucket>
 				<bucket>
-					<id>3</id>
 					<start>2009-02-01T00:00:00</start>
 					<end>2009-03-01T00:00:00</end>
 					<priority>-3</priority>
 					<value>3</value>
 				</bucket>
 				<bucket>
-					<id>2</id>
 					<start>2009-02-01T00:00:00</start>
 					<end>2009-05-01T00:00:00</end>
 					<priority>-2</priority>
@@ -52,7 +49,6 @@
 			<name>Capacity</name>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2009-01-01T00:00:00</start>
 					<value>1</value>
 				</bucket>

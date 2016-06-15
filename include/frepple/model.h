@@ -103,9 +103,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 {
     friend class Calendar;
   private:
-    /** Unique identifier of the bucket within the calendar. */
-    int id;
-
     /** Start date of the bucket. */
     Date startdate;
 
@@ -170,7 +167,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
   public:
     /** Default constructor. */
-    DECLARE_EXPORT CalendarBucket() : id(INT_MIN), enddate(Date::infiniteFuture),
+    DECLARE_EXPORT CalendarBucket() : enddate(Date::infiniteFuture),
       nextBucket(NULL), prevBucket(NULL), priority(0), days(127),
       starttime(0L), endtime(86400L), cal(NULL), val(0.0), offsetcounter(0)
     {
@@ -183,7 +180,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     /** This is a factory method that creates a new bucket in a calendar.<br>
       * It uses the calendar and id fields to identify existing buckets.
       */
-    static DECLARE_EXPORT Object* createBucket(
+    static DECLARE_EXPORT Object* reader(
       const MetaClass*, const DataValueDict&, CommandManager* = NULL
       );
 
@@ -195,19 +192,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     {
       return cal;
     }
-
-    /** Get the identifier. */
-    int getId() const
-    {
-      return id;
-    }
-
-    /** Generate the identfier.<br>
-      * If a bucket with the given identifier already exists a unique
-      * number is generated instead. This is done by incrementing the
-      * value passed until it is unique.
-      */
-    DECLARE_EXPORT void setId(int ident=INT_MIN);
 
     /** Returns the value of this bucket. */
     double getValue() const
@@ -326,7 +310,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addIntField<Cls>(Tags::id, &Cls::getId, &Cls::setId, INT_MIN, MANDATORY);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
@@ -477,20 +460,8 @@ class Calendar : public HasName<Calendar>, public HasSource
       */
     DECLARE_EXPORT CalendarBucket* findBucket(Date d, bool fwd = true) const;
 
-    /** Returns the bucket with a certain identifier.
-      * A NULL pointer is returned in case no bucket can be found with the
-      * given identifier.
-      */
-    DECLARE_EXPORT CalendarBucket* findBucket(int ident) const;
-
     /** Add a new bucket to the calendar. */
     DECLARE_EXPORT CalendarBucket* addBucket(Date, Date, double);
-
-    /** Find an existing bucket with a given identifier, or create a new one.
-      * If no identifier is passed, we always create a new bucket and automatically
-      * generate a unique identifier for it.
-      */
-    static DECLARE_EXPORT PyObject* addPythonBucket(PyObject*, PyObject*, PyObject*);
 
     /** @brief An iterator class to go through all dates where the calendar
       * value changes.*/

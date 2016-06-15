@@ -1105,6 +1105,15 @@ class Date
       return result;
     }
 
+    string toString(const char* fmt)
+    {
+      struct tm t;
+      char str[30];
+      getInfo(&t);
+      strftime(str, 30, fmt, &t);
+      return str;
+    }
+
 #ifndef HAVE_STRPTIME
   private:
     DECLARE_EXPORT char* strptime(const char *, const char *, struct tm *);

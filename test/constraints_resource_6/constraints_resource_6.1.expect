@@ -38,7 +38,6 @@
 			<source>The Matrix</source>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2000-12-01T00:00:00</start>
 					<end>2020-06-30T00:00:00</end>
 					<days>28</days>
@@ -52,7 +51,6 @@
 			<source>The Matrix</source>
 			<buckets>
 				<bucket>
-					<id>3</id>
 					<start>2000-12-01T00:00:00</start>
 					<end>2020-06-30T00:00:00</end>
 					<priority>2</priority>
@@ -61,14 +59,12 @@
 					<source>The Matrix</source>
 				</bucket>
 				<bucket>
-					<id>1</id>
 					<start>2014-02-16T00:00:00</start>
 					<end>2014-02-22T00:00:00</end>
 					<priority>1</priority>
 					<source>The Matrix</source>
 				</bucket>
 				<bucket>
-					<id>2</id>
 					<start>2014-03-09T00:00:00</start>
 					<end>2014-03-15T00:00:00</end>
 					<priority>1</priority>
@@ -81,7 +77,6 @@
 			<source>The Matrix</source>
 			<buckets>
 				<bucket>
-					<id>1</id>
 					<start>2013-12-01T00:00:00</start>
 					<end>2014-06-30T00:00:00</end>
 					<days>62</days>

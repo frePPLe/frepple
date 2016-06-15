@@ -354,7 +354,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
   for (int j = 0; j < cl; ++j)
     threads.add(
       SolverMRPdata::runme,
-      new SolverMRPdata(this, j, &(demands_per_cluster[j]))
+      new SolverMRPdata(this, (cluster == -1) ? j :  cluster, &(demands_per_cluster[j]))
       );
 
   // Run the planning command threads and wait for them to exit

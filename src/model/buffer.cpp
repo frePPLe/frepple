@@ -111,9 +111,21 @@ DECLARE_EXPORT void Buffer::inspect(const string msg) const
       << " qty:" << oo->getQuantity()
       << ", oh:" << oo->getOnhand()
       << ", min:" << curmin;
-    if (oo->getEventType() == 1)
-      logger <<  ", oper:" << static_cast<const FlowPlan*>(&*oo)->getOperationPlan()->getOperation();
-    logger << endl;
+    switch(oo->getEventType())
+    {
+      case 1:
+        logger << ", oper:" << static_cast<const FlowPlan*>(&*oo)->getOperationPlan()->getOperation() << endl;
+        break;
+      case 2:
+        logger << ", event set-onhand" << endl;
+        break;
+      case 3:
+        logger << ", event update-minimum" << endl;
+        break;
+      case 4:
+        logger << ", event update-maximum" << endl;
+        break;
+    }
   }
 }
 
@@ -318,18 +330,26 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
   // Mark as changed
   setChanged();
 
-  // Delete previous events.
+  // Delete previous events.  
+  inspect("before ALLL erases");
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
-    if (oo->getEventType() == 3)
+  {
+    flowplanlist::Event *tmp = &*oo;
+    ++oo;
+    if (tmp->getEventType() == 3)
     {
-      flowplans.erase(&(*oo));
-      delete &(*(oo++));
+      inspect("before erase");
+      flowplans.erase(tmp);
+      inspect("after erase");
+      delete tmp;
     }
-    else ++oo;
+  }
+  inspect("after ALLL erases");
 
   // Null pointer passed. Change back to time independent min.
   if (!cal)
   {
+    min_cal = NULL;
     setMinimum(min_val);
     return;
   }

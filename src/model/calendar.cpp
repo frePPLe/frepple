@@ -40,10 +40,6 @@ int Calendar::initialize()
   // Initialize the Python class
   PythonType& x = FreppleCategory<Calendar>::getPythonType();
   x.addMethod(
-    "addBucket", addPythonBucket, METH_VARARGS | METH_KEYWORDS,
-    "find a bucket or create a new one"
-    );
-  x.addMethod(
     "setValue", setPythonValue, METH_VARARGS | METH_KEYWORDS,
     "update the value in a date range"
     );
@@ -61,7 +57,7 @@ int CalendarBucket::initialize()
 {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<CalendarBucket>(
-    "bucket", "buckets", createBucket
+    "bucket", "buckets", reader
     );
   registerFields<CalendarBucket>(const_cast<MetaCategory*>(metacategory));
   metadata = MetaClass::registerClass<CalendarBucket>(
@@ -77,7 +73,7 @@ int CalendarBucket::initialize()
   x.supportsetattro();
   x.supportstr();
   x.supportcompare();
-  // TODO x.supportcreate(create);
+  x.supportcreate(Object::create<CalendarBucket>);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
@@ -323,14 +319,6 @@ DECLARE_EXPORT CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
 }
 
 
-DECLARE_EXPORT CalendarBucket* Calendar::findBucket(int ident) const
-{
-  for (CalendarBucket *b = firstBucket; b; b = b->nextBucket)
-    if (b->id == ident) return b;
-  return NULL;
-}
-
-
 DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
 {
   CalendarBucket* bckt = new CalendarBucket();
@@ -342,21 +330,44 @@ DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
 }
 
 
-DECLARE_EXPORT Object* CalendarBucket::createBucket(
+DECLARE_EXPORT Object* CalendarBucket::reader(
   const MetaClass* cat, const DataValueDict& atts, CommandManager* mgr
   )
 {
-  // Pick up the calendar and id fields
+  // Pick up the calendar
   const DataValue* cal_val = atts.get(Tags::calendar);
   Calendar *cal = cal_val ? static_cast<Calendar*>(cal_val->getObject()) : NULL;
-  const DataValue* id_val = atts.get(Tags::id);
-  int id = id_val ? id_val->getInt() : INT_MIN;
 
-  // Check for existence of a bucket with the same identifier
+  // Pick up the start date.
+  const DataValue* strtElement = atts.get(Tags::start);
+  Date strt;
+  if (strtElement)
+    strt = strtElement->getDate();
+
+  // Pick up the end date.
+  const DataValue* endElement = atts.get(Tags::end);
+  Date nd = Date::infiniteFuture;
+  if (endElement)
+    nd = endElement->getDate();
+
+  // Pick up  the priority
+  const DataValue* prioElement = atts.get(Tags::priority);
+  int prio = 0;
+  if (prioElement)
+    prio = prioElement->getInt();
+
+  // Check for existence of a bucket with the same start, end and priority
   CalendarBucket* result = NULL;
   if (cal)
-    result = cal->findBucket(id);
-
+  {
+    for (CalendarBucket::iterator i = cal->getBuckets(); i != CalendarBucket::iterator::end(); ++i)
+      if (i->getStart() == strt && i->getEnd() == nd && i->getPriority() == prio)
+      {
+        result = &*i;
+        break;
+      }
+  }
+    
   // Pick up the action attribute and update the bucket accordingly
   switch (MetaClass::decodeAction(atts))
   {
@@ -365,11 +376,13 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
       if (result)
       {
         ostringstream o;
-        o << "Bucket " << id << " already exists in calendar '" << cal << "'";
+        o << "Bucket already exists in calendar '" << cal << "'";
         throw DataException(o.str());
       }
       result = new CalendarBucket();
-      result->setId(id);
+      result->setStart(strt);
+      result->setEnd(nd);
+      result->setPriority(prio);
       if (cal)
         result->setCalendar(cal);
       if (mgr)
@@ -378,22 +391,12 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
     case CHANGE:
       // Only changes are allowed
       if (!result)
-      {
-        ostringstream o;
-        o << "Bucket " << id << " doesn't exist in calendar '"
-          << (cal ? cal->getName() : "NULL") << "'";
-        throw DataException(o.str());
-      }
+        throw DataException("Bucket doesn't exist");
       return result;
     case REMOVE:
       // Delete the entity
       if (!result)
-      {
-        ostringstream o;
-        o << "Bucket " << id << " doesn't exist in calendar '"
-          << (cal ? cal->getName() : "NULL") << "'";
-        throw DataException(o.str());
-      }
+        throw DataException("Bucket doesn't exist");
       else
       {
         // Delete it
@@ -405,7 +408,9 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
       {
         // Adding a new bucket
         result = new CalendarBucket();
-        result->setId(id);
+        result->setStart(strt);
+        result->setEnd(nd);
+        result->setPriority(prio);
         if (cal)
           result->setCalendar(cal);
         if (mgr)
@@ -421,20 +426,20 @@ DECLARE_EXPORT Object* CalendarBucket::createBucket(
 
 DECLARE_EXPORT void CalendarBucket::writeHeader(Serializer *o, const Keyword& tag) const
 {
-  // The header line has a variable number of attributes: start, end and/or name
+  // The header line has a variable number of attributes: start, end and/or priority
   if (startdate != Date::infinitePast)
   {
     if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::id, id, Tags::start, startdate, Tags::end, enddate);
+      o->BeginObject(tag, Tags::priority, priority, Tags::start, startdate, Tags::end, enddate);
     else
-      o->BeginObject(tag, Tags::id, id, Tags::start, startdate);
+      o->BeginObject(tag, Tags::priority, priority, Tags::start, startdate);
   }
   else
   {
     if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::id, id, Tags::end, enddate);
+      o->BeginObject(tag, Tags::priority, priority, Tags::end, enddate);
     else
-      o->BeginObject(tag, Tags::id, id);
+      o->BeginObject(tag, Tags::priority, priority);
   }
 }
 
@@ -445,10 +450,7 @@ DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
     return;
   if (cal)
     throw DataException("Can't reassign a calendar bucket to a new calendar");
-
-  // Generate a unique id
   cal = c;
-  setId(id);
 
   // Link in the list of buckets
   if (cal->firstBucket)
@@ -458,45 +460,6 @@ DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
   }
   cal->firstBucket = this;
   updateSort();
-}
-
-
-DECLARE_EXPORT void CalendarBucket::setId(int ident)
-{
-  if (cal)
-  {
-    if (ident == INT_MIN)
-    {
-      // Force generation of a new identifier.
-      // This is done by taking the highest existing id and adding 1.
-      for (CalendarBucket::iterator i = cal->getBuckets(); i != CalendarBucket::iterator::end(); ++i)
-        if (i->id >= ident)
-          ident = i->id + 1;
-      if (ident == INT_MIN)
-        ident = 1;
-    }
-    else
-    {
-      // Check & enforce uniqueness of the argument identifier
-      bool unique;
-      do
-      {
-        unique = true;
-        for (CalendarBucket::iterator i = cal->getBuckets(); i != CalendarBucket::iterator::end(); ++i)
-          if (i->id == ident && &(*i) != this)
-          {
-            // Update the identifier to avoid violating the uniqueness
-            unique = false;
-            ++ident;
-            break;
-          }
-      }
-      while (!unique);
-    }
-  }
-
-  // Update the identifier
-  id = ident;
 }
 
 
@@ -783,44 +746,6 @@ DECLARE_EXPORT PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args
     // Update the calendar
     PythonData start(pystart), end(pyend), val(pyval);
     cal->setValue(start.getDate(), end.getDate(), val.getDouble());
-  }
-  catch(...)
-  {
-    PythonType::evalException();
-    return NULL;
-  }
-  return Py_BuildValue("");
-}
-
-
-DECLARE_EXPORT PyObject* Calendar::addPythonBucket(PyObject* self, PyObject* args, PyObject* kwdict) // TODO Remove this method. Calendarbuckets now have a good Python API
-{
-  try
-  {
-    // Pick up the calendar
-    Calendar* cal = static_cast<Calendar*>(self);
-    if (!cal) throw LogicException("Can't set value of a NULL calendar");
-
-    // Parse the arguments
-    int id = INT_MIN;
-    if (!PyArg_ParseTuple(args, "|i:addBucket", &id))
-      return NULL;
-
-    // See if the bucket exists, or create it
-    CalendarBucket * b = NULL;
-    if (id != INT_MIN)
-      b = cal->findBucket(id);
-    if (!b)
-    {
-      b = new CalendarBucket();
-      b->setCalendar(cal);
-      if (id != INT_MIN)
-        b->setId(id);
-    }
-
-    // Return a reference
-    Py_INCREF(b);
-    return b;
   }
   catch(...)
   {

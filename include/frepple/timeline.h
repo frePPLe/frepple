@@ -757,7 +757,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
 {
   // Update later entries
   double qty = e->getQuantity();
-  if (qty>0)
+  if (qty > 0.0)
   {
     bool update_oh = true;
     for (iterator i = begin(e); i!=end(); ++i)
@@ -772,7 +772,7 @@ template <class type> void TimeLine<type>::erase(Event* e)
       i->cum_prod -= qty;
     }
   }
-  else
+  else if (qty < 0.0)
     for (iterator i = begin(e); i!=end() && i->getEventType() != 2; ++i)
       i->oh -= qty;
 

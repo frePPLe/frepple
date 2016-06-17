@@ -109,23 +109,22 @@ Here are the steps to get a fully working environment.
 #. **Install the Python modules**
 
    The python3 modules used by frePPLe are listed in the file "requirements.txt". You can download
-   it from https://raw.githubusercontent.com/frepple/frepple/3.1/contrib/django/requirements.txt
-   (make sure to replace 3.1 with the appropriate version number!)
+   it from https://raw.githubusercontent.com/frepple/frepple/3.2/contrib/django/requirements.txt
+   (make sure to replace 3.2 with the appropriate version number!)
 
    Alternatively you can create the file yourself with the following content:
    ::
 
-      CherryPy >= 3.2.2
-      djangorestframework >= 3.3.1
-      djangorestframework-bulk >= 0.2.1
-      djangorestframework-filters >= 0.6.0
+      CherryPy == 3.2.2
+      djangorestframework == 3.3.1
+      djangorestframework-bulk == 0.2.1
+      djangorestframework-filters == 0.6.0
       django-admin-bootstrapped
       django-bootstrap3
-      et-xmlfile >= 1.0.0
-      html5lib >= 0.999
-      jdcal >= 1.0
-      Markdown >= 2.6.4
-      openpyxl >= 2.3.0-b2
+      html5lib == 0.999
+      jdcal >= 1.0.1
+      Markdown == 2.6.4
+      openpyxl == 2.3.4
       https://github.com/frePPLe/django/tarball/frepple_3.1
 
    Next, install these modules with a pip3 command:

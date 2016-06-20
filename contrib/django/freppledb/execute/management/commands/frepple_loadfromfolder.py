@@ -85,20 +85,20 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % self.database )
     if 'user' in options and options['user']:
       try:
-        self.user = User.objects.all().using(database).get(username=options['user'])
+        self.user = User.objects.all().using(self.database).get(username=options['user'])
       except:
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       self.user = None
 
     now = datetime.now()
-    
+
     task = None
     try:
       # Initialize the task
       if 'task' in options and options['task']:
         try:
-          task = Task.objects.all().using(database).get(pk=options['task'])
+          task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'load from folder':

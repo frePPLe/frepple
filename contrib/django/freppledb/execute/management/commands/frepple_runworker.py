@@ -182,6 +182,9 @@ class Command(BaseCommand):
         # M
         elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:        
           management.call_command('odoo_import', database=database, task=task.id, verbosity=0)
+        # N
+        elif task.name == 'load from folder':
+          management.call_command('frepple_loadfromfolder', database=database, task=task.id)
         else:
           logger.error('Task %s not recognized' % task.name)
         # Read the task again from the database and update.

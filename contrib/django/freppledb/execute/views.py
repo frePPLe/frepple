@@ -20,6 +20,7 @@ import os.path
 import sys
 from datetime import datetime
 from subprocess import Popen
+from time import localtime, strftime
 
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -98,6 +99,22 @@ class TaskReport(GridReport):
         pass  # Silently ignore failures
     fixtures = sorted(fixtures)
 
+    # convert from bytes to
+    def sizeof_fmt(num, suffix='B'):
+      for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+      return "%.1f%s%s" % (num, 'Yi', suffix)
+
+    filestoupload = list()
+    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+      if os.path.isdir(settings.DATABASES[request.database]['FILEUPLOADFOLDER']):
+        thisfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+        for file in os.listdir(settings.DATABASES[request.database]['FILEUPLOADFOLDER']):
+          if file.endswith('.csv') or file.endswith('.xls') or file.endswith('.xlsx') or file.endswith('.txt'):
+            filestoupload.append([file,strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(thisfolder, file)).st_mtime)),sizeof_fmt(os.stat(os.path.join(thisfolder, file)).st_size, 'B')])
+
     # Send to template
     odoo = 'freppledb.odoo' in settings.INSTALLED_APPS
     return {'capacityconstrained': constraint & 4,
@@ -109,7 +126,8 @@ class TaskReport(GridReport):
             'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
             'odoo': odoo,
             'odoo_read': odoo and request.session.get('odoo_read', False),
-            'odoo_write': odoo and request.session.get('odoo_write', False)
+            'odoo_write': odoo and request.session.get('odoo_write', False),
+            'filestoupload': filestoupload
             }
 
 
@@ -262,7 +280,10 @@ def wrapTask(request, action):
     if 'filter_export' in request.POST:
       task.arguments = "--filter"
     task.save(using=request.database)
-
+  # K
+  elif action == 'frepple_loadfromfolder':
+    task = Task(name='load from folder', submitted=now, status='Waiting', user=request.user)
+    task.save(using=request.database)
   else:
     # Task not recognized
     raise Exception('Invalid launching task')

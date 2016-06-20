@@ -205,6 +205,14 @@
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
 
+    // Checkboxes for Load from folder
+    $(".chckfile_all").click( function() {
+      $(".chckfile_entity").prop("checked", $(this).prop("checked"));
+      });
+    $(".chckfile_entity").click( function() {
+      $(".chckfile_all").prop("checked",$(".chckfile_entity:not(:checked)").length == 0);
+      });
+
     $("#sourceul li a").click(function(){
       $("#source").html($(this).text() + ' <span class="caret"></span>');
       $("#sourcescenario").val($(this).text());
@@ -410,7 +418,6 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 				        <td style="padding: 15px;">
 				          <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
 		              <label>{% trans "Data file" %}:
-
                     <input class="btn btn-info form-control" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                   </label>
 				        </td>
@@ -419,6 +426,49 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 			    </div>
 		  </div>
 		</div>
+
+		{% if filestoupload and user.is_superuser %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-parent="#tasks" role="tab" id="vertiendeHeading" data-toggle="collapse" data-target="#vertiendeAccord">
+        <h4 class="panel-title">
+          <a role="button">{% trans "Load data files from folder" %}</a>
+        </h4>
+      </div>
+      <div id="vertiendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vertiendeHeading">
+        <div class="panel-body">
+
+            <table>
+              <tr>
+              <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_loadfromfolder/">{% csrf_token %}
+                <td style="vertical-align:top; padding: 15px">
+                  <button type="submit" class="btn btn-primary" id="import" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+                </td>
+                          </form>
+                <td colspan='4' style="padding: 15px;">
+                  <p>{% trans "Load data files from the prespecified folder</p><p>The file names must match the names of data objects (i.e. items, demand, ...)." %}</p>
+                </td>
+              </tr>
+              <tr>
+								<td></td>
+								<td><input class="chckfile_all check" type="checkbox" name="all" value="1" checked="" disabled hidden></td>
+								<td>&nbsp;<strong>{% trans 'file names'|capfirst %}</strong></td>
+								<td>&nbsp;<strong>{% trans 'size'|capfirst %}</strong></td>
+								<td>&nbsp;<strong>{% trans 'changed'|capfirst %}</strong></td>
+						  </tr>
+              {% for j in filestoupload %}
+              <tr>
+                <td></td>
+                <td><input class="chckfile_entity check" type="checkbox" value="{{j.0}}" checked="" id="chbx_input.demand" disabled hidden></td>
+                <td>&nbsp;{{j.0}}</td><td>&nbsp;{{j.2}}</td><td>&nbsp;{{j.1}}</td>
+              </tr>
+              {% endfor %}
+            </table>
+
+          </div>
+      </div>
+    </div>
+    {% endif %}
+
 
 	  {% if scenarios.count > 1 %}
 	  <div class="panel panel-default">

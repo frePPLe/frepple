@@ -30,8 +30,8 @@ def get_data(url, host, user, password):
   webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
   webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
   webservice.putheader("Content-length", "0")
-  webservice.putheader("Authorization", "Basic %s" % base64.encodestring(
-    ('%s:%s' % (user, password)).replace('\n', '').encode("utf-8")).decode("utf-8")
+  webservice.putheader("Authorization", "Basic %s" % base64.encodebytes(
+    ('%s:%s' % (user, password)).replace('\n', '').encode("utf-8"))
     )
   webservice.endheaders()
   webservice.send('')

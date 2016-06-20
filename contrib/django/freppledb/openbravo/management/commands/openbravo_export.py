@@ -305,32 +305,53 @@ class Command(BaseCommand):
       identifier = uuid4().hex
 
       if self.filteredexport:
-        filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+        
+        filter_expression_po = Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+        if filter_expression_po:
+          filter_expression_po = ' and (%s) ' %filter_expression_po
+        
+        filter_expression_do = Parameter.getValue('openbravo.filter_export_distribution_order', self.database, "")
+        if filter_expression_do:
+          filter_expression_do = ' and (%s) ' %filter_expression_do
       else:
-        filter_expression = ""
+        filter_expression_po = ""
+        filter_expression_do = ""
 
       body = [requisition % (identifier, self.organization_id, now, now, self.openbravo_user_id, self.openbravo_user)]
 
-      cursor.execute('''select item.source, location.source, enddate, sum(out_operationplan.quantity)
-         FROM out_operationplan
-         inner join out_flowplan
-           ON operationplan_id = out_operationplan.id
-           AND out_flowplan.quantity > 0
+      cursor.execute('''
+         select item.source, location.source, enddate, quantity
+         FROM purchase_order
          inner JOIN buffer
-           ON buffer.name = out_flowplan.thebuffer
+           ON buffer.item_id = purchase_order.item_id
+           AND buffer.location_id = purchase_order.location_id
            AND buffer.subcategory = 'openbravo'
          inner join item
-           ON buffer.item_id = item.name
+           ON item.name = purchase_order.item_id
            and item.source is not null
            and item.subcategory = 'openbravo'
          inner join location
-           ON buffer.location_id = location.name
+           ON purchase_order.location_id = location.name
            and location.source is not null
            and location.subcategory = 'openbravo'
-         where out_operationplan.operation like 'Purchase %'
-           and out_operationplan.locked = 'f' %s
-         group by location.source, item.source, enddate
-         ''' % filter_expression)
+         where status = 'proposed' %s
+       union all
+       select item.source, location.source, enddate, quantity
+         FROM distribution_order
+         inner JOIN buffer
+           ON buffer.item_id = distribution_order.item_id
+           AND buffer.location_id = distribution_order.destination_id
+           AND buffer.subcategory = 'openbravo'
+         inner join item
+           ON item.name = distribution_order.item_id
+           and item.source is not null
+           and item.subcategory = 'openbravo'
+         inner join location
+           ON distribution_order.destination_id = location.name
+           and location.source is not null
+           and location.subcategory = 'openbravo'
+         where status = 'proposed' %s
+         ''' % (filter_expression_po,filter_expression_do))
       for i in cursor.fetchall():
         body.append(requisitionline % (identifier, i[0], i[3], i[2].strftime("%Y-%m-%dT%H:%M:%S"), count))
         count += 1
@@ -432,7 +453,6 @@ class Command(BaseCommand):
       <name>FREPPLE %s</name>
       <description>Bulk export</description>
       <timeHorizon>365</timeHorizon>
-      <timeHorizon>365</timeHorizon>
       <safetyLeadTime>0</safetyLeadTime>
       <mRPPurchasingRunLineList>'''
     purchasingplanline = '''<ProcurementRequisitionLine>
@@ -469,9 +489,17 @@ class Command(BaseCommand):
         )
 
       if self.filteredexport:
-        filter_expression = 'and (%s) ' % Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+        
+        filter_expression_po = Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
+        if filter_expression_po:
+          filter_expression_po = ' and (%s) ' %filter_expression_po
+        
+        filter_expression_do = Parameter.getValue('openbravo.filter_export_distribution_order', self.database, "")
+        if filter_expression_do:
+          filter_expression_do = ' and (%s) ' %filter_expression_do
       else:
-        filter_expression = ""
+        filter_expression_po = ""
+        filter_expression_do = ""
 
       # Create new purchase plan
       starttime = time()
@@ -481,26 +509,39 @@ class Command(BaseCommand):
       now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
       identifier = uuid4().hex
       body = [purchaseplan % (identifier, self.organization_id, now),]
-      cursor.execute('''select item.source, location.source, enddate, sum(out_operationplan.quantity)
-         FROM out_operationplan
-         inner join out_flowplan
-           ON operationplan_id = out_operationplan.id
-           AND out_flowplan.quantity > 0
+      cursor.execute(''' 
+	  select item.source, location.source, enddate, quantity
+         FROM purchase_order
          inner JOIN buffer
-           ON buffer.name = out_flowplan.thebuffer
+           ON buffer.item_id = purchase_order.item_id
+           AND buffer.location_id = purchase_order.location_id
            AND buffer.subcategory = 'openbravo'
          inner join item
-           ON buffer.item_id = item.name
+           ON item.name = purchase_order.item_id
            and item.source is not null
            and item.subcategory = 'openbravo'
          inner join location
-           ON buffer.location_id = location.name
+           ON purchase_order.location_id = location.name
            and location.source is not null
            and location.subcategory = 'openbravo'
-         where out_operationplan.operation like 'Purchase %'
-           and out_operationplan.locked = 'f' %s
-         group by location.source, item.source, enddate
-         ''' % filter_expression)
+         where status = 'proposed' %s
+	   union all
+	   select item.source, location.source, enddate, quantity
+         FROM distribution_order
+         inner JOIN buffer
+           ON buffer.item_id = distribution_order.item_id
+           AND buffer.location_id = distribution_order.destination_id
+           AND buffer.subcategory = 'openbravo'
+         inner join item
+           ON item.name = distribution_order.item_id
+           and item.source is not null
+           and item.subcategory = 'openbravo'
+         inner join location
+           ON distribution_order.destination_id = location.name
+           and location.source is not null
+           and location.subcategory = 'openbravo'
+         where status = 'proposed' %s
+         ''' % (filter_expression_po,filter_expression_do))
       for i in cursor.fetchall():
         body.append(purchasingplanline % (identifier, i[0], i[3], i[2].strftime("%Y-%m-%dT%H:%M:%S"), count))
         count += 1

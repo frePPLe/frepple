@@ -25,10 +25,17 @@
 namespace frepple
 {
 
+	bool compare_location(const pair<Location*, double>& a, const pair<Location*, double>& b)
+	{
+		return a.second < b.second;
+	}
+
+
 
 DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 {
-  // Set a bookmark at the current command
+	typedef list<pair<Location* , double > > SortedLocation;
+	// Set a bookmark at the current command
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   CommandManager::Bookmark* topcommand = data->setBookmark();
 
@@ -112,223 +119,288 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
       delete &*j;
     }
 
+	// plan over different locations if global replenishment is set
+	// TODO : check if flag is set at tiem level 
+	// Store the original location in a variable
+	Location* originalLocation = l->getLocation();
+	SortedLocation sortedLocation;
+	bool globalPurchase = l->getItem()->getBoolProperty("global_purchase", false);
+	if (globalPurchase) {
+		// iterate over locations and store them using the excess as a priority
+		// excess being onhand minus safety stock
+		Item* item = l->getItem();
+		Item::bufferIterator iter(item);
+		
+		while (Buffer *buffer = iter.next()) {
+			// Make sure we don't pick original location
+			if (buffer->getLocation() == originalLocation)
+				continue;
+
+				// We need to calculate the excess
+				Calendar* ss_calendar = buffer->getMinimumCalendar();
+				double excess = 0;
+				if (ss_calendar) {
+					CalendarBucket* calendarBucket = ss_calendar->findBucket(data->state->q_date, true);
+					if (calendarBucket) {
+						excess = buffer->getOnHand(l->getDue()) - calendarBucket->getValue();
+						
+					}
+				}
+				else {
+					excess = buffer->getOnHand(l->getDue()) - buffer->getMinimum();
+				}
+				sortedLocation.push_front(pair<Location*, double> (buffer->getLocation(), excess));
+			
+		}
+		// Let's now order the list of location
+		sortedLocation.sort(compare_location);		
+	}
+
+
     // Planning loop
-    do
-    {
-      // Message
-      if (loglevel>0)
-        logger << "Demand '" << l << "' asks: "
-            << plan_qty << "  " << plan_date << endl;
+	do
+	{
+		do
+		{
+			// Message
+			if (loglevel > 0)
+				logger << "Demand '" << l << "' asks: "
+				<< plan_qty << "  " << plan_date << endl;
 
-      // Store the last command in the list, in order to undo the following
-      // commands if required.
-      CommandManager::Bookmark* topcommand = data->setBookmark();
+			// Store the last command in the list, in order to undo the following
+			// commands if required.
+			CommandManager::Bookmark* topcommand = data->setBookmark();
 
-      // Plan the demand by asking the delivery operation to plan
-      double q_qty = plan_qty;
-      data->state->curBuffer = NULL;
-      data->state->q_qty = plan_qty;
-      data->state->q_date = plan_date;
-      data->planningDemand = const_cast<Demand*>(l);
-      data->state->curDemand = const_cast<Demand*>(l);
-      data->state->curOwnerOpplan = NULL;
-      deliveryoper->solve(*this,v);
-      Date next_date = data->state->a_date;
+			// Plan the demand by asking the delivery operation to plan
+			double q_qty = plan_qty;
+			data->state->curBuffer = NULL;
+			data->state->q_qty = plan_qty;
+			data->state->q_date = plan_date;
+			data->planningDemand = const_cast<Demand*>(l);
+			data->state->curDemand = const_cast<Demand*>(l);
+			data->state->curOwnerOpplan = NULL;
+			deliveryoper->solve(*this, v);
+			Date next_date = data->state->a_date;
 
-      if (data->state->a_qty < ROUNDING_ERROR
-          && plan_qty > l->getMinShipment() && l->getMinShipment() > 0)
-      {
-        bool originalLogConstraints = data->logConstraints;
-        data->logConstraints = false;
-        try
-        {
-          // The full asked quantity is not possible.
-          // Try with the minimum shipment quantity.
-          if (loglevel>1)
-            logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
-          data->rollback(topcommand);
-          data->state->curBuffer = NULL;
-          data->state->q_qty = l->getMinShipment();
-          data->state->q_date = plan_date;
-          data->state->curDemand = const_cast<Demand*>(l);
-          deliveryoper->solve(*this,v);
-          if (data->state->a_date < next_date)
-            next_date = data->state->a_date;
-          if (data->state->a_qty > ROUNDING_ERROR)
-          {
-            // The minimum shipment quantity is feasible.
-            // Now try iteratively different quantities to find the best we can do.
-            double min_qty = l->getMinShipment();
-            double max_qty = plan_qty;
-            double delta = fabs(max_qty - min_qty);
-            while (delta > data->getSolver()->getIterationAccuracy() * l->getQuantity()
-                && delta > data->getSolver()->getIterationThreshold())
-            {
-              // Note: we're kind of assuming that the demand is an integer value here.
-              double new_qty = floor((min_qty + max_qty) / 2);
-              if (new_qty == min_qty)
-              {
-                // Required to avoid an infinite loop on the same value...
-                new_qty += 1;
-                if (new_qty > max_qty) break;
-              }
-              if (loglevel>0)
-                logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
-              data->rollback(topcommand);
-              data->state->curBuffer = NULL;
-              data->state->q_qty = new_qty;
-              data->state->q_date = plan_date;
-              data->state->curDemand = const_cast<Demand*>(l);
-              deliveryoper->solve(*this,v);
-              if (data->state->a_date < next_date)
-                next_date = data->state->a_date;
-              if (data->state->a_qty > ROUNDING_ERROR)
-                // Too small: new min
-                min_qty = new_qty;
-              else
-                // Too big: new max
-                max_qty = new_qty;
-              delta = fabs(max_qty - min_qty);
-            }
-            q_qty = min_qty;  // q_qty is the biggest Q quantity giving a positive reply
-            if (data->state->a_qty <= ROUNDING_ERROR)
-            {
-              if (loglevel>0)
-                logger << "Demand '" << l << "' restores plan for quantity " << min_qty << endl;
-              // Restore the last feasible plan
-              data->rollback(topcommand);
-              data->state->curBuffer = NULL;
-              data->state->q_qty = min_qty;
-              data->state->q_date = plan_date;
-              data->state->curDemand = const_cast<Demand*>(l);
-              deliveryoper->solve(*this,v);
-            }
-          }
-        }
-        catch (...)
-        {
-          data->logConstraints = originalLogConstraints;
-          throw;
-        }
-        data->logConstraints = originalLogConstraints;
-      }
+			if (data->state->a_qty < ROUNDING_ERROR
+				&& plan_qty > l->getMinShipment() && l->getMinShipment() > 0)
+			{
+				bool originalLogConstraints = data->logConstraints;
+				data->logConstraints = false;
+				try
+				{
+					// The full asked quantity is not possible.
+					// Try with the minimum shipment quantity.
+					if (loglevel > 1)
+						logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
+					data->rollback(topcommand);
+					data->state->curBuffer = NULL;
+					data->state->q_qty = l->getMinShipment();
+					data->state->q_date = plan_date;
+					data->state->curDemand = const_cast<Demand*>(l);
+					deliveryoper->solve(*this, v);
+					if (data->state->a_date < next_date)
+						next_date = data->state->a_date;
+					if (data->state->a_qty > ROUNDING_ERROR)
+					{
+						// The minimum shipment quantity is feasible.
+						// Now try iteratively different quantities to find the best we can do.
+						double min_qty = l->getMinShipment();
+						double max_qty = plan_qty;
+						double delta = fabs(max_qty - min_qty);
+						while (delta > data->getSolver()->getIterationAccuracy() * l->getQuantity()
+							&& delta > data->getSolver()->getIterationThreshold())
+						{
+							// Note: we're kind of assuming that the demand is an integer value here.
+							double new_qty = floor((min_qty + max_qty) / 2);
+							if (new_qty == min_qty)
+							{
+								// Required to avoid an infinite loop on the same value...
+								new_qty += 1;
+								if (new_qty > max_qty) break;
+							}
+							if (loglevel > 0)
+								logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
+							data->rollback(topcommand);
+							data->state->curBuffer = NULL;
+							data->state->q_qty = new_qty;
+							data->state->q_date = plan_date;
+							data->state->curDemand = const_cast<Demand*>(l);
+							deliveryoper->solve(*this, v);
+							if (data->state->a_date < next_date)
+								next_date = data->state->a_date;
+							if (data->state->a_qty > ROUNDING_ERROR)
+								// Too small: new min
+								min_qty = new_qty;
+							else
+								// Too big: new max
+								max_qty = new_qty;
+							delta = fabs(max_qty - min_qty);
+						}
+						q_qty = min_qty;  // q_qty is the biggest Q quantity giving a positive reply
+						if (data->state->a_qty <= ROUNDING_ERROR)
+						{
+							if (loglevel > 0)
+								logger << "Demand '" << l << "' restores plan for quantity " << min_qty << endl;
+							// Restore the last feasible plan
+							data->rollback(topcommand);
+							data->state->curBuffer = NULL;
+							data->state->q_qty = min_qty;
+							data->state->q_date = plan_date;
+							data->state->curDemand = const_cast<Demand*>(l);
+							deliveryoper->solve(*this, v);
+						}
+					}
+				}
+				catch (...)
+				{
+					data->logConstraints = originalLogConstraints;
+					throw;
+				}
+				data->logConstraints = originalLogConstraints;
+			}
 
-      // Message
-      if (loglevel>0)
-        logger << "Demand '" << l << "' gets answer: "
-            << data->state->a_qty << "  " << next_date << "  "
-            << data->state->a_cost << "  " << data->state->a_penalty << endl;
+			// Message
+			if (loglevel > 0)
+				logger << "Demand '" << l << "' gets answer: "
+				<< data->state->a_qty << "  " << next_date << "  "
+				<< data->state->a_cost << "  " << data->state->a_penalty << endl;
 
-      // Update the date to plan in the next loop
-      Date copy_plan_date = plan_date;
+			// Update the date to plan in the next loop
+			Date copy_plan_date = plan_date;
 
-      // Compare the planned quantity with the minimum allowed shipment quantity
-      // We don't accept the answer in case:
-      // 1) Nothing is planned
-      // 2) The planned quantity is less than the minimum shipment quantity
-      // 3) The remaining quantity after accepting this answer is less than
-      //    the minimum quantity.
-      if (data->state->a_qty < ROUNDING_ERROR
-          || data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
-          || (plan_qty - data->state->a_qty < l->getMinShipment()
-              && fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR))
-      {
-        if (plan_qty - data->state->a_qty < l->getMinShipment()
-            && data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
-            && data->state->a_qty > best_a_qty )
-        {
-          // The remaining quantity after accepting this answer is less than
-          // the minimum quantity. Therefore, we delay accepting it now, but
-          // still keep track of this best offer.
-          best_a_qty = data->state->a_qty;
-          best_q_qty = q_qty;
-          best_q_date = plan_date;
-        }
+			// Compare the planned quantity with the minimum allowed shipment quantity
+			// We don't accept the answer in case:
+			// 1) Nothing is planned
+			// 2) The planned quantity is less than the minimum shipment quantity
+			// 3) The remaining quantity after accepting this answer is less than
+			//    the minimum quantity.
+			if (data->state->a_qty < ROUNDING_ERROR
+				|| data->state->a_qty + ROUNDING_ERROR < l->getMinShipment()
+				|| (plan_qty - data->state->a_qty < l->getMinShipment()
+					&& fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR))
+			{
+				if (plan_qty - data->state->a_qty < l->getMinShipment()
+					&& data->state->a_qty + ROUNDING_ERROR >= l->getMinShipment()
+					&& data->state->a_qty > best_a_qty)
+				{
+					// The remaining quantity after accepting this answer is less than
+					// the minimum quantity. Therefore, we delay accepting it now, but
+					// still keep track of this best offer.
+					best_a_qty = data->state->a_qty;
+					best_q_qty = q_qty;
+					best_q_date = plan_date;
+				}
 
-        // Delete operationplans - Undo all changes
-        data->rollback(topcommand);
+				// Delete operationplans - Undo all changes
+				data->rollback(topcommand);
 
-        // Set the ask date for the next pass through the loop
-        if (next_date <= copy_plan_date
-          || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
-          || (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
-              && plan_qty - data->state->a_qty > ROUNDING_ERROR))
-        {
-          // Oops, we didn't get a proper answer we can use for the next loop.
-          // Print a warning and simply try one day later.
-          if (loglevel>0)
-            logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
-          plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
-        }
-        else
-          // Use the next-date answer from the solver
-          plan_date = next_date;
-      }
-      else
-      {
-        // Accepting this answer
-        if (data->state->a_qty + ROUNDING_ERROR < q_qty)
-        {
-          // The demand was only partially planned. We need to do a new
-          // 'coordinated' planning run.
+				// Set the ask date for the next pass through the loop
+				if (next_date <= copy_plan_date
+					|| (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
+					|| (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
+						&& plan_qty - data->state->a_qty > ROUNDING_ERROR))
+				{
+					// Oops, we didn't get a proper answer we can use for the next loop.
+					// Print a warning and simply try one day later.
+					if (loglevel > 0)
+						logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
+					plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+				}
+				else
+					// Use the next-date answer from the solver
+					plan_date = next_date;
+			}
+			else
+			{
+				// Accepting this answer
+				if (data->state->a_qty + ROUNDING_ERROR < q_qty)
+				{
+					// The demand was only partially planned. We need to do a new
+					// 'coordinated' planning run.
 
-          // Delete operationplans created in the 'testing round'
-          data->rollback(topcommand);
+					// Delete operationplans created in the 'testing round'
+					data->rollback(topcommand);
 
-          // Create the correct operationplans
-          if (loglevel>=2)
-            logger << "Demand '" << l << "' plans coordination." << endl;
-          data->getSolver()->setLogLevel(0);
-          double tmpresult = 0;
-          try
-          {
-            for(double remainder = data->state->a_qty;
-                remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
-            {
-              data->state->q_qty = remainder;
-              data->state->q_date = copy_plan_date;
-              data->state->curDemand = const_cast<Demand*>(l);
-              data->state->curBuffer = NULL;
-              deliveryoper->solve(*this,v);
-              if (data->state->a_qty < ROUNDING_ERROR)
-              {
-                logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
-                break;
-              }
-              tmpresult += data->state->a_qty;
-            }
-          }
-          catch (...)
-          {
-            data->getSolver()->setLogLevel(loglevel);
-            throw;
-          }
-          data->getSolver()->setLogLevel(loglevel);
-          data->state->a_qty = tmpresult;
-          if (tmpresult == 0) break;
-        }
+					// Create the correct operationplans
+					if (loglevel >= 2)
+						logger << "Demand '" << l << "' plans coordination." << endl;
+					data->getSolver()->setLogLevel(0);
+					double tmpresult = 0;
+					try
+					{
+						for (double remainder = data->state->a_qty;
+							remainder > ROUNDING_ERROR; remainder -= data->state->a_qty)
+						{
+							data->state->q_qty = remainder;
+							data->state->q_date = copy_plan_date;
+							data->state->curDemand = const_cast<Demand*>(l);
+							data->state->curBuffer = NULL;
+							deliveryoper->solve(*this, v);
+							if (data->state->a_qty < ROUNDING_ERROR)
+							{
+								logger << "Warning: Demand '" << l << "': Failing coordination" << endl;
+								break;
+							}
+							tmpresult += data->state->a_qty;
+						}
+					}
+					catch (...)
+					{
+						data->getSolver()->setLogLevel(loglevel);
+						throw;
+					}
+					data->getSolver()->setLogLevel(loglevel);
+					data->state->a_qty = tmpresult;
+					if (tmpresult == 0) break;
+				}
 
-        // Register the new operationplans. We need to make sure that the
-        // correct execute method is called!
-        if (data->getSolver()->getAutocommit())
-        {
-          data->getSolver()->scanExcess(data);
-          data->CommandManager::commit();
-        }
+				// Register the new operationplans. We need to make sure that the
+				// correct execute method is called!
+				if (data->getSolver()->getAutocommit())
+				{
+					data->getSolver()->scanExcess(data);
+					data->CommandManager::commit();
+				}
 
-        // Update the quantity to plan in the next loop
-        plan_qty -= data->state->a_qty;
-        best_a_qty = 0.0;  // Reset 'best-answer' remember
-      }
+				// Update the quantity to plan in the next loop
+				plan_qty -= data->state->a_qty;
+				best_a_qty = 0.0;  // Reset 'best-answer' remember
+			}
 
-    }
-    // Repeat while there is still a quantity left to plan and we aren't
-    // exceeding the maximum delivery delay.
-    while (plan_qty > ROUNDING_ERROR
-        && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness())
-            || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
-            || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
-           ));
+		}
+		// Repeat while there is still a quantity left to plan and we aren't
+		// exceeding the maximum delivery delay.
+		while (plan_qty > ROUNDING_ERROR
+			&& ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness())
+				|| (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
+				|| (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
+				));
+		
+		if (globalPurchase)
+		{
+			if (sortedLocation.empty() || (l->getPlannedQuantity() + ROUNDING_ERROR >= l->getQuantity()))
+				break;
+
+			if (getLogLevel()>1)
+				logger << "Changing demand location for " << l->getName()
+				<<  " from "
+				<< l->getLocation() << " to "
+				<< sortedLocation.front().first << endl;
+
+			const_cast<Demand*>(l)->setLocation(sortedLocation.front().first);
+			deliveryoper = l->getDeliveryOperation();
+
+			// Remove first element of the sorted location
+			sortedLocation.pop_front();
+
+		}
+	}
+	while (globalPurchase);
+
+	if (globalPurchase)
+		// set demand back to original location
+		const_cast<Demand*>(l)->setLocation(originalLocation);
 
     // Accept the best possible answer.
     // We may have skipped it in the previous loop, awaiting a still better answer

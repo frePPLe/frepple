@@ -635,7 +635,8 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 	
 	// Manage global replenishment
   Item* item = o->getItemSupplier()->getItem();
-  if (item->getBoolProperty("global_purchase",false)) {
+  if (item && item->getBoolProperty("global_purchase",false)) 
+  {
 	  double total_onhand = 0;
 	  double total_ss = 0;
 	  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
@@ -664,8 +665,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 			  << " Total OH/SS : " << total_onhand 
 			  << "/" << total_ss << endl;
 		  return;
-		}
-		
+		}	
 	}
 
   solve(static_cast<const Operation*>(o), v);

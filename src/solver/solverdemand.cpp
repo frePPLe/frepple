@@ -124,7 +124,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 	// Store the original location in a variable
 	Location* originalLocation = l->getLocation();
 	SortedLocation sortedLocation;
-	bool globalPurchase = l->getItem()->getBoolProperty("global_purchase", false);
+	bool globalPurchase = l->getItem() ? l->getItem()->getBoolProperty("global_purchase", false) : false;
 	if (globalPurchase) {
 		// iterate over locations and store them using the excess as a priority
 		// excess being onhand minus safety stock

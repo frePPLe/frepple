@@ -31,7 +31,8 @@ from time import time
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
-from freppledb.input.models import Resource
+from freppledb.boot import getAttributes
+from freppledb.input.models import Resource, Item
 
 import frepple
 
@@ -331,12 +332,17 @@ class loadData(object):
     print('Importing items...')
     cnt = 0
     starttime = time()
+    attrs = [ f[0] for f in getAttributes(Item) ]
+    if attrs:
+      attrsql = ', %s' % ', '.join(attrs)
+    else:
+      attrsql = ''
     self.cursor.execute('''
       SELECT
         name, description, operation_id, owner_id,
-        price, category, subcategory, source
+        price, category, subcategory, source %s
       FROM item %s
-      ''' % self.filter_where)
+      ''' % (attrsql, self.filter_where))
     for i in self.cursor.fetchall():
       cnt += 1
       try:
@@ -347,6 +353,10 @@ class loadData(object):
           x.owner = frepple.item(name=i[3])
         if i[4]:
           x.price = i[4]
+        idx = 8
+        for a in attrs:
+          setattr(x, a, i[idx])
+          idx += 1
       except Exception as e:
         print("Error:", e)
     print('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))

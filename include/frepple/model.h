@@ -452,8 +452,11 @@ class Calendar : public HasName<Calendar>, public HasSource
       defaultValue = v;
     }
 
-    /** Removes a bucket from the list. */
-    DECLARE_EXPORT void removeBucket(CalendarBucket* bkt);
+    /** Removes a bucket from the list. 
+      * The first argument is the bucket to remove, and the second argument
+      * is a flag indicating whether to delete the bucket or not.
+      */
+    DECLARE_EXPORT void removeBucket(CalendarBucket* bckt, bool del = true);
 
     /** Returns the bucket where a certain date belongs to.
       * A NULL pointer is returned when no bucket is effective.

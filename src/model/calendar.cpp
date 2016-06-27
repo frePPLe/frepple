@@ -148,7 +148,7 @@ DECLARE_EXPORT Calendar::~Calendar()
 }
 
 
-DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt)
+DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt, bool del)
 {
   // Verify the bucket is on this calendar indeed
   CalendarBucket *b = firstBucket;
@@ -174,7 +174,8 @@ DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt)
   bkt->nextBucket = NULL;
   bkt->prevBucket = NULL;
   bkt->cal = NULL;
-  delete bkt;
+  if (del)
+    delete bkt;
 }
 
 
@@ -448,18 +449,23 @@ DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
 {
   if (cal == c)
     return;
+
+  // Unlink from the previous calendar
   if (cal)
-    throw DataException("Can't reassign a calendar bucket to a new calendar");
+    cal->removeBucket(this, false);
   cal = c;
 
-  // Link in the list of buckets
-  if (cal->firstBucket)
+  // Link in the list of buckets of the new calendar
+  if (cal)
   {
-    cal->firstBucket->prevBucket = this;
-    nextBucket = cal->firstBucket;
+    if (cal->firstBucket)
+    {
+      cal->firstBucket->prevBucket = this;
+      nextBucket = cal->firstBucket;
+    }
+    cal->firstBucket = this;
+    updateSort();
   }
-  cal->firstBucket = this;
-  updateSort();
 }
 
 

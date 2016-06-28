@@ -8,13 +8,15 @@ item is kept. It’s often called SKU, i.e. it's a unique item-location combinat
 Different types of buffers exist:
 
 * | `Buffer_default`_:
-  | The default buffer uses an “producing” operation to replenish it with
+  | The default buffer uses an "producing" operation to replenish it with
     additional material.
 
 * | `Buffer_procure`_:
   | A buffer that is replenished by a supplier. A number of parameters
     control the re-ordering policy: classic re-order point, fixed time
-    ordering, fixed quantity ordering, etc…
+    ordering, fixed quantity ordering, etc...
+  | Note: This buffer type is deprecated. Using the itemsupplier model
+    provides exactly the same functionality.
 
 * | `Buffer_infinite`_:
   | An infinite buffer has an infinite supply of the material is available.
@@ -129,11 +131,16 @@ action           A/C/AC/R          | Type of action to be executed:
 Buffer_default
 --------------
 
-The default buffer uses an “producing” operation to replenish it.
+The default buffer uses an "producing" operation to replenish it.
 No fields are defined in addition to the ones listed above.
 
 Buffer_procure
 --------------
+
+.. Important::
+
+   This buffer type is deprecated. Using the itemsupplier model 
+   provides exactly the same functionality.
 
 A procurement buffer is replenished by a supplier.
 

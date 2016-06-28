@@ -1,5 +1,10 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
+{% block tools %}
+<button class="btn btn-xs btn-primary pull-right" style="margin-bottom: 10px" onClick="location.href='{{request.prefix}}/execute/logdownload/'" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'download complete log file'|capfirst %}">
+  <span class="fa fa-arrow-down"></span>
+</button>
+{% endblock %}
 {% block content %}
 <div class="row">
 <div class="col-md-12">

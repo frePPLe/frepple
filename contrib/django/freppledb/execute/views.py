@@ -18,11 +18,13 @@
 import os
 import os.path
 import sys
+import re
 from datetime import datetime
 from subprocess import Popen
 from time import localtime, strftime
 
 from django.conf import settings
+from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.db.models import get_apps
@@ -371,6 +373,35 @@ def CancelTask(request, taskid):
   except Exception as e:
     logger.error("Error saving report settings: %s" % e)
     return HttpResponseServerError('Error canceling task')
+
+
+@staff_member_required
+@never_cache
+def ViewFile(request, filename):
+  clean_filename = re.split(r'/|:|\\', filename)[-1]
+  if not clean_filename or not 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+    raise Http404('File not found')
+  response = static.serve(
+    request, clean_filename, 
+    document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+    )
+  response['Content-Disposition'] = 'inline; filename="%s"' % clean_filename
+  return response
+
+
+@staff_member_required
+@never_cache
+def DownloadLogFile(request):
+  if request.database == DEFAULT_DB_ALIAS:
+    filename = 'frepple.log'
+  else:
+    filename = 'frepple_%s.log' % request.database
+  response = static.serve(
+    request, filename, 
+    document_root=settings.FREPPLE_LOGDIR
+    )
+  response['Content-Disposition'] = 'inline; filename="%s"' % filename
+  return response
 
 
 @staff_member_required

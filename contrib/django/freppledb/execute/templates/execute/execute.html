@@ -459,7 +459,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
               <tr>
                 <td></td>
                 <td><input class="chckfile_entity check" type="checkbox" value="{{j.0}}" checked="" id="chbx_input.demand" disabled hidden></td>
-                <td>{{j.0}}{% ifequal j.0 'loadfromfolder.log' %}<a href="{{request.prefix}}/execute/viewfile/loadfromfolder.log">&nbsp;<span class="fa fa-caret-right"></span></a>{% endifequal %}</td>
+                <td>{{j.0}}<a href="{{request.prefix}}/execute/viewfile/{{j.0}}">&nbsp;<span class="fa fa-caret-right"></span></a></td>
                 <td>{{j.2}}</td>
                 <td>{{j.1}}</td>
               </tr>

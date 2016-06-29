@@ -40,6 +40,7 @@ from freppledb.common.report import GridReport
 from freppledb import VERSION
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
+from _datetime import datetime
 
 
 class Command(BaseCommand):
@@ -84,6 +85,7 @@ class Command(BaseCommand):
     now = datetime.now()
 
     task = None
+    self.logfile = None
     try:
       # Initialize the task
       if 'task' in options and options['task']:
@@ -106,6 +108,12 @@ class Command(BaseCommand):
 
       # Execute
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
+
+        # Open the logfile
+        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'loadfromfolder.log'), "a")
+        print("%s Started upload from folder\n" % datetime.now(), file=self.logfile)
+        print("Started upload from folder" )
+
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
         for ifile in os.listdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
@@ -119,16 +127,21 @@ class Command(BaseCommand):
             if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
+              print("%s Matched a model to file: %s" % (datetime.now(),ifile), file=self.logfile)
+              print("Matched a model to file: %s" % ifile)
               break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+            print("%s Ignoring data in file: %s" % (datetime.now(),ifile), file=self.logfile)
             print("Ignoring data in file: %s" % ifile)
           elif self.user and not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
             # Check permissions
+            print("%s You don't permissions to add: %s" % (datetime.now(),ifile), file=self.logfile)
             print("You don't permissions to add: %s" % ifile)
           else:
             deps = set([model])
             GridReport.dependent_models(model, deps)
+
             models.append( (ifile, model, contenttype_id, deps) )
 
         # Sort the list of models, based on dependencies between models
@@ -138,22 +151,40 @@ class Command(BaseCommand):
           ok = True
           for i in range(cnt):
             for j in range(i + 1, cnt):
-              if models[i][1] in models[j][3]:
+              if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
                 # A subsequent model i depends on model i. The list ordering is
                 # thus not ok yet. We move this element to the end of the list.
                 models.append(models.pop(i))
                 ok = False
+        task.status = '10%'
+        task.save(using=self.database)
+        print("%s Sorted the models\n" % datetime.now(), file=self.logfile)
 
+        i=0
+        errors = 0
         for ifile, model, contenttype_id, dependencies in models:
-          print("Processing data in file: %s" % ifile)
+          i += 1
+          print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile)
+          print("Started processing data in file: %s" % ifile)
           filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
-          self.parseCSVloadfromfolder(model, filetoparse)
+          errors += self.parseCSVloadfromfolder(model, filetoparse)
+          print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile)
+          print("Finished processing data in file: %s" % ifile)
+          task.status = str(int(10+i/cnt*80))+'%'
+          task.save(using=self.database)
+          print(str(int(10+i/cnt*80))+'%')
 
       # Task update
-      task.status = 'Done'
+      if errors:
+        task.status = 'Failed'
+        task.message = "Uploaded %s data files with %s errors" % (cnt, errors)
+      else:
+        task.status = 'Done'
+        task.message = "Uploaded %s data file" % cnt
       task.finished = datetime.now()
 
     except Exception as e:
+      print("%s Failed" % datetime.now(), file=self.logfile)
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
@@ -162,7 +193,11 @@ class Command(BaseCommand):
 
     finally:
       if task:
+        task.status = '100%'
         task.save(using=self.database)
+      if self.logfile:
+        print('%s End of upload from folder\n' % datetime.now(), file=self.logfile)
+        self.logfile.close()
 
 
   def parseCSVloadfromfolder(self, model, file):
@@ -180,6 +215,7 @@ class Command(BaseCommand):
     changed = 0
     added = 0
     content_type_id = ContentType.objects.get_for_model(model).pk
+    errorcount = 0
 
     # Handle the complete upload as a single database transaction
     with transaction.atomic(using=self.database):
@@ -207,7 +243,7 @@ class Command(BaseCommand):
                 break
             if not ok:
               headers.append(False)
-              print('Skipping field %s' % col)
+              print('%s Warning: Skipping field %s' % (datetime.now(), col), file=self.logfile)
             if col == model._meta.pk.name.lower() or \
                col == model._meta.pk.verbose_name.lower():
               has_pk_field = True
@@ -215,7 +251,8 @@ class Command(BaseCommand):
             # The primary key is not an auto-generated id and it is not mapped in the input...
             errors = True
             # Translators: Translation included with Django
-            print('Some keys were missing: %s' % model._meta.pk.name)
+            print('%s Error: Some keys were missing: %s' % (datetime.now(),model._meta.pk.name), file=self.logfile)
+            errorcount += 1
           # Abort when there are errors
           if errors:
             break
@@ -284,15 +321,25 @@ class Command(BaseCommand):
               except Exception as e:
                 # Validation fails
                 for error in form.non_field_errors():
-                  print('Row %s: %s' % (rownumber, error))
+                  print('%s Error: Row %s: %s' % (datetime.now(), rownumber, error), file=self.logfile)
+                  errorcount += 1
                 for field in form:
                   for error in field.errors:
-                    print('Row %s field %s: %s' % (rownumber, field.name, error))
+                    print('%s Error: Row %s field %s: %s' % (datetime.now(), rownumber, field.name, error), file=self.logfile)
+                    errorcount += 1
+
           except Exception as e:
-            print("Exception during upload: %s" % e )
+            print("%s Error: Exception during upload: %s" % (datetime.now(),e) , file=self.logfile)
+            errorcount += 1
 
       # Report all failed records
-      print('Uploaded data successfully: changed %d and added %d records' % (changed, added))
+      if not errors:
+        print('%s Uploaded data successfully: changed %d and added %d records' % (datetime.now(), changed, added), file=self.logfile)
+        print('Uploaded data successfully: changed %d and added %d records' % (changed, added))
+      else:
+        print('%s Error: Invalid data format - skipping the file \n' % datetime.now(), file=self.logfile)
+      return errorcount
+
 
   class EncodedCSVReader:
     '''

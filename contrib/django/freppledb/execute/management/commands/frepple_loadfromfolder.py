@@ -112,7 +112,6 @@ class Command(BaseCommand):
         # Open the logfile
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'loadfromfolder.log'), "a")
         print("%s Started upload from folder\n" % datetime.now(), file=self.logfile)
-        print("Started upload from folder" )
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
@@ -128,16 +127,13 @@ class Command(BaseCommand):
               model = m
               contenttype_id = ct
               print("%s Matched a model to file: %s" % (datetime.now(),ifile), file=self.logfile)
-              print("Matched a model to file: %s" % ifile)
               break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
             print("%s Ignoring data in file: %s" % (datetime.now(),ifile), file=self.logfile)
-            print("Ignoring data in file: %s" % ifile)
           elif self.user and not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
             # Check permissions
-            print("%s You don't permissions to add: %s" % (datetime.now(),ifile), file=self.logfile)
-            print("You don't permissions to add: %s" % ifile)
+            print("%s You don't have permissions to add: %s" % (datetime.now(),ifile), file=self.logfile)
           else:
             deps = set([model])
             GridReport.dependent_models(model, deps)
@@ -158,21 +154,17 @@ class Command(BaseCommand):
                 ok = False
         task.status = '10%'
         task.save(using=self.database)
-        print("%s Sorted the models\n" % datetime.now(), file=self.logfile)
 
         i=0
         errors = 0
         for ifile, model, contenttype_id, dependencies in models:
           i += 1
           print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile)
-          print("Started processing data in file: %s" % ifile)
           filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
           errors += self.parseCSVloadfromfolder(model, filetoparse)
           print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile)
-          print("Finished processing data in file: %s" % ifile)
           task.status = str(int(10+i/cnt*80))+'%'
           task.save(using=self.database)
-          print(str(int(10+i/cnt*80))+'%')
 
       # Task update
       if errors:
@@ -335,7 +327,6 @@ class Command(BaseCommand):
       # Report all failed records
       if not errors:
         print('%s Uploaded data successfully: changed %d and added %d records' % (datetime.now(), changed, added), file=self.logfile)
-        print('Uploaded data successfully: changed %d and added %d records' % (changed, added))
       else:
         print('%s Error: Invalid data format - skipping the file \n' % datetime.now(), file=self.logfile)
       return errorcount

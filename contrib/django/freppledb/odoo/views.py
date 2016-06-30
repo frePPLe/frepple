@@ -40,11 +40,19 @@ def Upload(request):
   try:
     # Prepare a message for odoo
     boundary = email.generator._make_boundary()
+    odoo_db = Parameter.getValue("odoo.db", request.database)
+    odoo_company = Parameter.getValue("odoo.company", request.database)
+    odoo_user = Parameter.getValue("odoo.user", request.database)
+    odoo_password = settings.ODOO_PASSWORDS.get(request.database, None)
+    if not odoo_password:
+      odoo_password = Parameter.getValue("odoo.password", request.database)    
+    if not odoo_db or not odoo_company or not odoo_user or not odoo_password:
+      return HttpResponseServerError(_("Invalid configuration parameters"))
     data_odoo = [
       '--%s' % boundary,
       'Content-Disposition: form-data; name="database"',
       '',
-      Parameter.getValue("odoo.db", request.database),
+      odoo_db,
       '--%s' % boundary,
       'Content-Disposition: form-data; name="language"',
       '',
@@ -52,7 +60,7 @@ def Upload(request):
       '--%s' % boundary,
       'Content-Disposition: form-data; name="company"',
       '',
-      Parameter.getValue("odoo.company", request.database),
+      odoo_company,
       '--%s' % boundary,
       'Content-Disposition: form-data; name="mode"',
       '',
@@ -123,10 +131,6 @@ def Upload(request):
     data_odoo.append('</operationplans></plan>')
     data_odoo.append('--%s--' % boundary)
     data_odoo.append('')
-    odoo_user = Parameter.getValue("odoo.user", request.database)
-    odoo_password = settings.ODOO_PASSWORDS.get(request.database)
-    if not odoo_password:
-      odoo_password = Parameter.getValue("odoo.password", request.database)    
     body = '\r\n'.join(data_odoo).encode('utf-8')
     size = len(body)
     encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))

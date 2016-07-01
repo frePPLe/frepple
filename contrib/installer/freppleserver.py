@@ -338,8 +338,6 @@ from django.core.handlers.wsgi import WSGIHandler
 from django.contrib.staticfiles.handlers import StaticFilesHandler
 from django.db import DEFAULT_DB_ALIAS
 
-from freppledb.execute.management.commands.frepple_runserver import CheckUpdates
-
 # Determine the port number
 port = options.port or settings.PORT
 
@@ -381,10 +379,6 @@ log("frePPLe using %s database '%s' as '%s' on '%s:%s'" % (
   settings.DATABASES[DEFAULT_DB_ALIAS].get('PORT', '')
   ))
 
-
-# Start a separate thread that will check for updates.
-# We don't wait for it to finish.
-CheckUpdates().start()
 
 # Run the WSGI server in a new thread
 wsgi = RunWSGIServer(address, port)

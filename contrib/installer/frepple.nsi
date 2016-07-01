@@ -578,7 +578,7 @@ Section -Post
   nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" migrate --noinput'
   Pop $0
   ${If} $0 == "0"
-    SectionGetFlags ${SecPostgres} $R0
+    SectionGetFlags ${SecDemoData} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     ${If} $R0 == ${SF_SELECTED}
       DetailPrint "Loading demo data"

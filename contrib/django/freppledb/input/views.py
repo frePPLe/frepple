@@ -1025,7 +1025,7 @@ class DistributionOrderList(GridReport):
     actions = [
       {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','openbravo')"},
     ]
-  if 'freppledb.odoo' in settings.INSTALLED_APPS:
+  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
     ]

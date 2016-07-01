@@ -15,24 +15,56 @@ BUFFER	item A @ WH3	1971-01-01T00:00:00	10	10
 BUFFER	item A @ WH4	1971-01-01T00:00:00	10	10
 BUFFER	item A @ WH5	1971-01-01T00:00:00	20	20
 BUFFER	item A @ WH6	1971-01-01T00:00:00	100	100
+BUFFER	item B @ DC1	1971-01-01T00:00:00	100	100
+BUFFER	item B @ DC2	1971-01-01T00:00:00	100	100
+BUFFER	item B @ DC2	1971-01-01T00:00:00	-10	90
+BUFFER	item B @ DC2	1971-01-01T00:00:00	-10	80
+BUFFER	item B @ DC2	2015-11-21T00:00:00	-40	40
+BUFFER	item B @ WH1	1971-01-01T00:00:00	10	10
+BUFFER	item B @ WH2	1971-01-01T00:00:00	100	100
+BUFFER	item B @ WH3	1971-01-01T00:00:00	10	10
+BUFFER	item B @ WH4	1971-01-01T00:00:00	10	10
+BUFFER	item B @ WH4	2015-12-01T00:00:00	40	50
+BUFFER	item B @ WH4	2015-12-01T00:00:00	-40	10
+BUFFER	item B @ WH5	1971-01-01T00:00:00	20	20
+BUFFER	item B @ WH6	1971-01-01T00:00:00	100	100
 DEMAND	order A1	2016-07-31T00:00:00	40
 DEMAND	order A2	2016-07-31T00:00:00	40
 DEMAND	order A3	2016-07-31T00:00:00	40
 DEMAND	order A4	2016-07-31T00:00:00	40
+DEMAND	order B1	2015-12-01T00:00:00	40
 OPERATION	Purchase item A @ DC1 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
 OPERATION	Purchase item A @ DC1 from Supplier 1	2016-05-22T00:00:00	2016-07-21T00:00:00	100
 OPERATION	Purchase item A @ DC2 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
 OPERATION	Purchase item A @ WH6 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
+OPERATION	Purchase item B @ DC1 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
+OPERATION	Purchase item B @ DC2 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
+OPERATION	Purchase item B @ WH6 from Supplier 1	1971-01-01T00:00:00	1971-01-01T00:00:00	100
 OPERATION	Ship item A from item A @ DC1 to item A @ WH1	2016-07-21T00:00:00	2016-07-31T00:00:00	160
 OPERATION	Ship item A from item A @ DC2 to item A @ WH3	1971-01-01T00:00:00	1971-01-01T00:00:00	10
 OPERATION	Ship item A from item A @ DC2 to item A @ WH4	1971-01-01T00:00:00	1971-01-01T00:00:00	10
+OPERATION	Ship item B from item B @ DC2 to item B @ WH3	1971-01-01T00:00:00	1971-01-01T00:00:00	10
+OPERATION	Ship item B from item B @ DC2 to item B @ WH4	1971-01-01T00:00:00	1971-01-01T00:00:00	10
+OPERATION	Ship item B from item B @ DC2 to item B @ WH4	2015-11-21T00:00:00	2015-12-01T00:00:00	40
 PROBLEM	material excess	Buffer 'item A @ DC1' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item A @ DC2' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item A @ WH2' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item A @ WH5' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item A @ WH6' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item B @ DC1' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item B @ DC2' has material excess of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item B @ WH2' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item B @ WH5' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item B @ WH6' has material excess of 90	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ DC1 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ DC2 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ WH6 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase item B @ DC1 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase item B @ DC2 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase item B @ WH6 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item A from item A @ DC2 to item A @ WH3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item A from item A @ DC2 to item A @ WH4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Ship item B @ WH4' planned in the past	2015-12-01T00:00:00 / 2015-12-01T00:00:00
+PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH4' planned in the past	2015-11-21T00:00:00 / 2015-12-01T00:00:00

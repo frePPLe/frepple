@@ -94,9 +94,6 @@
     </item>
     <item name="item A"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
     <item name="item B"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
-    <item name="item C"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
-    <item name="item D"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
-    <item name="item E"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
   </items>
   <buffers>
     <buffer name="item A @ WH1" onhand="10" minimum="10"><item name="item A"/><location name="WH1"/></buffer>
@@ -107,6 +104,14 @@
     <buffer name="item A @ WH6" onhand="0" minimum="10"><item name="item A"/><location name="WH6"/></buffer>
     <buffer name="item A @ DC1" onhand="0" minimum="10"><item name="item A"/><location name="DC1"/></buffer>
     <buffer name="item A @ DC2" onhand="0" minimum="10"><item name="item A"/><location name="DC2"/></buffer>
+    <buffer name="item B @ WH1" onhand="10" minimum="10"><item name="item B"/><location name="WH1"/></buffer>
+    <buffer name="item B @ WH2" onhand="100" minimum="10"><item name="item B"/><location name="WH2"/></buffer>
+    <buffer name="item B @ WH3" onhand="0" minimum="10"><item name="item B"/><location name="WH3"/></buffer>
+    <buffer name="item B @ WH4" onhand="0" minimum="10"><item name="item B"/><location name="WH4"/></buffer>
+    <buffer name="item B @ WH5" onhand="20" minimum="10"><item name="item B"/><location name="WH5"/></buffer>
+    <buffer name="item B @ WH6" onhand="0" minimum="10"><item name="item B"/><location name="WH6"/></buffer>
+    <buffer name="item B @ DC1" onhand="0" minimum="10"><item name="item B"/><location name="DC1"/></buffer>
+    <buffer name="item B @ DC2" onhand="0" minimum="10"><item name="item B"/><location name="DC2"/></buffer>
   </buffers>
   <demands>
     <demand name="order A1">
@@ -132,6 +137,12 @@
       <due>2016-07-31T00:00:00</due>
       <item name="item A" />
       <location name="WH1"/>
+    </demand>
+    <demand name="order B1">
+      <quantity>40</quantity>
+      <due>2015-12-01T00:00:00</due>
+      <item name="item B" />
+      <location name="WH4"/>
     </demand>
   </demands>
 

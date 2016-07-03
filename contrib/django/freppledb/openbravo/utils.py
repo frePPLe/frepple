@@ -24,6 +24,8 @@ def get_data(url, host, user, password):
   Utility function to read data from the Openbravo web service.
   '''
   # Connect to openbravo
+  if not url or not host or not user or not password:
+    raise Exception("Invalid configuration")
   webservice = http.client.HTTPConnection(host)
   webservice.putrequest("GET", url)
   webservice.putheader("Host", host)
@@ -48,6 +50,8 @@ def post_data(xmldoc, url, host, user, password):
   Utility function to post data to the Openbravo web service.
   '''
   # Send the data to openbravo
+  if not url or not host or not user or not password:
+    raise Exception("Invalid configuration")
   webservice = http.client.HTTPConnection(host)
   webservice.putrequest("POST", url)
   webservice.putheader("Host", host)
@@ -71,6 +75,8 @@ def delete_data(url, host, user, password):
   Utility function to delete data from the Openbravo web service.
   '''
   # Connect to openbravo
+  if not url or not host or not user or not password:
+    raise Exception("Invalid configuration")
   webservice = http.client.HTTPConnection(host)
   webservice.putrequest("DELETE", url)
   webservice.putheader("Host", host)

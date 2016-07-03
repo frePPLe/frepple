@@ -94,10 +94,6 @@ class Command(BaseCommand):
       print('    http://%s:%s/' % (address, port))
     print('Quit the server with CTRL-C.\n')
 
-    # Start a separate thread that will check for updates
-    # We don't wait for it to finish
-    CheckUpdates().start()
-
     # Run the WSGI server
     server = CherryPyWSGIServer(
       (address, port),
@@ -111,24 +107,3 @@ class Command(BaseCommand):
       server.start()
     except KeyboardInterrupt:
       server.stop()
-
-
-class CheckUpdates(Thread):
-  def run(self):
-    try:
-      import urllib.request, urllib.parse
-      import re
-      values = {
-        'platform': sys.platform,
-        'executable': sys.executable,
-        'version': VERSION,
-        }
-      request = urllib.request.Request('http://www.frepple.com/usage.php?' + urllib.parse.urlencode(values))
-      response = urllib.request.urlopen(request).read()
-      match = re.search("<release>(.*)</release>", response)
-      release = match.group(1)
-      if release > VERSION:
-        print("A new frePPLe release %s is available. Your current release is %s." % (release, VERSION))
-    except:
-      # Don't worry if something went wrong.
-      pass

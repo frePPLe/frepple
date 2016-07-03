@@ -25,7 +25,9 @@ autodiscover = True
 urlpatterns = patterns(
   '',   # Prefix
   url(r'^execute/$', freppledb.execute.views.TaskReport.as_view(), name="execute"),
-  url(r'^execute/logfrepple/$', freppledb.execute.views.logfile, name="execute_log"),
+  url(r'^execute/logfrepple/$', freppledb.execute.views.logfile, name="execute_view_log"),
   url(r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask, name="execute_launch"),
   url(r'^execute/cancel/(.+)/$', freppledb.execute.views.CancelTask, name="execute_cancel"),
+  url(r'^execute/viewfile/(.+)$', freppledb.execute.views.ViewFile, name="execute_view_file"),
+  url(r'^execute/logdownload/$', freppledb.execute.views.DownloadLogFile, name="execute_download_log"),
 )

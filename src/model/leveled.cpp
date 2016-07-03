@@ -315,6 +315,22 @@ DECLARE_EXPORT void HasLevel::computeLevels()
               }
             }
           }  // End of needs-procssing if statement
+
+          // Add all buffers for this item to the same cluster
+          Item::bufferIterator buf_iter(cur_Flow->getBuffer()->getItem());
+          while (Buffer* tmpbuf = buf_iter.next())
+            if (!tmpbuf->cluster)
+            {
+              tmpbuf->cluster = cur_cluster;
+              for (Buffer::flowlist::const_iterator
+                buffl = tmpbuf->getFlows().begin();
+                buffl != tmpbuf->getFlows().end();
+                ++buffl)
+              {
+                if (!buffl->getOperation()->cluster)
+                  buffl->getOperation()->cluster = cur_cluster;
+              }
+            }
         } // End of flow loop
 
       }     // End while stack not empty

@@ -486,6 +486,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   ${If} $R0 == ${SF_SELECTED}
   FileWrite $R4 "  'scenario1': {$\r$\n"
@@ -499,6 +500,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   FileWrite $R4 "  'scenario2': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
@@ -511,6 +513,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario2',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),$\r$\n"  
   FileWrite $R4 "    },$\r$\n"
   FileWrite $R4 "  'scenario3': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
@@ -523,6 +526,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario3',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   ${Endif}
   FileWrite $R4 "  }$\r$\n$\r$\n"
@@ -574,7 +578,7 @@ Section -Post
   nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" migrate --noinput'
   Pop $0
   ${If} $0 == "0"
-    SectionGetFlags ${SecPostgres} $R0
+    SectionGetFlags ${SecDemoData} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     ${If} $R0 == ${SF_SELECTED}
       DetailPrint "Loading demo data"

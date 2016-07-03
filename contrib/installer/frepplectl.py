@@ -34,7 +34,7 @@ import django
 django.setup()
 
 # Import django
-from django.core.management import execute_from_command_line, call_command
+from django.core.management import execute_from_command_line
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Global purchase</name>
+  <description>
+  Test the capability to replenish an item based on the total
+  material availability in the network.
+
+  The use case for this capability is when a customer order can be satisfied
+  from multiple distribution centers. Eg we can ship the item with fedex
+  from location A, but we could ship it by fedex from location B as well.
+
+  This feature has 2 specific planning behavior:
+    - Generation of a new purchase order for an item is blocked when the total
+      inventory of the item across all locations is above the sum of the
+      safety stock of the item across all locations.
+    - By default frePPLe *only* plans a demand on the location where it is
+      pointing at. When the global_purchase flag for the item is set, the
+      planning algorithm will first plan at the demand location. If the
+      demand can't be satisfied from that location the algorithm will try to
+      satisfy the demand from other locations that have the item on stock.
+      Candidate locations are sorted in descending order by the amount
+      inventory above the safety stock level they carry of the item.
+  </description>
+  <current>2016-01-01T00:00:00</current>
+  <locations>
+    <location name="WH1"/>   <!-- replenished through DC1 -->
+    <location name="WH2"/>   <!-- replenished through DC1 -->
+    <location name="WH3"/>   <!-- replenished through DC2 -->
+    <location name="WH4"/>   <!-- replenished through DC2 -->
+    <location name="WH5"/>   <!-- buys directly from supplier -->
+    <location name="WH6"/>   <!-- buys directly from supplier -->
+    <location name="DC1"/>   <!-- buys from supplier -->
+    <location name="DC2"/>   <!-- buys from supplier -->
+  </locations>
+  <items>
+    <!-- DEFAULT NETWORK FOR ALL PRODUCTS -->
+    <item name="All items" price="10">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P60D</leadtime>
+          <location name="DC1"/>
+          <size_minimum>100</size_minimum>
+          <priority>1</priority>
+        </itemsupplier>
+        <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P60D</leadtime>
+          <location name="DC2"/>
+          <size_minimum>100</size_minimum>
+          <priority>1</priority>
+        </itemsupplier>
+        <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P60D</leadtime>
+          <location name="WH5"/>
+          <size_minimum>100</size_minimum>
+          <priority>1</priority>
+        </itemsupplier>
+        <itemsupplier>
+          <supplier name="Supplier 1" />
+          <leadtime>P60D</leadtime>
+          <location name="WH6"/>
+          <size_minimum>100</size_minimum>
+          <priority>1</priority>
+        </itemsupplier>
+      </itemsuppliers>
+      <itemdistributions>
+        <itemdistribution>
+          <origin name="DC1" />
+          <leadtime>P10D</leadtime>
+          <destination name="WH1"/>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="DC1" />
+          <leadtime>P10D</leadtime>
+          <destination name="WH2"/>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="DC2" />
+          <leadtime>P10D</leadtime>
+          <destination name="WH3"/>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="DC2" />
+          <leadtime>P10D</leadtime>
+          <destination name="WH4"/>
+          <priority>1</priority>
+        </itemdistribution>
+      </itemdistributions>
+    </item>
+    <item name="item A"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
+    <item name="item B"><owner name="All items"/><booleanproperty name="global_purchase" value="1"/></item>
+  </items>
+  <buffers>
+    <buffer name="item A @ WH1" onhand="10" minimum="10"><item name="item A"/><location name="WH1"/></buffer>
+    <buffer name="item A @ WH2" onhand="100" minimum="10"><item name="item A"/><location name="WH2"/></buffer>
+    <buffer name="item A @ WH3" onhand="0" minimum="10"><item name="item A"/><location name="WH3"/></buffer>
+    <buffer name="item A @ WH4" onhand="0" minimum="10"><item name="item A"/><location name="WH4"/></buffer>
+    <buffer name="item A @ WH5" onhand="20" minimum="10"><item name="item A"/><location name="WH5"/></buffer>
+    <buffer name="item A @ WH6" onhand="0" minimum="10"><item name="item A"/><location name="WH6"/></buffer>
+    <buffer name="item A @ DC1" onhand="0" minimum="10"><item name="item A"/><location name="DC1"/></buffer>
+    <buffer name="item A @ DC2" onhand="0" minimum="10"><item name="item A"/><location name="DC2"/></buffer>
+    <buffer name="item B @ WH1" onhand="10" minimum="10"><item name="item B"/><location name="WH1"/></buffer>
+    <buffer name="item B @ WH2" onhand="100" minimum="10"><item name="item B"/><location name="WH2"/></buffer>
+    <buffer name="item B @ WH3" onhand="0" minimum="10"><item name="item B"/><location name="WH3"/></buffer>
+    <buffer name="item B @ WH4" onhand="0" minimum="10"><item name="item B"/><location name="WH4"/></buffer>
+    <buffer name="item B @ WH5" onhand="20" minimum="10"><item name="item B"/><location name="WH5"/></buffer>
+    <buffer name="item B @ WH6" onhand="0" minimum="10"><item name="item B"/><location name="WH6"/></buffer>
+    <buffer name="item B @ DC1" onhand="0" minimum="10"><item name="item B"/><location name="DC1"/></buffer>
+    <buffer name="item B @ DC2" onhand="0" minimum="10"><item name="item B"/><location name="DC2"/></buffer>
+  </buffers>
+  <demands>
+    <demand name="order A1">
+      <quantity>40</quantity>
+      <due>2016-07-31T00:00:00</due>
+      <item name="item A"/>
+      <location name="WH1"/>
+    </demand>
+    <demand name="order A2">
+      <quantity>40</quantity>
+      <due>2016-07-31T00:00:00</due>
+      <item name="item A" />
+      <location name="WH1"/>
+    </demand>
+    <demand name="order A3">
+      <quantity>40</quantity>
+      <due>2016-07-31T00:00:00</due>
+      <item name="item A" />
+      <location name="WH1"/>
+    </demand>
+    <demand name="order A4">
+      <quantity>40</quantity>
+      <due>2016-07-31T00:00:00</due>
+      <item name="item A" />
+      <location name="WH1"/>
+    </demand>
+    <demand name="order B1">
+      <quantity>40</quantity>
+      <due>2015-12-01T00:00:00</due>
+      <item name="item B" />
+      <location name="WH4"/>
+    </demand>
+  </demands>
+
+<?python
+import datetime
+import random
+
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

@@ -13,11 +13,11 @@ Usage::
 
    frepplectl subcommand [options] [args]
 
-Type ‘frepplectl.py help <subcommand>’ for help on a specific subcommand.
+Type 'frepplectl.py help <subcommand>' for help on a specific subcommand.
 
 Some subcommands optionally expect application names as arguments. The frePPLe
-user interface has the following applications: “input”, “output”, “execute”,
-“common”, “auth”, “forecast” (Enterprise Edition only) and “quoting” (Enterprise
+user interface has the following applications: "input", "output", "execute",
+"common", "auth", "forecast" (Enterprise Edition only) and "quoting" (Enterprise
 Edition only).
 
 Commonly used subcommands are:
@@ -30,6 +30,9 @@ Commonly used subcommands are:
 
 * | **frepple_flush**:
   | Deletes the data from the frePPLe database.
+
+* | **frepple_loadfromfolder**:
+  | Load CSV-formatted data files in to the frePPLe database.
 
 * | **frepple_import_openbravo**:
   | Execute the openbravo import connector, which downloads data from openbravo.
@@ -111,14 +114,18 @@ Less commonly used:
 
 Options:
 
+* | **--database=DATABASE
+  | Specifies which database to run the command for. The database names are defined in the
+    djangosettings.py.
+   
 * | **-v VERBOSITY, –verbosity=VERBOSITY**:
-  | Verbosity level: 0=minimal output, 1=normal output, 2=all output
+  | Verbosity level: 0=minimal output, 1=normal output, 2=all output.
 
 * | **–settings=SETTINGS**:
-  | The Python path to a settings module, normally leave to the default “freppledb.settings”
+  | The Python path to a settings module, normally leave to the default "freppledb.settings".
 
 * | **–pythonpath=PYTHONPATH**:
-  | A directory to add to the Python path, e.g. “/home/frepple/myproject”.
+  | A directory to add to the Python path, e.g. "/home/frepple/myproject".
 
 * | **–traceback**:
   | Print traceback on exception.

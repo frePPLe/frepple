@@ -14,3 +14,4 @@ There are different buffer types:
    :maxdepth: 1
 
    time-based-safety-stock
+   global-purchase

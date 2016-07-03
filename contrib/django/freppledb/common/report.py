@@ -2001,7 +2001,7 @@ def importWorkbook(request):
       ok = True
       for i in range(cnt):
         for j in range(i + 1, cnt):
-          if models[i][1] in models[j][3]:
+          if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
             # A subsequent model i depends on model i. The list ordering is
             # thus not ok yet. We move this element to the end of the list.
             models.append(models.pop(i))

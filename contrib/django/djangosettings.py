@@ -57,7 +57,7 @@ DATABASES = {
     'TEST': {
       'NAME': 'test_frepple' # Database name used when running the test suite.
       },
-    'FILEUPLOADFOLDER': 'C:\\develop'
+    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -77,7 +77,8 @@ DATABASES = {
     'OPTIONS': {},         # Backend specific configuration parameters.
     'TEST': {
       'NAME': 'test_scenario1' # Database name used when running the test suite.
-      }
+      },
+    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),
     },
   'scenario2': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -97,7 +98,8 @@ DATABASES = {
     'OPTIONS': {},         # Backend specific configuration parameters.
     'TEST': {
       'NAME': 'test_scenario2' # Database name used when running the test suite.
-      }
+      },
+    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),
     },
   'scenario3': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -117,7 +119,8 @@ DATABASES = {
     'OPTIONS': {},         # Backend specific configuration parameters.
     'TEST': {
       'NAME': 'test_scenario3' # Database name used when running the test suite.
-      }
+      },
+    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),
     },
   }
 

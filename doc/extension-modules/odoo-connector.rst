@@ -27,8 +27,7 @@ The connector provides the following functionality:
   | Implemented as an odoo addon module, it is easy to customize the connector
     to your needs.
 
-* | The integration has been developed with Odoo v7.
-  | A version for v8 is being worked on.
+* The integration has been developed and tested with Odoo v8 and v9.
 
 Here are the slides presented during the `Odoo opendays conference <https://www.odoo.com/event/OpenDays-2014-5/page/website_event.Introduction-OpenDays>`_
 in June 2014.
@@ -56,7 +55,7 @@ The connector has 2 components:
 * | **Install the Odoo addon**
   | The addon code is found in the folder contrib/odoo, or you can pick up the
     latest version from github https://github.com/frePPLe/frePPLe/tree/master/contrib/odoo.
-  | A different version is required for v7 and for v8.
+  | A different version is required for each version of Odoo.
 
   The module has the following dependencies: ‘procurement’, ‘product’, ‘purchase’,
   ‘sale’, ‘resource’, ‘mrp’, ‘sales_order_date’, and (optional) ‘hr’.

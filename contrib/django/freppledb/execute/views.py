@@ -18,11 +18,13 @@
 import os
 import os.path
 import sys
+import re
 from datetime import datetime
 from subprocess import Popen
 from time import localtime, strftime
 
 from django.conf import settings
+from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.db.models import get_apps
@@ -99,36 +101,43 @@ class TaskReport(GridReport):
         pass  # Silently ignore failures
     fixtures = sorted(fixtures)
 
-    # convert from bytes to
-    def sizeof_fmt(num, suffix='B'):
+    # Function to convert from bytes to human readabl format
+    def sizeof_fmt(num):
       for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
         if abs(num) < 1024.0:
-            return "%3.1f%s%s" % (num, unit, suffix)
+          return "%3.1f%sB" % (num, unit)
         num /= 1024.0
-      return "%.1f%s%s" % (num, 'Yi', suffix)
+      return "%.1f%sB" % (num, 'Yi')
 
-    filestoupload = list()
+    # List available data files
+    filestoupload = []
     if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
-      if os.path.isdir(settings.DATABASES[request.database]['FILEUPLOADFOLDER']):
-        thisfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
-        for file in os.listdir(settings.DATABASES[request.database]['FILEUPLOADFOLDER']):
-          if file.endswith('.csv') or file.endswith('.xls') or file.endswith('.xlsx') or file.endswith('.txt'):
-            filestoupload.append([file,strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(thisfolder, file)).st_mtime)),sizeof_fmt(os.stat(os.path.join(thisfolder, file)).st_size, 'B')])
+      uploadfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+      if os.path.isdir(uploadfolder):
+        for file in os.listdir(uploadfolder):
+          if file.endswith('.csv') or file.endswith('.log'):
+            filestoupload.append([
+              file,
+              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(uploadfolder, file)).st_mtime)),
+              sizeof_fmt(os.stat(os.path.join(uploadfolder, file)).st_size)
+              ])
 
     # Send to template
     odoo = 'freppledb.odoo' in settings.INSTALLED_APPS
-    return {'capacityconstrained': constraint & 4,
-            'materialconstrained': constraint & 2,
-            'leadtimeconstrained': constraint & 1,
-            'fenceconstrained': constraint & 8,
-            'scenarios': Scenario.objects.all(),
-            'fixtures': fixtures,
-            'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
-            'odoo': odoo,
-            'odoo_read': odoo and request.session.get('odoo_read', False),
-            'odoo_write': odoo and request.session.get('odoo_write', False),
-            'filestoupload': filestoupload
-            }
+    return {
+      'capacityconstrained': constraint & 4,
+      'materialconstrained': constraint & 2,
+      'leadtimeconstrained': constraint & 1,
+      'fenceconstrained': constraint & 8,
+      'scenarios': Scenario.objects.all(),
+      'fixtures': fixtures,
+      'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
+      'odoo': odoo,
+      'odoo_read': odoo and request.session.get('odoo_read', False),
+      'odoo_write': odoo and request.session.get('odoo_write', False),
+      'filestoupload': filestoupload,
+      'datafolderconfigured': 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]
+      }
 
 
 @staff_member_required
@@ -364,6 +373,35 @@ def CancelTask(request, taskid):
   except Exception as e:
     logger.error("Error saving report settings: %s" % e)
     return HttpResponseServerError('Error canceling task')
+
+
+@staff_member_required
+@never_cache
+def ViewFile(request, filename):
+  clean_filename = re.split(r'/|:|\\', filename)[-1]
+  if not clean_filename or not 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+    raise Http404('File not found')
+  response = static.serve(
+    request, clean_filename, 
+    document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+    )
+  response['Content-Disposition'] = 'inline; filename="%s"' % clean_filename
+  return response
+
+
+@staff_member_required
+@never_cache
+def DownloadLogFile(request):
+  if request.database == DEFAULT_DB_ALIAS:
+    filename = 'frepple.log'
+  else:
+    filename = 'frepple_%s.log' % request.database
+  response = static.serve(
+    request, filename, 
+    document_root=settings.FREPPLE_LOGDIR
+    )
+  response['Content-Disposition'] = 'inline; filename="%s"' % filename
+  return response
 
 
 @staff_member_required

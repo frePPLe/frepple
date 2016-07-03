@@ -630,19 +630,23 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 
 DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 {
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (v)
-    static_cast<SolverMRPdata*>(v)->purchase_operations.insert(o);
-	
+    data->purchase_operations.insert(o);
+
 	// Manage global replenishment
-  Item* item = o->getItemSupplier()->getItem();
-  if (item->getBoolProperty("global_purchase",false)) {
+  Item* item = o->getBuffer()->getItem();
+  if (item && item->getBoolProperty("global_purchase",false) && data->constrainedPlanning)
+  {
 	  double total_onhand = 0;
 	  double total_ss = 0;
-	  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+
 	  Item::bufferIterator iter(item);
 	  // iterate over all the buffers to compute the sum on hand and the sum ssl
 	  while (Buffer *buffer = iter.next()) {
-		  total_onhand += buffer->getOnHand(data->state->q_date);
+      double tmp = buffer->getOnHand(data->state->q_date);
+		  if (tmp > 0)
+        total_onhand += tmp;
 		  Calendar* ss_calendar = buffer->getMinimumCalendar();
 		  if (ss_calendar) {
 			  CalendarBucket* calendarBucket = ss_calendar->findBucket(data->state->q_date, true);
@@ -654,18 +658,17 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 			  total_ss += buffer->getMinimum();
 		  }
 	  }
-	  if (total_ss + ROUNDING_ERROR < total_onhand){
+	  if (total_ss + ROUNDING_ERROR < total_onhand) {
 		  data->state->a_qty = 0;
 		  data->state->a_date = Date::infiniteFuture;
 		  if (data->getSolver()->getLogLevel()>1)
 			  logger << indent(o->getLevel()) << "   Purchasing operation '" << o->getName()
-			  << "' replies 0. Requested qty/date: " << data->state->q_qty 
-			  << "/" << data->state->q_date 
-			  << " Total OH/SS : " << total_onhand 
+			  << "' replies 0. Requested qty/date: " << data->state->q_qty
+			  << "/" << data->state->q_date
+			  << " Total OH/SS : " << total_onhand
 			  << "/" << total_ss << endl;
 		  return;
 		}
-		
 	}
 
   solve(static_cast<const Operation*>(o), v);

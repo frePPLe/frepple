@@ -39,9 +39,6 @@ see demand OR material, lead time and capacity problems to be shown.
 In both the constrained and unconstrained plans you can select which constraints
 are considered during plan creation.
 
-The option to keep the plan in memory as a web service is only available in
-the Enterprise Edition. The web service is used by the order quoting module.
-
 A live data source allows your frePPLe plan to be 100% in sync with data in an
 external system. FrePPLe will read data from them before planning, and after
 the plan is generated frePPLe directly exports the results to them. FrePPLe also
@@ -76,6 +73,33 @@ in each sheet must contain the column names.
 
 .. image:: _images/execution-import.png
    :alt: Execution screen - Spreadsheet import
+
+Load data files from folder
+---------------------------
+
+This task allows loading data from a set of CSV-formatted files. The files
+are all placed in a folder that is configurable with the UPLOADFILEFOLDER
+in the djangosettings.py configuration file.
+
+The data files must meet the following criteria:
+
+* The name must match the data object they store: eg demand.csv, item.csv, ...
+
+* The first line of the file should contain the field names
+
+* The file should be in CSV format. The delimiter depends on the default
+  language (configured with LANGUAGE_CODE in djangosettings.py). 
+  For english-speaking countries it's a comma. For European countries 
+  it's a semicolon.
+
+* The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
+  setting in djangosettings.py)
+
+The file loadfromfolder.log records all data loads triggered in this way and
+any data errors identified during the loading.
+
+.. image:: _images/execution-loadfromfolder.png
+   :alt: Execution screen - Upload data from folder 
 
 Web service
 -----------

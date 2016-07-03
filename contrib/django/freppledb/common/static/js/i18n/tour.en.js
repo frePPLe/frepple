@@ -6,7 +6,9 @@ var tourdata = [
         'Jump to <span class="underline"><a href="/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
         'Jump to <span class="underline"><a href="/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
         'Jump to <span class="underline"><a href="/?tour=4,0,0">Generating the plan</a></span> (11 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>',
+        'Jump to <span class="underline"><a href="/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>' +
+        'Jump to <span class="underline"><a href="/?tour=6,0,0">A day in the life of a manufacturing planner</a></span> (9 steps)<br/>'
+        ,
      delay: 5,
      steps: [
              {
@@ -583,5 +585,74 @@ var tourdata = [
              position: "C"
            }
            ]
-      }
+      },
+      
+
+    // A day in the life of a manufacturing planner
+        {
+     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; A day in the life of a manufacturing planner</h2>' +
+        'The manufacturing planner\'s role is to make sure that demand is delivered on time ' +		
+        ' by reviewing the supply chain capacity and material constraints.<br/><br/>',
+     delay: 5,
+     steps:
+        [
+         {
+           url: "/",
+           element : '#cockpitcrumb',
+           description : "First action would be to browse over the relevant widgets of the cockpit to have a global picture of the situation",
+           position : 'R'
+         },
+         {
+           url: "/",
+           element : 'div.panel[data-cockpit-widget="late_orders"]',
+           description : "The late orders widget will display the delay of the orders that cannot be planned on time",
+           position : 'T'
+         },
+         {
+           url: "/",
+           element : 'div.panel[data-cockpit-widget="purchase_orders"]',
+           description : "The purchase orders widget let you review the proposed and confirmed purchase orders",
+           position : 'T'
+         },
+         {
+           url: "/",
+           element : 'div.panel[data-cockpit-widget="distribution_orders"]',
+           description : "The distribution orders widget let you review the proposed and confirmed distribution orders",
+           position : 'T'
+         },         
+         {
+           url: "/",
+           element : '#Manufacturing',
+           description : "The manufacturing section contains :<br/>" + 
+           "The manufacuring orders widget to review the value associated with the proposed and confirmed manufacturing orders<br/>" +
+           "The resource utilization widget lets you find out how loaded your resources are<br/>" +
+           "The capacity alerts widget displays any alert associated to capacity",
+           position : 'T'
+         },         
+         {
+           url: "/problem/",
+           element : "#jqgh_grid_owner",
+           description : "The problem report (under the sales menu) will display all late/early/short demands for review<br/>" ,
+           position : 'T'
+         },
+         {
+           url: "/data/input/operationplan/",
+           element : "#jqgh_grid_enddate",
+           description : "The operation plan screen let you review and confirm any proposed manufacturing order",
+           position : 'T'
+         },
+         {
+           url: "/resource/",
+           element : "#grid_graph",
+           description : "The resource report displays the resource utilization per time bucket",
+           position : 'T'
+         },
+         {
+           url: "/resource/",
+           element : ".fa-table",
+           description : "By clicking on the table button, the planner will switch to the table view",
+           position : 'T'
+         }
+        ]
+    }
 ];

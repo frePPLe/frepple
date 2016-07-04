@@ -11,10 +11,14 @@ a leading open source ERP.
 
 The connector provides the following functionality:
 
-* Two-way integration:
+* | Two-way integration.
+  | The connector retrieves all master data required for planning from Odoo.
+  | The connector publishes the resulting plan back to Odoo, either a)
+    automatically at the end of the planning run or b) after manual review
+    and approval by the planner.
 
 * | Live data integration.
-  | The connector reads the data directly from odoo and writes the results
+  | The connector reads the data directly from Odoo and writes the results
     back. Compared to replicating data to its own database, this provides
     a more native and tighter integration. It is still possible to save a
     copy of the odoo in the frePPLe database to use the frePPLe user
@@ -117,16 +121,37 @@ The connector has 2 components:
   * odoo.company: Company name for which to create purchase quotation and
     manufacturing orders
 
+  * | odoo.filter_export_purchase_order: Python filter expression for the
+      automatic export of purchase orders.
+    | The expression gets as arguments 'operationplan' and 'buffer', and it
+      should return True if the transaction is to be included in the automated
+      bulk export.
+
+  * | odoo.filter_export_manufacturing_order: Python filter expression for the
+      automatic export of manufacturing orders.
+    | The expression gets as arguments 'operationplan' and 'buffer', and it
+      should return True if the transaction is to be included in the automated
+      bulk export.
+
+  * | odoo.filter_export_distribution_order: Python filter expression for the
+      automatic export of distribution orders.
+    | The expression gets as arguments 'operationplan' and 'buffer', and it
+      should return True if the transaction is to be included in the automated
+      bulk export.
+
 **Running the connector**
 
 You can run the connector in different ways:
 
 * | **Interactively from the frePPLe user interface**
-  | The execute screen has a specific section where you can launch the import
-    connector.
+  | The execute screen has checkboxes that allow enabling reading from and
+    writing to Odoo.
+  | The plan exported to odoo is a subset of the plan which passes
+    certain filter conditions. The remaining part of the plan can
+    only be exported manually from frePPLe to Odoo: see below.
 
 .. image:: _images/odoo-import-export.png
-   :alt: Import from  and export to odoo
+   :alt: Import from and export to odoo
 
 * | **From the command line**
   | The script is especially handy when you want to regenerate the plan
@@ -135,7 +160,7 @@ You can run the connector in different ways:
 
   ::
 
-     frepplectl frepple_run --env=odoo_read,odoo_write
+     frepplectl frepple_run --env=odoo_read_1,odoo_write
 
 * | **Interactively from the Odoo menu**
   | Make sure the command line on the company you run for is configured
@@ -143,6 +168,41 @@ You can run the connector in different ways:
 
 * | **Automatically with the Odoo cron scheduler**
   | Make sure the command line on the task is configured correctly.
+
+| The connector distinguishes different modes to retrieve data from Odoo. This
+  allows us to schedule the extraction of larger and/or slowly changing data
+  volumes (eg sales order history over the last few years as required for the
+  forecast calculation) from the extraction of data elements that need to be
+  retrieved whenever the plan is generated (eg open sales orders, current
+  inventory).
+| Using the argument odoo_read_1 or odoo_read_2 specific the requested data
+  extraction mode. By default all data elements are extracted in mode 1.
+  It'll require customization of the Odoo addon to define for which
+  data elements you want to use mode 2.
+
+**Incremental export to Odoo**
+
+The connector exports plan data in 2 modes from frePPLe back to Odoo.
+
+* A bulk export is run automatically run when the plan generation
+  is finished. See the previous section.
+
+* | An incremental export from the frePPLe user interface for
+    individual purchase, manufacturing and distribution
+    orders.
+  | When selecting a sales order for incremental export a popup window
+    is displayed with a list of linked purchase, manufacturing and
+    distribution orders.
+
+A typical usage is to automatically export the proposed purchase for
+cheap or fast moving items, and let the planner review and approve
+the proposed plan for expensive or slow moving items.
+
+.. image:: _images/odoo-approve-export.png
+   :alt: Exporting individual transactions to odoo
+
+.. image:: _images/odoo-approve-export-sales-order.png
+   :alt: Exporting transactions of a sales order to odoo
 
 **Mapping details**
 

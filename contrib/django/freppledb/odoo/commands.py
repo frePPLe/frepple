@@ -38,14 +38,14 @@ def odoo_read(db=DEFAULT_DB_ALIAS, mode=1):
   authentication, and then reads data from the URL.
   The data from the source must adhere to frePPLe's official XML schema,
   as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
-  
+
   The mode is pass as an argument:
     - Mode 1:
       This mode returns all data that is loaded with every planning run.
     - Mode 2:
-      This mode returns data that is loaded that changes infrequently and 
+      This mode returns data that is loaded that changes infrequently and
       can be transferred during automated scheduled runs at a quiet moment.
-  Which data elements belong to each category is determined in the odoo 
+  Which data elements belong to each category is determined in the odoo
   addon module and can vary between implementations.
   '''
   odoo_user = Parameter.getValue("odoo.user", db)
@@ -54,7 +54,7 @@ def odoo_read(db=DEFAULT_DB_ALIAS, mode=1):
     odoo_password = Parameter.getValue("odoo.password", db)
   else:
     odoo_password = settings.ODOO_PASSWORDS.get(db)
-  
+
   odoo_db = Parameter.getValue("odoo.db", db)
   odoo_url = Parameter.getValue("odoo.url", db)
   odoo_company = Parameter.getValue("odoo.company", db)
@@ -81,8 +81,8 @@ def odoo_read(db=DEFAULT_DB_ALIAS, mode=1):
   # Connect to the odoo URL to GET data
   f = None
   url = "%sfrepple/xml?%s" % (odoo_url, urlencode({
-      'database': odoo_db, 
-      'language': odoo_language, 
+      'database': odoo_db,
+      'language': odoo_language,
       'company': odoo_company,
       'mode': mode
       }))
@@ -125,6 +125,11 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
          redundant operationplan.
     - The XML file uploaded is not exactly the standard XML of frePPLe, but a
       slight variation that fits odoo better.
+    - Filter expressions are evaluated to limit the plan data that is
+      automatically exported.
+        - odoo.filter_export_purchase_order
+        - odoo.filter_export_manufacturing_order
+        - odoo.filter_export_distribution_order
     - This code doesn't interprete any of the results. An odoo addon module
       will need to read the content, and take appropriate actions in odoo:
       such as creating purchase orders, manufacturing orders, work orders,
@@ -156,6 +161,11 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
     raise Exception("Odoo connector not configured correctly")
   boundary = email.generator._make_boundary()
 
+  # Filter expressions
+  filter_export_purchase_order = Parameter.getValue("odoo.filter_export_purchase_order", db)
+  filter_export_manufacturing_order = Parameter.getValue("odoo.filter_export_manufacturing_order", db)
+  filter_export_distribution_order = Parameter.getValue("odoo.filter_export_distribution_order", db)
+
   # Generator function
   # We generate output in the multipart/form-data format.
   # We send the connection parameters as well as a file with the planning
@@ -186,8 +196,23 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
       for j in i.flowplans:
         if j.quantity > 0:
           b = j.flow.buffer
-      if not b or not b.source.startswith('odoo') or i.locked:
+      if not b or not b.source or not b.source.startswith('odoo') or i.locked:
         continue
+
+      # Evaluate filter expressions
+      if i.operation.name.startswith('Purchase'):
+        if filter_export_purchase_order:
+          if not eval(filter_export_purchase_order, {}, {'operationplan': i, 'buffer': b}):
+            continue
+      elif isinstance(i.operation, frepple.operation_itemdistribution):
+        if filter_export_distribution_order:
+          if not eval(filter_export_distribution_order, {}, {'operationplan': i, 'buffer': b}):
+            continue
+      else:
+        if filter_export_manufacturing_order:
+          if not eval(filter_export_manufacturing_order, {}, {'operationplan': i, 'buffer': b}):
+            continue
+
       yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
         i.id, quoteattr(i.operation.name),
         i.start, i.end, i.quantity,
@@ -203,26 +228,22 @@ def odoo_write(db=DEFAULT_DB_ALIAS):
   try:
     body = '\n'.join(publishPlan()).encode('utf-8')
     size = len(body)
-    encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))[:-1]
+    encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))
     req = Request(
-      "%sfrepple/xml/" % odoo_url.encode('ascii'),
+      "%sfrepple/xml/" % odoo_url,
       data=body,
       headers={
-        'Authorization': "Basic %s" % encoded,
+        'Authorization': "Basic %s" % encoded.decode('ascii')[:-1],
         'Content-Type': 'multipart/form-data; boundary=%s' % boundary,
         'Content-length': size
         }
       )
 
-    # Posting the data
+    # Posting the data and displaying the server response
     print("Uploading %d bytes of planning results to odoo" % size)
-    req.get_data()
-
-    # Display the server response, which can contain error messages
-    print("Odoo response:")
-    for i in urlopen(req):
-      print(i, end="")
-    print("")
+    with urlopen(req) as f:
+      msg = f.read()
+      print("Odoo response: %s" % msg.decode('utf-8'))
 
   except HTTPError as e:
     print("Error connecting to odoo", e.read())

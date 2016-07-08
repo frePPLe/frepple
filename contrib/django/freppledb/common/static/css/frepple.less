@@ -472,11 +472,20 @@ tr.ui-state-highlight {
 }
 
 /* tour styles */
-#tourguide.popover, #tourModal div.modal-content, #tourtooltip {
+.tourpopover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    color: @text-color;
+    max-width: 450px;
+}
+
+#tourModal div.modal-content {
     border-top: 2px solid red;
     border-left: 2px solid red;
     border-right: 2px solid red;
     border-bottom: 2px solid red;
+    a.link {
+      color: @text-color;
+    };
 }
 
 /*+++++++++++++++++++++++++++++++++++++*/

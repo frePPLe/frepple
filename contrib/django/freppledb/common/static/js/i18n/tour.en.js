@@ -1,82 +1,95 @@
 var tourdata = [
    // Main page of the tour
    {
-     description: '<h2>Main</h2>' +
-        'Jump to <span class="underline"><a href="/?tour=1,0,0">Navigation</a></span> (5 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=2,0,0">Data entry</a></span> (10 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=3,0,0">Modeling</a></span> (3 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=4,0,0">Generating the plan</a></span> (11 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=5,0,0">Plan analysis</a></span> (25 steps)<br/>' +
-        'Jump to <span class="underline"><a href="/?tour=6,0,0">A day in the life of a manufacturing planner</a></span> (9 steps)<br/>'
-        ,
+     description: '<h3>Getting around</h3>' +
+        '<span class="underline"><a href="/?tour=1,0,0">Navigation</a></span><br>' +
+        '<span class="underline"><a href="/data/input/demand/?tour=2,0,0">Data maintenance</a></span><br>' +
+        '<span class="underline"><a href="/?tour=3,0,0">Modeling</a></span><br>' +
+        '<span class="underline"><a href="/?tour=4,0,0">Generating the plan</a></span><br>' +
+        '<h3>Plan analysis</h3>' +
+        '<span class="underline"><a href="/resource/?tour=5,1,0">Resource utilization</a></span><br>' +
+        '<span class="underline"><a href="/buffer/?tour=5,8,0">Inventory profile</a></span><br>' +
+        '<span class="underline"><a href="/operation/?tour=5,11,0">Planned operations</a></span><br>' +
+        '<span class="underline"><a href="/demand/?tour=5,14,0">Demand plans</a></span><br>' +
+        '<span class="underline"><a href="/problem/?tour=5,18,0">Exceptions and problems</a></span><br>' +
+        '<span class="underline"><a href="/demandpegging/Demand%2001/?tour=5,20,0">Order plan</a></span>' +
+        '<h3>Daily workflows</h3>' +
+        '<span class="underline"><a href="/?tour=6,0,0">A day in the life of a manufacturing planner</a></span><br>',
      delay: 5,
      steps: [
              {
                url: "/",
                element : '#tourModal',
-               description : "Welcome to frePPLe.<br/>" +
-                 "This guided tour will show you around.<br/><br/>" +
-                 "During the first 5 days of use this page<br/>" +
-                 "will suggest you to take the tour.<br/>" +
-                 "Later you can always start the tour from the menu.",
-               position : 'TL'
+               description : "<strong>Welcome to frePPLe.</strong><br>" +
+                 "This guided tour will show you around.<br><br>" +
+                 "During the first 5 days of use you will see this message to take " +
+                 "the tour. Later you can always start the tour from the menu.",
+               position : 'top'
              }
              ]
    },
 
    // Navigation
    {
-     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; Navigation</h2>' +
+     description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; Navigation</h2>' +
         'The main dashboard, the menu bar, breadcrumbs and a quick search option allow easy and intuitive navigation',
      delay: 5,
      steps:
         [
          {
            url: "/",
-           element : '#popup',
-           description : 'The main screen is organized as a dashboard with widgets<br/>' +
-                'for the most common activities, such as:<br/>' +
-                '&nbsp;&nbsp;- A list of planned operations on each resource<br/>' +
-                '&nbsp;&nbsp;- A list of materials to be purchased<br/>' +
-                '&nbsp;&nbsp;- A list of customers orders planned to be shipped<br/>' +
-                '&nbsp;&nbsp;- Alerts on problem situations<br/>' +
-                '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
-                'The widgets and layout of the dashboard are fully configurable.<br/>' +
-                'In the Enterprise Edition every user can customize his own cockpit.',
-           position : 'C'
+           element : '.row:eq(1)',
+           description : "The main screen is organized as a <b>dashboard with widgets</b> " +
+                "to show the overall health of the supply chain and provide access to the most common activities:" +
+                "<ul><li style='list-style:initial'>Purchase orders</li>" +
+                "<li style='list-style:initial'>Manufacturing orders</li>" +
+                "<li style='list-style:initial'>Distribution orders</li>" +
+                "<li style='list-style:initial'>Late orders</li>" +
+                "<li style='list-style:initial'>Resource utilization</li>" +
+                "<li style='list-style:initial'>Delivery performance</li>" +
+                "<li style='list-style:initial'>Forecast</li>" +
+                "<li style='list-style:initial'>Forecast Error</li>" +
+                "<li style='list-style:initial'>Inventory By Item</li>" +
+                "<li style='list-style:initial'>Inventory by Item</li>" +
+                "<li style='list-style:initial'>Stockout risk</li>" +                
+                "<li style='list-style:initial'>...</li></ul>" +
+                "The <b>widgets and layout of the dashboard are fully configurable</b>.<br>" +
+                "In the Enterprise Edition every user can personalize the cockpit.",
+           position : 'bottom',
+           afterstep : '$("div.arrow").remove()'
          },
          {
            url: "/",
            element : '#nav-menu',
-           description : "The menu bar gives access to all screens.<br/><br/>" +
-               "Screens that are not accessible with your profile<br/>won't be shown in the list.",
-           position : 'B'
+           description : "The <b>menu bar</b> gives access to all screens.<br><br>" +
+               "Screens that are not accessible with your profile<br>won't be shown in the list.",
+           position : 'bottom'
          },
          {
            url: "/",
            element : '#search',
-           description : 'You can enter a search string here.<br/>' +
-                   'A list of matching entities will be displayed.<br/>' +
+           description : '<b>Search field:</b> As you type string here ' +
+                   'a list of matching entities will be displayed.<br>' +
                    'This allows you to jump immediately to the screen of that entity.',
-           position : 'B'
+           position : 'bottom'
          },
          {
            url: "/",
            element : '#breadcrumbs',
-           description : 'A breadcrumb trail shows the history of screens you have accessed.<br/>' +
+           description : 'A <b>breadcrumb</b> trail shows the history of screens you have accessed.<br>' +
                    'You can easily step back and forth.',
-           position : 'B'
+           position : 'bottom'
          }
        ]
     },
 
     // Data entry
     {
-     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; Data entry</h2>' +
-        'Data can be entered in different ways:<br/>' +
-        '&nbsp;&nbsp;- Directly in a data grid<br/>' +
-        '&nbsp;&nbsp;- Using an edit form<br/>' +
-        '&nbsp;&nbsp;- By importing an Excel spreadsheet<br/>' +
+     description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; Data maintenance</h2>' +
+        'Data can be entered in different ways:<br>' +
+        '&nbsp;&nbsp;- Directly in a data grid<br>' +
+        '&nbsp;&nbsp;- Using an edit form<br>' +
+        '&nbsp;&nbsp;- By importing an Excel spreadsheet<br>' +
         '&nbsp;&nbsp;- By importing a CSV-formatted flat file.',
      delay: 5,
      steps:
@@ -86,572 +99,540 @@ var tourdata = [
            element : '#nav-menu',
 //           beforestep: '$("#nav-menu").first().hover()',
 //           beforestep: 'document.getElementById().hover()',
-           description : "Entities (items, locations, suppliers, ...) <br/>" + "have reports, and table views to add/change/detete data.",
-           position : 'B'
+           description : "Entities (items, locations, suppliers, ...) in the <b>menu</b><br>" + "have reports, and table views to <b>add/change/detete data</b>.",
+           position : 'bottom'
          },
          {
            url: "/data/input/demand/",
            element : "#content-main",
-           description : "We selected the demand table as an example.<br/>" +
-             "Click a column header to sort the data.<br/>" +
+           description : "FrePPLe has <strong>data maintenance</strong> capabilities.<br><br>" +
+             "All data objects have a table editor. Here we selected the sales order table as an example.<br>" +
+             "Click a column header to <b>sort the data</b>.<br>" +
              "Clicking a second time will reverse the sorting order.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/data/input/demand/",
-           element : 'span[role="input/item"]',
-           description : "A triangle on a field indicates gives access to details.<br/>" +
-             "Click the icon to display the detailed screens for the selected entity.<br/>" +
+           element : 'span[role="input/item"]:first()',
+           description : "A <b>triangle</b> on a field indicates gives <b>access to details</b>.<br>" +
+             "Click the icon to display the detailed screens for the selected entity.<br>" +
              "Screens that are not accessible with your profile won't be shown in this menu.",
-           position : 'B'
+           position : 'bottom'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-search",
-           description : "You can define filters to see a subset of the data.<br/>" +
-             "The filter expression can use all attributes from<br/>" +
+           description : "You can define <b>filters</b> to see a subset of the data.<br>" +
+             "The filter expression can use all attributes from<br>" +
              "the table and combine them using AND and OR criteria.",
-           position : 'B'
+           position : 'bottom'
          },
          {
            url: "/data/input/demand/",
            element : "#undo",
-           description : "You can directly edit data cells in the grid.<br/>" +
-             "Click 'save' to store the changes in the database.<br/>" +
-             "Clicking 'undo' will restore the original data.",
-           position : 'R'
+           description : "You can directly edit data cells in the grid.<br>" +
+             "Click <b>'save' to store</b> the changes in the database.<br>" +
+             "Clicking <b>'undo' will restore</b> the original data.",
+           position : 'right'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-plus",
-           description : "Clicking 'add' (+ sign) opens a form where you can enter data for a new record.",
-           position : 'L'
+           description : "Clicking <b>'add'</b> (+ sign) opens a form where you can enter <b>data for a new record</b>.",
+           position : 'left'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-copy",
-           description : "You can select some rows with the checkbox at the start of the row.<br/>" +
-             "Click 'copy' to duplicate the records.<br/>" +
-             "Click 'delete' to remove the selected records.",
-           position : 'L'
+           description : "You can select some rows with the checkbox at the start of the row.<br>" +
+             "Click <b>'copy' to duplicate</b> the records.<br>" +
+             "Click <b>'delete' to remove</b> the selected records.",
+           position : 'left'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-arrow-down",
-           description : "Click 'export' to export all data from the grid<br/>" +
-              "to a CSV-file or an Excel spreadsheet.",
-           position : 'L'
+           description : "Click 'export' to <strong>export a CSV or Excel file</strong> with all data from the grid.",
+           position : 'bottom'
          },
          {
            url: "/data/input/demand/",
            element : ".fa-arrow-up",
-           description : "Spreadsheets and CSV-files can also be imported again.<br/>" +
+           description : "Spreadsheets and CSV-files can also be <strong>imported</strong> again.<br>" +
              "The data is validated and any errors are reported.",
-           position : 'L'
+           position : 'bottom'
          },
          {
            url: "/data/input/demand/",
-           element : "#toolicons",
-           description : "Users of the <strong>Enterprise Edition</strong> also have the<br/>" +
-             "ability to customize the report:<br/>" +
-             "&nbsp;- Hide columns</br>" +
-             "&nbsp;- Change the order of columns<br/>" +
-             "&nbsp;- Choose the number of frozen columns<br/>" +
-             "&nbsp;- Adjust the column width<br/>" +
+           element : ".fa-wrench",
+           description : "Users of the Enterprise Edition also have the " +
+             "ability to <strong>customize the report</strong>:<br>" +
+             "<ul><li style='list-style:initial'>Hide columns</li>" +
+             "<li style='list-style:initial'>Change the order of columns</li>" +
+             "<li style='list-style:initial'>Choose the number of frozen columns</li>" +
+             "<li style='list-style:initial'>Adjust the column width</li></ul>" +
              "These settings are saved for each individual user.",
-           position : 'B'
+           position : 'bottom'
          }
         ]
     },
 
     // Modeling
     {
-     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; Modelling</h2>' +
+     description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; Modelling</h2>' +
         "Modelling your manufacturing environment.",
      delay: 5,
      steps:
         [
          {
-           url: "/",
-           element : '#nav-menu',
-//           beforestep: '$(".menuButton").first().click()',
-           description : "Entities have a data table view.<br/>" +
-             "A complete description of all entities and their relationships<br/>" +
-             "is beyond the scope of this tour.<br/>" +
-             "In this tour we'll only show the concepts at a very high level.<br/>" +
-             "Check out the documentation for more detail.<br/>",
-           position : 'B'
-         },
-         {
            url: "/supplypath/item/product/",
-           element : ".container-fluid h1",
-           description : "This report shows the bill of material of a particular item.<br/>" +
-             "The top section visualizes the data as a network graph.<br/>" +
-             "The bottom section displays the data as hierarchical tree.<br/><br/>" +
-             "The network graph is very important in modelling in frePPLe.<br/>" +
-             "Every single graphical object in this graph is stored as a single<br/>" +
-             "record in the frePPLe model. The graph allows you to verify that<br/>" +
-             "you have correctly filled in all data." +
-             "&nbsp;- <i>Operations</i> are shown as rectangles.<br/>" +
-             "&nbsp;- <i>Resources</i> are shown as circles.<br/>" +
-             "&nbsp;- <i>Buffers</i>/SKUs are shown as triangles.<br/>" +
-             "&nbsp;- The lines between operations and buffers are <i>flows</i>.<br/>" +
-             "&nbsp;- The dotted lines between operations and resources are <i>loads</i>.<br/>",
-           position : 'BL'
+           element : ".container-fluid h1 small",
+           description : "This report shows the <strong>bill of material</strong> or <strong>supply path</strong> of a particular item.<br>" +
+             "The top section visualizes the data as a network graph.<br>" +
+             "The bottom section displays the data as hierarchical tree.<br><br>" +
+             "The network graph is very important in modelling in frePPLe. " +
+             "Every single graphical object in this graph is stored as a single " +
+             "record in the frePPLe model. The graph allows you to verify that " +
+             "you have correctly filled in all data.<br>" +
+             "&nbsp;- <i>Operations</i> are shown as rectangles.<br>" +
+             "&nbsp;- <i>Resources</i> are shown as circles.<br>" +
+             "&nbsp;- <i>Buffers</i>/SKUs are shown as triangles.<br>" +
+             "&nbsp;- The lines between operations and buffers are <i>flows</i>.<br>" +
+             "&nbsp;- The dotted lines between operations and resources are <i>loads</i>.<br>",
+           position : 'bottom'
          },
          {
            url: "/whereused/buffer/thread%20%40%20factory%201/",
-           element : "#tabs ul li:nth-child(1)",
-           description : "The <strong>supply path</strong> report displayed the structure upstream, i.e. walking from end item towards the raw materials.<br/><br/>" +
-             "The <strong>where-used</strong> report displays the structure downstream, i.e. walking from the raw material towards the end items.<br/>" +
+           element : "#tabs ul li:nth-child(3)",
+           description : "The <strong>supply path</strong> report displayed the structure upstream, i.e. walking from end item towards the raw materials.<br><br>" +
+             "The <strong>where-used</strong> report displays the structure downstream, i.e. walking from the raw material towards the end items.<br>" +
              "It thus displays which end items the selected entity is used for.",
-           position : 'BL'
-         },
+           position : 'bottom'
+         }
         ]
     },
 
     // Planning tasks
     {
-     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; Generating the plan</h2>' +
+     description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; Generating the plan</h2>' +
         "Generating plans and performing other tasks.",
      delay: 5,
      steps:
         [
          {
-           url: "/",
-           element : '#popup',
-           beforestep: '$(".menuButton:eq(2)").click()',
-           description : "<strong>Once you have loaded all data, you are now ready to generate the plan.</strong>",
-           position : 'C'
-         },
-         {
            url: "/execute/",
            element : '#content-main',
-           description : "The top section show the log and status of all tasks.",
-           position : 'T'
-         },
-         {
-           url: "/execute/",
-           element : '#tasks',
-           description : "The bottom section allows you to interactively launch new tasks.<br/><br/>" +
-             "To automate tasks they can also be launched from the command line.",
-           position : 'T'
+           description : "The <strong>execution screen</strong> allows to runs commands.<br><br>" +
+             "The top section show the log and status of all tasks.<br><br>" +
+             "The bottom section allows you to interactively launch new tasks. " +
+             "To automate operations they can also be launched from the command line.",
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#eersteHeading',
            beforestep: '$("#eersteAccord").addClass("in")',
-           description : "You can generate constrained or unconstrained plans<br/>" +
-             "and select which constraints to consider.<br/><br/>" +
-             "A constrained plan will respect all constraints<br/>" +
-             "but some demands can be planned late or incomplete.<br/><br/>" +
-             "In an unconstrained plan all demand will be met at its due date<br/>" +
+           description : "You can <strong>generate constrained or unconstrained plans</strong><br>" +
+             "and select which constraints to consider.<br><br>" +
+             "A constrained plan will respect all constraints<br>" +
+             "but some demands can be planned late or incomplete.<br><br>" +
+             "In an unconstrained plan all demand will be met at its due date<br>" +
              "but some constraints can be violated.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#tweedeHeading',
            beforestep: '$("#eersteAccord").removeClass("in"); $("#tweedeAccord").addClass("in")',
-           description : "You can export all input data in single spreadsheet<br/>" +
+           description : "You can <strong>export a spreadsheet</strong> with all input data.<br>" +
              "Each entity gets a seperate tab.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#derdeHeading',
            beforestep: '$("#tweedeAccord").removeClass("in"); $("#derdeAccord").addClass("in")',
-           description : "With this option you can import a spreadsheet.<br/>" +
-             "The spreadsheet must match the structure exported with the task above.<br/><br/>" +
-             "You can thus export all data, edit in Excel and then reload the updated spreasheet.",
-           position : 'T'
+           description : "With this option you can <strong>import a spreadsheet</strong>.<br>" +
+             "The spreadsheet must match the structure exported with the task above.<br><br>" +
+             "You can thus export all data, edit in Excel and then reload the updated spreadsheet.",
+           position : 'top'
+         },
+         {
+           url: "/execute/",
+           element : '#vertiendeHeading',
+           beforestep: '$("#derdeAccord").removeClass("in"); $("#vertiendeAccord").addClass("in")',
+           description : "With this option you can <strong>import a set of CSV-formatted data files</strong>.<br><br>" +
+             "Data interfaces from external systems or users will copy data files in a specific folder. " +
+             "This command will then process all input data from the folder. Any data errors are reported in the log file.",
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#vierdeHeading',
-           beforestep: '$("#derdeAccord").removeClass("in"); $("#vierdeAccord").addClass("in")',
-           description : "Here you can copy your dataset into a whatif scenario.<br/><br/>" +
-             "A scenario is a complete copy of all data in a separate database.<br/>" +
-             "All data and plans can thus be vary independently.<br/><br/>" +
-             "Once a scenario has been copied, a dropdown list shows up in the upper right corner<br/>" +
+           beforestep: '$("#vertiendeAccord").removeClass("in"); $("#vierdeAccord").addClass("in")',
+           description : "Here you can copy your dataset into a <strong>what-if scenario</strong>.<br><br>" +
+             "A scenario is a complete copy of all data in a separate database. " +
+             "All data and plans can thus be vary independently.<br><br>" +
+             "All data and plans can thus be vary independently.<br><br>" +
+             "Once a scenario has been copied, a dropdown list shows up in the upper right corner " +
              "of the screen. Here you select the scenario you want to work with.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#vijfdeHeading',
            beforestep: '$("#vierdeAccord").removeClass("in"); $("#vijfdeAccord").addClass("in")',
-           description : "You can create a backup of the database.",
-           position : 'T'
+           description : "You can create a <strong>backup</strong> of the database.<br><br>" +
+             "There is a restore command as well. As restoring the database requires some " +
+             "downtime (and also for data security) it is only available from the command line.",
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#zesdeHeading',
            beforestep: '$("#vijfdeAccord").removeClass("in"); $("#zesdeAccord").addClass("in")',
-           description : "This task erases the content from the selected tables.<br/><br/>" +
-             "When you mark a certain entities for erasing, all entities which<br/>" +
+           description : "This task <strong>erases the data</strong> from the selected tables.<br><br>" +
+             "When you mark a certain entities for erasing, all entities which " +
              "depend on it will automatically also be selected.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#zevendeHeading',
            beforestep: '$("#zesdeAccord").removeClass("in"); $("#zevendeAccord").addClass("in")',
-           description : "We provide some sample datasets.<br/>" +
-             "With this action you can load them into your database.<br/><br/>" +
-             "A dataset is loaded incrementally, without erasing the existing data.<br/>" +
+           description : "With this action you can <strong>load demo datasets</strong> into your database.<br><br>" +
+             "A dataset is loaded incrementally, without erasing the existing data. " +
              "In most cases you'll want to erase the database contents before loading a new dataset.",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/execute/",
            element : '#tasks',
            beforestep: '$("#zevendeAccord").removeClass("in")',
-           description : "There are some additional tasks which are less commonly used.<br/>" +
-              "See the documentation for more info.<br/><br/>" +
+           description : "There are some additional tasks which are less commonly used.<br>" +
+              "<b>See the documentation for more info</b>.<br><br>" +
               "Custom tasks can also be added in an extension app.",
-           position : 'T'
+           position : 'top'
          }
         ]
       },
 
-      // Plan review analysis
+      // Plan analysis
       {
-       description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; Plan analysis</h2>' +
-          'Review and analyze the plan from different angles:<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,1,0">Cockpit</a></span> (1 step)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,2,0">Resource utilization</a></span> (8 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=5,9,0">Inventory profile</a></span> (3 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=5,12,0">Planned operations</a></span> (3 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,15,0">Demand plans</a></span> (4 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=5,19,0">Exceptions and problems</a></span> (2 steps)<br/>' +
-          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,21,0">Order plan</a></span> (5 steps)',
+       description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; Plan analysis</h2>' +
+          'Review and analyze the plan from different angles:<br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/resource/?tour=5,1,0">Resource utilization</a></span><br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/buffer/?tour=5,8,0">Inventory profile</a></span><br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/operation/?tour=5,11,0">Planned operations</a></span><br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demand/?tour=5,14,0">Demand plans</a></span><br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/problem/?tour=5,18,0">Exceptions and problems</a></span><br>' +
+          '&nbsp;&nbsp;- <span class="underline"><a href="/demandpegging/Demand%2001/?tour=5,20,0">Order plan</a></span>',
        delay: 5,
        steps:
           [
            {
-             url: "/",
-             element : '#popup',
-             beforestep: '$(".menuButton:eq(1)").click()',
-             description : "Once you have loaded all data and generated<br/>" +
-               "the plan, you are now ready to review and<br/>" +
-               "analyze the results.",
-             position : 'C'
-           },
-           {
-             url: "/",
-             element : '#popup',
-             description : 'In their day to day usage planners will be using the main<br/>' +
-                  'cockpit screen for the common analysis tasks.<br/><br/>' +
-                  'The main screen is organized as a dashboard with widgets<br/>' +
-                  'for the most common activities, such as:<br/>' +
-                  '&nbsp;&nbsp;- A list of new planned operations on each resource<br/>' +
-                  '&nbsp;&nbsp;- A list of new materials to be purchased<br/>' +
-                  '&nbsp;&nbsp;- A list of customers orders planned to be shipped<br/>' +
-                  '&nbsp;&nbsp;- Analysis of the urgency of open purchase and manufacturing orders<br/>' +
-                  '&nbsp;&nbsp;- Alerts on problem situations<br/>' +
-                  '&nbsp;&nbsp;- Key performance indicators<br/><br/>' +
-                  'The widgets and layout of the dashboard are fully configurable.<br/>' +
-                  'In the Enterprise Edition every user can customize his own cockpit.',
-             position : 'C'
-           },
-           {
              url: "/resource/",
-             element : 'h1',
-             description : "This report shows the utilization of all<br/>" +
-               "resources, aggregated in time buckets.<br/><br/>" +
-               "Users of the Enterprise Edition also have a second report<br/>" +
-               "to visualize the resource plan in a Gantt chart.<br/>" +
-               "The Gantt chart shows all invidual operations on the resource<br/>" +
+             element : 'h1 small',
+             description : "This report shows the <strong>resource utilization</strong>" +
+               ", aggregated in time buckets.<br><br>" +
+               "Users of the Enterprise Edition also have a second report" +
+               "to visualize the resource plan in a <strong>Gantt chart</strong>." +
+               "The Gantt chart shows all individual operations on the resource<br>" +
                "as blocks on a timeline.",
-             position : 'BL'
+             position : 'bottom'
            },
            {
              url: "/resource/",
              element : '.fa-clock-o',
-             description : "The result in this report (and the ones we'll see next) are " +
-                "aggregated by time buckets.<br/>" +
-                "You can adjust the bucket size and the report horizon here.<br/><br/>" +
-                "Note that the planning algorithm itself doesn't use buckets.<br/>" +
+             description : "Many reports display the plan aggregated by time buckets. " +
+                "You can <b>adjust the time bucket size and the report horizon</b> here.<br><br>" +
+                "Note that the planning algorithm itself doesn't use buckets. " +
                 "Time buckets are only used for reporting purposes.",
-             position : 'LT'
+             position : 'bottom'
            },
            {
              url: "/resource/",
              element : '.fa-table',
-             description : "You can display the report in graphical format<br/>" +
-               "or in table format.",
-             position : 'L'
+             description : "You can display the report in <b>graphical format</b> or in <b>table format</b>.",
+             position : 'bottom'
            },
            {
              url: "/resource/",
-             element : 'td[aria-describedby="grid_columns"]',
-             description : "For each resource and time bucket the report shows:<br/>" +
-               "&nbsp;&nbsp;- Available resource-hours<br/>" +
-               "&nbsp;&nbsp;- Unvailable resource-hours, suchs off-shift time, weekends and holidays<br/>" +
-               "&nbsp;&nbsp;- Setup resource-hours, ie time involved in changeovers<br/>" +
-               "&nbsp;&nbsp;- Load resource-hours<br/>" +
-               "&nbsp;&nbsp;- Utilization percentage, defined as load / available time<br/>",
-             position : 'T'
+             element : 'td[aria-describedby="grid_columns"]:eq(0)',
+             description : "<b>For each resource and time bucket</b> the report shows:<br>" +
+               "&nbsp;&nbsp;- Available resource-hours<br>" +
+               "&nbsp;&nbsp;- Unvailable resource-hours, suchs off-shift time, weekends and holidays<br>" +
+               "&nbsp;&nbsp;- Setup resource-hours, ie time involved in changeovers<br>" +
+               "&nbsp;&nbsp;- Load resource-hours<br>" +
+               "&nbsp;&nbsp;- Utilization percentage, defined as load / available time<br>",
+             position : 'top',
            },
            {
              url: "/resource/",
-             element : 'span[role="detail"]',
-             description : "When there is a load in a bucket, clicking on the triangle<br/>" +
-                "gives more detail:<br/>" +
-                "&nbsp;&nbsp;- detailed list of operations planned<br/>" +
-                "&nbsp;&nbsp;- pegging of the load to the customer demand<br/><br/>" +
+             element : 'span.context.cross.fa.fa-caret-right:eq(0)',
+             description : "If there is a load in a bucket, a <b>click on the triangle</b> gives more detail:<br>" +
+                "&nbsp;&nbsp;- detailed list of operations planned<br>" +
+                "&nbsp;&nbsp;- pegging of the load to the customer demand<br><br>" +
                 "We'll find the same drill-down capabilities in the reports we'll see next.",
-             position : 'T'
+             position : 'top'
            },
            {
              url: "/resource/",
-             element : 'span[role="resource"]',
-             description : "The drilldown menu allows you to look<br/>" +
-               "at the plan of that particular resource<br/>" +
+             element : 'span[role="input/resource"]:eq(0)',
+             description : "The <b>drilldown menu</b> allows you to look<br>" +
+               "at the plan of that particular resource<br>" +
                "The graphics will then shown much bigger.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/loadplan/",
-             element : 'h1',
-             description : "This report shows the details of all operations planned on a resource: start date, end date, operation, quantity.<br/>" +
+             element : 'h1 small',
+             description : "This report shows the <b>details of all operations</b> planned on a resource: start date, end date, operation, quantity.<br>" +
                "This list can be used to communicate the plan to operators on the shop floor, or integrate it to ERP and other systems.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/buffer/",
-             element : 'h1',
-             description : "This report shows the inventory profile of all SKUs.<br/>" +
-               "It displays how much inventory we plan to have for each raw<br/>" +
+             element : 'h1 small',
+             description : "This report shows the <b>inventory profile</b> of all SKUs.<br>" +
+               "It displays how much inventory we plan to have for each raw<br>" +
                "material, end product or intermediate product.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/buffer/",
              element : '#gview_grid',
-             description : "For each buffer and time bucket the report shows:<br/>" +
-               "&nbsp;&nbsp;- Start Inventory: on hand at the start of the bucket<br/>" +
-               "&nbsp;&nbsp;- Produced: quantity added during the bucket<br/>" +
-               "&nbsp;&nbsp;- Consumed: quantity consumed during the bucket<br/>" +
-               "&nbsp;&nbsp;- End Inventory: on hand at the start of the bucket<br/>",
-             position : 'T'
+             description : "<b>For each buffer and time bucket</b> the report shows:<br>" +
+               "&nbsp;&nbsp;- Start Inventory: on hand at the start of the bucket<br>" +
+               "&nbsp;&nbsp;- Produced: quantity added during the bucket<br>" +
+               "&nbsp;&nbsp;- Consumed: quantity consumed during the bucket<br>" +
+               "&nbsp;&nbsp;- End Inventory: on hand at the start of the bucket<br>",
+             position : 'top'
            },
            {
              url: "/flowplan/",
-             element : 'h1',
-             description : "This report shows the detailed list of all material consumed and produced.<br/>" +
-               "This list can be used to communicate the plan to operatorson the shop floor, or integrate it to ERP and other systems.",
-             position : 'R'
+             element : 'h1 small',
+             description : "This report shows the <strong>detailed list of all material consumed and produced</strong>.<br>" +
+               "This list can be used to communicate the plan to operators on the shop floor, or integrate it to ERP and other systems.",
+             position : 'right'
            },
            {
              url: "/operation/",
-             element : 'h1',
-             description : "This report summarizes the planned operations.<br/>" +
+             element : 'h1 small',
+             description : "This report summarizes the <b>planned operations</b>.<br>" +
                "It displays what operations we are planned to start and finish.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/operation/",
              element : '#gview_grid',
-             description : "For each operation and time bucket the report shows:<br/>" +
-               "&nbsp;&nbsp;- Locked starts: work-in-progress or frozen quantity started in the bucket<br/>" +
-               "&nbsp;&nbsp;- Total starts: total quantity of operations starting in the bucket<br/>" +
-               "&nbsp;&nbsp;- Locked ends: work-in-progress or frozen quantity ending in the bucket<br/>" +
-               "&nbsp;&nbsp;- Total ends: total quantity of operations ending in the bucket<br/>",
-             position : 'T'
+             description : "<b>For each operation and time bucket</b> the report shows:<br>" +
+               "&nbsp;&nbsp;- Locked starts: work-in-progress or frozen quantity started in the bucket<br>" +
+               "&nbsp;&nbsp;- Total starts: total quantity of operations starting in the bucket<br>" +
+               "&nbsp;&nbsp;- Locked ends: work-in-progress or frozen quantity ending in the bucket<br>" +
+               "&nbsp;&nbsp;- Total ends: total quantity of operations ending in the bucket<br>",
+             position : 'top'
            },
            {
              url: "/operationplan/",
-             element : 'h1',
-             description : "This report shows the detailed list of all planned operations.<br/>" +
-               "This list would be typically be used to communicate the plan to operators<br/>" +
+             element : 'h1 small',
+             description : "This report shows the <strong>detailed list of all planned operations</strong>.<br>" +
+               "This list would be typically be used to communicate the plan to operators<br>" +
                "on the shop floor, or integrate it to ERP and other systems.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/demand/",
-             element : 'h1',
-             description : "This report summarizes the demand for each item.<br/>" +
+             element : 'h1 small',
+             description : "This report summarizes the <strong>demand for each item</strong>.<br>" +
                "It displays the customer demand for the item and the planned supply.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/demand/",
              element : '#gview_grid',
-             description : "For each item and time bucket the report shows:<br/>" +
-               "&nbsp;&nbsp;- Demand: customer demand due in the bucket<br/>" +
-               "&nbsp;&nbsp;- Supply: supply of the item in the bucket<br/>" +
-               "&nbsp;&nbsp;- Backlog: Difference between the demand and supply<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;of the item, cumulated over time<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;A positive value indicates that some<br/>" +
+             description : "<b>For each item and time bucket</b> the report shows:<br>" +
+               "&nbsp;&nbsp;- Demand: customer demand due in the bucket<br>" +
+               "&nbsp;&nbsp;- Supply: supply of the item in the bucket<br>" +
+               "&nbsp;&nbsp;- Backlog: Difference between the demand and supply<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;of the item, cumulated over time<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;A positive value indicates that some<br>" +
                "&nbsp;&nbsp;&nbsp;&nbsp;orders are satisfied late",
-             position : 'T'
+             position : 'top'
            },
            {
              url: "/demand/",
-             element : 'thead',
-             description : "Clicking on the item triangles allows you to drill<br/>" +
-               "down to the individual orders due in the bucket",
-             position : 'TL'
+             element : 'a[href="/detail/input/item/key/"]:eq(1)',
+             description : "Clicking on the item <b>triangles allows you to drill down</b> to the individual orders due in the bucket",
+             position : 'top'
            },
            {
              url: "/demandplan/",
-             element : 'h1',
-             description : "This report shows the detailed list of all planned deliveries of each order.<br/>" +
+             element : 'h1 small',
+             description : "This report shows the detailed list of all <strong>planned deliveries</strong> of each order.<br>" +
                "It can be used for more detailed analysis of delays or shortages.",
-             position : 'R'
+             position : 'right'
            },
            {
              url: "/problem/",
-             element : '#gbox_grid',
-             description : "This report shows problem areas in the plan.<br/>" +
-               "Rather than browsing through all orders, resources and materials, this report allows you to focus<br/>" +
-               "directly on the exceptions.<br/><br/>" +
-               "The main exception types are:<br/>" +
-               "&nbsp;&nbsp;- Demand:<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- unplanned: No plan exists yet to satisfy this demand.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- excess: A demand is planned for more than the requested quantity.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- short: A demand is planned for less than the requested quantity.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- late: A demand is satisfied later after its due date.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- early: A demand is satisfied earlier than the due date.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- invalid data: Some data problem prevents this object from being planned.<br/>" +
-               "&nbsp;&nbsp;- Resource:<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- overload: A resource is being overloaded during a certain period of time.<br/>" +
-               "&nbsp;&nbsp;- Buffer:<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- material excess: A buffer is carrying too much material during a certain period of time.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- material shortage: A buffer is having a material shortage during a certain period of time.<br/>" +
-               "&nbsp;&nbsp;- Operation:<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- before current: Flagged when an operationplan is being planned in the past.<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;- before fence: Flagged when an operationplan is being planned within a frozen time window.",
-             position : 'C'
+             element : 'h1 small',
+             description : "This report shows <b>problem areas in the plan</b>.<br>" +
+               "Rather than browsing through all orders, resources and materials, this report allows you to focus" +
+               "directly on the exceptions." +
+               "The main exception types are:<br>" +
+               "&nbsp;<b>Demand:</b><br>" +
+               "&nbsp;&nbsp;- unplanned: No plan exists yet to satisfy this demand.<br>" +
+               "&nbsp;&nbsp;- excess: A demand is planned for more than the requested quantity.<br>" +
+               "&nbsp;&nbsp;- short: A demand is planned for less than the requested quantity.<br>" +
+               "&nbsp;&nbsp;- late: A demand is satisfied later after its due date.<br>" +
+               "&nbsp;&nbsp;- early: A demand is satisfied earlier than the due date.<br>" +
+               "&nbsp;&nbsp;- invalid data: Some data problem prevents this object from being planned.<br>" +
+               "&nbsp;<b>Resource:</b><br>" +
+               "&nbsp;&nbsp;- overload: A resource is being overloaded during a certain period of time.<br>" +
+               "&nbsp;<b>Buffer:</b><br>" +
+               "&nbsp;&nbsp;- material excess: A buffer is carrying too much material during a certain period of time.<br>" +
+               "&nbsp;&nbsp;- material shortage: A buffer is having a material shortage during a certain period of time.<br>" +
+               "&nbsp;<b>Operation:</b><br>" +
+               "&nbsp;&nbsp;- before current: Flagged when an operationplan is being planned in the past.<br>" +
+               "&nbsp;&nbsp;- before fence: Flagged when an operationplan is being planned within a frozen time window.",
+             position : 'bottom'
            },
            {
-             url: "/problem/",
+             url: "/problem/?entity=material",
              element : '#grid_owner',
-             description : "Let's analyze a late demand...<br/><br/>" +
-               "Search a demand problem of type 'late',<br/>" +
-               "click on the demand to display the popup menu,<br/>" +
+             description : "Let's <b>analyze a late demand...</b><br><br>" +
+               "Search a demand problem of type 'late',<br>" +
+               "click on the demand to display the popup menu,<br>" +
                "and select 'plan' from the menu.",
-             position : 'T'
+             position : 'top'
            },
            {
-             url: "/demandpegging/Demand%201/",
-             element : 'h1',
-             description : "This report visualizes the plan of a particular demand.",
-             position: "BL"
+             url: "/demandpegging/Demand%2001/",
+             element : 'h1 small',
+             description : "This report visualizes the <b>plan of a particular demand</b>.",
+             position: "right"
            },
            {
-             url: "/demandpegging/Demand%201/",
+             url: "/demandpegging/Demand%2001/",
              element : '#jqgh_grid_depth',
-             description : "All levels in the supply path / bill of material<br/>" +
-               "are displayed as a hierarchical tree.<br/>" +
-               "You can collapse and expand branches<br/>" +
+             description : "All levels in the supply path / bill of material " +
+               "are displayed as a <b>hierarchical tree</b>.<br>" +
+               "You can <b>collapse</b> and <b>expand</b> branches " +
                "by clicking on the icons.",
-             position: "TL"
+             position : "top"
            },
            {
-             url: "/demandpegging/Demand%201/",
-             element : '#jqgh_grid_operationplans',
-             description : "The Gantt chart visualizes the timing of the steps.<br/><br/>" +
-               "The icons above the chart allow you to scroll and zoom.<br/>" +
-               "The red line in the graph marks the due date.<br/>" +
+             url: "/demandpegging/Demand%2001/",
+             element : '#zoom_in',
+             description : "The <b>Gantt chart</b> visualizes the timing of the steps.<br><br>" +
+               "The icons above the chart allow you to scroll and zoom.<br>" +
+               "The red line in the graph marks the due date.<br>" +
                "The black line in the graph marks the current date",
-             position: "L"
+             position : "left"
            },
            {
-             url: "/demandpegging/Demand%201/",
+             url: "/demandpegging/Demand%2001/",
              element : '#tabs ul li:nth-child(1)',
-             description : "This tab allows us to see the constraints which<br/>" +
-               "prevented this demand to be planned on time.",
-             position: "TL"
+             description : "This tab allows us to <b>see the constraints</b> which prevented this demand to be planned on time.",
+             position : "top"
            },
            {
-             url: "/constraintdemand/Demand%201/",
-             element : '#gbox_grid',
-             description : "This report quickly learns us why a particular demand is late or short.<br/>" +
-               "This information assists the planner in resolving the bottlenecks.<br/><br/>" +
-               "The reasons can be:<br/>"  +
-               "&nbsp;&nbsp;- Capacity overload<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;A resource shows up as a bottleneck. Can you do some overtime here?<br/>" +
-               "&nbsp;&nbsp;- Before current<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;There isn't enough time. Can you expedite some operations?<br/>" +
-               "&nbsp;&nbsp;- Material shortage<br/>" +
-               "&nbsp;&nbsp;&nbsp;&nbsp;You're short of material. Please get some more.<br/><br/>" +
-               "Some care is when interpreting these results: if a certain resource is identified<br/>" +
-               "as the cause, it doesn't mean the resource is completely unavailable. It only<br/>" +
-               "indicates that other demands with higher priority already used up all available<br/>" +
+             url: "/constraintdemand/Demand%2001/",
+             element : 'h1 small',
+             description : "This report shows <b>why a particular demand is late or short</b>.<br>" +
+               "This information assists the planner in resolving the bottlenecks.<br><br>" +
+               "The reasons can be:<br>"  +
+               "&nbsp;&nbsp;- Capacity overload<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A resource shows up as a bottleneck.<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can you do some overtime here?<br>" +
+               "&nbsp;&nbsp;- Before current<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There isn't enough time.<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can you expedite some operations?<br>" +
+               "&nbsp;&nbsp;- Material shortage<br>" +
+               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You're short of material. Please get some more.<br><br>" +
+               "Some care is when interpreting these results: if a certain resource is identified " +
+               "as the cause, it doesn't mean the resource is completely unavailable. It only " +
+               "indicates that other demands with higher priority already used up all available " +
                "capacity.",
-             position: "C"
+             position: "bottom"
            }
            ]
       },
       
 
-    // A day in the life of a manufacturing planner
-        {
-     description: '<h2><span class="underline"><a href="/?tour=0,0,0">Main</a></span> &gt; A day in the life of a manufacturing planner</h2>' +
+      // A day in the life of a manufacturing planner
+      {
+       description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; A day in the life of a manufacturing planner</h2>' +
         'The manufacturing planner\'s role is to make sure that demand is delivered on time ' +		
-        ' by reviewing the supply chain capacity and material constraints.<br/><br/>',
-     delay: 5,
-     steps:
+        ' by reviewing the supply chain capacity and material constraints.<br><br>',
+       delay: 5,
+       steps:
         [
          {
            url: "/",
            element : '#cockpitcrumb',
-           description : "First action would be to browse over the relevant widgets of the cockpit to have a global picture of the situation",
-           position : 'R'
+           description : "The cockpit is a dashboard with widgets to give an overall health of the supply chain</b>:" +
+                         "<ul><li style='list-style:initial'>Purchase orders</li>" +
+                         "<li style='list-style:initial'>Manufacturing orders</li>" +
+                         "<li style='list-style:initial'>Distribution orders</li>" +
+                         "<li style='list-style:initial'>Late orders</li>" +
+                         "<li style='list-style:initial'>Resource utilization</li>" +
+                         "<li style='list-style:initial'>Delivery performance</li>" +
+                         "<li style='list-style:initial'>...</li></ul>" +
+                         "From the widgets you can jump to more detailed information.<br>" +
+                         "The dashboard can easily be personalized by each user.", 
+           position : 'right'
          },
          {
            url: "/",
            element : 'div.panel[data-cockpit-widget="late_orders"]',
            description : "The late orders widget will display the delay of the orders that cannot be planned on time",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/",
            element : 'div.panel[data-cockpit-widget="purchase_orders"]',
            description : "The purchase orders widget let you review the proposed and confirmed purchase orders",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/",
            element : 'div.panel[data-cockpit-widget="distribution_orders"]',
            description : "The distribution orders widget let you review the proposed and confirmed distribution orders",
-           position : 'T'
+           position : 'top'
          },         
          {
            url: "/",
            element : '#Manufacturing',
-           description : "The manufacturing section contains :<br/>" + 
-           "The manufacuring orders widget to review the value associated with the proposed and confirmed manufacturing orders<br/>" +
-           "The resource utilization widget lets you find out how loaded your resources are<br/>" +
+           description : "The manufacturing section contains :<br>" + 
+           "The manufacuring orders widget to review the value associated with the proposed and confirmed manufacturing orders<br>" +
+           "The resource utilization widget lets you find out how loaded your resources are<br>" +
            "The capacity alerts widget displays any alert associated to capacity",
-           position : 'T'
+           position : 'top'
          },         
          {
            url: "/problem/",
            element : "#jqgh_grid_owner",
-           description : "The problem report (under the sales menu) will display all late/early/short demands for review<br/>" ,
-           position : 'T'
+           description : "The problem report (under the sales menu) will display all late/early/short demands for review<br>" ,
+           position : 'top'
          },
          {
            url: "/data/input/operationplan/",
            element : "#jqgh_grid_enddate",
            description : "The operation plan screen let you review and confirm any proposed manufacturing order",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/resource/",
            element : "#grid_graph",
            description : "The resource report displays the resource utilization per time bucket",
-           position : 'T'
+           position : 'top'
          },
          {
            url: "/resource/",
            element : ".fa-table",
            description : "By clicking on the table button, the planner will switch to the table view",
-           position : 'T'
+           position : 'top'
          }
         ]
     }

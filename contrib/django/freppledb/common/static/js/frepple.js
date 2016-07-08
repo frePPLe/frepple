@@ -1922,6 +1922,10 @@ var tour = {
   step: 0,
   timeout: null,
 
+  tooltip: '<div class="popover tourpopover" role="tooltip">' +
+    '<div class="arrow"></div>' + 
+    '<div class="popover-content"></div>' +
+    '</div>',
 
   start: function (args)
   {
@@ -1945,15 +1949,14 @@ var tour = {
   init: function()
   {
      // Display the main dialog of the tour
-
     $('#timebuckets').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     $('#popup').removeClass("in").addClass("tourguide").html('<div class="modal-dialog" id="tourModal" role="dialog" style="width: 390px; position: absolute; bottom: 10px; left: auto; right: 15px;">'+
         '<div class="modal-content">'+
         '<div class="modal-header">'+
-          '<h4 id="modalTitle" class="modal-title alert alert-info">'+ gettext("Guided tour") +
-          '<button type="button" id="tourcancelbutton" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times"</button>'+'</h4>'+
+          '<h4 id="modalTitle" class="modal-title"><strong>'+ gettext("Guided tour") +
+          '</strong><button type="button" id="tourcancelbutton" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times"</button>'+'</h4>'+
         '</div>'+
         '<div class="modal-body" id="tourmodalbody" style="padding-bottom:20px;">'+
             tourdata[tour.chapter]['description']+
@@ -1969,6 +1972,9 @@ var tour = {
       backdrop: 'static',
       keyboard: false
     })
+    .on('shown.bs.modal', function () {
+      tour.showStep();
+    })
     .modal('show');
     $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
          tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
@@ -1982,23 +1988,14 @@ var tour = {
       tour.next();
     });
     $('#tourcancelbutton').on('click', function() {
-          $('#tourtooltip').remove();
+      $('.tourpopover').popover('destroy');
       $('#tourModal').modal('hide');
-      });
-
-     // Create the tooltip
-     tour.tooltip = $('<div>',{id:'tourtooltip', class:'popover', html:'<div class="popover" role="tooltip" style="margin-top:10px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'})
-     .css({
-        'placement': 'top','display': 'none', 'overflow': 'visible'
-     });
-     $("body").append(tour.tooltip);
-
-     // Show the first step
-     tour.showStep();
+    });
   },
 
   next: function()
   {
+    $(tourdata[tour.chapter]['steps'][tour.step]['element']).popover('destroy');
     tour.step++;
     if (tour.step >= tourdata[tour.chapter]['steps'].length)
     {
@@ -2025,6 +2022,7 @@ var tour = {
 
   prev: function()
   {
+    $(tourdata[tour.chapter]['steps'][tour.step]['element']).popover('destroy');
     tour.step--;
     if (tour.step < 0)
     {
@@ -2044,36 +2042,65 @@ var tour = {
 
   showStep: function()
   {
+    $('.tourpopover').popover('destroy');
     var stepData = tourdata[tour.chapter]['steps'][tour.step];
     // Switch url if required
+    var nexthref = '';
     var prefix = $('#database').attr('name');
+    var currsearch = '';
+    if ( location.search.lastIndexOf('&')>-1 )
+    {
+      currsearch = location.search.replace(location.search.slice(location.search.lastIndexOf('&')),''); //delete &tour=x,y,z
+    } else {
+      currsearch = ''; //delete ?tour=x,y,z
+    };
     if (prefix && prefix != "default")
     {
       if (location.pathname != "/" + prefix + stepData['url'])
       {
-        window.location.href = "/" + prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        nexthref = "/" + prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        if (nexthref.match(/\?/g || []).length == 2)
+        {
+          nexthref = "/" + prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        };
+        window.location.href = nexthref;
         return;
-      }
-    }
-    else
-    {
-      if (location.pathname != stepData['url'])
+      };
+    } else {
+      if (location.pathname+currsearch != stepData['url'])
       {
-        window.location.href = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        nexthref = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        if (nexthref.match(/\?/g || []).length == 2)
+        {
+          nexthref = stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        };
+        window.location.href = nexthref;
         return;
-      }
-    }
+      };
+    };
     // Callback
     if ('beforestep' in stepData)
       eval(stepData['beforestep']);
     // Display the tooltip
-    tour.tooltip.html(stepData['description']);
+    //tour.tooltip.html(stepData['description']);
     var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
-    var pos = tour.getTooltipPosition(tooltipPos, stepData['element']);
-    tour.tooltip.css({ 'top': pos.top+'px', 'left': pos.left+'px' });
-    tour.tooltip.show('fast');
-    pos.top = (pos.top<0) ? 1 : pos.top;
-    if (pos.top < window.pageYOffset || pos.top > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,pos.top-window.innerHeight/2);
+
+    $(stepData['element']).popover({ 
+      'html': true, 
+      'container': 'body',
+      'template': tour.tooltip, 
+      'title':'', 
+      'content': stepData['description'], 
+      'placement': stepData['position'], 
+      'trigger': 'manual' 
+      });
+    $(stepData['element'])
+    .popover('show')
+    .on('shown.bs.popover', function () {
+      var postop = $('.tourpopover').css('top').replace('px','');
+      if (postop < window.pageYOffset || postop > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,postop-window.innerHeight/2);
+    })
+    
     // Update tour dialog
     $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
     // Previous button
@@ -2109,109 +2136,7 @@ var tour = {
       tour.autoplay = 1;
       tour.next();
     }
-  },
-
-  getTooltipPosition: function(pos, elementselector)
-  {
-    var element = $(elementselector);
-    if (element.length == 0)
-    {
-      console.log("Warning: Tour refers to nonexisting element '" + elementselector + "'");
-      return { 'left'  : 100, 'top' : 100 };
-    }
-    var position;
-    var ew = element.outerWidth();
-    var eh = element.outerHeight();
-    var offset = element.offset();
-    var el = offset.left;
-    var et = offset.top;
-    var tw = tour.tooltip.width() + parseInt(tour.tooltip.css('padding-left')) + parseInt(tour.tooltip.css('padding-right'));
-    var th = tour.tooltip.height() + parseInt(tour.tooltip.css('padding-top')) +  + parseInt(tour.tooltip.css('padding-bottom'));
-
-    $('.tourArrow').remove();
-    var upArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-left' : '9px solid transparent', 'border-right' : '9px solid transparent', 'border-bottom' : '9px solid red'});
-    var downArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-left' : '9px solid transparent', 'border-right' : '9px solid transparent', 'border-top' : '9px solid red'});
-    var rightArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-top' : '9px solid transparent', 'border-bottom' : '9px solid transparent', 'border-left' : '9px solid red'});
-    var leftArrow = $('<div class="tourArrow"></div>').css({ 'position' : 'absolute', 'display' : 'block', 'width' : '0', 'height' : '0', 'border-top' : '9px solid transparent', 'border-bottom' : '9px solid transparent', 'border-right' : '9px solid red'});
-    switch (pos) {
-      case 'BL' :
-        position = { 'left'  : el, 'top' : et + eh + 10 };
-        upArrow.css({ top: '-9px', left: '48%' });
-        tour.tooltip.prepend(upArrow);
-        break;
-
-      case 'BR' :
-        position = { 'left'  : el + ew - tw, 'top' : et + eh + 10 };
-        upArrow.css({ top: '-9px', left: '48%' });
-        tour.tooltip.prepend(upArrow);
-        break;
-
-      case 'TL' :
-        position = { 'left'  : el, 'top' : (et - th) -10 };
-        downArrow.css({ top: th, left: '48%' });
-        tour.tooltip.append(downArrow);
-        break;
-
-      case 'TR' :
-        position = { 'left'  : (el + ew) - tw, 'top' : et - th -10 };
-        downArrow.css({ top: th, left: '48%' });
-        tour.tooltip.append(downArrow);
-        break;
-
-      case 'RT' :
-        position = { 'left'  : el + ew + 10, 'top' : et };
-        leftArrow.css({ left: '-9px' });
-        tour.tooltip.prepend(leftArrow);
-        break;
-
-      case 'RB' :
-        position = { 'left'  : el + ew + 10, 'top' : et + eh - th };
-        leftArrow.css({ left: '-9px' });
-        tour.tooltip.prepend(leftArrow);
-        break;
-
-      case 'LT' :
-        position = { 'left'  : (el - tw) - 10, 'top' : et };
-        rightArrow.css({ right: '-9px' });
-        tour.tooltip.prepend(rightArrow);
-        break;
-
-      case 'LB' :
-        position = { 'left'  : (el - tw) - 10, 'top' : et + eh - th};
-        rightArrow.css({ right: '-9px' });
-        tour.tooltip.prepend(rightArrow);
-        break;
-
-      case 'B'  :
-        position = { 'left'  : el + ew/2 - tw/2, 'top' : (et + eh) + 10 };
-        upArrow.css({ top: '-9px', left: '48%' });
-        tour.tooltip.prepend(upArrow);
-        break;
-
-      case 'L'  :
-        position = { 'left'  : (el - tw) - 17, 'top' : et + eh/2 - th/2 };
-        rightArrow.css({ top: '40%', right: '-9px' });
-        tour.tooltip.prepend(rightArrow);
-        break;
-
-      case 'T'  :
-        position = { 'left'  : el + ew/2 - tw/2, 'top' : (et - th) - 10 };
-        downArrow.css({ top: th, left: '48%' });
-        tour.tooltip.append(downArrow);
-        break;
-
-      case 'R'  :
-        position = { 'left'  : (el + ew) + 10, 'top' : et + eh/2 - th/2 };
-        leftArrow.css({ top: '40%', left: '-9px' });
-        tour.tooltip.prepend(leftArrow);
-        break;
-
-      case 'C'  :
-        position = { 'left'  : el + ew/2 - tw/2, 'top' : et + eh/2 - th/2 };
-    }
-    return position;
   }
-
 }
 
 

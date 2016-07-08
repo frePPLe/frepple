@@ -39,14 +39,14 @@ encoding = settings.CSV_CHARSET
 def exportProblems():
   print("Exporting problems...")
   starttime = time()
-  writer = csv.writer(open("problems.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("problems.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#entity', 'name', 'description', 'start date', 'end date', 'weight'
     ))
   for i in frepple.problems():
     writer.writerow((
-      i.entity, i.name.encode(encoding, "ignore"), i.owner.name.encode(encoding, "ignore"),
-      i.description.encode(encoding, "ignore"), i.start, i.end, i.weight
+      i.entity, i.name, i.owner.name,
+      i.description, i.start, i.end, i.weight
       ))
   print('Exported problems in %.2f seconds' % (time() - starttime))
 
@@ -54,15 +54,15 @@ def exportProblems():
 def exportConstraints():
   print("Exporting constraints...")
   starttime = time()
-  writer = csv.writer(open("constraints.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("constraints.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#demand', 'entity', 'name', 'owner', 'description', 'start date', 'end date', 'weight'
     ))
   for d in frepple.demands():
     for i in d.constraints:
       writer.writerow((
-        d.name.encode(encoding, "ignore"), i.entity, i.name.encode(encoding, "ignore"),
-        i.owner.name.encode(encoding, "ignore"), i.description.encode(encoding, "ignore"),
+        d.name, i.entity, i.name,
+        i.owner.name, i.description,
         i.start, i.end, i.weight
         ))
   print('Exported constraints in %.2f seconds' % (time() - starttime))
@@ -71,13 +71,13 @@ def exportConstraints():
 def exportOperationplans():
   print("Exporting operationplans...")
   starttime = time()
-  writer = csv.writer(open("operations.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("operations.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#id', 'operation', 'quantity', 'start date', 'end date', 'locked'
     ))
   for i in frepple.operationplans():
     writer.writerow((
-       i.id, i.operation.name.encode(encoding, "ignore"), i.quantity, i.start, i.end,
+       i.id, i.operation.name, i.quantity, i.start, i.end,
        i.locked, i.unavailable, i.owner and i.owner.id or None
      ))
   print('Exported operationplans in %.2f seconds' % (time() - starttime))
@@ -86,14 +86,14 @@ def exportOperationplans():
 def exportFlowplans():
   print("Exporting flowplans...")
   starttime = time()
-  writer = csv.writer(open("flowplans.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("flowplans.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#operationplan id', 'buffer', 'quantity', 'date', 'on hand'
     ))
   for i in frepple.buffers():
     for j in i.flowplans:
       writer.writerow((
-       j.operationplan.id, j.buffer.name.encode(encoding, "ignore"),
+       j.operationplan.id, j.buffer.name,
        j.quantity, j.date, j.onhand
        ))
   print('Exported flowplans in %.2f seconds' % (time() - starttime))
@@ -102,7 +102,7 @@ def exportFlowplans():
 def exportLoadplans():
   print("Exporting loadplans...")
   starttime = time()
-  writer = csv.writer(open("loadplans.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("loadplans.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#operationplan id', 'resource', 'quantity', 'start date', 'end date', 'setup'
     ))
@@ -110,8 +110,8 @@ def exportLoadplans():
     for j in i.loadplans:
       if j.quantity < 0:
         writer.writerow((
-          j.operationplan.id, j.resource.name.encode(encoding, "ignore"),
-          -j.quantity, j.startdate, j.enddate, j.setup and j.setup.encode(encoding, "ignore") or None
+          j.operationplan.id, j.resource.name,
+          -j.quantity, j.startdate, j.enddate, j.setup and j.setup or None
           ))
   print('Exported loadplans in %.2f seconds' % (time() - starttime))
 
@@ -119,7 +119,7 @@ def exportLoadplans():
 def exportResourceplans():
   print("Exporting resourceplans...")
   starttime = time()
-  writer = csv.writer(open("resources.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("resources.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#resource', 'startdate', 'available', 'unavailable', 'setup', 'load', 'free'
     ))
@@ -157,7 +157,7 @@ def exportResourceplans():
   for i in frepple.resources():
     for j in i.plan(buckets):
       writer.writerow((
-        i.name.encode(encoding, "ignore"), j['start'], j['available'],
+        i.name, j['start'], j['available'],
         j['unavailable'], j['setup'], j['load'], j['free']
         ))
   print('Exported resourceplans in %.2f seconds' % (time() - starttime))
@@ -180,21 +180,21 @@ def exportDemand():
         if cur < 0:
           cur = 0
       yield (
-        n.encode(encoding, "ignore"), d.item.name.encode(encoding, "ignore"),
-        d.customer and d.customer.name.encode(encoding, "ignore") or None, d.due,
+        n, d.item.name,
+        d.customer and d.customer.name or None, d.due,
         cur, i.end, i.quantity, i.id
         )
     # Extra record if planned short
     if cumplanned < d.quantity:
       yield (
-        n.encode(encoding, "ignore"), d.item.name.encode(encoding, "ignore"),
-        d.customer and d.customer.name.encode(encoding, "ignore") or None, d.due,
+        n, d.item.name,
+        d.customer and d.customer.name or None, d.due,
         d.quantity - cumplanned, None, None, None
         )
 
   print("Exporting demand plans...")
   starttime = time()
-  writer = csv.writer(open("demands.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("demands.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#demand', 'item', 'customer', 'due date', 'requested quantity',
     'plan date', 'plan quantity', 'operationplan id'
@@ -210,11 +210,9 @@ def exportDemand():
 def exportPegging():
   print("Exporting pegging...")
   starttime = time()
-  writer = csv.writer(open("demand_pegging.csv", "wb"), quoting=csv.QUOTE_ALL)
+  writer = csv.writer(open("demand_pegging.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
-    '#demand', 'level', 'consuming operationplan id', 'consuming date',
-    'producing operationplan id', 'producing date', 'buffer', 'item',
-    'quantity demand', 'quantity buffer'
+    '#demand', 'level', 'operationplan', 'quantity'
     ))
   for i in frepple.demands():
     # Find non-hidden demand owner
@@ -225,35 +223,9 @@ def exportPegging():
     # Export pegging
     for j in i.pegging:
       writer.writerow((
-       n.encode(encoding, "ignore"), j.level, j.consuming and j.consuming.id or '',
-       j.consuming_date,
-       j.producing and j.producing.id or '', j.producing_date,
-       j.buffer and j.buffer.name.encode(encoding, "ignore") or '',
-       (j.buffer and j.buffer.item and j.buffer.item.name.encode(encoding, "ignore")) or '',
-       j.quantity_demand, j.quantity_buffer
+        n, j.level, j.operationplan.id, j.quantity
        ))
   print('Exported pegging in %.2f seconds' % (time() - starttime))
-
-
-def exportForecast():
-  # Detect whether the forecast module is available
-  if 'demand_forecast' not in [ a[0] for a in inspect.getmembers(frepple) ]:
-    return
-
-  print("Exporting forecast plans...")
-  starttime = time()
-  writer = csv.writer(open("forecast.csv", "wb"), quoting=csv.QUOTE_ALL)
-  writer.writerow((
-    '#forecast', 'start date', 'end date', 'total quantity',
-    'net quantity', 'consumed quantity'
-    ))
-  for i in frepple.demands():
-    if not isinstance(i, frepple.demand_forecastbucket) or i.total <= 0.0:
-      continue
-    writer.writerow((
-      i.name.encode(encoding, "ignore"), i.startdate, i.enddate, i.total, i.quantity, i.consumed
-      ))
-  print('Exported forecast plans in %.2f seconds' % (time() - starttime))
 
 
 def exportfrepple():
@@ -265,4 +237,3 @@ def exportfrepple():
   exportResourceplans()
   exportDemand()
   exportPegging()
-  exportForecast()

@@ -703,40 +703,6 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
         </div>
       </div>
     </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading" data-parent="#tasks" role="tab" id="twalfdeHeading" data-toggle="collapse" data-target="#twalfdeAccord">
-        <h4 class="panel-title">
-          <a role="button">{% blocktrans with erp="Odoo" %}Export data to {{ erp }}{% endblocktrans %}</a>
-        </h4>
-      </div>
-      <div id="twalfdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="twalfdeAccord">
-        <div class="panel-body">
-          <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_export/">
-            {% csrf_token %}
-            <table>
-              <tr>
-                <td style="vertical-align: top; padding: 15px">
-                  <button class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">
-                  {% trans "launch"|capfirst %}
-                  </button>
-                </td>
-                <td style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %} </br>
-                </br>
-                {% blocktrans %}
-                <label data-toggle="tooltip" data-placement="bottom" data-original-title="These filters are defined in the parameters and can be used to export specific changes (ex: changes from last 24h in a certain location)">
-                {% endblocktrans %}
-                  <input type="checkbox" name="filter_export" value="SO" id="filter_export" style="margin-left: 8px;">
-                  <span> {% trans "Apply filter parameters." %} </span>
-                  <span class="fa fa-question-circle" style="display: inline-block;"></span>
-                </label>
-                </td>
-              </tr>
-            </table>
-          </form>
-        </div>
-      </div>
-    </div>
     {% endif %}
 
 	  {% if perms.execute.run_db %}

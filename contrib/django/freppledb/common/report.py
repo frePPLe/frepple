@@ -161,12 +161,14 @@ class GridFieldDate(GridField):
 
 class GridFieldInteger(GridField):
   formatter = 'integer'
+  extra = "formatoptions:{defaultValue: ''}"
   width = 70
   searchrules = 'integer:true'
 
 
 class GridFieldNumber(GridField):
   formatter = 'number'
+  extra = "formatoptions:{defaultValue: ''}"
   width = 70
   searchrules = 'number:true'
 
@@ -210,7 +212,7 @@ class GridFieldChoice(GridField):
 
 class GridFieldCurrency(GridField):
   formatter = 'currency'
-  extra = "formatoptions:{prefix:'%s', suffix:'%s'}" % settings.CURRENCY
+  extra = "formatoptions:{prefix:'%s', suffix:'%s', defaultValue=''}" % settings.CURRENCY
   width = 80
 
 

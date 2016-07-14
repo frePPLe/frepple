@@ -369,8 +369,8 @@ class Command(BaseCommand):
         update
         )
 
-      # Delete records
       if not self.incremental:
+        # Delete records
         delete = [ (i,) for i, j in unused_keys.items() if j ]
         cursor.executemany(
           'update customer set owner_id=null where owner_id=%s',
@@ -384,6 +384,11 @@ class Command(BaseCommand):
           'delete from customer where name=%s',
           delete
           )
+      else:
+        # Unused keys are customers that haven't changed. We still need them.
+        for name, objectid in unused_keys.items():
+          if objectid:
+            self.customers[objectid] = name
 
       if self.verbosity > 0:
         print("Inserted %d new customers" % len(insert))
@@ -475,8 +480,8 @@ class Command(BaseCommand):
         update
         )
 
-      # Delete records
       if not self.incremental:
+        # Delete records
         delete = [ (i,) for i, j in unused_keys.items() if j ]
         cursor.executemany(
           'update supplier set owner_id=null where owner_id=%s',
@@ -591,8 +596,9 @@ class Command(BaseCommand):
         update
         )
 
-      # Delete inactive items
+
       if not self.incremental:
+        # Delete inactive items
         delete = [ (i,) for i, j in unused_keys.items() if j ]
         cursor.executemany("delete from demand where item_id=%s", delete)
         cursor.executemany(
@@ -602,6 +608,11 @@ class Command(BaseCommand):
           )
         cursor.executemany("delete from buffer where item_id=%s", delete)
         cursor.executemany("delete from item where name=%s", delete)
+      else:
+        # Unused keys are in fact items that haven't changed. We still need them.
+        for name, objectid in unused_keys.items():
+          if objectid:
+            self.items[objectid] = name
 
       if self.verbosity > 0:
         print("Inserted %d new products" % len(insert))
@@ -735,7 +746,7 @@ class Command(BaseCommand):
         "update location \
           set description=%%s, subcategory='openbravo', source=%%s, lastmodified='%s' \
           where name=%%s" % self.date,
-        [ i for i in locations if i[2] not in frepple_keys ]
+        [ i for i in locations if i[2] in frepple_keys ]
         )
 
       # Get a mapping of all locators to their warehouse
@@ -1258,7 +1269,7 @@ class Command(BaseCommand):
         creationDate = datetime.strptime(elem.find("creationDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         orderedQuantity = float(elem.find("orderedQuantity").text or 0)
         deliveredQuantity = float(elem.find("deliveredQuantity").text or 0)
-        
+
         if objectid in frepple_keys:
           if deliveredQuantity >= orderedQuantity:   # TODO Not the right criterion
             delete.append( (objectid,) )

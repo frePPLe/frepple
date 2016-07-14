@@ -419,7 +419,7 @@ def logfile(request):
         f.seek(-50000, os.SEEK_END)
         d = f.read(50000)
         d = d[d.index(b'\n'):] # Strip the first, incomplete line
-        logdata = force_text(_("Displaying only the last 50K from the log file")) + '...\n\n...' + force_text(d)
+        logdata = force_text(_("Displaying only the last 50K from the log file")) + '...\n\n...' + d.decode("utf8","ignore")
       else:
         # Displayed completely
         f.seek(0, os.SEEK_SET)

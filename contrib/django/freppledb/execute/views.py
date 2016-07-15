@@ -395,6 +395,7 @@ def DownloadLogFile(request):
     document_root=settings.FREPPLE_LOGDIR
     )
   response['Content-Disposition'] = 'inline; filename="%s"' % filename
+  response['Content-Type'] = 'application/octet-stream'
   return response
 
 

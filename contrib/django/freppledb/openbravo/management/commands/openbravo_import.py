@@ -187,7 +187,7 @@ class Command(BaseCommand):
       if self.verbosity > 1:
         print('Request: ', url2)
 
-      data = get_data_base(url2, self.openbravo_host, self.openbravo_user, self.openbravo_password).replace("&#0;","").replace("&#22;","").replace("\xcc","")
+      data = get_data_base(url2, self.openbravo_host, self.openbravo_user, self.openbravo_password).replace("&#8;","").replace("&#0;","").replace("&#22;","").replace("\xcc","")
       if self.verbosity == 1:
         print('.', end="")
       elif self.verbosity > 2:

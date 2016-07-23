@@ -617,11 +617,12 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
   //   - it doesn't load any resources of type default
   //   - both operationplans aren't locked
   //   - both operationplans have no owner
+  //     or both have an owner of the same operation and is of type operation_alternate
   //   - start and end date of both operationplans are the same
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!o->getRawIdentifier() && !o->getLocked() && !o->getOwner())
+  if (!o->getRawIdentifier() && !o->getLocked())
   {
     // Verify we load no resources of type "default".
     // It's ok to merge operationplans which load "infinite" or "buckets" resources.
@@ -634,10 +635,21 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
     OperationPlan *y = NULL;
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
-    if (y && y->getDates() == o->getDates() && !y->getOwner()
+    if (y && y->getDates() == o->getDates()
         && y->getDemand() == o->getDemand() && !y->getLocked() && y->getRawIdentifier()
         && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
+      if (o->getOwner())
+      {
+        // Both must have the same owner operation of type alternate
+        if (!y->getOwner())
+          return true;
+        else if (o->getOwner()->getOperation() != y->getOwner()->getOperation())
+          return true;        
+        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata) 
+          return true;
+     }
+
       // Check that the flowplans are on identical alternates and not of type fixed
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
       OperationPlan::FlowPlanIterator fp2 = y->beginFlowPlans();
@@ -658,12 +670,25 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       }
       // Merging with the 'next' operationplan
       y->setQuantity(y->getQuantity() + o->getQuantity());
+      if (o->getOwner())
+        o->setOwner(NULL);
       return false;
     }
-    if (x!= OperationPlan::end() && x->getDates() == o->getDates() && !x->getOwner()
+    if (x!= OperationPlan::end() && x->getDates() == o->getDates()
         && x->getDemand() == o->getDemand() && !x->getLocked() && x->getRawIdentifier()
         && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
+      if (o->getOwner())
+      {
+        // Both must have the same owner operation of type alternate
+        if (!x->getOwner())
+          return true;
+        else if (o->getOwner()->getOperation() != x->getOwner()->getOperation())
+          return true;
+        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+          return true;
+      }
+
       // Check that the flowplans are on identical alternates
       OperationPlan::FlowPlanIterator fp1 = o->beginFlowPlans();
       OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
@@ -680,6 +705,8 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       }
       // Merging with the 'previous' operationplan
       x->setQuantity(x->getQuantity() + o->getQuantity());
+      if (o->getOwner())
+        o->setOwner(NULL);
       return false;
     }
   }

@@ -272,13 +272,25 @@ DECLARE_EXPORT bool OperationPlan::activate()
   // Avoid negative quantities, and call operation specific activation code
   if (getQuantity() < 0.0 || !oper->extraInstantiate(this))
   {
-    delete this;  // TODO Is this still safe & correct with new API?
+    delete this;
     return false;
   }
 
   // Instantiate all suboperationplans as well
-  for (OperationPlan::iterator x(this); x != end(); ++x)
-    x->activate();
+  OperationPlan::iterator x(this);
+  if (x != end())
+  {
+    while (x != end()) {
+      OperationPlan* tmp = &*x;
+      ++x;
+      tmp->activate();
+    }
+    x = this;
+    if (x == end()) {
+      delete this;
+      return false;
+    }
+  }
 
   // Mark as activated by assigning a unique identifier.
   if (id && id != ULONG_MAX)

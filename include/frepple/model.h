@@ -3826,16 +3826,20 @@ class Item : public HasHierarchy<Item>, public HasDescription
   friend class Buffer;
   friend class ItemSupplier;
   friend class ItemDistribution;
+  friend class Demand;
 
   public:
     class bufferIterator;
     friend class bufferIterator;
 
+    class demandIterator;
+    friend class demandIterator;
+
     typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Item() : deliveryOperation(NULL), price(0.0),
-      firstItemDistribution(NULL), firstItemBuffer(NULL) {}
+      firstItemDistribution(NULL), firstItemBuffer(NULL), firstItemDemand(NULL) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -3922,7 +3926,11 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return this;
     }
 
+    // Return an iterator over all buffers of this item
     inline bufferIterator getBufferIterator() const;
+
+    // Return an iterator over all demands of this item
+    inline demandIterator getDemandIterator() const;
 
     static int initialize();
 
@@ -3945,6 +3953,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
+      m->addIteratorField<Cls, demandIterator, Demand>(Tags::demands, Tags::demand, &Cls::getDemandIterator, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
     }
 
@@ -3965,6 +3974,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** Maintain a list of buffers. */
     Buffer *firstItemBuffer;
+
+    /** Maintain a list of demands. */
+    Demand *firstItemDemand;
 };
 
 
@@ -6592,6 +6604,7 @@ class LoadDefault : public Load
 class Demand
   : public HasHierarchy<Demand>, public Plannable, public HasDescription
 {
+  friend class Item;
   public:
     enum status {
       QUOTE, OPEN, CLOSED, CANCELED
@@ -6624,7 +6637,8 @@ class Demand
     /** Default constructor. */
     explicit DECLARE_EXPORT Demand() :
       it(NULL), loc(NULL), oper(uninitializedDelivery), cust(NULL), qty(0.0),
-      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false), state(OPEN)
+      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false), 
+      state(OPEN), nextItemDemand(NULL)
       {}
 
     /** Destructor.
@@ -6666,16 +6680,8 @@ class Demand
       return it;
     }
 
-    /** Updates the item/product being requested. */
-    virtual void setItem(Item *i)
-    {
-      if (it == i)
-        return;
-      it=i;
-      if (oper && oper->getHidden())
-        oper = uninitializedDelivery;
-      setChanged();
-    }
+    /** Update the item being requested. */
+    virtual void setItem(Item*);
 
     /** Returns the location where the demand is shipped from. */
     Location* getLocation() const
@@ -6791,6 +6797,12 @@ class Demand
         state = CANCELED;
       else
         throw DataException("Demand status not recognized");
+    }
+
+    /** Return a pointer to the next demand for the same item. */
+    Demand* getNextItemDemand() const
+    {
+      return nextItemDemand;
     }
 
     /** Returns the latest delivery operationplan. */
@@ -6992,7 +7004,69 @@ class Demand
 
     /** Status of the demand. */
     status state;
+
+    /** A linked list with all demands of an item. */
+    Demand* nextItemDemand;
 };
+
+
+class Item::demandIterator
+{
+  private:
+    Demand* cur;
+
+  public:
+    /** Constructor. */
+    demandIterator(const Item* i) : cur(i ? i->firstItemDemand : NULL) {}
+
+    bool operator != (const demandIterator &b) const
+    {
+      return b.cur != cur;
+    }
+
+    bool operator == (const demandIterator &b) const
+    {
+      return b.cur == cur;
+    }
+
+    demandIterator& operator++()
+    {
+      if (cur)
+        cur = cur->getNextItemDemand();
+      return *this;
+    }
+
+    demandIterator operator++(int)
+    {
+      demandIterator tmp = *this;
+      ++*this;
+      return tmp;
+    }
+
+    Demand* next()
+    {
+      Demand *tmp = cur;
+      if (cur)
+        cur = cur->getNextItemDemand();
+      return tmp;
+    }
+
+    Demand* operator ->() const
+    {
+      return cur;
+    }
+
+    Demand& operator *() const
+    {
+      return *cur;
+    }
+};
+
+
+inline Item::demandIterator Item::getDemandIterator() const
+{
+  return this;
+}
 
 
 /** @brief This class is the default implementation of the abstract

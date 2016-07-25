@@ -77,10 +77,10 @@ void LibraryModel::initialize()
   nok += BufferDefault::initialize();
   nok += BufferInfinite::initialize();
   nok += BufferProcure::initialize();
-  nok += Item::initialize();
-  nok += ItemDefault::initialize();
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
+  nok += Item::initialize();
+  nok += ItemDefault::initialize();
   nok += SetupMatrixRule::initialize();
   nok += SetupMatrix::initialize();
   nok += SetupMatrixDefault::initialize();

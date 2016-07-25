@@ -72,4 +72,42 @@ DECLARE_EXPORT Item::~Item()
 }
 
 
+void Demand::setItem(Item *i)
+{
+  // No change
+  if (it == i)
+    return;
+
+  // Unlink from previous item
+  if (it)
+  {
+    if (it->firstItemDemand == this)
+      it->firstItemDemand = nextItemDemand;
+    else
+    {
+      Demand* dmd = it->firstItemDemand;
+      while (dmd && dmd->nextItemDemand != this)
+        dmd = dmd->nextItemDemand;
+      if (!dmd)
+        throw LogicException("corrupted demand list for an item");
+      dmd->nextItemDemand = nextItemDemand;
+    }
+  }
+
+  // Link at new item
+  it = i;
+  if (it)
+  {
+    nextItemDemand = it->firstItemDemand;
+    it->firstItemDemand = this;
+  }
+
+  // Trigger recreation of the delivery operation
+  if (oper && oper->getHidden())
+    oper = uninitializedDelivery;
+
+  // Mark as changed
+  setChanged();
+}
+
 } // end namespace

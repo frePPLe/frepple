@@ -74,6 +74,22 @@ DECLARE_EXPORT Demand::~Demand()
 {
   // Remove the delivery operationplans
   deleteOperationPlans(true);
+
+  // Unlink from the item
+  if (it)
+  {
+    if (it->firstItemDemand == this)
+      it->firstItemDemand = nextItemDemand;
+    else
+    {
+      Demand* dmd = it->firstItemDemand;
+      while (dmd && dmd->nextItemDemand != this)
+        dmd = dmd->nextItemDemand;
+      if (!dmd)
+        logger << "corrupted demand list for an item" << endl;
+      dmd->nextItemDemand = nextItemDemand;
+    }
+  }
 }
 
 

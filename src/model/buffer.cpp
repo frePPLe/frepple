@@ -472,7 +472,7 @@ DECLARE_EXPORT Buffer::~Buffer()
       while (buf && buf->nextItemBuffer != this)
         buf = buf->nextItemBuffer;
       if (!buf)
-        logger << "Error: Corrupted buffer list for an item";
+        logger << "Error: Corrupted buffer list for an item" << endl;
       buf->nextItemBuffer = nextItemBuffer;
     }
   }

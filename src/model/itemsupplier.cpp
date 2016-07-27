@@ -217,6 +217,7 @@ int OperationItemSupplier::initialize()
     METH_STATIC | METH_VARARGS | METH_KEYWORDS,
     "Create an operationplan representing a purchase order");
   x.supportgetattro();
+  x.supportsetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }

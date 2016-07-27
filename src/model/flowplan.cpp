@@ -37,6 +37,7 @@ int FlowPlan::initialize()
   x.setName("flowplan");
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
+  x.supportsetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }

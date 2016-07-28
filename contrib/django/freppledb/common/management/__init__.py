@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.core.signals import request_finished
 from django.db.models import signals, get_models
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.auth.models import Permission
@@ -22,6 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.template.base import add_to_builtins
 
 from freppledb.common import models as common_models
+from freppledb.common.middleware import resetRequest
 
 
 # Make our tags built-in, so we don't have to load them any more in our
@@ -66,3 +68,4 @@ def createExtraPermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, 
 
 signals.post_syncdb.connect(createExtraPermissions)
 signals.post_syncdb.connect(createViewPermissions, common_models)
+request_finished.connect(resetRequest)

@@ -31,7 +31,7 @@ from freppledb.common.models import Scenario
 
 # A local thread variable to make the current request visible everywhere
 _thread_locals = threading.local()
-
+  
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
   """
@@ -63,8 +63,18 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     return None
 
   def process_response(self, request, response):
-    setattr(_thread_locals, 'request', None)
+    if not response.streaming:
+      setattr(_thread_locals, 'request', None)
+    # Note: Streaming response get the request field cleared in the
+    # request_finished signal handler
     return response
+
+
+def resetRequest(**kwargs):
+  """
+  Used as a request_finished signal handler.
+  """
+  setattr(_thread_locals, 'request', None)
 
 
 # Initialize the URL parsing middleware

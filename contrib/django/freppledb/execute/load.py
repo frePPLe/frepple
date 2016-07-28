@@ -117,13 +117,18 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT
-        name, defaultvalue, source
+        name, defaultvalue, source, 0 hidden
       FROM calendar %s
+      union
+      SELECT 
+        name, 0, 'common_bucket', 1 hidden
+      FROM common_bucket
+      order by name asc
       ''' % self.filter_where)
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        frepple.calendar(name=i[0], default=i[1], source=i[2])
+        frepple.calendar(name=i[0], default=i[1], source=i[2], hidden=i[3])                
       except Exception as e:
         print("Error:", e)
     print('Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime))

@@ -104,7 +104,7 @@ class exportStaticModel(object):
             self.timestamp
           )
           for i in frepple.calendars()
-          if i.name not in primary_keys and (not self.source or self.source == i.source)
+          if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
         "update calendar \
@@ -116,7 +116,7 @@ class exportStaticModel(object):
             i.name
           )
           for i in frepple.calendars()
-          if i.name in primary_keys and (not self.source or self.source == i.source)
+          if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       print('Exported calendars in %.2f seconds' % (time() - starttime))
 
@@ -127,6 +127,8 @@ class exportStaticModel(object):
       cursor.execute("SELECT max(id) FROM calendarbucket")
       cnt = cursor.fetchone()[0] or 1
       for c in frepple.calendars():
+        if c.hidden:
+          continue
         if self.source and self.source != c.source:
           continue
         for i in c.buckets:

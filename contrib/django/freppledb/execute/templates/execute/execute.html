@@ -431,7 +431,7 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
     <div class="panel panel-default">
       <div class="panel-heading" data-parent="#tasks" role="tab" id="vertiendeHeading" data-toggle="collapse" data-target="#vertiendeAccord">
         <h4 class="panel-title">
-          <a role="button">{% trans "Load data files from folder" %}</a>
+          <a role="button">{% trans "Import/Export data files in folder" %}</a>
         </h4>
       </div>
       <div id="vertiendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vertiendeHeading">
@@ -439,18 +439,27 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
 
             <table>
               <tr>
-	              <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_loadfromfolder/">{% csrf_token %}
-	                <td style="vertical-align:top; padding: 15px">
-	                  <button type="submit" class="btn btn-primary" id="import" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+	              <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
+	                <td style="vertical-align:top; padding-left: 15px">
+	                  <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
 	                </td>
 								</form>
-                <td colspan='4' style="padding: 15px;">
-                  <p>{% trans "Load CSV files from the configured data folder.</p><p>The file names must match the names of data objects (i.e. item, demand, ...) and the first line in the file must contain the field names." %}</p>
+                <td colspan='3' style="padding-left: 15px;">
+                  <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
+                </td>
+              </tr>
+              <tr>
+                <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
+                  <td style="vertical-align:top; padding-left: 15px">
+                    <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
+                  </td>
+                </form>
+                <td colspan='3' style="padding-left: 15px;">
+                  <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
                 </td>
               </tr>
               <tr>
 								<td></td>
-								<td><input class="chckfile_all check" type="checkbox" name="all" value="1" checked="" disabled hidden></td>
 								<td><strong>{% trans 'file name'|capfirst %}</strong></td>
 								<td><strong>{% trans 'size'|capfirst %}</strong></td>
 								<td><strong>{% trans 'changed'|capfirst %}</strong></td>
@@ -458,7 +467,6 @@ FrePPLe also saves a copy of the data in its own database for reporting.">Live d
               {% for j in filestoupload %}
               <tr>
                 <td></td>
-                <td><input class="chckfile_entity check" type="checkbox" value="{{j.0}}" checked="" id="chbx_input.demand" disabled hidden></td>
                 <td>{{j.0}}<a href="{{request.prefix}}/execute/viewfile/{{j.0}}">&nbsp;<span class="fa fa-caret-right"></span></a></td>
                 <td>{{j.2}}</td>
                 <td>{{j.1}}</td>

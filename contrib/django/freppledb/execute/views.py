@@ -279,13 +279,18 @@ def wrapTask(request, action):
     if 'filter_export' in request.POST:
       task.arguments = "--filter"
     task.save(using=request.database)
+  # J
   elif action == 'odoo_import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
     task = Task(name='Odoo import', submitted=now, status='Waiting', user=request.user)
     #task.arguments = "--filter"
     task.save(using=request.database)
-  # J
-  elif action == 'frepple_loadfromfolder':
-    task = Task(name='load from folder', submitted=now, status='Waiting', user=request.user)
+  # M
+  elif action == 'frepple_importfromfolder':
+    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user)
+    task.save(using=request.database)
+  # N
+  elif action == 'frepple_exporttofolder':
+    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   else:
     # Task not recognized

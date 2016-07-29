@@ -93,12 +93,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'load from folder':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'import from folder':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='load from folder', submitted=now, started=now, status='0%', user=self.user)
+        task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user)
       task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
 
@@ -107,11 +107,12 @@ class Command(BaseCommand):
       translation.activate(settings.LANGUAGE_CODE)
 
       # Execute
+      errors = 0
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
-        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'loadfromfolder.log'), "a")
-        print("%s Started upload from folder\n" % datetime.now(), file=self.logfile)
+        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'importfromfolder.log'), "a")
+        print("%s Started import from folder\n" % datetime.now(), file=self.logfile)
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
@@ -156,7 +157,6 @@ class Command(BaseCommand):
         task.save(using=self.database)
 
         i=0
-        errors = 0
         for ifile, model, contenttype_id, dependencies in models:
           i += 1
           print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile)
@@ -165,14 +165,22 @@ class Command(BaseCommand):
           print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile)
           task.status = str(int(10+i/cnt*80))+'%'
           task.save(using=self.database)
-
+      
+      else:
+        errors += 1
+        cnt = 0
+        print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile)
+        
       # Task update
       if errors:
         task.status = 'Failed'
-        task.message = "Uploaded %s data files with %s errors" % (cnt, errors)
+        if not cnt:
+          task.message = "Destination folder does not exist"
+        else:
+          task.message = "Uploaded %s data files with %s errors" % (cnt, errors)
       else:
         task.status = 'Done'
-        task.message = "Uploaded %s data file" % cnt
+        task.message = "Uploaded %s data files" % cnt
       task.finished = datetime.now()
 
     except Exception as e:
@@ -180,15 +188,18 @@ class Command(BaseCommand):
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
-        task.finished = datetime.now()
       raise e
 
     finally:
       if task:
-        task.status = '100%'
-        task.save(using=self.database)
+        if not errors:
+          task.status = '100%'
+        else:
+          task.status = 'Failed'
+      task.finished = datetime.now()
+      task.save(using=self.database)
       if self.logfile:
-        print('%s End of upload from folder\n' % datetime.now(), file=self.logfile)
+        print('%s End of import from folder\n' % datetime.now(), file=self.logfile)
         self.logfile.close()
 
 

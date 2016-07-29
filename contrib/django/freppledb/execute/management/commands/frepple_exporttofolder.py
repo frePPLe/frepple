@@ -40,13 +40,13 @@ class Command(BaseCommand):
   )
 
   requires_system_checks = False
-  
+
   statements = [
       ("export_purchaseorder.csv", "COPY (select * from purchase_order where status='proposed') TO STDOUT WITH CSV HEADER"),
       ("export_distributionorder.csv", "COPY distribution_order TO STDOUT WITH CSV HEADER"),
-      ("export_preference.csv", "COPY common_preference TO STDOUT WITH CSV HEADER")     
+      ("export_manufacturingorders.csv", "COPY operationplan TO STDOUT WITH CSV HEADER")
       ]
-  
+
   def get_version(self):
     return VERSION
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
       self.database = DEFAULT_DB_ALIAS
     if self.database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % self.database )
-    
+
     if 'user' in options and options['user']:
       try:
         self.user = User.objects.all().using(self.database).get(username=options['user'])
@@ -66,7 +66,7 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       self.user = None
-    
+
     now = datetime.now()
 
     task = None
@@ -87,16 +87,16 @@ class Command(BaseCommand):
         task = Task(name='export to folder', submitted=now, started=now, status='0%', user=self.user)
       task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
-      
+
        # Execute
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-        
+
         # Open the logfile
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'exporttofolder.log'), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
-        
+
         #Define our connection string
-        conn_string = "host='localhost' dbname='Enterprise' user='frepple' password='frepple'"
+        conn_string = "host='localhost' dbname='"+settings.DATABASES[self.database]['NAME']+"' user='"+settings.DATABASES[self.database]['USER']+"' password='"+settings.DATABASES[self.database]['PASSWORD']+"'"
 
         conn = psycopg2.connect(conn_string)
 
@@ -107,15 +107,15 @@ class Command(BaseCommand):
 
         i=0
         cnt = len(self.statements)
-        
+
         for filename, sqlquery in self.statements:
           print("%s Started export of %s" % (datetime.now(),filename), file=self.logfile)
 
           try:
             csv_datafile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], filename), "w")
-            
+
             cursor.copy_expert(sqlquery,csv_datafile)
-            
+
             csv_datafile.close()
             i += 1
 
@@ -126,14 +126,19 @@ class Command(BaseCommand):
               task.message = '%s' % e
             conn = psycopg2.connect(conn_string)
             cursor = conn.cursor()
-          
+
           task.status = str(int(i/cnt*100))+'%'
           task.save(using=self.database)
-          
+
         conn.close()
         print("%s Exported %s file(s)\n" % (datetime.now(),cnt-errors), file=self.logfile)
-        
-      
+
+      else:
+        errors += 1
+        print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile)
+        task.message = "Destination folder does not exist"
+        task.save(using=self.database)
+
     except Exception as e:
       print("%s Failed" % datetime.now(), file=self.logfile)
       errors += 1
@@ -144,8 +149,10 @@ class Command(BaseCommand):
       if task:
         if not errors:
           task.status = '100%'
+          task.message = "Exported %s data files" % (cnt)
         else:
           task.status = 'Failed'
+          #task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
         task.finished = datetime.now()
         task.save(using=self.database)
 

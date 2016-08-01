@@ -430,6 +430,7 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       // The order is chosen to minimize the work of the individual destructors.
       // E.g. the destructor of the item class recurses over all demands and
       // all buffers. It is much faster if there are none already.
+      ItemOperation::clear();
       Operation::clear();
       Demand::clear();
       Buffer::clear();

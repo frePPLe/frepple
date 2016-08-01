@@ -77,7 +77,7 @@ DECLARE_EXPORT ItemDistribution::~ItemDistribution()
   while (firstOperation)
     delete firstOperation;
 
-  // Unlink from previous item
+  // Unlink from item
   if (it)
   {
     if (it->firstItemDistribution == this)

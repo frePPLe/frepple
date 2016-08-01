@@ -1,6 +1,6 @@
-====
-Flow
-====
+==================
+Operation Material
+==================
 
 Flows are used to model the consumption and production of material from buffers.
 
@@ -84,7 +84,7 @@ action          A/C/AC/R          | Type of action to be executed:
 
 **Example XML structures**
 
-Defining a flow
+Defining an operationmaterial object
 
 .. code-block:: XML
 
@@ -98,7 +98,7 @@ Defining a flow
        </flows>
     </plan>
 
-Defining a flow nested in an operation structure.
+Defining an operationmaterial nested in an operation structure.
 A quantity 2 of component A OR 3 of component B are consumed, and 1 unit of the end item is produced.
 
 .. code-block:: XML
@@ -128,7 +128,7 @@ A quantity 2 of component A OR 3 of component B are consumed, and 1 unit of the 
        </operations>
     </plan>
 
-Defining a flow nested in a buffer structure
+Defining an operationmaterial nested in a buffer structure
 
 .. code-block:: XML
 
@@ -149,7 +149,7 @@ Defining a flow nested in a buffer structure
        </buffers>
     </plan>
 
-Deleting a flow
+Deleting an operationmaterial
 
 ::
 

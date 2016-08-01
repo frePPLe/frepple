@@ -20,8 +20,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
-from freppledb.input.models import Resource
-from freppledb.output.models import LoadPlan
+from freppledb.input.models import Resource, OperationPlanResource
 from freppledb.common.models import Parameter
 from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot
@@ -110,7 +109,7 @@ class OverviewReport(GridPivot):
       on res2.lft between res.lft and res.rght
       -- Utilization info
       left join out_resourceplan
-      on res2.name = out_resourceplan.theresource
+      on res2.name = out_resourceplan.resource
       and d.startdate <= out_resourceplan.startdate
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
@@ -118,15 +117,15 @@ class OverviewReport(GridPivot):
       -- Average utilization info
       left join (
                 select
-                  theresource,
+                  resource,
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
                    * 100.0 / coalesce(greatest(sum(out_resourceplan.available), 0.0001),1) as avg_util
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                 and out_resourceplan.startdate < '%s'
-                group by theresource
+                group by resource
                 ) plan_summary
-      on res2.name = plan_summary.theresource
+      on res2.name = plan_summary.resource
       -- Grouping and sorting
       group by res.name, res.location_id, res.type, d.bucket, d.startdate
       order by %s, d.startdate
@@ -162,11 +161,11 @@ class OverviewReport(GridPivot):
 
 class DetailReport(GridReport):
   '''
-  A list report to show loadplans.
+  A list report to show OperationPlanResources.
   '''
   template = 'output/loadplan.html'
   title = _("Resource detail report")
-  model = LoadPlan
+  model = OperationPlanResource
   permissions = (("view_resource_report", "Can view resource report"),)
   frozenColumns = 0
   editable = False
@@ -175,17 +174,12 @@ class DetailReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
-      base = LoadPlan.objects.filter(theresource__exact=args[0])
+      base = OperationPlanResource.objects.filter(resource__exact=args[0])
     else:
-      base = LoadPlan.objects
+      base = OperationPlanResource.objects
     return base.select_related() \
       .extra(select={
-        'operation_in': "select name from operation where out_operationplan.operation = operation.name",
-        'demand': "select string_agg(q || ' : ' || d, ', ') from ("
-                  "select round(sum(quantity)) as q, demand as d "
-                  "from out_demandpegging "
-                  "where out_demandpegging.operationplan = out_loadplan.operationplan_id "
-                  "group by demand order by 1 desc, 2) peg"
+        'operation_in': "select name from operation where operationplan.operation = operation.name"
         })
 
   @classmethod
@@ -196,12 +190,12 @@ class DetailReport(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
-    GridFieldText('theresource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
+    GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('demand', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False),
+    GridFieldText('operationplan__plan', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
     GridFieldBool('operationplan__locked', title=_('locked'), editable=False),

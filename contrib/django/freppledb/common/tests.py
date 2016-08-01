@@ -72,11 +72,11 @@ class ExcelTest(TransactionTestCase):
     countCalendar = input.models.Calendar.objects.count()
     countCustomer = input.models.Customer.objects.count()
     countDemand = input.models.Demand.objects.count()
-    countFlow = input.models.Flow.objects.count()
+    countOperationMaterial = input.models.OperationMaterial.objects.count()
     countItem = input.models.Item.objects.count()
     countItemSupplier = input.models.ItemSupplier.objects.count()
     countItemDistribution = input.models.ItemDistribution.objects.count()
-    countLoad = input.models.Load.objects.count()
+    countOperationResource = input.models.OperationResource.objects.count()
     countLocation = input.models.Location.objects.count()
     countOperationPlan = input.models.OperationPlan.objects.count()
     countOperation = input.models.Operation.objects.count()
@@ -95,9 +95,9 @@ class ExcelTest(TransactionTestCase):
     response = self.client.post('/execute/launch/exportworkbook/', {
        'entities': [
           'input.buffer', 'input.calendarbucket', 'input.calendar',
-          'input.customer', 'input.demand', 'input.flow', 'input.item',
+          'input.customer', 'input.demand', 'input.operationmaterial', 'input.item',
           'input.itemsupplier', 'input.itemdistribution',
-          'input.load', 'input.location', 'input.operationplan',
+          'input.operationresource', 'input.location', 'input.operationplan',
           'input.operation', 'input.resourceskill', 'input.resource',
           'input.skill', 'input.supplier', 'input.suboperation',
           'common.bucket', 'common.bucketdetail', 'common.parameter',
@@ -113,11 +113,11 @@ class ExcelTest(TransactionTestCase):
     self.assertEqual(input.models.Calendar.objects.count(), 0)
     self.assertEqual(input.models.Customer.objects.count(), 0)
     self.assertEqual(input.models.Demand.objects.count(), 0)
-    self.assertEqual(input.models.Flow.objects.count(), 0)
+    self.assertEqual(input.models.OperationMaterial.objects.count(), 0)
     self.assertEqual(input.models.Item.objects.count(), 0)
     self.assertEqual(input.models.ItemDistribution.objects.count(), 0)
     self.assertEqual(input.models.ItemSupplier.objects.count(), 0)
-    self.assertEqual(input.models.Load.objects.count(), 0)
+    self.assertEqual(input.models.OperationResource.objects.count(), 0)
     self.assertEqual(input.models.Location.objects.count(), 0)
     self.assertEqual(input.models.OperationPlan.objects.count(), 0)
     self.assertEqual(input.models.Operation.objects.count(), 0)
@@ -146,11 +146,11 @@ class ExcelTest(TransactionTestCase):
     self.assertEqual(input.models.Calendar.objects.count(), countCalendar)
     self.assertEqual(input.models.Customer.objects.count(), countCustomer)
     self.assertEqual(input.models.Demand.objects.count(), countDemand)
-    self.assertEqual(input.models.Flow.objects.count(), countFlow)
+    self.assertEqual(input.models.OperationMaterial.objects.count(), countOperationMaterial)
     self.assertEqual(input.models.Item.objects.count(), countItem)
     self.assertEqual(input.models.ItemDistribution.objects.count(), countItemDistribution)
     self.assertEqual(input.models.ItemSupplier.objects.count(), countItemSupplier)
-    self.assertEqual(input.models.Load.objects.count(), countLoad)
+    self.assertEqual(input.models.OperationResource.objects.count(), countOperationResource)
     self.assertEqual(input.models.Location.objects.count(), countLocation)
     self.assertEqual(input.models.OperationPlan.objects.count(), countOperationPlan)
     self.assertEqual(input.models.Operation.objects.count(), countOperation)
@@ -289,7 +289,7 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 4)
     self.assertEqual(input.models.Demand.objects.filter(category = 'TEST DELETE').count(), 2)
-    
+
     #Demand GET MULTIPART
     response = self.client.get('/api/input/demand/Order UFO 25/')
     self.assertEqual(response.status_code, 200)

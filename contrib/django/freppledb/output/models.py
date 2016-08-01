@@ -17,28 +17,6 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from django.conf import settings
-
-
-class OperationPlan(models.Model):
-  # Database fields
-  id = models.IntegerField(_('identifier'), primary_key=True)
-  operation = models.CharField(_('operation'), max_length=300, db_index=True, null=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='1.00')
-  unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=4, default='0.00')
-  startdate = models.DateTimeField(_('startdate'), db_index=True)
-  enddate = models.DateTimeField(_('enddate'), db_index=True)
-  criticality = models.DecimalField(_('criticality'), max_digits=15, decimal_places=4, null=True)
-  locked = models.BooleanField(_('locked'), default=True)
-  owner = models.IntegerField(_('owner'), null=True, blank=True, db_index=True)
-
-  def __str__(self):
-    return "Operationplan %s" % self.id
-
-  class Meta:
-    db_table = 'out_operationplan'
-    verbose_name = _('operationplan')
-    verbose_name_plural = _('operationplans')
 
 
 class Problem(models.Model):
@@ -85,7 +63,7 @@ class Constraint(models.Model):
 
 
 class ResourceSummary(models.Model):
-  theresource = models.CharField(_('resource'), max_length=300)
+  resource = models.CharField(_('resource'), max_length=300)
   startdate = models.DateTimeField(_('startdate'))
   available = models.DecimalField(_('available'), max_digits=15, decimal_places=4, null=True)
   unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=4, null=True)
@@ -95,50 +73,13 @@ class ResourceSummary(models.Model):
 
   class Meta:
     db_table = 'out_resourceplan'
-    ordering = ['theresource', 'startdate']
-    unique_together = (('theresource', 'startdate'),)
+    ordering = ['resource', 'startdate']
+    unique_together = (('resource', 'startdate'),)
     verbose_name = 'resource summary'  # No need to translate these since only used internally
     verbose_name_plural = 'resource summaries'
 
 
-class LoadPlan(models.Model):
-  # Database fields
-  theresource = models.CharField(_('resource'), max_length=300, db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
-  startdate = models.DateTimeField(_('startdate'), db_index=True)
-  enddate = models.DateTimeField(_('enddate'), db_index=True)
-  operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='loadplans')
-  setup = models.CharField(_('setup'), max_length=300, null=True)
-
-  def __str__(self):
-      return self.theresource + ' ' + str(self.startdate) + ' ' + str(self.enddate)
-
-  class Meta:
-    db_table = 'out_loadplan'
-    ordering = ['theresource', 'startdate']
-    verbose_name = _('loadplan')
-    verbose_name_plural = _('loadplans')
-
-
-class FlowPlan(models.Model):
-  # Database fields
-  thebuffer = models.CharField(_('buffer'), max_length=300, db_index=True)
-  operationplan = models.ForeignKey(OperationPlan, verbose_name=_('operationplan'), db_index=True, related_name='flowplans')
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4)
-  flowdate = models.DateTimeField(_('date'), db_index=True)
-  onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
-
-  def __str__(self):
-    return self.thebuffer.name + str(self.flowdate)
-
-  class Meta:
-    db_table = 'out_flowplan'
-    ordering = ['thebuffer', 'flowdate']
-    verbose_name = _('flowplan')
-    verbose_name_plural = _('flowplans')
-
-
-class Demand(models.Model):
+class Demand(models.Model):   # TODO remove this model. The same deliveries are already exported in the operationplan table as type DLVR
   # Database fields
   demand = models.CharField(_('demand'), max_length=300, db_index=True, null=True)
   item = models.CharField(_('item'), max_length=300, db_index=True, null=True)
@@ -157,22 +98,3 @@ class Demand(models.Model):
     ordering = ['id']
     verbose_name = _('demand')
     verbose_name_plural = _('demands')
-
-
-class DemandPegging(models.Model):
-  # Database fields
-  demand = models.CharField(_('demand'), max_length=300, db_index=True)
-  level = models.IntegerField(_('level'))
-  operationplan = models.IntegerField(_('operationplan'), db_index=True)
-  quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=4, default='0.00')
-
-  def __str__(self):
-    return self.demand \
-      + ' - ' + str(self.depth) + ' - ' + str(self.operationplan) \
-      + ' - ' + self.quantity
-
-  class Meta:
-    db_table = 'out_demandpegging'
-    ordering = ['id']
-    verbose_name = _('demand pegging')
-    verbose_name_plural = _('demand peggings')

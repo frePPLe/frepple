@@ -67,6 +67,10 @@ DECLARE_EXPORT Item::~Item()
   while (firstItemDistribution)
     delete firstItemDistribution;
 
+  // Remove all item operations referencing this item
+  while (firstItemOperation)
+    delete firstItemOperation;
+
   // The ItemSupplier objects are automatically deleted by the
   // destructor of the Association list class.
 }

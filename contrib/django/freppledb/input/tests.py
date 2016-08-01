@@ -35,7 +35,7 @@ class DataLoadTest(TestCase):
   def test_demo_data(self):
     response = self.client.get('/data/input/customer/?format=json')
     self.assertContains(response, '"records":2,')
-    response = self.client.get('/data/input/flow/?format=json')
+    response = self.client.get('/data/input/operationmaterial/?format=json')
     self.assertContains(response, '"records":13,')
     response = self.client.get('/data/input/buffer/?format=json')
     self.assertContains(response, '"records":8,')
@@ -47,7 +47,7 @@ class DataLoadTest(TestCase):
     self.assertContains(response, '"records":14,')
     response = self.client.get('/data/input/item/?format=json')
     self.assertContains(response, '"records":5,')
-    response = self.client.get('/data/input/load/?format=json')
+    response = self.client.get('/data/input/operationresource/?format=json')
     self.assertContains(response, '"records":3,')
     response = self.client.get('/data/input/location/?format=json')
     self.assertContains(response, '"records":2,')

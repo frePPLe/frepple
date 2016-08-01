@@ -225,6 +225,7 @@
     <ClCompile Include="..\..\src\model\flowplan.cpp" />
     <ClCompile Include="..\..\src\model\item.cpp" />
     <ClCompile Include="..\..\src\model\itemdistribution.cpp" />
+    <ClCompile Include="..\..\src\model\itemoperation.cpp" />
     <ClCompile Include="..\..\src\model\leveled.cpp" />
     <ClCompile Include="..\..\src\model\library.cpp" />
     <ClCompile Include="..\..\src\model\load.cpp" />

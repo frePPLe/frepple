@@ -120,7 +120,7 @@ class ReportByDemand(GridReport):
       select
         demand.due, ops.operation, ops.level, ops.pegged,
         op2.id, op2.startdate, op2.enddate, op2.quantity,
-        op2.locked, out_loadplan.theresource
+        op2.locked, operationplanresource.resource
       from (
         select
           out_operationplan.operation as operation,
@@ -140,8 +140,8 @@ class ReportByDemand(GridReport):
         and op2.operation = ops.operation
       inner join demand
         on name = %s
-      left outer join out_loadplan
-        on op2.id = out_loadplan.operationplan_id
+      left outer join operationplanresource
+        on op2.id = operationplanresource.operationplan
       order by ops.id, op2.id
       '''
     cursor.execute(query, baseparams + baseparams + baseparams)

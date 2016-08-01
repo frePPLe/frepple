@@ -54,6 +54,7 @@ class OperationPlan;
 class Item;
 class ItemSupplier;
 class ItemDistribution;
+class ItemOperation;
 class Operation;
 class OperationPlanState;
 class OperationFixedTime;
@@ -3816,6 +3817,157 @@ class ItemDistribution : public Object,
 };
 
 
+
+/** @brief This class defines that a certain operation can be used to replenish
+* a certain item-location. */
+class ItemOperation : public Object, public HasSource
+{
+  friend class Item;
+public:
+  /** Default constructor. */
+  explicit DECLARE_EXPORT ItemOperation();
+
+  /** Constructor. */
+  explicit DECLARE_EXPORT ItemOperation(Operation*, Item*, int);
+
+  /** Constructor. */
+  explicit DECLARE_EXPORT ItemOperation(Operation*, Item*, int, DateRange);
+
+  /** Destructor. */
+  DECLARE_EXPORT ~ItemOperation();
+
+  /** Search an existing object. */
+  static Object* finder(const DataValueDict&);
+
+  /** Initialize the class. */
+  static int initialize();
+
+  /** Returns the operation. */
+  Operation* getOperation() const
+  {
+    return oper;
+  }
+
+  /** Updates the operation. */
+  void setOperation(Operation* o)
+  {
+    oper = o;
+    HasLevel::triggerLazyRecomputation();
+  }
+
+  /** Returns the item. */
+  Item* getItem() const
+  {
+    return item;
+  }
+
+  /** Updates the item. */
+  void setItem(Item*);
+
+  /** Return the applicable location. */
+  Location *getLocation() const
+  {
+    return loc;
+  }
+
+  /** Update the applicable locations. */
+  void setLocation(Location* l)
+  {
+    loc = l;
+    HasLevel::triggerLazyRecomputation();
+  }
+
+  /** Update the priority. */
+  void setPriority(int i)
+  {
+    priority = i;
+  }
+
+  /** Return the priority. */
+  int getPriority() const
+  {
+    return priority;
+  }
+
+  /** Get the start date of the effectivity range. */
+  Date getEffectiveStart() const
+  {
+    return effectivity.getStart();
+  }
+
+  /** Get the end date of the effectivity range. */
+  Date getEffectiveEnd() const
+  {
+    return effectivity.getEnd();
+  }
+
+  /** Return the effectivity daterange.<br>
+  * The default covers the complete time horizon.
+  */
+  DateRange getEffective() const
+  {
+    return effectivity;
+  }
+
+  /** Update the start date of the effectivity range. */
+  void setEffectiveStart(Date d)
+  {
+    effectivity.setStart(d);
+  }
+
+  /** Update the end date of the effectivity range. */
+  void setEffectiveEnd(Date d)
+  {
+    effectivity.setEnd(d);
+  }
+
+  /** Update the effectivity range. */
+  void setEffective(DateRange dr)
+  {
+    effectivity = dr;
+  }
+
+  /** Remove all itemoperations. */
+  static void clear();
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static DECLARE_EXPORT const MetaClass* metadata;
+  static DECLARE_EXPORT const MetaCategory* metacategory;
+
+  template<class Cls> static inline void registerFields(MetaClass* m)
+  {
+    m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
+    m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
+    m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
+    m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
+    m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
+    m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+    HasSource::registerFields<Cls>(m);
+  }
+
+private:
+  /** Factory method. */
+  static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
+  /** Item pointer. */
+  Item* item;
+
+  /** Location where the operation appll. */
+  Location* loc;
+
+  /** Replenishing operation. */
+  Operation* oper;
+
+  /** Effective date range. */
+  DateRange effectivity;
+
+  /** Linked list of all itemoperations for a specific item. */
+  ItemOperation* next;
+
+  int priority;
+};
+
+
 /** @brief An item defines the products being planned, sold, stored and/or
   * manufactured. Buffers and demands have a reference an item.
   *
@@ -3827,6 +3979,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
   friend class ItemSupplier;
   friend class ItemDistribution;
   friend class Demand;
+  friend class ItemOperation;
 
   public:
     class bufferIterator;
@@ -3839,7 +3992,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Item() : deliveryOperation(NULL), price(0.0),
-      firstItemDistribution(NULL), firstItemBuffer(NULL), firstItemDemand(NULL) {}
+      firstItemDistribution(NULL), firstItemBuffer(NULL), firstItemDemand(NULL), firstItemOperation(NULL) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -3926,6 +4079,34 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return this;
     }
 
+    /** Nested class to iterate of ItemOperation objects of this item. */
+    class operationIterator
+    {
+      private:
+        ItemOperation* cur;
+
+      public:
+        /** Constructor. */
+        operationIterator(const Item *c)
+        {
+          cur = c ? c->firstItemOperation : NULL;
+        }
+
+        /** Return current value and advance the iterator. */
+        ItemOperation* next()
+        {
+          ItemOperation* tmp = cur;
+          if (cur)
+            cur = cur->next;
+          return tmp;
+        }
+    };
+
+    operationIterator getOperationIterator() const
+    {
+      return this;
+    }
+
     // Return an iterator over all buffers of this item
     inline bufferIterator getBufferIterator() const;
 
@@ -3952,6 +4133,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
+      m->addIteratorField<Cls, operationIterator, ItemOperation>(Tags::itemoperations, Tags::itemoperation, &Cls::getOperationIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, demandIterator, Demand>(Tags::demands, Tags::demand, &Cls::getDemandIterator, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
@@ -3977,6 +4159,9 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     /** Maintain a list of demands. */
     Demand *firstItemDemand;
+
+    /** Maintain a list of ItemOperations. */
+    ItemOperation *firstItemOperation;
 };
 
 
@@ -4020,7 +4205,6 @@ class ItemSupplier : public Object,
 
     /** Initialize the class. */
     static int initialize();
-    static void writer(const MetaCategory*, Serializer*);
 
     /** Returns the supplier. */
     Supplier* getSupplier() const
@@ -4034,7 +4218,7 @@ class ItemSupplier : public Object,
       return getPtrB();
     }
 
-    /** Updates the resource. This method can only be called on an instance. */
+    /** Updates the supplier. This method can only be called on an instance. */
     void setSupplier(Supplier* s)
     {
       if (s)

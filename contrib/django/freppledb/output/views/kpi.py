@@ -70,20 +70,20 @@ class Report(GridReport):
       where plandate > due and plandate is not null
       union all
       select 301, 'Operation', 'Count', count(*)
-      from out_operationplan
+      from operationplan
       union all
       select 301, 'Operation', 'Quantity', coalesce(round(sum(quantity)),0)
-      from out_operationplan
+      from operationplan
       union all
       select 302, 'Resource', 'Usage', coalesce(round(sum(quantity * %s)),0)
-      from out_loadplan
+      from operationplanresource
       union all
       select 401, 'Material', 'Produced', coalesce(round(sum(quantity)),0)
-      from out_flowplan
+      from operationplanmaterial
       where quantity>0
       union all
       select 402, 'Material', 'Consumed', coalesce(round(sum(-quantity)),0)
-      from out_flowplan
+      from operationplanmaterial
       where quantity<0
       order by 1
       ''' % (

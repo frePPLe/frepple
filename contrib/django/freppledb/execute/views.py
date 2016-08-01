@@ -36,6 +36,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, 
 from django.contrib import messages
 from django.utils.encoding import force_text
 
+from freppledb.common.commands import PlanTaskRegistry
 from freppledb.execute.models import Task
 from freppledb.common.models import Scenario
 from freppledb.common.report import exportWorkbook, importWorkbook
@@ -84,6 +85,10 @@ class TaskReport(GridReport):
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
 
+    # Collect optional tasks
+    PlanTaskRegistry.autodiscover()
+    planning_options = PlanTaskRegistry.getLabels()
+
     # Loop over all fixtures of all apps and directories
     fixtures = set()
     folders = list(settings.FIXTURE_DIRS)
@@ -123,7 +128,6 @@ class TaskReport(GridReport):
               ])
 
     # Send to template
-    odoo = 'freppledb.odoo' in settings.INSTALLED_APPS
     return {
       'capacityconstrained': constraint & 4,
       'materialconstrained': constraint & 2,
@@ -132,9 +136,8 @@ class TaskReport(GridReport):
       'scenarios': Scenario.objects.all(),
       'fixtures': fixtures,
       'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
-      'odoo': odoo,
-      'odoo_read': odoo and request.session.get('odoo_read', False),
-      'odoo_write': odoo and request.session.get('odoo_write', False),
+      'planning_options': planning_options,
+      'current_options': request.session.get('env', [ i[0] for i in planning_options ]),
       'filestoupload': filestoupload,
       'datafolderconfigured': 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]
       }
@@ -190,18 +193,11 @@ def wrapTask(request, action):
     task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
     env = []
-    if request.POST.get('odoo_read', None) == '1':
-      env.append("odoo_read_1")
-      request.session['odoo_read'] = True
-    else:
-      request.session['odoo_read'] = False
-    if request.POST.get('odoo_write', None) == '1':
-      env.append("odoo_write")
-      request.session['odoo_write'] = True
-    else:
-      request.session['odoo_write'] = False
+    for value in request.POST.getlist('optional'):
+      env.append(value)
     if env:
       task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
+    request.session['env'] = env
     task.save(using=request.database)
     # Update the session object
     request.session['plantype'] = request.POST.get('plantype')
@@ -381,7 +377,7 @@ def ViewFile(request, filename):
   if not clean_filename or not 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
     raise Http404('File not found')
   response = static.serve(
-    request, clean_filename, 
+    request, clean_filename,
     document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
     )
   response['Content-Disposition'] = 'inline; filename="%s"' % clean_filename
@@ -396,7 +392,7 @@ def DownloadLogFile(request):
   else:
     filename = 'frepple_%s.log' % request.database
   response = static.serve(
-    request, filename, 
+    request, filename,
     document_root=settings.FREPPLE_LOGDIR
     )
   response['Content-Disposition'] = 'inline; filename="%s"' % filename

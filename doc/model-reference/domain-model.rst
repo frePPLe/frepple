@@ -19,15 +19,16 @@ Start populating the entities at the top of the list and work your way down.
 |      :doc:`resource` (references setup matrix, calendar, location and itself)
 |      :doc:`operation` (references location)
 |        :doc:`resource-skill` (references skill and resource)
-|        :doc:`load` (references resource, skill and operation)
+|        :doc:`operation-resource` (references resource, skill and operation)
 |        :doc:`Sub operation <operation>` (references operation)
 |        :doc:`operationplan` (references operation)
 |          :doc:`item` (references operation and itself)
+|            :doc:`item-operation` (references operation, item and location)
 |            :doc:`item-supplier` (references supplier, item and location)
 |            :doc:`item-distribution` (references location and item)
 |            :doc:`demand` (references item, customer, operation, location and itself)
 |            :doc:`buffer` (references item, operation, location, calendar and itself)
-|              :doc:`flow` (references buffer and operation)
+|              :doc:`operation-material` (references buffer and operation)
 
 .. image:: _images/dependencies.png
    :alt: Model dependencies

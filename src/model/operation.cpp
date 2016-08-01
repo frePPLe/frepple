@@ -180,6 +180,17 @@ DECLARE_EXPORT Operation::~Operation()
     if (m->getProducingOperation() == this)
       m->setProducingOperation(NULL);
 
+  // Remove all item operations referencing this operation
+  for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
+  {
+    Item::operationIterator itemoperiter(&*it);
+    while (ItemOperation *itemoper = itemoperiter.next())
+    {
+      if (itemoper->getOperation() == this)
+        delete itemoper;
+    }
+  }
+
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move

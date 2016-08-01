@@ -31,8 +31,8 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport
-from freppledb.input.models import PurchaseOrder, DistributionOrder
-from freppledb.output.models import LoadPlan, Problem
+from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPlanResource
+from freppledb.output.models import Problem
 
 
 class LateOrdersWidget(Widget):
@@ -897,9 +897,9 @@ class ResourceQueueWidget(Widget):
         )
       ]
     alt = False
-    for ldplan in LoadPlan.objects.using(db).select_related().order_by('startdate')[:limit]:
-      result.append('<tr%s><td class="underline"><a href="%s/loadplan/?theresource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(ldplan.theresource), escape(ldplan.theresource), escape(ldplan.operationplan.operation), ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
+    for ldplan in OperationPlanResource.objects.using(db).select_related().order_by('startdate')[:limit]:
+      result.append('<tr%s><td class="underline"><a href="%s/loadplan/?resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+        alt and ' class="altRow"' or '', request.prefix, urlquote(ldplan.resource), escape(ldplan.resource), escape(ldplan.operationplan.operation), ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
         ))
       alt = not alt
     result.append('</table></div>')
@@ -1090,7 +1090,7 @@ class ResourceLoadWidget(Widget):
     cursor = connections[request.database].cursor()
     GridReport.getBuckets(request)
     query = '''select
-                  theresource,
+                  resource,
                   ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
                    * 100.0 / coalesce(sum(out_resourceplan.available)+0.000001,1) as avg_util,
                   coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0),
@@ -1098,7 +1098,7 @@ class ResourceLoadWidget(Widget):
                 from out_resourceplan
                 where out_resourceplan.startdate >= '%s'
                   and out_resourceplan.startdate < '%s'
-                group by theresource
+                group by resource
                 order by 2 desc
               ''' % (request.report_startdate, request.report_enddate)
     cursor.execute(query)

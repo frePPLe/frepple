@@ -51,7 +51,7 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import Field, CharField, IntegerField, AutoField
+from django.db.models.fields import Field, CharField, IntegerField, AutoField, DurationField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
@@ -701,6 +701,8 @@ class GridReport(View):
           continue
         if isinstance(i[f.field_name], str) or isinstance(i[f.field_name], (list, tuple)):
           s = json.dumps(i[f.field_name])
+        elif isinstance(i[f.field_name], timedelta):
+          s = i[f.field_name].total_seconds()
         else:
           s = '"%s"' % i[f.field_name]
         if first2:
@@ -1238,6 +1240,8 @@ class GridReport(View):
                 if isinstance(headers[colnum], (IntegerField, AutoField)):
                   if isinstance(data, numericTypes):
                     data = int(data)
+                elif isinstance(headers[colnum], DurationField):
+                  data = str(data)
                 d[headers[colnum].name] = data
               colnum += 1
 
@@ -1872,6 +1876,8 @@ def _localize(value, decimal_separator):
     value = value()
   if isinstance(value, numericTypes):
     return decimal_separator == "," and six.text_type(value).replace(".", ",") or six.text_type(value)
+  elif isinstance(value, timedelta):
+    return value.total_seconds()
   elif isinstance(value, (list, tuple) ):
     return "|".join([ str(_localize(i, decimal_separator)) for i in value ])
   else:
@@ -1883,7 +1889,10 @@ def _getCellValue(data):
     return ''
   if isinstance(data, numericTypes):
     return data
-  return str(data)
+  elif isinstance(data, timedelta):
+    return data.total_seconds()
+  else:
+    return str(data)
 
 
 def exportWorkbook(request):

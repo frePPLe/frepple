@@ -172,6 +172,8 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
   Flow *fl;
   if (!o)
   {
+    // Stop here if the quantity is 0
+    if (!f) return;
     // Create a fixed time operation with zero leadtime, hidden from the xml
     // output, hidden for the solver, and without problem detection.
     o = new OperationFixedTime();
@@ -915,6 +917,92 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       } // End loop over origin locations
 
     } // End loop over itemdistributions
+
+    // Loop over all item operations to replenish this item+location combination
+    Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
+    while (ItemOperation *itemoper = itemoper_iter.next())
+    {
+      // Verify whether the ItemOperation is applicable to the buffer
+      if (
+        !itemoper->getOperation()
+        || (itemoper->getLocation() && itemoper->getLocation() != getLocation())
+        || (!itemoper->getLocation() && itemoper->getOperation()->getLocation() != getLocation())
+        )
+          continue;
+
+      // Check if there is already a producing operation referencing this ItemOperation
+      if (producing_operation && producing_operation != uninitializedProducing)
+      {
+        if (producing_operation->getType() != *OperationAlternate::metadata)
+        {
+          if (producing_operation == itemoper->getOperation())
+            // Already exists
+            continue;
+        }
+        else
+        {
+          SubOperation::iterator subiter(producing_operation->getSubOperations());
+          while (SubOperation *o = subiter.next())
+            if (o->getOperation() == itemoper->getOperation())
+              // Already exists
+              continue;
+        }
+      }
+
+      // Merge the new operation in an alternate operation if required
+      if (producing_operation && producing_operation != uninitializedProducing)
+      {
+        // We're not the first
+        SubOperation* subop = new SubOperation();
+        subop->setOperation(itemoper->getOperation());
+        subop->setPriority(itemoper->getPriority());
+        subop->setEffective(itemoper->getEffective());
+        if (producing_operation->getType() != *OperationAlternate::metadata)
+        {
+          // We are the second: create an alternate and add 2 suboperations
+          OperationAlternate *superop = new OperationAlternate();
+          stringstream o;
+          o << "Replenish " << getName();
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
+          SubOperation* subop2 = new SubOperation();
+          subop2->setOperation(producing_operation);
+          // Note that priority and effectivity are at default values.
+          // If not, the alternate would already have been created.
+          subop2->setOwner(superop);
+          producing_operation = superop;
+          subop->setOwner(producing_operation);
+        }
+        else
+          // We are third or later: just add a suboperation
+          subop->setOwner(producing_operation);
+      }
+      else
+      {
+        // We are the first
+        if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1)
+          // Use a single operation. If an alternate is required
+          // later on, we know it has the default priority and effectivity.
+          producing_operation = itemoper->getOperation();
+        else
+        {
+          // Already create an alternate now
+          OperationAlternate *superop = new OperationAlternate();
+          producing_operation = superop;
+          stringstream o;
+          o << "Replenish " << getName();
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
+          SubOperation* subop = new SubOperation();
+          subop->setOperation(itemoper->getOperation());
+          subop->setPriority(itemoper->getPriority());
+          subop->setEffective(itemoper->getEffective());
+          subop->setOwner(superop);
+        }
+      }
+    } // End loop over itemoperations
 
     // While-loop to add suppliers defined at parent items
     item = item->getOwner();

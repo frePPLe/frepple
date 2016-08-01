@@ -106,7 +106,7 @@ class Command(BaseCommand):
       # Flows
       print('subgraph flows {')
       print('  edge[weight=100];')
-      cursor.execute('select operation_id, thebuffer_id, quantity from flow')
+      cursor.execute('select operation_id, buffer_id, quantity from flow')
       for o, b, q in cursor.fetchall():
         if q > 0:
           print('  "O%s"->"B%s";' % (o, b))

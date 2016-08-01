@@ -297,31 +297,35 @@ jQuery.extend($.fn.fmatter, {
   },
   duration : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    var d = cellvalue.split(" ");
-    if (d.length == 1)
-    {
-      var t = cellvalue.split(":");
-      var days = 0;
-    }
-    else
-    {
-      var t = d[1].split(":");
-      var days = (d[0]!='' ? parseFloat(d[0]) : 0);
-    }
-    switch (t.length)
-    {
-      case 0: // Days only
-        var seconds = days * 86400;
-        break;
-      case 1: // Days, seconds
-        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0);
-        break;
-      case 2: // Days, hours and seconds
-        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
-        break;
-      default:
-        // Days, hours, minutes, seconds
-        var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+    if (typeof cellvalue === "number")
+      var seconds = cellvalue;
+    else {
+      var d = cellvalue.split(" ");
+      if (d.length == 1)
+      {
+        var t = cellvalue.split(":");
+        var days = 0;
+      }
+      else
+      {
+        var t = d[1].split(":");
+        var days = (d[0]!='' ? parseFloat(d[0]) : 0);
+      }
+      switch (t.length)
+      {
+        case 0: // Days only
+          var seconds = days * 86400;
+          break;
+        case 1: // Days, seconds
+          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0);
+          break;
+        case 2: // Days, hours and seconds
+          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
+          break;
+        default:
+          // Days, hours, minutes, seconds
+          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+      }
     }
     var days   = Math.floor(seconds / 86400);
     var hours   = Math.floor((seconds - (days * 86400)) / 3600);
@@ -343,6 +347,7 @@ jQuery.extend($.fn.fmatter, {
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
+    // TODO This function is not very generic. 
     if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellvalue;
     var result = '';

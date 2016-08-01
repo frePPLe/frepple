@@ -15,102 +15,22 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from decimal import Decimal
 import json
-import math
-import re
 
-import django.forms.fields as fields
 import django.db.models as models
-from django.utils.translation import ugettext_lazy as _
 from django.utils import six
-from django.conf import settings
-from django.forms.widgets import TextInput
-from django.core.exceptions import ValidationError
 
 
 #
-# DURATIONFIELD   TODO Use standard django duration field
+# DURATIONFIELD
 #
-# This field is stored in the database as an Decimal field, but it is displayed
-# in forms as a text in the form 'DD HH:MM:SS'.
-#
-
-class DurationWidget(TextInput):
-
-    def render(self, name, value, attrs=None):
-      try:
-        value = float(value)
-        days = math.floor(value / 86400)
-        hours = math.floor((value - (days * 86400)) / 3600)
-        minutes = math.floor((value - (days * 86400) - (hours * 3600)) / 60)
-        seconds = value - (days * 86400) - (hours * 3600) - (minutes * 60)
-        if days > 0:
-          value = "%d %02d:%02d:%02d" % (days, hours, minutes, seconds)
-        elif hours > 0:
-          value = "%2d:%02d:%02d" % (hours, minutes, seconds)
-        elif minutes > 0:
-          value = "%2d:%02d" % (minutes, seconds)
-        else:
-          value = seconds
-      except:
-        pass
-      return super(DurationWidget, self).render(name, value, attrs)
-
-
-numericTypes = (Decimal, float) + six.integer_types
-
-
-class DurationFormField(fields.RegexField):
-
-  widget = DurationWidget
-
-  regex = re.compile(r'[0-9]*$')
-
-  def __init__(self, *args, **kwargs):
-    self.max_digits = kwargs.pop('decimal_places', 4)
-    self.decimal_places = kwargs.pop('max_digits', 15)
-    kwargs.update({
-      'regex': self.regex,
-      'error_message': _('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"')
-      })
-    super(DurationFormField, self).__init__(**kwargs)
-
-  def to_python(self, value):
-    if isinstance(value, numericTypes) or value is None:
-      # Empty fields and numeric values pass directly
-      return value
-    if value == '':
-      return None
-
-    # Parse the input string to a decimal number, representing the number of seconds
-    try:
-      t = value.strip().split(":")
-      tl = len(t)
-      if tl <= 1:
-        # Seconds only
-        return float(t[0])
-      elif tl == 2:
-        # Minutes and seconds
-        return int(t[0]) * 60 + float(t[1])
-      elif tl == 3:
-        v = t[0].split(' ')
-        if len(v) > 1:
-          # Days, hours, minutes, seconds
-          return int(v[0]) * 86400 + int(v[1]) * 3600 + int(t[1]) * 60 + float(t[2])
-        else:
-          # Hours, minutes, seconds
-          return int(t[0]) * 3600 + int(t[1]) * 60 + float(t[2])
-    except:
-      raise ValidationError(_('Expected format "DD HH:MM:SS", "HH:MM:SS", "MM:SS" or "SS"'), code='invalid')
-
 
 class DurationField(models.DecimalField):
-
-  def formfield(self, **kwargs):
-    defaults = {'form_class': DurationFormField, }
-    defaults.update(kwargs)
-    return super(DurationField, self).formfield(**defaults)
+  '''
+  Obsoleted database field type.
+  Not used any longer, but the code is required to be kept here to make migrations run.
+  '''
+  pass
 
 
 #
@@ -120,7 +40,6 @@ class DurationField(models.DecimalField):
 #
 # This code is very loosely inspired on the code found at:
 #    https://github.com/bradjasper/django-jsonfield
-
 class JSONField(models.TextField, metaclass=models.SubfieldBase):
 
   def __init__(self, *args, **kwargs):
@@ -157,7 +76,9 @@ class JSONField(models.TextField, metaclass=models.SubfieldBase):
     return json.dumps(value)
 
   def db_type(self, connection):
-    if connection.vendor == 'postgresql' and connection.pg_version >= 90200:
-      return 'json'
-    else:
-      return super(JSONField, self).db_type(connection)
+    # PostgreSQL also has a jsonb field. The difference is that jsonb is
+    # 1) much more efficient in querying the field, 2) allows indexes to
+    # be defined on the content, but 3) takes a bit more time to update.
+    # The JSON fields is sufficient for us since we just want to store the
+    # JSON data without complex operations.
+    return 'json'

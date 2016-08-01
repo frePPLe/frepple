@@ -257,11 +257,11 @@ class exportStaticModel(object):
       print('Exported suboperations in %.2f seconds' % (time() - starttime))
 
 
-  def exportFlows(self, cursor):
+  def exportOperationMaterials(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
-      print("Exporting flows...")
+      print("Exporting operation materials...")
       starttime = time()
-      cursor.execute("SELECT operation_id, thebuffer_id FROM flow")  # todo oper&buffer are not necesarily unique
+      cursor.execute("SELECT operation_id, buffer_id FROM operationmaterial")  # todo oper&buffer are not necesarily unique
       primary_keys = set([ i for i in cursor.fetchall() ])
 
       def flows():
@@ -270,8 +270,8 @@ class exportStaticModel(object):
             yield i
 
       cursor.executemany(
-        '''insert into flow
-        (operation_id,thebuffer_id,quantity,type,effective_start,effective_end,name,priority,
+        '''insert into operationmaterial
+        (operation_id,buffer_id,quantity,type,effective_start,effective_end,name,priority,
         search,source,lastmodified)
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
@@ -284,10 +284,10 @@ class exportStaticModel(object):
           if (i.operation.name, i.buffer.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update flow
+        '''update operationmaterial
          set quantity=%s, type=%s, effective_start=%s, effective_end=%s, name=%s,
          priority=%s, search=%s, source=%s, lastmodified=%s
-         where operation_id=%s and thebuffer_id=%s''',
+         where operation_id=%s and buffer_id=%s''',
         [
           (
             round(i.quantity, 4),
@@ -298,14 +298,14 @@ class exportStaticModel(object):
           for i in flows()
           if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
-      print('Exported flows in %.2f seconds' % (time() - starttime))
+      print('Exported operation materials in %.2f seconds' % (time() - starttime))
 
 
-  def exportLoads(self, cursor):
+  def exportOperationResources(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
-      print("Exporting loads...")
+      print("Exporting operation resources...")
       starttime = time()
-      cursor.execute("SELECT operation_id, resource_id FROM resourceload")  # todo oper&resource are not necesarily unique
+      cursor.execute("SELECT operation_id, resource_id FROM operationresource")  # todo oper&resource are not necesarily unique
       primary_keys = set([ i for i in cursor.fetchall() ])
 
       def loads():
@@ -314,7 +314,7 @@ class exportStaticModel(object):
             yield i
 
       cursor.executemany(
-        '''insert into resourceload
+        '''insert into operationresource
         (operation_id,resource_id,quantity,setup,effective_start,effective_end,name,priority,
         search,source,lastmodified)
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
@@ -329,7 +329,7 @@ class exportStaticModel(object):
           if (i.operation.name, i.resource.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update resourceload
+        '''update operationresource
          set quantity=%s, setup=%s, effective_start=%s, effective_end=%s, name=%s,
          priority=%s, search=%s, source=%s, lastmodified=%s
          where operation_id=%s and resource_id=%s''',
@@ -343,7 +343,7 @@ class exportStaticModel(object):
           for i in loads()
           if (i.operation.name, i.resource.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
-      print('Exported loads in %.2f seconds' % (time() - starttime))
+      print('Exported operation resources in %.2f seconds' % (time() - starttime))
 
 
   def exportBuffers(self, cursor):
@@ -355,28 +355,15 @@ class exportStaticModel(object):
       cursor.executemany(
         '''insert into buffer
         (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id,
-         producing_id,type,leadtime,min_inventory,
-         max_inventory,min_interval,max_interval,size_minimum,
-         size_multiple,size_maximum,fence,
-         category,subcategory,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+         type,min_interval,category,subcategory,source,lastmodified)
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
         [
           (
             i.name, i.description, i.location and i.location.name or None,
             i.item and i.item.name or None,
             round(i.onhand, 4), round(i.minimum, 4),
-            i.minimum_calendar and i.minimum_calendar.name or None,
-            (not isinstance(i, frepple.buffer_procure) and i.producing and not i.producing.hidden) and i.producing.name or None,
-            i.__class__.__name__[7:],
-            isinstance(i, frepple.buffer_procure) and i.leadtime or None,
-            isinstance(i, frepple.buffer_procure) and round(i.mininventory, 4) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, 4) or None,
-            i.mininterval,
-            i.maxinterval < 99999999999 and i.maxinterval or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, 4) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
-            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
-            isinstance(i, frepple.buffer_procure) and i.fence or None,
+            i.minimum_calendar and i.minimum_calendar.name or None,          
+            i.__class__.__name__[7:], i.mininterval,
             i.category, i.subcategory, i.source, self.timestamp
           )
           for i in frepple.buffers()
@@ -384,27 +371,18 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         '''update buffer
-         set description=%s, location_id=%s, item_id=%s, onhand=%s, minimum=%s, minimum_calendar_id=%s,
-         producing_id=%s, type=%s, leadtime=%s, min_inventory=%s, max_inventory=%s, min_interval=%s,
-         max_interval=%s, size_minimum=%s, size_multiple=%s, size_maximum=%s, fence=%s,
-         category=%s, subcategory=%s, source=%s, lastmodified=%s
+         set description=%s, location_id=%s, item_id=%s, onhand=%s,
+         minimum=%s, minimum_calendar_id=%s, type=%s,
+         min_interval=%s, category=%s, subcategory=%s, source=%s,
+         lastmodified=%s
          where name=%s''',
         [
           (
             i.description, i.location and i.location.name or None, i.item and i.item.name or None,
             round(i.onhand, 4), round(i.minimum, 4),
             i.minimum_calendar and i.minimum_calendar.name or None,
-            (not isinstance(i, frepple.buffer_procure) and i.producing and not i.producing.hidden) and i.producing.name or None,
             i.__class__.__name__[7:],
-            isinstance(i, frepple.buffer_procure) and i.leadtime or None,
-            isinstance(i, frepple.buffer_procure) and round(i.mininventory, 4) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.maxinventory, 4) or None,
             (i.mininterval!=-1) and i.mininterval or None,
-            i.maxinterval < 99999999999 and i.maxinterval or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_minimum, 4) or None,
-            isinstance(i, frepple.buffer_procure) and round(i.size_multiple, 4) or None,
-            isinstance(i, frepple.buffer_procure) and i.size_maximum < 99999999999 and round(i.size_maximum, 4) or None,
-            isinstance(i, frepple.buffer_procure) and i.fence or None,
             i.category, i.subcategory, i.source, self.timestamp, i.name
           )
           for i in frepple.buffers()
@@ -645,7 +623,7 @@ class exportStaticModel(object):
             i.customer.name if i.customer else None,
             round(i.minshipment, 4),
             round(i.maxlateness, 4),
-            i.category, i.subcategory, i.source, self.timestamp, 
+            i.category, i.subcategory, i.source, self.timestamp,
             i.status, i.name
           )
           for i in frepple.demands()
@@ -965,13 +943,13 @@ class exportStaticModel(object):
           self.exportOperationPlans(cursor)
           self.exportItems(cursor)
           self.exportBuffers(cursor)
-          self.exportFlows(cursor)
+          self.exportOperationMaterials(cursor)
           self.exportSetupMatrices(cursor)
           self.exportSetupMatricesRules(cursor)
           self.exportResources(cursor)
           self.exportSkills(cursor)
           self.exportResourceSkills(cursor)
-          self.exportLoads(cursor)
+          self.exportOperationResources(cursor)
           self.exportCustomers(cursor)
           self.exportSuppliers(cursor)
           self.exportItemSuppliers(cursor)
@@ -993,8 +971,8 @@ class exportStaticModel(object):
           self.exportResources(cursor)
           tasks = (
             DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-            DatabaseTask(self, self.exportBuffers, self.exportFlows, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
-            DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportLoads),
+            DatabaseTask(self, self.exportBuffers, self.exportOperationMaterials, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
+            DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportOperationResources),
             DatabaseTask(self, self.exportCustomers, self.exportDemands),
             )
           # Start all threads
@@ -1008,7 +986,7 @@ class exportStaticModel(object):
 
       # Cleanup unused records
       if self.source:
-        cursor.execute("delete from flow where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute("delete from operationmaterial where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from demand where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from itemsupplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
@@ -1016,7 +994,7 @@ class exportStaticModel(object):
         cursor.execute("delete from item where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operationplan where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from resourceload where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute("delete from operationresource where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from resourceskill where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))

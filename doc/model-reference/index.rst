@@ -20,13 +20,14 @@ a high level overview of the model objects and their relationships.
    calendar
    customer
    demand
-   flow
    item
-   item-supplier
    item-distribution
-   load
+   item-operation
+   item-supplier
    location
    operation
+   operation-material
+   operation-resource
    suboperation
    operationplan
    problem

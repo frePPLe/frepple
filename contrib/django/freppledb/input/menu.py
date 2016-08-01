@@ -18,16 +18,20 @@ from freppledb.menu import menu
 
 import freppledb.input.views
 from freppledb.input.models import Buffer, Item, Customer, Location, Demand
-from freppledb.input.models import DistributionOrder, OperationPlan, CalendarBucket
-from freppledb.input.models import PurchaseOrder, Supplier, ItemSupplier,Flow
-from freppledb.input.models import ItemDistribution, Skill, Resource, Load
-from freppledb.input.models import ResourceSkill, SetupMatrix, SubOperation
+from freppledb.input.models import DistributionOrder, ManufacturingOrder, CalendarBucket
+from freppledb.input.models import PurchaseOrder, Supplier, ItemSupplier, OperationMaterial
+from freppledb.input.models import ItemDistribution, Skill, Resource, OperationResource
+from freppledb.input.models import ResourceSkill, SetupMatrix, SubOperation, ItemOperation
 from freppledb.input.models import Calendar, Operation
 
 
 menu.addItem(
+  "inventory", "locations", url="/data/input/location/",
+  report=freppledb.input.views.LocationList, index=1100, model=Location
+  )
+menu.addItem(
   "inventory", "buffer admin", url="/data/input/buffer/",
-  report=freppledb.input.views.BufferList, index=1100, model=Buffer
+  report=freppledb.input.views.BufferList, index=1200, model=Buffer
   )
 menu.addItem(
   "sales", "demand", url="/data/input/demand/",
@@ -78,12 +82,8 @@ menu.addItem(
   report=freppledb.input.views.ItemDistributionList, index=1100, model=ItemDistribution
   )
 menu.addItem(
-  "manufacturing", "manufacturing orders", url="/data/input/operationplan/",
-  report=freppledb.input.views.OperationPlanList, index=100, model=OperationPlan
-  )
-menu.addItem(
-  "manufacturing", "locations", url="/data/input/location/",
-  report=freppledb.input.views.LocationList, index=1100, model=Location
+  "manufacturing", "manufacturing orders", url="/data/input/manufacturingorder/",
+  report=freppledb.input.views.ManufacturingOrderList, index=100, model=ManufacturingOrder
   )
 menu.addItem(
   "manufacturing", "calendars", url="/data/input/calendar/",
@@ -98,12 +98,16 @@ menu.addItem(
   report=freppledb.input.views.OperationList, index=1400, model=Operation
   )
 menu.addItem(
-  "manufacturing", "flows", url="/data/input/flow/",
-  report=freppledb.input.views.FlowList, index=1500, model=Flow
+  "manufacturing", "itemoperations", url="/data/input/itemoperation/",
+  report=freppledb.input.views.ItemOperationList, index=1450, model=ItemOperation
   )
 menu.addItem(
-  "manufacturing", "loads", url="/data/input/load/",
-  report=freppledb.input.views.LoadList, index=1600, model=Load
+  "manufacturing", "operationmaterials", url="/data/input/operationmaterial/",
+  report=freppledb.input.views.OperationMaterialList, index=1500, model=OperationMaterial
+  )
+menu.addItem(
+  "manufacturing", "operationresources", url="/data/input/operationresource/",
+  report=freppledb.input.views.OperationResourceList, index=1600, model=OperationResource
   )
 menu.addItem(
   "manufacturing", "suboperations", url="/data/input/suboperation/",

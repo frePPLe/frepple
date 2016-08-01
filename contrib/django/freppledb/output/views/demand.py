@@ -26,7 +26,7 @@ from django.utils.encoding import force_text
 
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan
-from freppledb.output.models import Demand, DemandPegging
+from freppledb.output.models import Demand
 from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
@@ -203,12 +203,15 @@ def OperationPlans(request):
   # Collect list of selected sales orders
   so_list = request.GET.getlist('demand')
   
+  # TODO BROKEN WITH DATA MODEL CHANGE
+   
   # Find proposed associated with this sales order
   result = []
-  id_list = [
-    peg.operationplan
-    for peg in DemandPegging.objects.all().using(request.database).filter(demand__in=so_list)
-    ]
+  id_list = []
+# id_list = [
+#     peg.operationplan
+#     for peg in DemandPegging.objects.all().using(request.database).filter(demand__in=so_list)
+#     ]
   for o in PurchaseOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
     result.append({
       'id': o.id,

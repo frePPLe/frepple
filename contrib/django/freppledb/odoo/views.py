@@ -45,7 +45,7 @@ def Upload(request):
     odoo_user = Parameter.getValue("odoo.user", request.database)
     odoo_password = settings.ODOO_PASSWORDS.get(request.database, None)
     if not odoo_password:
-      odoo_password = Parameter.getValue("odoo.password", request.database)    
+      odoo_password = Parameter.getValue("odoo.password", request.database)
     if not odoo_db or not odoo_company or not odoo_user or not odoo_password:
       return HttpResponseServerError(_("Invalid configuration parameters"))
     data_odoo = [
@@ -72,15 +72,15 @@ def Upload(request):
       '<?xml version="1.0" encoding="UTF-8" ?>',
       '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><operationplans>'
       ]
-    
+
     # Validate records which exist in the database
     data = json.loads(request.body.decode('utf-8'))
     data_ok = False
-    obj = []  
+    obj = []
     for rec in data:
       try:
         if rec['type'] == 'PO':
-          po = PurchaseOrder.objects.using(request.database).get(id=rec['id'])          
+          po = PurchaseOrder.objects.using(request.database).get(id=rec['id'])
           if not po.supplier.source or po.status != 'proposed' or not po.item.source:
             continue
           data_ok = True
@@ -104,11 +104,11 @@ def Upload(request):
             do.startdate, do.enddate, do.quantity,
             quoteattr(do.location.subcategory), quoteattr(do.item.subcategory),
             int(do.criticality)
-            ))      
+            ))
         else:
           op = OperationPlan.objects.using(request.database).get(id=rec['id'])
           try:
-            buf = op.operation.flows.all().using(request.database).filter(quantity__gt=0)[0].thebuffer
+            buf = op.operation.operationmaterials.all().using(request.database).filter(quantity__gt=0)[0].buffer
           except:
             buf = None
           if not op.operation.source or op.status != 'proposed' or not buf or not buf.item.source:
@@ -121,12 +121,12 @@ def Upload(request):
             op.startdate, op.enddate, op.quantity,
             quoteattr(buf.location.subcategory), quoteattr(buf.subcategory),
             int(op.criticality)
-            ))      
+            ))
       except:
         pass
     if not data_ok:
       return HttpResponseServerError(_("No proposed data records selected"))
-      
+
     # Send the data to Odoo
     data_odoo.append('</operationplans></plan>')
     data_odoo.append('--%s--' % boundary)
@@ -153,11 +153,11 @@ def Upload(request):
       i.status = "approved"
       i.save(using=request.database)
     return HttpResponse("OK")
-  
+
   except HTTPError:
     logger.error("Can't connect to the Odoo server")
     return HttpResponseServerError("Can't connect to the odoo server")
-   
+
   except Exception as e:
     logger.error(e)
     return HttpResponseServerError("internal server error")

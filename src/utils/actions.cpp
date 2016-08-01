@@ -613,13 +613,17 @@ DECLARE_EXPORT PyObject* loadModule
 
 DECLARE_EXPORT void Environment::printModules()
 {
-  logger << "Loaded modules:" << endl;
-  for (set<string>::const_iterator i=moduleRegistry.begin(); i!=moduleRegistry.end(); ++i)
+  bool first = true;
+  for (set<string>::const_iterator i = moduleRegistry.begin(); i != moduleRegistry.end(); ++i) {
+    if (first) {
+      logger << "Loaded modules:" << endl;
+      first = false;
+    }
     logger << "   " << *i << endl;
-  logger << endl;
+  }
+  if (!first)
+    logger << endl;
 }
-
-
 
 
 } // end namespace

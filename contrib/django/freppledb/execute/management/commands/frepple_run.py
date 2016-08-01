@@ -26,6 +26,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 
+from freppledb.common.commands import PlanTaskRegistry
 from freppledb.common.models import User
 from freppledb.execute.models import Task
 
@@ -112,6 +113,19 @@ class Command(BaseCommand):
           raise ValueError("Invalid plan type: %s" % options['plantype'])
       else:
         plantype = 1
+
+      # Reset environment variables
+      # TODO avoid having to delete the environment variables. Use options directly?
+      for i in PlanTaskRegistry.reg:
+        if options['env']:
+          # Options specified
+          if i.label and i.label[0] in os.environ:
+            del os.environ[i.label[0]]
+        else:
+          # No options specified - default to activate them all
+          os.environ[i.label[0]] = '1'
+
+      # Set environment variables
       if options['env']:
         task.arguments = "--constraint=%d --plantype=%d --env=%s" % (constraint, plantype, options['env'])
         for i in options['env'].split(','):
@@ -129,14 +143,8 @@ class Command(BaseCommand):
       task.save(using=database)
 
       # Locate commands.py
-      cmd = None
-      for app in settings.INSTALLED_APPS:
-        mod = import_module(app)
-        if os.path.exists(os.path.join(os.path.dirname(mod.__file__), 'commands.py')):
-          cmd = os.path.join(os.path.dirname(mod.__file__), 'commands.py')
-          break
-      if not cmd:
-        raise Exception("Can't locate commands.py")
+      import freppledb.common.commands
+      cmd = freppledb.common.commands.__file__
 
       # Prepare environment
       os.environ['FREPPLE_PLANTYPE'] = str(plantype)
@@ -148,15 +156,7 @@ class Command(BaseCommand):
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
       if 'DJANGO_SETTINGS_MODULE' not in os.environ:
         os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      if os.path.exists(os.path.join(settings.FREPPLE_HOME, 'python34.zip')):
-        # For the py2exe executable
-        os.environ['PYTHONPATH'] = os.path.join(
-          settings.FREPPLE_HOME,
-          'python%d%d.zip' %(sys.version_info[0], sys.version_info[1])
-          ) + os.pathsep + os.path.normpath(settings.FREPPLE_APP)
-      else:
-        # Other executables
-        os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
+      os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
 
       if options['background']:
         # Execute as background process on Windows

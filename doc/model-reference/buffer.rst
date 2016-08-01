@@ -11,15 +11,17 @@ Different types of buffers exist:
   | The default buffer uses an "producing" operation to replenish it with
     additional material.
 
+* | `Buffer_infinite`_:
+  | An infinite buffer has an infinite supply of the material is available.
+
 * | `Buffer_procure`_:
   | A buffer that is replenished by a supplier. A number of parameters
     control the re-ordering policy: classic re-order point, fixed time
     ordering, fixed quantity ordering, etc...
   | Note: This buffer type is deprecated. Using the itemsupplier model
-    provides exactly the same functionality.
-
-* | `Buffer_infinite`_:
-  | An infinite buffer has an infinite supply of the material is available.
+    provides exactly the same functionality. The model is still available
+    in the planning engine, but all references to it from the user interface
+    and database have been removed already.
 
 **Fields**
 
@@ -91,6 +93,10 @@ producing        operation         | This operation will be instantiated by the 
                                      version 3.0 onwards we recommend to use the auto-generated
                                      operations, unless you have some very specific modeling
                                      requirements.
+                                   | From version 4.0 onwards, this field is deprecated. It is
+                                     left only for backwards compatibility. New implementations 
+                                     and upgraded installs should use the easier modeling 
+                                     constructs itemsupplier, itemdistribution and itemoperation. 
 detectproblems   boolean           | Set this field to false to supress problem detection on this
                                      buffer.
                                    | Default is true.

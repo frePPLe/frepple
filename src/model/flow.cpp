@@ -98,13 +98,15 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       throw DataException("missing operation on Flow");
     if (!PyObject_TypeCheck(oper, Operation::metadata->pythonClass))
       throw DataException("flow operation must be of type operation");
+    else if (!static_cast<Operation*>(oper)->getLocation())
+      throw DataException("operation location is unspecified");
 
-    // Pick up the buffer
-    PyObject* buf = PyDict_GetItemString(kwds, "buffer");
-    if (!buf)
-      throw DataException("missing buffer on Flow");
-    if (!PyObject_TypeCheck(buf, Buffer::metadata->pythonClass))
-      throw DataException("flow buffer must be of type buffer");
+    // Pick up the item
+    PyObject* item = PyDict_GetItemString(kwds, "item");
+    if (!item)
+      throw DataException("missing item on Flow");
+    if (!PyObject_TypeCheck(item, Item::metadata->pythonClass))
+      throw DataException("flow item must be of type item");
 
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds, "quantity");
@@ -123,6 +125,15 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     {
       PythonData d(eff_end);
       eff.setEnd(d.getDate());
+    }
+
+    // Find or create a buffer for the item at the operation location
+    stringstream o;
+    o << static_cast<Item*>(item)->getName() << " @ " << static_cast<Operation*>(oper)->getLocation()->getName();
+    Buffer* buf = Buffer::find(o.str());
+    if (!buf) {
+      buf = new BufferDefault();
+      buf->setName(o.str());
     }
 
     // Pick up the type and create the flow

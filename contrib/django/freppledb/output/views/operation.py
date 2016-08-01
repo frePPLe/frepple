@@ -20,8 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Operation
-from freppledb.output.models import OperationPlan
+from freppledb.input.models import Operation, OperationPlan
 from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -80,7 +79,7 @@ class OverviewReport(GridPivot):
              where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
              ) d
           -- Planned and frozen quantity, based on start date
-          left join out_operationplan o1
+          left join operationplan o1
           on oper.name = o1.operation
           and d.startdate <= o1.startdate
           and d.enddate > o1.startdate
@@ -88,7 +87,7 @@ class OverviewReport(GridPivot):
           group by oper.name, oper.location_id, d.bucket, d.startdate, d.enddate
         ) x
         -- Planned and frozen quantity, based on end date
-        left join out_operationplan o2
+        left join operationplan o2
         on x.row1 = o2.operation
         and x.col2 <= o2.enddate
         and x.col3 > o2.enddate
@@ -112,52 +111,3 @@ class OverviewReport(GridPivot):
         'locked_end': row[7],
         'total_end': row[8],
         }
-
-
-class DetailReport(GridReport):
-  '''
-  A list report to show operationplans.
-  '''
-  template = 'output/operationplan.html'
-  title = _("Operation detail report")
-  model = OperationPlan
-  permissions = (("view_operation_report", "Can view operation report"),)
-  frozenColumns = 0
-  editable = False
-  multiselect = False
-
-  @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
-    if args and args[0]:
-      base = OperationPlan.objects.filter(operation__exact=args[0])
-    else:
-      base = OperationPlan.objects
-    return base.select_related() \
-      .extra(select={
-        'operation_in': "select name from operation where out_operationplan.operation = operation.name",
-        'demand': "select string_agg(q || ' : ' || d, ', ') from ("
-                  "select round(sum(quantity)) as q, demand as d "
-                  "from out_demandpegging "
-                  "where out_demandpegging.operationplan = out_operationplan.id "
-                  "group by demand order by 1 desc, 2) peg"
-        })
-
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
-    if args and args[0]:
-      request.session['lasttab'] = 'plandetail'
-    return {'active_tab': 'plandetail'}
-
-
-  rows = (
-    GridFieldInteger('id', title=_('operationplan'), key=True, editable=False),
-    GridFieldText('operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False),
-    GridFieldText('demand', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
-    GridFieldNumber('criticality', title=_('criticality'), editable=False),
-    GridFieldBool('locked', title=_('locked'), editable=False),
-    GridFieldNumber('unavailable', title=_('unavailable'), editable=False),
-    GridFieldInteger('owner', title=_('owner'), editable=False),
-    )

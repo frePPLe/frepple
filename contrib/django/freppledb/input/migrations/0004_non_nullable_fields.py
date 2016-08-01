@@ -54,6 +54,10 @@ def CheckReadyForMigration(apps, schema_editor):
     raise ValueError("Manual migration required")
 
 
+def CheckReadyForMigrationReverse(apps, schema_editor):
+  return
+
+
 class Migration(migrations.Migration):
 
   dependencies = [
@@ -61,7 +65,7 @@ class Migration(migrations.Migration):
   ]
 
   operations = [
-    migrations.RunPython(CheckReadyForMigration),
+    migrations.RunPython(CheckReadyForMigration, CheckReadyForMigrationReverse),
     migrations.AlterField(
       model_name='buffer',
       name='item',

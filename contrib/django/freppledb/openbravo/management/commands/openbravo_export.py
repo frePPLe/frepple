@@ -401,10 +401,10 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Exporting work orders...")
       cursor.execute('''
-        select operation.source, out_operationplan.quantity, startdate, enddate
-        from out_operationplan
+        select operation.source, operationplan.quantity, startdate, enddate
+        from operationplan
         inner join operation
-          on out_operationplan.operation = operation.name
+          on operationplan.operation = operation.name
           and operation.type = 'routing'
         where operation like 'Process%' %s ''' % filter_expression)
       count = 0

@@ -82,18 +82,8 @@ class loadData(object):
     # We call this method only at the end, as calling it earlier gives a slower
     # performance to load operationplans
     self.cursor.execute('''
-      select
-        coalesce(max(ids.max_id), 1) + 1
-      from (
-        select max(id) as max_id from purchase_order
-          where status is not null and status <> 'proposed'
-        union all
-        select max(id) as max_id from distribution_order
-          where status is not null and status <> 'proposed'
-        union all
-        select max(id) as max_id from operationplan
-          where status is not null and status <> 'proposed'
-        ) ids
+      select coalesce(max(id),1) + 1 as max_id
+      from operationplan
       ''')
     d = self.cursor.fetchone()
     frepple.settings.id = d[0]
@@ -250,15 +240,15 @@ class loadData(object):
             name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
           if i[7]:
-            x.duration = i[7]
+            x.duration = i[7].total_seconds()
         elif i[6] == "time_per":
           x = frepple.operation_time_per(
             name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
             )
           if i[7]:
-            x.duration = i[7]
+            x.duration = i[7].total_seconds()
           if i[8]:
-            x.duration_per = i[8]
+            x.duration_per = i[8].total_seconds()
         elif i[6] == "alternate":
           x = frepple.operation_alternate(
             name=i[0], description=i[12], category=i[13], subcategory=i[14], source=i[15]
@@ -274,9 +264,9 @@ class loadData(object):
         else:
           raise ValueError("Operation type '%s' not recognized" % i[6])
         if i[1]:
-          x.fence = i[1]
+          x.fence = i[1].total_seconds()
         if i[2]:
-          x.posttime = i[2]
+          x.posttime = i[2].total_seconds()
         if i[3] is not None:
           x.size_minimum = i[3]
         if i[4]:
@@ -370,7 +360,7 @@ class loadData(object):
       SELECT
         supplier_id, item_id, location_id, sizeminimum, sizemultiple,
         cost, priority, effective_start, effective_end, source, leadtime,
-        resource_id, resource_qty
+        resource_id, resource_qty, fence
       FROM itemsupplier %s
       ORDER BY supplier_id, item_id, location_id, priority desc
       ''' % self.filter_where)
@@ -387,7 +377,9 @@ class loadData(object):
           curitem = frepple.item(name=curitemname)
         curitemsupplier = frepple.itemsupplier(
           supplier=cursupplier, item=curitem, source=i[9],
-          leadtime=i[10] or 0, resource_qty=i[12]
+          leadtime=i[10].total_seconds() if i[10] else 0,
+          fence=i[13].total_seconds() if i[13] else 0,
+          resource_qty=i[12]
           )
         if i[2]:
           curitemsupplier.location = frepple.location(name=i[2])
@@ -418,7 +410,7 @@ class loadData(object):
       SELECT
         origin_id, item_id, location_id, sizeminimum, sizemultiple,
         cost, priority, effective_start, effective_end, source,
-        leadtime, resource_id, resource_qty
+        leadtime, resource_id, resource_qty, fence
       FROM itemdistribution %s
       ORDER BY origin_id, item_id, location_id, priority desc
       ''' % self.filter_where)
@@ -435,7 +427,9 @@ class loadData(object):
           curitem = frepple.item(name=curitemname)
         curitemdistribution = frepple.itemdistribution(
           origin=curorigin, item=curitem, source=i[9],
-          leadtime=i[10] or 0, resource_qty=i[12]
+          leadtime=i[10].total_seconds() if i[10] else 0,
+          fence=i[13].total_seconds() if i[13] else 0,
+          resource_qty=i[12]
           )
         if i[2]:
           curitemdistribution.destination = frepple.location(name=i[2])
@@ -464,59 +458,67 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT name, description, location_id, item_id, onhand,
-        minimum, minimum_calendar_id, producing_id, type, leadtime, min_inventory,
-        max_inventory, min_interval, max_interval, size_minimum,
-        size_multiple, size_maximum, fence, category, subcategory, source
+        minimum, minimum_calendar_id, type,
+        min_interval, category, subcategory, source
       FROM buffer %s
       ''' % self.filter_where)
     for i in self.cursor.fetchall():
       cnt += 1
-      if i[8] == "procure":
-        b = frepple.buffer_procure(
-          name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[18], subcategory=i[19], source=i[20]
-          )
-        if i[9]:
-          b.leadtime = i[9]
-        if i[10]:
-          b.mininventory = i[10]
-        if i[11]:
-          b.maxinventory = i[11]
-        if i[14]:
-          b.size_minimum = i[14]
-        if i[15]:
-          b.size_multiple = i[15]
-        if i[16]:
-          b.size_maximum = i[16]
-        if i[17]:
-          b.fence = i[17]
-      elif i[8] == "infinite":
+      if i[7] == "infinite":
         b = frepple.buffer_infinite(
-          name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[18], subcategory=i[19], source=i[20]
+          name=i[0], description=i[1], location=frepple.location(name=i[2]),
+          item=frepple.item(name=i[3]), onhand=i[4],
+          category=i[9], subcategory=i[10], source=i[11]
           )
-      elif not i[8] or i[8] == "default":
+      elif not i[7] or i[7] == "default":
         b = frepple.buffer(
-          name=i[0], description=i[1], item=frepple.item(name=i[3]), onhand=i[4],
-          category=i[18], subcategory=i[19], source=i[20]
+          name=i[0], description=i[1], location=frepple.location(name=i[2]),
+          item=frepple.item(name=i[3]), onhand=i[4],
+          category=i[9], subcategory=i[10], source=i[11]
           )
+        if i[8]:
+          b.mininterval = i[8].total_seconds()
       else:
-        raise ValueError("Buffer type '%s' not recognized" % i[8])
-      if i[20] == 'tool':
+        raise ValueError("Buffer type '%s' not recognized" % i[7])
+      if i[11] == 'tool':
         b.tool = True
-      if i[2]:
-        b.location = frepple.location(name=i[2])
       if i[5]:
         b.minimum = i[5]
       if i[6]:
         b.minimum_calendar = frepple.calendar(name=i[6])
-      if i[7]:
-        b.producing = frepple.operation(name=i[7])
-      if i[12]:
-        b.mininterval = i[12]
-      if i[13]:
-        b.maxinterval = i[13]
     print('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
+
+
+  def loadItemOperations(self):
+    print('Importing item operations...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      SELECT
+        item_id, location_id, operation_id, priority,
+        effective_start, effective_end, source
+      FROM itemoperation %s
+      ORDER BY item_id, location_id, priority, operation_id desc
+      ''' % self.filter_where)
+    curitemname = None
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        if i[0] != curitemname:
+          curitemname = i[0]
+          curitem = frepple.item(name=curitemname)
+        itemoper = frepple.itemoperation(
+          item=curitem, location=frepple.location(name=i[1]),
+          operation=frepple.operation(name=i[2]), priority=i[3],
+          source=i[6]
+          )
+        if i[4]:
+          itemoper.effective_start = i[4]
+        if i[5]:
+          itemoper.effective_end = i[5]
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d item operations in %.2f seconds' % (cnt, time() - starttime))
 
 
   def loadSetupMatrices(self):
@@ -538,7 +540,7 @@ class loadData(object):
         if i[3]:
           r.tosetup = i[3]
         if i[4]:
-          r.duration = i[4]
+          r.duration = i[4].total_seconds()
         if i[5]:
           r.cost = i[5]
       except Exception as e:
@@ -580,7 +582,7 @@ class loadData(object):
           if i[3]:
             x.maximum_calendar = frepple.calendar(name=i[3])
           if i[7]:
-            x.maxearly = i[7]
+            x.maxearly = i[7].total_seconds()
           if i[2]:
             x.maximum = i[2]
         else:
@@ -626,27 +628,29 @@ class loadData(object):
     print('Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime))
 
 
-  def loadFlows(self):
-    print('Importing flows...')
+  def loadOperationMaterials(self):
+    print('Importing operation materials...')
     cnt = 0
     starttime = time()
     # Note: The sorting of the flows is not really necessary, but helps to make
     # the planning progress consistent across runs and database engines.
     self.cursor.execute('''
       SELECT
-        operation_id, thebuffer_id, quantity, type, effective_start,
+        operation_id, item_id, quantity, type, effective_start,
         effective_end, name, priority, search, source
-      FROM flow %s
-      ORDER BY operation_id, thebuffer_id
+      FROM operationmaterial %s
+      ORDER BY operation_id, item_id
       ''' % self.filter_where)
-    curbufname = None
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        if i[1] != curbufname:
-          curbufname = i[1]
-          curbuf = frepple.buffer(name=curbufname)
-        curflow = frepple.flow(operation=frepple.operation(name=i[0]), type="flow_%s" % i[3], buffer=curbuf, quantity=i[2], source=i[9])
+        curflow = frepple.flow(
+          operation=frepple.operation(name=i[0]),
+          item=frepple.item(name=i[1]),
+          quantity=i[2],
+          type="flow_%s" % i[3],
+          source=i[9]
+          )
         if i[4]:
           curflow.effective_start = i[4]
         if i[5]:
@@ -659,18 +663,11 @@ class loadData(object):
           curflow.search = i[8]
       except Exception as e:
         print("Error:", e)
-    self.cursor.execute('''
-      SELECT count(*)
-      FROM flow
-      WHERE alternate IS NOT NULL AND alternate <> ''
-      ''')
-    if self.cursor.fetchone()[0]:
-      raise ValueError("Flow.alternate field is not used any longer. Use only flow.name")
-    print('Loaded %d flows in %.2f seconds' % (cnt, time() - starttime))
+    print('Loaded %d operation materials in %.2f seconds' % (cnt, time() - starttime))
 
 
-  def loadLoads(self):
-    print('Importing loads...')
+  def loadOperationResources(self):
+    print('Importing operation resources...')
     cnt = 0
     starttime = time()
     # Note: The sorting of the loads is not really necessary, but helps to make
@@ -679,17 +676,18 @@ class loadData(object):
       SELECT
         operation_id, resource_id, quantity, effective_start, effective_end, name,
         priority, setup, search, skill_id, source
-      FROM resourceload %s
+      FROM operationresource %s
       ORDER BY operation_id, resource_id
       ''' % self.filter_where)
-    curresname = None
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        if i[1] != curresname:
-          curresname = i[1]
-          curres = frepple.resource(name=curresname)
-        curload = frepple.load(operation=frepple.operation(name=i[0]), resource=curres, quantity=i[2], source=i[10])
+        curload = frepple.load(
+          operation=frepple.operation(name=i[0]),
+          resource=frepple.resource(name=i[1]),
+          quantity=i[2],
+          source=i[10]
+          )
         if i[3]:
           curload.effective_start = i[3]
         if i[4]:
@@ -706,48 +704,76 @@ class loadData(object):
           curload.skill = frepple.skill(name=i[9])
       except Exception as e:
         print("Error:", e)
-    self.cursor.execute('''
-      SELECT count(*)
-      FROM resourceload
-      WHERE alternate IS NOT NULL AND alternate <> ''
-      ''')
-    if self.cursor.fetchone()[0]:
-      raise ValueError("Load.alternate field is not used any longer. Use only load.name")
-    print('Loaded %d loads in %.2f seconds' % (cnt, time() - starttime))
+    print('Loaded %d resource loads in %.2f seconds' % (cnt, time() - starttime))
 
 
-  def loadOperationPlans(self):
+  def loadOperationPlans(self):   # TODO if we are going to replan anyway, we can skip loading the proposed operationplans
     print('Importing operationplans...')
-    cnt = 0
+    cnt_mo = 0
+    cnt_po = 0
+    cnt_do = 0
+    cnt_dlvr = 0
     starttime = time()
     self.cursor.execute('''
       SELECT
-        operation_id, id, quantity, startdate, enddate, status, source
+        operation_id, id, quantity, startdate, enddate, status, source,
+        type, origin_id, destination_id, supplier_id, item_id, location_id,
+        reference
       FROM operationplan
       WHERE owner_id IS NULL and quantity >= 0 and status <> 'closed' %s
+         and type in ('PO', 'MO', 'DO', 'DLVR')
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
-      cnt += 1
-      opplan = frepple.operationplan(
-        operation=frepple.operation(name=i[0]),
-        id=i[1], quantity=i[2], source=i[6],
-        start=i[3], end=i[4], status=i[5]
-        )
-      if opplan.start <= frepple.settings.current:
-        # We assume that locked operationplans with a start date in the past
-        # have already consumed all materials.
-        # TODO Specifying this explicitly may be more appropriate
-        opplan.consume_material = False
+      try:
+        if i[7] == 'MO':
+          cnt_mo += 1
+          opplan = frepple.operationplan(
+            operation=frepple.operation(name=i[0]), id=i[1],
+            quantity=i[2], source=i[6], start=i[3], end=i[4],
+            status=i[5], reference=i[13]
+            )
+          if opplan.start <= frepple.settings.current:
+            # We assume that locked operationplans with a start date in the past
+            # have already consumed all materials.
+            # TODO Specifying this explicitly may be more appropriate
+            opplan.consume_material = False
+        elif i[7] == 'PO':
+          cnt_po += 1
+          frepple.operation_itemsupplier.createOrder(
+            location=frepple.location(name=i[12]),
+            id=i[1], reference=i[12],
+            item=frepple.item(name=i[11]) if i[11] else None,
+            supplier=frepple.supplier(name=i[10]) if i[10] else None,
+            quantity=i[2], start=i[3], end=i[4],
+            status=i[5], source=i[6]
+            )
+        elif i[7] == 'DO':
+          cnt_do += 1
+          frepple.operation_itemdistribution.createOrder(
+            destination=frepple.location(name=i[9]) if i[9] else None,
+            id=i[1], reference=i[12],
+            item=frepple.item(name=i[11]) if i[11] else None,
+            origin=frepple.location(name=i[8]) if i[8] else None,
+            quantity=i[2], start=i[3], end=i[4],
+            status=i[5], source=i[6]
+            )
+        elif i[7] == 'DLVR':
+          cnt_dlvr += 1
+          # TODO Logic to read deliveries from the database
+        else:
+          print("Warning: unhandled operationplan type '%s'" % type)
+      except Exception as e:
+        print("Error:", e)
     self.cursor.execute('''
       SELECT
         operation_id, id, quantity, startdate, enddate, status, owner_id, source
       FROM operationplan
-      WHERE owner_id IS NOT NULL and quantity >= 0 and status <> 'closed' %s
+      WHERE owner_id IS NOT NULL and quantity >= 0 and status <> 'closed' %s and type = 'MO'
       ORDER BY id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
-      cnt += 1
+      cnt_mo += 1
       opplan = frepple.operationplan(
         operation=frepple.operation(name=i[0]),
         id=i[1], quantity=i[2], source=i[7],
@@ -759,63 +785,7 @@ class loadData(object):
         # have already consumed all materials.
         # TODO Specifying this explicitly may be more appropriate
         opplan.consume_material=False
-    print('Loaded %d operationplans in %.2f seconds' % (cnt, time() - starttime))
-
-
-  def loadPurchaseOrders(self):
-    print('Importing purchase orders...')
-    cnt = 0
-    starttime = time()
-    self.cursor.execute('''
-      SELECT
-        location_id, id, reference, item_id, supplier_id, quantity, startdate, enddate, status, source
-      FROM purchase_order
-      WHERE status <> 'closed' %s
-      ORDER BY id ASC
-      ''' % self.filter_and)
-    for i in self.cursor.fetchall():
-      cnt += 1
-      try:
-        frepple.operation_itemsupplier.createOrder(
-          location=frepple.location(name=i[0]),
-          id=i[1], reference=i[2],
-          item=frepple.item(name=i[3]) if i[3] else None,
-          supplier=frepple.supplier(name=i[4]) if i[4] else None,
-          quantity=i[5], start=i[6], end=i[7],
-          status=i[8], source=i[9]
-          )
-      except Exception as e:
-        print("Error:", e)
-    print('Loaded %d purchase orders in %.2f seconds' % (cnt, time() - starttime))
-
-
-  def loadDistributionOrders(self):
-    print('Importing distribution orders...')
-    cnt = 0
-    starttime = time()
-    self.cursor.execute('''
-      SELECT
-        destination_id, id, reference, item_id, origin_id, quantity, startdate,
-        enddate, consume_material, status, source
-      FROM distribution_order
-      WHERE status <> 'closed' %s
-      ORDER BY id ASC
-      ''' % self.filter_and)
-    for i in self.cursor.fetchall():
-      cnt += 1
-      try:
-        frepple.operation_itemdistribution.createOrder(
-          destination=frepple.location(name=i[0]),
-          id=i[1], reference=i[2],
-          item=frepple.item(name=i[3]) if i[3] else None,
-          origin=frepple.location(name=i[4]) if i[4] else None,
-          quantity=i[5], start=i[6], end=i[7],
-          consume_material=i[8] if i[8] != None else True,
-          status=i[9], source=i[10]
-          )
-      except Exception as e:
-        print("Error:", e)
-    print('Loaded %d distribution orders in %.2f seconds' % (cnt, time() - starttime))
+    print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
 
   def loadDemand(self):
@@ -847,7 +817,7 @@ class loadData(object):
         if i[8]:
           x.minshipment = i[8]
         if i[9] is not None:
-          x.maxlateness = i[9]
+          x.maxlateness = i[9].total_seconds()
         if i[13]:
           x.location = frepple.location(name=i[13])
       except Exception as e:
@@ -884,16 +854,15 @@ class loadData(object):
     self.loadSuboperations()
     self.loadItems()
     self.loadBuffers()
+    self.loadItemOperations()
     self.loadSetupMatrices()
     self.loadResources()
     self.loadResourceSkills()
     self.loadItemSuppliers()
     self.loadItemDistributions()
-    self.loadFlows()
-    self.loadLoads()
+    self.loadOperationMaterials()
+    self.loadOperationResources()
     self.loadOperationPlans()
-    self.loadPurchaseOrders()
-    self.loadDistributionOrders()
     self.loadDemand()
     self.finalize()
 

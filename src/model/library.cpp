@@ -71,6 +71,7 @@ void LibraryModel::initialize()
   nok += OperationItemDistribution::initialize();
   nok += OperationSetup::initialize();
   nok += ItemDistribution::initialize();
+  nok += ItemOperation::initialize();
   nok += Location::initialize();
   nok += LocationDefault::initialize();
   nok += Buffer::initialize();

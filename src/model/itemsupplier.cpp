@@ -168,7 +168,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
           && !attr.isA(Tags::supplier) && !attr.isA(Tags::item)
-          && !attr.isA(Tags::type) && !attr.isA(Tags::action))
+          && !attr.isA(Tags::type) && !attr.isA(Tags::priority) && !attr.isA(Tags::action))
         {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)

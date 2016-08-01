@@ -36,4 +36,3 @@ menu.addItem("capacity", "resource report", url="/resource/", report=freppledb.o
 menu.addItem("capacity", "resource detail report", url="/loadplan/", report=freppledb.output.views.resource.DetailReport, index=200)
 menu.addItem("capacity", "problem report", url="/problem/?entity=capacity", report=freppledb.output.views.problem.Report, index=300)
 menu.addItem("manufacturing", "operation report", url="/operation/", report=freppledb.output.views.operation.OverviewReport, index=100)
-menu.addItem("manufacturing", "operation detail report", url="/operationplan/", report=freppledb.output.views.operation.DetailReport, index=200)

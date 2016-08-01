@@ -14,8 +14,6 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import class_prepared
 
-from freppledb.common.fields import DurationField
-
 
 _register = {}
 
@@ -36,7 +34,7 @@ def add_extra_model_fields(sender, **kwargs):
     elif fieldtype == 'datetime':
       field = models.DateTimeField(label, null=True, blank=True, db_index=True)
     elif fieldtype == 'duration':
-      field = DurationField(label, null=True, blank=True, db_index=True)
+      field = models.DurationField(label, null=True, blank=True, db_index=True)
     elif fieldtype == 'time':
       field = models.TimeField(label, null=True, blank=True, db_index=True)
     else:

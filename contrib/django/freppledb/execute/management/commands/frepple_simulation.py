@@ -414,7 +414,7 @@ class Simulator(object):
       buf = None
       for fl in op.operation.flows.all().using(self.database):
         if fl.quantity > 0:
-          buf = fl.thebuffer
+          buf = fl.buffer
           break
       if not buf:
         continue
@@ -424,11 +424,11 @@ class Simulator(object):
       op.save(using=self.database)
       for fl in op.operation.flows.all().using(self.database):
         if fl.type == 'end':
-          fl.thebuffer.onhand += fl.quantity * op.quantity
-          fl.thebuffer.save(using=self.database)
+          fl.buffer.onhand += fl.quantity * op.quantity
+          fl.buffer.save(using=self.database)
         elif fl.type == 'fixed_end':
-          fl.thebuffer.onhand += fl.quantity
-          fl.thebuffer.save(using=self.database)
+          fl.buffer.onhand += fl.quantity
+          fl.buffer.save(using=self.database)
 
 
   def create_manufacturing_orders(self, strt, nd):
@@ -443,11 +443,11 @@ class Simulator(object):
         print("      Opening MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
       for fl in op.operation.flows.all().using(self.database):
         if fl.type == 'start':
-          fl.thebuffer.onhand += fl.quantity * op.quantity
-          fl.thebuffer.save(using=self.database)
+          fl.buffer.onhand += fl.quantity * op.quantity
+          fl.buffer.save(using=self.database)
         elif fl.type == 'fixed_start':
-          fl.thebuffer.onhand += fl.quantity
-          fl.thebuffer.save(using=self.database)
+          fl.buffer.onhand += fl.quantity
+          fl.buffer.save(using=self.database)
       op.status = 'confirmed'
       op.save(using=self.database)
 
@@ -562,16 +562,16 @@ class Simulator(object):
         continue
       if fl.type in ('start', 'end') or not fl.type:
         if consume:
-          fl.thebuffer.onhand += qty * fl.quantity
-          fl.thebuffer.save(using=self.database)
-        elif fl.thebuffer.onhand < - fl.quantity * min_qty:
+          fl.buffer.onhand += qty * fl.quantity
+          fl.buffer.save(using=self.database)
+        elif fl.buffer.onhand < - fl.quantity * min_qty:
           # Even the minimum isn't available
           return 0
         else:
           if qty > min_qty:
-            ship_qty = min(- fl.thebuffer.onhand / fl.quantity, qty - min_qty)
+            ship_qty = min(- fl.buffer.onhand / fl.quantity, qty - min_qty)
           else:
-            ship_qty = - fl.thebuffer.onhand / fl.quantity
+            ship_qty = - fl.buffer.onhand / fl.quantity
           if ship_qty < min_qty:
             # Remaining open quantity after an ok would be less than the minimum
             return 0
@@ -583,16 +583,16 @@ class Simulator(object):
             qty = ship_qty
       if fl.type in ('fixed_start', 'fixed_end'):
         if consume:
-          fl.thebuffer.onhand += qty
-          fl.thebuffer.save(using=self.database)
-        elif fl.thebuffer.onhand < - min_qty:
+          fl.buffer.onhand += qty
+          fl.buffer.save(using=self.database)
+        elif fl.buffer.onhand < - min_qty:
           # Even the minimum isn't available
           return 0
         else:
           if qty > min_qty:
-            ship_qty = min(- fl.thebuffer.onhand, qty - min_qty)
+            ship_qty = min(- fl.buffer.onhand, qty - min_qty)
           else:
-            ship_qty = - fl.thebuffer.onhand
+            ship_qty = - fl.buffer.onhand
           if ship_qty < min_qty:
             # Remaining open quantity after an ok would be less than the minimum
             return 0

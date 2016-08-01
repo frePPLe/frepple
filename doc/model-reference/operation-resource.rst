@@ -1,8 +1,8 @@
-====
-Load
-====
+==================
+Operation Resource
+==================
 
-Loads are used to model the capacity consumption of an operation.
+Operation resources are used to model the capacity consumption of an operation.
 
 **Fields**
 
@@ -63,7 +63,7 @@ action          A/C/AC/R          | Type of action to be executed:
 
 **Example XML structures**
 
-Defining a load
+Defining an operationresource
 
 .. code-block:: XML
 
@@ -76,7 +76,7 @@ Defining a load
        </loads>
     </plan>
 
-Defining a load nested in an operation structure.
+Defining an operationresource nested in an operation structure.
 Resources A AND B are used by the operation.
 
 .. code-block:: XML
@@ -98,7 +98,7 @@ Resources A AND B are used by the operation.
        </operations>
     </plan>
 
-Defining a load nested in an operation structure.
+Defining an operationresource nested in an operation structure.
 Resource A OR B is used by the operation.
 
 .. code-block:: XML
@@ -124,7 +124,7 @@ Resource A OR B is used by the operation.
        </operations>
     </plan>
 
-Defining a load nested in a resource structure
+Defining an operationresource nested in a resource structure
 
 .. code-block:: XML
 
@@ -145,7 +145,7 @@ Defining a load nested in a resource structure
        </resources>
     </plan>
 
-Deleting a load
+Deleting an operationresource
 
 ::
 

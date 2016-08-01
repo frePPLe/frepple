@@ -304,9 +304,16 @@
 				        {% blocktrans %}
 										Load frePPLe from the database and live data sources...<br>
 										and create a plan in frePPLe...<br>
-										and export results.<br><br>
+										and export results.{% endblocktrans %}<br><br>
+								{% if planning_options %}
+								<p><b>{% trans "optional planning steps"|capfirst %}</b><br>
+				        {% for b in planning_options %}
+				        <label for="option_{{b.0}}"><input type="checkbox" name="optional" {% if b.0 in current_options %}checked {% endif %}value="{{b.0}}" id="option_{{b.0}}"/>&nbsp;&nbsp;{{b.1}}</label><br>
+				        {% endfor %}
+				        </p>
+				        {% endif %}
 								<p><b>Plan type</b><br>
-				        {% endblocktrans %}
+
 				        <label>
 						        <input type="radio" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
 						        {% blocktrans %}
@@ -332,25 +339,6 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 				        <br>
 				        </p>
 				        <p>
-				        {% if odoo %}
-				          {% blocktrans %}
-				              <b data-toggle="tooltip" data-html="true" data-original-title="A live data source allows your frePPLe plan to be 100% in sync with data in an external system.<br>
-FrePPLe will read data from them before planning.<br>
-And after the plan is generated frePPLe directly exports the results to them.<br>
-FrePPLe also saves a copy of the data in its own database for reporting.">Live data sources</b>
-				          {% endblocktrans %}
-				          <span class="fa fa-question-circle" style="display:inline-block;"></span><br>
-				          <table>
-				            <tr>
-				              <td></td>
-				              <td style="padding: 0px 5px">{% trans "read"|capfirst %}</td>
-				              <td style="padding: 0px 5px">{% trans "write"|capfirst %}</td></tr>
-				            <tr>
-				              <td style="padding-right: 10px">Odoo</td>
-				              <td style="text-align:center"><input type="checkbox" name="odoo_read" {% if odoo_read %}checked {% endif %}value="1"/></td>
-				              <td style="text-align:center"><input type="checkbox" name="odoo_write" {% if odoo_write %}checked {% endif %}value="1"/></td></tr>
-				          </table><br>
-				        {% endif %}
 				        <a id="logfile" class="btn btn-info" role="button" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a>
 				        </p>
 				      </td>

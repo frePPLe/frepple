@@ -994,7 +994,7 @@ class Command(BaseCommand):
       delete = [ (i,) for i in unused_keys ]
       cursor.executemany('delete from resourceskill where resource_id=%s', delete)
       cursor.executemany('delete from resourceload where resource_id=%s', delete)
-      cursor.executemany('update resource set owner_id where owner_id=%s', delete)
+      cursor.executemany('update resource set owner_id = null where owner_id=%s', delete)
       cursor.executemany('delete from resource where name=%s', delete)
       if self.verbosity > 0:
         print("Inserted %d new machines" % len(insert))
@@ -1355,9 +1355,9 @@ class Command(BaseCommand):
         # warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
         warehouse = 'Main location'   # TODO: purchasing plan has no concept of the location
         organization = self.organizations.get(elem.find("organization").get("id"), None)
-        plannedDate = datetime.strptime(elem.find("plannedDate"), '%Y-%m-%dT%H:%M:%S.%fZ')
-        plannedOrderDate = datetime.strptime(elem.find("plannedDate"), '%Y-%m-%dT%H:%M:%S.%fZ')
-        businessPartner = self.suppliers(elem.find("businessPartner").get("id"), None)
+        plannedDate = datetime.strptime(elem.find("plannedDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        plannedOrderDate = datetime.strptime(elem.find("plannedDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
+        businessPartner = self.suppliers.get(elem.find("businessPartner").get("id"), None)
         name = elem.find("purchasingPlan").get('identifier')
         if not warehouse or not product or not organization or not plannedDate:
           # Product, location or organization are not known in frePPLe.
@@ -1418,7 +1418,7 @@ class Command(BaseCommand):
       insert_do = []
       update_do = []
       query = urllib.parse.quote("name like 'FREPPLE%' and description like 'Incremental export triggered by %'" % self.delta)
-      self.get_data("/openbravo/ws/dal/MRPPurchasingRun?where=%s" % query, parse)
+      self.get_data("/openbravo/ws/dal/MRPPurchasingRunLine?where=%s" % query, parse)
 
       # Create or update purchase orders
       cursor.executemany(

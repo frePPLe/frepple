@@ -74,14 +74,16 @@ in each sheet must contain the column names.
 .. image:: _images/execution-import.png
    :alt: Execution screen - Spreadsheet import
 
-Load data files from folder
----------------------------
+Import/Export data files from folder
+------------------------------------
 
-This task allows loading data from a set of CSV-formatted files. The files
-are all placed in a folder that is configurable with the UPLOADFILEFOLDER
-in the djangosettings.py configuration file.
+This task allows importing or exporting data from a set of CSV-formatted files.
+The purpose of this task is to help the exchange of information with other systems. 
+The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER in the djangosettings.py configuration file.
+The log files importfromfolder.log and exporttofolder.log record all data imports and file exports triggered in this way, in addition to
+any data errors identified during these tasks.
 
-The data files must meet the following criteria:
+The data files to be imported must meet the following criteria:
 
 * The name must match the data object they store: eg demand.csv, item.csv, ...
 
@@ -95,11 +97,20 @@ The data files must meet the following criteria:
 * The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
   setting in djangosettings.py)
 
-The file loadfromfolder.log records all data loads triggered in this way and
-any data errors identified during the loading.
+The export can be customized, i.e. export only the relevant data and with the a specific format (file names, dates, separators, ...).
+The costumization is done on the frepple_exporttofolder.py statements.
+   ::
 
-.. image:: _images/execution-loadfromfolder.png
-   :alt: Execution screen - Upload data from folder 
+     statements = [
+       ("export_purchaseorder.csv", "COPY (select * from purchase_order where status='proposed') TO STDOUT WITH CSV HEADER"),
+       ("export_distributionorder.csv", "COPY distribution_order TO STDOUT WITH CSV HEADER"),
+       ("export_manufacturingorders.csv", "COPY operationplan TO STDOUT WITH CSV HEADER")
+     ]
+
+In this option you can see a list of files present in the specified folder.
+
+.. image:: _images/execution-importexportfolder.png
+   :alt: Execution screen - Import/Export data from/to folder 
 
 Web service
 -----------

@@ -5646,7 +5646,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {
       m->addDateField<Cls>(Tags::date, &Cls::getDate);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity);
-      m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand);
+      m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, NULL, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);

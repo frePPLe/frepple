@@ -212,7 +212,7 @@ class GridFieldChoice(GridField):
 
 class GridFieldCurrency(GridField):
   formatter = 'currency'
-  extra = "formatoptions:{prefix:'%s', suffix:'%s', defaultValue=''}" % settings.CURRENCY
+  extra = "formatoptions:{prefix:'%s', suffix:'%s', defaultValue:''}" % settings.CURRENCY
   width = 80
 
 

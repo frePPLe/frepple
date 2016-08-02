@@ -766,8 +766,8 @@ class exportStaticModel(object):
 
       def res_skills():
         for s in frepple.skills():
-          for r in s.resources:
-            yield (r.effective_start, r.effective_end, r.priority, r.source, self.timestamp, r.name, s.name)
+          for r in s.resourceskills:
+            yield (r.effective_start, r.effective_end, r.priority, r.source, self.timestamp, r.resource.name, s.name)
 
       cursor.executemany(
         '''insert into resourceskill
@@ -775,7 +775,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s)''',
         [
           i for i in res_skills()
-          if i not in primary_keys and (not self.source or self.source == i.source)
+          if (i[5],i[6]) not in primary_keys and (not self.source or self.source == i[3])
         ])
       cursor.executemany(
         '''update resourceskill
@@ -783,7 +783,7 @@ class exportStaticModel(object):
         where resource_id=%s and skill_id=%s''',
         [
           i for i in res_skills()
-          if i not in primary_keys and (not self.source or self.source == i.source)
+          if (i[5],i[6]) in primary_keys and (not self.source or self.source == i[3])
         ])
       print('Exported resource skills in %.2f seconds' % (time() - starttime))
 

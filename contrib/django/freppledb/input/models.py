@@ -835,6 +835,84 @@ class ItemDistribution(AuditModel):
     verbose_name_plural = _('item distributions')
 
 
+class Demand(AuditModel, HierarchyModel):
+  # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
+  demandpriorities = (
+    (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, '6'), (7, '7'),
+    (8, '8'), (9, '9'), (10, '10'), (11, '11'), (12, '12'), (13, '13'),
+    (14, '14'), (15, '15'), (16, '16'), (17, '17'), (18, '18'),
+    (19, '19'), (20, '20')
+  )
+
+  # Status
+  demandstatus = (
+    ('inquiry', _('inquiry')),
+    ('quote', _('quote')),
+    ('open', _('open')),
+    ('closed', _('closed')),
+    ('canceled', _('canceled')),
+    )
+
+  # Database fields
+  description = models.CharField(
+    _('description'), max_length=500, null=True, blank=True
+    )
+  category = models.CharField(
+    _('category'), max_length=300, null=True, blank=True, db_index=True
+    )
+  subcategory = models.CharField(
+    _('subcategory'), max_length=300, null=True, blank=True, db_index=True
+    )
+  customer = models.ForeignKey(
+    Customer, verbose_name=_('customer'), db_index=True
+    )
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'), db_index=True
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), db_index=True
+    )
+  due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
+  status = models.CharField(
+    _('status'), max_length=10, null=True, blank=True,
+    choices=demandstatus, default='open',
+    help_text=_('Status of the demand. Only "open" demands are planned'),
+    )
+  operation = models.ForeignKey(
+    Operation,
+    verbose_name=_('delivery operation'), null=True, blank=True,
+    related_name='used_demand',
+    help_text=_('Operation used to satisfy this demand')
+    )
+  quantity = models.DecimalField(
+    _('quantity'), max_digits=15, decimal_places=4
+    )
+  priority = models.PositiveIntegerField(
+    _('priority'), default=10, choices=demandpriorities,
+    help_text=_('Priority of the demand (lower numbers indicate more important demands)')
+    )
+  minshipment = models.DecimalField(
+    _('minimum shipment'), null=True, blank=True,
+    max_digits=15, decimal_places=4,
+    help_text=_('Minimum shipment quantity when planning this demand')
+    )
+  maxlateness = models.DurationField(
+    _('maximum lateness'), null=True, blank=True,
+    help_text=_("Maximum lateness allowed when planning this demand")
+    )
+  plan = JSONField(default="{}", null=True, blank=True, editable=False)
+
+  # Convenience methods
+  def __str__(self):
+    return self.name
+
+  class Meta(AuditModel.Meta):
+    db_table = 'demand'
+    verbose_name = _('sales order')
+    verbose_name_plural = _('sales orders')
+    ordering = ['name']
+
+
 class OperationPlan(AuditModel):
   # Possible types
   types = (
@@ -867,7 +945,6 @@ class OperationPlan(AuditModel):
     _('type'), max_length=5, choices=types,
     help_text=_('Order type'), db_index=True
     )
-  name = models.CharField(max_length=300, null=True, db_index=True)
   reference = models.CharField(
     _('reference'), max_length=300, null=True, blank=True,
     help_text=_('External reference of this order')
@@ -916,7 +993,10 @@ class OperationPlan(AuditModel):
     null=True, blank=True, db_index=True
     )
   # Used for delivery operationplans
-  demand = models.CharField(max_length=300, null=True, db_index=True)
+  demand = models.ForeignKey(
+    Demand, verbose_name=_('demand'),
+    null=True, blank=True, db_index=True
+    )
 
   def __str__(self):
     return str(self.id)
@@ -1071,81 +1151,3 @@ class DeliveryOrder(OperationPlan):
     proxy = True
     verbose_name = _('customer shipment')
     verbose_name_plural = _('customer shipments')
-
-
-class Demand(AuditModel, HierarchyModel):
-  # The priorities defined here are for convenience only. FrePPLe accepts any number as priority.
-  demandpriorities = (
-    (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, '6'), (7, '7'),
-    (8, '8'), (9, '9'), (10, '10'), (11, '11'), (12, '12'), (13, '13'),
-    (14, '14'), (15, '15'), (16, '16'), (17, '17'), (18, '18'),
-    (19, '19'), (20, '20')
-  )
-
-  # Status
-  demandstatus = (
-    ('inquiry', _('inquiry')),
-    ('quote', _('quote')),
-    ('open', _('open')),
-    ('closed', _('closed')),
-    ('canceled', _('canceled')),
-    )
-
-  # Database fields
-  description = models.CharField(
-    _('description'), max_length=500, null=True, blank=True
-    )
-  category = models.CharField(
-    _('category'), max_length=300, null=True, blank=True, db_index=True
-    )
-  subcategory = models.CharField(
-    _('subcategory'), max_length=300, null=True, blank=True, db_index=True
-    )
-  customer = models.ForeignKey(
-    Customer, verbose_name=_('customer'), db_index=True
-    )
-  item = models.ForeignKey(
-    Item, verbose_name=_('item'), db_index=True
-    )
-  location = models.ForeignKey(
-    Location, verbose_name=_('location'), db_index=True
-    )
-  due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
-  status = models.CharField(
-    _('status'), max_length=10, null=True, blank=True,
-    choices=demandstatus, default='open',
-    help_text=_('Status of the demand. Only "open" demands are planned'),
-    )
-  operation = models.ForeignKey(
-    Operation,
-    verbose_name=_('delivery operation'), null=True, blank=True,
-    related_name='used_demand',
-    help_text=_('Operation used to satisfy this demand')
-    )
-  quantity = models.DecimalField(
-    _('quantity'), max_digits=15, decimal_places=4
-    )
-  priority = models.PositiveIntegerField(
-    _('priority'), default=10, choices=demandpriorities,
-    help_text=_('Priority of the demand (lower numbers indicate more important demands)')
-    )
-  minshipment = models.DecimalField(
-    _('minimum shipment'), null=True, blank=True,
-    max_digits=15, decimal_places=4,
-    help_text=_('Minimum shipment quantity when planning this demand')
-    )
-  maxlateness = models.DurationField(
-    _('maximum lateness'), null=True, blank=True,
-    help_text=_("Maximum lateness allowed when planning this demand")
-    )
-  plan = JSONField(default="{}", null=True, blank=True, editable=False)
-
-  # Convenience methods
-  def __str__(self):
-    return self.name
-
-  class Meta(AuditModel.Meta):
-    db_table = 'demand'
-    verbose_name = _('sales order')
-    verbose_name_plural = _('sales orders')
-    ordering = ['name']

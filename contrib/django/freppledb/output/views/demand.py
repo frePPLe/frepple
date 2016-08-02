@@ -25,8 +25,7 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
-from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan
-from freppledb.output.models import Demand
+from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan, DeliveryOrder
 from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
@@ -167,8 +166,8 @@ class DetailReport(GridReport):
   '''
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
-  model = Demand
-  basequeryset = Demand.objects.all()
+  model = DeliveryOrder
+  basequeryset = DeliveryOrder.objects.all()
   permissions = (("view_demand_report", "Can view demand report"),)
   frozenColumns = 0
   editable = False
@@ -176,13 +175,14 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), editable=False, formatter='detail', extra="role:'input/demand'"),
-    GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra="role:'input/item'"),
-    GridFieldText('customer', title=_('customer'), editable=False, formatter='detail', extra="role:'input/customer'"),
+    GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra="role:'input/item'"),
+    GridFieldText('customer', title=_('customer'), field_name='demand__customer', editable=False, formatter='detail', extra="role:'input/customer'"),
+    GridFieldText('location', title=_('location'), field_name='demand__location', editable=False, formatter='detail', extra="role:'input/location'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
-    GridFieldNumber('planquantity', title=_('planned quantity'), editable=False),
-    GridFieldDateTime('due', title=_('due date'), editable=False),
-    GridFieldDateTime('plandate', title=_('planned date'), editable=False),
-    GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
+    GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
+    GridFieldDateTime('startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('start date'), editable=False),
+    GridFieldDateTime('due', field_name='demand__due', title=_('due date'), editable=False),
     )
 
   @classmethod

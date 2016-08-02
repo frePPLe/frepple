@@ -448,12 +448,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplan',
       name='demand',
-      field=models.CharField(max_length=300, null=True, db_index=True),
-    ),
-    migrations.AddField(
-      model_name='operationplan',
-      name='name',
-      field=models.CharField(max_length=300, null=True, db_index=True),
+      field=models.ForeignKey(to='input.Demand', blank=True, null=True, verbose_name='demand'),
     ),
     migrations.RunSQL(
       '''

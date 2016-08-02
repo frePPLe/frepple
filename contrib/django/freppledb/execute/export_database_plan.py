@@ -104,7 +104,6 @@ class export:
     if self.cluster == -1:
       # Complete export for the complete model
       process.stdin.write("truncate table out_problem, out_resourceplan, out_constraint;\n".encode(self.encoding))
-      process.stdin.write("truncate table out_demand;\n".encode(self.encoding))
       process.stdin.write("delete from operationplanmaterial using operationplan where operationplanmaterial.operationplan_id = operationplan.id and operationplan.status = 'proposed';\n".encode(self.encoding))
       process.stdin.write("delete from operationplanresource using operationplan where operationplanresource.operationplan_id = operationplan.id and operationplan.status = 'proposed';\n".encode(self.encoding))
       process.stdin.write("delete from operationplan where status='proposed' or status is null;\n".encode(self.encoding))
@@ -114,7 +113,6 @@ class export:
       for i in frepple.items():
         if i.cluster == self.cluster:
           process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
-      process.stdin.write("delete from out_demand where item in (select name from cluster_keys);\n".encode(self.encoding))
       process.stdin.write("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n".encode(self.encoding))
       process.stdin.write("delete from operationplanmaterial where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n".encode(self.encoding))
       process.stdin.write('''delete from out_problem
@@ -195,25 +193,38 @@ class export:
         if self.cluster != -1 and self.cluster != i.cluster:
           continue
         for j in i.operationplans:
-          if flag and i.name.startswith("Inventory "):
+          if i.name.startswith("Inventory "):
             # Export inventory
-            yield (
-              i.name, 'STCK', j.status, j.reference or blank, round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
-              self.getPegging(j), j.source or blank, self.timestamp,
-              blank, j.owner.id if j.owner else blank,
-              blank, blank, blank, blank, blank,
-              j.demand.name if j.demand else blank,
-              j.id
-              )
+            if flag:
+              yield (
+                'STCK', j.status, j.reference or blank, round(j.quantity, 4),
+                str(j.start), str(j.end), round(j.criticality, 4),
+                self.getPegging(j), j.source or blank, self.timestamp,
+                blank, j.owner.id if j.owner else blank,
+                blank, blank, blank, blank, blank,
+                j.demand.name if j.demand else blank,
+                j.id
+                )
           elif flag and j.status != 'proposed':
             continue
           elif not flag and j.status == 'proposed':
             continue
+          elif j.demand:
+            # Export shipments
+            yield (
+              'DLVR', j.status, j.reference or blank, round(j.quantity, 4),
+              str(j.start), str(j.end), round(j.criticality, 4),
+              self.getPegging(j), j.source or blank, self.timestamp,
+              i.name if not isinstance(i, (frepple.operation_itemdistribution, frepple.operation_itemsupplier)) else blank, 
+              j.owner.id if j.owner else blank,
+              blank, blank, blank, blank, blank,
+              j.demand.name,
+              j.id
+              )          
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
-              i.name, 'DO', j.status, j.reference or blank, round(j.quantity, 4),
+              'DO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -226,7 +237,7 @@ class export:
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
             yield (
-              i.name, 'PO', j.status, j.reference or blank, round(j.quantity, 4),
+              'PO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -238,7 +249,7 @@ class export:
           elif not i.hidden:
             # Export MO
             yield (
-              i.name, 'MO', j.status, j.reference or blank, round(j.quantity, 4),
+              'MO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               i.name, j.owner.id if j.owner else blank,
@@ -248,8 +259,9 @@ class export:
               )
           else:
             # Hidden operationplans: alternate tops, deliveries
+            print ("unknown operationplan type:", i.name)
             yield (
-              i.name, 'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
+              'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -264,14 +276,14 @@ class export:
 
     # Export newly proposed operationplans
     process.stdin.write('''COPY operationplan
-      (name,type,status,reference,quantity,startdate,enddate,
+      (type,status,reference,quantity,startdate,enddate,
       criticality,plan,source,lastmodified,
       operation_id,owner_id,
       item_id,destination_id,origin_id,
       location_id,supplier_id,
-      demand,id) FROM STDIN;\n'''.encode(self.encoding))
+      demand_id,id) FROM STDIN;\n'''.encode(self.encoding))
     for p in getOperationPlans(True):
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
 
     # Update existing operationplans
@@ -279,11 +291,11 @@ class export:
       cursor = connections[self.database].cursor()
       cursor.executemany('''
         update operationplan
-        set name=%s, type=%s, status=%s, reference=%s, quantity=%s,
+        set type=%s, status=%s, reference=%s, quantity=%s,
         startdate=%s, enddate=%s, criticality=%s, plan=%s, source=%s,
         lastmodified=%s, operation_id=%s, owner_id=%s, item_id=%s,
         destination_id=%s, origin_id=%s, location_id=%s, supplier_id=%s,
-        demand=%s
+        demand_id=%s
         where id=%s''',
         [ p for p in getOperationPlans(False) ]
         )
@@ -292,7 +304,7 @@ class export:
       print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
-  def exportFlowplans(self, process):
+  def exportOperationMaterials(self, process):
     if self.verbosity:
       print("Exporting operationplan materials...")
     starttime = time()
@@ -315,7 +327,7 @@ class export:
       print('Exported operationplan materials in %.2f seconds' % (time() - starttime))
 
 
-  def exportLoadplans(self, process):
+  def exportOperationResources(self, process):
     if self.verbosity:
       print("Exporting operationplan resources...")
     starttime = time()
@@ -393,47 +405,6 @@ class export:
       print('Exported resourceplans in %.2f seconds' % (time() - starttime))
 
 
-  def exportDemand(self, process):
-
-    def deliveries(d):
-      cumplanned = 0
-      # Loop over all delivery operationplans
-      for i in d.operationplans:
-        cumplanned += i.quantity
-        cur = i.quantity
-        if cumplanned > d.quantity:
-          cur -= cumplanned - d.quantity
-          if cur < 0:
-            cur = 0
-        yield (
-          d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
-          round(cur, 4), str(i.end),
-          round(i.quantity, 4), i.id
-          )
-      # Extra record if planned short
-      if cumplanned < d.quantity:
-        yield (
-          d.name, d.item.name, d.customer and d.customer.name or "\\N", str(d.due),
-          round(d.quantity - cumplanned, 4), "\\N",
-          "\\N", "\\N"
-          )
-
-    if self.verbosity:
-      print("Exporting demand plans...")
-    starttime = time()
-    process.stdin.write('COPY out_demand (demand,item,customer,due,quantity,plandate,planquantity,operationplan) FROM STDIN;\n'.encode(self.encoding))
-    for i in frepple.demands():
-      if self.cluster != -1 and self.cluster != i.cluster:
-        continue
-      if i.quantity == 0:
-        continue
-      for j in deliveries(i):
-        process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % j).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
-    if self.verbosity:
-      print('Exported demand plans in %.2f seconds' % (time() - starttime))
-
-
   def exportPegging(self, process):
 
     def getDemandPlan():
@@ -478,13 +449,12 @@ class export:
     tasks = (
       DatabasePipe(
         self,
-        export.exportResourceplans, export.exportDemand,
-        export.exportProblems, export.exportConstraints
+        export.exportResourceplans, export.exportProblems, export.exportConstraints
         ),
       DatabasePipe(
         self,
-        export.exportOperationplans, export.exportFlowplans, export.exportLoadplans,
-        export.exportPegging
+        export.exportOperationplans, export.exportOperationMaterials, 
+        export.exportOperationResources, export.exportPegging
         )
       )
     # Start all threads
@@ -503,7 +473,6 @@ class export:
         union select 'operationplanmaterial', count(*) from operationplanmaterial
         union select 'operationplanresource', count(*) from operationplanresource
         union select 'out_resourceplan', count(*) from out_resourceplan
-        union select 'out_demand', count(*) from out_demand
         union select 'operationplan', count(*) from operationplan
         order by 1
         ''')
@@ -540,10 +509,9 @@ class export:
       self.exportProblems(process)
       self.exportConstraints(process)
       self.exportOperationplans(process)
-      self.exportFlowplans(process)
-      self.exportLoadplans(process)
+      self.exportOperationMaterials(process)
+      self.exportOperationResources(process)
       self.exportResourceplans(process)
-      self.exportDemand(process)
       self.exportPegging(process)
     finally:
       # Print any error messages
@@ -565,7 +533,6 @@ class export:
         union select 'operationplanmaterial', count(*) from operationplanmaterial
         union select 'operationplanresource', count(*) from operationplanresource
         union select 'out_resourceplan', count(*) from out_resourceplan
-        union select 'out_demand', count(*) from out_demand
         order by 1
         ''')
       for table, recs in cursor.fetchall():

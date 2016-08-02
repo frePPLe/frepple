@@ -77,24 +77,3 @@ class ResourceSummary(models.Model):
     unique_together = (('resource', 'startdate'),)
     verbose_name = 'resource summary'  # No need to translate these since only used internally
     verbose_name_plural = 'resource summaries'
-
-
-class Demand(models.Model):   # TODO remove this model. The same deliveries are already exported in the operationplan table as type DLVR
-  # Database fields
-  demand = models.CharField(_('demand'), max_length=300, db_index=True, null=True)
-  item = models.CharField(_('item'), max_length=300, db_index=True, null=True)
-  customer = models.CharField(_('customer'), max_length=300, db_index=True, null=True)
-  due = models.DateTimeField(_('due'), db_index=True)
-  quantity = models.DecimalField(_('demand quantity'), max_digits=15, decimal_places=4, default='0.00')
-  planquantity = models.DecimalField(_('planned quantity'), max_digits=15, decimal_places=4, default='0.00', null=True)
-  plandate = models.DateTimeField(_('planned date'), null=True, db_index=True)
-  operationplan = models.IntegerField(_('operationplan'), null=True, db_index=True)
-
-  def __str__(self):
-    return self.demand
-
-  class Meta:
-    db_table = 'out_demand'
-    ordering = ['id']
-    verbose_name = _('demand')
-    verbose_name_plural = _('demands')

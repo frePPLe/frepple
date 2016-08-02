@@ -40,4 +40,7 @@ class Migration(migrations.Migration):
       name='resourcesummary',
       unique_together=set([('resource', 'startdate')]),
     ),    
+    migrations.DeleteModel(
+      name='Demand',
+    ),
   ]

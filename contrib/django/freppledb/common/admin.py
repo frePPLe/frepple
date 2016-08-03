@@ -66,6 +66,7 @@ data_site.register(User, MyUserAdmin)
 
 
 class MyGroupAdmin(GroupAdmin, MultiDBModelAdmin):
+  save_on_top = True
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:auth_group_change", "permission": 'auth.change_group'},
     {"name": 'comments', "label": _("comments"), "view": "admin:auth_group_comment"},

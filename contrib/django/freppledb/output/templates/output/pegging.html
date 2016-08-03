@@ -26,7 +26,7 @@ function ganttcell(cellvalue, options, rowdata)
         }
      };
      if (row >= layer.length) layer.push(data["enddate"]);
-     if (data['locked'] == 1)
+     if (data['status'] == 'confirmed')
        result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
      else
        result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');

@@ -197,7 +197,7 @@ class export:
             # Export inventory
             if flag:
               yield (
-                'STCK', j.status, j.reference or blank, round(j.quantity, 4),
+                i.name, 'STCK', j.status, j.reference or blank, round(j.quantity, 4),
                 str(j.start), str(j.end), round(j.criticality, 4),
                 self.getPegging(j), j.source or blank, self.timestamp,
                 blank, j.owner.id if j.owner else blank,
@@ -212,7 +212,7 @@ class export:
           elif j.demand:
             # Export shipments
             yield (
-              'DLVR', j.status, j.reference or blank, round(j.quantity, 4),
+              i.name, 'DLVR', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               i.name if not isinstance(i, (frepple.operation_itemdistribution, frepple.operation_itemsupplier)) else blank, 
@@ -224,7 +224,7 @@ class export:
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
-              'DO', j.status, j.reference or blank, round(j.quantity, 4),
+              i.name, 'DO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -237,7 +237,7 @@ class export:
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
             yield (
-              'PO', j.status, j.reference or blank, round(j.quantity, 4),
+              i.name, 'PO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -249,7 +249,7 @@ class export:
           elif not i.hidden:
             # Export MO
             yield (
-              'MO', j.status, j.reference or blank, round(j.quantity, 4),
+              i.name, 'MO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               i.name, j.owner.id if j.owner else blank,
@@ -261,7 +261,7 @@ class export:
             # Hidden operationplans: alternate tops, deliveries
             print ("unknown operationplan type:", i.name)
             yield (
-              'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
+              i.name, 'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner else blank,
@@ -276,14 +276,14 @@ class export:
 
     # Export newly proposed operationplans
     process.stdin.write('''COPY operationplan
-      (type,status,reference,quantity,startdate,enddate,
+      (name,type,status,reference,quantity,startdate,enddate,
       criticality,plan,source,lastmodified,
       operation_id,owner_id,
       item_id,destination_id,origin_id,
       location_id,supplier_id,
       demand_id,id) FROM STDIN;\n'''.encode(self.encoding))
     for p in getOperationPlans(True):
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
 
     # Update existing operationplans
@@ -291,7 +291,7 @@ class export:
       cursor = connections[self.database].cursor()
       cursor.executemany('''
         update operationplan
-        set type=%s, status=%s, reference=%s, quantity=%s,
+        set name=%s, type=%s, status=%s, reference=%s, quantity=%s,
         startdate=%s, enddate=%s, criticality=%s, plan=%s, source=%s,
         lastmodified=%s, operation_id=%s, owner_id=%s, item_id=%s,
         destination_id=%s, origin_id=%s, location_id=%s, supplier_id=%s,
@@ -420,9 +420,10 @@ class export:
             'opplan': j.operationplan.id,
             'quantity': j.quantity
             })
-        yield (json.dumps(peg), i.name)
+        yield (json.dumps({'pegging': peg}), i.name)
 
     print("Exporting demand pegging...")
+    print([ i for i in getDemandPlan() ])
     starttime = time()
     with transaction.atomic(using=self.database, savepoint=False):
       cursor = connections[self.database].cursor()

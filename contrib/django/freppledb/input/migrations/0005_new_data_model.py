@@ -450,6 +450,11 @@ class Migration(migrations.Migration):
       name='demand',
       field=models.ForeignKey(to='input.Demand', blank=True, null=True, verbose_name='demand'),
     ),
+    migrations.AddField(
+      model_name='operationplan',
+      name='name',
+      field=models.CharField(db_index=True, null=True, max_length=1000),
+    ),
     migrations.RunSQL(
       '''
       insert into operationplan

@@ -193,7 +193,7 @@ class export:
         if self.cluster != -1 and self.cluster != i.cluster:
           continue
         for j in i.operationplans:
-          if i.name.startswith("Inventory "):
+          if isinstance(i, frepple.operation_inventory):
             # Export inventory
             if flag:
               yield (
@@ -423,7 +423,6 @@ class export:
         yield (json.dumps({'pegging': peg}), i.name)
 
     print("Exporting demand pegging...")
-    print([ i for i in getDemandPlan() ])
     starttime = time()
     with transaction.atomic(using=self.database, savepoint=False):
       cursor = connections[self.database].cursor()

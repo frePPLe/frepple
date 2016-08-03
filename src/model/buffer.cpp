@@ -24,7 +24,7 @@
 
 // This is the name used for the dummy operation used to represent the
 // inventory.
-#define INVENTORY_OPERATION "Inventory " + string(getName())
+#define INVENTORY_OPERATION
 
 // This is the name used for the dummy operation used to represent procurements
 #define PURCHASE_OPERATION "Purchase " + string(getName())
@@ -36,7 +36,8 @@ template<class Buffer> DECLARE_EXPORT Tree utils::HasName<Buffer>::st;
 DECLARE_EXPORT const MetaCategory* Buffer::metadata;
 DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
-               *BufferProcure::metadata;
+               *BufferProcure::metadata,
+               *OperationInventory::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
 DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = NULL;
 
@@ -91,6 +92,25 @@ int BufferProcure::initialize()
 
   // Initialize the Python class
   return FreppleClass<BufferProcure,Buffer>::initialize();
+}
+
+
+int OperationInventory::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<OperationInventory>(
+    "operation",
+    "operation_inventory");
+  registerFields<OperationInventory>(const_cast<MetaClass*>(metadata));
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<OperationInventory>::getPythonType();
+  x.setName("operation_inventory");
+  x.setDoc("frePPLe operation_inventory");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
 }
 
 
@@ -168,7 +188,7 @@ DECLARE_EXPORT void Buffer::setItem(Item* i)
 DECLARE_EXPORT void Buffer::setOnHand(double f)
 {
   // The dummy operation to model the inventory may need to be created
-  Operation *o = Operation::find(INVENTORY_OPERATION);
+  Operation *o = Operation::find("Inventory " + string(getName()));
   Flow *fl;
   if (!o)
   {
@@ -176,10 +196,7 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
     if (!f) return;
     // Create a fixed time operation with zero leadtime, hidden from the xml
     // output, hidden for the solver, and without problem detection.
-    o = new OperationFixedTime();
-    o->setName(INVENTORY_OPERATION);
-    o->setHidden(true);
-    o->setDetectProblems(false);
+    o = new OperationInventory(this);
     fl = new FlowEnd(o, this, 1);
   }
   else
@@ -215,14 +232,29 @@ DECLARE_EXPORT void Buffer::setOnHand(double f)
 }
 
 
+OperationInventory::OperationInventory(Buffer *buf)
+{
+  setName("Inventory " + string(buf->getName()));
+  setHidden(true);
+  setDetectProblems(false);
+}
+
+
+Buffer* OperationInventory::getBuffer() const
+{
+  return getFlows().begin()->getBuffer();
+}
+
+
 DECLARE_EXPORT double Buffer::getOnHand() const
 {
+  string invop = "Inventory " + string(getName());
   for (flowplanlist::const_iterator i = flowplans.begin(); i!=flowplans.end(); ++i)
   {
     if(i->getDate()) return 0.0; // Inventory event is always at start of horizon
     if(i->getEventType() != 1) continue;
     const FlowPlan *fp = static_cast<const FlowPlan*>(&*i);
-    if (fp->getFlow()->getOperation()->getName() == string(INVENTORY_OPERATION)
+    if (fp->getFlow()->getOperation()->getName() == invop
       && fabs(fp->getQuantity()) > ROUNDING_ERROR)
         return fp->getQuantity();
   }
@@ -480,7 +512,7 @@ DECLARE_EXPORT Buffer::~Buffer()
   }
 
   // Remove the inventory operation
-  Operation *invoper = Operation::find(INVENTORY_OPERATION);
+  Operation *invoper = Operation::find("Inventory " + string(getName()));
   if (invoper) delete invoper;
 }
 

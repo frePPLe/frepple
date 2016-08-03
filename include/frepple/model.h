@@ -4887,6 +4887,32 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 };
 
 
+/** @brief An internally generated operation to represent inventory. */
+class OperationInventory : public OperationFixedTime
+{
+  friend class Buffer;
+  private:
+    /** Constructor. */
+    explicit OperationInventory(Buffer*);
+
+    /** Destructor. */
+    virtual ~OperationInventory() {}
+
+  public:
+    Buffer *getBuffer() const;
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static DECLARE_EXPORT const MetaClass* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
+    }
+};
+
+
 class Item::bufferIterator
 {
   private:

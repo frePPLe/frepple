@@ -69,6 +69,7 @@ void LibraryModel::initialize()
   nok += OperationRouting::initialize();
   nok += OperationItemSupplier::initialize();
   nok += OperationItemDistribution::initialize();
+  nok += OperationInventory::initialize();
   nok += OperationSetup::initialize();
   nok += ItemDistribution::initialize();
   nok += ItemOperation::initialize();

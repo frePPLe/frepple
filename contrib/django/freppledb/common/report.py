@@ -31,7 +31,7 @@ It provides the following functionality:
 import codecs
 import collections
 import csv
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 import functools
 import math
@@ -51,7 +51,7 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import Field, CharField, IntegerField, AutoField
+from django.db.models.fields import Field, CharField, IntegerField, AutoField, DateField, DateTimeField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
@@ -1238,6 +1238,13 @@ class GridReport(View):
                 if isinstance(headers[colnum], (IntegerField, AutoField)):
                   if isinstance(data, numericTypes):
                     data = int(data)
+                elif isinstance(headers[colnum], (DateField, DateTimeField)):
+                  if isinstance(data, datetime):
+                    # Rounding to second
+                    if data.microsecond < 500000:
+                      data = data.replace(microsecond=0)
+                    else:
+                      data = data.replace(microsecond=0) + timedelta(seconds=1)
                 d[headers[colnum].name] = data
               colnum += 1
 
@@ -1881,7 +1888,7 @@ def _localize(value, decimal_separator):
 def _getCellValue(data):
   if data is None:
     return ''
-  if isinstance(data, numericTypes):
+  elif isinstance(data, numericTypes) or isinstance(data, (date, datetime)):
     return data
   return str(data)
 
@@ -2080,6 +2087,13 @@ def importWorkbook(request):
                 if isinstance(headers[colnum], (IntegerField, AutoField)):
                   if isinstance(data, numericTypes):
                     data = int(data)
+                elif isinstance(headers[colnum], (DateField, DateTimeField)):
+                  if isinstance(data, datetime):
+                    # Rounding to second
+                    if data.microsecond < 500000:
+                      data = data.replace(microsecond=0)
+                    else:
+                      data = data.replace(microsecond=0) + timedelta(seconds=1)
                 d[headers[colnum].name] = data
               colnum += 1
             # Step 2: Fill the form with data, either updating an existing

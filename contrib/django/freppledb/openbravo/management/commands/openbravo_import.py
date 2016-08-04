@@ -235,7 +235,7 @@ class Command(BaseCommand):
     task.save(using=self.database)
     self.import_purchaseorders(cursor)
     exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
-    if exportPurchasingPlan == "true":
+    if exportPurchasingPlan.lower() == "true":
       task.status = '75%'
       task.save(using=self.database)
       self.import_purchasingplan(cursor)

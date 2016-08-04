@@ -179,7 +179,7 @@ class Command(BaseCommand):
   # The first one is the recommended approach
   def exportData(self, task, cursor):
     exportPurchasingPlan = Parameter.getValue("openbravo.exportPurchasingPlan", self.database, default="false")
-    if exportPurchasingPlan == "true":
+    if exportPurchasingPlan.lower() == "true":
       self.export_purchasingplan(cursor)
     else:
       self.export_procurement_order(cursor)

@@ -499,7 +499,12 @@ class Command(BaseCommand):
           'delete from supplier where name=%s',
           delete
           )
-
+      else:
+        # Unused keys are in fact suppliers that haven't changed. We still need them.
+        for name, objectid in unused_keys.items():
+          if objectid:
+            self.suppliers[objectid] = name
+        
       if self.verbosity > 0:
         print("Inserted %d new suppliers" % len(insert))
         print("Updated %d existing suppliers" % len(update))
@@ -828,13 +833,13 @@ class Command(BaseCommand):
           update.append((
             objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
             product, closed and 'closed' or 'open', scheduledDeliveryDate,
-            businessPartner, operation, unique_name
+            businessPartner, operation, warehouse, unique_name
             ))
         else:
           insert.append((
             objectid, closed and orderedQuantity or orderedQuantity - deliveredQuantity,
             product, closed and 'closed' or 'open', scheduledDeliveryDate,
-            businessPartner, operation, unique_name
+            businessPartner, operation, unique_name, warehouse
             ))
           frepple_keys.add(unique_name)
         # Clean the XML hierarchy
@@ -903,14 +908,14 @@ class Command(BaseCommand):
       # Create or update demands
       cursor.executemany(
         "insert into demand \
-          (source, quantity, item_id, status, subcategory, due, customer_id, operation_id, name, priority, lastmodified) \
-          values (%%s,%%s,%%s,%%s,'openbravo',%%s,%%s,%%s,%%s,0,'%s')" % self.date,
+          (source, quantity, item_id, status, subcategory, due, customer_id, operation_id, name, location_id, priority, lastmodified) \
+          values (%%s,%%s,%%s,%%s,'openbravo',%%s,%%s,%%s,%%s,%%s,0,'%s')" % self.date,
         insert
         )
       cursor.executemany(
         "update demand \
           set source=%%s, quantity=%%s, item_id=%%s, status=%%s, subcategory='openbravo', \
-              due=%%s, customer_id=%%s, operation_id=%%s, lastmodified='%s' \
+              due=%%s, customer_id=%%s, operation_id=%%s, location_id=%%s, lastmodified='%s' \
           where name=%%s" % self.date,
         update
         )
@@ -1319,7 +1324,7 @@ class Command(BaseCommand):
       cursor.executemany(
         "update purchase_order \
           set reference=%%s, status=%%s, quantity=%%s, startdate=%%s, enddate=%%s, \
-          lastmodified='%s', item_id=%%s, location_id=%%s, customer_id=%%s \
+          lastmodified='%s', item_id=%%s, location_id=%%s, supplier_id=%%s \
           where source=%%s" % self.date,
         update)
       cursor.executemany(
@@ -1344,124 +1349,90 @@ class Command(BaseCommand):
           continue
         if event != 'end':
           continue
-        elif elem.tag == 'MRPPurchasingRun':
-          # Clean the XML hierarchy
-          root.clear()
-          continue
         elif elem.tag != 'MRPPurchasingRunLine':
           continue
         records += 1
         product = self.items.get(elem.find("product").get('id'), None)
-        # warehouse = self.locations.get(elem.find("warehouse").get('id'), None)
-        warehouse = 'Main location'   # TODO: purchasing plan has no concept of the location
+        transactionType = elem.find("transactionType").text
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         plannedDate = datetime.strptime(elem.find("plannedDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         plannedOrderDate = datetime.strptime(elem.find("plannedDate").text, '%Y-%m-%dT%H:%M:%S.%fZ')
         businessPartner = self.suppliers.get(elem.find("businessPartner").get("id"), None)
         name = elem.find("purchasingPlan").get('identifier')
-        if not warehouse or not product or not organization or not plannedDate:
+        if not product or not organization or not plannedDate:
           # Product, location or organization are not known in frePPLe.
           # Or there is no scheduled delivery date.
           # We assume that in that case you don't need to the purchase order either.
+          root.clear()      
           continue
+        # Note: purchasing plan data have no concept of the warehouses by default.
+        # These are customizations.
         objectid = elem.get('id')
-        requiredQuantity = float(elem.find("requiredQuantity").text or 0)
-        transactionType = elem.find("transactionType").text
-        if transactionType == 'PO' and businessPartner:
+        requiredQuantity = float(elem.find("requiredQuantity").text or 0)        
+        if transactionType == 'PP' and businessPartner:
           # Purchase order
-          unused_keys_po.discard(objectid)
-          if objectid in frepple_keys_po:
-            update_po.append((
-              name, product, warehouse, businessPartner, requiredQuantity,
-              plannedDate, plannedOrderDate, objectid
-              ))
-          else:
-            self.idcounter += 1
-            insert_po.append((
-              self.idcounter, name, product, warehouse, businessPartner,
-              requiredQuantity, plannedDate, plannedOrderDate, objectid
-              ))
-            frepple_keys_po.add(objectid)
-        elif transactionType == 'MS':
+          toWarehouse = self.locations.get(elem.find("scToWarehouse").get('id'), None)
+          if not toWarehouse:
+            # warehouse not found in Frepple. 
+            root.clear()
+            continue
+          self.idcounter += 1
+          insert_po.append((
+            self.idcounter, name, product, toWarehouse, businessPartner,
+            requiredQuantity, plannedDate, plannedOrderDate, objectid
+            ))
+        elif transactionType == 'SC_ST':
           # Distribution order
-          unused_keys_do.discard(objectid)
-          if objectid in frepple_keys_do:
-            update_do.append((
-              name, product, warehouse, requiredQuantity,
-              plannedDate, objectid
-              ))
-          else:
-            self.idcounter += 1
-            insert_do.append((
-              self.idcounter, name, product, warehouse, requiredQuantity,
-              plannedDate, objectid
-              ))
-            frepple_keys_do.add(objectid)
-      return records
+          toWarehouse = self.locations.get(elem.find("scToWarehouse").get('id'), None)
+          fromWarehouse = self.locations.get(elem.find("scFromWarehouse").get('id'), None)
+          if not toWarehouse or not fromWarehouse:
+            # warehouse not found in Frepple.
+            root.clear()
+            continue     
+          self.idcounter += 1
+          insert_do.append((
+            self.idcounter, name, product, toWarehouse, fromWarehouse, 
+            requiredQuantity, plannedDate, objectid
+            ))
+        # Clean the XML hierarchy
+        root.clear()      
+        return records
 
     with transaction.atomic(using=self.database, savepoint=False):
       starttime = time()
       if self.verbosity > 0:
         print("Importing purchasing plan...")
 
-      # Collect existing purchase orders and distribution orders
-      cursor.execute("select source from purchase_order where status='approved'")
-      frepple_keys_po = set([ i for i in cursor.fetchall()])
-      unused_keys_po = frepple_keys_po.copy()
-      cursor.execute("select source from distribution_order where status='approved'")
-      frepple_keys_do = set([ i for i in cursor.fetchall()])
-      unused_keys_do = frepple_keys_do.copy()
-
-      # Process the input
+      # Remove existing approved records from frePPLe
+      cursor.execute("delete from purchase_order where status = 'approved'")
+      cursor.execute("delete from distribution_order where status = 'approved'")
+        
+      # Get all input records.
+      # There is no incremental mode for the purchasing plan. 
+      # We recognize open, unprocessed records with a blank salesOrderLine.
       insert_po = []
-      update_po = []
       insert_do = []
-      update_do = []
-      query = urllib.parse.quote("name like 'FREPPLE%' and description like 'Incremental export triggered by %'" % self.delta)
+      query = urllib.parse.quote("transactionType in ('PP','SC_ST') and salesOrderLine is null")
       self.get_data("/openbravo/ws/dal/MRPPurchasingRunLine?where=%s" % query, parse)
-
-      # Create or update purchase orders
+      
+      # Recreate approved purchase orders
       cursor.executemany(
         "insert into purchase_order \
-            (id,reference,item_id,location_id,supplier_id,quantity,enddate,startdate,status,lastmodified) \
-            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'confirmed''%s')" % self.date,
+            (id,reference,item_id,location_id,supplier_id,quantity,enddate,startdate,source,status,lastmodified) \
+            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'approved','%s')" % self.date,
         insert_po
         )
-      cursor.executemany(
-        "update purchase_order \
-            set reference=%%s, item_id=%%s, location_id=%%s, supplier_id=%%s, quantity=%%s, \
-            enddate=%%s, startdate=%%s, status='approved', lastmodified='%s' \
-          where source=%%s" % self.date,
-        update_po
-        )
-      cursor.executemany(
-        "delete from purchase_order where source=%s",
-        unused_keys_po
-        )
 
-      # Create or update distribution orders
+      # Recreate approved distribution orders
       cursor.executemany(
         "insert into distribution_order \
-            (id,reference,item_id,destination_id,quantity,enddate,source,status,consume_material,lastmodified) \
-            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,'approved',false,'%s')" % self.date,
+            (id,reference,item_id,destination_id,origin_id,quantity,enddate,source,status,consume_material,lastmodified) \
+            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'approved',false,'%s')" % self.date,
         insert_do
-        )
-      cursor.executemany(
-        "update distribution_order \
-            set reference=%%s, item_id=%%s, destination_id=%%s, quantity=%%s, enddate=%%s, status='approved', \
-            consume_material=false, lastmodified='%s'  \
-          where source=%%s" % self.date,
-        update_do
-        )
-      cursor.executemany(
-        "delete from distribution_order where source=%s",
-        unused_keys_do
         )
 
       if self.verbosity > 0:
         print("Inserted %d approved purchasing plan lines" % (len(insert_po) + len(insert_do)))
-        print("Updated %d approved purchasing plan lines" % (len(update_po) + len(update_do)))
-        print("Deleted %d approved purchasing plan lines" % (len(unused_keys_po) + len(unused_keys_do)))
         print("Imported approved purchasing plan lines in %.2f seconds" % (time() - starttime))
 
 

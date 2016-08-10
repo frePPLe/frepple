@@ -102,7 +102,7 @@ class OverviewReport(GridPivot):
         cross join (
              select name as bucket, startdate, enddate
              from common_bucketdetail
-             where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
+             where bucket_id = %%s and enddate > %%s and startdate < %%s
              ) d
         -- Include child buffers
         inner join buffer
@@ -112,16 +112,16 @@ class OverviewReport(GridPivot):
         on buffer.name = operationplanmaterial.buffer
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= '%s'
-        and operationplanmaterial.flowdate < '%s'
+        and operationplanmaterial.flowdate >= %%s
+        and operationplanmaterial.flowdate < %%s
         -- Grouping and sorting
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (
-        basesql, request.report_bucket, request.report_startdate, request.report_enddate,
-        request.report_startdate, request.report_enddate, sortsql
+        basesql, sortsql 
       )
-    cursor.execute(query, baseparams)
+    cursor.execute(query, baseparams + (request.report_bucket, request.report_startdate, request.report_enddate,
+        request.report_startdate, request.report_enddate))
 
     # Build the python result
     prevbuf = None

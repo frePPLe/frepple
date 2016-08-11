@@ -1020,6 +1020,7 @@ class Command(BaseCommand):
         records += 1
         organization = self.organizations.get(elem.find("organization").get("id"), None)
         if not organization:
+          root.clear()
           continue
         onhand = elem.find("quantityOnHand").text
         locator = elem.find("storageBin").get('id')

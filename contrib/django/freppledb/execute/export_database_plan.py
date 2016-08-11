@@ -134,7 +134,7 @@ class export:
         if i.cluster == self.cluster:
           process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
       process.stdin.write("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n".encode(self.encoding))
-      process.stdin.write("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n".encode(self.encoding))
+      process.stdin.write("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n".encode(self.encoding)) # TODO not correct in new data model
       process.stdin.write("drop table cluster_keys;\n".encode(self.encoding))
     if self.verbosity:
       print("Emptied plan tables in %.2f seconds" % (time() - starttime))

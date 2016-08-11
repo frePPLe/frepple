@@ -1187,7 +1187,8 @@ class InventoryByLocationWidget(Widget):
              from buffer
              inner join item on buffer.item_id = item.name
              group by location_id
-             order by 2 desc'''
+             order by 2 desc
+             limit 30'''
 
   @classmethod
   def render(cls, request=None):

@@ -176,7 +176,7 @@
         next: 'fa fa-chevron-right',
         today: 'fa fa-bullseye',
         clear: 'fa fa-trash',
-        close: 'fa fa-remove'
+        close: 'fa fa-close'
       };
     // Date picker
     $(".vDateField").on('focusin', function() {
@@ -424,24 +424,28 @@ The demand is always met completely and on time.">Unconstrained plan</span>
       </div>
       <div id="vertiendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vertiendeHeading">
         <div class="panel-body">
-
+          <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
             <table>
               <tr>
-	              <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
+
 	                <td style="vertical-align:top; padding-left: 15px">
 	                  <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
 	                </td>
-								</form>
-                <td colspan='3' style="padding-left: 15px;">
+
+                <td colspan='1' style="padding-left: 15px;">
                   <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
                 </td>
               </tr>
+            </table>
+          </form>
+          <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
+            <table>
               <tr>
-                <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
+
                   <td style="vertical-align:top; padding-left: 15px">
                     <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
                   </td>
-                </form>
+
                 <td colspan='3' style="padding-left: 15px;">
                   <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
                 </td>
@@ -461,7 +465,8 @@ The demand is always met completely and on time.">Unconstrained plan</span>
               </tr>
               {% endfor %}
             </table>
-          </div>
+          </form>
+        </div>
       </div>
     </div>
     {% endif %}
@@ -498,11 +503,11 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 					      {% endifnotequal %}{% endfor %}
 					      {% if perms.execute.copy_scenario %}
 					      <tr>
-					        <td><button  class="btn btn-primary" role="button" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
+					        <td><button  class="btn btn-primary" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
 					        </td>
 					        <td  style="padding: 0px 15px;" colspan="3">
-                    <span  style="display: inline-block;">{% trans "copy"|capfirst %}
-                      <span class="dropdown dropdown-submit-input">
+                    {% trans "copy"|capfirst %}
+                      <div class="dropdown dropdown-submit-input" style="display: inline-block;">
 	                      <button class="btn btn-default dropdown-toggle" id="source" value="" type="button" data-toggle="dropdown" style="min-width: 160px">-&nbsp;&nbsp;<span class="caret"></span></button>
 	                      <ul class="dropdown-menu" aria-labelledby="source" id="sourceul" style="top: auto">
 	                      {% for j in scenarios %}
@@ -511,19 +516,19 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 	                        {% endifequal %}
 	                      {% endfor %}
 	                      </ul>
-	                    </span>
+	                    </div>
                     {% trans "into selected scenarios" %}
-                    </span>
+
 					        </td>
 					      </tr>
 					      {% endif %}
 					      {% if perms.execute.release_scenario %}
 					      <tr>
-					        <td><button class="btn btn-primary" role="button" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
-					        <td  style="padding: 0px 15px;" colspan="2">{% trans "release selected scenarios"|capfirst %}</td>
+					        <td><button class="btn btn-primary" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
+					        <td  style="padding: 0px 15px;" colspan="3">{% trans "release selected scenarios"|capfirst %}</td>
 					      </tr>
 					      <tr>
-					        <td><button class="btn btn-primary" role="button" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
+					        <td><button class="btn btn-primary" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
 					        <td  style="padding: 0px 15px;" colspan="3"><input class="form-control" name="description" type="text" size="40" placeholder="{% trans "Update description of selected scenarios" %}"/></td>
 					      </tr>
 					      {% endif %}
@@ -547,7 +552,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}
 				    <table>
 						<tr>
-							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+							<td  style="padding: 0px 15px;"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
 							<td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
 						</tr>
 						</table>
@@ -567,7 +572,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
 			    <table>
 					  <tr>
-							<td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" role="button" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+							<td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
 							<td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
 								<input class="empty_all" type="checkbox" name="all" value="1"><br>
 								{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
@@ -595,7 +600,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 					<table>
 					 <tr>
 						<td  style="padding: 0px 15px;">
-						  <button  class="btn btn-primary" role="button" id="load" type="submit" value="{% trans "launch"|capfirst %}">
+						  <button  class="btn btn-primary" id="load" type="submit" value="{% trans "launch"|capfirst %}">
 						    {% trans "launch"|capfirst %}
 						  </button>
 						</td>
@@ -632,7 +637,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 			    <table>
 			      <tr>
 				      <td style="vertical-align:top; padding: 15px">
-				         <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+				         <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
 				      </td>
 				      <td  style="padding: 0px 15px;">{% blocktrans with delta="<input class='form-control' name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
 			        </td>
@@ -656,7 +661,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 						<table>
 							<tr>
 								<td style="vertical-align: top; padding: 15px">
-									<button class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">
+									<button class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">
 									{% trans "launch"|capfirst %}
 									</button>
 								</td>
@@ -689,7 +694,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
           <table>
             <tr>
               <td style="vertical-align:top; padding: 15px">
-                 <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+                 <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
               </td>
               <td  style="padding: 0px 15px;">{% trans "Import data from the Odoo into frePPLe." %}
               </td>
@@ -715,7 +720,7 @@ The demand is always met completely and on time.">Unconstrained plan</span>
 					<table>
 					  <tr>
 							<td style="vertical-align:top; padding: 15px">
-							  <button  class="btn btn-primary" role="button" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+							  <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
 							</td>
 							<td  style="padding: 0px 15px;">
 							<p>{% blocktrans %}Create time buckets for reporting.</p>

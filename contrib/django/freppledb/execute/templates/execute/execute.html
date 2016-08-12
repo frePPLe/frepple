@@ -306,7 +306,7 @@
 										and create a plan in frePPLe...<br>
 										and export results.{% endblocktrans %}<br><br>
 								{% if planning_options %}
-								<p><b>{% trans "optional planning steps"|capfirst %}</b><br>
+								<p {% if planning_options|length <= 1 %}style="display: none"{% endif %}><b>{% trans "optional planning steps"|capfirst %}</b><br>
 				        {% for b in planning_options %}
 				        <label for="option_{{b.0}}"><input type="checkbox" name="optional" {% if b.0 in current_options %}checked {% endif %}value="{{b.0}}" id="option_{{b.0}}"/>&nbsp;&nbsp;{{b.1}}</label><br>
 				        {% endfor %}

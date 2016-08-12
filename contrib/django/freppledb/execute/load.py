@@ -721,13 +721,19 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT
-        operation_id, id, quantity, startdate, enddate, status, source,
-        type, origin_id, destination_id, supplier_id, item_id, location_id,
-        reference
+        operationplan.operation_id, operationplan.id, operationplan.quantity, 
+        operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id, 
+        operationplan.item_id, operationplan.location_id,
+        reference, coalesce(demand.name, null)
       FROM operationplan
-      WHERE owner_id IS NULL and quantity >= 0 and status <> 'closed' %s
-         and type in ('PO', 'MO', 'DO', 'DLVR')
-      ORDER BY id ASC
+      LEFT OUTER JOIN demand 
+        on demand.name = operationplan.demand_id
+        and demand.status = 'open'       
+      WHERE operationplan.owner_id IS NULL 
+        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+        %s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+      ORDER BY operationplan.id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
       try:
@@ -745,7 +751,7 @@ class loadData(object):
             opplan.consume_material = False
         elif i[7] == 'PO':
           cnt_po += 1
-          frepple.operation_itemsupplier.createOrder(
+          opplan = frepple.operation_itemsupplier.createOrder(
             location=frepple.location(name=i[12]),
             id=i[1], reference=i[12],
             item=frepple.item(name=i[11]) if i[11] else None,
@@ -755,7 +761,7 @@ class loadData(object):
             )
         elif i[7] == 'DO':
           cnt_do += 1
-          frepple.operation_itemdistribution.createOrder(
+          opplan = frepple.operation_itemdistribution.createOrder(
             destination=frepple.location(name=i[9]) if i[9] else None,
             id=i[1], reference=i[12],
             item=frepple.item(name=i[11]) if i[11] else None,
@@ -766,16 +772,28 @@ class loadData(object):
         elif i[7] == 'DLVR':
           cnt_dlvr += 1
           # TODO Logic to read deliveries from the database
+          opplan = None
         else:
           print("Warning: unhandled operationplan type '%s'" % type)
+          continue
+        if i[14] and opplan:
+          opplan.demand = frepple.demand(name=i[14])
       except Exception as e:
         print("Error:", e)
     self.cursor.execute('''
       SELECT
-        operation_id, id, quantity, startdate, enddate, status, owner_id, source
+        operationplan.operation_id, operationplan.id, operationplan.quantity,
+        operationplan.startdate, operationplan.enddate, operationplan.status, 
+        operationplan.owner_id, operationplan.source, coalesce(demand.name, null)
       FROM operationplan
-      WHERE owner_id IS NOT NULL and quantity >= 0 and status <> 'closed' %s and type = 'MO'
-      ORDER BY id ASC
+      INNER JOIN operationplan opplan_parent
+        ON operationplan.owner_id = opplan_parent.id
+      LEFT OUTER JOIN demand 
+        on demand.name = operationplan.demand_id    
+        and demand.status = 'open'  
+      WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed' 
+        %s and operationplan.type = 'MO'
+      ORDER BY operationplan.id ASC
       ''' % self.filter_and)
     for i in self.cursor.fetchall():
       cnt_mo += 1
@@ -790,6 +808,8 @@ class loadData(object):
         # have already consumed all materials.
         # TODO Specifying this explicitly may be more appropriate
         opplan.consume_material=False
+      if i[8]:
+        opplan.demand = frepple.demand(name=i[8])
     print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
 

@@ -104,9 +104,22 @@ class export:
     if self.cluster == -1:
       # Complete export for the complete model
       process.stdin.write("truncate table out_problem, out_resourceplan, out_constraint;\n".encode(self.encoding))
-      process.stdin.write("delete from operationplanmaterial using operationplan where operationplanmaterial.operationplan_id = operationplan.id and operationplan.status = 'proposed';\n".encode(self.encoding))
-      process.stdin.write("delete from operationplanresource using operationplan where operationplanresource.operationplan_id = operationplan.id and operationplan.status = 'proposed';\n".encode(self.encoding))
-      process.stdin.write("delete from operationplan where status='proposed' or status is null;\n".encode(self.encoding))
+      process.stdin.write('''
+        delete from operationplanmaterial 
+        using operationplan 
+        where operationplanmaterial.operationplan_id = operationplan.id 
+        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
+        '''.encode(self.encoding))
+      process.stdin.write('''
+        delete from operationplanresource 
+        using operationplan 
+        where operationplanresource.operationplan_id = operationplan.id 
+        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
+        '''.encode(self.encoding))
+      process.stdin.write('''
+        delete from operationplan 
+        where (status='proposed' or status is null) or type = 'STCK';\n
+        '''.encode(self.encoding))
     else:
       # Partial export for a single cluster
       process.stdin.write('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n'.encode(self.encoding))
@@ -114,13 +127,27 @@ class export:
         if i.cluster == self.cluster:
           process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
       process.stdin.write("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n".encode(self.encoding))
-      process.stdin.write("delete from operationplanmaterial where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n".encode(self.encoding))
-      process.stdin.write('''delete from out_problem
+      process.stdin.write('''
+        delete from operationplanmaterial 
+        where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
+        '''.encode(self.encoding))
+      process.stdin.write('''
+        delete from out_problem
         where entity = 'demand' and owner in (
           select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
-          );\n'''.encode(self.encoding))
-      process.stdin.write("delete from out_problem where entity = 'material' and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n".encode(self.encoding))
-      process.stdin.write("delete from operationplan using cluster_keys where (status='proposed' or status is null) and item_id = cluster_keys.name;\n".encode(self.encoding))
+          );\n
+        '''.encode(self.encoding))
+      process.stdin.write('''
+        delete from out_problem 
+        where entity = 'material' 
+        and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
+        '''.encode(self.encoding))
+      process.stdin.write('''
+        delete from operationplan 
+        using cluster_keys 
+        where (status='proposed' or status is null or type='STCK') 
+        and item_id = cluster_keys.name;\n
+        '''.encode(self.encoding))
       process.stdin.write("truncate table cluster_keys;\n".encode(self.encoding))
       for i in frepple.resources():
         if i.cluster == self.cluster:
@@ -200,8 +227,8 @@ class export:
                 i.name, 'STCK', j.status, j.reference or blank, round(j.quantity, 4),
                 str(j.start), str(j.end), round(j.criticality, 4),
                 self.getPegging(j), j.source or blank, self.timestamp,
-                blank, j.owner.id if j.owner else blank,
-                blank, blank, blank, blank, blank,
+                blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
+                j.operation.buffer.item.name, j.operation.buffer.location.name, blank, blank, blank,
                 j.demand.name if j.demand else blank,
                 j.id
                 )
@@ -209,25 +236,13 @@ class export:
             continue
           elif not flag and j.status == 'proposed':
             continue
-          elif j.demand:
-            # Export shipments
-            yield (
-              i.name, 'DLVR', j.status, j.reference or blank, round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
-              self.getPegging(j), j.source or blank, self.timestamp,
-              i.name if not isinstance(i, (frepple.operation_itemdistribution, frepple.operation_itemsupplier)) else blank, 
-              j.owner.id if j.owner else blank,
-              blank, blank, blank, blank, blank,
-              j.demand.name,
-              j.id
-              )          
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
               i.name, 'DO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
-              blank, j.owner.id if j.owner else blank,
+              blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               j.operation.destination.item.name, j.operation.destination.location.name,
               j.operation.origin.location.name,
               blank, blank,
@@ -240,7 +255,7 @@ class export:
               i.name, 'PO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
-              blank, j.owner.id if j.owner else blank,
+              blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               j.operation.buffer.item.name, blank, blank,
               j.operation.buffer.location.name, j.operation.itemsupplier.supplier.name,
               j.demand.name if j.demand else blank,
@@ -252,19 +267,30 @@ class export:
               i.name, 'MO', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
-              i.name, j.owner.id if j.owner else blank,
+              i.name, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               blank, blank, blank, blank, blank,
-              j.demand.name if j.demand else blank,
+              j.demand.name if j.demand else j.owner.demand if j.owner and j.owner.demand else blank,
               j.id
               )
+          elif j.demand or (j.owner and j.owner.demand):
+            # Export shipments (with automatically created delivery operations)
+            yield (
+              i.name, 'DLVR', j.status, j.reference or blank, round(j.quantity, 4),
+              str(j.start), str(j.end), round(j.criticality, 4),
+              self.getPegging(j), j.source or blank, self.timestamp,
+              blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
+              blank, blank, blank, blank, blank,
+              j.demand.name if j.demand else j.owner.demand.name,
+              j.id
+              )            
           else:
-            # Hidden operationplans: alternate tops, deliveries
+            # Hidden operationplans: alternate tops
             print ("unknown operationplan type:", i.name)
             yield (
               i.name, 'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
               str(j.start), str(j.end), round(j.criticality, 4),
               self.getPegging(j), j.source or blank, self.timestamp,
-              blank, j.owner.id if j.owner else blank,
+              blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               blank, blank, blank, blank, blank,
               j.demand.name if j.demand else blank,
               j.id

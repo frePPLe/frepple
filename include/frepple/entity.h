@@ -57,6 +57,7 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
       if (!i) throw LogicException("Invalid hierarchy data");
       i->next_brother = next_brother;
     }
+    next_brother = NULL;
   }
 
   // Set new owner

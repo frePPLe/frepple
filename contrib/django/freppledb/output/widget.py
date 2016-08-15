@@ -469,33 +469,36 @@ class DistributionOrderWidget(Widget):
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(item.price * quantity)),0)
       from common_bucketdetail
-      left outer join distribution_order
-        on distribution_order.startdate >= common_bucketdetail.startdate
-        and distribution_order.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed')
+      left outer join operationplan
+        on operationplan.startdate >= common_bucketdetail.startdate
+        and operationplan.startdate < common_bucketdetail.enddate
       left outer join item
-        on distribution_order.item_id = item.name
+        on operationplan.item_id = item.name
+        and status in ('confirmed', 'proposed')
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
+        and type = 'DO'
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
       select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from distribution_order
+      from operationplan
       inner join item
-      on distribution_order.item_id = item.name
-      where status = 'confirmed'
+      on operationplan.item_id = item.name
+      where status = 'confirmed' and type = 'DO'
       union all
       select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from distribution_order
+      from operationplan
       inner join item
-      on distribution_order.item_id = item.name
+      on operationplan.item_id = item.name
       where status = 'proposed' and startdate < %%s + interval '%s day'
+      and type = 'DO'
       union all
       select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from distribution_order
+      from operationplan
       inner join item
-      on distribution_order.item_id = item.name
+      on operationplan.item_id = item.name
       where status = 'proposed' and startdate < %%s + interval '%s day'
+      and type = 'DO'
       order by 1, 3
       ''' % (fence1, fence2)
     cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))
@@ -675,33 +678,33 @@ class PurchaseOrderWidget(Widget):
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(item.price * quantity)),0)
       from common_bucketdetail
-      left outer join purchase_order
-        on purchase_order.startdate >= common_bucketdetail.startdate
-        and purchase_order.startdate < common_bucketdetail.enddate
+      left outer join operationplan
+        on operationplan.startdate >= common_bucketdetail.startdate
+        and operationplan.startdate < common_bucketdetail.enddate
         and status in ('confirmed', 'proposed') %s
       left outer join item
-        on purchase_order.item_id = item.name
+        on operationplan.item_id = item.name
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
       select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from purchase_order
+      from operationplan
       inner join item
-      on purchase_order.item_id = item.name
-      where status = 'confirmed' %s
+      on operationplan.item_id = item.name
+      where status = 'confirmed' %s and type = 'PO'
       union all
       select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from purchase_order
+      from operationplan
       inner join item
-      on purchase_order.item_id = item.name
-      where status = 'proposed' and startdate < %%s + interval '%s day' %s
+      on operationplan.item_id = item.name
+      where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
       union all
       select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
-      from purchase_order
+      from operationplan
       inner join item
-      on purchase_order.item_id = item.name
-      where status = 'proposed' and startdate < %%s + interval '%s day' %s
+      on operationplan.item_id = item.name
+      where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
       order by 1, 3
       ''' % (
         supplierfilter, supplierfilter, fence1, supplierfilter, fence2, supplierfilter
@@ -1335,10 +1338,12 @@ class DeliveryPerformanceWidget(Widget):
       select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
       from (
         select
-          demand, max(case when plandate > due then 1 else 0 end) late
-        from out_demand
+          demand_id, max(case when enddate > due then 1 else 0 end) late
+        from operationplan
+        left outer join demand
+          on operationplan.demand_id = demand.name
         where due < '%s'
-        group by demand
+        group by demand_id
       ) demands
       ''' % request.report_enddate
     cursor.execute(query)

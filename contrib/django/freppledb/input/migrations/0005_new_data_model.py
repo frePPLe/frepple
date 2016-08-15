@@ -442,7 +442,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplan',
       name='type',
-      field=models.CharField(help_text='Order type', db_index=True, verbose_name='type', choices=[('STCK', 'inventory'), ('MO', 'manufacturing order'), ('PO', 'purchase order'), ('DO', 'distribution order'), ('DLVR', 'customer shipment')], max_length=5),
+      field=models.CharField(help_text='Order type', db_index=True, verbose_name='type', choices=[('STCK', 'inventory'), ('MO', 'manufacturing order'), ('PO', 'purchase order'), ('DO', 'distribution order'), ('DLVR', 'customer shipment')], max_length=5, default='MO'),
       preserve_default=False,
     ),
     migrations.AddField(
@@ -455,89 +455,6 @@ class Migration(migrations.Migration):
       name='name',
       field=models.CharField(db_index=True, null=True, max_length=1000),
     ),
-    migrations.RunSQL(
-      '''
-      insert into operationplan
-        (type, id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, location_id, supplier_id)
-      select
-         'PO', id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, location_id, supplier_id
-      from purchase_order
-      ''',
-      '''
-      insert into purchase_order
-        (id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, location_id, supplier_id)
-      select
-         id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, location_id, supplier_id
-      from operationplan
-      where type = 'PO'
-      '''
-    ),
-    migrations.RunSQL(
-      '''
-      insert into operationplan
-        (type, id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, origin_id, destination_id)
-      select
-         'DO', id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, origin_id, destination_id
-      from distribution_order
-      ''',
-      '''
-      insert into distribution_order
-        (id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, origin_id, destination_id)
-      select
-         id, lastmodified, source, reference, status, quantity, startdate, enddate, criticality, item_id, origin_id, destination_id from operationplan
-      where type = 'DO'
-      '''
-    ),
-    migrations.RunSQL(
-      "update operationplan set type = 'MO' where type is null or type = ''",
-      "delete from operationplan where type <> 'MO'"
-    ),
-    migrations.RemoveField(
-      model_name='distributionorder',
-      name='destination',
-    ),
-    migrations.RemoveField(
-      model_name='distributionorder',
-      name='item',
-    ),
-    migrations.RemoveField(
-      model_name='distributionorder',
-      name='origin',
-    ),
-    migrations.RemoveField(
-      model_name='purchaseorder',
-      name='item',
-    ),
-    migrations.RemoveField(
-      model_name='purchaseorder',
-      name='location',
-    ),
-    migrations.RemoveField(
-      model_name='purchaseorder',
-      name='supplier',
-    ),
-    migrations.CreateModel(
-      name='DeliveryOrder',
-      fields=[
-      ],
-      options={
-        'verbose_name': 'customer shipment',
-        'proxy': True,
-        'verbose_name_plural': 'customer shipments',
-      },
-      bases=('input.operationplan',),
-    ),
-    migrations.CreateModel(
-      name='ManufacturingOrder',
-      fields=[
-      ],
-      options={
-        'verbose_name': 'manufacturing order',
-        'proxy': True,
-        'verbose_name_plural': 'manufacturing orders',
-      },
-      bases=('input.operationplan',),
-    ),
     migrations.AlterField(
       model_name='operationplan',
       name='operation',
@@ -548,40 +465,5 @@ class Migration(migrations.Migration):
       name='status',
       field=models.CharField(blank=True, choices=[('proposed', 'proposed'), ('approved', 'approved'), ('confirmed', 'confirmed'), ('closed', 'closed')], null=True, verbose_name='status', help_text='Status of the order', max_length=20),
     ),
-    migrations.DeleteModel(
-      name='DistributionOrder',
-    ),
-    migrations.DeleteModel(
-      name='PurchaseOrder',
-    ),
-    migrations.CreateModel(
-      name='DistributionOrder',
-      fields=[],
-      options={
-        'verbose_name': 'distribution order',
-        'proxy': True,
-        'verbose_name_plural': 'distribution orders',
-      },
-      bases=('input.operationplan',),
-    ),
-    migrations.CreateModel(
-      name='PurchaseOrder',
-      fields=[],
-      options={
-        'verbose_name': 'purchase order',
-        'proxy': True,
-        'verbose_name_plural': 'purchase orders',
-      },
-      bases=('input.operationplan',),
-    ),
-
-    # A buffer is recognized by an item and location, and they automatically
-    # get assigned a name.
-#     migrations.RunSQL(
-#       '''
-#       TODO update buffer name
-#       ''',
-#       migrations.RunSQL.noop
-#     ),
 
   ]

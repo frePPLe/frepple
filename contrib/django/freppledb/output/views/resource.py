@@ -177,10 +177,9 @@ class DetailReport(GridReport):
       base = OperationPlanResource.objects.filter(resource__exact=args[0])
     else:
       base = OperationPlanResource.objects
-    return base.select_related() \
-      .extra(select={
-        'operation_in': "select name from operation where operationplan.operation = operation.name"
-        })
+    return base.select_related().extra(select={
+      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
+      })
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -191,15 +190,14 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
+    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),    
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('operationplan__plan', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False),
+    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False, sortable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
-    GridFieldBool('operationplan__locked', title=_('locked'), editable=False),
-    GridFieldNumber('operationplan__unavailable', title=_('unavailable'), editable=False),
-    GridFieldInteger('operationplan', title=_('operationplan'), editable=False),
+    GridFieldBool('operationplan__status', title=_('status'), editable=False),
     GridFieldText('setup', title=_('setup'), editable=False),
     )

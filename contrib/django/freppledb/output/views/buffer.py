@@ -166,7 +166,7 @@ class DetailReport(GridReport):
     else:
       base = OperationPlanMaterial.objects
     return base.select_related().extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
+      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
       })
 
   @classmethod
@@ -178,13 +178,13 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra="role:'input/buffer'"),
-    GridFieldText('operationplantype', title=_('operationplan type'), field_name='operationplan__type', editable=False),    
-    GridFieldText('operation', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),    
+    GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),
-    GridFieldNumber('criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
-    GridFieldBool('status', title=_('status'), editable=False, field_name='operationplan__status'),
+    GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
+    GridFieldBool('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('demand', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False),
+    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False, sortable=False),
     )

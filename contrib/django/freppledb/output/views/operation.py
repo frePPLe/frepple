@@ -64,12 +64,12 @@ class OverviewReport(GridPivot):
     query = '''
         select x.row1, x.row2, x.col1, x.col2, x.col3,
           min(x.frozen_start), min(x.total_start),
-          coalesce(sum(case o2.locked when true then o2.quantity else 0 end),0),
+          coalesce(sum(case when o2.status in ('approved','confirmed') then o2.quantity else 0 end),0),
           coalesce(sum(o2.quantity),0)
         from (
           select oper.name as row1,  oper.location_id as row2,
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
-               coalesce(sum(case o1.locked when true then o1.quantity else 0 end),0) as frozen_start,
+               coalesce(sum(case when o1.status in ('approved','confirmed') then o1.quantity else 0 end),0) as frozen_start,
                coalesce(sum(o1.quantity),0) as total_start
           from (%s) oper
           -- Multiply with buckets
@@ -80,17 +80,21 @@ class OverviewReport(GridPivot):
              ) d
           -- Planned and frozen quantity, based on start date
           left join operationplan o1
-          on oper.name = o1.operation
+          on oper.name = o1.operation_id
           and d.startdate <= o1.startdate
           and d.enddate > o1.startdate
+          and o1.type = 'MO'
+          and o1.status in ('approved','confirmed','proposed')
           -- Grouping
           group by oper.name, oper.location_id, d.bucket, d.startdate, d.enddate
         ) x
         -- Planned and frozen quantity, based on end date
         left join operationplan o2
-        on x.row1 = o2.operation
+        on x.row1 = o2.operation_id
         and x.col2 <= o2.enddate
         and x.col3 > o2.enddate
+        and o2.type = 'MO'
+        and o2.status in ('approved','confirmed','proposed')
         -- Grouping and ordering
         group by x.row1, x.row2, x.col1, x.col2, x.col3
         order by %s, x.col2

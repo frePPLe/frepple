@@ -161,7 +161,7 @@ class PathReport(GridReport):
   def findUsage(reportclass, buffer, db, level, curqty, realdepth, pushsuper):
     result = [
       (level + 1, None, i.operation, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
-      for i in buffer.operationmaterials.filter(quantity__lt=0).only('operation').using(db)
+      for i in buffer.item.operationmaterials.filter(quantity__lt=0).only('operation').using(db)
       ]
     result.extend([
       (level + 1, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
@@ -181,8 +181,6 @@ class PathReport(GridReport):
     # item supplier models for the item and location combination. (As a special
     # case in case only a single location exists in the model, a match on the
     # item is sufficient).
-    if buffer.producing:
-      return [ (level, None, buffer.producing, curqty, 0, None, realdepth, pushsuper, buffer.producing.location.name if buffer.producing.location else None) ]
     result = []
     if Location.objects.using(db).count() > 1:
       # Multiple locations
@@ -205,8 +203,17 @@ class PathReport(GridReport):
           result.append(
             (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
             )
+      for i in ItemOperation.objects.using(db).filter(
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
+        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft        
+        ):
+          i.item = buffer.item
+          i.location = buffer.location
+          result.append(
+            (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
+            )        
     else:
-      # Single location, and itemdistributions obviously aren't defined here
+      # Single location
       for i in ItemSupplier.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
@@ -215,6 +222,14 @@ class PathReport(GridReport):
         result.append(
           (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
           )
+      for i in ItemOperation.objects.using(db).filter(
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft 
+        ):
+          i.item = buffer.item
+          i.location = buffer.location
+          result.append(
+            (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
+            )        
     return result
 
 
@@ -289,19 +304,35 @@ class PathReport(GridReport):
             ("%s @ %s" % (curoperation.item.name, curoperation.origin.name), -1),
             ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1)
             ]
-          resources = None
+          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
+        elif isinstance(curoperation, ItemOperation):
+          name = curoperation.operation.name
+          optype = curoperation.operation.type
+          duration = curoperation.operation.duration
+          duration_per = curoperation.operation.duration_per
+          buffers = [ (x.buffer.name, float(x.quantity)) for x in curoperation.operation.operationmaterials.only('item', 'quantity').using(request.database) ]
+          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
+          for x in curoperation.operation.operationmaterials.filter(quantity__gt=0).only('item').using(request.database):
+            curflows = x.item.operationmaterials.filter(quantity__lt=0, operation__location=curoperation.location.name).only('operation', 'quantity').using(request.database)
+            for y in curflows:
+              hasChildren = True
+              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
+          for x in curoperation.operation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
+            subcount += curoperation.type == "routing" and 1 or -1
+            root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
+            hasChildren = True
         else:
           name = curoperation.name
           optype = curoperation.type
           duration = curoperation.duration
           duration_per = curoperation.duration_per
-          buffers = [ (x.buffer.name, float(x.quantity)) for x in curoperation.operationmaterials.only('buffer', 'quantity').using(request.database) ]
+          buffers = [ ('%s @ %s' % (x.item.name, curoperation.location.name), float(x.quantity)) for x in curoperation.operationmaterials.only('item', 'quantity').using(request.database) ]
           resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operationresources.only('resource', 'quantity').using(request.database) ]
-          for x in curoperation.operationmaterials.filter(quantity__gt=0).only('buffer').using(request.database):
-            curflows = x.buffer.operationmaterials.filter(quantity__lt=0).only('operation', 'quantity').using(request.database)
+          for x in curoperation.operationmaterials.filter(quantity__gt=0).only('item').using(request.database):
+            curflows = x.item.operationmaterials.filter(quantity__lt=0, operation__location=curoperation.location.name).only('operation', 'quantity').using(request.database)
             for y in curflows:
               hasChildren = True
-              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.buffer.location.name if x.buffer.location else None) )
+              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -331,27 +362,46 @@ class PathReport(GridReport):
           except Buffer.DoesNotExist:
             upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
+        elif isinstance(curoperation, ItemOperation):
+          curprodflow = None
+          name = curoperation.operation.name
+          optype = curoperation.operation.type
+          duration = curoperation.operation.duration
+          duration_per = curoperation.operation.duration_per
+          buffers = [ ('%s @ %s' % (x.item.name, curoperation.operation.location.name), float(x.quantity)) for x in curoperation.operation.operationmaterials.only('item', 'quantity').using(request.database) ]
+          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
+          for x in curoperation.operation.operationmaterials.filter(quantity__gt=0).only('quantity').using(request.database):
+            curprodflow = x
+          curflows = curoperation.operation.operationmaterials.filter(quantity__lt=0).only('item', 'quantity').using(request.database)
+          for y in curflows:
+            b = Buffer(
+              name='%s @ %s' % (y.item.name, curoperation.operation.location.name),
+              item=y.item,
+              location=curoperation.operation.location
+              )
+            root.extend( reportclass.findReplenishment(b, request.database, level + 2, curqty, realdepth + 1, False) )
+          for x in curoperation.operation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
+            subcount += curoperation.type == "routing" and 1 or -1
+            root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
+            hasChildren = True
         else:
           curprodflow = None
           name = curoperation.name
           optype = curoperation.type
           duration = curoperation.duration
           duration_per = curoperation.duration_per
-          buffers = [ (x.buffer.name, float(x.quantity)) for x in curoperation.operationmaterials.only('buffer', 'quantity').using(request.database) ]
+          buffers = [ ('%s @ %s' % (x.item.name, curoperation.location.name), float(x.quantity)) for x in curoperation.operationmaterials.only('item', 'quantity').using(request.database) ]
           resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operationresources.only('resource', 'quantity').using(request.database) ]
           for x in curoperation.operationmaterials.filter(quantity__gt=0).only('quantity').using(request.database):
             curprodflow = x
-          curflows = curoperation.operationmaterials.filter(quantity__lt=0).only('buffer', 'quantity').using(request.database)
+          curflows = curoperation.operationmaterials.filter(quantity__lt=0).only('item', 'quantity').using(request.database)
           for y in curflows:
-            if y.buffer.producing:
-              hasChildren = True
-              root.append( (
-                level + 1, curnode, y.buffer.producing,
-                curprodflow and (-curqty * y.quantity) / curprodflow.quantity or (-curqty * y.quantity),
-                subcount, None, realdepth + 1, True, y.buffer.location
-                ) )
-            else:
-              root.extend( reportclass.findReplenishment(y.buffer, request.database, level + 2, curqty, realdepth + 1, False) )
+            b = Buffer(
+              name='%s @ %s' % (y.item.name, curoperation.location.name),
+              item=y.item,
+              location=curoperation.location
+              )
+            root.extend( reportclass.findReplenishment(b, request.database, level + 2, curqty, realdepth + 1, False) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -996,7 +1046,7 @@ class ManufacturingOrderList(GridReport):
       })
   
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationplan'"),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'"),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),

@@ -229,7 +229,7 @@ class Operation_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
     {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
+    {"name": 'plandetail', "label": _("plan detail"), "view": "input_operationplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django
@@ -378,7 +378,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
   model = ManufacturingOrder
   raw_id_fields = ('operation', 'owner',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'origin', 'destination', 'item', 'supplier', 'location')
+  exclude = ('type', 'id', 'source', 'criticality', 'origin', 'destination', 'item', 'supplier', 'location', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_manufacturingorder_change", "permissions": "input.change_manufacturingorder"},
     ]
@@ -389,7 +389,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
   raw_id_fields = ('item',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'operation', 'owner', 'supplier', 'location')
+  exclude = ('type', 'id', 'source', 'criticality', 'operation', 'owner', 'supplier', 'location', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_distributionorder_change", "permissions": "input.change_distributionorder"},
     ]
@@ -400,7 +400,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
   model = PurchaseOrder
   raw_id_fields = ('item', 'supplier',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'operation', 'owner', 'origin', 'destination')
+  exclude = ('type', 'id', 'source', 'criticality', 'operation', 'owner', 'origin', 'destination', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_purchaseorder_change", "permissions": "input.change_purchaseorder"},
     ]

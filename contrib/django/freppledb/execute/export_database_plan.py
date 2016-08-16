@@ -229,7 +229,8 @@ class export:
                 self.getPegging(j), j.source or blank, self.timestamp,
                 blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
                 j.operation.buffer.item.name, j.operation.buffer.location.name, blank, blank, blank,
-                j.demand.name if j.demand else blank,
+                j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
+                j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
                 j.id
                 )
           elif flag and j.status != 'proposed':
@@ -246,7 +247,8 @@ class export:
               j.operation.destination.item.name, j.operation.destination.location.name,
               j.operation.origin.location.name,
               blank, blank,
-              j.demand.name if j.demand else blank,
+              j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
+              j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
               j.id
               )
           elif isinstance(i, frepple.operation_itemsupplier):
@@ -258,7 +260,8 @@ class export:
               blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               j.operation.buffer.item.name, blank, blank,
               j.operation.buffer.location.name, j.operation.itemsupplier.supplier.name,
-              j.demand.name if j.demand else blank,
+              j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
+              j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
               j.id
               )
           elif not i.hidden:
@@ -269,7 +272,8 @@ class export:
               self.getPegging(j), j.source or blank, self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               blank, blank, blank, blank, blank,
-              j.demand.name if j.demand else j.owner.demand if j.owner and j.owner.demand else blank,
+              j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
+              j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
               j.id
               )
           elif j.demand or (j.owner and j.owner.demand):
@@ -280,7 +284,8 @@ class export:
               self.getPegging(j), j.source or blank, self.timestamp,
               blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
               blank, blank, blank, blank, blank,
-              j.demand.name if j.demand else j.owner.demand.name,
+              j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
+              j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
               j.id
               )            
           else:
@@ -307,9 +312,9 @@ class export:
       operation_id,owner_id,
       item_id,destination_id,origin_id,
       location_id,supplier_id,
-      demand_id,id) FROM STDIN;\n'''.encode(self.encoding))
+      demand_id,due,id) FROM STDIN;\n'''.encode(self.encoding))
     for p in getOperationPlans(True):
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
 
     # Update existing operationplans
@@ -321,7 +326,7 @@ class export:
         startdate=%s, enddate=%s, criticality=%s, plan=%s, source=%s,
         lastmodified=%s, operation_id=%s, owner_id=%s, item_id=%s,
         destination_id=%s, origin_id=%s, location_id=%s, supplier_id=%s,
-        demand_id=%s
+        demand_id=%s, due=%s
         where id=%s''',
         [ p for p in getOperationPlans(False) ]
         )

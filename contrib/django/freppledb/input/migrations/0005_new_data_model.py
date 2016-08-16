@@ -455,6 +455,11 @@ class Migration(migrations.Migration):
       name='name',
       field=models.CharField(db_index=True, null=True, max_length=1000),
     ),
+    migrations.AddField(
+      model_name='operationplan',
+      name='due',
+      field=models.DateTimeField(db_index=False, blank=True, null=True, verbose_name='due'),
+    ),
     migrations.AlterField(
       model_name='operationplan',
       name='operation',

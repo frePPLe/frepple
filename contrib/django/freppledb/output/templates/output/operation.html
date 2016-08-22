@@ -44,6 +44,10 @@ function drawGraphs(jsondata)
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 
+  // Set the database name
+  var database = $('#database').prop('name');
+  database = (database===undefined || database==='default') ? '' : '/' + database;
+
   // Draw all graphs
   $("#grid"){% if not args.0 %}.find(".graph"){% endif %}.each(function(index)
   {
@@ -87,22 +91,15 @@ function drawGraphs(jsondata)
       .on("click", function(d) {
           if (d3.event.defaultPrevented || d['total_start'] == 0) return;
           d3.select("#tooltip").style('display', 'none');
-          contextMenu = $("#detail1context");
-          contextMenu.find('a').each( function() {
-              $(this).attr(
-                'href',
-                $(this).attr('id')
-                  .replace(/{value}/g, admin_escape(d['operation']))
-                  .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                  .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                );
-            });
+
+          window.location = window.location.protocol+"//"
+            +window.location.host+database
+            +"/data/input/manufacturingorder/"
+            +"?operation__name="+admin_escape(d['operation'])
+            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+
           var coord = d3.mouse(document.body);
-          contextMenu.css({
-            left: coord[0],
-            top: coord[1],
-            display: 'block'
-            });
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {
@@ -137,22 +134,15 @@ function drawGraphs(jsondata)
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
-                contextMenu = $("#detail1context");
-                contextMenu.find('a').each( function() {
-                    $(this).attr(
-                      'href',
-                      $(this).attr('id')
-                        .replace(/{value}/g, admin_escape(d['operation']))
-                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                      );
-                  });
+
+			          window.location = window.location.protocol+"//"
+			            +window.location.host+database
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+
                 var coord = d3.mouse(document.body);
-                contextMenu.css({
-                  left: coord[0],
-                  top: coord[1],
-                  display: 'block'
-                  });
                 d3.event.stopPropagation();
               });
         }
@@ -168,22 +158,16 @@ function drawGraphs(jsondata)
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
-                contextMenu = $("#detail1context");
-                contextMenu.find('a').each( function() {
-                    $(this).attr(
-                      'href',
-                      $(this).attr('id')
-                        .replace(/{value}/g, admin_escape(d['operation']))
-                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                      );
-                  });
+
+			          window.location = window.location.protocol+"//"
+			            +window.location.host+database
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+
                 var coord = d3.mouse(document.body);
-                contextMenu.css({
-                  left: coord[0],
-                  top: coord[1],
-                  display: 'block'
-                  });
+
                 d3.event.stopPropagation();
               });
         }
@@ -199,22 +183,15 @@ function drawGraphs(jsondata)
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
-                contextMenu = $("#detail3context");
-                contextMenu.find('a').each( function() {
-                    $(this).attr(
-                      'href',
-                      $(this).attr('id')
-                        .replace(/{value}/g, admin_escape(d['operation']))
-                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                      );
-                  });
+
+			          window.location = window.location.protocol+"//"
+			            +window.location.host+database
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+
                 var coord = d3.mouse(document.body);
-                contextMenu.css({
-                  left: coord[0],
-                  top: coord[1],
-                  display: 'block'
-                  });
                 d3.event.stopPropagation();
               });
         }
@@ -229,22 +206,15 @@ function drawGraphs(jsondata)
             .on("click", function(d) {
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
-                contextMenu = $("#detail3context");
-                contextMenu.find('a').each( function() {
-                    $(this).attr(
-                      'href',
-                      $(this).attr('id')
-                        .replace(/{value}/g, admin_escape(d['operation']))
-                        .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                        .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                      );
-                  });
+
+			          window.location = window.location.protocol+"//"
+			            +window.location.host+database
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+
                 var coord = d3.mouse(document.body);
-                contextMenu.css({
-                  left: coord[0],
-                  top: coord[1],
-                  display: 'block'
-                  });
                 d3.event.stopPropagation();
               });
         }

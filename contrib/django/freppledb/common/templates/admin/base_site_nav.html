@@ -12,7 +12,6 @@ $(function() {
   $("#nav-menu li.dropdown").mouseleave(
       function() { if ($(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
   );
-
 });
 
 </script>
@@ -79,12 +78,12 @@ $(function() {
 
 			<div class="col-sm-2 pull-right">
 			  <div class="selectdb ">
-				{% if user.scenarios|length > 1 %}
+				{% if user.scenarios|length > 1 %}{{user.scenarios}}
 					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
 					{{ request.database }}&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="database">
-					{% for db in user.scenarios %}<li><a>{{ db }}</a></li>{% endfor %}
+					{% for db in user.scenarios|sortdatabases %}<li><a>{{ db }}</a></li>{% endfor %}
 					</ul>
 				{% endif %}
 				</div>

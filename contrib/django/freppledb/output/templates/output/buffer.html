@@ -92,22 +92,18 @@ function drawGraphs(jsondata)
           if (d3.event.defaultPrevented || (d['produced'] == 0 && d['consumed'] == 0))
             return;
           d3.select("#tooltip").style('display', 'none');
-          contextMenu = $("#detail2context");
-          contextMenu.find('a').each( function() {
-              $(this).attr(
-                'href',
-                $(this).attr('id')
-                  .replace(/{value}/g, admin_escape(d['buffer']))
-                  .replace(/{enddate}/g, timebuckets[d['bucket']]['enddate'])
-                  .replace(/{startdate}/g, timebuckets[d['bucket']]['startdate'])
-                );
-            });
+
+          var database = $('#database').prop('name');
+          database = (database===undefined || database==='default') ? '' : '/' + database;
+
+          window.location = window.location.protocol+"//"
+            +window.location.host+database
+            +"/flowplan/"
+            +admin_escape(d['buffer'])
+            +"/?flowdate__gte="+timebuckets[d['bucket']]['startdate']
+            +"&flowdate__lt="+timebuckets[d['bucket']]['enddate'];
+
           var coord = d3.mouse(document.body);
-          contextMenu.css({
-            left: coord[0],
-            top: coord[1],
-            display: 'block'
-            });
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {

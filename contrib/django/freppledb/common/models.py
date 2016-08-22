@@ -255,8 +255,9 @@ class Scenario(models.Model):
               Scenario(name=db, status="In use", description='Production database').save()
             else:
               Scenario(name=db, status="Free").save()
-    except Exception as e:
-      logger.error("Error synchronizing the scenario table with the settings: %s" % e)
+    except:
+      # Failures are acceptable - eg when the default database has not been intialized yet 
+      pass
 
   class Meta:
     db_table = "common_scenario"

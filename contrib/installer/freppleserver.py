@@ -332,6 +332,10 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
 
 cx_Logging.Info("Starting the web server")
 
+# Synchronize the scenario table with the settings
+from freppledb.common.models import Scenario
+Scenario.syncWithSettings()
+
 # Import modules
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler

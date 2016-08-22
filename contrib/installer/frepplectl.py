@@ -64,5 +64,10 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
       creationflags=CREATE_NO_WINDOW
       )
 
+  
+# Synchronize the scenario table with the settings
+from freppledb.common.models import Scenario
+Scenario.syncWithSettings()
+
 # Execute the command
 execute_from_command_line(sys.argv)

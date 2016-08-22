@@ -229,7 +229,7 @@ class Operation_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
     {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "input_operationplan_plandetail"},
+    #{"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django
@@ -250,7 +250,7 @@ class Buffer_admin(MultiDBModelAdmin):
   raw_id_fields = ('location', 'item', 'minimum_calendar', 'owner', )
   fieldsets = (
     (None, {
-      'fields': ('name', 'item', 'location', 'description', 'owner', 'category', 'subcategory')}),
+      'fields': ('item', 'location', 'description', 'owner', 'category', 'subcategory')}),
     (_('Inventory'), {
       'fields': ('onhand',)
       }),

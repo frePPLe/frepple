@@ -73,7 +73,7 @@ class ReportByDemand(GridReport):
         from demand
         where name = %s
         )
-      select min(due), min(startdate), max(enddate)
+      select min(dmd.due), min(startdate), max(enddate)
       from dmd
       inner join operationplan
       on dmd.opplan = operationplan.id

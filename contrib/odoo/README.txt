@@ -1,6 +1,7 @@
 
-This directory contains an addon for Odoo v8 that provides a 2-way integration
+This directory contains an addon for Odoo v8 and v9 that provides a 2-way integration
 between frePPLe and Odoo.
+The addon for v8 is supported, but not actively developed any longer.
 
 The module adds the following functionality in Odoo:
 
@@ -38,7 +39,7 @@ necessarily complete...):
   - mrp.bom is now split over the 2 tables mrp.bom and mrp.bom_lines
   - mrp.bom now refers to a product.template
   - authentication issue when there are multiple databases in odoo 
-  - v7 web controller allowed a streaming response, which is apparantly not possible
-    any longer with v8. As a result the connector will be slower and consume more
-    memory.
+  - The web controller builds the results in memory before returning results to the client.
+    As a result the connector will be be slower and consume more memory, compared to
+    situation where the data can be streamed incrementally.
 

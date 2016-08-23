@@ -434,7 +434,7 @@ var tourdata = [
              position : 'top'
            },
            {
-             url: "/operationplan/",
+             url: "/data/input/manufacturingorder/",
              element : 'h1 small',
              description : "This report shows the <strong>detailed list of all planned operations</strong>.<br>" +
                "This list would be typically be used to communicate the plan to operators<br>" +
@@ -617,7 +617,7 @@ var tourdata = [
            position : 'top'
          },
          {
-           url: "/data/input/operationplan/",
+           url: "/data/input/manufacturingorder/",
            element : "#jqgh_grid_enddate",
            description : "The operation plan screen let you review and confirm any proposed manufacturing order",
            position : 'top'

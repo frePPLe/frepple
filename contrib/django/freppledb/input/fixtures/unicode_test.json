@@ -1,7 +1,7 @@
 [
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "\u2190\u2191\u2192\u2193\u2194\u2195", "model": "input.customer", "fields": {"description": "Arrows"}},
-{"pk": "< > \" ' & ` # = ;", "model": "input.operation", "fields": {"type": "fixed_time"}},
+{"pk": "< > \" ' & ` # = ;", "model": "input.operation", "fields": {"type": "fixed_time", "location": "\u20ac \u00a5 $ \u00a3"}},
 {"pk": "\u20ac \u00a5 $ \u00a3", "model": "input.location", "fields": {"description": "currencies"}},
 {"pk": "\"< / > \"", "model": "input.resource", "fields": {"location": "\u20ac \u00a5 $ \u00a3", "type": "default"}},
 {"pk": 1, "model": "input.operationresource", "fields": {"operation": "< > \" ' & ` # = ;", "quantity": "1", "resource": "\"< / > \""}},
@@ -30,7 +30,7 @@
 {"pk": "\u0ae6 \u0ae7 \u0ae8 \u0ae9 \u0aea \u0aeb \u0aec \u0aed \u0aee \u0aef \u0ae7\u0ae6 ", "model": "input.buffer", "fields": {"description": "Gujarati", "item": "C\u00c7 c\u00e7 G\u0122 g\u0123 K\u0136 k\u0137 L\u013b l\u013c N\u0145 n\u0146 R\u0156 r\u0157 S\u015e s\u015f T\u0162 t\u0163 ", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},
 {"pk": "\u0e4f \u0e41\u0e1c\u0e48\u0e19\u0e14\u0e34\u0e19\u0e2e\u0e31\u0e48\u0e19\u0e40\u0e2a\u0e37\u0e48\u0e2d\u0e21\u0e42\u0e17\u0e23\u0e21\u0e41\u0e2a\u0e19\u0e2a\u0e31\u0e07\u0e40\u0e27\u0e0a  \u0e1e\u0e23\u0e30\u0e1b\u0e01\u0e40\u0e01\u0e28\u0e01\u0e2d\u0e07\u0e1a\u0e39\u0e4a\u0e01\u0e39\u0e49\u0e02\u0e36\u0e49\u0e19\u0e43\u0e2b\u0e21\u0e48", "model": "input.buffer", "fields": {"description": "Thai", "item": "AE\u00c6 ae\u00e6 OE\u0152 oe\u0153 ", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": ""}},
 {"pk": "\u9762\u5411\u5f00\u53d1\u4eba\u5458", "model": "input.buffer", "fields": {"description": "Simplified chinese", "item": "O\u0150 o\u0151 U\u0170 u\u0171 ", "location": "\u20ac \u00a5 $ \u00a3", "onhand": "0", "type": "infinite"}},
-{"pk": 1, "model": "input.operationmaterial", "fields": {"operation": "< > \" ' & ` # = ;", "type": "", "buffer": "\u9762\u5411\u5f00\u53d1\u4eba\u5458", "quantity": "-1"}},
+{"pk": 1, "model": "input.operationmaterial", "fields": {"operation": "< > \" ' & ` # = ;", "type": "", "item": "AE\u00c6 ae\u00e6 OE\u0152 oe\u0153 ", "quantity": "-1"}},
 {"fields": {"description": "Yearly time buckets", "level": 1}, "model": "common.bucket", "pk": "year"},
 {"fields": {"description": "Quarterly time buckets", "level": 2}, "model": "common.bucket", "pk": "quarter"},
 {"fields": {"description": "Monthly time buckets", "level": 3}, "model": "common.bucket", "pk": "month"},

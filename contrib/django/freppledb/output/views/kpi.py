@@ -52,22 +52,22 @@ class Report(GridReport):
       group by name
       union all
       select 201, 'Demand', 'Requested', coalesce(round(sum(quantity)),0)
-      from out_demand
+      from demand
       union all
-      select 202, 'Demand', 'Planned', coalesce(round(sum(planquantity)),0)
-      from out_demand
+      select 202, 'Demand', 'Planned', coalesce(round(sum(quantity)),0)
+      from operationplan
       union all
-      select 203, 'Demand', 'Planned late', coalesce(round(sum(planquantity)),0)
-      from out_demand
-      where plandate > due and plandate is not null
+      select 203, 'Demand', 'Planned late', coalesce(round(sum(quantity)),0)
+      from operationplan
+      where enddate > due and enddate is not null and status = 'open'
       union all
       select 204, 'Demand', 'Unplanned', coalesce(round(sum(quantity)),0)
-      from out_demand
-      where planquantity is null
+      from operationplan
+      where quantity is null
       union all
-      select 205, 'Demand', 'Total lateness', coalesce(round(sum(planquantity * %s)),0)
-      from out_demand
-      where plandate > due and plandate is not null
+      select 205, 'Demand', 'Total lateness', coalesce(round(sum(quantity * %s)),0)
+      from operationplan
+      where enddate > due and enddate is not null
       union all
       select 301, 'Operation', 'Count', count(*)
       from operationplan
@@ -87,7 +87,7 @@ class Report(GridReport):
       where quantity<0
       order by 1
       ''' % (
-        sql_datediff('plandate', 'due'),
+        sql_datediff('operationplan.due', 'due'),
         sql_datediff('enddate', 'startdate')
       )
     cursor.execute(query)

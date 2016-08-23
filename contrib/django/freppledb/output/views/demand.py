@@ -74,9 +74,9 @@ class OverviewReport(GridPivot):
       from (%s) items
       inner join item
       on item.lft between items.lft and items.rght
-      inner join out_demand
-      on item.name = out_demand.item
-        and (plandate is null or plandate >= '%s')
+      inner join operationplan
+      on item.name = operationplan.item_id
+        and (operationplan.startdate is null or operationplan.startdate >= '%s')
         and due < '%s'
       group by items.name
       ''' % (basesql, request.report_startdate, request.report_startdate)
@@ -99,7 +99,7 @@ class OverviewReport(GridPivot):
           from (
           select items.name as name, items.lft as lft, items.rght as rght,
                  d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-                 coalesce(sum(out_demand.quantity),0) as planned
+                 coalesce(sum(operationplan.quantity),0) as planned
           from (%s) items
           -- Multiply with buckets
           cross join (
@@ -111,12 +111,13 @@ class OverviewReport(GridPivot):
           inner join item
           on item.lft between items.lft and items.rght
           -- Planned quantity
-          left join out_demand
-          on item.name = out_demand.item
-          and d.startdate <= out_demand.plandate
-          and d.enddate > out_demand.plandate
-          and out_demand.plandate >= '%s'
-          and out_demand.plandate < '%s'
+          left join operationplan
+          on item.name = operationplan.item_id
+          and d.startdate <= operationplan.due
+          and d.enddate > operationplan.due
+          and operationplan.due >= '%s'
+          and operationplan.due < '%s'
+          and operationplan.type = 'DO'
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x

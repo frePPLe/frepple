@@ -1338,11 +1338,11 @@ class DeliveryPerformanceWidget(Widget):
       select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
       from (
         select
-          demand_id, max(case when enddate > due then 1 else 0 end) late
+          demand_id, max(case when enddate > operationplan.due then 1 else 0 end) late
         from operationplan
         left outer join demand
           on operationplan.demand_id = demand.name
-        where due < '%s'
+        where demand.due < '%s'
         group by demand_id
       ) demands
       ''' % request.report_enddate

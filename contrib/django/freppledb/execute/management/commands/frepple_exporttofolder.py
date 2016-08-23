@@ -49,9 +49,9 @@ class Command(BaseCommand):
   requires_system_checks = False
 
   statements = [
-      ("export_purchaseorder.csv", "COPY (select * from purchase_order where status='proposed') TO STDOUT WITH CSV HEADER"),
-      ("export_distributionorder.csv", "COPY distribution_order TO STDOUT WITH CSV HEADER"),
-      ("export_manufacturingorders.csv", "COPY operationplan TO STDOUT WITH CSV HEADER")
+      ("export_purchaseorder.csv", "COPY (select source,lastmodified,id,status,reference,quantity,startdate,enddate,criticality,owner_id,item_id,location_id,supplier_id,demand_id,name,due from operationplan where status='proposed' and type='PO') TO STDOUT WITH CSV HEADER"),
+      ("export_distributionorder.csv", "COPY (select source,lastmodified,id,status,reference,quantity,startdate,enddate,criticality,plan,destination_id,item_id,origin_id,type,demand_id,name,due from operationplan where status='proposed' and type='DO') TO STDOUT WITH CSV HEADER"),
+      ("export_manufacturingorders.csv", "COPY (select source, lastmodified, id , status ,reference ,quantity ,startdate ,enddate ,criticality ,operation_id, owner_id, plan, item_id, type, demand_id, name, due from operationplan where status='proposed' and type='MO') TO STDOUT WITH CSV HEADER")
       ]
 
   def get_version(self):

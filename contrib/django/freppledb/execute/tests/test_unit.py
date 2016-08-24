@@ -47,9 +47,9 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(input.models.Calendar.objects.count(), 0)
     self.assertEqual(input.models.Demand.objects.count(), 0)
     self.assertEqual(output.models.Problem.objects.count(), 0)
-    self.assertEqual(output.models.FlowPlan.objects.count(), 0)
-    self.assertEqual(output.models.LoadPlan.objects.count(), 0)
-    self.assertEqual(output.models.OperationPlan.objects.count(), 0)
+    self.assertEqual(input.models.OperationMaterial.objects.count(), 0)
+    self.assertEqual(input.models.OperationPlanResource.objects.count(), 0)
+    self.assertEqual(input.models.OperationPlan.objects.count(), 0)
 
     # Create a new model
     management.call_command('frepple_createmodel', cluster='1', verbosity='0')
@@ -62,9 +62,9 @@ class execute_with_commands(TransactionTestCase):
     # check on the output.
     management.call_command('frepple_run', plantype=1, constraint=15)
     self.assertTrue(output.models.Problem.objects.count() > 70)
-    self.assertTrue(output.models.FlowPlan.objects.count() > 500)
-    self.assertTrue(output.models.LoadPlan.objects.count() > 40)
-    self.assertTrue(output.models.OperationPlan.objects.count(), 350)
+    self.assertTrue(input.models.OperationPlanMaterial.objects.count() > 500)
+    self.assertTrue(input.models.OperationPlanResource.objects.count() > 40)
+    self.assertTrue(input.models.OperationPlan.objects.count(), 350)
 
 
 class execute_multidb(TransactionTestCase):
@@ -90,8 +90,8 @@ class execute_multidb(TransactionTestCase):
       return
 
     # Check count in both databases
-    count1 = output.models.FlowPlan.objects.all().using(db1).count()
-    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
+    count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertEqual(count1, 0)
     self.assertEqual(count2, 0)
 
@@ -108,15 +108,15 @@ class execute_multidb(TransactionTestCase):
     transaction.commit(using=db1)
     transaction.commit(using=db2)
     management.call_command('frepple_copy', db1, db2)
-    count1 = output.models.Demand.objects.all().using(db1).count()
-    count2 = output.models.Demand.objects.all().using(db2).count()
+    count1 = input.models.OperationPlan.objects.all().filter(type='PO').using(db1).count()
+    count2 = input.models.OperationPlan.objects.all().filter(type='PO').using(db2).count()
     self.assertEqual(count1, count2)
 
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
     management.call_command('frepple_run', plantype=1, constraint=15, database=db1)
-    count1 = output.models.FlowPlan.objects.all().using(db1).count()
-    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
+    count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertNotEqual(count1, 0)
     self.assertEqual(count2, 0)
 
@@ -124,8 +124,8 @@ class execute_multidb(TransactionTestCase):
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan
     management.call_command('frepple_run', plantype=1, constraint=0, database=db2)
-    count1new = output.models.FlowPlan.objects.all().using(db1).count()
-    count2 = output.models.FlowPlan.objects.all().using(db2).count()
+    count1new = input.models.OperationPlanMaterial.objects.all().using(db1).count()
+    count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertEqual(count1new, count1)
     self.assertNotEqual(count2, 0)
     self.assertNotEqual(count2, count1new)

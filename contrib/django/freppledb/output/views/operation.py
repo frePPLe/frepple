@@ -39,9 +39,9 @@ class OverviewReport(GridPivot):
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
     )
   crosses = (
-    ('locked_start', {'title': _('locked starts')}),
+    ('proposed_start', {'title': _('proposed starts')}),
     ('total_start', {'title': _('total starts')}),
-    ('locked_end', {'title': _('locked ends')}),
+    ('proposed_end', {'title': _('proposed ends')}),
     ('total_end', {'title': _('total ends')}),
     )
 
@@ -63,13 +63,13 @@ class OverviewReport(GridPivot):
     cursor = connections[request.database].cursor()
     query = '''
         select x.row1, x.row2, x.col1, x.col2, x.col3,
-          min(x.frozen_start), min(x.total_start),
-          coalesce(sum(case when o2.status in ('approved','confirmed') then o2.quantity else 0 end),0),
+          min(x.proposed_start), min(x.total_start),
+          coalesce(sum(case when o2.status in ('proposed') then o2.quantity else 0 end),0),
           coalesce(sum(o2.quantity),0)
         from (
           select oper.name as row1,  oper.location_id as row2,
                d.bucket as col1, d.startdate as col2, d.enddate as col3,
-               coalesce(sum(case when o1.status in ('approved','confirmed') then o1.quantity else 0 end),0) as frozen_start,
+               coalesce(sum(case when o1.status in ('proposed') then o1.quantity else 0 end),0) as proposed_start,
                coalesce(sum(o1.quantity),0) as total_start
           from (%s) oper
           -- Multiply with buckets
@@ -110,8 +110,8 @@ class OverviewReport(GridPivot):
         'bucket': row[2],
         'startdate': python_date(row[3]),
         'enddate': python_date(row[4]),
-        'locked_start': row[5],
+        'proposed_start': row[5],
         'total_start': row[6],
-        'locked_end': row[7],
+        'proposed_end': row[7],
         'total_end': row[8],
         }

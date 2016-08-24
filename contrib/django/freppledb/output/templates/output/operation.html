@@ -44,10 +44,6 @@ function drawGraphs(jsondata)
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 
-  // Set the database name
-  var database = $('#database').prop('name');
-  database = (database===undefined || database==='default') ? '' : '/' + database;
-
   // Draw all graphs
   $("#grid"){% if not args.0 %}.find(".graph"){% endif %}.each(function(index)
   {
@@ -70,9 +66,9 @@ function drawGraphs(jsondata)
       data.push({
         'operation': jsondata['rows'][index]['operation'],
         'bucket': bckt,
-        'locked_start': tmp[0],
+        'proposed_start': tmp[0],
         'total_start': tmp[1],
-        'locked_end': tmp[2],
+        'proposed_end': tmp[2],
         'total_end': tmp[3]
         });
       if (tmp[1] > max_y) max_y = tmp[1] ;
@@ -92,8 +88,7 @@ function drawGraphs(jsondata)
           if (d3.event.defaultPrevented || d['total_start'] == 0) return;
           d3.select("#tooltip").style('display', 'none');
 
-          window.location = window.location.protocol+"//"
-            +window.location.host+database
+          window.location = "{{ request.prefix }}"
             +"/data/input/manufacturingorder/"
             +"?operation__name="+admin_escape(d['operation'])
             +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -106,12 +101,12 @@ function drawGraphs(jsondata)
         graph.showTooltip(
           '<div class="panel-heading" style="text-align:center; font-weight:bold">'
           + timebuckets[d['bucket']]['name'] + '</div>'
-          + '<table><tr><td>{{_('locked starts')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['locked_start']*10)/10)
+          + '<table><tr><td>{{_('proposed starts')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['proposed_start']*10)/10)
           + '</td></tr><tr><td>{{_('total starts')|capfirst}}</td><td style="text-align:center">'
           + (Math.round(d['total_start']*10)/10)
-          + '</td></tr><tr><td>{{_('locked ends')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['locked_end']*10)/10)
+          + '</td></tr><tr><td>{{_('proposed ends')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['proposed_end']*10)/10)
           + '</td></tr><tr><td>{{_('total ends')|capfirst}}</td><td style="text-align:center">'
           + (Math.round(d['total_end']*10)/10)
           + '</td></tr></table>'
@@ -122,9 +117,9 @@ function drawGraphs(jsondata)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
-        if (d['locked_start'] > 0)
+        if (d['proposed_start'] > 0)
         {
-          top = y(d['locked_start']);
+          top = y(d['proposed_start']);
           bucket.append("rect")
             .attr("width", x_width/2)
             .attr("x", x_width/2)
@@ -135,8 +130,7 @@ function drawGraphs(jsondata)
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
 
-			          window.location = window.location.protocol+"//"
-			            +window.location.host+database
+			          window.location ="{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -146,7 +140,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['total_start'] > d['locked_start'])
+        if (d['total_start'] > d['proposed_start'])
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
@@ -159,8 +153,7 @@ function drawGraphs(jsondata)
                 if (d3.event.defaultPrevented || d['total_start'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
 
-			          window.location = window.location.protocol+"//"
-			            +window.location.host+database
+			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -172,9 +165,9 @@ function drawGraphs(jsondata)
               });
         }
         top = y(0);
-        if (d['locked_end'] > 0)
+        if (d['proposed_end'] > 0)
         {
-          top = y(d['locked_end']);
+          top = y(d['proposed_end']);
           bucket.append("rect")
             .attr("width", x_width/2)
             .attr("y", top)
@@ -184,8 +177,7 @@ function drawGraphs(jsondata)
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
 
-			          window.location = window.location.protocol+"//"
-			            +window.location.host+database
+			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -195,7 +187,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['total_end'] > d['locked_end'])
+        if (d['total_end'] > d['proposed_end'])
         {
           var newtop = y(d['total_end']);
           bucket.append("rect")
@@ -207,8 +199,7 @@ function drawGraphs(jsondata)
                 if (d3.event.defaultPrevented || d['total_end'] == 0) return;
                 d3.select("#tooltip").style('display', 'none');
 
-			          window.location = window.location.protocol+"//"
-			            +window.location.host+database
+			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -250,9 +241,9 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('locked starts')|capfirst}}", "#113C5E"],
+      [1, "{{_('proposed starts')|capfirst}}", "#113C5E"],
       [2, "{{_('new starts')|capfirst}}", "#2B95EC"],
-      [3, "{{_('locked ends')|capfirst}}", "#7B5E08"],
+      [3, "{{_('proposed ends')|capfirst}}", "#7B5E08"],
       [4, "{{_('new ends')|capfirst}}", "#F6BD0F"],
       ];
     for (var i in codes)
@@ -279,36 +270,36 @@ function crosses (cellvalue, options, rowdata)
 {
   var result = '';
   if (cellvalue[0] != 0.0)
-    result += cellvalue[0] + '<a href="{{request.prefix}}/operationplan/' +
-                                                         admin_escape(rowdata['operation']) +
-                                                         '/?startdate__gte=' + options['colModel']['startdate'] +
+    result += cellvalue[0] + '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+                                                        admin_escape(rowdata['operation']) +
+                                                         '&amp;startdate__gte=' + options['colModel']['startdate'] +
                                                          '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                         '&amp;locked=1">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                         '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
     result += '0.0</br>';
 
   if (cellvalue[1] != 0.0)
-    result += cellvalue[1] +  '<a href="{{request.prefix}}/operationplan/' +
+    result += cellvalue[1] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                             admin_escape(rowdata['operation']) +
-                                                            '/?startdate__gte=' + options['colModel']['startdate'] +
+                                                            '&startdate__gte=' + options['colModel']['startdate'] +
                                                             '&amp;startdate__lt=' + options['colModel']['enddate'] +
                                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
     result += '0.0<br/>';
 
   if (cellvalue[2] != 0.0)
-    result += cellvalue[2] +  '<a href="{{request.prefix}}/operationplan/' +
+    result += cellvalue[2] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                             admin_escape(rowdata['operation']) +
-                                                            '/?enddate__gte=' + options['colModel']['startdate'] +
+                                                            '&enddate__gte=' + options['colModel']['startdate'] +
                                                             '&amp;enddate__lt=' + options['colModel']['enddate'] +
-                                                            '&amp;locked=1">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
     result += '0.0<br/>';
 
   if (cellvalue[3] != 0.0)
-    result += cellvalue[3] +  '<a href="{{request.prefix}}/operationplan/' +
+    result += cellvalue[3] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                             admin_escape(rowdata['operation']) +
-                                                            '/?enddate__gte=' + options['colModel']['startdate'] +
+                                                            '&enddate__gte=' + options['colModel']['startdate'] +
                                                             '&amp;enddate__lt=' + options['colModel']['enddate'] +
                                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else

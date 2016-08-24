@@ -241,10 +241,10 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('proposed starts')|capfirst}}", "#113C5E"],
-      [2, "{{_('new starts')|capfirst}}", "#2B95EC"],
-      [3, "{{_('proposed ends')|capfirst}}", "#7B5E08"],
-      [4, "{{_('new ends')|capfirst}}", "#F6BD0F"],
+      [1, "{{_('approved and confirmed starts')|capfirst}}", "#113C5E"],
+      [2, "{{_('proposed starts')|capfirst}}", "#2B95EC"],
+      [3, "{{_('approved and confirmed ends')|capfirst}}", "#7B5E08"],
+      [4, "{{_('proposed ends')|capfirst}}", "#F6BD0F"],
       ];
     for (var i in codes)
     {

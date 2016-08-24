@@ -114,7 +114,7 @@ Less commonly used:
 
 Options:
 
-* | **--database=DATABASE
+* | **--database=DATABASE**:
   | Specifies which database to run the command for. The database names are defined in the
     djangosettings.py.
    

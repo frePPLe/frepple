@@ -75,6 +75,15 @@ The connector has 2 components:
 
   * Extra configuration options in company editing form, as described below.
 
+
+* | **Deploying in a multi-database odoo environment**
+  | When using the connector in a configuration with multiple databases
+    the addon needs to be loaded as a server wide module. This is achieved
+    by using the option "--load frepple" option on the command line
+    starting the server.
+    
+  In a setup with only a single odoo database this step is not required.
+  
 * | **Configure the Odoo addon**
   | The module adds some configuration fields on the company model.
   | Edit these parameters:

@@ -98,8 +98,9 @@ The data files to be imported must meet the following criteria:
   setting in djangosettings.py)
 
 The export can be customized, i.e. export only the relevant data and with the a specific format (file names, dates, separators, ...).
-The costumization is done on the frepple_exporttofolder.py statements.
-   ::
+The customization is done on the frepple_exporttofolder.py statements.
+
+::
 
      statements = [
        ("export_purchaseorder.csv", "COPY (select * from purchase_order where status='proposed') TO STDOUT WITH CSV HEADER"),

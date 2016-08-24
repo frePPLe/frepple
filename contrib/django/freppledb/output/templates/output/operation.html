@@ -117,9 +117,9 @@ function drawGraphs(jsondata)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
-        if (d['proposed_start'] > 0)
+        if (d['total_start'] > d['proposed_start'])
         {
-          top = y(d['proposed_start']);
+          top = y(d['total_start'] - d['proposed_start']);
           bucket.append("rect")
             .attr("width", x_width/2)
             .attr("x", x_width/2)
@@ -140,7 +140,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['total_start'] > d['proposed_start'])
+        if (d['proposed_start'] > 0)
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
@@ -165,9 +165,9 @@ function drawGraphs(jsondata)
               });
         }
         top = y(0);
-        if (d['proposed_end'] > 0)
+        if (d['total_end'] > d['proposed_end'])
         {
-          top = y(d['proposed_end']);
+          top = y(d['total_end'] - d['proposed_end']);
           bucket.append("rect")
             .attr("width", x_width/2)
             .attr("y", top)
@@ -187,7 +187,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['total_end'] > d['proposed_end'])
+        if (d['proposed_end'] > 0)
         {
           var newtop = y(d['total_end']);
           bucket.append("rect")

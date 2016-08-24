@@ -42,9 +42,9 @@ class PlanTaskRegistry:
       cls.reg.append(task)
 
   @classmethod
-  def getTask(cls, sequence=None, task=None):
+  def getTask(cls, sequence=None):
     for i in cls.reg:
-      if i.sequence == sequence or i.task == task:
+      if i.sequence == sequence:
         return i
     return None
 

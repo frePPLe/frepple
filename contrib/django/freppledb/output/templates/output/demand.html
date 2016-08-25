@@ -89,15 +89,15 @@ function drawGraphs(jsondata)
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
       .on("click", function(d) {
-          if (d3.event.defaultPrevented || (d['produced'] == 0 && d['consumed'] == 0))
+          if (d3.event.defaultPrevented || d['demand'] == 0)
             return;
           d3.select("#tooltip").style('display', 'none');
 
           window.location = "{{ request.prefix }}"
             +"/demandplan/"
             +admin_escape(d['item'])
-            +"/?o=5a&due__gte="+timebuckets[d['bucket']]['startdate']
-            +"&due__lt="+timebuckets[d['bucket']]['enddate'];
+            +"/?o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
+            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
 
           var coord = d3.mouse(document.body);
           d3.event.stopPropagation();

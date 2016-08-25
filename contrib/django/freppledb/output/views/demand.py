@@ -181,7 +181,7 @@ class DetailReport(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldDateTime('due', field_name='demand__due', title=_('due date'), editable=False),
     )
 

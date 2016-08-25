@@ -149,7 +149,7 @@ class ManufacturingOrderWidget(Widget):
   tooltip = _("Shows manufacturing orders by start date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
-  url = '/data/input/operationplan/?sord=asc&sidx=startdate&status__in=proposed,confirmed'
+  url = '/data/input/manufacturingorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed'
   exporturl = True
   fence1 = 7
   fence2 = 30
@@ -307,7 +307,7 @@ class ManufacturingOrderWidget(Widget):
       if rec[0] == 0:
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
           request.prefix,
           force_text(_("Review")),
@@ -315,7 +315,7 @@ class ManufacturingOrderWidget(Widget):
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
@@ -323,7 +323,7 @@ class ManufacturingOrderWidget(Widget):
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/operationplan/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),

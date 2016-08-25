@@ -22,7 +22,6 @@ from django.utils.text import capfirst
 
 from freppledb.input.models import Resource, OperationPlanResource
 from freppledb.common.models import Parameter
-from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot
 from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -150,7 +149,7 @@ class OverviewReport(GridPivot):
         'location': row[1],
         'avgutil': round(row[2], 2),
         'bucket': row[3],
-        'startdate': python_date(row[4]),
+        'startdate': row[4].date(),
         'available': round(row[5], 1),
         'unavailable': round(row[6], 1),
         'load': round(row[7], 1),

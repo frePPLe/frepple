@@ -176,7 +176,7 @@ class export:
       if self.cluster != -1 and i.owner.cluster != self.cluster:
         continue
       if isinstance(i.owner, frepple.operationplan):
-        owner = i.owner.operation.Name
+        owner = i.owner.operation.name
       else:
         owner = i.owner.name
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
@@ -286,18 +286,6 @@ class export:
               blank, blank, blank, blank, blank,
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else blank,
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else blank,
-              j.id
-              )            
-          else:
-            # Hidden operationplans: alternate tops
-            print ("unknown operationplan type:", i.name)
-            yield (
-              i.name, 'OTHER', j.status, j.reference or blank, round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
-              self.getPegging(j), j.source or blank, self.timestamp,
-              blank, j.owner.id if j.owner and not j.owner.operation.hidden else blank,
-              blank, blank, blank, blank, blank,
-              j.demand.name if j.demand else blank,
               j.id
               )
 

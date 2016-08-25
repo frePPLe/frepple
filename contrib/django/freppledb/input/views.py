@@ -160,16 +160,15 @@ class PathReport(GridReport):
   @classmethod
   def findUsage(reportclass, buffer, db, level, curqty, realdepth, pushsuper):
     result = [
-      (level + 1, None, i.operation, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
+      (level - 1, None, i.operation, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
       for i in buffer.item.operationmaterials.filter(quantity__lt=0).only('operation').using(db)
       ]
-    result.extend([
-      (level + 1, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
-      for i in ItemDistribution.objects.using(db).filter(
+    for i in ItemDistribution.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
         origin__lft__lte=buffer.location.lft, origin__rght__gt=buffer.location.lft
-        )
-      ])
+        ):
+      i.item = buffer.item
+      result.append( (level - 1, None, i, curqty, 0, None, realdepth - 1, pushsuper, i.location.name if i.location else None) )
     return result
 
 
@@ -258,7 +257,9 @@ class PathReport(GridReport):
       level, parent, curoperation, curqty, issuboperation, parentoper, realdepth, pushsuper, location = root.pop()
       curnode = counter
       counter += 1
-
+      if isinstance(location, str):
+        curlocation = Location.objects.all().using(request.database).get(name=location)
+         
       # If an operation has parent operations we forget about the current operation
       # and use only the parent
       if pushsuper and not isinstance(curoperation, (ItemSupplier, ItemDistribution)):
@@ -288,13 +289,16 @@ class PathReport(GridReport):
           duration = curoperation.leadtime
           duration_per = None
           buffers = [ ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1), ]
-          resources = None
+          if curoperation.resource:
+            resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
+          else:
+            resources = None
           try:
             downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False, location) )
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
           except Buffer.DoesNotExist:
-            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.location.name), item=curoperation.item, location=curoperation.location)
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False, location) )
+            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.location.name), item=curoperation.item, location=curlocation)
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
         elif isinstance(curoperation, ItemDistribution):
           name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
           optype = "distribution"
@@ -304,7 +308,16 @@ class PathReport(GridReport):
             ("%s @ %s" % (curoperation.item.name, curoperation.origin.name), -1),
             ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1)
             ]
-          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
+          if curoperation.resource:            
+            resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
+          else:
+            resources = None
+          try:
+            downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, location))
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+          except Buffer.DoesNotExist:
+            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=curoperation.item, location=curlocation)
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )            
         elif isinstance(curoperation, ItemOperation):
           name = curoperation.operation.name
           optype = curoperation.operation.type
@@ -332,7 +345,13 @@ class PathReport(GridReport):
             curflows = x.item.operationmaterials.filter(quantity__lt=0, operation__location=curoperation.location.name).only('operation', 'quantity').using(request.database)
             for y in curflows:
               hasChildren = True
-              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
+              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )            
+            try:
+              downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
+              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )
+            except Buffer.DoesNotExist:
+              downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=x.item, location=curlocation)
+              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )            
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -345,7 +364,10 @@ class PathReport(GridReport):
           duration = curoperation.leadtime
           duration_per = None
           buffers = [ ("%s @ %s" % (curoperation.item.name, location), 1), ]
-          resources = None
+          if curoperation.resource:            
+            resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
+          else:
+            resources = None
         elif isinstance(curoperation, ItemDistribution):
           name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, location)
           optype = "distribution"
@@ -355,7 +377,10 @@ class PathReport(GridReport):
             ("%s @ %s" % (curoperation.item.name, curoperation.origin.name), -1),
             ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1)
             ]
-          resources = None
+          if curoperation.resource:            
+            resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
+          else:
+            resources = None
           try:
             upstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )

@@ -24,7 +24,7 @@ from django.test import TransactionTestCase
 from django.test.utils import override_settings
 
 from freppledb.common.models import User
-import freppledb.output as output
+import freppledb.input
 
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
@@ -55,11 +55,10 @@ class cookbooktest(TransactionTestCase):
 
   def assertOperationplans(self, *resultpath):
     opplans = [
-      "%s,%s,%s,%s" % (i.operation, i.startdate, i.enddate, round(i.quantity, 1))
-      for i in output.models.OperationPlan.objects \
-        .extra(select={'lower_operation':'lower(operation)'}) \
-        .order_by('lower_operation', 'startdate', 'quantity') \
-        .only('operation', 'startdate', 'enddate', 'quantity')
+      "%s,%s,%s,%s" % (i.id, i.startdate, i.enddate, round(i.quantity, 1))
+      for i in freppledb.input.models.ManufacturingOrder.objects \
+        .order_by('id', 'startdate', 'quantity') \
+        .only('id', 'startdate', 'enddate', 'quantity')
       ]
     row = 0
     maxrow = len(opplans)

@@ -1141,7 +1141,7 @@ class DeliveryOrder(OperationPlan):
 
     def get_queryset(self):
       return super(DeliveryOrder.DeliveryOrderManager, self).get_queryset() \
-        .filter(type='DLVR') \
+        .filter(demand__isnull=False) \
         .defer("operation", "owner", "supplier", "location", "origin", "destination")
 
   objects = DeliveryOrderManager()

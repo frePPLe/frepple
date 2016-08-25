@@ -26,7 +26,6 @@ from django.utils.encoding import force_text
 
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan, DeliveryOrder
-from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
@@ -153,8 +152,8 @@ class OverviewReport(GridPivot):
       yield {
         'item': row[0],
         'bucket': row[1],
-        'startdate': python_date(row[2]),
-        'enddate': python_date(row[3]),
+        'startdate': row[2].date(),
+        'enddate': row[3].date(),
         'demand': round(row[4], 1),
         'supply': round(row[5], 1),
         'backlog': round(backlog, 1)

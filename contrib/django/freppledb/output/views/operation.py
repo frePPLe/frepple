@@ -20,8 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Operation, OperationPlan
-from freppledb.common.db import python_date
+from freppledb.input.models import Operation
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
 
 
@@ -108,8 +107,8 @@ class OverviewReport(GridPivot):
         'operation': row[0],
         'location': row[1],
         'bucket': row[2],
-        'startdate': python_date(row[3]),
-        'enddate': python_date(row[4]),
+        'startdate': row[3].date(),
+        'enddate': row[4].date(),
         'proposed_start': row[5],
         'total_start': row[6],
         'proposed_end': row[7],

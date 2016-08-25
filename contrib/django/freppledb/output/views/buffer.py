@@ -21,7 +21,6 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.input.models import Buffer, OperationPlanMaterial
-from freppledb.common.db import python_date
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -138,8 +137,8 @@ class OverviewReport(GridPivot):
         'item': row[1],
         'location': row[2],
         'bucket': row[3],
-        'startdate': python_date(row[4]),
-        'enddate': python_date(row[5]),
+        'startdate': row[4].date(),
+        'enddate': row[5].date(),
         'startoh': round(startoh, 1),
         'produced': round(row[6], 1),
         'consumed': round(row[7], 1),

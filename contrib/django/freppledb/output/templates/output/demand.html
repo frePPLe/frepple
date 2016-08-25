@@ -93,13 +93,9 @@ function drawGraphs(jsondata)
             return;
           d3.select("#tooltip").style('display', 'none');
 
-          var database = $('#database').prop('name');
-          database = (database===undefined || database==='default') ? '' : '/' + database;
-
-          window.location = window.location.protocol+"//"
-            +window.location.host+database
+          window.location = "{{ request.prefix }}"
             +"/demandplan/"
-            +admin_escape(d['demand'])
+            +admin_escape(d['item'])
             +"/?o=5a&due__gte="+timebuckets[d['bucket']]['startdate']
             +"&due__lt="+timebuckets[d['bucket']]['enddate'];
 

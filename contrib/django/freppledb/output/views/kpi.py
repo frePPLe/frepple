@@ -52,7 +52,7 @@ class Report(GridReport):
       union all
       select 201, 'Demand', 'Requested', coalesce(round(sum(quantity)),0)
       from demand
-      where status = 'open'
+      where status in ('open', 'quote')
       union all
       select 202, 'Demand', 'Planned', coalesce(round(sum(quantity)),0)
       from operationplan

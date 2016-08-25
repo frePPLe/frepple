@@ -69,17 +69,28 @@ class OverviewReport(GridPivot):
     # Execute a query to get the backlog at the start of the horizon
     startbacklogdict = {}
     query = '''
-      select items.name, sum(quantity)
+      select items.name, coalesce(req.qty, 0) - coalesce(pln.qty, 0)
       from (%s) items
-      inner join item
-      on item.lft between items.lft and items.rght
-      inner join operationplan
-      on item.name = operationplan.item_id
-        and (operationplan.startdate is null or operationplan.startdate >= '%s')
-        and due < '%s'
-      group by items.name
-      ''' % (basesql, request.report_startdate, request.report_startdate)
-    cursor.execute(query, baseparams)
+      left outer join (
+        select item_id, sum(quantity) qty
+        from demand 
+        where status in ('open', 'quote')
+        and due < %%s
+        group by item_id
+        ) req
+      on req.item_id = items.name
+      left outer join (
+        select demand.item_id, sum(operationplan.quantity) qty
+        from operationplan
+        inner join demand
+        on operationplan.demand_id = demand.name
+        and operationplan.owner_id is null
+        and operationplan.enddate < %%s
+        group by demand.item_id
+        ) pln
+      on pln.item_id = items.name  
+      ''' % basesql
+    cursor.execute(query, baseparams + (request.report_startdate, request.report_startdate))
     for row in cursor.fetchall():
       if row[0]:
         startbacklogdict[row[0]] = float(row[1])
@@ -104,19 +115,21 @@ class OverviewReport(GridPivot):
           cross join (
              select name as bucket, startdate, enddate
              from common_bucketdetail
-             where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
+             where bucket_id = %%s and enddate > %%s and startdate < %%s
              ) d
           -- Include hierarchical children
           inner join item
           on item.lft between items.lft and items.rght
           -- Planned quantity
-          left join operationplan
-          on item.name = operationplan.item_id
-          and d.startdate <= operationplan.due
-          and d.enddate > operationplan.due
-          and operationplan.due >= '%s'
-          and operationplan.due < '%s'
-          and operationplan.type = 'DO'
+          left outer join demand 
+          on item.name = demand.item_id
+          left outer join operationplan
+          on demand.name = operationplan.demand_id
+          and d.startdate <= operationplan.enddate
+          and d.enddate > operationplan.enddate
+          and operationplan.enddate >= %%s
+          and operationplan.enddate < %%s
+          and operationplan.owner_id is null
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x
@@ -127,20 +140,22 @@ class OverviewReport(GridPivot):
         on item.name = demand.item_id
         and x.startdate <= demand.due
         and x.enddate > demand.due
-        and demand.due >= '%s'
-        and demand.due < '%s'
-        and demand.status = 'open'
+        and demand.due >= %%s
+        and demand.due < %%s
+        and demand.status in ('open', 'quote')
         -- Grouping
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
         -- Ordering and grouping
         group by y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
-       ''' % (basesql, request.report_bucket, request.report_startdate,
-              request.report_enddate, request.report_startdate,
-              request.report_enddate, request.report_startdate,
-              request.report_enddate, sortsql)
-    cursor.execute(query, baseparams)
+       ''' % (basesql, sortsql)
+    cursor.execute(query, baseparams + (
+      request.report_bucket, request.report_startdate,
+      request.report_enddate, request.report_startdate,
+      request.report_enddate, request.report_startdate,
+      request.report_enddate
+      ))
 
     # Build the python result
     previtem = None
@@ -174,14 +189,14 @@ class DetailReport(GridReport):
   multiselect = False
   rows = (
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
-    GridFieldText('demand', title=_('demand'), editable=False, formatter='detail', extra="role:'input/demand'"),
+    GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra="role:'input/item'"),
     GridFieldText('customer', title=_('customer'), field_name='demand__customer', editable=False, formatter='detail', extra="role:'input/customer'"),
     GridFieldText('location', title=_('location'), field_name='demand__location', editable=False, formatter='detail', extra="role:'input/location'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('start date'), editable=False),
+    GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldDateTime('due', field_name='demand__due', title=_('due date'), editable=False),
     )
 

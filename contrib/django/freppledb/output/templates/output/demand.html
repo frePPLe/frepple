@@ -206,19 +206,19 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata) {
   var result = cellvalue[0] + '<br/>';
   if (cellvalue[0] != 0.0)
-    var result = cellvalue[0] + '<a href="{{request.prefix}}/demandplan/' +
-                                                                    admin_escape(rowdata['item']) +
-                                                                    '/?o=5a&amp;due__gte=' + options['colModel']['startdate'] +
-                                                                    '&amp;due__lt=' + options['colModel']['enddate'] +
-                                                                    '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+    result = cellvalue[0] + '<a href="{{request.prefix}}/demandplan/' +
+      admin_escape(rowdata['item']) +
+      '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
+      '&amp;demand__due__lt=' + options['colModel']['enddate'] +
+      '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
-    var result = '0.0<br/>';
+    result = '0.0<br/>';
   if (cellvalue[1] != 0.0)
     result += cellvalue[1] +  '<a href="{{request.prefix}}/demandplan/' +
-                                                                  admin_escape(rowdata['item']) +
-                                                                  '/?o=5a&amp;plandate__gte=' + options['colModel']['startdate'] +
-                                                                  '&amp;plandate__lt=' + options['colModel']['enddate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+      admin_escape(rowdata['item']) +
+      '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
+      '&amp;enddate__lt=' + options['colModel']['enddate'] +
+      '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
   else
     result += '0.0<br/>';
   result += cellvalue[2];

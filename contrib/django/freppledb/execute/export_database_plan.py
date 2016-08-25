@@ -176,7 +176,7 @@ class export:
       if self.cluster != -1 and i.owner.cluster != self.cluster:
         continue
       if isinstance(i.owner, frepple.operationplan):
-        owner = i.owner.operation.Name
+        owner = i.owner.operation.name
       else:
         owner = i.owner.name
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (

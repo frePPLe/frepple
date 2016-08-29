@@ -79,8 +79,8 @@ The connector has 2 components:
 * | **Deploying in a multi-database odoo environment**
   | When using the connector in a configuration with multiple databases
     the addon needs to be loaded as a server wide module. This is achieved
-    by using the option "--load frepple" option on the command line
-    starting the server.
+    by using the option "--load frepple,web,web_kanban" option on the command
+    line starting the server.
     
   In a setup with only a single odoo database this step is not required.
   

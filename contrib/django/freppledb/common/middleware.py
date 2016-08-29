@@ -15,10 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import jwt
 import re
 import threading
 
 from django.contrib import auth
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -26,7 +28,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.http import Http404
 from django.conf import settings
 
-from freppledb.common.models import Scenario
+from freppledb.common.models import Scenario, User
 
 
 # A local thread variable to make the current request visible everywhere
@@ -41,8 +43,27 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     - user interface theme to be used
   """
   def process_request(self, request):
+    # Make session information available throughout
     setattr(_thread_locals, 'request', request)
-    if isinstance(request.user, AnonymousUser):
+    
+    # Authentication through a web token, specified as an URL parameter
+    webtoken = request.GET.get('webtoken', None)
+    request.webtoken = None
+    if webtoken:
+      # Decode the web token
+      try:         
+        decoded = jwt.decode(webtoken, settings.SECRET_WEBTOKEN_KEY, algorithms=['HS256'])
+        user = User.objects.get(username=decoded['user'])
+        user.backend = settings.AUTHENTICATION_BACKENDS[0]
+        login(request, user)        
+        request.webtoken = decoded 
+      except:
+        raise Exception('Invalid web token or user')      
+      language = request.user.language
+      request.theme = request.user.theme or settings.DEFAULT_THEME
+      request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
+      request.webtoken = True
+    elif isinstance(request.user, AnonymousUser):
       # Anonymous users don't have preferences
       language = 'auto'
       request.theme = settings.DEFAULT_THEME
@@ -63,6 +84,20 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     return None
 
   def process_response(self, request, response):
+    #import django.middleware.clickjacking.XFrameOptionsMiddleware
+    
+    # Set a clickjacking protection x-frame-option header in the 
+    # response UNLESS one the following conditions applies:
+    #  - a x-trame-options header is already populated
+    #  - the view was marked xframe_options_exempt
+    #  - a web token was used to authenticate the request
+    # See https://docs.djangoproject.com/en/1.10/ref/clickjacking/#module-django.middleware.clickjacking
+    # See https://en.wikipedia.org/wiki/Clickjacking
+    if not response.get('X-Frame-Options', None) \
+      and not getattr(response, 'xframe_options_exempt', False) \
+      and not request.webtoken:
+        response['X-Frame-Options'] = getattr(settings, 'X_FRAME_OPTIONS', 'SAMEORIGIN').upper()
+
     if not response.streaming:
       setattr(_thread_locals, 'request', None)
     # Note: Streaming response get the request field cleared in the

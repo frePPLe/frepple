@@ -126,6 +126,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
+SECRET_WEBTOKEN_KEY = SECRET_KEY
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {
@@ -207,7 +208,6 @@ MIDDLEWARE_CLASSES = (
     'freppledb.common.middleware.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 CURRENCY=("","$")    # Prefix and suffix for currency strings

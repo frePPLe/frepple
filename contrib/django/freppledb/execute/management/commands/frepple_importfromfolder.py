@@ -148,11 +148,14 @@ class Command(BaseCommand):
           ok = True
           for i in range(cnt):
             for j in range(i + 1, cnt):
-              if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
-                # A subsequent model i depends on model i. The list ordering is
-                # thus not ok yet. We move this element to the end of the list.
-                models.append(models.pop(i))
-                ok = False
+              if models[i][1] != models[j][1] \
+                and models[i][1] in models[j][3] \
+                and (not models[j][1].__bases__ \
+                     or (models[j][1].__bases__ and models[j][1].__bases__ != models[i][1].__bases__)):
+                  # A subsequent model i depends on model i. The list ordering is
+                  # thus not ok yet. We move this element to the end of the list.
+                  models.append(models.pop(i))
+                  ok = False
         task.status = '10%'
         task.save(using=self.database)
 

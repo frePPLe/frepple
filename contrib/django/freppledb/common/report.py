@@ -935,9 +935,11 @@ class GridReport(View):
     ''' An auxilary method that constructs a set of all dependent models'''
     for f in m._meta.get_fields():
       if f.is_relation and f.auto_created and f.related_model != m and f.related_model not in found:
+        for sub in f.related_model.__subclasses__():
+          found.update([sub])          
         found.update([f.related_model])
         GridReport.dependent_models(f.related_model, found)
-
+    
 
   @classmethod
   def erase(reportclass, request):
@@ -2019,12 +2021,15 @@ def importWorkbook(request):
       ok = True
       for i in range(cnt):
         for j in range(i + 1, cnt):
-          if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
-            # A subsequent model i depends on model i. The list ordering is
-            # thus not ok yet. We move this element to the end of the list.
-            models.append(models.pop(i))
-            ok = False
-
+          if models[i][1] != models[j][1] \
+            and models[i][1] in models[j][3] \
+            and (not models[j][1].__bases__ \
+                 or (models[j][1].__bases__ and models[j][1].__bases__ != models[i][1].__bases__)):
+              # A subsequent model i depends on model i. The list ordering is
+              # thus not ok yet. We move this element to the end of the list.              
+              models.append(models.pop(i))            
+              ok = False
+    
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
       yield force_text(_("Processing data in worksheet: %s") % ws_name) + '\n'

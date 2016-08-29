@@ -15,8 +15,19 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import logging
+import time
+
 from openerp.osv import osv
 from openerp.osv import fields
+
+logger = logging.getLogger(__name__)
+
+try:
+   import jwt
+except:
+   logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
+
 
 class res_company(osv.osv):
   _name = 'res.company'
@@ -31,5 +42,14 @@ class res_company(osv.osv):
   _defaults = {
     'cmdline': lambda *a: 'frepplectl --env=odoo_read,odoo_write'
     }
+    
+  def getWebToken(self, cr, uid, context=None):
+    # Create an authorization header trusted by frePPLe
+    payload = {
+      'exp': round(time.time()) + 3600,
+      'user': "admin"
+      }
+    return jwt.encode(payload, "%@mzit!i8b*$zc&6oev96=RANDOMSTRING", algorithm='HS256').decode('ascii')
+
 
 res_company()

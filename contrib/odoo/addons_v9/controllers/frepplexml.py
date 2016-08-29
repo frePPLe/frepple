@@ -52,7 +52,6 @@ class XMLController(openerp.http.Controller):
 
     @openerp.http.route('/frepple/xml',  type='http', auth='none', methods=['POST','GET'])
     def xml(self, **kwargs):
-        logger.info("start request")
         database = kwargs.get('database', None)
         if not database:
             database = db_monodb()
@@ -61,12 +60,10 @@ class XMLController(openerp.http.Controller):
         if req.httprequest.method == 'GET':
             # Login
             database = kwargs.get('database', None)  
-            logger.info(dir(req.session))
             req.session.db = database                    
             try:                          
                 self.authenticate(req, database, language)
             except Exception as e:
-                logger.info(e)
                 return Response(
                     'Login with Odoo user name and password', 401,
                     headers=[('WWW-Authenticate', 'Basic realm="odoo"')]
@@ -98,7 +95,6 @@ class XMLController(openerp.http.Controller):
             try:                          
                 self.authenticate(req, database, language)
             except Exception as e:
-                logger.info(e)
                 return Response(
                     'Login with Odoo user name and password', 401,
                     headers=[('WWW-Authenticate', 'Basic realm="odoo"')]

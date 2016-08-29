@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'frepple',
-    'version': '0.2.9',
+    'version': '4.0.0',
     'category': 'Manufacturing',
     'summary': 'Advanced planning and scheduling',
     'author': 'frePPLe',
-    'website': 'http://frepple.com',
+    'website': 'https://frepple.com',
     'description': '''
 Connector to frePPLe
 ====================
@@ -35,6 +35,7 @@ material and capacity planning decisions.
       'resource',
       'mrp'
       ],
+    'external_dependencies': {'python': ['PyJWT']},      
     'data': [
       'frepple_data.xml',
       ],

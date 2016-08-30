@@ -93,17 +93,12 @@ function drawGraphs(jsondata)
             return;
           d3.select("#tooltip").style('display', 'none');
 
-          var database = $('#database').prop('name');
-          database = (database===undefined || database==='default') ? '' : '/' + database;
-
-          window.location = window.location.protocol+"//"
-            +window.location.host+database
+          window.location = url_prefix
             +"/flowplan/"
             +admin_escape(d['buffer'])
             +"/?flowdate__gte="+timebuckets[d['bucket']]['startdate']
             +"&flowdate__lt="+timebuckets[d['bucket']]['enddate'];
 
-          var coord = d3.mouse(document.body);
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {

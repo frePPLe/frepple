@@ -1,9 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}
+{% block extrahead %}{{block.super}}{% if not 'navbar' in request.session or request.session.navbar %}
 <script type="text/javascript">
 $(function() {
+  breadcrumbs_reflow();
+  $(window).resize(breadcrumbs_reflow);
+  
   $(".selectdb li a").click(selectDatabase);
 
   $("#nav-menu li.dropdown").mouseenter(
@@ -15,9 +18,9 @@ $(function() {
 });
 
 </script>
-{% endblock %}
+{% endif %}{% endblock %}
 
-{% block nav-global %}
+{% block nav-global %}{% if not 'navbar' in request.session or request.session.navbar %}
 {% getMenu as menu %}
 <nav id="nav-menu-header" class="navbar navbar-static-top navbar-default">
 	<div class="container-fluid">
@@ -92,4 +95,4 @@ $(function() {
   </div> <!--  end of container -->
 </nav>
 
-{% endblock %}
+{% endif %}{% endblock %}

@@ -96,18 +96,13 @@ function drawGraphs(jsondata)
           if (d3.event.defaultPrevented || d['load'] == 0) return;
           d3.select("#tooltip").style('display', 'none');
 
-          var database = $('#database').prop('name');
-          database = (database===undefined || database==='default') ? '' : '/' + database;
-
-          window.location = window.location.protocol+"//"
-            +window.location.host+database
+          window.location = url_prefix
             +"/loadplan/"
             +admin_escape(d['resource'])
             +"/?startdate__gte="+timebuckets[d['bucket']]['startdate']
             +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
 
           var coord = d3.mouse(document.body);
-
           d3.event.stopPropagation();
         })
       .on("mouseenter", function(d) {

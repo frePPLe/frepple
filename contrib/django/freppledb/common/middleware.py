@@ -20,7 +20,7 @@ import re
 import threading
 
 from django.contrib import auth
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -43,7 +43,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     - user interface theme to be used
   """
   def process_request(self, request):
-    # Make session information available throughout
+    # Make request information available throughout the application
     setattr(_thread_locals, 'request', request)
     
     # Authentication through a web token, specified as an URL parameter
@@ -57,6 +57,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)        
         request.webtoken = decoded 
+        if not decoded.get('navbar', True):
+          request.session['navbar'] = False 
       except:
         raise Exception('Invalid web token or user')      
       language = request.user.language
@@ -84,8 +86,6 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     return None
 
   def process_response(self, request, response):
-    #import django.middleware.clickjacking.XFrameOptionsMiddleware
-    
     # Set a clickjacking protection x-frame-option header in the 
     # response UNLESS one the following conditions applies:
     #  - a x-trame-options header is already populated

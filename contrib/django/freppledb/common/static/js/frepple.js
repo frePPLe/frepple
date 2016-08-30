@@ -279,15 +279,13 @@ var upload = {
 //----------------------------------------------------------------------------
 
 function opendetail(event) {
-  var database = $('#database').prop('name');
-  database = (database===undefined || database==='default') ? '' : '/' + database;
   var curlink = $(event.target).parent().attr('href');
   var objectid = $(event.target).parent().parent().text();
   objectid = admin_escape(objectid);
 
   event.preventDefault();
   event.stopImmediatePropagation();
-  window.location.href = database + curlink.replace('key', objectid);
+  window.location.href = url_prefix + curlink.replace('key', objectid);
 }
 
 jQuery.extend($.fn.fmatter, {
@@ -983,11 +981,9 @@ var ERPconnection = {
       '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');
-        var database = $('#database').attr('name');
-        database = (database===undefined || database==='default') ? '' : '/' + database;
+        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');       
         $.ajax({
-          url: database + "/"+ERPsystem+"/upload/",
+          url: url_prefix + "/" + ERPsystem + "/upload/",
           data: JSON.stringify(data),
           type: "POST",
           contentType: "application/json",
@@ -1055,9 +1051,7 @@ var ERPconnection = {
           '</div>'+
       '</div>' );
 
-//    compose url
-      var database = $('#database').attr('name');
-      database = (database===undefined || database==='default') ? '' : '/' + database;
+      // compose url     
       var components='?demand=';
       for (i=0; i<sel.length; i++) {
         var r = grid.jqGrid('getRowData', sel[i]);
@@ -1071,7 +1065,7 @@ var ERPconnection = {
 
       //get demandplans
       $.ajax({
-        url: database + "/demand/operationplans/" + components,
+        url: url_prefix + "/demand/operationplans/" + components,
         type: "GET",
         contentType: "application/json",
         success: function (data) {
@@ -1140,12 +1134,9 @@ var ERPconnection = {
               data.push(row1data);
             });
 
-            //ERPsystem='openbravo'; //for tests
             $('#popup .modal-body').html(gettext('connecting to ')+ERPsystem+'...');
-            var database = $('#database').attr('name');
-            database = (database===undefined || database==='default') ? '' : '/' + database;
             $.ajax({
-              url: database + "/"+ERPsystem+"/upload/",
+              url: url_prefix + "/" + ERPsystem + "/upload/",
               data: JSON.stringify(data),
               type: "POST",
               contentType: "application/json",
@@ -1264,15 +1255,12 @@ $(function() {
   $.ajaxSetup({ cache: false });
 
   // Autocomplete search functionality
-  var database = $('#database').attr('name');
-  database = (database===undefined || database==='default') ? '' : '/' + database;
-
   var searchsource = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     //prefetch: '/search/',
     remote: {
-      url: database+'/search/?term=%QUERY',
+      url: url_prefix + '/search/?term=%QUERY',
       wildcard: '%QUERY'
     }
   });
@@ -1287,7 +1275,7 @@ $(function() {
         if (data.value === null)
           return '<span><p style="margin-top: 5px; margin-bottom: 1px;">'+data.label+'</p><li  role="separator" class="divider"></li></span>';
         else
-          return '<li><a href="'+ database + data.url + admin_escape(data.value) + '/" >' + data.value + '</a></li>';
+          return '<li><a href="'+ url_prefix + data.url + admin_escape(data.value) + '/" >' + data.value + '</a></li>';
       },
     }
   });
@@ -1540,12 +1528,11 @@ function selectDatabase()
 {
   // Find new database and current database
   var db = $(this).text();
-  var cur = $('#database').attr('name');
 
   // Change the location
-  if (cur == db)
+  if (database == db)
     return;
-  else if (cur == 'default')
+  else if (database == 'default')
   {
     if (window.location.pathname == '/')
       window.location.href = "/"+db+"/";
@@ -1553,9 +1540,9 @@ function selectDatabase()
       window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
   }
   else if (db == 'default')
-    window.location.href = window.location.href.replace("/"+cur+"/", "/");
+    window.location.href = window.location.href.replace("/"+database+"/", "/");
   else
-    window.location.href = window.location.href.replace("/"+cur+"/", "/"+db+"/");
+    window.location.href = window.location.href.replace("/"+database+"/", "/"+db+"/");
 }
 
 
@@ -2051,7 +2038,6 @@ var tour = {
     var stepData = tourdata[tour.chapter]['steps'][tour.step];
     // Switch url if required
     var nexthref = '';
-    var prefix = $('#database').attr('name');
     var currsearch = '';
     if ( location.search.lastIndexOf('&')>-1 )
     {
@@ -2059,29 +2045,12 @@ var tour = {
     } else {
       currsearch = ''; //delete ?tour=x,y,z
     };
-    if (prefix && prefix != "default")
-    {
-      if (location.pathname != "/" + prefix + stepData['url'])
-      {
-        nexthref = "/" + prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        if (nexthref.match(/\?/g || []).length == 2)
-        {
-          nexthref = "/" + prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        };
-        window.location.href = nexthref;
-        return;
-      };
-    } else {
-      if (location.pathname+currsearch != stepData['url'])
-      {
-        nexthref = stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        if (nexthref.match(/\?/g || []).length == 2)
-        {
-          nexthref = stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        };
-        window.location.href = nexthref;
-        return;
-      };
+    if (location.pathname+currsearch != url_prefix+stepData['url']) {
+      nexthref = url_prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+      if (nexthref.match(/\?/g || []).length == 2)
+        nexthref = url_prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+      window.location.href = nexthref;
+      return;
     };
     // Callback
     if ('beforestep' in stepData)

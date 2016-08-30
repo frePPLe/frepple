@@ -396,18 +396,26 @@ class ModelDependenciesNode(Node):
   A tag to return JSON string with all models and their dependencies
   '''
   def render(self, context):
-    return json.dumps( dict([
-        (
-         "%s.%s" % (i._meta.app_label, i._meta.model_name),
-         [
-           "%s.%s" % (j[0].related_model._meta.app_label, j[0].related_model._meta.model_name)
-           for j in i._meta.get_all_related_objects_with_model()
-           if j[0].related_model != i
-         ]
-        )
-        for i in models.get_models(include_auto_created=True)
-      ])
-      )
+    res = {}
+    for i in models.get_models(include_auto_created=True):
+      deps = []
+      i_name = "%s.%s" % (i._meta.app_label, i._meta.model_name)
+      for j in i._meta.get_all_related_objects_with_model():
+        if j[0].related_model == i:
+          continue        
+        j_name = "%s.%s" % (j[0].related_model._meta.app_label, j[0].related_model._meta.model_name)
+        # Some ugly (but unavoidable...) hard-codes related to the proxy models
+        if j_name == 'input.operationplan':
+          if i_name in ('input.supplier', 'item.itemsupplier', 'input.location', 'input.item'):
+            deps.append('input.purchaseorder')
+          if i_name in ('input.itemdistribution', 'input.location'):
+            deps.append('input.distributionorder')
+          if i_name in ('input.operation', 'input.location'):
+            deps.append('input.manufacturingorder')
+        elif not j_name in ('input.purchaseorder', 'input.manufacturingorder', 'input.distributionorder'):
+          deps.append(j_name)
+      res[i_name] = deps
+    return json.dumps(res)
 
   def __repr__(self):
     return "<getModelDependencies Node>"

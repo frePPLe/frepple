@@ -131,6 +131,10 @@ class Command(BaseCommand):
         tables.add("setuprule")
       if models:
         tables.discard('operationplan')
+        tables.discard('demand')
+      else:
+        tables.add('operationplanmaterial')
+        tables.add('operationplanresource')
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
       tables.discard('auth_group')
@@ -150,12 +154,71 @@ class Command(BaseCommand):
         for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
           cursor.execute(stmt)
         if models:
+          if 'input.demand' in models:
+            cursor.execute('''
+              delete from operationplanresource 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where demand_id is not null
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanmaterial 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where demand_id is not null
+                )
+              ''')
+            cursor.execute("delete from operationplan where demand_id is not null")
+            cursor.execute("delete from demand")           
           if 'input.purchaseorder' in models:
-            cursor.execute("delete from operationplan where type='PO'")
+            cursor.execute('''
+              delete from operationplanresource 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'PO'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanmaterial 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'PO'
+                )
+              ''')
+            cursor.execute("delete from operationplan where type = 'PO'")
           if 'input.distributionorder' in models:
-            cursor.execute("delete from operationplan where type='DO'")
+            cursor.execute('''
+              delete from operationplanresource 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'DO'
+                )
+              ''')            
+            cursor.execute('''
+              delete from operationplanmaterial 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'DO'
+                )
+              ''')            
+            cursor.execute("delete from operationplan where type = 'DO'")
           if 'input.manufacturingorder' in models:
-            cursor.execute("delete from operationplan where type='MO'")
+            cursor.execute('''
+              delete from operationplanmaterial 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'MO'
+                )
+              ''')            
+            cursor.execute('''
+              delete from operationplanresource 
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'MO'
+                )
+              ''')            
+            cursor.execute("delete from operationplan where type = 'MO'")
 
       # Task update
       task.status = 'Done'

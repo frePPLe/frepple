@@ -57,8 +57,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)        
         request.webtoken = decoded 
-        if not decoded.get('navbar', True):
-          request.session['navbar'] = False 
+        request.session['navbar'] = decoded.get('navbar', True)
+        request.session['xframe_options_exempt'] = True
       except:
         raise Exception('Invalid web token or user')      
       language = request.user.language
@@ -95,7 +95,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     # See https://en.wikipedia.org/wiki/Clickjacking
     if not response.get('X-Frame-Options', None) \
       and not getattr(response, 'xframe_options_exempt', False) \
-      and not request.webtoken:
+      and not request.session.get('xframe_options_exempt', False):
         response['X-Frame-Options'] = getattr(settings, 'X_FRAME_OPTIONS', 'SAMEORIGIN').upper()
 
     if not response.streaming:

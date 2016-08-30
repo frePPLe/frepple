@@ -18,6 +18,7 @@
 import logging
 import time
 
+from openerp import api, models
 from openerp.osv import osv
 from openerp.osv import fields
 
@@ -29,27 +30,37 @@ except:
    logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
 
 
-class res_company(osv.osv):
+class res_company(models.Model):
   _name = 'res.company'
   _inherit = 'res.company'
 
   _columns = {
-    'manufacturing warehouse': fields.many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null'),
+    'manufacturing_warehouse': fields.many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null'),
     'calendar': fields.many2one('resource.calendar', 'Calendar', ondelete='set null'),
-    'cmdline': fields.char('Command line', size=128)
+    'cmdline': fields.char('Command line', size=128),
+    'webtoken_key': fields.char('Webtoken key', size=128),
+    'frepple_server': fields.char('frePPLe web server', size=128),
     }
 
   _defaults = {
     'cmdline': lambda *a: 'frepplectl --env=odoo_read,odoo_write'
     }
     
-  def getWebToken(self, cr, uid, context=None):
-    # Create an authorization header trusted by frePPLe
-    payload = {
-      'exp': round(time.time()) + 3600,
-      'user': "admin"
-      }
-    return jwt.encode(payload, "%@mzit!i8b*$zc&6oev96=RANDOMSTRING", algorithm='HS256').decode('ascii')
+  @api.model
+  def getFreppleURL(self):
+    '''
+    Create an authorization header trusted by frePPLe
+    '''
+    webtoken = jwt.encode({
+      'exp': round(time.time()) + 600,
+      'user': self.env.user.login,
+      'navbar': self.env.context.get("navbar", True)
+      }, 
+      self.env.user.company_id.webtoken_key, 
+      algorithm='HS256').decode('ascii')
+    url = self.env.context.get("url", "/")
+    logger.warn("%s%s?webtoken=%s" % (self.env.user.company_id.frepple_server, url, webtoken))
+    return "%s%s?webtoken=%s" % (self.env.user.company_id.frepple_server, url, webtoken)
 
 
 res_company()

@@ -999,7 +999,7 @@ class OperationPlan(AuditModel):
     )
   due = models.DateTimeField(_('due'), help_text=_('Due date of the demand/forecast'))
   name = models.CharField(
-    _('name'), max_length=1000, null=True, blank = True, db_index=True
+    _('name'), max_length=1000, null=True, db_index=True
     )
 
   def __str__(self):

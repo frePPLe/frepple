@@ -102,7 +102,7 @@ class exporter(object):
     def load_company(self):
         m = self.req.session.model('res.company')
         ids = m.search([('name', '=', self.company)], context=self.req.session.context)
-        fields = ['security_lead', 'po_lead', 'manufacturing_lead', 'calendar', 'manufacturing warehouse']
+        fields = ['security_lead', 'po_lead', 'manufacturing_lead', 'calendar', 'manufacturing_warehouse']
         self.company_id = 0
         for i in m.read(ids, fields, self.req.session.context):
             self.company_id = i['id']
@@ -110,7 +110,7 @@ class exporter(object):
             self.po_lead = i['po_lead']
             self.manufacturing_lead = i['manufacturing_lead']
             self.calendar = i['calendar'] and i['calendar'][1] or "Working hours"
-            self.mfg_location = i['manufacturing warehouse'] and i['manufacturing warehouse'][1] or self.company
+            self.mfg_location = i['manufacturing_warehouse'] and i['manufacturing_warehouse'][1] or self.company
         if not self.company_id:
             logger.warning("Can't find company '%s'" % self.company)
             self.company_id = None

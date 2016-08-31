@@ -29,7 +29,7 @@ class importer(object):
   def __init__(self, req, database=None, company=None, mode=1):    
     self.req = req    
     self.database = database 
-    self.company = req.httprequest.form.get('company', None)
+    self.company = company
     self.datafile = req.httprequest.files.get('frePPLe plan')
     
     # The mode argument defines different types of runs:
@@ -44,13 +44,6 @@ class importer(object):
 
   def run(self):
     msg = []
-    # Look up the company id
-    company_id = None
-    m = self.req.session.model('res.company')
-    for i in m.search([('name', '=', self.company)], context=self.req.session.context):
-      company_id = i
-    if not company_id:
-      raise Exception("Invalid company name argument")
 
     if self.mode == 1:
       # Cancel previous draft purchase quotations
@@ -95,7 +88,7 @@ class importer(object):
               'product_qty': elem.get("quantity"),
               'date_planned': elem.get("end"),
               'product_id': int(item_id),
-              'company_id': company_id,
+              'company_id': company.id,
               'product_uom': int(uom_id),
               'location_id': int(elem.get('location')),
               #'procure_method': 'make_to_order', # this field is no longer there
@@ -113,7 +106,7 @@ class importer(object):
               'product_qty': elem.get("quantity"),
               'date_planned': elem.get("end"),
               'product_id': int(item_id),
-              'company_id': company_id,
+              'company_id': company.id,
               'product_uom': int(uom_id),
               'location_src_id': int(elem.get('location')),
               'product_uos_qty': False,

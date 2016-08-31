@@ -16,8 +16,9 @@
 #
 import base64
 import email
+import jwt
 import os
-from datetime import datetime
+import time
 from urllib.request import urlopen, HTTPError, Request
 from xml.sax.saxutils import quoteattr
 
@@ -222,6 +223,15 @@ class OdooWritePlan(PlanTask):
     # We send the connection parameters as well as a file with the planning
     # results in XML-format.
     def publishPlan():
+      yield '--%s\r' % boundary
+      yield 'Content-Disposition: form-data; name="webtoken"\r'
+      yield '\r'
+      yield '%s\r' % jwt.encode({
+        'exp': round(time.time()) + 600,
+        'user': odoo_user,
+        }, 
+        settings.DATABASES[database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
+        algorithm='HS256').decode('ascii')
       yield '--%s\r' % boundary
       yield 'Content-Disposition: form-data; name="database"\r'
       yield '\r'

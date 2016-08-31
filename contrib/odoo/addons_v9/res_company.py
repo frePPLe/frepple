@@ -43,7 +43,7 @@ class res_company(models.Model):
     }
 
   _defaults = {
-    'cmdline': lambda *a: 'frepplectl --env=odoo_read,odoo_write'
+    'cmdline': lambda *a: 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
     }
     
   @api.model

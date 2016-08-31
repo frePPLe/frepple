@@ -48,15 +48,17 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     
     # Authentication through a web token, specified as an URL parameter
     webtoken = request.GET.get('webtoken', None)
-    request.webtoken = None
     if webtoken:
       # Decode the web token
       try:         
-        decoded = jwt.decode(webtoken, settings.SECRET_WEBTOKEN_KEY, algorithms=['HS256'])
+        decoded = jwt.decode(
+          webtoken,
+          settings.DATABASES[request.database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
+          algorithms=['HS256']
+          )
         user = User.objects.get(username=decoded['user'])
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)        
-        request.webtoken = decoded 
         request.session['navbar'] = decoded.get('navbar', True)
         request.session['xframe_options_exempt'] = True
       except:
@@ -64,7 +66,6 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       language = request.user.language
       request.theme = request.user.theme or settings.DEFAULT_THEME
       request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
-      request.webtoken = True
     elif isinstance(request.user, AnonymousUser):
       # Anonymous users don't have preferences
       language = 'auto'

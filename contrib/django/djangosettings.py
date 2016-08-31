@@ -58,6 +58,7 @@ DATABASES = {
       'NAME': 'test_frepple' # Database name used when running the test suite.
       },
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),
+    'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
   'scenario1': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -79,6 +80,7 @@ DATABASES = {
       'NAME': 'test_scenario1' # Database name used when running the test suite.
       },
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),
+    'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
   'scenario2': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -100,6 +102,7 @@ DATABASES = {
       'NAME': 'test_scenario2' # Database name used when running the test suite.
       },
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),
+    'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
   'scenario3': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -121,12 +124,12 @@ DATABASES = {
       'NAME': 'test_scenario3' # Database name used when running the test suite.
       },
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),
+    'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
   }
 
 LANGUAGE_CODE = 'en'
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
-SECRET_WEBTOKEN_KEY = SECRET_KEY
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {

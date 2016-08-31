@@ -725,11 +725,12 @@ class loadData(object):
         operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
         operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id, 
         operationplan.item_id, operationplan.location_id,
-        reference, coalesce(demand.name, null)
+        reference, coalesce(dmd.name, null)
       FROM operationplan
-      LEFT OUTER JOIN demand 
-        on demand.name = operationplan.demand_id
-        and demand.status = 'open'       
+      LEFT OUTER JOIN (select name from demand 
+        where demand.status = 'open'
+        ) dmd
+      on dmd.name = operationplan.demand_id
       WHERE operationplan.owner_id IS NULL 
         and operationplan.quantity >= 0 and operationplan.status <> 'closed'
         %s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
@@ -784,13 +785,16 @@ class loadData(object):
       SELECT
         operationplan.operation_id, operationplan.id, operationplan.quantity,
         operationplan.startdate, operationplan.enddate, operationplan.status, 
-        operationplan.owner_id, operationplan.source, coalesce(demand.name, null)
+        operationplan.owner_id, operationplan.source, coalesce(dmd.name, null)
       FROM operationplan
-      INNER JOIN operationplan opplan_parent
-        ON operationplan.owner_id = opplan_parent.id
-      LEFT OUTER JOIN demand 
-        on demand.name = operationplan.demand_id    
-        and demand.status = 'open'  
+      INNER JOIN (select id 
+        from operationplan
+        ) opplan_parent
+      on operationplan.owner_id = opplan_parent.id
+      LEFT OUTER JOIN (select name from demand 
+        where demand.status = 'open'
+        ) dmd
+      on dmd.name = operationplan.demand_id
       WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed' 
         %s and operationplan.type = 'MO'
       ORDER BY operationplan.id ASC

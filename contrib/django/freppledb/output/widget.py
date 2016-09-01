@@ -281,21 +281,27 @@ class ManufacturingOrderWidget(Widget):
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
         and status in ('confirmed', 'proposed')
+        and type = 'MO'
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
       select 1, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'confirmed'
+      where status = 'confirmed' 
+        and type = 'MO'
       union all
       select 2, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'proposed' and startdate < %%s + interval '%s day'
+      where status = 'proposed' 
+        and startdate < %%s + interval '%s day'
+         and type = 'MO'
       union all
       select 3, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'proposed' and startdate < %%s + interval '%s day'
+      where status = 'proposed' 
+        and startdate < %%s + interval '%s day'
+         and type = 'MO'
       order by 1, 3
       ''' % (fence1, fence2)
     cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))

@@ -73,6 +73,7 @@ from django.views.generic.base import View
 
 from freppledb.boot import getAttributes
 from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
+from freppledb.admin import data_site
 
 
 import logging
@@ -1965,6 +1966,11 @@ def exportWorkbook(request):
       header = []
       source = False
       lastmodified = False
+      try:
+        # The admin model of the class can define some fields to exclude from the export
+        exclude = data_site._registry[model].exclude        
+      except:
+        exclude = None      
       for i in model._meta.fields:
         if i.name in ['lft', 'rght', 'lvl']:
           continue  # Skip some fields of HierarchyModel
@@ -1972,8 +1978,8 @@ def exportWorkbook(request):
           source = True  # Put the source field at the end
         elif i.name == 'lastmodified':
           lastmodified = True  # Put the last-modified field at the very end
-        else:
-          fields.append(connections[request.database].ops.quote_name(i.column))
+        elif not (exclude and i.name in exclude and not i.name == model._meta.pk.name.lower()):          
+          fields.append(i.column)
           header.append(force_text(i.verbose_name))
       if source:
         fields.append("source")
@@ -1989,18 +1995,13 @@ def exportWorkbook(request):
       # Loop over all records
       if issubclass(model, HierarchyModel):
         model.rebuildHierarchy(database=request.database)
-        cursor.execute(
-          "SELECT %s FROM %s ORDER BY lvl, 1" %
-          (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
-          )
+        query = model.objects.all().using(request.database).order_by('lvl', 'pk')
       else:
-        cursor.execute(
-          "SELECT %s FROM %s ORDER BY 1" %
-          (",".join(fields), connections[request.database].ops.quote_name(model._meta.db_table))
-          )
-      for rec in cursor.fetchall():
+        query = model.objects.all().using(request.database).order_by('pk')
+      for rec in query.values_list(*fields):
         ws.append([ _getCellValue(f) for f in rec ])
-    except:
+    except Exception as e:
+      print(e)
       pass  # Silently ignore the error and move on to the next entity.
 
   # Not a single entity to export
@@ -2065,6 +2066,13 @@ def importWorkbook(request):
       changed = 0
       added = 0
       numerrors = 0
+
+      try:
+        # The admin model of the class can define some fields to exclude from the import
+        exclude = data_site._registry[model].exclude
+      except:
+        exclude = None      
+      
       for row in ws.iter_rows():
         with transaction.atomic(using=request.database):
           rownum += 1
@@ -2081,7 +2089,7 @@ def importWorkbook(request):
                 value = value.lower()
               for i in model._meta.fields:
                 if value == i.name.lower() or value == i.verbose_name.lower():
-                  if i.editable is True:
+                  if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
                     headers.append(i)
                   else:
                     headers.append(False)

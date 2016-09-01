@@ -1067,7 +1067,7 @@ class ManufacturingOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return ManufacturingOrder.objects.all().extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)"
       })
   
   rows = (
@@ -1110,7 +1110,7 @@ class DistributionOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return DistributionOrder.objects.all().extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)"
       })
 
   rows = (
@@ -1162,7 +1162,7 @@ class PurchaseOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return PurchaseOrder.objects.all().extra(select={
-      'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg), '')"
+      'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg), '')"
       })
 
   rows = (

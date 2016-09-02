@@ -558,6 +558,7 @@ class Calendar : public HasName<Calendar>, public HasSource
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       HasSource::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, BASE + WRITE_FULL);
     }
 

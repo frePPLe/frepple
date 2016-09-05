@@ -1,6 +1,6 @@
 # frePPLe
 
-## Open source production planning and scheduling
+## Open source supply chain planning
 
 FrePPLe is an easy-to-use and easy-to-implement open source **advanced planning and scheduling** tool for manufacturing companies.
 
@@ -20,7 +20,7 @@ The latest stable release can be downloaded from [http://sourceforge.net](https:
 
 ## Documentation
 
-Visit [http://frepple.com](http://frepple.com) for documentation, screencasts and build instructions.
+Visit [https://frepple.com](http://frepple.com) for documentation, screencasts and build instructions.
 
 ## License
 

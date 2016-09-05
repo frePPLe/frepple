@@ -142,24 +142,10 @@ class Command(BaseCommand):
             models.append( (ifile, model, contenttype_id, deps) )
 
         # Sort the list of models, based on dependencies between models
-        cnt = len(models)
-        ok = False
-        while not ok:
-          ok = True
-          for i in range(cnt):
-            for j in range(i + 1, cnt):
-              if models[i][1] != models[j][1] \
-                and models[i][1] in models[j][3] \
-                and (not models[j][1].__bases__ \
-                     or (models[j][1].__bases__ and models[j][1].__bases__ != models[i][1].__bases__)):
-                  # A subsequent model i depends on model i. The list ordering is
-                  # thus not ok yet. We move this element to the end of the list.
-                  models.append(models.pop(i))
-                  ok = False
-        task.status = '10%'
-        task.save(using=self.database)
+        models = GridReport.sort_models(models)
 
         i=0
+        cnt = len(models)
         for ifile, model, contenttype_id, dependencies in models:
           i += 1
           print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile)
@@ -168,12 +154,12 @@ class Command(BaseCommand):
           print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile)
           task.status = str(int(10+i/cnt*80))+'%'
           task.save(using=self.database)
-      
+
       else:
         errors += 1
         cnt = 0
         print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile)
-        
+
       # Task update
       if errors:
         task.status = 'Failed'

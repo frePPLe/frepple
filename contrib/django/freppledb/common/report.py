@@ -40,6 +40,7 @@ import json
 from io import StringIO, BytesIO
 from openpyxl import load_workbook, Workbook
 
+from django.db.models import Model
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
@@ -538,12 +539,14 @@ class GridReport(View):
     ws.append([ force_text(f.title).title() for f in reportclass.rows if f.title and not f.hidden ])
 
     # Loop over all records
-    fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden ]
+    fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden]
+
     if isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*fields):
+
       if hasattr(row, "__getitem__"):
         ws.append([ _getCellValue(row[f]) for f in fields ])
       else:
@@ -935,17 +938,45 @@ class GridReport(View):
     resp.status_code = ok and 200 or 500
     return resp
 
-
   @staticmethod
   def dependent_models(m, found):
     ''' An auxilary method that constructs a set of all dependent models'''
     for f in m._meta.get_fields():
       if f.is_relation and f.auto_created and f.related_model != m and f.related_model not in found:
         for sub in f.related_model.__subclasses__():
-          found.update([sub])          
+#        if sub not in found:
+          found.update([sub])
         found.update([f.related_model])
         GridReport.dependent_models(f.related_model, found)
-    
+
+  @staticmethod
+  def sort_models(models):
+    # Sort the list of models, based on dependencies between models
+    cnt = len(models)
+    ok = False
+    while not ok:
+      ok = True
+      for i in range(cnt):
+        j = i + 1
+        while j < cnt:
+          if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
+            i_base=models[i][1].__base__
+            if i_base == Model or i_base._meta.abstract:
+              i_base=None
+            j_base=models[j][1].__base__
+            if j_base == Model or j_base._meta.abstract:
+              j_base=None
+            if i_base == j_base and i_base and j_base:
+              j += 1
+              continue
+            if i_base == models[j][1] or j_base == models[i][1]:
+              j += 1
+              continue
+            models.append(models.pop(i))
+            j = i
+            ok = False
+          j += 1
+    return models
 
   @classmethod
   def erase(reportclass, request):
@@ -1249,7 +1280,7 @@ class GridReport(View):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  data = str(data)
+                  data = str(data) if data else None
                 elif isinstance(headers[colnum], (DateField, DateTimeField)):
                   if isinstance(data, datetime):
                     # Rounding to second
@@ -2021,20 +2052,7 @@ def importWorkbook(request):
         models.append( (ws_name, model, contenttype_id, deps) )
 
     # Sort the list of models, based on dependencies between models
-    cnt = len(models)
-    ok = False
-    while not ok:
-      ok = True
-      for i in range(cnt):
-        for j in range(i + 1, cnt):
-          if models[i][1] != models[j][1] \
-            and models[i][1] in models[j][3] \
-            and (not models[j][1].__bases__ \
-                 or (models[j][1].__bases__ and models[j][1].__bases__ != models[i][1].__bases__)):
-              # A subsequent model i depends on model i. The list ordering is
-              # thus not ok yet. We move this element to the end of the list.              
-              models.append(models.pop(i))            
-              ok = False
+    models = GridReport.sort_models(models)
     
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
@@ -2108,7 +2126,7 @@ def importWorkbook(request):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  data = str(data)
+                  data = str(data) if data else None
                 elif isinstance(headers[colnum], (DateField, DateTimeField)):
                   if isinstance(data, datetime):
                     # Rounding to second

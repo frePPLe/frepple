@@ -3784,6 +3784,7 @@ class ItemDistribution : public Object,
       m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity, 1.0);
       m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
       m->addIteratorField<Cls, OperationIterator, OperationItemDistribution>(Tags::operations, Tags::operation, &Cls::getOperations, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasSource::registerFields<Cls>(m);
     }
 
@@ -3945,6 +3946,7 @@ public:
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+    m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     HasSource::registerFields<Cls>(m);
   }
 
@@ -4374,6 +4376,7 @@ class ItemSupplier : public Object,
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
       m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity, &Cls::setResourceQuantity, 1.0);
       m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasSource::registerFields<Cls>(m);
     }
 
@@ -6101,6 +6104,7 @@ class Skill : public HasName<Skill>, public HasSource
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "", MANDATORY);
       m->addIteratorField<Cls, resourcelist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getResources);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasSource::registerFields<Cls>(m);
     }
   private:
@@ -7954,7 +7958,7 @@ class Plan : public Plannable, public Object
       m->addIteratorField<Plan, Operation::loadlist::iterator, Load>(Tags::loads, Tags::load); // Only for XML import
       m->addIteratorField<Plan, Operation::flowlist::iterator, Flow>(Tags::flows, Tags::flow); // Only for XML import
       m->addIteratorField<Plan, Item::supplierlist::iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier); // Only for XML import
-      m->addIteratorField<Plan, Location::distributionoriginlist::iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution);
+      m->addIteratorField<Plan, Location::distributionoriginlist::iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution); // Only for XML import
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans);
     }
 };

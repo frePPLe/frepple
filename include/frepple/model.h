@@ -8408,10 +8408,14 @@ class ProblemInvalidData : public Problem
 
     Object* getOwner() const
     {
-      if (entity == "demand") return static_cast<Demand*>(owner);
-      if (entity == "buffer") return static_cast<Buffer*>(owner);
-      if (entity == "resource") return static_cast<Resource*>(owner);
-      if (entity == "operation") return static_cast<Operation*>(owner);
+      if (entity == "demand")
+        return static_cast<Demand*>(owner);
+      if (entity == "buffer" || entity == "material")
+        return static_cast<Buffer*>(owner);
+      if (entity == "resource" || entity == "capacity")
+        return static_cast<Resource*>(owner);
+      if (entity == "operation")
+        return static_cast<Operation*>(owner);
       throw LogicException("Unknown problem entity type");
     }
 

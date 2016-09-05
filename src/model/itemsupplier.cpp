@@ -522,7 +522,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     // Create operation plan
     opplan = oper->createOperationPlan(qty, start, end);
     new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier", "operation",
-      Date::infinitePast, Date::infiniteFuture, 1);
+      start, end, qty);
   }
   else
     // Create the operationplan

@@ -448,6 +448,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   }
 
   // No matching operation is found.
+  OperationPlan *opplan = NULL;
   if (!oper)
   {
     // We'll create one now, but that requires that we have an origin defined.
@@ -484,12 +485,16 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     itemdist->setItem(item);
     itemdist->setDestination(dest);
     oper = new OperationItemDistribution(itemdist, originbuffer, destbuffer);
-    new ProblemInvalidData(oper, "Distribution orders on unauthorized lanes", "operation",
-      Date::infinitePast, Date::infiniteFuture, 1);
+    // Create operation plan
+    opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
+    new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operation",
+      start, end, qty);
   }
+  else
+    // Create operation plan
+    opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
 
-  // Finally, create the operationplan
-  OperationPlan *opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
+  // Set operationplan fields
   if (id)
     opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
   if (status)

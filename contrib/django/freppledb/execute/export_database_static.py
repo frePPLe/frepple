@@ -154,11 +154,11 @@ class exportStaticModel(object):
         cursor.execute("delete from calendarbucket")
 
       cursor.executemany(
-        '''insert into calendarbucket
-        (calendar_id,startdate,enddate,id,priority,value,
-         sunday,monday,tuesday,wednesday,thursday,friday,saturday,
-         starttime,endtime,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into calendarbucket \
+        (calendar_id,startdate,enddate,id,priority,value, \
+        sunday,monday,tuesday,wednesday,thursday,friday,saturday, \
+        starttime,endtime,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
@@ -182,10 +182,13 @@ class exportStaticModel(object):
       cursor.execute("SELECT name FROM operation")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into operation
-        (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type,duration,
-         duration_per,location_id,cost,search,description,category,subcategory,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into operation \
+        (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type, \
+        duration,duration_per,location_id,cost,search,description,category, \
+        subcategory,source,lastmodified) \
+        values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s, \
+        %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s, \
+        %s,%s,%s,%s,%s)",
         [
           (
             i.name, i.fence, i.posttime, round(i.size_minimum, 4),
@@ -202,11 +205,13 @@ class exportStaticModel(object):
           if i.name not in primary_keys and not i.hidden and not isinstance(i, frepple.operation_itemsupplier) and i.name != 'setup operation' and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update operation
-         set fence=%s, posttime=%s, sizeminimum=%s, sizemultiple=%s,
-         sizemaximum=%s, type=%s, duration=%s, duration_per=%s, location_id=%s, cost=%s, search=%s,
-         description=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s
-         where name=%s''',
+        "update operation \
+        set fence=%s * interval '1 second', posttime=%s, sizeminimum=%s, \
+        sizemultiple=%s, sizemaximum=%s, type=%s, \
+        duration=%s * interval '1 second', duration_per=%s * interval '1 second', \
+        location_id=%s, cost=%s, search=%s, description=%s, \
+        category=%s, subcategory=%s, source=%s, lastmodified=%s \
+        where name=%s",
         [
           (
             i.fence, i.posttime, round(i.size_minimum, 4),
@@ -263,42 +268,47 @@ class exportStaticModel(object):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation materials...")
       starttime = time()
-      cursor.execute("SELECT operation_id, buffer_id FROM operationmaterial")  # todo oper&buffer are not necesarily unique
+      cursor.execute("SELECT operation_id, item_id, effective_start FROM operationmaterial")
       primary_keys = set([ i for i in cursor.fetchall() ])
 
-      def flows():
+      def flows(source):
         for o in frepple.operations():
+          if o.hidden:
+            continue
           for i in o.flows:
-            yield i
+            if i.hidden:
+              continue
+            if not source or source == i.source:
+              yield i
 
       cursor.executemany(
-        '''insert into operationmaterial
-        (operation_id,buffer_id,quantity,type,effective_start,effective_end,name,priority,
-        search,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into operationmaterial \
+        (operation_id,item_id,quantity,type,effective_start,effective_end,\
+        name,priority,search,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.operation.name, i.buffer.name, round(i.quantity, 4),
-            i.type[5:], str(i.effective_start), str(i.effective_end),
+            i.operation.name, i.buffer.item.name, round(i.quantity, 4),
+            i.type[5:], i.effective_start, i.effective_end,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source, self.timestamp
           )
-          for i in flows()
-          if (i.operation.name, i.buffer.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          for i in flows(self.source)
+          if (i.operation.name, i.buffer.item.name, i.effective_start) not in primary_keys
         ])
       cursor.executemany(
-        '''update operationmaterial
-         set quantity=%s, type=%s, effective_start=%s, effective_end=%s, name=%s,
-         priority=%s, search=%s, source=%s, lastmodified=%s
-         where operation_id=%s and buffer_id=%s''',
+        "update operationmaterial \
+        set quantity=%s, type=%s, effective_end=%s, name=%s, \
+        priority=%s, search=%s, source=%s, lastmodified=%s \
+        where operation_id=%s and item_id=%s and effective_start=%s",
         [
           (
             round(i.quantity, 4),
-            i.type[5:], str(i.effective_start), str(i.effective_end),
+            i.type[5:], i.effective_end,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
-            self.timestamp, i.operation.name, i.buffer.name,
+            self.timestamp, i.operation.name, i.buffer.item.name, i.effective_start
           )
-          for i in flows()
-          if (i.operation.name, i.buffer.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          for i in flows(self.source)
+          if (i.operation.name, i.buffer.name) in primary_keys
         ])
       print('Exported operation materials in %.2f seconds' % (time() - starttime))
 
@@ -307,34 +317,39 @@ class exportStaticModel(object):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation resources...")
       starttime = time()
-      cursor.execute("SELECT operation_id, resource_id FROM operationresource")  # todo oper&resource are not necesarily unique
+      cursor.execute("SELECT operation_id, resource_id, effective_start FROM operationresource")
       primary_keys = set([ i for i in cursor.fetchall() ])
 
-      def loads():
+      def loads(source):
         for o in frepple.operations():
+          if o.hidden:
+            continue
           for i in o.loads:
-            yield i
+            if i.hidden:
+              continue
+            if not source or source == i.source:
+              yield i
 
       cursor.executemany(
-        '''insert into operationresource
-        (operation_id,resource_id,quantity,setup,effective_start,effective_end,name,priority,
-        search,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into operationresource \
+        (operation_id,resource_id,quantity,setup,effective_start, \
+        effective_end,name,priority,search,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i.operation.name, i.resource.name, round(i.quantity, 4),
-            i.setup, str(i.effective_start), str(i.effective_end),
+            i.setup, str(i.effective_start), i.effective_end,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp
           )
-          for i in loads()
-          if (i.operation.name, i.resource.name) not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          for i in loads(self.source)
+          if (i.operation.name, i.resource.name, i.effective_start) not in primary_keys
         ])
       cursor.executemany(
-        '''update operationresource
-         set quantity=%s, setup=%s, effective_start=%s, effective_end=%s, name=%s,
-         priority=%s, search=%s, source=%s, lastmodified=%s
-         where operation_id=%s and resource_id=%s''',
+        "update operationresource \
+        set quantity=%s, setup=%s, effective_start=%s, effective_end=%s, \
+        name=%s, priority=%s, search=%s, source=%s, lastmodified=%s \
+        where operation_id=%s and resource_id=%s",
         [
           (
             round(i.quantity, 4),
@@ -342,8 +357,8 @@ class exportStaticModel(object):
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp, i.operation.name, i.resource.name,
           )
-          for i in loads()
-          if (i.operation.name, i.resource.name) in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          for i in loads(self.source)
+          if (i.operation.name, i.resource.name, i.effective_start) in primary_keys
         ])
       print('Exported operation resources in %.2f seconds' % (time() - starttime))
 
@@ -355,10 +370,10 @@ class exportStaticModel(object):
       cursor.execute("SELECT name FROM buffer")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into buffer
-        (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id,
-         type,min_interval,category,subcategory,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into buffer \
+        (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id, \
+        type,min_interval,category,subcategory,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s)",
         [
           (
             i.name, i.description, i.location and i.location.name or None,
@@ -372,12 +387,12 @@ class exportStaticModel(object):
           if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update buffer
-         set description=%s, location_id=%s, item_id=%s, onhand=%s,
-         minimum=%s, minimum_calendar_id=%s, type=%s,
-         min_interval=%s, category=%s, subcategory=%s, source=%s,
-         lastmodified=%s
-         where name=%s''',
+        "update buffer \
+         set description=%s, location_id=%s, item_id=%s, onhand=%s, \
+         minimum=%s, minimum_calendar_id=%s, type=%s, \
+         min_interval=%s * interval '1 second', category=%s, \
+         subcategory=%s, source=%s, lastmodified=%s \
+         where name=%s",
         [
           (
             i.description, i.location and i.location.name or None, i.item and i.item.name or None,
@@ -487,7 +502,7 @@ class exportStaticModel(object):
         "insert into itemsupplier \
         (supplier_id,item_id,location_id,leadtime,sizeminimum,sizemultiple, \
          cost,priority,effective_start,effective_end,resource_id,resource_qty,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        values(%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (i.supplier.name, i.item.name, i.location.name if i.location else None,
            i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
@@ -500,7 +515,7 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update itemsupplier \
-         set leadtime=%s, sizeminimum=%s, sizemultiple=%s, \
+         set leadtime=%s * interval '1 second', sizeminimum=%s, sizemultiple=%s, \
          cost=%s, priority=%s, effective_end=%s, \
          source=%s, lastmodified=%s \
          where supplier_id=%s and item_id=%s and location_id=%s and effective_start=%s",
@@ -515,7 +530,7 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update itemsupplier \
-         set leadtime=%s, sizeminimum=%s, sizemultiple=%s, \
+         set leadtime=%s * interval '1 second', sizeminimum=%s, sizemultiple=%s, \
          cost=%s, priority=%s, effective_end=%s, \
          source=%s, lastmodified=%s \
          where supplier_id=%s and item_id=%s and location_id=%s and effective_start is null",
@@ -549,7 +564,7 @@ class exportStaticModel(object):
         "insert into itemdistribution \
         (origin_id,item_id,location_id,leadtime,sizeminimum,sizemultiple, \
          cost,priority,effective_start,effective_end,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        values(%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (i.origin.name, i.item.name, i.destination.name if i.destination else None,
            i.leadtime, i.size_minimum, i.size_multiple, i.cost, i.priority,
@@ -561,8 +576,8 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update itemdistribution \
-         set leadtime=%s, sizeminimum=%s, sizemultiple=%s, \
-         cost=%s, priority=%s, effective_end=%s, \
+         set leadtime=%s * interval '1 second', sizeminimum=%s, \
+         sizemultiple=%s, cost=%s, priority=%s, effective_end=%s, \
          source=%s, lastmodified=%s \
          where origin_id=%s and item_id=%s and location_id=%s and effective_start=%s",
         [
@@ -576,7 +591,7 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update itemdistribution \
-         set leadtime=%s, sizeminimum=%s, sizemultiple=%s, \
+         set leadtime=%s * interval '1 second', sizeminimum=%s, sizemultiple=%s, \
          cost=%s, priority=%s, effective_end=%s, \
          source=%s, lastmodified=%s \
          where origin_id=%s and item_id=%s and location_id=%s and effective_start is null",
@@ -598,35 +613,35 @@ class exportStaticModel(object):
       cursor.execute("SELECT name FROM demand")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into demand
-        (name,due,quantity,priority,item_id,location_id,operation_id,customer_id,
-         minshipment,maxlateness,category,subcategory,source,lastmodified,status)
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into demand \
+        (name,due,quantity,priority,item_id,location_id,operation_id,customer_id, \
+         minshipment,maxlateness,category,subcategory,source,lastmodified,status) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s)",
         [
           (
             i.name, str(i.due), round(i.quantity, 4), i.priority, i.item.name,
-            i.location.name if i.location else None, i.operation.name if i.operation else None,
+            i.location.name if i.location else None, i.operation.name if i.operation and not i.operation.hidden else None,
             i.customer.name if i.customer else None,
-            round(i.minshipment, 4), round(i.maxlateness, 4),
+            round(i.minshipment, 4), i.maxlateness,
             i.category, i.subcategory, i.source, self.timestamp, i.status
           )
           for i in frepple.demands()
           if i.name not in primary_keys and isinstance(i, frepple.demand_default) and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update demand
-         set due=%s, quantity=%s, priority=%s, item_id=%s, location_id=%s,
-         operation_id=%s, customer_id=%s, minshipment=%s, maxlateness=%s,
-         category=%s, subcategory=%s, source=%s, lastmodified=%s, status=%s
-         where name=%s''',
+        "update demand \
+         set due=%s, quantity=%s, priority=%s, item_id=%s, location_id=%s, \
+         operation_id=%s, customer_id=%s, minshipment=%s, maxlateness=%s * interval '1 second', \
+         category=%s, subcategory=%s, source=%s, lastmodified=%s, status=%s \
+         where name=%s",
         [
           (
             str(i.due), round(i.quantity, 4), i.priority,
             i.item.name, i.location.name if i.location else None,
-            i.operation.name if i.operation else None,
+            i.operation.name if i.operation and not i.operation.hidden else None,
             i.customer.name if i.customer else None,
             round(i.minshipment, 4),
-            round(i.maxlateness, 4),
+            i.maxlateness,
             i.category, i.subcategory, i.source, self.timestamp,
             i.status, i.name
           )
@@ -654,9 +669,9 @@ class exportStaticModel(object):
       cursor.execute("SELECT id FROM operationplan")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into operationplan
-        (id,operation_id,quantity,startdate,enddate,status,source,lastmodified)
-        values(%s,%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into operationplan \
+        (id,operation_id,quantity,startdate,enddate,status,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s)",
         [
          (
            i.id, i.operation.name, round(i.quantity, 4),
@@ -666,9 +681,9 @@ class exportStaticModel(object):
          if i.locked and not i.operation.hidden and i.id not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update operationplan
-         set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, status=%s, source=%s, lastmodified=%s
-         where id=%s''',
+        "update operationplan \
+         set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, status=%s, source=%s, lastmodified=%s \
+         where id=%s",
         [
          (
            i.operation.name, round(i.quantity, 4),
@@ -691,18 +706,18 @@ class exportStaticModel(object):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting resources...")
       starttime = time()
-      cursor.execute("SELECT name FROM %s" % connections[self.database].ops.quote_name('resource'))
+      cursor.execute("select name from resource")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into %s
-        (name,description,maximum,maximum_calendar_id,location_id,type,cost,
-         maxearly,setup,setupmatrix_id,category,subcategory,source,lastmodified)
-        values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s)''' % connections[self.database].ops.quote_name('resource'),
+        "insert into resource \
+        (name,description,maximum,maximum_calendar_id,location_id,type,cost, \
+         maxearly,setup,setupmatrix_id,category,subcategory,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s)",
         [
           (
             i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, 4), round(i.maxearly, 4),
+            round(i.cost, 4), i.maxearly,
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
             i.category, i.subcategory, i.source, self.timestamp
           )
@@ -710,11 +725,11 @@ class exportStaticModel(object):
           if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update %s
-         set description=%%s, maximum=%%s, maximum_calendar_id=%%s, location_id=%%s,
-         type=%%s, cost=%%s, maxearly=%%s, setup=%%s, setupmatrix_id=%%s, category=%%s,
-         subcategory=%%s, source=%%s, lastmodified=%%s
-         where name=%%s''' % connections[self.database].ops.quote_name('resource'),
+        "update resource \
+        set description=%s, maximum=%s, maximum_calendar_id=%s, location_id=%s, \
+        type=%s, cost=%s, maxearly=%s * interval '1 second', setup=%s, setupmatrix_id=%s, \
+        category=%s, subcategory=%s, source=%s, lastmodified=%s \
+        where name=%s",
         [
           (
             i.description, i.maximum,
@@ -729,7 +744,7 @@ class exportStaticModel(object):
           if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        "update %s set owner_id=%%s where name=%%s" % connections[self.database].ops.quote_name('resource'),
+        "update resource set owner_id=%s where name=%s",
         [
           (i.owner.name, i.name)
           for i in frepple.resources()
@@ -745,14 +760,14 @@ class exportStaticModel(object):
       cursor.execute("SELECT name FROM skill")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
-        '''insert into skill (name,source,lastmodified) values(%s,%s,%s)''',
+        "insert into skill (name,source,lastmodified) values(%s,%s,%s)",
         [
           ( i.name, i.source, self.timestamp )
           for i in frepple.skills()
           if i.name not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        '''update skill set source=%s, lastmodified=%s where name=%s''',
+        "update skill set source=%s, lastmodified=%s where name=%s",
         [
           (i.source, self.timestamp, i.name)
           for i in frepple.skills()
@@ -774,17 +789,17 @@ class exportStaticModel(object):
             yield (r.effective_start, r.effective_end, r.priority, r.source, self.timestamp, r.resource.name, s.name)
 
       cursor.executemany(
-        '''insert into resourceskill
-        (effective_start,effective_end,priority,source,lastmodified,resource_id,skill_id)
-        values(%s,%s,%s,%s,%s,%s,%s)''',
+        "insert into resourceskill \
+        (effective_start,effective_end,priority,source,lastmodified,resource_id,skill_id) \
+        values(%s,%s,%s,%s,%s,%s,%s)",
         [
           i for i in res_skills()
           if (i[5],i[6]) not in primary_keys and (not self.source or self.source == i[3])
         ])
       cursor.executemany(
-        '''update resourceskill
-        set effective_start=%s, effective_end=%s, priority=%s, source=%s, lastmodified=%s
-        where resource_id=%s and skill_id=%s''',
+        "update resourceskill \
+        set effective_start=%s, effective_end=%s, priority=%s, source=%s, lastmodified=%s \
+        where resource_id=%s and skill_id=%s",
         [
           i for i in res_skills()
           if (i[5],i[6]) in primary_keys and (not self.source or self.source == i[3])
@@ -834,7 +849,7 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into setuprule \
         (setupmatrix_id,priority,fromsetup,tosetup,duration,cost,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s)",
+        values(%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s)",
         [
          (
            i[0].name, i[1].priority, i[1].fromsetup, i[1].tosetup, i[1].duration,
@@ -845,8 +860,9 @@ class exportStaticModel(object):
          if (i[0].name, i[1].priority) not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
-        "update setuprule \
-         set fromsetup=%s, tosetup=%s, duration=%s, cost=%s, source=%s, lastmodified=%s \
+         "update setuprule \
+         set fromsetup=%s, tosetup=%s, duration=%s * interval '1 second', \
+         cost=%s, source=%s, lastmodified=%s \
          where setupmatrix_id=%s and priority=%s",
         [
           (
@@ -911,7 +927,7 @@ class exportStaticModel(object):
       # Update current date if the parameter already exists
       # If it doesn't exist, we want to continue using the system clock for the next run.
       cursor.execute(
-        "UPDATE common_parameter SET value=%s, lastmodified=%s WHERE name='currentdate'",
+        "update common_parameter set value=%s, lastmodified=%s where name='currentdate'",
         (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"), self.timestamp)
         )
       print('Exported parameters in %.2f seconds' % (time() - starttime))

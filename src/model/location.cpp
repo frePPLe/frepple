@@ -57,25 +57,25 @@ DECLARE_EXPORT Location::~Location()
   for (Buffer::iterator buf = Buffer::begin();
       buf != Buffer::end(); ++buf)
     if (buf->getLocation() == this)
-      buf->setLocation(NULL);
+      buf->setLocation(nullptr);
 
   // Remove all references from resources to this location
   for (Resource::iterator res = Resource::begin();
       res != Resource::end(); ++res)
     if (res->getLocation() == this)
-      res->setLocation(NULL);
+      res->setLocation(nullptr);
 
   // Remove all references from operations to this location
   for (Operation::iterator oper = Operation::begin();
       oper != Operation::end(); ++oper)
     if (oper->getLocation() == this)
-      oper->setLocation(NULL);
+      oper->setLocation(nullptr);
 
   // Remove all references from demands to this location
   for (Demand::iterator dmd = Demand::begin();
       dmd != Demand::end(); ++dmd)
     if (dmd->getLocation() == this)
-      dmd->setLocation(NULL);
+      dmd->setLocation(nullptr);
 
   // Remove all item suppliers referencing this location
   for (Supplier::iterator sup = Supplier::begin();

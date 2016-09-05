@@ -210,7 +210,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -220,13 +220,13 @@ DECLARE_EXPORT Object* Flow::finder(const DataValueDict& d)
   // Check operation
   const DataValue* tmp = d.get(Tags::operation);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Operation* oper = static_cast<Operation*>(tmp->getObject());
 
   // Check buffer field
   tmp = d.get(Tags::buffer);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Buffer* buf = static_cast<Buffer*>(tmp->getObject());
 
   // Walk over all flows of the operation, and return
@@ -262,7 +262,7 @@ DECLARE_EXPORT Object* Flow::finder(const DataValueDict& d)
       continue;
     return const_cast<Flow*>(&*fl);
   }
-  return NULL;
+  return nullptr;
 }
 
 } // end namespace

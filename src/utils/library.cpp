@@ -39,14 +39,14 @@ namespace utils
 {
 
 // Repository of all categories and commands
-DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = NULL;
+DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = nullptr;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
 DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
-DECLARE_EXPORT const MetaCategory* Object::metadata = NULL;
+DECLARE_EXPORT const MetaCategory* Object::metadata = nullptr;
 
 // Generic Python type for timeline events
-DECLARE_EXPORT PythonType* EventPythonType = NULL;
+DECLARE_EXPORT PythonType* EventPythonType = nullptr;
 
 // Repository of loaded modules
 DECLARE_EXPORT set<string> Environment::moduleRegistry;
@@ -243,20 +243,20 @@ DECLARE_EXPORT void Environment::loadModule(string lib)
 
   // Change the error mode: we handle errors now, not the operating system
   UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
-  HINSTANCE handle = LoadLibraryEx(lib.c_str(),NULL,LOAD_WITH_ALTERED_SEARCH_PATH);
-  if (!handle) handle = LoadLibraryEx(lib.c_str(), NULL, 0);
+  HINSTANCE handle = LoadLibraryEx(lib.c_str(),nullptr,LOAD_WITH_ALTERED_SEARCH_PATH);
+  if (!handle) handle = LoadLibraryEx(lib.c_str(), nullptr, 0);
   if (!handle)
   {
     // Get the error description
     char error[256];
     FormatMessage(
       FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
+      nullptr,
       GetLastError(),
       0,
       error,
       256,
-      NULL );
+      nullptr );
     throw RuntimeException(error);
   }
   SetErrorMode(em);  // Restore the previous error mode
@@ -270,12 +270,12 @@ DECLARE_EXPORT void Environment::loadModule(string lib)
     char error[256];
     FormatMessage(
       FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
+      nullptr,
       GetLastError(),
       0,
       error,
       256,
-      NULL );
+      nullptr );
     throw RuntimeException(error);
   }
 
@@ -337,7 +337,7 @@ DECLARE_EXPORT void MetaClass::addClass (const string& a, const string& b,
   if (isDefault)
     cat->classes[Keyword::hash("default")] = this;
 
-  // Set method pointers to NULL
+  // Set method pointers to nullptr
   factoryMethod = f;
 }
 
@@ -359,7 +359,7 @@ DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
   grouptag = &Keyword::find(group.c_str());
 
   // Maintain a linked list of all registered categories
-  nextCategory = NULL;
+  nextCategory = nullptr;
   if (!firstCategory)
     firstCategory = this;
   else
@@ -375,7 +375,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(Keyword::hash(c));
-  return (i!=categoriesByTag.end()) ? i->second : NULL;
+  return (i!=categoriesByTag.end()) ? i->second : nullptr;
 }
 
 
@@ -383,7 +383,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtyp
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(h);
-  return (i!=categoriesByTag.end()) ? i->second : NULL;
+  return (i!=categoriesByTag.end()) ? i->second : nullptr;
 }
 
 
@@ -391,7 +391,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ch
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(Keyword::hash(c));
-  return (i!=categoriesByGroupTag.end()) ? i->second : NULL;
+  return (i!=categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 
@@ -399,7 +399,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ha
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
-  return (i!=categoriesByGroupTag.end()) ? i->second : NULL;
+  return (i!=categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
 
@@ -407,7 +407,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const char* c) const
 {
   // Look up in the registered classes
   MetaCategory::ClassMap::const_iterator j = classes.find(Keyword::hash(c));
-  return (j == classes.end()) ? NULL : j->second;
+  return (j == classes.end()) ? nullptr : j->second;
 }
 
 
@@ -415,7 +415,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
 {
   // Look up in the registered classes
   MetaCategory::ClassMap::const_iterator j = classes.find(h);
-  return (j == classes.end()) ? NULL : j->second;
+  return (j == classes.end()) ? nullptr : j->second;
 }
 
 
@@ -431,7 +431,7 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
     if (j != i->second->classes.end()) return j->second;
   }
   // Not found...
-  return NULL;
+  return nullptr;
 }
 
 
@@ -461,7 +461,7 @@ DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(const Keyword& key) con
   for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getName() == key)
       return *i;
-  return NULL;
+  return nullptr;
 }
 
 
@@ -470,7 +470,7 @@ DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(hashtype h) const
   for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getHash() == h)
       return *i;
-  return NULL;
+  return nullptr;
 }
 
 
@@ -478,7 +478,7 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 {
   // Validate the action
   if (!x)
-    throw LogicException("Invalid action NULL");
+    throw LogicException("Invalid action nullptr");
   else if (!strcmp(x, "AC"))
     return ADD_CHANGE;
   else if (!strcmp(x, "A"))
@@ -570,7 +570,7 @@ Object* MetaCategory::ControllerDefault (
       return result;
   }
   throw LogicException("Unreachable code reached");
-  return NULL;
+  return nullptr;
 }
 
 
@@ -579,7 +579,7 @@ DECLARE_EXPORT bool matchWildcard(const char* wild, const char *str)
   // Empty arguments: always return a match
   if (!wild || !str) return 1;
 
-  const char *cp = NULL, *mp = NULL;
+  const char *cp = nullptr, *mp = nullptr;
 
   while ((*str) && *wild != '*')
   {

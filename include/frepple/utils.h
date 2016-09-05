@@ -564,7 +564,7 @@ class PythonInterpreter
       * - The function that implements it.
       * - Combination of METH_* flags, which mostly describe the args
       *   expected by the C func.
-      * - The __doc__ attribute, or NULL.
+      * - The __doc__ attribute, or nullptr.
       */
     static DECLARE_EXPORT void registerGlobalMethod(
       const char*, PyCFunction, int, const char*, bool = true
@@ -1837,7 +1837,7 @@ class MetaClass : public NonCopyable
 
     /** Initialize the data structure and register the class. */
     DECLARE_EXPORT void addClass(const string&, const string&,
-        bool = false, creatorDefault = NULL);
+        bool = false, creatorDefault = nullptr);
 
     /** This constructor registers the metadata of a class. */
     template <class T> static inline MetaClass* registerClass(
@@ -1938,18 +1938,18 @@ class MetaClass : public NonCopyable
     static DECLARE_EXPORT void printClasses();
 
     /** Find a particular class by its name. If it can't be located the return
-      * value is NULL. */
+      * value is nullptr. */
     static DECLARE_EXPORT const MetaClass* findClass(const char*);
 
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(NULL), pythonClass(NULL), factoryMethod(NULL), parent(false) {}
+      category(nullptr), pythonClass(nullptr), factoryMethod(nullptr), parent(false) {}
 
     /** Register a field. */
     template <class Cls> inline void addStringField(
       const Keyword& k,
       string (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(const string&) = NULL,
+      void (Cls::*setfunc)(const string&) = nullptr,
       string dflt = "",
       unsigned int c = BASE
       )
@@ -1960,7 +1960,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addIntField(
       const Keyword& k,
       int (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(int) = NULL,
+      void (Cls::*setfunc)(int) = nullptr,
       int d = 0,
       unsigned int c = BASE
       )
@@ -1982,7 +1982,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addShortField(
       const Keyword& k,
       short (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(short) = NULL,
+      void (Cls::*setfunc)(short) = nullptr,
       int d = 0,
       unsigned int c = BASE
       )
@@ -1993,7 +1993,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addUnsignedLongField(
       const Keyword& k,
       unsigned long (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(unsigned long) = NULL,
+      void (Cls::*setfunc)(unsigned long) = nullptr,
       unsigned long d = 0.0,
       unsigned int c = BASE
       )
@@ -2004,7 +2004,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addDoubleField(
       const Keyword& k,
       double (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(double) = NULL,
+      void (Cls::*setfunc)(double) = nullptr,
       double d = 0.0,
       unsigned int c = BASE
       )
@@ -2097,7 +2097,7 @@ class MetaClass : public NonCopyable
   private:
     /** This constructor registers the metadata of a class. */
     MetaClass(const string& cls, size_t sz, creatorDefault f)
-      : type(cls), size(sz), category(NULL), pythonClass(NULL), factoryMethod(f),
+      : type(cls), size(sz), category(nullptr), pythonClass(nullptr), factoryMethod(f),
       parent(false), isDefault(false)
     {
       factoryMethod = f;
@@ -2106,7 +2106,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class. */
     MetaClass(const string& cat, const string& cls, size_t sz, bool def = false)
-      : size(sz), pythonClass(NULL), isDefault(def)
+      : size(sz), pythonClass(nullptr), isDefault(def)
     {
       addClass(cat, cls, def);
     }
@@ -2114,7 +2114,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
     MetaClass(const string& cat, const string& cls, size_t sz, creatorDefault f,
-        bool def = false) : size(sz), pythonClass(NULL), isDefault(def)
+        bool def = false) : size(sz), pythonClass(nullptr), isDefault(def)
     {
       addClass(cat, cls, def);
       factoryMethod = f;
@@ -2169,7 +2169,7 @@ class MetaCategory : public MetaClass
       * classes without key fields and which rely on a default constructor.
       */
     static Object* ControllerDefault (
-      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      const MetaClass*, const DataValueDict&, CommandManager* = nullptr
       );
 
     /** Destructor. */
@@ -2191,35 +2191,35 @@ class MetaCategory : public MetaClass
     typedef map < hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
     /** Looks up a category name in the registry. If the category can't be
-      * located the return value is NULL. */
+      * located the return value is nullptr. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const char*);
 
     /** Looks up a category name in the registry. If the category can't be
-      * located the return value is NULL. */
+      * located the return value is nullptr. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const hashtype);
 
     /** Looks up a category name in the registry. If the category can't be
-      * located the return value is NULL. */
+      * located the return value is nullptr. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
 
     /** Looks up a category name in the registry. If the category can't be
-      * located the return value is NULL. */
+      * located the return value is nullptr. */
     static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
 
     /** Find a class in this category with a specified name.<br>
-      * If the catrgory can't be found the return value is NULL.
+      * If the catrgory can't be found the return value is nullptr.
       */
     DECLARE_EXPORT const MetaClass* findClass(const char*) const;
 
     /** Find a class in this category with a specified name.<br>
-      * If the catrgory can't be found the return value is NULL.
+      * If the catrgory can't be found the return value is nullptr.
       */
     DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
 
     /** Find an object given a dictionary of values. */
     Object* find(const DataValueDict& key) const
     {
-      return findFunction ? findFunction(key) : NULL;
+      return findFunction ? findFunction(key) : nullptr;
     }
 
     /** A control function for reading objects of a category.
@@ -2452,7 +2452,7 @@ class Serializer
 
     /** Constructor with a given stream. */
     Serializer(ostream& os) : numObjects(0),
-      numParents(0), currentObject(NULL), parentObject(NULL),
+      numParents(0), currentObject(nullptr), parentObject(nullptr),
       content(BASE), skipHeader(false), skipFooter(false)
     {
       m_fp = &os;
@@ -2460,7 +2460,7 @@ class Serializer
 
     /** Default constructor. */
     Serializer() : numObjects(0), numParents(0),
-      currentObject(NULL), parentObject(NULL), content(BASE),
+      currentObject(nullptr), parentObject(nullptr), content(BASE),
       skipHeader(false), skipFooter(false), writeHidden(false)
     {
       m_fp = &logger;
@@ -2689,7 +2689,7 @@ class DataKeyword
 
   public:
     /** Default constructor. */
-    explicit DataKeyword() : hash(0), ch(NULL) {}
+    explicit DataKeyword() : hash(0), ch(nullptr) {}
 
     /** Constructor. */
     explicit DataKeyword(const string& n)
@@ -2897,10 +2897,10 @@ class XMLData : public DataValue
     }
 
     /** Default constructor. */
-    XMLData() : m_obj(NULL) {}
+    XMLData() : m_obj(nullptr) {}
 
     /** Constructor. */
-    XMLData(const string& v) : m_strData(v), m_obj(NULL) {}
+    XMLData(const string& v) : m_strData(v), m_obj(nullptr) {}
 
     /** Copy constructor from DataValue base class. */
     XMLData(const DataValue& d)
@@ -2920,7 +2920,7 @@ class XMLData : public DataValue
     void reset()
     {
       m_strData.clear();
-      m_obj = NULL;
+      m_obj = nullptr;
     }
 
     /** Add some characters to this data field of this element.<br>
@@ -3042,7 +3042,7 @@ class XMLData : public DataValue
     virtual void setString(const string& v)
     {
       m_strData = v;
-      m_obj = NULL;
+      m_obj = nullptr;
     }
 
     virtual void setBool(const bool b)
@@ -3178,12 +3178,12 @@ class PythonData : public DataValue
       Py_INCREF(obj);
     }
 
-    /** Set the internal pointer to NULL. */
+    /** Set the internal pointer to nullptr. */
     inline void setNull()
     {
       if (obj)
         Py_DECREF(obj);
-      obj = NULL;
+      obj = nullptr;
     }
 
     /** This conversion operator casts the object back to a PyObject pointer. */
@@ -3195,7 +3195,7 @@ class PythonData : public DataValue
     /** Check for null value. */
     operator bool() const
     {
-      return obj != NULL && obj != Py_None;
+      return obj != nullptr && obj != Py_None;
     }
 
     /** Assignment operator. */
@@ -3360,7 +3360,7 @@ class PythonData : public DataValue
     }
 
     /** Return the frePPle Object referred to by the Python value.
-      * If it points to a non-frePPLe object, the return value is NULL.
+      * If it points to a non-frePPLe object, the return value is nullptr.
       */
     DECLARE_EXPORT Object* getObject() const;
 
@@ -3371,56 +3371,56 @@ class PythonData : public DataValue
     DECLARE_EXPORT PythonData(Object* p);
 
     /** Convert a C++ string into a Unicode Python string. */
-    inline PythonData(const string& val) : obj(NULL)
+    inline PythonData(const string& val) : obj(nullptr)
     {
       setString(val);
     }
 
     /** Convert a C++ double into a Python number. */
-    inline PythonData(const double val) : obj(NULL)
+    inline PythonData(const double val) : obj(nullptr)
     {
       setDouble(val);
     }
 
     /** Convert a C++ integer into a Python integer. */
-    inline PythonData(const int val) : obj(NULL)
+    inline PythonData(const int val) : obj(nullptr)
     {
       setInt(val);
     }
 
     /** Convert a C++ unsigned integer into a Python integer. */
-    inline PythonData(const unsigned int val) : obj(NULL)
+    inline PythonData(const unsigned int val) : obj(nullptr)
     {
       setInt(val);
     }
 
     /** Convert a C++ long into a Python long. */
-    inline PythonData(const long val) : obj(NULL)
+    inline PythonData(const long val) : obj(nullptr)
     {
       setLong(val);
     }
 
     /** Convert a C++ unsigned long into a Python long. */
-    inline PythonData(const unsigned long val) : obj(NULL)
+    inline PythonData(const unsigned long val) : obj(nullptr)
     {
       setUnsignedLong(val);
     }
 
     /** Convert a C++ boolean into a Python boolean. */
-    inline PythonData(const bool val) : obj(NULL)
+    inline PythonData(const bool val) : obj(nullptr)
     {
       setBool(val);
     }
 
     /** Convert a frePPLe duration into a Python number representing
       * the number of seconds. */
-    inline PythonData(const Duration val) : obj(NULL)
+    inline PythonData(const Duration val) : obj(nullptr)
     {
       setDuration(val);
     }
 
     /** Convert a frePPLe date into a Python datetime.datetime object. */
-    PythonData(const Date val) : obj(NULL)
+    PythonData(const Date val) : obj(nullptr)
     {
       setDate(val);
     }
@@ -3489,7 +3489,7 @@ class PythonFunction : public PythonData
 {
   public:
     /** Default constructor. */
-    PythonFunction() : func(NULL) {}
+    PythonFunction() : func(nullptr) {}
 
     /** Constructor. */
     DECLARE_EXPORT PythonFunction(const string&);
@@ -3527,13 +3527,13 @@ class PythonFunction : public PythonData
     /** Conversion operator to a string. */
     operator string() const
     {
-      return func ? PyEval_GetFuncName(func) : "NULL";
+      return func ? PyEval_GetFuncName(func) : "nullptr";
     }
 
     /** Conversion operator to bool. */
     operator bool() const
     {
-      return func != NULL;
+      return func != nullptr;
     }
 
     /** Call the Python function without arguments. */
@@ -3592,7 +3592,7 @@ class PythonDataValueDict : public DataValueDict
       }
       PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
       if (!val)
-        return NULL;
+        return nullptr;
       const_cast<PythonDataValueDict*>(this)->result = PythonData(val);
       return &result;
     }
@@ -3624,14 +3624,14 @@ class Object : public PyObject
 
   public:
     /** Constructor. */
-    explicit Object() : dict(NULL) {}
+    explicit Object() : dict(nullptr) {}
 
     /** Destructor. */
     virtual ~Object()
     {
       if (PyObject::ob_refcnt > 1)
         logger << "Warning: Deleting "
-          << (PyObject::ob_type->tp_name && PyObject::ob_type ? PyObject::ob_type->tp_name : "NULL")
+          << (PyObject::ob_type->tp_name && PyObject::ob_type ? PyObject::ob_type->tp_name : "nullptr")
             << " object that is still referenced "
             << (PyObject::ob_refcnt-1) << " times" << endl;
       if (dict) Py_DECREF(dict);
@@ -3654,7 +3654,7 @@ class Object : public PyObject
       *   4: string
       */
     DECLARE_EXPORT void setProperty(
-      const string& name, const DataValue& value, short type, CommandManager* mgr = NULL
+      const string& name, const DataValue& value, short type, CommandManager* mgr = nullptr
       );
 
     /** Set a custom property referring to a python object. */
@@ -3798,7 +3798,7 @@ class Object : public PyObject
       catch (...)
       {
         PythonType::evalException();
-        return NULL;
+        return nullptr;
       }
     }
 
@@ -3843,7 +3843,7 @@ class Object : public PyObject
     virtual PyObject* getattro(const DataKeyword& attr)
     {
       PyErr_SetString(PythonLogicException, "Missing method 'getattro'");
-      return NULL;
+      return nullptr;
     }
 
     /** Default compare method. <br>
@@ -3862,7 +3862,7 @@ class Object : public PyObject
     virtual PyObject* iternext()
     {
       PyErr_SetString(PythonLogicException, "Missing method 'iternext'");
-      return NULL;
+      return nullptr;
     }
 
     /** Default call method. <br>
@@ -3872,7 +3872,7 @@ class Object : public PyObject
     virtual PyObject* call(const PythonData& args, const PythonData& kwds)
     {
       PyErr_SetString(PythonLogicException, "Missing method 'call'");
-      return NULL;
+      return nullptr;
     }
 
     /** Default str method. <br>
@@ -3882,7 +3882,7 @@ class Object : public PyObject
     virtual PyObject* str() const
     {
       PyErr_SetString(PythonLogicException, "Missing method 'str'");
-      return NULL;
+      return nullptr;
     }
 
     // TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()
@@ -3928,7 +3928,7 @@ class PythonExtension: public Object, public NonCopyable
     /** This method keeps the type information object for your extension. */
     static PythonType& getPythonType()
     {
-      static PythonType* cachedTypePtr = NULL;
+      static PythonType* cachedTypePtr = nullptr;
       if (cachedTypePtr) return *cachedTypePtr;
 
       // Register a new type
@@ -3960,7 +3960,7 @@ class PythonExtension: public Object, public NonCopyable
   *         DATACLASS* next()
   *    This returns the current value of the iterator, and then
   *    advances it.
-  *  - If the iteration ends, the above method should return NULL.
+  *  - If the iteration ends, the above method should return nullptr.
   *  - DATACLASS must be a subclass of Object, implementing the
   *    type member to point to a MetaClass.
   */
@@ -3972,7 +3972,7 @@ class PythonIterator : public Object
     /** This method keeps the type information object for your extension. */
     static PythonType& getPythonType()
     {
-      static PythonType* cachedTypePtr = NULL;
+      static PythonType* cachedTypePtr = nullptr;
       if (cachedTypePtr) return *cachedTypePtr;
 
       // Register a new type
@@ -4038,7 +4038,7 @@ class PythonIterator : public Object
     {
       PyObject *result = iter.next();
       if (!result)
-        return NULL;
+        return nullptr;
       Py_INCREF(result);
       return result;
     }
@@ -4158,7 +4158,7 @@ class ConditionVariable: public NonCopyable
     // Pthreads
     ConditionVariable()
     {
-      pthread_cond_init (&cond, NULL);
+      pthread_cond_init (&cond, nullptr);
     }
 
     ~ConditionVariable()
@@ -4347,16 +4347,16 @@ class Tree : public NonCopyable
         }
 
         /** Default constructor. */
-        TreeNode() : color(none), parent(NULL), left(NULL), right(NULL) {}
+        TreeNode() : color(none), parent(nullptr), left(nullptr), right(nullptr) {}
 
         /** Return a pointer to the node following this one. */
         TreeNode* increment() const
         {
           TreeNode *node = const_cast<TreeNode*>(this);
-          if (node->right != NULL)
+          if (node->right != nullptr)
           {
             node = node->right;
-            while (node->left != NULL) node = node->left;
+            while (node->left != nullptr) node = node->left;
           }
           else
           {
@@ -4377,10 +4377,10 @@ class Tree : public NonCopyable
           TreeNode *node = const_cast<TreeNode*>(this);
           if (node->color == red && node->parent->parent == node)
             node = node->right;
-          else if (node->left != NULL)
+          else if (node->left != nullptr)
           {
             TreeNode* y = node->left;
-            while (y->right != NULL) y = y->right;
+            while (y->right != nullptr) y = y->right;
             node = y;
           }
           else
@@ -4417,7 +4417,7 @@ class Tree : public NonCopyable
     Tree(bool b = false) : count(0), clearOnDestruct(b)
     {
       header.color = head; // Mark as special head
-      header.parent = NULL;
+      header.parent = nullptr;
       header.left = &header;
       header.right = &header;
     }
@@ -4454,11 +4454,11 @@ class Tree : public NonCopyable
       * Its complexity is O(1). */
     bool empty() const
     {
-      return header.parent == NULL;
+      return header.parent == nullptr;
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
-    DECLARE_EXPORT void rename(TreeNode* obj, const string& newname, TreeNode* hint = NULL)
+    DECLARE_EXPORT void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr)
     {
       if (obj->nm == newname)
         return;
@@ -4540,7 +4540,7 @@ class Tree : public NonCopyable
     /** Insert a new node in the tree. */
     TreeNode* insert(TreeNode* v)
     {
-      return insert(v, NULL);
+      return insert(v, nullptr);
     }
 
     /** Insert a new node in the tree. The second argument is a hint on
@@ -4639,7 +4639,7 @@ class Command
       * command yet. The execute() method needs to be called explicitly to
       * do so.
       */
-    Command() : owner(NULL), next(NULL), prev(NULL) {};
+    Command() : owner(nullptr), next(nullptr), prev(nullptr) {};
 
     /** This method makes the change permanent.<br>
       * A couple of notes on how this method should be implemented by the
@@ -4684,7 +4684,7 @@ class Command
     }
   private:
     /** Points to the commandlist which owns this command. The default value
-      * is NULL, meaning there is no owner. */
+      * is nullptr, meaning there is no owner. */
     Command *owner;
 
     /** Points to the next command in the owner command list.<br>
@@ -4729,16 +4729,16 @@ class CommandSetField : public Command
       if (!obj || !fld)
         return;
       fld->setField(obj, olddata);
-      obj = NULL;
-      fld = NULL;
+      obj = nullptr;
+      fld = nullptr;
     }
 
     /** Committing the change - nothing to be done as the change
       * is realized when creating the command. */
     virtual DECLARE_EXPORT void commit()
     {
-      obj = NULL;
-      fld = NULL;
+      obj = nullptr;
+      fld = nullptr;
     }
 
     /** Undoes the field change. */
@@ -4759,7 +4759,7 @@ class CommandSetField : public Command
 
     void clearObject()
     {
-      obj = NULL;
+      obj = nullptr;
     }
 
     Object* getObject() const
@@ -4799,7 +4799,7 @@ class CommandSetProperty : public Command
     {
       if (obj && !name.empty())
         undo();
-      obj = NULL;
+      obj = nullptr;
       name = "";
     }
 
@@ -4807,7 +4807,7 @@ class CommandSetProperty : public Command
       * is realized when creating the command. */
     virtual DECLARE_EXPORT void commit()
     {
-      obj = NULL;
+      obj = nullptr;
       name = "";
     }
 
@@ -4821,7 +4821,7 @@ class CommandSetProperty : public Command
 
     void clearObject()
     {
-      obj = NULL;
+      obj = nullptr;
     }
 
     Object* getObject() const
@@ -4862,7 +4862,7 @@ class CommandCreateObject : public Command
       */
     virtual DECLARE_EXPORT void commit()
     {
-      obj = NULL;
+      obj = nullptr;
     }
 
     /** Undoes the creation. */
@@ -4895,7 +4895,7 @@ class CommandCreateObject : public Command
 
       // Actual deletion
       delete obj;
-      obj = NULL;
+      obj = nullptr;
     }
 
     /** Redoing the creation isn't possible and throws an exception. */
@@ -4991,7 +4991,7 @@ class CommandList : public Command
     /** Returns an iterator beyond the last command. */
     iterator end() const
     {
-      return iterator(NULL);
+      return iterator(nullptr);
     }
 
     /** Append an additional command to the end of the list. */
@@ -5020,11 +5020,11 @@ class CommandList : public Command
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const
     {
-      return firstCommand==NULL;
+      return firstCommand==nullptr;
     }
 
     /** Default constructor. */
-    explicit CommandList() : firstCommand(NULL), lastCommand(NULL) {}
+    explicit CommandList() : firstCommand(nullptr), lastCommand(nullptr) {}
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands
@@ -5050,8 +5050,8 @@ class CommandManager
         Bookmark* nextBookmark;
         Bookmark* prevBookmark;
         Bookmark* parent;
-        Bookmark(Bookmark* p=NULL) : active(true),
-          nextBookmark(NULL), prevBookmark(NULL), parent(p) {}
+        Bookmark(Bookmark* p=nullptr) : active(true),
+          nextBookmark(nullptr), prevBookmark(nullptr), parent(p) {}
       public:
         /** Returns true if the bookmark commands are active. */
         bool isActive() const
@@ -5229,7 +5229,7 @@ class CommandManager
     /** Returns an iterator beyond the last bookmark in forward direction. */
     iterator end()
     {
-      return iterator(NULL);
+      return iterator(nullptr);
     }
 
     /** Returns an iterator over all bookmarks in reverse direction. */
@@ -5241,7 +5241,7 @@ class CommandManager
     /** Returns an iterator beyond the last bookmark in reverse direction. */
     reverse_iterator rend()
     {
-      return reverse_iterator(NULL);
+      return reverse_iterator(nullptr);
     }
 
     /** Add a command to the active bookmark. */
@@ -5298,7 +5298,7 @@ class DataInput
 {
   public:
     /** Default constructor. */
-    explicit DataInput() : user_exit_cpp(NULL), cmds(NULL) {}
+    explicit DataInput() : user_exit_cpp(nullptr), cmds(nullptr) {}
 
     /** Update the command manager used to track all changes. */
     void setCommandManager(CommandManager* c)
@@ -5428,7 +5428,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         T* next()
         {
           if (node->getColor() == Tree::head)
-            return NULL;
+            return nullptr;
           T* tmp = static_cast<T*>(node);
           node = node->increment();
           return tmp;
@@ -5563,12 +5563,12 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       return getName().compare(static_cast<const T*>(other)->getName());
     }
 
-    /** Find an entity given its name. In case it can't be found, a NULL
+    /** Find an entity given its name. In case it can't be found, a nullptr
       * pointer is returned. */
     static T* find(const string& k)
     {
       Tree::TreeNode *i = st.find(k);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
+      return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
     /** Find the element with this given key or the element
@@ -5576,10 +5576,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       * The optional second argument is a boolean that is set to true when
       * the element is found in the list.
       */
-    static T* findLowerBound(const string& k, bool *f = NULL)
+    static T* findLowerBound(const string& k, bool *f = nullptr)
     {
       Tree::TreeNode *i = st.findLowerBound(k, f);
-      return (i!=st.end() ? static_cast<T*>(i) : NULL);
+      return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
     /** This method is available as a object creation factory for
@@ -5600,7 +5600,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       * @see HasName
       */
     static DECLARE_EXPORT Object* reader (
-      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
+      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = nullptr
       )
     {
       // Pick up the action attribute
@@ -5640,7 +5640,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
             {
               // Delete the object
               delete i;
-              return NULL;
+              return nullptr;
             }
             else
               // The callbacks disallowed the deletion!
@@ -5701,15 +5701,15 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       return x;
     }
 
-    /** Find an entity given its name. In case it can't be found, a NULL
+    /** Find an entity given its name. In case it can't be found, a nullptr
       * pointer is returned. */
     static Object* finder(const DataValueDict& k)
     {
       const DataValue* val = k.get(Tags::name);
       if (!val)
-        return NULL;
+        return nullptr;
       Tree::TreeNode *i = st.find(val->getString());
-      return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : NULL);
+      return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : nullptr);
     }
 };
 
@@ -5824,7 +5824,7 @@ template <class T> class HasHierarchy : public HasName<T>
         /** Constructor to iterate over member entities. */
         memberIterator(const HasHierarchy<T>* x) : member_iter(true)
         {
-          curmember = x ? const_cast<HasHierarchy<T>*>(x)->first_child : NULL;
+          curmember = x ? const_cast<HasHierarchy<T>*>(x)->first_child : nullptr;
         }
 
         /** Constructor to iterate over all entities. */
@@ -5878,7 +5878,7 @@ template <class T> class HasHierarchy : public HasName<T>
         T* next()
         {
           if (!curmember)
-            return NULL;
+            return nullptr;
           T *tmp = static_cast<T*>(curmember);
           if (member_iter)
             curmember = curmember->next_brother;
@@ -5914,7 +5914,7 @@ template <class T> class HasHierarchy : public HasName<T>
         /** End iterator. */
         static memberIterator end()
         {
-          return NULL;
+          return nullptr;
         }
 
       private:
@@ -5924,8 +5924,8 @@ template <class T> class HasHierarchy : public HasName<T>
     };
 
     /** Default constructor. */
-    HasHierarchy() : parent(NULL),
-      first_child(NULL), next_brother(NULL) {}
+    HasHierarchy() : parent(nullptr),
+      first_child(nullptr), next_brother(nullptr) {}
 
     /** Destructor.
       * When deleting a node of the hierarchy, the children will get the
@@ -5963,19 +5963,19 @@ template <class T> class HasHierarchy : public HasName<T>
       */
     bool hasOwner() const
     {
-      return parent != NULL;
+      return parent != nullptr;
     }
 
     /** Returns true if this entity has lower level entities belonging to
       * it. */
     bool isGroup() const
     {
-      return first_child != NULL;
+      return first_child != nullptr;
     }
 
     /** Changes the owner of the entity.<br>
       * The argument must be a valid pointer to an entity of the same type.<br>
-      * A NULL pointer can be passed to clear the existing owner.<br>
+      * A nullptr pointer can be passed to clear the existing owner.<br>
       */
     void setOwner(T* f);
 
@@ -6051,11 +6051,11 @@ template <class A, class B, class C> class Association
         C* first;
 
       public:
-        List() : first(NULL) {};
+        List() : first(nullptr) {};
 
         bool empty() const
         {
-          return first==NULL;
+          return first==nullptr;
         }
     };
 
@@ -6179,12 +6179,12 @@ template <class A, class B, class C> class Association
 
         iterator end()
         {
-          return iterator(NULL);
+          return iterator(nullptr);
         }
 
         const_iterator end() const
         {
-          return const_iterator(NULL);
+          return const_iterator(nullptr);
         }
 
         /** Destructor. */
@@ -6226,7 +6226,7 @@ template <class A, class B, class C> class Association
         {
           for (C* p=this->first; p; p=p->nextA)
             if (p->ptrB == b && p->effectivity.within(d)) return p;
-          return NULL;
+          return nullptr;
         }
 
         /** Search for the association with a certain name. */
@@ -6234,7 +6234,7 @@ template <class A, class B, class C> class Association
         {
           for (C* p=this->first; p; p=p->nextA)
             if (p->name == n) return p;
-          return NULL;
+          return nullptr;
         }
 
         /** Move an association a position up in the list of associations. */
@@ -6244,7 +6244,7 @@ template <class A, class B, class C> class Association
           if (p == this->first) return;
 
           // Scan the list
-          C* prev = NULL;
+          C* prev = nullptr;
           for (C* ptr = this->first; ptr; ptr = ptr->nextA)
           {
             if (ptr->nextA == p)
@@ -6393,12 +6393,12 @@ template <class A, class B, class C> class Association
 
         iterator end()
         {
-          return iterator(NULL);
+          return iterator(nullptr);
         }
 
         const_iterator end() const
         {
-          return const_iterator(NULL);
+          return const_iterator(nullptr);
         }
 
         /** Remove an association. */
@@ -6429,7 +6429,7 @@ template <class A, class B, class C> class Association
         {
           for (C* p = this->first; p; p = p->nextB)
             if (p->ptrA == b && p->effectivity.within(d)) return p;
-          return NULL;
+          return nullptr;
         }
 
         /** Search for the association with a certain name. */
@@ -6437,7 +6437,7 @@ template <class A, class B, class C> class Association
         {
           for (C* p = this->first; p; p = p->nextB)
             if (p->name == n) return p;
-          return NULL;
+          return nullptr;
         }
 
         /** Move an association a position up in the list of associations. */
@@ -6447,7 +6447,7 @@ template <class A, class B, class C> class Association
           if (p == this->first) return;
 
           // Scan the list
-          C* prev = NULL;
+          C* prev = nullptr;
           for (C* ptr = this->first; ptr; ptr = ptr->nextB)
           {
             if (ptr->nextB == p)
@@ -6481,11 +6481,11 @@ template <class A, class B, class C> class Association
         int priority;
       public:
         /** Constructor. */
-        Node() : ptrA(NULL), ptrB(NULL), nextA(NULL), nextB(NULL), priority(1) {};
+        Node() : ptrA(nullptr), ptrB(nullptr), nextA(nullptr), nextB(nullptr), priority(1) {};
 
         /** Constructor. */
         Node(A* a, B* b, const ListA& al, const ListB& bl)
-          : ptrA(a), ptrB(b), nextA(NULL), nextB(NULL), priority(1)
+          : ptrA(a), ptrB(b), nextA(nullptr), nextB(nullptr), priority(1)
         {
           if (al.first)
           {
@@ -6626,7 +6626,7 @@ template <class A, class B, class C> class Association
     };
 
     static DECLARE_EXPORT Object* reader(
-      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = NULL
+      const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = nullptr
       )
     {
       // Pick up the action attribute
@@ -6639,7 +6639,7 @@ template <class A, class B, class C> class Association
           if (!obj)
             throw DataException("Can't find object for removal");
           delete obj;
-          return NULL;
+          return nullptr;
         case CHANGE:
           if (!obj)
             throw DataException("Object doesn't exist");
@@ -6687,7 +6687,7 @@ template <class A, class B, class C> class Association
           return result;
       }
       throw LogicException("Unreachable code reached");
-      return NULL;
+      return nullptr;
     }
 };
 
@@ -6709,18 +6709,18 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
 
     MetaFieldString(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         string dflt = "",
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -6771,18 +6771,18 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
 
     MetaFieldBool(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         tribool d = BOOL_UNSET,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -6828,18 +6828,18 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
 
     MetaFieldDouble(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         double d = 0.0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -6885,18 +6885,18 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
 
     MetaFieldInt(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         int d = 0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -6947,13 +6947,13 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -6999,18 +6999,18 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
 
     MetaFieldShort(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         short d = 0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7056,18 +7056,18 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
 
     MetaFieldUnsignedLong(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         unsigned long d = 0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7113,18 +7113,18 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
 
     MetaFieldDuration(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         Duration d = 0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7170,18 +7170,18 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
 
     MetaFieldDurationDouble(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         double d = 0,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7231,18 +7231,18 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
 
     MetaFieldDate(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         Date d = Date::infinitePast,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7288,17 +7288,17 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
 
     MetaFieldPointer(const Keyword& n,
         getFunction getfunc,
-        setFunction setfunc = NULL,
+        setFunction setfunc = nullptr,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const
     {
-      if (setf == NULL)
+      if (setf == nullptr)
       {
         ostringstream o;
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
@@ -7371,7 +7371,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     MetaFieldIterator(const Keyword& g,
         const Keyword& n,
-        getFunction getfunc = NULL,
+        getFunction getfunc = nullptr,
         unsigned int c = BASE
         ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
 
@@ -7468,8 +7468,8 @@ template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFie
         unsigned int c = BASE
         ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
     {
-      if (getfunc == NULL)
-        throw DataException("Getter function can't be NULL");
+      if (getfunc == nullptr)
+        throw DataException("Getter function can't be nullptr");
     };
 
     virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const {}

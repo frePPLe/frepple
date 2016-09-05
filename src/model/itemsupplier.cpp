@@ -72,8 +72,8 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier() :
-  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
-  firstOperation(NULL), res(NULL), res_qty(1.0)
+  loc(nullptr), size_minimum(1.0), size_multiple(1.0), cost(0.0),
+  firstOperation(nullptr), res(nullptr), res_qty(1.0)
 {
   initType(metadata);
 
@@ -83,8 +83,8 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier() :
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) :
-  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
-  firstOperation(NULL), res(NULL), res_qty(1.0)
+  loc(nullptr), size_minimum(1.0), size_multiple(1.0), cost(0.0),
+  firstOperation(nullptr), res(nullptr), res_qty(1.0)
 {
   setSupplier(s);
   setItem(r);
@@ -97,8 +97,8 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) :
 
 
 DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) :
-  loc(NULL), size_minimum(1.0), size_multiple(1.0), cost(0.0),
-  firstOperation(NULL), res(NULL), res_qty(1.0)
+  loc(nullptr), size_minimum(1.0), size_multiple(1.0), cost(0.0),
+  firstOperation(nullptr), res(nullptr), res_qty(1.0)
 {
   setSupplier(s);
   setItem(r);
@@ -189,7 +189,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -343,7 +343,7 @@ DECLARE_EXPORT void OperationItemSupplier::trimExcess(bool zero_or_minimum) cons
     if (fliter->getQuantity() <= 0)
       // Strange, shouldn't really happen
       continue;
-    FlowPlan* candidate = NULL;
+    FlowPlan* candidate = nullptr;
     double curmin = 0;
     double oh = 0;
     double excess_min = DBL_MAX;
@@ -378,12 +378,12 @@ DECLARE_EXPORT void OperationItemSupplier::trimExcess(bool zero_or_minimum) cons
           {
             // This candidate can now be resized
             candidate->setQuantity(candidate->getQuantity() - excess_min, false);
-            candidate = NULL;
+            candidate = nullptr;
           }
           else if (flpln->getOperation() == this)
             candidate = const_cast<FlowPlan*>(flpln);
           else
-            candidate = NULL;
+            candidate = nullptr;
           excess_min = DBL_MAX;
         }
       }
@@ -405,19 +405,19 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   )
 {
   // Parse the Python arguments
-  PyObject* pylocation = NULL;
+  PyObject* pylocation = nullptr;
   unsigned long id = 0;
-  const char* ref = NULL;
-  PyObject* pyitem = NULL;
-  PyObject* pysupplier = NULL;
+  const char* ref = nullptr;
+  PyObject* pyitem = nullptr;
+  PyObject* pysupplier = nullptr;
   double qty = 0;
-  PyObject* pystart = NULL;
-  PyObject* pyend = NULL;
-  const char* status = NULL;
-  const char* source = NULL;
+  PyObject* pystart = nullptr;
+  PyObject* pyend = nullptr;
+  const char* status = nullptr;
+  const char* source = nullptr;
   static const char *kwlist[] = {
     "location", "id", "reference", "item", "supplier", "quantity", "start",
-    "end", "status", "source", NULL
+    "end", "status", "source", nullptr
     };
   int ok = PyArg_ParseTupleAndKeywords(
     args, kwdict, "|OkzOOdOOzz:createOrder", const_cast<char**>(kwlist),
@@ -425,7 +425,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     &pyend, &status, &source
     );
   if (!ok)
-    return NULL;
+    return nullptr;
   Date start = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
   Date end = pyend ? PythonData(pyend).getDate() : Date::infinitePast;
 
@@ -433,32 +433,32 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   if (!pylocation || !pyitem)
   {
     PyErr_SetString(PythonDataException, "item and location arguments are mandatory");
-    return NULL;
+    return nullptr;
   }
   PythonData location_tmp(pylocation);
   if (!location_tmp.check(Location::metadata))
   {
     PyErr_SetString(PythonDataException, "location argument must be of type location");
-    return NULL;
+    return nullptr;
   }
   PythonData item_tmp(pyitem);
   if (!item_tmp.check(Item::metadata))
   {
     PyErr_SetString(PythonDataException, "item argument must be of type item");
-    return NULL;
+    return nullptr;
   }
   PythonData supplier_tmp(pysupplier);
   if (pysupplier && !supplier_tmp.check(Supplier::metadata))
   {
     PyErr_SetString(PythonDataException, "supplier argument must be of type supplier");
-    return NULL;
+    return nullptr;
   }
   Item *item = static_cast<Item*>(item_tmp.getObject());
   Location *location = static_cast<Location*>(location_tmp.getObject());
-  Supplier *supplier = pysupplier ? static_cast<Supplier*>(supplier_tmp.getObject()) : NULL;
+  Supplier *supplier = pysupplier ? static_cast<Supplier*>(supplier_tmp.getObject()) : nullptr;
 
   // Find or create the destination buffer.
-  Buffer* destbuffer = NULL;
+  Buffer* destbuffer = nullptr;
   Item::bufferIterator buf_iter(item);
   while (Buffer* tmpbuf = buf_iter.next())
   {
@@ -488,7 +488,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   destbuffer->getProducingOperation();
 
   // Look for a matching operation replenishing this buffer.
-  Operation *oper = NULL;
+  Operation *oper = nullptr;
   for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
     flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
   {
@@ -505,7 +505,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   }
 
   // No matching operation is found.
-  OperationPlan *opplan = NULL;
+  OperationPlan *opplan = nullptr;
   if (!oper)
   {
     // We'll create one now, but that requires that we have a supplier defined.
@@ -551,13 +551,13 @@ DECLARE_EXPORT Object* ItemSupplier::finder(const DataValueDict& d)
   // Check item
   const DataValue* tmp = d.get(Tags::item);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Item* item = static_cast<Item*>(tmp->getObject());
 
   // Check supplier field
   tmp = d.get(Tags::supplier);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Supplier* sup = static_cast<Supplier*>(tmp->getObject());
 
   // Walk over all suppliers of the item, and return
@@ -587,7 +587,7 @@ DECLARE_EXPORT Object* ItemSupplier::finder(const DataValueDict& d)
       continue;
     return const_cast<ItemSupplier*>(&*fl);
   }
-  return NULL;
+  return nullptr;
 }
 
 }

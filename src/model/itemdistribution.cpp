@@ -54,9 +54,9 @@ int ItemDistribution::initialize()
 }
 
 
-DECLARE_EXPORT ItemDistribution::ItemDistribution() : it(NULL),
-  size_minimum(1.0), size_multiple(1.0), cost(0.0), firstOperation(NULL),
-  next(NULL), res(NULL), res_qty(1.0)
+DECLARE_EXPORT ItemDistribution::ItemDistribution() : it(nullptr),
+  size_minimum(1.0), size_multiple(1.0), cost(0.0), firstOperation(nullptr),
+  next(nullptr), res(nullptr), res_qty(1.0)
 {
   initType(metadata);
 
@@ -207,7 +207,7 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -341,20 +341,20 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   )
 {
   // Parse the Python arguments
-  PyObject* pydest = NULL;
+  PyObject* pydest = nullptr;
   unsigned long id = 0;
-  const char* ref = NULL;
-  PyObject* pyitem = NULL;
-  PyObject* pyorigin = NULL;
+  const char* ref = nullptr;
+  PyObject* pyitem = nullptr;
+  PyObject* pyorigin = nullptr;
   double qty = 0;
-  PyObject* pystart = NULL;
-  PyObject* pyend = NULL;
+  PyObject* pystart = nullptr;
+  PyObject* pyend = nullptr;
   int consume = 1;
-  const char* status = NULL;
-  const char* source = NULL;
+  const char* status = nullptr;
+  const char* source = nullptr;
   static const char *kwlist[] = {
     "destination", "id", "reference", "item", "origin", "quantity", "start",
-    "end", "consume_material", "status", "source", NULL
+    "end", "consume_material", "status", "source", nullptr
     };
   int ok = PyArg_ParseTupleAndKeywords(
     args, kwdict, "|OkzOOdOOpzz:createOrder", const_cast<char**>(kwlist),
@@ -362,7 +362,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     &consume, &status, &source
     );
   if (!ok)
-    return NULL;
+    return nullptr;
   Date start = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
   Date end = pyend ? PythonData(pyend).getDate() : Date::infinitePast;
 
@@ -370,32 +370,32 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   if (!pydest || !pyitem)
   {
     PyErr_SetString(PythonDataException, "item and destination arguments are mandatory");
-    return NULL;
+    return nullptr;
   }
   PythonData dest_tmp(pydest);
   if (!dest_tmp.check(Location::metadata))
   {
     PyErr_SetString(PythonDataException, "destination argument must be of type location");
-    return NULL;
+    return nullptr;
   }
   PythonData item_tmp(pyitem);
   if (!item_tmp.check(Item::metadata))
   {
     PyErr_SetString(PythonDataException, "item argument must be of type item");
-    return NULL;
+    return nullptr;
   }
   PythonData origin_tmp(pyorigin);
   if (pyorigin && !origin_tmp.check(Location::metadata))
   {
     PyErr_SetString(PythonDataException, "origin argument must be of type location");
-    return NULL;
+    return nullptr;
   }
   Item *item = static_cast<Item*>(item_tmp.getObject());
   Location *dest = static_cast<Location*>(dest_tmp.getObject());
-  Location *origin = pyorigin ? static_cast<Location*>(origin_tmp.getObject()) : NULL;
+  Location *origin = pyorigin ? static_cast<Location*>(origin_tmp.getObject()) : nullptr;
 
   // Find or create the destination buffer.
-  Buffer* destbuffer = NULL;
+  Buffer* destbuffer = nullptr;
   Item::bufferIterator buf_iter(item);
   while (Buffer* tmpbuf = buf_iter.next())
   {
@@ -425,7 +425,7 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   destbuffer->getProducingOperation();
 
   // Look for a matching operation replenishing this buffer.
-  Operation *oper = NULL;
+  Operation *oper = nullptr;
   for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
     flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
   {
@@ -448,13 +448,13 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
   }
 
   // No matching operation is found.
-  OperationPlan *opplan = NULL;
+  OperationPlan *opplan = nullptr;
   if (!oper)
   {
     // We'll create one now, but that requires that we have an origin defined.
     if (!origin)
       throw DataException("Origin location is needed on this distribution order");
-    Buffer* originbuffer = NULL;
+    Buffer* originbuffer = nullptr;
     for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
     {
       if (bufiter->getLocation() == origin && bufiter->getItem() == item)
@@ -486,13 +486,13 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     itemdist->setDestination(dest);
     oper = new OperationItemDistribution(itemdist, originbuffer, destbuffer);
     // Create operation plan
-    opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
+    opplan = oper->createOperationPlan(qty, start, end, nullptr, nullptr, 0, false);
     new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operation",
       start, end, qty);
   }
   else
     // Create operation plan
-    opplan = oper->createOperationPlan(qty, start, end, NULL, NULL, 0, false);
+    opplan = oper->createOperationPlan(qty, start, end, nullptr, nullptr, 0, false);
 
   // Set operationplan fields
   if (id)
@@ -519,19 +519,19 @@ DECLARE_EXPORT Object* ItemDistribution::finder(const DataValueDict& d)
   // Check item field
   const DataValue* tmp = d.get(Tags::item);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Item* item = static_cast<Item*>(tmp->getObject());
 
   // Check origin field
   tmp = d.get(Tags::origin);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Location* origin = static_cast<Location*>(tmp->getObject());
 
   // Check destination field
   tmp = d.get(Tags::destination);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Location* destination = static_cast<Location*>(tmp->getObject());
 
   // Walk over all suppliers of the item, and return
@@ -563,7 +563,7 @@ DECLARE_EXPORT Object* ItemDistribution::finder(const DataValueDict& d)
       continue;
     return const_cast<ItemDistribution*>(&*i);
   }
-  return NULL;
+  return nullptr;
 }
 
 }

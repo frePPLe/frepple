@@ -39,7 +39,7 @@ DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
                *BufferProcure::metadata,
                *OperationInventory::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
-DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = NULL;
+DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = nullptr;
 
 
 int Buffer::initialize()
@@ -384,7 +384,7 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
   // Null pointer passed. Change back to time independent min.
   if (!cal)
   {
-    min_cal = NULL;
+    min_cal = nullptr;
     setMinimum(min_val);
     return;
   }
@@ -872,7 +872,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           continue;
 
         // Find or create the source buffer
-        Buffer* originbuf = NULL;
+        Buffer* originbuf = nullptr;
         for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
           if (buf->getLocation() == &*loc && buf->getItem() == getItem())
           {
@@ -1055,7 +1055,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
     // No producer could be generated. No replenishment will be possible.
     new ProblemInvalidData(this, "No replenishment defined", "material",
       Date::infinitePast, Date::infiniteFuture, 1);    
-    producing_operation = NULL;
+    producing_operation = nullptr;
   }
   else
   {

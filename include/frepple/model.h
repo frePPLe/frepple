@@ -169,8 +169,8 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
   public:
     /** Default constructor. */
     DECLARE_EXPORT CalendarBucket() : enddate(Date::infiniteFuture),
-      nextBucket(NULL), prevBucket(NULL), priority(0), days(127),
-      starttime(0L), endtime(86400L), cal(NULL), val(0.0), offsetcounter(0)
+      nextBucket(nullptr), prevBucket(nullptr), priority(0), days(127),
+      starttime(0L), endtime(86400L), cal(nullptr), val(0.0), offsetcounter(0)
     {
       initType(metadata);
     }
@@ -182,7 +182,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       * It uses the calendar and id fields to identify existing buckets.
       */
     static DECLARE_EXPORT Object* reader(
-      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      const MetaClass*, const DataValueDict&, CommandManager* = nullptr
       );
 
     /** Update the calendar owning the bucket. */
@@ -330,7 +330,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
         CalendarBucket* curBucket;
 
       public:
-        iterator(CalendarBucket* b = NULL) : curBucket(b) {}
+        iterator(CalendarBucket* b = nullptr) : curBucket(b) {}
 
         bool operator != (const iterator &b) const
         {
@@ -389,7 +389,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
         static iterator end()
         {
-          return NULL;
+          return nullptr;
         }
     };
 };
@@ -411,7 +411,7 @@ class Calendar : public HasName<Calendar>, public HasSource
     class EventIterator; // Forward declaration
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Calendar() : firstBucket(NULL), defaultValue(0.0) {}
+    explicit DECLARE_EXPORT Calendar() : firstBucket(nullptr), defaultValue(0.0) {}
 
     /** Destructor, which cleans up the buckets too and all references to the
       * calendar from the core model.
@@ -460,7 +460,7 @@ class Calendar : public HasName<Calendar>, public HasSource
     DECLARE_EXPORT void removeBucket(CalendarBucket* bckt, bool del = true);
 
     /** Returns the bucket where a certain date belongs to.
-      * A NULL pointer is returned when no bucket is effective.
+      * A nullptr pointer is returned when no bucket is effective.
       */
     DECLARE_EXPORT CalendarBucket* findBucket(Date d, bool fwd = true) const;
 
@@ -495,7 +495,7 @@ class Calendar : public HasName<Calendar>, public HasSource
           return theCalendar;
         }
 
-        DECLARE_EXPORT EventIterator(const Calendar* c = NULL,
+        DECLARE_EXPORT EventIterator(const Calendar* c = nullptr,
           Date d = Date::infinitePast, bool forward = true);
 
         DECLARE_EXPORT EventIterator& operator++();
@@ -632,7 +632,7 @@ class Problem : public NonCopyable, public Object
       * the problem objects aren't fully constructed yet.
       * @see addProblem
       */
-    explicit Problem(HasProblems *p = NULL) : owner(p), nextProblem(NULL)
+    explicit Problem(HasProblems *p = nullptr) : owner(p), nextProblem(nullptr)
     {
       initType(metadata);
     }
@@ -730,13 +730,13 @@ class Problem : public NonCopyable, public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::name, &Cls::getName, NULL, "", MANDATORY + COMPUTED);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, NULL, "", MANDATORY + COMPUTED);
-      m->addDateField<Cls>(Tags::start, &Cls::getStart, NULL, Date::infinitePast, MANDATORY);
-      m->addDateField<Cls>(Tags::end, &Cls::getEnd, NULL, Date::infiniteFuture, MANDATORY);
-      m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, NULL, 0.0, MANDATORY);
-      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, NULL, "", DONT_SERIALIZE);
-      m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, NULL, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::name, &Cls::getName, nullptr, "", MANDATORY + COMPUTED);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, nullptr, "", MANDATORY + COMPUTED);
+      m->addDateField<Cls>(Tags::start, &Cls::getStart, nullptr, Date::infinitePast, MANDATORY);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd, nullptr, Date::infiniteFuture, MANDATORY);
+      m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, nullptr, 0.0, MANDATORY);
+      m->addStringField<Cls>(Tags::entity, &Cls::getEntity, nullptr, "", DONT_SERIALIZE);
+      m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, nullptr, DONT_SERIALIZE);
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -804,7 +804,7 @@ class HasProblems
     static DECLARE_EXPORT EntityIterator endEntity();
 
     /** Constructor. */
-    HasProblems() : firstProblem(NULL) {}
+    HasProblems() : firstProblem(nullptr) {}
 
     /** Destructor. It needs to take care of making sure all problems objects
       * are being deleted as well. */
@@ -841,7 +841,7 @@ class Problem::List
 {
   public:
     /** Constructor. */
-    List() : first(NULL) {};
+    List() : first(nullptr) {};
 
     /** Destructor. */
     ~List()
@@ -854,7 +854,7 @@ class Problem::List
       * following it in the list are deleted.<br>
       * If no argument is passed, the complete list is erased.
       */
-    DECLARE_EXPORT void clear(Problem * = NULL);
+    DECLARE_EXPORT void clear(Problem * = nullptr);
 
     /** Add a problem to the list. */
     DECLARE_EXPORT Problem* push
@@ -871,14 +871,14 @@ class Problem::List
     DECLARE_EXPORT Problem* unlink(Problem* p)
     {
       Problem *tmp = p->nextProblem;
-      p->nextProblem = NULL;
+      p->nextProblem = nullptr;
       return tmp;
     }
 
     /** Returns true if the list is empty. */
     bool empty() const
     {
-      return first == NULL;
+      return first == nullptr;
     }
 
     typedef Problem::iterator iterator;
@@ -916,113 +916,113 @@ class Solver : public Object
 
     static DECLARE_EXPORT PyObject* solve(PyObject*, PyObject*);
 
-    virtual void solve(void* = NULL) = 0;
+    virtual void solve(void* = nullptr) = 0;
 
-    virtual void solve(const Demand*,void* = NULL)
+    virtual void solve(const Demand*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Demand*) method");
     }
 
-    virtual void solve(const Operation*,void* = NULL)
+    virtual void solve(const Operation*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Operation*) method");
     }
 
-    virtual void solve(const OperationFixedTime* o, void* v = NULL)
+    virtual void solve(const OperationFixedTime* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationTimePer* o, void* v = NULL)
+    virtual void solve(const OperationTimePer* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationRouting* o, void* v = NULL)
+    virtual void solve(const OperationRouting* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationAlternate* o, void* v = NULL)
+    virtual void solve(const OperationAlternate* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationSplit* o, void* v = NULL)
+    virtual void solve(const OperationSplit* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationItemSupplier* o, void* v = NULL)
+    virtual void solve(const OperationItemSupplier* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const OperationItemDistribution* o, void* v = NULL)
+    virtual void solve(const OperationItemDistribution* o, void* v = nullptr)
     {
       solve(reinterpret_cast<const Operation*>(o),v);
     }
 
-    virtual void solve(const Resource*,void* = NULL)
+    virtual void solve(const Resource*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Resource*) method");
     }
 
-    virtual void solve(const ResourceInfinite* r, void* v = NULL)
+    virtual void solve(const ResourceInfinite* r, void* v = nullptr)
     {
       solve(reinterpret_cast<const Resource*>(r),v);
     }
 
-    virtual void solve(const ResourceBuckets* r, void* v = NULL)
+    virtual void solve(const ResourceBuckets* r, void* v = nullptr)
     {
       solve(reinterpret_cast<const Resource*>(r),v);
     }
 
-    virtual void solve(const Buffer*,void* = NULL)
+    virtual void solve(const Buffer*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Buffer*) method");
     }
 
-    virtual void solve(const BufferInfinite* b, void* v = NULL)
+    virtual void solve(const BufferInfinite* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Buffer*>(b),v);
     }
 
-    virtual void solve(const BufferProcure* b, void* v = NULL)
+    virtual void solve(const BufferProcure* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Buffer*>(b),v);
     }
 
-    virtual void solve(const Load* b, void* v = NULL)
+    virtual void solve(const Load* b, void* v = nullptr)
     {
       throw LogicException("Called undefined solve(Load*) method");
     }
 
-    virtual void solve(const LoadDefault* b, void* v = NULL)
+    virtual void solve(const LoadDefault* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Load*>(b),v);
     }
-    virtual void solve(const Flow* b, void* v = NULL)
+    virtual void solve(const Flow* b, void* v = nullptr)
     {
       throw LogicException("Called undefined solve(Flow*) method");
     }
 
-    virtual void solve(const FlowEnd* b, void* v = NULL)
+    virtual void solve(const FlowEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
 
-    virtual void solve(const FlowFixedStart* b, void* v = NULL)
+    virtual void solve(const FlowFixedStart* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
 
-    virtual void solve(const FlowFixedEnd* b, void* v = NULL)
+    virtual void solve(const FlowFixedEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
 
-    virtual void solve(const Solvable*,void* = NULL)
+    virtual void solve(const Solvable*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Solvable*) method");
     }
@@ -1076,7 +1076,7 @@ class Solvable
       * polymorphism the solver can implement seperate methods for different
       * plannable subclasses.
       */
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -1216,8 +1216,8 @@ class HasLevel
   protected:
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addShortField<Cls>(Tags::level, &Cls::getLevel, NULL, 0, DONT_SERIALIZE);
-      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
+      m->addShortField<Cls>(Tags::level, &Cls::getLevel, nullptr, 0, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
     }
 
     /** Default constructor. The initial level is -1 and basically indicates
@@ -1320,7 +1320,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     typedef Association<Location,Location,ItemDistribution>::ListB distributiondestinationlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Location() : available(NULL)
+    explicit DECLARE_EXPORT Location() : available(nullptr)
     {
       initType(metadata);
     }
@@ -1546,7 +1546,7 @@ class SubOperation : public Object, public HasSource
     typedef list<SubOperation*> suboperationlist;
 
     /** Default constructor. */
-    explicit SubOperation() : owner(NULL), oper(NULL), prio(1)
+    explicit SubOperation() : owner(nullptr), oper(nullptr), prio(1)
     {
       initType(metadata);
     }
@@ -1633,7 +1633,7 @@ class SubOperation : public Object, public HasSource
         SubOperation* next()
         {
           if (cur == nd)
-            return NULL;
+            return nullptr;
           SubOperation *tmp = *cur;
           ++cur;
           return tmp;
@@ -1722,7 +1722,7 @@ class OperationPlan
     /** This is a factory method that creates an operationplan pointer based
       * on the operation and id. */
     static DECLARE_EXPORT Object* createOperationPlan(
-      const MetaClass*, const DataValueDict&, CommandManager* = NULL
+      const MetaClass*, const DataValueDict&, CommandManager* = nullptr
       );
 
     /** Shortcut method to the cluster. */
@@ -1763,7 +1763,7 @@ class OperationPlan
       bool update = true, bool execute = true, Date end = Date::infinitePast);
 
     /** Returns a pointer to the demand for which this operationplan is a delivery.
-      * If the operationplan isn't a delivery, this is a NULL pointer.
+      * If the operationplan isn't a delivery, this is a nullptr pointer.
       */
     Demand* getDemand() const
     {
@@ -1958,7 +1958,7 @@ class OperationPlan
 
     /** Returns a pointer to the operationplan for which this operationplan
       * a sub-operationplan.<br>
-      * The method returns NULL if there is no owner defined.<br>
+      * The method returns nullptr if there is no owner defined.<br>
       * E.g. Sub-operationplans of a routing refer to the overall routing
       * operationplan.<br>
       * E.g. An alternate sub-operationplan refers to its parent.
@@ -2176,7 +2176,7 @@ class OperationPlan
     inline bool getHidden() const;
 
     /** Searches for an OperationPlan with a given identifier.<br>
-      * Returns a NULL pointer if no such OperationPlan can be found.<br>
+      * Returns a nullptr pointer if no such OperationPlan can be found.<br>
       * The method is of complexity O(n), i.e. involves a LINEAR search through
       * the existing operationplans, and can thus be quite slow in big models.<br>
       * The method is O(1), i.e. constant time regardless of the model size,
@@ -2248,7 +2248,7 @@ class OperationPlan
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       // Default of -999 to enforce serializing the value if it is 0
-      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, NULL, -999, PLAN + DETAIL);
+      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN + DETAIL);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
@@ -2260,13 +2260,13 @@ class OperationPlan
       HasSource::registerFields<Cls>(m);
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
-      m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, NULL, 0L, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
-      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
     }
 
     DECLARE_EXPORT static PyObject* createIterator(PyObject* self, PyObject* args);
@@ -2308,10 +2308,10 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(NULL), quantity(0.0), flags(0), dmd(NULL),
-      id(0), oper(NULL), firstflowplan(NULL), firstloadplan(NULL),
-      prev(NULL), next(NULL), firstsubopplan(NULL), lastsubopplan(NULL),
-      nextsubopplan(NULL), prevsubopplan(NULL)
+    OperationPlan() : owner(nullptr), quantity(0.0), flags(0), dmd(nullptr),
+      id(0), oper(nullptr), firstflowplan(nullptr), firstloadplan(nullptr),
+      prev(nullptr), next(nullptr), firstsubopplan(nullptr), lastsubopplan(nullptr),
+      nextsubopplan(nullptr), prevsubopplan(nullptr)
     {
       initType(metadata);
     }
@@ -2350,7 +2350,7 @@ class OperationPlan
     static DECLARE_EXPORT unsigned long counterMin;
 
     /** Pointer to the demand.<br>
-      * Only delivery operationplans have this field set. The field is NULL
+      * Only delivery operationplans have this field set. The field is nullptr
       * for all other operationplans.
       */
     Demand *dmd;
@@ -2434,9 +2434,9 @@ class Operation : public HasName<Operation>,
   public:
     /** Default constructor. */
     explicit DECLARE_EXPORT Operation() :
-      loc(NULL), size_minimum(1.0), size_minimum_calendar(NULL),
+      loc(nullptr), size_minimum(1.0), size_minimum_calendar(nullptr),
       size_multiple(0.0), size_maximum(DBL_MAX), cost(0.0), hidden(false),
-      first_opplan(NULL), last_opplan(NULL)
+      first_opplan(nullptr), last_opplan(nullptr)
       {}
 
     /** Destructor. */
@@ -2492,7 +2492,7 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     DECLARE_EXPORT OperationPlan* createOperationPlan(double, Date,
-        Date, Demand* = NULL, OperationPlan* = NULL, unsigned long = 0,
+        Date, Demand* = nullptr, OperationPlan* = nullptr, unsigned long = 0,
         bool makeflowsloads=true) const;
 
     /** Returns true for operation types that own suboperations. */
@@ -2519,7 +2519,7 @@ class Operation : public HasName<Operation>,
       */
     DECLARE_EXPORT DateRange calculateOperationTime
     (Date thedate, Duration duration, bool forward,
-     Duration* actualduration = NULL) const;
+     Duration* actualduration = nullptr) const;
 
     /** Calculates the effective, available time between two dates.
       *
@@ -2535,7 +2535,7 @@ class Operation : public HasName<Operation>,
       *             amount of available time found.
       */
     DECLARE_EXPORT DateRange calculateOperationTime
-    (Date start, Date end, Duration* actualduration = NULL) const;
+    (Date start, Date end, Duration* actualduration = nullptr) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -2632,14 +2632,14 @@ class Operation : public HasName<Operation>,
     DECLARE_EXPORT OperationPlan::iterator getOperationPlans() const;
 
     /** Return the flow that is associates a given buffer with this
-      * operation. Returns NULL is no such flow exists. */
+      * operation. Returns nullptr is no such flow exists. */
     Flow* findFlow(const Buffer* b, Date d) const
     {
       return flowdata.find(b,d);
     }
 
     /** Return the load that is associates a given resource with this
-      * operation. Returns NULL is no such load exists. */
+      * operation. Returns nullptr is no such load exists. */
     Load* findLoad(const Resource* r, Date d) const
     {
       return loaddata.find(r,d);
@@ -2727,7 +2727,7 @@ class Operation : public HasName<Operation>,
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -2928,14 +2928,14 @@ class OperationPlan::iterator
       * of the operation passed. */
     iterator(const Operation* x) : op(Operation::end()), mode(1)
     {
-      opplan = x ? x->getFirstOpPlan() : NULL;
+      opplan = x ? x->getFirstOpPlan() : nullptr;
     }
 
     /** Constructor. The iterator will loop only over the suboperationplans
       * of the operationplan passed. */
     iterator(const OperationPlan* x) : op(Operation::end()), mode(2)
     {
-      opplan = x ? x->firstsubopplan : NULL;
+      opplan = x ? x->firstsubopplan : nullptr;
     }
 
     /** Constructor. The iterator will loop over all operationplans. */
@@ -2947,7 +2947,7 @@ class OperationPlan::iterator
       if (op!=Operation::end())
         opplan = op->getFirstOpPlan();
       else
-        opplan = NULL;
+        opplan = nullptr;
     }
 
     /** Copy constructor. */
@@ -2984,7 +2984,7 @@ class OperationPlan::iterator
         if (op!=Operation::end())
           opplan = op->getFirstOpPlan();
         else
-          opplan = NULL;
+          opplan = nullptr;
       }
       return *this;
     }
@@ -3005,7 +3005,7 @@ class OperationPlan::iterator
         if (op!=Operation::end())
           opplan = op->getFirstOpPlan();
         else
-          opplan = NULL;
+          opplan = nullptr;
       }
       return tmp;
     }
@@ -3048,7 +3048,7 @@ class OperationPlan::iterator
 
 inline OperationPlan::iterator OperationPlan::end()
 {
-  return iterator(static_cast<Operation*>(NULL));
+  return iterator(static_cast<Operation*>(nullptr));
 }
 
 
@@ -3130,7 +3130,7 @@ class OperationFixedTime : public Operation
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -3178,7 +3178,7 @@ class OperationSetup : public Operation
     // Never write the setup operation
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -3273,7 +3273,7 @@ class OperationTimePer : public Operation
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -3358,7 +3358,7 @@ class OperationRouting : public Operation
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     /** Return a list of all sub-operations. */
     virtual Operationlist& getSubOperations() const
@@ -3466,7 +3466,7 @@ class OperationSplit : public Operation
       OperationPlan*, OperationPlan*, bool=true
       );
 
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -3548,7 +3548,7 @@ class OperationAlternate : public Operation
       OperationPlan*, OperationPlan*, bool=true
       );
 
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -3598,7 +3598,7 @@ class ItemDistribution : public Object,
         /** Constructor. */
         OperationIterator(const ItemDistribution* i)
         {
-          curOper = i ? i->firstOperation : NULL;
+          curOper = i ? i->firstOperation : nullptr;
         }
 
         /** Return current value and advance the iterator. */
@@ -3994,8 +3994,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
     typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Item() : deliveryOperation(NULL), price(0.0),
-      firstItemDistribution(NULL), firstItemBuffer(NULL), firstItemDemand(NULL), firstItemOperation(NULL) {}
+    explicit DECLARE_EXPORT Item() : deliveryOperation(nullptr), price(0.0),
+      firstItemDistribution(nullptr), firstItemBuffer(nullptr), firstItemDemand(nullptr), firstItemOperation(nullptr) {}
 
     /** Returns the delivery operation.<br>
       * This field is inherited from a parent item, if it hasn't been
@@ -4013,7 +4013,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
           return i->deliveryOperation;
 
       // The field is not specified on the item or any of its parents.
-      return NULL;
+      return nullptr;
     }
 
     /** Updates the delivery operation.<br>
@@ -4064,7 +4064,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
         /** Constructor. */
         distributionIterator(const Item *c)
         {
-          cur = c ? c->firstItemDistribution : NULL;
+          cur = c ? c->firstItemDistribution : nullptr;
         }
 
         /** Return current value and advance the iterator. */
@@ -4092,7 +4092,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
         /** Constructor. */
         operationIterator(const Item *c)
         {
-          cur = c ? c->firstItemOperation : NULL;
+          cur = c ? c->firstItemOperation : nullptr;
         }
 
         /** Return current value and advance the iterator. */
@@ -4139,7 +4139,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addIteratorField<Cls, operationIterator, ItemOperation>(Tags::itemoperations, Tags::itemoperation, &Cls::getOperationIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, demandIterator, Demand>(Tags::demands, Tags::demand, &Cls::getDemandIterator, DONT_SERIALIZE);
-      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
     }
 
   private:
@@ -4441,16 +4441,16 @@ class OperationItemDistribution : public OperationFixedTime
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, ItemDistribution>(Tags::itemdistribution, &Cls::getItemDistribution, NULL);
-      m->addPointerField<Cls, Buffer>(Tags::origin, &Cls::getOrigin, NULL, DONT_SERIALIZE);
-      m->addPointerField<Cls, Buffer>(Tags::destination, &Cls::getDestination, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, ItemDistribution>(Tags::itemdistribution, &Cls::getItemDistribution, nullptr);
+      m->addPointerField<Cls, Buffer>(Tags::origin, &Cls::getOrigin, nullptr, DONT_SERIALIZE);
+      m->addPointerField<Cls, Buffer>(Tags::destination, &Cls::getDestination, nullptr, DONT_SERIALIZE);
     }
 
     /** Create a new transfer operationplan.
@@ -4508,15 +4508,15 @@ class OperationItemSupplier : public OperationFixedTime
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, ItemSupplier>(Tags::itemsupplier, &Cls::getItemSupplier, NULL);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, ItemSupplier>(Tags::itemsupplier, &Cls::getItemSupplier, nullptr);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
     }
 
     /** Create a new purchase operationplan.
@@ -4549,9 +4549,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Buffer() :
-      hidden(false), producing_operation(uninitializedProducing), loc(NULL), it(NULL),
-      min_val(0), max_val(default_max), min_cal(NULL), max_cal(NULL),
-      min_interval(-1), tool(false), nextItemBuffer(NULL) {}
+      hidden(false), producing_operation(uninitializedProducing), loc(nullptr), it(nullptr),
+      min_val(0), max_val(default_max), min_cal(nullptr), max_cal(nullptr),
+      min_interval(-1), tool(false), nextItemBuffer(nullptr) {}
 
     /** Builds a producing operation for a buffer.
       * The logic used is based on the following:
@@ -4704,7 +4704,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       return flows.begin();
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const
+    virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
     }
@@ -4727,7 +4727,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     }
 
     /** Return the flow that is associates a given operation with this
-      * buffer.<br>Returns NULL is no such flow exists. */
+      * buffer.<br>Returns nullptr is no such flow exists. */
     Flow* findFlow(const Operation* o, Date d) const
     {
       return flows.find(o,d);
@@ -4843,12 +4843,12 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 
     /** Location of this buffer.<br>
       * This field is only used as information.<br>
-      * The default is NULL.
+      * The default is nullptr.
       */
     Location* loc;
 
     /** Item being stored in this buffer.<br>
-      * The default value is NULL.
+      * The default value is nullptr.
       */
     Item* it;
 
@@ -4865,13 +4865,13 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     double max_val;
 
     /** Points to a calendar to store the minimum inventory level.<br>
-      * The default value is NULL, resulting in a constant minimum level
+      * The default value is nullptr, resulting in a constant minimum level
       * of 0.
       */
     Calendar *min_cal;
 
     /** Points to a calendar to store the maximum inventory level.<br>
-      * The default value is NULL, resulting in a buffer without excess
+      * The default value is nullptr, resulting in a buffer without excess
       * inventory problems.
       */
     Calendar *max_cal;
@@ -4911,7 +4911,7 @@ class OperationInventory : public OperationFixedTime
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
     }
 };
 
@@ -4923,7 +4923,7 @@ class Item::bufferIterator
 
   public:
     /** Constructor. */
-    bufferIterator(const Item* i) : cur(i ? i->firstItemBuffer : NULL) {}
+    bufferIterator(const Item* i) : cur(i ? i->firstItemBuffer : nullptr) {}
 
     bool operator != (const bufferIterator &b) const
     {
@@ -5008,11 +5008,11 @@ class BufferInfinite : public Buffer
     explicit BufferInfinite()
     {
       setDetectProblems(false);
-      setProducingOperation(NULL);
+      setProducingOperation(nullptr);
       initType(metadata);
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     static int initialize();
@@ -5073,13 +5073,13 @@ class BufferInfinite : public Buffer
 class BufferProcure : public Buffer
 {
   public:
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
     virtual const MetaClass& getType() const {return *metadata;}
     static int initialize();
 
     /** Default constructor. */
     explicit BufferProcure() : size_minimum(0), size_maximum(DBL_MAX),
-      size_multiple(0), oper(NULL)
+      size_multiple(0), oper(nullptr)
     {
       initType(metadata);
     }
@@ -5375,17 +5375,17 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Return the leading flow of this group.
       * When the flow has no alternate or if the flow is itself leading
-      * then NULL is returned.
+      * then nullptr is returned.
       */
     Flow* getAlternate() const
     {
       if (getName().empty() || !getOperation())
-        return NULL;
+        return nullptr;
       for (Operation::flowlist::const_iterator h=getOperation()->getFlows().begin();
         h!=getOperation()->getFlows().end() && this != &*h; ++h)
         if (getName() == h->getName())
           return const_cast<Flow*>(&*h);
-      return NULL;
+      return nullptr;
     }
 
     /** Return whether the flow has alternates. */
@@ -5433,7 +5433,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       return getType().type;
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
@@ -5452,7 +5452,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
     	// Not very nice: all flow subclasses appear to Python as instance of a
 	    // single Python class. We use this method to distinguish them.
-      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, NULL, "", DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::type, &Cls::getTypeName, nullptr, "", DONT_SERIALIZE);
     }
 
   protected:
@@ -5489,7 +5489,7 @@ class FlowStart : public Flow
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 };
 
 
@@ -5509,7 +5509,7 @@ class FlowEnd : public Flow
     /** This method holds the logic the compute the date of a flowplan. */
     virtual Date getFlowplanDate(const FlowPlan* fl) const;
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -5531,7 +5531,7 @@ class FlowFixedEnd : public FlowEnd
     /** This method holds the logic the compute the quantity of a flowplan. */
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -5553,7 +5553,7 @@ class FlowFixedStart : public FlowStart
     /** This method holds the logic the compute the quantity of a flowplan. */
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -5675,14 +5675,14 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {
       m->addDateField<Cls>(Tags::date, &Cls::getDate);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity);
-      m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, NULL, -666);
+      m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, NULL, DONT_SERIALIZE);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
       /*  TODO XXX write pegging?
   // Write pegging info.
   if (o->getContentType() == Serializer::PLANDETAIL)
@@ -5793,7 +5793,7 @@ class SetupMatrixRule : public Object
   public:
 
     /** Default constructor. */
-    SetupMatrixRule() : cost(0), priority(0), matrix(NULL), nextRule(NULL), prevRule(NULL)
+    SetupMatrixRule() : cost(0), priority(0), matrix(nullptr), nextRule(nullptr), prevRule(nullptr)
     {
       initType(metadata);
     }
@@ -5922,7 +5922,7 @@ class SetupMatrixRule : public Object
 
       public:
         /** Constructor. */
-        iterator(SetupMatrixRule* c = NULL) : curRule(c) {}
+        iterator(SetupMatrixRule* c = nullptr) : curRule(c) {}
 
         bool operator != (const iterator &b) const
         {
@@ -5981,7 +5981,7 @@ class SetupMatrixRule : public Object
 
         static iterator end()
         {
-          return NULL;
+          return nullptr;
         }
     };
 };
@@ -6005,7 +6005,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
   public:
     /** Default constructor. */
-    explicit DECLARE_EXPORT SetupMatrix() : firstRule(NULL) {}
+    explicit DECLARE_EXPORT SetupMatrix() : firstRule(nullptr) {}
 
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrix();
@@ -6038,7 +6038,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * tosetup fields.<br>
       * As soon as a matching rule is found, it is applied and subsequent
       * rules are not evaluated.<br>
-      * If no matching rule is found, the changeover is not allowed: a NULL
+      * If no matching rule is found, the changeover is not allowed: a nullptr
       * pointer is returned.
       */
     DECLARE_EXPORT SetupMatrixRule* calculateSetup(const string, const string) const;
@@ -6147,8 +6147,8 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Resource() :
-      size_max_cal(NULL), size_max(0), loc(NULL), cost(0.0), hidden(false),
-      maxearly(defaultMaxEarly), setupmatrix(NULL)
+      size_max_cal(nullptr), size_max(0), loc(nullptr), cost(0.0), hidden(false),
+      maxearly(defaultMaxEarly), setupmatrix(nullptr)
     {
       setMaximum(1);
     }
@@ -6242,7 +6242,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     /** Return the load that is associates a given operation with this
-      * resource. Returns NULL is no such load exists. */
+      * resource. Returns nullptr is no such load exists. */
     Load* findLoad(const Operation* o, Date d) const
     {
       return loads.find(o,d);
@@ -6263,7 +6263,7 @@ class Resource : public HasHierarchy<Resource>,
       loc = i;
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     /** Deletes all operationplans loading this resource. The boolean parameter
       * controls whether we delete also locked operationplans or not.
@@ -6274,7 +6274,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual DECLARE_EXPORT void updateProblems();
 
     /** Scan the setups of this resource. */
-    virtual DECLARE_EXPORT void updateSetups(const LoadPlan* = NULL);
+    virtual DECLARE_EXPORT void updateSetups(const LoadPlan* = nullptr);
 
     void setHidden(bool b)
     {
@@ -6481,7 +6481,7 @@ class ResourceInfinite : public Resource
       initType(metadata);
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     static int initialize();
@@ -6499,7 +6499,7 @@ class ResourceBuckets : public Resource
       initType(metadata);
     }
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
     static int initialize();
@@ -6603,7 +6603,7 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : search(PRIORITY), skill(NULL)
+      : search(PRIORITY), skill(nullptr)
     {
       setOperation(o);
       setResource(r);
@@ -6614,7 +6614,7 @@ class Load
 
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u, DateRange e)
-      : search(PRIORITY), skill(NULL)
+      : search(PRIORITY), skill(nullptr)
     {
       setOperation(o);
       setResource(r);
@@ -6671,17 +6671,17 @@ class Load
 
     /** Return the leading load of this group.
       * When the load has no alternate or if the flow is itself leading
-      * then NULL is returned.
+      * then nullptr is returned.
       */
     Load* getAlternate() const
     {
       if (getName().empty() || !getOperation())
-        return NULL;
+        return nullptr;
       for (Operation::loadlist::const_iterator h=getOperation()->getLoads().begin();
         h!=getOperation()->getLoads().end() && this != &*h; ++h)
         if (getName() == h->getName())
           return const_cast<Load*>(&*h);
-      return NULL;
+      return nullptr;
     }
 
     /** Return whether the load has alternates. */
@@ -6730,13 +6730,13 @@ class Load
       return (getResource() && getResource()->getHidden())
           || (getOperation() && getOperation()->getHidden());
     }
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
 
     /** Default constructor. */
-    Load() : qty(1.0), search(PRIORITY), skill(NULL)
+    Load() : qty(1.0), search(PRIORITY), skill(nullptr)
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -6802,7 +6802,7 @@ class LoadDefault : public Load
     /** This constructor is called from the plan begin_element function. */
     explicit LoadDefault() {}
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaClass* metadata;
@@ -6840,7 +6840,7 @@ class Demand
         OperationPlan* next()
         {
           if (cur == end)
-            return NULL;
+            return nullptr;
           OperationPlan* tmp = *cur;
           ++cur;
           return tmp;
@@ -6849,9 +6849,9 @@ class Demand
 
     /** Default constructor. */
     explicit DECLARE_EXPORT Demand() :
-      it(NULL), loc(NULL), oper(uninitializedDelivery), cust(NULL), qty(0.0),
+      it(nullptr), loc(nullptr), oper(uninitializedDelivery), cust(nullptr), qty(0.0),
       prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false), 
-      state(OPEN), nextItemDemand(NULL)
+      state(OPEN), nextItemDemand(nullptr)
       {}
 
     /** Destructor.
@@ -6917,14 +6917,14 @@ class Demand
     }
 
     /** This fields points to an operation that is to be used to plan the
-      * demand. By default, the field is left to NULL and the demand will then
+      * demand. By default, the field is left to nullptr and the demand will then
       * be planned using the delivery operation of its item.
       * @see Item::getDelivery()
       */
     Operation* getOperation() const
     {
       if (oper == uninitializedDelivery)
-        return NULL;
+        return nullptr;
       else
         return oper;
     }
@@ -6952,7 +6952,7 @@ class Demand
       *         If only a single location exists in the model, use that
       *         to use the same logic as in case a.
       *         If multiple locations exist, we can't resolve the case.
-      *   4) If the previous step fails, return NULL.
+      *   4) If the previous step fails, return nullptr.
       *      This demand can't be satisfied!
       */
     DECLARE_EXPORT Operation* getDeliveryOperation() const;
@@ -7037,7 +7037,7 @@ class Demand
       * remove the operationplans in an undo-able way.
       */
     DECLARE_EXPORT void deleteOperationPlans
-    (bool deleteLockedOpplans = false, CommandManager* = NULL);
+    (bool deleteLockedOpplans = false, CommandManager* = nullptr);
 
     /** Returns the due date of the demand. */
     Date getDue() const
@@ -7089,7 +7089,7 @@ class Demand
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     /** Return the maximum delay allowed in satisfying this demand.<br>
       * The default value is infinite.
@@ -7169,7 +7169,7 @@ class Demand
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_FULL);
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
-      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, NULL, 0, DONT_SERIALIZE);
+      m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
     }
 
   private:
@@ -7181,7 +7181,7 @@ class Demand
     /** Location. */
     Location * loc;
 
-    /** Delivery Operation. Can be left NULL, in which case the delivery
+    /** Delivery Operation. Can be left nullptr, in which case the delivery
       * operation can be specified on the requested item. */
     Operation *oper;
 
@@ -7230,7 +7230,7 @@ class Item::demandIterator
 
   public:
     /** Constructor. */
-    demandIterator(const Item* i) : cur(i ? i->firstItemDemand : NULL) {}
+    demandIterator(const Item* i) : cur(i ? i->firstItemDemand : nullptr) {}
 
     bool operator != (const demandIterator &b) const
     {
@@ -7444,11 +7444,11 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
       m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DONT_SERIALIZE);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, DONT_SERIALIZE);
-      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, NULL, BOOL_FALSE, DONT_SERIALIZE);
-      m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
-      m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, NULL, Date::infiniteFuture, DONT_SERIALIZE);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, NULL, DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, NULL, "", DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
+      m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
+      m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, nullptr, "", DONT_SERIALIZE);
     }
 
   private:
@@ -7535,7 +7535,7 @@ class Resource::OperationPlanIterator
       Resource::loadplanlist::Event* i = iter.next();
       while (i && i->getEventType() == 1 && i->getQuantity() >= 0)
         i = iter.next();
-      return i ? static_cast<LoadPlan*>(i)->getOperationPlan() : NULL;
+      return i ? static_cast<LoadPlan*>(i)->getOperationPlan() : nullptr;
     }
 };
 
@@ -7585,7 +7585,7 @@ class HasProblems::EntityIterator
 
     /** Used to create an iterator pointing beyond the last HasProblems
       * object. */
-    explicit EntityIterator(unsigned short i) : bufIter(NULL), type(i) {}
+    explicit EntityIterator(unsigned short i) : bufIter(nullptr), type(i) {}
 
     /** Copy constructor. */
     DECLARE_EXPORT EntityIterator(const EntityIterator&);
@@ -7632,7 +7632,7 @@ class Problem::iterator
 {
     friend class Problem;
   private:
-    /** A pointer to the current problem. If this pointer is NULL, we are
+    /** A pointer to the current problem. If this pointer is nullptr, we are
       * at the end of the list. */
     Problem* iter;
     HasProblems* owner;
@@ -7642,19 +7642,19 @@ class Problem::iterator
     /** Creates an iterator that will loop through the problems of a
       * single entity only. <BR>
       * This constructor is also used to create a end-iterator, when passed
-      * a NULL pointer as argument.
+      * a nullptr pointer as argument.
       */
-    explicit iterator(HasProblems* o) : iter(o ? o->firstProblem : NULL),
-      owner(o), eiter(NULL) {}
+    explicit iterator(HasProblems* o) : iter(o ? o->firstProblem : nullptr),
+      owner(o), eiter(nullptr) {}
 
     /** Creates an iterator that will loop through the constraints of
       * a demand.
       */
-    explicit iterator(Problem* o) : iter(o), owner(NULL), eiter(NULL) {}
+    explicit iterator(Problem* o) : iter(o), owner(nullptr), eiter(nullptr) {}
 
     /** Creates an iterator that will loop through the problems of all
       * entities. */
-    DECLARE_EXPORT explicit iterator() : owner(NULL)
+    DECLARE_EXPORT explicit iterator() : owner(nullptr)
     {
       // Update problems
       Plannable::computeProblems();
@@ -7664,7 +7664,7 @@ class Problem::iterator
       while (*eiter != HasProblems::endEntity() && !((*eiter)->firstProblem))
         ++(*eiter);
       // Found a first problem, or no problem at all
-      iter = (*eiter != HasProblems::endEntity()) ? (*eiter)->firstProblem : NULL;
+      iter = (*eiter != HasProblems::endEntity()) ? (*eiter)->firstProblem : nullptr;
     }
 
     /** Copy constructor. */
@@ -7673,7 +7673,7 @@ class Problem::iterator
       if (i.eiter)
         eiter = new HasProblems::EntityIterator(*(i.eiter));
       else
-        eiter = NULL;
+        eiter = nullptr;
     }
 
     /** Destructor. */
@@ -7728,7 +7728,7 @@ inline Problem::iterator Problem::List::begin() const
 /** Stop iterator. */
 inline Problem::iterator Problem::List::end() const
 {
-  return Problem::iterator(static_cast<Problem*>(NULL));
+  return Problem::iterator(static_cast<Problem*>(nullptr));
 }
 
 
@@ -7762,7 +7762,7 @@ class Plan : public Plannable, public Object
     /** The only constructor of this class is made private. An object of this
       * class is created by the instance() member function.
       */
-    Plan() : cur_Date(Date::now()), cal(NULL)
+    Plan() : cur_Date(Date::now()), cal(nullptr)
     {
       initType(metadata);
     }
@@ -7849,7 +7849,7 @@ class Plan : public Plannable, public Object
     virtual void updateProblems() {};
 
     /** This method basically solves the whole planning problem. */
-    virtual void solve(Solver &s, void* v = NULL) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     Location::iterator getLocations() const
     {
@@ -7986,7 +7986,7 @@ class ProblemBeforeCurrent : public Problem
       return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();
     }
 
-    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(NULL)
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(nullptr)
     {
       if (add) addProblem();
     }
@@ -8061,7 +8061,7 @@ class ProblemBeforeFence : public Problem
     }
 
     explicit ProblemBeforeFence(OperationPlan* o, bool add = true)
-      : Problem(o), oper(NULL)
+      : Problem(o), oper(nullptr)
     {
       if (add) addProblem();
     }
@@ -8828,11 +8828,11 @@ class CommandCreateOperationPlan : public Command
     /** Constructor. */
     CommandCreateOperationPlan
     (const Operation* o, double q, Date d1, Date d2, Demand* l,
-     OperationPlan* ow=NULL, bool makeflowsloads=true)
+     OperationPlan* ow=nullptr, bool makeflowsloads=true)
     {
       opplan = o ?
           o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads)
-          : NULL;
+          : nullptr;
     }
 
     void commit()
@@ -8840,14 +8840,14 @@ class CommandCreateOperationPlan : public Command
       if (opplan)
       {
         opplan->activate();
-        opplan = NULL; // Avoid executing / initializing more than once
+        opplan = nullptr; // Avoid executing / initializing more than once
       }
     }
 
     virtual void rollback()
     {
       delete opplan;
-      opplan = NULL;
+      opplan = nullptr;
     }
 
     virtual void undo()
@@ -8889,7 +8889,7 @@ class CommandDeleteOperationPlan : public Command
     virtual void commit()
     {
       if (opplan) delete opplan;
-      opplan = NULL;
+      opplan = nullptr;
     }
 
     virtual void undo()
@@ -8925,7 +8925,7 @@ class CommandDeleteOperationPlan : public Command
     virtual void rollback()
     {
       undo();
-      opplan = NULL;
+      opplan = nullptr;
     }
 
     virtual ~CommandDeleteOperationPlan()
@@ -8968,13 +8968,13 @@ class CommandMoveOperationPlan : public Command
     /** Commit the changes. */
     virtual void commit()
     {
-      opplan=NULL;
+      opplan=nullptr;
     }
 
     /** Undo the changes. */
     virtual void rollback()
     {
-      restore(true); opplan = NULL;
+      restore(true); opplan = nullptr;
     }
 
     virtual void undo()
@@ -9136,9 +9136,9 @@ class PeggingIterator : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, NULL, MANDATORY + WRITE_FULL);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, NULL, MANDATORY);
-      m->addShortField<Cls>(Tags::level, &Cls::getLevel, NULL, MANDATORY);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, MANDATORY + WRITE_FULL);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, nullptr, MANDATORY);
+      m->addShortField<Cls>(Tags::level, &Cls::getLevel, nullptr, MANDATORY);
     }
 
   private:
@@ -9189,7 +9189,7 @@ class OperationPlan::FlowPlanIterator
     FlowPlan* curflowplan;
     FlowPlan* prevflowplan;
 
-    FlowPlanIterator(FlowPlan* b) : curflowplan(b), prevflowplan(NULL) {}
+    FlowPlanIterator(FlowPlan* b) : curflowplan(b), prevflowplan(nullptr) {}
 
   public:
     FlowPlanIterator(const FlowPlanIterator& b)
@@ -9261,7 +9261,7 @@ inline OperationPlan::FlowPlanIterator OperationPlan::beginFlowPlans() const
 
 inline OperationPlan::FlowPlanIterator OperationPlan::endFlowPlans() const
 {
-  return OperationPlan::FlowPlanIterator(NULL);
+  return OperationPlan::FlowPlanIterator(nullptr);
 }
 
 
@@ -9289,7 +9289,7 @@ class OperationPlan::LoadPlanIterator
   private:
     LoadPlan* curloadplan;
     LoadPlan* prevloadplan;
-    LoadPlanIterator(LoadPlan* b) : curloadplan(b), prevloadplan(NULL) {}
+    LoadPlanIterator(LoadPlan* b) : curloadplan(b), prevloadplan(nullptr) {}
   public:
     LoadPlanIterator(const LoadPlanIterator& b)
     {
@@ -9360,7 +9360,7 @@ inline OperationPlan::LoadPlanIterator OperationPlan::beginLoadPlans() const
 
 inline OperationPlan::LoadPlanIterator OperationPlan::endLoadPlans() const
 {
-  return OperationPlan::LoadPlanIterator(NULL);
+  return OperationPlan::LoadPlanIterator(nullptr);
 }
 
 
@@ -9405,7 +9405,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
     FlowPlanIterator(Buffer* b) : buf(b), buffer_or_opplan(true)
     {
       if (!b)
-        throw LogicException("Creating flowplan iterator for NULL buffer");
+        throw LogicException("Creating flowplan iterator for nullptr buffer");
       bufiter = new Buffer::flowplanlist::const_iterator(b->getFlowPlans().begin());
     }
 
@@ -9413,7 +9413,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator>
     FlowPlanIterator(OperationPlan* o) : opplan(o), buffer_or_opplan(false)
     {
       if (!o)
-        throw LogicException("Creating flowplan iterator for NULL operationplan");
+        throw LogicException("Creating flowplan iterator for nullptr operationplan");
       opplaniter = new OperationPlan::FlowPlanIterator(o->beginFlowPlans());
     }
 
@@ -9452,14 +9452,14 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator>
     LoadPlanIterator(Resource* r) : res(r), resource_or_opplan(true)
     {
       if (!r)
-        throw LogicException("Creating loadplan iterator for NULL resource");
+        throw LogicException("Creating loadplan iterator for nullptr resource");
       resiter = new Resource::loadplanlist::const_iterator(r->getLoadPlans().begin());
     }
 
     LoadPlanIterator(OperationPlan* o) : opplan(o), resource_or_opplan(false)
     {
       if (!opplan)
-        throw LogicException("Creating loadplan iterator for NULL operationplan");
+        throw LogicException("Creating loadplan iterator for nullptr operationplan");
       opplaniter = new OperationPlan::LoadPlanIterator(o->beginLoadPlans());
     }
 

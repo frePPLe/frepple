@@ -168,17 +168,17 @@ DECLARE_EXPORT Operation::~Operation()
   // Remove the reference to this operation from all items
   for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
     if (k->getOperation() == this)
-      k->setOperation(NULL);
+      k->setOperation(nullptr);
 
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getOperation() == this)
-      l->setOperation(NULL);
+      l->setOperation(nullptr);
 
   // Remove the reference to this operation from all buffers
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
     if (m->getProducingOperation() == this)
-      m->setProducingOperation(NULL);
+      m->setProducingOperation(nullptr);
 
   // Remove all item operations referencing this operation
   for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
@@ -643,7 +643,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
 
     // Loop through candidates
     OperationPlan::iterator x(this);
-    OperationPlan *y = NULL;
+    OperationPlan *y = nullptr;
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
     if (y && y->getDates() == o->getDates()
@@ -682,7 +682,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       // Merging with the 'next' operationplan
       y->setQuantity(y->getQuantity() + o->getQuantity());
       if (o->getOwner())
-        o->setOwner(NULL);
+        o->setOwner(nullptr);
       return false;
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates()
@@ -717,7 +717,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
       // Merging with the 'previous' operationplan
       x->setQuantity(x->getQuantity() + o->getQuantity());
       if (o->getOwner())
-        o->setOwner(NULL);
+        o->setOwner(nullptr);
       return false;
     }
   }
@@ -981,7 +981,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
   if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
   {
     Date d = o->getDates().getEnd();
-    OperationPlan *p = NULL;
+    OperationPlan *p = nullptr;
     // @todo not possible to initialize a routing oplan based on a start date
     if (d != Date::infiniteFuture)
     {
@@ -990,7 +990,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
           getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
       {
         p = (*e)->getOperation()->createOperationPlan(
-          o->getQuantity(), Date::infinitePast, d, NULL, o, 0, true
+          o->getQuantity(), Date::infinitePast, d, nullptr, o, 0, true
           );
         d = p->getDates().getStart();
       }
@@ -1005,7 +1005,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
           getSubOperations().begin(); e != getSubOperations().end(); ++e)
       {
         p = (*e)->getOperation()->createOperationPlan(
-          o->getQuantity(), d, Date::infinitePast, NULL, o, 0, true
+          o->getQuantity(), d, Date::infinitePast, nullptr, o, 0, true
           );
         d = p->getDates().getEnd();
       }
@@ -1083,7 +1083,7 @@ DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
       // Create an operationplan instance
       (*altIter)->getOperation()->createOperationPlan(
         o->getQuantity(), o->getDates().getStart(),
-        o->getDates().getEnd(), NULL, o, 0, true);
+        o->getDates().getEnd(), nullptr, o, 0, true);
   }
   return true;
 }
@@ -1146,7 +1146,7 @@ DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
     // Find the first producing flow.
     // In case the split suboperation produces multiple materials this code
     // is not foolproof...
-    const Flow* f = NULL;
+    const Flow* f = nullptr;
     for (Operation::flowlist::const_iterator fiter = (*altIter)->getOperation()->getFlows().begin();
       fiter != (*altIter)->getOperation()->getFlows().end() && !f; ++fiter)
     {
@@ -1157,7 +1157,7 @@ DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
     // Create an operationplan instance
     (*altIter)->getOperation()->createOperationPlan(
       o->getQuantity() * (*altIter)->getPriority() / sum_percent / (f ? f->getQuantity() : 1.0),
-      o->getDates().getStart(), enddate, NULL, o, 0, true
+      o->getDates().getStart(), enddate, nullptr, o, 0, true
       );
   }
   return true;
@@ -1169,7 +1169,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 {
   // Find or create a loadplan
   OperationPlan::LoadPlanIterator i = opplan->beginLoadPlans();
-  LoadPlan *ldplan = NULL;
+  LoadPlan *ldplan = nullptr;
   if (i != opplan->endLoadPlans())
     // Already exists
     ldplan = &*i;
@@ -1191,7 +1191,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
   }
 
   // Find the setup of the resource at the start of the conversion
-  const Load* lastld = NULL;
+  const Load* lastld = nullptr;
   Date boundary = s ? s : e;
   if (ldplan->getDate() < boundary)
   {
@@ -1477,7 +1477,7 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
     // We verify that the new operationplan is a valid step in the routing.
     // The child element is inserted at the right place in the list, which
     // considers its status locked/unlocked and its order in the routing.
-    OperationPlan* matchingUnlocked = NULL;
+    OperationPlan* matchingUnlocked = nullptr;
     OperationPlan* prevsub = parent->firstsubopplan;
     if (prevsub && prevsub->getOperation() == OperationSetup::setupoperation)
       prevsub = prevsub->nextsubopplan;

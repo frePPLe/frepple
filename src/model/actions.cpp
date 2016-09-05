@@ -32,12 +32,12 @@ namespace frepple
 DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
-  char *filename = NULL;
+  char *filename = nullptr;
   int validate(1), validate_only(0);
-  PyObject *userexit = NULL;
+  PyObject *userexit = nullptr;
   int ok = PyArg_ParseTuple(args, "|siiO:readXMLfile",
     &filename, &validate, &validate_only, &userexit);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
@@ -51,7 +51,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
       if (userexit) p.setUserExit(userexit);
       if (validate_only!=0)
         // When no root object is passed, only the input validation happens
-        p.parse(in, NULL, true);
+        p.parse(in, nullptr, true);
       else
         p.parse(in, &Plan::instance(), validate!=0);
     }
@@ -61,7 +61,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
       if (userexit) p.setUserExit(userexit);
       if (validate_only!=0)
         // Read and validate a file
-        p.parse(NULL, true);
+        p.parse(nullptr, true);
       else
         // Read, execute and optionally validate a file
         p.parse(&Plan::instance(),validate!=0);
@@ -71,7 +71,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -88,10 +88,10 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   // Pick up arguments
   char *data;
   int validate(1), validate_only(0);
-  PyObject *userexit = NULL;
+  PyObject *userexit = nullptr;
   int ok = PyArg_ParseTuple(args, "s|iiO:readXMLdata",
     &data, &validate, &validate_only, &userexit);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS
@@ -103,7 +103,7 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
     XMLInputString p(data);
     if (userexit) p.setUserExit(userexit);
     if (validate_only!=0)
-      p.parse(NULL, true);
+      p.parse(nullptr, true);
     else
       p.parse(&Plan::instance(), validate!=0);
   }
@@ -111,7 +111,7 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");  // Safer than using Py_None, which is not portable across compilers
@@ -127,9 +127,9 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *filename;
-  char *content = NULL;
+  char *content = nullptr;
   int ok = PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Execute and catch exceptions
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
@@ -153,7 +153,7 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -170,7 +170,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
   // Pick up arguments
   const char *filename = "plan.out";
   int ok = PyArg_ParseTuple(args, "s:saveplan", &filename);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS
@@ -284,7 +284,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
       textoutput.close();
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -296,7 +296,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o) : opplan(o), firstCommand(NULL)
+(OperationPlan* o) : opplan(o), firstCommand(nullptr)
 {
   if (!o)
   {
@@ -324,7 +324,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 (OperationPlan* o, Date newstart, Date newend, double newQty)
-  : opplan(o), firstCommand(NULL)
+  : opplan(o), firstCommand(nullptr)
 {
   if (!opplan) return;
 
@@ -392,7 +392,7 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
   // Avoid deleting locked operationplans
   if (o->getLocked())
   {
-    opplan = NULL;
+    opplan = nullptr;
     throw DataException("Can't delete a locked operationplan");
   }
 
@@ -412,9 +412,9 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
 DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
 {
   // Pick up arguments
-  PyObject *obj = NULL;
+  PyObject *obj = nullptr;
   int ok = PyArg_ParseTuple(args, "|O:erase", &obj);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Validate the argument
   bool deleteStaticModel = false;
@@ -459,7 +459,7 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -666,7 +666,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");

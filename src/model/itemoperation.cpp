@@ -32,7 +32,7 @@ int ItemOperation::initialize()
 {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<ItemOperation>(
-	  "itemoperation", "itemoperations", NULL, finder
+	  "itemoperation", "itemoperations", nullptr, finder
 	  );
   metadata = MetaClass::registerClass<ItemOperation>(
     "itemoperation", "itemoperation", Object::create<ItemOperation>, true
@@ -76,7 +76,7 @@ DECLARE_EXPORT ItemOperation::~ItemOperation()
 
 
 DECLARE_EXPORT ItemOperation::ItemOperation() :
-  item(NULL), loc(NULL), oper(NULL), next(NULL), priority(1)
+  item(nullptr), loc(nullptr), oper(nullptr), next(nullptr), priority(1)
 {
   initType(metadata);
   HasLevel::triggerLazyRecomputation();
@@ -84,7 +84,7 @@ DECLARE_EXPORT ItemOperation::ItemOperation() :
 
 
 DECLARE_EXPORT ItemOperation::ItemOperation(Operation* s, Item* r, int u) :
-  item(r), loc(NULL), oper(s), next(NULL), priority(u)
+  item(r), loc(nullptr), oper(s), next(nullptr), priority(u)
 {
   initType(metadata);
   setItem(r);
@@ -93,7 +93,7 @@ DECLARE_EXPORT ItemOperation::ItemOperation(Operation* s, Item* r, int u) :
 
 
 DECLARE_EXPORT ItemOperation::ItemOperation(Operation* s, Item* r, int u, DateRange e) :
-  item(NULL), loc(NULL), oper(s), effectivity(e), next(NULL), priority(u)
+  item(nullptr), loc(nullptr), oper(s), effectivity(e), next(nullptr), priority(u)
 {
   initType(metadata);
   setItem(r);
@@ -216,7 +216,7 @@ PyObject* ItemOperation::create(PyTypeObject* pytype, PyObject* args, PyObject* 
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -237,13 +237,13 @@ Object* ItemOperation::finder(const DataValueDict& d)
   // Check item
   const DataValue* tmp = d.get(Tags::item);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Item* item = static_cast<Item*>(tmp->getObject());
 
   // Check operation field
   tmp = d.get(Tags::operation);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Operation* oper = static_cast<Operation*>(tmp->getObject());
 
   // Walk over all operations of the item, and return
@@ -273,7 +273,7 @@ Object* ItemOperation::finder(const DataValueDict& d)
       continue;
     return itemoper;
   }
-  return NULL;
+  return nullptr;
 }
 
 }

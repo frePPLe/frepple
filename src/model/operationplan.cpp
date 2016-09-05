@@ -75,7 +75,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   if (!val && action==ADD)
     // Operation name required
     throw DataException("Missing operation field");
-  Object *oper = NULL;
+  Object *oper = nullptr;
   if (val)
   {
     oper = val->getObject();
@@ -93,7 +93,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     throw DataException("Missing identifier field");
 
   // If an identifier is specified, we look up this operation plan
-  OperationPlan* opplan = NULL;
+  OperationPlan* opplan = nullptr;
   if (id)
   {
     if (id == ULONG_MAX)
@@ -137,7 +137,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
         ch << "Operationplan with identifier " << id << " doesn't exist";
         throw DataException(ch.str());
       }
-      return NULL;
+      return nullptr;
     case ADD:
       if (opplan)
       {
@@ -179,7 +179,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     const DataValue* quantityfld = in.get(Tags::quantity);
     double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-      quantity, start, end, NULL, NULL, id, false
+      quantity, start, end, nullptr, nullptr, id, false
       );
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
@@ -219,14 +219,14 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
   // We are garantueed that there are no operationplans that have an id equal
   // or higher than the current counter. This is garantueed by the
   // instantiate() method.
-  if (l >= counterMin) return NULL;
+  if (l >= counterMin) return nullptr;
 
   // Loop through all operationplans.
   for (OperationPlan::iterator i = begin(); i != end(); ++i)
     if (i->id == l) return &*i;
 
   // This ID was not found
-  return NULL;
+  return nullptr;
 }
 
 
@@ -378,7 +378,7 @@ DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
   {
     // Insert in the middle of the list
     OperationPlan *x = oper->last_opplan;
-    OperationPlan *y = NULL;
+    OperationPlan *y = nullptr;
     while (!(*x < *this))
     {
       y = x;
@@ -407,8 +407,8 @@ DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
     // Last opplan in the list of this operation
     oper->last_opplan = prev;
   // Clear existing pointers to become an orphan
-  prev = NULL;
-  next = NULL;
+  prev = nullptr;
+  next = nullptr;
 }
 
 
@@ -476,9 +476,9 @@ DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
     lastsubopplan = o->prevsubopplan;
 
   // Clear fields
-  o->owner = NULL;
-  prevsubopplan = NULL;
-  nextsubopplan = NULL;
+  o->owner = nullptr;
+  prevsubopplan = nullptr;
+  nextsubopplan = nullptr;
 };
 
 
@@ -511,7 +511,7 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
       new LoadPlan(this, &*g);
       if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
         OperationSetup::setupoperation->createOperationPlan(
-          1, getDates().getStart(), getDates().getStart(), NULL, this);
+          1, getDates().getStart(), getDates().getStart(), nullptr, this);
     }
 
   // Create flowplans for flows
@@ -532,9 +532,9 @@ DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
   if (!firstflowplan && !firstloadplan) return;
 
   FlowPlanIterator e = beginFlowPlans();
-  firstflowplan = NULL;    // Important to do this before the delete!
+  firstflowplan = nullptr;    // Important to do this before the delete!
   LoadPlanIterator f = beginLoadPlans();
-  firstloadplan = NULL;  // Important to do this before the delete!
+  firstloadplan = nullptr;  // Important to do this before the delete!
 
   // Delete the flowplans
   while (e != endFlowPlans())
@@ -571,14 +571,14 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 
   // Initialize
   OperationPlan *x = firstsubopplan;
-  firstsubopplan = NULL;
-  lastsubopplan = NULL;
+  firstsubopplan = nullptr;
+  lastsubopplan = nullptr;
 
   // Delete the sub operationplans
   while (x)
   {
     OperationPlan *y = x->nextsubopplan;
-    x->owner = NULL; // Need to clear before destroying the suboperationplan
+    x->owner = nullptr; // Need to clear before destroying the suboperationplan
     delete x;
     x = y;
   }
@@ -587,7 +587,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
   if (owner)
   {
     const OperationPlan* o = owner;
-    setOwner(NULL);
+    setOwner(nullptr);
     delete o;
   }
 
@@ -607,7 +607,7 @@ void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o, bool fast)
     // Register with the new owner
     o->getOperation()->addSubOperationPlan(o, this, fast);
   else if (owner)
-    // Setting the owner field to NULL
+    // Setting the owner field to nullptr
     owner->eraseSubOperationPlan(this);
 }
 
@@ -717,16 +717,16 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
   flags = src.flags;
   dmd = src.dmd;
   oper = src.oper;
-  firstflowplan = NULL;
-  firstloadplan = NULL;
+  firstflowplan = nullptr;
+  firstloadplan = nullptr;
   dates = src.dates;
-  prev = NULL;
-  next = NULL;
-  owner = NULL;
-  firstsubopplan = NULL;
-  lastsubopplan = NULL;
-  nextsubopplan = NULL;
-  prevsubopplan = NULL;
+  prev = nullptr;
+  next = nullptr;
+  owner = nullptr;
+  firstsubopplan = nullptr;
+  lastsubopplan = nullptr;
+  nextsubopplan = nullptr;
+  prevsubopplan = nullptr;
   initType(metadata);
 
   // Clone the suboperationplans
@@ -752,16 +752,16 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
   flags = src.flags;
   dmd = src.dmd;
   oper = src.oper;
-  firstflowplan = NULL;
-  firstloadplan = NULL;
+  firstflowplan = nullptr;
+  firstloadplan = nullptr;
   dates = src.dates;
-  prev = NULL;
-  next = NULL;
-  owner = NULL;
-  firstsubopplan = NULL;
-  lastsubopplan = NULL;
-  nextsubopplan = NULL;
-  prevsubopplan = NULL;
+  prev = nullptr;
+  next = nullptr;
+  owner = nullptr;
+  firstsubopplan = nullptr;
+  lastsubopplan = nullptr;
+  nextsubopplan = nullptr;
+  prevsubopplan = nullptr;
   initType(metadata);
 
   // Set owner
@@ -909,7 +909,7 @@ DECLARE_EXPORT Object* OperationPlan::finder(const DataValueDict& key)
   const DataValue* val = key.get(Tags::id);
   return val ?
     OperationPlan::findId(val->getUnsignedLong()) :
-    NULL;
+    nullptr;
 }
 
 
@@ -983,7 +983,7 @@ DECLARE_EXPORT bool OperationPlan::isConstrained() const
   for (PeggingIterator p(this); p; ++p)
   {
     const OperationPlan* m = p.getOperationPlan();
-    Demand* dmd = m ? m->getTopOwner()->getDemand() : NULL;
+    Demand* dmd = m ? m->getTopOwner()->getDemand() : nullptr;
     if (dmd && dmd->getDue() < m->getEnd())
       return true;
   }
@@ -1082,14 +1082,14 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
     if (x && !static_cast<OperationPlan*>(x)->activate())
     {
       PyErr_SetString(PythonRuntimeException, "operationplan activation failed");
-      return NULL;
+      return nullptr;
     }
     return x;
   }
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1151,10 +1151,10 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
 PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
 {
   // Check arguments
-  PyObject *pyoper = NULL;
+  PyObject *pyoper = nullptr;
   int ok = PyArg_ParseTuple(args, "|O:operationplans", &pyoper);
   if (!ok)
-    return NULL;
+    return nullptr;
 
   if (!pyoper)
     // First case: Iterate over all operationplans
@@ -1165,7 +1165,7 @@ PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
   if (!oper.check(Operation::metadata))
   {
     PyErr_SetString(PythonDataException, "optional argument must be of type operation");
-    return NULL;
+    return nullptr;
   }
   return new PythonIterator<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
 }

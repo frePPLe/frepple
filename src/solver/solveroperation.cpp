@@ -530,7 +530,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
   // Find the current list of constraints
   Problem* topConstraint = data->planningDemand ?
     data->planningDemand->getConstraints().top() :
-    NULL;
+    nullptr;
 
   // Subtract the post-operation time.
   // Note that we subtract it BEFORE we have snapped the requirement date
@@ -570,7 +570,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
         Date::infinitePast, data->state->q_date, data->state->curDemand,
         data->state->curOwnerOpplan
         );
-    data->state->curDemand = NULL;
+    data->state->curDemand = nullptr;
     z = a->getOperationPlan();
     data->add(a);
   }
@@ -743,7 +743,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
           + "' for buffer '" + data->state->curBuffer->getName() + "'");
   }
   // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-  data->state->curBuffer = NULL;
+  data->state->curBuffer = nullptr;
   double a_qty;
   if (fixed_flow == -1) fixed_flow = 0;
   if (fixed_flow)
@@ -756,7 +756,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     oper, a_qty, Date::infinitePast,
     data->state->q_date, data->state->curDemand, data->state->curOwnerOpplan, false
     );
-  data->state->curDemand = NULL;
+  data->state->curDemand = nullptr;
 
   // Quantity can be changed because of size constraints on the top operation
   a_qty = a->getOperationPlan()->getQuantity();
@@ -848,7 +848,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->a_cost += data->state->curOwnerOpplan->getQuantity() * oper->getCost();
 
   // Make other operationplans don't take this one as owner any more.
-  // We restore the previous owner, which could be NULL.
+  // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
   if (data->state->a_qty == 0 && data->state->a_date <= top_q_date)
@@ -922,7 +922,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool originalLogConstraints = data->logConstraints;
   Problem* topConstraint = data->planningDemand ?
     data->planningDemand->getConstraints().top() :
-    NULL;
+    nullptr;
 
   // Try all alternates:
   // - First, all alternates that are fully effective in the order of priority.
@@ -933,14 +933,14 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
   bool effectiveOnly = true;
   Date a_date = Date::infiniteFuture;
   Date ask_date;
-  SubOperation *firstAlternate = NULL;
+  SubOperation *firstAlternate = nullptr;
   double firstFlowPer;
   while (a_qty > 0)
   {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
-    Operation* bestAlternateSelection = NULL;
+    Operation* bestAlternateSelection = nullptr;
     double bestFlowPer = 1.0;
     Date bestQDate;
     for (Operation::Operationlist::const_iterator altIter
@@ -1033,9 +1033,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
       // Create a sub operationplan
       data->state->q_date = ask_date;
-      data->state->curDemand = NULL;
+      data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
-      data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+      data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
       if (fixed_flow)
         data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
       else
@@ -1195,9 +1195,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       else
         data->state->q_qty = a_qty / bestFlowPer;
       data->state->q_date = bestQDate;
-      data->state->curDemand = NULL;
+      data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
-      data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+      data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
 
       // Create a sub operationplan and solve constraints
       bestAlternateSelection->solve(*this,v);
@@ -1268,9 +1268,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Recreate the ask
     data->state->q_qty = a_qty / firstFlowPer;
     data->state->q_date = origQDate;
-    data->state->curDemand = NULL;
+    data->state->curDemand = nullptr;
     data->state->curOwnerOpplan = a->getOperationPlan();
-    data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+    data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
 
     // Create a sub operationplan and solve constraints
     firstAlternate->getOperation()->solve(*this,v);
@@ -1307,7 +1307,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     data->state->a_cost += data->state->curOwnerOpplan->getQuantity() * oper->getCost();
 
   // Make sure other operationplans don't take this one as owner any more.
-  // We restore the previous owner, which could be NULL.
+  // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
   // Message
@@ -1372,7 +1372,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
   // Loop until we find quantity that can be planned on each alternate.
   bool recheck = true;
   double loop_qty = data->state->q_qty;
-  CommandCreateOperationPlan *top_cmd = NULL;
+  CommandCreateOperationPlan *top_cmd = nullptr;
   while (recheck)
   {
     // Set a bookmark in the command list.
@@ -1429,9 +1429,9 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
         // negative and we skip some alternate.
         data->state->q_qty = asked;
         data->state->q_date = origQDate;
-        data->state->curDemand = NULL;
+        data->state->curDemand = nullptr;
         data->state->curOwnerOpplan = top_cmd->getOperationPlan();
-        data->state->curBuffer = NULL;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
+        data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
         (*iter)->getOperation()->solve(*this,v);
       }
 
@@ -1446,7 +1446,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
         loop_qty = 0.0;
         // Undo all plans done on any of the previous alternates
         data->rollback(topcommand);
-        top_cmd = NULL;
+        top_cmd = nullptr;
         break;
       }
       else if (data->state->a_qty <= asked - ROUNDING_ERROR)
@@ -1457,7 +1457,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
         loop_qty *= data->state->a_qty / asked;
         // Undo all plans done on any of the previous alternates
         data->rollback(topcommand);
-        top_cmd = NULL;
+        top_cmd = nullptr;
         break;
       }
       else
@@ -1479,7 +1479,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
   }
 
   // Make sure other operationplans don't take this one as owner any more.
-  // We restore the previous owner, which could be NULL.
+  // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
   // Final reply

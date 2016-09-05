@@ -219,14 +219,14 @@ DECLARE_EXPORT void Problem::clearProblems(
   if (!p.firstProblem) return;
 
   // Delete all problems in the list
-  Problem *keepfirst = NULL;
+  Problem *keepfirst = nullptr;
   for (Problem *cur=p.firstProblem; cur; )
   {
     Problem *del = cur;
     cur = cur->nextProblem;
     if (includeInvalidData || typeid(*del) != typeid(ProblemInvalidData))
     {
-      del->owner = NULL;
+      del->owner = nullptr;
       delete del;
     }
     else if (!keepfirst)
@@ -316,7 +316,7 @@ DECLARE_EXPORT HasProblems::EntityIterator& HasProblems::EntityIterator::operato
       // Ended recursing of all entities
       ++type;
       delete demIter;
-      demIter = NULL;
+      demIter = nullptr;
       return *this;
   }
   throw LogicException("Unreachable code reached");
@@ -512,7 +512,7 @@ DECLARE_EXPORT Problem::iterator Problem::begin(HasProblems* i, bool refresh)
 
 DECLARE_EXPORT const Problem::iterator Problem::end()
 {
-  return iterator(static_cast<Problem*>(NULL));
+  return iterator(static_cast<Problem*>(nullptr));
 }
 
 
@@ -524,7 +524,7 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
     for (Problem *x = first; x; x = x->nextProblem)
       if (x->nextProblem == c)
       {
-        x->nextProblem = NULL;
+        x->nextProblem = nullptr;
         break;
       }
   }
@@ -534,12 +534,12 @@ DECLARE_EXPORT void Problem::List::clear(Problem *c)
   {
     Problem *del = cur;
     cur = cur->nextProblem;
-    del->owner = NULL;
+    del->owner = nullptr;
     delete del;
   }
 
-  // Set the header to NULL
-  if (!c) first = NULL;
+  // Set the header to nullptr
+  if (!c) first = nullptr;
 }
 
 
@@ -578,18 +578,18 @@ DECLARE_EXPORT Problem* Problem::List::push(const MetaClass* m,
 
 DECLARE_EXPORT void Problem::List::pop(Problem *p)
 {
-  Problem *q = NULL;
+  Problem *q = nullptr;
   if (p)
   {
     // Skip the problem that was passed as argument
     q = p->nextProblem;
-    p->nextProblem = NULL;
+    p->nextProblem = nullptr;
   }
   else
   {
-    // NULL argument: delete all
+    // nullptr argument: delete all
     q = first;
-    first = NULL;
+    first = nullptr;
   }
 
   // Delete each constraint after the marked one
@@ -597,7 +597,7 @@ DECLARE_EXPORT void Problem::List::pop(Problem *p)
   {
     Problem *del = q;
     q = q->nextProblem;
-    del->owner = NULL;
+    del->owner = nullptr;
     delete del;
   }
 }
@@ -607,7 +607,7 @@ DECLARE_EXPORT Problem* Problem::List::top() const
 {
   for (Problem *p = first; p; p = p->nextProblem)
     if (!p->nextProblem) return p;
-  return NULL;
+  return nullptr;
 }
 
 

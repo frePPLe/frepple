@@ -28,7 +28,7 @@ namespace frepple
 DECLARE_EXPORT void Resource::updateProblems()
 {
   // Delete existing problems for this resource
-  Problem::clearProblems(*this);
+  Problem::clearProblems(*this, true, false);
 
   // Problem detection disabled on this resource
   if (!getDetectProblems()) return;
@@ -126,7 +126,7 @@ DECLARE_EXPORT void Resource::updateProblems()
 DECLARE_EXPORT void ResourceBuckets::updateProblems()
 {
   // Delete existing problems for this resource
-  Problem::clearProblems(*this);
+  Problem::clearProblems(*this, true, false);
 
   // Problem detection disabled on this resource
   if (!getDetectProblems()) return;

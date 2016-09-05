@@ -15,12 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import os
-import sys
-from datetime import datetime
-from importlib import import_module
 
 from django.db import DEFAULT_DB_ALIAS
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask

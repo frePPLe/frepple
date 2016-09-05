@@ -1007,9 +1007,18 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           producing_operation = superop;
           subop->setOwner(producing_operation);
         }
-        else
+        else 
+        {
           // We are third or later: just add a suboperation
-          subop->setOwner(producing_operation);
+          if (producing_operation->getSubOperations().size() > 100) 
+          {
+            new ProblemInvalidData(this, "Excessive replenishments defined", "material",
+              Date::infinitePast, Date::infiniteFuture, 1);
+            return;
+          }
+          else
+            subop->setOwner(producing_operation);
+        }
       }
       else
       {
@@ -1044,10 +1053,21 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   if (producing_operation == uninitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.
-    new ProblemInvalidData(this, "no replenishment defined", "buffer",
-      Date::infinitePast, Date::infiniteFuture, 1);
-    logger << "Warning: Can't replenish buffer '" << this << "'" << endl;
+    new ProblemInvalidData(this, "No replenishment defined", "material",
+      Date::infinitePast, Date::infiniteFuture, 1);    
     producing_operation = NULL;
+  }
+  else
+  {
+    // Remove eventual existing problem on the buffer
+    for (Problem::iterator j = Problem::begin(this, false); j != Problem::end(); ++j)
+    {
+      if (typeid(*j) == typeid(ProblemInvalidData))
+      {
+        delete &*j;
+        break;
+      }
+    }
   }
 }
 

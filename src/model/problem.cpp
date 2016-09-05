@@ -211,20 +211,28 @@ DECLARE_EXPORT void Problem::clearProblems()
 }
 
 
-DECLARE_EXPORT void Problem::clearProblems(HasProblems& p, bool setchanged)
+DECLARE_EXPORT void Problem::clearProblems(
+  HasProblems& p, bool setchanged, bool includeInvalidData
+  )
 {
   // Nothing to do
   if (!p.firstProblem) return;
 
   // Delete all problems in the list
+  Problem *keepfirst = NULL;
   for (Problem *cur=p.firstProblem; cur; )
   {
     Problem *del = cur;
     cur = cur->nextProblem;
-    del->owner = NULL;
-    delete del;
+    if (includeInvalidData || typeid(*del) != typeid(ProblemInvalidData))
+    {
+      del->owner = NULL;
+      delete del;
+    }
+    else if (!keepfirst)
+      keepfirst = del;
   }
-  p.firstProblem = NULL;
+  p.firstProblem = keepfirst;
 
   // Mark as changed
   if (setchanged) p.getEntity()->setChanged();

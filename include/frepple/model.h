@@ -715,7 +715,9 @@ class Problem : public NonCopyable, public Object
       * If the second parameter is set to true, the problems will be
       * recreated when the next problem detection round is triggered.
       */
-    static DECLARE_EXPORT void clearProblems(HasProblems& p, bool setchanged = true);
+    static DECLARE_EXPORT void clearProblems(
+      HasProblems& p, bool setchanged = true, bool includeInvalidData = true
+      );
 
     /** Returns a pointer to the object that owns this problem. */
     virtual Object* getOwner() const = 0;

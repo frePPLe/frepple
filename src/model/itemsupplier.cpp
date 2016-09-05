@@ -505,6 +505,7 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
   }
 
   // No matching operation is found.
+  OperationPlan *opplan = NULL;
   if (!oper)
   {
     // We'll create one now, but that requires that we have a supplier defined.
@@ -516,13 +517,18 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     itemsupplier->setSupplier(supplier);
     itemsupplier->setItem(item);
     itemsupplier->setLocation(location);
+    itemsupplier->setHidden(true);
     oper = new OperationItemSupplier(itemsupplier, destbuffer);
-    new ProblemInvalidData(oper, "Purchase orders on unauthorized supplier", "operation",
+    // Create operation plan
+    opplan = oper->createOperationPlan(qty, start, end);
+    new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier", "operation",
       Date::infinitePast, Date::infiniteFuture, 1);
   }
+  else
+    // Create the operationplan
+    opplan = oper->createOperationPlan(qty, start, end);
 
-  // Finally, create the operationplan
-  OperationPlan *opplan = oper->createOperationPlan(qty, start, end);
+  // Set operationplan fields
   if (id)
     opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
   if (status)

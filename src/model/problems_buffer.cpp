@@ -28,7 +28,7 @@ namespace frepple
 DECLARE_EXPORT void Buffer::updateProblems()
 {
   // Delete existing problems for this buffer
-  Problem::clearProblems(*this);
+  Problem::clearProblems(*this, true, false);
 
   // Problem detection disabled on this buffer
   if (!getDetectProblems()) return;

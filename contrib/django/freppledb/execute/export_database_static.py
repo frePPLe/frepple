@@ -474,7 +474,8 @@ class exportStaticModel(object):
       def itemsuppliers():
         for o in frepple.suppliers():
           for i in o.itemsuppliers:
-            yield i
+            if not i.hidden:
+              yield i
 
       print("Exporting item suppliers...")
       starttime = time()
@@ -535,7 +536,8 @@ class exportStaticModel(object):
       def itemdistributions():
         for o in frepple.items():
           for i in o.itemdistributions:
-            yield i
+            if not i.hidden:
+              yield i
 
       print("Exporting item distributions...")
       starttime = time()

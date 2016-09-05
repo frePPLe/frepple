@@ -1040,7 +1040,7 @@ class OperationPlanResource(models.Model):
   setup = models.CharField(_('setup'), max_length=300, null=True)
 
   def __str__(self):
-      return self.resource + ' ' + str(self.startdate) + ' ' + str(self.enddate)
+      return "%s %s %s" % (self.resource, self.startdate, self.enddate)
 
   class Meta:
     db_table = 'operationplanresource'
@@ -1060,7 +1060,7 @@ class OperationPlanMaterial(models.Model):
   onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=4)
 
   def __str__(self):
-    return self.buffer.name + str(self.flowdate)
+    return "%s %s %s" % (self.buffer, self.flowdate, self.quantity)
 
   class Meta:
     db_table = 'operationplanmaterial'
@@ -1075,8 +1075,8 @@ class DistributionOrder(OperationPlan):
 
     def get_queryset(self):
       return super(DistributionOrder.DistributionOrderManager, self).get_queryset() \
-        .filter(type='DO') \
-        .defer("operation", "owner", "supplier", "location")
+        .filter(type='DO')
+        #.defer("operation", "owner", "supplier", "location")
 
   objects = DistributionOrderManager()
 
@@ -1097,8 +1097,9 @@ class PurchaseOrder(OperationPlan):
 
     def get_queryset(self):
       return super(PurchaseOrder.PurchaseOrderManager, self).get_queryset() \
-        .filter(type='PO') \
-        .defer("operation", "owner", "origin", "destination")
+        .filter(type='PO')
+        # Note: defer screws up the model name when deleting a PO
+        #.defer("operation", "owner", "origin", "destination")
 
   objects = PurchaseOrderManager()
 
@@ -1119,8 +1120,9 @@ class ManufacturingOrder(OperationPlan):
 
     def get_queryset(self):
       return super(ManufacturingOrder.ManufacturingOrderManager, self).get_queryset() \
-        .filter(type='MO') \
-        .defer("supplier", "location", "origin", "destination")
+        .filter(type='MO')
+        # Note: defer screws up the model name when deleting a PO
+        # .defer("supplier", "location", "origin", "destination")
 
   objects = ManufacturingOrderManager()
 
@@ -1141,8 +1143,9 @@ class DeliveryOrder(OperationPlan):
 
     def get_queryset(self):
       return super(DeliveryOrder.DeliveryOrderManager, self).get_queryset() \
-        .filter(demand__isnull=False, owner__isnull=True) \
-        .defer("operation", "owner", "supplier", "location", "origin", "destination")
+        .filter(demand__isnull=False, owner__isnull=True)
+        # Note: defer screws up the model name when deleting a PO
+        # .defer("operation", "owner", "supplier", "location", "origin", "destination")
 
   objects = DeliveryOrderManager()
 

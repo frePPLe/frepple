@@ -106,8 +106,8 @@ Tree::TreeNode* Tree::insert(TreeNode* z, TreeNode *hint)
 
   // Set parent and child pointers of the new node
   z->parent = y;
-  z->left = NULL;
-  z->right = NULL;
+  z->left = nullptr;
+  z->right = nullptr;
 
   // Increase the node count
   ++count;
@@ -180,18 +180,18 @@ void Tree::erase(TreeNode* z)
   if (!z || z->color == none) return;
 
   TreeNode* y = z;
-  TreeNode* x = NULL;
-  TreeNode* x_parent = NULL;
+  TreeNode* x = nullptr;
+  TreeNode* x_parent = nullptr;
   --count;
-  if (y->left == NULL)     // z has at most one non-null child. y == z.
+  if (y->left == nullptr)     // z has at most one non-null child. y == z.
     x = y->right;     // x might be null.
-  else if (y->right == NULL) // z has exactly one non-null child. y == z.
+  else if (y->right == nullptr) // z has exactly one non-null child. y == z.
     x = y->left;    // x is not null.
   else
   {
     // z has two non-null children.  Set y to
     y = y->right;   //   z's successor.  x might be null.
-    while (y->left != NULL) y = y->left;
+    while (y->left != nullptr) y = y->left;
     x = y->right;
   }
   if (y != z)
@@ -227,7 +227,7 @@ void Tree::erase(TreeNode* z)
     else z->parent->right = x;
     if (header.left == z)
     {
-      if (z->right == NULL)    // z->left must be null also
+      if (z->right == nullptr)    // z->left must be null also
         header.left = z->parent;
       // makes leftmost == header if z == root
       else
@@ -235,7 +235,7 @@ void Tree::erase(TreeNode* z)
     }
     if (header.right == z)
     {
-      if (z->left == NULL)     // z->right must be null also
+      if (z->left == nullptr)     // z->right must be null also
         header.right = z->parent;
       // makes rightmost == header if z == root
       else                      // x == z->left
@@ -244,7 +244,7 @@ void Tree::erase(TreeNode* z)
   }
   if (y->color != red)
   {
-    while (x != header.parent && (x == NULL || x->color == black))
+    while (x != header.parent && (x == nullptr || x->color == black))
       if (x == x_parent->left)
       {
         TreeNode* w = x_parent->right;
@@ -255,8 +255,8 @@ void Tree::erase(TreeNode* z)
           rotateLeft(x_parent);
           w = x_parent->right;
         }
-        if ((w->left == NULL || w->left->color == black) &&
-            (w->right == NULL || w->right->color == black))
+        if ((w->left == nullptr || w->left->color == black) &&
+            (w->right == nullptr || w->right->color == black))
         {
           w->color = red;
           x = x_parent;
@@ -264,7 +264,7 @@ void Tree::erase(TreeNode* z)
         }
         else
         {
-          if (w->right == NULL || w->right->color == black)
+          if (w->right == nullptr || w->right->color == black)
           {
             w->left->color = black;
             w->color = red;
@@ -289,8 +289,8 @@ void Tree::erase(TreeNode* z)
           rotateRight(x_parent);
           w = x_parent->left;
         }
-        if ((w->right == NULL || w->right->color == black) &&
-            (w->left == NULL || w->left->color == black))
+        if ((w->right == nullptr || w->right->color == black) &&
+            (w->left == nullptr || w->left->color == black))
         {
           w->color = red;
           x = x_parent;
@@ -298,7 +298,7 @@ void Tree::erase(TreeNode* z)
         }
         else
         {
-          if (w->left == NULL || w->left->color == black)
+          if (w->left == nullptr || w->left->color == black)
           {
             w->right->color = black;
             w->color = red;
@@ -321,7 +321,7 @@ void Tree::rotateLeft(TreeNode* x)
 {
   TreeNode* y = x->right;
   x->right = y->left;
-  if (y->left != NULL) y->left->parent = x;
+  if (y->left != nullptr) y->left->parent = x;
   y->parent = x->parent;
 
   if (x == header.parent)
@@ -342,7 +342,7 @@ void Tree::rotateRight(TreeNode* x)
 {
   TreeNode* y = x->left;
   x->left = y->right;
-  if (y->right != NULL) y->right->parent = x;
+  if (y->right != nullptr) y->right->parent = x;
   y->parent = x->parent;
 
   if (x == header.parent)
@@ -386,7 +386,7 @@ DECLARE_EXPORT void Tree::verify() const
 
     if (x->color == red)
       if ((L && L->color == red) || (R && R->color == red))
-        // A red node can have only NULL and black children
+        // A red node can have only nullptr and black children
         throw LogicException("Wrong color on node");
 
     if (L && x->nm<L->nm)

@@ -89,7 +89,7 @@ DECLARE_EXPORT(void) FreppleInitialize(bool=true);
 DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
 
 /** The first parameter is the name of a file that contains data in XML
-  * format for frePPLe processing. If a NULL pointer is passed, frepple
+  * format for frePPLe processing. If a nullptr pointer is passed, frepple
   * will read from the standard input.<br>
   * The second argument specifies whether frePPLe should validate the data
   * against the XSD schema.<br>

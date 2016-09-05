@@ -127,23 +127,23 @@ DECLARE_EXPORT Calendar::~Calendar()
   for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
   {
     if (l->getAvailable() == this)
-      l->setAvailable(NULL);
+      l->setAvailable(nullptr);
   }
 
   // Remove reference from buffers
   for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
   {
     if (b->getMaximumCalendar() == this)
-      b->setMaximumCalendar(NULL);
+      b->setMaximumCalendar(nullptr);
     if (b->getMinimumCalendar() == this)
-      b->setMinimumCalendar(NULL);
+      b->setMinimumCalendar(nullptr);
   }
 
   // Remove references from resources
   for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
   {
     if (r->getMaximumCalendar() == this)
-      r->setMaximumCalendar(NULL);
+      r->setMaximumCalendar(nullptr);
   }
 }
 
@@ -171,9 +171,9 @@ DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt, bool del)
     bkt->nextBucket->prevBucket = bkt->prevBucket;
 
   // Delete the bucket
-  bkt->nextBucket = NULL;
-  bkt->prevBucket = NULL;
-  bkt->cal = NULL;
+  bkt->nextBucket = nullptr;
+  bkt->prevBucket = nullptr;
+  bkt->cal = nullptr;
   if (del)
     delete bkt;
 }
@@ -273,7 +273,7 @@ DECLARE_EXPORT void CalendarBucket::updateSort()
 
 DECLARE_EXPORT CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
 {
-  CalendarBucket *curBucket = NULL;
+  CalendarBucket *curBucket = nullptr;
   double curPriority = DBL_MAX;
   long timeInWeek = INT_MIN;
   for (CalendarBucket *b = firstBucket; b; b = b->nextBucket)
@@ -337,7 +337,7 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
 {
   // Pick up the calendar
   const DataValue* cal_val = atts.get(Tags::calendar);
-  Calendar *cal = cal_val ? static_cast<Calendar*>(cal_val->getObject()) : NULL;
+  Calendar *cal = cal_val ? static_cast<Calendar*>(cal_val->getObject()) : nullptr;
 
   // Pick up the start date.
   const DataValue* strtElement = atts.get(Tags::start);
@@ -358,7 +358,7 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
     prio = prioElement->getInt();
 
   // Check for existence of a bucket with the same start, end and priority
-  CalendarBucket* result = NULL;
+  CalendarBucket* result = nullptr;
   if (cal)
   {
     for (CalendarBucket::iterator i = cal->getBuckets(); i != CalendarBucket::iterator::end(); ++i)
@@ -402,7 +402,7 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
       {
         // Delete it
         cal->removeBucket(result);
-        return NULL;
+        return nullptr;
       }
     case ADD_CHANGE:
       if (!result)
@@ -473,7 +473,7 @@ DECLARE_EXPORT Calendar::EventIterator::EventIterator
   (const Calendar* c, Date d, bool forward)
   : theCalendar(c), curDate(d)
 {
-  curBucket = lastBucket = c ? c->findBucket(d,forward) : NULL;
+  curBucket = lastBucket = c ? c->findBucket(d,forward) : nullptr;
   curPriority = lastPriority = curBucket ? curBucket->priority : INT_MAX;
 }
 
@@ -481,7 +481,7 @@ DECLARE_EXPORT Calendar::EventIterator::EventIterator
 DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 {
   if (!theCalendar)
-    throw LogicException("Can't walk forward on event iterator of NULL calendar.");
+    throw LogicException("Can't walk forward on event iterator of nullptr calendar.");
 
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
@@ -499,7 +499,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
 {
   if (!theCalendar)
-    throw LogicException("Can't walk backward on event iterator of NULL calendar.");
+    throw LogicException("Can't walk backward on event iterator of nullptr calendar.");
 
   // Go over all entries and ask them to update the iterator
   Date d = curDate;
@@ -742,12 +742,12 @@ DECLARE_EXPORT PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args
   {
     // Pick up the calendar
     CalendarDefault *cal = static_cast<CalendarDefault*>(self);
-    if (!cal) throw LogicException("Can't set value of a NULL calendar");
+    if (!cal) throw LogicException("Can't set value of a nullptr calendar");
 
     // Parse the arguments
     PyObject *pystart, *pyend, *pyval;
     if (!PyArg_ParseTuple(args, "OOO:setValue", &pystart, &pyend, &pyval))
-      return NULL;
+      return nullptr;
 
     // Update the calendar
     PythonData start(pystart), end(pyend), val(pyval);
@@ -756,7 +756,7 @@ DECLARE_EXPORT PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args
   catch(...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   return Py_BuildValue("");
 }
@@ -769,7 +769,7 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
   try
   {
     // Pick up the calendar
-    Calendar *cal = NULL;
+    Calendar *cal = nullptr;
     PythonData c(self);
     if (c.check(CalendarDefault::metadata))
       cal = static_cast<CalendarDefault*>(self);
@@ -777,10 +777,10 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
       throw LogicException("Invalid calendar type");
 
     // Parse the arguments
-    PyObject* pystart = NULL;
-    PyObject* pydirection = NULL;
+    PyObject* pystart = nullptr;
+    PyObject* pydirection = nullptr;
     if (!PyArg_ParseTuple(args, "|OO:getEvents", &pystart, &pydirection))
-      return NULL;
+      return nullptr;
     Date startdate = pystart ? PythonData(pystart).getDate() : Date::infinitePast;
     bool forward = pydirection ? PythonData(pydirection).getBool() : true;
 
@@ -790,7 +790,7 @@ DECLARE_EXPORT PyObject* Calendar::getEvents(
   catch(...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -810,7 +810,7 @@ PyObject* CalendarEventIterator::iternext()
 {
   if ((forward && eventiter.getDate() == Date::infiniteFuture)
       || (!forward && eventiter.getDate() == Date::infinitePast))
-    return NULL;
+    return nullptr;
   PythonData x;
   if (dynamic_cast<CalendarDefault*>(cal))
   {
@@ -821,7 +821,7 @@ PyObject* CalendarEventIterator::iternext()
   }
   else
     // Unknown calendar type we can't iterate
-    return NULL;
+    return nullptr;
   PyObject* result = Py_BuildValue("(N,N)",
       static_cast<PyObject*>(PythonData(eventiter.getDate())),
       static_cast<PyObject*>(x)

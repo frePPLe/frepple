@@ -35,11 +35,11 @@ PyMODINIT_FUNC PyInit_frepple(void)
   catch(const exception& e)
   {
     PyErr_SetString(PyExc_SystemError, e.what());
-    return NULL;
+    return nullptr;
   }
   catch (...)
   {
     PyErr_SetString(PyExc_SystemError, "Initialization failed");
-    return NULL;
+    return nullptr;
   }
 }

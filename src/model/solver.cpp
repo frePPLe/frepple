@@ -57,7 +57,7 @@ DECLARE_EXPORT PyObject *Solver::solve(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");

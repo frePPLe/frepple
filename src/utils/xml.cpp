@@ -57,7 +57,7 @@ namespace frepple
 namespace utils
 {
 
-xercesc::XMLTranscoder* XMLInput::utf8_encoder = NULL;
+xercesc::XMLTranscoder* XMLInput::utf8_encoder = nullptr;
 
 
 char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
@@ -72,7 +72,7 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
 }
 
 
-DECLARE_EXPORT XMLInput::XMLInput() : parser(NULL), objects(maxobjects),
+DECLARE_EXPORT XMLInput::XMLInput() : parser(nullptr), objects(maxobjects),
   data(maxdata), objectindex(-1), dataindex(-1), numElements(-1),
   reading(false), ignore(0), abortOnDataException(true)
 {
@@ -158,7 +158,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(ename_utf8);
-  data[dataindex].field = NULL;
+  data[dataindex].field = nullptr;
   if (dataindex >= 1 && data[dataindex-1].field && data[dataindex-1].field->isGroup()
     && data[dataindex].hash == data[dataindex-1].field->getKeyword()->getHash())
   {
@@ -168,7 +168,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       // You're joking?
       throw DataException("XML-document nested excessively deep");
     // New object on the stack
-    objects[objectindex].object = NULL;
+    objects[objectindex].object = nullptr;
     objects[objectindex].start = dataindex;
     objects[objectindex].cls = data[dataindex-1].field->getClass();
     objects[objectindex].hash = data[dataindex].hash;
@@ -227,7 +227,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       else if (data[dataindex].hash == Tags::action.getHash())
       {
         // Action attribute is special, as it's not a field
-        data[dataindex].field = NULL;
+        data[dataindex].field = nullptr;
       }
       else
       {
@@ -309,7 +309,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       throw DataException("XML-document with elements nested excessively deep");
 
     // New object on the stack
-    objects[objectindex].object = NULL;
+    objects[objectindex].object = nullptr;
     objects[objectindex].cls = data[dataindex].field->getClass();
     objects[objectindex].start = dataindex + 1;
     objects[objectindex].hash = Keyword::hash(ename_utf8);
@@ -369,7 +369,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
       else if (data[dataindex].hash == Tags::action.getHash())
       {
         // Action attribute is special, as it's not a field
-        data[dataindex].field = NULL;
+        data[dataindex].field = nullptr;
       }
       else
       {
@@ -510,7 +510,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 if (data[idx].field && !data[idx].field->isGroup())
                 {
                     data[idx].field->setField(objects[objectindex-1].object, data[idx].value, getCommandManager());
-                    data[idx].field = NULL; // Mark as already applied
+                    data[idx].field = nullptr; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
                   objects[objectindex].object->setProperty(
@@ -590,7 +590,7 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
                 if (data[idx].field && !data[idx].field->isGroup())
                 {
                     data[idx].field->setField(objects[objectindex-1].object, data[idx].value, getCommandManager());
-                    data[idx].field = NULL; // Mark as already applied
+                    data[idx].field = nullptr; // Mark as already applied
                 }
                 else if (data[idx].hash == Tags::booleanproperty.getHash())
                   objects[objectindex].object->setProperty(
@@ -789,7 +789,7 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
 
     if (pRoot)
     {
-      // Set the event handler. If we are reading into a NULL object, there is
+      // Set the event handler. If we are reading into a nullptr object, there is
       // no need to use a content handler.
       parser->setContentHandler(this);
 
@@ -827,13 +827,13 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
     string msg(message);
     xercesc::XMLString::release(&message);
     delete parser;
-    parser = NULL;
+    parser = nullptr;
     throw RuntimeException("Parsing error: " + msg);
   }
   catch (const exception& toCatch)
   {
     delete parser;
-    parser = NULL;
+    parser = nullptr;
     ostringstream msg;
     msg << "Error during XML parsing: " << toCatch.what();
     throw RuntimeException(msg.str());
@@ -841,12 +841,12 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
   catch (...)
   {
     delete parser;
-    parser = NULL;
+    parser = nullptr;
     throw RuntimeException(
       "Parsing error: Unexpected exception during XML parsing");
   }
   delete parser;
-  parser = NULL;
+  parser = nullptr;
 }
 
 
@@ -899,7 +899,7 @@ DECLARE_EXPORT void Serializer::setContentType(const string& c)
 DECLARE_EXPORT void Serializer::writeElement
 (const Keyword& tag, const Object* object, FieldCategory m)
 {
-  // Avoid NULL pointers and skip hidden objects
+  // Avoid nullptr pointers and skip hidden objects
   if (!object || (object->getHidden() && !writeHidden))
     return;
 
@@ -932,7 +932,7 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
 {
   // Root object can't be null...
   if (!object)
-    throw RuntimeException("Can't accept a NULL object as XML root");
+    throw RuntimeException("Can't accept a nullptr object as XML root");
 
   // There should not be any saved objects yet
   if (numObjects > 0)
@@ -954,8 +954,8 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
   object->writeElement(this, tag, getContentType());
 
   // Adjust current and parent object pointer
-  currentObject = NULL;
-  parentObject = NULL;
+  currentObject = nullptr;
+  parentObject = nullptr;
 }
 
 
@@ -989,7 +989,7 @@ DECLARE_EXPORT const XMLData* XMLDataValueDict::get(const Keyword& key) const
   for (int i = strt; i <= nd; ++i)
     if (fields[i].hash == key.getHash())
       return &fields[i].value;
-  return NULL;
+  return nullptr;
 }
 
 
@@ -1173,7 +1173,7 @@ DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
   #elif HAVE_DIRENT_H
     struct dirent *dir_entry_p;
     DIR *dir_p = opendir(filename.c_str());
-    while (NULL != (dir_entry_p = readdir(dir_p)))
+    while (nullptr != (dir_entry_p = readdir(dir_p)))
     {
       int n = NAMLEN(dir_entry_p);
       if (n > 4 && !strcmp(".xml", dir_entry_p->d_name + n - 4))

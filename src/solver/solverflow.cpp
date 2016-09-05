@@ -57,7 +57,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implemen
     // 3) Control the planning mode
     bool originalPlanningMode = data->constrainedPlanning;
     data->constrainedPlanning = true;
-    Flow *firstAlternate = NULL;
+    Flow *firstAlternate = nullptr;
     double firstQuantity = 0.0;
 
     // Remember the top constraint

@@ -36,7 +36,7 @@ namespace utils
 DECLARE_EXPORT void CommandList::add(Command* c)
 {
   // Validity check
-  if (!c) throw LogicException("Adding NULL command to a command list");
+  if (!c) throw LogicException("Adding nullptr command to a command list");
 
   // Set the owner of the command
   c->owner = this;
@@ -63,13 +63,13 @@ DECLARE_EXPORT void CommandList::rollback()
   {
     Command *t = i;  // Temporarily store the pointer to be deleted
     i = i->prev;
-    t->next = NULL;
+    t->next = nullptr;
     delete t; // The delete is expected to also revert the change!
   }
 
   // Reset the list
-  firstCommand = NULL;
-  lastCommand = NULL;
+  firstCommand = nullptr;
+  lastCommand = nullptr;
 }
 
 
@@ -92,13 +92,13 @@ DECLARE_EXPORT void CommandList::commit()
     Command *t = i;  // Temporarily store the pointer to be deleted
     i->commit();
     i = i->next;
-    t->prev = NULL;
+    t->prev = nullptr;
     delete t;
   }
 
   // Reset the list
-  firstCommand = NULL;
-  lastCommand = NULL;
+  firstCommand = nullptr;
+  lastCommand = nullptr;
 }
 
 
@@ -139,7 +139,7 @@ DECLARE_EXPORT CommandManager::Bookmark* CommandManager::setBookmark()
 
 DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
 {
-  if (!b) throw LogicException("Can't undo NULL bookmark");
+  if (!b) throw LogicException("Can't undo nullptr bookmark");
 
   Bookmark* i = lastBookmark;
   for (; i && i != b; i = i->prevBookmark)
@@ -159,7 +159,7 @@ DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
 
 DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 {
-  if (!b) throw LogicException("Can't redo NULL bookmark");
+  if (!b) throw LogicException("Can't redo nullptr bookmark");
 
   for (Bookmark* i = b; i; i = i->nextBookmark)
   {
@@ -176,7 +176,7 @@ DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
 {
   if (!b)
-    throw LogicException("Can't rollback NULL bookmark");
+    throw LogicException("Can't rollback nullptr bookmark");
   if (b == &firstBookmark)
     throw LogicException("Can't rollback default bookmark");
 
@@ -219,7 +219,7 @@ DECLARE_EXPORT void CommandManager::commit()
     i = i->nextBookmark;
     delete tmp;
   }
-  firstBookmark.nextBookmark = NULL;
+  firstBookmark.nextBookmark = nullptr;
   currentBookmark = &firstBookmark;
   lastBookmark = &firstBookmark;
 }
@@ -235,7 +235,7 @@ DECLARE_EXPORT void CommandManager::rollback()
     delete tmp;
   }
   firstBookmark.rollback();
-  firstBookmark.nextBookmark = NULL;
+  firstBookmark.nextBookmark = nullptr;
   currentBookmark = &firstBookmark;
   lastBookmark = &firstBookmark;
 }
@@ -437,7 +437,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
   for (; worker<numthreads; ++worker)
   {
     if ((errcode=pthread_create(&threads[worker],  // thread struct
-        NULL,                  // default thread attributes
+        nullptr,                  // default thread attributes
         wrapper,               // start routine
         this)))                // arg to routine
     {
@@ -457,9 +457,9 @@ DECLARE_EXPORT void ThreadGroup::execute()
   // Wait for the threads as they exit
   for (--worker; worker>=0; --worker)
     // Wait for thread to terminate.
-    // The second arg is NULL, since we don't care about the return status
+    // The second arg is nullptr, since we don't care about the return status
     // of the finished threads.
-    if ((errcode=pthread_join(threads[worker],NULL)))
+    if ((errcode=pthread_join(threads[worker],nullptr)))
     {
       ostringstream ch;
       ch << "Can't join with thread " << worker << ", error " << errcode;
@@ -505,12 +505,12 @@ DECLARE_EXPORT void ThreadGroup::execute()
     char error[256];
     FormatMessage(
       FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-      NULL,
+      nullptr,
       GetLastError(),
       0,
       error,
       256,
-      NULL );
+      nullptr );
     delete[] threads;
     delete[] m_id;
     throw RuntimeException(string("Can't join threads: ") + error);
@@ -532,7 +532,7 @@ DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable
   {
     // No more functions
     assert( countCallables == 0 );
-    return callableWithArgument(static_cast<callable>(NULL),static_cast<void*>(NULL));
+    return callableWithArgument(static_cast<callable>(nullptr),static_cast<void*>(nullptr));
   }
   callableWithArgument c = callables.top();
   callables.pop();
@@ -587,9 +587,9 @@ DECLARE_EXPORT PyObject* loadModule
 {
 
   // Create the command
-  char *data = NULL;
+  char *data = nullptr;
   int ok = PyArg_ParseTuple(args, "s:loadmodule", &data);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Free Python interpreter for other threads.
   // This is important since the module may also need access to Python
@@ -604,7 +604,7 @@ DECLARE_EXPORT PyObject* loadModule
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");

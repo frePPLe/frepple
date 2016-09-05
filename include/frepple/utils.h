@@ -63,7 +63,7 @@
 // A dummy function to suppress warnings about the unused variable PyDateTimeAPI.
 // Some of our source files do use it, some don't.
 inline bool unused_function() {
-  return PyDateTimeAPI == NULL;
+  return PyDateTimeAPI == nullptr;
 }
 
 // For compatibility with earlier Python releases
@@ -1701,7 +1701,7 @@ class MetaFieldBase
     }
 
     /** Function to update a field given a data value. */
-    virtual void setField(Object*, const DataValue&, CommandManager* = NULL) const = 0;
+    virtual void setField(Object*, const DataValue&, CommandManager* = nullptr) const = 0;
 
     /** Function to retrieve a field value. */
     virtual void getField(Object*, DataValue&) const = 0;
@@ -1740,12 +1740,12 @@ class MetaFieldBase
 
     virtual const MetaClass* getClass() const
     {
-      return NULL;
+      return nullptr;
     }
 
     virtual const Keyword* getKeyword() const
     {
-      return NULL;
+      return nullptr;
     }
 
   private:
@@ -2015,7 +2015,7 @@ class MetaClass : public NonCopyable
     template <class Cls, class Ptr> inline void addPointerField(
       const Keyword& k,
       Ptr* (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(Ptr*) = NULL,
+      void (Cls::*setfunc)(Ptr*) = nullptr,
       unsigned int c = BASE
       )
     {
@@ -2026,7 +2026,7 @@ class MetaClass : public NonCopyable
 
     template <class Cls, class Iter, class Ptr> inline void addIteratorField(
       const Keyword& k1, const Keyword& k2,
-      Iter (Cls::*getfunc)(void) const = NULL,
+      Iter (Cls::*getfunc)(void) const = nullptr,
       unsigned int c = BASE
       )
     {
@@ -2039,7 +2039,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addBoolField(
       const Keyword& k,
       bool (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(bool) = NULL,
+      void (Cls::*setfunc)(bool) = nullptr,
       tribool d = BOOL_UNSET,
       unsigned int c = BASE
       )
@@ -2050,7 +2050,7 @@ class MetaClass : public NonCopyable
     template <class Cls> inline void addDateField(
       const Keyword& k,
       Date (Cls::*getfunc)(void) const,
-      void (Cls::*setfunc)(Date) = NULL,
+      void (Cls::*setfunc)(Date) = nullptr,
       Date d = Date::infinitePast,
       unsigned int c = BASE
       )
@@ -2178,7 +2178,7 @@ class MetaCategory : public MetaClass
     /** Template constructor. */
     template <class cls> static inline MetaCategory* registerCategory(
       const string& t, const string& g,
-      readController r = NULL, findController f = NULL
+      readController r = nullptr, findController f = nullptr
       )
     {
       return new MetaCategory(t, g, sizeof(cls), r, f);

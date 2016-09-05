@@ -84,7 +84,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -161,7 +161,7 @@ DECLARE_EXPORT void OperatorDelete::solve(const Demand* d, void* v)
   while (true)
   {
     // Find a candidate operationplan to delete
-    OperationPlan *candidate = NULL;
+    OperationPlan *candidate = nullptr;
     const Demand::OperationPlanList& deli = d->getDelivery();
     for (Demand::OperationPlanList::const_iterator i = deli.begin(); i != deli.end(); ++i)
       if (!(*i)->getLocked())
@@ -244,7 +244,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       ++fiter;
       continue;
     }
-    FlowPlan* fp = NULL;
+    FlowPlan* fp = nullptr;
     if (fiter->getEventType() == 1)
       fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
     double cur_excess = b->getFlowPlans().getExcess(&*fiter);
@@ -316,9 +316,9 @@ void OperatorDelete::solve(const Buffer* b, void* v)
 PyObject* OperatorDelete::solve(PyObject *self, PyObject *args)
 {
   // Parse the argument
-  PyObject *obj = NULL;
+  PyObject *obj = nullptr;
   short objtype = 0;
-  if (args && !PyArg_ParseTuple(args, "|O:solve", &obj)) return NULL;
+  if (args && !PyArg_ParseTuple(args, "|O:solve", &obj)) return nullptr;
   if (obj)
   {
     if (PyObject_TypeCheck(obj, Demand::metadata->pythonClass))
@@ -335,7 +335,7 @@ PyObject* OperatorDelete::solve(PyObject *self, PyObject *args)
         PythonDataException,
         "solve(d) argument must be a demand, buffer, resource or operationplan"
         );
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -369,7 +369,7 @@ PyObject* OperatorDelete::solve(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");

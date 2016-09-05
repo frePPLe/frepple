@@ -64,7 +64,7 @@ DECLARE_EXPORT Plan::~Plan()
   Environment::setLogFile("");
 
   // Clear the pointer to this singleton object
-  thePlan = NULL;
+  thePlan = nullptr;
 }
 
 

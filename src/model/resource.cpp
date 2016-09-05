@@ -252,11 +252,11 @@ DECLARE_EXPORT Resource::~Resource()
     Item::supplierlist::const_iterator itmsup_iter = itm_iter->getSupplierIterator();
     while (ItemSupplier* itmsup = itmsup_iter.next())
       if (itmsup->getResource() == this)
-        itmsup->setResource(NULL);
+        itmsup->setResource(nullptr);
     Item::distributionIterator  itmdist_iter = itm_iter->getDistributionIterator();
     while (ItemDistribution* itmdist = itmdist_iter.next())
       if (itmdist->getResource() == this)
-        itmdist->setResource(NULL);
+        itmdist->setResource(nullptr);
   }
 }
 
@@ -268,7 +268,7 @@ DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
     return;
 
   // Update later setup opplans
-  OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : NULL;
+  OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : nullptr;
   loadplanlist::const_iterator i = ldplan ?
       getLoadPlans().begin(ldplan) :
       getLoadPlans().begin();
@@ -307,16 +307,16 @@ extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
   Resource* resource = static_cast<Resource*>(self);
 
   // Parse the Python arguments
-  PyObject* buckets = NULL;
+  PyObject* buckets = nullptr;
   int ok = PyArg_ParseTuple(args, "O:plan", &buckets);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Validate that the argument supports iteration.
   PyObject* iter = PyObject_GetIter(buckets);
   if (!iter)
   {
     PyErr_Format(PyExc_AttributeError,"Argument to resource.plan() must support iteration");
-    return NULL;
+    return nullptr;
   }
 
   // Return the iterator
@@ -336,13 +336,13 @@ int Resource::PlanIterator::initialize()
 
 
 Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
-  res(r), bucketiterator(o), ldplaniter(r ? r->getLoadPlans().begin() : NULL),
-  cur_setup(0.0), cur_load(0.0), cur_size(0.0), start_date(NULL), end_date(NULL)
+  res(r), bucketiterator(o), ldplaniter(r ? r->getLoadPlans().begin() : nullptr),
+  cur_setup(0.0), cur_load(0.0), cur_size(0.0), start_date(nullptr), end_date(nullptr)
 {
   if (!r)
   {
-    bucketiterator = NULL;
-    throw LogicException("Creating resource plan iterator for NULL resource");
+    bucketiterator = nullptr;
+    throw LogicException("Creating resource plan iterator for nullptr resource");
   }
 
   // Count differently for bucketized and continuous resources
@@ -461,7 +461,7 @@ PyObject* Resource::PlanIterator::iternext()
   {
     if (ldplaniter == res->getLoadPlans().end())
       // No more resource buckets
-      return NULL;
+      return nullptr;
     else
     {
       // At this point ldplaniter points to a bucket start event.
@@ -491,7 +491,7 @@ PyObject* Resource::PlanIterator::iternext()
     if (start_date) Py_DECREF(start_date);
     start_date = end_date;
     end_date = PyIter_Next(bucketiterator);
-    if (!end_date) return NULL;
+    if (!end_date) return nullptr;
     cur_date = PythonData(end_date).getDate();
 
     // Measure from beginning of the bucket till the first event in this bucket

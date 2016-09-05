@@ -35,12 +35,12 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT PyObject* PythonLogicException = NULL;
-DECLARE_EXPORT PyObject* PythonDataException = NULL;
-DECLARE_EXPORT PyObject* PythonRuntimeException = NULL;
+DECLARE_EXPORT PyObject* PythonLogicException = nullptr;
+DECLARE_EXPORT PyObject* PythonDataException = nullptr;
+DECLARE_EXPORT PyObject* PythonRuntimeException = nullptr;
 
-DECLARE_EXPORT PyObject *PythonInterpreter::module = NULL;
-DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = NULL;
+DECLARE_EXPORT PyObject *PythonInterpreter::module = nullptr;
+DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = nullptr;
 
 
 DECLARE_EXPORT void Object::writeElement(
@@ -125,14 +125,14 @@ DECLARE_EXPORT size_t Object::getSize() const
 PyObject* PythonInterpreter::createModule()
 {
   static PyMethodDef freppleMethods[] = {
-    {NULL, NULL, 0, NULL}
+    {nullptr, nullptr, 0, nullptr}
   };
   static struct PyModuleDef frepplemodule = {
     PyModuleDef_HEAD_INIT,
     "frepple",
     "Bindings for the frePPLe production planning application",
     -1, freppleMethods,
-    NULL, NULL, NULL, NULL
+    nullptr, nullptr, nullptr, nullptr
   };
   module = PyModule_Create(&frepplemodule);
   return module;
@@ -185,13 +185,13 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
 
   // Create python exception types
   int nok = 0;
-  PythonLogicException = PyErr_NewException((char*)"frepple.LogicException", NULL, NULL);
+  PythonLogicException = PyErr_NewException((char*)"frepple.LogicException", nullptr, nullptr);
   Py_IncRef(PythonLogicException);
   nok += PyModule_AddObject(module, "LogicException", PythonLogicException);
-  PythonDataException = PyErr_NewException((char*)"frepple.DataException", NULL, NULL);
+  PythonDataException = PyErr_NewException((char*)"frepple.DataException", nullptr, nullptr);
   Py_IncRef(PythonDataException);
   nok += PyModule_AddObject(module, "DataException", PythonDataException);
-  PythonRuntimeException = PyErr_NewException((char*)"frepple.RuntimeException", NULL, NULL);
+  PythonRuntimeException = PyErr_NewException((char*)"frepple.RuntimeException", nullptr, nullptr);
   Py_IncRef(PythonRuntimeException);
   nok += PyModule_AddObject(module, "RuntimeException", PythonRuntimeException);
 
@@ -336,7 +336,7 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
     if (lock) PyGILState_Release(state);;
     throw RuntimeException("Error registering a new Python method");
   }
-  PyObject* func = PyCFunction_NewEx(newMethod, NULL, mod);
+  PyObject* func = PyCFunction_NewEx(newMethod, nullptr, mod);
   Py_DECREF(mod);
   if (!func)
   {
@@ -387,7 +387,7 @@ PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
   // Pick up arguments
   char *data;
   int ok = PyArg_ParseTuple(args, "s:log", &data);
-  if (!ok) return NULL;
+  if (!ok) return nullptr;
 
   // Print and flush the output stream
   logger << data;
@@ -401,7 +401,7 @@ PyObject* PythonInterpreter::python_log(PyObject *self, PyObject *args)
 
 const PyTypeObject PythonType::PyTypeObjectTemplate =
 {
-  PyVarObject_HEAD_INIT(NULL, 0)
+  PyVarObject_HEAD_INIT(nullptr, 0)
   "frepple.unspecified",  /* WILL BE UPDATED tp_name */
   0,  /* WILL BE UPDATED tp_basicsize */
   0,  /* tp_itemsize */
@@ -531,7 +531,7 @@ inline Object* PythonData::getObject() const
     // This objects are owned by us!
     return static_cast<Object*>(const_cast<PyObject*>(obj));
   else
-    return NULL;
+    return nullptr;
 }
 
 
@@ -564,7 +564,7 @@ DECLARE_EXPORT void Object::writeProperties(Serializer& o) const
 
   // Create a sorted list of all keys
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* key_iterator = PyObject_CallMethod(dict, "keys", NULL); // new ref
+  PyObject* key_iterator = PyObject_CallMethod(dict, "keys", nullptr); // new ref
   PyObject* keylist = PySequence_Fast(key_iterator, ""); // new ref
   PyList_Sort(keylist);
 
@@ -886,14 +886,14 @@ DECLARE_EXPORT PyObject* Object::getPyObjectProperty(const string& name) const
 {
   if (!dict)
     // Not a single property has been defined
-    return NULL;
+    return nullptr;
   PyGILState_STATE pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp)
   {
     // Value not found in the dictionary
     PyGILState_Release(pythonstate);
-    return NULL;
+    return nullptr;
   }
   PyGILState_Release(pythonstate);
   return lkp;
@@ -905,10 +905,10 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
   try
   {
     // Parse the argument
-    PyObject *filearg = NULL;
-    char *mode = NULL;
+    PyObject *filearg = nullptr;
+    char *mode = nullptr;
     if (!PyArg_ParseTuple(args, "|sO:toXML", &mode, &filearg))
-      return NULL;
+      return nullptr;
 
     // Create the XML string.
     ostringstream ch;
@@ -939,7 +939,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
         // ... to a file
         Py_DECREF(writer);
         return PyFile_WriteString(ch.str().c_str(), filearg) ?
-            NULL : // Error writing to the file
+            nullptr : // Error writing to the file
             Py_BuildValue("");
       }
       else
@@ -953,7 +953,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
   catch(...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   throw LogicException("Unreachable code reached");
 }
@@ -990,10 +990,10 @@ DECLARE_EXPORT void PythonType::addMethod
   table->tp_methods[i].ml_doc = doc;
 
   // Append an empty terminator record
-  table->tp_methods[++i].ml_name = NULL;
-  table->tp_methods[i].ml_meth = NULL;
+  table->tp_methods[++i].ml_name = nullptr;
+  table->tp_methods[i].ml_meth = nullptr;
   table->tp_methods[i].ml_flags = 0;
-  table->tp_methods[i].ml_doc = NULL;
+  table->tp_methods[i].ml_doc = nullptr;
 }
 
 
@@ -1057,8 +1057,8 @@ DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
 {
   if (n.empty())
   {
-    // Resetting to NULL when the string is empty
-    func = NULL;
+    // Resetting to nullptr when the string is empty
+    func = nullptr;
     return;
   }
 
@@ -1088,7 +1088,7 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
   if (!p || p == Py_None)
   {
     // Resetting to null
-    func = NULL;
+    func = nullptr;
     return;
   }
 
@@ -1127,7 +1127,7 @@ DECLARE_EXPORT PythonData PythonFunction::call() const
   if (!result)
   {
     logger << "Error: Exception caught when calling Python function '"
-        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+        << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1143,7 +1143,7 @@ DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p) const
   if (!result)
   {
     logger << "Error: Exception caught when calling Python function '"
-        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+        << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1159,7 +1159,7 @@ DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p, const PyObject
   if (!result)
   {
     logger << "Error: Exception caught when calling Python function '"
-        << (func ? PyEval_GetFuncName(func) : "NULL") << "'" << endl;
+        << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
     if (PyErr_Occurred()) PyErr_PrintEx(0);
   }
   PyGILState_Release(pythonstate);
@@ -1176,7 +1176,7 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
       PyErr_Format(PyExc_TypeError,
           "attribute name must be string, not '%S'",
           Py_TYPE(name)->tp_name);
-      return NULL;
+      return nullptr;
     }
 
     // Find the field
@@ -1200,7 +1200,7 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
 
       // Exit 2: Exception occurred
       if (PyErr_Occurred())
-        return NULL;
+        return nullptr;
     }
 
     // Exit 3: Look up in our custom dictionary
@@ -1224,7 +1224,7 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1313,7 +1313,7 @@ extern "C" DECLARE_EXPORT PyObject* compare_handler(PyObject *self, PyObject *ot
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1327,7 +1327,7 @@ extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1341,7 +1341,7 @@ extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args,
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -1355,7 +1355,7 @@ extern "C" DECLARE_EXPORT PyObject* str_handler(PyObject* self)
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 

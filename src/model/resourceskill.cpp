@@ -162,7 +162,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -172,13 +172,13 @@ DECLARE_EXPORT Object* ResourceSkill::finder(const DataValueDict& d)
   // Check resource
   const DataValue* tmp = d.get(Tags::resource);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Resource* res = static_cast<Resource*>(tmp->getObject());
 
   // Check skill field
   tmp = d.get(Tags::skill);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Skill* skill = static_cast<Skill*>(tmp->getObject());
 
   // Walk over all skills of the resurce, and return
@@ -214,7 +214,7 @@ DECLARE_EXPORT Object* ResourceSkill::finder(const DataValueDict& d)
       continue;
     return const_cast<ResourceSkill*>(&*i);
   }
-  return NULL;
+  return nullptr;
 }
 
 }

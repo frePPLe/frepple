@@ -87,7 +87,7 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 
   // Remove all references to this setup matrix from resources
   for (Resource::iterator m = Resource::begin(); m != Resource::end(); ++m)
-    if (m->getSetupMatrix() == this) m->setSetupMatrix(NULL);
+    if (m->getSetupMatrix() == this) m->setSetupMatrix(nullptr);
 }
 
 
@@ -103,7 +103,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& att
   while (result && priority > result->priority)
     result = result->nextRule;
   if (result && result->priority != priority)
-    result = NULL;
+    result = nullptr;
 
   // Pick up the action attribute and update the rule accordingly
   switch (MetaClass::decodeAction(atts))
@@ -142,7 +142,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& att
       {
         // Delete it
         delete result;
-        return NULL;
+        return nullptr;
       }
     case ADD_CHANGE:
       if (!result)
@@ -162,19 +162,19 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
   {
     // Pick up the setup matrix
     SetupMatrix *matrix = static_cast<SetupMatrix*>(self);
-    if (!matrix) throw LogicException("Can't add a rule to a NULL setupmatrix");
+    if (!matrix) throw LogicException("Can't add a rule to a nullptr setupmatrix");
 
     // Parse the arguments
     int prio = 0;
-    PyObject *pyfrom = NULL;
-    PyObject *pyto = NULL;
+    PyObject *pyfrom = nullptr;
+    PyObject *pyto = nullptr;
     long duration = 0;
     double cost = 0;
-    static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", NULL};
+    static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", nullptr};
     if (!PyArg_ParseTupleAndKeywords(args, kwdict,
         "i|ssld:addRule",
         const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
-      return NULL;
+      return nullptr;
 
     // Add the new rule
     SetupMatrixRule *r = new SetupMatrixRule();
@@ -189,7 +189,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
   catch(...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -200,13 +200,13 @@ DECLARE_EXPORT void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
   if (matrix)
     throw DataException("Can't reassign setup matrix matrix once assigned");
   if (!s)
-    throw DataException("Can't update setup matrix to NULL");
+    throw DataException("Can't update setup matrix to nullptr");
 
   // Assign the pointer
   matrix = s;
 
   // Find the right place in the list
-  SetupMatrixRule *next = matrix->firstRule, *prev = NULL;
+  SetupMatrixRule *next = matrix->firstRule, *prev = nullptr;
   while (next && priority > next->priority)
   {
     prev = next;
@@ -304,7 +304,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::calculateSetup
 (const string oldsetup, const string newsetup) const
 {
   // No need to look
-  if (oldsetup == newsetup) return NULL;
+  if (oldsetup == newsetup) return nullptr;
 
   // Loop through all rules
   for (SetupMatrixRule *curRule = firstRule; curRule; curRule = curRule->nextRule)
@@ -324,7 +324,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::calculateSetup
   // No matching rule was found
   logger << "Warning: Conversion from '" << oldsetup << "' to '" << newsetup
       << "' undefined in setup matrix '" << getName() << endl;
-  return NULL;
+  return nullptr;
 }
 
 } // end namespace

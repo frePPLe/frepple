@@ -142,26 +142,26 @@ DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
   double produced = 0.0;
   double consumed = 0.0;
   double current_inventory = 0.0;
-  const FlowPlan* current_flowplan = NULL;
+  const FlowPlan* current_flowplan = nullptr;
   for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
       latest_next != Date::infiniteFuture || earliest_next || cur != b->getFlowPlans().end(); )
   {
     if (cur==b->getFlowPlans().end())
     {
       current_date = earliest_next ? earliest_next : latest_next;
-      current_flowplan = NULL;
+      current_flowplan = nullptr;
     }
     else if (latest_next != Date::infiniteFuture && latest_next < cur->getDate())
     {
       // Latest procument time is reached
       current_date = latest_next;
-      current_flowplan = NULL;
+      current_flowplan = nullptr;
     }
     else if (earliest_next && earliest_next < cur->getDate())
     {
       // Earliest procument time was reached
       current_date = earliest_next;
-      current_flowplan = NULL;
+      current_flowplan = nullptr;
     }
     else
     {

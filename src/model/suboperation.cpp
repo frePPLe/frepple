@@ -185,7 +185,7 @@ PyObject* SubOperation::create(PyTypeObject* pytype, PyObject* args, PyObject* k
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 

@@ -71,7 +71,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
   // The loop goes from the requested date till the very end. Whenever the
   // event date changes, we evaluate if a shortage exists.
   Date currentDate;
-  const TimeLine<FlowPlan>::Event *prev = NULL;
+  const TimeLine<FlowPlan>::Event *prev = nullptr;
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
@@ -117,7 +117,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         && prev
         && prev->getDate() >= theDate - b->getMinimumInterval())
       {
-        Operation *prevOper = NULL;
+        Operation *prevOper = nullptr;
         DateRange prevDates;
         double prevQty = 0.0;
         Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
@@ -127,7 +127,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         {
           // Check if it is an unlocked producing operationplan
           if (batchiter->getQuantity() <= 0) continue;
-          const FlowPlan* batchcandidate = NULL;
+          const FlowPlan* batchcandidate = nullptr;
           if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
           if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
@@ -168,7 +168,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
             // want to plan *exactly* at the date of the existing operationplan.
             data->state->q_date =
               batchdate + b->getProducingOperation()->getPostTime();
-            data->state->curOwnerOpplan = NULL;
+            data->state->curOwnerOpplan = nullptr;
             b->getProducingOperation()->solve(*this, v);
           }
           catch (...)
@@ -210,7 +210,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           {
             c = b->getFlowPlans().rbegin();
             if (c == b->getFlowPlans().end())
-              prev = NULL;
+              prev = nullptr;
             else
               prev = &*c;
           }
@@ -225,7 +225,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         && cur != b->getFlowPlans().end()
         && cur->getDate() <= theDate + b->getMinimumInterval())
       {
-        Operation *prevOper = NULL;
+        Operation *prevOper = nullptr;
         DateRange prevDates;
         double prevQty = 0.0;
         Buffer::flowplanlist::const_iterator prevbatchiter = b->getFlowPlans().end();
@@ -235,7 +235,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
         {
           // Check if it is an unlocked producing operationplan
           if (batchiter->getQuantity() <= 0) continue;
-          const FlowPlan* batchcandidate = NULL;
+          const FlowPlan* batchcandidate = nullptr;
           if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
           if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
@@ -271,7 +271,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
             data->state->curBuffer = const_cast<Buffer*>(b);
             data->state->q_qty = batchqty;
             data->state->q_date = theDate;
-            data->state->curOwnerOpplan = NULL;
+            data->state->curOwnerOpplan = nullptr;
             b->getProducingOperation()->solve(*this, v);
           }
           catch (...)
@@ -343,7 +343,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
           // solving for buffers we must make sure NOT to pass owner information.
           // At the end of solving for a buffer we need to restore the original
           // settings...
-          data->state->curOwnerOpplan = NULL;
+          data->state->curOwnerOpplan = nullptr;
 
           // Note that the supply created with the next line changes the
           // onhand value at all later dates!
@@ -451,7 +451,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Buffer* b, void* v)
     // solving for buffers we must make sure NOT to pass owner information.
     // At the end of solving for a buffer we need to restore the original
     // settings...
-    data->state->curOwnerOpplan = NULL;
+    data->state->curOwnerOpplan = nullptr;
     // Note that the supply created with the next line changes the onhand value
     // at all later dates!
     // Note that asking at the requested date doesn't keep the material on
@@ -539,7 +539,7 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
 
   // Scan the complete horizon
   Date currentDate;
-  const TimeLine<FlowPlan>::Event *prev = NULL;
+  const TimeLine<FlowPlan>::Event *prev = nullptr;
   double shortage(0.0);
   double current_minimum(0.0);
   Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
@@ -572,7 +572,7 @@ DECLARE_EXPORT void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
         // solving for buffers we must make sure NOT to pass owner information.
         // At the end of solving for a buffer we need to restore the original
         // settings...
-        data->state->curOwnerOpplan = NULL;
+        data->state->curOwnerOpplan = nullptr;
 
         // Note that the supply created with the next line changes the
         // onhand value at all later dates!

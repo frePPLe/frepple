@@ -113,7 +113,7 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -198,13 +198,13 @@ DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
       try
       {
         safety_stock_planning = true;
-        state->curBuffer = NULL;
+        state->curBuffer = nullptr;
         state->q_qty = -1.0;
         state->q_date = Date::infinitePast;
         state->a_cost = 0.0;
         state->a_penalty = 0.0;
-        state->curDemand = NULL;
-        state->curOwnerOpplan = NULL;
+        state->curDemand = nullptr;
+        state->curOwnerOpplan = nullptr;
         state->a_qty = 0;
         (*o)->getBuffer()->solve(*solver, this);
         CommandManager::commit();
@@ -267,15 +267,15 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
     for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
       try
       {
-        state->curBuffer = NULL;
+        state->curBuffer = nullptr;
         // A quantity of -1 is a flag for the buffer solver to solve safety stock.
         state->q_qty = -1.0;
         state->q_date = Date::infinitePast;
         state->a_cost = 0.0;
         state->a_penalty = 0.0;
-        planningDemand = NULL;
-        state->curDemand = NULL;
-        state->curOwnerOpplan = NULL;
+        planningDemand = nullptr;
+        state->curDemand = nullptr;
+        state->curOwnerOpplan = nullptr;
         // Call the buffer solver
         iteration_count = 0;
         (*b)->solve(*solver, this);
@@ -371,12 +371,12 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
 {
   // Parse the argument
-  PyObject *dem = NULL;
-  if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return NULL;
+  PyObject *dem = nullptr;
+  if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return nullptr;
   if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
   {
     PyErr_SetString(PythonDataException, "solve(d) argument must be a demand");
-    return NULL;
+    return nullptr;
   }
 
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
@@ -401,7 +401,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -421,7 +421,7 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
@@ -439,7 +439,7 @@ DECLARE_EXPORT PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
   {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");

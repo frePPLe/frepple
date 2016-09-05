@@ -172,12 +172,12 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 
 			  // Plan the demand by asking the delivery operation to plan
 			  double q_qty = plan_qty;
-			  data->state->curBuffer = NULL;
+			  data->state->curBuffer = nullptr;
 			  data->state->q_qty = plan_qty;
 			  data->state->q_date = plan_date;
 			  data->planningDemand = const_cast<Demand*>(l);
 			  data->state->curDemand = const_cast<Demand*>(l);
-			  data->state->curOwnerOpplan = NULL;
+			  data->state->curOwnerOpplan = nullptr;
 			  deliveryoper->solve(*this, v);
 			  Date next_date = data->state->a_date;
 
@@ -193,7 +193,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 					  if (loglevel > 1)
 						  logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
 					  data->rollback(topcommand);
-					  data->state->curBuffer = NULL;
+					  data->state->curBuffer = nullptr;
 					  data->state->q_qty = l->getMinShipment();
 					  data->state->q_date = plan_date;
 					  data->state->curDemand = const_cast<Demand*>(l);
@@ -221,7 +221,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 							  if (loglevel > 0)
 								  logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
 							  data->rollback(topcommand);
-							  data->state->curBuffer = NULL;
+							  data->state->curBuffer = nullptr;
 							  data->state->q_qty = new_qty;
 							  data->state->q_date = plan_date;
 							  data->state->curDemand = const_cast<Demand*>(l);
@@ -243,7 +243,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 								  logger << "Demand '" << l << "' restores plan for quantity " << min_qty << endl;
 							  // Restore the last feasible plan
 							  data->rollback(topcommand);
-							  data->state->curBuffer = NULL;
+							  data->state->curBuffer = nullptr;
 							  data->state->q_qty = min_qty;
 							  data->state->q_date = plan_date;
 							  data->state->curDemand = const_cast<Demand*>(l);
@@ -334,7 +334,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 							  data->state->q_qty = remainder;
 							  data->state->q_date = copy_plan_date;
 							  data->state->curDemand = const_cast<Demand*>(l);
-							  data->state->curBuffer = NULL;
+							  data->state->curBuffer = nullptr;
 							  deliveryoper->solve(*this, v);
 							  if (data->state->a_qty < ROUNDING_ERROR)
 							  {
@@ -419,7 +419,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
           data->state->q_qty = remainder;
           data->state->q_date = best_q_date;
           data->state->curDemand = const_cast<Demand*>(l);
-          data->state->curBuffer = NULL;
+          data->state->curBuffer = nullptr;
           deliveryoper->solve(*this,v);
           if (data->state->a_qty < ROUNDING_ERROR)
           {

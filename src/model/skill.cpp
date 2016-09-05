@@ -64,7 +64,7 @@ DECLARE_EXPORT Skill::~Skill()
     for(Operation::loadlist::const_iterator l = o->getLoads().begin();
       l != o->getLoads().end(); ++l)
       if (l->getSkill() == this)
-        const_cast<Load&>(*l).setSkill(NULL);
+        const_cast<Load&>(*l).setSkill(nullptr);
 }
 
 }

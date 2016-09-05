@@ -28,7 +28,7 @@ template<class Demand> DECLARE_EXPORT Tree utils::HasName<Demand>::st;
 DECLARE_EXPORT const MetaCategory* Demand::metadata;
 DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
 
-DECLARE_EXPORT OperationFixedTime *Demand::uninitializedDelivery = NULL;
+DECLARE_EXPORT OperationFixedTime *Demand::uninitializedDelivery = nullptr;
 
 
 int Demand::initialize()
@@ -102,7 +102,7 @@ DECLARE_EXPORT void Demand::deleteOperationPlans
   while (true)
   {
     // Find a candidate to delete
-    OperationPlan *candidate = NULL;
+    OperationPlan *candidate = nullptr;
     for (OperationPlanList::iterator i = deli.begin(); i!=deli.end(); ++i)
       if (deleteLocked || !(*i)->getLocked())
       {
@@ -134,8 +134,8 @@ DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
     throw LogicException("Delivery operationplan incorrectly registered");
 
   // Remove the reference on the operationplan
-  o->dmd = NULL;  // Required to avoid endless loop
-  o->setDemand(NULL);
+  o->dmd = nullptr;  // Required to avoid endless loop
+  o->setDemand(nullptr);
 
   // Find in the list of deliveries
   OperationPlanList::iterator j = deli.begin();
@@ -187,14 +187,14 @@ DECLARE_EXPORT const Demand::OperationPlanList& Demand::getDelivery() const
 DECLARE_EXPORT OperationPlan* Demand::getLatestDelivery() const
 {
   const Demand::OperationPlanList& l = getDelivery();
-  return l.empty() ? NULL : *(l.begin());
+  return l.empty() ? nullptr : *(l.begin());
 }
 
 
 DECLARE_EXPORT OperationPlan* Demand::getEarliestDelivery() const
 {
   const Demand::OperationPlanList& l = getDelivery();
-  OperationPlan *last = NULL;
+  OperationPlan *last = nullptr;
   for (Demand::OperationPlanList::const_iterator i = l.begin(); i!=l.end(); ++i)
     last = *i;
   return last;
@@ -262,14 +262,14 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
       l = &*l_iter;
       if (++l_iter != Location::end())
         // No, multiple locations
-        l = NULL;
+        l = nullptr;
     }
   }
   if (l)
   {
     // Search for buffers for the requested item and location.
     bool ok = true;
-    Buffer* buf = NULL;
+    Buffer* buf = nullptr;
     Item::bufferIterator buf_iter(getItem());
     while (Buffer* tmpbuf = buf_iter.next())
     {
@@ -321,8 +321,8 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
   }
 
   // Case 4: Tough luck. Not possible to ship this demand.
-  const_cast<Demand*>(this)->oper = NULL;
-  return NULL;
+  const_cast<Demand*>(this)->oper = nullptr;
+  return nullptr;
 }
 
 

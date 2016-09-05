@@ -209,7 +209,7 @@ DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
   else
     --*this;
   if (!operator bool())
-    return NULL;
+    return nullptr;
   else
     return this;
 }

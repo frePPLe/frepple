@@ -192,7 +192,7 @@ PyObject* Load::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
   catch (...)
   {
     PythonType::evalException();
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -202,13 +202,13 @@ DECLARE_EXPORT Object* Load::finder(const DataValueDict& d)
   // Check operation
   const DataValue* tmp = d.get(Tags::operation);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Operation* oper = static_cast<Operation*>(tmp->getObject());
 
   // Check resource field
   tmp = d.get(Tags::resource);
   if (!tmp)
-    return NULL;
+    return nullptr;
   Resource* res = static_cast<Resource*>(tmp->getObject());
 
   // Walk over all loads of the operation, and return
@@ -244,7 +244,7 @@ DECLARE_EXPORT Object* Load::finder(const DataValueDict& d)
       continue;
     return const_cast<Load*>(&*fl);
   }
-  return NULL;
+  return nullptr;
 }
 
 } // end namespace

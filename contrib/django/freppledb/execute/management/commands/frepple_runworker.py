@@ -174,7 +174,7 @@ class Command(BaseCommand):
           else:
             management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)
         # L
-        elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:        
+        elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
           management.call_command('odoo_import', database=database, task=task.id, verbosity=0)
         # M
         elif task.name == 'import from folder':

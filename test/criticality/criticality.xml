@@ -16,13 +16,13 @@
     <operation name="item 1+2+3 - level 3" duration="P2D" xsi:type="operation_fixed_time"/>
   </operations>
   <items>
-    <item name="item 1"> 
+    <item name="item 1">
       <operation name="item 1 - level 0"/>
     </item>
-    <item name="item 2"> 
+    <item name="item 2">
       <operation name="item 2 - level 0"/>
     </item>
-    <item name="item 3"> 
+    <item name="item 3">
       <operation name="item 3 - level 0"/>
     </item>
     <item name="item 2+3"/>
@@ -48,8 +48,8 @@
     <buffer name="item 1+2+3">
       <producing name="item 1+2+3 - level 3" />
       <item name="item 1+2+3" />
-    </buffer>    
-  </buffers>  
+    </buffer>
+  </buffers>
   <flows>
     <flow xsi:type="flow_start">
       <operation name="item 1 - level 0" />

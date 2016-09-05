@@ -260,7 +260,7 @@
           <suboperation>
             <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
           </suboperation>
-          <suboperation>          
+          <suboperation>
             <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
           </suboperation>
           <suboperation>

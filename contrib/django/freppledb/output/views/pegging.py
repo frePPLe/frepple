@@ -67,8 +67,8 @@ class ReportByDemand(GridReport):
     cursor = connections[request.database].cursor()
     cursor.execute('''
       with dmd as (
-        select 
-          due, 
+        select
+          due,
           cast(json_array_elements(plan->'pegging')->>'opplan' as integer) opplan
         from demand
         where name = %s
@@ -121,19 +121,19 @@ class ReportByDemand(GridReport):
     # Collect demand due date, all operationplans and loaded resources
     query = '''
       with pegging as (
-        select 
+        select
           min(rownum) as rownum, min(due) as due, opplan, min(lvl) as lvl, sum(quantity) as quantity
         from (select
           row_number() over () as rownum, opplan, due, lvl, quantity
-        from (select     
-          due, 
+        from (select
+          due,
           cast(json_array_elements(plan->'pegging')->>'opplan' as integer) as opplan,
           cast(json_array_elements(plan->'pegging')->>'level' as integer) as lvl,
           cast(json_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
           from demand
           where name = 'Demand 01'
           ) d1
-          )d2    
+          )d2
         group by opplan
         )
       select
@@ -142,7 +142,7 @@ class ReportByDemand(GridReport):
         operationplan.status, operationplanresource.resource, operationplan.type
       from pegging
       inner join operationplan
-        on operationplan.id = pegging.opplan      
+        on operationplan.id = pegging.opplan
       inner join (
         select name,
           min(rownum) as rownum,
@@ -152,7 +152,7 @@ class ReportByDemand(GridReport):
           on pegging.opplan = operationplan.id
         group by operationplan.name
         ) ops
-      on operationplan.name = ops.name     
+      on operationplan.name = ops.name
       left outer join operationplanresource
         on pegging.opplan = operationplanresource.operationplan_id
       order by ops.rownum, pegging.rownum

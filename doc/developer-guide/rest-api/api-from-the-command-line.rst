@@ -18,7 +18,7 @@ To just get a list of all sales orders in API format (assuming the user is named
 ::
 
    wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=api
-   
+
    curl -H 'Accept: application/json; indent=4; charset=UTF-8' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=api
 
 
@@ -60,4 +60,3 @@ A DELETE request for one or more records can be done with:
 ::
 
    curl -X DELETE -H "Content-Type: application/json; charset=UTF-8" -u admin:admin http://127.0.0.1:8000/api/input/demand/?source=ERP
-   

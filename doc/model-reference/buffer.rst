@@ -94,9 +94,9 @@ producing        operation         | This operation will be instantiated by the 
                                      operations, unless you have some very specific modeling
                                      requirements.
                                    | From version 4.0 onwards, this field is deprecated. It is
-                                     left only for backwards compatibility. New implementations 
-                                     and upgraded installs should use the easier modeling 
-                                     constructs itemsupplier, itemdistribution and itemoperation. 
+                                     left only for backwards compatibility. New implementations
+                                     and upgraded installs should use the easier modeling
+                                     constructs itemsupplier, itemdistribution and itemoperation.
 detectproblems   boolean           | Set this field to false to supress problem detection on this
                                      buffer.
                                    | Default is true.
@@ -145,7 +145,7 @@ Buffer_procure
 
 .. Important::
 
-   This buffer type is deprecated. Using the itemsupplier model 
+   This buffer type is deprecated. Using the itemsupplier model
    provides exactly the same functionality.
 
 A procurement buffer is replenished by a supplier.

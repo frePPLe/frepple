@@ -142,7 +142,7 @@ class Command(BaseCommand):
       tables.discard('django_admin_log')
       tables.discard('django_content_type')
       tables.discard('execute_log')
-      tables.discard('common_scenario')      
+      tables.discard('common_scenario')
 
       # Delete all records from the tables.
       with transaction.atomic(using=database, savepoint=False):
@@ -150,17 +150,17 @@ class Command(BaseCommand):
           cursor.execute('update common_user set horizonbuckets = null')
         for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
           cursor.execute(stmt)
-        if models:           
+        if models:
           if 'input.purchaseorder' in models:
             cursor.execute('''
-              delete from operationplanresource 
+              delete from operationplanresource
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'PO'
                 )
               ''')
             cursor.execute('''
-              delete from operationplanmaterial 
+              delete from operationplanmaterial
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'PO'
@@ -169,35 +169,35 @@ class Command(BaseCommand):
             cursor.execute("delete from operationplan where type = 'PO'")
           if 'input.distributionorder' in models:
             cursor.execute('''
-              delete from operationplanresource 
+              delete from operationplanresource
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'DO'
                 )
-              ''')            
+              ''')
             cursor.execute('''
-              delete from operationplanmaterial 
+              delete from operationplanmaterial
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'DO'
                 )
-              ''')            
+              ''')
             cursor.execute("delete from operationplan where type = 'DO'")
           if 'input.manufacturingorder' in models:
             cursor.execute('''
-              delete from operationplanmaterial 
+              delete from operationplanmaterial
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'MO'
                 )
-              ''')            
+              ''')
             cursor.execute('''
-              delete from operationplanresource 
+              delete from operationplanresource
               where operationplan_id in (
                 select operationplan.id from operationplan
                 where type = 'MO'
                 )
-              ''')            
+              ''')
             cursor.execute("delete from operationplan where type = 'MO'")
 
       # Task update

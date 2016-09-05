@@ -54,7 +54,7 @@ int ResourceDefault::initialize()
     Object::create<ResourceDefault>,
     true
     );
-  
+
   // Initialize the Python class
   return FreppleClass<ResourceDefault,Resource>::initialize();
 }

@@ -71,7 +71,7 @@ DECLARE_EXPORT ItemOperation::~ItemOperation()
       else
         logger << "Error: Corrupted ItemOperation list" << endl;
     }
-  } 
+  }
 }
 
 

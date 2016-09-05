@@ -19,7 +19,7 @@ owner            resource          | Suppliers can be organized in a hierarchica
 members          list of supplier  | Suppliers can be organized in a hierarchical tree.
                                    | This field defines a list of child suppliers.
 available        calendar          | Calendar defining the holiday schedule of the supplier.
-                                   | Procurements will be stretched to account for the 
+                                   | Procurements will be stretched to account for the
                                      unavailable time.
 action           A/C/AC/R          | Type of action to be executed:
                                    | A: Add an new entity, and report an error if the entity

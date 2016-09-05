@@ -18,15 +18,15 @@
       <form method="post">
 {% csrf_token %}
         <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%" oninput="$('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');"></textarea>
-{% comment %}Translators: Translation included with Django {% endcomment %}  
+{% comment %}Translators: Translation included with Django {% endcomment %}
         <div style="margin-top: 0.7em"><button id="submit" type="submit" class="btn btn-primary" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button></div>
       </form>{% endif%}
-	
+
 {% for c in comments %}
 	    <hr/><h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
 	    <pre>{{c.comment}}</pre>
 {% endfor %}
-	
+
 	   </div>
 	</div>
 {% endblock %}

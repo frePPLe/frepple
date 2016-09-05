@@ -33,11 +33,11 @@ size_multiple   positive double   | All procurements must be a multiple of this 
                                   | The default is 0, i.e. no multiple to be considered.
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
-resource        resource          | Optionally, it refers to a resource that represents the 
+resource        resource          | Optionally, it refers to a resource that represents the
                                     supplier capacity.
-                                  | The referenced resource will typically be of type 
+                                  | The referenced resource will typically be of type
                                     'buckets'.
-resource_qty    positive double   | Resource capacity consumed per purchased unit.                                                                        
+resource_qty    positive double   | Resource capacity consumed per purchased unit.
 fence           duration          | Release fence for the distribution operation.
                                   | New shipments cannot be proposed within this time fence
                                     after the plan current date.

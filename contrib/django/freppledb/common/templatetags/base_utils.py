@@ -402,7 +402,7 @@ class ModelDependenciesNode(Node):
       i_name = "%s.%s" % (i._meta.app_label, i._meta.model_name)
       for j in i._meta.get_all_related_objects_with_model():
         if j[0].related_model == i:
-          continue        
+          continue
         j_name = "%s.%s" % (j[0].related_model._meta.app_label, j[0].related_model._meta.model_name)
         # Some ugly (but unavoidable...) hard-codes related to the proxy models
         if j_name == 'input.operationplan':

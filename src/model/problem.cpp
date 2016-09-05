@@ -229,7 +229,7 @@ DECLARE_EXPORT void Problem::clearProblems(
       del->owner = nullptr;
       delete del;
     }
-    else if (!keepfirst) 
+    else if (!keepfirst)
     {
       keepfirst = del;
       if (keepfirst)

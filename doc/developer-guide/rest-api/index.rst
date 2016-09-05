@@ -25,4 +25,3 @@ HTTP methods supported by the API.
 
 .. image:: ../_images/api-index.png
    :alt: REST API index
-   

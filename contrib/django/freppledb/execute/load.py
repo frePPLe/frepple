@@ -120,7 +120,7 @@ class loadData(object):
         name, defaultvalue, source, 0 hidden
       FROM calendar %s
       union
-      SELECT 
+      SELECT
         name, 0, 'common_bucket', 1 hidden
       FROM common_bucket
       order by name asc
@@ -128,7 +128,7 @@ class loadData(object):
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        frepple.calendar(name=i[0], default=i[1], source=i[2], hidden=i[3])                
+        frepple.calendar(name=i[0], default=i[1], source=i[2], hidden=i[3])
       except Exception as e:
         print("Error:", e)
     print('Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime))
@@ -721,17 +721,17 @@ class loadData(object):
     starttime = time()
     self.cursor.execute('''
       SELECT
-        operationplan.operation_id, operationplan.id, operationplan.quantity, 
+        operationplan.operation_id, operationplan.id, operationplan.quantity,
         operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
-        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id, 
+        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
         operationplan.item_id, operationplan.location_id,
         reference, coalesce(dmd.name, null)
       FROM operationplan
-      LEFT OUTER JOIN (select name from demand 
+      LEFT OUTER JOIN (select name from demand
         where demand.status = 'open'
         ) dmd
       on dmd.name = operationplan.demand_id
-      WHERE operationplan.owner_id IS NULL 
+      WHERE operationplan.owner_id IS NULL
         and operationplan.quantity >= 0 and operationplan.status <> 'closed'
         %s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
       ORDER BY operationplan.id ASC
@@ -784,18 +784,18 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         operationplan.operation_id, operationplan.id, operationplan.quantity,
-        operationplan.startdate, operationplan.enddate, operationplan.status, 
+        operationplan.startdate, operationplan.enddate, operationplan.status,
         operationplan.owner_id, operationplan.source, coalesce(dmd.name, null)
       FROM operationplan
-      INNER JOIN (select id 
+      INNER JOIN (select id
         from operationplan
         ) opplan_parent
       on operationplan.owner_id = opplan_parent.id
-      LEFT OUTER JOIN (select name from demand 
+      LEFT OUTER JOIN (select name from demand
         where demand.status = 'open'
         ) dmd
       on dmd.name = operationplan.demand_id
-      WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed' 
+      WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
         %s and operationplan.type = 'MO'
       ORDER BY operationplan.id ASC
       ''' % self.filter_and)

@@ -60,7 +60,7 @@ are required:
 
 #. **Install the Python database drivers, Django and other python modules**
 
-   Since frePPle requires some patches to the standard Django package, so the source 
+   Since frePPle requires some patches to the standard Django package, so the source
    from our cloned and patched version of django will be downloaded and installed.
 
    In the root of your python install you will find a "requirements.txt" file containing a list like:

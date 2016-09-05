@@ -78,7 +78,7 @@ Import/Export data files from folder
 ------------------------------------
 
 This task allows importing or exporting data from a set of CSV-formatted files.
-The purpose of this task is to help the exchange of information with other systems. 
+The purpose of this task is to help the exchange of information with other systems.
 The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER in the djangosettings.py configuration file.
 The log files importfromfolder.log and exporttofolder.log record all data imports and file exports triggered in this way, in addition to
 any data errors identified during these tasks.
@@ -90,8 +90,8 @@ The data files to be imported must meet the following criteria:
 * The first line of the file should contain the field names
 
 * The file should be in CSV format. The delimiter depends on the default
-  language (configured with LANGUAGE_CODE in djangosettings.py). 
-  For english-speaking countries it's a comma. For European countries 
+  language (configured with LANGUAGE_CODE in djangosettings.py).
+  For english-speaking countries it's a comma. For European countries
   it's a semicolon.
 
 * The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
@@ -111,7 +111,7 @@ The customization is done on the frepple_exporttofolder.py statements.
 In this option you can see a list of files present in the specified folder.
 
 .. image:: _images/execution-importexportfolder.png
-   :alt: Execution screen - Import/Export data from/to folder 
+   :alt: Execution screen - Import/Export data from/to folder
 
 Web service
 -----------

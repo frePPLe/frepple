@@ -73,7 +73,7 @@ class OverviewReport(GridPivot):
       from (%s) items
       left outer join (
         select item_id, sum(quantity) qty
-        from demand 
+        from demand
         where status in ('open', 'quote')
         and due < %%s
         group by item_id
@@ -88,7 +88,7 @@ class OverviewReport(GridPivot):
         and operationplan.enddate < %%s
         group by demand.item_id
         ) pln
-      on pln.item_id = items.name  
+      on pln.item_id = items.name
       ''' % basesql
     cursor.execute(query, baseparams + (request.report_startdate, request.report_startdate))
     for row in cursor.fetchall():
@@ -121,7 +121,7 @@ class OverviewReport(GridPivot):
           inner join item
           on item.lft between items.lft and items.rght
           -- Planned quantity
-          left outer join demand 
+          left outer join demand
           on item.name = demand.item_id
           left outer join operationplan
           on demand.name = operationplan.demand_id
@@ -210,16 +210,16 @@ class DetailReport(GridReport):
 @staff_member_required
 def OperationPlans(request):
   # Check permissions
-  if request.method != "GET" or not request.is_ajax(): 
-    return HttpResponseBadRequest('Only ajax get requests allowed')  
+  if request.method != "GET" or not request.is_ajax():
+    return HttpResponseBadRequest('Only ajax get requests allowed')
   if not request.user.has_perm("view_demand_report"):
     return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
-  
+
   # Collect list of selected sales orders
   so_list = request.GET.getlist('demand')
-  
+
   # TODO BROKEN WITH DATA MODEL CHANGE
-   
+
   # Find proposed associated with this sales order
   result = []
   id_list = []
@@ -232,7 +232,7 @@ def OperationPlans(request):
       'id': o.id,
       'type': "PO",
       'item': o.item.name,
-      'location': o.location.name,    
+      'location': o.location.name,
       'origin': o.supplier.name,
       'startdate': str(o.startdate.date()),
       'enddate': str(o.enddate.date()),
@@ -245,7 +245,7 @@ def OperationPlans(request):
       'id': o.id,
       'type': "DO",
       'item': o.item.name,
-      'location': o.location.name,    
+      'location': o.location.name,
       'origin': o.origin.name,
       'startdate': str(o.startdate),
       'enddate': str(o.enddate),
@@ -258,7 +258,7 @@ def OperationPlans(request):
       'id': o.id,
       'type': "MO",
       'item': '',
-      'location': o.operation.location.name,    
+      'location': o.operation.location.name,
       'origin': o.operation.name,
       'startdate': str(o.startdate.date()),
       'enddate': str(o.enddate.date()),
@@ -266,9 +266,8 @@ def OperationPlans(request):
       'value': '',
       'criticality': float(o.criticality)
     })
-  
+
   return HttpResponse(
     content=json.dumps(result),
     content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET
     )
-  

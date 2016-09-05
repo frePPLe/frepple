@@ -288,18 +288,18 @@ class ManufacturingOrderWidget(Widget):
       union all
       select 1, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'confirmed' 
+      where status = 'confirmed'
         and type = 'MO'
       union all
       select 2, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'proposed' 
+      where status = 'proposed'
         and startdate < %%s + interval '%s day'
          and type = 'MO'
       union all
       select 3, null, null, count(*), coalesce(round(sum(quantity)),0)
       from operationplan
-      where status = 'proposed' 
+      where status = 'proposed'
         and startdate < %%s + interval '%s day'
          and type = 'MO'
       order by 1, 3

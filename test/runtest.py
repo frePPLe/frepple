@@ -209,11 +209,11 @@ def runTestSuite():
 
     # Finally, run the test suite now
     if 'FREPPLE_HOME' in os.environ:
-      print("Running", AllTests.countTestCases(), 
-         "tests from directory", testdir, 
+      print("Running", AllTests.countTestCases(),
+         "tests from directory", testdir,
          "with FREPPLE_HOME", os.environ['FREPPLE_HOME'])
     else:
-      print("Running", AllTests.countTestCases(), 
+      print("Running", AllTests.countTestCases(),
          "tests from directory", testdir)
     result = unittest.TextTestRunner(verbosity=2,descriptions=False).run(AllTests)
     if not result.wasSuccessful(): sys.exit(1)

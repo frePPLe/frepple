@@ -58,7 +58,7 @@
 		  <buffer name="1. end item" />
 		  <quantity>1</quantity>
 		</flow>
-	  </flows>	
+	  </flows>
 	</operation>
     <operation name="1. delivery end item">
       <flows>
@@ -100,7 +100,7 @@
 <?python
 print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")
-	
+
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")

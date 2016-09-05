@@ -15,7 +15,7 @@
       <dateproperty name="date_field" value="2014-01-01T01:01:01"/>
     </item>
   </items>
-  
+
 <?python
 from datetime import date
 it = frepple.item(name="test")
@@ -36,7 +36,7 @@ with open("output.1.xml","wt") as output:
   print("new_object_field", it.new_object_field.source, file=output)
   print("new_object_field", it.new_object_field, file=output)
   print("new_date_field", it.new_date_field, file=output)
- 
+
 frepple.saveXMLfile("output.2.xml")
 ?>
 

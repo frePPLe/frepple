@@ -305,11 +305,11 @@ class Command(BaseCommand):
       identifier = uuid4().hex
 
       if self.filteredexport:
-        
+
         filter_expression_po = Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
         if filter_expression_po:
           filter_expression_po = ' and (%s) ' %filter_expression_po
-        
+
         filter_expression_do = Parameter.getValue('openbravo.filter_export_distribution_order', self.database, "")
         if filter_expression_do:
           filter_expression_do = ' and (%s) ' %filter_expression_do
@@ -489,11 +489,11 @@ class Command(BaseCommand):
         )
 
       if self.filteredexport:
-        
+
         filter_expression_po = Parameter.getValue('openbravo.filter_export_purchase_order', self.database, "")
         if filter_expression_po:
           filter_expression_po = ' and (%s) ' %filter_expression_po
-        
+
         filter_expression_do = Parameter.getValue('openbravo.filter_export_distribution_order', self.database, "")
         if filter_expression_do:
           filter_expression_do = ' and (%s) ' %filter_expression_do
@@ -509,7 +509,7 @@ class Command(BaseCommand):
       now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
       identifier = uuid4().hex
       body = [purchaseplan % (identifier, self.organization_id, now),]
-      cursor.execute(''' 
+      cursor.execute('''
 	  select item.source, location.source, enddate, quantity
          FROM purchase_order
          inner JOIN buffer

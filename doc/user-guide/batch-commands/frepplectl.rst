@@ -117,7 +117,7 @@ Options:
 * | **--database=DATABASE**:
   | Specifies which database to run the command for. The database names are defined in the
     djangosettings.py.
-   
+
 * | **-v VERBOSITY, –verbosity=VERBOSITY**:
   | Verbosity level: 0=minimal output, 1=normal output, 2=all output.
 

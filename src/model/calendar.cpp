@@ -368,7 +368,7 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
         break;
       }
   }
-    
+
   // Pick up the action attribute and update the bucket accordingly
   switch (MetaClass::decodeAction(atts))
   {

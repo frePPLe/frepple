@@ -2053,7 +2053,7 @@ def importWorkbook(request):
 
     # Sort the list of models, based on dependencies between models
     models = GridReport.sort_models(models)
-    
+
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
       yield force_text(_("Processing data in worksheet: %s") % ws_name) + '\n'

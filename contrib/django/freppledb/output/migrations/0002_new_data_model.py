@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
     migrations.AlterUniqueTogether(
       name='resourcesummary',
       unique_together=set([('resource', 'startdate')]),
-    ),    
+    ),
     migrations.DeleteModel(
       name='Demand',
     ),

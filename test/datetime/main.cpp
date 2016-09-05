@@ -71,8 +71,8 @@ int main (int argc, char *argv[])
     t3.parse("Pwrong");
   }
   catch (const DataException& e)
-  { 
-    logger << "Data exception caught: " << e.what() << endl; 
+  {
+    logger << "Data exception caught: " << e.what() << endl;
   }
   logger << "time \"Pwrong\" => " << t3 << "    "
       << static_cast<long>(t3) << endl;

@@ -81,9 +81,9 @@ The connector has 2 components:
     the addon needs to be loaded as a server wide module. This is achieved
     by using the option "--load frepple,web,web_kanban" option on the command
     line starting the server.
-    
+
   In a setup with only a single odoo database this step is not required.
-  
+
 * | **Configure the Odoo addon**
   | The module adds some configuration fields on the company model.
   | Edit these parameters:

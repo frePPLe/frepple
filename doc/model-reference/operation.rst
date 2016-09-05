@@ -65,7 +65,7 @@ size_maximum           positive double   | The maximum quantity for operationpla
                                          | Note that this value limits the size of individual
                                            operationplans. The solver can create multiple operationplans
                                            of this maximum size, so this value does NOT constrain the
-                                           total planned quantity on the operation. The field is            
+                                           total planned quantity on the operation. The field is
                                            useful to break big operationplans in smaller ones.
 cost                   double            | The cost of executing this operation, per unit of the
                                            operation_plan.

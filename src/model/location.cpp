@@ -99,7 +99,7 @@ DECLARE_EXPORT Location::~Location()
   for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
   {
     Item::operationIterator itemoperiter(&*it);
-    while ( ItemOperation *itemoper = itemoperiter.next() ) 
+    while ( ItemOperation *itemoper = itemoperiter.next() )
     {
       if (itemoper->getLocation() == this)
         delete itemoper;

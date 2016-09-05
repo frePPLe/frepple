@@ -96,7 +96,7 @@
 	    <category>510</category>
 	    <operation name="job 2 routing" xsi:type="operation_routing">
 	    <suboperations>
-        <suboperation>      
+        <suboperation>
         <operation name="J02T01" xsi:type="operation_fixed_time" duration="PT43H">
         <loads><load><resource name="M00"/></load></loads>
         </operation>

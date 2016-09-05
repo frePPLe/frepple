@@ -17,7 +17,7 @@
  * If not, see <http://www.gnu.org/licenses/>.                             *
  *                                                                         *
  ***************************************************************************/
- 
+
 #define FREPPLE_CORE
 #include "frepple/model.h"
 

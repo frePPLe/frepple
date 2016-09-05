@@ -204,13 +204,13 @@ class PathReport(GridReport):
             )
       for i in ItemOperation.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
-        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft        
+        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
         ):
           i.item = buffer.item
           i.location = buffer.location
           result.append(
             (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
-            )        
+            )
     else:
       # Single location
       for i in ItemSupplier.objects.using(db).filter(
@@ -222,13 +222,13 @@ class PathReport(GridReport):
           (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
           )
       for i in ItemOperation.objects.using(db).filter(
-        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft 
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
           i.item = buffer.item
           i.location = buffer.location
           result.append(
             (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
-            )        
+            )
     return result
 
 
@@ -259,7 +259,7 @@ class PathReport(GridReport):
       counter += 1
       if isinstance(location, str):
         curlocation = Location.objects.all().using(request.database).get(name=location)
-         
+
       # If an operation has parent operations we forget about the current operation
       # and use only the parent
       if pushsuper and not isinstance(curoperation, (ItemSupplier, ItemDistribution)):
@@ -308,7 +308,7 @@ class PathReport(GridReport):
             ("%s @ %s" % (curoperation.item.name, curoperation.origin.name), -1),
             ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1)
             ]
-          if curoperation.resource:            
+          if curoperation.resource:
             resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
           else:
             resources = None
@@ -317,7 +317,7 @@ class PathReport(GridReport):
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
           except Buffer.DoesNotExist:
             downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=curoperation.item, location=curlocation)
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )            
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
         elif isinstance(curoperation, ItemOperation):
           name = curoperation.operation.name
           optype = curoperation.operation.type
@@ -345,13 +345,13 @@ class PathReport(GridReport):
             curflows = x.item.operationmaterials.filter(quantity__lt=0, operation__location=curoperation.location.name).only('operation', 'quantity').using(request.database)
             for y in curflows:
               hasChildren = True
-              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )            
+              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
             try:
               downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
               root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )
             except Buffer.DoesNotExist:
               downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=x.item, location=curlocation)
-              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )            
+              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -364,7 +364,7 @@ class PathReport(GridReport):
           duration = curoperation.leadtime
           duration_per = None
           buffers = [ ("%s @ %s" % (curoperation.item.name, location), 1), ]
-          if curoperation.resource:            
+          if curoperation.resource:
             resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
           else:
             resources = None
@@ -377,7 +377,7 @@ class PathReport(GridReport):
             ("%s @ %s" % (curoperation.item.name, curoperation.origin.name), -1),
             ("%s @ %s" % (curoperation.item.name, curoperation.location.name), 1)
             ]
-          if curoperation.resource:            
+          if curoperation.resource:
             resources = [ (curoperation.resource.name, float(curoperation.resource_qty)) ]
           else:
             resources = None
@@ -1069,7 +1069,7 @@ class ManufacturingOrderList(GridReport):
     return ManufacturingOrder.objects.all().extra(select={
       'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)"
       })
-  
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'"),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
@@ -1106,7 +1106,7 @@ class DistributionOrderList(GridReport):
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
   frozenColumns = 1
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return DistributionOrder.objects.all().extra(select={
@@ -1158,7 +1158,7 @@ class PurchaseOrderList(GridReport):
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
   frozenColumns = 1
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return PurchaseOrder.objects.all().extra(select={

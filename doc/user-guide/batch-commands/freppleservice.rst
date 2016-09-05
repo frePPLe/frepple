@@ -14,7 +14,7 @@ service.
 Usage:
 
 * | **freppleservice --install name**
-  | Register the new service. After this step, you’ll be able to see the 
+  | Register the new service. After this step, you’ll be able to see the
     service in the Service Manager.
   | The last argument is an extra name given to the service name.
 

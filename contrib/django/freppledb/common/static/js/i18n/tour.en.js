@@ -51,7 +51,7 @@ var tourdata = [
                 "<li style='list-style:initial'>Forecast Error</li>" +
                 "<li style='list-style:initial'>Inventory By Item</li>" +
                 "<li style='list-style:initial'>Inventory by Item</li>" +
-                "<li style='list-style:initial'>Stockout risk</li>" +                
+                "<li style='list-style:initial'>Stockout risk</li>" +
                 "<li style='list-style:initial'>...</li></ul>" +
                 "The <b>widgets and layout of the dashboard are fully configurable</b>.<br>" +
                 "In the Enterprise Edition every user can personalize the cockpit.",
@@ -558,12 +558,12 @@ var tourdata = [
            }
            ]
       },
-      
+
 
       // A day in the life of a manufacturing planner
       {
        description: '<h2><span class="underline"><a href="/?tour=0,0,0"><i class="fa fa-home" aria-hidden="true"></i></a></span> &gt; A day in the life of a manufacturing planner</h2>' +
-        'The manufacturing planner\'s role is to make sure that demand is delivered on time ' +		
+        'The manufacturing planner\'s role is to make sure that demand is delivered on time ' +
         ' by reviewing the supply chain capacity and material constraints.<br><br>',
        delay: 5,
        steps:
@@ -580,7 +580,7 @@ var tourdata = [
                          "<li style='list-style:initial'>Delivery performance</li>" +
                          "<li style='list-style:initial'>...</li></ul>" +
                          "From the widgets you can jump to more detailed information.<br>" +
-                         "The dashboard can easily be personalized by each user.", 
+                         "The dashboard can easily be personalized by each user.",
            position : 'right'
          },
          {
@@ -600,16 +600,16 @@ var tourdata = [
            element : 'div.panel[data-cockpit-widget="distribution_orders"]',
            description : "The distribution orders widget let you review the proposed and confirmed distribution orders",
            position : 'top'
-         },         
+         },
          {
            url: "/",
            element : '#Manufacturing',
-           description : "The manufacturing section contains :<br>" + 
+           description : "The manufacturing section contains :<br>" +
            "The manufacuring orders widget to review the value associated with the proposed and confirmed manufacturing orders<br>" +
            "The resource utilization widget lets you find out how loaded your resources are<br>" +
            "The capacity alerts widget displays any alert associated to capacity",
            position : 'top'
-         },         
+         },
          {
            url: "/problem/",
            element : "#jqgh_grid_owner",

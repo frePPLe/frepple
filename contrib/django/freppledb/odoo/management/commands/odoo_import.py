@@ -58,15 +58,14 @@ class Command(BaseCommand):
 
     if 'user' in options and options['user']:
       management.call_command(
-        'frepple_run', 
+        'frepple_run',
         env="odoo_read_2,noforecast,noproduction,noinventory,noevaluation",
         database=database,
         user=options['user']
-        )    
+        )
     else:
       management.call_command(
-        'frepple_run', 
+        'frepple_run',
         env="odoo_read_2,noforecast,noproduction,noinventory,noevaluation",
         database=database
         )
-            

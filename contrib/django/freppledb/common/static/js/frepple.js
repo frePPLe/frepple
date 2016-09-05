@@ -345,7 +345,7 @@ jQuery.extend($.fn.fmatter, {
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
-    // TODO This function is not very generic. 
+    // TODO This function is not very generic.
     if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellvalue;
     var result = '';
@@ -981,7 +981,7 @@ var ERPconnection = {
       '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');       
+        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');
         $.ajax({
           url: url_prefix + "/" + ERPsystem + "/upload/",
           data: JSON.stringify(data),
@@ -1051,7 +1051,7 @@ var ERPconnection = {
           '</div>'+
       '</div>' );
 
-      // compose url     
+      // compose url
       var components='?demand=';
       for (i=0; i<sel.length; i++) {
         var r = grid.jqGrid('getRowData', sel[i]);
@@ -1915,7 +1915,7 @@ var tour = {
   timeout: null,
 
   tooltip: '<div class="popover tourpopover" role="tooltip">' +
-    '<div class="arrow"></div>' + 
+    '<div class="arrow"></div>' +
     '<div class="popover-content"></div>' +
     '</div>',
 
@@ -2059,14 +2059,14 @@ var tour = {
     //tour.tooltip.html(stepData['description']);
     var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
 
-    $(stepData['element']).popover({ 
-      'html': true, 
+    $(stepData['element']).popover({
+      'html': true,
       'container': 'body',
-      'template': tour.tooltip, 
-      'title':'', 
-      'content': stepData['description'], 
-      'placement': stepData['position'], 
-      'trigger': 'manual' 
+      'template': tour.tooltip,
+      'title':'',
+      'content': stepData['description'],
+      'placement': stepData['position'],
+      'trigger': 'manual'
       });
     $(stepData['element'])
     .popover('show')
@@ -2074,7 +2074,7 @@ var tour = {
       var postop = $('.tourpopover').css('top').replace('px','');
       if (postop < window.pageYOffset || postop > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,postop-window.innerHeight/2);
     })
-    
+
     // Update tour dialog
     $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
     // Previous button

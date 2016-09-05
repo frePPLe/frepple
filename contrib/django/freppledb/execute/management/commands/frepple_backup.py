@@ -101,7 +101,7 @@ class Command(BaseCommand):
       task.save(using=database)
 
       # Run the backup command
-      # Commenting the next line is a little more secure, but requires you to 
+      # Commenting the next line is a little more secure, but requires you to
       # create a .pgpass file.
       os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
       args = [

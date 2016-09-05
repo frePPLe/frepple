@@ -8,7 +8,7 @@
 <div style="position:relative; top:70px; float:right; font-weight:bold">Documentation v{{ release }}</div>
 
 </div>
-<div id="header-end"><hr/></div>    
+<div id="header-end"><hr/></div>
 {% endblock %}
 
 {%- block content %}
@@ -22,13 +22,13 @@
     </form>
     {{ toc }}
     </div>
-                 
+
   {%- block document %}
     <div class="documentwrapper">
-    
-    <!-- Breadcrumbs --> 
+
+    <!-- Breadcrumbs -->
     <ul class="breadcrumbs">
-    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="{{ pathto(master_doc) }}">Home</a></li>{% for doc in parents %} 
+    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="{{ pathto(master_doc) }}">Home</a></li>{% for doc in parents %}
     <li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;<a href="{{ doc.link|e }}">{{ doc.title }}</a></li>{% endfor %}
     {% if pagename != master_doc %}<li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;{{ title }}</li>
     {% endif %}</ul><br/>

@@ -365,7 +365,7 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
   // Mark as changed
   setChanged();
 
-  // Delete previous events.  
+  // Delete previous events.
   inspect("before ALLL erases");
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
   {
@@ -1007,10 +1007,10 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           producing_operation = superop;
           subop->setOwner(producing_operation);
         }
-        else 
+        else
         {
           // We are third or later: just add a suboperation
-          if (producing_operation->getSubOperations().size() > 100) 
+          if (producing_operation->getSubOperations().size() > 100)
           {
             new ProblemInvalidData(this, "Excessive replenishments defined", "material",
               Date::infinitePast, Date::infiniteFuture, 1);
@@ -1054,7 +1054,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   {
     // No producer could be generated. No replenishment will be possible.
     new ProblemInvalidData(this, "No replenishment defined", "material",
-      Date::infinitePast, Date::infiniteFuture, 1);    
+      Date::infinitePast, Date::infiniteFuture, 1);
     producing_operation = nullptr;
   }
   else

@@ -31,21 +31,21 @@ class Migration(migrations.Migration):
     migrations.RunSQL(
       '''
       insert into operationplan
-        (type, id, lastmodified, source, reference, status, quantity, 
-		 startdate, enddate, criticality, item_id, location_id, supplier_id, 
+        (type, id, lastmodified, source, reference, status, quantity,
+		 startdate, enddate, criticality, item_id, location_id, supplier_id,
 		 name)
       select
-         'PO', id, lastmodified, source, reference, status, quantity, 
-		 startdate, enddate, criticality, item_id, location_id, supplier_id, 
+         'PO', id, lastmodified, source, reference, status, quantity,
+		 startdate, enddate, criticality, item_id, location_id, supplier_id,
          'Purchase ' || item_id || ' @ ' || location_id || '  from ' || supplier_id
       from purchase_order
       ''',
       '''
       insert into purchase_order
-        (id, lastmodified, source, reference, status, quantity, startdate, 
+        (id, lastmodified, source, reference, status, quantity, startdate,
 		 enddate, criticality, item_id, location_id, supplier_id)
       select
-         id, lastmodified, source, reference, status, quantity, startdate, 
+         id, lastmodified, source, reference, status, quantity, startdate,
 		 enddate, criticality, item_id, location_id, supplier_id
       from operationplan
       where type = 'PO'
@@ -54,17 +54,17 @@ class Migration(migrations.Migration):
     migrations.RunSQL(
       '''
       insert into operationplan
-        (type, id, lastmodified, source, reference, status, quantity, startdate, 
+        (type, id, lastmodified, source, reference, status, quantity, startdate,
 		 enddate, criticality, item_id, origin_id, destination_id, name)
       select
-         'DO', id, lastmodified, source, reference, status, quantity, startdate, 
+         'DO', id, lastmodified, source, reference, status, quantity, startdate,
 		 enddate, criticality, item_id, origin_id, destination_id,
 		 'Ship ' || item_id || ' from ' || origin_id || ' to ' || destination_id
       from distribution_order
       ''',
       '''
       insert into distribution_order
-        (id, lastmodified, source, reference, status, quantity, startdate, enddate, 
+        (id, lastmodified, source, reference, status, quantity, startdate, enddate,
 		 criticality, item_id, origin_id, destination_id)
       select
        id, lastmodified, source, reference, status, quantity, startdate, enddate,

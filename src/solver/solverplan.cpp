@@ -362,8 +362,8 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 
   // @todo Check the resource setups that were broken - needs to be removed
   for (Resource::iterator res = Resource::begin(); res != Resource::end(); ++res)
-    if (res->getSetupMatrix() 
-      && (cluster == -1 || res->getCluster() == cluster)) 
+    if (res->getSetupMatrix()
+      && (cluster == -1 || res->getCluster() == cluster))
         res->updateSetups();
 }
 

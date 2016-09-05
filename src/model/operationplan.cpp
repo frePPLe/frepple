@@ -200,7 +200,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
         opplan->setStatus(status);
         opplan->freezeStatus(start, end, quantity);
       }
-      else 
+      else
         opplan->setStatus(status);
     }
     opplan->activate();

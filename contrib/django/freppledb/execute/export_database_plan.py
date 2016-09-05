@@ -105,19 +105,19 @@ class export:
       # Complete export for the complete model
       process.stdin.write("truncate table out_problem, out_resourceplan, out_constraint;\n".encode(self.encoding))
       process.stdin.write('''
-        delete from operationplanmaterial 
-        using operationplan 
-        where operationplanmaterial.operationplan_id = operationplan.id 
+        delete from operationplanmaterial
+        using operationplan
+        where operationplanmaterial.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
         '''.encode(self.encoding))
       process.stdin.write('''
-        delete from operationplanresource 
-        using operationplan 
-        where operationplanresource.operationplan_id = operationplan.id 
+        delete from operationplanresource
+        using operationplan
+        where operationplanresource.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
         '''.encode(self.encoding))
       process.stdin.write('''
-        delete from operationplan 
+        delete from operationplan
         where (status='proposed' or status is null) or type = 'STCK';\n
         '''.encode(self.encoding))
     else:
@@ -128,7 +128,7 @@ class export:
           process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
       process.stdin.write("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n".encode(self.encoding))
       process.stdin.write('''
-        delete from operationplanmaterial 
+        delete from operationplanmaterial
         where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
         '''.encode(self.encoding))
       process.stdin.write('''
@@ -138,14 +138,14 @@ class export:
           );\n
         '''.encode(self.encoding))
       process.stdin.write('''
-        delete from out_problem 
-        where entity = 'material' 
+        delete from out_problem
+        where entity = 'material'
         and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
         '''.encode(self.encoding))
       process.stdin.write('''
-        delete from operationplan 
-        using cluster_keys 
-        where (status='proposed' or status is null or type='STCK') 
+        delete from operationplan
+        using cluster_keys
+        where (status='proposed' or status is null or type='STCK')
         and item_id = cluster_keys.name;\n
         '''.encode(self.encoding))
       process.stdin.write("truncate table cluster_keys;\n".encode(self.encoding))
@@ -472,7 +472,7 @@ class export:
         ),
       DatabasePipe(
         self,
-        export.exportOperationplans, export.exportOperationMaterials, 
+        export.exportOperationplans, export.exportOperationMaterials,
         export.exportOperationResources, export.exportPegging
         )
       )

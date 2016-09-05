@@ -229,7 +229,7 @@ class OdooWritePlan(PlanTask):
       yield '%s\r' % jwt.encode({
         'exp': round(time.time()) + 600,
         'user': odoo_user,
-        }, 
+        },
         settings.DATABASES[database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
         algorithm='HS256').decode('ascii')
       yield '--%s\r' % boundary

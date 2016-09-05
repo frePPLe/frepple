@@ -90,7 +90,7 @@
       <operation name="level 4A" />
       <buffer name="between 3A and 4A" />
       <quantity>1</quantity>
-    </flow> 
+    </flow>
     <flow xsi:type="flow_end">
       <operation name="level 3B" />
       <buffer name="between 2 and 3B" />
@@ -105,7 +105,7 @@
       <operation name="level 4B" />
       <buffer name="between 3B and 4B" />
       <quantity>1</quantity>
-    </flow>        
+    </flow>
   </flows>
   <demands>
     <demand name="order 1">

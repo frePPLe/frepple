@@ -559,7 +559,7 @@
 			<duration>P0D</duration>
 			<duration_per>PT10S</duration_per>
 		</operation>
-		<operation name="ship product 1" xsi:type="operation_fixed_time">			
+		<operation name="ship product 1" xsi:type="operation_fixed_time">
             <location name="Finished goods"/>
 		</operation>
 		<operation name="ship product 10" xsi:type="operation_fixed_time">

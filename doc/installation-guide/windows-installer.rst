@@ -47,39 +47,39 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
    .. image:: _images/wininstall5.png
      :scale: 50 %
-   
+
    - **Install and configure the PostgreSQL database.**
-   
+
      PostgreSQL 9.4 or higher is required by frePPLe.
      You can:
      - either use the postgreSQL included with frePPLe
      - either install and configure PostgreSQL yourself (advanced users only)
-      
+
      If you choose to download and install PostgreSQL manually please follow these instructions:
- 
+
      #. Cancel frePPLe installer.
 
      #. Download and run the postgreSQL installer.
-   
+
      #. | Use the PgAdmin administration tool to create a login role for frePPLe.
         | If you intend to use the default login role "postgres", you can skip this step.
         | See http://www.postgresqltutorial.com/postgresql-roles/ for detailed steps.
-   
+
      #. | Use the PgAdmin administration tool to create a database for frePPLe.
         | Make sure to assign the login role created in the previous step as the owner.
         | See http://www.postgresqltutorial.com/postgresql-create-database/ for
            detailed steps.
- 
+
      #. | Database connection parameters
         | If you are upgrading frePPLe you should copy the following from the
           old custom/djangosettings.py to the new custom/djangosettings.py
-        
+
         - | Default language for the user interface
         - | Database connection parameters
-     
+
      | Advanced administrators can further fine-tune the database instance.
      | For a simple trial installation, you want to skip this.
-   
+
         - | FrePPLe assumes that the database uses UTF-8 encoding.
           | FrePPLe needs the following settings for its database connections. If these
             values are configured as default for the database (in the file postgresql.conf)
@@ -87,11 +87,11 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
             optimization is achieved:
 
         ::
-        
+
             client_encoding: 'UTF8',
             default_transaction_isolation: 'read committed',
             timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
-   
+
         - | The default configuration of PostgreSQL is not configured right for
             intensive use.
           | We highly recommend using the pgtune utility (or its online
@@ -99,7 +99,7 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
             for your hardware.
 
      6. Restart frePPLe installer without PostgreSQL option.
-     
+
 #. **Select the installation parameters**
 
    If you chose to install the database from the frePPLe installer,
@@ -114,7 +114,7 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
    .. image:: _images/wininstall6.png
      :scale: 50 %
-     
+
    Your selections are saved in the file custom/djangosettings.py. The file can
    later be edited with a text editor.
 
@@ -134,7 +134,7 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
    a system tray application.
 
    For an installation in production mode AND when you have administrator rights on
-   your computer, you can chose to register and start a service instead (currently 
+   your computer, you can chose to register and start a service instead (currently
    in development).
 
    .. image:: _images/wininstall8.png

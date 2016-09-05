@@ -14,7 +14,7 @@ contrib:
 
 clean-local:
 	-rm -rf install-test *.exe
-	
+
 # Remove our custom subdirectories
 uninstall-local:
 	-rm -rf $(DESTDIR)$(datadir)/frepple $(DESTDIR)$(libdir)/frepple

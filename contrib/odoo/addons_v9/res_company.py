@@ -45,7 +45,7 @@ class res_company(models.Model):
   _defaults = {
     'cmdline': lambda *a: 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
     }
-    
+
   @api.model
   def getFreppleURL(self):
     '''
@@ -55,8 +55,8 @@ class res_company(models.Model):
       'exp': round(time.time()) + 600,
       'user': self.env.user.login,
       'navbar': self.env.context.get("navbar", True)
-      }, 
-      self.env.user.company_id.webtoken_key, 
+      },
+      self.env.user.company_id.webtoken_key,
       algorithm='HS256').decode('ascii')
     url = self.env.context.get("url", "/")
     logger.warn("%s%s?webtoken=%s" % (self.env.user.company_id.frepple_server, url, webtoken))

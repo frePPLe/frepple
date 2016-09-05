@@ -35,15 +35,15 @@ price           double            | Cost or price of the item.
                                   | For most applications the booking value is the appropriate
                                     one.
                                   | The default value is 0.
-global_purchase boolean           | When this item flag is set, it will a) prevent any new 
+global_purchase boolean           | When this item flag is set, it will a) prevent any new
                                     purchase orders for the item to be generated until the total
-                                    inventory across all locations drops below the total safety 
-                                    stock and b) sales orders pointing at a location that is 
+                                    inventory across all locations drops below the total safety
+                                    stock and b) sales orders pointing at a location that is
                                     running out of stock will automatically be pointed to other
                                     locations in the network which still carry sufficient stock.
                                   | This field is not available in the standard database schema.
-                                    You'll need to add it as a custom attribute, or set this 
-                                    field through a custom Python script.                    
+                                    You'll need to add it as a custom attribute, or set this
+                                    field through a custom Python script.
 buffers         list of buffer    Returns the list of buffers for this item.
 hidden          boolean           Marks entities that are considered hidden and are normally
                                   not shown to the end user.

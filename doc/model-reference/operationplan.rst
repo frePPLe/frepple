@@ -27,9 +27,9 @@ id               unsigned long     | Unique identifier of the operationplan.
                                    | If left unspecified an identifier will be automatically
                                      generated.
                                    | This field is required when updating existing instances.
-reference        string            | Identifier or reference of this operationplan in 
+reference        string            | Identifier or reference of this operationplan in
                                      external system.
-                                   | We don't impose a restriction for its uniqueness.                                   
+                                   | We don't impose a restriction for its uniqueness.
 start            dateTime          | Start date.
                                    | If left unspecified (or set to 1971-01-01), this field
                                      will be computed based on the end date.
@@ -52,22 +52,22 @@ status           string            | Status of the operationplan.
                                    | The valid choices are:
 
                                    * | proposed:
-                                     | An operationplan in this state is a draft one. When 
+                                     | An operationplan in this state is a draft one. When
                                        regenerating the plan operationplans in this state can be
                                        changed and even deleted by the planning algorithm.
                                      | This is the default.
 
                                    * | approved:
-                                     | An operationplan in this state is reviewed by the user 
+                                     | An operationplan in this state is reviewed by the user
                                        and ready for exporting to your ERP system. Once exported
                                        the status will become confirmed.
-                                     | The planning algorithm will not change or create 
+                                     | The planning algorithm will not change or create
                                        operationplans in this state.
 
                                    * | confirmed:
-                                     | Confirmed operationplans are ongoing transactions read 
+                                     | Confirmed operationplans are ongoing transactions read
                                        as input from your ERP system.
-                                     | The planning algorithm will not change or create 
+                                     | The planning algorithm will not change or create
                                        operationplans in this state.
 
 consume_material boolean           | Controls whether this operationplan should consume material

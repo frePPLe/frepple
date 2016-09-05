@@ -163,19 +163,19 @@ void scalability_test()
     Timer m;
 
     // Insert elements in the list
-    for (int i=0; i<scale; ++i) 
+    for (int i=0; i<scale; ++i)
       (new CustomerDefault())->setName(names[i]);
 
     // Do a number of searches and deletes
-    for (int i=0; i<scale; ++i) 
+    for (int i=0; i<scale; ++i)
       Customer::find(names[i]);
 
     // Do a number of deletes
-    for (int i=0; i<scale; ++i) 
+    for (int i=0; i<scale; ++i)
       delete Customer::find(names[i]);
 
     // Clear the complete list
-    if (Customer::size()) 
+    if (Customer::size())
       throw domain_error("Tree elements not all deleted");
     Customer::clear();
 

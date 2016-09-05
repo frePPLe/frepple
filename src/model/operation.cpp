@@ -656,8 +656,8 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
         if (!y->getOwner())
           return true;
         else if (o->getOwner()->getOperation() != y->getOwner()->getOperation())
-          return true;        
-        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata) 
+          return true;
+        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
           return true;
      }
 

@@ -256,7 +256,7 @@ class Scenario(models.Model):
             else:
               Scenario(name=db, status="Free").save()
     except:
-      # Failures are acceptable - eg when the default database has not been intialized yet 
+      # Failures are acceptable - eg when the default database has not been intialized yet
       pass
 
   class Meta:

@@ -11,7 +11,7 @@ FrePPLe orders the demands based on the following attributes:
 1. **Priority**
 
    Lower values get planned first. We first plan all demands of priority 1, then 2, then 3...
-   
+
 2. **Due date**
 
    In case the priority of 2 demands is the same, the demand is ordered based on the due date. Earlier due dates are planned first.

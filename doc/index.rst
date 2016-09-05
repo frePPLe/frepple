@@ -9,8 +9,8 @@ To get started we suggest the following **introduction trail**:
    | The easiest start to learn frePPLe is to use the online demo
      environment.
    | Installing it locally on a Windows machine is also easy. An
-     all-in-one installer installs the planning engine, PostgreSQL 
-     database and the user interface web server. 
+     all-in-one installer installs the planning engine, PostgreSQL
+     database and the user interface web server.
 
 #. | :doc:`Follow the guided tour <user-guide/guided-tour>`
    | The application has an integrated guided tour. It interactively guides

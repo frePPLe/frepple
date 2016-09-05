@@ -35,8 +35,8 @@ You will also need to install:
 
   You will have to compile this package from source. The xerces-c team
   provides a Visual Studio file that can be used to create a 64-bit static
-  library.  
-  
+  library.
+
 The solution file is *contrib/vc/frepple.sln*. The include and library
 directories of Python and Xerces-C will need to configured in Visual Studio.
 

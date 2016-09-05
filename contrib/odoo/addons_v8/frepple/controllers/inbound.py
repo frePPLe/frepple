@@ -40,10 +40,10 @@ class importer(object):
     if 'language' in kwargs:
       # If not set we use the default language of the user
       req.session.context['lang'] = kwargs['language']
-    self.req = req    
+    self.req = req
     self.company = req.httprequest.form.get('company', None)
     self.datafile = req.httprequest.files.get('frePPLe plan')
-    
+
     # The mode argument defines different types of runs:
     #  - Mode 1:
     #    Export of the complete plan. This first erase all previous frePPLe
@@ -52,7 +52,7 @@ class importer(object):
     #    Incremental export of some proposed transactions from frePPLe.
     #    In this mode mode we are not erasing any previous proposals.
     self.mode = req.httprequest.form.get('mode', 1)
-    
+
 
   def run(self):
     msg = []
@@ -96,7 +96,7 @@ class importer(object):
     countproc = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
-      if event == 'end' and elem.tag == 'operationplan':        
+      if event == 'end' and elem.tag == 'operationplan':
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
         try:

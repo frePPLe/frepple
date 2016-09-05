@@ -117,7 +117,7 @@ class OverviewReport(GridPivot):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         order by %s, d.startdate
       ''' % (
-        basesql, sortsql 
+        basesql, sortsql
       )
     cursor.execute(query, baseparams + (request.report_bucket, request.report_startdate, request.report_enddate,
         request.report_startdate, request.report_enddate))
@@ -177,7 +177,7 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra="role:'input/buffer'"),
-    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),    
+    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),

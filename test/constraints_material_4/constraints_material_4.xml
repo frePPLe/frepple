@@ -8,7 +8,7 @@
 	<current>2009-01-01T00:00:00</current>
 	<items>
 	  <item name="item 1">
-	    <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />	
+	    <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />
 	  </item>
 	</items>
 	<buffers>

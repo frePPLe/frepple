@@ -121,8 +121,8 @@ class PlanTaskRegistry:
           cls.task.status = '%d%%' % int(progress * 100.0 / task_weights)
           cls.task.message = step.description
           cls.task.save(using=database)
-  
-        # Run the step 
+
+        # Run the step
         print("\nStart step %s '%s' at %s" % (
           step.sequence,
           step.description,
@@ -132,7 +132,7 @@ class PlanTaskRegistry:
         if step.sequence > 0:
           print("Finished '%s' at %s" % (step.description,  datetime.now().strftime("%H:%M:%S")))
         progress += step.weight
-  
+
       # Final task status
       if cls.task:
         cls.task.finished = datetime.now()

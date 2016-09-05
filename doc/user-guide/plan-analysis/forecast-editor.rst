@@ -40,13 +40,13 @@ The panel is split in two areas:
 
     .. image:: ../_images/forecast-editor-tabAttributes.png
        :alt: Attributes of selections
-   
+
     .. image:: ../_images/forecast-editor-tabForecast.png
        :alt: Forecast graph and table
-   
+
     .. image:: ../_images/forecast-editor-tabComments.png
        :alt: Comments for selections
-   
+
     .. image:: ../_images/ forecast-editor-tabHistory.png
        :alt: History of changes in selection
 

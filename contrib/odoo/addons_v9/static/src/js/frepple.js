@@ -27,7 +27,7 @@ openerp.frepple = function(instance, local) {
       var model = new instance.web.Model("res.company");
       model.call("getFreppleURL", [], {context: new instance.web.CompoundContext({'navbar': false, 'url': '/inventoryplanning/drp/'})})
         .then(function(result) {
-          el.append('<iframe src="' + result 
+          el.append('<iframe src="' + result
             + '" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="no" '
             + ' scrolling="yes" style="border-width:0px;"/>');
           });
@@ -43,7 +43,7 @@ openerp.frepple = function(instance, local) {
       var model = new instance.web.Model("res.company");
       model.call("getFreppleURL", [], {context: new instance.web.CompoundContext({'navbar': true, 'url': '/'})})
         .then(function(result) {
-          el.append('<iframe src="' + result 
+          el.append('<iframe src="' + result
             + '" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="no" '
             + ' scrolling="yes" style="border-width:0px;"/>');
           });

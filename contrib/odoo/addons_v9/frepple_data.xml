@@ -3,11 +3,11 @@
   <data noupdate="1">
 
     <template id="assets_backend" name="frepple_assets" inherit_id="web.assets_backend">
-      <xpath expr="." position="inside">               
+      <xpath expr="." position="inside">
         <script type="text/javascript" src="/frepple/static/src/js/frepple.js"/>
       </xpath>
-    </template>    
-                            
+    </template>
+
     <!-- Extra configuration fields on the company form -->
     <record id="company_form_frepple" model="ir.ui.view">
       <field name="name">res.company.form.frepple.inherit</field>
@@ -68,42 +68,42 @@
       parent="stock.menu_stock_sched"
       sequence="100" groups="stock.group_stock_manager"/>
 
-    <!-- Complete frePPLe UI in iframe. -->     
+    <!-- Complete frePPLe UI in iframe. -->
     <record id="action_frepple_web" model="ir.actions.client">
       <field name="name">frePPLe user interface</field>
       <field name="tag">frepple.homepage</field>
     </record>
-    <menuitem id="menu_frepple_web" 
+    <menuitem id="menu_frepple_web"
       name="Advanced planning - frePPLe"
       parent="mrp.menu_mrp_planning"
-      sequence="100"      
+      sequence="100"
       action="action_frepple_web"/>
-                
+
     <!-- frePPle forecast editor in sales menu. -->
     <record id="action_frepple_forecast_editor" model="ir.actions.client">
-      <field name="name">Forecast editor - frePPLe</field> 
-       <field name="tag">frepple.forecasteditor</field>    
+      <field name="name">Forecast editor - frePPLe</field>
+       <field name="tag">frepple.forecasteditor</field>
     </record>
-    <menuitem id="menu_frepple_forecast_editor" 
+    <menuitem id="menu_frepple_forecast_editor"
       name="Forecast editor - frePPLe"
       parent="base.menu_sales"
-      sequence="100"      
+      sequence="100"
       action="action_frepple_forecast_editor"
       groups="base.group_sale_manager,base.group_sale_salesman"
       />
 
     <!-- frePPle forecast editor in sales menu. -->
     <record id="action_frepple_distributionplanning" model="ir.actions.client">
-      <field name="name">Distribution planning - frePPLe</field> 
-       <field name="tag">frepple.distributionplanning</field>    
+      <field name="name">Distribution planning - frePPLe</field>
+       <field name="tag">frepple.distributionplanning</field>
     </record>
-    <menuitem id="menu_frepple_distributionplanning" 
+    <menuitem id="menu_frepple_distributionplanning"
       name="Distribution planning - frePPLe"
       parent="stock.menu_stock_inventory_control"
-      sequence="100"      
+      sequence="100"
       action="action_frepple_distributionplanning"
       />
-                      
+
     <!-- Plan information tab on a sales order. -->
     <record id="frepple.sales_order_form_frepple" model="ir.ui.view">
       <field name="name">sale.order.form.frepple.inherit</field>
@@ -113,12 +113,12 @@
       <field name="arch" type="xml">
         <xpath expr="//notebook" position="inside">
           <page string="Plan information">
-            <h1>test</h1>           
-            <iframe src="http://localhost:8000" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;"/>       
+            <h1>test</h1>
+            <iframe src="http://localhost:8000" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="no" scrolling="yes" style="border-width:0px;"/>
           </page>
         </xpath>
       </field>
     </record>
-     
+
   </data>
 </odoo>

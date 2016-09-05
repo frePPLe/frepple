@@ -33,7 +33,7 @@ from freppledb.common.models import Scenario, User
 
 # A local thread variable to make the current request visible everywhere
 _thread_locals = threading.local()
-  
+
 
 class LocaleMiddleware(DjangoLocaleMiddleware):
   """
@@ -45,12 +45,12 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
   def process_request(self, request):
     # Make request information available throughout the application
     setattr(_thread_locals, 'request', request)
-    
+
     # Authentication through a web token, specified as an URL parameter
     webtoken = request.GET.get('webtoken', None)
     if webtoken:
       # Decode the web token
-      try:         
+      try:
         decoded = jwt.decode(
           webtoken,
           settings.DATABASES[request.database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
@@ -58,11 +58,11 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
           )
         user = User.objects.get(username=decoded['user'])
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
-        login(request, user)        
+        login(request, user)
         request.session['navbar'] = decoded.get('navbar', True)
         request.session['xframe_options_exempt'] = True
       except:
-        raise Exception('Invalid web token or user')      
+        raise Exception('Invalid web token or user')
       language = request.user.language
       request.theme = request.user.theme or settings.DEFAULT_THEME
       request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
@@ -87,7 +87,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     return None
 
   def process_response(self, request, response):
-    # Set a clickjacking protection x-frame-option header in the 
+    # Set a clickjacking protection x-frame-option header in the
     # response UNLESS one the following conditions applies:
     #  - a x-trame-options header is already populated
     #  - the view was marked xframe_options_exempt

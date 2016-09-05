@@ -7,7 +7,7 @@ EXTRA_DIST = README.txt httpd.conf $(DEBIANFILES)
 
 clean-local:
 	-rm -rf frepple_* frepple-$(VERSION) *.deb DEBIAN
-	
+
 # This make target builds a Debian distribution file, suitable for Ubuntu.
 contrib:
 	cd ../..; make dist

@@ -13,7 +13,7 @@ Field           Type              Description
 =============== ================= ===========================================================
 item            item              | Reference to the item.
                                   | This is a required attribute.
-                                  | The item can point to a parent level in the item 
+                                  | The item can point to a parent level in the item
                                     hierarchy. All child items can then be distributed using
                                     this definition.
 origin          location          | Origin location from where we can ship the item.
@@ -31,7 +31,7 @@ leadtime        duration          Shipment lead time.
 size_minimum    positive double   | Minimum size for shipments.
                                   | The default is 1.
 size_multiple   positive double   | All shipments must be a multiple of this quantity.
-                                  | The default is 0, i.e. no multiple to be considered.                                  
+                                  | The default is 0, i.e. no multiple to be considered.
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
 priority        integer           | Priority of this shipment among all other methods to
@@ -39,9 +39,9 @@ priority        integer           | Priority of this shipment among all other me
                                   | A lower number indicates that this shipment is preferred
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
-resource        resource          | Optionally, it refers to a resource that represents the 
+resource        resource          | Optionally, it refers to a resource that represents the
                                     distribution capacity.
-                                  | The referenced resource will typically be of type 
+                                  | The referenced resource will typically be of type
                                     'buckets'.
 resource_qty    positive double   | Resource capacity consumed per distributed unit.
 fence           duration          | Release fence for the purchasing operations.
@@ -114,7 +114,7 @@ Iterate over item distributions
       print("Following shipments are possible with item '%s':" % m.name)
       for i in m.itemdistributions:
         print(
-          " ", i.origin.name if i.origin else None, 
-          i.destination.name if i.destionation else None, 
+          " ", i.origin.name if i.origin else None,
+          i.destination.name if i.destionation else None,
           i.cost, i.effective_start, i.effective_end
           )

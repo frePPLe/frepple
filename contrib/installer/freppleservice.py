@@ -121,7 +121,7 @@ class ServiceHandler(object):
         self.server = CherryPyWSGIServer(('127.0.0.1', settings.PORT),
           StaticFilesHandler(WSGIHandler())
           )
-        
+
         # Synchronize the scenario table with the settings
         from freppledb.common.models import Scenario
         Scenario.syncWithSettings()

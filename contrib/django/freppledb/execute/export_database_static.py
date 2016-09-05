@@ -379,7 +379,7 @@ class exportStaticModel(object):
             i.name, i.description, i.location and i.location.name or None,
             i.item and i.item.name or None,
             round(i.onhand, 4), round(i.minimum, 4),
-            i.minimum_calendar and i.minimum_calendar.name or None,          
+            i.minimum_calendar and i.minimum_calendar.name or None,
             i.__class__.__name__[7:], i.mininterval,
             i.category, i.subcategory, i.source, self.timestamp
           )

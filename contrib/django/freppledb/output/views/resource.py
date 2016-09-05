@@ -189,7 +189,7 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
-    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),    
+    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),

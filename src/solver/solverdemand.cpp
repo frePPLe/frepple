@@ -123,7 +123,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 	  // Store the original location in a variable
 	  Location* originalLocation = l->getLocation();
 	  SortedLocation sortedLocation;
-	  bool globalPurchase = l->getItem() ? 
+	  bool globalPurchase = l->getItem() ?
       l->getItem()->getBoolProperty("global_purchase", false) && data->constrainedPlanning :
       false;
 	  if (globalPurchase) {
@@ -131,7 +131,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 		  // excess being onhand minus safety stock
 		  Item* item = l->getItem();
 		  Item::bufferIterator iter(item);
-		
+
 		  while (Buffer *buffer = iter.next()) {
 			  // Make sure we don't pick original location
 			  if (buffer->getLocation() == originalLocation)
@@ -143,16 +143,16 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 			  if (ss_calendar) {
 				  CalendarBucket* calendarBucket = ss_calendar->findBucket(data->state->q_date, true);
 				  if (calendarBucket)
-					  excess = buffer->getOnHand(l->getDue()) - calendarBucket->getValue();						
+					  excess = buffer->getOnHand(l->getDue()) - calendarBucket->getValue();
 			  }
 			  else {
 				  excess = buffer->getOnHand(l->getDue()) - buffer->getMinimum();
 			  }
 			  sortedLocation.push_front(pair<Location*, double> (buffer->getLocation(), excess));
-			
+
 		  }
 		  // Let's now order the list of location
-		  sortedLocation.sort(compare_location);	
+		  sortedLocation.sort(compare_location);
 	  }
 
 
@@ -375,7 +375,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 				  || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
 				  || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
 				  ));
-		
+
 		  if (globalPurchase)
 		  {
 			  if (sortedLocation.empty() || (l->getPlannedQuantity() + ROUNDING_ERROR >= l->getQuantity()))

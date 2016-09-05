@@ -76,17 +76,17 @@ Field        Type              Description
 start        dateTime          | Start date of the validity of this bucket.
                                | When left unspecified, the entry is effective from the
                                  infinite past.
-                               | Makes up the key together with the end and priority 
+                               | Makes up the key together with the end and priority
                                  fields.
 end          dateTime          | End date of the validity of this bucket.
                                | When left unspecified, the entry is effective indefinitely
                                  in the future.
-                               | Makes up the key together with the start and priority 
+                               | Makes up the key together with the start and priority
                                  fields.
 priority     integer           | Priority of this bucket when multiple buckets are
                                  effective for the same date.
                                | Lower values indicate higher priority.
-                               | Makes up the key together with the start and end 
+                               | Makes up the key together with the start and end
                                  fields.
 days         integer           | Bit pattern representing the days on which the calendar
              between 0 and 127   bucket is valid:

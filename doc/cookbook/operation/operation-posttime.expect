@@ -1,5 +1,3 @@
-Inventory end product @ factory,1971-01-01 00:00:00,1971-01-01 00:00:00,0.0
-Inventory intermediate decoupling point @ factory,1971-01-01 00:00:00,1971-01-01 00:00:00,0.0
 Production step 1,2014-01-01 09:00:00,2014-01-01 17:00:00,10.0
 Production step 1,2014-01-09 09:00:00,2014-01-09 17:00:00,5.0
 Production step 1,2014-01-13 09:00:00,2014-01-13 17:00:00,5.0

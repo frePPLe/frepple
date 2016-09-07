@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+import time
 import os
 import os.path
 
@@ -94,13 +94,14 @@ class ExcelTest(TransactionTestCase):
     # Export workbook
     response = self.client.post('/execute/launch/exportworkbook/', {
        'entities': [
-          'input.buffer', 'input.calendarbucket', 'input.calendar',
-          'input.customer', 'input.demand', 'input.operationmaterial', 'input.item',
-          'input.itemsupplier', 'input.itemdistribution',
-          'input.operationresource', 'input.location', 'input.operationplan',
-          'input.operation', 'input.resourceskill', 'input.resource',
-          'input.skill', 'input.supplier', 'input.suboperation',
-          'common.bucket', 'common.bucketdetail', 'common.parameter',
+          'input.demand', 'input.item', 'input.customer', 'input.location', 'input.buffer',
+          'input.resource', 'input.skill', 'input.resourceskill', 'input.setupmatrix',
+          'input.purchaseorder', 'input.supplier', 'input.itemsupplier',
+          'input.distributionorder', 'input.itemdistribution', 'input.operationmaterial',
+          'input.manufacturingorder', 'input.calendar', 'input.calendarbucket',
+          'input.operation', 'input.itemoperation', 'input.operationplanmaterial',
+          'input.operationresource', 'input.suboperation', 'common.parameter',
+          'common.bucket', 'common.bucketdetail',
           ]
        })
     with open("workbook.xlsx", 'wb') as f:
@@ -120,6 +121,8 @@ class ExcelTest(TransactionTestCase):
     self.assertEqual(input.models.OperationResource.objects.count(), 0)
     self.assertEqual(input.models.Location.objects.count(), 0)
     self.assertEqual(input.models.OperationPlan.objects.count(), 0)
+    self.assertEqual(input.models.OperationPlanResource.objects.count(), 0)
+    self.assertEqual(input.models.OperationPlanMaterial.objects.count(), 0)
     self.assertEqual(input.models.Operation.objects.count(), 0)
     self.assertEqual(input.models.ResourceSkill.objects.count(), 0)
     self.assertEqual(input.models.Resource.objects.count(), 0)

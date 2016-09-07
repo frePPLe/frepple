@@ -134,6 +134,8 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     if (!buf) {
       buf = new BufferDefault();
       buf->setName(o.str());
+      buf->setItem(static_cast<Item*>(item));
+      buf->setLocation(static_cast<Operation*>(oper)->getLocation());
     }
 
     // Pick up the type and create the flow

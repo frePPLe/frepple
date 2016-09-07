@@ -21,8 +21,8 @@ Example
 
 :download:`Excel spreadsheet calendar-working-hours <calendar-working-hours.xlsx>`
 
-The attached example models a warehouse where the replenishment operations are running on weekdays (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not working on Christmas, December 25th.
+The attached example models a warehouse where the manufacturing operations are running on weekdays (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The manufacturing site is also not working on Christmas, December 25th.
 
-In the resulting plan, the shipping operation is available 24-by-7: it takes 48 hours, and is planned to last exactly 48 hours.
+The shipping operation is available 24-by-7: it takes 48 hours, and is planned to last exactly 48 hours.
 
-The replenishment operation takes also 48 hours, but due to the working hours it lasts much longer. The replenishment ends right before the Christmas break starts at 24/12/2014 17:00:00 and uses 8 hours available time on the following days: 24/12/2014, 23/12/2014, 22/12/2014, 19/12/2014, 18/12/2014 and 17/12/2014. The replenishment thus starts on 17/12/2014 08:00:00.
+The manufacturing operation takes also 48 hours, but due to the working hours it lasts much longer. The manufacturing ends right before the Christmas break starts at 24/12/2014 17:00:00 and uses 8 hours available time on the following days: 24/12/2014, 23/12/2014, 22/12/2014, 19/12/2014, 18/12/2014 and 17/12/2014. The replenishment thus starts on 17/12/2014 08:00:00.

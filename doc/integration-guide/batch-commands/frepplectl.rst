@@ -2,10 +2,6 @@
 frepplectl
 ==========
 
-.. note::
-
-  Before 2.1 this command was called manage.py (manage.exe on windows)
-
 This command has a long list of subcommands that allow different operations
 on the user interface and the database.
 

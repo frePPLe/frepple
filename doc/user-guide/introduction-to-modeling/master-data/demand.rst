@@ -1,0 +1,28 @@
+=======
+Demand
+=======
+
+The demand table contains all the orders placed by your customers.
+You should also consider adding the closed orders if you plan to use the forecast module.
+
+
+Key Fields
+----------
+
+============== ================= ===========================================================
+Field          Type              Description
+============== ================= ===========================================================
+name           non-empty string  Name of the demand, must be unique (E.g : Order1, SO125124...)
+quantity       number            Requested quantity.
+item           non-empty string  Requested item.
+location       non-empty string  Requested shipping location.
+due            dateTime          Due date of the demand.
+customer       non-empty string  Customer placing the demand.
+status         string            | Status of the demand.
+                                 | Possible values are "open", "closed".
+============== ================= ===========================================================               
+
+Advanced topics
+---------------
+
+* Complete table description: :doc:`../../model-reference/demand`

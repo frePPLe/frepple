@@ -12,6 +12,7 @@ This chapter describe frePPLe's capabilities to integrate external systems.
    api
    xml
    python
+   csv-files
    rest-api/index
    batch-commands/index
    python-interpreter

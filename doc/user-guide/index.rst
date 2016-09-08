@@ -8,13 +8,8 @@ interface.
 .. toctree::
    :maxdepth: 3
 
-   supported-browsers
-   guided-tour
-   getting-around/index
-   data-maintenance
-   cockpit
-   supply-path-where-used
-   plan-analysis/index
-   what-if-scenarios
-   execute
-   batch-commands/index
+   overview/index
+   user-interface/index
+   model-reference/index
+   cookbook/index
+   

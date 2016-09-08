@@ -105,7 +105,7 @@ The following steps are required to configure a multi-model setup.
 
   To initialize the additional schemas you copy the default schema with the
   command below. The command can also be executed from the user interface in
-  the execution screen: see :doc:`../user-guide/execute`
+  the execution screen: see :doc:`../user-guide/user-interface/execute`
 
   ::
 

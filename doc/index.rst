@@ -6,7 +6,7 @@ frePPLe |release| documentation
 To get started we suggest the following **introduction trail**:
 
 #. | :doc:`Install the software <installation-guide/windows-installer>`
-   | The easiest start to learn frePPLe is to use the online demo
+   | The easiest start to learn frePPLe is to use an online demo
      environment.
    | Installing it locally on a Windows machine is also easy. An
      all-in-one installer installs the planning engine, PostgreSQL
@@ -14,9 +14,9 @@ To get started we suggest the following **introduction trail**:
 
 #. | :doc:`Follow the guided tour <user-guide/user-interface/guided-tour>`
    | The application has an integrated guided tour. It interactively guides
-     you through all important screens in less than 10 minutes.
+     you through the main screens in less than 10 minutes.
 
-#. | :doc:`build your own model<user-guide/modeling-guide/concepts>`
+#. | :doc:`build your own model<user-guide/modeling-wizard/index>`
    | The userface has an integrated wizard that will guide you through
      building your first model step by step.
 
@@ -30,8 +30,6 @@ To get started we suggest the following **introduction trail**:
 
    user-guide/index
    installation-guide/index
-   cookbook/index
-   model-reference/index
    integration-guide/index
    developer-guide/index
    faq

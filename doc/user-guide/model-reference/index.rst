@@ -18,7 +18,6 @@ a high level overview of the model objects and their relationships.
    demand
    item
    item-distribution
-   item-operation
    item-supplier
    location
    operation
@@ -26,7 +25,6 @@ a high level overview of the model objects and their relationships.
    operation-resource
    suboperation
    operationplan
-   problem
    resource
    resource-skill
    setup-matrix

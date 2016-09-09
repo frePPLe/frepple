@@ -38,13 +38,24 @@ Field                  Type              Description
 ====================== ================= ===========================================================
 name                   non-empty string  | Name of the operation.
                                          | This is the key field and a required attribute.
-description            string            Free format description.
-category               string            Free format category.
-subcategory            string            Free format subcategory.
+item                   item              | Reference to the item being produced.
+                                         | If left unspecified we will try to determine the item
+                                           as the producing records from the operation-material 
+                                           records.
 location               location          | Location of the operation.
                                          | Default is null.
                                          | The working hours and holidays for the operation are
-                                           taken from the ‘available’ calendar of the location.
+                                           taken from the 'available' calendar of the location.
+effective_start        dateTime          Date when the operation becomes valid.
+effective_end          dateTime          Date when the operation becomes valid.
+priority               integer           | Priority of this operation to produce the specified item.
+                                         | This is useful when there are multiple operations 
+                                           producing the same item-location, or the same item-location
+                                           can also be replenished with :doc:`purchase orders<item-supplier>`
+                                           and/or :doc:`distribution orders<item-distribution>`.
+description            string            Free format description.
+category               string            Free format category.
+subcategory            string            Free format subcategory.
 fence                  duration          | Time window from the current date of the plan during
                                            which all operationplans are expected to be
                                            frozen/released.

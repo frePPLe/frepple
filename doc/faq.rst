@@ -2,19 +2,19 @@
 Frequently asked questions
 ==========================
 
-* `User interface`_
+* User interface
 
   * `How does frePPLe choose the language of the user interface?`_
   
   * `I want frePPLe in my own language`_
   
-* `Data integration`_
+* Data integration
   
   * `How can I export my model to share with others?`_
   
   * `How can I import a model sent to me?`_
   
-* `Modelling and solver algorithm`_
+* Modelling and solver algorithm
 
   * `What is the solver algorithm in frePPLe?`_
   
@@ -22,12 +22,9 @@ Frequently asked questions
   
   * `How can I debug or trace the solver algorithm?`_
 
-* `Database`_
+* Database
 
   * `What are recommended PostgreSQL database settings?`_
-
-User interface
---------------
 
 How does frePPLe choose the language of the user interface?
 -----------------------------------------------------------
@@ -49,9 +46,6 @@ to create you own translations and submit them to the frePPLe team.
 It'll take you only a few hours to come up with the translations.
 
 
-Data integration
-----------------
-
 How can I export my model to share with others?
 -----------------------------------------------
 
@@ -69,8 +63,6 @@ A model exported as a Excel workbook can be imported again from the execution
 screen. You should first erase any existing contents from the database before
 loading the workbook.
 
-Modelling and solver algorithm
-------------------------------
 
 What is the solver algorithm in frePPLe?
 ----------------------------------------
@@ -155,9 +147,6 @@ How can I debug or trace the solver algorithm?
 The level of detail in the planning file can be controlled with the parameter
 'plan.loglevel'. Setting this variable to '2' will generate a full trace of
 the planning algorithm.
-
-Database
---------
 
 What are recommended PostgreSQL database settings?
 --------------------------------------------------

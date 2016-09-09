@@ -293,6 +293,9 @@ class GridReport(View):
   # The title of the report. Used for the window title
   title = ''
 
+  # Link to the documentation
+  help_url = None
+  
   # The resultset that returns a list of entities that are to be
   # included in the report.
   # This query is used to return the number of records.

@@ -34,6 +34,7 @@ class OverviewReport(GridPivot):
   basequeryset = Buffer.objects.only('name', 'item__name', 'location__name', 'lft', 'rght', 'onhand')
   model = Buffer
   permissions = (('view_inventory_report', 'Can view inventory report'),)
+  help_url = 'user-guide/user-interface/plan-analysis/inventory-report.html'
   rows = (
     GridFieldText('buffer', title=_('buffer'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/buffer'"),
     GridFieldText('item', title=_('item'), editable=False, field_name='item__name', formatter='detail', extra="role:'input/item'"),
@@ -157,7 +158,8 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   multiselect = False
-
+  help_url = 'user-guide/user-interface/plan-analysis/inventory-detail-report.html'
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:

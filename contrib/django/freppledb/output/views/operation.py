@@ -33,6 +33,7 @@ class OverviewReport(GridPivot):
   basequeryset = Operation.objects.all()
   model = Operation
   permissions = (("view_operation_report", "Can view operation report"),)
+  help_url = 'user-guide/user-interface/plan-analysis/operation-report.html'
   rows = (
     GridFieldText('operation', title=_('operation'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/operation'"),
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),

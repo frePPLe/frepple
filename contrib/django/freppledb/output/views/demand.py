@@ -187,6 +187,7 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   multiselect = False
+  help_url = 'user-guide/user-interface/plan-analysis/demand-detail-report.html'
   rows = (
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra="role:'input/demand'"),

@@ -36,6 +36,8 @@ class OverviewReport(GridPivot):
   model = Resource
   permissions = (("view_resource_report", "Can view resource report"),)
   editable = False
+  help_url = 'user-guide/user-interface/plan-analysis/resource-report.html'
+  
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/resource'"),
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
@@ -169,7 +171,8 @@ class DetailReport(GridReport):
   frozenColumns = 0
   editable = False
   multiselect = False
-
+  help_url = 'user-guide/user-interface/plan-analysis/resource-detail-report.html'
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:

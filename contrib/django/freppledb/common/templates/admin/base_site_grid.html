@@ -159,7 +159,8 @@ $(function() {
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-xs btn-primary" id="delete_selected" disabled data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" ><span class="fa fa-minus"></span></button>
 {% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig"><span class="fa fa-clock-o"></span></button>
 {% endif %}{% if hasaddperm %}<button class="btn btn-xs btn-primary" id="csvimport" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()"><span class="fa fa-arrow-up"></span></button>
-{% endif %}<button class="btn btn-xs btn-primary" onclick="grid.showExport(true)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><span class="fa fa-arrow-down"></span></button>{% endblock %}
+{% endif %}<button class="btn btn-xs btn-primary" onclick="grid.showExport(true)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><span class="fa fa-arrow-down"></span></button>
+<button class="btn btn-xs btn-primary" onclick="" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'contextual help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>{% endblock %}
 </div>
 
 </div>

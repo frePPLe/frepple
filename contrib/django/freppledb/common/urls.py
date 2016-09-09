@@ -34,6 +34,9 @@ urlpatterns = patterns(
 
   # Cockpit screen
   url(r'^$', freppledb.common.views.cockpit, name='cockpit'),
+  
+  # Wizard screen
+  url(r'^wizard/$', freppledb.common.views.wizard, name='wizard'),
 
   # User preferences
   url(r'^preferences/$', freppledb.common.views.preferences, name="preferences"),

@@ -36,7 +36,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpRespons
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
-from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
+from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail, Wizard
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 
@@ -89,7 +89,54 @@ def handler500(request):
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
   return HttpResponseServerError(template.render(RequestContext(request)))
 
+###############################################
+class WizardForm(forms.Form):
 
+  wizardstatus = forms.ModelMultipleChoiceField(
+      queryset = Bucket.objects.all().values_list('name', flat=True),
+      widget  = forms.CheckboxInput,
+      )
+
+@sensitive_variables('newdata')
+@login_required
+@csrf_protect
+def wizard(request):
+
+  if request.method == 'POST':
+    form = WizardForm(request.POST)
+    form.user = request.user
+    if form.is_valid():
+      try:
+        print('got here')
+        return HttpResponse(content="OK")
+      except Exception as e:
+        logger.error("Error saving wizard progress: %s" % e)
+        raise Http404('Error saving wizard progress')
+
+  overallprogress = 0
+  subjectprogress = []
+  progresssum = 0
+  subject = ''
+
+  subjectdictlist=[]
+  #create base subjects list
+  for step in Wizard.objects.all():
+    if step.owner == None:
+      subject = step.name
+      owner = step.owner
+      sequenceorder = step.sequenceorder
+      status = step.status
+      subjectdictlist.append({'subject': subject,'owner': owner,'sequenceorder': sequenceorder,'status': status})
+
+  return render_to_response('common/wizard.html', {
+     'title': _('wizard'),
+     'form': form,
+     },
+     context_instance=RequestContext(request, {
+        'subjectdictlist': subjectdictlist
+        }
+    ))
+###############################################
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
     label=_("Language"),

@@ -2,10 +2,12 @@
 Purchase Orders
 ===============
 
-This table declare which items a supplier can procure.
+Tihs table contains the purchase orders you passed to your suppliers.
 
 Note that frepple will populate this table with proposed purchase orders when running the plan.
 
+For a first simplified model, this table can be left empty, frepple will generate proposed purchase orders to meet the plan.
+As a consequence, some demand records might be delivered late.
 
 Key Fields
 ----------

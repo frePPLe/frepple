@@ -10,6 +10,6 @@ interface.
 
    overview/index
    user-interface/index
-   introduction-to-modeling/index
+   modeling-wizard/index
    model-reference/index
    cookbook/index

@@ -1,6 +1,6 @@
-==================
+===========
 Master Data
-==================
+===========
 
 The master data contains the core data of your supply chain such as items and locations.
 This data is mandatory to generate a plan.
@@ -11,5 +11,5 @@ This data is mandatory to generate a plan.
    location
    item
    customer
-   demand
+   sales-orders
    buffer

@@ -1,8 +1,8 @@
-=======
-Demand
-=======
+============
+Sales orders
+============
 
-The demand table contains all the orders placed by your customers.
+The sales orders table contains all the orders placed by your customers.
 You should also consider adding the closed orders if you plan to use the forecast module.
 
 
@@ -25,4 +25,4 @@ status         string            | Status of the demand.
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/demand`
+* Complete table description: :doc:`../../model-reference/sales-orders`

@@ -1,6 +1,6 @@
-=======
+========
 Supplier
-=======
+========
 
 This table contains all the suppliers you are purchasing items from.
 

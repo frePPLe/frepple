@@ -40,6 +40,7 @@ class ReportByDemand(GridReport):
   hasTimeBuckets = True
   multiselect = False
   heightmargin = 82
+  help_url = 'user-guide/user-interface/plan-analysis/demand-gantt-report.html'
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra="role:'input/operation'"),

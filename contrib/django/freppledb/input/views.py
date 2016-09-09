@@ -87,6 +87,8 @@ class PathReport(GridReport):
   editable = False
   default_sort = None
   multiselect = False
+  help_url = 'user-guide/user-interface/supply-path-where-used.html'
+  
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), editable=False, sortable=False, formatter='detail', extra="role:'input/operation'"),
@@ -591,6 +593,7 @@ class BufferList(GridReport):
   basequeryset = Buffer.objects.all()
   model = Buffer
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/master-data/buffers.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -608,7 +611,7 @@ class BufferList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
-# Extra fields for procurement buffers:   leadtime, fence, min_inventory, max_inventory, size_minimum, size_multiple, size_maximum
+
 
 class SetupMatrixList(GridReport):
   '''
@@ -618,6 +621,7 @@ class SetupMatrixList(GridReport):
   basequeryset = SetupMatrix.objects.all()
   model = SetupMatrix
   frozenColumns = 1
+  help_url = 'user-guide/model-reference/setup-matrices.html'  
 
   rows = (
     #. Translators: Translation included with Django
@@ -635,6 +639,7 @@ class ResourceList(GridReport):
   basequeryset = Resource.objects.all()
   model = Resource
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/manufacturing-capacity/resources.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -655,6 +660,7 @@ class ResourceList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class LocationList(GridReport):
   '''
   A list report to show locations.
@@ -663,6 +669,7 @@ class LocationList(GridReport):
   basequeryset = Location.objects.all()
   model = Location
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/master-data/locations.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -676,6 +683,7 @@ class LocationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class CustomerList(GridReport):
   '''
   A list report to show customers.
@@ -684,6 +692,7 @@ class CustomerList(GridReport):
   basequeryset = Customer.objects.all()
   model = Customer
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/master-data/customers.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -696,6 +705,7 @@ class CustomerList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class SupplierList(GridReport):
   '''
   A list report to show supplier.
@@ -704,6 +714,7 @@ class SupplierList(GridReport):
   basequeryset = Supplier.objects.all()
   model = Supplier
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/purchasing/suppliers.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -715,6 +726,7 @@ class SupplierList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+
 
 class ItemOperationList(GridReport):
   '''
@@ -737,6 +749,7 @@ class ItemOperationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class ItemSupplierList(GridReport):
   '''
   A list report to show item suppliers.
@@ -745,6 +758,7 @@ class ItemSupplierList(GridReport):
   basequeryset = ItemSupplier.objects.all()
   model = ItemSupplier
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/purchasing/item-suppliers.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/itemsupplier'"),
@@ -765,6 +779,7 @@ class ItemSupplierList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class ItemDistributionList(GridReport):
   '''
   A list report to show item distribution.
@@ -773,6 +788,7 @@ class ItemDistributionList(GridReport):
   basequeryset = ItemDistribution.objects.all()
   model = ItemDistribution
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/distribution/item-distributions.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/itemdistribution'"),
@@ -793,6 +809,7 @@ class ItemDistributionList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class ItemList(GridReport):
   '''
   A list report to show items.
@@ -802,7 +819,8 @@ class ItemList(GridReport):
   model = Item
   frozenColumns = 1
   editable = True
-
+  help_url = 'user-guide/modeling-wizard/master-data/items.html'
+  
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/item'"),
@@ -816,6 +834,7 @@ class ItemList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class SkillList(GridReport):
   '''
   A list report to show skills.
@@ -824,13 +843,15 @@ class SkillList(GridReport):
   basequeryset = Skill.objects.all()
   model = Skill
   frozenColumns = 1
-
+  help_url = 'user-guide/model-reference/skills.html'
+  
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/skill'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+
 
 class ResourceSkillList(GridReport):
   '''
@@ -840,7 +861,8 @@ class ResourceSkillList(GridReport):
   basequeryset = ResourceSkill.objects.all()
   model = ResourceSkill
   frozenColumns = 1
-
+  help_url = 'user-guide/model-reference/resource-skills.html'
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/resourceskill'"),
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra="role:'input/resource'"),
@@ -852,6 +874,7 @@ class ResourceSkillList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class OperationResourceList(GridReport):
   '''
   A list report to show operationresources.
@@ -860,6 +883,7 @@ class OperationResourceList(GridReport):
   basequeryset = OperationResource.objects.all()
   model = OperationResource
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationresource'"),
@@ -878,6 +902,7 @@ class OperationResourceList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class OperationMaterialList(GridReport):
   '''
   A list report to show operationmaterials.
@@ -886,7 +911,8 @@ class OperationMaterialList(GridReport):
   basequeryset = OperationMaterial.objects.all()
   model = OperationMaterial
   frozenColumns = 1
-
+  help_url = 'user-guide/modeling-wizard/manufacturing-BOM/operation-materials.html'
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationmaterial'"),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
@@ -903,15 +929,17 @@ class OperationMaterialList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class DemandList(GridReport):
   '''
-  A list report to show demands.
+  A list report to show sales orders.
   '''
   title = _("sales orders")
   basequeryset = Demand.objects.all()
   model = Demand
   frozenColumns = 1
-
+  help_url = 'user-guide/modeling-wizard/master-data/demands.html'
+  
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/demand'"),
@@ -959,6 +987,8 @@ class CalendarList(GridReport):
   basequeryset = Calendar.objects.all()
   model = Calendar
   frozenColumns = 1
+  help_url = 'user-guide/model-reference/calendars.html'
+
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/calendar'"),
@@ -978,6 +1008,8 @@ class CalendarBucketList(GridReport):
   basequeryset = CalendarBucket.objects.all()
   model = CalendarBucket
   frozenColumns = 3
+  help_url = 'user-guide/model-reference/calendars.html'
+  
   rows = (
     GridFieldInteger('id', title=_('identifier'), formatter='detail', extra="role:'input/calendarbucket'"),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='detail', extra="role:'input/calendar'"),
@@ -1005,6 +1037,7 @@ class CalendarBucketList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class OperationList(GridReport):
   '''
   A list report to show operations.
@@ -1013,6 +1046,7 @@ class OperationList(GridReport):
   basequeryset = Operation.objects.all()
   model = Operation
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/manufacturing-bom/operations.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -1035,6 +1069,7 @@ class OperationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class SubOperationList(GridReport):
   '''
   A list report to show suboperations.
@@ -1043,6 +1078,7 @@ class SubOperationList(GridReport):
   basequeryset = SubOperation.objects.all()
   model = SubOperation
   frozenColumns = 1
+  help_url = None
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),
@@ -1055,6 +1091,7 @@ class SubOperationList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
+
 class ManufacturingOrderList(GridReport):
   '''
   A list report to show manufacturing orders.
@@ -1063,6 +1100,7 @@ class ManufacturingOrderList(GridReport):
   basequeryset = ManufacturingOrder.objects.all()
   model = ManufacturingOrder
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html'
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
@@ -1098,6 +1136,7 @@ class ManufacturingOrderList(GridReport):
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]
 
+
 class DistributionOrderList(GridReport):
   '''
   A list report to show distribution orders.
@@ -1106,6 +1145,7 @@ class DistributionOrderList(GridReport):
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
@@ -1158,6 +1198,7 @@ class PurchaseOrderList(GridReport):
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
   frozenColumns = 1
+  help_url = 'user-guide/modeling-wizard/purchasing/purchase-orders.html'
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):

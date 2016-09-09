@@ -263,6 +263,7 @@ class UserList(GridReport):
   frozenColumns = 2
   multiselect = False
   permissions = (("change_user", "Can change user"),)
+  help_url = 'user-guide/user-interface/user-permissions-and-roles.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -298,6 +299,7 @@ class GroupList(GridReport):
   frozenColumns = 0
   multiselect = False
   permissions = (("change_group", "Can change group"),)
+  help_url = 'user-guide/user-interface/user-permissions-and-roles.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
@@ -315,6 +317,7 @@ class ParameterList(GridReport):
   model = Parameter
   adminsite = 'admin'
   frozenColumns = 1
+  help_url = 'user-guide/model-reference/parameter.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -358,6 +361,7 @@ class BucketList(GridReport):
   basequeryset = Bucket.objects.all()
   model = Bucket
   frozenColumns = 1
+  help_url = 'user-guide/model-reference/buckets.html'
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/bucket'"),
@@ -376,6 +380,7 @@ class BucketDetailList(GridReport):
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail
   frozenColumns = 2
+  help_url = 'user-guide/model-reference/buckets.html'
   rows = (
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra="role:'common/bucket'"),
     GridFieldDateTime('startdate', title=_('start date')),

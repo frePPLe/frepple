@@ -72,6 +72,7 @@ class BaseReport(GridReport):
   frozenColumns = 0
   editable = False
   multiselect = False
+  help_url = 'user-guide/user-interface/plan-analysis/constraint-report.html'
   rows = (
     GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), editable=False, formatter='detail', extra="role:'input/demand'"),

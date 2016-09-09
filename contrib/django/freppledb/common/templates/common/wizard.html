@@ -56,18 +56,16 @@
 
 <div id="content-main">
     <div>Wizard progress:</div>
-    <form id="WizardForm" action="{{request.prefix}}/wizard/" method="post" class="form">{% csrf_token %}
-          {% for subject in subjectdictlist %}
+          {% for step in subjectdictlist %}
       <div>
-        <span>{{subject.name}}</span>
-        <progress value="{% if subject.status == True %}1{% else %}0{% endif %}" max="1">
+        <span>{{step.name}}</span>
+        <progress value="{% if subject.status %}1{% else %}0{% endif %}" max="1">
         </progress>
-        <input type="checkbox" value="{{subject.status}}" name="{{subject.name}}">
+        <a href="{{ step.url_internaldoc }}">Do it!</a>
+        <a href="{{ step.url_doc}}" target="_frepplecom">Help</a>
+        <input type="checkbox" value="{{subject.status}}" name="{{step.name}}">
       </div>
       {% endfor %}
-		</form>
 
 </div>
-{{subjectdictlist}}
-
 {% endblock %}

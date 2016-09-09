@@ -89,57 +89,24 @@ def handler500(request):
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
   return HttpResponseServerError(template.render(RequestContext(request)))
 
+
 ###############################################
-class WizardForm(forms.Form):
-
-  wizardstatus = forms.ModelMultipleChoiceField(
-      queryset = Bucket.objects.all().values_list('name', flat=True),
-      widget  = forms.CheckboxInput,
-      )
-
-#@sensitive_variables('newdata')
 @login_required
 @csrf_protect
 def wizard(request):
-
-  overallprogress = 0
-  subjectprogress = []
-  progresssum = 0
-  subject = ''
-
-  subjectdictlist=[]
-  #create base subjects list
-  for step in Wizard.objects.all():
-    if step.owner == None:
-      name = step.name
-      owner = step.owner
-      sequenceorder = step.sequenceorder
-      status = step.status
-      subjectdictlist.append({'subject': subject,'owner': owner,'sequenceorder': sequenceorder,'status': status})
-      
-  if request.method == 'POST':
-    form = WizardForm(request.POST)
-    form.user = request.user
-    if form.is_valid():
-      try:
-        print('got here')
-        return HttpResponse(content="OK")
-      except Exception as e:
-        logger.error("Error saving wizard progress: %s" % e)
-        raise Http404('Error saving wizard progress')
-  else:
-    pref = request.user
-    form = WizardForm()
+    
+  if request.method == 'POST':    
+    print('got here')
+    return HttpResponse(content="OK")
 
   return render_to_response('common/wizard.html', {
-     'title': _('wizard'),
-     'form': form,
-     },
-     context_instance=RequestContext(request, {
-        'subjectdictlist': subjectdictlist
-        }
-    ))
-###############################################
+    'title': _('Modeling wizard'),
+    'subjectdictlist': Wizard.objects.all().using(request.database).order_by('sequenceorder')
+    },
+    context_instance=RequestContext(request)
+    )
+
+
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
     label=_("Language"),

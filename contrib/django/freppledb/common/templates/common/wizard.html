@@ -1,0 +1,43 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list %}
+{% block extrahead %}{{block.super}}
+
+<style>
+#content-main td {
+  padding-bottom: 1em;
+}
+#content-main th {
+  line-height: 2em;
+}
+</style>
+
+{% endblock %}
+
+  {% block content_title %}
+    <div class="row">
+    <div class="col-xs-12">
+  {% if title %}
+      <h1>{{ title|capfirst }}</h1>
+  {% endif %}
+    </div></div>
+  {% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+  <div>Wizard progress:</div>
+    <form action="." method="post" class="form">
+          {% for subject in subjectdictlist %}
+      <div>
+        <span>{{subject.subject}}</span>
+        <progress value="{% if subject.status == True %}1{% else %}0{% endif %}" max="1">
+        </progress>
+        <input type="checkbox" value="{{subject.status}}" name="choices">
+              </div>
+      {% endfor %}
+		</form>
+
+</div>
+{{subjectdictlist}}
+
+{% endblock %}

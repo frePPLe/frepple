@@ -51,8 +51,8 @@ effective_end          dateTime          Date when the operation becomes valid.
 priority               integer           | Priority of this operation to produce the specified item.
                                          | This is useful when there are multiple operations 
                                            producing the same item-location, or the same item-location
-                                           can also be replenished with :doc:`purchase orders<item-supplier>`
-                                           and/or :doc:`distribution orders<item-distribution>`.
+                                           can also be replenished with :doc:`purchase orders<item-suppliers>`
+                                           and/or :doc:`distribution orders<item-distributions>`.
 description            string            Free format description.
 category               string            Free format category.
 subcategory            string            Free format subcategory.

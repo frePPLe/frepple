@@ -65,6 +65,7 @@ action       A/C/AC/R          | Type of action to be executed:
 |                        |                                                       |
 |                        | - value: value that becomes effective at the time of  |
 |                        | the event.                                            |
+|                        |                                                       |
 +------------------------+-------------------------------------------------------+
 
 Calendar bucket

@@ -9,25 +9,25 @@ less indentation.
 
 Start populating the entities at the top of the list and work your way down.
 
-|  :doc:`customer` (references itself)
-|  :doc:`setup-matrix`
-|  :doc:`skill`
-|  :doc:`calendar`
-|    :doc:`Calendar bucket <calendar>` (references calendar)
-|    :doc:`location` (references calendar and itself)
-|    :doc:`supplier` (references calendar and itself)
-|      :doc:`resource` (references setup matrix, calendar, location and itself)
-|      :doc:`operation` (references location)
-|        :doc:`resource-skill` (references skill and resource)
-|        :doc:`operation-resource` (references resource, skill and operation)
-|        :doc:`Sub operation <operation>` (references operation)
-|        :doc:`operationplan` (references operation)
-|          :doc:`item` (references operation and itself)
-|            :doc:`item-supplier` (references supplier, item and location)
-|            :doc:`item-distribution` (references location and item)
-|            :doc:`demand` (references item, customer, operation, location and itself)
-|            :doc:`buffer` (references item, operation, location, calendar and itself)
-|              :doc:`operation-material` (references buffer and operation)
+|  :doc:`customers` (references itself)
+|  :doc:`setup-matrices`
+|  :doc:`skills`
+|  :doc:`calendars`
+|    :doc:`Calendar bucket <calendars>` (references calendars)
+|    :doc:`locations` (references calendars and itself)
+|    :doc:`suppliers` (references calendars and itself)
+|      :doc:`resources` (references setup matrices, calendars, locations and itself)
+|      :doc:`operations` (references locations)
+|        :doc:`resource-skills` (references skills and resources)
+|        :doc:`operation-resources` (references resources, skills and operations)
+|        :doc:`Sub operation <operations>` (references operations)
+|        :doc:`operationplan` (references operations)
+|          :doc:`items` (references operations and itself)
+|            :doc:`item-suppliers` (references suppliers, items and locations)
+|            :doc:`item-distributions` (references locations and items)
+|            :doc:`sales-orders` (references items, customers, operations, locations and itself)
+|            :doc:`buffers` (references items, operations, locations, calendars and itself)
+|              :doc:`operation-materials` (references buffers and operations)
 
 .. image:: _images/dependencies.png
    :alt: Model dependencies

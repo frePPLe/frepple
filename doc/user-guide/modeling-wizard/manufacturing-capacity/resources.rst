@@ -1,6 +1,6 @@
-=======
+=========
 Resources
-=======
+=========
 
 | This table contains all the resources you wish to introduce in your supply chain.
 | There are three types of resources in frepple, continuous resources, bucketized resources and infinite resources.

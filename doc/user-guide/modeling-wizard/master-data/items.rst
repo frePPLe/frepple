@@ -1,8 +1,8 @@
 =======
-Item
+Items
 =======
 
-The item table contains all the items of your supply chain.
+The Items table contains all the items that you want to manage in your supply chain.
 
 
 Key Fields
@@ -19,7 +19,7 @@ price           number            Cost or price of the item.
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/item`
+* Complete table description: :doc:`../../model-reference/items`
 
 
 

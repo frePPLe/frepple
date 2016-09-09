@@ -1,8 +1,8 @@
-=======
-Customer
-=======
+=========
+Customers
+=========
 
-The customer table contains all the customers passing orders to your business.
+The Customers table contains all the customers passing orders to your business.
 
 
 Key Fields
@@ -18,4 +18,4 @@ description  string            Free format description.
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/customer`
+* Complete table description: :doc:`../../model-reference/customers`

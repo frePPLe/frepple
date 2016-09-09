@@ -1,6 +1,6 @@
-========
-Resource
-========
+=========
+Resources
+=========
 
 Resources represent capacity. They represent a machine, a worker or
 a group of workers, or some logical limits.

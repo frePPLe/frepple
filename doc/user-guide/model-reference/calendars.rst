@@ -1,6 +1,6 @@
-========
-Calendar
-========
+=========
+Calendars
+=========
 
 A calendar represents a numeric value that is varying over time.
 

@@ -1,6 +1,6 @@
-====
-Item
-====
+=====
+Items
+=====
 
 An item represents an end product, intermediate product or a raw material.
 

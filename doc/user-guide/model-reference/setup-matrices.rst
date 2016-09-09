@@ -1,6 +1,6 @@
-============
-Setup matrix
-============
+==============
+Setup matrices
+==============
 
 A setup matrix defines the time and cost of setup conversions on a resource.
 Within a setup matrix rules are used to define the changeover cost and

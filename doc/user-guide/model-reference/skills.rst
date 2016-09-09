@@ -1,6 +1,6 @@
-=====
-Skill
-=====
+======
+Skills
+======
 
 A skill defines a certain property that can be assigned to resources.
 

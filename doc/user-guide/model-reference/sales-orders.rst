@@ -1,6 +1,6 @@
-===========
-Sales order
-===========
+============
+Sales orders
+============
 
 Defines independent demands for items.
 

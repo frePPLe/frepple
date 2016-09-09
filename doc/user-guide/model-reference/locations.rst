@@ -1,6 +1,6 @@
-========
-Location
-========
+=========
+Locations
+=========
 
 A location is a (physical or logical) place where resources, buffers
 and operations are located.

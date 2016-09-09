@@ -1,6 +1,6 @@
-========
-Supplier
-========
+=========
+Suppliers
+=========
 
 A supplier ships us items.
 

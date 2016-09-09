@@ -1,6 +1,6 @@
-==============
-Resource skill
-==============
+===============
+Resource skills
+===============
 
 A resource skill associates a certain skill with a resource.
 

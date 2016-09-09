@@ -1,6 +1,6 @@
-=========
-Operation
-=========
+==========
+Operations
+==========
 
 An operation represents an activity: these consume and produce material,
 take time and also require capacity.

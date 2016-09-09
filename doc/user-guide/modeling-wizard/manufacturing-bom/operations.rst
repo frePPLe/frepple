@@ -24,4 +24,4 @@ location_id                            non-empty string  The location where the 
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/operation`
+* Complete table description: :doc:`../../model-reference/operations`

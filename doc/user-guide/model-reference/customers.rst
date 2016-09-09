@@ -1,6 +1,6 @@
-========
-Customer
-========
+=========
+Customers
+=========
 
 Demands are associated with a customer.
 

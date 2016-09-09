@@ -269,6 +269,24 @@ class Scenario(models.Model):
     verbose_name = _('scenario')
     ordering = ['name']
 
+class Wizard(models.Model):
+  # Database fields
+  # Translators: Translation included with Django
+  name = models.CharField(_('name'), max_length=300, primary_key=True)
+  sequenceorder = models.IntegerField(_('progress'), help_text=_('Model completion level'))
+  url_doc = models.URLField(_('documentation URL'), max_length=500, null=True, blank=True)
+  url_internaldoc = models.URLField(_('wizard URL'), max_length=500, null=True, blank=True)
+  owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
+                            related_name='xchildren', help_text=_('Hierarchical parent'))
+  status = models.BooleanField(blank=True, default=True)
+
+  def __str__(self):
+    return self.name
+
+  class Meta:
+    db_table = "common_wizard"
+    ordering = ['sequenceorder']
+
 
 class User(AbstractUser):
   languageList = tuple( [ ('auto', _('Detect automatically')), ] + list(settings.LANGUAGES) )

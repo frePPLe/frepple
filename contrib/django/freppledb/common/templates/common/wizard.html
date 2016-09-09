@@ -10,7 +10,37 @@
   line-height: 2em;
 }
 </style>
+<script type="text/javascript">
 
+	function updateProgress()
+	{
+	  if (refresh !== null)
+	  {
+	     // Disable the refresh which is currently active
+	     clearInterval(refresh);
+	     $('#autorefresh span').removeClass("fa-pause").addClass("fa-refresh");
+	     refresh = null;
+	  }
+	  else
+	  {
+	    // Enable the refresh which is currently inactive
+	    refresh = setInterval(function() {
+	      $("#grid").trigger("reloadGrid",[{current:true}]);
+	      }, 5000);
+	    $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
+	  }
+	}
+
+  $(function() {
+    $("#WizardForm input").click(function(){
+      // update progress
+
+      //submit form
+      $("#WizardForm").submit();
+    });
+
+  });
+</script>
 {% endblock %}
 
   {% block content_title %}
@@ -25,15 +55,15 @@
 {% block content %}
 
 <div id="content-main">
-  <div>Wizard progress:</div>
-    <form action="." method="post" class="form">
+    <div>Wizard progress:</div>
+    <form id="WizardForm" action="{{request.prefix}}/wizard/" method="post" class="form">{% csrf_token %}
           {% for subject in subjectdictlist %}
       <div>
-        <span>{{subject.subject}}</span>
+        <span>{{subject.name}}</span>
         <progress value="{% if subject.status == True %}1{% else %}0{% endif %}" max="1">
         </progress>
-        <input type="checkbox" value="{{subject.status}}" name="choices">
-              </div>
+        <input type="checkbox" value="{{subject.status}}" name="{{subject.name}}">
+      </div>
       {% endfor %}
 		</form>
 

@@ -97,21 +97,10 @@ class WizardForm(forms.Form):
       widget  = forms.CheckboxInput,
       )
 
-@sensitive_variables('newdata')
+#@sensitive_variables('newdata')
 @login_required
 @csrf_protect
 def wizard(request):
-
-  if request.method == 'POST':
-    form = WizardForm(request.POST)
-    form.user = request.user
-    if form.is_valid():
-      try:
-        print('got here')
-        return HttpResponse(content="OK")
-      except Exception as e:
-        logger.error("Error saving wizard progress: %s" % e)
-        raise Http404('Error saving wizard progress')
 
   overallprogress = 0
   subjectprogress = []
@@ -122,11 +111,25 @@ def wizard(request):
   #create base subjects list
   for step in Wizard.objects.all():
     if step.owner == None:
-      subject = step.name
+      name = step.name
       owner = step.owner
       sequenceorder = step.sequenceorder
       status = step.status
       subjectdictlist.append({'subject': subject,'owner': owner,'sequenceorder': sequenceorder,'status': status})
+      
+  if request.method == 'POST':
+    form = WizardForm(request.POST)
+    form.user = request.user
+    if form.is_valid():
+      try:
+        print('got here')
+        return HttpResponse(content="OK")
+      except Exception as e:
+        logger.error("Error saving wizard progress: %s" % e)
+        raise Http404('Error saving wizard progress')
+  else:
+    pref = request.user
+    form = WizardForm()
 
   return render_to_response('common/wizard.html', {
      'title': _('wizard'),

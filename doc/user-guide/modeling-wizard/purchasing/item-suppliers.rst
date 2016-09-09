@@ -1,6 +1,6 @@
-=======
-Item Supplier
-=======
+==============
+Item Suppliers
+==============
 
 This table defines the supplier(s) that can procure an item.
 
@@ -26,4 +26,4 @@ priority        integer           | Priority of this supplier among all supplier
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/item-supplier`
+* Complete table description: :doc:`../../model-reference/item-suppliers`

@@ -1,6 +1,6 @@
-===============
+==================
 Item Distributions
-===============
+==================
 
 This table allows you to authorize the transfer of an item from a location in your model to another location in your model.
 

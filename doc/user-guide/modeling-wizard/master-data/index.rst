@@ -8,8 +8,8 @@ This data is mandatory to generate a plan.
 .. toctree::
    :maxdepth: 2
 
-   location
-   item
-   customer
+   locations
+   items
+   customers
    sales-orders
-   buffer
+   buffers

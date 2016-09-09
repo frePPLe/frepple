@@ -1,6 +1,6 @@
-============================
-Inventory Planning Parameter
-============================
+=============================
+Inventory Planning Parameters
+=============================
 
 A record should be entered in this table if you wish frepple to calculate a safety stock or a reorder quantity for a buffer.
 
@@ -34,4 +34,4 @@ service level                          number            This is the desired ser
 Advanced topics
 ---------------
 
-* Complete table description: :doc:`../../model-reference/inventory-planning-parameter`
+* Complete table description: :doc:`../../model-reference/inventory-planning-parameters`

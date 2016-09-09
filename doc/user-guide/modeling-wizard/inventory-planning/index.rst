@@ -7,5 +7,5 @@ This module provides the functionality to compute a safety stock and a reorder q
 .. toctree::
    :maxdepth: 2
 
-   inventory-planning-parameter
+   inventory-planning-parameters
 

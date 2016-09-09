@@ -8,6 +8,6 @@ The suppliers must be declared in the supplier tables and the items each supplie
 .. toctree::
    :maxdepth: 2
 
-   supplier
-   item-supplier
+   suppliers
+   item-suppliers
    purchase-orders

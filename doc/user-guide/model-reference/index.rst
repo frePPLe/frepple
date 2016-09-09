@@ -12,21 +12,21 @@ a high level overview of the model objects and their relationships.
 
    domain-model
    parameter
-   buffer
-   calendar
-   customer
-   demand
-   item
-   item-distribution
-   item-supplier
-   location
-   operation
-   operation-material
-   operation-resource
-   suboperation
+   buffers
+   calendars
+   customers
+   sales-orders
+   items
+   item-distributions
+   item-suppliers
+   locations
+   operations
+   operation-materials
+   operation-resources
+   suboperations
    operationplan
-   resource
-   resource-skill
-   setup-matrix
-   skill
-   supplier
+   resources
+   resource-skills
+   setup-matrices
+   skills
+   suppliers

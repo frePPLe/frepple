@@ -79,9 +79,11 @@ Import/Export data files from folder
 
 This task allows importing or exporting data from a set of CSV-formatted files.
 The purpose of this task is to help the exchange of information with other systems.
-The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER in the djangosettings.py configuration file.
-The log files importfromfolder.log and exporttofolder.log record all data imports and file exports triggered in this way, in addition to
-any data errors identified during these tasks.
+
+The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
+in the djangosettings.py configuration file. The log files importfromfolder.log 
+and exporttofolder.log record all data imports and file exports, in addition to 
+any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
 
@@ -97,17 +99,6 @@ The data files to be imported must meet the following criteria:
 * The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
   setting in djangosettings.py)
 
-The export can be customized, i.e. export only the relevant data and with the a specific format (file names, dates, separators, ...).
-The customization is done on the frepple_exporttofolder.py statements.
-
-::
-
-     statements = [
-       ("export_purchaseorder.csv", "COPY (select * from purchase_order where status='proposed') TO STDOUT WITH CSV HEADER"),
-       ("export_distributionorder.csv", "COPY distribution_order TO STDOUT WITH CSV HEADER"),
-       ("export_manufacturingorders.csv", "COPY operationplan TO STDOUT WITH CSV HEADER")
-     ]
-
 In this option you can see a list of files present in the specified folder.
 
 .. image:: _images/execution-importexportfolder.png
@@ -116,7 +107,7 @@ In this option you can see a list of files present in the specified folder.
 Web service
 -----------
 
-In the Enterprise Edition users have the option to shut down the web service
+In the Enterprise Edition users have the option to start and stop the web service
 which keeps the plan in memory.
 
 .. image:: _images/execution-webservice.png

@@ -31,6 +31,8 @@ Each entity type has it’s own set of exceptions:
   * **material excess**: A buffer is carrying too much material during a certain period of time.
 
   * **material shortage**: A buffer is having a material shortage during a certain period of time.
+  
+  * **invalid data**: Flagged when a buffer has no ways of replenishment or too many. 
 
 * **Operation**:
 
@@ -41,7 +43,7 @@ Each entity type has it’s own set of exceptions:
     i.e. it starts 1) after the current date of the plan but 2) before the
     current date of the plan plus the release fence of the operation.
 
-  * **precedence**: Flagged when the sequence of two operationplans in a routing isn’t respected.
+  * **precedence**: Flagged when the sequence of two operationplans in a routing isn't respected.
 
 ============ ==============================================================================
 Field        Description
@@ -49,7 +51,8 @@ Field        Description
 name         Problem type.
 description  Description of the problem.
 weight       | A number expressing the seriousness of the problem.
-             | Sorting on this field allows the user to focus on the biggest problems first.
+             | Sorting on this field allows the user to focus on the most important 
+               problems first.
 start        Date at which the problem starts.
 end          Date at which the problem ends.
 ============ ==============================================================================

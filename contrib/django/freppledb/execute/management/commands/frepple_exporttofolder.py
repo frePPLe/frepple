@@ -49,9 +49,33 @@ class Command(BaseCommand):
   requires_system_checks = False
 
   statements = [
-      ("purchaseorder.csv", "COPY (select source, lastmodified, id, status , reference, quantity, to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality, owner_id, item_id, location_id, supplier_id from operationplan where status='proposed' and type='PO') TO STDOUT WITH CSV HEADER"),
-      ("distributionorder.csv", "COPY (select source, lastmodified, id, status, reference, quantity, to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality, plan, destination_id, item_id, origin_id from operationplan where status='proposed' and type='DO') TO STDOUT WITH CSV HEADER"),
-      ("manufacturingorder.csv", "COPY (select source, lastmodified, id , status ,reference ,quantity , to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality, operation_id, owner_id, plan, item_id from operationplan where status='proposed' and type='MO') TO STDOUT WITH CSV HEADER")
+      ("purchaseorder.csv", 
+        '''COPY 
+        (select source, lastmodified, id, status , reference, quantity, 
+        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
+        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality, 
+        owner_id, item_id, location_id, supplier_id from operationplan 
+        where status='proposed' and type='PO') 
+        TO STDOUT WITH CSV HEADER'''
+        ),
+      ("distributionorder.csv", 
+        '''COPY 
+        (select source, lastmodified, id, status, reference, quantity, 
+        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
+        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality,
+        plan, destination_id, item_id, origin_id from operationplan 
+        where status='proposed' and type='DO') 
+        TO STDOUT WITH CSV HEADER'''
+        ),
+      ("manufacturingorder.csv", 
+       '''COPY 
+       (select source, lastmodified, id , status ,reference ,quantity,
+       to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
+       to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, 
+       criticality, operation_id, owner_id, plan, item_id
+       from operationplan where status='proposed' and type='MO')
+       TO STDOUT WITH CSV HEADER'''
+       )
       ]
 
   def get_version(self):

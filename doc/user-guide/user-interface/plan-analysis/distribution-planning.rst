@@ -57,13 +57,15 @@ can conveniently perform the following actions:
 
   - | The third tab shows the **planned and ongoing transactions** that are
       currently ongoing or proposed by frePPLe. The list shows purchase orders,
-      incoming distribution orders and outgoing distribution orders.
+      incoming distribution orders, outgoing distribution orders and open 
+      sales orders.
 
     | Date, quantity, item and supplier can be edited for proposed transactions.
     | When one or more rows are selected, the action list becomes active which is
       used to change the status of the transaction.
-    | If the Openbravo connector app is activated, the dropdown allows the planner
-      to immediately export the transaction immediately towards Openbravo.
+    | If the Openbravo or Odoo connector app is activated, the dropdown allows 
+      the planner to immediately export the transaction immediately towards 
+      the ERP system.
 
     .. image:: ../_images/distribution-planning-transactions.png
 

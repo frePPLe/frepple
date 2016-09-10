@@ -2,10 +2,10 @@
 Importing data
 ==============
 
-You can upload data files in a) native Excel format or b) CSV-text format.
-Clicking on the import arrow in the upper right corner allows you to select
-a the file to upload. FrePPLe automatically detects which of the two data
-formats you're using.
+You can upload data files in a) **native Excel format** or 
+b) **CSV format**. Clicking on the import arrow in the upper
+right corner allows you to select a the file to upload. FrePPLe automatically
+detects which of the two data formats you're using.
 
 The upload icon will only be available when you have add-permission on
 the data object you're uploading. A message is shown when you don’t have

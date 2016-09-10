@@ -20,5 +20,5 @@ The report can follow the material flows in both directions:
     the material.
 
 
-.. image:: _images/supply-path.png
+.. image:: ../_images/supply-path.png
    :alt: Supply path

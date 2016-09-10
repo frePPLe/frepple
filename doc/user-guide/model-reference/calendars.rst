@@ -44,30 +44,6 @@ action       A/C/AC/R          | Type of action to be executed:
                                  doesn’t exist.
 ============ ================= ===========================================================
 
-**Methods**
-
-+------------------------+-------------------------------------------------------+
-| Method                 | Description                                           |
-+========================+=======================================================+
-| setValue([start date], | Creates or updates calendar buckets to reflect the    |
-| [end date],[value])    | specified value in the given date range.              |
-+------------------------+-------------------------------------------------------+
-| buckets()              | Returns an iterator over the calendar buckets.        |
-+------------------------+-------------------------------------------------------+
-| events([start date],   | Returns an iterator over the calendar events starting |
-| [direction])           | from the (optional) start date, either backward or    |
-|                        | forward in time. These are the dates at which the     |
-|                        | calendar value is changing.                           |
-|                        |                                                       |
-|                        | Each event is a tuple with 2 fields:                  |
-|                        |                                                       |
-|                        | - date: date of the event.                            |
-|                        |                                                       |
-|                        | - value: value that becomes effective at the time of  |
-|                        | the event.                                            |
-|                        |                                                       |
-+------------------------+-------------------------------------------------------+
-
 Calendar bucket
 ---------------
 

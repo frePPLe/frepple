@@ -2,9 +2,9 @@
 Constraint report
 =================
 
-This report shows for each demand the resaon(s) why it is planned short or late.
+This report shows for each demand the reason(s) why it is planned short or late.
 
-It can also be used to show all demand that is delayed or short because of
+It can also be used to show all demands that are delayed or short because of
 a certain bottleneck resource or material.
 
 ============ ==============================================================================
@@ -18,6 +18,7 @@ weight       | A number expressing the seriousness of the problem.
 start        Date at which the problem starts.
 end          Date at which the problem ends.
 ============ ==============================================================================
+
 
 .. image:: ../_images/constraint-report.png
    :alt: Constraint report

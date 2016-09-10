@@ -6,8 +6,8 @@ Forecast editor
 
    This module is only available in the Enterprise Edition.
 
-The forecast editor provides a convenient way to review a forecast, and preview results, in just one screen. When entering
-forecast numbers, the numbers will be disaggregated to the planning buckets.
+The forecast editor provides a convenient way to review and edit forecast values. 
+It allows easy navigation across the item, location and time hierarchies.
 
 .. image:: ../_images/forecast-editor-main.png
    :alt: Forecast editor screen
@@ -75,5 +75,3 @@ Forecast Consumed    Forecast quantity already consumed by orders.
 Planned Orders       Quantity of orders planned in this time bucket.
 Planned Net Forecast Quantity of net forecast planned in this time bucket.
 ==================== ==============================================================================
-
-

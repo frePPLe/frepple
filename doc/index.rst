@@ -16,7 +16,7 @@ To get started we suggest the following **introduction trail**:
    | The application has an integrated guided tour. It interactively guides
      you through the main screens in less than 10 minutes.
 
-#. | :doc:`build your own model<user-guide/modeling-wizard/index>`
+#. | :doc:`Build your own model<user-guide/modeling-wizard/index>`
    | The userface has an integrated wizard that will guide you through
      building your first model step by step.
 

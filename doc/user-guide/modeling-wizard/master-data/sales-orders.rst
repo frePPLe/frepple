@@ -6,8 +6,7 @@ The sales orders table contains all the orders placed by your customers.
 You should also consider adding the closed orders if you plan to use the forecast module.
 
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 ============== ================= ===========================================================
 Field          Type              Description
@@ -22,7 +21,6 @@ status         string            | Status of the demand.
                                  | Possible values are "open", "closed".
 ============== ================= ===========================================================               
 
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/sales-orders`

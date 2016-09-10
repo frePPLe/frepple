@@ -9,8 +9,7 @@ Note that frepple will populate this table with proposed purchase orders when ru
 For a first simplified model, this table can be left empty, frepple will generate proposed purchase orders to meet the plan.
 As a consequence, some demand records might be delivered late.
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 ================ ================= ===========================================================
 Field            Type              Description
@@ -23,7 +22,6 @@ end date         date              The date of the purchase order delivery.
 quantity         number            The quantity delivered.
 ================ ================= ===========================================================                              
                                   
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/purchase-orders`

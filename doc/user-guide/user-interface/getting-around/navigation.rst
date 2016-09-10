@@ -21,7 +21,7 @@ Navigating the user interface is easy and intuitive.
     it will open a screen with a selection of detailed reports on the
     object.
 
-In the screenshot below you may find each of these methods.
+The screenshot below illustrates each of these methods.
 
 .. image:: ../_images/navigation.png
    :alt: Navigation

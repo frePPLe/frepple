@@ -39,12 +39,6 @@ see demand OR material, lead time and capacity problems to be shown.
 In both the constrained and unconstrained plans you can select which constraints
 are considered during plan creation.
 
-A live data source allows your frePPLe plan to be 100% in sync with data in an
-external system. FrePPLe will read data from them before planning, and after
-the plan is generated frePPLe directly exports the results to them. FrePPLe also
-saves a copy of the data received from the external data sources in its own
-database for reporting.
-
 .. image:: _images/execution-plan.png
    :alt: Execution screen - Plan generation
 

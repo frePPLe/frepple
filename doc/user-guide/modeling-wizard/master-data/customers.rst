@@ -5,8 +5,7 @@ Customers
 The Customers table contains all the customers passing orders to your business.
 
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 ============ ================= ===========================================================
 Field        Type              Description
@@ -15,7 +14,6 @@ name         non-empty string  Name of the customer.
 description  string            Free format description.
 ============ ================= ===========================================================
 
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/customers`

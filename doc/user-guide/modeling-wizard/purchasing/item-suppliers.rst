@@ -5,8 +5,7 @@ Item Suppliers
 This table defines the supplier(s) that can procure an item.
 
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 =============== ================= ===========================================================
 Field           Type              Description
@@ -23,7 +22,6 @@ priority        integer           | Priority of this supplier among all supplier
                                   | If a demand cannot be delivered on time with the primary supplier, the algorithm will try with secondary supplier(s).
 =============== ================= ===========================================================
                                   
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/item-suppliers`

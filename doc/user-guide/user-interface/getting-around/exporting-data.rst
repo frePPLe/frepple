@@ -2,8 +2,9 @@
 Exporting data
 ==============
 
-You can export the data either a) to **native Excel** or b) to **CSV text**
-files by clicking on the download arrow on the upper right.
+You can export the data either a) as a **native Excel workbook** or b) as
+a **CSV-formatted text file** by clicking on the download arrow on the upper
+right.
 
 For report with time buckets, two structures are available:
 
@@ -37,7 +38,7 @@ A couple of notes on the CSV-format:
    Exporting to Excel format avoids these common pitfalls from the CSV
    text-files.
 
-In the admin/execute menu you also have the capability to export all entities
+In the :doc:`../execute` you also have the capability to export all entities
 into a single Excel workbook.
 
 .. image:: ../_images/exporting-data.png

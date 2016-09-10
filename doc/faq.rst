@@ -73,27 +73,27 @@ in order of priority and due date, and searches for each demand the best plan.
 The steps for planning a demand are:
 
 #. The algorithm first starts with a backward search: From the demand due
-  date, we compute backward taking into account all lead times.
+   date, we compute backward taking into account all lead times.
 
-  Material availability, capacity constraints, post-operation times,
-  safety stock levels and alternate supply paths are all considered in
-  this backward search.
+   Material availability, capacity constraints, post-operation times,
+   safety stock levels and alternate supply paths are all considered in
+   this backward search.
 
 #. If the backward search is not feasible with all post-operation times and
-  safety stock respected, frePPLe will create a plan in which the
-  post-operation times are shrunk and safety stock inventory targets are
-  not met.
+   safety stock respected, frePPLe will create a plan in which the
+   post-operation times are shrunk and safety stock inventory targets are
+   not met.
 
-  In other words these are considered “soft constraints”: we try to respect
-  them if possible, but will create a plan that violates these if that is
-  required to deliver the customer order on time.
+   In other words these are considered “soft constraints”: we try to respect
+   them if possible, but will create a plan that violates these if that is
+   required to deliver the customer order on time.
 
 #. When the backward search finds that the demand can’t be fulfilled at
-  the due date at all, frePPLe switches to forward planning mode for that
-  demand. The algorithm will try to minize the delay.
+   the due date at all, frePPLe switches to forward planning mode for that
+   demand. The algorithm will try to minize the delay.
 
-  Material availability, capacity constraints, post-operation times, and
-  alternate supply paths are all considered in this forward search.
+   Material availability, capacity constraints, post-operation times, and
+   alternate supply paths are all considered in this forward search.
 
 The algorithm thus automatically switches between a backward and forward
 search. This results in a plan that minimizes late orders with low inventory
@@ -125,21 +125,21 @@ Some examples of planning problems where the frePPLe default solver is likely
 to fall short:
 
 * | Project planning:
- | If your planning problem has one-of tasks with complex dependencies and
-   timing constraints the solver needs to recognize and utilize the critical
-   path information. Such logic is currently not implemented.
+  | If your planning problem has one-of tasks with complex dependencies and
+    timing constraints the solver needs to recognize and utilize the critical
+    path information. Such logic is currently not implemented.
 
 * | Human resource planning:
- | If your planning problems looks like a timetable where people need to be
-   assigned to a set of tasks subject to a complex set of constraints and
-   objectives, you’ll find that specialized solvers are doing a better job
-   than frePPLe.
+  | If your planning problems looks like a timetable where people need to be
+    assigned to a set of tasks subject to a complex set of constraints and
+    objectives, you’ll find that specialized solvers are doing a better job
+    than frePPLe.
 
 * | Combinatorial problems:
- | Some planning problems look like puzzles. A combinatorial search is
-   required to achieve good plan quality in such environments. The heuristic
-   rules used by the default solver will find a feasible solution fast, but
-   it can be far from optimal.
+  | Some planning problems look like puzzles. A combinatorial search is
+    required to achieve good plan quality in such environments. The heuristic
+    rules used by the default solver will find a feasible solution fast, but
+    it can be far from optimal.
 
 How can I debug or trace the solver algorithm?
 ----------------------------------------------
@@ -147,6 +147,9 @@ How can I debug or trace the solver algorithm?
 The level of detail in the planning file can be controlled with the parameter
 'plan.loglevel'. Setting this variable to '2' will generate a full trace of
 the planning algorithm.
+
+In the Enterprise Edition there are additional parameters 'forecast.loglevel'
+and 'inventoryplanning.loglevel' with the same purpose.
 
 What are recommended PostgreSQL database settings?
 --------------------------------------------------

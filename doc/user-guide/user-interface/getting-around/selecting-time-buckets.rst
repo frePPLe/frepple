@@ -22,7 +22,7 @@ The popup window allows you to define the horizon you want to report for:
 
      * | Relative to the current date.
        | The report horizon then always starts at the current date of the plan. This
-         value is specified in the Parameter table as “currentdate”, or is
+         value is specified in the Parameter table as "currentdate", or is
          automatically set to the system clock if the parameter is absent or
          incorrectly formatted.
        | The end date of the reporting horizon is equal to the current date plus

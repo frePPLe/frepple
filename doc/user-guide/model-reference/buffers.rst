@@ -14,15 +14,6 @@ Different types of buffers exist:
 * | `Buffer_infinite`_:
   | An infinite buffer has an infinite supply of the material is available.
 
-* | `Buffer_procure`_:
-  | A buffer that is replenished by a supplier. A number of parameters
-    control the re-ordering policy: classic re-order point, fixed time
-    ordering, fixed quantity ordering, etc...
-  | Note: This buffer type is deprecated. Using the itemsupplier model
-    provides exactly the same functionality. The model is still available
-    in the planning engine, but all references to it from the user interface
-    and database have been removed already.
-
 **Fields**
 
 ================ ================= ===========================================================

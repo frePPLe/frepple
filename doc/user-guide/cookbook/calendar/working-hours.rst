@@ -15,9 +15,7 @@ It is fine to leave theses fields empty, which indicates 24 by 7 availability.
 If the fields are populated, you should populate them consistently. You'll run into strange situations when planning
 an operation in location A that loads a resource in location B using another calendar.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet calendar-working-hours <calendar-working-hours.xlsx>`
 

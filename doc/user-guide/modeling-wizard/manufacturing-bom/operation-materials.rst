@@ -1,6 +1,6 @@
-============================
+===================
 Operation Materials
-============================
+===================
 
 The Operation Materials table is where you will declare what item(s) an operation is consuming and what item(s) an operation is producing.
 
@@ -14,8 +14,7 @@ Op           -1            B         Start
 Op           1             C         End
 =========    ========      ====      =====
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 =====================================  ================= ========================================================================================
 Field                                  Type              Description
@@ -31,7 +30,6 @@ type                                   non-empty string  This field is used to s
                                                          | End : This is typical to produced items. The item is produced at the end of the operation.
 =====================================  ================= ========================================================================================
                                   
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/operation-materials`

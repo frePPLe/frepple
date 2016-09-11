@@ -35,35 +35,33 @@ are required:
 
 #. **Install PostgreSQL database.**
 
-   The recommended version is 9.3, 64-bit. Information on tuning the database
-   configuration is easily found on Google.
+   The recommended version is 9.5 64-bit. It is recommended to tune the database
+   parameters with the values found on http://pgtune.leopard.in.ua/.
 
-#. **Install Python 3.3 or higher**
+#. **Install Python 3.5 64-bit or higher**
 
-   The download URL is http://www.python.org/download/releases/2.7/
-   Use the 32-bit version, even on 64-bit platforms.
+   The download URL is http://www.python.org/download/releases/3.5/
 
 #. **Install Psycopg2**
 
    The Python database driver for PostgreSQLcan be downloaded from
    http://stickpeople.com/projects/python/win-psycopg/
 
-   Pick the executable that matches the Python version. The executable built for PostgreSQL 9.2
-   also works with PostgreSQL 9.3.
+   Pick the executable that matches the Python version. 
 
 #. **Install PyWin32**
 
    The Python Windows extensions can be downloaded from
    http://sourceforge.net/projects/pywin32/
 
-   Select the 32-bit installer for Python 2.7.
+   Select the 64-bit installer for Python 3.5.
 
 #. **Install the Python database drivers, Django and other python modules**
 
    Since frePPle requires some patches to the standard Django package, so the source
    from our cloned and patched version of django will be downloaded and installed.
 
-   In the root of your python install you will find a "requirements.txt" file containing a list like:
+   In the root of your Python install you will find a "requirements.txt" file containing a list like:
    ::
 
       CherryPy >= 3.2.2
@@ -74,7 +72,7 @@ are required:
       https://github.com/frePPLe/django/tarball/frepple_3.0
       djangorestframework >= 3.3.1
 
-   To install the requirements just issue a pip3 (or pip depending on your distribution) command:
+   To install the requirements just issue a pip3 command:
    ::
 
       sudo pip install -r requirements.txt
@@ -84,7 +82,7 @@ are required:
    Mod_wsgi is python WSGI adapter module for Apache.
 
    The download URL is http://www.lfd.uci.edu/~gohlke/pythonlibs/#mod_wsgi
-   Choose the 32-bit for Python 2.7 and Apache 2.4, and copy the file to the Apache
+   Choose the 64-bit for Python 3.5 and Apache 2.4, and copy the file to the Apache
    modules folder.
 
 #. **Configure the Apache web server**

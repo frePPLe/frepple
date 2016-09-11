@@ -2,8 +2,6 @@
 Resource type
 =============
 
-.. note:: Bucketized resources are new in 2.2
-
 FrePPLe has 2 conceptually different resource types:
 
 * The default resource model has a **continuous** representation of capacity.
@@ -25,9 +23,7 @@ FrePPLe has 2 conceptually different resource types:
 
   This resource model is typically used for mid term master planning.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet resource-type <resource-type.xlsx>`
 

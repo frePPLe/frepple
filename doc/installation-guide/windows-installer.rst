@@ -35,7 +35,7 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
 #. **Select the license file**
 
-   The enterprise edition requires a license file to be activated. You get the
+   The Enterprise Edition requires a license file to be activated. You get the
    license file when you register your copy on the support section of the website.
 
    .. image:: _images/wininstall4.png
@@ -52,8 +52,10 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
      PostgreSQL 9.4 or higher is required by frePPLe.
      You can:
-     - either use the postgreSQL included with frePPLe
-     - either install and configure PostgreSQL yourself (advanced users only)
+     
+     * either use the postgreSQL included with frePPLe
+     
+     * either install and configure PostgreSQL yourself (advanced users only)
 
      If you choose to download and install PostgreSQL manually please follow these instructions:
 
@@ -178,7 +180,8 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
 .. tip::
 
-  Multiple versions of frePPLe can be installed on the same machine.
+  Multiple versions of frePPLe can be installed on the same machine, but not when using the
+  PostgreSQL database included with the installer.
 
   Multiple installations of the same release can’t. If you’ld need such a setup, it is better to
   install once and create different copies of the custom folder. Each copy will get need different

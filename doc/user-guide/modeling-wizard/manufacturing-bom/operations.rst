@@ -1,12 +1,10 @@
-============================
+==========
 Operations
-============================
+==========
 
 An operation is a manufacturing operation consuming some items (a bill of material) to produce a new item.
 
-
-Key Fields
-----------
+.. rubric:: Key Fields
 
 =====================================  ================= ========================================================================================
 Field                                  Type              Description
@@ -21,7 +19,10 @@ type                                   non-empty string  | Possible values : "ti
 location_id                            non-empty string  The location where the operation takes place.                                                        
 =====================================  ================= ========================================================================================
                                   
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/operations`
+
+* Modeling operation types: :doc:`../../cookbook/operation/operation-type`
+
+* Modeling post-operation safety time: :doc:`../../cookbook/operation/posttime`

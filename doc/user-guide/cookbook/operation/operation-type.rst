@@ -37,9 +37,7 @@ Different operation types are available:
   has a calendar with the working hours and holidays, the time between the start and
   end date of an operationplan can be longer than the duration defined on the operation.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet operation-type <operation-type.xlsx>`
 

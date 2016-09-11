@@ -2,15 +2,14 @@
 Distribution Orders
 ===================
 
-This table all the confirmed distribution orders of your supply chain.
+This table all the distribution orders of your supply chain.
 
 Note that frepple will populate this table with proposed distribution orders when running the plan.
 
 For a first simplified model, this table can be left empty, frepple will generate proposed distribution orders to meet the plan. 
 As a consequence, some demand records might be delivered late.
 
-Key Fields
-----------
+.. rubric:: Key Fields
 
 ================ ================= ===========================================================
 Field            Type              Description
@@ -23,7 +22,6 @@ end date         date              The date of the distribution order delivery.
 quantity         number            The quantity delivered.
 ================ ================= ===========================================================                              
                                   
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/distribution-orders`

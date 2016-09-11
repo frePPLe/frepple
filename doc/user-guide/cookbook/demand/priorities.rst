@@ -16,9 +16,7 @@ FrePPLe orders the demands based on the following attributes:
 
    In case the priority of 2 demands is the same, the demand is ordered based on the due date. Earlier due dates are planned first.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet demand-priorities <demand-priorities.xlsx>`
 

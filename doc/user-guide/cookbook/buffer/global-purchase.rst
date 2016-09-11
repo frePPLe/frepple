@@ -30,9 +30,7 @@ This feature has 2 specific planning behavior:
     Candidate locations are sorted in descending order by the amount
     inventory above the safety stock level they carry of the item.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 Imagine a distribution network with inventory at a number of warehouses
 across the country for a particular item:

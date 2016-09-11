@@ -16,9 +16,7 @@ we will try to respect it in the plans, but if it is required to avoid planning 
 order late we will generate a plan that violates the constraint. In that case we’ll
 have a plan with rushed operations planned to follow each other quicker.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet operation-posttime <operation-posttime.xlsx>`
 

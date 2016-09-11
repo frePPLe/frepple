@@ -4,9 +4,7 @@ Operation Resources
 
 The operation resources table is associating a resource to an operation.
 
-
-Key Fields
-----------
+.. rubric:: Key Fields
 
 ============ ================= ===========================================================
 Field        Type              Description
@@ -16,7 +14,6 @@ resource     non-empty string  The resource name.
 quantity     number            How much capacity this operation is consuming from the resource.
 ============ ================= ===========================================================
 
-Advanced topics
----------------
+.. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/operation-resources`

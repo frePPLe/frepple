@@ -12,7 +12,6 @@ This part of the manual covers all topics related to installation and deployment
    windows-compiling
    linux-binaries
    linux-compiling
-   vmware
    other-platforms
    multi-model
    python-module

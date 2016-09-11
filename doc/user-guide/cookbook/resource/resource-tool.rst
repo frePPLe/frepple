@@ -20,9 +20,7 @@ Tools
           construct with a simpler and more intuitive representation as a
           resource.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet resource-tool <resource-tool.xlsx>`
 

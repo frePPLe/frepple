@@ -26,9 +26,7 @@ Two fields on the demand configure what deliveries are being accepted by the cus
   the product from your competitor. Another usage is for forecasted demand – typically you don’t
   want to plan them later planned later than the demand bucket.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet demand-policies <demand-policies.xlsx>`
 

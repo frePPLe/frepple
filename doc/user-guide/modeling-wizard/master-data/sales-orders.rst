@@ -24,3 +24,7 @@ status         string            | Status of the demand.
 .. rubric:: Advanced topics
 
 * Complete table description: :doc:`../../model-reference/sales-orders`
+
+* Modeling demand priorities: :doc:`../../cookbook/demand/priorities`
+
+* Modeling demand policies: :doc:`../../cookbook/demand/policies`

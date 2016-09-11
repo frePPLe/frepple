@@ -23,8 +23,8 @@ Start populating the entities at the top of the list and work your way down.
 |        :doc:`Sub operation <operations>` (references operations)
 |        :doc:`operationplan` (references operations)
 |          :doc:`items` (references operations and itself)
-|            :doc:`item-suppliers` (references suppliers, items and locations)
-|            :doc:`item-distributions` (references locations and items)
+|            :doc:`item-suppliers` (references suppliers, items, resources and locations)
+|            :doc:`item-distributions` (references locations, items and resources)
 |            :doc:`sales-orders` (references items, customers, operations, locations and itself)
 |            :doc:`buffers` (references items, operations, locations, calendars and itself)
 |              :doc:`operation-materials` (references buffers and operations)
@@ -35,9 +35,3 @@ Start populating the entities at the top of the list and work your way down.
 Note that it is pretty straightforward to extend the data model to match your
 own domain model. During an implementation additional data types can be added
 that map more accurately to your business and/or data sources.
-
-The diagram below gives a more detailed overview of the models, their fields
-and relations. You can also get is :download:`as a pdf <_images/domain-model.pdf>`.
-
-.. image:: _images/domain-model.png
-   :alt: Domain model

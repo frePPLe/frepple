@@ -16,9 +16,7 @@ A calendar also has a default value that is valid when no calendar bucket is eff
 The above rules allow you to determine the value of a calendar at any moment in time, as illustrated in the example below.
 
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet calendar-working-hours <calendar-working-hours.xlsx>`
 

@@ -14,9 +14,7 @@ a skill required to perform the operation. The planning algorithm will then
 automatically select an available resource with the required skills from
 the pool.
 
-*******
-Example
-*******
+.. rubric:: Example
 
 :download:`Excel spreadsheet resource-skills <resource-skills.xlsx>`
 

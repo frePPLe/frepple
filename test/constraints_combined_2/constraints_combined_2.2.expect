@@ -4837,6 +4837,16 @@ PROBLEM	material excess	Buffer '07 step 07' has material excess of 5000	2011-12-
 PROBLEM	material excess	Buffer '08 step 07' has material excess of 5000	2011-12-27T14:03:20 / 2011-12-31T00:00:00
 PROBLEM	material excess	Buffer '09 step 07' has material excess of 5000	2011-12-26T10:16:40 / 2011-12-31T00:00:00
 PROBLEM	material excess	Buffer '10 step 07' has material excess of 5000	2011-12-25T06:30:00 / 2011-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 01 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 02 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 03 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 04 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 05 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 06 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 07 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 08 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 09 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 10 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation '02 step 01b' planned in the past	2011-12-28T20:28:20 / 2011-12-28T21:43:20
 PROBLEM	before current	Operation '02 step 01b' planned in the past	2011-12-28T21:51:40 / 2011-12-28T23:06:40
 PROBLEM	before current	Operation '02 step 01b' planned in the past	2011-12-28T23:15:00 / 2011-12-29T00:30:00

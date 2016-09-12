@@ -114,19 +114,30 @@ OPERATION	supply 5b	2009-01-01T00:00:00	2009-01-01T00:00:00	20	locked
 OPERATION	supply 6	2009-01-01T00:00:00	2009-01-01T00:00:00	50	locked
 PROBLEM	material excess	Buffer 'buffer 6' has material excess of 50	2009-01-07T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 25	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 2' has material excess of 25	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 3a' has material excess of 25	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 3b' has material excess of 2	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 3c' has material excess of 30	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3c'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4a' has material excess of 50	2009-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 2	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 6	2009-01-20T00:00:00 / 2009-01-21T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4b' has material excess of 1	2009-01-22T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 12	2009-01-01T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4c' has material excess of 3	2009-01-21T00:00:00 / 2009-01-22T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4c'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 5a' has material excess of 10	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5a'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 5b' has material excess of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 5b'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 6' has material excess of 50	2009-01-01T00:00:00 / 2009-01-06T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 6'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 1' planned 68.75 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 2' planned 70 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 3' planned 90 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00

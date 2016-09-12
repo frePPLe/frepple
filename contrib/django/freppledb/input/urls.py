@@ -46,7 +46,6 @@ urlpatterns = patterns(
   url(r'^data/input/skill/$', freppledb.input.views.SkillList.as_view(), name="admin:input_skill_changelist"),
   url(r'^data/input/resourceskill/$', freppledb.input.views.ResourceSkillList.as_view(), name="admin:input_resourceskill_changelist"),
   url(r'^data/input/supplier/$', freppledb.input.views.SupplierList.as_view(), name="admin:input_supplier_changelist"),
-  url(r'^data/input/itemoperation/$', freppledb.input.views.ItemOperationList.as_view(), name="admin:input_itemoperation_changelist"),
   url(r'^data/input/itemsupplier/$', freppledb.input.views.ItemSupplierList.as_view(), name="admin:input_itemsupplier_changelist"),
   url(r'^data/input/itemdistribution/$', freppledb.input.views.ItemDistributionList.as_view(), name="admin:input_itemdistribution_changelist"),
 
@@ -85,7 +84,6 @@ urlpatterns = patterns(
   (r'^api/input/supplier/$', freppledb.input.serializers.SupplierAPI.as_view()),
   (r'^api/input/itemsupplier/$', freppledb.input.serializers.ItemSupplierAPI.as_view()),
   (r'^api/input/itemdistribution/$', freppledb.input.serializers.ItemDistributionAPI.as_view()),
-  (r'^api/input/itemoperation/$', freppledb.input.serializers.ItemOperationAPI.as_view()),
 
   (r'^api/input/buffer/(?P<pk>(.+))/$', freppledb.input.serializers.BufferdetailAPI.as_view()),
   (r'^api/input/resource/(?P<pk>(.+))/$', freppledb.input.serializers.ResourcedetailAPI.as_view()),
@@ -109,6 +107,5 @@ urlpatterns = patterns(
   (r'^api/input/supplier/(?P<pk>(.+))/$', freppledb.input.serializers.SupplierdetailAPI.as_view()),
   (r'^api/input/itemsupplier/(?P<pk>(.+))/$', freppledb.input.serializers.ItemSupplierdetailAPI.as_view()),
   (r'^api/input/itemdistribution/(?P<pk>(.+))/$', freppledb.input.serializers.ItemDistributiondetailAPI.as_view()),
-  (r'^api/input/itemoperation/(?P<pk>(.+))/$', freppledb.input.serializers.ItemOperationdetailAPI.as_view()),
 
   )

@@ -87,7 +87,7 @@ producing        operation         | This operation will be instantiated by the 
                                    | From version 4.0 onwards, this field is deprecated. It is
                                      left only for backwards compatibility. New implementations
                                      and upgraded installs should use the easier modeling
-                                     constructs itemsupplier, itemdistribution and itemoperation.
+                                     constructs itemsupplier, itemdistribution and operation.
 detectproblems   boolean           | Set this field to false to supress problem detection on this
                                      buffer.
                                    | Default is true.

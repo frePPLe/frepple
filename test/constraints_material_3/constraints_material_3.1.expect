@@ -95,8 +95,12 @@ PROBLEM	material shortage	Buffer 'buffer 3' has material shortage of 4	2009-01-0
 PROBLEM	material excess	Buffer 'buffer 4' has material excess of 10	1971-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 6	2009-01-09T00:00:00 / 2009-01-15T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 106	2009-01-17T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 3' has material excess of 808	2009-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 4' has material excess of 804	2009-01-15T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	late	Demand 'order for item 1' planned P8D after its due date	2009-01-10T00:00:00 / 2009-01-18T00:00:00
 PROBLEM	short	Demand 'order for item 2' planned 20 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	late	Demand 'order for item 2' planned P8D after its due date	2009-01-10T00:00:00 / 2009-01-18T00:00:00

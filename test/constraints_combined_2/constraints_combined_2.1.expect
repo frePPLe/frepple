@@ -5099,6 +5099,16 @@ OPERATION	ship product 9	2012-01-06T22:11:40	2012-01-06T22:11:40	500
 OPERATION	ship product 9	2012-01-06T23:35:00	2012-01-06T23:35:00	500
 OPERATION	ship product 9	2012-01-09T00:58:20	2012-01-09T00:58:20	500
 PROBLEM	material excess	Buffer '05 step 04' has material excess of 500	2012-01-07T00:00:00 / 2012-01-09T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 01 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 02 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 03 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 04 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 05 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 06 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 07 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 08 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 09 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'product 10 @ Line 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	late	Demand 'Order 001 01' planned P1DT23H45M after its due date	2012-01-01T00:00:00 / 2012-01-02T23:45:00
 PROBLEM	late	Demand 'Order 001 02' planned P3DT3H31M40S after its due date	2012-01-01T00:00:00 / 2012-01-04T03:31:40
 PROBLEM	late	Demand 'Order 001 03' planned P4DT7H18M20S after its due date	2012-01-01T00:00:00 / 2012-01-05T07:18:20

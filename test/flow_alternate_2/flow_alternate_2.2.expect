@@ -39,6 +39,17 @@ OPERATION	Purchase C4	1971-01-01T00:00:00	1971-01-01T00:00:00	65
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
+PROBLEM	invalid data	No replenishment defined for 'A1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'A2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'A3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase A1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase A2' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase A3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00

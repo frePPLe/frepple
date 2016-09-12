@@ -179,13 +179,16 @@ class exportStaticModel(object):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operations...")
       starttime = time()
+      default_start = datetime.datetime(1971, 1, 1)
+      default_end = datetime.datetime(2030, 12, 31)
       cursor.execute("SELECT name FROM operation")
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
         "insert into operation \
         (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type, \
         duration,duration_per,location_id,cost,search,description,category, \
-        subcategory,source,lastmodified) \
+        subcategory,source,item_id,priority,effective_start,effective_end, \
+        lastmodified) \
         values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s, \
         %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s, \
         %s,%s,%s,%s,%s)",
@@ -199,7 +202,11 @@ class exportStaticModel(object):
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
             i.location and i.location.name or None, round(i.cost, 4),
             isinstance(i, frepple.operation_alternate) and i.search or None,
-            i.description, i.category, i.subcategory, i.source, self.timestamp
+            i.description, i.category, i.subcategory, i.source, 
+            i.item.name if i.item else None, i.priority if i.priority != 1 else None,
+            i.effective_start if i.effective_start != default_start else None,
+            i.effective_end if i.effective_end != default_end else None,
+            self.timestamp
           )
           for i in frepple.operations()
           if i.name not in primary_keys and not i.hidden and not isinstance(i, frepple.operation_itemsupplier) and i.name != 'setup operation' and (not self.source or self.source == i.source)
@@ -210,7 +217,8 @@ class exportStaticModel(object):
         sizemultiple=%s, sizemaximum=%s, type=%s, \
         duration=%s * interval '1 second', duration_per=%s * interval '1 second', \
         location_id=%s, cost=%s, search=%s, description=%s, \
-        category=%s, subcategory=%s, source=%s, lastmodified=%s \
+        category=%s, subcategory=%s, source=%s, lastmodified=%s, \
+        item_id=%s, priority=%s, effective_start=%s, effective_end=%s \
         where name=%s",
         [
           (
@@ -222,7 +230,11 @@ class exportStaticModel(object):
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
             i.location and i.location.name or None, round(i.cost, 4),
             isinstance(i, frepple.operation_alternate) and i.search or None,
-            i.description, i.category, i.subcategory, i.source, self.timestamp, i.name
+            i.description, i.category, i.subcategory, i.source, self.timestamp, 
+            i.item.name if i.item else None, i.priority,
+            i.effective_start if i.effective_start != default_start else None,
+            i.effective_end if i.effective_end != default_end else None,
+            i.name
           )
           for i in frepple.operations()
           if i.name in primary_keys and not i.hidden and not isinstance(i, frepple.operation_itemsupplier) and i.name != 'setup operation' and (not self.source or self.source == i.source)

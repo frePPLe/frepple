@@ -184,35 +184,11 @@ class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ItemDistributionSerializer
 
 
-class ItemOperationSerializer(BulkSerializerMixin, ModelSerializer):
-    class Meta:
-      model = freppledb.input.models.ItemOperation
-      fields = (
-      'id', 'item', 'location', 'operation', 'priority',
-      'effective_start', 'effective_end', 'source', 'lastmodified'
-      )
-      list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
-      partial=True
-
-class ItemOperationAPI(frePPleListCreateAPIView):
-    queryset = freppledb.input.models.ItemOperation.objects.all()
-    serializer_class = ItemOperationSerializer
-    filter_fields = (
-      'id', 'item', 'location', 'operation', 'priority',
-      'effective_start', 'effective_end', 'source', 'lastmodified'
-      )
-
-class ItemOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = freppledb.input.models.ItemOperation.objects.all()
-    serializer_class = ItemOperationSerializer
-
-
 class OperationSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Operation
-      fields = ('name', 'type', 'description', 'category', 'subcategory', 'location', 'fence',
-                'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum',
+      fields = ('name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
+                'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end', 
                  'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'

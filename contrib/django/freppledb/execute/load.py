@@ -234,7 +234,8 @@ class loadData(object):
       SELECT
         name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
         type, duration, duration_per, location_id, cost, search, description,
-        category, subcategory, source
+        category, subcategory, source, item_id, priority, effective_start,
+        effective_end
       FROM operation %s
       ''' % self.filter_where)
     for i in self.cursor.fetchall():
@@ -284,6 +285,14 @@ class loadData(object):
           x.cost = i[10]
         if i[11]:
           x.search = i[11]
+        if i[16]:
+          x.item = frepple.item(name=i[16])
+        if i[17] is not None:  
+          x.priority = i[17]
+        if i[18]:
+          x.effective_start = i[18]
+        if i[19]:
+          x.effective_end = i[19]
       except Exception as e:
         print("Error:", e)
     print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
@@ -492,38 +501,6 @@ class loadData(object):
       if i[6]:
         b.minimum_calendar = frepple.calendar(name=i[6])
     print('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
-
-
-  def loadItemOperations(self):
-    print('Importing item operations...')
-    cnt = 0
-    starttime = time()
-    self.cursor.execute('''
-      SELECT
-        item_id, location_id, operation_id, priority,
-        effective_start, effective_end, source
-      FROM itemoperation %s
-      ORDER BY item_id, location_id, priority, operation_id desc
-      ''' % self.filter_where)
-    curitemname = None
-    for i in self.cursor.fetchall():
-      cnt += 1
-      try:
-        if i[0] != curitemname:
-          curitemname = i[0]
-          curitem = frepple.item(name=curitemname)
-        itemoper = frepple.itemoperation(
-          item=curitem, location=frepple.location(name=i[1]),
-          operation=frepple.operation(name=i[2]), priority=i[3],
-          source=i[6]
-          )
-        if i[4]:
-          itemoper.effective_start = i[4]
-        if i[5]:
-          itemoper.effective_end = i[5]
-      except Exception as e:
-        print("Error:", e)
-    print('Loaded %d item operations in %.2f seconds' % (cnt, time() - starttime))
 
 
   def loadSetupMatrices(self):
@@ -883,7 +860,6 @@ class loadData(object):
     self.loadSuboperations()
     self.loadItems()
     self.loadBuffers()
-    self.loadItemOperations()
     self.loadSetupMatrices()
     self.loadResources()
     self.loadResourceSkills()

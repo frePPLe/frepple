@@ -47,12 +47,16 @@ OPERATION	supply 3	2009-01-20T00:00:00	2009-01-20T00:00:00	2	locked
 OPERATION	supply 4	2009-01-01T00:00:00	2009-01-01T00:00:00	10	locked
 OPERATION	supply 4	2009-01-20T00:00:00	2009-01-20T00:00:00	10	locked
 PROBLEM	material excess	Buffer 'buffer 1' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 1' has material shortage of 5	2009-01-11T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 2' has material excess of 25	2009-01-01T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 2' has material shortage of 5	2009-01-10T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 3' has material excess of 25	2009-01-01T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 3' has material shortage of 5	2009-01-10T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 4' has material excess of 10	2009-01-01T00:00:00 / 2009-01-04T00:00:00
 PROBLEM	material excess	Buffer 'buffer 4' has material excess of 2	2009-01-20T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 8	2009-01-09T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 6	2009-01-21T00:00:00 / 2030-12-31T00:00:00

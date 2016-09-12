@@ -92,8 +92,6 @@ class Tags
     static DECLARE_EXPORT const Keyword item;
     static DECLARE_EXPORT const Keyword itemdistribution;
     static DECLARE_EXPORT const Keyword itemdistributions;
-    static DECLARE_EXPORT const Keyword itemoperation;
-    static DECLARE_EXPORT const Keyword itemoperations;
     static DECLARE_EXPORT const Keyword items;
     static DECLARE_EXPORT const Keyword itemsupplier;
     static DECLARE_EXPORT const Keyword itemsuppliers;

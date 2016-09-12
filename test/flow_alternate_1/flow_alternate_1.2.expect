@@ -40,6 +40,13 @@ OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
 OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
+PROBLEM	invalid data	No replenishment defined for 'component A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component D'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component E'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component F'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component G'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase component A' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase component B' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase component C' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00

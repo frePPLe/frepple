@@ -170,6 +170,25 @@ DECLARE_EXPORT Operation::~Operation()
     if (k->getOperation() == this)
       k->setOperation(nullptr);
 
+  // Unlink from item
+  if (item)
+  {
+    if (item->firstOperation == this)
+      // Remove from head
+      item->firstOperation = next;
+    else
+    {
+      // Remove from middle
+      Operation *j = item->firstOperation;
+      while (j->next && j->next != this)
+        j = j->next;
+      if (j)
+        j->next = next;
+      else
+        logger << "Error: Corrupted Operation list on Item" << endl;
+    }
+  }
+
   // Remove the reference to this operation from all demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getOperation() == this)
@@ -179,17 +198,6 @@ DECLARE_EXPORT Operation::~Operation()
   for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
     if (m->getProducingOperation() == this)
       m->setProducingOperation(nullptr);
-
-  // Remove all item operations referencing this operation
-  for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
-  {
-    Item::operationIterator itemoperiter(&*it);
-    while (ItemOperation *itemoper = itemoperiter.next())
-    {
-      if (itemoper->getOperation() == this)
-        delete itemoper;
-    }
-  }
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually
@@ -1729,5 +1737,41 @@ DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
   return newqty;
 }
 
+
+void Operation::setItem(Item* i)
+{
+  // Unlink from previous item
+  if (item)
+  {
+    if (item->firstOperation == this)
+      // Remove from head
+      item->firstOperation = next;
+    else
+    {
+      // Remove from middle
+      Operation *j = item->firstOperation;
+      while (j->next && j->next != this)
+        j = j->next;
+      if (j)
+        j->next = next;
+      else
+        throw LogicException("Corrupted Operation list on Item");
+    }
+  }
+
+  // Update item
+  item = i;
+
+  // Link at the new owner.
+  // We insert ourself at the head of the list.
+  if (item)
+  {
+    next = item->firstOperation;
+    item->firstOperation = this;
+  }
+
+  // Trigger level and cluster recomputation
+  HasLevel::triggerLazyRecomputation();
+}
 
 } // end namespace

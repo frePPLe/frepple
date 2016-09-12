@@ -99,9 +99,8 @@ class ExcelTest(TransactionTestCase):
           'input.purchaseorder', 'input.supplier', 'input.itemsupplier',
           'input.distributionorder', 'input.itemdistribution', 'input.operationmaterial',
           'input.manufacturingorder', 'input.calendar', 'input.calendarbucket',
-          'input.operation', 'input.itemoperation', 'input.operationplanmaterial',
-          'input.operationresource', 'input.suboperation', 'common.parameter',
-          'common.bucket', 'common.bucketdetail',
+          'input.operation', 'input.operationplanmaterial', 'input.operationresource',
+          'input.suboperation', 'common.parameter', 'common.bucket', 'common.bucketdetail',
           ]
        })
     with open("workbook.xlsx", 'wb') as f:

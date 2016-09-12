@@ -28,7 +28,7 @@ from freppledb.common.models import Parameter, BucketDetail
 from freppledb.input.models import Operation, Buffer, Resource, Location, Calendar
 from freppledb.input.models import CalendarBucket, Customer, Demand, Supplier
 from freppledb.input.models import Item, OperationMaterial, OperationResource
-from freppledb.input.models import ItemSupplier, ItemOperation
+from freppledb.input.models import ItemSupplier
 from freppledb.execute.models import Task
 from freppledb.common.models import User
 from freppledb import VERSION
@@ -407,6 +407,7 @@ class Command(BaseCommand):
                 location=loc,
                 duration_per=timedelta(days=1),
                 sizemultiple=1,
+                item=previtem
                 )
               if resource < cluster and i < resource:
                 # When there are more cluster than resources, we try to assure
@@ -420,6 +421,7 @@ class Command(BaseCommand):
                 duration=random.choice(durations),
                 sizemultiple=1,
                 location=loc,
+                item=previtem
                 )
             ops.append(oper)
             # Some inventory in random buffers
@@ -431,12 +433,6 @@ class Command(BaseCommand):
               item=previtem,
               quantity=1,
               type="end"
-              )
-            ItemOperation.objects.using(database).create(
-              item=previtem,
-              location=loc,
-              operation=oper,
-              priority=1
               )
             if k != level - 1:
               # Consume from the next level in the bill of material

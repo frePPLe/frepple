@@ -42,6 +42,7 @@ PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2008-12-23
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-02-05T00:00:00 / 2009-02-12T00:00:00
 PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-03-05T00:00:00 / 2009-03-12T00:00:00
 PROBLEM	material excess	Buffer 'end item 3 C' has material excess of 2	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'end item 3 C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase end item 3 C' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'buy end item 3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00

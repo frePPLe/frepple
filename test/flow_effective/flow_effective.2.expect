@@ -40,7 +40,9 @@ OPERATION	3. make end item	2009-02-18T00:00:00	2009-02-19T00:00:00	125
 OPERATION	3. make end item	2009-03-18T00:00:00	2009-03-19T00:00:00	100
 PROBLEM	material excess	Buffer '2. component A' has material excess of 10	1971-01-01T00:00:00 / 2008-12-30T00:00:00
 PROBLEM	material excess	Buffer '2. component A' has material excess of 5	2009-02-12T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for '2. component A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer '2. component A' has material shortage of 20	2008-12-30T00:00:00 / 2009-02-12T00:00:00
 PROBLEM	material excess	Buffer '2. component B' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for '2. component B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation '2. deliver end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation '2. make end item' planned in the past	2008-12-30T00:00:00 / 2008-12-31T00:00:00

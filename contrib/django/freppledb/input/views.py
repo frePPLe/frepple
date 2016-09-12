@@ -28,7 +28,7 @@ from django.utils.encoding import force_text
 from django.utils.text import capfirst
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
-from freppledb.input.models import Skill, ItemOperation, Buffer, Customer, Demand
+from freppledb.input.models import Skill, Buffer, Customer, Demand
 from freppledb.input.models import Item, OperationResource, OperationMaterial
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
@@ -204,7 +204,7 @@ class PathReport(GridReport):
           result.append(
             (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
             )
-      for i in ItemOperation.objects.using(db).filter(
+      for i in Operation.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
         location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
         ):
@@ -223,7 +223,7 @@ class PathReport(GridReport):
         result.append(
           (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
           )
-      for i in ItemOperation.objects.using(db).filter(
+      for i in Operation.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
           i.item = buffer.item
@@ -320,22 +320,6 @@ class PathReport(GridReport):
           except Buffer.DoesNotExist:
             downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=curoperation.item, location=curlocation)
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
-        elif isinstance(curoperation, ItemOperation):
-          name = curoperation.operation.name
-          optype = curoperation.operation.type
-          duration = curoperation.operation.duration
-          duration_per = curoperation.operation.duration_per
-          buffers = [ (x.buffer.name, float(x.quantity)) for x in curoperation.operation.operationmaterials.only('item', 'quantity').using(request.database) ]
-          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
-          for x in curoperation.operation.operationmaterials.filter(quantity__gt=0).only('item').using(request.database):
-            curflows = x.item.operationmaterials.filter(quantity__lt=0, operation__location=curoperation.location.name).only('operation', 'quantity').using(request.database)
-            for y in curflows:
-              hasChildren = True
-              root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
-          for x in curoperation.operation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
-            subcount += curoperation.type == "routing" and 1 or -1
-            root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
-            hasChildren = True
         else:
           name = curoperation.name
           optype = curoperation.type
@@ -389,28 +373,6 @@ class PathReport(GridReport):
           except Buffer.DoesNotExist:
             upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
-        elif isinstance(curoperation, ItemOperation):
-          curprodflow = None
-          name = curoperation.operation.name
-          optype = curoperation.operation.type
-          duration = curoperation.operation.duration
-          duration_per = curoperation.operation.duration_per
-          buffers = [ ('%s @ %s' % (x.item.name, curoperation.operation.location.name), float(x.quantity)) for x in curoperation.operation.operationmaterials.only('item', 'quantity').using(request.database) ]
-          resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operation.operationresources.only('resource', 'quantity').using(request.database) ]
-          for x in curoperation.operation.operationmaterials.filter(quantity__gt=0).only('quantity').using(request.database):
-            curprodflow = x
-          curflows = curoperation.operation.operationmaterials.filter(quantity__lt=0).only('item', 'quantity').using(request.database)
-          for y in curflows:
-            b = Buffer(
-              name='%s @ %s' % (y.item.name, curoperation.operation.location.name),
-              item=y.item,
-              location=curoperation.operation.location
-              )
-            root.extend( reportclass.findReplenishment(b, request.database, level + 2, curqty, realdepth + 1, False) )
-          for x in curoperation.operation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
-            subcount += curoperation.type == "routing" and 1 or -1
-            root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
-            hasChildren = True
         else:
           curprodflow = None
           name = curoperation.name
@@ -728,28 +690,6 @@ class SupplierList(GridReport):
     )
 
 
-class ItemOperationList(GridReport):
-  '''
-  A list report to show item operations.
-  '''
-  title = _("item operations")
-  basequeryset = ItemOperation.objects.all()
-  model = ItemOperation
-  frozenColumns = 1
-
-  rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/itemoperation'"),
-    GridFieldText('item', title=_('item'), formatter='detail', extra="role:'input/item'"),
-    GridFieldText('location', title=_('location'), formatter='detail', extra="role:'input/location'"),
-    GridFieldText('operation', title=_('operation'), formatter='detail', extra="role:'input/operation'"),
-    GridFieldInteger('priority', title=_('priority')),
-    GridFieldDateTime('effective_start', title=_('effective start')),
-    GridFieldDateTime('effective_end', title=_('effective end')),
-    GridFieldText('source', title=_('source')),
-    GridFieldLastModified('lastmodified'),
-    )
-
-
 class ItemSupplierList(GridReport):
   '''
   A list report to show item suppliers.
@@ -1055,6 +995,7 @@ class OperationList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldChoice('type', title=_('type'), choices=Operation.types),
+    GridFieldText('item', title=_('item'), formatter='detail', extra="role:'input/item'"),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra="role:'input/location'"),
     GridFieldDuration('duration', title=_('duration')),
     GridFieldDuration('duration_per', title=_('duration per unit')),
@@ -1063,6 +1004,9 @@ class OperationList(GridReport):
     GridFieldNumber('sizeminimum', title=_('size minimum')),
     GridFieldNumber('sizemultiple', title=_('size multiple')),
     GridFieldNumber('sizemaximum', title=_('size maximum')),
+    GridFieldInteger('priority', title=_('priority')),
+    GridFieldDateTime('effective_start', title=_('effective start')),
+    GridFieldDateTime('effective_end', title=_('effective end')),
     GridFieldCurrency('cost', title=_('cost')),
     GridFieldChoice('search', title=_('search mode'), choices=searchmode),
     GridFieldText('source', title=_('source')),

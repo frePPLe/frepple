@@ -91,8 +91,6 @@ DECLARE_EXPORT const Keyword Tags::id("id");
 DECLARE_EXPORT const Keyword Tags::item("item");
 DECLARE_EXPORT const Keyword Tags::itemdistribution("itemdistribution");
 DECLARE_EXPORT const Keyword Tags::itemdistributions("itemdistributions");
-DECLARE_EXPORT const Keyword Tags::itemoperation("itemoperation");
-DECLARE_EXPORT const Keyword Tags::itemoperations("itemoperations");
 DECLARE_EXPORT const Keyword Tags::items("items");
 DECLARE_EXPORT const Keyword Tags::itemsupplier("itemsupplier");
 DECLARE_EXPORT const Keyword Tags::itemsuppliers("itemsuppliers");

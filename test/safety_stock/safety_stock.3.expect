@@ -41,6 +41,7 @@ PROBLEM	material excess	Buffer 'end item 2' has material excess of 10	2009-03-05
 PROBLEM	material shortage	Buffer 'end item 3 A' has material shortage of 10	1971-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 B' has material shortage of 20	1971-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'end item 3 C' has material excess of 2	2009-01-05T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'end item 3 C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'end item 3 C' has material shortage of 20	1971-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	Demand 'order 1 - item 1' planned P2D after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
 PROBLEM	late	Demand 'order 1 - item 2' planned P2D after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00

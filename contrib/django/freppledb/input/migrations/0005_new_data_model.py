@@ -307,45 +307,45 @@ class Migration(migrations.Migration):
         ]
       ),
 
-    # New model
-    migrations.CreateModel(
-      name='ItemOperation',
-      fields=[
-        ('source', models.CharField(db_index=True, max_length=300, blank=True, null=True, verbose_name='source')),
-        ('lastmodified', models.DateTimeField(db_index=True, default=django.utils.timezone.now, verbose_name='last modified', editable=False)),
-        ('id', models.AutoField(serialize=False, primary_key=True, verbose_name='identifier')),
-        ('priority', models.IntegerField(default=1, blank=True, null=True, verbose_name='priority', help_text='Priority among all alternates')),
-        ('effective_start', models.DateTimeField(blank=True, null=True, verbose_name='effective start', help_text='Validity start date')),
-        ('effective_end', models.DateTimeField(blank=True, null=True, verbose_name='effective end', help_text='Validity end date')),
-        ('item', models.ForeignKey(verbose_name='item', related_name='itemoperations', to='input.Item')),
-        ('location', models.ForeignKey(blank=True, related_name='itemoperations', null=True, verbose_name='location', to='input.Location')),
-        ('operation', models.ForeignKey(verbose_name='operation', related_name='itemoperation', to='input.Operation')),
-      ],
-      options={
-        'db_table': 'itemoperation',
-        'verbose_name_plural': 'item operations',
-        'verbose_name': 'item operation',
-        'abstract': False,
-      },
+    # Extra fields on the operation model
+    migrations.AddField(
+      model_name='operation',
+      name='effective_end',
+      field=models.DateTimeField(blank=True, null=True, verbose_name='effective end', help_text='Validity end date'),
     ),
-    migrations.AlterUniqueTogether(
-      name='itemoperation',
-      unique_together=set([('item', 'location', 'operation', 'effective_start')]),
+    migrations.AddField(
+      model_name='operation',
+      name='effective_start',
+      field=models.DateTimeField(blank=True, null=True, verbose_name='effective start', help_text='Validity start date'),
+    ),
+    migrations.AddField(
+      model_name='operation',
+      name='item',
+      field=models.ForeignKey(related_name='operations', verbose_name='item', to='input.Item', blank=True, null=True),
+    ),
+    migrations.AddField(
+      model_name='operation',
+      name='priority',
+      field=models.IntegerField(blank=True, default=1, null=True, verbose_name='priority', help_text='Priority among all alternates'),
+    ),
+    migrations.AlterField(
+      model_name='item',
+      name='operation',
+      field=models.ForeignKey(related_name='operation', verbose_name='delivery operation', to='input.Operation', blank=True, null=True, help_text='Default operation used to ship a demand for this item'),
     ),
     migrations.RunSQL(
       '''
-      insert into itemoperation
-        (item_id, location_id, operation_id, lastmodified)
-      select item_id, location_id, producing_id, lastmodified
+      update operation
+        set item_id = buffer.item_id
       from buffer
-      where producing_id is not null
+      where buffer.producing_id = operation.name
       ''',
       '''
       update buffer
-      set producing_id = itemoperation.operation_id
-      from itemoperation
-      where buffer.item_id = itemoperation.item_id
-        and buffer.location_id = itemoperation.location_id
+      set producing_id = operation.name
+      from operation
+      where buffer.item_id = operation.item_id
+        and buffer.location_id = operation.location_id
       '''
       ),
     migrations.RemoveField(

@@ -152,7 +152,8 @@ class Item(AuditModel, HierarchyModel):
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   operation = models.ForeignKey(
     'Operation', verbose_name=_('delivery operation'), null=True, blank=True,
-    help_text=_("Default operation used to ship a demand for this item")
+    help_text=_("Default operation used to ship a demand for this item"),
+    related_name='operation'
     )
   price = models.DecimalField(
     _('price'), null=True, blank=True,
@@ -187,9 +188,25 @@ class Operation(AuditModel):
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'), null=True, blank=True,
+    db_index=True, related_name='operations'
+    )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), db_index=True
     )
+  priority = models.IntegerField(
+    _('priority'), default=1, null=True, blank=True,
+    help_text=_('Priority among all alternates')
+    )
+  effective_start = models.DateTimeField(
+    _('effective start'), null=True, blank=True,
+    help_text=_('Validity start date')
+    )
+  effective_end = models.DateTimeField(
+    _('effective end'), null=True, blank=True,
+    help_text=_('Validity end date')
+    )  
   fence = models.DurationField(
     _('release fence'), null=True, blank=True,
     help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP")
@@ -252,48 +269,6 @@ class Operation(AuditModel):
     verbose_name = _('operation')
     verbose_name_plural = _('operations')
     ordering = ['name']
-
-
-class ItemOperation(AuditModel):
-  # Database fields
-  id = models.AutoField(_('identifier'), primary_key=True)
-  item = models.ForeignKey(
-    Item, verbose_name=_('item'),
-    db_index=True, related_name='itemoperations'
-    )
-  location = models.ForeignKey(
-    Location, verbose_name=_('location'), null=True, blank=True,
-    db_index=True, related_name='itemoperations'
-    )
-  operation = models.ForeignKey(
-    Operation, verbose_name=_('operation'),
-    db_index=True, related_name='itemoperation'
-    )
-  priority = models.IntegerField(
-    _('priority'), default=1, null=True, blank=True,
-    help_text=_('Priority among all alternates')
-    )
-  effective_start = models.DateTimeField(
-    _('effective start'), null=True, blank=True,
-    help_text=_('Validity start date')
-    )
-  effective_end = models.DateTimeField(
-    _('effective end'), null=True, blank=True,
-    help_text=_('Validity end date')
-    )
-
-  def __str__(self):
-    return '%s - %s - %s' % (
-      self.operation.name if self.operation else 'No operation',
-      self.item.name if self.item else 'No item',
-      self.location.name if self.location else 'No location'
-      )
-
-  class Meta(AuditModel.Meta):
-    db_table = 'itemoperation'
-    unique_together = (('item', 'location', 'operation', 'effective_start'),)
-    verbose_name = _('item operation')
-    verbose_name_plural = _('item operations')
 
 
 class SubOperation(AuditModel):

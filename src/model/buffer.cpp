@@ -953,22 +953,18 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
 
     // Loop over all item operations to replenish this item+location combination
     Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
-    while (ItemOperation *itemoper = itemoper_iter.next())
+    while (Operation *itemoper = itemoper_iter.next())
     {
-      // Verify whether the ItemOperation is applicable to the buffer
-      if (
-        !itemoper->getOperation()
-        || (itemoper->getLocation() && itemoper->getLocation() != getLocation())
-        || (!itemoper->getLocation() && itemoper->getOperation()->getLocation() != getLocation())
-        )
-          continue;
+      // Verify whether the operation is applicable to the buffer
+      if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
+        continue;
 
-      // Check if there is already a producing operation referencing this ItemOperation
+      // Check if there is already a producing operation referencing this operation
       if (producing_operation && producing_operation != uninitializedProducing)
       {
         if (producing_operation->getType() != *OperationAlternate::metadata)
         {
-          if (producing_operation == itemoper->getOperation())
+          if (producing_operation == itemoper)
             // Already exists
             continue;
         }
@@ -976,7 +972,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         {
           SubOperation::iterator subiter(producing_operation->getSubOperations());
           while (SubOperation *o = subiter.next())
-            if (o->getOperation() == itemoper->getOperation())
+            if (o->getOperation() == itemoper)
               // Already exists
               continue;
         }
@@ -987,7 +983,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
       {
         // We're not the first
         SubOperation* subop = new SubOperation();
-        subop->setOperation(itemoper->getOperation());
+        subop->setOperation(itemoper);
         subop->setPriority(itemoper->getPriority());
         subop->setEffective(itemoper->getEffective());
         if (producing_operation->getType() != *OperationAlternate::metadata)
@@ -1012,8 +1008,11 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           // We are third or later: just add a suboperation
           if (producing_operation->getSubOperations().size() > 100)
           {
-            new ProblemInvalidData(this, "Excessive replenishments defined", "material",
-              Date::infinitePast, Date::infiniteFuture, 1);
+            new ProblemInvalidData(
+              this,             
+              string("Excessive replenishments defined for '") + getName() + "'",
+              "material", Date::infinitePast, Date::infiniteFuture, 1
+              );
             return;
           }
           else
@@ -1026,7 +1025,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
         if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1)
           // Use a single operation. If an alternate is required
           // later on, we know it has the default priority and effectivity.
-          producing_operation = itemoper->getOperation();
+          producing_operation = itemoper;
         else
         {
           // Already create an alternate now
@@ -1038,13 +1037,13 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           superop->setHidden(true);
           superop->setSearch("PRIORITY");
           SubOperation* subop = new SubOperation();
-          subop->setOperation(itemoper->getOperation());
+          subop->setOperation(itemoper);
           subop->setPriority(itemoper->getPriority());
           subop->setEffective(itemoper->getEffective());
           subop->setOwner(superop);
         }
       }
-    } // End loop over itemoperations
+    } // End loop over operations
 
     // While-loop to add suppliers defined at parent items
     item = item->getOwner();
@@ -1053,8 +1052,11 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
   if (producing_operation == uninitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.
-    new ProblemInvalidData(this, "No replenishment defined", "material",
-      Date::infinitePast, Date::infiniteFuture, 1);
+    new ProblemInvalidData(
+      this,
+      string("No replenishment defined for '") + getName() + "'",
+      "material", Date::infinitePast, Date::infiniteFuture, 1
+      );
     producing_operation = nullptr;
   }
   else

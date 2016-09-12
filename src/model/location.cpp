@@ -95,17 +95,6 @@ DECLARE_EXPORT Location::~Location()
     }
   }
 
-  // Remove all item operations referencing this location
-  for (Item::iterator it = Item::begin(); it != Item::end(); ++it)
-  {
-    Item::operationIterator itemoperiter(&*it);
-    while ( ItemOperation *itemoper = itemoperiter.next() )
-    {
-      if (itemoper->getLocation() == this)
-        delete itemoper;
-    }
-  }
-
   // The ItemDistribution objects are automatically deleted by the
   // destructor of the Association list class.
 }

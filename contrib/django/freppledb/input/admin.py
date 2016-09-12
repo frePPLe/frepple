@@ -22,7 +22,7 @@ from freppledb.input.models import Buffer, Customer, Demand, Item, OperationReso
 from freppledb.input.models import OperationMaterial, Skill, ResourceSkill, Supplier
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ItemSupplier, ItemDistribution, DistributionOrder
-from freppledb.input.models import ItemOperation, PurchaseOrder
+from freppledb.input.models import PurchaseOrder
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
@@ -181,20 +181,6 @@ class ItemDistribution_admin(MultiDBModelAdmin):
     {"name": 'history', "label": _("History"), "view": "admin:input_itemdistribution_history"},
   ]
 data_site.register(ItemDistribution, ItemDistribution_admin)
-
-
-class ItemOperation_admin(MultiDBModelAdmin):
-  model = ItemOperation
-  save_on_top = True
-  raw_id_fields = ('item', 'operation')
-  exclude = ('source',)
-  tabs = [
-    {"name": 'edit', "label": _("edit"), "view": "admin:input_itemoperation_change", "permissions": "input.change_itemoperation"},
-    {"name": 'comments', "label": _("comments"), "view": "admin:input_itemoperation_comment"},
-    #. Translators: Translation included with Django
-    {"name": 'history', "label": _("History"), "view": "admin:input_itemoperation_history"},
-    ]
-data_site.register(ItemOperation, ItemOperation_admin)
 
 
 class SubOperation_inline(MultiDBTabularInline):

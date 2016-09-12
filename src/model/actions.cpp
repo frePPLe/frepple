@@ -430,7 +430,6 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
       // The order is chosen to minimize the work of the individual destructors.
       // E.g. the destructor of the item class recurses over all demands and
       // all buffers. It is much faster if there are none already.
-      ItemOperation::clear();
       Operation::clear();
       Demand::clear();
       Buffer::clear();
@@ -602,7 +601,6 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
     // Items
     memsize = 0;
     size_t countItemSuppliers(0), memItemSuppliers(0);
-    size_t countItemOperations(0), memItemOperations(0);
     for (Item::iterator i = Item::begin(); i != Item::end(); ++i)
     {
       memsize += i->getSize();
@@ -612,17 +610,10 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
         ++countItemSuppliers;
         memItemSuppliers += rs->getSize();
       }
-      Item::operationIterator rsiter = i->getOperationIterator();
-      while (ItemOperation* rs = rsiter.next())
-      {
-        ++countItemOperations;
-        memItemOperations += rs->getSize();
-      }
     }
     logger << "Item                  \t" << Item::size() << "\t" << memsize  << endl;
     logger << "Item suppliers        \t" << countItemSuppliers << "\t" << memItemSuppliers << endl;
     logger << "Item distributions    \t" << countItemDistributions << "\t" << memItemDistributions << endl;
-    logger << "Item operations       \t" << countItemOperations << "\t" << memItemOperations << endl;
     total += memsize + memItemSuppliers;
 
     // Demands

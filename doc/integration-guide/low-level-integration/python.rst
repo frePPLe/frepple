@@ -1,6 +1,6 @@
-==================
-Python interpreter
-==================
+==========
+Python API
+==========
 
 FrePPle embeds an interpreter for the Python language. The full capabilities
 of this scripting language are accessible from frePPLe, and Python also has

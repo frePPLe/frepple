@@ -1,6 +1,6 @@
-==========
-frepplectl
-==========
+==============
+Batch commands
+==============
 
 This command has a long list of subcommands that allow different operations
 on the user interface and the database.

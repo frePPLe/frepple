@@ -5,6 +5,8 @@ REST API
 FrePPLe provides a state of the art REST API (see https://en.wikipedia.org/wiki/Representational_state_transfer)
 for data exchange with other enterprise applications.
 
+Features:
+
 * Fast and efficient.
 
 * Supports multiple formats.

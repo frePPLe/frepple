@@ -1,13 +1,13 @@
-=============================================
-Import and export of CSV-formatted text files
-=============================================
+==============
+CSV text files
+==============
 
 FrePPLe can import CSV-formatted files from a configurable data directory.
 And frePPLe can export its planning results in a set of CSV-formatted files as well.
 
 The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
 in the djangosettings.py configuration file. The log files importfromfolder.log 
-and exporttofolder.log record all data imports and file exports, in addition to 
+and exporttofolder.log record all data imports and file exports, together with
 any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
@@ -35,7 +35,7 @@ The export and import can be run in 2 ways:
   the :doc:`execution screen </user-guide/user-interface/execute>`.
 
 * You can run the task from the command line using the 
-  :doc:`frepplectl utility</integration-guide/batch-commands/frepplectl.rst>`.
+  :doc:`frepplectl utility</integration-guide/batch-commands>`.
 
   ::
   

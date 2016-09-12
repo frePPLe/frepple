@@ -116,12 +116,13 @@ class Command(BaseCommand):
 
       # Reset environment variables
       # TODO avoid having to delete the environment variables. Use options directly?
+      PlanTaskRegistry.autodiscover()
       for i in PlanTaskRegistry.reg:
         if options['env']:
           # Options specified
           if i.label and i.label[0] in os.environ:
             del os.environ[i.label[0]]
-        else:
+        elif i.label:
           # No options specified - default to activate them all
           os.environ[i.label[0]] = '1'
 

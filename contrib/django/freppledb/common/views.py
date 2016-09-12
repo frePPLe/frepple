@@ -23,6 +23,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.core import serializers
 from django.core.urlresolvers import reverse, resolve
 from django.template import RequestContext, loader, TemplateDoesNotExist
 from django import forms
@@ -35,6 +36,7 @@ from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
+from django.forms.models import model_to_dict
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail, Wizard
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -83,6 +85,7 @@ def handler500(request):
   The only difference with the default Django handler is that we passes more context
   to the error template.
   '''
+
   try:
     template = loader.get_template("500.html")
   except TemplateDoesNotExist:
@@ -94,14 +97,15 @@ def handler500(request):
 @login_required
 @csrf_protect
 def wizard(request):
-    
-  if request.method == 'POST':    
+
+  if request.method == 'POST':
     print('got here')
+    #request.Wizard.save()
     return HttpResponse(content="OK")
 
   return render_to_response('common/wizard.html', {
     'title': _('Modeling wizard'),
-    'subjectdictlist': Wizard.objects.all().using(request.database).order_by('sequenceorder')
+    'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
     },
     context_instance=RequestContext(request)
     )

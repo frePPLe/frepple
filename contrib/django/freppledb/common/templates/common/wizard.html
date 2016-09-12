@@ -6,38 +6,163 @@
 #content-main td {
   padding-bottom: 1em;
 }
-#content-main th {
-  line-height: 2em;
+.panel .table tbody > tr > td, .table > thead > tr > th {
+  vertical-align: middle;
 }
+.panel .table .progress {
+  height: 100%;
+  margin-bottom: 0px;
+}
+.progress-bar {
+  white-space: nowrap;
+}
+
 </style>
 <script type="text/javascript">
+  var list={{ subjectlist|safe }};
 
-	function updateProgress()
-	{
-	  if (refresh !== null)
-	  {
-	     // Disable the refresh which is currently active
-	     clearInterval(refresh);
-	     $('#autorefresh span').removeClass("fa-pause").addClass("fa-refresh");
-	     refresh = null;
-	  }
-	  else
-	  {
-	    // Enable the refresh which is currently inactive
-	    refresh = setInterval(function() {
-	      $("#grid").trigger("reloadGrid",[{current:true}]);
-	      }, 5000);
-	    $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
-	  }
+	function getProgress(name) {
+	  var progress = 0;
+	  var step = 0;
+	  var total = 0;
+	  var childrenprogress = 0;
+
+
+	  for (var step in list) {
+
+	    if (name == 'overall' && list[step].fields.owner != null ) {
+	      total += 1;
+	      if (list[step].fields.status)
+	         progress += 1;
+	    } else if (name == list[step].pk || name ==  list[step].fields.owner) {
+	      if (name ==  list[step].fields.owner) {
+	        if (list[step].fields.status)
+	          childrenprogress += 1;
+	      }
+	      total += 1;
+	      if (list[step].fields.status)
+	       progress += 1;
+	    };
+	    if (childrenprogress > 0)  //has children so the parent progress will be the sum of the children progress
+	      progress = childrenprogress;
+	  };
+	  if (name != 'overall' && total > 1 ) //has children so the parent total will be the sum of the children
+	    total -=1;
+	  return [total,progress];
 	}
 
-  $(function() {
-    $("#WizardForm input").click(function(){
-      // update progress
+	function setProgress(name,value) {
+		for (var step in list) {
 
-      //submit form
-      $("#WizardForm").submit();
-    });
+		  if (name ==  list[step].fields.owner)
+		    list[step].fields.status = value;
+		  if (name == list[step].pk) {
+		    list[step].fields.status = value;
+
+		    if (list[step].fields.owner == 'string') setProgress(list[step].fields.owner,value);
+		  };
+
+		};
+		return saveWizard();
+	};
+
+	function saveWizard() {
+		var data = list;
+		$.ajax({
+      url: url_prefix + "/wizard/",
+      data: JSON.stringify(data),
+      type: "POST",
+      contentType: "application/json",
+      success: function () {
+        var result = [];
+        var resultpercent = 0;
+        result = getProgress('overall');
+        resultpercent = result[1]/result[0]*100;
+        $("#overall .progress-bar").attr('data-valuenow', resultpercent).css('width',resultpercent+'%').text(result[1] + ' of ' + result[0]);
+
+        var result=[];
+        var resultpercent = 0;
+        //update the wizard progress
+
+        for (var step in list) {
+          result = getProgress(list[step].pk);
+          resultpercent = result[1]/result[0]*100;
+
+          $("#row"+list[step].fields.sequenceorder+" .progress-bar form-control").attr('data-valuenow', resultpercent).css('width',resultpercent+'%').text(result[1] + ' of ' + result[0]);
+          if (list[step].fields.status) {
+            $("#row"+list[step].fields.sequenceorder+" .fa").removeClass().addClass("text-success fa fa-lg fa-thumbs-up");
+          } else {
+            $("#row"+list[step].fields.sequenceorder+" .fa").removeClass().addClass("text-danger fa fa-lg fa-thumbs-down");
+          };
+          $("#row"+list[step].fields.sequenceorder+" button")
+            .text( (list[step].fields.status) ? gettext("mark as not done") : gettext("mark as done")  )
+            .one('click',function() {setProgress(list[step].pk,!list[step].fields.status)});
+        };
+      },
+      error: function (result, stat, errorThrown) {
+	      $('#popup').html(''+
+	          '<div class="modal-dialog" style="max-height: 80%; width: 90%; visibility: hidden">'+
+	          '<div class="modal-content">'+
+	          '<div class="modal-header">'+
+	          '<button type="button" class="close" data-dismiss="modal"><span class="fa fa-times"></span></button>'+
+	          '<h4 class="modal-title text-capitalize">'+gettext("Error")+'</h4>'+
+	          '</div>'+
+	          '<div class="modal-body">'+
+	          '</div>'+
+	          '<div class="modal-footer">'+
+	          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+	          '</div>'+
+	          '</div>'+
+	      '</div>' );
+        fmts = ngettext("Error during export");
+        $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+        $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+        $('#button_export').val(gettext('Retry'));
+        $('#popup .modal-dialog').css({'visibility':'visible'})
+        $('#popup').modal('show');
+      }
+		    });
+
+//			};
+  };
+
+  $(function() {
+
+    var newrow = '';
+    var list={{ subjectlist|safe }};
+    var result = [];
+    result = getProgress('overall');
+
+    $("#overall .progress-bar").attr('data-valuenow', result[1]/result[0]*100).css('width',result[1]/result[0]*100+'%').text(result[1] + ' of ' + result[0]);
+    if (result[1] == result[0])
+      $("#overall  th span").addClass("text-success fa fa-lg fa-thumbs-up");
+    else
+      $("#overall  th span").removeClass("text-success fa fa-lg fa-thumbs-up");
+
+    var step = 0;
+    var result = [];
+    for (step in list) {
+      result = getProgress(list[step].pk);
+      newrow += '<tr id="row'+list[step].fields.sequenceorder+'"><td>';
+      newrow += '<a href="'+list[step].fields.url_internaldoc+'"><span>'+list[step].pk+'</span></a>';
+      newrow += '</td><td  style="text-align: center">';
+      if (list[step].fields.owner == null) {
+	      newrow += '<div class="progress"><div class="progress-bar progress-bar-success form-control" role="progressbar" valuemin="0" valuemax="1"'
+	      newrow += 'valuenow="'+result[1]/result[0]*100+'" style="width:'+result[1]/result[0]*100+'%">'+result[1]+' of '+result[0]+'</div></div>';
+      } else {
+        if (list[step].fields.status) newrow += '<span class="text-success fa fa-lg fa-thumbs-up"></span>';
+        if (!list[step].fields.status) newrow += '<span class="text-danger fa fa-lg fa-thumbs-down"></span>';
+      };
+      newrow += '</td><td>';
+      newrow += '<a class="btn btn-info form-control" href="'+list[step].fields.url_doc+'" target="_frepplecom"><span>'+gettext("information")+'</span></a>';
+      newrow += '</td><td>';
+      newrow += '<button class="btn btn-primary form-control">';
+      newrow += list[step].fields.status ? gettext("mark as not done") : gettext("mark as done");
+      newrow += '</button>';
+      newrow += '</td></tr>';
+    };
+    $("tbody").append(newrow);
+    $("#row"+list[step].fields.sequenceorder+" button").one('click',function() {setProgress(list[step].pk,!list[step].fields.status)});
 
   });
 </script>
@@ -55,17 +180,28 @@
 {% block content %}
 
 <div id="content-main">
-    <div>Wizard progress:</div>
-          {% for step in subjectdictlist %}
-      <div>
-        <span>{{step.name}}</span>
-        <progress value="{% if subject.status %}1{% else %}0{% endif %}" max="1">
-        </progress>
-        <a href="{{ step.url_internaldoc }}">Do it!</a>
-        <a href="{{ step.url_doc}}" target="_frepplecom">Help</a>
-        <input type="checkbox" value="{{subject.status}}" name="{{step.name}}">
-      </div>
-      {% endfor %}
-
+	<div class="panel" style="max-width:700px; min-width: 600px">
+		<div class="panel-body">
+			<div class="table-reponsive">
+				<table class="table">
+					<thead>
+						<tr id="overall">
+							<th colspan="2" style="text-align: right">
+								<span>{% trans "overall progress"|capfirst %}:&nbsp;</span>
+							</th>
+							<th colspan="2">
+								<div class="progress">
+									<div class="progress-bar progress-bar-success form-control" role="progressbar" data-valuemin="0" data-valuemax="1" data-valuenow="0" style="width: 0%">
+									</div>
+								</div>
+						  </th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}

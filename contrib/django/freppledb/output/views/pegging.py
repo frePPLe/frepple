@@ -81,9 +81,14 @@ class ReportByDemand(GridReport):
       and type <> 'STCK'
       ''', (args[0]))
     x = cursor.fetchone()
-    if not x:
-      raise Http404("Demand not found")
     (due, start, end) = x
+    if not due:
+      # This demand is unplanned
+      request.report_startdate = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+      request.report_enddate = request.report_startdate + timedelta(days=1)
+      request.report_bucket = None
+      request.report_bucketlist = []
+      return
     if not start:
       start = due
     if not end:
@@ -132,7 +137,7 @@ class ReportByDemand(GridReport):
           cast(json_array_elements(plan->'pegging')->>'level' as integer) as lvl,
           cast(json_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
           from demand
-          where name = 'Demand 01'
+          where name = %s
           ) d1
           )d2
         group by opplan
@@ -161,7 +166,6 @@ class ReportByDemand(GridReport):
     cursor.execute(query, baseparams)
 
     # Build the Python result
-    # due, oper, level, pegged, op_id, op_start, op_end, op_qty, op_res
     prevrec = None
     parents = {}
     for rec in cursor.fetchall():

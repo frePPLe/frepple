@@ -84,6 +84,12 @@ treeReader: {
   },
 ExpandColClick: true,
 resizeStop: gantt.redraw,
+loadComplete: function(data) {
+  if(data.rows.length == 0) {
+    var msg = $("<h2>").text(gettext("This demand has not been planned")).css('padding','30px');
+    $("#content-main").replaceWith(msg);
+  }
+},
 {% endblock %}
 
 {% block actions %}

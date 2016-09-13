@@ -647,6 +647,30 @@ class loadData(object):
         print("Error:", e)
     print('Loaded %d operation materials in %.2f seconds' % (cnt, time() - starttime))
 
+    # Check for operations where:
+    #  - operation.item is still blank
+    #  - they have a single operationmaterial item with quantity > 0
+    # If found we update 
+    starttime = time()
+    cnt = 0
+    print('Auto-update operation items...')
+    for oper in frepple.operations():
+      if oper.hidden or oper.item:
+        continue
+      item = None
+      for fl in oper.flows:
+        if fl.quantity < 0 or fl.hidden:
+          continue
+        if item and item != fl.item:
+          item = None
+          break
+        else:
+          item = fl.item
+      if item:
+        cnt += 1
+        oper.item = item
+    print('Auto-update of %s operation items in %.2f seconds' % (cnt, time() - starttime))
+
 
   def loadOperationResources(self):
     print('Importing operation resources...')

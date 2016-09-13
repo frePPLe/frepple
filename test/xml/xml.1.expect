@@ -7,5 +7,6 @@ OPERATION	operation 1	2009-01-13T00:00:00	2009-01-27T00:00:00	12
 OPERATION	operation 1 step1	2009-01-13T00:00:00	2009-01-20T00:00:00	12
 OPERATION	operation 1 step2	2009-01-20T00:00:00	2009-01-27T00:00:00	12
 PROBLEM	material excess	Buffer 'STCK1' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'STCK1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'resource 1' has capacity shortage of 1	2009-01-13T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	excess	Demand ' แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่' planned 2 units excess	2009-01-27T00:00:00 / 2009-01-27T00:00:00

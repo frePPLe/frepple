@@ -667,6 +667,8 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
           return true;
         else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
           return true;
+        else if (o->getOwner()->getDemand() != y->getOwner()->getDemand())
+          return true;
      }
 
       // Check that the flowplans are on identical alternates and not of type fixed

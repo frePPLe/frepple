@@ -722,11 +722,6 @@ class loadData(object):
             quantity=i[2], source=i[6], start=i[3], end=i[4],
             status=i[5], reference=i[13]
             )
-          if opplan.start <= frepple.settings.current:
-            # We assume that locked operationplans with a start date in the past
-            # have already consumed all materials.
-            # TODO Specifying this explicitly may be more appropriate
-            opplan.consume_material = False
         elif i[7] == 'PO':
           cnt_po += 1
           opplan = frepple.operation_itemsupplier.createOrder(
@@ -784,11 +779,6 @@ class loadData(object):
         owner=frepple.operationplan(id=i[6]),
         start=i[3], end=i[4], status=i[5]
         )
-      if opplan.start <= frepple.settings.current:
-        # We assume that locked operationplans with a start date in the past
-        # have already consumed all materials.
-        # TODO Specifying this explicitly may be more appropriate
-        opplan.consume_material=False
       if i[8]:
         opplan.demand = frepple.demand(name=i[8])
     print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))

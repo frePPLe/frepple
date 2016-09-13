@@ -74,6 +74,7 @@ PROBLEM	material excess	Buffer 'buffer 3' has material excess of 10	1971-01-01T0
 PROBLEM	material excess	Buffer 'buffer 3' has material excess of 2	2009-01-12T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 4' has material excess of 10	1971-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'constraint buffer 1' has material excess of 106	2009-01-17T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'constraint buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'constraint buffer 1' has material shortage of 194	2009-01-09T00:00:00 / 2009-01-17T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'constraint buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'constraint buffer 2' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00

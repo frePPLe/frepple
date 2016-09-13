@@ -2,6 +2,10 @@
 Setup matrices
 ==============
 
+.. important::
+
+   This feature is currently not ready for production use yet.
+   
 A setup matrix defines the time and cost of setup conversions on a resource.
 Within a setup matrix rules are used to define the changeover cost and
 duration.
@@ -34,12 +38,12 @@ Priority   From    To      Duration    Cost
 
 Based on this matrix:
 
-- A change from “lightgreen” to “darkgreen” takes no time, but costs 10.
+- A change from 'lightgreen' to 'darkgreen' takes no time, but costs 10.
   Rule 1 applies.
 
-- A change from “green” to “black” takes 2 days and costs 50. Rule 4 applies.
+- A change from 'green' to 'black' takes 2 days and costs 50. Rule 4 applies.
 
-- | A change from “red” to “black” takes 3 days and costs 50. Rule 5 applies.
+- | A change from 'red' to 'black' takes 3 days and costs 50. Rule 5 applies.
   | Without rule 5 this changeover would not be allowed.
 
 **Fields**
@@ -51,28 +55,7 @@ name         non-empty string  | Name of the setup matrix.
                                | This is the key field and a required attribute.
 rules        list of setup     A read-only list of rules in this matrix.
              matrix rules
-action       A/C/AC/R          | Type of action to be executed:
-                               | A: Add an new entity, and report an error if the entity
-                                 already exists.
-                               | C: Change an existing entity, and report an error if the
-                                 entity doesn’t exist yet.
-                               | AC: Change an entity or create a new one if it doesn’t
-                                 exist yet. This is the default.
-                               | R: Remove an entity, and report an error if the entity
-                                 doesn’t exist.
 ============ ================= ===========================================================
-
-**Methods**
-
-+-----------------------------+----------------------------------------------------+
-| Method                      | Description                                        |
-+=============================+====================================================+
-| addRule(priority=[integer], | This method adds a new rule to the matrix.         |
-| fromsetup=[string],         | Only the priority keyword is compulsory. The other |
-| tosetup=[string],           | arguments are optional.                            |
-| duration=[timeperiod],      |                                                    |
-| cost=[number])              |                                                    |
-+-----------------------------+----------------------------------------------------+
 
 Setup Rule
 ----------

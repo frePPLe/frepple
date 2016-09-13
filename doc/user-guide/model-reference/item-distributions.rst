@@ -47,13 +47,4 @@ resource_qty    positive double   | Resource capacity consumed per distributed u
 fence           duration          | Release fence for the purchasing operations.
                                   | New purchases cannot be proposed within this time fence
                                     after the plan current date.
-action          A/C/AC/R          | Type of action to be executed:
-                                  | A: Add an new entity, and report an error if the entity
-                                    already exists.
-                                  | C: Change an existing entity, and report an error if the
-                                    entity doesn’t exist yet.
-                                  | AC: Change an entity or create a new one if it doesn’t
-                                    exist yet. This is the default.
-                                  | R: Remove an entity, and report an error if the entity
-                                    doesn’t exist.
 =============== ================= ===========================================================

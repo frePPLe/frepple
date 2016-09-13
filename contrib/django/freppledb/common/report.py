@@ -960,9 +960,10 @@ class GridReport(View):
     ok = False
     while not ok:
       ok = True
+      print ("sort again")
       for i in range(cnt):
         j = i + 1
-        while j < cnt:
+        while j < cnt and ok:
           if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
             i_base=models[i][1].__base__
             if i_base == Model or i_base._meta.abstract:
@@ -976,6 +977,7 @@ class GridReport(View):
             if i_base == models[j][1] or j_base == models[i][1]:
               j += 1
               continue
+            print("switch ", models[i][1], models[j][1])
             models.append(models.pop(i))
             j = i
             ok = False

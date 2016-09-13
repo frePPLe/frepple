@@ -5,9 +5,8 @@ Locations
 A location is a (physical or logical) place where resources, buffers
 and operations are located.
 
-FrePPLe uses locations from reporting purposes, and the ‘available’
-calendar is used to model the working hours and holidays of resources,
-buffers and operations.
+Each location has an 'available' calendar to model the working hours 
+and holidays of resources, buffers and operations in that location.
 
 **Fields**
 
@@ -27,13 +26,4 @@ members      list of location  | Locations are organized in a hierarchical tree.
                                | This field defines a list of child location.
 hidden       boolean           Marks entities that are considered hidden and are normally
                                not shown to the end user.
-action       A/C/AC/R          | Type of action to be executed:
-                               | A: Add an new entity, and report an error if the entity
-                                 already exists.
-                               | C: Change an existing entity, and report an error if the
-                                 entity doesn’t exist yet.
-                               | AC: Change an entity or create a new one if it doesn’t
-                                 exist yet. This is the default.
-                               | R: Remove an entity, and report an error if the entity
-                                 doesn’t exist.
 ============ ================= ===========================================================

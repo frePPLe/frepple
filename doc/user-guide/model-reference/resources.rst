@@ -90,15 +90,6 @@ setupmatrix      setupmatrix       The name of the setup matrix which specifies 
                                    times between setups.
 hidden           boolean           Marks entities that are considered hidden and are normally
                                    not shown to the end user.
-action           A/C/AC/R          | Type of action to be executed:
-                                   | A: Add an new entity, and report an error if the entity
-                                     already exists.
-                                   | C: Change an existing entity, and report an error if the
-                                     entity doesn’t exist yet.
-                                   | AC: Change an entity or create a new one if it doesn’t
-                                     exist yet. This is the default.
-                                   | R: Remove an entity, and report an error if the entity
-                                     doesn’t exist.
 ================ ================= ===========================================================
 
 Resource_default
@@ -130,4 +121,4 @@ Resource_infinite
 An infinite resource has no capacity limit. It is useful to monitor the
 loading or usage of a resource without constraining the plan.
 
-The fields ‘maximum’ and ‘maximum_calendar’ are unused for this resource type.
+The fields 'maximum' and 'maximum_calendar' are unused for this resource type.

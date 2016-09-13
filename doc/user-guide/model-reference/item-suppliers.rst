@@ -46,13 +46,4 @@ priority        integer           | Priority of this supplier among all supplier
                                   | A lower number indicates that this supplier is preferred
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
-action          A/C/AC/R          | Type of action to be executed:
-                                  | A: Add an new entity, and report an error if the entity
-                                    already exists.
-                                  | C: Change an existing entity, and report an error if the
-                                    entity doesn’t exist yet.
-                                  | AC: Change an entity or create a new one if it doesn’t
-                                    exist yet. This is the default.
-                                  | R: Remove an entity, and report an error if the entity
-                                    doesn’t exist.
 =============== ================= ===========================================================

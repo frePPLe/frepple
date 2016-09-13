@@ -23,7 +23,7 @@ Different operation types exist:
 * | `Operation_alternate`_:
   | Models a choice between different operations.
 
-* | `Operation_split`_ (new in 2.2):
+* | `Operation_split`_:
   | This operation type plans the demand proportionally over a number of
     sub-operations, using some pre-defined percentages.
 
@@ -41,7 +41,9 @@ name                   non-empty string  | Name of the operation.
 item                   item              | Reference to the item being produced.
                                          | If left unspecified we will try to determine the item
                                            as the producing records from the operation-material 
-                                           records.
+                                           records: if an operation has only a single operation-material
+                                           with a positive quantity then we use its item as the 
+                                           item of the operation.
 location               location          | Location of the operation.
                                          | Default is null.
                                          | The working hours and holidays for the operation are
@@ -115,15 +117,6 @@ cluster                integer           | The network of entities can be partit
                                          | The field is export-only.
 hidden                 boolean           Marks entities that are considered hidden and are normally
                                          not shown to the end user.
-action                 A/C/AC/R          | Type of action to be executed:
-                                         | A: Add an new entity, and report an error if the entity
-                                           already exists.
-                                         | C: Change an existing entity, and report an error if the
-                                           entity doesn’t exist yet.
-                                         | AC: Change an entity or create a new one if it doesn’t
-                                           exist yet. This is the default.
-                                         | R: Remove an entity, and report an error if the entity
-                                           doesn’t exist.
 ====================== ================= ===========================================================
 
 Operation_fixed_time
@@ -198,28 +191,8 @@ search           string            Defines the order of preference among the alt
                                       | Select the alternate which gives the lowest sum of
                                         the cost and penalty.
                                       | The sum is computed for the complete upstream path.
-suboperations    List of           List of alternate sub-operations.
-                 suboperation
-================ ================= ===========================================================
-
-
-Suboperation fields:
-
-================ ================= ===========================================================
-Field            Type              Description
-================ ================= ===========================================================
-operation        operation         Sub-operation.
-owner            operation         Parent operation
-priority         integer           | For alternate operations: Priority of this alternate.
-                                   | For routing operations: Sequence number of the step.
-                                   | For split operations: Proportion of the demand planned
-                                     along this suboperation.
-                                   | Lower numbers indicate higher priority.
-                                   | When the priority is equal to 0, this alternate is
-                                     considered unavailable and it can’t be used for planning.
-                                   | Default value is 1.
-effective_start  dateTime          Earliest allowed start date for using this suboperation.
-effective_end    dateTime          Latest allowed end date for using this suboperation.
+suboperations    List of           | List of alternate sub-operations.
+                 suboperation      | See :doc:`suboperations`
 ================ ================= ===========================================================
 
 Operation_split
@@ -244,7 +217,7 @@ the sub-operations.
 Field            Type              Description
 ================ ================= ===========================================================
 suboperations    List of           | List of sub-operations to divide the plan across.
-                 suboperation      | See above for the definition of the suboperation.
+                 suboperation      | See :doc:`suboperations`
 ================ ================= ===========================================================
 
 
@@ -256,6 +229,6 @@ Models a sequence a number of ‘step’ sub-operations, to be executed sequenti
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-suboperations    List of           | List of sub-operations to execute in sequence.
-                 suboperation      | See above for the definition of the suboperation.
+suboperations    List of           List of sub-operations to execute in sequence.
+                 suboperation      | See :doc:`suboperations`
 ================ ================= ===========================================================

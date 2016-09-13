@@ -47,6 +47,9 @@ detectproblems boolean           | Set this field to false to supress problem de
 maxlateness    duration          | The maximum delay that can be accepted to satisfy this
                                    demand.
                                  | The default value allows an infinite delay.
+                                 | Use a value of 0 in businesses where the customer will
+                                   not accept a late delivery and cancel his order in such
+                                   a case. 
 minshipment    positive double   | The minimum quantity allowed for the shipment
                                    operationplans that satisfy this demand.
                                  | The default is 1.
@@ -55,13 +58,4 @@ constraints    list of problem   | This field returns the list of reasons why th
                                  | The field is export-only.
 hidden         boolean           Marks entities that are considered hidden and are
                                  normally not shown to the end user.
-action         A/C/AC/R          | Type of action to be executed:
-                                 | A: Add an new entity, and report an error if the entity
-                                   already exists.
-                                 | C: Change an existing entity, and report an error if the
-                                   entity doesn’t exist yet.
-                                 | AC: Change an entity or create a new one if it doesn’t
-                                   exist yet. This is the default.
-                                 | R: Remove an entity, and report an error if the entity
-                                   doesn’t exist.
 ============== ================= ===========================================================

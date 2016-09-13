@@ -1397,8 +1397,8 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
   else if (parent->firstsubopplan->getOperation() != OperationSetup::setupoperation)
   {
     // Remove previous head alternate suboperationplan
-    if (parent->firstsubopplan->getLocked())
-      throw DataException("Can't replace locked alternate suboperationplan");
+    //if (parent->firstsubopplan->getLocked())
+    //  throw DataException("Can't replace locked alternate suboperationplan");
     OperationPlan *tmp = parent->firstsubopplan;
     parent->eraseSubOperationPlan(tmp);
     delete tmp;
@@ -1414,8 +1414,8 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
     // Remove previous alternate suboperationplan
     if (s)
     {
-      if (s->getLocked())
-        throw LogicException("Can't replace locked alternate suboperationplan");
+      //if (s->getLocked())
+      //  throw DataException("Can't replace locked alternate suboperationplan");
       parent->eraseSubOperationPlan(s);
       delete s;
     }

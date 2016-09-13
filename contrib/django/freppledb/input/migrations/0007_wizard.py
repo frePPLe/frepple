@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
       ('Item suppliers', 320, '/user-guide/modeling-wizard/purchasing/item-suppliers.html', '/data/input/itemsupplier/', false, 'Purchasing'),
       ('Purchase orders', 330, '/user-guide/modeling-wizard/purchasing/purchase-orders.html', '/data/input/purchaseorder/', false, 'Purchasing'),
       ('Distribution', 400, '/user-guide/modeling-wizard/distribution/index.html', null, false, null),
-      ('Suppliers', 410, '/user-guide/modeling-wizard/distribution/item-distributions.html', '/data/input/itemdistribution/', false, 'Distribution'),
+      ('Item distributions', 410, '/user-guide/modeling-wizard/distribution/item-distributions.html', '/data/input/itemdistribution/', false, 'Distribution'),
       ('Distribution orders', 420, '/user-guide/modeling-wizard/purchasing/purchase-orders.html', '/data/input/distributionorder/', false, 'Distribution'),
       ('Manufacturing BOM', 700, '/user-guide/modeling-wizard/manufacturing-bom/index.html', null, false, null),
       ('Operations', 710, '/user-guide/modeling-wizard/manufacturing-bom/operations.html', '/data/input/operation/', false, 'Manufacturing BOM'),

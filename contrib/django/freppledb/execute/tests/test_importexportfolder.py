@@ -16,16 +16,15 @@
 #
 
 import os
+import os.path
+import unittest
 
 from django.conf import settings
-from django.core import management, serializers
-from django.db import DEFAULT_DB_ALIAS, transaction
-from django.db.models import Sum, Count, Q
-from django.test import TransactionTestCase, TestCase
+from django.core import management
+from django.db import DEFAULT_DB_ALIAS
+from django.test import TransactionTestCase
 from django.test.utils import override_settings
 
-from freppledb.common.models import User
-import freppledb.output as output
 import freppledb.input as input
 
 
@@ -43,6 +42,10 @@ class execute_with_commands(TransactionTestCase):
     if os.path.exists("workbook.xlsx"):
       os.remove("workbook.xlsx")
     
+  @unittest.skipUnless(
+    os.path.isdir(settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER', '')),
+    "Requires FILEUPLOADFOLDER to be configured"
+    )
   def test_exportimportfromfolder(self):
 
     # Run frePPLe on the test database.

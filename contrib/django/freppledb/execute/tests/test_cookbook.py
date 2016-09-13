@@ -77,41 +77,41 @@ class cookbooktest(TransactionTestCase):
       self.fail("More output rows than expected")
 
   def test_calendar_working_hours(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "calendar", "calendar-working-hours.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "calendar", "calendar-working-hours.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "calendar", "calendar-working-hours.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "calendar", "calendar-working-hours.expect")
 
   def test_resource_type(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-type.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-type.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-type.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-type.expect")
 
   def test_resource_skills(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-skills.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-skills.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
     self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-skills.expect")
 
   def test_resource_tool(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-tool.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-tool.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-tool.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-tool.expect")
 
   def test_demand_priorities(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "demand", "demand-priorities.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "demand", "demand-priorities.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "demand", "demand-priorities.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "demand", "demand-priorities.expect")
 
   def test_demand_policies(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "demand", "demand-policies.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "demand", "demand-policies.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "demand", "demand-policies.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "demand", "demand-policies.expect")
 
   def test_operation_type(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "operation", "operation-type.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-type.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "operation", "operation-type.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-type.expect")
 
   def test_operation_posttime(self):
-    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "cookbook", "operation", "operation-posttime.xlsx")
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-posttime.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "operation", "operation-posttime.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-posttime.expect")

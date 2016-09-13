@@ -28,7 +28,7 @@ from django.db.models import Sum, Max, Count, F
 from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
 from freppledb.input.models import PurchaseOrder, DistributionOrder, Buffer, Demand, Item
-from freppledb.input.models import OperationPlan, Location
+from freppledb.input.models import ManufacturingOrder, Location
 
 
 def load_class(full_class_string):
@@ -330,7 +330,7 @@ class Simulator(object):
     self.database = database
     self.verbosity = verbosity
     self.demand_number = Demand.objects.all().using(self.database).count()
-    self.mo_number = OperationPlan.objects.all().using(self.database).aggregate(Max('id'))['id__max']
+    self.mo_number = ManufacturingOrder.objects.all().using(self.database).aggregate(Max('id'))['id__max']
     if not self.mo_number:
       self.mo_number = 0
     self.mo_number += 10000 # A bit of a trick to avoid duplicate IDs with POs and DOs
@@ -382,7 +382,7 @@ class Simulator(object):
       self.inventory_quantity += inv['qty']
 
     # Measure the current work-in-progress
-    wip = OperationPlan.objects.all().using(self.database).filter(status='confirmed').aggregate(
+    wip = ManufacturingOrder.objects.all().using(self.database).filter(status='confirmed').aggregate(
       qty=Sum(F('quantity'))
       )
     if wip['qty']:
@@ -407,47 +407,48 @@ class Simulator(object):
     Find all confirmed manufacturing orders scheduled to finish in this bucket.
 
     For each of these manufacturing orders:
-      - delete the record
-      - execute all material flows at the end of the operation
+      - change the status to "closed"
+      - execute all operation materials at the end of the operation
     '''
-    for op in OperationPlan.objects.select_for_update().using(self.database).filter(status="confirmed", enddate__lte=nd):
-      buf = None
-      for fl in op.operation.flows.all().using(self.database):
-        if fl.quantity > 0:
-          buf = fl.buffer
-          break
-      if not buf:
-        continue
+    for op in ManufacturingOrder.objects.select_for_update().using(self.database).filter(status="confirmed", enddate__lte=nd, demand__isnull=True):
       if self.verbosity > 2:
         print("      Closing MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
       op.status = "closed"
       op.save(using=self.database)
-      for fl in op.operation.flows.all().using(self.database):
-        if fl.type == 'end':
-          fl.buffer.onhand += fl.quantity * op.quantity
-          fl.buffer.save(using=self.database)
+      for fl in op.operation.operationmaterials.all().using(self.database):
+        if not op.operation.location or not fl.item:
+          continue
+        elif fl.type == 'end':
+          buf = Buffer.objects.select_for_update().using(self.database).get(item=fl.item, location=op.operation.location)
+          buf.onhand += fl.quantity * op.quantity
+          buf.save(using=self.database)
         elif fl.type == 'fixed_end':
-          fl.buffer.onhand += fl.quantity
-          fl.buffer.save(using=self.database)
+          buf = Buffer.objects.select_for_update().using(self.database).get(item=fl.item, location=op.operation.location)
+          buf.onhand += fl.quantity
+          buf.save(using=self.database)
 
 
   def create_manufacturing_orders(self, strt, nd):
     '''
-    Find proposed operationplans within the time bucket.
-    For each of these operationplans:
+    Find proposed manufacturing orders within the time bucket.
+    For each of these:
       - change the status to "confirmed"
-      - execute all material flows at the start of the operation
+      - execute all operation materials at the start of the operation
     '''
-    for op in OperationPlan.objects.select_for_update().using(self.database).filter(status="proposed", startdate__lte=nd):
+    for op in ManufacturingOrder.objects.select_for_update().using(self.database).filter(status="proposed", startdate__lte=nd, demand__isnull=True):
       if self.verbosity > 2:
         print("      Opening MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
-      for fl in op.operation.flows.all().using(self.database):
-        if fl.type == 'start':
-          fl.buffer.onhand += fl.quantity * op.quantity
-          fl.buffer.save(using=self.database)
+      for fl in op.operation.operationmaterials.all().using(self.database):
+        if not op.operation.location or not fl.item:
+          continue                
+        elif fl.type == 'start':
+          buf = Buffer.objects.select_for_update().using(self.database).get(item=fl.item, location=op.operation.location)
+          buf.onhand += fl.quantity * op.quantity
+          buf.save(using=self.database)
         elif fl.type == 'fixed_start':
-          fl.buffer.onhand += fl.quantity
-          fl.buffer.save(using=self.database)
+          buf = Buffer.objects.select_for_update().using(self.database).get(item=fl.item, location=op.operation.location)
+          buf.onhand += fl.quantity
+          buf.save(using=self.database)
       op.status = 'confirmed'
       op.save(using=self.database)
 
@@ -557,21 +558,24 @@ class Simulator(object):
     '''
     Verify whether an operationplan of a given quantity is material-feasible.
     '''
-    for fl in oper.flows.all().using(self.database):
+    for fl in oper.operationmaterials.all().using(self.database):
       if fl.quantity > 0 and not consume:
         continue
-      if fl.type in ('start', 'end') or not fl.type:
+      if not fl.item or not oper.location:
+        continue
+      buf = Buffer.objects.using(self.database).get(item=fl.item, location=oper.location)
+      if fl.type in ('start', 'end') or not fl.type:        
         if consume:
-          fl.buffer.onhand += qty * fl.quantity
-          fl.buffer.save(using=self.database)
-        elif fl.buffer.onhand < - fl.quantity * min_qty:
+          buf.onhand += qty * fl.quantity
+          buf.save(using=self.database)
+        elif buf.onhand < - fl.quantity * min_qty:
           # Even the minimum isn't available
           return 0
         else:
           if qty > min_qty:
-            ship_qty = min(- fl.buffer.onhand / fl.quantity, qty - min_qty)
+            ship_qty = min(- buf.onhand / fl.quantity, qty - min_qty)
           else:
-            ship_qty = - fl.buffer.onhand / fl.quantity
+            ship_qty = - buf.onhand / fl.quantity
           if ship_qty < min_qty:
             # Remaining open quantity after an ok would be less than the minimum
             return 0
@@ -583,16 +587,16 @@ class Simulator(object):
             qty = ship_qty
       if fl.type in ('fixed_start', 'fixed_end'):
         if consume:
-          fl.buffer.onhand += qty
-          fl.buffer.save(using=self.database)
-        elif fl.buffer.onhand < - min_qty:
+          buf.onhand += qty
+          buf.save(using=self.database)
+        elif buf.onhand < - min_qty:
           # Even the minimum isn't available
           return 0
         else:
           if qty > min_qty:
-            ship_qty = min(- fl.buffer.onhand, qty - min_qty)
+            ship_qty = min(- buf.onhand, qty - min_qty)
           else:
-            ship_qty = - fl.buffer.onhand
+            ship_qty = - buf.onhand
           if ship_qty < min_qty:
             # Remaining open quantity after an ok would be less than the minimum
             return 0
@@ -666,7 +670,7 @@ class Simulator(object):
         # Case 1: Delivery operation specified
         ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)
         if ship_qty > 0:
-          # Execute all flows on the delivery operation
+          # Execute all operation materials on the delivery operation
           self.checkAvailable(ship_qty, 0, oper, True)
           if dmd.quantity > ship_qty:
             # Partial shipment
@@ -742,7 +746,7 @@ class Simulator(object):
     It prints the list of all open transactions:
       - open customer demands
       - confirmed purchase orders
-      - confirmed operationplans
+      - confirmed manufacturing orders
       - confirmed distribution orders
       - current inventory
     '''
@@ -759,7 +763,7 @@ class Simulator(object):
       print("    Distribution order '%s': %d %s@%s arriving on %s" % (
         do.id, do.quantity, do.item.name, do.destination.name, do.enddate
         ))
-    for op in OperationPlan.objects.all().using(self.database).filter(status='confirmed').order_by('enddate', 'startdate'):
+    for op in ManufacturingOrder.objects.all().using(self.database).filter(status='confirmed').order_by('enddate', 'startdate'):
       print("    Operation plan '%s': %d %s finishing on %s" % (
         op.id, op.quantity, op.operation.name, op.enddate
         ))

@@ -25,6 +25,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.core.urlresolvers import reverse, resolve
+from django.db import connections, transaction
 from django.template import RequestContext, loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_text
@@ -99,31 +100,42 @@ def wizard(request):
 
   if request.method == 'POST':
     if not request.is_ajax():
-      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
-    # try:
-    print(request.body)
+      return HttpResponseForbidden('%s' % _('Permission denied'))
     errors=[]
-    data = json.loads(request.body.decode(request.encoding))
-    print(data)
-    for instruction in data:
-      try:
-        if instruction['command'] == 'set':
-          wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
-          wiz.status = instruction['value']
-          wiz.save(update_fields=['status'], using=request.database)
-        elif instruction['command'] == 'execute':
-          print(instruction['key'])
-          if instruction['key'] == 'Locations':
-            print('Here will generate Locations entries')
-          elif instruction['key'] == 'Sales orders':
-            print('Here will generate Sales orders entries')
-          elif instruction['key'] == 'Items':
-            print('Here will generate Items entries')
-      except Exception as e:
-        errors.append(str(e))
-
-    #request.Wizard.save(using=request.database)
-    #return HttpResponse(content="OK")
+    try:
+      data = json.loads(request.body.decode(request.encoding))
+      for instruction in data:
+        try:
+          if instruction['command'] == 'set':
+            wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
+            wiz.status = instruction['value']
+            wiz.save(update_fields=['status'], using=request.database)
+          elif instruction['command'] == 'execute':
+            if instruction['key'] == 'Buffers':
+              # Create a buffer for every item+location combination
+              cursor = connections[request.database].cursor()
+              with transaction.atomic(using=request.database):
+                cursor.execute('''
+                  update buffer
+                    set name = item_id || ' @ ' || location_id
+                  where item_id || ' @ ' || location_id <> name
+                  ''')
+                cursor.execute('''
+                  insert into buffer
+                    (name, item_id, location_id, onhand, source, lastmodified)
+                  select item.name || ' @ ' || location.name, 
+                    item.name, location.name, 0, 'wizard', now()
+                  from item
+                  cross join location
+                  except
+                  select name, item_id, location_id, 0, 'wizard', now()
+                  from buffer
+                  ''')           
+        except Exception as e:
+          errors.append(str(e))
+    except Exception as e:
+      errors.append(str(e))
+      
     if errors:
       logger.error("Error saving wizard updates: %s" % "".join(errors))
       return HttpResponseServerError('Error saving wizard updates: %s' % "<br/>".join(errors))

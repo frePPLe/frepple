@@ -167,14 +167,7 @@
     
     $('#autoexecbutton').one('click',function () {
     //define button action
-      // Fetch the report data
-      var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
-      url += encodeURI('?option='+name);
-      
-      console.log(url);
-      // Open the window
-      //window.open(url,'_blank').close();
-
+      saveWizard([{"command": "execute", "key": name}]);
       $('#popup').modal('hide');
       }
     );

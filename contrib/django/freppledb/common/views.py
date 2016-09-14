@@ -107,12 +107,18 @@ def wizard(request):
     print(data)
     for instruction in data:
       try:
-        print(instruction)
-        print(instruction['key'])
-        print(instruction['value'])
-        wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
-        wiz.status = instruction['value']
-        wiz.save(update_fields=['status'], using=request.database)
+        if instruction['command'] == 'set':
+          wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
+          wiz.status = instruction['value']
+          wiz.save(update_fields=['status'], using=request.database)
+        elif instruction['command'] == 'execute':
+          print(instruction['key'])
+          if instruction['key'] == 'Locations':
+            print('Here will generate Locations entries')
+          elif instruction['key'] == 'Sales orders':
+            print('Here will generate Sales orders entries')
+          elif instruction['key'] == 'Items':
+            print('Here will generate Items entries')
       except Exception as e:
         errors.append(str(e))
 

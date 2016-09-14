@@ -33,10 +33,9 @@ from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
-from django.forms.models import model_to_dict
 
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail, Wizard
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
@@ -99,9 +98,31 @@ def handler500(request):
 def wizard(request):
 
   if request.method == 'POST':
-    print('got here')
-    #request.Wizard.save()
-    return HttpResponse(content="OK")
+    if not request.is_ajax():
+      return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
+    # try:
+    print(request.body)
+    errors=[]
+    data = json.loads(request.body.decode(request.encoding))
+    print(data)
+    for instruction in data:
+      try:
+        print(instruction)
+        print(instruction['key'])
+        print(instruction['value'])
+        wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
+        wiz.status = instruction['value']
+        wiz.save(update_fields=['status'], using=request.database)
+      except Exception as e:
+        errors.append(str(e))
+
+    #request.Wizard.save(using=request.database)
+    #return HttpResponse(content="OK")
+    if errors:
+      logger.error("Error saving wizard updates: %s" % "".join(errors))
+      return HttpResponseServerError('Error saving wizard updates: %s' % "<br/>".join(errors))
+    else:
+      return HttpResponse(content="OK")
 
   return render_to_response('common/wizard.html', {
     'title': _('Modeling wizard'),

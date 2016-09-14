@@ -3,18 +3,18 @@
 {% block extrahead %}{{block.super}}
 
 <style>
-#content-main td {
-  padding-bottom: 1em;
-}
-.panel .table tbody > tr > td, .table > thead > tr > th {
+
+.panel table tbody > tr > td, .panel table > thead > tr > th {
+  padding-right: 10px;
+  padding-bottom: 10px;
   vertical-align: middle;
   white-space: nowrap;
 }
-.panel .table .progress {
+.panel table .progress {
   height: 100%;
   margin-bottom: 0px;
 }
-.panel .table .progress .progress-bar {
+.panel table .progress .progress-bar {
   white-space: nowrap;
 }
 .progressspan {
@@ -193,8 +193,10 @@
       result = getProgress(list[step].pk);
       newrow += '<tr id="row'+list[step].fields.sequenceorder+'"><td>';
       if (list[step].fields.owner != null) newrow += '&nbsp;-&nbsp;';
+      if (list[step].fields.owner == null) newrow += '<strong>';
       if (list[step].fields.url_internaldoc != null) newrow += '<a href="'+list[step].fields.url_internaldoc+'"><span>'+list[step].pk+'&nbsp;</span><span class="fa fa-caret-right"></span></a>';
       if (list[step].fields.url_internaldoc == null) newrow += '<span>'+list[step].pk+'</span>';
+      if (list[step].fields.owner == null) newrow += '</strong>';
       newrow += '</td><td  style="text-align: center">';
       if (list[step].fields.owner == null && singleparentslist.indexOf(list[step].pk) == -1) {
 	      newrow += '<div class="progress"><div class="progress-bar progress-bar-success" role="progressbar" valuemin="0" valuemax="1"'
@@ -246,7 +248,7 @@
 	<div class="panel" style="max-width:700px; min-width: 600px">
 		<div class="panel-body">
 			<div class="table-reponsive">
-				<table class="table">
+				<table>
 					<thead>
 						<tr id="overall">
 						  <th></th>

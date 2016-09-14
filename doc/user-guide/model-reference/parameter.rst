@@ -24,22 +24,30 @@ The table below shows the parameters that are recognized by the standard
 application. Look at the documentation of extension modules to see which
 additional parameters they introduce.
 
-=================== =============================================================
-Parameter           Description
-=================== =============================================================
-currentdate         | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS
-                    | If the parameter is missing or empty the system time is
-                      used as current date.
-plan.loglevel       | Controls the verbosity of the planning log file.
-                    | Accepted values are 0 (silent – default), 1 (minimal) and
-                      2 (verbose).
-loading_time_units  | Time units to be used for the resource report.
-                    | Accepted values are: hours, days, weeks.
-calendar            | Name of a calendar to align new operationplans with.
-                    | When this parameter is used, the plan results are
-                      effectively grouped in the time buckets defined in this
-                      calendar.
-                    | This feature is typically used for medium and long term
-                      plans. Such plans are reviewed in monthly or weekly
-                      buckets rather than at individual dates.
-=================== =============================================================
+========================== =============================================================
+Parameter                  Description
+========================== =============================================================
+currentdate                | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS
+                           | If the parameter is missing or empty the system time is
+                             used as current date.
+plan.loglevel              | Controls the verbosity of the planning log file.
+                           | Accepted values are 0 (silent – default), 1 (minimal) and
+                             2 (verbose).
+loading_time_units         | Time units to be used for the resource report.
+                           | Accepted values are: hours, days, weeks.
+plan.calendar              | Name of a calendar to align new operationplans with.
+                           | When this parameter is used, the plan results are
+                             effectively grouped in the time buckets defined in this
+                             calendar.
+                           | This feature is typically used for medium and long term
+                             plans. Such plans are reviewed in monthly or weekly
+                             buckets rather than at individual dates.
+plan.planSafetyStockFirst  | Controls whether safety stock is planned before or after the demand.
+                           | Accepted values are false (default) and true.
+plan.rotateResources       When set to true, the algorithm will better distribute 
+                           the demand across alternate suboperations instead of using 
+                           the preferred operation.
+plan.webservice            | Specifies whether to use the web service or not.
+                           | Accepted values are false (default) and true.
+                           
+========================== =============================================================

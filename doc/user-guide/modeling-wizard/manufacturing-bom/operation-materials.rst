@@ -19,10 +19,10 @@ Op           1             C         End
 =====================================  ================= ========================================================================================
 Field                                  Type              Description
 =====================================  ================= ========================================================================================
-operation                              non-empty string  The operation name consuming and producing items.
+operation                              operation         The operation name consuming and producing items.
 quantity                               number            The quantity of item consumed or produced. A negative quantity should be used for consumed items
                                                          and positive quantity should be used for produced items.
-item                                   non-empty string  The item being consumed or produced.  
+item                                   item              The item being consumed or produced.  
 type                                   non-empty string  This field is used to specify whether the stock should be consumed/produced at the start or 
                                                          at the end of the operation.
                                                          | Possible values : "Start", "End", "Fixed start", "Fixed end".

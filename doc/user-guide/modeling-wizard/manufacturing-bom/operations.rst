@@ -16,7 +16,7 @@ type                                   non-empty string  | Possible values : "ti
                                                                       This is typical for manufacturing, producing three items takes three times the
                                                                       duration of producing one item.
                                                          | fixed_time : The operation duration is fixed whatever the number of produced items is.
-location_id                            non-empty string  The location where the operation takes place.                                                        
+location_id                            location          The location where the operation takes place.                                                        
 =====================================  ================= ========================================================================================
                                   
 .. rubric:: Advanced topics

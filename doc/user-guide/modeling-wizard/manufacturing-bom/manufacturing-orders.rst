@@ -14,7 +14,7 @@ For a first simplified model, this table can be left empty, frepple will generat
 Field            Type              Description
 ================ ================= ===========================================================
 status           non-empty string  For confirmed purchase orders, the status should be "confirmed".
-operation        non-empty string  The operation that should be run for the manufacturing orders.
+operation        operation         The operation that should be run for the manufacturing orders.
 end date         DateTime          The date the manufacturing order ends.
 quantity         number            The produced item quantity.
 ================ ================= ===========================================================                              

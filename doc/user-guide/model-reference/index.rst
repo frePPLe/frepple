@@ -15,18 +15,20 @@ a high level overview of the model objects and their relationships.
    buffers
    calendars
    customers
-   sales-orders
+   distribution-orders
    items
    item-distributions
    item-suppliers
    locations
+   manufacturing-orders
    operations
    operation-materials
    operation-resources
+   purchase-orders
    suboperations
-   operationplan
    resources
    resource-skills
+   sales-orders   
    setup-matrices
    skills
    suppliers

@@ -9,8 +9,8 @@ The operation resources table is associating a resource to an operation.
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-operation    non-empty string  The operation name.
-resource     non-empty string  The resource name.
+operation    operation         The operation name.
+resource     resource          The resource name.
 quantity     number            How much capacity this operation is consuming from the resource.
 ============ ================= ===========================================================
 

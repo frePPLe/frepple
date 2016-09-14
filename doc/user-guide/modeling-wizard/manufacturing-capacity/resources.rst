@@ -25,7 +25,7 @@ operation at the same time.
 Field        Type              Description
 ============ ================= ===========================================================
 name         non-empty string  The resource name.
-location     non-empty string   The resource location.
+location     location          The resource location.
 type         non-empty string  | Possible values are : "Default", "Buckets", "Infinite"
                                | For continuous resources, the Default type should be used.
 maximum      number            The resource capacity.

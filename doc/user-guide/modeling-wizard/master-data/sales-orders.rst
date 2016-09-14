@@ -13,10 +13,10 @@ Field          Type              Description
 ============== ================= ===========================================================
 name           non-empty string  Name of the demand, must be unique (E.g : Order1, SO125124...)
 quantity       number            Requested quantity.
-item           non-empty string  Requested item.
-location       non-empty string  Requested shipping location.
+item           item              Requested item.
+location       location          Requested shipping location.
 due            dateTime          Due date of the demand.
-customer       non-empty string  Customer placing the demand.
+customer       customer          Customer placing the demand.
 status         string            | Status of the demand.
                                  | Possible values are "open", "closed".
 ============== ================= ===========================================================               

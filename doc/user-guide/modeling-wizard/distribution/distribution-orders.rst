@@ -15,10 +15,10 @@ As a consequence, some demand records might be delivered late.
 Field            Type              Description
 ================ ================= ===========================================================
 status           non-empty string  For confirmed distribution orders, the status should be "confirmed".
-item             non-empty string  The item being transfered.
-origin           non-empty string  The model location where the item is transfered from.
-destination      non-empty string  The model location where the item will be received.
-end date         date              The date of the distribution order delivery.
+item             item              The item being transfered.
+origin           location          The model location where the item is transfered from.
+destination      location          The model location where the item will be received.
+end date         DateTime          The date of the distribution order delivery.
 quantity         number            The quantity delivered.
 ================ ================= ===========================================================                              
                                   

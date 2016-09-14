@@ -15,10 +15,10 @@ As a consequence, some demand records might be delivered late.
 Field            Type              Description
 ================ ================= ===========================================================
 status           non-empty string  For confirmed purchase orders, the status should be "confirmed".
-item             non-empty string  The item purchased from that supplier.
-location         non-empty string  The model location where the items will be received.
-supplier         non-empty string  The supplier the items are purchased from.
-end date         date              The date of the purchase order delivery.
+item             item              The item purchased from that supplier.
+location         location          The model location where the items will be received.
+supplier         supplier          The supplier the items are purchased from.
+end date         Date              The date of the purchase order delivery.
 quantity         number            The quantity delivered.
 ================ ================= ===========================================================                              
                                   

@@ -26,9 +26,9 @@
 <script type="text/javascript">
   var list={{ subjectlist|safe }};
   var automaticList = {
-      'Locations':gettext('text1'),
-      'Items':gettext('tex2'),
-      'Sales orders':gettext('text3')
+      'Buffers': gettext('Buffers represent store information on item-locations. ' 
+          + 'The auto-population wizard simply creates a record for every item at every location.<br><br>' 
+          + 'For a simple first model, we recommend you sit back and let us do this step for you.')
   };
   var singleparentslist = ['Introduction']; //for parents with no children
 
@@ -133,9 +133,8 @@
 	          '</div>'+
 	          '</div>'+
 	      '</div>' );
-        fmts = ngettext("Error during export");
-        $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
-        $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+        $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Wizard error"));
+        $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+result.responseText + '</div>');
         $('#button_export').val(gettext('Retry'));
         $('#popup .modal-dialog').css({'visibility':'visible'})
         $('#popup').modal('show');
@@ -210,7 +209,7 @@
         };
       };
       newrow += '</td><td>';
-      newrow += '<a class="btn btn-info form-control" href="'+list[step].fields.url_doc+'" target="_frepplecom"><span>'+gettext("information")+'</span></a>';
+      newrow += '<a class="btn btn-info form-control" href="https://frepple.com/docs/{% version%}/'+list[step].fields.url_doc+'" target="_frepplecom"><span>'+gettext("information")+'</span></a>';
       newrow += '</td><td>';
       if (Object.keys(automaticList).indexOf(list[step].pk) > -1) {
         newrow += '<button class="autoBtn btn btn-primary form-control" data-value1="'+list[step].pk+'">';

@@ -37,6 +37,7 @@ class Migration(migrations.Migration):
       ('Items', 220, '/user-guide/modeling-wizard/master-data/items.html', '/data/input/item/', false, 'Master data'),
       ('Customers', 230, '/user-guide/modeling-wizard/master-data/customers.html', '/data/input/customer/', false, 'Master data'), 
       ('Sales orders', 240, '/user-guide/modeling-wizard/master-data/sales-orders.html', '/data/input/demand/', false, 'Master data'),
+      ('Buffers', 250, '/user-guide/modeling-wizard/master-data/buffers.html', '/data/input/buffer/', false, 'Master data'),
       ('Purchasing', 300, '/user-guide/modeling-wizard/purchasing/index.html', null, false, null),
       ('Suppliers', 310, '/user-guide/modeling-wizard/purchasing/suppliers.html', '/data/input/supplier/', false, 'Purchasing'),
       ('Item suppliers', 320, '/user-guide/modeling-wizard/purchasing/item-suppliers.html', '/data/input/itemsupplier/', false, 'Purchasing'),

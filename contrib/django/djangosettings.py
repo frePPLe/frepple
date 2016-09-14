@@ -40,7 +40,7 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'IPV',
+    'NAME': 'frepple',
     'USER': 'frepple',     # Role name when using md5 authentication.
                            # Leave as an empty string when using peer or
                            # ident authencation.
@@ -426,6 +426,7 @@ DEFAULT_DASHBOARD = [
       #("execute",{}),
       ("recent_comments",{"limit":10}),
       ("recent_actions",{"limit":10}),
+      ("wizard",{}),
     ]},
   ]},
   { 'rowname': 'Sales', 'cols': [

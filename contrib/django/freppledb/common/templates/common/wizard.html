@@ -25,7 +25,11 @@
 </style>
 <script type="text/javascript">
   var list={{ subjectlist|safe }};
-  var automaticList = ['Locations','Items','Sales orders'];
+  var automaticList = {
+      'Locations':gettext('text1'),
+      'Items':gettext('tex2'),
+      'Sales orders':gettext('text3')
+  };
   var singleparentslist = ['Introduction']; //for parents with no children
 
 	function getProgress(name) {
@@ -138,9 +142,45 @@
       }
     });
 
-//			};
   };
 
+  function populate(name) {
+    //pop the dialog
+    $('#popup').html(''+
+        '<div class="modal-dialog" style="max-height: 80%; width: 350px; visibility: hidden">'+
+        '<div class="modal-content">'+
+        '<div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal"><span class="fa fa-times"></span></button>'+
+        '<h4 class="modal-title text-capitalize">'+gettext("Auto-populate")+'</h4>'+
+        '</div>'+
+        '<div class="modal-body">'+
+        automaticList[name] +
+        '</div>'+
+        '<div class="modal-footer">'+
+        '<input type="submit" id="autoexecbutton" role="button" class="btn btn-primary pull-left" value="'+gettext('Execute')+'">'+
+        '<input type="submit" id="autocancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+        '</div>'+
+        '</div>'+
+    '</div>' );
+
+    $('#popup .modal-dialog').css({'visibility':'visible'})
+    
+    $('#autoexecbutton').one('click',function () {
+    //define button action
+      // Fetch the report data
+      var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+      url += encodeURI('?option='+name);
+      
+      console.log(url);
+      // Open the window
+      //window.open(url,'_blank').close();
+
+      $('#popup').modal('hide');
+      }
+    );
+    $('#popup').modal('show');
+  };
+  
   $(function() {
 
     var newrow = '';
@@ -179,8 +219,8 @@
       newrow += '</td><td>';
       newrow += '<a class="btn btn-info form-control" href="'+list[step].fields.url_doc+'" target="_frepplecom"><span>'+gettext("information")+'</span></a>';
       newrow += '</td><td>';
-      if (automaticList.indexOf(list[step].pk) > -1) {
-        newrow += '<button class="autoBtn btn btn-primary form-control">';
+      if (Object.keys(automaticList).indexOf(list[step].pk) > -1) {
+        newrow += '<button class="autoBtn btn btn-primary form-control" data-value1="'+list[step].pk+'">';
         newrow += gettext('auto-populate');
         newrow += '</button>';
       };
@@ -193,6 +233,7 @@
 
     $("tbody").append(newrow);
     $("table tr").on('click','.setBtn', function(){setProgress($(this).attr('data-value1') , $(this).attr('data-value2'));});
+    $("table tr").on('click','.autoBtn', function(){ populate($(this).attr('data-value1') ); } );
 
   });
 </script>

@@ -112,8 +112,8 @@ Scenario management
 
 This option allows a user to copy a dataset into a what-if scenario.
 
-When the data is successfully copied, the status changes from “free”
-to “in use”.
+When the data is successfully copied, the status changes from 'Free'
+to 'In use'.
 
 When the user doesn’t need the what-if scenario any more, it can be released
 again.

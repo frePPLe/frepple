@@ -8,8 +8,8 @@ The frePPLe software has dual licensing, which means:
     `GNU Affero General Public License <http://www.gnu.org/licenses/>`_.
   | In short, the AGPL license is a strong copyleft license. You are allowed
     to copy, use and modify the source code as long as any derived product
-    remains  AGPL-compatible open source : “what is open source must remain
-    open source”.
+    remains  AGPL-compatible open source : 'what is open source must remain
+    open source'.
   | You can thus not make a proprietary commercial product using frePPLe.
   | This also applies to users who interact with frePPLe over a network: they
     must be able receive the source code.

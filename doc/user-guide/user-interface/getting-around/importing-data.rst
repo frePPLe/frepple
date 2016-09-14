@@ -35,7 +35,7 @@ A couple of notes on the CSV-format:
   will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
   See http://en.wikipedia.org/wiki/Decimal_mark
 
-* The date format expected by frePPLe is “YYYY-MM-DD HH\:MM\:SS”.
+* The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
 
 * The data file is expected to be encoded in the character encoding defined by
   the setting CSV_CHARSET (default UTF-8).

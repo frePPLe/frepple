@@ -26,7 +26,7 @@ A couple of notes on the CSV-format:
   will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
   See http://en.wikipedia.org/wiki/Decimal_mark
 
-* The date format exported and imported by frePPLe is “YYYY-MM-DD HH:MM:SS”.
+* The date format exported and imported by frePPLe is 'YYYY-MM-DD HH:MM:SS'.
   Microsoft Excel tends to export dates in your local format, which can cause
   problems when you save the file again and try to importing it back in frePPLe.
   The best approach is to import the cells as text to avoid any conversion.

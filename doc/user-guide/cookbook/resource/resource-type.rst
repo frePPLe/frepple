@@ -18,7 +18,7 @@ FrePPLe has 2 conceptually different resource types:
 
   The maximum_calendar of the resource defines the time buckets and how much
   capacity (expressed in man-hours/machine-hours) is available per time bucket.
-  Each operationplan consumes “load quantity * operationplan quantity” of the
+  Each operationplan consumes 'load quantity * operationplan quantity' of the
   resource capacity in the time bucket where it starts.
 
   This resource model is typically used for mid term master planning.
@@ -33,8 +33,8 @@ model and the third is a bucketized resource.
 The first resource represents a machine of which we have two installed. The
 constrained plan will never allocate more than 2 jobs simultaneously on the
 resource. The total available capacity in a weekly time bucket is 2*7
-machine-days (or machine-hours if the parameter “loading_time_units” is set
-to “hours”)
+machine-days (or machine-hours if the parameter 'loading_time_units' is set
+to 'hours')
 
 The second resource is similar to the first, except that now the resource
 size is varying over time. Until April 1st we have 1 resource available, and

@@ -61,7 +61,7 @@ subcategory            string            Free format subcategory.
 fence                  duration          | Time window from the current date of the plan during
                                            which all operationplans are expected to be
                                            frozen/released.
-                                         | When the “FENCE” constraint is enabled in the solver, it
+                                         | When the 'FENCE' constraint is enabled in the solver, it
                                            won’t create any new operation plans in this time fence.
                                            Only the externally supplied and locked operationplans will
                                            then exist in this time window.

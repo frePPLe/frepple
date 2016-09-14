@@ -84,7 +84,7 @@ The steps for planning a demand are:
    post-operation times are shrunk and safety stock inventory targets are
    not met.
 
-   In other words these are considered “soft constraints”: we try to respect
+   In other words these are considered soft constraints: we try to respect
    them if possible, but will create a plan that violates these if that is
    required to deliver the customer order on time.
 

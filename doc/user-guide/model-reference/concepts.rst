@@ -24,7 +24,7 @@ There are different operation types:
 * alternate: an alternate operation models the choice among multiple choices.
 
 | Example:
-  Operation “Make product X” takes 10 minutes per unit.
+  Operation 'Make product X' takes 10 minutes per unit.
 
 .. image:: _images/modelling-1.png
    :alt: Modeling - Operation
@@ -43,9 +43,9 @@ There are different buffer types:
 * infinite supply: a buffer without replenishing operation
 
 | Example:
-| Buffer “Part A” models inventory of the item “part A” in location “my factory”.
-| Buffer “Part B” models inventory of the item “part B” in location “my factory”.
-| Buffer “Bulk product” models inventory of the item “bulk product” in location “my factory”.
+| Buffer 'Part A' models inventory of the item 'part A' in location 'my factory'.
+| Buffer 'Part B' models inventory of the item 'part B' in location 'my factory'.
+| Buffer 'Bulk product' models inventory of the item 'bulk product' in location 'my factory'.
 
 .. image:: _images/modelling-2.png
    :alt: Modeling - Buffer
@@ -67,12 +67,12 @@ There are 2 types of flows:
   material and have a postive quantity.
 
 | Example:
-| Operation “Make product X” has 3 flows.
-| A first flow to consume 1 units of a buffer “Part A” at the start of the
+| Operation 'Make product X' has 3 flows.
+| A first flow to consume 1 units of a buffer 'Part A' at the start of the
   operation.
-| A second flow to consume 2 units of a buffer “Part B” at the start of the
+| A second flow to consume 2 units of a buffer 'Part B' at the start of the
   operation.
-| And finally a third flow to model the production of 1 unit of “product X”
+| And finally a third flow to model the production of 1 unit of 'product X'
   when the operation finishes.
 
 .. image:: _images/modelling-3.png
@@ -85,7 +85,7 @@ available in resources and a load defines an association between the operation
 and a resource.
 
 | Example:
-| The resource “production line” is required to perform the operation.
+| The resource 'production line' is required to perform the operation.
 
 .. image:: _images/modelling-4.png
    :alt: Modeling - Buffer
@@ -97,11 +97,11 @@ planned dates or quantities. Concrete activities are then instantiated in
 operationplans.
 
 | Example:
-| To satisfy a customer demand we plan to run “Assemble product X” for 12
+| To satisfy a customer demand we plan to run 'Assemble product X' for 12
   units from tomorrow 8am till 10am.
-| Another instance of “Make product X” is planned the next day from 3pm to 4pm
+| Another instance of 'Make product X' is planned the next day from 3pm to 4pm
   for 6 units to meet another customer demand.
-| Another instance of “Make product X” for 20 units is planned today to
+| Another instance of 'Make product X' for 20 units is planned today to
   replenish a buffer storing the product X to its safety stock level.
 
 **Putting it all together**

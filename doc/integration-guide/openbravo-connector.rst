@@ -43,7 +43,7 @@ The connector provides the following functionality:
     it is enabled.
 
 * | **Configure the following parameters**
-  | In the frePPLe user interface, the menu item “admin/parameters” opens a
+  | In the frePPLe user interface, the menu item 'admin/parameters' opens a
     data table to edit these.
 
   * openbravo.host: host where the Openbravo web service is running

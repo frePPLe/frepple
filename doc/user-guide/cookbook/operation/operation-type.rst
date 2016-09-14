@@ -14,7 +14,7 @@ Different operation types are available:
 * **Time_per**
 
   The duration of the operation increases linearly with the planned quantity. The total
-  duration takes the form of “A + B * quantity”, where A and B are constants.
+  duration takes the form of 'A + B * quantity', where A and B are constants.
 
   A typical example is a production operation: there is a fixed overhead of machine
   setup at the start, and the actual production is linear with the quantity to produce.

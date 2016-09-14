@@ -9,7 +9,7 @@ Such extension modules can be shipped with frePPLe, or can be developed by
 third parties. They can be open source or have a commercial license.
 
 The steps below describe how a custom extension can be build on the framework.
-An complete example is available in the test case “sample_module”, with a
+An complete example is available in the test case 'sample_module', with a
 Linux makefile and Visual Studio project.
 
 * Create your own header files, and include the frePPLe header file
@@ -59,14 +59,14 @@ Linux makefile and Visual Studio project.
 * Compile your code as a loadable module.
 
   The command line options and arguments vary for each compiler and platform.
-  For gcc I use the options “-module -shrext .so -avoid-version”, adding also
-  “-no-undefined” when running under Cygwin.
+  For gcc I use the options '-module -shrext .so -avoid-version', adding also
+  '-no-undefined' when running under Cygwin.
 
   To keep things simple and transparent please use the .so extension for your
   modules and place them in the $FREPPLE_HOME directory.
 
 * Update the init.xml or init.py file to load your module with the
-  “frepple.loadmodule” Python function. Keyword arguments to this function are
+  'frepple.loadmodule' Python function. Keyword arguments to this function are
   passed to the initialize() function when the module is loaded.
 
 * Update the file frepple.xsd by defining the XML constructs enabled by

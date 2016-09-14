@@ -19,7 +19,7 @@ core planning engine:
   data format.
 
   The XML-data can be placed in any namespace. To support subclassing the
-  namespace xsi must be defined as “http\://www.w3.org/2001/XMLSchema-instance”.
+  namespace xsi must be defined as 'http\://www.w3.org/2001/XMLSchema-instance'.
 
   FrePPLe XML files thus typically have the following structure:
 

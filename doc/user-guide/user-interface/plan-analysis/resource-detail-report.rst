@@ -9,7 +9,7 @@ Field             Description
 ================= ==============================================================================
 Resource          Resource name.
 Operation         | Name of the operation loading the resource.
-                  | If the name is “setup operation” this load plan shows a conversion of the
+                  | If the name is 'setup operation' this load plan shows a conversion of the
                     resource to a new setup.
 Start date        Date when the load plan starts.
 End date          Date when the load plan ends.

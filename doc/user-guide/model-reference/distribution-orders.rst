@@ -18,14 +18,14 @@ status           non-empty string  | This field should have one of the following
 item             item              The item being transfered.
 origin           location          The model location where the item is transfered from.
 destination      location          The model location where the item will be received.
+quantity         number            The quantity delivered.
 start date       DateTime          The date when the distribution order is leaving the origin location.
 end date         DateTime          The date of the distribution order delivery.
-Demands          demand            | The demand(s) (and quantity) pegged to the distribution order.
-criticality      number            | The criticality is a number calculated by the optimization.
+Demands          demand            | The demand(s) (and quantity) pegged to the distribution order. This is a generated field.
+criticality      number            | The criticality is a number calculated by the optimization. This is a generated field.
                                    | It reprensents an indication of the urgency of the distribution order.
                                    | A criticality of 0 indicates that the distribution order is on the critical path of one or more demands.
                                    | Higher criticality values indicate a delay of the distribution order will not immediately impact the delivery of any demand.
                                    | A criticality of 999 indicates a distribution order that isn’t used at all to meet any demand.
-quantity         number            The quantity delivered.
 ================ ================= =================================================================================================================================                            
                                   

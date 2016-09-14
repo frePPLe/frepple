@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 by frePPLe bvba
+# Copyright (C) 2016 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -26,7 +26,7 @@ from django.utils.encoding import force_text
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.models import Comment
+from freppledb.common.models import Comment, Wizard
 
 
 class WelcomeWidget(Widget):
@@ -47,6 +47,67 @@ How to get started?
 ''') % {'docurl': "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])}
 
 Dashboard.register(WelcomeWidget)
+
+class WizardWidget(Widget):
+  name = "wizard"
+  title = _("Modelling wizard")
+  tooltip = _("frePPLe data wizard")
+  asynchronous = False
+
+  def render(self, request=None):
+    from freppledb.common.middleware import _thread_locals
+    try:
+      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
+    except:
+      db = DEFAULT_DB_ALIAS
+
+    print(Wizard.objects.using(db).all())
+    data = Wizard.objects.using(db).all().filter(owner = None).order_by('sequenceorder')
+    countall = Wizard.objects.using(db).all().count()
+    countchildren = Wizard.objects.using(db).all().exclude(owner = None).count()
+    countparents = Wizard.objects.using(db).all().filter(owner = None).count()
+    
+    #list of owners
+    listofowners = list(set(Wizard.objects.using(db).all().exclude(owner = None).values_list('owner',flat = True)))
+    print(listofowners)
+    countowners = len(listofowners)
+    print(countowners)
+    #count single parents
+    listofsingleparents = list(set(Wizard.objects.using(db).all().exclude(owner__in = listofowners).filter(owner = None).values_list('owner',flat = True)))
+    countsingle = len(listofsingleparents)
+     
+    count1 = countchildren + countsingle
+    # count the status of count1
+    part1 = Wizard.objects.using(db).all().exclude(owner = None).filter(status = True).count()
+    part2 = Wizard.objects.using(db).all().exclude(pk__in = listofowners).filter(owner = None, status = True).count()
+    count2 = part1+part2
+    progress = str(int(count2/count1*100))+'%'
+    
+    #print(data)
+    #print(count)
+
+    result = ['<div class="table-reponsive"><table style="width: 100%"><thead><tr id="overall"><th style="vertical-align: top; text-align: left; width: 120px; padding-right: 10px;">']
+    result.append('<span>%s</span>' % capfirst(force_text(_('overall progress'))) )
+    result.append('</th><th style="min-width: 50px"><div class="progress">')
+    result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s; min-width: 0px;">' % (count1,count2,progress) )
+    result.append('<span>%s</span>' % progress )
+    result.append('</div>')
+    result.append('</div></th></tr></thead><tbody>')
+    for subject in data:
+      count1 = Wizard.objects.using(db).all().filter(owner = subject.name).count()
+      if count1 == 0:
+        count1 = 1
+      count2 = Wizard.objects.using(db).all().filter(owner = subject.name, status = True).count()
+      progress = str(int(count2/count1*100))+'%'
+      result.append('<tr style="vertical-align: top"><td class="underline"><a href="/wizard/" target="_blank">%s</a></td>' % subject.name)
+      result.append('<td><div class="progress">')
+      result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s; min-width: 0px;">' % (count1,count2,progress) )
+      result.append('<span>%s</span>' % progress )
+      result.append('</div></div></td></tr></tbody>')
+    result.append('</table>')
+
+    return '\n'.join(result)
+Dashboard.register(WizardWidget)
 
 
 class NewsWidget(Widget):

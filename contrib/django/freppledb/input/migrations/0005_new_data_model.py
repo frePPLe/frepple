@@ -471,4 +471,21 @@ class Migration(migrations.Migration):
       field=models.CharField(blank=True, choices=[('proposed', 'proposed'), ('approved', 'approved'), ('confirmed', 'confirmed'), ('closed', 'closed')], null=True, verbose_name='status', help_text='Status of the order', max_length=20),
     ),
 
+    # Remove the operation field from item
+    migrations.RunSQL(
+     '''
+     update demand 
+     set operation_id = item.operation_id
+     from item
+     where demand.operation_id is null
+       and item.operation_id is not null
+       and item.name = demand.item_id
+     ''',
+     migrations.RunSQL.noop
+    ), 
+    migrations.RemoveField(
+      model_name='item',
+      name='operation',
+    ),
+
   ]

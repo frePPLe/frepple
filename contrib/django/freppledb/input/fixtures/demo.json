@@ -27,7 +27,7 @@
 {"pk": "Make fabric @ factory 1", "model": "input.operation", "fields": {"item": "fabric", "location": "factory 1", "sizemultiple": "1.00", "sizeminimum":"24.00", "duration_per": "3600.00", "duration": "0.00", "type": "time_per"}},
 {"pk": "Deliver product from factory 1 or 2", "model": "input.operation", "fields": {"location": "factory 1", "sizemultiple": "1.00", "type": "alternate"}},
 {"pk": "Deliver product from factory 2 or 1", "model": "input.operation", "fields": {"location": "factory 2", "sizemultiple": "1.00", "type": "alternate"}},
-{"pk": "product", "model": "input.item", "fields": {"price": 100, "operation": "Deliver product from factory 1 or 2"}},
+{"pk": "product", "model": "input.item", "fields": {"price": 100}},
 {"pk": "fabric", "model": "input.item", "fields": {"price": 100}},
 {"pk": "box", "model": "input.item", "fields": {"price": 1}},
 {"pk": "ink", "model": "input.item", "fields": {"price": 10}},

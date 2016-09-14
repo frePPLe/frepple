@@ -343,21 +343,19 @@ class loadData(object):
       attrsql = ''
     self.cursor.execute('''
       SELECT
-        name, description, operation_id, owner_id,
+        name, description, owner_id,
         price, category, subcategory, source %s
       FROM item %s
       ''' % (attrsql, self.filter_where))
     for i in self.cursor.fetchall():
       cnt += 1
       try:
-        x = frepple.item(name=i[0], description=i[1], category=i[5], subcategory=i[6], source=i[7])
+        x = frepple.item(name=i[0], description=i[1], category=i[4], subcategory=i[5], source=i[6])
         if i[2]:
-          x.operation = frepple.operation(name=i[2])
+          x.owner = frepple.item(name=i[2])
         if i[3]:
-          x.owner = frepple.item(name=i[3])
-        if i[4]:
-          x.price = i[4]
-        idx = 8
+          x.price = i[3]
+        idx = 7
         for a in attrs:
           setattr(x, a, i[idx])
           idx += 1

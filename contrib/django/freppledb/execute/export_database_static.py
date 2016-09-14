@@ -895,25 +895,23 @@ class exportStaticModel(object):
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
         "insert into item \
-        (name,description,operation_id,price,category,subcategory,source,lastmodified) \
+        (name,description,price,category,subcategory,source,lastmodified) \
         values(%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.name, i.description, i.operation and i.operation.name or None,
-            round(i.price, 4), i.category, i.subcategory,
-            i.source, self.timestamp
+            i.name, i.description, round(i.price, 4), i.category, 
+            i.subcategory, i.source, self.timestamp
           )
           for i in frepple.items()
           if i.name not in primary_keys and (not self.source or self.source == i.source)
         ])
       cursor.executemany(
         "update item \
-         set description=%s, operation_id=%s, price=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
+         set description=%s, price=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
          where name=%s",
         [
           (
-            i.description, i.operation and i.operation.name or None,
-            round(i.price, 4), i.category, i.subcategory,
+            i.description, round(i.price, 4), i.category, i.subcategory,
             i.source, self.timestamp, i.name
           )
           for i in frepple.items()

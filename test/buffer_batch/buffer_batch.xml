@@ -13,9 +13,7 @@
     <operation name="level 5" duration="P2D" duration_per="PT1H" xsi:type="operation_time_per"/>
   </operations>
   <items>
-    <item name="product">
-      <operation name="level 0"/>
-    </item>
+    <item name="product"/>
   </items>
   <buffers>
     <buffer name="level 1">
@@ -97,366 +95,427 @@
       <minshipment>2</minshipment>
       <due>2014-07-31T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-30">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-30T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-29">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-29T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>
     </demand>
     <demand name="order 2014-07-28">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-28T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-27">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-27T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-26">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-26T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-25">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-25T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-24">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-24T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-23">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-23T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-22">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-22T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-21">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-21T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-20">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-20T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-19">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-19T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-18">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-18T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-17">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-17T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-16">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-16T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-15">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-15T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-14">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-14T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>
     </demand>
     <demand name="order 2014-07-13">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-13T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-12">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-12T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-11">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-11T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-10">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-10T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-09">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-09T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-08">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-08T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-07">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-07T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-06">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-06T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-05">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-05T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-04">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-04T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-03">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-03T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-02">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-02T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-07-01">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-07-01T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>
     </demand>
     <demand name="order 2014-06-30">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-30T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-29">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-29T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-28">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-28T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-27">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-27T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-26">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-26T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-25">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-25T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-24">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-24T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-23">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-23T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-22">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-22T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-21">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-21T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-20">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-20T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-19">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-19T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-18">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-18T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-17">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-17T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-16">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-16T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-15">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-15T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-14">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-14T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-13">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-13T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-12">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-12T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-11">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-11T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-10">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-10T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-09">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-09T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-08">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-08T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-07">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-07T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-06">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-06T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-05">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-05T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>
     </demand>
     <demand name="order 2014-06-04">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-04T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-03">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-03T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-02">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-02T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
     <demand name="order 2014-06-01">
       <quantity>2</quantity>
       <minshipment>2</minshipment>
       <due>2014-06-01T00:00:00</due>
       <item name="product" />
+      <operation name="level 0"/>    
     </demand>
   </demands>
 

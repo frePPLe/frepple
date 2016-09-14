@@ -17,20 +17,26 @@
 		- 9: Procurement in fixed quantity with fixed interval
 		- 10: Constrained procurement test
     - 11: Procurement with a supplier calendar
+  
+  IMPORTANT:
+  The buffer type buffer_procure are deprecated. It is easier to model the same
+  using itemsupplier records and a buffer.minimum.
 	</description>
 	<current>2009-01-01T00:00:00</current>
 	<buffers>
 	  <buffer name="buffer 1" xsi:type="buffer_procure">
 	    <description>1: Base scenario</description>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
 	    <maxinventory>70</maxinventory>
 	  </buffer>
 	  <buffer name="buffer 2" xsi:type="buffer_procure">
-	    <description>2: Procure in multiples</description>
+	    <description>2: Procure in multiples</description>      
 	    <item name="item 2" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
@@ -41,6 +47,7 @@
 	    <description>3: Procurement with miniumum size, maximum size
 	    and in multiples</description>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
@@ -52,6 +59,7 @@
 	  <buffer name="buffer 4" xsi:type="buffer_procure">
 	    <description>4: Invalid parameters</description>
 	    <item name="item 4" />
+      <location name="warehouse" />
 	    <onhand>0</onhand>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
@@ -64,6 +72,7 @@
 	  <buffer name="buffer 5" xsi:type="buffer_procure">
 	    <description>5: Procurement with minimum and maximum interval</description>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <mininterval>P10D</mininterval>
 	    <maxinterval>P12D</maxinterval>
@@ -75,6 +84,7 @@
 	    <description>6: The full monty. Procurement with minimum interval,
 	    maximum interval, miniumum size, maximum size and in multiples</description>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <mininterval>P10D</mininterval>
 	    <maxinterval>P12D</maxinterval>
@@ -88,6 +98,7 @@
 	  <buffer name="buffer 7" xsi:type="buffer_procure">
 	    <description>7: Procurement with fixed interval</description>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <mininterval>P7D</mininterval>
 	    <maxinterval>P7D</maxinterval>
@@ -98,6 +109,7 @@
 	  <buffer name="buffer 8" xsi:type="buffer_procure">
 	    <description>8: Procurement in fixed quantity</description>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <leadtime>P3DT12H</leadtime>
 	    <mininventory>20</mininventory>
@@ -108,6 +120,7 @@
 	  <buffer name="buffer 9" xsi:type="buffer_procure">
 	    <description>9: Procurement in fixed quantity with fixed interval</description>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	    <onhand>25</onhand>
 	    <mininterval>P7D</mininterval>
 	    <maxinterval>P7D</maxinterval>
@@ -120,6 +133,7 @@
 	  <buffer name="buffer 10" xsi:type="buffer_procure">
 	    <description>10: Constrained procurement</description>
 	    <item name="item 10" />
+      <location name="warehouse" />
 	    <onhand>0</onhand>
 	    <mininterval>P10D</mininterval>
 	    <leadtime>P10D</leadtime>
@@ -146,661 +160,657 @@
       <fence>P7D</fence>
 	  </buffer>
 	</buffers>
-	<items>
-	  <item name="item 1">
-	    <operation name="delivery 1" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 1" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 2">
-	    <operation name="delivery 2" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 2" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 3">
-	    <operation name="delivery 3" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 3" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 4">
-	    <operation name="delivery 4" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 4" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 5">
-	    <operation name="delivery 5" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 5" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 6">
-	    <operation name="delivery 6" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 6" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 7">
-	    <operation name="delivery 7" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 7" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 8">
-	    <operation name="delivery 8" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 8" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 9">
-	    <operation name="delivery 9" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 9" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 10">
-	    <operation name="delivery 10" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 10" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	  <item name="item 11">
-	    <operation name="delivery 11" xsi:type="operation_fixed_time">
-      	<flows>
-      	  <flow xsi:type="flow_end">
-      	    <buffer name="buffer 11" />
-      	    <quantity>-1</quantity>
-      	  </flow>
-      	</flows>
-      </operation>
-	  </item>
-	</items>
 	<demands>
 	  <!-- demand for item 1 -->
 	  <demand name="order 01 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 1">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 1">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 1">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 1">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 1">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 1">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 1" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 2 -->
 	  <demand name="order 01 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 2">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 2">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 2">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 2">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 2">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 2">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 2">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 2" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 3 -->
 	  <demand name="order 01 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 3">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 3">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 3">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 3">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 3">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 3">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 3">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 3" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 4.
 	       A single demand suffices to show the invalid parameters
@@ -809,938 +819,1124 @@
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 4" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 5 -->
 	  <demand name="order 01 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 5">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 5">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 5">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 5">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 5">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 5">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 5">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 5" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 6 -->
 	  <demand name="order 01 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 6">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 6">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 6">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 6">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 6">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 6">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 6">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 6" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 7 -->
 	  <demand name="order 01 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 7">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 7">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 7">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 7">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 7">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 7">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 7">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 7" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 8 -->
 	  <demand name="order 01 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 8">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 8">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 8">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 8">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 8">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 8">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 8">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 8" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 9 -->
 	  <demand name="order 01 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 03 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-03T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 04 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-04T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 05 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-05T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 06 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-06T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 07 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-07T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 08 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-08T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 09 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-09T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 10 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 11 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-11T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 12 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-12T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 13 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-13T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 14 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-14T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 15 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-15T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 16 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-16T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 17 for item 9">
 	    <quantity>10</quantity>
 	    <due>2009-01-17T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 18 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-18T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 19 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-19T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 20 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-20T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 21 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-21T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 22 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-22T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 23 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-23T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 24 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-24T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 25 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-25T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 26 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-26T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 27 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-27T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 28 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-28T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 29 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-29T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 30 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 31 for item 9">
 	    <quantity>5</quantity>
 	    <due>2009-01-31T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 32 for item 9">
 	    <quantity>15</quantity>
 	    <due>2009-02-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 33 for item 9">
 	    <quantity>15</quantity>
 	    <due>2009-03-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 34 for item 9">
 	    <quantity>15</quantity>
 	    <due>2009-04-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 35 for item 9">
 	    <quantity>15</quantity>
 	    <due>2009-05-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 36 for item 9">
 	    <quantity>15</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 9" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 10 -->
 	  <demand name="order 01 for item 10">
 	    <quantity>70</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 10" />
+      <location name="warehouse" />
 	  </demand>
 	  <demand name="order 02 for item 10">
 	    <quantity>70</quantity>
 	    <due>2009-06-01T00:00:00</due>
 	    <item name="item 10" />
+      <location name="warehouse" />
 	  </demand>
 	  <!-- demand for item 11 -->
 	  <demand name="order 01 for item 11">
 	    <quantity>70</quantity>
 	    <due>2009-01-01T00:00:00</due>
 	    <item name="item 11" />
+      <location name="supplier" />
 	  </demand>
 	  <demand name="order 02 for item 11">
 	    <quantity>70</quantity>
 	    <due>2009-07-06T00:00:00</due>
 	    <item name="item 11" />
+      <location name="supplier" />
 	  </demand>
 	  <demand name="order 03 for item 11">
 	    <quantity>70</quantity>
 	    <due>2009-07-12T00:00:00</due>
 	    <item name="item 11" />
+      <location name="supplier" />
 	  </demand>
 	</demands>
 

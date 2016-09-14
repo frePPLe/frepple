@@ -110,9 +110,7 @@ class ItemSerializer(BulkSerializerMixin, ModelSerializer):
 
 class ItemAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Item.objects.all()
-
-
-    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'operation', 'price', 'source', 'lastmodified')
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'price', 'source', 'lastmodified')
 
     serializer_class = ItemSerializer
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -187,9 +185,11 @@ class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class OperationSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Operation
-      fields = ('name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
-                'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end', 
-                 'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified')
+      fields = (
+        'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
+        'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end', 
+        'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial=True
@@ -197,11 +197,11 @@ class OperationSerializer(BulkSerializerMixin, ModelSerializer):
 class OperationAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Operation.objects.all()
     serializer_class = OperationSerializer
-
-
-    filter_fields = ('name', 'type', 'description', 'category', 'subcategory', 'location', 'fence',
-                'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum',
-                 'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified')
+    filter_fields = (
+      'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
+      'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end', 
+      'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified'
+      )
 
 class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Operation.objects.all()

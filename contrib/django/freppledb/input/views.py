@@ -767,7 +767,6 @@ class ItemList(GridReport):
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldText('owner', title=_('owner'), field_name='owner__name'),
     GridFieldCurrency('price', title=_('price')),
     GridFieldText('source', title=_('source')),

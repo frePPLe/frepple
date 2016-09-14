@@ -231,6 +231,10 @@
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
+      <xsd:element name="item" type="item" />
+      <xsd:element name="priority" type="xsd:integer" />
+      <xsd:element name="effective_start" type="xsd:dateTime" />
+      <xsd:element name="effective_end" type="xsd:dateTime" /> 
       <xsd:element name="duration" type="xsd:duration" />
       <xsd:element name="owner" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
@@ -255,6 +259,9 @@
     <xsd:attribute name="size_multiple" type="positiveDouble" />
     <xsd:attribute name="size_maximum" type="positiveDouble" />
     <xsd:attribute name="cost" type="positiveDouble" />
+    <xsd:attribute name="priority" type="xsd:integer" />
+    <xsd:attribute name="effective_start" type="xsd:dateTime" />
+    <xsd:attribute name="effective_end" type="xsd:dateTime" />
   </xsd:complexType>
 
   <xsd:complexType name="operationlist">
@@ -364,7 +371,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="operation" type="operation" />
       <xsd:element name="price" type="positiveDouble" />
       <xsd:element name="itemsuppliers" type="itemsupplierlist" />
       <xsd:element name="itemdistributions" type="itemdistributionlist" />
@@ -716,6 +722,7 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="operation" type="operation" />
       <xsd:element name="buffer" type="buffer" />
+      <xsd:element name="item" type="item" />
       <xsd:element name="quantity" type="xsd:double" />
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />

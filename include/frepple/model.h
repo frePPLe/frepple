@@ -3922,34 +3922,6 @@ class Item : public HasHierarchy<Item>, public HasDescription
     explicit DECLARE_EXPORT Item() : deliveryOperation(nullptr), price(0.0),
       firstItemDistribution(nullptr), firstItemBuffer(nullptr), firstItemDemand(nullptr), firstOperation(nullptr) {}
 
-    /** Returns the delivery operation.<br>
-      * This field is inherited from a parent item, if it hasn't been
-      * specified.
-      */
-    Operation* getOperation() const
-    {
-      // Current item has a non-empty deliveryOperation field
-      if (deliveryOperation)
-        return deliveryOperation;
-
-      // Look for a non-empty deliveryOperation field on owners
-      for (Item* i = getOwner(); i; i = i->getOwner())
-        if (i->deliveryOperation)
-          return i->deliveryOperation;
-
-      // The field is not specified on the item or any of its parents.
-      return nullptr;
-    }
-
-    /** Updates the delivery operation.<br>
-      * If some demands have already been planned using the old delivery
-      * operation they are left untouched and won't be replanned.
-      */
-    void setOperation(Operation* o)
-    {
-      deliveryOperation = o;
-    }
-
     /** Return the selling price of the item.<br>
       * The default value is 0.0.
       */
@@ -4057,7 +4029,6 @@ class Item : public HasHierarchy<Item>, public HasDescription
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::price, &Cls::getPrice, &Cls::setPrice, 0);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
@@ -4478,6 +4449,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       hidden(false), producing_operation(uninitializedProducing), loc(nullptr), it(nullptr),
       min_val(0), max_val(default_max), min_cal(nullptr), max_cal(nullptr),
       min_interval(-1), tool(false), nextItemBuffer(nullptr) {}
+
+    static Buffer* findOrCreate(Item*, Location*);
 
     /** Builds a producing operation for a buffer.
       * The logic used is based on the following:
@@ -5287,6 +5260,13 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Returns the buffer. */
     Buffer* getBuffer() const
     {
+      if (!getPtrB() && item && getOperation() && getOperation()->getLocation())
+      {
+        // Dynamically set the buffer
+        Buffer* b = Buffer::findOrCreate(item, getOperation()->getLocation());
+        if (b) 
+          const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
+      }
       return getPtrB();
     }
 
@@ -5297,6 +5277,18 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     void setBuffer(Buffer* b)
     {
       if (b) setPtrB(b,b->getFlows());
+    }
+
+    Item* getItem() const
+    {
+      return getPtrB() ? getPtrB()->getItem() : item;
+    }
+
+    void setItem(Item* i)
+    {
+      if (getPtrB() && getPtrB()->getItem() != i)
+        throw DataException("Invalid update of operationmaterial");
+      item = i;
     }
 
     /** Return the leading flow of this group.
@@ -5367,7 +5359,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MANDATORY + PARENT);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, DONT_SERIALIZE);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
@@ -5383,7 +5376,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit DECLARE_EXPORT Flow() : quantity(0.0), search(PRIORITY)
+    explicit DECLARE_EXPORT Flow() : quantity(0.0), search(PRIORITY), item(nullptr)
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -5395,6 +5388,11 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
     /** Mode to select the preferred alternates. */
     SearchMode search;
+
+    /** Item of the flow. This can be used to automatically generate the buffer
+      * when and if needed.
+      */
+    Item *item;
 
     static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };

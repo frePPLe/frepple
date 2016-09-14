@@ -474,15 +474,8 @@ extern "C" PyObject* OperationItemSupplier::createOrder(
     }
   }
   if (!destbuffer)
-  {
     // Create the destination buffer
-    destbuffer = new BufferDefault();
-    stringstream o;
-    o << item << " @ " << location;
-    destbuffer->setName(o.str());
-    destbuffer->setItem(item);
-    destbuffer->setLocation(location);
-  }
+    destbuffer = Buffer::findOrCreate(item, location);
 
   // Build the producing operation for this buffer.
   destbuffer->getProducingOperation();

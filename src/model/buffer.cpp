@@ -714,6 +714,26 @@ DECLARE_EXPORT Operation* BufferProcure::getOperation() const
 }
 
 
+Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
+{
+  if (!itm || !loc)
+    return nullptr;
+
+  // Return existing buffer if it exists
+  stringstream o;
+  o << itm->getName() << " @ " << loc->getName();
+  Buffer* b = find(o.str());
+  if (b) return b;
+
+  // Create a new buffer
+  b = new BufferDefault();
+  b->setItem(itm);
+  b->setLocation(loc);
+  b->setName(o.str());
+  return b;
+}
+
+
 DECLARE_EXPORT void Buffer::buildProducingOperation()
 {
   if (producing_operation
@@ -872,24 +892,7 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           continue;
 
         // Find or create the source buffer
-        Buffer* originbuf = nullptr;
-        for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-          if (buf->getLocation() == &*loc && buf->getItem() == getItem())
-          {
-            originbuf = &*buf;
-            break;
-          }
-        if (!originbuf)
-        {
-          originbuf = new BufferDefault();
-          originbuf->setItem(getItem());
-          originbuf->setLocation(&*loc);
-          stringstream o;
-          o << getItem() << " @ " << loc->getName();
-          // We assume there is no buffer with that name yet. If there is,
-          // we'll get an error here.
-          originbuf->setName(o.str());
-        }
+        Buffer* originbuf = findOrCreate(getItem(), &*loc);
 
         // Create new operation
         OperationItemDistribution *oper = new OperationItemDistribution(itemdist, originbuf, this);

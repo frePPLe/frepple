@@ -411,15 +411,8 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
     }
   }
   if (!destbuffer)
-  {
     // Create the destination buffer
-    destbuffer = new BufferDefault();
-    stringstream o;
-    o << item << " @ " << dest;
-    destbuffer->setName(o.str());
-    destbuffer->setItem(item);
-    destbuffer->setLocation(dest);
-  }
+    destbuffer = Buffer::findOrCreate(item, dest);
 
   // Build the producing operation for this buffer.
   destbuffer->getProducingOperation();
@@ -469,15 +462,9 @@ extern "C" PyObject* OperationItemDistribution::createOrder(
       }
     }
     if (!originbuffer)
-    {
       // Create the origin buffer
-      originbuffer = new BufferDefault();
-      stringstream o;
-      o << item << " @ " << origin;
-      originbuffer->setName(o.str());
-      originbuffer->setItem(item);
-      originbuffer->setLocation(origin);
-    }
+      originbuffer = Buffer::findOrCreate(item, origin);
+
     // Note: We know that we need to create a new one. An existing one would
     // have created an operation on the buffer already.
     ItemDistribution *itemdist = new ItemDistribution();

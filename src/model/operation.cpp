@@ -165,11 +165,6 @@ DECLARE_EXPORT Operation::~Operation()
   // The Flow and Load objects are automatically deleted by the destructor
   // of the Association list class.
 
-  // Remove the reference to this operation from all items
-  for (Item::iterator k = Item::begin(); k != Item::end(); ++k)
-    if (k->getOperation() == this)
-      k->setOperation(nullptr);
-
   // Unlink from item
   if (item)
   {

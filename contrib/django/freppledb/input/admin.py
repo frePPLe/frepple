@@ -139,7 +139,7 @@ class OperationResource_inline(MultiDBTabularInline):
 class Item_admin(MultiDBModelAdmin):
   model = Item
   save_on_top = True
-  raw_id_fields = ('operation', 'owner',)
+  raw_id_fields = ('owner',)
   inlines = [ ItemSupplier_inline, OperationMaterial_inline ]
   exclude = ('source',)
   tabs = [

@@ -29,9 +29,7 @@
     </operation>
   </operations>
   <items>
-    <item name="end item">
-      <operation name="level 1"/>
-    </item>
+    <item name="end item"/>
   </items>
   <buffers>
     <buffer name="between 1 and 2">
@@ -113,6 +111,7 @@
       <due>2014-01-01T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
+      <operation name="level 1"/>
     </demand>
   </demands>
 

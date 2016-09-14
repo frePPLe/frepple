@@ -150,11 +150,6 @@ class Item(AuditModel, HierarchyModel):
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
-  operation = models.ForeignKey(
-    'Operation', verbose_name=_('delivery operation'), null=True, blank=True,
-    help_text=_("Default operation used to ship a demand for this item"),
-    related_name='operation'
-    )
   price = models.DecimalField(
     _('price'), null=True, blank=True,
     max_digits=15, decimal_places=4,

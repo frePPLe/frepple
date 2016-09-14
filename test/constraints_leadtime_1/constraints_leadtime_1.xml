@@ -7,62 +7,67 @@
   <current>2009-01-01T00:00:00</current>
   <operations>
     <operation name="make end item" xsi:type="operation_fixed_time">
+      <location name="factory" />
       <!--size_multiple>3</size_multiple-->
       <duration>P7D</duration>
     </operation>
     <operation name="make subassembly" xsi:type="operation_time_per">
+      <location name="factory" />
       <duration>P1D</duration>
       <duration_per>PT12H</duration_per>
     </operation>
+    <operation name="delivery end item" xsi:type="operation_fixed_time">
+      <location name="factory" />
+      <duration>P1D</duration>
+    </operation>
   </operations>
   <items>
-    <item name="end item">
-      <operation name="delivery end item" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
+    <item name="end item"/>
     <item name="subassembly" />
     <item name="Raw material" />
   </items>
   <buffers>
-    <buffer name="end item">
+    <buffer name="end item @ factory">
       <producing name="make end item" />
       <item name="end item" />
+      <location name="factory" />
     </buffer>
-    <buffer name="subassembly">
+    <buffer name="subassembly @ factory">
       <producing name="make subassembly" />
       <item name="subassembly" />
+      <location name="factory" />
       <onhand>15</onhand>
     </buffer>
-    <buffer name="Raw material">
+    <buffer name="Raw material @ factory">
       <item name="Raw material" />
+      <location name="factory" />
       <onhand>20</onhand>
     </buffer>
   </buffers>
   <flows>
     <flow xsi:type="flow_start">
       <operation name="delivery end item" />
-      <buffer name="end item" />
+      <item name="end item" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_start">
       <operation name="make subassembly" />
-      <buffer name="Raw material" />
+      <item name="Raw material" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_start">
       <operation name="make end item" />
-      <buffer name="subassembly" />
+      <item name="subassembly" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
       <operation name="make end item" />
-      <buffer name="end item" />
+      <item name="end item" />
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_end">
       <operation name="make subassembly" />
-      <buffer name="subassembly" />
+      <item name="subassembly" />
       <quantity>1</quantity>
     </flow>
   </flows>
@@ -77,6 +82,8 @@
       <due>2009-01-03T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
+      <location name="factory" />
+      <operation name="delivery end item" />
     </demand>
     <demand name="order 2">
       <description>
@@ -90,6 +97,8 @@
       <due>2009-01-11T00:00:00</due>
       <priority>2</priority>
       <item name="end item" />
+      <location name="factory" />
+      <operation name="delivery end item" />      
     </demand>
   </demands>
 

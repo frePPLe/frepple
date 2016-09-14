@@ -245,13 +245,7 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
   if (oper && oper != uninitializedDelivery)
     return oper;
 
-  // Case 2: Operation specified on the item.
-  // Note that we don't accept a delivery operation at the parent level
-  // as a valid operation to plan the demand.
-  if (it && it->getOperation())
-    return it->getOperation();
-
-  // Case 3: Create a delivery operation automatically
+  // Case 2: Create a delivery operation automatically
   Location *l = getLocation();
   if (!l)
   {
@@ -289,15 +283,8 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
     if (ok)
     {
       if (!buf)
-      {
         // Create a new buffer
-        buf = new BufferDefault();
-        buf->setItem(getItem());
-        buf->setLocation(l);
-        stringstream o;
-        o << getItem() << " @ " << l;
-        buf->setName(o.str());
-      }
+        buf = Buffer::findOrCreate(getItem(), l);
 
       // Find an existing operation consuming from this buffer
       stringstream o;

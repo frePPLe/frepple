@@ -128,15 +128,10 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     }
 
     // Find or create a buffer for the item at the operation location
-    stringstream o;
-    o << static_cast<Item*>(item)->getName() << " @ " << static_cast<Operation*>(oper)->getLocation()->getName();
-    Buffer* buf = Buffer::find(o.str());
-    if (!buf) {
-      buf = new BufferDefault();
-      buf->setName(o.str());
-      buf->setItem(static_cast<Item*>(item));
-      buf->setLocation(static_cast<Operation*>(oper)->getLocation());
-    }
+    Buffer* buf = Buffer::findOrCreate(
+      static_cast<Item*>(item), 
+      static_cast<Operation*>(oper)->getLocation()
+      );
 
     // Pick up the type and create the flow
     Flow *l;

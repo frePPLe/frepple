@@ -17,7 +17,7 @@
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils import formats
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
@@ -48,63 +48,64 @@ How to get started?
 
 Dashboard.register(WelcomeWidget)
 
+
 class WizardWidget(Widget):
   name = "wizard"
-  title = _("Modelling wizard")
-  tooltip = _("frePPLe data wizard")
+  title = _("Modeling wizard")
+  tooltip = _("Get started quick and easy to fill out the data tables")
   asynchronous = False
-
+  url = '/wizard/'
+  
   def render(self, request=None):
     from freppledb.common.middleware import _thread_locals
     try:
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
       db = DEFAULT_DB_ALIAS
+    cursor = connections[db].cursor()
+    cursor.execute('''
+      with summary as (
+      select owner_id as grp,
+        sum(case when status then 1 else 0 end) steps_complete,
+        count(*) steps_total
+      from common_wizard
+      where owner_id is not null
+      group by owner_id
+      )
+      select 'Overall progress', 
+        sum(steps_complete),
+        sum(greatest(steps_total,1))
+      from summary
+      union all
+      (
+      select name, steps_complete, steps_total
+      from summary
+      inner join common_wizard
+      on summary.grp = common_wizard.name
+      order by common_wizard.sequenceorder
+      )
+      ''')
 
-    print(Wizard.objects.using(db).all())
-    data = Wizard.objects.using(db).all().filter(owner = None).order_by('sequenceorder')
-    countall = Wizard.objects.using(db).all().count()
-    countchildren = Wizard.objects.using(db).all().exclude(owner = None).count()
-    countparents = Wizard.objects.using(db).all().filter(owner = None).count()
-    
-    #list of owners
-    listofowners = list(set(Wizard.objects.using(db).all().exclude(owner = None).values_list('owner',flat = True)))
-    print(listofowners)
-    countowners = len(listofowners)
-    print(countowners)
-    #count single parents
-    listofsingleparents = list(set(Wizard.objects.using(db).all().exclude(owner__in = listofowners).filter(owner = None).values_list('owner',flat = True)))
-    countsingle = len(listofsingleparents)
-     
-    count1 = countchildren + countsingle
-    # count the status of count1
-    part1 = Wizard.objects.using(db).all().exclude(owner = None).filter(status = True).count()
-    part2 = Wizard.objects.using(db).all().exclude(pk__in = listofowners).filter(owner = None, status = True).count()
-    count2 = part1+part2
-    progress = str(int(count2/count1*100))+'%'
-    
-    #print(data)
-    #print(count)
-
-    result = ['<div class="table-reponsive"><table style="width: 100%"><thead><tr id="overall"><th style="vertical-align: top; text-align: left; width: 120px; padding-right: 10px;">']
-    result.append('<span>%s</span>' % capfirst(force_text(_('overall progress'))) )
-    result.append('</th><th style="min-width: 50px"><div class="progress">')
-    result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s; min-width: 0px;">' % (count1,count2,progress) )
-    result.append('<span>%s</span>' % progress )
-    result.append('</div>')
-    result.append('</div></th></tr></thead><tbody>')
-    for subject in data:
-      count1 = Wizard.objects.using(db).all().filter(owner = subject.name).count()
-      if count1 == 0:
-        count1 = 1
-      count2 = Wizard.objects.using(db).all().filter(owner = subject.name, status = True).count()
-      progress = str(int(count2/count1*100))+'%'
-      result.append('<tr style="vertical-align: top"><td class="underline"><a href="/wizard/" target="_blank">%s</a></td>' % subject.name)
-      result.append('<td><div class="progress">')
-      result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s; min-width: 0px;">' % (count1,count2,progress) )
-      result.append('<span>%s</span>' % progress )
-      result.append('</div></div></td></tr></tbody>')
-    result.append('</table>')
+    result = ['<div class="table-reponsive"><table style="width: 100%"><thead>']    
+    first = True  
+    for label, complete, total in cursor.fetchall():
+      progress = int(complete / total * 100)
+      if first:
+        first = False
+        result.append('<tr id="overall"><th style="vertical-align: top; text-align: left; width: 150px; padding-right: 10px;">')
+        result.append('<span>%s</span>' % capfirst(force_text(_('overall progress'))) )
+        result.append('</th><th style="min-width: 50px"><div class="progress">')
+        result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
+        result.append('<span>%s%%</span>' % progress )
+        result.append('</div>')
+        result.append('</div></th></tr></thead><tbody>')
+      else:
+        result.append('<tr style="vertical-align: top"><td class="underline"><a href="/wizard/" target="_blank">%s</a></td>' % label)
+        result.append('<td><div class="progress">')
+        result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
+        result.append('<span>%s%%</span>' % progress )
+        result.append('</div></div></td></tr>')
+    result.append('</tbody></table></div>')
 
     return '\n'.join(result)
 Dashboard.register(WizardWidget)

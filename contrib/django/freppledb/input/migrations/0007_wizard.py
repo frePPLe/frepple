@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
       insert into common_wizard 
       (name, sequenceorder, url_doc, url_internaldoc, status, owner_id)
       values
-      ('Introduction', 100, '/user-guide/modeling-wizard/index.html', null, false, null),
+      ('Introduction', 100, '/user-guide/modeling-wizard/index.html', null, false, 'Introduction'),
       ('Master data', 200, '/user-guide/modeling-wizard/master-data/index.html', null, false, null),
       ('Locations', 210, '/user-guide/modeling-wizard/master-data/locations.html', '/data/input/location/', false, 'Master data'),
       ('Items', 220, '/user-guide/modeling-wizard/master-data/items.html', '/data/input/item/', false, 'Master data'),
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
       ('Manufacturing Capacity', 800, '/user-guide/modeling-wizard/manufacturing-capacity/index.html', null, false, null),
       ('Resources', 810, '/user-guide/modeling-wizard/manufacturing-capacity/resources.html', '/data/input/resource/', false, 'Manufacturing Capacity'),
       ('Operation Resources', 820, '/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html', '/data/input/operationresource/', false, 'Manufacturing Capacity'),  
-      ('Plan generation', 900, '/user-guide/modeling-wizard/plan-generation.html', '/execute/', false, null)
+      ('Plan generation', 900, '/user-guide/modeling-wizard/plan-generation.html', '/execute/', false, 'Plan generation')
       ''',
       '''
       delete from common_wizard where name in (

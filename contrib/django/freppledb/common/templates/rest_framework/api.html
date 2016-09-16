@@ -221,7 +221,7 @@ $(function() {
     <div id="delete_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
       <div class="panel-body">
           <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
-            <button  class="btn btn-primary" role="button" type="submit" data-method="PATCH"
+            <button  class="btn btn-primary" role="button" type="submit" data-method="DELETE"
                 value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">
                 {% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}
             </button>

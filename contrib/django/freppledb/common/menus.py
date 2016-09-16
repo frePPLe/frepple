@@ -64,13 +64,11 @@ class MenuItem:
       for perm in self.report.permissions:
         if not user.has_perm("%s.%s" % (self.report.getAppLabel(), perm[0])):
           return False
-      return True
-    elif self.model:
+    if self.model:
       # The menu item is a model
       return user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('view', self.model._meta)))
-    else:
-      # Other item is always available
-      return True
+    # Other item is always available
+    return True
 
   def can_add(self, user):
     return self.model and user.has_perm("%s.%s" % (self.model._meta.app_label, get_permission_codename('add', self.model._meta)))
@@ -206,7 +204,7 @@ class Menu:
           for k in j.report.permissions:
             if content_type is None:
               # Create a dummy contenttype in the app
-              content_type = ContentType.objects.get_or_create(model="reports", app_label=app.split('.')[-1])[0]
+              content_type = ContentType.objects.get_or_create(model="permission", app_label="auth")[0]
             # Create the permission object
             # TODO: cover the case where the permission refers to a permission of a model in the same app.
             # TODO: cover the case where app X wants to refer to a permission defined in app Y.

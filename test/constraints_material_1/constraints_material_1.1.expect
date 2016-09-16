@@ -1,23 +1,23 @@
-BUFFER	buffer 1	2009-01-01T00:00:00	25	25
-BUFFER	buffer 1	2009-01-09T00:00:00	-10	15
-BUFFER	buffer 1	2009-01-10T00:00:00	-10	5
-BUFFER	buffer 1	2009-01-11T00:00:00	-5	0
-BUFFER	buffer 2	2009-01-01T00:00:00	25	25
-BUFFER	buffer 2	2009-01-04T00:00:00	-5	20
-BUFFER	buffer 2	2009-01-09T00:00:00	-10	10
-BUFFER	buffer 2	2009-01-10T00:00:00	-10	0
-BUFFER	buffer 3	2009-01-01T00:00:00	25	25
-BUFFER	buffer 3	2009-01-04T00:00:00	-5	20
-BUFFER	buffer 3	2009-01-09T00:00:00	-10	10
-BUFFER	buffer 3	2009-01-10T00:00:00	-10	0
-BUFFER	buffer 3	2009-01-20T00:00:00	2	2
-BUFFER	buffer 3	2009-01-20T00:00:00	-2	0
-BUFFER	buffer 4	2009-01-01T00:00:00	10	10
-BUFFER	buffer 4	2009-01-04T00:00:00	-2	8
-BUFFER	buffer 4	2009-01-09T00:00:00	-8	0
-BUFFER	buffer 4	2009-01-20T00:00:00	10	10
-BUFFER	buffer 4	2009-01-20T00:00:00	-2	8
-BUFFER	buffer 4	2009-01-21T00:00:00	-8	0
+BUFFER	item 1 @ factory	2009-01-01T00:00:00	25	25
+BUFFER	item 1 @ factory	2009-01-10T00:00:00	-10	15
+BUFFER	item 1 @ factory	2009-01-11T00:00:00	-10	5
+BUFFER	item 1 @ factory	2009-01-12T00:00:00	-5	0
+BUFFER	item 2 @ factory	2009-01-01T00:00:00	25	25
+BUFFER	item 2 @ factory	2009-01-05T00:00:00	-5	20
+BUFFER	item 2 @ factory	2009-01-10T00:00:00	-10	10
+BUFFER	item 2 @ factory	2009-01-11T00:00:00	-10	0
+BUFFER	item 3 @ factory	2009-01-01T00:00:00	25	25
+BUFFER	item 3 @ factory	2009-01-05T00:00:00	-5	20
+BUFFER	item 3 @ factory	2009-01-10T00:00:00	-10	10
+BUFFER	item 3 @ factory	2009-01-11T00:00:00	-10	0
+BUFFER	item 3 @ factory	2009-01-20T00:00:00	2	2
+BUFFER	item 3 @ factory	2009-01-20T00:00:00	-2	0
+BUFFER	item 4 @ factory	2009-01-01T00:00:00	10	10
+BUFFER	item 4 @ factory	2009-01-05T00:00:00	-2	8
+BUFFER	item 4 @ factory	2009-01-10T00:00:00	-8	0
+BUFFER	item 4 @ factory	2009-01-20T00:00:00	10	10
+BUFFER	item 4 @ factory	2009-01-20T00:00:00	-2	8
+BUFFER	item 4 @ factory	2009-01-22T00:00:00	-8	0
 DEMAND	order prio 1 for item 1	2009-01-10T00:00:00	10
 DEMAND	order prio 1 for item 2	2009-01-10T00:00:00	10
 DEMAND	order prio 1 for item 3	2009-01-10T00:00:00	10
@@ -28,46 +28,32 @@ DEMAND	order prio 2 for item 3	2009-01-11T00:00:00	10
 DEMAND	order prio 2 for item 4	2009-01-22T00:00:00	8
 DEMAND	order prio 3 for item 1	2009-01-12T00:00:00	5
 DEMAND	order prio 3 for item 2	2009-01-05T00:00:00	5
-DEMAND	order prio 3 for item 3	2009-01-21T00:00:00	2
+DEMAND	order prio 3 for item 3	2009-01-20T00:00:00	2
 DEMAND	order prio 3 for item 3	2009-01-05T00:00:00	5
-DEMAND	order prio 3 for item 4	2009-01-21T00:00:00	2
+DEMAND	order prio 3 for item 4	2009-01-20T00:00:00	2
 DEMAND	order prio 3 for item 4	2009-01-05T00:00:00	2
-OPERATION	delivery 1	2009-01-09T00:00:00	2009-01-10T00:00:00	10
-OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	10
-OPERATION	delivery 1	2009-01-11T00:00:00	2009-01-12T00:00:00	5
-OPERATION	delivery 2	2009-01-04T00:00:00	2009-01-05T00:00:00	5
-OPERATION	delivery 2	2009-01-09T00:00:00	2009-01-10T00:00:00	10
-OPERATION	delivery 2	2009-01-10T00:00:00	2009-01-11T00:00:00	10
-OPERATION	delivery 3	2009-01-04T00:00:00	2009-01-05T00:00:00	5
-OPERATION	delivery 3	2009-01-09T00:00:00	2009-01-10T00:00:00	10
-OPERATION	delivery 3	2009-01-10T00:00:00	2009-01-11T00:00:00	10
-OPERATION	delivery 3	2009-01-20T00:00:00	2009-01-21T00:00:00	2
-OPERATION	delivery 4	2009-01-04T00:00:00	2009-01-05T00:00:00	2
-OPERATION	delivery 4	2009-01-09T00:00:00	2009-01-10T00:00:00	8
-OPERATION	delivery 4	2009-01-20T00:00:00	2009-01-21T00:00:00	2
-OPERATION	delivery 4	2009-01-21T00:00:00	2009-01-22T00:00:00	8
 OPERATION	supply 1	2009-01-01T00:00:00	2009-01-01T00:00:00	25	locked
 OPERATION	supply 2	2009-01-01T00:00:00	2009-01-01T00:00:00	25	locked
 OPERATION	supply 3	2009-01-01T00:00:00	2009-01-01T00:00:00	25	locked
 OPERATION	supply 3	2009-01-20T00:00:00	2009-01-20T00:00:00	2	locked
 OPERATION	supply 4	2009-01-01T00:00:00	2009-01-01T00:00:00	10	locked
 OPERATION	supply 4	2009-01-20T00:00:00	2009-01-20T00:00:00	10	locked
-PROBLEM	material excess	Buffer 'buffer 1' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer 1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 2' has material excess of 25	2009-01-01T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer 2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 3' has material excess of 25	2009-01-01T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 4' has material excess of 10	2009-01-01T00:00:00 / 2009-01-09T00:00:00
-PROBLEM	material excess	Buffer 'buffer 4' has material excess of 8	2009-01-20T00:00:00 / 2009-01-21T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-12T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 1 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 3 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 4 @ factory' has material excess of 10	2009-01-01T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	material excess	Buffer 'item 4 @ factory' has material excess of 8	2009-01-20T00:00:00 / 2009-01-22T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 1' planned 5 units short	2009-01-12T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 2' planned 5 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 3' planned 3 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order prio 3 for item 3' planned P16D after its due date	2009-01-05T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	late	Demand 'order prio 3 for item 3' planned P15D after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 4' planned 6 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order prio 3 for item 4' planned P16D after its due date	2009-01-05T00:00:00 / 2009-01-21T00:00:00
-DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'buffer 1' has material shortage of 5	2009-01-11T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'buffer 2' has material shortage of 5	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'buffer 3' has material shortage of 5	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'buffer 4' has material shortage of 8	2009-01-04T00:00:00 / 2030-12-31T00:00:00	
+PROBLEM	late	Demand 'order prio 3 for item 4' planned P15D after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
+DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order prio 3 for item 4	Buffer 'item 4 @ factory' has material shortage of 8	2009-01-05T00:00:00 / 2030-12-31T00:00:00	

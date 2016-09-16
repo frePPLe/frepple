@@ -10,33 +10,30 @@
   <current>2009-01-01T00:00:00</current>
   <operations>
     <operation name="make end item" xsi:type="operation_time_per">
+      <location name="factory" />
       <duration_per>P1D</duration_per>
     </operation>
   </operations>
-  <items>
-    <item name="end item">
-      <operation name="delivery end item" xsi:type="operation_fixed_time">
-        <duration>PT0S</duration>
-      </operation>
-    </item>
-    <item name="component"/>
-  </items>
   <buffers>
     <buffer name="end item">
       <producing name="make end item" />
       <item name="end item" />
+      <location name="factory" />
     </buffer>
     <buffer name="component">
       <producing name="buy component" xsi:type="operation_fixed_time">
         <duration>P10D</duration>
+        <location name="factory" />
       </producing>
       <item name="component" />
+      <location name="factory" />
       <onhand>10</onhand>
     </buffer>
   </buffers>
   <resources>
     <resource name="Resource">
       <maximum>3</maximum>
+      <location name="factory" />
       <loads>
         <load>
           <operation name="make end item" />
@@ -45,24 +42,19 @@
     </resource>
   </resources>
   <flows>
-    <flow xsi:type="flow_start">
-      <operation name="delivery end item" />
-      <buffer name="end item" />
-      <quantity>-1</quantity>
-    </flow>
     <flow xsi:type="flow_end">
       <operation name="make end item" />
-      <buffer name="end item" />
+      <item name="end item" />
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_end">
       <operation name="buy component" />
-      <buffer name="component" />
+      <item name="component" />
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_start">
       <operation name="make end item" />
-      <buffer name="component" />
+      <item name="component" />
       <quantity>-1</quantity>
     </flow>
   </flows>
@@ -73,6 +65,7 @@
       <due>2009-01-20T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
+      <location name="factory" />
     </demand>
     <!-- No mat or cap problem -->
     <demand name="order 2">
@@ -80,6 +73,7 @@
       <due>2009-01-17T00:00:00</due>
       <priority>2</priority>
       <item name="end item" />
+      <location name="factory" />
     </demand>
     <!-- No mat or cap problem -->
     <demand name="order 3">
@@ -87,8 +81,9 @@
       <due>2009-01-16T00:00:00</due>
       <priority>3</priority>
       <item name="end item" />
+      <location name="factory" />
     </demand>
-    <!-- Creates a capcity overload, and needs to be planned late.
+    <!-- Creates a capacity overload, and needs to be planned late.
         Planning earlier is not possible due to material constraints.
     -->
     <demand name="order 4">
@@ -96,6 +91,7 @@
       <due>2009-01-18T00:00:00</due>
       <priority>4</priority>
       <item name="end item" />
+      <location name="factory" />
     </demand>
   </demands>
 

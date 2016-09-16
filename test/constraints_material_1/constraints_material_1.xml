@@ -15,89 +15,49 @@
   </description>
   <current>2009-01-01T00:00:00</current>
   <items>
-    <item name="item 1">
-      <operation name="delivery 1" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
-    <item name="item 2">
-      <operation name="delivery 2" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
-    <item name="item 3">
-      <operation name="delivery 3" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
-    <item name="item 4">
-      <operation name="delivery 4" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
+    <item name="item 1" />
+    <item name="item 2" />
+    <item name="item 3" />
+    <item name="item 4" />
   </items>
   <operations>
-    <operation name="supply 1" />
-    <operation name="supply 2" />
-    <operation name="supply 3" />
-    <operation name="supply 4" />
+    <operation name="supply 1">
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 1" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>      
+    </operation>    
+    <operation name="supply 2">
+      <location name="factory" />     
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 2" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>      
+    </operation>    
+    <operation name="supply 3">
+      <location name="factory" />     
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 3" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>      
+    </operation>    
+    <operation name="supply 4">
+      <location name="factory" />     
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 4" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>      
+    </operation>    
   </operations>
-  <buffers>
-    <buffer name="buffer 1">
-      <item name="item 1" />
-    </buffer>
-    <buffer name="buffer 2">
-      <item name="item 2" />
-    </buffer>
-    <buffer name="buffer 3">
-      <item name="item 3" />
-    </buffer>
-    <buffer name="buffer 4">
-      <item name="item 4" />
-    </buffer>
-  </buffers>
-  <flows>
-    <flow xsi:type="flow_end">
-      <operation name="supply 1" />
-      <buffer name="buffer 1" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery 1" />
-      <buffer name="buffer 1" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply 2" />
-      <buffer name="buffer 2" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery 2" />
-      <buffer name="buffer 2" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply 3" />
-      <buffer name="buffer 3" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery 3" />
-      <buffer name="buffer 3" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply 4" />
-      <buffer name="buffer 4" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery 4" />
-      <buffer name="buffer 4" />
-      <quantity>-1</quantity>
-    </flow>
-  </flows>
   <!-- DYNAMIC data CASE 1 -->
   <demands>
     <demand name="order prio 1 for item 1">
@@ -105,18 +65,21 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="item 1" />
+      <location name="factory" />
     </demand>
     <demand name="order prio 2 for item 1">
       <quantity>10</quantity>
       <due>2009-01-11T00:00:00</due>
       <priority>2</priority>
       <item name="item 1" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 3 for item 1">
       <quantity>10</quantity>
       <due>2009-01-12T00:00:00</due>
       <priority>3</priority>
       <item name="item 1" />
+      <location name="factory" />    
     </demand>
   </demands>
   <operationplans>
@@ -135,18 +98,21 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="item 2" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 2 for item 2">
       <quantity>10</quantity>
       <due>2009-01-11T00:00:00</due>
       <priority>2</priority>
       <item name="item 2" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 3 for item 2">
       <quantity>10</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>3</priority>
       <item name="item 2" />
+      <location name="factory" />    
     </demand>
   </demands>
   <operationplans>
@@ -165,18 +131,21 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="item 3" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 2 for item 3">
       <quantity>10</quantity>
       <due>2009-01-11T00:00:00</due>
       <priority>2</priority>
       <item name="item 3" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 3 for item 3">
       <quantity>10</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>3</priority>
       <item name="item 3" />
+      <location name="factory" />    
     </demand>
   </demands>
   <operationplans>
@@ -202,18 +171,21 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="item 4" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 2 for item 4">
       <quantity>8</quantity>
       <due>2009-01-22T00:00:00</due>
       <priority>2</priority>
       <item name="item 4" />
+      <location name="factory" />    
     </demand>
     <demand name="order prio 3 for item 4">
       <quantity>10</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>3</priority>
       <item name="item 4" />
+      <location name="factory" />    
     </demand>
   </demands>
   <operationplans>

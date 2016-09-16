@@ -4032,7 +4032,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_FULL);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_FULL);
-      m->addIteratorField<Cls, operationIterator, Operation>(Tags::operations, Tags::operation, &Cls::getOperationIterator, BASE + WRITE_FULL);
+      m->addIteratorField<Cls, operationIterator, Operation>(Tags::operations, Tags::operation, &Cls::getOperationIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, demandIterator, Demand>(Tags::demands, Tags::demand, &Cls::getDemandIterator, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
@@ -5260,14 +5260,19 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Returns the buffer. */
     Buffer* getBuffer() const
     {
-      if (!getPtrB() && item && getOperation() && getOperation()->getLocation())
+      Buffer* b = getPtrB();
+      if (b) return b;
+      
+      // Dynamically set the buffer
+      if (item && getOperation() && getOperation()->getLocation())
       {
-        // Dynamically set the buffer
-        Buffer* b = Buffer::findOrCreate(item, getOperation()->getLocation());
-        if (b) 
+        b = Buffer::findOrCreate(item, getOperation()->getLocation());
+        if (b)
           const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
       }
-      return getPtrB();
+      if (!b)
+        throw DataException("Flow doesn't have a buffer");      
+      return b;
     }
 
     /** Updates the buffer of this flow. This method can be called only ONCE

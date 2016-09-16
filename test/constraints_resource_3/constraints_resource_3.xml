@@ -12,14 +12,10 @@
     <operation name="make end item" xsi:type="operation_fixed_time">
       <duration>P1D</duration>
     </operation>
+    <operation name="delivery end item" xsi:type="operation_fixed_time">
+      <duration>P1D</duration>
+    </operation>
   </operations>
-  <items>
-    <item name="end item">
-      <operation name="delivery end item" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <buffers>
     <buffer name="end item">
       <producing name="make end item" />
@@ -70,18 +66,21 @@
       <due>2009-01-04T09:00:00</due>
       <priority>1</priority>
       <item name="end item" />
+      <operation name="delivery end item" />
     </demand>
     <demand name="order 2">
       <quantity>10</quantity>
       <due>2009-01-04T08:00:00</due>
       <priority>2</priority>
       <item name="end item" />
+      <operation name="delivery end item" />
     </demand>
     <demand name="order 3">
       <quantity>10</quantity>
       <due>2009-01-04T08:00:00</due>
       <priority>3</priority>
       <item name="end item" />
+      <operation name="delivery end item" />
     </demand>
   </demands>
 

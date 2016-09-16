@@ -18,6 +18,14 @@
 	<current>2014-01-01T00:00:00</current>
 	<locations>
 		<location>
+			<name>1. factory</name>
+			<source>The Matrix</source>
+		</location>
+		<location>
+			<name>2. factory</name>
+			<source>The Matrix</source>
+		</location>
+		<location>
 			<name>3. factory</name>
 			<source>The Matrix</source>
 			<available>
@@ -94,6 +102,9 @@
 				<name>Capacity</name>
 			</maximum_calendar>
 			<maxearly>P28D</maxearly>
+			<location>
+				<name>1. factory</name>
+			</location>
 		</resource>
 		<resource xsi:type="resource_buckets">
 			<name>2. Resource</name>
@@ -102,6 +113,9 @@
 				<name>Capacity</name>
 			</maximum_calendar>
 			<maxearly>P28D</maxearly>
+			<location>
+				<name>2. factory</name>
+			</location>
 		</resource>
 		<resource xsi:type="resource_buckets">
 			<name>3. Resource</name>
@@ -130,30 +144,18 @@
 		<item>
 			<name>1. end item</name>
 			<source>The Matrix</source>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
 		</item>
 		<item>
 			<name>2. end item</name>
 			<source>The Matrix</source>
-			<operation>
-				<name>2. delivery end item</name>
-			</operation>
 		</item>
 		<item>
 			<name>3. end item</name>
 			<source>The Matrix</source>
-			<operation>
-				<name>3. delivery end item</name>
-			</operation>
 		</item>
 		<item>
 			<name>4. end item</name>
 			<source>The Matrix</source>
-			<operation>
-				<name>4. delivery end item</name>
-			</operation>
 		</item>
 	</items>
 	<buffers>
@@ -166,6 +168,9 @@
 			<item>
 				<name>1. end item</name>
 			</item>
+			<location>
+				<name>1. factory</name>
+			</location>
 		</buffer>
 		<buffer>
 			<name>2. end item</name>
@@ -176,6 +181,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 		</buffer>
 		<buffer>
 			<name>3. end item</name>
@@ -186,6 +194,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 		</buffer>
 		<buffer>
 			<name>4. end item</name>
@@ -196,26 +207,22 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 		</buffer>
 	</buffers>
 	<operations>
 		<operation>
-			<name>1. delivery end item</name>
-			<source>The Matrix</source>
-			<flows>
-				<flow>
-					<buffer>
-						<name>1. end item</name>
-					</buffer>
-					<quantity>-1</quantity>
-					<source>The Matrix</source>
-				</flow>
-			</flows>
-		</operation>
-		<operation>
 			<name>1. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
+			<item>
+				<name>1. end item</name>
+			</item>
+			<location>
+				<name>1. factory</name>
+			</location>
 			<loads>
 				<load>
 					<resource xsi:type="resource_buckets">
@@ -226,9 +233,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>1. end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 					<source>The Matrix</source>
 				</flow>
@@ -236,22 +243,15 @@
 			<duration>P7D</duration>
 		</operation>
 		<operation>
-			<name>2. delivery end item</name>
-			<source>The Matrix</source>
-			<flows>
-				<flow>
-					<buffer>
-						<name>2. end item</name>
-					</buffer>
-					<quantity>-1</quantity>
-					<source>The Matrix</source>
-				</flow>
-			</flows>
-		</operation>
-		<operation>
 			<name>2. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
+			<item>
+				<name>2. end item</name>
+			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<loads>
 				<load>
 					<resource xsi:type="resource_buckets">
@@ -262,9 +262,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>2. end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 					<source>The Matrix</source>
 				</flow>
@@ -272,25 +272,12 @@
 			<duration>P7D</duration>
 		</operation>
 		<operation>
-			<name>3. delivery end item</name>
-			<source>The Matrix</source>
-			<location>
-				<name>3. factory</name>
-			</location>
-			<flows>
-				<flow>
-					<buffer>
-						<name>3. end item</name>
-					</buffer>
-					<quantity>-1</quantity>
-					<source>The Matrix</source>
-				</flow>
-			</flows>
-		</operation>
-		<operation>
 			<name>3. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
+			<item>
+				<name>3. end item</name>
+			</item>
 			<location>
 				<name>3. factory</name>
 			</location>
@@ -304,9 +291,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>3. end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 					<source>The Matrix</source>
 				</flow>
@@ -314,25 +301,12 @@
 			<duration>P3D</duration>
 		</operation>
 		<operation>
-			<name>4. delivery end item</name>
-			<source>The Matrix</source>
-			<location>
-				<name>4. factory</name>
-			</location>
-			<flows>
-				<flow>
-					<buffer>
-						<name>4. end item</name>
-					</buffer>
-					<quantity>-1</quantity>
-					<source>The Matrix</source>
-				</flow>
-			</flows>
-		</operation>
-		<operation>
 			<name>4. make end item</name>
 			<source>The Matrix</source>
 			<size_multiple>1</size_multiple>
+			<item>
+				<name>4. end item</name>
+			</item>
 			<location>
 				<name>4. factory</name>
 			</location>
@@ -346,9 +320,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>4. end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 					<source>The Matrix</source>
 				</flow>
@@ -364,6 +338,9 @@
 			<item>
 				<name>1. end item</name>
 			</item>
+			<location>
+				<name>1. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -374,6 +351,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -384,6 +364,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -394,6 +377,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -404,6 +390,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -414,6 +403,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -424,6 +416,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -434,6 +429,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -444,6 +442,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -454,6 +455,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -464,6 +468,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -474,6 +481,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -484,6 +494,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -494,6 +507,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -504,6 +520,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -514,6 +533,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -524,6 +546,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -534,6 +559,9 @@
 			<item>
 				<name>2. end item</name>
 			</item>
+			<location>
+				<name>2. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
 		</demand>
@@ -544,6 +572,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -554,6 +585,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -564,6 +598,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -574,6 +611,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -584,6 +624,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -594,6 +637,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -604,6 +650,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -614,6 +663,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -624,6 +676,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -634,6 +689,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -644,6 +702,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -654,6 +715,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -664,6 +728,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -674,6 +741,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -684,6 +754,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -694,6 +767,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -704,6 +780,9 @@
 			<item>
 				<name>3. end item</name>
 			</item>
+			<location>
+				<name>3. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
 		</demand>
@@ -714,6 +793,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -724,6 +806,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -734,6 +819,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -744,6 +832,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -754,6 +845,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -764,6 +858,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -774,6 +871,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -784,6 +884,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -794,6 +897,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -804,6 +910,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -814,6 +923,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -824,6 +936,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -834,6 +949,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -844,6 +962,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -854,6 +975,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -864,6 +988,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>
@@ -874,6 +1001,9 @@
 			<item>
 				<name>4. end item</name>
 			</item>
+			<location>
+				<name>4. factory</name>
+			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
 		</demand>

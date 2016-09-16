@@ -35,25 +35,24 @@
   </calendars>
 
   <!-- Model 1 -->
-  <items>
-    <item name="1. end item">
-      <operation name="1. delivery end item" xsi:type="operation_fixed_time">
-        <duration>P0D</duration>
-      </operation>
-    </item>
-  </items>
-  <buffers>
-    <buffer name="1. end item">
-      <producing name="1. make end item" xsi:type="operation_time_per">
-        <size_multiple>1</size_multiple>
-        <duration_per>P1D</duration_per>
-      </producing>
+  <operations>
+    <operation name="1. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
       <item name="1. end item" />
-    </buffer>
-  </buffers>
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="1. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration_per>P1D</duration_per>
+    </operation>
+  </operations>
   <resources>
     <resource name="1. Resource">
       <maximum_calendar name="Capacity"/>
+      <location name="factory" />
       <loads>
         <load>
           <operation name="1. make end item" />
@@ -61,39 +60,26 @@
       </loads>
     </resource>
   </resources>
-  <flows>
-    <flow xsi:type="flow_start">
-      <operation name="1. delivery end item" />
-      <buffer name="1. end item" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="1. make end item" />
-      <buffer name="1. end item" />
-      <quantity>1</quantity>
-    </flow>
-  </flows>
 
   <!-- Model 2 -->
-  <items>
-    <item name="2. end item">
-      <operation name="2. delivery end item" xsi:type="operation_fixed_time">
-        <duration>P0D</duration>
-      </operation>
-    </item>
-  </items>
-  <buffers>
-    <buffer name="2. end item">
-      <producing name="2. make end item" xsi:type="operation_time_per">
-        <size_multiple>1</size_multiple>
-        <duration_per>P1D</duration_per>
-      </producing>
+  <operations>
+    <operation name="2. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
       <item name="2. end item" />
-    </buffer>
-  </buffers>
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="2. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>      
+      <duration_per>P1D</duration_per>
+    </operation>
+  </operations>
   <resources>
     <resource name="2. Resource">
       <maximum_calendar name="Capacity"/>
+      <location name="factory" />
       <loads>
         <load>
           <operation name="2. make end item" />
@@ -101,19 +87,7 @@
       </loads>
     </resource>
   </resources>
-  <flows>
-    <flow xsi:type="flow_start">
-      <operation name="2. delivery end item" />
-      <buffer name="2. end item" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="2. make end item" />
-      <buffer name="2. end item" />
-      <quantity>1</quantity>
-    </flow>
-  </flows>
-
+  
   <demands>
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
@@ -121,6 +95,7 @@
       <due>2009-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
+      <location name="factory" />
     </demand>
     <!-- Demand model 2: search for capacity forward in time -->
     <demand name="2. order">
@@ -128,6 +103,7 @@
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="2. end item" />
+      <location name="factory" />
     </demand>
   </demands>
 

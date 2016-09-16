@@ -15,32 +15,6 @@
 		- 6: based on 1, but with a routing producing operation with multiple flows.
 	</description>
 	<current>2009-01-01T00:00:00</current>
-	<items>
-	  <item name="item 1">
-	    <operation name="delivery 1" duration="P1D"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	  <item name="item 2">
-	    <operation name="delivery 2" duration="P1D" size_multiple="1"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	  <item name="item 3">
-	    <operation name="delivery 3" duration="P1D"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	  <item name="item 4">
-	    <operation name="delivery 4" duration="P1D"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	  <item name="item 5">
-	    <operation name="delivery 5" duration="P1D"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	  <item name="item 6">
-	    <operation name="delivery 6" duration="P1D"
-	      xsi:type="operation_fixed_time" />
-	  </item>
-	</items>
 	<buffers>
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
@@ -345,6 +319,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 1" />
+      <location name="factory" />
+      <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>
@@ -363,6 +339,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 2" />
+      <location name="factory" />
+      <operation name="delivery 2" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>
@@ -381,6 +359,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 3" />
+      <location name="factory" />
+      <operation name="delivery 3" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>
@@ -420,6 +400,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 4" />
+      <location name="factory" />
+      <operation name="delivery 4" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>
@@ -473,6 +455,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 5" />
+      <location name="factory" />
+      <operation name="delivery 5" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>
@@ -498,6 +482,8 @@
 	    <due>2009-01-10T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 6" />
+      <location name="factory" />
+      <operation name="delivery 6" duration="P1D" xsi:type="operation_fixed_time" />
 	  </demand>
 	</demands>
 	<operationplans>

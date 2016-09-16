@@ -720,12 +720,20 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
     return nullptr;
 
   // Return existing buffer if it exists
+  Buffer* destbuffer = nullptr;
+  Item::bufferIterator buf_iter(itm);
+  while (Buffer* tmpbuf = buf_iter.next())
+  {
+    if (tmpbuf->getLocation() == loc)
+      return tmpbuf;
+  }
+
+  // Create a new buffer with a unique name
   stringstream o;
   o << itm->getName() << " @ " << loc->getName();
-  Buffer* b = find(o.str());
-  if (b) return b;
-
-  // Create a new buffer
+  Buffer* b;
+  while (b = find(o.str()))
+    o << '*';
   b = new BufferDefault();
   b->setItem(itm);
   b->setLocation(loc);

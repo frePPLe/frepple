@@ -6,11 +6,6 @@
 		material could be created.
 	</description>
 	<current>2009-01-01T00:00:00</current>
-	<items>
-	  <item name="item 1">
-	    <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />
-	  </item>
-	</items>
 	<buffers>
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
@@ -61,9 +56,9 @@
 	    <quantity>5000</quantity>
 	    <due>2009-01-30T00:00:00</due>
 	    <item name="item 1" />
+      <operation name="delivery 1" xsi:type="operation_fixed_time" duration="P1D" />
 	  </demand>
 	</demands>
-
 
 <?python
 print("CREATING CONSTRAINED PLAN")

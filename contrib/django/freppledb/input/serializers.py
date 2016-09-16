@@ -103,7 +103,7 @@ class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ItemSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Item
-      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'operation', 'price', 'source', 'lastmodified')
+      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'price', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial=True

@@ -83,10 +83,10 @@ FunctionEnd
 !insertmacro x "un."
 
 ;Include for Modern UI and library installation
-!define MULTIUSER_EXECUTIONLEVEL Highest
+!define MULTIUSER_EXECUTIONLEVEL highest
 !define MULTIUSER_MUI
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
-!define MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER
+!define MULTIUSER_INSTALLMODE_DEFAULT_ALLUSERS
 !define MULTIUSER_INSTALLMODE_INSTDIR "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !include MultiUser.nsh
 !include MUI2.nsh
@@ -109,6 +109,7 @@ FunctionEnd
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "../../COPYING"
+!insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
 Page custom DatabaseOpen DatabaseLeave
@@ -221,10 +222,10 @@ Section "Application" SecAppl
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
   ; SetOutPath is used to set the working directory for the shortcut
-  SetOutPath "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  SetOutPath "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start frePPLe server.lnk" "$INSTDIR\bin\freppleserver.exe"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk" "$INSTDIR\bin\custom"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   SetOutPath "$INSTDIR\bin"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
 SectionEnd
@@ -530,7 +531,7 @@ Section -Post
   FileWrite $R4 "    },$\r$\n"
   ${Endif}
   FileWrite $R4 "  }$\r$\n$\r$\n"
-  FileWrite $R4 "FREPPLE_LOGDIR = r'$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
+  FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   ; Read the third section in settings.py and write unmodified to the output file
   read3_loop:
@@ -543,11 +544,15 @@ Section -Post
   FileClose $R4
   Rename "djangosettings.py" "djangosettings.py.old"
   Rename "$R3" "djangosettings.py"
+  ${If} $MultiUser.InstallMode != "CurrentUser"
+    AccessControl::GrantOnFile \
+      "djangosettings.py" "(BU)" "GenericRead + GenericWrite"
+  ${EndIf}
 
   ClearErrors
 
   ; Create the log directory
-  CreateDirectory "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  CreateDirectory "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
 
   ; Initialize the included PostgreSQL database, if selected
   SectionGetFlags ${SecPostgres} $R0
@@ -555,16 +560,16 @@ Section -Post
   ${If} $R0 == ${SF_SELECTED}
     DetailPrint ""
     DetailPrint "Initializing the PostgreSQL database"
-    CreateDirectory "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
+    CreateDirectory "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\initdb" \
-      --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+      --pgdata="$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
       --auth=ident \
       --encoding=UTF8'
-    CopyFiles "$INSTDIR\pgsql\*.conf" "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
+    CopyFiles "$INSTDIR\pgsql\*.conf" "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database"
     Delete "$INSTDIR\pgsql\*.conf"
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\pg_ctl" \
-      --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
-      --log="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
+      --pgdata="$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+      --log="$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database\server.log" \
       -w start'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 frepple'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario1'
@@ -647,7 +652,7 @@ Section Uninstall
 
   ; Stop the postgresql database
   nsExec::Exec '"$INSTDIR\pgsql\bin\pg_ctl" \
-    --pgdata="$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
+    --pgdata="$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\database" \
     -w stop'
 
   ; Remove the entries from the start menu
@@ -667,8 +672,8 @@ Section Uninstall
   ; Remove the log directory
   ; Version subdirectory is always removed.
   ; FrePPLe subdirectory is removed if it is empty.
-  RMDir /r "$LOCALAPPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
-  RMDir "$LOCALAPPDATA\${PRODUCT_NAME}"
+  RMDir /r "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
+  RMDir "$APPDATA\${PRODUCT_NAME}"
 
   ; Remove the installation directory
   RMDir /r "$INSTDIR"

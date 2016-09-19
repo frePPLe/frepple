@@ -25,7 +25,7 @@ The connector provides the following functionality:
     interface.
 
 * You can still maintain additional data in the frePPLe user interface.
-  I.e. Odoo doesn’t need to be the only source of data for your model.
+  I.e. Odoo doesn't need to be the only source of data for your model.
 
 * | Easy to customize.
   | Implemented as an odoo addon module, it is easy to customize the connector
@@ -61,10 +61,10 @@ The connector has 2 components:
     latest version from github https://github.com/frePPLe/frePPLe/tree/master/contrib/odoo.
   | A different version is required for each version of Odoo.
 
-  The module has the following dependencies: ‘procurement’, ‘product’, ‘purchase’,
-  ‘sale’, ‘resource’, ‘mrp’, ‘sales_order_date’, and (optional) ‘hr’.
+  The module has the following dependencies: 'procurement', 'product', 'purchase',
+  'sale', 'resource', 'mrp', 'sales_order_date', and (optional) 'hr'.
 
-  After installation, you’ll find the following additional features in odoo:
+  After installation, you'll find the following additional features in odoo:
 
   * A web interface called by the frePPLe planning engine. It is accessible at the
     URL http\://<host>:<port>/frepple/xml?database=<db>&language=<language>&company=<yourcompany>
@@ -215,7 +215,7 @@ the proposed plan for expensive or slow moving items.
 
 **Mapping details**
 
-The connector doesn’t cover all possible configurations of Odoo and frePPLe.
+The connector doesn't cover all possible configurations of Odoo and frePPLe.
 The connector is very likely to require some customization to fit the particular
 setup of the ERP and the planning requirements in frePPLe.
 

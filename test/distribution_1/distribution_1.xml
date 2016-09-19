@@ -138,6 +138,15 @@
     </demand>
   </demands>
 
+  <operationplans>
+    <operationplan ordertype="DO" end="2015-06-06T00:00:00" 
+      quantity="100" status="confirmed">
+      <item name="product A"/>
+      <location name="Local DC 2b"/>
+      <origin name="Central WH"/>
+    </operationplan>
+  </operationplans>
+  
 <?python
 print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")

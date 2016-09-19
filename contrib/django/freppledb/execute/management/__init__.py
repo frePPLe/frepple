@@ -14,10 +14,14 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.db import DEFAULT_DB_ALIAS
 from django.db.models import signals
 
-from freppledb.common.management import removeDefaultPermissions
-from freppledb.execute import models as execute_models
+from freppledb.common.management import removeModelPermissions
 
 
-signals.post_syncdb.connect(removeDefaultPermissions, execute_models)
+def removePermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
+  removeModelPermissions("execute", "task", db)
+
+
+signals.post_syncdb.connect(removePermissions)

@@ -363,10 +363,17 @@ class MenuNode(Node):
     for i in menu.getMenu(req.LANGUAGE_CODE):
       group = [i[0], [] ]
       empty = True
+      kept_back = None
       for j in i[1]:
-        if j[2].has_permission(req.user):
-          empty = False
-          group[1].append( (j[1], j[2], j[2].can_add(req.user) ) )
+        if j[2].has_permission(req.user):          
+          if j[2].separator:
+            kept_back = (j[1], j[2], j[2].can_add(req.user) )
+          else:
+            if kept_back:
+              group[1].append(kept_back)
+              kept_back = None        
+            group[1].append( (j[1], j[2], j[2].can_add(req.user) ) )
+            empty = False
       if not empty:
         # At least one item of the group is visible
         o.append(group)

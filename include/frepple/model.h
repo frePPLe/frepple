@@ -1701,6 +1701,9 @@ class OperationPlan
     /** Returns how many loadplans are created on an operationplan. */
     int sizeLoadPlans() const;
 
+    /** Returns whether this operationplan is a PO, MO or DO. */
+    inline string getOrderType() const;
+
     /** Returns the criticality index of the operationplan, which reflects
       * its urgency.<br>
       * If the operationplan is on the critical path of one or more orders
@@ -2245,7 +2248,7 @@ class OperationPlan
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);      
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN + DETAIL);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
@@ -2266,6 +2269,12 @@ class OperationPlan
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
+      // Fields only valid for PO and DO
+      m->addStringField<Cls>(Tags::ordertype, &Cls::getOrderType, &Cls::setOrderType, "MO");
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
+      m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
+      m->addPointerField<Cls, Location>(Tags::origin, &Cls::getOrigin, &Cls::setOrigin);
+      m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier, &Cls::setSupplier);
     }
 
     DECLARE_EXPORT static PyObject* createIterator(PyObject* self, PyObject* args);
@@ -2401,7 +2410,55 @@ class OperationPlan
 
     /** Pointer to the previous suboperationplan of the parent operationplan. */
     OperationPlan* prevsubopplan;
-};
+
+    /** Hidden, static field to store the location during import. */
+    static Location* loc;
+
+    /** Hidden, static field to store the origin during import. */
+    static Location* ori;
+
+    /** Hidden, static field to store the supplier during import. */
+    static Supplier* sup;
+
+    /** Hidden, static field to store the order type during import. */
+    static string ordertype;
+
+    /** Hidden, static field to store the item during import. */
+    static Item *itm;
+
+    void setLocation(Location* l) 
+    {
+      loc = l;
+    }
+
+    inline Location* getLocation() const;
+
+    void setOrigin(Location* l) 
+    {
+      ori = l;
+    }
+
+    inline Location* getOrigin() const;
+
+    void setSupplier(Supplier* l) 
+    {
+      sup = l;
+    }
+
+    inline Supplier* getSupplier() const;
+
+    void setOrderType(const string& o) 
+    {
+      ordertype = o;
+    }
+
+    void setItem(Item* i) 
+    {
+      itm = i;
+    }
+
+    inline Item* getItem() const;
+ };
 
 
 /** @brief An operation represents an activity: these consume and produce material,
@@ -2441,6 +2498,11 @@ class Operation : public HasName<Operation>,
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Operation();
+
+    virtual string getOrderType() const
+    {
+      return "MO";
+    }
 
     /** Returns a pointer to the operationplan being instantiated. */
     OperationPlan* getFirstOpPlan() const
@@ -2635,8 +2697,8 @@ class Operation : public HasName<Operation>,
     }
 
     /** Return the effectivity daterange.<br>
-    * The default covers the complete time horizon.
-    */
+      * The default covers the complete time horizon. 
+      */
     DateRange getEffective() const
     {
       return effectivity;
@@ -2962,6 +3024,12 @@ class Operation : public HasName<Operation>,
 };
 
 
+inline string OperationPlan::getOrderType() const
+{
+  return oper ? oper->getOrderType() : "Unknown";
+}
+
+
 inline double OperationPlan::setQuantity(double f, bool roundDown,
   bool update, bool execute, Date end)
 {
@@ -2980,12 +3048,6 @@ inline int OperationPlan::getCluster() const
 Plannable* OperationPlan::getEntity() const
 {
   return oper;
-}
-
-
-inline bool OperationPlan::getHidden() const
-{
-  return getOperation()->getHidden();
 }
 
 
@@ -4326,6 +4388,11 @@ class OperationItemDistribution : public OperationFixedTime
       return itemdist;
     }
 
+    virtual string getOrderType() const
+    {
+      return "DO";
+    }
+
     DECLARE_EXPORT Buffer* getOrigin() const;
 
     DECLARE_EXPORT Buffer* getDestination() const;
@@ -4349,14 +4416,6 @@ class OperationItemDistribution : public OperationFixedTime
       m->addPointerField<Cls, Buffer>(Tags::origin, &Cls::getOrigin, nullptr, DONT_SERIALIZE);
       m->addPointerField<Cls, Buffer>(Tags::destination, &Cls::getDestination, nullptr, DONT_SERIALIZE);
     }
-
-    /** Create a new transfer operationplan.
-      * This method will link the operationplan to the correct ItemDistribution
-      * model and its operation.
-      * If none can be found, an ItemDistribution model is created
-      * automatically and a data problem is also generated.
-      */
-    static PyObject* createOrder(PyObject*, PyObject*, PyObject*);
 
     /** Scan and trim operationplans creating excess inventory in the
       * buffer.
@@ -4393,6 +4452,11 @@ class OperationItemSupplier : public OperationFixedTime
       return supitem;
     }
 
+    virtual string getOrderType() const
+    {
+      return "PO";
+    }
+
     DECLARE_EXPORT Buffer* getBuffer() const;
 
     static DECLARE_EXPORT OperationItemSupplier* findOrCreate(ItemSupplier*, Buffer*);
@@ -4416,19 +4480,40 @@ class OperationItemSupplier : public OperationFixedTime
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
     }
 
-    /** Create a new purchase operationplan.
-      * This method will link the operationplan to the correct ItemSupplier
-      * model and its operation.
-      * If none can be found, an ItemSupplier model is created automatically
-      * and a data problem is also generated.
-      */
-    static PyObject* createOrder(PyObject*, PyObject*, PyObject*);
-
     /** Scan and trim operationplans creating excess inventory in the
       * buffer.
       */
     DECLARE_EXPORT void trimExcess(bool zero_or_minimum) const;
 };
+
+
+inline bool OperationPlan::getHidden() const
+{
+  if (!getOperation()->getHidden())
+    // Operation isn't hidden
+    return false;
+  if (getOperation()->getType() == *OperationItemSupplier::metadata
+    || getOperation()->getType() == *OperationItemDistribution::metadata)
+    // Purchasing and distribution operations are hidden, but not their operationplans
+    return false;
+  return true;
+}
+
+
+inline Location* OperationPlan::getOrigin() const
+{
+  if (!oper || oper->getType() != *OperationItemDistribution::metadata)
+    return nullptr;
+  return static_cast<OperationItemDistribution*>(oper)->getItemDistribution()->getOrigin();
+}
+
+
+Supplier* OperationPlan::getSupplier() const
+{
+  if (!oper || oper->getType() != *OperationItemSupplier::metadata)
+    return nullptr;
+  return static_cast<OperationItemSupplier*>(oper)->getItemSupplier()->getSupplier();
+}
 
 
 /** @brief A buffer represents a combination of a item and location.<br>
@@ -4789,6 +4874,32 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 };
 
 
+inline Location* OperationPlan::getLocation() const
+{
+  if (!oper)
+    return nullptr;
+  else if (oper->getType() == *OperationItemSupplier::metadata)
+    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
+  else if (oper->getType() == *OperationItemDistribution::metadata)
+    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation();
+  else
+    return nullptr;
+}
+
+
+Item* OperationPlan::getItem() const
+{
+  if (!oper)
+    return nullptr;
+  else if (oper->getType() == *OperationItemSupplier::metadata)
+    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
+  else if (oper->getType() == *OperationItemDistribution::metadata)
+    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem();
+  else
+    return nullptr;
+}
+
+
 /** @brief An internally generated operation to represent inventory. */
 class OperationInventory : public OperationFixedTime
 {
@@ -4804,6 +4915,11 @@ class OperationInventory : public OperationFixedTime
     Buffer *getBuffer() const;
 
     static int initialize();
+
+    virtual string getOrderType() const
+    {
+      return "STCK";
+    }
 
     virtual const MetaClass& getType() const { return *metadata; }
     static DECLARE_EXPORT const MetaClass* metadata;

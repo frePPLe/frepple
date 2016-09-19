@@ -16,6 +16,8 @@ a high level overview of the model objects and their relationships.
    calendars
    customers
    distribution-orders
+   forecast
+   inventory-planning-parameters
    items
    item-distributions
    item-suppliers
@@ -24,6 +26,8 @@ a high level overview of the model objects and their relationships.
    operations
    operation-materials
    operation-resources
+   operationplan-materials
+   operationplan-resources
    purchase-orders
    suboperations
    resources

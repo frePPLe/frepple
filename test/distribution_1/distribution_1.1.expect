@@ -127,6 +127,17 @@
 				<name>All products</name>
 			</owner>
 			<price>2</price>
+			<itemdistributions>
+				<itemdistribution>
+					<origin>
+						<name>Central WH</name>
+					</origin>
+					<destination>
+						<name>Local DC 2b</name>
+					</destination>
+					<priority>0</priority>
+				</itemdistribution>
+			</itemdistributions>
 		</item>
 	</items>
 	<buffers>
@@ -139,6 +150,24 @@
 				<name>Central WH</name>
 			</location>
 			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>product A @ Local DC 2b</name>
+			<item>
+				<name>product A</name>
+			</item>
+			<location>
+				<name>Local DC 2b</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>product A @ Regional DC 2</name>
+			<item>
+				<name>product A</name>
+			</item>
+			<location>
+				<name>Regional DC 2</name>
+			</location>
 		</buffer>
 	</buffers>
 	<demands>
@@ -203,4 +232,23 @@
 			<priority>1</priority>
 		</demand>
 	</demands>
+	<operationplans>
+		<operationplan>
+			<id>2</id>
+			<start>2015-06-06T00:00:00</start>
+			<end>2015-06-06T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<ordertype>DO</ordertype>
+			<item>
+				<name>product A</name>
+			</item>
+			<location>
+				<name>Local DC 2b</name>
+			</location>
+			<origin>
+				<name>Central WH</name>
+			</origin>
+		</operationplan>
+	</operationplans>
 </plan>

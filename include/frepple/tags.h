@@ -125,6 +125,7 @@ class Tags
     static DECLARE_EXPORT const Keyword operationplan;
     static DECLARE_EXPORT const Keyword operationplans;
     static DECLARE_EXPORT const Keyword operations;
+    static DECLARE_EXPORT const Keyword ordertype;
     static DECLARE_EXPORT const Keyword origin;
     static DECLARE_EXPORT const Keyword owner;
     static DECLARE_EXPORT const Keyword pegging;

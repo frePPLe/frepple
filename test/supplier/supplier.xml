@@ -69,19 +69,19 @@
   </items>
 
   <buffers>
-    <buffer name="A @ warehouse" onhand="10">
+    <buffer name="Component A @ warehouse" onhand="10">
       <item name="Component A"/>
       <location name="warehouse"/>
     </buffer>
-    <buffer name="B @ warehouse" onhand="10">
+    <buffer name="Component B @ warehouse" onhand="10">
       <item name="Component B"/>
       <location name="warehouse"/>
     </buffer>
-    <buffer name="C @ warehouse" onhand="10">
+    <buffer name="Component C @ warehouse" onhand="10">
       <item name="Component C"/>
       <location name="warehouse"/>
     </buffer>
-    <buffer name="D @ warehouse" onhand="10">
+    <buffer name="Component D @ warehouse" onhand="10">
       <item name="Component D"/>
       <location name="warehouse"/>
     </buffer>
@@ -92,100 +92,69 @@
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="Component A">
-        <operation name="Delivery A">
-          <flows>
-            <flow>
-              <buffer name="A @ warehouse"/>
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="Component A"/>
+      <location name="warehouse"/>
     </demand>
     <demand name="order 2 for item A">
       <quantity>100</quantity>
       <due>2015-02-01T00:00:00</due>
       <priority>1</priority>
-      <item name="Component A" />
+      <item name="Component A"/>
+      <location name="warehouse" />
     </demand>
     <demand name="order 1 for item B">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="Component B">
-        <operation name="Delivery B">
-          <flows>
-            <flow>
-              <buffer name="B @ warehouse"/>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="Component B"/>
+      <location name="warehouse" />
     </demand>
     <demand name="order 2 for item B">
       <quantity>100</quantity>
       <due>2015-02-01T00:00:00</due>
       <priority>1</priority>
       <item name="Component B" />
+      <location name="warehouse" />
     </demand>
     <demand name="order 1 for item C">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="Component C">
-        <operation name="Delivery C">
-          <flows>
-            <flow>
-              <buffer name="C @ warehouse"/>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="Component C"/>
+      <location name="warehouse" />
     </demand>
     <demand name="order 2 for item C">
       <quantity>100</quantity>
       <due>2015-02-01T00:00:00</due>
       <priority>1</priority>
       <item name="Component C" />
+      <location name="warehouse" />
     </demand>
     <demand name="order 1 for item D">
       <quantity>100</quantity>
       <due>2015-01-01T00:00:00</due>
       <priority>1</priority>
-      <item name="Component D">
-        <operation name="Delivery D">
-          <flows>
-            <flow>
-              <buffer name="D @ warehouse"/>
-              <quantity> -1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </item>
+      <item name="Component D"/>
+      <location name="warehouse" />
     </demand>
     <demand name="order 2 for item D">
       <quantity>100</quantity>
       <due>2015-02-01T00:00:00</due>
       <priority>1</priority>
       <item name="Component D" />
+      <location name="warehouse" />
     </demand>
   </demands>
+  <operationplans>
+    <operationplan ordertype="PO" end="2015-06-06T00:00:00" 
+      quantity="100" status="confirmed">
+      <item name="Component C"/>
+      <location name="warehouse"/>
+      <supplier name="Supplier of component B"/>
+    </operationplan>
+  </operationplans>
 
 <?python
-
-# Test purchase order creation from Python code
-import datetime
-frepple.operation_itemsupplier.createOrder(
-  location = frepple.location(name="warehouse"),
-  item = frepple.item(name="Component C"),
-  supplier = frepple.supplier(name="Supplier of component C"),
-  quantity = 100,
-  end = datetime.datetime(2015, 6, 6),
-  status = "confirmed"
-  )
 
 print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")

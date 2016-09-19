@@ -965,6 +965,15 @@
   </xsd:complexType>
 
   <!-- OPERATIONPLAN -->
+  <xsd:simpleType name="ordertype">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="MO" />
+      <xsd:enumeration value="PO" />
+      <xsd:enumeration value="DO" />
+      <xsd:enumeration value="DLVR" />
+      <xsd:enumeration value="STCK" />
+    </xsd:restriction>
+  </xsd:simpleType>  
   <xsd:complexType name="operationplan">
     <xsd:annotation>
       <xsd:documentation>
@@ -972,7 +981,8 @@
         operation planned at a certain quantity and time.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded"> 
+      <xsd:element name="ordertype" type="ordertype" />    
       <xsd:element name="id" type="xsd:unsignedLong" />
       <xsd:element name="operation" type="operation" />
       <xsd:element name="demand" type="demand" />
@@ -987,11 +997,16 @@
       <xsd:element name="consume_capacity" type="xsd:boolean" />
       <xsd:element name="produce_material" type="xsd:boolean" />
       <xsd:element name="source" type="xsd:normalizedString" />
+      <xsd:element name="item" type="item" />
+      <xsd:element name="location" type="location" />
+      <xsd:element name="origin" type="location" />
+      <xsd:element name="supplier" type="supplier" />
       <xsd:element name="booleanproperty" type="booleanproperty" />
       <xsd:element name="stringproperty" type="stringproperty" />
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
     </xsd:choice>
+    <xsd:attribute name="ordertype" type="ordertype" />
     <xsd:attribute name="id" type="xsd:unsignedLong" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />

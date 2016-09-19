@@ -123,6 +123,7 @@ DECLARE_EXPORT const Keyword Tags::operation("operation");
 DECLARE_EXPORT const Keyword Tags::operationplan("operationplan");
 DECLARE_EXPORT const Keyword Tags::operationplans("operationplans");
 DECLARE_EXPORT const Keyword Tags::operations("operations");
+DECLARE_EXPORT const Keyword Tags::ordertype("ordertype");
 DECLARE_EXPORT const Keyword Tags::origin("origin");
 DECLARE_EXPORT const Keyword Tags::owner("owner");
 DECLARE_EXPORT const Keyword Tags::pegging("pegging");

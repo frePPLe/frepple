@@ -287,7 +287,7 @@ class loadData(object):
           x.search = i[11]
         if i[16]:
           x.item = frepple.item(name=i[16])
-        if i[17] is not None:  
+        if i[17] is not None:
           x.priority = i[17]
         if i[18]:
           x.effective_start = i[18]
@@ -648,7 +648,7 @@ class loadData(object):
     # Check for operations where:
     #  - operation.item is still blank
     #  - they have a single operationmaterial item with quantity > 0
-    # If found we update 
+    # If found we update
     starttime = time()
     cnt = 0
     print('Auto-update operation items...')
@@ -747,7 +747,7 @@ class loadData(object):
         elif i[7] == 'PO':
           cnt_po += 1
           opplan = frepple.operationplan(
-            location=frepple.location(name=i[12]),
+            location=frepple.location(name=i[12]), ordertype=i[7],
             id=i[1], reference=i[12],
             item=frepple.item(name=i[11]) if i[11] else None,
             supplier=frepple.supplier(name=i[10]) if i[10] else None,
@@ -757,8 +757,8 @@ class loadData(object):
         elif i[7] == 'DO':
           cnt_do += 1
           opplan = frepple.operationplan(
-            destination=frepple.location(name=i[9]) if i[9] else None,
-            id=i[1], reference=i[12],
+            location=frepple.location(name=i[9]) if i[9] else None,
+            id=i[1], reference=i[12], ordertype=i[7],
             item=frepple.item(name=i[11]) if i[11] else None,
             origin=frepple.location(name=i[8]) if i[8] else None,
             quantity=i[2], start=i[3], end=i[4],

@@ -268,6 +268,10 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   if (ordtype == "PO")
   {
     // Find or create the destination buffer.
+    if (!itemval)
+      throw DataException("Missing item field");
+    if (!locval)
+      throw DataException("Missing location field");
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next())
@@ -343,6 +347,10 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   else if (ordtype == "DO")
   {
     // Find or create the destination buffer.
+    if (!itemval)
+      throw DataException("Missing item field");
+    if (!locval)
+      throw DataException("Missing location field");
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next())
@@ -388,7 +396,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     }
 
     // No matching operation is found.
-    OperationPlan *opplan = nullptr;
     if (!oper)
     {
       // We'll create one now, but that requires that we have an origin defined.

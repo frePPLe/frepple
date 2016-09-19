@@ -746,7 +746,7 @@ class loadData(object):
             )
         elif i[7] == 'PO':
           cnt_po += 1
-          opplan = frepple.operation_itemsupplier.createOrder(
+          opplan = frepple.operationplan(
             location=frepple.location(name=i[12]),
             id=i[1], reference=i[12],
             item=frepple.item(name=i[11]) if i[11] else None,
@@ -756,7 +756,7 @@ class loadData(object):
             )
         elif i[7] == 'DO':
           cnt_do += 1
-          opplan = frepple.operation_itemdistribution.createOrder(
+          opplan = frepple.operationplan(
             destination=frepple.location(name=i[9]) if i[9] else None,
             id=i[1], reference=i[12],
             item=frepple.item(name=i[11]) if i[11] else None,

@@ -24,6 +24,8 @@ a high level overview of the model objects and their relationships.
    operations
    operation-materials
    operation-resources
+   operationplan-materials
+   operationplan-resources
    purchase-orders
    suboperations
    resources

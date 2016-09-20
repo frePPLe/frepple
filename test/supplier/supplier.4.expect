@@ -2,6 +2,7 @@ Supplier Supplier of component A :
       Component A
 Supplier Supplier of component B :
       Component B
+      Component C
 Supplier Supplier of component C :
       Component C
 Supplier Supplier of components A and B :
@@ -14,6 +15,7 @@ Item Component B :
       Supplier of component B
 Item Component C :
       Supplier of component C
+      Supplier of component B
 Item Component D :
 Item Component group A and B :
       Supplier of components A and B

@@ -16,6 +16,8 @@ a high level overview of the model objects and their relationships.
    calendars
    customers
    distribution-orders
+   forecast
+   inventory-planning-parameters
    items
    item-distributions
    item-suppliers

@@ -45,6 +45,8 @@ class importer(object):
   def run(self):
     msg = []
 
+    proc_order = self.req.session.model('procurement.order')
+    mfg_order = self.req.session.model('mrp.production')
     if self.mode == 1:
       # Cancel previous draft purchase quotations
       m = self.req.session.model('purchase.order')
@@ -56,7 +58,6 @@ class importer(object):
       msg.append("Removed %s old draft purchase quotations" % len(ids))
 
       # Cancel previous draft procurement orders
-      proc_order = self.req.session.model('procurement.order')
       ids = proc_order.search(
         ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
         context=self.req.session.context
@@ -65,7 +66,6 @@ class importer(object):
       msg.append("Removed %s old draft procurement orders" % len(ids))
 
       # Cancel previous draft manufacturing orders
-      mfg_order = self.req.session.model('mrp.production')
       ids = mfg_order.search(
         ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
         context=self.req.session.context
@@ -77,7 +77,7 @@ class importer(object):
     countproc = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
-      if event == 'end' and elem.tag == 'operationplan':        
+      if event == 'end' and elem.tag == 'operationplan':   
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
         try:

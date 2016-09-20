@@ -191,7 +191,7 @@ class exportStaticModel(object):
         lastmodified) \
         values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s, \
         %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s, \
-        %s,%s,%s,%s,%s)",
+        %s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i.name, i.fence, i.posttime, round(i.size_minimum, 4),
@@ -213,8 +213,8 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update operation \
-        set fence=%s * interval '1 second', posttime=%s, sizeminimum=%s, \
-        sizemultiple=%s, sizemaximum=%s, type=%s, \
+        set fence=%s * interval '1 second', posttime=%s* interval '1 second', \
+        sizeminimum=%s, sizemultiple=%s, sizemaximum=%s, type=%s, \
         duration=%s * interval '1 second', duration_per=%s * interval '1 second', \
         location_id=%s, cost=%s, search=%s, description=%s, \
         category=%s, subcategory=%s, source=%s, lastmodified=%s, \
@@ -276,7 +276,7 @@ class exportStaticModel(object):
       print('Exported suboperations in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationMaterials(self, cursor):
+  def exportOperationPlanMaterials(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation materials...")
       starttime = time()
@@ -325,7 +325,7 @@ class exportStaticModel(object):
       print('Exported operation materials in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationResources(self, cursor):
+  def exportOperationPlanResources(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation resources...")
       starttime = time()
@@ -896,7 +896,7 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into item \
         (name,description,price,category,subcategory,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s)",
+        values(%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i.name, i.description, round(i.price, 4), i.category, 
@@ -963,56 +963,50 @@ class exportStaticModel(object):
         # OPTION 1: Sequential export of each entity
         # The parallel export normally gives a better performance, but
         # you could still choose a sequential export.
-        try:
-          self.exportParameters(cursor)
-          self.exportCalendars(cursor)
-          self.exportCalendarBuckets(cursor)
-          self.exportLocations(cursor)
-          self.exportOperations(cursor)
-          self.exportSubOperations(cursor)
-          self.exportOperationPlans(cursor)
-          self.exportItems(cursor)
-          self.exportBuffers(cursor)
-          self.exportOperationMaterials(cursor)
-          self.exportSetupMatrices(cursor)
-          self.exportSetupMatricesRules(cursor)
-          self.exportResources(cursor)
-          self.exportSkills(cursor)
-          self.exportResourceSkills(cursor)
-          self.exportOperationResources(cursor)
-          self.exportCustomers(cursor)
-          self.exportSuppliers(cursor)
-          self.exportItemSuppliers(cursor)
-          self.exportItemDistributions(cursor),
-          self.exportDemands(cursor)
-        except:
-          traceback.print_exc()
-
+        self.exportParameters(cursor)
+        self.exportCalendars(cursor)
+        self.exportCalendarBuckets(cursor)
+        self.exportLocations(cursor)
+        self.exportItems(cursor)
+        self.exportOperations(cursor)
+        self.exportSubOperations(cursor)
+        self.exportOperationPlans(cursor)
+        self.exportBuffers(cursor)
+        self.exportOperationPlanMaterials(cursor)
+        self.exportSetupMatrices(cursor)
+        self.exportSetupMatricesRules(cursor)
+        self.exportResources(cursor)
+        self.exportSkills(cursor)
+        self.exportResourceSkills(cursor)
+        self.exportOperationPlanResources(cursor)
+        self.exportCustomers(cursor)
+        self.exportSuppliers(cursor)
+        self.exportItemSuppliers(cursor)
+        self.exportItemDistributions(cursor),
+        self.exportDemands(cursor)
+        
       else:
         # OPTION 2: Parallel export of entities in groups.
         # The groups are running in separate threads, and all functions in a group
         # are run in sequence.
-        try:
-          self.exportCalendars(cursor)
-          self.exportLocations(cursor)
-          self.exportOperations(cursor)
-          self.exportItems(cursor)
-          self.exportSetupMatrices(cursor)
-          self.exportResources(cursor)
-          tasks = (
-            DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-            DatabaseTask(self, self.exportBuffers, self.exportOperationMaterials, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
-            DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportOperationResources),
-            DatabaseTask(self, self.exportCustomers, self.exportDemands),
-            )
-          # Start all threads
-          for i in tasks:
-            i.start()
-          # Wait for all threads to finish
-          for i in tasks:
-            i.join()
-        except Exception as e:
-          print("Error exporting static model:", e)
+        self.exportCalendars(cursor)
+        self.exportLocations(cursor)
+        self.exportItems(cursor)
+        self.exportOperations(cursor)
+        self.exportSetupMatrices(cursor)
+        self.exportResources(cursor)
+        tasks = (
+          DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
+          DatabaseTask(self, self.exportBuffers, self.exportOperationPlanMaterials, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
+          DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportOperationPlanResources),
+          DatabaseTask(self, self.exportCustomers, self.exportDemands),
+          )
+        # Start all threads
+        for i in tasks:
+          i.start()
+        # Wait for all threads to finish
+        for i in tasks:
+          i.join()
 
       # Cleanup unused records
       if self.source:
@@ -1022,6 +1016,22 @@ class exportStaticModel(object):
         cursor.execute("delete from itemsupplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from itemdistribution where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from item where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationplanmaterial
+          where operationplan_id in (
+            select operationplan.id 
+            from operationplan 
+            where operationplan.source = %s and operationplan.lastmodified <> %s
+            )
+          ''', (self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationplanresource
+          where operationplan_id in (
+            select operationplan.id 
+            from operationplan 
+            where operationplan.source = %s and operationplan.lastmodified <> %s
+            )
+          ''', (self.source, self.timestamp))
         cursor.execute("delete from operationplan where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operationresource where source = %s and lastmodified <> %s", (self.source, self.timestamp))

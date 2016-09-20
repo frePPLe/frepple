@@ -514,7 +514,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario2',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),$\r$\n"  
+  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   FileWrite $R4 "  'scenario3': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql_psycopg2',$\r$\n"
@@ -597,6 +597,16 @@ Section -Post
     DetailPrint " "
     DetailPrint "Review the file 'bin\\custom\\djangosettings.py' and run 'frepplectl migrate'"
     DetailPrint " "
+  ${EndIf}
+
+  ; set permissions on log files
+    ${If} $MultiUser.InstallMode != "CurrentUser"
+    AccessControl::GrantOnFile \
+      "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\systray.log" "(BU)" "GenericRead + GenericWrite"
+    AccessControl::GrantOnFile \
+      "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\frepple.log" "(BU)" "GenericRead + GenericWrite"
+    AccessControl::GrantOnFile \
+      "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\server.log" "(BU)" "GenericRead + GenericWrite"
   ${EndIf}
 
   ; Create uninstaller

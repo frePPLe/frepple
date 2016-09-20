@@ -19,6 +19,13 @@ settings:
 You can tune these parameters to fit your needs. For performance
 tuning the pgtune site http://pgtune.leopard.in.ua/ provides very
 useful input.
+
+If you install as admin and want frePPLe to be started by a user, some additional steps
+are required:
+- set pgsql to start as a service
+"C:\Program Files\frePPLe 4.0.beta\pgsql\bin>pg_ctl.exe register -N postgres -D C:\ProgramData\frePPLe\4.0.beta\database"
+- in djangosettings.py set the database user to admin
+" 'USER': 'Administrator' "
   
 If you want to install PostgreSQL yourself we recommended to use the
 installer found at:

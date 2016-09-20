@@ -73,8 +73,8 @@ class WizardWidget(Widget):
       group by owner_id
       )
       select 'Overall progress', 
-        sum(steps_complete),
-        sum(greatest(steps_total,1))
+        coalesce(sum(steps_complete),0),
+        coalesce(sum(greatest(steps_total,1)),1)
       from summary
       union all
       (

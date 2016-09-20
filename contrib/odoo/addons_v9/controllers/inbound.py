@@ -26,12 +26,12 @@ logger = logging.getLogger(__name__)
 
 class importer(object):
 
-  def __init__(self, req, database=None, company=None, mode=1):
-    self.req = req
-    self.database = database
+  def __init__(self, req, database=None, company=None, mode=1):    
+    self.req = req    
+    self.database = database 
     self.company = company
     self.datafile = req.httprequest.files.get('frePPLe plan')
-
+    
     # The mode argument defines different types of runs:
     #  - Mode 1:
     #    Export of the complete plan. This first erase all previous frePPLe
@@ -40,7 +40,7 @@ class importer(object):
     #    Incremental export of some proposed transactions from frePPLe.
     #    In this mode mode we are not erasing any previous proposals.
     self.mode = mode
-
+    
 
   def run(self):
     msg = []
@@ -77,7 +77,7 @@ class importer(object):
     countproc = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
-      if event == 'end' and elem.tag == 'operationplan':
+      if event == 'end' and elem.tag == 'operationplan':        
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
         try:

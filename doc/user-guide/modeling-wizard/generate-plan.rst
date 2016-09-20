@@ -36,7 +36,7 @@ see demand OR material, lead time and capacity problems to be shown.
   that prevent the demand from being planned in time. The demand is always met
   completely and on time.
 
-  In both the constrained and unconstrained plans you can select which constraints
+In both the constrained and unconstrained plans you can select which constraints
 are considered during plan creation.
 
 **Reading the plan**

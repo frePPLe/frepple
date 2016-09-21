@@ -2,9 +2,10 @@
 Low level integration
 =====================
 
-Most projects will integrate frePPLe at the database level. FrePPLe's open
-architecture allows also integration scenario's where frePPLe is much
-closer embedded in another enterprise application.
+Most projects will integrate frePPLe at the application and/or 
+database level. FrePPLe's open architecture allows also integration
+scenario's where frePPLe is much closer embedded in another enterprise
+application.
 
 * Using the :doc:`xml` or :doc:`python` you can directly interact with 
   the core planning algorithm. It allows data integration without passing

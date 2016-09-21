@@ -25,4 +25,4 @@ location_id                            location          The location where the 
 
 * Modeling operation types: :doc:`../../cookbook/operation/operation-type`
 
-* Modeling post-operation safety time: :doc:`../../cookbook/operation/posttime`
+* Modeling post-operation safety time: :doc:`../../cookbook/operation/operation-posttime`

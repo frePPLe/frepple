@@ -47,7 +47,7 @@ class XMLController(openerp.http.Controller):
         if authmeth.lower() != 'basic':
             raise Exception("Unknown authentication method")
         auth = auth.strip().decode('base64')
-        self.user, password = auth.split(':', 1)        
+        self.user, password = auth.split(':', 1)             
         if not database or not self.user or not password:
             raise Exception("Missing user, password or database")          
         if not req.session.authenticate(database, self.user, password):
@@ -71,6 +71,7 @@ class XMLController(openerp.http.Controller):
             try:                          
                 self.authenticate(req, database, language)
             except Exception as e:
+                logger.warning("Failed login attempt %" % e)  
                 return Response(
                     'Login with Odoo user name and password', 401,
                     headers=[('WWW-Authenticate', 'Basic realm="odoo"')]
@@ -107,7 +108,8 @@ class XMLController(openerp.http.Controller):
             req.session.db = database
             try:                          
                 self.authenticate(req, database, language)
-            except:
+            except Exception as e:
+                logger.warning("Failed login attempt %s" % e)
                 return Response(
                     'Login with Odoo user name and password', 401,
                     headers=[('WWW-Authenticate', 'Basic realm="odoo"')]

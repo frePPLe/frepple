@@ -18,6 +18,8 @@
 import base64
 import email
 import json
+import jwt
+import time
 from urllib.request import urlopen, HTTPError, Request
 from xml.sax.saxutils import quoteattr
 
@@ -50,6 +52,15 @@ def Upload(request):
       return HttpResponseServerError(_("Invalid configuration parameters"))
     data_odoo = [
       '--%s' % boundary,
+      'Content-Disposition: form-data; name="webtoken"\r',
+      '\r',
+      '%s\r' % jwt.encode({
+        'exp': round(time.time()) + 600,
+        'user': odoo_user,
+        },
+        settings.DATABASES[request.database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
+        algorithm='HS256').decode('ascii'),
+      '--%s\r' % boundary,      
       'Content-Disposition: form-data; name="database"',
       '',
       odoo_db,
@@ -131,7 +142,7 @@ def Upload(request):
     data_odoo.append('</operationplans></plan>')
     data_odoo.append('--%s--' % boundary)
     data_odoo.append('')
-    body = '\r\n'.join(data_odoo).encode('utf-8')
+    body = '\n'.join(data_odoo).encode('utf-8')
     size = len(body)
     encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))
     logger.debug("Uploading %d bytes of planning results to Odoo" % size)

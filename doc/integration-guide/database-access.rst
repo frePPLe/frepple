@@ -2,8 +2,7 @@
 Database access
 ===============
 
-For large data volumes a data integration with an 
-`ETL tool<https://en.wikipedia.org/wiki/Extract,_transform,_load>` 
+For large data volumes a data integration with an `ETL tool`_
 to directly connect to the PostgreSQL database will be the most
 efficient.
 
@@ -19,3 +18,5 @@ Keep in mind however:
 
 * The database schema can change between releases. We provide no guarantuee
   that your ETL-interface will be future-proof.
+
+.. _`ETL tool`: https://en.wikipedia.org/wiki/Extract,_transform,_load

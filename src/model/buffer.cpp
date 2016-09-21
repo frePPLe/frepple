@@ -823,8 +823,20 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
           subop->setOwner(producing_operation);
         }
         else
+        {
           // We are third or later: just add a suboperation
-          subop->setOwner(producing_operation);
+          if (producing_operation->getSubOperations().size() > 100)
+          {
+            new ProblemInvalidData(
+              this,
+              string("Excessive replenishments defined for '") + getName() + "'",
+              "material", Date::infinitePast, Date::infiniteFuture, 1
+            );
+            return;
+          }
+          else
+            subop->setOwner(producing_operation);
+        }
       }
       else
       {
@@ -931,8 +943,20 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
             subop->setOwner(producing_operation);
           }
           else
+          {
             // We are third or later: just add a suboperation
-            subop->setOwner(producing_operation);
+            if (producing_operation->getSubOperations().size() > 100)
+            {
+              new ProblemInvalidData(
+                this,
+                string("Excessive replenishments defined for '") + getName() + "'",
+                "material", Date::infinitePast, Date::infiniteFuture, 1
+              );
+              return;
+            }
+            else
+              subop->setOwner(producing_operation);
+          }
         }
         else
         {

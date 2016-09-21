@@ -37,31 +37,27 @@ class execute_with_commands(TransactionTestCase):
     # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
 
-  def tearDown(self):
-    del os.environ['FREPPLE_TEST']
-    if os.path.exists("workbook.xlsx"):
-      os.remove("workbook.xlsx")
-    
   @unittest.skipUnless(
     os.path.isdir(settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER', '')),
     "Requires FILEUPLOADFOLDER to be configured"
     )
+
   def test_exportimportfromfolder(self):
 
     # Run frePPLe on the test database.
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
 
-    self.assertTrue(input.models.ManufacturingOrder.objects.count() > 80)
+    self.assertTrue(input.models.ManufacturingOrder.objects.count() > 30)
     self.assertTrue(input.models.PurchaseOrder.objects.count() > 30)
-    self.assertTrue(input.models.DistributionOrder.objects.count() >= 0)
-    
+    self.assertTrue(input.models.DistributionOrder.objects.count() > 0)
+
     #the exporttofolder filters by status so the count must also filter
     countMO = input.models.ManufacturingOrder.objects.filter(status = 'proposed').count()
     countPO = input.models.PurchaseOrder.objects.filter(status = 'proposed').count()
     countDO = input.models.DistributionOrder.objects.filter(status = 'proposed').count()
 
     management.call_command('frepple_exporttofolder', )
-    
+
     input.models.ManufacturingOrder.objects.all().delete()
     input.models.DistributionOrder.objects.all().delete()
     input.models.PurchaseOrder.objects.all().delete()
@@ -69,7 +65,7 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(input.models.DistributionOrder.objects.count(), 0)
     self.assertEqual(input.models.PurchaseOrder.objects.count(),0)
     self.assertEqual(input.models.ManufacturingOrder.objects.count(), 0)
-    
+
     management.call_command('frepple_importfromfolder', )
     self.assertEqual(input.models.DistributionOrder.objects.count(), countDO)
     self.assertEqual(input.models.PurchaseOrder.objects.count(), countPO)

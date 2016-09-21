@@ -60,11 +60,11 @@ class execute_with_commands(TransactionTestCase):
     # Since the random model generator is not generating the same model
     # across different version and platforms, we can only do a rough
     # check on the output.
-    management.call_command('frepple_run', plantype=1, constraint=15)
-    self.assertTrue(output.models.Problem.objects.count() > 70)
-    self.assertTrue(input.models.OperationPlanMaterial.objects.count() > 500)
-    self.assertTrue(input.models.OperationPlanResource.objects.count() > 40)
-    self.assertTrue(input.models.OperationPlan.objects.count(), 350)
+    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    self.assertTrue(output.models.Problem.objects.count() > 100)
+    self.assertTrue(input.models.OperationPlanMaterial.objects.count() > 400)
+    self.assertTrue(input.models.OperationPlanResource.objects.count() > 20)
+    self.assertTrue(input.models.OperationPlan.objects.count() > 300)
 
 
 class execute_multidb(TransactionTestCase):
@@ -114,7 +114,7 @@ class execute_multidb(TransactionTestCase):
 
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
-    management.call_command('frepple_run', plantype=1, constraint=15, database=db1)
+    management.call_command('frepple_run', plantype=1, constraint=15, env='supply', database=db1)
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertNotEqual(count1, 0)
@@ -178,7 +178,7 @@ class execute_simulation(TransactionTestCase):
 
   def test_run_cmd(self):
     # Run the plan and measure the lateness
-    management.call_command('frepple_run', plantype=1, constraint=15)
+    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
     initial_planned_late = output.models.Problem.objects.all().filter(name="late").aggregate(
       count = Count('id'),
       lateness = Sum('weight')

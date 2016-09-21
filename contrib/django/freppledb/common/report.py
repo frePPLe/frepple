@@ -960,7 +960,7 @@ class GridReport(View):
     ok = False
     while not ok:
       ok = True
-      print ("sort again")
+      #---------------------------------------------------- print ("sort again")
       for i in range(cnt):
         j = i + 1
         while j < cnt and ok:
@@ -977,7 +977,7 @@ class GridReport(View):
             if i_base == models[j][1] or j_base == models[i][1]:
               j += 1
               continue
-            print("switch ", models[i][1], models[j][1])
+            #---------------------- print("switch ", models[i][1], models[j][1])
             models.append(models.pop(i))
             j = i
             ok = False

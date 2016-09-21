@@ -89,7 +89,7 @@ class cookbooktest(TransactionTestCase):
   def test_resource_skills(self):
     self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-skills.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
-    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "cookbook", "resource", "resource-skills.expect")
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-skills.expect")
 
   def test_resource_tool(self):
     self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "resource", "resource-tool.xlsx")

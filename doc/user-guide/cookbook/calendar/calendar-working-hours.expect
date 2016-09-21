@@ -1,2 +1,3 @@
 Make shoes,2014-12-17 08:00:00,2014-12-24 17:00:00,1.0
-Ship shoes,2014-12-25 12:00:00,2014-12-27 12:00:00,1.0
+Ship shoes @ warehouse,2014-12-27 12:00:00,2014-12-27 12:00:00,1.0
+Ship shoes from shoes @ manufacturing to shoes @ warehouse,2014-12-25 12:00:00,2014-12-27 12:00:00,1.0

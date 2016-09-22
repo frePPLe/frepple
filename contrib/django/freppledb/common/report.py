@@ -295,7 +295,7 @@ class GridReport(View):
 
   # Link to the documentation
   help_url = None
-  
+
   # The resultset that returns a list of entities that are to be
   # included in the report.
   # This query is used to return the number of records.
@@ -390,7 +390,14 @@ class GridReport(View):
 
     # Select the bucket size
     try:
-      if reportclass.maxBucketLevel:
+      if not pref.horizonbuckets:
+        if reportclass.maxBucketLevel:
+          bucket = Bucket.objects.using(request.database).filter(level__lte=reportclass.maxBucketLevel).order_by('-level')[0].name
+        else:
+          bucket = Bucket.objects.using(request.database).order_by('-level')[2].name
+        pref.horizonbuckets = bucket
+        pref.save()
+      elif reportclass.maxBucketLevel:
         bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets, level__lte=reportclass.maxBucketLevel)
       else:
         bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets)
@@ -398,8 +405,10 @@ class GridReport(View):
       try:
         if reportclass.maxBucketLevel:
           bucket = Bucket.objects.using(request.database).filter(level__lte=reportclass.maxBucketLevel).order_by('-level')[0].name
+
         else:
           bucket = Bucket.objects.using(request.database).order_by('-level')[2].name
+
       except:
         bucket = None
 
@@ -1973,9 +1982,9 @@ def exportWorkbook(request):
       lastmodified = False
       try:
         # The admin model of the class can define some fields to exclude from the export
-        exclude = data_site._registry[model].exclude        
+        exclude = data_site._registry[model].exclude
       except:
-        exclude = None      
+        exclude = None
       for i in model._meta.fields:
         if i.name in ['lft', 'rght', 'lvl']:
           continue  # Skip some fields of HierarchyModel
@@ -1983,7 +1992,7 @@ def exportWorkbook(request):
           source = True  # Put the source field at the end
         elif i.name == 'lastmodified':
           lastmodified = True  # Put the last-modified field at the very end
-        elif not (exclude and i.name in exclude and not i.name == model._meta.pk.name.lower()):          
+        elif not (exclude and i.name in exclude and not i.name == model._meta.pk.name.lower()):
           fields.append(i.column)
           header.append(force_text(i.verbose_name))
       if source:
@@ -2076,8 +2085,8 @@ def importWorkbook(request):
         # The admin model of the class can define some fields to exclude from the import
         exclude = data_site._registry[model].exclude
       except:
-        exclude = None      
-      
+        exclude = None
+
       for row in ws.iter_rows():
         with transaction.atomic(using=request.database):
           rownum += 1

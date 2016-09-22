@@ -96,14 +96,14 @@ class WizardWidget(Widget):
         result.append('<span>%s</span>' % capfirst(force_text(_('overall progress'))) )
         result.append('</th><th style="min-width: 50px"><div class="progress">')
         result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
-        result.append('<span>%s%%</span>' % progress )
+        result.append('<span style="color: black">%s%%</span>' % progress )
         result.append('</div>')
         result.append('</div></th></tr></thead><tbody>')
       else:
         result.append('<tr style="vertical-align: top"><td class="underline"><a href="/wizard/" target="_blank">%s</a></td>' % label)
         result.append('<td><div class="progress">')
         result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
-        result.append('<span>%s%%</span>' % progress )
+        result.append('<span style="color: black">%s%%</span>' % progress )
         result.append('</div></div></td></tr>')
     result.append('</tbody></table></div>')
 

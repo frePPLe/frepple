@@ -349,8 +349,8 @@ class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.OperationMaterial
-      fields = ('id', 'operation', 'buffer', 'quantity', 'type', 'effective_start', 'effective_end',
-                'name', 'alternate', 'priority', 'search', 'source', 'lastmodified')
+      fields = ('id', 'operation', 'quantity', 'type', 'effective_start', 'effective_end',
+                'name', 'priority', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -358,8 +358,8 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
 class OperationMaterialAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
-    filter_fields = ('id', 'operation', 'buffer', 'quantity', 'type', 'effective_start', 'effective_end',
-                'name', 'alternate', 'priority', 'search', 'source', 'lastmodified')
+    filter_fields = ('id', 'operation', 'quantity', 'type', 'effective_start', 'effective_end',
+                'name', 'priority', 'search', 'source', 'lastmodified')
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
@@ -370,7 +370,7 @@ class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.OperationResource
       fields = ('id', 'operation', 'resource', 'skill', 'quantity', 'effective_start', 'effective_end',
-                'name', 'alternate', 'priority', 'setup', 'search', 'source', 'lastmodified')
+                'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -379,7 +379,7 @@ class OperationResourceAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()
     serializer_class = OperationResourceSerializer
     filter_fields = ('id', 'operation', 'resource', 'skill', 'quantity', 'effective_start', 'effective_end',
-                'name', 'alternate', 'priority', 'setup', 'search', 'source', 'lastmodified')
+                'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
 
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()

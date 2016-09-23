@@ -207,6 +207,79 @@ class freppleREST(APITestCase):
     response = self.client.get('/api/')
     self.assertEqual(response.status_code, 200)
 
+    response = self.client.get('/api/input/demand/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/item/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/customer/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/location/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/buffer/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/resource/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/skill/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/resourceskill/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/setupmatrix/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/purchaseorder/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/supplier/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/itemsupplier/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/distributionorder/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/itemdistribution/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/manufacturingorder/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/calendar/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/calendarbucket/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/operation/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/operationmaterial/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/operationresource/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/input/suboperation/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/common/parameter/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/common/bucket/')
+    self.assertEqual(response.status_code, 200)
+
+    response = self.client.get('/api/common/bucketdetail/')
+    self.assertEqual(response.status_code, 200)
+
+
     #Demand tests
   def test_api_demand(self):
     response = self.client.get('/api/input/demand/')

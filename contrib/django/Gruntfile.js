@@ -55,7 +55,8 @@ module.exports = function (grunt) {
       snow: themeconfig('snow'),
       strawberry: themeconfig('strawberry'),
       water: themeconfig('water'),
-      orange: themeconfig('orange')
+      orange: themeconfig('orange'),
+      openbravo: themeconfig('openbravo')
     },
     // When any .less file changes we automatically run the "less"-task.
     watch: {

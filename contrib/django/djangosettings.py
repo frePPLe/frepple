@@ -403,7 +403,7 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'earth', 'grass', 'lemon', 'odoo', 'orange', 'snow', 'strawberry', 'water'
+  'earth', 'grass', 'lemon', 'odoo', 'orange', 'snow', 'strawberry', 'water', 'openbravo'
   ]
 
 # A default user-group to which new users are automatically added

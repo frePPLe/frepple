@@ -20,12 +20,12 @@ import json
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
+from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
-from freppledb.input.models import Item, PurchaseOrder, DistributionOrder, OperationPlan, DeliveryOrder
+from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, ManufacturingOrder, DeliveryOrder
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
@@ -218,16 +218,15 @@ def OperationPlans(request):
 
   # Collect list of selected sales orders
   so_list = request.GET.getlist('demand')
-
-  # TODO BROKEN WITH DATA MODEL CHANGE
-
-  # Find proposed associated with this sales order
-  result = []
+  
+  # Collect operationplans associated with the sales order(s)
   id_list = []
-# id_list = [
-#     peg.operationplan
-#     for peg in DemandPegging.objects.all().using(request.database).filter(demand__in=so_list)
-#     ]
+  for dm in Demand.objects.all().using(request.database).filter(pk__in=so_list).only('plan'):
+    for op in dm.plan['pegging']:
+      id_list.append(op['opplan'])
+  
+  # Collect details on the operationplans    
+  result = []
   for o in PurchaseOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
     result.append({
       'id': o.id,
@@ -254,7 +253,7 @@ def OperationPlans(request):
       'value': float(o.quantity * o.item.price),
       'criticality': float(o.criticality)
     })
-  for o in OperationPlan.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
+  for o in ManufacturingOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
     result.append({
       'id': o.id,
       'type': "MO",

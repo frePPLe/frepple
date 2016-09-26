@@ -30,7 +30,7 @@ class exporter(object):
         self.req = req
         self.database = database
         self.company = company
-                
+             
         # The mode argument defines differen types of runs:
         #  - Mode 1:
         #    This mode returns all data that is loaded with every planning run.
@@ -50,6 +50,13 @@ class exporter(object):
 
 
     def run(self):
+        # Check if we manage by work orders or manufacturing orders.
+        self.manage_work_orders = False
+        m = self.req.session.model('ir.model')
+        ids = m.search([('name', '=', 'mrp_operations.operation')], context=self.req.session.context)
+        for i in m.read(ids, ['name'], self.req.session.context):
+            self.manage_work_orders = True
+
         # Load some auxiliary data in memory
         self.load_company()
         self.load_uom()
@@ -82,7 +89,7 @@ class exporter(object):
             yield i
         if self.mode == 1:
             for i in self.export_boms():
-                yield i
+                yield i          
         for i in self.export_salesorders():
             yield i
         if self.mode == 1:
@@ -468,12 +475,9 @@ class exporter(object):
     def export_boms(self):
         '''
         Exports mrp.routings, mrp.routing.workcenter and mrp.bom records into
-        frePPLe operations, flows, buffers and loads.
+        frePPLe operations, flows and loads.
         
-        Not supported yet: a) parent boms, b) phantom boms, c) subproducts,
-        d) routing steps.
-        
-        Mapping:
+        Not supported yet: a) parent boms, b) phantom boms.    
         '''
         yield '<!-- bills of material -->\n'
         yield '<operations>\n'
@@ -490,49 +494,44 @@ class exporter(object):
         # Read all workcenters of all routings
         mrp_routing_workcenters = {}
         m = self.req.session.model('mrp.routing.workcenter')
-        ids = m.search([], context=self.req.session.context)
+        ids = m.search([], order='routing_id, sequence asc', context=self.req.session.context)
         fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr']
         for i in m.read(ids, fields, self.req.session.context):
             if i['routing_id'][0] in mrp_routing_workcenters:
               # If the same workcenter is used multiple times in a routing, 
               # we add the times together.
               exists = False
-              for r in mrp_routing_workcenters[i['routing_id'][0]]:
-                if r[0] == i['workcenter_id'][1]:
-                  r[1] += i['cycle_nbr']
-                  exists = True
-                  break
+              if not self.manage_work_orders:
+                for r in mrp_routing_workcenters[i['routing_id'][0]]:
+                  if r[0] == i['workcenter_id'][1]:
+                    r[1] += i['hour_nbr']
+                    exists = True
+                    break
               if not exists:
-                mrp_routing_workcenters[i['routing_id'][0]].append([i['workcenter_id'][1], i['cycle_nbr']])
+                mrp_routing_workcenters[i['routing_id'][0]].append([i['workcenter_id'][1], i['hour_nbr'], i['sequence']])
             else:
-                mrp_routing_workcenters[i['routing_id'][0]] = [[i['workcenter_id'][1], i['cycle_nbr']]]
-                
-        # Loop over all "producing" bom records
-        m = self.req.session.model('mrp.bom')
-        m_lines = self.req.session.model('mrp.bom.line')
-        ids = m.search([], context=self.req.session.context)
-        fields = [
+                mrp_routing_workcenters[i['routing_id'][0]] = [[i['workcenter_id'][1], i['hour_nbr'], i['sequence']]]
+        
+        # Models used in the bom-loop below        
+        bom_lines_model = self.req.session.model('mrp.bom.line')
+        bom_lines_fields = [
+            'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
+            'routing_id', 'product_rounding'
+        ]
+        subproduct_model = self.req.session.model('mrp.subproduct')
+        subproduct_fields = [
+            'product_id', 'product_qty', 'product_uom', 'subproduct_type'
+        ]
+                    
+        # Loop over all bom records
+        bom_model = self.req.session.model('mrp.bom')        
+        bom_ids = bom_model.search([], context=self.req.session.context)
+        bom_fields = [
             'product_qty', 'product_uom', 'date_start', 'date_stop',
             'product_efficiency', 'product_tmpl_id', 'routing_id', 'type',
-            'product_rounding', 'bom_line_ids'
+            'product_rounding', 'bom_line_ids', 'sub_products'
         ]
-        fields2 = [
-            'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
-            'routing_id', 'type', 'product_rounding'
-        ]
-        
-        product = self.req.session.model('product.template')
-        product_ids = product.search([('bom_ids','!=',False)], context=self.req.session.context)
-        product_field = ['bom_ids', 'id', 'name']
-        product_bom = {}
-        operation_bom = {}
-        buffer_bom = {}
-                    
-        for i in m.read(ids, fields, self.req.session.context):
-            duration_hour = 0
-            duration_per = 0
-            type = ""
-            producing = ""
+        for i in bom_model.read(bom_ids, bom_fields, self.req.session.context):
             # Determine the location
             if i['routing_id']:
                 location = mrp_routings.get(i['routing_id'][0], None)
@@ -544,59 +543,159 @@ class exporter(object):
                 location = self.mfg_location
 
             # Determine operation name and item
-            product_buf = self.product_template_product.get(i['product_tmpl_id'][0], None) # TODO avoid multiple bom on single template
+            product_buf = self.product_template_product.get(i['product_tmpl_id'][0], None) # TODO avoid multiple bom on single template            
             if not product_buf:
+                logger.warn("skipping %s %s" % (i['product_tmpl_id'][0], i['routing_id']))
                 continue
             buf_name = u'%s @ %s' % (product_buf['name'], location)
             uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_tmpl_id'][0])
             operation = u'%d %s @ %s' % (i['id'], product_buf['name'], location)
             self.operations.add(operation)
 
-            # Build operation
-            yield '<operation name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time">' \
-              '<item name=%s/><location name=%s/>\n' % (
-                quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
-                self.manufacturing_lead, quoteattr(product_buf['name']), quoteattr(location)
-            )
-            yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"%s%s><item name=%s/></flow>\n' % (
-                i['product_qty'] * i['product_efficiency'] * uom_factor,
-                i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
-                i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
-                quoteattr(product_buf['name'])
+            # Build operation. The operation can either be a summary operation or a detailed
+            # routing.
+            if not self.manage_work_orders or not i['routing_id'] or not mrp_routing_workcenters.get(i['routing_id'][0], []): 
+                #
+                # CASE 1: A single operation used for the BOM
+                # All routing steps are collapsed in a single operation.
+                #            
+                yield '<operation name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD"%s%s xsi:type="operation_fixed_time">\n' \
+                  '<item name=%s/><location name=%s/>\n' % (
+                    quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
+                    int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
+                    self.manufacturing_lead,
+                    (' effective_start="%s"' % i['date_start']) if i['date_start'] else '', 
+                    (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '', 
+                    quoteattr(product_buf['name']), quoteattr(location)
                 )
- 
-            # Build consuming flows. If the same component is consumed multiple times in the same
-            # BOM we sum up all quantities in a single flow.
-            fl = {}
-            for j in m_lines.read(i['bom_line_ids'], fields2, self.req.session.context):
-                product = self.product_product.get(j['product_id'][0], None)
-                if not product:
-                    continue
-                if j['product_id'][0] in fl:
-                    fl[j['product_id'][0]].append(j)
-                else:
-                    fl[j['product_id'][0]] = [j]
-            for j in fl:
-                product = self.product_product[j]
-                qty = sum(
-                    self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
-                    for k in fl[j]
+                
+                yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"%s%s><item name=%s/></flow>\n' % (
+                    i['product_qty'] * i['product_efficiency'] * uom_factor,
+                    i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
+                    i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
+                    quoteattr(product_buf['name'])
+                    )
+     
+                # Build consuming flows. 
+                # If the same component is consumed multiple times in the same BOM
+                # we sum up all quantities in a single flow. We assume all of them
+                # have the same effectivity.
+                fl = {}
+                for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields, self.req.session.context):
+                    product = self.product_product.get(j['product_id'][0], None)
+                    if not product:
+                        continue
+                    if j['product_id'][0] in fl:
+                        fl[j['product_id'][0]].append(j)
+                    else:
+                        fl[j['product_id'][0]] = [j]
+                for j in fl:
+                    product = self.product_product[j]
+                    qty = sum(
+                        self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
+                        for k in fl[j]
+                    )
+                    yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
+                        qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
+                        fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
+                        quoteattr(product['name'])
+                    )
+                
+                # Build byproduct flows
+                if i.get('sub_products', None):
+                  for j in subproduct_model.read(i['sub_products'], subproduct_fields, self.req.session.context):
+                    product = self.product_product.get(j['product_id'][0], None)
+                    if not product:
+                        continue
+                    yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
+                        "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
+                        self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
+                        quoteattr(product['name'])
+                        )
+                    
+                yield '</flows>\n'
+    
+                # Create loads
+                if i['routing_id']:
+                    yield '<loads>\n'
+                    for j in mrp_routing_workcenters.get(i['routing_id'][0], []):
+                        yield '<load quantity="%f"><resource name=%s/></load>\n' % (j[1], quoteattr(j[0]))
+                    yield '</loads>\n'
+            else: 
+                #
+                # CASE 2: A routing operation is created with a suboperation for each 
+                # routing step.
+                #       
+                yield '<operation name=%s size_multiple="%s" posttime="P%dD"%s%s xsi:type="operation_routing">' \
+                  '<item name=%s/><location name=%s/>\n' % (
+                    quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
+                    self.manufacturing_lead,
+                    (' effective_start="%s"' % i['date_start']) if i['date_start'] else '', 
+                    (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '', 
+                    quoteattr(product_buf['name']), quoteattr(location)
                 )
-                yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
-                    qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
-                    fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
-                    quoteattr(product['name'])
-                )
-            yield '</flows>\n'
-
-            # Create loads
-            if i['routing_id']:
-                yield '<loads>\n'
-                for j in mrp_routing_workcenters.get(i['routing_id'][0], []):
-                    yield '<load quantity="%f"><resource name=%s/></load>\n' % (j[1], quoteattr(j[0]))
-                yield '</loads>\n'
-
+                
+                yield '<suboperations>'
+                steplist = mrp_routing_workcenters[i['routing_id'][0]]         
+                for step in steplist:
+                    yield '<suboperation priority="%s">' \
+                          '<operation name=%s duration="PT%dH" xsi:type="operation_fixed_time">\n' \
+                          '<location name=%s/>\n' \
+                          '<loads><load quantity="%f"><resource name=%s/></load></loads>\n' % (
+                            step[2], 
+                            quoteattr("%s - %s" % (operation, step[2])),
+                            int(step[1]), quoteattr(location),
+                            step[1], quoteattr(step[0])
+                            )
+                    if step[2] == steplist[-1][2]:
+                        # Add producing flows on the last routing step
+                        yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"%s%s><item name=%s/></flow>\n' % (
+                            i['product_qty'] * i['product_efficiency'] * uom_factor,
+                            i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
+                            i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
+                            quoteattr(product_buf['name'])
+                            )    
+                        # Add byproduct flows
+                        if i.get('sub_products', None):
+                          for j in subproduct_model.read(i['sub_products'], subproduct_fields, self.req.session.context):
+                            product = self.product_product.get(j['product_id'][0], None)
+                            if not product:
+                                continue
+                            yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
+                                "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
+                                self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
+                                quoteattr(product['name'])
+                                )
+                        yield '</flows>\n'
+                    if step[2] == steplist[0][2]:
+                        # All consuming flows on the first routing step. 
+                        # If the same component is consumed multiple times in the same BOM
+                        # we sum up all quantities in a single flow. We assume all of them
+                        # have the same effectivity.
+                        fl = {}
+                        for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields, self.req.session.context):
+                            product = self.product_product.get(j['product_id'][0], None)
+                            if not product:
+                                continue
+                            if j['product_id'][0] in fl:
+                                fl[j['product_id'][0]].append(j)
+                            else:
+                                fl[j['product_id'][0]] = [j]
+                        yield '<flows>\n'
+                        for j in fl:
+                            product = self.product_product[j]
+                            qty = sum(
+                                self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
+                                for k in fl[j]
+                            )
+                            yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
+                                qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
+                                fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
+                                quoteattr(product['name'])
+                            )
+                        yield '</flows>\n'                                    
+                    yield '</operation></suboperation>\n'            
+                yield '</suboperations>\n'
             yield '</operation>\n'            
         yield '</operations>\n'
 

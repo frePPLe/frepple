@@ -71,7 +71,7 @@ class XMLController(openerp.http.Controller):
             try:                          
                 self.authenticate(req, database, language)
             except Exception as e:
-                logger.warning("Failed login attempt %" % e)  
+                logger.warning("Failed login attempt: %s" % e)  
                 return Response(
                     'Login with Odoo user name and password', 401,
                     headers=[('WWW-Authenticate', 'Basic realm="odoo"')]

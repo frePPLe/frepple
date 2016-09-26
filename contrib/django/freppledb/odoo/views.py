@@ -97,7 +97,7 @@ def Upload(request):
           data_ok = True
           obj.append(po)
           data_odoo.append(
-            '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
+            '<operationplan ordertype="PO" id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
             po.id, quoteattr("Purchase %s @ %s" % (po.item.name, po.location.name)),
             po.startdate, po.enddate, po.quantity,
             quoteattr(po.location.subcategory), quoteattr(po.item.subcategory),
@@ -105,12 +105,12 @@ def Upload(request):
             ))
         elif rec['type'] == 'DO':
           do = DistributionOrder.objects.using(request.database).get(id=rec['id'])
-          if not do.supplier.source or do.status != 'proposed' or not do.item.source:
+          if not do.origin.source or do.status != 'proposed' or not do.item.source:
             continue
           data_ok = True
           obj.append(do)
           data_odoo.append(
-            '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
+            '<operationplan ordertype="DO" id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
             do.id, quoteattr("Ship %s from %s to %s" % (do.item.name, do.origin.name, do.location.name)),
             do.startdate, do.enddate, do.quantity,
             quoteattr(do.location.subcategory), quoteattr(do.item.subcategory),

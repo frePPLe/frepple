@@ -75,9 +75,9 @@ class importer(object):
 
     # Parsing the XML data file
     countproc = 0
-    countmfg = 0
+    countmfg = 0    
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
-      if event == 'end' and elem.tag == 'operationplan':   
+      if event == 'end' and elem.tag == 'operationplan':       
         uom_id, item_id = elem.get('item').split(',')
         n = elem.get('operation')
         try:
@@ -88,7 +88,7 @@ class importer(object):
               'product_qty': elem.get("quantity"),
               'date_planned': elem.get("end"),
               'product_id': int(item_id),
-              'company_id': company.id,
+              'company_id': self.company.id,
               'product_uom': int(uom_id),
               'location_id': int(elem.get('location')),
               #'procure_method': 'make_to_order', # this field is no longer there
@@ -106,7 +106,7 @@ class importer(object):
               'product_qty': elem.get("quantity"),
               'date_planned': elem.get("end"),
               'product_id': int(item_id),
-              'company_id': company.id,
+              'company_id': self.company.id,
               'product_uom': int(uom_id),
               'location_src_id': int(elem.get('location')),
               'product_uos_qty': False,

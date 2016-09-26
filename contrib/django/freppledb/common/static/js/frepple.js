@@ -1154,7 +1154,7 @@ var ERPconnection = {
               error: function (result, stat, errorThrown) {
                 fmts = ngettext("Error during export");
                 $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
-                $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+                $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
                 $('#button_export').val(gettext('Retry'));
                 $('#popup .modal-dialog').css({'visibility':'visible'})
                 $('#popup').modal('show');
@@ -1185,7 +1185,7 @@ var ERPconnection = {
         error: function (result, stat, errorThrown) {
           fmts = gettext("Error getting data");
           $('#popup .modal-title').addClass('alert alert-danger').html(fmts);
-          $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+gettext("The database returned") + ':' + result.responseText + '</div>');
+          $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
           $('#button_export').val(gettext('Retry'));
           $('#popup .modal-dialog').css({'visibility':'visible'})
           $('#popup').modal('show');

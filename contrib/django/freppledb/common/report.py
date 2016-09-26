@@ -440,7 +440,7 @@ class GridReport(View):
       # Second type: Absolute start and end dates given
       start = pref.horizonstart
       if not start or (reportclass.showOnlyFutureTimeBuckets and start < current):
-        start = current
+        start = current.replace(hour=0, minute=0, second=0, microsecond=0)
       end = pref.horizonend
       if end:
         if end < start:

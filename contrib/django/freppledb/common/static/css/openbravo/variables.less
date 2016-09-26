@@ -144,9 +144,9 @@
 
 @btn-font-weight:                normal;
 
-@btn-default-color:              #aed186;
-@btn-default-bg:                 #21b799;
-@btn-default-border:             #21b799;
+@btn-default-color:              #fff;
+@btn-default-bg:                 #549033;
+@btn-default-border:             #799e65;
 
 @btn-primary-color:              #fff;
 @btn-primary-bg:                 #549033;
@@ -365,8 +365,15 @@
 @navbar-collapse-max-height:       340px;
 
 @navbar-default-color:             #ddd;
-@navbar-default-bg:                #48790f;
+@navbar-default-bg:                #43740a;
 @navbar-default-border:           #729945;
+
+// Only for the openbravo style gradient
+@navbar-gradient-start-color: lighten(#68992f ,20%);
+@navbar-gradient-stop-color: #43740a;
+.navbar-default {
+#gradient > .vertical( @navbar-gradient-start-color,@navbar-gradient-stop-color);
+}
 
 // Navbar links
 @navbar-default-link-color:                   @navbar-default-color;
@@ -791,7 +798,7 @@
 @breadcrumb-padding-vertical:   8px;
 @breadcrumb-padding-horizontal: 0;
 //** Breadcrumb background color
-@breadcrumb-bg:                 @navbar-default-bg;
+@breadcrumb-bg:                 transparent;
 //** Breadcrumb text color
 @breadcrumb-color:              @navbar-default-link-color;
 //** Text color of current page in the breadcrumb

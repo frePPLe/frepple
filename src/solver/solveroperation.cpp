@@ -1049,7 +1049,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
         // Message
         if (loglevel>1)
           logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
-            << "' tries alternate '" << *altIter << "' " << endl;
+            << "' tries alternate '" << (*altIter)->getOperation() << "' " << endl;
         (*altIter)->getOperation()->solve(*this,v);
       }
       else
@@ -1254,7 +1254,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Message
     if (loglevel)
       logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
-        << "' plans unconstrained on alternate '" << firstAlternate << "' " << search << endl;
+        << "' plans unconstrained on alternate '" << firstAlternate->getOperation() << "' " << search << endl;
 
     // Create the top operationplan.
     // Note that both the top- and the sub-operation can have a flow in the

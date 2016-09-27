@@ -32,9 +32,6 @@
 			<name>item 1</name>
 			<category>item category</category>
 			<description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
-			<operation xsi:type="operation_routing">
-				<name>operation 1</name>
-			</operation>
 		</item>
 	</items>
 	<buffers>
@@ -77,9 +74,9 @@
 			</loads>
 			<flows>
 				<flow>
-					<buffer>
-						<name>STCK1</name>
-					</buffer>
+					<item>
+						<name>item 1</name>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -97,6 +94,9 @@
 			<item>
 				<name>item 1</name>
 			</item>
+			<operation xsi:type="operation_routing">
+				<name>operation 1</name>
+			</operation>
 			<due>2009-01-27T00:00:00</due>
 			<priority>1</priority>
 		</demand>

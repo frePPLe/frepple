@@ -20,17 +20,17 @@ Echoing locations:
   Location: locB None None None None
 
 Echoing items:
-  Item: end item None None None None delivery end item
-  Item: item 0 None None None None None
-  Item: item 1 None None None None None
-  Item: item 2 None None None None None
-  Item: item 3 None None None None None
-  Item: item 4 None None None None None
-  Item: item 5 None None None None None
-  Item: item 6 None None None None None
-  Item: item 7 None None None None None
-  Item: item 8 None None None None None
-  Item: item 9 None None None None None
+  Item: end item None None None None
+  Item: item 0 None None None None
+  Item: item 1 None None None None
+  Item: item 2 None None None None
+  Item: item 3 None None None None
+  Item: item 4 None None None None
+  Item: item 5 None None None None
+  Item: item 6 None None None None
+  Item: item 7 None None None None
+  Item: item 8 None None None None
+  Item: item 9 None None None None
 
 Echoing resources:
   Resource: Resource None None None None

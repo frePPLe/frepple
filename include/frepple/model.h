@@ -2754,10 +2754,7 @@ class Operation : public HasName<Operation>,
 
     /** Return the flow that is associates a given buffer with this
       * operation. Returns nullptr is no such flow exists. */
-    Flow* findFlow(const Buffer* b, Date d) const
-    {
-      return flowdata.find(b,d);
-    }
+    Flow* findFlow(const Buffer* b, Date d) const;
 
     /** Return the load that is associates a given resource with this
       * operation. Returns nullptr is no such load exists. */
@@ -4710,11 +4707,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       return flowplans;
     }
 
-    /** Return the flow that is associates a given operation with this
-      * buffer.<br>Returns nullptr is no such flow exists. */
+    /** Return the flow that is associates a given operation with this buffer.
+      * Returns nullptr is no such flow exists. */
     Flow* findFlow(const Operation* o, Date d) const
     {
-      return flows.find(o,d);
+      return o ? o->findFlow(this, d) : nullptr;
     }
 
     /** Deletes all operationplans consuming from or producing from this

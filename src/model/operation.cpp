@@ -556,6 +556,22 @@ DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan,
 }
 
 
+Flow* Operation::findFlow(const Buffer* b, Date d) const
+{
+  for (flowlist::const_iterator fl = flowdata.begin();
+    fl != flowdata.end(); ++fl)
+  {
+    if (!fl->effectivity.within(d))
+      continue;
+    if (fl->getBuffer() == b)
+        return const_cast<Flow*>(&*fl);
+    else if (!fl->getBuffer() && fl->getItem() == b->getItem() && getLocation() == b->getLocation())
+      return const_cast<Flow*>(&*fl);
+  }
+  return nullptr;
+}
+
+
 DECLARE_EXPORT void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 {
   OperationPlan::deleteOperationPlans(this, deleteLockedOpplans);

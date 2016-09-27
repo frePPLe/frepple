@@ -32,139 +32,107 @@
   </description>
   <current>2009-01-01T00:00:00</current>
   <operations>
-    <operation name="supply item A" xsi:type="operation_fixed_time"/>
-    <operation name="supply item B" xsi:type="operation_fixed_time"/>
-    <operation name="supply item C" xsi:type="operation_fixed_time"/>
-    <operation name="supply item D" xsi:type="operation_fixed_time"/>
-    <operation name="supply item E" xsi:type="operation_fixed_time"/>
-    <operation name="supply item F" xsi:type="operation_fixed_time"/>
-    <operation name="supply item G" xsi:type="operation_fixed_time"/>
+    <operation name="supply item A" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item A" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>
+    <operation name="supply item B" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item B" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
+    <operation name="supply item C" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item C" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
+    <operation name="supply item D" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item D" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
+    <operation name="supply item E" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item E" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
+    <operation name="supply item F" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item F" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
+    <operation name="supply item G" xsi:type="operation_fixed_time">
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">        
+          <item name="item G" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+    </operation>    
   </operations>
-  <items>
-    <item name="item A">
-      <operation name="delivery item A" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item B">
-      <operation name="delivery item B" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item C">
-      <operation name="delivery item C" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item D">
-      <operation name="delivery item D" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item E">
-      <operation name="delivery item E" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item F">
-      <operation name="delivery item F" xsi:type="operation_fixed_time"/>
-    </item>
-    <item name="item G">
-      <operation name="delivery item G" xsi:type="operation_fixed_time"/>
-    </item>
-  </items>
   <buffers>
     <buffer name="buffer A">
       <item name="item A" />
+      <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
     <buffer name="buffer B">
       <item name="item B" />
+      <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
     <buffer name="buffer C">
       <item name="item C" />
+      <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
     <buffer name="buffer D">
       <item name="item D" />
+      <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
     <buffer name="buffer E">
       <item name="item E" />
+      <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
     <buffer name="buffer F">
       <item name="item F" />
+      <location name="factory"/>
       <onhand>15</onhand>
     </buffer>
     <buffer name="buffer G">
       <item name="item G" />
+      <location name="factory"/>
       <onhand>15</onhand>
     </buffer>
   </buffers>
-  <flows>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item A" />
-      <buffer name="buffer A" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item A" />
-      <buffer name="buffer A" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item B" />
-      <buffer name="buffer B" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item B" />
-      <buffer name="buffer B" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item C" />
-      <buffer name="buffer C" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item C" />
-      <buffer name="buffer C" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item D" />
-      <buffer name="buffer D" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item D" />
-      <buffer name="buffer D" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item E" />
-      <buffer name="buffer E" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item E" />
-      <buffer name="buffer E" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item F" />
-      <buffer name="buffer F" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item F" />
-      <buffer name="buffer F" />
-      <quantity>1</quantity>
-    </flow>
-    <flow xsi:type="flow_start">
-      <operation name="delivery item G" />
-      <buffer name="buffer G" />
-      <quantity>-1</quantity>
-    </flow>
-    <flow xsi:type="flow_end">
-      <operation name="supply item G" />
-      <buffer name="buffer G" />
-      <quantity>1</quantity>
-    </flow>
-  </flows>
 	<operationplans>
 	  <operationplan id="1001">
       <operation name="supply item A"/>
@@ -222,12 +190,14 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item A" />
+      <location name="factory"/>
     </demand>
     <demand name="order B">
       <quantity>20</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item B" />
+      <location name="factory"/>
       <maxlateness>P0D</maxlateness>
     </demand>
     <demand name="order C">
@@ -235,6 +205,7 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item C" />
+      <location name="factory"/>
       <minshipment>20</minshipment>
     </demand>
     <demand name="order D">
@@ -242,6 +213,7 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item D" />
+      <location name="factory"/>
       <maxlateness>P0D</maxlateness>
       <minshipment>20</minshipment>
     </demand>
@@ -250,6 +222,7 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item E" />
+      <location name="factory"/>
       <maxlateness>P2D</maxlateness>
     </demand>
     <demand name="order F">
@@ -257,6 +230,7 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item F" />
+      <location name="factory"/>
       <minshipment>11</minshipment>
     </demand>
     <demand name="order G">
@@ -264,6 +238,7 @@
       <due>2009-01-05T00:00:00</due>
       <priority>1</priority>
       <item name="item G" />
+      <location name="factory"/>
       <minshipment>30</minshipment>
     </demand>
   </demands>

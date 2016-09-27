@@ -13,54 +13,54 @@
         <!-- Level 2: item -->
         <description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
         <category>item category</category>
-        <operation name="operation 1" xsi:type="operation_routing">
-          <!-- Level 3: operation -->
-          <size_multiple>3</size_multiple>
-          <suboperations>
-            <suboperation>
-            <operation name="operation 1 step1"
-              xsi:type="operation_fixed_time">
-              <!-- Level 4: operation -->
-              <flows>
-                <flow xsi:type="flow_start">
-                  <!-- Level 5: flow -->
-                  <quantity>-1</quantity>
-                  <buffer name="STCK1">
-                    <!-- Level 6: buffer -->
-                    <item name="item 1" category="end item" />
-                    <onhand>100</onhand>
-                    <!-- Level 7: location -->
-                    <location name="location 1" category="manufacturing" />
-                  </buffer>
-                </flow>
-              </flows>
-              <loads>
-                <load>
-                  <!-- Level 5: load -->
-                  <resource name="resource 1">
-                    <!-- Level 6: resource -->
-                    <maximum_calendar name="weeks">
-                      <!-- Level 7: calendar -->
-                      <buckets>
-                        <!-- Level 8: bucket -->
-                        <bucket start="2009-01-01T00:00:00" value="0"/>
-                      </buckets>
-                    </maximum_calendar>
-                  </resource>
-                </load>
-              </loads>
-              <duration>P7D</duration>
-            </operation>
-            </suboperation>
-            <suboperation>
-            <operation name="operation 1 step2"
-              xsi:type="operation_fixed_time">
-              <duration>P7D</duration>
-            </operation>
-            </suboperation>
-          </suboperations>
-        </operation>
       </item>
+      <operation name="operation 1" xsi:type="operation_routing">
+        <!-- Level 2: operation -->
+        <size_multiple>3</size_multiple>
+        <suboperations>
+          <suboperation>
+          <operation name="operation 1 step1"
+            xsi:type="operation_fixed_time">
+            <!-- Level 3: operation -->
+            <flows>
+              <flow xsi:type="flow_start">
+                <!-- Level 4: flow -->
+                <quantity>-1</quantity>
+                <buffer name="STCK1">
+                  <!-- Level 5: buffer -->
+                  <item name="item 1" />
+                  <onhand>100</onhand>
+                  <!-- Level 6: location -->
+                  <location name="location 1" category="manufacturing" />
+                </buffer>
+              </flow>
+            </flows>
+            <loads>
+              <load>
+                <!-- Level 4: load -->
+                <resource name="resource 1">
+                  <!-- Level 5: resource -->
+                  <maximum_calendar name="weeks">
+                    <!-- Level 6: calendar -->
+                    <buckets>
+                      <!-- Level 7: bucket -->
+                      <bucket start="2009-01-01T00:00:00" value="0"/>
+                    </buckets>
+                  </maximum_calendar>
+                </resource>
+              </load>
+            </loads>
+            <duration>P7D</duration>
+          </operation>
+          </suboperation>
+          <suboperation>
+          <operation name="operation 1 step2"
+            xsi:type="operation_fixed_time">
+            <duration>P7D</duration>
+          </operation>
+          </suboperation>
+        </suboperations>
+      </operation>      
     </demand>
   </demands>
   <problems>

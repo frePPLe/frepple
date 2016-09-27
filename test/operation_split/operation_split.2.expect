@@ -1,63 +1,61 @@
-BUFFER	component 1 for option A	2013-12-23T00:00:00	15	15
-BUFFER	component 1 for option A	2013-12-23T00:00:00	-15	0
-BUFFER	component 1 for option B	2013-12-26T00:00:00	35	35
-BUFFER	component 1 for option B	2013-12-26T00:00:00	-35	0
-BUFFER	component 1 for option C	2013-12-21T00:00:00	7	7
-BUFFER	component 1 for option C	2013-12-21T00:00:00	-7	0
-BUFFER	component 2 for option A	2013-12-23T00:00:00	30	30
-BUFFER	component 2 for option A	2013-12-23T00:00:00	-30	0
-BUFFER	component 2 for option B	2013-12-26T00:00:00	35	35
-BUFFER	component 2 for option B	2013-12-26T00:00:00	-35	0
-BUFFER	component 2 for option C	2013-12-21T00:00:00	35	35
-BUFFER	component 2 for option C	2013-12-21T00:00:00	-35	0
-BUFFER	component 3 for option A	2014-06-22T00:00:00	30	30
-BUFFER	component 3 for option A	2014-06-22T00:00:00	-30	0
-BUFFER	component 3 for option A	2014-07-23T00:00:00	30	30
-BUFFER	component 3 for option A	2014-07-23T00:00:00	-30	0
-BUFFER	component 3 for option B	2014-06-25T00:00:00	35	35
-BUFFER	component 3 for option B	2014-06-25T00:00:00	-35	0
-BUFFER	component 3 for option B	2014-07-26T00:00:00	35	35
-BUFFER	component 3 for option B	2014-07-26T00:00:00	-35	0
-BUFFER	component 3 for option B	2014-08-26T00:00:00	50	50
-BUFFER	component 3 for option B	2014-08-26T00:00:00	-50	0
-BUFFER	component 3 for option B	2014-09-25T00:00:00	25	25
-BUFFER	component 3 for option B	2014-09-25T00:00:00	-25	0
-BUFFER	component 3 for option B	2014-10-26T00:00:00	20	20
-BUFFER	component 3 for option B	2014-10-26T00:00:00	-20	0
-BUFFER	component 3 for option C	2014-06-20T00:00:00	35	35
-BUFFER	component 3 for option C	2014-06-20T00:00:00	-35	0
-BUFFER	component 3 for option C	2014-07-21T00:00:00	35	35
-BUFFER	component 3 for option C	2014-07-21T00:00:00	-35	0
-BUFFER	component 3 for option C	2014-08-21T00:00:00	50	50
-BUFFER	component 3 for option C	2014-08-21T00:00:00	-50	0
-BUFFER	component 3 for option C	2014-09-20T00:00:00	75	75
-BUFFER	component 3 for option C	2014-09-20T00:00:00	-75	0
-BUFFER	component 3 for option C	2014-10-21T00:00:00	80	80
-BUFFER	component 3 for option C	2014-10-21T00:00:00	-80	0
-BUFFER	component 4 for option A	2013-12-23T00:00:00	20	20
-BUFFER	component 4 for option A	2013-12-23T00:00:00	-20	0
-BUFFER	component 4 for option B	2013-12-26T00:00:00	40	40
-BUFFER	component 4 for option B	2013-12-26T00:00:00	-40	0
-BUFFER	component 4 for option C	2013-12-21T00:00:00	40	40
-BUFFER	component 4 for option C	2013-12-21T00:00:00	-40	0
-BUFFER	item 1	2013-12-26T00:00:00	30	30
-BUFFER	item 1	2013-12-31T00:00:00	35	65
-BUFFER	item 1	2013-12-31T00:00:00	35	100
-BUFFER	item 1	2013-12-31T00:00:00	-100	0
-BUFFER	item 2	2013-12-31T00:00:00	200	200
-BUFFER	item 2	2013-12-31T00:00:00	-200	0
-BUFFER	item 3	2014-06-30T00:00:00	100	100
-BUFFER	item 3	2014-06-30T00:00:00	-100	0
-BUFFER	item 3	2014-07-31T00:00:00	100	100
-BUFFER	item 3	2014-07-31T00:00:00	-100	0
-BUFFER	item 3	2014-08-31T00:00:00	100	100
-BUFFER	item 3	2014-08-31T00:00:00	-100	0
-BUFFER	item 3	2014-09-30T00:00:00	100	100
-BUFFER	item 3	2014-09-30T00:00:00	-100	0
-BUFFER	item 3	2014-10-31T00:00:00	100	100
-BUFFER	item 3	2014-10-31T00:00:00	-100	0
-BUFFER	item 4	2013-12-31T00:00:00	200	200
-BUFFER	item 4	2013-12-31T00:00:00	-200	0
+BUFFER	component 1 for option A @ location 1	2013-12-24T00:00:00	15	15
+BUFFER	component 1 for option A @ location 1	2013-12-24T00:00:00	-15	0
+BUFFER	component 1 for option B @ location 1	2013-12-27T00:00:00	35	35
+BUFFER	component 1 for option B @ location 1	2013-12-27T00:00:00	-35	0
+BUFFER	component 1 for option C @ location 1	2013-12-22T00:00:00	7	7
+BUFFER	component 1 for option C @ location 1	2013-12-22T00:00:00	-7	0
+BUFFER	component 2 for option A @ location 2	2013-12-24T00:00:00	30	30
+BUFFER	component 2 for option A @ location 2	2013-12-24T00:00:00	-30	0
+BUFFER	component 2 for option B @ location 2	2013-12-27T00:00:00	35	35
+BUFFER	component 2 for option B @ location 2	2013-12-27T00:00:00	-35	0
+BUFFER	component 2 for option C @ location 2	2013-12-22T00:00:00	35	35
+BUFFER	component 2 for option C @ location 2	2013-12-22T00:00:00	-35	0
+BUFFER	component 3 for option A @ location 3	2014-06-23T00:00:00	30	30
+BUFFER	component 3 for option A @ location 3	2014-06-23T00:00:00	-30	0
+BUFFER	component 3 for option B @ location 3	2014-06-26T00:00:00	35	35
+BUFFER	component 3 for option B @ location 3	2014-06-26T00:00:00	-35	0
+BUFFER	component 3 for option B @ location 3	2014-07-27T00:00:00	50	50
+BUFFER	component 3 for option B @ location 3	2014-07-27T00:00:00	-50	0
+BUFFER	component 3 for option B @ location 3	2014-08-27T00:00:00	25	25
+BUFFER	component 3 for option B @ location 3	2014-08-27T00:00:00	-25	0
+BUFFER	component 3 for option B @ location 3	2014-09-26T00:00:00	20	20
+BUFFER	component 3 for option B @ location 3	2014-09-26T00:00:00	-20	0
+BUFFER	component 3 for option B @ location 3	2014-10-27T00:00:00	20	20
+BUFFER	component 3 for option B @ location 3	2014-10-27T00:00:00	-20	0
+BUFFER	component 3 for option C @ location 3	2014-06-21T00:00:00	35	35
+BUFFER	component 3 for option C @ location 3	2014-06-21T00:00:00	-35	0
+BUFFER	component 3 for option C @ location 3	2014-07-22T00:00:00	50	50
+BUFFER	component 3 for option C @ location 3	2014-07-22T00:00:00	-50	0
+BUFFER	component 3 for option C @ location 3	2014-08-22T00:00:00	75	75
+BUFFER	component 3 for option C @ location 3	2014-08-22T00:00:00	-75	0
+BUFFER	component 3 for option C @ location 3	2014-09-21T00:00:00	80	80
+BUFFER	component 3 for option C @ location 3	2014-09-21T00:00:00	-80	0
+BUFFER	component 3 for option C @ location 3	2014-10-22T00:00:00	80	80
+BUFFER	component 3 for option C @ location 3	2014-10-22T00:00:00	-80	0
+BUFFER	component 4 for option A @ location 4	2013-12-24T00:00:00	20	20
+BUFFER	component 4 for option A @ location 4	2013-12-24T00:00:00	-20	0
+BUFFER	component 4 for option B @ location 4	2013-12-27T00:00:00	40	40
+BUFFER	component 4 for option B @ location 4	2013-12-27T00:00:00	-40	0
+BUFFER	component 4 for option C @ location 4	2013-12-22T00:00:00	40	40
+BUFFER	component 4 for option C @ location 4	2013-12-22T00:00:00	-40	0
+BUFFER	item 1 @ location 1	2013-12-27T00:00:00	30	30
+BUFFER	item 1 @ location 1	2014-01-01T00:00:00	35	65
+BUFFER	item 1 @ location 1	2014-01-01T00:00:00	35	100
+BUFFER	item 1 @ location 1	2014-01-01T00:00:00	-100	0
+BUFFER	item 2 @ location 2	2014-01-01T00:00:00	200	200
+BUFFER	item 2 @ location 2	2014-01-01T00:00:00	-200	0
+BUFFER	item 3 @ location 3	2014-07-01T00:00:00	100	100
+BUFFER	item 3 @ location 3	2014-07-01T00:00:00	-100	0
+BUFFER	item 3 @ location 3	2014-08-01T00:00:00	100	100
+BUFFER	item 3 @ location 3	2014-08-01T00:00:00	-100	0
+BUFFER	item 3 @ location 3	2014-09-01T00:00:00	100	100
+BUFFER	item 3 @ location 3	2014-09-01T00:00:00	-100	0
+BUFFER	item 3 @ location 3	2014-10-01T00:00:00	100	100
+BUFFER	item 3 @ location 3	2014-10-01T00:00:00	-100	0
+BUFFER	item 3 @ location 3	2014-11-01T00:00:00	100	100
+BUFFER	item 3 @ location 3	2014-11-01T00:00:00	-100	0
+BUFFER	item 4 @ location 4	2014-01-01T00:00:00	200	200
+BUFFER	item 4 @ location 4	2014-01-01T00:00:00	-200	0
 DEMAND	order 1 for item 1	2014-01-01T00:00:00	100
 DEMAND	order 1 for item 2	2014-01-01T00:00:00	200
 DEMAND	order 1 for item 3	2014-07-01T00:00:00	100
@@ -66,125 +64,110 @@ DEMAND	order 2 for item 3	2014-08-01T00:00:00	100
 DEMAND	order 3 for item 3	2014-09-01T00:00:00	100
 DEMAND	order 4 for item 3	2014-10-01T00:00:00	100
 DEMAND	order 5 for item 3	2014-11-01T00:00:00	100
-RESOURCE	Resource 1 A+B	2013-12-23T00:00:00	1	1
-RESOURCE	Resource 1 A+B	2013-12-26T00:00:00	1	2
-RESOURCE	Resource 1 A+B	2013-12-26T00:00:00	-1	1
-RESOURCE	Resource 1 A+B	2013-12-31T00:00:00	-1	0
-RESOURCE	Resource 1 C	2013-12-21T00:00:00	1	1
-RESOURCE	Resource 1 C	2013-12-31T00:00:00	-1	0
-RESOURCE	Resource 2 A+B	2013-12-23T00:00:00	1	1
-RESOURCE	Resource 2 A+B	2013-12-26T00:00:00	1	2
-RESOURCE	Resource 2 A+B	2013-12-26T00:00:00	-1	1
-RESOURCE	Resource 2 A+B	2013-12-31T00:00:00	-1	0
-RESOURCE	Resource 2 C	2013-12-21T00:00:00	1	1
-RESOURCE	Resource 2 C	2013-12-31T00:00:00	-1	0
-RESOURCE	Resource 3 A+B	2014-06-22T00:00:00	1	1
-RESOURCE	Resource 3 A+B	2014-06-25T00:00:00	1	2
-RESOURCE	Resource 3 A+B	2014-06-25T00:00:00	-1	1
-RESOURCE	Resource 3 A+B	2014-06-30T00:00:00	-1	0
-RESOURCE	Resource 3 A+B	2014-07-23T00:00:00	1	1
-RESOURCE	Resource 3 A+B	2014-07-26T00:00:00	1	2
-RESOURCE	Resource 3 A+B	2014-07-26T00:00:00	-1	1
-RESOURCE	Resource 3 A+B	2014-07-31T00:00:00	-1	0
-RESOURCE	Resource 3 A+B	2014-08-26T00:00:00	1	1
-RESOURCE	Resource 3 A+B	2014-08-31T00:00:00	-1	0
-RESOURCE	Resource 3 A+B	2014-09-25T00:00:00	1	1
-RESOURCE	Resource 3 A+B	2014-09-30T00:00:00	-1	0
-RESOURCE	Resource 3 A+B	2014-10-26T00:00:00	1	1
-RESOURCE	Resource 3 A+B	2014-10-31T00:00:00	-1	0
-RESOURCE	Resource 3 C	2014-06-20T00:00:00	1	1
-RESOURCE	Resource 3 C	2014-06-30T00:00:00	-1	0
-RESOURCE	Resource 3 C	2014-07-21T00:00:00	1	1
-RESOURCE	Resource 3 C	2014-07-31T00:00:00	-1	0
-RESOURCE	Resource 3 C	2014-08-21T00:00:00	1	1
-RESOURCE	Resource 3 C	2014-08-31T00:00:00	-1	0
-RESOURCE	Resource 3 C	2014-09-20T00:00:00	1	1
-RESOURCE	Resource 3 C	2014-09-30T00:00:00	-1	0
-RESOURCE	Resource 3 C	2014-10-21T00:00:00	1	1
-RESOURCE	Resource 3 C	2014-10-31T00:00:00	-1	0
-RESOURCE	Resource 4 A+B	2013-12-23T00:00:00	1	1
-RESOURCE	Resource 4 A+B	2013-12-26T00:00:00	1	2
-RESOURCE	Resource 4 A+B	2013-12-26T00:00:00	-1	1
-RESOURCE	Resource 4 A+B	2013-12-31T00:00:00	-1	0
-RESOURCE	Resource 4 C	2013-12-21T00:00:00	1	1
-RESOURCE	Resource 4 C	2013-12-31T00:00:00	-1	0
-OPERATION	buy component 1 for option A	2013-12-16T00:00:00	2013-12-23T00:00:00	15
-OPERATION	buy component 1 for option B	2013-12-24T00:00:00	2013-12-26T00:00:00	35
-OPERATION	buy component 1 for option C	2013-12-20T00:00:00	2013-12-21T00:00:00	7
-OPERATION	buy component 2 for option A	2013-12-16T00:00:00	2013-12-23T00:00:00	30
-OPERATION	buy component 2 for option B	2013-12-24T00:00:00	2013-12-26T00:00:00	35
-OPERATION	buy component 2 for option C	2013-12-20T00:00:00	2013-12-21T00:00:00	35
-OPERATION	buy component 3 for option A	2014-06-15T00:00:00	2014-06-22T00:00:00	30
-OPERATION	buy component 3 for option A	2014-07-16T00:00:00	2014-07-23T00:00:00	30
-OPERATION	buy component 3 for option B	2014-06-23T00:00:00	2014-06-25T00:00:00	35
-OPERATION	buy component 3 for option B	2014-07-24T00:00:00	2014-07-26T00:00:00	35
-OPERATION	buy component 3 for option B	2014-08-24T00:00:00	2014-08-26T00:00:00	50
-OPERATION	buy component 3 for option B	2014-09-23T00:00:00	2014-09-25T00:00:00	25
-OPERATION	buy component 3 for option B	2014-10-24T00:00:00	2014-10-26T00:00:00	20
-OPERATION	buy component 3 for option C	2014-06-19T00:00:00	2014-06-20T00:00:00	35
-OPERATION	buy component 3 for option C	2014-07-20T00:00:00	2014-07-21T00:00:00	35
-OPERATION	buy component 3 for option C	2014-08-20T00:00:00	2014-08-21T00:00:00	50
-OPERATION	buy component 3 for option C	2014-09-19T00:00:00	2014-09-20T00:00:00	75
-OPERATION	buy component 3 for option C	2014-10-20T00:00:00	2014-10-21T00:00:00	80
-OPERATION	buy component 4 for option A	2013-12-16T00:00:00	2013-12-23T00:00:00	20
-OPERATION	buy component 4 for option B	2013-12-24T00:00:00	2013-12-26T00:00:00	40
-OPERATION	buy component 4 for option C	2013-12-20T00:00:00	2013-12-21T00:00:00	40
-OPERATION	delivery 1	2013-12-31T00:00:00	2014-01-01T00:00:00	100
-OPERATION	delivery 2	2013-12-31T00:00:00	2014-01-01T00:00:00	200
-OPERATION	delivery 3	2014-06-30T00:00:00	2014-07-01T00:00:00	100
-OPERATION	delivery 3	2014-07-31T00:00:00	2014-08-01T00:00:00	100
-OPERATION	delivery 3	2014-08-31T00:00:00	2014-09-01T00:00:00	100
-OPERATION	delivery 3	2014-09-30T00:00:00	2014-10-01T00:00:00	100
-OPERATION	delivery 3	2014-10-31T00:00:00	2014-11-01T00:00:00	100
-OPERATION	delivery 4	2013-12-31T00:00:00	2014-01-01T00:00:00	200
-OPERATION	make item 1	2013-12-21T00:00:00	2013-12-31T00:00:00	100
-OPERATION	make item 1 option A	2013-12-23T00:00:00	2013-12-26T00:00:00	15
-OPERATION	make item 1 option B	2013-12-26T00:00:00	2013-12-31T00:00:00	35
-OPERATION	make item 1 option C	2013-12-21T00:00:00	2013-12-31T00:00:00	7
-OPERATION	make item 2	2013-12-21T00:00:00	2013-12-31T00:00:00	100
-OPERATION	make item 2 option A	2013-12-23T00:00:00	2013-12-26T00:00:00	30
-OPERATION	make item 2 option B	2013-12-26T00:00:00	2013-12-31T00:00:00	35
-OPERATION	make item 2 option C	2013-12-21T00:00:00	2013-12-31T00:00:00	35
-OPERATION	make item 3	2014-06-20T00:00:00	2014-06-30T00:00:00	100
-OPERATION	make item 3	2014-07-21T00:00:00	2014-07-31T00:00:00	100
-OPERATION	make item 3	2014-08-21T00:00:00	2014-08-31T00:00:00	100
-OPERATION	make item 3	2014-09-20T00:00:00	2014-09-30T00:00:00	100
-OPERATION	make item 3	2014-10-21T00:00:00	2014-10-31T00:00:00	100
-OPERATION	make item 3 option A	2014-06-22T00:00:00	2014-06-25T00:00:00	30
-OPERATION	make item 3 option A	2014-07-23T00:00:00	2014-07-26T00:00:00	30
-OPERATION	make item 3 option B	2014-06-25T00:00:00	2014-06-30T00:00:00	35
-OPERATION	make item 3 option B	2014-07-26T00:00:00	2014-07-31T00:00:00	35
-OPERATION	make item 3 option B	2014-08-26T00:00:00	2014-08-31T00:00:00	50
-OPERATION	make item 3 option B	2014-09-25T00:00:00	2014-09-30T00:00:00	25
-OPERATION	make item 3 option B	2014-10-26T00:00:00	2014-10-31T00:00:00	20
-OPERATION	make item 3 option C	2014-06-20T00:00:00	2014-06-30T00:00:00	35
-OPERATION	make item 3 option C	2014-07-21T00:00:00	2014-07-31T00:00:00	35
-OPERATION	make item 3 option C	2014-08-21T00:00:00	2014-08-31T00:00:00	50
-OPERATION	make item 3 option C	2014-09-20T00:00:00	2014-09-30T00:00:00	75
-OPERATION	make item 3 option C	2014-10-21T00:00:00	2014-10-31T00:00:00	80
-OPERATION	make item 4	2013-12-21T00:00:00	2013-12-31T00:00:00	100
-OPERATION	make item 4 option A	2013-12-23T00:00:00	2013-12-26T00:00:00	20
-OPERATION	make item 4 option B	2013-12-26T00:00:00	2013-12-31T00:00:00	40
-OPERATION	make item 4 option C	2013-12-21T00:00:00	2013-12-31T00:00:00	40
-PROBLEM	material excess	Buffer 'item 1' has material excess of 30	2013-12-26T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'buy component 1 for option A' planned in the past	2013-12-16T00:00:00 / 2013-12-23T00:00:00
-PROBLEM	before current	Operation 'buy component 1 for option B' planned in the past	2013-12-24T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'buy component 1 for option C' planned in the past	2013-12-20T00:00:00 / 2013-12-21T00:00:00
-PROBLEM	before current	Operation 'buy component 2 for option A' planned in the past	2013-12-16T00:00:00 / 2013-12-23T00:00:00
-PROBLEM	before current	Operation 'buy component 2 for option B' planned in the past	2013-12-24T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'buy component 2 for option C' planned in the past	2013-12-20T00:00:00 / 2013-12-21T00:00:00
-PROBLEM	before current	Operation 'buy component 4 for option A' planned in the past	2013-12-16T00:00:00 / 2013-12-23T00:00:00
-PROBLEM	before current	Operation 'buy component 4 for option B' planned in the past	2013-12-24T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'buy component 4 for option C' planned in the past	2013-12-20T00:00:00 / 2013-12-21T00:00:00
-PROBLEM	before current	Operation 'delivery 1' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
-PROBLEM	before current	Operation 'delivery 2' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
-PROBLEM	before current	Operation 'delivery 4' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00
-PROBLEM	before current	Operation 'make item 1 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'make item 1 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 1 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 2 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'make item 2 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 2 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 4 option A' planned in the past	2013-12-23T00:00:00 / 2013-12-26T00:00:00
-PROBLEM	before current	Operation 'make item 4 option B' planned in the past	2013-12-26T00:00:00 / 2013-12-31T00:00:00
-PROBLEM	before current	Operation 'make item 4 option C' planned in the past	2013-12-21T00:00:00 / 2013-12-31T00:00:00
+RESOURCE	Resource 1 A+B	2013-12-24T00:00:00	1	1
+RESOURCE	Resource 1 A+B	2013-12-27T00:00:00	1	2
+RESOURCE	Resource 1 A+B	2013-12-27T00:00:00	-1	1
+RESOURCE	Resource 1 A+B	2014-01-01T00:00:00	-1	0
+RESOURCE	Resource 1 C	2013-12-22T00:00:00	1	1
+RESOURCE	Resource 1 C	2014-01-01T00:00:00	-1	0
+RESOURCE	Resource 2 A+B	2013-12-24T00:00:00	1	1
+RESOURCE	Resource 2 A+B	2013-12-27T00:00:00	1	2
+RESOURCE	Resource 2 A+B	2013-12-27T00:00:00	-1	1
+RESOURCE	Resource 2 A+B	2014-01-01T00:00:00	-1	0
+RESOURCE	Resource 2 C	2013-12-22T00:00:00	1	1
+RESOURCE	Resource 2 C	2014-01-01T00:00:00	-1	0
+RESOURCE	Resource 3 A+B	2014-06-23T00:00:00	1	1
+RESOURCE	Resource 3 A+B	2014-06-26T00:00:00	1	2
+RESOURCE	Resource 3 A+B	2014-06-26T00:00:00	-1	1
+RESOURCE	Resource 3 A+B	2014-07-01T00:00:00	-1	0
+RESOURCE	Resource 3 A+B	2014-07-27T00:00:00	1	1
+RESOURCE	Resource 3 A+B	2014-08-01T00:00:00	-1	0
+RESOURCE	Resource 3 A+B	2014-08-27T00:00:00	1	1
+RESOURCE	Resource 3 A+B	2014-09-01T00:00:00	-1	0
+RESOURCE	Resource 3 A+B	2014-09-26T00:00:00	1	1
+RESOURCE	Resource 3 A+B	2014-10-01T00:00:00	-1	0
+RESOURCE	Resource 3 A+B	2014-10-27T00:00:00	1	1
+RESOURCE	Resource 3 A+B	2014-11-01T00:00:00	-1	0
+RESOURCE	Resource 3 C	2014-06-21T00:00:00	1	1
+RESOURCE	Resource 3 C	2014-07-01T00:00:00	-1	0
+RESOURCE	Resource 3 C	2014-07-22T00:00:00	1	1
+RESOURCE	Resource 3 C	2014-08-01T00:00:00	-1	0
+RESOURCE	Resource 3 C	2014-08-22T00:00:00	1	1
+RESOURCE	Resource 3 C	2014-09-01T00:00:00	-1	0
+RESOURCE	Resource 3 C	2014-09-21T00:00:00	1	1
+RESOURCE	Resource 3 C	2014-10-01T00:00:00	-1	0
+RESOURCE	Resource 3 C	2014-10-22T00:00:00	1	1
+RESOURCE	Resource 3 C	2014-11-01T00:00:00	-1	0
+RESOURCE	Resource 4 A+B	2013-12-24T00:00:00	1	1
+RESOURCE	Resource 4 A+B	2013-12-27T00:00:00	1	2
+RESOURCE	Resource 4 A+B	2013-12-27T00:00:00	-1	1
+RESOURCE	Resource 4 A+B	2014-01-01T00:00:00	-1	0
+RESOURCE	Resource 4 C	2013-12-22T00:00:00	1	1
+RESOURCE	Resource 4 C	2014-01-01T00:00:00	-1	0
+OPERATION	Purchase component 1 for option A @ location 1 from My supplier	2013-12-17T00:00:00	2013-12-24T00:00:00	15
+OPERATION	Purchase component 1 for option B @ location 1 from My supplier	2013-12-25T00:00:00	2013-12-27T00:00:00	35
+OPERATION	Purchase component 1 for option C @ location 1 from My supplier	2013-12-21T00:00:00	2013-12-22T00:00:00	7
+OPERATION	Purchase component 2 for option A @ location 2 from My supplier	2013-12-17T00:00:00	2013-12-24T00:00:00	30
+OPERATION	Purchase component 2 for option B @ location 2 from My supplier	2013-12-25T00:00:00	2013-12-27T00:00:00	35
+OPERATION	Purchase component 2 for option C @ location 2 from My supplier	2013-12-21T00:00:00	2013-12-22T00:00:00	35
+OPERATION	Purchase component 3 for option A @ location 3 from My supplier	2014-06-16T00:00:00	2014-06-23T00:00:00	30
+OPERATION	Purchase component 3 for option B @ location 3 from My supplier	2014-06-24T00:00:00	2014-06-26T00:00:00	35
+OPERATION	Purchase component 3 for option B @ location 3 from My supplier	2014-07-25T00:00:00	2014-07-27T00:00:00	50
+OPERATION	Purchase component 3 for option B @ location 3 from My supplier	2014-08-25T00:00:00	2014-08-27T00:00:00	25
+OPERATION	Purchase component 3 for option B @ location 3 from My supplier	2014-09-24T00:00:00	2014-09-26T00:00:00	20
+OPERATION	Purchase component 3 for option B @ location 3 from My supplier	2014-10-25T00:00:00	2014-10-27T00:00:00	20
+OPERATION	Purchase component 3 for option C @ location 3 from My supplier	2014-06-20T00:00:00	2014-06-21T00:00:00	35
+OPERATION	Purchase component 3 for option C @ location 3 from My supplier	2014-07-21T00:00:00	2014-07-22T00:00:00	50
+OPERATION	Purchase component 3 for option C @ location 3 from My supplier	2014-08-21T00:00:00	2014-08-22T00:00:00	75
+OPERATION	Purchase component 3 for option C @ location 3 from My supplier	2014-09-20T00:00:00	2014-09-21T00:00:00	80
+OPERATION	Purchase component 3 for option C @ location 3 from My supplier	2014-10-21T00:00:00	2014-10-22T00:00:00	80
+OPERATION	Purchase component 4 for option A @ location 4 from My supplier	2013-12-17T00:00:00	2013-12-24T00:00:00	20
+OPERATION	Purchase component 4 for option B @ location 4 from My supplier	2013-12-25T00:00:00	2013-12-27T00:00:00	40
+OPERATION	Purchase component 4 for option C @ location 4 from My supplier	2013-12-21T00:00:00	2013-12-22T00:00:00	40
+OPERATION	make item 1	2013-12-22T00:00:00	2014-01-01T00:00:00	100
+OPERATION	make item 1 option A	2013-12-24T00:00:00	2013-12-27T00:00:00	15
+OPERATION	make item 1 option B	2013-12-27T00:00:00	2014-01-01T00:00:00	35
+OPERATION	make item 1 option C	2013-12-22T00:00:00	2014-01-01T00:00:00	7
+OPERATION	make item 2	2013-12-22T00:00:00	2014-01-01T00:00:00	100
+OPERATION	make item 2 option A	2013-12-24T00:00:00	2013-12-27T00:00:00	30
+OPERATION	make item 2 option B	2013-12-27T00:00:00	2014-01-01T00:00:00	35
+OPERATION	make item 2 option C	2013-12-22T00:00:00	2014-01-01T00:00:00	35
+OPERATION	make item 3	2014-06-21T00:00:00	2014-07-01T00:00:00	100
+OPERATION	make item 3	2014-07-22T00:00:00	2014-08-01T00:00:00	100
+OPERATION	make item 3	2014-08-22T00:00:00	2014-09-01T00:00:00	100
+OPERATION	make item 3	2014-09-21T00:00:00	2014-10-01T00:00:00	100
+OPERATION	make item 3	2014-10-22T00:00:00	2014-11-01T00:00:00	100
+OPERATION	make item 3 option A	2014-06-23T00:00:00	2014-06-26T00:00:00	30
+OPERATION	make item 3 option B	2014-06-26T00:00:00	2014-07-01T00:00:00	35
+OPERATION	make item 3 option B	2014-07-27T00:00:00	2014-08-01T00:00:00	50
+OPERATION	make item 3 option B	2014-08-27T00:00:00	2014-09-01T00:00:00	25
+OPERATION	make item 3 option B	2014-09-26T00:00:00	2014-10-01T00:00:00	20
+OPERATION	make item 3 option B	2014-10-27T00:00:00	2014-11-01T00:00:00	20
+OPERATION	make item 3 option C	2014-06-21T00:00:00	2014-07-01T00:00:00	35
+OPERATION	make item 3 option C	2014-07-22T00:00:00	2014-08-01T00:00:00	50
+OPERATION	make item 3 option C	2014-08-22T00:00:00	2014-09-01T00:00:00	75
+OPERATION	make item 3 option C	2014-09-21T00:00:00	2014-10-01T00:00:00	80
+OPERATION	make item 3 option C	2014-10-22T00:00:00	2014-11-01T00:00:00	80
+OPERATION	make item 4	2013-12-22T00:00:00	2014-01-01T00:00:00	100
+OPERATION	make item 4 option A	2013-12-24T00:00:00	2013-12-27T00:00:00	20
+OPERATION	make item 4 option B	2013-12-27T00:00:00	2014-01-01T00:00:00	40
+OPERATION	make item 4 option C	2013-12-22T00:00:00	2014-01-01T00:00:00	40
+PROBLEM	material excess	Buffer 'item 1 @ location 1' has material excess of 30	2013-12-27T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component 1 for option A @ location 1 from My supplier' planned in the past	2013-12-17T00:00:00 / 2013-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component 1 for option B @ location 1 from My supplier' planned in the past	2013-12-25T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'Purchase component 1 for option C @ location 1 from My supplier' planned in the past	2013-12-21T00:00:00 / 2013-12-22T00:00:00
+PROBLEM	before current	Operation 'Purchase component 2 for option A @ location 2 from My supplier' planned in the past	2013-12-17T00:00:00 / 2013-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component 2 for option B @ location 2 from My supplier' planned in the past	2013-12-25T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'Purchase component 2 for option C @ location 2 from My supplier' planned in the past	2013-12-21T00:00:00 / 2013-12-22T00:00:00
+PROBLEM	before current	Operation 'Purchase component 4 for option A @ location 4 from My supplier' planned in the past	2013-12-17T00:00:00 / 2013-12-24T00:00:00
+PROBLEM	before current	Operation 'Purchase component 4 for option B @ location 4 from My supplier' planned in the past	2013-12-25T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'Purchase component 4 for option C @ location 4 from My supplier' planned in the past	2013-12-21T00:00:00 / 2013-12-22T00:00:00
+PROBLEM	before current	Operation 'make item 1 option A' planned in the past	2013-12-24T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'make item 1 option B' planned in the past	2013-12-27T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 1 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 2 option A' planned in the past	2013-12-24T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'make item 2 option B' planned in the past	2013-12-27T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 2 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 4 option A' planned in the past	2013-12-24T00:00:00 / 2013-12-27T00:00:00
+PROBLEM	before current	Operation 'make item 4 option B' planned in the past	2013-12-27T00:00:00 / 2014-01-01T00:00:00
+PROBLEM	before current	Operation 'make item 4 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00

@@ -60,19 +60,6 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="end item">
-      <operation name="deliver end item" xsi:type="operation_fixed_time"
-        duration="P1D">
-        <flows>
-          <flow xsi:type="flow_start">
-            <buffer name="end item" />
-            <quantity>-1</quantity>
-          </flow>
-        </flows>
-      </operation>
-    </item>
-  </items>
   <resources>
     <resource name="Resource A">
       <maximum>1</maximum>
@@ -88,17 +75,21 @@
     <resource name="Resource C" maximum="1" />
     <resource name="Resource D" />
   </resources>
-  <items>
-    <item name="1. end item">
-      <operation name="1. deliver end item" />
-    </item>
-  </items>
   <demands>
     <demand name="order 1">
       <quantity>1</quantity>
       <due>2009-01-01T00:00:00</due>
       <priority>11</priority>
       <item name="end item" />
+      <operation name="deliver end item" xsi:type="operation_fixed_time"
+        duration="P1D">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="end item" />
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+      </operation>      
     </demand>
     <!--
     <demand name="1. order 2">

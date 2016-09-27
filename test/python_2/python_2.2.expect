@@ -104,9 +104,6 @@
 			<owner>
 				<name>product group</name>
 			</owner>
-			<operation>
-				<name>delivery end item</name>
-			</operation>
 		</item>
 		<item>
 			<name>product group</name>
@@ -128,9 +125,9 @@
 			<name>delivery end item</name>
 			<flows>
 				<flow>
-					<buffer>
+					<item>
 						<name>end item</name>
-					</buffer>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -147,9 +144,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -166,6 +163,9 @@
 			<customer>
 				<name>Customer</name>
 			</customer>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-01-04T09:00:00</due>
 			<priority>1</priority>
 			<maxlateness>P0D</maxlateness>
@@ -176,6 +176,9 @@
 			<item>
 				<name>end item</name>
 			</item>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-01-04T08:00:00</due>
 			<priority>2</priority>
 			<maxlateness>P0D</maxlateness>
@@ -186,6 +189,9 @@
 			<item>
 				<name>end item</name>
 			</item>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-01-04T08:00:00</due>
 			<priority>3</priority>
 			<maxlateness>P0D</maxlateness>

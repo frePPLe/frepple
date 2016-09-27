@@ -2,28 +2,6 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Verify the pegging</name>
 	<current>2009-01-01T00:00:00</current>
-	<items>
-	  <item name="item 1">
-	    <operation name="delivery 1" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </item>
-	  <item name="item 2">
-	    <operation name="delivery 2" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </item>
-	  <item name="item 3">
-	    <operation name="delivery 3" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </item>
-	  <item name="item 4">
-	    <operation name="delivery 4" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </item>
-	</items>
 	<buffers>
 	  <buffer name="buffer 1">
 	    <item name="item 1" />
@@ -181,6 +159,9 @@
 	    <quantity>100</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 1" />
+      <operation name="delivery 1">
+	      <duration>P1D</duration>
+	    </operation>
 	  </demand>
 	</demands>
 	<operationplans>
@@ -205,6 +186,9 @@
 	    <quantity>100</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 2" />
+      <operation name="delivery 2">
+	      <duration>P1D</duration>
+	    </operation>
 	  </demand>
 	</demands>
 	<operationplans>
@@ -229,6 +213,9 @@
 	    <quantity>100</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 3" />
+      <operation name="delivery 3">
+	      <duration>P1D</duration>
+	    </operation>
 	  </demand>
 	</demands>
 	<operationplans>
@@ -246,11 +233,17 @@
 	    <quantity>100</quantity>
 	    <due>2009-01-10T00:00:00</due>
 	    <item name="item 4" />
+      <operation name="delivery 4">
+	      <duration>P1D</duration>
+	    </operation>
 	  </demand>
 	  <demand name="order 2 for item 4">
 	    <quantity>100</quantity>
 	    <due>2009-06-19T00:00:00</due>
 	    <item name="item 4" />
+      <operation name="delivery 4">
+	      <duration>P1D</duration>
+	    </operation>
 	  </demand>
 	</demands>
 	<operationplans>

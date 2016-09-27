@@ -72,9 +72,6 @@
 	<items>
 		<item>
 			<name>end item</name>
-			<operation>
-				<name>delivery end item</name>
-			</operation>
 		</item>
 		<item>
 			<name>item 0</name>
@@ -145,9 +142,9 @@
 			</location>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer xsi:type="buffer_procure">
-						<name>buffer1</name>
-					</buffer>
+					<item>
+						<name>item 1</name>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -160,9 +157,9 @@
 			<name>delivery end item</name>
 			<flows>
 				<flow>
-					<buffer>
+					<item>
 						<name>end item</name>
-					</buffer>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -210,9 +207,9 @@
 			<name>make or buy item</name>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -241,6 +238,9 @@
 			<customer>
 				<name>client</name>
 			</customer>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-03-02T09:00:00</due>
 			<priority>1</priority>
 			<maxlateness>P0D</maxlateness>
@@ -254,6 +254,9 @@
 			<customer>
 				<name>client</name>
 			</customer>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-03-02T08:30:00</due>
 			<priority>2</priority>
 			<maxlateness>P0D</maxlateness>
@@ -267,6 +270,9 @@
 			<customer>
 				<name>client</name>
 			</customer>
+			<operation>
+				<name>delivery end item</name>
+			</operation>
 			<due>2009-03-02T20:00:00</due>
 			<priority>3</priority>
 			<maxlateness>P0D</maxlateness>

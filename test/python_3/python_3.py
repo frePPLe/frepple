@@ -70,7 +70,7 @@ def printModel(filename):
     # Items
     print("\nEchoing items:", file=output)
     for b in frepple.items():
-      print("  Item:", b.name, b.description, b.category, b.subcategory, b.owner, b.operation, file=output)
+      print("  Item:", b.name, b.description, b.category, b.subcategory, b.owner, file=output)
 
     # Resources
     print("\nEchoing resources:", file=output)
@@ -253,7 +253,7 @@ opplan.status = 'confirmed'
 
 ###
 print("\nCreating items")
-item = frepple.item(name="end item", operation=shipoper)
+item = frepple.item(name="end item")
 itemlist = [ frepple.item(name="item %d" % i) for i in range(10) ]
 
 ###
@@ -322,11 +322,11 @@ except Exception as e:
 ###
 print("\nCreating demands")
 order1 = frepple.demand(name="order 1", item=item, quantity=10, priority=1, \
-  due=datetime.datetime(2009,3,2,9), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,9), customer=mycustomer, maxlateness=0, operation=shipoper)
 order2 = frepple.demand(name="order 2", item=item, quantity=10, priority=2, \
-  due=datetime.datetime(2009,3,2,8,30,0), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,8,30,0), customer=mycustomer, maxlateness=0, operation=shipoper)
 order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
-  due=datetime.datetime(2009,3,2,20,0,0), customer=mycustomer, maxlateness=0)
+  due=datetime.datetime(2009,3,2,20,0,0), customer=mycustomer, maxlateness=0, operation=shipoper)
 
 ###
 print("\nCreating a solver and running it")

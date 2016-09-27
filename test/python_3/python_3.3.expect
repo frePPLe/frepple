@@ -16,9 +16,6 @@
 </operationplan>
 <item>
 	<name>end item</name>
-	<operation>
-		<name>delivery end item</name>
-	</operation>
 </item>
 <demand>
 	<name>order 1</name>
@@ -29,6 +26,9 @@
 	<customer>
 		<name>client</name>
 	</customer>
+	<operation>
+		<name>delivery end item</name>
+	</operation>
 	<due>2009-03-02T09:00:00</due>
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>

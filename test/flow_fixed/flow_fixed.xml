@@ -18,24 +18,24 @@
   -->
   <buffers>
     <buffer name="1. fixed consumption item">
-      <item name="1. fixed consumption item" />
+      <item name="1. fixed consumption item"/>
       <onhand>3</onhand>
     </buffer>
     <buffer name="1. end item">
-      <item name="1. end item" />
+      <item name="1. end item"/>
       <producing name="1. make end item" xsi:type="operation_fixed_time" duration="P1D">
         <flows>
           <flow xsi:type="flow_end">
-            <buffer name="1. end item" />
+            <buffer name="1. end item"/>
             <quantity>1</quantity>
           </flow>
           <flow xsi:type="flow_fixed_start">
-            <buffer name="1. fixed consumption item" />
+            <buffer name="1. fixed consumption item"/>
             <quantity>-1</quantity>
             <effective_end>2013-02-01T00:00:00</effective_end>
           </flow>
           <flow xsi:type="flow_fixed_start">
-            <buffer name="1. fixed consumption item" />
+            <buffer name="1. fixed consumption item"/>
             <quantity>-2</quantity>
             <effective_start>2013-02-01T00:00:00</effective_start>
           </flow>
@@ -47,7 +47,7 @@
     <operation name="1. supply fixed item" xsi:type="operation_fixed_time" duration="P1D">
       <flows>
         <flow xsi:type="flow_end">
-          <buffer name="1. fixed consumption item" />
+          <buffer name="1. fixed consumption item"/>
           <quantity>1</quantity>
         </flow>
       </flows>
@@ -62,36 +62,34 @@
       <status>confirmed</status>
     </operationplan>
   </operationplans>
-  <items>
-    <item name="1. end item">
-      <operation name="1. deliver end item" xsi:type="operation_fixed_time" duration="P1D">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="1. end item" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="1. order 1">
       <quantity>100</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="1. end item" />
+      <item name="1. end item"/>
+      <operation name="1. deliver end item" xsi:type="operation_fixed_time" duration="P1D">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="1. end item"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+      </operation>      
     </demand>
     <demand name="1. order 2">
       <quantity>10</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="1. end item" />
+      <item name="1. end item"/>
+      <operation name="1. deliver end item"/>
     </demand>
     <demand name="1. order 3">
       <quantity>50</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="1. end item" />
+      <item name="1. end item"/>
+      <operation name="1. deliver end item"/>
     </demand>
   </demands>
 
@@ -101,21 +99,21 @@
   -->
   <buffers>
     <buffer name="2. fixed production co-product">
-      <item name="2. fixed production co-product" />
+      <item name="2. fixed production co-product"/>
       <onhand>4</onhand>
       <producing name="2. make product" xsi:type="operation_fixed_time" duration="P1D">
         <flows>
           <flow xsi:type="flow_end">
-            <buffer name="2. main product" />
+            <buffer name="2. main product"/>
             <quantity>100</quantity>
           </flow>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="2. fixed production co-product" />
+            <buffer name="2. fixed production co-product"/>
             <quantity>1</quantity>
             <effective_end>2013-02-01T00:00:00</effective_end>
           </flow>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="2. fixed production co-product" />
+            <buffer name="2. fixed production co-product"/>
             <quantity>2</quantity>
             <effective_start>2013-02-01T00:00:00</effective_start>
           </flow>
@@ -123,38 +121,36 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="2. co-product">
-      <operation name="2. deliver co-product" xsi:type="operation_fixed_time">
-          <fence>P25D</fence>
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="2. fixed production co-product" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="2. order 1">
       <quantity>10</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="2. co-product" />
+      <item name="2. co-product"/>
+      <operation name="2. deliver co-product" xsi:type="operation_fixed_time">
+          <fence>P25D</fence>
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="2. fixed production co-product"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <duration>P1D</duration>
+      </operation>      
     </demand>
     <demand name="2. order 2">
       <quantity>5</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="2. co-product" />
+      <item name="2. co-product"/>
+      <operation name="2. deliver co-product"/>
     </demand>
     <demand name="2. order 3">
       <quantity>7</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="2. co-product" />
+      <item name="2. co-product"/>
+      <operation name="2. deliver co-product"/>
     </demand>
   </demands>
 
@@ -163,12 +159,12 @@
   -->
   <buffers>
     <buffer name="3. end item">
-      <item name="3. end item" />
+      <item name="3. end item"/>
       <onhand>3</onhand>
       <producing name="3. make end item" xsi:type="operation_routing">
         <flows>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="3. end item" />
+            <buffer name="3. end item"/>
             <quantity>3</quantity>
           </flow>
         </flows>
@@ -186,37 +182,35 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="3. end item">
-      <operation name="3. deliver end item" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="3. end item" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="3. order 1">
       <quantity>10</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="3. end item" />
+      <item name="3. end item"/>
+      <operation name="3. deliver end item" xsi:type="operation_fixed_time">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="3. end item"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <duration>P1D</duration>
+      </operation>      
     </demand>
     <demand name="3. order 2">
       <quantity>5</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="3. end item" />
+      <item name="3. end item"/>
+      <operation name="3. deliver end item"/>
     </demand>
     <demand name="3. order 3">
       <quantity>7</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="3. end item" />
+      <item name="3. end item"/>
+      <operation name="3. deliver end item"/>
     </demand>
   </demands>
 
@@ -225,12 +219,12 @@
   -->
   <buffers>
     <buffer name="4. end item">
-      <item name="4. end item" />
+      <item name="4. end item"/>
       <onhand>3</onhand>
       <producing name="4. make end item" xsi:type="operation_routing">
         <flows>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="4. end item" />
+            <buffer name="4. end item"/>
             <quantity>1</quantity>
           </flow>
         </flows>
@@ -239,7 +233,7 @@
           <operation name="4. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
-                <buffer name="4. end item" />
+                <buffer name="4. end item"/>
                 <quantity>1</quantity>
               </flow>
             </flows>
@@ -249,7 +243,7 @@
           <operation name="4. make end item - step 2" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
-                <buffer name="4. end item" />
+                <buffer name="4. end item"/>
                 <quantity>1</quantity>
               </flow>
             </flows>
@@ -259,7 +253,7 @@
           <operation name="4. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D">
             <flows>
               <flow xsi:type="flow_fixed_end">
-                <buffer name="4. end item" />
+                <buffer name="4. end item"/>
                 <quantity>1</quantity>
               </flow>
             </flows>
@@ -269,37 +263,35 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="4. end item">
-      <operation name="4. deliver end item" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="4. end item" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="4. order 1">
       <quantity>10</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="4. end item" />
+      <item name="4. end item"/>
+      <operation name="4. deliver end item" xsi:type="operation_fixed_time">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="4. end item"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <duration>P1D</duration>
+      </operation>      
     </demand>
     <demand name="4. order 2">
       <quantity>5</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="4. end item" />
+      <item name="4. end item"/>
+      <operation name="4. deliver end item"/>
     </demand>
     <demand name="4. order 3">
       <quantity>7</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="4. end item" />
+      <item name="4. end item"/>
+      <operation name="4. deliver end item"/>
     </demand>
   </demands>
 
@@ -308,12 +300,12 @@
   -->
   <buffers>
     <buffer name="5. end item">
-      <item name="5. end item" />
+      <item name="5. end item"/>
       <onhand>3</onhand>
       <producing name="5. make end item" xsi:type="operation_alternate">
         <flows>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="5. end item" />
+            <buffer name="5. end item"/>
             <quantity>3</quantity>
           </flow>
         </flows>
@@ -334,37 +326,35 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="5. end item">
-      <operation name="5. deliver end item" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="5. end item" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="5. order 1">
       <quantity>10</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="5. end item" />
+      <item name="5. end item"/>
+      <operation name="5. deliver end item" xsi:type="operation_fixed_time">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="5. end item"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <duration>P1D</duration>
+      </operation>      
     </demand>
     <demand name="5. order 2">
       <quantity>5</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="5. end item" />
+      <item name="5. end item"/>
+      <operation name="5. deliver end item"/>
     </demand>
     <demand name="5. order 3">
       <quantity>7</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="5. end item" />
+      <item name="5. end item"/>
+      <operation name="5. deliver end item"/>
     </demand>
   </demands>
 
@@ -373,12 +363,12 @@
   -->
   <buffers>
     <buffer name="6. end item">
-      <item name="6. end item" />
+      <item name="6. end item"/>
       <onhand>3</onhand>
       <producing name="6. make end item" xsi:type="operation_alternate">
         <flows>
           <flow xsi:type="flow_fixed_end">
-            <buffer name="6. end item" />
+            <buffer name="6. end item"/>
             <quantity>1</quantity>
           </flow>
         </flows>
@@ -387,7 +377,7 @@
             <operation name="6. make end item - alternate 1" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
-                  <buffer name="6. end item" />
+                  <buffer name="6. end item"/>
                   <quantity>1</quantity>
                 </flow>
               </flows>
@@ -398,7 +388,7 @@
             <operation name="6. make end item - alternate 2" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
-                  <buffer name="6. end item" />
+                  <buffer name="6. end item"/>
                   <quantity>4</quantity>
                 </flow>
               </flows>
@@ -409,7 +399,7 @@
             <operation name="6. make end item - alternate 3" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_fixed_end">
-                  <buffer name="6. end item" />
+                  <buffer name="6. end item"/>
                   <quantity>5</quantity>
                 </flow>
               </flows>
@@ -420,37 +410,35 @@
       </producing>
     </buffer>
   </buffers>
-  <items>
-    <item name="6. end item">
-      <operation name="6. deliver end item" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="6. end item" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="6. order 1">
       <quantity>10</quantity>
       <due>2013-01-20T00:00:00</due>
       <priority>11</priority>
-      <item name="6. end item" />
+      <item name="6. end item"/>
+      <operation name="6. deliver end item" xsi:type="operation_fixed_time">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="6. end item"/>
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+          <duration>P1D</duration>
+      </operation>      
     </demand>
     <demand name="6. order 2">
       <quantity>5</quantity>
       <due>2013-02-07T00:00:00</due>
       <priority>12</priority>
-      <item name="6. end item" />
+      <item name="6. end item"/>
+      <operation name="6. deliver end item"/>
     </demand>
     <demand name="6. order 3">
       <quantity>7</quantity>
       <due>2013-02-20T00:00:00</due>
       <priority>13</priority>
-      <item name="6. end item" />
+      <item name="6. end item"/>
+      <operation name="6. deliver end item"/>
     </demand>
   </demands>
 

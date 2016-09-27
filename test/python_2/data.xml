@@ -36,9 +36,6 @@
   </suppliers>
   <items>
     <item name="end item">
-      <operation name="delivery end item" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
       <owner name="product group"/>
     </item>
   </items>
@@ -84,6 +81,9 @@
       <item name="end item" />
       <maxlateness>PT0S</maxlateness>
       <customer name="Customer"/>
+      <operation name="delivery end item" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
     </demand>
     <demand name="order 2">
       <quantity>10</quantity>
@@ -91,6 +91,9 @@
       <priority>2</priority>
       <item name="end item" />
       <maxlateness>P0D</maxlateness>
+      <operation name="delivery end item" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
     </demand>
     <demand name="order 3">
       <quantity>10</quantity>
@@ -98,6 +101,9 @@
       <priority>3</priority>
       <item name="end item" />
       <maxlateness>P0D</maxlateness>
+      <operation name="delivery end item" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
     </demand>
   </demands>
 </plan>

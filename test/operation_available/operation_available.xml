@@ -21,24 +21,9 @@
     </location>
   </locations>
   <items>
-    <item name="1. item 1 day">
-      <operation name="1. Deliver item 1 day" xsi:type="operation_fixed_time">
-        <location name="site 1"/>
-        <duration>P1D</duration>
-      </operation>
-    </item>
-    <item name="1. item 10 days">
-      <operation name="1. Deliver item 10 days" xsi:type="operation_fixed_time">
-        <location name="site 1"/>
-        <duration>P10D</duration>
-      </operation>
-    </item>
-    <item name="1. item 20 days">
-      <operation name="1. Deliver item 20 days" xsi:type="operation_fixed_time">
-        <location name="site 1"/>
-        <duration>P20D</duration>
-      </operation>
-    </item>
+    <item name="1. item 1 day"/>
+    <item name="1. item 10 days"/>
+    <item name="1. item 20 days"/>      
   </items>
   <demands>
     <demand name="1. order 1">
@@ -47,6 +32,10 @@
       <due>2009-01-14T00:00:00</due>
       <priority>11</priority>
       <item name="1. item 1 day" />
+      <operation name="1. Deliver item 1 day" xsi:type="operation_fixed_time">
+        <location name="site 1"/>
+        <duration>P1D</duration>
+      </operation>
     </demand>
     <demand name="1. order 2">
       <description>Would start in unavailable period</description>
@@ -54,6 +43,7 @@
       <due>2009-01-12T12:00:00</due>
       <priority>12</priority>
       <item name="1. item 1 day" />
+      <operation name="1. Deliver item 1 day"/>
     </demand>
     <demand name="1. order 3">
       <description>Would start and end in unavailable period</description>
@@ -61,6 +51,7 @@
       <due>2009-01-11T12:00:00</due>
       <priority>13</priority>
       <item name="1. item 1 day" />
+      <operation name="1. Deliver item 1 day"/>
     </demand>
     <demand name="1. order 4">
       <description>Would end unavailable period</description>
@@ -68,6 +59,7 @@
       <due>2009-01-10T12:00:00</due>
       <priority>14</priority>
       <item name="1. item 1 day" />
+      <operation name="1. Deliver item 1 day"/>
     </demand>
     <demand name="1. order 5">
       <description>Before unavailable period</description>
@@ -75,6 +67,7 @@
       <due>2009-01-08T00:00:00</due>
       <priority>15</priority>
       <item name="1. item 1 day" />
+      <operation name="1. Deliver item 1 day"/>
     </demand>
     <demand name="1. order 6">
       <description>Across unavailable period</description>
@@ -82,6 +75,10 @@
       <due>2009-01-14T00:00:00</due>
       <priority>16</priority>
       <item name="1. item 10 days" />
+      <operation name="1. Deliver item 10 days" xsi:type="operation_fixed_time">
+        <location name="site 1"/>
+        <duration>P10D</duration>        
+      </operation>
     </demand>
     <demand name="1. order 7">
       <description>Across 2 unavailable periods</description>
@@ -89,6 +86,10 @@
       <due>2009-01-28T00:00:00</due>
       <priority>17</priority>
       <item name="1. item 20 days" />
+      <operation name="1. Deliver item 20 days" xsi:type="operation_fixed_time">
+        <location name="site 1"/>
+        <duration>P20D</duration>
+      </operation>
     </demand>
     <demand name="1. order 8">
       <description>Across 2 unavailable periods</description>
@@ -96,6 +97,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>18</priority>
       <item name="1. item 20 days" />
+      <operation name="1. Deliver item 20 days"/>
     </demand>
   </demands>
 
@@ -114,24 +116,9 @@
     </location>
   </locations>
   <items>
-    <item name="2. item 1 day">
-      <operation name="2. Deliver item 1 day" xsi:type="operation_fixed_time">
-        <location name="site 2"/>
-        <duration>P1D</duration>
-      </operation>
-    </item>
-    <item name="2. item 10 days">
-      <operation name="2. Deliver item 10 days" xsi:type="operation_fixed_time">
-        <location name="site 2"/>
-        <duration>P10D</duration>
-      </operation>
-    </item>
-    <item name="2. item 3 days">
-      <operation name="2. Deliver item 3 days" xsi:type="operation_fixed_time">
-        <location name="site 2"/>
-        <duration>P3D</duration>
-      </operation>
-    </item>
+    <item name="2. item 1 day"/>
+    <item name="2. item 10 days"/>
+    <item name="2. item 3 days"/>
   </items>
   <demands>
     <demand name="2. order 1">
@@ -140,6 +127,10 @@
       <due>2009-01-14T00:00:00</due>
       <priority>21</priority>
       <item name="2. item 1 day" />
+      <operation name="2. Deliver item 1 day" xsi:type="operation_fixed_time">
+        <location name="site 2"/>
+        <duration>P1D</duration>
+      </operation>
     </demand>
     <demand name="2. order 2">
       <description>Would start in available period</description>
@@ -147,6 +138,7 @@
       <due>2009-01-12T12:00:00</due>
       <priority>22</priority>
       <item name="2. item 1 day" />
+      <operation name="2. Deliver item 1 day"/>      
     </demand>
     <demand name="2. order 3">
       <description>Would start and end in available period</description>
@@ -154,6 +146,7 @@
       <due>2009-01-11T12:00:00</due>
       <priority>23</priority>
       <item name="2. item 1 day" />
+      <operation name="2. Deliver item 1 day"/>
     </demand>
     <demand name="2. order 4">
       <description>Would end in available period</description>
@@ -161,6 +154,7 @@
       <due>2009-01-10T12:00:00</due>
       <priority>24</priority>
       <item name="2. item 1 day" />
+      <operation name="2. Deliver item 1 day"/>
     </demand>
     <demand name="2. order 5">
       <description>Before available period</description>
@@ -168,6 +162,7 @@
       <due>2009-01-08T00:00:00</due>
       <priority>25</priority>
       <item name="2. item 1 day" />
+      <operation name="2. Deliver item 1 day"/>
     </demand>
     <demand name="2. order 6">
       <description>Across all available periods</description>
@@ -175,6 +170,10 @@
       <due>2009-01-14T00:00:00</due>
       <priority>26</priority>
       <item name="2. item 10 days" />
+      <operation name="2. Deliver item 10 days" xsi:type="operation_fixed_time">
+        <location name="site 2"/>
+        <duration>P10D</duration>
+      </operation>
     </demand>
     <demand name="2. order 7">
       <description>Using the 2 available periods</description>
@@ -182,6 +181,10 @@
       <due>2009-01-04T00:00:00</due>
       <priority>27</priority>
       <item name="2. item 3 days" />
+      <operation name="2. Deliver item 3 days" xsi:type="operation_fixed_time">
+        <location name="site 2"/>
+        <duration>P3D</duration>
+      </operation>
     </demand>
     <demand name="2. order 8">
       <description>Using the 2 available periods</description>
@@ -189,6 +192,7 @@
       <due>2009-01-28T00:00:00</due>
       <priority>28</priority>
       <item name="2. item 3 days" />
+      <operation name="2. Deliver item 3 days"/>
     </demand>
   </demands>
 
@@ -206,15 +210,6 @@
       </available>
     </location>
   </locations>
-  <items>
-    <item name="3. item">
-      <operation name="3. Deliver item" xsi:type="operation_time_per">
-        <location name="site 3"/>
-        <duration>P1D</duration>
-        <duration_per>P1D</duration_per>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="3. order 1">
       <description>After unavailable period</description>
@@ -222,6 +217,11 @@
       <due>2009-01-14T00:00:00</due>
       <priority>31</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item" xsi:type="operation_time_per">
+        <location name="site 3"/>
+        <duration>P1D</duration>
+        <duration_per>P1D</duration_per>
+      </operation>
     </demand>
     <demand name="3. order 2">
       <description>Would start in unavailable period</description>
@@ -229,6 +229,7 @@
       <due>2009-01-12T12:00:00</due>
       <priority>32</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 3">
       <description>Would start and end in unavailable period</description>
@@ -236,6 +237,7 @@
       <due>2009-01-11T12:00:00</due>
       <priority>33</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 4">
       <description>Would end unavailable period</description>
@@ -243,6 +245,7 @@
       <due>2009-01-10T12:00:00</due>
       <priority>34</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 5">
       <description>Before unavailable period</description>
@@ -250,6 +253,7 @@
       <due>2009-01-08T00:00:00</due>
       <priority>35</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 6">
       <description>Across unavailable period</description>
@@ -257,6 +261,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>36</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 7">
       <description>Across 2 unavailable periods</description>
@@ -264,6 +269,7 @@
       <due>2009-01-28T00:00:00</due>
       <priority>37</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
     <demand name="3. order 8">
       <description>Across 2 unavailable periods</description>
@@ -271,6 +277,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>38</priority>
       <item name="3. item" />
+      <operation name="3. Deliver item"/>
     </demand>
   </demands>
 
@@ -288,15 +295,6 @@
       </available>
     </location>
   </locations>
-  <items>
-    <item name="4. item">
-      <operation name="4. Deliver item" xsi:type="operation_time_per">
-        <location name="site 4"/>
-        <duration>P1D</duration>
-        <duration_per>P1D</duration_per>
-      </operation>
-    </item>
-  </items>
   <demands>
     <demand name="4. order 1">
       <description>After available period</description>
@@ -304,6 +302,11 @@
       <due>2009-01-14T00:00:00</due>
       <priority>41</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item" xsi:type="operation_time_per">
+        <location name="site 4"/>
+        <duration>P1D</duration>
+        <duration_per>P1D</duration_per>
+      </operation>
     </demand>
     <demand name="4. order 2">
       <description>Would start in available period</description>
@@ -311,6 +314,7 @@
       <due>2009-01-12T12:00:00</due>
       <priority>42</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 3">
       <description>Would start and end in available period</description>
@@ -318,6 +322,7 @@
       <due>2009-01-11T12:00:00</due>
       <priority>43</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 4">
       <description>Would end available period</description>
@@ -325,6 +330,7 @@
       <due>2009-01-10T12:00:00</due>
       <priority>44</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 5">
       <description>Before available period</description>
@@ -332,6 +338,7 @@
       <due>2009-01-08T00:00:00</due>
       <priority>45</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 6">
       <description>Across all available periods</description>
@@ -339,6 +346,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>46</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 7">
       <description>Using the 2 available periods</description>
@@ -346,6 +354,7 @@
       <due>2009-01-04T00:00:00</due>
       <priority>47</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
     <demand name="4. order 8">
       <description>Using the 2 available periods</description>
@@ -353,6 +362,7 @@
       <due>2009-01-28T00:00:00</due>
       <priority>48</priority>
       <item name="4. item" />
+      <operation name="4. Deliver item"/>
     </demand>
   </demands>
 
@@ -400,8 +410,13 @@
       <duration_per>P1D</duration_per>
     </operation>
   </operations>
-  <items>
-    <item name="5. item">
+  <demands>
+    <demand name="5. order 1">
+      <description>After unavailable period</description>
+      <quantity>1</quantity>
+      <due>2009-01-14T00:00:00</due>
+      <priority>51</priority>
+      <item name="5. item" />
       <operation name="5. Deliver item" xsi:type="operation_fixed_time">
         <flows>
           <flow xsi:type="flow_start">
@@ -414,15 +429,6 @@
         </flows>
         <duration>P1D</duration>
       </operation>
-    </item>
-  </items>
-  <demands>
-    <demand name="5. order 1">
-      <description>After unavailable period</description>
-      <quantity>1</quantity>
-      <due>2009-01-14T00:00:00</due>
-      <priority>51</priority>
-      <item name="5. item" />
     </demand>
     <demand name="5. order 2">
       <description>Would start in unavailable period</description>
@@ -430,6 +436,7 @@
       <due>2009-01-12T12:00:00</due>
       <priority>52</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 3">
       <description>Would start and end in unavailable period</description>
@@ -437,6 +444,7 @@
       <due>2009-01-11T12:00:00</due>
       <priority>53</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 4">
       <description>Would end unavailable period</description>
@@ -444,6 +452,7 @@
       <due>2009-01-10T12:00:00</due>
       <priority>54</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 5">
       <description>Before unavailable period</description>
@@ -451,6 +460,7 @@
       <due>2009-01-08T00:00:00</due>
       <priority>55</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 6">
       <description>Across unavailable period</description>
@@ -459,6 +469,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>56</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 7">
       <description>Across 2 unavailable periods</description>
@@ -467,6 +478,7 @@
       <due>2009-01-28T00:00:00</due>
       <priority>57</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
     <demand name="5. order 8">
       <description>Across 2 unavailable periods</description>
@@ -475,6 +487,7 @@
       <due>2009-01-14T00:00:00</due>
       <priority>58</priority>
       <item name="5. item" />
+      <operation name="5. Deliver item"/>
     </demand>
   </demands>
 

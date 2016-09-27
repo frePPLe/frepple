@@ -1,63 +1,62 @@
-BUFFER	A1	1971-01-01T00:00:00	70	70
-BUFFER	A2	1971-01-01T00:00:00	70	70
-BUFFER	A3	1971-01-01T00:00:00	60	60
-BUFFER	A3	1971-01-01T00:00:00	10	70
-BUFFER	A3	2009-01-03T00:00:00	-5	65
-BUFFER	A3	2009-01-03T00:00:00	-5	60
-BUFFER	B1	1971-01-01T00:00:00	70	70
-BUFFER	B2	1971-01-01T00:00:00	70	70
-BUFFER	B3	1971-01-01T00:00:00	65	65
-BUFFER	B3	1971-01-01T00:00:00	5	70
-BUFFER	B3	2009-01-03T00:00:00	-5	65
-BUFFER	B4	1971-01-01T00:00:00	65	65
-BUFFER	B4	1971-01-01T00:00:00	5	70
-BUFFER	B4	2009-01-03T00:00:00	-5	65
-BUFFER	C1	1971-01-01T00:00:00	70	70
-BUFFER	C2	1971-01-01T00:00:00	60	60
-BUFFER	C2	1971-01-01T00:00:00	10	70
-BUFFER	C3	1971-01-01T00:00:00	65	65
-BUFFER	C3	1971-01-01T00:00:00	5	70
-BUFFER	C4	1971-01-01T00:00:00	65	65
-BUFFER	C4	1971-01-01T00:00:00	5	70
-BUFFER	C4	2009-01-03T00:00:00	-5	65
-BUFFER	C4	2009-01-03T00:00:00	-5	60
-BUFFER	product	2009-01-04T00:00:00	5	5
-BUFFER	product	2009-01-04T00:00:00	5	10
-BUFFER	product	2009-01-04T00:00:00	-10	0
+BUFFER	A1 @ factory	1971-01-01T00:00:00	70	70
+BUFFER	A2 @ factory	1971-01-01T00:00:00	70	70
+BUFFER	A3 @ factory	1971-01-01T00:00:00	60	60
+BUFFER	A3 @ factory	1971-01-01T00:00:00	10	70
+BUFFER	A3 @ factory	2009-01-03T00:00:00	-5	65
+BUFFER	A3 @ factory	2009-01-03T00:00:00	-5	60
+BUFFER	B1 @ factory	1971-01-01T00:00:00	70	70
+BUFFER	B2 @ factory	1971-01-01T00:00:00	70	70
+BUFFER	B3 @ factory	1971-01-01T00:00:00	65	65
+BUFFER	B3 @ factory	1971-01-01T00:00:00	5	70
+BUFFER	B3 @ factory	2009-01-03T00:00:00	-5	65
+BUFFER	B4 @ factory	1971-01-01T00:00:00	65	65
+BUFFER	B4 @ factory	1971-01-01T00:00:00	5	70
+BUFFER	B4 @ factory	2009-01-03T00:00:00	-5	65
+BUFFER	C1 @ factory	1971-01-01T00:00:00	70	70
+BUFFER	C2 @ factory	1971-01-01T00:00:00	60	60
+BUFFER	C2 @ factory	1971-01-01T00:00:00	10	70
+BUFFER	C3 @ factory	1971-01-01T00:00:00	65	65
+BUFFER	C3 @ factory	1971-01-01T00:00:00	5	70
+BUFFER	C4 @ factory	1971-01-01T00:00:00	65	65
+BUFFER	C4 @ factory	1971-01-01T00:00:00	5	70
+BUFFER	C4 @ factory	2009-01-03T00:00:00	-5	65
+BUFFER	C4 @ factory	2009-01-03T00:00:00	-5	60
+BUFFER	product @ factory	2009-01-04T00:00:00	5	5
+BUFFER	product @ factory	2009-01-04T00:00:00	5	10
+BUFFER	product @ factory	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Purchase A1	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase A2	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase A3	1971-01-01T00:00:00	1971-01-01T00:00:00	60
-OPERATION	Purchase B1	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase B2	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase B3	1971-01-01T00:00:00	1971-01-01T00:00:00	65
-OPERATION	Purchase B4	1971-01-01T00:00:00	1971-01-01T00:00:00	65
-OPERATION	Purchase C1	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase C2	1971-01-01T00:00:00	1971-01-01T00:00:00	60
-OPERATION	Purchase C3	1971-01-01T00:00:00	1971-01-01T00:00:00	65
-OPERATION	Purchase C4	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase A1 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase A2 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase A3 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	60
+OPERATION	Purchase B1 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase B2 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase B3 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase B4 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase C1 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase C2 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	60
+OPERATION	Purchase C3 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase C4 @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
-OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
-PROBLEM	invalid data	No replenishment defined for 'A1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'A2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'A3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'B1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'B2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'B3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'B4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'C1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'C2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'C3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'C4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase A1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase A2' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase A3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B2' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C2' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'A1 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'A2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'A3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B1 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'B4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C1 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'C4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Purchase A1 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase A2 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase A3 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase B1 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase B2 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase B3 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase B4 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase C1 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase C2 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase C3 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase C4 @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00

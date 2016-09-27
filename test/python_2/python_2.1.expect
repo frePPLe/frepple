@@ -28,6 +28,6 @@ Resource None None None None Capacity None
       5 -1.0 2009-01-02 09:00:00 2009-01-03 09:00:00
 
 Demands:
-order 1 10.0 2009-01-04 09:00:00 1 end item None None Customer
-order 2 10.0 2009-01-04 08:00:00 2 end item None None None
-order 3 10.0 2009-01-04 08:00:00 3 end item None None None
+order 1 10.0 2009-01-04 09:00:00 1 end item delivery end item None Customer
+order 2 10.0 2009-01-04 08:00:00 2 end item delivery end item None None
+order 3 10.0 2009-01-04 08:00:00 3 end item delivery end item None None

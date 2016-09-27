@@ -1,59 +1,58 @@
-BUFFER	component A	1971-01-01T00:00:00	69	69
-BUFFER	component A	1971-01-01T00:00:00	1	70
-BUFFER	component A	2008-12-24T00:00:00	-1	69
-BUFFER	component A	2008-12-27T00:00:00	-2	67
-BUFFER	component A	2008-12-29T00:00:00	-5	62
-BUFFER	component B	1971-01-01T00:00:00	66	66
-BUFFER	component B	1971-01-01T00:00:00	4	70
-BUFFER	component B	2008-12-25T00:00:00	-4	66
-BUFFER	component C	1971-01-01T00:00:00	65	65
-BUFFER	component C	1971-01-01T00:00:00	5	70
-BUFFER	component C	2008-12-24T00:00:00	-1	69
-BUFFER	component C	2008-12-25T00:00:00	-2	67
-BUFFER	component C	2008-12-27T00:00:00	-2	65
-BUFFER	component C	2008-12-29T00:00:00	-5	60
-BUFFER	component D	1971-01-01T00:00:00	70	70
-BUFFER	component E	1971-01-01T00:00:00	70	70
-BUFFER	component F	1971-01-01T00:00:00	65	65
-BUFFER	component F	1971-01-01T00:00:00	5	70
-BUFFER	component F	2008-12-24T00:00:00	-1	69
-BUFFER	component F	2008-12-25T00:00:00	-2	67
-BUFFER	component F	2008-12-27T00:00:00	-2	65
-BUFFER	component G	1971-01-01T00:00:00	65	65
-BUFFER	component G	1971-01-01T00:00:00	5	70
-BUFFER	component G	2008-12-29T00:00:00	-5	65
-BUFFER	product	2009-01-04T00:00:00	5	5
-BUFFER	product	2009-01-04T00:00:00	2	7
-BUFFER	product	2009-01-04T00:00:00	2	9
-BUFFER	product	2009-01-04T00:00:00	1	10
-BUFFER	product	2009-01-04T00:00:00	-10	0
+BUFFER	component A @ factory	1971-01-01T00:00:00	69	69
+BUFFER	component A @ factory	1971-01-01T00:00:00	1	70
+BUFFER	component A @ factory	2008-12-24T00:00:00	-1	69
+BUFFER	component A @ factory	2008-12-27T00:00:00	-2	67
+BUFFER	component A @ factory	2008-12-29T00:00:00	-5	62
+BUFFER	component B @ factory	1971-01-01T00:00:00	66	66
+BUFFER	component B @ factory	1971-01-01T00:00:00	4	70
+BUFFER	component B @ factory	2008-12-25T00:00:00	-4	66
+BUFFER	component C @ factory	1971-01-01T00:00:00	65	65
+BUFFER	component C @ factory	1971-01-01T00:00:00	5	70
+BUFFER	component C @ factory	2008-12-24T00:00:00	-1	69
+BUFFER	component C @ factory	2008-12-25T00:00:00	-2	67
+BUFFER	component C @ factory	2008-12-27T00:00:00	-2	65
+BUFFER	component C @ factory	2008-12-29T00:00:00	-5	60
+BUFFER	component D @ factory	1971-01-01T00:00:00	70	70
+BUFFER	component E @ factory	1971-01-01T00:00:00	70	70
+BUFFER	component F @ factory	1971-01-01T00:00:00	65	65
+BUFFER	component F @ factory	1971-01-01T00:00:00	5	70
+BUFFER	component F @ factory	2008-12-24T00:00:00	-1	69
+BUFFER	component F @ factory	2008-12-25T00:00:00	-2	67
+BUFFER	component F @ factory	2008-12-27T00:00:00	-2	65
+BUFFER	component G @ factory	1971-01-01T00:00:00	65	65
+BUFFER	component G @ factory	1971-01-01T00:00:00	5	70
+BUFFER	component G @ factory	2008-12-29T00:00:00	-5	65
+BUFFER	product @ factory	2009-01-04T00:00:00	5	5
+BUFFER	product @ factory	2009-01-04T00:00:00	2	7
+BUFFER	product @ factory	2009-01-04T00:00:00	2	9
+BUFFER	product @ factory	2009-01-04T00:00:00	1	10
+BUFFER	product @ factory	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Purchase component A	1971-01-01T00:00:00	1971-01-01T00:00:00	69
-OPERATION	Purchase component B	1971-01-01T00:00:00	1971-01-01T00:00:00	66
-OPERATION	Purchase component C	1971-01-01T00:00:00	1971-01-01T00:00:00	65
-OPERATION	Purchase component D	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase component E	1971-01-01T00:00:00	1971-01-01T00:00:00	70
-OPERATION	Purchase component F	1971-01-01T00:00:00	1971-01-01T00:00:00	65
-OPERATION	Purchase component G	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase component A @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	69
+OPERATION	Purchase component B @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	66
+OPERATION	Purchase component C @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase component D @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase component E @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	70
+OPERATION	Purchase component F @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
+OPERATION	Purchase component G @ factory	1971-01-01T00:00:00	1971-01-01T00:00:00	65
 OPERATION	assembly	2008-12-24T00:00:00	2009-01-04T00:00:00	1
 OPERATION	assembly	2008-12-25T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-27T00:00:00	2009-01-04T00:00:00	2
 OPERATION	assembly	2008-12-29T00:00:00	2009-01-04T00:00:00	5
-OPERATION	deliver product	2009-01-04T00:00:00	2009-01-04T00:00:00	10
-PROBLEM	invalid data	No replenishment defined for 'component A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component D'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component E'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component F'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'component G'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Purchase component A' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component B' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component C' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component D' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component E' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component F' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase component G' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component C @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component D @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component E @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component F @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component G @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Purchase component A @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component B @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component C @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component D @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component E @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component F @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase component G @ factory' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-24T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'assembly' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00

@@ -7194,6 +7194,20 @@ class Demand
 
     DECLARE_EXPORT PeggingIterator getPegging() const;
 
+    /** Return the latest delivery date for the demand. */
+    Date getDeliveryDate() const
+    {
+      OperationPlan* op = getLatestDelivery();
+      return op ? op->getDates().getEnd() : Date::infiniteFuture;
+    }
+
+    /** Return the delay of the latest delivery compared to the due date. */
+    Duration getDelay() const
+    {
+      OperationPlan* op = getLatestDelivery();
+      return (op ? op->getDates().getEnd() : Date::infiniteFuture) - getDue();
+    }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
@@ -7213,6 +7227,8 @@ class Demand
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, 0L, DONT_SERIALIZE);
+      m->addDateField<Cls>(Tags::delivery, &Cls::getDeliveryDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
     }
 
   private:

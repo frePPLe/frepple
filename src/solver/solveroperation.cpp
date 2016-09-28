@@ -975,10 +975,38 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
       double sub_flow_qty_per = 0.0;
       if (buf)
       {
+        // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
         if (f && f->getQuantity() > 0.0)
+        {
           sub_flow_qty_per = f->getQuantity();
-        else if (!top_flow_exists)
+          bool f_is_fixed = f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata;
+          if (top_flow_exists && fixed_flow != f_is_fixed)
+              throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
+                + "' for buffer '" + data->state->curBuffer->getName() + "'");
+          fixed_flow = f_is_fixed;
+        }
+
+        // Flow quantity on the suboperations of a routing suboperation
+        if ((*altIter)->getOperation()->getType() == *OperationRouting::metadata)
+        {
+          SubOperation::iterator subiter((*altIter)->getOperation()->getSubOperations());
+          while (SubOperation *o = subiter.next())
+          {
+            Flow *g = o->getOperation()->findFlow(buf, ask_date);            
+            if (g && g->getQuantity() > 0.0)
+            {
+              sub_flow_qty_per += g->getQuantity();
+              bool g_is_fixed = g->getType() == *FlowFixedEnd::metadata || g->getType() == *FlowFixedStart::metadata;
+              if ((top_flow_exists || f) && fixed_flow != g_is_fixed)
+                throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
+                  + "' for buffer '" + data->state->curBuffer->getName() + "'");
+              fixed_flow = g_is_fixed;
+            }              
+          }
+        }
+
+        if (!sub_flow_qty_per && !top_flow_exists)
         {
           // Neither the top nor the sub operation have a flow in the buffer,
           // we're in trouble...
@@ -986,16 +1014,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
           data->constrainedPlanning = originalPlanningMode;
           throw DataException("Invalid producing operation '" + oper->getName()
               + "' for buffer '" + buf->getName() + "'");
-        }
-        else if (f && top_flow_exists)
-        {
-          if ((fixed_flow && f->getType() != *FlowFixedEnd::metadata && f->getType() != *FlowFixedStart::metadata)
-            || (!fixed_flow && (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)))
-              throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-              + "' for buffer '" + data->state->curBuffer->getName() + "'");
-        }
-        else if (f && (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata))
-          fixed_flow = true;
+        }       
       }
       else
         // Default value is 1.0, if no matching flow is required

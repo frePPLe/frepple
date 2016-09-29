@@ -21,10 +21,13 @@ quantity         number            The quantity delivered.
 start date       DateTime          The date when the purchase order is leaving the supplier location.
 end date         DateTime          The date of the purchase order delivery.
 Demands          demand            The demand(s) (and quantity) pegged to the purchase order. This is a generated field.
-criticality      number            | The criticality is a number calculated by the optimization. This is a generated field.
-                                   | It reprensents an indication of the urgency of the purchase order.
+criticality      number            | The criticality is a read-only field, calculated by the planning engine. 
+                                   | It represents an indication of the slack time in the usage of the purchase order.
                                    | A criticality of 0 indicates that the purchase order is on the critical path of one or more demands.
-                                   | Higher criticality values indicate a delay of the purchase order will not immediately impact the delivery of any demand.
+                                   | Higher criticality values indicate a delay of the purchase order will not immediately impact the shipment of any demand.                                   
                                    | A criticality of 999 indicates a purchase order that isn’t used at all to meet any demand.
+                                   | Note that the criticality is independent of whether the customer demand will be shipped on time or not.
+delay            Duration          | The delay is a read-only field, calculated by the planning engine.
+                                   | It compares the end data of the purchase order with the latest possible end date to ship all demands it feeds on time.
 ================ ================= =================================================================================================================================                            
                                   

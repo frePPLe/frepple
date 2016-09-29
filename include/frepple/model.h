@@ -1719,6 +1719,29 @@ class OperationPlan
       */
     DECLARE_EXPORT double getCriticality() const;
 
+    /** Returns the difference between:
+      *  a) the end date of the this operationplan
+      * and
+      *  b) the due of the demand fed by this operationplan
+      *     minus the sum all of all operation times between
+      *     the demand delivery and this demand.
+      *
+      * The concepts of "criticality" and "delay" are related but distinct.
+      * A delayed operationplan will have a low criticality (because
+      * the solver will squeeze all slack to reduce the lateness). 
+      * However, an operationplan can be critical and still satisfy demands
+      * on time or even early.
+      * Example:
+      *    Imagine a series of operationplans that are planned start-to-end to
+      *    meet a customer demand.
+      *    The criticality of the operationplans will be computed as 0 
+      *    (because there is no slack between the operationplans), regardless 
+      *    whether the demand is shipped on time, early or late.
+      *    The delay of the operationplans on the other hand will reflect the
+      *    relation to the due date of the customer order.
+      */
+    Duration getDelay() const;
+
     friend class iterator;
 
     /** This is a factory method that creates an operationplan pointer based
@@ -2263,6 +2286,7 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN + DETAIL);
       m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);

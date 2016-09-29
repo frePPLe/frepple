@@ -1386,7 +1386,7 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
     return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
   }
 
-  // Upstream operationplan
+  // Handle an upstream operationplan
   Duration minslack = 86313600L; // 999 days in seconds
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
@@ -1418,6 +1418,50 @@ DECLARE_EXPORT double OperationPlan::getCriticality() const
     }
   }
   return minslack / 86400.0; // Convert to days
+}
+
+
+Duration OperationPlan::getDelay() const
+{
+  // Operationplan hasn't been set up yet. On time by default. 
+  if (!oper)
+    return 0L;
+
+  // Child operationplans have the same delay as the parent
+  // TODO for routing steps this is not really as accurrate as we could do it
+  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+    return getOwner()->getDelay();
+
+  // Handle demand delivery operationplans
+  if (getTopOwner()->getDemand())
+    return getDates().getEnd() - getTopOwner()->getDemand()->getDue();
+
+  // Handle an upstream operationplan
+  Duration maxdelay = Duration::MIN;
+  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
+  {
+    unsigned int lvl = p.getLevel();
+    if (lvl >= opplans.size())
+      opplans.resize(lvl + 5);
+    opplans[lvl] = p.getOperationPlan();
+    const OperationPlan* m = p.getOperationPlan();
+    if (m && m->getTopOwner()->getDemand())
+    {
+      // Reached a demand. Get the total slack now.
+      Duration mydelay = getDates().getEnd() - m->getTopOwner()->getDemand()->getDue();
+      for (unsigned int i = 0; i < lvl; i++)
+      {
+        if (opplans[i]->getOwner())
+          // Don't count operation times on child operationplans
+          continue;
+        mydelay -= opplans[i]->getDates().getDuration();
+      }
+      if (mydelay > maxdelay)
+        maxdelay = mydelay;
+    }
+  }
+  return maxdelay;
 }
 
 

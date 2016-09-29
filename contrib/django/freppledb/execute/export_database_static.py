@@ -783,7 +783,7 @@ class exportStaticModel(object):
         [
           (i.source, self.timestamp, i.name)
           for i in frepple.skills()
-          if i.name not in primary_keys and (not self.source or self.source == i.source)
+          if i.name in primary_keys and (not self.source or self.source == i.source)
         ])
       print('Exported skills in %.2f seconds' % (time() - starttime))
 

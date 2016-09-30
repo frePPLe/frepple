@@ -118,9 +118,6 @@
 		</item>
 		<item>
 			<name>item 1</name>
-			<operation>
-				<name>delivery 1</name>
-			</operation>
 		</item>
 	</items>
 	<buffers>
@@ -163,9 +160,9 @@
 			<name>delivery 1</name>
 			<flows>
 				<flow>
-					<buffer>
-						<name>buffer 1</name>
-					</buffer>
+					<item>
+						<name>item 1</name>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -182,21 +179,21 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
-						<name>buffer 1</name>
-					</buffer>
+					<item>
+						<name>item 1</name>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 				<flow>
-					<buffer>
-						<name>buffer A</name>
-					</buffer>
+					<item>
+						<name>component A</name>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 				<flow>
-					<buffer>
-						<name>buffer B</name>
-					</buffer>
+					<item>
+						<name>component B</name>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -222,9 +219,9 @@
 			<name>supply component A from supplier 1</name>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
-						<name>buffer A</name>
-					</buffer>
+					<item>
+						<name>component A</name>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -234,9 +231,9 @@
 			<name>supply component A from supplier 2</name>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
-						<name>buffer A</name>
-					</buffer>
+					<item>
+						<name>component A</name>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -253,6 +250,9 @@
 			<customer>
 				<name>Customer 1</name>
 			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -265,6 +265,9 @@
 			<customer>
 				<name>Customer 1</name>
 			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -277,6 +280,9 @@
 			<customer>
 				<name>Customer 2</name>
 			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-04-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>

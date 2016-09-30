@@ -34,4 +34,5 @@ OPERATION	supply component A	2009-03-29T00:00:00	2009-03-30T00:00:00	1
 OPERATION	supply component A from supplier 1	2009-01-29T00:00:00	2009-01-30T00:00:00	1
 OPERATION	supply component A from supplier 1	2009-02-26T00:00:00	2009-02-27T00:00:00	1
 OPERATION	supply component A from supplier 1	2009-03-29T00:00:00	2009-03-30T00:00:00	1
+PROBLEM	invalid data	No replenishment defined for 'buffer B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'buffer B' has material shortage of 3	2009-01-30T00:00:00 / 2030-12-31T00:00:00

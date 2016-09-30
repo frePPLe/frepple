@@ -8,6 +8,7 @@
   <current>2009-01-01T00:00:00</current>
   <resources>
     <resource name="Painting line">
+      <location name="factory" />
       <maximum>2</maximum>
       <setupmatrix name="Painting line changeover">
         <rules>
@@ -23,207 +24,154 @@
       <setup>green</setup>
     </resource>
   </resources>
-  <items>
-    <item name="red product">
-      <operation name="delivery red product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="green product">
-      <operation name="delivery green product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="white product">
-      <operation name="delivery white product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="blue product">
-      <operation name="delivery blue product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="black product">
-      <operation name="delivery black product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="yellow product">
-      <operation name="delivery yellow product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-    <item name="colorless product">
-      <operation name="delivery colorless product" xsi:type="operation_fixed_time" duration="P1D" />
-    </item>
-  </items>
-  <buffers>
-    <buffer name="red product">
-      <producing name="make red product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>red</setup>
-          </load>
-        </loads>
-      </producing>
+  <operations>
+    <operation name="make red product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="red product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>red</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery red product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make red product" />
+          <item name="red product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="green product">
-      <producing name="make green product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>green</setup>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>
+    <operation name="make green product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="green product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>green</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery green product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make green product" />
+          <item name="green product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="white product">
-      <producing name="make white product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>white</setup>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>  
+    <operation name="make white product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="white product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>white</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery white product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make white product" />
+          <item name="white product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="blue product">
-      <producing name="make blue product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>blue</setup>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>
+    <operation name="make blue product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="blue product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>blue</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery blue product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make blue product" />
+          <item name="blue product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="black product">
-      <producing name="make black product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>black</setup>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>
+    <operation name="make black product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="black product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>black</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery black product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make black product" />
+          <item name="black product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="yellow product">
-      <producing name="make yellow product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-            <setup>yellow</setup>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>
+    <operation name="make yellow product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="yellow product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+          <setup>yellow</setup>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery yellow product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make yellow product" />
+          <item name="yellow product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-    <buffer name="colorless product">
-      <producing name="make colorless product" xsi:type="operation_time_per" duration_per="P1D">
-        <loads>
-          <load>
-            <resource name="Painting line"/>
-          </load>
-        </loads>
-      </producing>
+      </flows>      
+    </operation>
+    <operation name="make colorless product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="colorless product" />
+      <location name="factory" />
+      <loads>
+        <load>
+          <resource name="Painting line"/>
+        </load>
+      </loads>
       <flows>
-        <flow xsi:type="flow_start">
-          <operation name="delivery colorless product" />
-           <quantity>-1</quantity>
-        </flow>
         <flow xsi:type="flow_end">
-          <operation name="make colorless product" />
+          <item name="colorless product" />
           <quantity>1</quantity>
         </flow>
-      </flows>
-    </buffer>
-  </buffers>
+      </flows>      
+    </operation> 
+  </operations>
   <demands>
     <demand name="order 1 red">
       <quantity>3</quantity>
       <due>2009-01-30T00:00:00</due>
       <priority>1</priority>
       <item name="red product" />
+      <location name="factory" />
     </demand>
     <demand name="order 2 green">
       <quantity>3</quantity>
       <due>2009-02-10T00:00:00</due>
       <priority>2</priority>
       <item name="green product" />
+      <location name="factory" />
     </demand>
     <demand name="order 1 white">
       <quantity>3</quantity>
       <due>2009-02-01T00:00:00</due>
       <priority>3</priority>
       <item name="white product" />
+      <location name="factory" />
     </demand>
     <demand name="order 1 black">
       <quantity>7</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>4</priority>
       <item name="black product" />
+      <location name="factory" />
     </demand>
     <demand name="order 1 colorless">
       <quantity>3</quantity>
       <due>2009-01-12T00:00:00</due>
       <priority>5</priority>
       <item name="colorless product" />
+      <location name="factory" />
     </demand>
   </demands>
 

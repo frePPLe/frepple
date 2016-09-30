@@ -97,9 +97,6 @@
 		</item>
 		<item>
 			<name>item 1</name>
-			<operation>
-				<name>delivery 1</name>
-			</operation>
 		</item>
 	</items>
 	<buffers>
@@ -121,9 +118,9 @@
 			<name>delivery 1</name>
 			<flows>
 				<flow>
-					<buffer>
-						<name>buffer 1</name>
-					</buffer>
+					<item>
+						<name>item 1</name>
+					</item>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -161,6 +158,9 @@
 			<item>
 				<name>item 1</name>
 			</item>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -170,6 +170,9 @@
 			<item>
 				<name>item 1</name>
 			</item>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -182,6 +185,9 @@
 			<customer>
 				<name>Customer 2</name>
 			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-04-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>

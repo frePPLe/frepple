@@ -6,6 +6,11 @@
   and organized in various levels of qualification.
   </description>
 	<current>2013-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>factory</name>
+		</location>
+	</locations>
 	<resources>
 		<resource>
 			<name>Bob</name>
@@ -13,6 +18,9 @@
 				<name>Operators</name>
 			</owner>
 			<cost>1</cost>
+			<location>
+				<name>factory</name>
+			</location>
 		</resource>
 		<resource>
 			<name>John</name>
@@ -20,6 +28,9 @@
 				<name>Operators</name>
 			</owner>
 			<cost>1</cost>
+			<location>
+				<name>factory</name>
+			</location>
 		</resource>
 		<resource>
 			<name>Neil</name>
@@ -27,9 +38,15 @@
 				<name>Operators</name>
 			</owner>
 			<cost>1</cost>
+			<location>
+				<name>factory</name>
+			</location>
 		</resource>
 		<resource>
 			<name>Operators</name>
+			<location>
+				<name>factory</name>
+			</location>
 		</resource>
 		<resource>
 			<name>Paul</name>
@@ -37,6 +54,9 @@
 				<name>Operators</name>
 			</owner>
 			<cost>1</cost>
+			<location>
+				<name>factory</name>
+			</location>
 		</resource>
 	</resources>
 	<items>
@@ -44,28 +64,15 @@
 			<name>1. end item</name>
 		</item>
 	</items>
-	<buffers>
-		<buffer>
-			<name>1. end item</name>
-			<producing xsi:type="operation_time_per">
-				<name>1. make end item</name>
-			</producing>
-		</buffer>
-	</buffers>
 	<operations>
-		<operation>
-			<name>1. delivery end item</name>
-			<flows>
-				<flow>
-					<buffer>
-						<name>1. end item</name>
-					</buffer>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
-		</operation>
 		<operation xsi:type="operation_time_per">
 			<name>1. make end item</name>
+			<item>
+				<name>1. end item</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
 			<loads>
 				<load>
 					<resource>
@@ -79,9 +86,9 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<buffer>
+					<item>
 						<name>1. end item</name>
-					</buffer>
+					</item>
 					<quantity>1</quantity>
 				</flow>
 			</flows>
@@ -95,9 +102,9 @@
 			<item>
 				<name>1. end item</name>
 			</item>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
+			<location>
+				<name>factory</name>
+			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -107,9 +114,9 @@
 			<item>
 				<name>1. end item</name>
 			</item>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
+			<location>
+				<name>factory</name>
+			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -119,9 +126,9 @@
 			<item>
 				<name>1. end item</name>
 			</item>
-			<operation>
-				<name>1. delivery end item</name>
-			</operation>
+			<location>
+				<name>factory</name>
+			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>

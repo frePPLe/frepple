@@ -14,8 +14,9 @@
 	</skill>
   </skills>
   <resources>
-    <resource name="Operators"></resource>
+    <resource name="Operators"><location name="factory" /></resource>
     <resource name="Neil" cost="1">
+      <location name="factory" />
 	    <owner name="Operators"/>
 	    <resourceskills>
 	      <resourceskill priority="1"><skill name="Qualification B" /></resourceskill>
@@ -23,29 +24,34 @@
 	    </resourceskills>
 	  </resource>
     <resource name="Bob" cost="1">
-	  <owner name="Operators"/>
-	  <resourceskills>
-	    <resourceskill><skill name="Qualification B" /></resourceskill>
-	    <resourceskill><skill name="Qualification C" /></resourceskill>
-	  </resourceskills>
-	</resource>
-  <resource name="John" cost="1">
-	  <owner name="Operators"/>
-	  <resourceskills>
-	    <resourceskill><skill name="Qualification C" /></resourceskill>
-	  </resourceskills>
-	</resource>
+      <location name="factory" />
+      <owner name="Operators"/>
+      <resourceskills>
+        <resourceskill><skill name="Qualification B" /></resourceskill>
+        <resourceskill><skill name="Qualification C" /></resourceskill>
+      </resourceskills>
+    </resource>
+    <resource name="John" cost="1">
+      <location name="factory" />
+      <owner name="Operators"/>
+      <resourceskills>
+        <resourceskill><skill name="Qualification C" /></resourceskill>
+      </resourceskills>
+    </resource>
     <resource name="Paul" cost="1">
-	  <owner name="Operators"/>
-	  <resourceskills>
-	    <resourceskill><skill name="Qualification A" /></resourceskill>
-	    <resourceskill><skill name="Qualification B" /></resourceskill>
-	    <resourceskill><skill name="Qualification C" /></resourceskill>
-	  </resourceskills>
-	</resource>
+    <location name="factory" />
+      <owner name="Operators"/>
+      <resourceskills>
+        <resourceskill><skill name="Qualification A" /></resourceskill>
+        <resourceskill><skill name="Qualification B" /></resourceskill>
+        <resourceskill><skill name="Qualification C" /></resourceskill>
+      </resourceskills>
+    </resource>
   </resources>
   <operations>
-	<operation name="1. make end item" duration_per="PT1H6.6S" xsi:type="operation_time_per">
+    <operation name="1. make end item" duration_per="PT1H6.6S" xsi:type="operation_time_per">
+      <location name="factory" />
+      <item name="1. end item" />
       <loads>
         <load>
           <resource name="Operators" />
@@ -53,25 +59,14 @@
 		      <search>MINCOSTPENALTY</search>
         </load>
       </loads>
-	  <flows>
-		<flow xsi:type="flow_end">
-		  <buffer name="1. end item" />
-		  <quantity>1</quantity>
-		</flow>
-	  </flows>
-	</operation>
-    <operation name="1. delivery end item">
       <flows>
-        <flow xsi:type="flow_start">
-          <buffer name="1. end item">
-             <producing name="1. make end item" />
-          </buffer>
-          <quantity>-1</quantity>
+        <flow xsi:type="flow_end">
+          <item name="1. end item" />
+          <quantity>1</quantity>
         </flow>
       </flows>
     </operation>
   </operations>
-
   <demands>
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
@@ -79,21 +74,21 @@
       <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
-      <operation name="1. delivery end item"/>
+      <location name="factory" />
     </demand>
     <demand name="2. order">
       <quantity>100</quantity>
       <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
-      <operation name="1. delivery end item"/>
+      <location name="factory" />
     </demand>
     <demand name="3. order">
       <quantity>40</quantity>
       <due>2013-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
-      <operation name="1. delivery end item"/>
+      <location name="factory" />
     </demand>
   </demands>
 

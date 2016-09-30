@@ -33,9 +33,9 @@
 	</customers>
 	<calendars>
 		<calendar>
-      <name>months</name>
+			<name>months</name>
 			<buckets>
-        <bucket>
+				<bucket>
 					<start>2009-02-01T00:00:00</start>
 					<end>2009-02-01T00:00:00</end>
 				</bucket>
@@ -94,9 +94,6 @@
 			<name>delivery 1</name>
 			<flows>
 				<flow>
-					<buffer>
-						<name>buffer 1</name>
-					</buffer>
 					<quantity>-1</quantity>
 				</flow>
 			</flows>
@@ -131,12 +128,18 @@
 		<demand>
 			<name>order 1</name>
 			<quantity>1</quantity>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-03-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
 			<name>order 2</name>
 			<quantity>1</quantity>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-02-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
@@ -146,8 +149,49 @@
 			<customer>
 				<name>Customer 2</name>
 			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
 			<due>2009-04-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>
+	<operationplans>
+		<operationplan>
+			<id>17</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order 2</name>
+			</demand>
+			<start>2009-01-31T00:00:00</start>
+			<end>2009-02-01T00:00:00</end>
+			<quantity>1</quantity>
+		</operationplan>
+		<operationplan>
+			<id>18</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order 1</name>
+			</demand>
+			<start>2009-02-28T00:00:00</start>
+			<end>2009-03-01T00:00:00</end>
+			<quantity>1</quantity>
+		</operationplan>
+		<operationplan>
+			<id>19</id>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>order 3</name>
+			</demand>
+			<start>2009-03-31T00:00:00</start>
+			<end>2009-04-01T00:00:00</end>
+			<quantity>1</quantity>
+		</operationplan>
+	</operationplans>
 </plan>

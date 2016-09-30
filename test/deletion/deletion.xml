@@ -24,11 +24,7 @@
     </calendar>
   </calendars>
   <items>
-    <item name="item 1">
-      <operation name="delivery 1" xsi:type="operation_fixed_time">
-        <duration>P1D</duration>
-      </operation>
-    </item>
+    <item name="item 1"/>
   </items>
   <buffers>
     <buffer name="buffer 1">
@@ -68,11 +64,6 @@
     </buffer>
   </buffers>
   <flows>
-    <flow xsi:type="flow_start">
-      <operation name="delivery 1" />
-      <buffer name="buffer 1" />
-      <quantity>-1</quantity>
-    </flow>
     <flow xsi:type="flow_end">
       <operation name="make item 1" />
       <buffer name="buffer 1" />
@@ -136,6 +127,15 @@
       <due>2009-03-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 1" />
+      <operation name="delivery 1" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_start">      
+            <buffer name="buffer 1" />
+            <quantity>-1</quantity>
+          </flow>
+         </flows>
+        <duration>P1D</duration>        
+      </operation>
     </demand>
     <demand name="order 2">
       <item name="item 1" />
@@ -143,6 +143,7 @@
       <due>2009-02-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 1" />
+      <operation name="delivery 1" xsi:type="operation_fixed_time"/>
     </demand>
     <demand name="order 3">
       <item name="item 1" />
@@ -150,6 +151,7 @@
       <due>2009-04-01T00:00:00</due>
       <quantity>1</quantity>
       <customer name="Customer 2" />
+      <operation name="delivery 1" xsi:type="operation_fixed_time"/>
     </demand>
   </demands>
 
@@ -231,7 +233,7 @@ frepple.operation(name="make item 1", action="R")
 solver.solve()
 frepple.saveXMLfile("output.10.xml")
 
-# Now we delete an item.
+# Now we delete an item
 frepple.item(name="item 1", action="R")
 solver.solve()
 frepple.saveXMLfile("output.11.xml")

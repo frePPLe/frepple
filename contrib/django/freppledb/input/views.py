@@ -1052,6 +1052,8 @@ class ManufacturingOrderList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus),
     GridFieldInteger('owner', title=_('owner'), extra="formatoptions:{defaultValue:''}"),
+    GridFieldNumber('criticality', title=_('criticality'), editable=False),
+    GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('demand', title=_('Demands'), editable=False, sortable=False, formatter='demanddetail', extra="role:'input/demand'"),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
@@ -1105,6 +1107,7 @@ class DistributionOrderList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldText('demand', title=_('Demands'), editable=False, sortable=False, formatter='demanddetail', extra="role:'input/demand'"),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
+    GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -1158,6 +1161,7 @@ class PurchaseOrderList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldText('demand', title=_('Demands'), editable=False, sortable=False, formatter='demanddetail', extra="role:'input/demand'"),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
+    GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

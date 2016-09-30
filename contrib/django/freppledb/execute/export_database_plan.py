@@ -220,7 +220,7 @@ class export:
             # Export inventory  
             yield (
               i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
+              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
@@ -232,7 +232,7 @@ class export:
             # Export DO
             yield (
               i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
+              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.destination.item.name, j.operation.destination.location.name,
@@ -246,7 +246,7 @@ class export:
             # Export PO
             yield (
               i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
+              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N',
@@ -259,7 +259,7 @@ class export:
             # Export MO
             yield (
               i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
+              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               '\\N', '\\N', '\\N', '\\N', '\\N',
@@ -271,7 +271,7 @@ class export:
             # Export shipments (with automatically created delivery operations)
             yield (
               i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4),
+              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               '\\N', '\\N', '\\N', '\\N', '\\N',
@@ -295,6 +295,7 @@ class export:
         startdate timestamp with time zone,
         enddate timestamp with time zone,
         criticality numeric(15,4),
+        delay numeric,
         plan json,
         source character varying(300),
         lastmodified timestamp with time zone NOT NULL,
@@ -312,13 +313,13 @@ class export:
       '''.encode(self.encoding))
     process.stdin.write('''COPY tmp_operationplan
       (name,type,status,reference,quantity,startdate,enddate,
-      criticality,plan,source,lastmodified,
+      criticality,delay,plan,source,lastmodified,
       operation_id,owner_id,
       item_id,destination_id,origin_id,
       location_id,supplier_id,
       demand_id,due,id) FROM STDIN;\n'''.encode(self.encoding))
     for p in getOperationPlans():
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
+      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
 
     # Merge temp table into the actual table
@@ -326,7 +327,8 @@ class export:
       update operationplan 
         set name=tmp.name, type=tmp.type, status=tmp.status, reference=tmp.reference, 
         quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
-        criticality=tmp.criticality, plan=tmp.plan, source=tmp.source,
+        criticality=tmp.criticality, delay=tmp.delay * interval '1 second', 
+        plan=tmp.plan, source=tmp.source,
         lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
         item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
         location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
@@ -337,13 +339,13 @@ class export:
     process.stdin.write('''
       insert into operationplan
         (name,type,status,reference,quantity,startdate,enddate,
-        criticality,plan,source,lastmodified,
+        criticality,delay,plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,
         demand_id,due,id)
       select name,type,status,reference,quantity,startdate,enddate,
-        criticality,plan,source,lastmodified,
+        criticality,delay * interval '1 second',plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,

@@ -929,6 +929,9 @@ class OperationPlan(AuditModel):
     _('criticality'), max_digits=15,
     decimal_places=4, null=True, blank=True, editable=False
     )
+  delay = models.DurationField(
+    _('delay'), null=True, blank=True, editable=False
+    )
   plan = JSONField(default="{}", null=True, blank=True, editable=False)
   # Used only for manufacturing orders
   operation = models.ForeignKey(

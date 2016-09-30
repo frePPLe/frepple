@@ -460,6 +460,11 @@ class Migration(migrations.Migration):
       name='due',
       field=models.DateTimeField(db_index=False, blank=True, null=True, verbose_name='due'),
     ),
+    migrations.AddField(
+      model_name='operationplan',
+      name='delay',
+      field=models.DurationField(verbose_name='delay', editable=False, blank=True, null=True),
+    ),
     migrations.AlterField(
       model_name='operationplan',
       name='operation',

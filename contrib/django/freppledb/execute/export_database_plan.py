@@ -174,13 +174,13 @@ class export:
     process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n'.encode(self.encoding))
     for i in frepple.problems():
       if isinstance(i.owner, frepple.operationplan):
-        owner = i.owner.operation.name
+        owner = i.owner.operation
       else:
-        owner = i.owner.name
+        owner = i.owner
       if self.cluster != -1 and owner.cluster != self.cluster:
         continue
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         i.entity, i.name, owner,
+         i.entity, i.name, owner.name,
          i.description, str(i.start), str(i.end),
          round(i.weight, 4)
       )).encode(self.encoding))

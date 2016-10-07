@@ -48,7 +48,7 @@ class execute_with_commands(TransactionTestCase):
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
 
     self.assertTrue(input.models.ManufacturingOrder.objects.count() > 30)
-    self.assertTrue(input.models.PurchaseOrder.objects.count() > 30)
+    self.assertTrue(input.models.PurchaseOrder.objects.count() > 20)
     self.assertTrue(input.models.DistributionOrder.objects.count() > 0)
 
     #the exporttofolder filters by status so the count must also filter

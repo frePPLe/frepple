@@ -664,11 +664,9 @@ class Simulator(object):
     '''
     for dmd in Demand.objects.using(self.database).filter(due__lt=nd, status='open').order_by('priority', 'due'):
       oper = dmd.operation
-      if not oper:
-        oper = dmd.item.operation
       if oper:
-        # Case 1: Delivery operation specified
-        ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)
+        # Case 1: Delivery operation specified        
+        ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)        
         if ship_qty > 0:
           # Execute all operation materials on the delivery operation
           self.checkAvailable(ship_qty, 0, oper, True)
@@ -689,20 +687,20 @@ class Simulator(object):
         except Buffer.DoesNotExist:
           self.checkDemandExpired(dmd, nd)
           continue
-        if buf.onhand < dmd.minshipment:
+        if buf.onhand < (dmd.minshipment or 0):
           # Not sufficient to ship something
           self.checkDemandExpired(dmd, nd)
           continue
-        elif buf.onhand > dmd.quantity:
+        elif buf.onhand >=  dmd.quantity:
           # Shipping the complete remaining quantity
           buf.onhand -= dmd.quantity
           buf.save(using=self.database)
         else:
-          if dmd.quantity > dmd.minshipment:
-            ship_qty = min(buf.onhand, dmd.quantity - dmd.minshipment)
+          if dmd.quantity > (dmd.minshipment or 0):
+            ship_qty = min(buf.onhand, dmd.quantity - (dmd.minshipment or 0))
           else:
             ship_qty = buf.onhand
-          if ship_qty <= dmd.minshipment:
+          if ship_qty <= (dmd.minshipment or 0):
             # Remaining open quantity after a partial shipment would be less than the minimum shipment
             self.checkDemandExpired(dmd, nd)
             continue

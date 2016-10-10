@@ -37,7 +37,8 @@ DECLARE_EXPORT const MetaCategory* Buffer::metadata;
 DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
                *BufferProcure::metadata,
-               *OperationInventory::metadata;
+               *OperationInventory::metadata,
+               *OperationDelivery::metadata;
 DECLARE_EXPORT const double Buffer::default_max = 1e37;
 DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = nullptr;
 
@@ -111,6 +112,44 @@ int OperationInventory::initialize()
   x.supportsetattro();
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+int OperationDelivery::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<OperationDelivery>(
+    "operation",
+    "operation_delivery");
+  registerFields<OperationDelivery>(const_cast<MetaClass*>(metadata));
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<OperationDelivery>::getPythonType();
+  x.setName("operation_delivery");
+  x.setDoc("frePPLe operation_delivery");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+OperationDelivery::OperationDelivery(Buffer *buf)
+{
+  setName("Ship " + string(buf->getName()));
+  setHidden(true);
+  setDetectProblems(false);
+  // When we set the size minimum to 0 for the automatically created
+  // delivery operations, they will be constrained by the minimum shipment
+  // size specified on the demand.
+  setSizeMinimum(0.0);
+  initType(metadata);
+}
+
+
+Buffer* OperationDelivery::getBuffer() const
+{
+  return getFlows().begin()->getBuffer();
 }
 
 

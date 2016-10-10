@@ -861,6 +861,7 @@
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="common_fields" />
       <xsd:element name="quantity" type="positiveDouble" />
+      <xsd:element name="planned_quantity" type="positiveDouble" />
       <xsd:element name="item" type="item" />
       <xsd:element name="location" type="location" />
       <xsd:element name="due" type="xsd:dateTime" />
@@ -883,6 +884,7 @@
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="quantity" type="positiveDouble" />
+    <xsd:attribute name="planned_quantity" type="positiveDouble" />
     <xsd:attribute name="due" type="xsd:dateTime" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />

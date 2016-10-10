@@ -736,6 +736,7 @@ class Problem : public NonCopyable, public Object
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, nullptr, 0.0, MANDATORY);
       m->addStringField<Cls>(Tags::entity, &Cls::getEntity, nullptr, "", DONT_SERIALIZE);
       m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, nullptr, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::feasible, &Cls::isFeasible, nullptr, BOOL_UNSET, PLAN + COMPUTED);
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -793,6 +794,7 @@ class HasProblems
     friend class Problem::iterator;
     friend class Problem;
     friend class Plannable;
+    friend class OperationPlan;
   public:
     class EntityIterator;
 
@@ -1830,6 +1832,9 @@ class OperationPlan
       */
     DECLARE_EXPORT void freezeStatus(Date, Date, double);
 
+    /** Return the list of problems of this operationplan. */
+    inline Problem::iterator getProblems() const;
+
     /** Returns whether the operationplan is locked, ie the status is APPROVED
       * or confirmed. A locked operationplan is never changed.
       */
@@ -2198,7 +2203,13 @@ class OperationPlan
       */
     DECLARE_EXPORT void deleteFlowLoads();
 
-    inline bool getHidden() const;
+    /** Operationplans are never considered hidden, even if the operation they
+      * instantiate is hidden. 
+      */
+    bool getHidden() const
+    {
+      return false;
+    }
 
     /** Searches for an OperationPlan with a given identifier.<br>
       * Returns a nullptr pointer if no such OperationPlan can be found.<br>
@@ -2272,8 +2283,10 @@ class OperationPlan
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);      
+      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems);
+
       // Default of -999 to enforce serializing the value if it is 0
-      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN + DETAIL);
+      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
@@ -2286,14 +2299,13 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
-      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN + DETAIL);
+      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L);
       m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
-      // Fields only valid for PO and DO
       m->addStringField<Cls>(Tags::ordertype, &Cls::getOrderType, &Cls::setOrderType, "MO");
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
@@ -4508,19 +4520,6 @@ class OperationItemSupplier : public OperationFixedTime
 };
 
 
-inline bool OperationPlan::getHidden() const
-{
-  if (!getOperation()->getHidden())
-    // Operation isn't hidden
-    return false;
-  if (getOperation()->getType() == *OperationItemSupplier::metadata
-    || getOperation()->getType() == *OperationItemDistribution::metadata)
-    // Purchasing and distribution operations are hidden, but not their operationplans
-    return false;
-  return true;
-}
-
-
 inline Location* OperationPlan::getOrigin() const
 {
   if (!oper || oper->getType() != *OperationItemDistribution::metadata)
@@ -4895,32 +4894,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
 };
 
 
-inline Location* OperationPlan::getLocation() const
-{
-  if (!oper)
-    return nullptr;
-  else if (oper->getType() == *OperationItemSupplier::metadata)
-    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
-  else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation();
-  else
-    return nullptr;
-}
-
-
-Item* OperationPlan::getItem() const
-{
-  if (!oper)
-    return nullptr;
-  else if (oper->getType() == *OperationItemSupplier::metadata)
-    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
-  else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem();
-  else
-    return nullptr;
-}
-
-
 /** @brief An internally generated operation to represent inventory. */
 class OperationInventory : public OperationFixedTime
 {
@@ -4950,6 +4923,71 @@ class OperationInventory : public OperationFixedTime
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
     }
 };
+
+
+/** @brief An internally generated operation to represent a zero time delivery. */
+class OperationDelivery : public OperationFixedTime
+{
+  friend class Demand;
+  private:
+    /** Constructor. */
+    explicit OperationDelivery(Buffer*);
+
+    /** Destructor. */
+    virtual ~OperationDelivery() {}
+
+  public:
+    Buffer *getBuffer() const;
+
+    static int initialize();
+
+    virtual string getOrderType() const
+    {
+      return "DLVR";
+    }
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static DECLARE_EXPORT const MetaClass* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
+    }
+};
+
+
+inline Location* OperationPlan::getLocation() const
+{
+  if (!oper)
+    return nullptr;
+  else if (oper->getType() == *OperationItemSupplier::metadata)
+    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
+  else if (oper->getType() == *OperationItemDistribution::metadata)
+    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation();
+  else if (oper->getType() == *OperationInventory::metadata)
+    return static_cast<OperationInventory*>(oper)->getBuffer()->getLocation();
+  else if (oper->getType() == *OperationDelivery::metadata)
+    return static_cast<OperationDelivery*>(oper)->getBuffer()->getLocation();
+  else
+    return nullptr;
+}
+
+
+Item* OperationPlan::getItem() const
+{
+  if (!oper)
+    return nullptr;
+  else if (oper->getType() == *OperationItemSupplier::metadata)
+    return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
+  else if (oper->getType() == *OperationItemDistribution::metadata)
+    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem();
+  else if (oper->getType() == *OperationInventory::metadata)
+    return static_cast<OperationInventory*>(oper)->getBuffer()->getItem();
+  else if (oper->getType() == *OperationDelivery::metadata)
+    return static_cast<OperationDelivery*>(oper)->getBuffer()->getItem();
+  else
+    return nullptr;
+}
 
 
 class Item::bufferIterator
@@ -7251,8 +7289,9 @@ class Demand
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_FULL + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
-      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, 0L, DONT_SERIALIZE);
-      m->addDateField<Cls>(Tags::delivery, &Cls::getDeliveryDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN);
+      m->addDateField<Cls>(Tags::delivery, &Cls::getDeliveryDate, nullptr, Date::infiniteFuture, PLAN);
+      m->addDoubleField<Cls>(Tags::planned_quantity, &Cls::getPlannedQuantity, nullptr, -1.0, PLAN);
     }
 
   private:
@@ -7812,6 +7851,13 @@ inline Problem::iterator Problem::List::begin() const
 inline Problem::iterator Problem::List::end() const
 {
   return Problem::iterator(static_cast<Problem*>(nullptr));
+}
+
+
+inline Problem::iterator OperationPlan::getProblems() const
+{
+  const_cast<OperationPlan*>(this)->updateProblems();
+  return Problem::iterator(const_cast<Problem*>(firstProblem));
 }
 
 

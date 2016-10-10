@@ -79,8 +79,9 @@ class Tags
     static DECLARE_EXPORT const Keyword enddate;
     static DECLARE_EXPORT const Keyword endtime;
     static DECLARE_EXPORT const Keyword entity;
-    static DECLARE_EXPORT const Keyword fence;
     static DECLARE_EXPORT const Keyword factor;
+    static DECLARE_EXPORT const Keyword feasible;
+    static DECLARE_EXPORT const Keyword fence;
     static DECLARE_EXPORT const Keyword filename;
     static DECLARE_EXPORT const Keyword flow;
     static DECLARE_EXPORT const Keyword flowplan;
@@ -135,8 +136,9 @@ class Tags
     static DECLARE_EXPORT const Keyword pegging_downstream;
     static DECLARE_EXPORT const Keyword percent;
     static DECLARE_EXPORT const Keyword plan;
+    static DECLARE_EXPORT const Keyword planned_quantity;
     static DECLARE_EXPORT const Keyword plantype;
-    static DECLARE_EXPORT const Keyword posttime;
+    static DECLARE_EXPORT const Keyword posttime;    
     static DECLARE_EXPORT const Keyword pretime;
     static DECLARE_EXPORT const Keyword price;
     static DECLARE_EXPORT const Keyword priority;

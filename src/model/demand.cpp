@@ -292,14 +292,8 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
       const_cast<Demand*>(this)->oper = Operation::find(o.str());
       if (!oper)
       {
-        const_cast<Demand*>(this)->oper = new OperationFixedTime();
-        oper->setName(o.str());
-        oper->setHidden(true);
+        const_cast<Demand*>(this)->oper = new OperationDelivery(buf);
         new FlowStart(oper, buf, -1);
-        // When we set the size minimum to 0 for the automatically created
-        // delivery operations, they will constrained by the minimum shipment
-        // size specified on the demand.
-        oper->setSizeMinimum(0.0);
       }
 
       // Success!

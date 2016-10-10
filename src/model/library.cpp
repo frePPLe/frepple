@@ -70,6 +70,7 @@ void LibraryModel::initialize()
   nok += OperationItemSupplier::initialize();
   nok += OperationItemDistribution::initialize();
   nok += OperationInventory::initialize();
+  nok += OperationDelivery::initialize();
   nok += OperationSetup::initialize();
   nok += ItemDistribution::initialize();
   nok += Location::initialize();

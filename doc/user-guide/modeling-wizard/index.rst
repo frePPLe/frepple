@@ -14,6 +14,7 @@ It accompanies the implementation wizard available in the user interface.
 .. toctree::
    :maxdepth: 2
 
+   concepts
    master-data/index 
    purchasing/index
    distribution/index  

@@ -9,7 +9,8 @@ Modelling concepts
 
 **Operation**
 
-The key modelling element is an operation, which defines an activity.
+The key modelling element is an operation, which defines an activity
+at a given location producing an item.
 
 There are different operation types:
 
@@ -38,8 +39,6 @@ There are different buffer types:
 
 * default: a buffer that is replenished with a producing operation
 
-* procure: a buffer that is replenished with a procurement operation
-
 * infinite supply: a buffer without replenishing operation
 
 | Example:
@@ -50,38 +49,40 @@ There are different buffer types:
 .. image:: _images/modelling-2.png
    :alt: Modeling - Buffer
 
-**Flow**
+**Operation materials**
 
-Operations consume and produce material through flows.
+Operations consume and produce material. Operation materials define an
+association between an item (either produced or consumed) and an operation.
 
-A flow defines an association between the operation and a buffer. Flows thus
-represent the Bills of Material (aka BOM) and Bills of Distribution (aka BOD)
-in your model.
+They therefore represent the Bills of Material (aka BOM) in your model.
 
-There are 2 types of flows:
+When the item is consumed, the quantity should be negative.
+When the item is produced, the quantity should be positive.
 
-* start: Flows happening at the start of the operation. These are normally consuming
+There are 2 types of operation materials:
+
+* start: The consumption/production occurs at the start of the operation. These are normally consuming
   material and have a negative quantity.
 
-* end: Flows happening at the end of the operation. These are normally producing
+* end: The consumption/production occurs at the end of the operation. These are normally producing
   material and have a postive quantity.
 
 | Example:
-| Operation 'Make product X' has 3 flows.
-| A first flow to consume 1 units of a buffer 'Part A' at the start of the
+| Operation 'Make product X' has 3 operation materials.
+| A first operation material to consume 1 units of item A at the start of the
   operation.
-| A second flow to consume 2 units of a buffer 'Part B' at the start of the
+| A second operation material to consume 2 units of item B at the start of the
   operation.
-| And finally a third flow to model the production of 1 unit of 'product X'
+| And finally a third operation material to model the production of 1 unit of X
   when the operation finishes.
 
 .. image:: _images/modelling-3.png
    :alt: Modeling - Buffer
 
-**Load**
+**Operation resources**
 
-Operations also require capacity, which is modelled through loads. Capacity is
-available in resources and a load defines an association between the operation
+Operations also require capacity. Capacity is
+available in resources and operation resources define an association between the operation
 and a resource.
 
 | Example:

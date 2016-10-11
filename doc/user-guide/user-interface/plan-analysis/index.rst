@@ -7,8 +7,10 @@ This series of screens is used to review the planning results.
 .. toctree::
    :maxdepth: 2
 
-   supply-path-where-used
    distribution-planning
+   forecast-editor
+   plan-editor
+   supply-path-where-used
    problem-report
    constraint-report
    inventory-report
@@ -22,5 +24,4 @@ This series of screens is used to review the planning results.
    demand-detail-report
    demand-gantt-report
    forecast-report
-   forecast-editor
    performance-indicator-report

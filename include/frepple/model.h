@@ -2204,12 +2204,9 @@ class OperationPlan
     DECLARE_EXPORT void deleteFlowLoads();
 
     /** Operationplans are never considered hidden, even if the operation they
-      * instantiate is hidden. 
+      * instantiate is hidden. Only exception are stock operationplans.
       */
-    bool getHidden() const
-    {
-      return false;
-    }
+    inline bool getHidden() const;
 
     /** Searches for an OperationPlan with a given identifier.<br>
       * Returns a nullptr pointer if no such OperationPlan can be found.<br>
@@ -4954,6 +4951,15 @@ class OperationDelivery : public OperationFixedTime
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
     }
 };
+
+
+inline bool OperationPlan::getHidden() const
+{
+  if (getOperation() && getOperation()->getType() == *OperationInventory::metadata)
+    return true;
+  else
+    return false;
+}
 
 
 inline Location* OperationPlan::getLocation() const

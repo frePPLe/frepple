@@ -7,6 +7,35 @@ Modelling concepts
 | The modelling concepts of operations, material and capacity consumption
   however need some introduction.
 
+**Buffer**
+
+Items are stocked in buffers. A buffer, often called SKU -stock keeping unit-,
+is a (physical or logical) inventory point.
+
+There are different buffer types:
+
+* infinite supply: a buffer for which the inventory is not tracked and that you consider with infinite supply.
+
+* default: a buffer that has to be replenished.
+
+There are three different ways of replenishing a buffer of type default.
+
+- The item can be purchased from a supplier. The valid suppliers for that item have to be declared in the Item suppliers table.
+
+- The item can be transfered from another location within your supply chain. The valid distribution paths for an item have to be declared in the Item distributions table.
+
+- The item can be manufactured. It is therefore produced by an manufacturing operation. The bill of material to produce that item has to be declared in the Operation materials table (with a negative quantity when the item is consumed and a positive quantity when the item is produced)
+
+
+
+| Example:
+| Buffer 'Part A' models inventory of the item 'part A' in location 'my factory'.
+| Buffer 'Part B' models inventory of the item 'part B' in location 'my factory'.
+| Buffer 'Bulk product' models inventory of the item 'bulk product' in location 'my factory'.
+
+.. image:: _images/modelling-2.png
+   :alt: Modeling - Buffer
+  
 **Operation**
 
 The key modelling element is an operation, which defines an activity
@@ -29,25 +58,6 @@ There are different operation types:
 
 .. image:: _images/modelling-1.png
    :alt: Modeling - Operation
-
-**Buffer**
-
-Items are stocked in buffers. A buffer, often called SKU -stock keeping unit-,
-is a (physical or logical) inventory point.
-
-There are different buffer types:
-
-* default: a buffer that is replenished with a producing operation
-
-* infinite supply: a buffer without replenishing operation
-
-| Example:
-| Buffer 'Part A' models inventory of the item 'part A' in location 'my factory'.
-| Buffer 'Part B' models inventory of the item 'part B' in location 'my factory'.
-| Buffer 'Bulk product' models inventory of the item 'bulk product' in location 'my factory'.
-
-.. image:: _images/modelling-2.png
-   :alt: Modeling - Buffer
 
 **Operation materials**
 
@@ -91,11 +101,11 @@ and a resource.
 .. image:: _images/modelling-4.png
    :alt: Modeling - Buffer
 
-**Operationplan**
+**Manufacturing orders**
 
 An operation only statically defines the activity, and doesn’t specify any
 planned dates or quantities. Concrete activities are then instantiated in
-operationplans.
+manufacturing orders.
 
 | Example:
 | To satisfy a customer demand we plan to run 'Assemble product X' for 12

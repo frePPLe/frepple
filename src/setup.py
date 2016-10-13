@@ -27,6 +27,7 @@ mod = Extension(
   include_dirs=["../include"],
   define_macros=[("HAVE_LOCALTIME_R","1")],
   libraries=['frepple', 'xerces-c'],
+  extra_compile_args=['-std=c++0x'],
   library_dirs=[os.environ['LIB_DIR']]
   )
 

@@ -306,52 +306,11 @@ class Migration(migrations.Migration):
           )
         ]
       ),
-
-    # Extra fields on the operation model
-    migrations.AddField(
-      model_name='operation',
-      name='effective_end',
-      field=models.DateTimeField(blank=True, null=True, verbose_name='effective end', help_text='Validity end date'),
-    ),
-    migrations.AddField(
-      model_name='operation',
-      name='effective_start',
-      field=models.DateTimeField(blank=True, null=True, verbose_name='effective start', help_text='Validity start date'),
-    ),
-    migrations.AddField(
-      model_name='operation',
-      name='item',
-      field=models.ForeignKey(related_name='operations', verbose_name='item', to='input.Item', blank=True, null=True),
-    ),
-    migrations.AddField(
-      model_name='operation',
-      name='priority',
-      field=models.IntegerField(blank=True, default=1, null=True, verbose_name='priority', help_text='Priority among all alternates'),
-    ),
     migrations.AlterField(
       model_name='item',
       name='operation',
       field=models.ForeignKey(related_name='operation', verbose_name='delivery operation', to='input.Operation', blank=True, null=True, help_text='Default operation used to ship a demand for this item'),
-    ),
-    migrations.RunSQL(
-      '''
-      update operation
-        set item_id = buffer.item_id
-      from buffer
-      where buffer.producing_id = operation.name
-      ''',
-      '''
-      update buffer
-      set producing_id = operation.name
-      from operation
-      where buffer.item_id = operation.item_id
-        and buffer.location_id = operation.location_id
-      '''
-      ),
-    migrations.RemoveField(
-      model_name='buffer',
-      name='producing',
-    ),
+    ),    
 
     # Renaming model output.flowplan to operationplanmaterial
     migrations.CreateModel(

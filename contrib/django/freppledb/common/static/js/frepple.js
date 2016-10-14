@@ -1403,8 +1403,8 @@ function about_show()
       content += '' +
                '<div class="col-sm-5"><br/><br/>' +
                  '<p><a href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/docs/' + data.version + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/docs/' + data.version + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
+                 '<p><a href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+                 '<p><a href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
                '</div>' +
 
                '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";

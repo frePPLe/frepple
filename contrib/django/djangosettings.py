@@ -147,23 +147,6 @@ OPENBRAVO_PASSWORDS = {
   'scenario3': ''
   }
 
-# Keep each database connection alive for 10 minutes.
-CONN_MAX_AGE = 600
-
-# A list of strings representing the host/domain names the application can serve.
-# This is a security measure to prevent an attacker from poisoning caches and
-# password reset emails with links to malicious hosts by submitting requests
-# with a fake HTTP Host header, which is possible even under many seemingly-safe
-# webserver configurations.
-# Values in this list can be fully qualified names (e.g. 'www.example.com'),
-# in which case they will be matched against the request's Host header exactly
-# (case-insensitive, not including port).
-# A value beginning with a period can be used as a subdomain wildcard: '.example.com'
-# will match example.com, www.example.com, and any other subdomain of example.com.
-# A value of '*' will match anything, effectively disabling this feature.
-# This option is only active when DEBUG = false.
-ALLOWED_HOSTS = [ '*' ]
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -270,22 +253,6 @@ INSTALLED_APPS = (
 #    ]
 ATTRIBUTES = []
 
-REST_FRAMEWORK = {
-  # Use Django's standard `django.contrib.auth` permissions,
-  # or allow read-only access for unauthenticated users.
-  'DEFAULT_PERMISSION_CLASSES': [
-    'rest_framework.permissions.DjangoModelPermissions'
-  ],
-  'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework.authentication.BasicAuthentication',
-    'rest_framework.authentication.SessionAuthentication',
-  ),
-  'DEFAULT_RENDERER_CLASSES': (
-    'rest_framework.renderers.JSONRenderer',
-    'freppledb.common.api.renderers.freppleBrowsableAPI',
-  )
-}
-
 import django.contrib.admindocs
 LOCALE_PATHS = (
     os.path.normpath(os.path.join(FREPPLE_HOME,'locale','django')),
@@ -320,12 +287,6 @@ TEMPLATES_TODO = [ #to be used in the future, now interferes with middleware
         },
     },
 ]
-
-STATICFILES_DIRS = ()
-if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
-  STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
-if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output'))):
-  STATICFILES_DIRS += (('doc', os.path.normpath(os.path.join(FREPPLE_HOME,'..','doc','output')),),)
 
 LOGGING = {
     'version': 1,
@@ -377,25 +338,6 @@ LOGGING = {
         }
     }
 }
-
-# Backends for user authentication and authorization.
-# FrePPLe currently supports only this custom one.
-AUTHENTICATION_BACKENDS = (
-    "freppledb.common.auth.MultiDBBackend",
-)
-
-# IP address of the machine you are browsing from. When logging in from this
-# machine additional debugging statements can be shown.
-INTERNAL_IPS = ( '127.0.0.1', )
-
-# Default charset to use for all ``HttpResponse`` objects, if a MIME type isn't
-# manually specified.
-DEFAULT_CHARSET = 'utf-8'
-
-# Default characterset for writing and reading CSV files.
-# FrePPLe versions < 3 used the default encoding of the server as default.
-# From version 3 onwards the default is UTF-8.
-CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
 # If multiple themes are configured in this list, the user's can change their

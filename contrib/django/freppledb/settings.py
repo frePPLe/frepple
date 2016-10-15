@@ -152,6 +152,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
 )
 
+STATICFILES_DIRS = ()
+if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
+  STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
+  
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.
@@ -165,6 +169,23 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
+# A list of strings representing the host/domain names the application can serve.
+# This is a security measure to prevent an attacker from poisoning caches and
+# password reset emails with links to malicious hosts by submitting requests
+# with a fake HTTP Host header, which is possible even under many seemingly-safe
+# webserver configurations.
+# Values in this list can be fully qualified names (e.g. 'www.example.com'),
+# in which case they will be matched against the request's Host header exactly
+# (case-insensitive, not including port).
+# A value beginning with a period can be used as a subdomain wildcard: '.example.com'
+# will match example.com, www.example.com, and any other subdomain of example.com.
+# A value of '*' will match anything, effectively disabling this feature.
+# This option is only active when DEBUG = false.
+ALLOWED_HOSTS = [ '*' ]
+
+# Keep each database connection alive for 10 minutes.
+CONN_MAX_AGE = 600
+
 # Mail settings
 #DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
 #EMAIL_HOST #required
@@ -172,12 +193,10 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 #EMAIL_HOST_USER #if required authentication to host
 #EMAIL_HOST_PASSWORD #if required auth.
 
-# To use a customized authentication backend.
+# Backends for user authentication and authorization.
+# FrePPLe currently supports only this custom one.
 AUTHENTICATION_BACKENDS = (
-    # Uncomment for external authentication.
-    # The middleware RemoteUserMiddleware also needs to be activated.
-    #"django.contrib.auth.backends.RemoteUserBackend",
-    "freppledb.common.auth.EmailBackend",
+    "freppledb.common.auth.MultiDBBackend",
 )
 
 # Custom user model
@@ -197,7 +216,7 @@ DEFAULT_CHARSET = 'utf-8'
 # For Windows clients you should set this to the encoding that is better suited for Excel or
 # other office tools.
 #    Windows - western europe -> 'cp1252'
-CSV_CHARSET = locale.getdefaultlocale()[1]
+CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 
 # A list of available user interface themes.
 # If multiple themes are configured in this list, the user's can change their
@@ -205,20 +224,89 @@ CSV_CHARSET = locale.getdefaultlocale()[1]
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
 THEMES = [
-  'earth', 'grass', 'lemon', 'snow', 'strawberry', 'water'
+  'earth', 'grass', 'lemon', 'odoo', 'openbravo', 'orange', 'snow', 'strawberry', 'water'
   ]
 
 # A default user-group to which new users are automatically added
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme
-DEFAULT_THEME = 'grass'
+DEFAULT_THEME = 'earth'
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100
 
+# Configuration of the default dashboard
+DEFAULT_DASHBOARD = [
+  { 'rowname': 'Welcome', 'cols': [
+    {'width':8, 'widgets':[
+      ("welcome",{}),
+      ("news",{}),
+    ]},
+    {'width':4, 'widgets':[
+      #("execute",{}),
+      ("recent_comments",{"limit":10}),
+      ("recent_actions",{"limit":10}),
+      ("wizard",{}),
+    ]},
+  ]},
+  { 'rowname': 'Sales', 'cols': [
+    {'width':9, 'widgets':[
+      ("late_orders",{"limit":20}),
+      ("short_orders",{"limit":20}),
+    ]},
+    {'width':3, 'widgets':[
+      ("demand_alerts", {}),
+      ("delivery_performance",{"green": 90, "yellow": 80}),
+    ]},
+  ]},
+  { 'rowname': 'Purchasing', 'cols': [
+    {'width':9, 'widgets':[
+      ("purchase_orders",{"fence1": 7, "fence2": 30}),
+      #("purchase_queue",{"limit":20}),
+      ("purchase_order_analysis",{"limit":20}),
+    ]},
+    {'width':3, 'widgets':[
+      ("inventory_by_location",{"limit":5}),
+      ("inventory_by_item",{"limit":10}),
+    ]},
+  ]},
+  { 'rowname': 'Distribution', 'cols': [
+    {'width':12, 'widgets':[
+      ("distribution_orders",{"fence1":7, "fence2": 30}),
+      #("shipping_queue",{"limit":20}),
+    ]},
+  ]},
+  { 'rowname': 'Manufacturing', 'cols': [
+    {'width':9, 'widgets':[
+      ("manufacturing_orders",{"fence1":7, "fence2": 30}),
+      #("resource_queue",{"limit":20}),
+    ]},
+    {'width':3, 'widgets':[
+      ('capacity_alerts',{}),
+      ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
+    ]},
+  ]},
+]
+
 # Port number for the CherryPy web server
 PORT = 8000
+
+REST_FRAMEWORK = {
+  # Use Django's standard `django.contrib.auth` permissions,
+  # or allow read-only access for unauthenticated users.
+  'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.DjangoModelPermissions'
+  ],
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework.authentication.BasicAuthentication',
+    'rest_framework.authentication.SessionAuthentication',
+  ),
+  'DEFAULT_RENDERER_CLASSES': (
+    'rest_framework.renderers.JSONRenderer',
+    'freppledb.common.api.renderers.freppleBrowsableAPI',
+  )
+}
 
 # Bootstrap
 DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'

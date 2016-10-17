@@ -18,7 +18,7 @@
 from datetime import datetime
 
 from django import forms
-from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
@@ -65,8 +65,15 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
 data_site.register(User, MyUserAdmin)
 
 
-class MyGroupAdmin(GroupAdmin, MultiDBModelAdmin):
-  save_on_top = True
+class MyGroupAdmin(MultiDBModelAdmin):
+  # This class re-implements the GroupAdmin class from 
+  # django.contrib.auth.admin, but without the performance optimization
+  # trick it uses. Our version of the Admin is slower (as it generates much
+  # more database queries), but it works on frepple's multi-database setups. 
+  search_fields = ('name',)
+  ordering = ('name',)
+  filter_horizontal = ('permissions',)
+  save_on_top = True  
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:auth_group_change", "permission": 'auth.change_group'},
     {"name": 'comments', "label": _("comments"), "view": "admin:auth_group_comment"},

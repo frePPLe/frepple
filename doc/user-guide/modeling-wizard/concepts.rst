@@ -1,132 +1,81 @@
-==================
-Modelling concepts
-==================
+=================
+Modeling concepts
+=================
 
-| Concepts as items, locations, customers, demands, ...don’t need a much of
+| Concepts as items, locations, customers, demands... don’t need a much of
   an explanation.
-| The modelling concepts of operations, material and capacity consumption
-  however need some introduction.
+| Some other concepts need some introduction before you get your hands dirty.
 
 **Buffer**
 
-Items are stocked in buffers. A buffer, often called SKU -stock keeping unit-,
-is a (physical or logical) inventory point.
+A buffer is a item+location combination. It is a inventory point for an item
+at a specific location.
 
-There are different buffer types:
+There are three different ways to replenishing a buffer:
 
-* infinite supply: a buffer for which the inventory is not tracked and that you consider with infinite supply.
+1. The item can be purchased from a supplier
+2. The item can be transfered from another location
+3. The item can be manufactured
 
-* default: a buffer that has to be replenished.
+It is possible to define multiple replenishment methods for a buffer: for 
+instance "buy from supplier X or supplier Y", "make the item or buy the item". 
+In such a case the planning algorithm will automatically choose the appropriate 
+method.
 
-There are three different ways of replenishing a buffer of type default.
+**Buy: Replenishing with a purchase order**
 
-- The item can be purchased from a supplier. The valid suppliers for that item have to be declared in the Item suppliers table.
+The :doc:`purchasing/index` section of this wizard will guide you through this.
 
-- The item can be transfered from another location within your supply chain. The valid distribution paths for an item have to be declared in the Item distributions table.
+By populating the supplier and itemsupplier tables we define that a buffer
+can be replenished with a purchase order to a specific vendor.
 
-- The item can be manufactured. It is therefore produced by an manufacturing operation. The bill of material to produce that item has to be declared in the Operation materials table (with a negative quantity when the item is consumed and a positive quantity when the item is produced)
-
-
-
-| Example:
-| Buffer 'Part A' models inventory of the item 'part A' in location 'my factory'.
-| Buffer 'Part B' models inventory of the item 'part B' in location 'my factory'.
-| Buffer 'Bulk product' models inventory of the item 'bulk product' in location 'my factory'.
-
-.. image:: _images/modelling-2.png
-   :alt: Modeling - Buffer
+.. image:: _images/modeling-purchase.png
+   :alt: Modeling - Purchase operation
+   :scale: 33%
+   :align: center
   
-**Operation**
+**Transfer: Replenishing with a distribution order**
 
-The key modelling element is an operation, which defines an activity
-at a given location producing an item.
+The :doc:`distribution/index` section of this wizard will guide you through this.
 
-There are different operation types:
+By populating the itemdistribution table we define that a buffer
+can be replenished with a distribution order (aka transfer order or stock transfer
+order) from another location.
 
-* fixed time: the duration is identical regardless of the planned quantity.
-  Eg, a transport operation
+.. image:: _images/modeling-transfer.png
+   :alt: Modeling - Distribution operation
+   :width: 51%
+   :align: center
 
-* time-per: the duration increases linearly with the planned quantity.
-  Eg, a manufacturing operation
+**Make: Replenishing with a manufacturing order**
+ 
+The :doc:`manufacturing-bom/index` and :doc:`manufacturing-capacity/index`
+sections of this wizard will guide through this.
 
-* routing: this operation type represent a sequence of sub-operations.
+A number of tables are required to define the operation, its
+produced materials, its consumed materials and its capacity usage.
+The diagram below shows the buffers as a triangle, operations as a rectangle
+and resources as a circle. 
 
-* alternate: an alternate operation models the choice among multiple choices.
-
-| Example:
-  Operation 'Make product X' takes 10 minutes per unit.
-
-.. image:: _images/modelling-1.png
-   :alt: Modeling - Operation
-
-**Operation materials**
-
-Operations consume and produce material. Operation materials define an
-association between an item (either produced or consumed) and an operation.
-
-They therefore represent the Bills of Material (aka BOM) in your model.
-
-When the item is consumed, the quantity should be negative.
-When the item is produced, the quantity should be positive.
-
-There are 2 types of operation materials:
-
-* start: The consumption/production occurs at the start of the operation. These are normally consuming
-  material and have a negative quantity.
-
-* end: The consumption/production occurs at the end of the operation. These are normally producing
-  material and have a postive quantity.
-
-| Example:
-| Operation 'Make product X' has 3 operation materials.
-| A first operation material to consume 1 units of item A at the start of the
-  operation.
-| A second operation material to consume 2 units of item B at the start of the
-  operation.
-| And finally a third operation material to model the production of 1 unit of X
-  when the operation finishes.
-
-.. image:: _images/modelling-3.png
-   :alt: Modeling - Buffer
-
-**Operation resources**
-
-Operations also require capacity. Capacity is
-available in resources and operation resources define an association between the operation
-and a resource.
-
-| Example:
-| The resource 'production line' is required to perform the operation.
-
-.. image:: _images/modelling-4.png
-   :alt: Modeling - Buffer
-
-**Manufacturing orders**
-
-An operation only statically defines the activity, and doesn’t specify any
-planned dates or quantities. Concrete activities are then instantiated in
-manufacturing orders.
-
-| Example:
-| To satisfy a customer demand we plan to run 'Assemble product X' for 12
-  units from tomorrow 8am till 10am.
-| Another instance of 'Make product X' is planned the next day from 3pm to 4pm
-  for 6 units to meet another customer demand.
-| Another instance of 'Make product X' for 20 units is planned today to
-  replenish a buffer storing the product X to its safety stock level.
+.. image:: _images/modeling-make.png
+   :alt: Modeling - Manufacturing operation
+   :width: 50%
+   :align: center
 
 **Putting it all together**
 
-Combining all of the above modelling objects we can construct a network
-representing the flow of material and usage of capacity in your plant.
+Combining all of the above building blocks we can construct a network
+representing the complete supply chain from end to end.
 
 The picture below shows a simple network with 3 levels.
 
 .. important::
 
-   Drawing this type of schematic network of your environment is extremely useful
-   before you start entering data in frePPLe. Each shape and line in such a
-   diagram will be defined as an input record in the frePPLe data model.
+   Drawing this type of schematic network of your environment is extremely 
+   useful before you start entering data in frePPLe. It will help you in
+   getting the data ready for the next steps of this wizard.
 
-.. image:: _images/modelling-5.png
-   :alt: Modeling - Buffer
+.. image:: _images/modeling-network.png
+   :alt: Modeling - putting it together
+   :width: 100%
+   :align: center

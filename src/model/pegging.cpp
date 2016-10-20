@@ -45,16 +45,18 @@ int PeggingIterator::initialize()
 
 
 DECLARE_EXPORT PeggingIterator::PeggingIterator(const PeggingIterator& c)
-  : downstream(c.downstream), firstIteration(c.firstIteration), first(c.first)
+: downstream(c.downstream), firstIteration(c.firstIteration), first(c.first), second_pass(c.second_pass)
 {
   initType(metadata);
   for (statestack::const_iterator i = c.states.begin(); i != c.states.end(); ++i)
     states.push_back( state(i->opplan, i->quantity, i->offset, i->level) );
+  for (statestack::const_iterator i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
+    states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
 }
 
 
 DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
-  : downstream(false), firstIteration(true), first(false)
+  : downstream(false), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
   const Demand::OperationPlanList &deli = d->getDelivery();
@@ -64,11 +66,42 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
     OperationPlan *t = (*opplaniter)->getTopOwner();
     updateStack(t, t->getQuantity(), 0.0, 0);
   }
+
+  // Bring all pegging information to a second stack
+  while (operator bool())
+  {
+    /** Check if already found in the vector. */
+    bool found = false;
+    state& curtop = states.back();
+    for (statestack::iterator it = states_sorted.begin(); it != states_sorted.end() && !found; ++it)
+      if (it->opplan == curtop.opplan)
+      {
+        // Update existing element in sorted stack
+        it->quantity += curtop.quantity;
+        if (it->level > curtop.level)
+          it->level = curtop.level;
+        found = true;
+      }
+    if (!found)
+      // New element in sorted stack
+      states_sorted.push_back( state(curtop.opplan, curtop.quantity, curtop.offset, curtop.level) );
+
+    if (downstream)
+      ++*this;
+    else
+      --*this;
+  }
+
+  // Sort the vector, using the start date of the operationplans
+  sort(states_sorted.begin(), states_sorted.end());
+
+  // The normal iteration will use the sorted results
+  second_pass = true;
 }
 
 
 DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
-  : downstream(b), firstIteration(true), first(false)
+  : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
   if (!opplan) return;
@@ -90,7 +123,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, boo
 
 
 DECLARE_EXPORT PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
-  : downstream(b), firstIteration(true), first(false)
+  : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
   if (!fp) return;
@@ -104,7 +137,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
 
 
 DECLARE_EXPORT PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
-  : downstream(b), firstIteration(true), first(false)
+  : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
   if (!lp) return;
@@ -119,6 +152,13 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
 
 DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 {
+  // Second pass
+  if (second_pass)
+  {
+    states_sorted.pop_back();
+    return *this;
+  }
+
   // Validate
   if (states.empty())
     throw LogicException("Incrementing the iterator beyond it's end");
@@ -143,6 +183,13 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 
 DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 {
+  // Second pass
+  if (second_pass)
+  {
+    states_sorted.pop_back();
+    return *this;
+  }
+
   // Validate
   if (states.empty())
     throw LogicException("Incrementing the iterator beyond it's end");

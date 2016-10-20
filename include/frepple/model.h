@@ -9218,7 +9218,9 @@ class PeggingIterator : public Object
     /** Return the operationplan. */
     OperationPlan* getOperationPlan() const
     {
-      return const_cast<OperationPlan*>(states.back().opplan);
+      return second_pass ? 
+        const_cast<OperationPlan*>(states_sorted.back().opplan) :
+        const_cast<OperationPlan*>(states.back().opplan);
     }
 
     /** Destructor. */
@@ -9233,13 +9235,17 @@ class PeggingIterator : public Object
     /** Return the pegged quantity. */
     double getQuantity() const
     {
-      return states.back().quantity;
+      return second_pass ?
+        states_sorted.back().quantity :
+        states.back().quantity;
     }
 
     /** Returns the recursion depth of the iterator.*/
     short getLevel() const
     {
-      return states.back().level;
+      return second_pass ? 
+        states_sorted.back().level : 
+        states.back().level;
     }
 
     /** Move the iterator downstream. */
@@ -9254,7 +9260,7 @@ class PeggingIterator : public Object
       */
     operator bool() const
     {
-      return !states.empty();
+      return second_pass ? !states_sorted.empty() : !states.empty();
     }
 
     DECLARE_EXPORT PeggingIterator* next();
@@ -9267,7 +9273,6 @@ class PeggingIterator : public Object
 
     virtual const MetaClass& getType() const {return *metadata;}
     static DECLARE_EXPORT const MetaCategory* metadata;
-
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -9293,8 +9298,17 @@ class PeggingIterator : public Object
       // Copy constructor
       state(const state& o)
         : opplan(o.opplan), quantity(o.quantity), offset(o.offset), level(o.level) {};
+
+      // Comparison operator
+      bool operator < (const state& other) const
+      {
+        if (opplan->getDates().getStart() == other.opplan->getDates().getStart())
+          return other.opplan->getDates().getEnd() < opplan->getDates().getEnd();
+        else
+          return other.opplan->getDates().getStart() < opplan->getDates().getStart();
+      }
     };
-    typedef vector<state> statestack;
+    typedef vector<state> statestack;    
 
     /* Auxilary function to make recursive code possible. */
     DECLARE_EXPORT void followPegging(const OperationPlan*, double, double, short);
@@ -9310,6 +9324,10 @@ class PeggingIterator : public Object
 
     /** Optimization to reuse elements on the stack. */
     bool first;
+
+    /** Extra data structure to avoid duplicate operationplan ids in the list. */
+    bool second_pass;
+    statestack states_sorted;
 };
 
 

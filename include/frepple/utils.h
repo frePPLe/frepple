@@ -1257,6 +1257,17 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data form
       end = dr.end;
     }
 
+    /** Comparison operator. */
+    bool operator < (const DateRange& dr) const
+    {
+      if (start != dr.start)
+        // Comparison based on the start date
+        return start < dr.start;
+      else
+        // Use end date as tie breaker
+        return end < dr.end;
+    }
+
     /** Return true if two date ranges are overlapping.<br>
       * The start point of the first interval is included in the comparison,
       * whereas the end point isn't. As a result this method is not

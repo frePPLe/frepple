@@ -144,6 +144,9 @@ OperationDelivery::OperationDelivery(Buffer *buf)
   // size specified on the demand.
   setSizeMinimum(0.0);
   initType(metadata);
+
+  // Add a flow consuming from the buffer
+  new FlowStart(this, buf, -1);
 }
 
 

@@ -88,6 +88,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   Object *locval = nullptr;
   Object *supval = nullptr;
   Object *orival = nullptr;
+  Object *dmdval = nullptr;
   if (ordtype == "MO")
   {
     const DataValue* val = in.get(Tags::operation);
@@ -160,8 +161,39 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
         throw DataException("Location field on operationplan must be of type location");
     }
   }
+  else if (ordtype == "DLVR")
+  {
+    const DataValue* val = in.get(Tags::demand);
+    if (!val && action == ADD)
+      throw DataException("Missing demand field");
+    if (val)
+    {
+      dmdval = val->getObject();
+      if (dmdval && dmdval->getType().category != Demand::metadata)
+        throw DataException("Demand field on operationplan must be of type demand");
+    }
+    val = in.get(Tags::item);
+    if (!val && action == ADD)
+      throw DataException("Missing item field");
+    if (val)
+    {
+      itemval = val->getObject();
+      if (itemval && itemval->getType().category != Item::metadata)
+        throw DataException("Item field on operationplan must be of type item");
+    }
+    val = in.get(Tags::location);
+    if (!val && action == ADD)
+      throw DataException("Missing location field");
+    if (val)
+    {
+      locval = val->getObject();
+      if (locval && locval->getType().category != Location::metadata)
+        throw DataException("Location field on operationplan must be of type location");
+    }
+  }
   else
-    throw DataException("Unknown order type for operationplan");
+    // Unknown order type for operationplan. We won't read it.
+    return nullptr; 
 
   // Decode the operationplan identifier
   unsigned long id = 0;
@@ -186,6 +218,13 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     if (opplan)
     {
       // Check whether previous and current operations match.
+      if (ordtype != opplan->getOrderType())
+      {
+        ostringstream ch;
+        ch << "Operationplan identifier " << id
+          << " defined multiple times for different order types";
+        throw DataException(ch.str());
+      }
       if (ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
       {
         ostringstream ch;
@@ -193,13 +232,6 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
           << " defined multiple times for different operations";
         throw DataException(ch.str());
       }
-      /* TODOelse if (ordtype == "PO" && (
-        static_cast<Item*>(itmval) != opplan->getBuffer()->getItem()
-        || 
-        ))
-      {
-
-      }*/
     }
   }
 
@@ -435,6 +467,51 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     else
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
+
+    // Set operationplan fields
+    if (id)
+      opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
+    if (statusfld)
+      opplan->setStatus(statusfld->getString());
+    // Reset quantity after the status update to assure that
+    // also non-valid quantities are getting accepted.
+    opplan->setQuantity(quantity);
+    opplan->activate();
+  }
+  else if (ordtype == "DLVR")
+  {
+    // Find or create the destination buffer.
+    if (!itemval)
+      throw DataException("Missing item field");
+    if (!locval)
+      throw DataException("Missing location field");
+    Buffer* destbuffer = nullptr;
+    Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
+    while (Buffer* tmpbuf = buf_iter.next())
+    {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval))
+      {
+        if (destbuffer)
+        {
+          stringstream o;
+          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "'' and location '" << static_cast<Location*>(locval) << "'";
+          throw DataException(o.str());
+        }
+        destbuffer = tmpbuf;
+      }
+    }
+    if (!destbuffer)
+      // Create the destination buffer
+      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
+    
+    // Create new operation if not found
+    oper = Operation::find("Ship " + string(destbuffer->getName()));
+    if (!oper)
+      oper = new OperationDelivery(destbuffer);
+
+    // Create operation plan
+    opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
+    static_cast<Demand*>(dmdval)->addDelivery(opplan);
 
     // Set operationplan fields
     if (id)

@@ -2290,7 +2290,7 @@ class OperationPlan
       m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, PLAN);
 
       // Default of -999 to enforce serializing the value if it is 0
-      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999);
+      m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
@@ -2303,7 +2303,7 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
-      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L);
+      m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN);
       m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
@@ -4933,14 +4933,13 @@ class OperationInventory : public OperationFixedTime
 class OperationDelivery : public OperationFixedTime
 {
   friend class Demand;
-  private:
+  public:
     /** Constructor. */
     explicit OperationDelivery(Buffer*);
 
     /** Destructor. */
     virtual ~OperationDelivery() {}
 
-  public:
     Buffer *getBuffer() const;
 
     static int initialize();

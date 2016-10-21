@@ -287,14 +287,9 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
         buf = Buffer::findOrCreate(getItem(), l);
 
       // Find an existing operation consuming from this buffer
-      stringstream o;
-      o << "Ship " << buf;
-      const_cast<Demand*>(this)->oper = Operation::find(o.str());
+      const_cast<Demand*>(this)->oper = Operation::find("Ship " + string(buf->getName()));
       if (!oper)
-      {
         const_cast<Demand*>(this)->oper = new OperationDelivery(buf);
-        new FlowStart(oper, buf, -1);
-      }
 
       // Success!
       return oper;

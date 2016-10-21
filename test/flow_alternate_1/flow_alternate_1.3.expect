@@ -414,6 +414,22 @@
 		</operationplan>
 		<operationplan>
 			<id>9</id>
+			<demand>
+				<name>order 1</name>
+			</demand>
+			<start>2009-01-04T00:00:00</start>
+			<end>2009-01-04T00:00:00</end>
+			<quantity>10</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>product</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<id>10</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -422,7 +438,7 @@
 			<quantity>1</quantity>
 		</operationplan>
 		<operationplan>
-			<id>10</id>
+			<id>11</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -431,7 +447,7 @@
 			<quantity>2</quantity>
 		</operationplan>
 		<operationplan>
-			<id>11</id>
+			<id>12</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -440,7 +456,7 @@
 			<quantity>2</quantity>
 		</operationplan>
 		<operationplan>
-			<id>12</id>
+			<id>13</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>

@@ -124,12 +124,12 @@ OPERATION	Pack product @ factory 1	2009-01-07T01:00:00	2009-01-08T01:00:00	1
 OPERATION	Pack product @ factory 1	2009-01-12T01:00:00	2009-01-13T01:00:00	1
 OPERATION	Pack product @ factory 1	2009-01-13T01:00:00	2009-01-14T01:00:00	24
 OPERATION	Pack product @ factory 1	2009-01-14T01:00:00	2009-01-15T01:00:00	15
-OPERATION	Purchase box @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	400	locked
-OPERATION	Purchase box @ factory 2	2008-12-31T00:00:00	2009-01-09T00:00:00	400	locked
-OPERATION	Purchase ink @ factory 1	2008-12-26T00:00:00	2009-01-02T00:00:00	100	locked
+OPERATION	Purchase box @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	400	locked
+OPERATION	Purchase box @ factory 2	2009-01-09T00:00:00	2009-01-09T00:00:00	400	locked
 OPERATION	Purchase ink @ factory 1	2009-01-01T00:00:00	2009-01-10T00:00:00	50
+OPERATION	Purchase ink @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	100	locked
 OPERATION	Purchase ink @ factory 1	2009-01-02T10:00:00	2009-01-13T10:00:00	50
-OPERATION	Purchase thread @ factory 1	2008-12-19T00:00:00	2009-01-02T00:00:00	500	locked
+OPERATION	Purchase thread @ factory 1	2009-01-02T00:00:00	2009-01-02T00:00:00	500	locked
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 98	2009-01-02T00:00:00 / 2009-01-07T00:00:00
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 50	2009-01-10T00:00:00 / 2009-01-12T01:00:00
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 20	2009-01-13T10:00:00 / 2030-12-31T00:00:00

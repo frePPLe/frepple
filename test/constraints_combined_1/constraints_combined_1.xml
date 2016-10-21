@@ -167,17 +167,11 @@
 		</operation>
 	</operations>
 	<items>
-		<item name="box">
-		</item>
-		<item name="fabric">
-		</item>
-		<item name="ink">
-		</item>
-		<item name="product">
-			<operation name="Deliver product from factory 1 or 2" xsi:type="operation_alternate"/>
-		</item>
-		<item name="thread">
-		</item>
+		<item name="box"/>
+		<item name="fabric"/>
+		<item name="ink"/>
+		<item name="product"/>
+		<item name="thread"/>
 	</items>
 	<buffers>
 		<buffer name="box @ factory 1" xsi:type="buffer_infinite">
@@ -326,7 +320,7 @@
 			<due>2009-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
-  </demands>
+    </demands>
 	<resources>
 		<resource name="pack in factory 1">
 			<maximum_calendar name="pack capacity factory 1"/>
@@ -361,14 +355,14 @@
       <operation name="Purchase box @ factory 1"/>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
-			<quantity>100</quantity>
+			<quantity>400</quantity>
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan id="1001">
       <operation name="Purchase box @ factory 2"/>
 			<start>2009-01-09T00:00:00</start>
 			<end>2009-01-09T00:00:00</end>
-			<quantity>100</quantity>
+			<quantity>400</quantity>
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan id="1002">
@@ -382,7 +376,7 @@
       <operation name="Purchase thread @ factory 1"/>
 			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
-			<quantity>100</quantity>
+			<quantity>500</quantity>
 			<status>confirmed</status>
 		</operationplan>
 	</operationplans>

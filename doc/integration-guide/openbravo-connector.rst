@@ -29,9 +29,18 @@ The connector provides the following functionality:
 * You can still maintain additional data in the frePPLe user interface. I.e.
   Openbravo doesn’t need to be the only source of data for your model.
 
-* Easy to customize.
+* | Easy to customize.
+  | The connector uses the standard Openbravo web services (see 
+    http://wiki.openbravo.com/wiki/XML_REST_Web_Services ) to read and write 
+    data.
+  | Coded in Python, the connector can easily be updated to match the
+    customizations done in your Openbravo deployment.
 
-* The connector has been developed with Openbravo 3.0.
+* | The connector has been validated with Openbravo 16Q3.3. 
+  | For integration of work requirements the Advanced Warehousing Operations
+    (see http://wiki.openbravo.com/wiki/Modules:Advanced_Warehouse_Operations )
+    is recommended, as it provides an additional web service that provides
+    a better workflow for the end users.
 
 **Configuring the connector**
 

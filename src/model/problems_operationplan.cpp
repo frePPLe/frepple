@@ -44,32 +44,26 @@ void OperationPlan::updateProblems()
   bool needsBeforeFence(false);
   bool needsPrecedence(false);
 
-  // The following categories of operation plans can't have problems:
-  //  - locked opplans
-  //  - opplans of hidden operations
-  if (!getLocked() && getOperation()->getDetectProblems())
+  if (!firstsubopplan || getOperation() == OperationSetup::setupoperation)
   {
-    if (!firstsubopplan || getOperation() == OperationSetup::setupoperation)
-    {
-      // Avoid duplicating problems on child and owner operationplans
-      // Check if a BeforeCurrent problem is required.
-      if (dates.getStart() < Plan::instance().getCurrent())
-        needsBeforeCurrent = true;
+    // Avoid duplicating problems on child and owner operationplans
+    // Check if a BeforeCurrent problem is required.
+    if (dates.getStart() < Plan::instance().getCurrent())
+      needsBeforeCurrent = true;
 
-      // Check if a BeforeFence problem is required.
-      // Note that we either detect of beforeCurrent or a beforeFence problem,
-      // never both simultaneously.
-      else if
-      (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
-        needsBeforeFence = true;
-    }
-    if (nextsubopplan
-      && getDates().getEnd() > nextsubopplan->getDates().getStart()
-      && !nextsubopplan->getLocked()
-      && owner && owner->getOperation()->getType() != *OperationSplit::metadata
-      )
-      needsPrecedence = true;
+    // Check if a BeforeFence problem is required.
+    // Note that we either detect of beforeCurrent or a beforeFence problem,
+    // never both simultaneously.
+    else if
+    (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
+      needsBeforeFence = true;
   }
+  if (nextsubopplan
+    && getDates().getEnd() > nextsubopplan->getDates().getStart()
+    && !nextsubopplan->getLocked()
+    && owner && owner->getOperation()->getType() != *OperationSplit::metadata
+    )
+    needsPrecedence = true;
 
   // Loop through the existing problems
   for (Problem::iterator j = Problem::begin(this, false);
@@ -103,12 +97,52 @@ void OperationPlan::updateProblems()
   }
 
   // Create the problems that are required but aren't existing yet.
-  // There is a little trick involved here... Normally problems are owned
-  // by objects of the Plannable class. OperationPlan isn't a subclass of
-  // Plannable, so we need a dirty cast.
   if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
   if (needsBeforeFence) new ProblemBeforeFence(this);
   if (needsPrecedence) new ProblemPrecedence(this);
+}
+
+
+OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan) 
+  : Problem::iterator(opplan->firstProblem)
+{
+  // Adding related material problems
+  for (FlowPlanIterator flpln = opplan->beginFlowPlans(); flpln != opplan->endFlowPlans(); ++flpln)
+  {
+    for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end(); ++prob)
+      if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
+        relatedproblems.push(&*prob);
+  }
+
+  // Adding related capacity problems
+  for (LoadPlanIterator ldpln = opplan->beginLoadPlans(); ldpln != opplan->endLoadPlans(); ++ldpln)
+  {
+    for (Problem::iterator prob(ldpln->getResource()); prob != Problem::end(); ++prob)
+      if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
+        relatedproblems.push(&*prob);
+  }
+
+  // Update the first problem pointer
+  if (!iter && !relatedproblems.empty())
+    iter = relatedproblems.top();
+}
+
+
+OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++()
+{
+  // Incrementing beyond the end
+  if (!iter) return *this;
+
+  if (!relatedproblems.empty())
+  {
+    relatedproblems.pop();
+    iter = relatedproblems.top();
+    return *this;
+  }
+
+  // Move to the next problem
+  iter = iter->getNextProblem();
+  return *this;
 }
 
 }

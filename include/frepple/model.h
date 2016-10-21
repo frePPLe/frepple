@@ -727,6 +727,12 @@ class Problem : public NonCopyable, public Object
     /** Storing metadata on this class. */
     static DECLARE_EXPORT const MetaCategory* metadata;
 
+    /** An internal convenience method to return the next linked problem. */
+    Problem* getNextProblem() const
+    {
+      return nextProblem;
+    }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addStringField<Cls>(Tags::name, &Cls::getName, nullptr, "", MANDATORY + COMPUTED);
@@ -736,7 +742,7 @@ class Problem : public NonCopyable, public Object
       m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, nullptr, 0.0, MANDATORY);
       m->addStringField<Cls>(Tags::entity, &Cls::getEntity, nullptr, "", DONT_SERIALIZE);
       m->addPointerField<Cls, Object>(Tags::owner, &Cls::getOwner, nullptr, DONT_SERIALIZE);
-      m->addBoolField<Cls>(Tags::feasible, &Cls::isFeasible, nullptr, BOOL_UNSET, PLAN + COMPUTED);
+      m->addBoolField<Cls>(Tags::feasible, &Cls::isFeasible, nullptr, BOOL_UNSET, COMPUTED);
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
@@ -1678,6 +1684,7 @@ class OperationPlan
     class iterator;
     class FlowPlanIterator;
     class LoadPlanIterator;
+    class ProblemIterator;
 
     // Type definitions
     typedef TimeLine<FlowPlan> flowplanlist;
@@ -1833,7 +1840,7 @@ class OperationPlan
     DECLARE_EXPORT void freezeStatus(Date, Date, double);
 
     /** Return the list of problems of this operationplan. */
-    inline Problem::iterator getProblems() const;
+    inline OperationPlan::ProblemIterator getProblems() const;
 
     /** Returns whether the operationplan is locked, ie the status is APPROVED
       * or confirmed. A locked operationplan is never changed.
@@ -2280,7 +2287,7 @@ class OperationPlan
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);      
-      m->addIteratorField<Cls, Problem::iterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems);
+      m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, PLAN);
 
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999);
@@ -7759,7 +7766,8 @@ class HasProblems::EntityIterator
 class Problem::iterator
 {
     friend class Problem;
-  private:
+
+  protected:
     /** A pointer to the current problem. If this pointer is nullptr, we are
       * at the end of the list. */
     Problem* iter;
@@ -7860,10 +7868,24 @@ inline Problem::iterator Problem::List::end() const
 }
 
 
-inline Problem::iterator OperationPlan::getProblems() const
+class OperationPlan::ProblemIterator : public Problem::iterator
+{
+  private:
+    stack<Problem*> relatedproblems;
+
+  public:
+    /** Constructor. */
+    OperationPlan::ProblemIterator(const OperationPlan*);
+
+    /** Advance the iterator. */
+    OperationPlan::ProblemIterator& operator++();
+};
+
+
+inline OperationPlan::ProblemIterator OperationPlan::getProblems() const
 {
   const_cast<OperationPlan*>(this)->updateProblems();
-  return Problem::iterator(const_cast<Problem*>(firstProblem));
+  return OperationPlan::ProblemIterator(this);
 }
 
 

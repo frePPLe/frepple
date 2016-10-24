@@ -1695,7 +1695,9 @@ enum FieldCategory
                          // argument.
   WRITE_FULL = 128,      // Write this field in full, even at deeper
                          // indentation levels.
-  WRITE_HIDDEN = 256     // Force serializing of hidden objects
+  WRITE_HIDDEN = 256,    // Force serializing of hidden objects
+  WRITE_REPEAT = 512     // Force writing an object again, even if already 
+                         // written as parent.
 };
 
 
@@ -2588,7 +2590,12 @@ class Serializer
     DECLARE_EXPORT virtual void writeElement(const Keyword&, const Object*, FieldCategory = BASE);
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
-    void writeElement(const Keyword& t, const Object& o, FieldCategory m = BASE)
+    void writeElement(const Keyword& t, const Object& o)
+    {
+      writeElement(t, &o, content);
+    }
+
+    void writeElement(const Keyword& t, const Object& o, FieldCategory m)
     {
       writeElement(t, &o, m);
     }
@@ -7350,7 +7357,7 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
       Ptr* c = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      if (c && (output.getPreviousObject() != c || output.getContentType() == PLAN))
+      if (c && (output.getPreviousObject() != c || getFlag(WRITE_REPEAT)) ) 
         output.writeElement(getName(), c);
       if (getFlag(WRITE_FULL))
         output.incParents();
@@ -7430,7 +7437,9 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = static_cast<Ptr*>(it.next()))
       {
-        if (first && (getFlag(WRITE_HIDDEN) || !ob->getHidden()))
+        if (ob->getHidden() && !getFlag(WRITE_HIDDEN))
+          continue;
+        if (first)
         {
           output.BeginList(getName());
           first = false;

@@ -319,16 +319,15 @@
       <owner id="4006"><operation name="Oper4"/></owner>
       <operation name="Oper4B"/>
     </operationplan>
-    </operationplan>
     <operationplan id="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
-      <operation name="Oper4B"/>
+      <operation name="Oper4"/>
     </operationplan>
     <operationplan id="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="false">
-      <owner id="4008"><operation name="Oper4"/></owner>
+      <owner id="4008"/>
       <operation name="Oper4B"/>
     </operationplan>
     <operationplan id="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
-      <owner id="4008"><operation name="Oper4"/></owner>
+      <owner id="4008"/>
       <operation name="Oper4A"/>
     </operationplan>
   </operationplans>

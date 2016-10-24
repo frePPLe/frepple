@@ -2281,8 +2281,8 @@ class OperationPlan
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
-      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);
+      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);     
+      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, BASE + WRITE_REPEAT);
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
@@ -2304,8 +2304,8 @@ class OperationPlan
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN);
-      m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, DONT_SERIALIZE);
-      m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, PLAN);
+      m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, PLAN);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
@@ -5796,7 +5796,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, DONT_SERIALIZE);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
       /*  TODO XXX write pegging?
@@ -6463,8 +6463,8 @@ class Resource : public HasHierarchy<Resource>,
       Plannable::registerFields<Cls>(m);
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, DETAIL);
       m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, DETAIL + WRITE_FULL);
-      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, PLAN + WRITE_FULL);
-      m->addIteratorField<Cls, OperationPlanIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, PLAN);
+      m->addIteratorField<Cls, loadplanlist::const_iterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlanIterator, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlanIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, PLAN + WRITE_FULL);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
@@ -7552,7 +7552,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     bool getHidden() const
     {
-      return ld->getHidden();
+      return getQuantity() < 0 || ld->getHidden();
     }
 
     /** Each operationplan has 2 loadplans per load: one at the start,
@@ -7577,7 +7577,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
       m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DONT_SERIALIZE);
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, DONT_SERIALIZE);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
@@ -9297,7 +9297,7 @@ class PeggingIterator : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, MANDATORY + WRITE_FULL);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, PLAN + WRITE_FULL);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, nullptr, MANDATORY);
       m->addShortField<Cls>(Tags::level, &Cls::getLevel, nullptr, MANDATORY);
     }

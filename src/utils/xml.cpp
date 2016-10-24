@@ -918,7 +918,7 @@ DECLARE_EXPORT void Serializer::writeElement
     // Choose wether to save a reference of the object.
     // The root object can't be saved as a reference.
     object->writeElement(
-      this, tag, numParents > 2 ? MANDATORY : BASE
+      this, tag, numParents > 2 ? MANDATORY : content
       );
 
   // Adjust current and parent object pointer

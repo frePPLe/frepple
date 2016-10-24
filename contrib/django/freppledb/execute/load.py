@@ -766,10 +766,18 @@ class loadData(object):
             )
         elif i[7] == 'DLVR':
           cnt_dlvr += 1
-          # TODO Logic to read deliveries from the database
+          opplan = frepple.operationplan(
+            location=frepple.location(name=i[9]) if i[9] else None,
+            id=i[1], reference=i[12], ordertype=i[7],
+            item=frepple.item(name=i[11]) if i[11] else None,
+            origin=frepple.location(name=i[8]) if i[8] else None,
+            demand=frepple.demand(name=i[14]) if i[14] else None,
+            quantity=i[2], start=i[3], end=i[4],
+            status=i[5], source=i[6]
+            )
           opplan = None
-        else:
-          print("Warning: unhandled operationplan type '%s'" % type)
+        else:          
+          print("Warning: unhandled operationplan type '%s'" % i[7])
           continue
         if i[14] and opplan:
           opplan.demand = frepple.demand(name=i[14])

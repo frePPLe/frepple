@@ -274,7 +274,7 @@ class export:
               str(j.start), str(j.end), round(j.criticality, 4), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
-              '\\N', '\\N', '\\N', '\\N', '\\N',
+              j.operation.buffer.item.name, '\\N', '\\N', j.operation.buffer.location.name, '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
               j.id

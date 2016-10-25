@@ -17,78 +17,45 @@
 
 import base64
 import http.client
+from urllib.parse import urlparse
+
+import logging
+logger = logging.getLogger(__name__)
 
 
-def get_data(url, host, user, password):
+def get_data(url, host, user, password, method='GET', headers=None, xmldoc=''):
   '''
-  Utility function to read data from the Openbravo web service.
+  Utility function to communicate with the Openbravo web service.
   '''
-  # Connect to openbravo
+  # Connect to Openbravo
   if not url or not host or not user or not password:
     raise Exception("Invalid configuration")
-  webservice = http.client.HTTPConnection(host)
-  webservice.putrequest("GET", url)
-  webservice.putheader("Host", host)
+  full_url = urlparse("%s%s" % (host, url))
+  if full_url.scheme == 'https':
+    webservice = http.client.HTTPSConnection(host=full_url.netloc)
+  else:
+    webservice = http.client.HTTPConnection(host=full_url.netloc)
+  if full_url.query:
+    webservice.putrequest(method, "%s?%s" % (full_url.path, full_url.query))
+  else:
+    webservice.putrequest(method, full_url.path)
+  webservice.putheader("Host", full_url.netloc)
   webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
-  webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
-  webservice.putheader("Content-length", "0")
+  webservice.putheader("Content-type", 'text/xml; charset=\"UTF-8\"')
+  webservice.putheader("Content-length", "%s" % len(xmldoc))
   encoded = base64.encodestring(('%s:%s' % (user, password)).encode('utf-8'))[:-1]
   webservice.putheader("Authorization", "Basic %s" % encoded.decode('ascii'))
+  if headers:
+    for key, value in headers.items():
+      webservice.putheader(key, "%s" % value)
   webservice.endheaders()
-  webservice.send('')
+  webservice.send(xmldoc.encode(encoding='utf_8'))
 
-  # Get the openbravo response
+  # Get the Openbravo response
   response = webservice.getresponse()
+  result = response.read().decode("utf-8")
   if response.status != http.client.OK:
+    logger.error("Failed %s connection to %s%s" % (method, host, url))
+    logger.error(result)
     raise Exception(response.reason)
-  return response.read().decode("utf-8")
-
-
-def post_data(xmldoc, url, host, user, password):
-  '''
-  Utility function to post data to the Openbravo web service.
-  '''
-  # Send the data to openbravo
-  if not url or not host or not user or not password:
-    raise Exception("Invalid configuration")
-  webservice = http.client.HTTPConnection(host)
-  webservice.putrequest("POST", url)
-  webservice.putheader("Host", host)
-  webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
-  webservice.putheader("Content-type", 'text/xml')
-  webservice.putheader("Content-length", str(len(xmldoc)))
-  encoded = base64.encodestring(('%s:%s' % (user, password)).encode('utf-8'))[:-1]
-  webservice.putheader("Authorization", "Basic %s" % encoded.decode('ascii'))
-  webservice.endheaders()
-  webservice.send(xmldoc)
-
-  # Get the openbravo response
-  response = webservice.getresponse()
-  if response.status != http.client.OK:
-    raise Exception(response.reason)
-
-
-def delete_data(url, host, user, password):
-  '''
-  Utility function to delete data from the Openbravo web service.
-  '''
-  # Connect to openbravo
-  if not url or not host or not user or not password:
-    raise Exception("Invalid configuration")
-  webservice = http.client.HTTPConnection(host)
-  webservice.putrequest("DELETE", url)
-  webservice.putheader("Host", host)
-  webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
-  webservice.putheader("Content-type", "text/html; charset=\"UTF-8\"")
-  webservice.putheader("Content-length", "0")
-  encoded = base64.encodestring(('%s:%s' % (user, password)).encode('utf-8'))[:-1]
-  webservice.putheader("Authorization", "Basic %s" % encoded.decode('ascii'))
-  webservice.endheaders()
-  webservice.send('')
-
-  # Get the openbravo response
-  response = webservice.getresponse()
-  if response.status != http.client.OK:
-    raise Exception(response.reason)
-  return response.read().decode("utf-8")
-
+  return result

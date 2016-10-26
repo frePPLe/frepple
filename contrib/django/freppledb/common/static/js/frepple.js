@@ -1992,22 +1992,10 @@ var tour = {
     if (tour.step >= tourdata[tour.chapter]['steps'].length)
     {
       tour.chapter++;
-      if (tour.chapter < tourdata.length)
-        tour.step = 0;
-      else if (tour.autoplay == 2)
-      {
+      tour.step = 0;
+      if (tour.chapter >= tourdata.length)
         // Restart from the beginning
-        tour.step = 0;
         tour.chapter = 0;
-      }
-      else
-      {
-        // Stop at the last step
-        if (tour.autoplay == 1) tour.toggleAutoplay();
-        tour.chapter--;
-        tour.step--;
-        return;
-      }
     }
     tour.showStep();
   },

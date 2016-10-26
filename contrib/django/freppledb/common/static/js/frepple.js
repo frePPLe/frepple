@@ -2064,7 +2064,7 @@ var tour = {
     })
 
     // Update tour dialog
-    $('#tour').html(tourdata[tour.chapter]['description'] + '<br/><br/>' + (tour.step+1) + " " + gettext("out of") + " " + tourdata[tour.chapter]['steps'].length);
+    $('#tourmodalbody').html(tourdata[tour.chapter]['description']);
     // Previous button
     if (tour.chapter == 0 && tour.step == 0)
       $("#tourprevious").prop('disabled', true);

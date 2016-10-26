@@ -98,15 +98,31 @@ class CrumbsNode(Node):
 
         if not exists:
           # Add the current URL to the stack
-          cur.append( (
-            title,
-            '<li><a href="%s%s%s">%s</a></li>' % (
-              req.prefix, urlquote(req.path),
-              req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
-              str(escape(capfirst(title)))
-              ),
-            req.path
-            ))
+          if 'tour' in req.GET:
+            # Special case when the guided tour is used: we don't want to
+            # include the tour argument in the breadcrumb. It makes the
+            # breadcrumb link reenter the tour, which is not cool.
+            params = req.GET.copy()
+            params.pop('tour')
+            cur.append( (
+              title,
+              '<li><a href="%s%s%s">%s</a></li>' % (
+                req.prefix, urlquote(req.path),
+                params and ('?' + iri_to_uri(params.urlencode())) or '',
+                str(escape(capfirst(title)))
+                ),
+              req.path
+              ))
+          else:
+            cur.append( (
+              title,
+              '<li><a href="%s%s%s">%s</a></li>' % (
+                req.prefix, urlquote(req.path),
+                req.GET and ('?' + iri_to_uri(req.GET.urlencode())) or '',
+                str(escape(capfirst(title)))
+                ),
+              req.path
+              ))
           count += 1
 
         # Limit the number of crumbs.

@@ -7874,10 +7874,10 @@ class OperationPlan::ProblemIterator : public Problem::iterator
 
   public:
     /** Constructor. */
-    OperationPlan::ProblemIterator(const OperationPlan*);
+    ProblemIterator(const OperationPlan*);
 
     /** Advance the iterator. */
-    OperationPlan::ProblemIterator& operator++();
+    ProblemIterator& operator++();
 };
 
 

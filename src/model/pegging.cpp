@@ -50,7 +50,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const PeggingIterator& c)
   initType(metadata);
   for (statestack::const_iterator i = c.states.begin(); i != c.states.end(); ++i)
     states.push_back( state(i->opplan, i->quantity, i->offset, i->level) );
-  for (statestack::const_iterator i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
+  for (deque<state>::const_iterator i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
     states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
 }
 
@@ -67,13 +67,15 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
     updateStack(t, t->getQuantity(), 0.0, 0);
   }
 
-  // Bring all pegging information to a second stack
+  // Bring all pegging information to a second stack.
+  // Only in this way can we avoid that the same operationplan is returned
+  // multiple times
   while (operator bool())
   {
     /** Check if already found in the vector. */
     bool found = false;
     state& curtop = states.back();
-    for (statestack::iterator it = states_sorted.begin(); it != states_sorted.end() && !found; ++it)
+    for (deque<state>::iterator it = states_sorted.begin(); it != states_sorted.end() && !found; ++it)
       if (it->opplan == curtop.opplan)
       {
         // Update existing element in sorted stack
@@ -91,9 +93,6 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
     else
       --*this;
   }
-
-  // Sort the vector, using the start date of the operationplans
-  sort(states_sorted.begin(), states_sorted.end());
 
   // The normal iteration will use the sorted results
   second_pass = true;
@@ -155,7 +154,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
   // Second pass
   if (second_pass)
   {
-    states_sorted.pop_back();
+    states_sorted.pop_front();
     return *this;
   }
 
@@ -186,7 +185,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
   // Second pass
   if (second_pass)
   {
-    states_sorted.pop_back();
+    states_sorted.pop_front();
     return *this;
   }
 

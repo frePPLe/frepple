@@ -9240,7 +9240,7 @@ class PeggingIterator : public Object
     OperationPlan* getOperationPlan() const
     {
       return second_pass ? 
-        const_cast<OperationPlan*>(states_sorted.back().opplan) :
+        const_cast<OperationPlan*>(states_sorted.front().opplan) :
         const_cast<OperationPlan*>(states.back().opplan);
     }
 
@@ -9257,7 +9257,7 @@ class PeggingIterator : public Object
     double getQuantity() const
     {
       return second_pass ?
-        states_sorted.back().quantity :
+        states_sorted.front().quantity :
         states.back().quantity;
     }
 
@@ -9265,7 +9265,7 @@ class PeggingIterator : public Object
     short getLevel() const
     {
       return second_pass ? 
-        states_sorted.back().level : 
+        states_sorted.front().level : 
         states.back().level;
     }
 
@@ -9348,7 +9348,7 @@ class PeggingIterator : public Object
 
     /** Extra data structure to avoid duplicate operationplan ids in the list. */
     bool second_pass;
-    statestack states_sorted;
+    deque<state> states_sorted;
 };
 
 

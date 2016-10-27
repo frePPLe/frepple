@@ -40,6 +40,7 @@ class PlanTaskRegistry:
     else:
       # Adding a new task to the registry
       cls.reg.append(task)
+    return task
 
   @classmethod
   def getTask(cls, sequence=None):

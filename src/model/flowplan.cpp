@@ -43,17 +43,15 @@ int FlowPlan::initialize()
 }
 
 
-DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
+DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f) 
+  : fl(const_cast<Flow*>(f)), oper(opplan)
 {
   assert(opplan && f);
-  fl = const_cast<Flow*>(f);
 
   // Initialize the Python type
   initType(metadata);
 
   // Link the flowplan to the operationplan
-  oper = opplan;
-  nextFlowPlan = nullptr;
   if (opplan->firstflowplan)
   {
     // Append to the end

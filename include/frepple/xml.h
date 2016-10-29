@@ -92,7 +92,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     static xercesc::XMLTranscoder* utf8_encoder;
 
     /** A pointer to an XML parser for processing the input. */
-    xercesc::SAX2XMLReader* parser;
+    xercesc::SAX2XMLReader* parser = nullptr;
 
     /** Stack of objects and their data fields. */
     struct obj
@@ -108,24 +108,24 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     vector<fld> data;
 
     /** Index into the objects stack. */
-    int objectindex;
+    int objectindex = -1;
 
     /** Index into the data field stack. */
-    int dataindex;
+    int dataindex = -1;
 
     /** A variable to keep track of the size of the element stack. It is used
       * together with the variable m_EStack.
       */
-    short numElements;
+    short numElements = -1;
 
     /** Controls wether or not we need to process character data. */
-    bool reading;
+    bool reading = false;
 
     /** This field counts how deep we are in a nested series of ignored input.
       * It is represented as a counter since the ignored element could contain
       * itself.
       */
-    unsigned short ignore;
+    unsigned short ignore = 0;
 
     /** This field controls whether we continue processing after data errors
       * or whether we abort processing the remaining XML data.<br>
@@ -139,7 +139,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       *  - The default setting is true, in order to provide a maximum level of
       *    security for the application.
       */
-    bool abortOnDataException;
+    bool abortOnDataException = true;
 
     /** A buffer used for transcoding XML data. */
     char encodingbuffer[4*1024];

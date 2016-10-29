@@ -54,9 +54,7 @@ int ItemDistribution::initialize()
 }
 
 
-DECLARE_EXPORT ItemDistribution::ItemDistribution() : it(nullptr),
-  size_minimum(1.0), size_multiple(1.0), cost(0.0), firstOperation(nullptr),
-  next(nullptr), res(nullptr), res_qty(1.0)
+DECLARE_EXPORT ItemDistribution::ItemDistribution()
 {
   initType(metadata);
 

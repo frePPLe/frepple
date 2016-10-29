@@ -410,18 +410,11 @@ class NonCopyable
     NonCopyable() {}
     ~NonCopyable() {}
 
-  private:
-    /** This copy constructor isn't implemented.<br>
-      * It's here just so we can declare them as private so that this, and
-      * any derived class, do not have copy constructors.
-      */
-    NonCopyable(const NonCopyable&);
+    /** This copy constructor doesn't exist. */
+    NonCopyable(const NonCopyable&) = delete;
 
-    /** This assignment operator isn't implemented.<br>
-      * It's here just so we can declare them as private so that this, and
-      * any derived class, do not have copy constructors.
-      */
-    NonCopyable& operator=(const NonCopyable&);
+    /** This assignment operator doesn't exist. */
+    NonCopyable& operator=(const NonCopyable&) = delete;
 };
 
 
@@ -1829,21 +1822,21 @@ class MetaClass : public NonCopyable
     const Keyword* typetag;
 
     /** The category of this class. */
-    const MetaCategory* category;
+    const MetaCategory* category = nullptr;
 
     /** A pointer to the Python type. */
-    PyTypeObject* pythonClass;
+    PyTypeObject* pythonClass = nullptr;
 
     /** A factory method for the registered class. */
-    creatorDefault factoryMethod;
+    creatorDefault factoryMethod = nullptr;
 
     /** A flag that tracks whether this object can inherit context from
       * its parent during creation.
       */
-    bool parent;
+    bool parent = false;
 
     /** A flag whether this is the default class in its category. */
-    bool isDefault;
+    bool isDefault = false;
 
     /** Destructor. */
     virtual ~MetaClass() {}
@@ -1955,8 +1948,7 @@ class MetaClass : public NonCopyable
     static DECLARE_EXPORT const MetaClass* findClass(const char*);
 
     /** Default constructor. */
-    MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")),
-      category(nullptr), pythonClass(nullptr), factoryMethod(nullptr), parent(false) {}
+    MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")) {}
 
     /** Register a field. */
     template <class Cls> inline void addStringField(
@@ -2110,8 +2102,7 @@ class MetaClass : public NonCopyable
   private:
     /** This constructor registers the metadata of a class. */
     MetaClass(const string& cls, size_t sz, creatorDefault f)
-      : type(cls), size(sz), category(nullptr), pythonClass(nullptr), factoryMethod(f),
-      parent(false), isDefault(false)
+      : type(cls), size(sz), factoryMethod(f)
     {
       factoryMethod = f;
       typetag = &Keyword::find(cls.c_str());
@@ -2119,7 +2110,7 @@ class MetaClass : public NonCopyable
 
     /** This constructor registers the metadata of a class. */
     MetaClass(const string& cat, const string& cls, size_t sz, bool def = false)
-      : size(sz), pythonClass(nullptr), isDefault(def)
+      : size(sz), isDefault(def)
     {
       addClass(cat, cls, def);
     }
@@ -2127,7 +2118,7 @@ class MetaClass : public NonCopyable
     /** This constructor registers the metadata of a class, with a factory
       * method that uses the default constructor of the class. */
     MetaClass(const string& cat, const string& cls, size_t sz, creatorDefault f,
-        bool def = false) : size(sz), pythonClass(nullptr), isDefault(def)
+        bool def = false) : size(sz), isDefault(def)
     {
       addClass(cat, cls, def);
       factoryMethod = f;
@@ -2464,20 +2455,10 @@ class Serializer
     DECLARE_EXPORT void setContentType(const string&);
 
     /** Constructor with a given stream. */
-    Serializer(ostream& os) : numObjects(0),
-      numParents(0), currentObject(nullptr), parentObject(nullptr),
-      content(BASE), skipHeader(false), skipFooter(false)
-    {
-      m_fp = &os;
-    }
+    Serializer(ostream& os) { m_fp = &os; }
 
     /** Default constructor. */
-    Serializer() : numObjects(0), numParents(0),
-      currentObject(nullptr), parentObject(nullptr), content(BASE),
-      skipHeader(false), skipFooter(false), writeHidden(false)
-    {
-      m_fp = &logger;
-    }
+    Serializer() { m_fp = &logger; }
 
     /** Force writing only references for nested objects. */
     void setReferencesOnly(bool b)
@@ -2660,32 +2641,32 @@ class Serializer
     ostream* m_fp;
 
     /** Keep track of the number of objects being stored. */
-    unsigned long numObjects;
+    unsigned long numObjects = 0;
 
     /** Keep track of the number of objects currently in the save stack. */
-    unsigned int numParents;
+    unsigned int numParents = 0;
 
     /** This stores a pointer to the object that is currently being saved. */
-    const Object *currentObject;
+    const Object *currentObject = nullptr;
 
     /** This stores a pointer to the object that has previously been saved. */
-    const Object *parentObject;
+    const Object *parentObject = nullptr;
 
     /** Stores the type of data to be exported. */
-    FieldCategory content;
+    FieldCategory content = BASE;
 
     /** Flag allowing us to skip writing the head of the XML element.
       * The flag is reset to 'true'.
       */
-    bool skipHeader;
+    bool skipHeader = false;
 
     /** Flag allowing us to skip writing the tail of the XML element.
       * The flag is reset to 'true'.
       */
-    bool skipFooter;
+    bool skipFooter = false;
 
     /** Flag to mark whether hidden objects need to be written as well. */
-    bool writeHidden;
+    bool writeHidden = false;
 };
 
 
@@ -2697,17 +2678,17 @@ class DataKeyword
 {
   private:
     /** This string stores the hash value of the element. */
-    hashtype hash;
+    hashtype hash = 0;
 
     /** A pointer to the string representation of the keyword.<br>
       * The string buffer is to be managed by the code creating this
       * instance.
       */
-    const char* ch;
+    const char* ch = nullptr;
 
   public:
     /** Default constructor. */
-    explicit DataKeyword() : hash(0), ch(nullptr) {}
+    explicit DataKeyword() {}
 
     /** Constructor. */
     explicit DataKeyword(const string& n)
@@ -2906,7 +2887,7 @@ class XMLData : public DataValue
     string m_strData;
 
     /** Object pointer. */
-    Object* m_obj;
+    Object* m_obj = nullptr;
 
   public:
     virtual operator bool() const
@@ -2915,10 +2896,10 @@ class XMLData : public DataValue
     }
 
     /** Default constructor. */
-    XMLData() : m_obj(nullptr) {}
+    XMLData() {}
 
     /** Constructor. */
-    XMLData(const string& v) : m_strData(v), m_obj(nullptr) {}
+    XMLData(const string& v) : m_strData(v) {}
 
     /** Copy constructor from DataValue base class. */
     XMLData(const DataValue& d)
@@ -3172,7 +3153,7 @@ class Environment
 class PythonData : public DataValue
 {
   private:
-    PyObject* obj;
+    PyObject* obj = nullptr;
 
     // Used by the getString method to store a string value
     string result;
@@ -3389,56 +3370,56 @@ class PythonData : public DataValue
     DECLARE_EXPORT PythonData(Object* p);
 
     /** Convert a C++ string into a Unicode Python string. */
-    inline PythonData(const string& val) : obj(nullptr)
+    inline PythonData(const string& val)
     {
       setString(val);
     }
 
     /** Convert a C++ double into a Python number. */
-    inline PythonData(const double val) : obj(nullptr)
+    inline PythonData(const double val)
     {
       setDouble(val);
     }
 
     /** Convert a C++ integer into a Python integer. */
-    inline PythonData(const int val) : obj(nullptr)
+    inline PythonData(const int val)
     {
       setInt(val);
     }
 
     /** Convert a C++ unsigned integer into a Python integer. */
-    inline PythonData(const unsigned int val) : obj(nullptr)
+    inline PythonData(const unsigned int val)
     {
       setInt(val);
     }
 
     /** Convert a C++ long into a Python long. */
-    inline PythonData(const long val) : obj(nullptr)
+    inline PythonData(const long val)
     {
       setLong(val);
     }
 
     /** Convert a C++ unsigned long into a Python long. */
-    inline PythonData(const unsigned long val) : obj(nullptr)
+    inline PythonData(const unsigned long val)
     {
       setUnsignedLong(val);
     }
 
     /** Convert a C++ boolean into a Python boolean. */
-    inline PythonData(const bool val) : obj(nullptr)
+    inline PythonData(const bool val)
     {
       setBool(val);
     }
 
     /** Convert a frePPLe duration into a Python number representing
       * the number of seconds. */
-    inline PythonData(const Duration val) : obj(nullptr)
+    inline PythonData(const Duration val)
     {
       setDuration(val);
     }
 
     /** Convert a frePPLe date into a Python datetime.datetime object. */
-    PythonData(const Date val) : obj(nullptr)
+    PythonData(const Date val)
     {
       setDate(val);
     }
@@ -3507,7 +3488,7 @@ class PythonFunction : public PythonData
 {
   public:
     /** Default constructor. */
-    PythonFunction() : func(nullptr) {}
+    PythonFunction() {}
 
     /** Constructor. */
     DECLARE_EXPORT PythonFunction(const string&);
@@ -3565,7 +3546,7 @@ class PythonFunction : public PythonData
 
   private:
     /** A pointer to the Python object. */
-    PyObject* func;
+    PyObject* func = nullptr;
 };
 
 
@@ -3642,7 +3623,7 @@ class Object : public PyObject
 
   public:
     /** Constructor. */
-    explicit Object() : dict(nullptr) {}
+    explicit Object() {}
 
     /** Destructor. */
     virtual ~Object()
@@ -3912,7 +3893,7 @@ class Object : public PyObject
     static vector<PythonType*> table;
 
   private:
-    PyObject* dict;
+    PyObject* dict = nullptr;
 };
 
 
@@ -4365,7 +4346,7 @@ class Tree : public NonCopyable
         }
 
         /** Default constructor. */
-        TreeNode() : color(none), parent(nullptr), left(nullptr), right(nullptr) {}
+        TreeNode() {}
 
         /** Return a pointer to the node following this one. */
         TreeNode* increment() const
@@ -4419,16 +4400,16 @@ class Tree : public NonCopyable
         string nm;
 
         /** Color of the node. This is used to keep the tree balanced. */
-        NodeColor color;
+        NodeColor color = none;
 
         /** Pointer to the parent node. */
-        TreeNode* parent;
+        TreeNode* parent = nullptr;
 
         /** Pointer to the left child node. */
-        TreeNode* left;
+        TreeNode* left = nullptr;
 
         /** Pointer to the right child node. */
-        TreeNode* right;
+        TreeNode* right = nullptr;
     };
 
     /** Default constructor. */
@@ -4657,7 +4638,7 @@ class Command
       * command yet. The execute() method needs to be called explicitly to
       * do so.
       */
-    Command() : owner(nullptr), next(nullptr), prev(nullptr) {};
+    Command() {};
 
     /** This method makes the change permanent.<br>
       * A couple of notes on how this method should be implemented by the
@@ -4703,15 +4684,15 @@ class Command
   private:
     /** Points to the commandlist which owns this command. The default value
       * is nullptr, meaning there is no owner. */
-    Command *owner;
+    Command *owner = nullptr;
 
     /** Points to the next command in the owner command list.<br>
       * The commands are chained in a double linked list data structure. */
-    Command *next;
+    Command *next = nullptr;
 
     /** Points to the previous command in the owner command list.<br>
       * The commands are chained in a double linked list data structure. */
-    Command *prev;
+    Command *prev = nullptr;
 };
 
 
@@ -4938,10 +4919,10 @@ class CommandList : public Command
       * on the commands.<br>
       * The commands are this chained in a double linked list data structure.
       */
-    Command* firstCommand;
+    Command* firstCommand = nullptr;
 
     /** Points to the last command in the list. */
-    Command* lastCommand;
+    Command* lastCommand = nullptr;
   public:
     class iterator
     {
@@ -5042,7 +5023,7 @@ class CommandList : public Command
     }
 
     /** Default constructor. */
-    explicit CommandList() : firstCommand(nullptr), lastCommand(nullptr) {}
+    explicit CommandList() {}
 
     /** Destructor.<br>
       * A commandlist should only be deleted when all of its commands
@@ -5064,12 +5045,11 @@ class CommandManager
     {
         friend class CommandManager;
       private:
-        bool active;
-        Bookmark* nextBookmark;
-        Bookmark* prevBookmark;
-        Bookmark* parent;
-        Bookmark(Bookmark* p=nullptr) : active(true),
-          nextBookmark(nullptr), prevBookmark(nullptr), parent(p) {}
+        bool active = true;
+        Bookmark* nextBookmark = nullptr;
+        Bookmark* prevBookmark = nullptr;
+        Bookmark* parent = nullptr;
+        Bookmark(Bookmark* p=nullptr) : parent(p) {}
       public:
         /** Returns true if the bookmark commands are active. */
         bool isActive() const
@@ -5316,7 +5296,7 @@ class DataInput
 {
   public:
     /** Default constructor. */
-    explicit DataInput() : user_exit_cpp(nullptr), cmds(nullptr) {}
+    explicit DataInput() {}
 
     /** Update the command manager used to track all changes. */
     void setCommandManager(CommandManager* c)
@@ -5385,10 +5365,10 @@ class DataInput
     PythonFunction userexit;
 
     /** A second type of callback function. This time called from C++. */
-    callback user_exit_cpp;
+    callback user_exit_cpp = nullptr;
 
     /** A command manager used to track changes applied from the input. */
-    CommandManager* cmds;
+    CommandManager* cmds = nullptr;
 };
 
 
@@ -5942,8 +5922,7 @@ template <class T> class HasHierarchy : public HasName<T>
     };
 
     /** Default constructor. */
-    HasHierarchy() : parent(nullptr),
-      first_child(nullptr), next_brother(nullptr) {}
+    HasHierarchy() {}
 
     /** Destructor.
       * When deleting a node of the hierarchy, the children will get the
@@ -6019,17 +5998,17 @@ template <class T> class HasHierarchy : public HasName<T>
 
   private:
     /** A pointer to the parent object. */
-    T *parent;
+    T *parent = nullptr;
 
     /** A pointer to the first child object. */
-    T *first_child;
+    T *first_child = nullptr;
 
     /** A pointer to the next brother object, ie an object having the
       * same parent.<br>
       * The brothers are all linked as a single linked list, with the
       * first_child pointer on the parent being the root pointer of the list.
       */
-    T *next_brother;
+    T *next_brother = nullptr;
 };
 
 
@@ -6066,14 +6045,14 @@ template <class A, class B, class C> class Association
     {
         friend class Node;
       public:
-        C* first;
+        C* first = nullptr;
 
       public:
-        List() : first(nullptr) {};
+        List() {};
 
         bool empty() const
         {
-          return first==nullptr;
+          return first == nullptr;
         }
     };
 
@@ -6490,20 +6469,19 @@ template <class A, class B, class C> class Association
     class Node
     {
       public:
-        A* ptrA;
-        B* ptrB;
-        C* nextA;
-        C* nextB;
+        A* ptrA = nullptr;
+        B* ptrB = nullptr;
+        C* nextA = nullptr;
+        C* nextB = nullptr;
         DateRange effectivity;
         string name;
-        int priority;
+        int priority = 1;
       public:
         /** Constructor. */
-        Node() : ptrA(nullptr), ptrB(nullptr), nextA(nullptr), nextB(nullptr), priority(1) {};
+        Node() {};
 
         /** Constructor. */
-        Node(A* a, B* b, const ListA& al, const ListB& bl)
-          : ptrA(a), ptrB(b), nextA(nullptr), nextB(nullptr), priority(1)
+        Node(A* a, B* b, const ListA& al, const ListB& bl) : ptrA(a), ptrB(b)
         {
           if (al.first)
           {

@@ -72,9 +72,7 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
 }
 
 
-DECLARE_EXPORT XMLInput::XMLInput() : parser(nullptr), objects(maxobjects),
-  data(maxdata), objectindex(-1), dataindex(-1), numElements(-1),
-  reading(false), ignore(0), abortOnDataException(true)
+DECLARE_EXPORT XMLInput::XMLInput() : objects(maxobjects), data(maxdata)
 {
   if (!utf8_encoder)
   {

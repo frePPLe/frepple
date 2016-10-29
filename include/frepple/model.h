@@ -107,18 +107,18 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     Date startdate;
 
     /** End Date of the bucket. */
-    Date enddate;
+    Date enddate = Date::infiniteFuture;
 
     /** A pointer to the next bucket. */
-    CalendarBucket* nextBucket;
+    CalendarBucket* nextBucket = nullptr;
 
     /** A pointer to the previous bucket. */
-    CalendarBucket* prevBucket;
+    CalendarBucket* prevBucket = nullptr;
 
     /** Priority of this bucket, compared to other buckets effective
       * at a certain time.
       */
-    int priority;
+    int priority = 0;
 
     /** Weekdays on which the entry is effective.
       * - Bit 0: Sunday
@@ -129,19 +129,19 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       * - Bit 5: Friday
       * - Bit 6: Saturday
       */
-    short days;
+    short days = 127;
 
     /** Starting time on the effective days. */
     Duration starttime;
 
     /** Ending time on the effective days. */
-    Duration endtime;
+    Duration endtime = 86400L;
 
     /** A pointer to the owning calendar. */
-    Calendar *cal;
+    Calendar *cal = nullptr;
 
     /** Value of this bucket.*/
-    double val;
+    double val = 0.0;
 
     /** An internally managed data structure to keep the offsets
       * inside the week where the entry changes effectivity.
@@ -151,7 +151,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
     /** An internal counter for the number of indices used in the
       * offset array. */
-    short offsetcounter;
+    short offsetcounter = 0;
 
     /** Updates the offsets data structure. */
     DECLARE_EXPORT void updateOffsets();
@@ -167,9 +167,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
 
   public:
     /** Default constructor. */
-    DECLARE_EXPORT CalendarBucket() : enddate(Date::infiniteFuture),
-      nextBucket(nullptr), prevBucket(nullptr), priority(0), days(127),
-      starttime(0L), endtime(86400L), cal(nullptr), val(0.0), offsetcounter(0)
+    DECLARE_EXPORT CalendarBucket()
     {
       initType(metadata);
     }
@@ -410,7 +408,7 @@ class Calendar : public HasName<Calendar>, public HasSource
     class EventIterator; // Forward declaration
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Calendar() : firstBucket(nullptr), defaultValue(0.0) {}
+    explicit DECLARE_EXPORT Calendar() {}
 
     /** Destructor, which cleans up the buckets too and all references to the
       * calendar from the core model.
@@ -574,10 +572,10 @@ class Calendar : public HasName<Calendar>, public HasSource
   private:
     /** A pointer to the first bucket. The buckets are stored in a doubly
       * linked list. */
-    CalendarBucket* firstBucket;
+    CalendarBucket* firstBucket = nullptr;
 
     /** Value used when no bucket is effective at all. */
-    double defaultValue;
+    double defaultValue = 0.0;
 };
 
 
@@ -631,7 +629,7 @@ class Problem : public NonCopyable, public Object
       * the problem objects aren't fully constructed yet.
       * @see addProblem
       */
-    explicit Problem(HasProblems *p = nullptr) : owner(p), nextProblem(nullptr)
+    explicit Problem(HasProblems *p = nullptr) : owner(p)
     {
       initType(metadata);
     }
@@ -746,12 +744,12 @@ class Problem : public NonCopyable, public Object
     }
   protected:
     /** Each Problem object references a HasProblem object as its owner. */
-    HasProblems *owner;
+    HasProblems *owner = nullptr;
 
     /** Each Problem contains a pointer to the next pointer for the same
       * owner. This class implements thus an intrusive single linked list
       * of Problem objects. */
-    Problem *nextProblem;
+    Problem *nextProblem = nullptr;
 
     /** Adds a newly created problem to the problem container.
       * This method needs to be called in the constructor of a problem
@@ -811,7 +809,7 @@ class HasProblems
     static DECLARE_EXPORT EntityIterator endEntity();
 
     /** Constructor. */
-    HasProblems() : firstProblem(nullptr) {}
+    HasProblems() {}
 
     /** Destructor. It needs to take care of making sure all problems objects
       * are being deleted as well. */
@@ -839,7 +837,7 @@ class HasProblems
   private:
     /** A pointer to the first problem of this object. Problems are maintained
       * in a single linked list. */
-    Problem* firstProblem;
+    Problem* firstProblem = nullptr;
 };
 
 
@@ -848,7 +846,7 @@ class Problem::List
 {
   public:
     /** Constructor. */
-    List() : first(nullptr) {};
+    List() {};
 
     /** Destructor. */
     ~List()
@@ -898,7 +896,7 @@ class Problem::List
 
   private:
     /** Pointer to the head of the list. */
-    Problem* first;
+    Problem* first = nullptr;
 };
 
 
@@ -1327,7 +1325,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     typedef Association<Location,Location,ItemDistribution>::ListB distributiondestinationlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Location() : available(nullptr)
+    explicit DECLARE_EXPORT Location()
     {
       initType(metadata);
     }
@@ -1394,7 +1392,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
     /** The availability calendar models the working hours and holidays. It
       * applies to all operations, resources and buffers using this location.
       */
-    Calendar* available;
+    Calendar* available = nullptr;
 
     /** This is a list of item distributions pointing to this location as
       * origin.
@@ -1531,16 +1529,16 @@ class SubOperation : public Object, public HasSource
 {
   private:
     /** Pointer to the parent operation. */
-    Operation* owner;
+    Operation* owner = nullptr;
 
     /** Pointer to the child operation.
       * Note that the same child operation can be used in multiple parents.
       * The child operation is completely unaware of its parents.
       */
-    Operation* oper;
+    Operation* oper = nullptr;
 
     /** Priority index. */
-    int prio;
+    int prio = 1;
 
     /** Validity date range for the child operation. */
     DateRange effective;
@@ -1553,7 +1551,7 @@ class SubOperation : public Object, public HasSource
     typedef list<SubOperation*> suboperationlist;
 
     /** Default constructor. */
-    explicit SubOperation() : owner(nullptr), oper(nullptr), prio(1)
+    explicit SubOperation()
     {
       initType(metadata);
     }
@@ -2356,10 +2354,7 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : owner(nullptr), quantity(0.0), flags(0), dmd(nullptr),
-      id(0), oper(nullptr), firstflowplan(nullptr), firstloadplan(nullptr),
-      prev(nullptr), next(nullptr), firstsubopplan(nullptr), lastsubopplan(nullptr),
-      nextsubopplan(nullptr), prevsubopplan(nullptr)
+    OperationPlan()
     {
       initType(metadata);
     }
@@ -2379,14 +2374,14 @@ class OperationPlan
     static const short CONSUME_CAPACITY = 64;
 
     /** Pointer to a higher level OperationPlan. */
-    OperationPlan *owner;
+    OperationPlan *owner = nullptr;
 
     /** Quantity. */
-    double quantity;
+    double quantity = 0.0;
 
     /** Is this operationplan locked? A locked operationplan doesn't accept
       * any changes. This field is only relevant for top-operationplans. */
-    short flags;
+    short flags = 0;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -2401,7 +2396,7 @@ class OperationPlan
       * Only delivery operationplans have this field set. The field is nullptr
       * for all other operationplans.
       */
-    Demand *dmd;
+    Demand *dmd = nullptr;
 
     /** Unique identifier.<br>
       * The field is 0 while the operationplan is not fully registered yet.
@@ -2410,7 +2405,7 @@ class OperationPlan
       * A unique value for each operationplan is created lazily when the
       * method getIdentifier() is called.
       */
-    unsigned long id;
+    unsigned long id = 0;
 
     /** External identifier for this operationplan. */
     string ref;
@@ -2419,37 +2414,37 @@ class OperationPlan
     DateRange dates;
 
     /** Pointer to the operation. */
-    Operation *oper;
+    Operation *oper = nullptr;
 
     /** Root of a single linked list of flowplans. */
-    FlowPlan* firstflowplan;
+    FlowPlan* firstflowplan = nullptr;
 
     /** Single linked list of loadplans. */
-    LoadPlan* firstloadplan;
+    LoadPlan* firstloadplan = nullptr;
 
     /** Pointer to the previous operationplan.<br>
       * Operationplans are chained in a doubly linked list for each operation.
       * @see next
       */
-    OperationPlan* prev;
+    OperationPlan* prev = nullptr;
 
     /** Pointer to the next operationplan.<br>
       * Operationplans are chained in a doubly linked list for each operation.
       * @see prev
       */
-    OperationPlan* next;
+    OperationPlan* next = nullptr;
 
     /** Pointer to the first suboperationplan of this operationplan. */
-    OperationPlan* firstsubopplan;
+    OperationPlan* firstsubopplan = nullptr;
 
     /** Pointer to the last suboperationplan of this operationplan. */
-    OperationPlan* lastsubopplan;
+    OperationPlan* lastsubopplan = nullptr;
 
     /** Pointer to the next suboperationplan of the parent operationplan. */
-    OperationPlan* nextsubopplan;
+    OperationPlan* nextsubopplan = nullptr;
 
     /** Pointer to the previous suboperationplan of the parent operationplan. */
-    OperationPlan* prevsubopplan;
+    OperationPlan* prevsubopplan = nullptr;
 
     /** Hidden, static field to store the location during import. */
     static Location* loc;
@@ -2530,11 +2525,7 @@ class Operation : public HasName<Operation>,
 
   public:
     /** Default constructor. */
-    explicit DECLARE_EXPORT Operation() :
-      item(nullptr), loc(nullptr), size_minimum(1.0), size_minimum_calendar(nullptr),
-      size_multiple(0.0), size_maximum(DBL_MAX), cost(0.0), hidden(false),
-      first_opplan(nullptr), last_opplan(nullptr), priority(1), next(nullptr)
-      {}
+    explicit DECLARE_EXPORT Operation() {}
 
     /** Destructor. */
     virtual DECLARE_EXPORT ~Operation();
@@ -2992,12 +2983,12 @@ class Operation : public HasName<Operation>,
     static DECLARE_EXPORT Operationlist nosubOperations;
 
     /** Item produced by the operation. */
-    Item* item;
+    Item* item = nullptr;
 
     /** Location of the operation.<br>
       * The location is used to model the working hours and holidays.
       */
-    Location* loc;
+    Location* loc = nullptr;
 
     /** Represents the time between this operation and a next one. */
     Duration post_time;
@@ -3014,50 +3005,46 @@ class Operation : public HasName<Operation>,
     /** Singly linked list of all resources Loaded by this operation. */
     loadlist loaddata;
 
-    /** Minimum size for operationplans.<br>
-      * The default value is 1.0
-      */
-    double size_minimum;
-
+    /** Minimum size for operationplans. */
+    double size_minimum = 1.0;
+    
     /** Minimum size for operationplans when this size varies over time.
       * If this field is specified, the size_minimum field is ignored.
       */
-    Calendar *size_minimum_calendar;
+    Calendar *size_minimum_calendar = nullptr;
 
     /** Multiple size for operationplans. */
-    double size_multiple;
+    double size_multiple = 0.0;
 
     /** Maximum size for operationplans. */
-    double size_maximum;
+    double size_maximum = DBL_MAX;
 
-    /** Cost of the operation.<br>
-      * The default value is 0.0.
-      */
-    double cost;
+    /** Cost of the operation. */
+    double cost = 0.0;
 
     /** Does the operation require serialization or not. */
-    bool hidden;
+    bool hidden = false;
 
     /** A pointer to the first operationplan of this operation.<br>
       * All operationplans of this operation are stored in a sorted
       * doubly linked list.
       */
-    OperationPlan* first_opplan;
+    OperationPlan* first_opplan = nullptr;
 
     /** A pointer to the last operationplan of this operation.<br>
       * All operationplans of this operation are stored in a sorted
       * doubly linked list.
       */
-    OperationPlan* last_opplan;
+    OperationPlan* last_opplan = nullptr;
 
     /** Priority of the operation among alternates. */
-    int priority;
+    int priority = 1;
 
     /** Effectivity of the operation. */
     DateRange effectivity;
 
     /** A pointer to the next operation producing the item. */
-    Operation* next;
+    Operation* next = nullptr;
 };
 
 
@@ -3964,31 +3951,31 @@ class ItemDistribution : public Object,
 
   private:
     /** Item being distributed. */
-    Item* it;
+    Item* it = nullptr;
 
     /** Shipping lead time. */
     Duration leadtime;
 
     /** Minimum procurement quantity. */
-    double size_minimum;
+    double size_minimum = 1.0;
 
     /** Procurement multiple quantity. */
-    double size_multiple;
+    double size_multiple = 1.0;
 
     /** Procurement cost. */
-    double cost;
+    double cost = 0.0;
 
     /** Pointer to the head of the auto-generated shipping operation list.*/
-    OperationItemDistribution* firstOperation;
+    OperationItemDistribution* firstOperation = nullptr;
 
     /** Pointer to the next ItemDistribution for the same item. */
-    ItemDistribution* next;
+    ItemDistribution* next = nullptr;
 
     /** Resource to model distribution capacity. */
-    Resource *res;
+    Resource *res = nullptr;
 
     /** Consumption on the distribution capacity resource. */
-    double res_qty;
+    double res_qty = 1.0;
 
     /** Release fence for the distribution operation. */
     Duration fence;
@@ -4018,8 +4005,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
     typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Item() : deliveryOperation(nullptr), price(0.0),
-      firstItemDistribution(nullptr), firstItemBuffer(nullptr), firstItemDemand(nullptr), firstOperation(nullptr) {}
+    explicit DECLARE_EXPORT Item() {}
 
     /** Return the selling price of the item.<br>
       * The default value is 0.0.
@@ -4141,25 +4127,25 @@ class Item : public HasHierarchy<Item>, public HasDescription
     /** This is the operation used to satisfy a demand for this item.
       * @see Demand
       */
-    Operation* deliveryOperation;
+    Operation* deliveryOperation = nullptr;
 
     /** Selling price of the item. */
-    double price;
+    double price = 0.0;
 
     /** This is a list of suppliers this item has. */
     supplierlist suppliers;
 
     /** Maintain a list of ItemDistributions. */
-    ItemDistribution *firstItemDistribution;
+    ItemDistribution *firstItemDistribution = nullptr;
 
     /** Maintain a list of buffers. */
-    Buffer *firstItemBuffer;
+    Buffer *firstItemBuffer = nullptr;
 
     /** Maintain a list of demands. */
-    Demand *firstItemDemand;
+    Demand *firstItemDemand = nullptr;
 
     /** Maintain a list of operations producing this item. */
-    Operation *firstOperation;
+    Operation *firstOperation = nullptr;
 };
 
 
@@ -4378,28 +4364,28 @@ class ItemSupplier : public Object,
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
     /** Location where the supplier item applies to. */
-    Location* loc;
+    Location* loc = nullptr;
 
     /** Procurement lead time. */
     Duration leadtime;
 
     /** Minimum procurement quantity. */
-    double size_minimum;
+    double size_minimum = 1.0;
 
     /** Procurement multiple quantity. */
-    double size_multiple;
+    double size_multiple = 1.0;
 
     /** Procurement cost. */
-    double cost;
+    double cost = 0.0;
 
     /** Pointer to the head of the auto-generated purchase operation list.*/
-    OperationItemSupplier* firstOperation;
+    OperationItemSupplier* firstOperation = nullptr;
 
     /** Resource to model supplier capacity. */
-    Resource *res;
+    Resource *res = nullptr;
 
     /** Consumption on the supplier capacity resource. */
-    double res_qty;
+    double res_qty = 1.0;
 
     /** Release fence for the purchasing operation. */
     Duration fence;
@@ -4554,10 +4540,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     typedef Association<Operation,Buffer,Flow>::ListB flowlist;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Buffer() :
-      hidden(false), producing_operation(uninitializedProducing), loc(nullptr), it(nullptr),
-      min_val(0), max_val(default_max), min_cal(nullptr), max_cal(nullptr),
-      min_interval(-1), tool(false), nextItemBuffer(nullptr) {}
+    explicit DECLARE_EXPORT Buffer() {}      
 
     static Buffer* findOrCreate(Item*, Location*);
 
@@ -4844,57 +4827,57 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     flowlist flows;
 
     /** Hide this entity from serialization or not. */
-    bool hidden;
+    bool hidden = false;
 
     /** This is the operation used to create extra material in this buffer. */
-    Operation *producing_operation;
+    Operation *producing_operation = uninitializedProducing;
 
     /** Location of this buffer.<br>
       * This field is only used as information.<br>
       * The default is nullptr.
       */
-    Location* loc;
+    Location* loc = nullptr;
 
     /** Item being stored in this buffer.<br>
       * The default value is nullptr.
       */
-    Item* it;
+    Item* it = nullptr;
 
     /** Minimum inventory target.<br>
       * If a minimum calendar is specified this field is ignored.
       * @see min_cal
       */
-    double min_val;
+    double min_val = 0.0;
 
     /** Maximum inventory target. <br>
       * If a maximum calendar is specified this field is ignored.
       * @see max_cal
       */
-    double max_val;
+    double max_val = default_max;
 
     /** Points to a calendar to store the minimum inventory level.<br>
       * The default value is nullptr, resulting in a constant minimum level
       * of 0.
       */
-    Calendar *min_cal;
+    Calendar *min_cal = nullptr;
 
     /** Points to a calendar to store the maximum inventory level.<br>
       * The default value is nullptr, resulting in a buffer without excess
       * inventory problems.
       */
-    Calendar *max_cal;
+    Calendar *max_cal = nullptr;
 
     /** Minimum time interval between purchasing operations. */
-    Duration min_interval;
+    Duration min_interval = -1;
 
     /** Maximum time interval between purchasing operations. */
     Duration max_interval;
 
     /** A flag that marks whether this buffer represents a tool or not. */
-    bool tool;
+    bool tool = false;
 
     /** Maintain a linked list of buffers per item. */
-    Buffer *nextItemBuffer;
+    Buffer *nextItemBuffer = nullptr;
 };
 
 
@@ -5164,8 +5147,7 @@ class BufferProcure : public Buffer
     static int initialize();
 
     /** Default constructor. */
-    explicit BufferProcure() : size_minimum(0), size_maximum(DBL_MAX),
-      size_multiple(0), oper(nullptr)
+    explicit BufferProcure()
     {
       initType(metadata);
     }
@@ -5343,26 +5325,21 @@ class BufferProcure : public Buffer
       */
     Duration fence;
 
-    /** Minimum purchasing quantity.<br>
-      * The default value is 0, meaning no minimum.
-      * TODO The fence should be a property of the operation, not the buffer.
-      */
-    double size_minimum;
-
+    /** Minimum purchasing quantity. */
+    double size_minimum = 0.0;
+    
     /** Maximum purchasing quantity.<br>
       * The default value is 0, meaning no maximum limit.
-      * TODO The fence should be a property of the operation, not the buffer.
       */
-    double size_maximum;
+    double size_maximum = DBL_MAX;
 
     /** Purchases are always rounded up to a multiple of this quantity.<br>
       * The default value is 0, meaning no multiple needs to be applied.
-      * TODO The fence should be a property of the operation, not the buffer.
       */
-    double size_multiple;
+    double size_multiple = 0.0;
 
     /** A pointer to the procurement operation. */
-    Operation* oper;
+    Operation* oper = nullptr;
 };
 
 
@@ -5378,8 +5355,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     virtual DECLARE_EXPORT ~Flow();
 
     /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, double q)
-      : quantity(q), search(PRIORITY)
+    explicit Flow(Operation* o, Buffer* b, double q) : quantity(q)
     {
       setOperation(o);
       setBuffer(b);
@@ -5388,8 +5364,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     }
 
     /** Constructor. */
-    explicit Flow(Operation* o, Buffer* b, double q, DateRange e)
-      : quantity(q), search(PRIORITY)
+    explicit Flow(Operation* o, Buffer* b, double q, DateRange e) : quantity(q)
     {
       setOperation(o);
       setBuffer(b);
@@ -5568,7 +5543,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   protected:
     /** Default constructor. */
-    explicit DECLARE_EXPORT Flow() : quantity(0.0), search(PRIORITY), item(nullptr)
+    explicit DECLARE_EXPORT Flow()
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -5576,15 +5551,15 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
 
   private:
     /** Quantity of the flow. */
-    double quantity;
+    double quantity = 0.0;
 
     /** Mode to select the preferred alternates. */
-    SearchMode search;
+    SearchMode search = PRIORITY;
 
     /** Item of the flow. This can be used to automatically generate the buffer
       * when and if needed.
       */
-    Item *item;
+    Item *item = nullptr;
 
     static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };
@@ -5686,13 +5661,13 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     friend class OperationPlan::FlowPlanIterator;
   private:
     /** Points to the flow instantiated by this flowplan. */
-    Flow *fl;
+    Flow *fl = nullptr;
 
     /** Points to the operationplan owning this flowplan. */
-    OperationPlan *oper;
+    OperationPlan *oper = nullptr;
 
     /** Points to the next flowplan owned by the same operationplan. */
-    FlowPlan *nextFlowPlan;
+    FlowPlan *nextFlowPlan = nullptr;
 
   public:
 
@@ -5909,7 +5884,7 @@ class SetupMatrixRule : public Object
   public:
 
     /** Default constructor. */
-    SetupMatrixRule() : cost(0), priority(0), matrix(nullptr), nextRule(nullptr), prevRule(nullptr)
+    SetupMatrixRule()
     {
       initType(metadata);
     }
@@ -6012,22 +5987,22 @@ class SetupMatrixRule : public Object
     Duration duration;
 
     /** Changeover cost. */
-    double cost;
+    double cost = 0.0;
 
     /** Priority of the rule.<br>
       * This field is the key field, i.e. within a setup matrix all rules
       * need to have different priorities.
       */
-    int priority;
+    int priority = 0;
 
     /** Pointer to the owning matrix. */
-    SetupMatrix *matrix;
+    SetupMatrix *matrix = nullptr;
 
     /** Pointer to the next rule in this matrix. */
-    SetupMatrixRule *nextRule;
+    SetupMatrixRule *nextRule = nullptr;
 
     /** Pointer to the previous rule in this matrix. */
-    SetupMatrixRule *prevRule;
+    SetupMatrixRule *prevRule = nullptr;
 
   public:
     /** @brief An iterator class to go through all rules of a setup matrix. */
@@ -6121,7 +6096,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
   public:
     /** Default constructor. */
-    explicit DECLARE_EXPORT SetupMatrix() : firstRule(nullptr) {}
+    explicit DECLARE_EXPORT SetupMatrix() {}
 
     /** Destructor. */
     DECLARE_EXPORT ~SetupMatrix();
@@ -6161,7 +6136,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
   private:
     /** Head of the list of rules. */
-    SetupMatrixRule *firstRule;
+    SetupMatrixRule *firstRule = nullptr;
 };
 
 
@@ -6263,9 +6238,7 @@ class Resource : public HasHierarchy<Resource>,
     static Duration defaultMaxEarly;
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Resource() :
-      size_max_cal(nullptr), size_max(0), loc(nullptr), cost(0.0), hidden(false),
-      maxearly(defaultMaxEarly), setupmatrix(nullptr)
+    explicit DECLARE_EXPORT Resource()
     {
       setMaximum(1);
     }
@@ -6470,7 +6443,7 @@ class Resource : public HasHierarchy<Resource>,
     }
   protected:
     /** This calendar is used to updates to the resource size. */
-    Calendar* size_max_cal;
+    Calendar* size_max_cal = nullptr;
 
     /** Stores the collection of all loadplans of this resource. */
     loadplanlist loadplans;
@@ -6479,7 +6452,7 @@ class Resource : public HasHierarchy<Resource>,
     /** The maximum resource size.<br>
       * If a calendar is specified, this field is ignored.
       */
-    double size_max;
+    double size_max = 0.0;
 
     /** This is a list of all load models that are linking this resource with
       * operations. */
@@ -6489,19 +6462,19 @@ class Resource : public HasHierarchy<Resource>,
     skilllist skills;
 
     /** A pointer to the location of the resource. */
-    Location* loc;
+    Location* loc = nullptr;
 
     /** The cost of using 1 unit of this resource for 1 hour. */
-    double cost;
+    double cost = 0.0;
 
     /** Specifies whether this resource is hidden for serialization. */
-    bool hidden;
+    bool hidden = false;
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
-    Duration maxearly;
+    Duration maxearly = defaultMaxEarly;
 
     /** Reference to the setup matrix. */
-    SetupMatrix *setupmatrix;
+    SetupMatrix *setupmatrix = nullptr;
 
     /** Current setup. */
     string setup;
@@ -6720,7 +6693,6 @@ class Load
   public:
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u)
-      : search(PRIORITY), skill(nullptr)
     {
       setOperation(o);
       setResource(r);
@@ -6731,7 +6703,6 @@ class Load
 
     /** Constructor. */
     explicit Load(Operation* o, Resource* r, double u, DateRange e)
-      : search(PRIORITY), skill(nullptr)
     {
       setOperation(o);
       setResource(r);
@@ -6853,7 +6824,7 @@ class Load
     static DECLARE_EXPORT const MetaCategory* metadata;
 
     /** Default constructor. */
-    Load() : qty(1.0), search(PRIORITY), skill(nullptr)
+    Load()
     {
       initType(metadata);
       HasLevel::triggerLazyRecomputation();
@@ -6890,16 +6861,16 @@ class Load
   private:
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
-    double qty;
+    double qty = 1.0;
 
     /** Required setup. */
     string setup;
 
     /** Mode to select the preferred alternates. */
-    SearchMode search;
+    SearchMode search = PRIORITY;
 
     /** Required skill. */
-    Skill* skill;
+    Skill* skill = nullptr;
 
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -6965,11 +6936,7 @@ class Demand
     };
 
     /** Default constructor. */
-    explicit DECLARE_EXPORT Demand() :
-      it(nullptr), loc(nullptr), oper(uninitializedDelivery), cust(nullptr), qty(0.0),
-      prio(0), maxLateness(Duration::MAX), minShipment(1), hidden(false),
-      state(OPEN), nextItemDemand(nullptr)
-      {}
+    explicit DECLARE_EXPORT Demand() {}
 
     /** Destructor.
       * Deleting the demand will also delete all delivery operation
@@ -7310,23 +7277,23 @@ class Demand
     static DECLARE_EXPORT OperationFixedTime *uninitializedDelivery;
 
     /** Requested item. */
-    Item *it;
+    Item *it = nullptr;
 
     /** Location. */
-    Location * loc;
+    Location *loc = nullptr;
 
     /** Delivery Operation. Can be left nullptr, in which case the delivery
       * operation can be specified on the requested item. */
-    Operation *oper;
+    Operation *oper = uninitializedDelivery;
 
     /** Customer creating this demand. */
-    Customer *cust;
+    Customer *cust = nullptr;
 
     /** Requested quantity. Only positive numbers are allowed. */
-    double qty;
+    double qty = 0.0;
 
     /** Priority. Lower numbers indicate a higher priority level.*/
-    int prio;
+    int prio = 0;
 
     /** Due date. */
     Date dueDate;
@@ -7334,13 +7301,13 @@ class Demand
     /** Maximum lateness allowed when planning this demand.<br>
       * The default value is Duration::MAX.
       */
-    Duration maxLateness;
+    Duration maxLateness = Duration::MAX;
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
-    double minShipment;
+    double minShipment = 1.0;
 
     /** Hide this demand or not. */
-    bool hidden;
+    bool hidden = false;
 
     /** A list of operation plans to deliver this demand. */
     OperationPlanList deli;
@@ -7350,10 +7317,10 @@ class Demand
     Problem::List constraints;
 
     /** Status of the demand. */
-    status state;
+    status state = OPEN;
 
     /** A linked list with all demands of an item. */
-    Demand* nextItemDemand;
+    Demand* nextItemDemand = nullptr;
 };
 
 
@@ -7769,9 +7736,9 @@ class Problem::iterator
   protected:
     /** A pointer to the current problem. If this pointer is nullptr, we are
       * at the end of the list. */
-    Problem* iter;
-    HasProblems* owner;
-    HasProblems::EntityIterator *eiter;
+    Problem* iter = nullptr;
+    HasProblems* owner = nullptr;
+    HasProblems::EntityIterator *eiter = nullptr;
 
   public:
     /** Creates an iterator that will loop through the problems of a
@@ -7780,16 +7747,16 @@ class Problem::iterator
       * a nullptr pointer as argument.
       */
     explicit iterator(HasProblems* o) : iter(o ? o->firstProblem : nullptr),
-      owner(o), eiter(nullptr) {}
+      owner(o) {}
 
     /** Creates an iterator that will loop through the constraints of
       * a demand.
       */
-    explicit iterator(Problem* o) : iter(o), owner(nullptr), eiter(nullptr) {}
+    explicit iterator(Problem* o) : iter(o) {}
 
     /** Creates an iterator that will loop through the problems of all
       * entities. */
-    DECLARE_EXPORT explicit iterator() : owner(nullptr)
+    DECLARE_EXPORT explicit iterator()
     {
       // Update problems
       Plannable::computeProblems();
@@ -8142,7 +8109,7 @@ class ProblemBeforeCurrent : public Problem
       return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();
     }
 
-    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o), oper(nullptr)
+    explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o)
     {
       if (add) addProblem();
     }
@@ -8167,7 +8134,8 @@ class ProblemBeforeCurrent : public Problem
 
     const DateRange getDates() const
     {
-      if (oper) return DateRange(state.start, state.end);
+      if (oper) 
+        return DateRange(state.start, state.end);
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent())
         return DateRange(o->getDates().getStart(),
@@ -8184,7 +8152,7 @@ class ProblemBeforeCurrent : public Problem
     static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
-    Operation* oper;
+    Operation* oper = nullptr;
     OperationPlanState state;
 };
 
@@ -8217,7 +8185,7 @@ class ProblemBeforeFence : public Problem
     }
 
     explicit ProblemBeforeFence(OperationPlan* o, bool add = true)
-      : Problem(o), oper(nullptr)
+      : Problem(o)
     {
       if (add) addProblem();
     }
@@ -8260,7 +8228,7 @@ class ProblemBeforeFence : public Problem
     static DECLARE_EXPORT const MetaClass* metadata;
 
   private:
-    Operation* oper;
+    Operation* oper = nullptr;
     OperationPlanState state;
 };
 
@@ -9196,7 +9164,7 @@ class CommandMoveOperationPlan : public Command
 
   private:
     /** This is a pointer to the operationplan being moved. */
-    OperationPlan *opplan;
+    OperationPlan *opplan = nullptr;
 
     /** These are the original dates of the operationplan before its move. */
     DateRange originaldates;
@@ -9205,7 +9173,7 @@ class CommandMoveOperationPlan : public Command
     double originalqty;
 
     /** A pointer to a list of suboperationplan commands. */
-    Command* firstCommand;
+    Command* firstCommand = nullptr;
 };
 
 
@@ -9360,10 +9328,10 @@ class OperationPlan::FlowPlanIterator
 {
     friend class OperationPlan;
   private:
-    FlowPlan* curflowplan;
-    FlowPlan* prevflowplan;
+    FlowPlan* curflowplan = nullptr;
+    FlowPlan* prevflowplan = nullptr;
 
-    FlowPlanIterator(FlowPlan* b) : curflowplan(b), prevflowplan(nullptr) {}
+    FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
 
   public:
     FlowPlanIterator(const FlowPlanIterator& b)
@@ -9461,9 +9429,9 @@ class OperationPlan::LoadPlanIterator
 {
     friend class OperationPlan;
   private:
-    LoadPlan* curloadplan;
-    LoadPlan* prevloadplan;
-    LoadPlanIterator(LoadPlan* b) : curloadplan(b), prevloadplan(nullptr) {}
+    LoadPlan* curloadplan = nullptr;
+    LoadPlan* prevloadplan = nullptr;
+    LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
   public:
     LoadPlanIterator(const LoadPlanIterator& b)
     {

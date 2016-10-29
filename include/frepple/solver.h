@@ -873,8 +873,7 @@ class SolverMRP : public Solver
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = nullptr, int c = 0, deque<Demand*>* d = nullptr)
           : sol(s), cluster(c), demands(d), constrainedPlanning(true),
-            logConstraints(true), planningDemand(nullptr), state(statestack),
-            prevstate(statestack-1)
+            logConstraints(true), state(statestack), prevstate(statestack-1)
         {
           operator_delete = new OperatorDelete(this);
         }
@@ -976,7 +975,7 @@ class SolverMRP : public Solver
         bool logConstraints;
 
         /** Points to the demand being planned. */
-        Demand* planningDemand;
+        Demand* planningDemand = nullptr;
 
         /** Internal flag that is set to true when solving for safety stock. */
         bool safety_stock_planning;

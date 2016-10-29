@@ -296,7 +296,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 //
 
 DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o) : opplan(o), firstCommand(nullptr)
+(OperationPlan* o) : opplan(o)
 {
   if (!o)
   {

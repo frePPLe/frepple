@@ -42,8 +42,8 @@ DECLARE_EXPORT void HasLevel::computeLevels()
 {
   computationBusy = true;
   // Get exclusive access to this function in a multi-threaded environment.
-  static Mutex levelcomputationbusy;
-  ScopeMutexLock l(levelcomputationbusy);
+  static mutex levelcomputationbusy;
+  lock_guard<mutex> l(levelcomputationbusy);
 
   // Another thread may already have computed the levels while this thread was
   // waiting for the lock. In that case the while loop will be skipped.

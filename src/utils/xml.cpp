@@ -1083,9 +1083,9 @@ void Keyword::check()
 {
   // To be thread-safe we make sure only a single thread at a time
   // can execute this check.
-  static Mutex dd;
+  static mutex dd;
   {
-    ScopeMutexLock l(dd);
+    lock_guard<mutex> l(dd);
     tagtable::const_iterator i = getTags().find(dw);
     if (i!=getTags().end() && i->second->getName()!=strName)
       throw LogicException("Tag XML-tag hash function clashes for "

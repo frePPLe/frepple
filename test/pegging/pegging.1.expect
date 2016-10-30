@@ -1,201 +1,201 @@
 Pegging of demand order 2 for item 4 with quantity 100.0:
+	0	4002	delivery 4	100.0	2009-06-18 00:00:00	2009-06-19 00:00:00
+	1	4003	make 4	3.0	2009-01-15 00:00:00	2009-01-15 00:00:00
 	2	4001	supply 4	200.0	2009-01-15 00:00:00	2009-01-15 00:00:00
-	1	4002	make 4	3.0	2009-01-15 00:00:00	2009-01-15 00:00:00
-	1	4003	make 4	97.0	2009-06-18 00:00:00	2009-06-18 00:00:00
-	0	4004	delivery 4	100.0	2009-06-18 00:00:00	2009-06-19 00:00:00
+	1	4004	make 4	97.0	2009-06-18 00:00:00	2009-06-18 00:00:00
 Pegging of demand order for item 1 with quantity 100.0:
-	1	4005	Inventory buffer 1	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
-	0	4006	delivery 1	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	0	4005	delivery 1	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	1	4006	Inventory buffer 1	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
+	0	4007	delivery 1	50.0	2009-01-10 00:00:00	2009-01-11 00:00:00
+	1	4008	make 1	50.0	2009-01-10 00:00:00	2009-01-10 00:00:00
 	2	1001	supply 1	100.0	2009-01-10 00:00:00	2009-01-10 00:00:00
-	1	4007	make 1	50.0	2009-01-10 00:00:00	2009-01-10 00:00:00
-	0	4008	delivery 1	50.0	2009-01-10 00:00:00	2009-01-11 00:00:00
+	0	4009	delivery 1	45.0	2009-01-17 00:00:00	2009-01-18 00:00:00
+	1	4010	make 1	45.0	2009-01-17 00:00:00	2009-01-17 00:00:00
 	2	1002	supply 1	90.0	2009-01-17 00:00:00	2009-01-17 00:00:00
-	1	4009	make 1	45.0	2009-01-17 00:00:00	2009-01-17 00:00:00
-	0	4010	delivery 1	45.0	2009-01-17 00:00:00	2009-01-18 00:00:00
 Pegging of demand order for item 2 with quantity 100.0:
-	1	4011	Inventory buffer 2	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
-	0	4012	delivery 2	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	0	4011	delivery 2	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	1	4012	Inventory buffer 2	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
+	0	4013	delivery 2	50.0	2009-01-10 00:00:00	2009-01-11 00:00:00
+	1	4014	make 2	50.0	2009-01-10 00:00:00	2009-01-10 00:00:00
 	2	2001	supply 2	100.0	2009-01-10 00:00:00	2009-01-10 00:00:00
-	1	4013	make 2	50.0	2009-01-10 00:00:00	2009-01-10 00:00:00
-	0	4014	delivery 2	50.0	2009-01-10 00:00:00	2009-01-11 00:00:00
+	0	4015	delivery 2	25.0	2009-01-17 00:00:00	2009-01-18 00:00:00
+	1	4016	make 2	25.0	2009-01-17 00:00:00	2009-01-17 00:00:00
 	2	2002	supply 2	50.0	2009-01-17 00:00:00	2009-01-17 00:00:00
-	1	4015	make 2	25.0	2009-01-17 00:00:00	2009-01-17 00:00:00
-	0	4016	delivery 2	25.0	2009-01-17 00:00:00	2009-01-18 00:00:00
 Pegging of demand order for item 3 with quantity 100.0:
-	1	4017	Inventory buffer 3	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
-	0	4018	delivery 3	10.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	0	4017	delivery 3	10.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	1	4018	Inventory buffer 3	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
+	0	4019	delivery 3	90.0	2009-01-15 00:00:00	2009-01-16 00:00:00
+	1	4020	make 3	90.0	2009-01-15 00:00:00	2009-01-15 00:00:00
 	2	3001	supply 3	180.0	2009-01-15 00:00:00	2009-01-15 00:00:00
-	1	4019	make 3	90.0	2009-01-15 00:00:00	2009-01-15 00:00:00
-	0	4020	delivery 3	90.0	2009-01-15 00:00:00	2009-01-16 00:00:00
 Pegging of demand order for item 4 with quantity 100.0:
-	1	4021	Inventory buffer 4	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
-	0	4022	delivery 4	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
-	2	4001	supply 4	190.0	2009-01-15 00:00:00	2009-01-15 00:00:00
-	1	4002	make 4	95.0	2009-01-15 00:00:00	2009-01-15 00:00:00
+	0	4021	delivery 4	5.0	2009-01-09 00:00:00	2009-01-10 00:00:00
+	1	4022	Inventory buffer 4	10.0	1971-01-01 00:00:00	1971-01-01 00:00:00
 	0	4023	delivery 4	95.0	2009-01-15 00:00:00	2009-01-16 00:00:00
-Upstream pegging of operationplan with id 4005 with quantity 10.0 of 'Inventory buffer 1':
-	0	4005	Inventory buffer 1	10.0
-Downstream pegging of operationplan with id 4005 with quantity 10.0 of 'Inventory buffer 1':
-	0	4005	Inventory buffer 1	10.0
-	1	4006	delivery 1	5.0
-Upstream pegging of operationplan with id 4011 with quantity 10.0 of 'Inventory buffer 2':
-	0	4011	Inventory buffer 2	10.0
-Downstream pegging of operationplan with id 4011 with quantity 10.0 of 'Inventory buffer 2':
-	0	4011	Inventory buffer 2	10.0
-	1	4012	delivery 2	5.0
-Upstream pegging of operationplan with id 4017 with quantity 10.0 of 'Inventory buffer 3':
-	0	4017	Inventory buffer 3	10.0
-Downstream pegging of operationplan with id 4017 with quantity 10.0 of 'Inventory buffer 3':
-	0	4017	Inventory buffer 3	10.0
-	1	4018	delivery 3	10.0
-Upstream pegging of operationplan with id 4021 with quantity 10.0 of 'Inventory buffer 4':
-	0	4021	Inventory buffer 4	10.0
-Downstream pegging of operationplan with id 4021 with quantity 10.0 of 'Inventory buffer 4':
-	0	4021	Inventory buffer 4	10.0
-	1	4022	delivery 4	5.0
-Upstream pegging of operationplan with id 4006 with quantity 5.0 of 'delivery 1':
-	0	4006	delivery 1	5.0
-	1	4005	Inventory buffer 1	10.0
-Downstream pegging of operationplan with id 4006 with quantity 5.0 of 'delivery 1':
-	0	4006	delivery 1	5.0
-Upstream pegging of operationplan with id 4008 with quantity 50.0 of 'delivery 1':
-	0	4008	delivery 1	50.0
-	1	4007	make 1	50.0
+	1	4003	make 4	95.0	2009-01-15 00:00:00	2009-01-15 00:00:00
+	2	4001	supply 4	190.0	2009-01-15 00:00:00	2009-01-15 00:00:00
+Upstream pegging of operationplan with id 4006 with quantity 10.0 of 'Inventory buffer 1':
+	0	4006	Inventory buffer 1	10.0
+Downstream pegging of operationplan with id 4006 with quantity 10.0 of 'Inventory buffer 1':
+	0	4006	Inventory buffer 1	10.0
+	1	4005	delivery 1	5.0
+Upstream pegging of operationplan with id 4012 with quantity 10.0 of 'Inventory buffer 2':
+	0	4012	Inventory buffer 2	10.0
+Downstream pegging of operationplan with id 4012 with quantity 10.0 of 'Inventory buffer 2':
+	0	4012	Inventory buffer 2	10.0
+	1	4011	delivery 2	5.0
+Upstream pegging of operationplan with id 4018 with quantity 10.0 of 'Inventory buffer 3':
+	0	4018	Inventory buffer 3	10.0
+Downstream pegging of operationplan with id 4018 with quantity 10.0 of 'Inventory buffer 3':
+	0	4018	Inventory buffer 3	10.0
+	1	4017	delivery 3	10.0
+Upstream pegging of operationplan with id 4022 with quantity 10.0 of 'Inventory buffer 4':
+	0	4022	Inventory buffer 4	10.0
+Downstream pegging of operationplan with id 4022 with quantity 10.0 of 'Inventory buffer 4':
+	0	4022	Inventory buffer 4	10.0
+	1	4021	delivery 4	5.0
+Upstream pegging of operationplan with id 4005 with quantity 5.0 of 'delivery 1':
+	0	4005	delivery 1	5.0
+	1	4006	Inventory buffer 1	10.0
+Downstream pegging of operationplan with id 4005 with quantity 5.0 of 'delivery 1':
+	0	4005	delivery 1	5.0
+Upstream pegging of operationplan with id 4007 with quantity 50.0 of 'delivery 1':
+	0	4007	delivery 1	50.0
+	1	4008	make 1	50.0
 	2	1001	supply 1	100.0
-Downstream pegging of operationplan with id 4008 with quantity 50.0 of 'delivery 1':
-	0	4008	delivery 1	50.0
-Upstream pegging of operationplan with id 4010 with quantity 45.0 of 'delivery 1':
-	0	4010	delivery 1	45.0
-	1	4009	make 1	45.0
+Downstream pegging of operationplan with id 4007 with quantity 50.0 of 'delivery 1':
+	0	4007	delivery 1	50.0
+Upstream pegging of operationplan with id 4009 with quantity 45.0 of 'delivery 1':
+	0	4009	delivery 1	45.0
+	1	4010	make 1	45.0
 	2	1002	supply 1	90.0
-Downstream pegging of operationplan with id 4010 with quantity 45.0 of 'delivery 1':
-	0	4010	delivery 1	45.0
-Upstream pegging of operationplan with id 4012 with quantity 5.0 of 'delivery 2':
-	0	4012	delivery 2	5.0
-	1	4011	Inventory buffer 2	10.0
-Downstream pegging of operationplan with id 4012 with quantity 5.0 of 'delivery 2':
-	0	4012	delivery 2	5.0
-Upstream pegging of operationplan with id 4014 with quantity 50.0 of 'delivery 2':
-	0	4014	delivery 2	50.0
-	1	4013	make 2	50.0
+Downstream pegging of operationplan with id 4009 with quantity 45.0 of 'delivery 1':
+	0	4009	delivery 1	45.0
+Upstream pegging of operationplan with id 4011 with quantity 5.0 of 'delivery 2':
+	0	4011	delivery 2	5.0
+	1	4012	Inventory buffer 2	10.0
+Downstream pegging of operationplan with id 4011 with quantity 5.0 of 'delivery 2':
+	0	4011	delivery 2	5.0
+Upstream pegging of operationplan with id 4013 with quantity 50.0 of 'delivery 2':
+	0	4013	delivery 2	50.0
+	1	4014	make 2	50.0
 	2	2001	supply 2	100.0
-Downstream pegging of operationplan with id 4014 with quantity 50.0 of 'delivery 2':
-	0	4014	delivery 2	50.0
-Upstream pegging of operationplan with id 4016 with quantity 25.0 of 'delivery 2':
-	0	4016	delivery 2	25.0
-	1	4015	make 2	25.0
+Downstream pegging of operationplan with id 4013 with quantity 50.0 of 'delivery 2':
+	0	4013	delivery 2	50.0
+Upstream pegging of operationplan with id 4015 with quantity 25.0 of 'delivery 2':
+	0	4015	delivery 2	25.0
+	1	4016	make 2	25.0
 	2	2002	supply 2	50.0
-Downstream pegging of operationplan with id 4016 with quantity 25.0 of 'delivery 2':
-	0	4016	delivery 2	25.0
-Upstream pegging of operationplan with id 4018 with quantity 10.0 of 'delivery 3':
-	0	4018	delivery 3	10.0
-	1	4017	Inventory buffer 3	10.0
-Downstream pegging of operationplan with id 4018 with quantity 10.0 of 'delivery 3':
-	0	4018	delivery 3	10.0
-Upstream pegging of operationplan with id 4020 with quantity 90.0 of 'delivery 3':
-	0	4020	delivery 3	90.0
-	1	4019	make 3	90.0
+Downstream pegging of operationplan with id 4015 with quantity 25.0 of 'delivery 2':
+	0	4015	delivery 2	25.0
+Upstream pegging of operationplan with id 4017 with quantity 10.0 of 'delivery 3':
+	0	4017	delivery 3	10.0
+	1	4018	Inventory buffer 3	10.0
+Downstream pegging of operationplan with id 4017 with quantity 10.0 of 'delivery 3':
+	0	4017	delivery 3	10.0
+Upstream pegging of operationplan with id 4019 with quantity 90.0 of 'delivery 3':
+	0	4019	delivery 3	90.0
+	1	4020	make 3	90.0
 	2	3001	supply 3	180.0
-Downstream pegging of operationplan with id 4020 with quantity 90.0 of 'delivery 3':
-	0	4020	delivery 3	90.0
-Upstream pegging of operationplan with id 4022 with quantity 5.0 of 'delivery 4':
-	0	4022	delivery 4	5.0
-	1	4021	Inventory buffer 4	10.0
-Downstream pegging of operationplan with id 4022 with quantity 5.0 of 'delivery 4':
-	0	4022	delivery 4	5.0
+Downstream pegging of operationplan with id 4019 with quantity 90.0 of 'delivery 3':
+	0	4019	delivery 3	90.0
+Upstream pegging of operationplan with id 4021 with quantity 5.0 of 'delivery 4':
+	0	4021	delivery 4	5.0
+	1	4022	Inventory buffer 4	10.0
+Downstream pegging of operationplan with id 4021 with quantity 5.0 of 'delivery 4':
+	0	4021	delivery 4	5.0
 Upstream pegging of operationplan with id 4023 with quantity 95.0 of 'delivery 4':
 	0	4023	delivery 4	95.0
-	1	4002	make 4	95.0
+	1	4003	make 4	95.0
 	2	4001	supply 4	190.0
 Downstream pegging of operationplan with id 4023 with quantity 95.0 of 'delivery 4':
 	0	4023	delivery 4	95.0
-Upstream pegging of operationplan with id 4004 with quantity 100.0 of 'delivery 4':
-	0	4004	delivery 4	100.0
-	1	4002	make 4	3.0
+Upstream pegging of operationplan with id 4002 with quantity 100.0 of 'delivery 4':
+	0	4002	delivery 4	100.0
+	1	4003	make 4	3.0
 	2	4001	supply 4	6.0
-	1	4003	make 4	97.0
+	1	4004	make 4	97.0
 	2	4001	supply 4	194.0
-Downstream pegging of operationplan with id 4004 with quantity 100.0 of 'delivery 4':
-	0	4004	delivery 4	100.0
-Upstream pegging of operationplan with id 4007 with quantity 50.0 of 'make 1':
-	0	4007	make 1	50.0
+Downstream pegging of operationplan with id 4002 with quantity 100.0 of 'delivery 4':
+	0	4002	delivery 4	100.0
+Upstream pegging of operationplan with id 4008 with quantity 50.0 of 'make 1':
+	0	4008	make 1	50.0
 	1	1001	supply 1	100.0
-Downstream pegging of operationplan with id 4007 with quantity 50.0 of 'make 1':
-	0	4007	make 1	50.0
-	1	4008	delivery 1	50.0
-Upstream pegging of operationplan with id 4009 with quantity 47.0 of 'make 1':
-	0	4009	make 1	47.0
+Downstream pegging of operationplan with id 4008 with quantity 50.0 of 'make 1':
+	0	4008	make 1	50.0
+	1	4007	delivery 1	50.0
+Upstream pegging of operationplan with id 4010 with quantity 47.0 of 'make 1':
+	0	4010	make 1	47.0
 	1	1002	supply 1	94.0
-Downstream pegging of operationplan with id 4009 with quantity 47.0 of 'make 1':
-	0	4009	make 1	47.0
-	1	4010	delivery 1	45.0
-Upstream pegging of operationplan with id 4013 with quantity 50.0 of 'make 2':
-	0	4013	make 2	50.0
+Downstream pegging of operationplan with id 4010 with quantity 47.0 of 'make 1':
+	0	4010	make 1	47.0
+	1	4009	delivery 1	45.0
+Upstream pegging of operationplan with id 4014 with quantity 50.0 of 'make 2':
+	0	4014	make 2	50.0
 	1	2001	supply 2	100.0
-Downstream pegging of operationplan with id 4013 with quantity 50.0 of 'make 2':
-	0	4013	make 2	50.0
-	1	4014	delivery 2	50.0
-Upstream pegging of operationplan with id 4015 with quantity 25.0 of 'make 2':
-	0	4015	make 2	25.0
+Downstream pegging of operationplan with id 4014 with quantity 50.0 of 'make 2':
+	0	4014	make 2	50.0
+	1	4013	delivery 2	50.0
+Upstream pegging of operationplan with id 4016 with quantity 25.0 of 'make 2':
+	0	4016	make 2	25.0
 	1	2002	supply 2	50.0
-Downstream pegging of operationplan with id 4015 with quantity 25.0 of 'make 2':
-	0	4015	make 2	25.0
-	1	4016	delivery 2	25.0
-Upstream pegging of operationplan with id 4019 with quantity 92.0 of 'make 3':
-	0	4019	make 3	92.0
+Downstream pegging of operationplan with id 4016 with quantity 25.0 of 'make 2':
+	0	4016	make 2	25.0
+	1	4015	delivery 2	25.0
+Upstream pegging of operationplan with id 4020 with quantity 92.0 of 'make 3':
+	0	4020	make 3	92.0
 	1	3001	supply 3	184.0
-Downstream pegging of operationplan with id 4019 with quantity 92.0 of 'make 3':
-	0	4019	make 3	92.0
-	1	4020	delivery 3	90.0
-Upstream pegging of operationplan with id 4002 with quantity 98.0 of 'make 4':
-	0	4002	make 4	98.0
+Downstream pegging of operationplan with id 4020 with quantity 92.0 of 'make 3':
+	0	4020	make 3	92.0
+	1	4019	delivery 3	90.0
+Upstream pegging of operationplan with id 4003 with quantity 98.0 of 'make 4':
+	0	4003	make 4	98.0
 	1	4001	supply 4	196.0
-Downstream pegging of operationplan with id 4002 with quantity 98.0 of 'make 4':
-	0	4002	make 4	98.0
-	1	4004	delivery 4	3.0
+Downstream pegging of operationplan with id 4003 with quantity 98.0 of 'make 4':
+	0	4003	make 4	98.0
+	1	4002	delivery 4	3.0
 	1	4023	delivery 4	95.0
-Upstream pegging of operationplan with id 4003 with quantity 100.0 of 'make 4':
-	0	4003	make 4	100.0
+Upstream pegging of operationplan with id 4004 with quantity 100.0 of 'make 4':
+	0	4004	make 4	100.0
 	1	4001	supply 4	200.0
-Downstream pegging of operationplan with id 4003 with quantity 100.0 of 'make 4':
-	0	4003	make 4	100.0
-	1	4004	delivery 4	97.0
+Downstream pegging of operationplan with id 4004 with quantity 100.0 of 'make 4':
+	0	4004	make 4	100.0
+	1	4002	delivery 4	97.0
 Upstream pegging of operationplan with id 1001 with quantity 100.0 of 'supply 1':
 	0	1001	supply 1	100.0
 Downstream pegging of operationplan with id 1001 with quantity 100.0 of 'supply 1':
 	0	1001	supply 1	100.0
-	1	4007	make 1	50.0
-	2	4008	delivery 1	50.0
+	1	4008	make 1	50.0
+	2	4007	delivery 1	50.0
 Upstream pegging of operationplan with id 1002 with quantity 200.0 of 'supply 1':
 	0	1002	supply 1	200.0
 Downstream pegging of operationplan with id 1002 with quantity 200.0 of 'supply 1':
 	0	1002	supply 1	200.0
-	1	4009	make 1	47.0
-	2	4010	delivery 1	45.0
+	1	4010	make 1	47.0
+	2	4009	delivery 1	45.0
 Upstream pegging of operationplan with id 2001 with quantity 100.0 of 'supply 2':
 	0	2001	supply 2	100.0
 Downstream pegging of operationplan with id 2001 with quantity 100.0 of 'supply 2':
 	0	2001	supply 2	100.0
-	1	4013	make 2	50.0
-	2	4014	delivery 2	50.0
+	1	4014	make 2	50.0
+	2	4013	delivery 2	50.0
 Upstream pegging of operationplan with id 2002 with quantity 50.0 of 'supply 2':
 	0	2002	supply 2	50.0
 Downstream pegging of operationplan with id 2002 with quantity 50.0 of 'supply 2':
 	0	2002	supply 2	50.0
-	1	4015	make 2	25.0
-	2	4016	delivery 2	25.0
+	1	4016	make 2	25.0
+	2	4015	delivery 2	25.0
 Upstream pegging of operationplan with id 3001 with quantity 1000.0 of 'supply 3':
 	0	3001	supply 3	1000.0
 Downstream pegging of operationplan with id 3001 with quantity 1000.0 of 'supply 3':
 	0	3001	supply 3	1000.0
-	1	4019	make 3	92.0
-	2	4020	delivery 3	90.0
+	1	4020	make 3	92.0
+	2	4019	delivery 3	90.0
 Upstream pegging of operationplan with id 4001 with quantity 1000.0 of 'supply 4':
 	0	4001	supply 4	1000.0
 Downstream pegging of operationplan with id 4001 with quantity 1000.0 of 'supply 4':
 	0	4001	supply 4	1000.0
-	1	4003	make 4	100.0
-	2	4004	delivery 4	97.0
-	1	4002	make 4	98.0
-	2	4004	delivery 4	3.0
+	1	4004	make 4	100.0
+	2	4002	delivery 4	97.0
+	1	4003	make 4	98.0
+	2	4002	delivery 4	3.0
 	2	4023	delivery 4	95.0

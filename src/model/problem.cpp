@@ -166,9 +166,9 @@ DECLARE_EXPORT void Plannable::computeProblems()
 
   computationBusy = true;
   // Get exclusive access to this function in a multi-threaded environment.
-  static Mutex computationbusy;
+  static mutex computationbusy;
   {
-    ScopeMutexLock l(computationbusy);
+    lock_guard<mutex> l(computationbusy);
 
     // Another thread may already have computed it while this thread was
     // waiting for the lock

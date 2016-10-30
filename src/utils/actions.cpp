@@ -527,7 +527,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
 
 DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable()
 {
-  ScopeMutexLock l(lock);
+  lock_guard<mutex> l(lock);
   if (callables.empty())
   {
     // No more functions

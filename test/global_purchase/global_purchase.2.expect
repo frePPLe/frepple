@@ -64,7 +64,6 @@ PROBLEM	before current	Operation 'Purchase item B @ DC2 from Supplier 1' planned
 PROBLEM	before current	Operation 'Purchase item B @ WH6 from Supplier 1' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item A from item A @ DC2 to item A @ WH3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item A from item A @ DC2 to item A @ WH4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
-PROBLEM	before current	Operation 'Ship item B @ WH4' planned in the past	2015-12-01T00:00:00 / 2015-12-01T00:00:00
 PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH3' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Ship item B from item B @ DC2 to item B @ WH4' planned in the past	2015-11-21T00:00:00 / 2015-12-01T00:00:00

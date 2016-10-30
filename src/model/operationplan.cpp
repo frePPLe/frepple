@@ -582,11 +582,12 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 
 DECLARE_EXPORT bool OperationPlan::assignIdentifier()
 {
-  static Mutex onlyOne;
-  ScopeMutexLock l(onlyOne);  // Need to assure that ids are unique!
-  if (id && id!=ULONG_MAX)
+  // Need to assure that ids are unique!
+  static mutex onlyOne;  
+  if (id && id != ULONG_MAX)
   {
     // An identifier was read in from input
+    lock_guard<mutex> l(onlyOne);  
     if (id < counterMin)
     {
       // The assigned id potentially clashes with an existing operationplan.
@@ -601,9 +602,11 @@ DECLARE_EXPORT bool OperationPlan::assignIdentifier()
     else
       counterMin = id+1;
   }
-  else
+  else {
     // Fresh operationplan with blank id
+    lock_guard<mutex> l(onlyOne);  // Need to assure that ids are unique!
     id = counterMin++;
+  }
 
   // Check whether the counter is still okay
   if (counterMin >= ULONG_MAX)

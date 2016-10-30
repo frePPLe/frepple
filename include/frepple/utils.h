@@ -82,6 +82,8 @@ typedef int Py_ssize_t;
 #include <assert.h>
 #include <typeinfo>
 #include <float.h>
+#include <mutex>
+#include <condition_variable>
 #endif
 
 // We want to use singly linked lists, but these are not part of the C++
@@ -4049,154 +4051,6 @@ class PythonIterator : public Object
 //
 
 
-/** @brief This class is a wrapper around platform specific mutex functions. */
-class Mutex: public NonCopyable
-{
-  friend class ConditionVariable;
-  public:
-#if defined(HAVE_PTHREAD_H)
-    // Pthreads
-    Mutex()
-    {
-      pthread_mutex_init(&mtx, 0);
-    }
-
-    ~Mutex()
-    {
-      pthread_mutex_destroy(&mtx);
-    }
-
-    void lock()
-    {
-      pthread_mutex_lock(&mtx);
-    }
-
-    void unlock()
-    {
-      pthread_mutex_unlock(&mtx);
-    }
-  private:
-    pthread_mutex_t mtx;
-#else
-    // Windows critical section
-    Mutex()
-    {
-      InitializeCriticalSection(&critsec);
-    }
-
-    ~Mutex()
-    {
-      DeleteCriticalSection(&critsec);
-    }
-
-    void lock()
-    {
-      EnterCriticalSection(&critsec);
-    }
-
-    void unlock()
-    {
-      LeaveCriticalSection(&critsec);
-    }
-  private:
-    CRITICAL_SECTION critsec;
-#endif
-};
-
-
-/** @brief This is a convenience class that makes it easy (and
-  * exception-safe) to lock a mutex in a scope.
-  */
-class ScopeMutexLock: public NonCopyable
-{
-  protected:
-    Mutex& mtx;
-
-  public:
-    ScopeMutexLock(Mutex& imtx): mtx(imtx)
-    {
-      mtx.lock ();
-    }
-
-    ~ScopeMutexLock()
-    {
-      mtx.unlock();
-    }
-};
-
-
-/** @brief This class is a wrapper around the platform specific
-  * implementation condition variable.
-  *
-  * A condition variable is a mechanism to synchronize execution threads.
-  * It is used to block one or more threads until another thread both
-  * modifies a shared variable (the condition), and notifies the condition
-  * variable.
-  *
-  * The typical usage will follow this pattern:
-  *   - For the thread that is waiting for a condition:
-  *        mutex.lock();
-  *        while (condition is not true)
-  *          condition_variable.wait(mutex);
-  *        update the condition;
-  *        mutex.unlock();
-  *   - For the thread updating the condition:
-  *        mutex.lock();
-  *        update condition;
-  *        waiting.signal();
-  *        mutex.unlock();
-  *   - The wait method is used to delay the thread.
-  *   - The signal method is used to flag all waiting threads of a condition
-  *     change.
-  *   - A mutex is required to control single-threaded access to the condition.
-  */
-class ConditionVariable: public NonCopyable
-{
-  public:
-#if defined(HAVE_PTHREAD_H)
-    // Pthreads
-    ConditionVariable()
-    {
-      pthread_cond_init (&cond, nullptr);
-    }
-
-    ~ConditionVariable()
-    {
-      pthread_cond_destroy(&cond);
-    }
-
-    void wait(Mutex& x)
-    {
-      pthread_cond_wait(&cond, &(x.mtx));
-    }
-
-    void signal()
-    {
-      pthread_cond_signal(&cond);
-    }
-  private:
-    pthread_cond_t cond;
-#else
-    // Windows
-    ConditionVariable() {}
-
-    ~ConditionVariable() {}
-
-    void wait(Mutex& x)
-    {
-      SleepConditionVariableCS(&cond, &x.critsec, INFINITE);
-    }
-
-    void signal()
-    {
-      WakeAllConditionVariable(&cond);
-    }
-  private:
-    CONDITION_VARIABLE cond;
-#endif
-};
-
-
 /** @brief This class supports parallel execution of a number of functions.
   *
   * Currently Pthreads and Windows threads are supported as the implementation
@@ -4257,7 +4111,7 @@ class ThreadGroup : public NonCopyable
       * execution.
       * @see selectCommand
       */
-    Mutex lock;
+    mutex lock;
 
     /** Specifies the maximum number of commands in the list that can be
       * executed in parallel.

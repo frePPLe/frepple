@@ -25,6 +25,7 @@ namespace frepple
 {
 
 DECLARE_EXPORT const MetaCategory* PeggingIterator::metadata;
+DECLARE_EXPORT const MetaCategory* PeggingDemandIterator::metadata;
 
 
 int PeggingIterator::initialize()
@@ -36,10 +37,27 @@ int PeggingIterator::initialize()
   // Initialize the Python type
   PythonType& x = PythonExtension<PeggingIterator>::getPythonType();
   x.setName("peggingIterator");
-  x.setDoc("frePPLe iterator for demand pegging");
+  x.setDoc("frePPLe iterator for operationplan pegging");
   x.supportgetattro();
   x.supportiter();
   const_cast<MetaCategory*>(PeggingIterator::metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+int PeggingDemandIterator::initialize()
+{
+  // Initialize the pegging metadata
+  PeggingDemandIterator::metadata = MetaCategory::registerCategory<PeggingDemandIterator>("demandpegging", "demandpeggings");
+  registerFields<PeggingDemandIterator>(const_cast<MetaCategory*>(metadata));
+
+  // Initialize the Python type
+  PythonType& x = PythonExtension<PeggingDemandIterator>::getPythonType();
+  x.setName("peggingDemandIterator");
+  x.setDoc("frePPLe iterator for demand pegging");
+  x.supportgetattro();
+  x.supportiter();
+  const_cast<MetaCategory*>(PeggingDemandIterator::metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
@@ -282,5 +300,49 @@ DECLARE_EXPORT void PeggingIterator::updateStack
     states.push_back( state(op, qty, o, lvl) );
 }
 
+
+PeggingDemandIterator::PeggingDemandIterator(const PeggingDemandIterator& c)
+{
+  initType(metadata);
+  dmds.insert(c.dmds.begin(), c.dmds.end());
+}
+
+
+PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan)
+{
+  initType(metadata);
+  // Walk over all downstream operationplans till demands are found
+  for (PeggingIterator p(opplan); p; ++p)
+  {
+    const OperationPlan* m = p.getOperationPlan();
+    if (!m) 
+      continue;
+    Demand* dmd = m->getTopOwner()->getDemand();
+    if (!dmd || p.getQuantity() < ROUNDING_ERROR)
+      continue;
+    map<Demand*, double>::iterator i = dmds.lower_bound(dmd);
+    if (i != dmds.end() && i->first == dmd)
+      // Pegging to the same demand multiple times
+      i->second += p.getQuantity();
+    else
+      // Adding demand 
+      dmds.insert(i, make_pair(dmd, p.getQuantity()));
+  }
+}
+
+
+PeggingDemandIterator* PeggingDemandIterator::next()
+{
+  if (first)
+  {
+    iter = dmds.begin();
+    first = false;
+  }
+  else
+    ++iter;
+  if (iter == dmds.end())
+    return nullptr;
+  return this;
+}
 
 } // End namespace

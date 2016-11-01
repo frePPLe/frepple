@@ -132,8 +132,9 @@ class Tags
     static DECLARE_EXPORT const Keyword origin;
     static DECLARE_EXPORT const Keyword owner;
     static DECLARE_EXPORT const Keyword pegging;
-    static DECLARE_EXPORT const Keyword pegging_upstream;
+    static DECLARE_EXPORT const Keyword pegging_demand;
     static DECLARE_EXPORT const Keyword pegging_downstream;
+    static DECLARE_EXPORT const Keyword pegging_upstream;    
     static DECLARE_EXPORT const Keyword percent;
     static DECLARE_EXPORT const Keyword plan;
     static DECLARE_EXPORT const Keyword planned_quantity;

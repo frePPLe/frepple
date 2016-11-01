@@ -1838,7 +1838,7 @@ class MetaClass : public NonCopyable
     bool parent = false;
 
     /** A flag whether this is the default class in its category. */
-    bool isDefault = false;
+    bool isDefault = true;
 
     /** Destructor. */
     virtual ~MetaClass() {}

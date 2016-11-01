@@ -1568,15 +1568,22 @@ PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
 }
 
 
-DECLARE_EXPORT PeggingIterator OperationPlan::getPeggingDownstream() const
+PeggingIterator OperationPlan::getPeggingDownstream() const
 {
   return PeggingIterator(this, true);
 }
 
 
-DECLARE_EXPORT PeggingIterator OperationPlan::getPeggingUpstream() const
+PeggingIterator OperationPlan::getPeggingUpstream() const
 {
   return PeggingIterator(this, false);
 }
+
+
+PeggingDemandIterator OperationPlan::getPeggingDemand() const
+{
+  return PeggingDemandIterator(this);
+}
+
 
 } // end namespace

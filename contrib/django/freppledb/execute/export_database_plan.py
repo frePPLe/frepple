@@ -89,12 +89,7 @@ class export:
 
 
   def getPegging(self, opplan):
-    dmds = {}
-    for j in opplan.pegging_downstream:
-      if j.operationplan.demand:
-        n = j.operationplan.demand.name
-        dmds[n] = dmds.get(n, 0.0) + j.quantity
-    return json.dumps(dmds)
+    return json.dumps({ j.demand.name: j.quantity for j in opplan.pegging_demand })
 
 
   def truncate(self, process):

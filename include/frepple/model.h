@@ -78,6 +78,7 @@ class Customer;
 class HasProblems;
 class Solvable;
 class PeggingIterator;
+class PeggingDemandIterator;
 class Skill;
 class ResourceSkill;
 class Supplier;
@@ -2272,9 +2273,11 @@ class OperationPlan
 
     inline OperationPlan::iterator getSubOperationPlans() const;
 
-    DECLARE_EXPORT PeggingIterator getPeggingDownstream() const;
+    PeggingIterator getPeggingDownstream() const;
 
-    DECLARE_EXPORT PeggingIterator getPeggingUpstream() const;
+    PeggingIterator getPeggingUpstream() const;
+
+    PeggingDemandIterator getPeggingDemand() const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -2306,6 +2309,7 @@ class OperationPlan
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, PLAN);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
+      m->addIteratorField<Cls, PeggingDemandIterator, PeggingDemandIterator>(Tags::pegging_demand, Tags::pegging, &Cls::getPeggingDemand, PLAN);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::ordertype, &Cls::getOrderType, &Cls::setOrderType, "MO");
@@ -9265,7 +9269,7 @@ class PeggingIterator : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, PLAN + WRITE_FULL);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, PLAN + WRITE_FULL + WRITE_HIDDEN);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, nullptr, MANDATORY);
       m->addShortField<Cls>(Tags::level, &Cls::getLevel, nullptr, MANDATORY);
     }
@@ -9317,6 +9321,49 @@ class PeggingIterator : public Object
     /** Extra data structure to avoid duplicate operationplan ids in the list. */
     bool second_pass;
     deque<state> states_sorted;
+};
+
+
+/** An iterator that shows all demands linked to an operationplan. */
+class PeggingDemandIterator : public Object
+{
+  private:
+    typedef map<Demand*, double> demandmap;
+    demandmap dmds;
+    demandmap::const_iterator iter;
+    bool first = true;
+
+  public:
+    /** Constructor. */
+    PeggingDemandIterator(const OperationPlan*);
+
+    /** Copy constructor. */
+    PeggingDemandIterator(const PeggingDemandIterator&);
+
+    /** Advance to the next demand. */
+    PeggingDemandIterator* next();
+
+    /** Initialize the class. */
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static DECLARE_EXPORT const MetaCategory* metadata;
+
+    Demand* getDemand() const
+    {
+      return iter != dmds.end() ? iter->first : nullptr;
+    }
+
+    double getQuantity() const
+    {
+      return iter != dmds.end() ? iter->second : 0.0;
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, nullptr, MANDATORY + WRITE_FULL + WRITE_HIDDEN);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, nullptr, MANDATORY);
+    }
 };
 
 

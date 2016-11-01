@@ -168,8 +168,10 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
       throw DataException("Missing demand field");
     if (val)
     {
-      dmdval = val->getObject();
-      if (dmdval && dmdval->getType().category != Demand::metadata)
+      dmdval = val->getObject();      
+      if (!dmdval)
+        throw DataException("Empty demand field");
+      else if (dmdval->getType().category != Demand::metadata)
         throw DataException("Demand field on operationplan must be of type demand");
     }
     val = in.get(Tags::item);

@@ -767,7 +767,7 @@ class loadData(object):
         elif i[7] == 'DLVR':
           cnt_dlvr += 1
           opplan = frepple.operationplan(
-            location=frepple.location(name=i[9]) if i[9] else None,
+            location=frepple.location(name=i[12]) if i[12] else None,
             id=i[1], reference=i[12], ordertype=i[7],
             item=frepple.item(name=i[11]) if i[11] else None,
             origin=frepple.location(name=i[8]) if i[8] else None,

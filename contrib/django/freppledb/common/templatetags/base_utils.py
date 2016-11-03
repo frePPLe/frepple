@@ -276,6 +276,17 @@ def version():
 version.is_safe = True
 
 
+@register.simple_tag
+def version_short():
+  '''
+  A simple tag returning the version of the frePPLe application.
+  '''
+  versionnumber = VERSION.split('.', 2)
+  return versionnumber[0]+"."+versionnumber[1]
+
+version_short.is_safe = True
+
+
 #
 # A tag to mark whether the password of a user is correct.
 #

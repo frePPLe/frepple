@@ -60,7 +60,7 @@ class TaskReport(GridReport):
   editable = False
   height = 150
   default_sort = (0, 'desc')
-  help_url = 'user-guide/execute.html'
+  help_url = 'user-guide/user-interface/execute.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),

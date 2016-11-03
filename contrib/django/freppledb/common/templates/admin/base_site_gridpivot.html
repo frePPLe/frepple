@@ -154,7 +154,7 @@ $(function() {
 		    <span data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 		  </button>
   {% if reportclass.help_url %}
-  <button class="btn btn-xs btn-primary" onclick="window.open('https://frepple.com/docs/{% version %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  <button class="btn btn-xs btn-primary" onclick="window.open('https://frepple.com/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
   </button>{% endif %}
 	</div>

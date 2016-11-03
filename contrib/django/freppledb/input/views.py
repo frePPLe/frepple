@@ -870,7 +870,7 @@ class DemandList(GridReport):
   basequeryset = Demand.objects.all()
   model = Demand
   frozenColumns = 1
-  help_url = 'user-guide/modeling-wizard/master-data/demands.html'
+  help_url = 'user-guide/modeling-wizard/master-data/sales-orders.html'
   
   rows = (
     #. Translators: Translation included with Django

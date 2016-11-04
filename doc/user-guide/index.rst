@@ -8,7 +8,6 @@ interface.
 .. toctree::
    :maxdepth: 3
 
-   overview/index
    user-interface/index
    modeling-wizard/index
    model-reference/index

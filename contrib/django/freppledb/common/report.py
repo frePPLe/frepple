@@ -85,6 +85,63 @@ logger = logging.getLogger(__name__)
 EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment, Wizard)
 
 
+def getHorizon(request, future_only=False):
+  # Pick up the current date
+  try:
+    current = datetime.strptime(
+      Parameter.objects.using(request.database).get(name="currentdate").value,
+      "%Y-%m-%d %H:%M:%S"
+      )
+  except:
+    current = datetime.now()
+    current = current.replace(microsecond=0)
+
+  if request.user.horizontype:
+    # First type: Horizon relative to the current date
+    start = current.replace(hour=0, minute=0, second=0, microsecond=0)
+    if request.user.horizonunit == 'day':
+      end = start + timedelta(days=request.user.horizonlength or 60)
+      end = end.replace(hour=0, minute=0, second=0)
+    elif request.user.horizonunit == 'week':
+      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=request.user.horizonlength or 8, days=7 - start.weekday())
+    else:
+      y = start.year
+      m = start.month + (request.user.horizonlength or 2) + (start.day > 1 and 1 or 0)
+      while m > 12:
+        y += 1
+        m -= 12
+      end = datetime(y, m, 1)
+  else:
+    # Second type: Absolute start and end dates given
+    start = request.user.horizonstart
+    if not start or (future_only and start < current):
+      start = current.replace(hour=0, minute=0, second=0, microsecond=0)
+    end = request.user.horizonend
+    if end:
+      if end < start:
+        if future_only and end < current:
+          # Special case to assure a minimum number of future buckets
+          if request.user.horizonunit == 'day':
+            end = start + timedelta(days=request.user.horizonlength or 60)
+          elif request.user.horizonunit == 'week':
+            end = start + timedelta(weeks=request.user.horizonlength or 8)
+          else:
+            end = start + timedelta(weeks=request.user.horizonlength or 8)
+        else:
+          # Swap start and end to assure the start is before the end
+          tmp = start
+          start = end
+          end = tmp
+    else:
+      if request.user.horizonunit == 'day':
+        end = start + timedelta(days=request.user.horizonlength or 60)
+      elif request.user.horizonunit == 'week':
+        end = start + timedelta(weeks=request.user.horizonlength or 8)
+      else:
+        end = start + timedelta(weeks=request.user.horizonlength or 8)
+  return (current, start, end)
+
+
 class GridField(object):
   '''
   Base field for columns in grid views.
@@ -412,58 +469,8 @@ class GridReport(View):
       except:
         bucket = None
 
-    # Pick up the current date
-    try:
-      current = datetime.strptime(
-        Parameter.objects.using(request.database).get(name="currentdate").value,
-        "%Y-%m-%d %H:%M:%S"
-        )
-    except:
-      current = datetime.now()
-      current = current.replace(microsecond=0)
-
-    if pref.horizontype:
-      start = current.replace(hour=0, minute=0, second=0, microsecond=0)
-      if pref.horizonunit == 'day':
-        end = start + timedelta(days=pref.horizonlength or 60)
-        end = end.replace(hour=0, minute=0, second=0)
-      elif pref.horizonunit == 'week':
-        end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=pref.horizonlength or 8, days=7 - start.weekday())
-      else:
-        y = start.year
-        m = start.month + (pref.horizonlength or 2) + (start.day > 1 and 1 or 0)
-        while m > 12:
-          y += 1
-          m -= 12
-        end = datetime(y, m, 1)
-    else:
-      # Second type: Absolute start and end dates given
-      start = pref.horizonstart
-      if not start or (reportclass.showOnlyFutureTimeBuckets and start < current):
-        start = current.replace(hour=0, minute=0, second=0, microsecond=0)
-      end = pref.horizonend
-      if end:
-        if end < start:
-          if reportclass.showOnlyFutureTimeBuckets and end < current:
-            # Special case to assure a minimum number of future buckets
-            if pref.horizonunit == 'day':
-              end = start + timedelta(days=pref.horizonlength or 60)
-            elif pref.horizonunit == 'week':
-              end = start + timedelta(weeks=pref.horizonlength or 8)
-            else:
-              end = start + timedelta(weeks=pref.horizonlength or 8)
-          else:
-            # Swap start and end to assure the start is before the end
-            tmp = start
-            start = end
-            end = tmp
-      else:
-        if pref.horizonunit == 'day':
-          end = start + timedelta(days=pref.horizonlength or 60)
-        elif pref.horizonunit == 'week':
-          end = start + timedelta(weeks=pref.horizonlength or 8)
-        else:
-          end = start + timedelta(weeks=pref.horizonlength or 8)
+    # Get the report horizon
+    current, start, end = getHorizon(request, future_only=reportclass.showOnlyFutureTimeBuckets)
 
     # Filter based on the start and end date
     request.current_date = str(current)

@@ -482,7 +482,7 @@ DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Intro
     logger << endl << "Size information of frePPLe " << PACKAGE_VERSION
-        << " (" << __DATE__ << ")" << endl << endl;
+      << " (" << __DATE__ << ")" << endl << endl;
 
     // Print loaded modules
     Environment::printModules();

@@ -39,7 +39,7 @@ namespace frepple
 class OperatorDelete : public Solver
 {
   public:
-	/** Constructor. */
+    /** Constructor. */
     DECLARE_EXPORT OperatorDelete(CommandManager* c = nullptr) : cmds(c)
     {
       initType(metadata);

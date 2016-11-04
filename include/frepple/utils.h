@@ -1688,11 +1688,11 @@ enum FieldCategory
   PARENT = 64,           // If set, the constructor of the child object
                          // will get a pointer to the parent as extra
                          // argument.
-  WRITE_FULL = 128,      // Write this field in full, even at deeper
-                         // indentation levels.
-  WRITE_HIDDEN = 256,    // Force serializing of hidden objects
-  WRITE_REPEAT = 512     // Force writing an object again, even if already 
-                         // written as parent.
+  WRITE_OBJECT = 128,    // Force writing this field as an object
+  WRITE_REFERENCE = 256, // Force writing this field as a reference
+  WRITE_HIDDEN = 512,    // Force writing hidden fields
+  WRITE_REPEAT = 1024    // Force writing an object again, even if already
+                         // written as parent
 };
 
 
@@ -2462,16 +2462,21 @@ class Serializer
     /** Default constructor. */
     Serializer() { m_fp = &logger; }
 
-    /** Force writing only references for nested objects. */
-    void setReferencesOnly(bool b)
+    /** Update the flag to write references or not.
+      * The value of the flag before the call is returned. This is useful
+      * to restore the previous state later on.
+      */
+    bool setSaveReferences(bool b)
     {
-      numParents = b ? 2 : 0;
+      bool tmp = writeReference;
+      writeReference = b;
+      return tmp;
     }
 
     /** Returns whether we write only references for nested objects or not. */
-    bool getReferencesOnly() const
+    bool getSaveReferences() const
     {
-      return numParents>0;
+      return writeReference;
     }
 
     bool getWriteHidden() const
@@ -2479,9 +2484,15 @@ class Serializer
       return writeHidden;
     }
 
-    void setWriteHidden(bool b)
+    /** Update the flag to write hidden objects or not.
+      * The value of the flag before the call is returned. This is useful
+      * to restore the previous state later on.
+      */
+    bool setWriteHidden(bool b)
     {
+      bool tmp = writeHidden;
       writeHidden = b;
+      return b;
     }
 
     /** Start writing a new list. */
@@ -2628,25 +2639,12 @@ class Serializer
       return skipFooter;
     }
 
-    inline void incParents()
-    {
-      ++numParents;
-    }
-
-    inline void decParents()
-    {
-      --numParents;
-    }
-
   protected:
     /** Output stream. */
     ostream* m_fp;
 
     /** Keep track of the number of objects being stored. */
     unsigned long numObjects = 0;
-
-    /** Keep track of the number of objects currently in the save stack. */
-    unsigned int numParents = 0;
 
     /** This stores a pointer to the object that is currently being saved. */
     const Object *currentObject = nullptr;
@@ -2669,6 +2667,9 @@ class Serializer
 
     /** Flag to mark whether hidden objects need to be written as well. */
     bool writeHidden = false;
+
+    /** Flag to mark whether to save objects or their reference. */
+    bool writeReference = false;
 };
 
 
@@ -5528,6 +5529,10 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         }
       }
 
+      // No factory method is available for this object
+      if (!j->factoryMethod)
+        throw DataException("Can't create object " + name);
+
       // Create a new instance
       T* x = static_cast<T*>(j->factoryMethod());
 
@@ -5636,8 +5641,8 @@ class HasDescription : public HasSource
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::category, &Cls::getCategory, &Cls::setCategory);
-      m->addStringField<Cls>(Tags::subcategory, &Cls::getSubCategory, &Cls::setSubCategory);
+      m->addStringField<Cls>(Tags::category, &Cls::getCategory, &Cls::setCategory, "", BASE + PLAN);
+      m->addStringField<Cls>(Tags::subcategory, &Cls::getSubCategory, &Cls::setSubCategory, "", BASE + PLAN);
       m->addStringField<Cls>(Tags::description, &Cls::getDescription, &Cls::setDescription);
       HasSource::registerFields<Cls>(m);
     }
@@ -7183,16 +7188,27 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
     {
       if (getFlag(DONT_SERIALIZE))
         return;
-      if (getFlag(WRITE_FULL))
-        output.decParents();
       // Imagine object A refers to object B. Both objects have fields
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
       Ptr* c = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      if (c && (output.getPreviousObject() != c || getFlag(WRITE_REPEAT)) ) 
+      if (c && (output.getPreviousObject() != c || getFlag(WRITE_REPEAT)))
+      {
+        // Update the serialization mode
+        // Unless specified otherwise we save a reference.
+        bool tmp_refs = output.setSaveReferences(!getFlag(WRITE_OBJECT));
+        bool tmp_hidden = false;
+        if (getFlag(WRITE_HIDDEN))
+          tmp_hidden = output.setWriteHidden(true);
+
+        // Write the object
         output.writeElement(getName(), c);
-      if (getFlag(WRITE_FULL))
-        output.incParents();
+
+        // Restore the original serialization mode
+        output.setSaveReferences(tmp_refs);
+        if (getFlag(WRITE_HIDDEN))
+          output.setWriteHidden(tmp_hidden);
+      }
     }
 
     virtual bool isPointer() const
@@ -7238,6 +7254,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
 
     virtual void writeField(Serializer& output) const
     {
+      // Check whether this field matches the intended content detail
       switch (output.getContentType())
       {
         case MANDATORY:
@@ -7245,7 +7262,7 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
             return;
           break;
         case BASE:
-          if (getFlag(DETAIL) || getFlag(PLAN))
+          if (!getFlag(BASE) && !getFlag(MANDATORY))
             return;
           break;
         case DETAIL:
@@ -7261,10 +7278,18 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
       }
       if (getFlag(DONT_SERIALIZE) || !getf)
         return;
-      if (getFlag(WRITE_FULL))
-        output.decParents();
+
+      // Update the serialization mode
+      bool tmp_refs = false;
+      bool tmp_hidden = false;
+      if (getFlag(WRITE_OBJECT))
+        tmp_refs = output.setSaveReferences(false);
+      else if (getFlag(WRITE_REFERENCE))
+        tmp_refs = output.setSaveReferences(true);
       if (getFlag(WRITE_HIDDEN))
-        output.setWriteHidden(true);
+        tmp_hidden = output.setWriteHidden(true);
+
+      // Write all objects
       bool first = true;
       Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       while (Ptr* ob = static_cast<Ptr*>(it.next()))
@@ -7278,12 +7303,14 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         }
         output.writeElement(singleKeyword, ob, output.getContentType());
       }
-      if (getFlag(WRITE_HIDDEN))
-        output.setWriteHidden(false);
-      if (getFlag(WRITE_FULL))
-        output.incParents();
       if (!first)
         output.EndList(getName());
+
+      // Restore the original serialization mode
+      if (getFlag(WRITE_OBJECT + WRITE_REFERENCE))
+        output.setSaveReferences(tmp_refs);
+      if (getFlag(WRITE_HIDDEN))
+        output.setWriteHidden(tmp_hidden);
     }
 
     virtual bool isGroup() const
@@ -7294,70 +7321,6 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
     virtual const MetaClass* getClass() const
     {
       return Ptr::metadata;
-    }
-
-    virtual const Keyword* getKeyword() const
-    {
-      return &singleKeyword;
-    }
-
-  protected:
-    /** Get function. */
-    getFunction getf;
-
-    const Keyword& singleKeyword;
-};
-
-
-template <class Cls, class Ptr, class Ptr2> class MetaFieldList : public MetaFieldBase
-{
-  public:
-    typedef const Ptr& (Cls::*getFunction)(void) const;
-
-    MetaFieldList(const Keyword& g,
-        const Keyword& n,
-        getFunction getfunc,
-        unsigned int c = BASE
-        ) : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n)
-    {
-      if (getfunc == nullptr)
-        throw DataException("Getter function can't be nullptr");
-    };
-
-    virtual void setField(Object* me, const DataValue& el, CommandManager* cmd) const {}
-
-    virtual void getField(Object* me, DataValue& el) const
-    {
-      throw LogicException("GetField not implemented for list fields");
-    }
-
-    virtual void writeField(Serializer& output) const
-    {
-      if (getFlag(DONT_SERIALIZE))
-        return;
-      bool first = true;
-      Ptr lst = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      for (typename Ptr::iterator i = lst.begin(); i != lst.end(); ++i)
-      {
-        if (first)
-        {
-          output.BeginList(getName());
-          first = false;
-        }
-        output.writeElement(singleKeyword, *i);
-      }
-      if (!first)
-        output.EndList(getName());
-    }
-
-    virtual bool isGroup() const
-    {
-      return true;
-    }
-
-    virtual const MetaClass* getClass() const
-    {
-      return Ptr2::metadata;
     }
 
     virtual const Keyword* getKeyword() const

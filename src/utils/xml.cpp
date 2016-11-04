@@ -906,7 +906,6 @@ DECLARE_EXPORT void Serializer::writeElement
   parentObject = currentObject;
   currentObject = object;
   ++numObjects;
-  ++numParents;
 
   // Call the write method on the object
   if (m != BASE)
@@ -916,11 +915,10 @@ DECLARE_EXPORT void Serializer::writeElement
     // Choose wether to save a reference of the object.
     // The root object can't be saved as a reference.
     object->writeElement(
-      this, tag, numParents > 2 ? MANDATORY : content
+      this, tag, getSaveReferences() ? MANDATORY : content
       );
 
   // Adjust current and parent object pointer
-  --numParents;
   currentObject = parentObject;
   parentObject = previousParent;
 }
@@ -946,7 +944,6 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
 
   // Write the object
   ++numObjects;
-  ++numParents;
   BeginObject(tag, getHeaderAtts());
   skipHead();
   object->writeElement(this, tag, getContentType());
@@ -954,31 +951,6 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
   // Adjust current and parent object pointer
   currentObject = nullptr;
   parentObject = nullptr;
-}
-
-
-DECLARE_EXPORT void XMLSerializer::writeHeader(const Keyword& t)
-{
-  // Write the first line and the opening tag
-  writeString(getHeaderStart());
-  *m_fp << indentstring << t.stringStartElement() << " " << headerAtts << ">\n";
-  incIndent();
-
-  // Fake a dummy parent
-  numParents += 2;
-}
-
-
-DECLARE_EXPORT void XMLSerializer::writeHeader(const Keyword& t, const Keyword& t1, const string& val1)
-{
-  // Write the first line and the opening tag
-  writeString(getHeaderStart());
-  *m_fp << indentstring << t.stringStartElement() << " " << headerAtts
-    << t1.stringAttribute() << val1 << "\">\n";
-  incIndent();
-
-  // Fake a dummy parent
-  numParents += 2;
 }
 
 

@@ -65,38 +65,53 @@ DECLARE_EXPORT void Object::writeElement(
   }
 
   // Write the content
-  if (m == MANDATORY)
+  switch (m)
   {
-    // Write references only
-    if (meta.category)
-      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+    case MANDATORY:
+      // Write references only
+      if (meta.category)
+        for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+          if ((*i)->getFlag(MANDATORY))
+            (*i)->writeField(*o);
+      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
         if ((*i)->getFlag(MANDATORY))
           (*i)->writeField(*o);
-    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if ((*i)->getFlag(MANDATORY))
-        (*i)->writeField(*o);
-  }
-  else if (m == BASE)
-  {
-    // Write only the fields required to successfully save&restore the object
-    if (meta.category)
-      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        if (!(*i)->getFlag(DETAIL) && !(*i)->getFlag(PLAN))
+      break;
+    case BASE:
+      // Write only the fields required to successfully save&restore the object.
+      if (meta.category)
+        for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+          if ((*i)->getFlag(BASE + MANDATORY))
+            (*i)->writeField(*o);
+      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+        if ((*i)->getFlag(BASE + MANDATORY))
           (*i)->writeField(*o);
-    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      if (!(*i)->getFlag(DETAIL) && !(*i)->getFlag(PLAN))
-        (*i)->writeField(*o);
-    writeProperties(*o);
-  }
-  else
-  {
-    // Write the full info on the object
-    if (meta.category)
-      for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
-        (*i)->writeField(*o);
-    for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
-      (*i)->writeField(*o);
-    writeProperties(*o);
+      writeProperties(*o);
+      break;
+    case DETAIL:
+      // Write detailed info on the object.
+      if (meta.category)
+        for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+          if ((*i)->getFlag(DETAIL + MANDATORY))
+            (*i)->writeField(*o);
+      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+        if ((*i)->getFlag(DETAIL + MANDATORY))
+          (*i)->writeField(*o);
+      writeProperties(*o);
+      break;
+    case PLAN:
+      // Write plan info on the object.
+      if (meta.category)
+        for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
+          if ((*i)->getFlag(BASE + PLAN + MANDATORY))
+            (*i)->writeField(*o);
+      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
+        if ((*i)->getFlag(BASE + PLAN + MANDATORY))
+          (*i)->writeField(*o);
+      writeProperties(*o);
+      break;
+    default:
+      throw LogicException("Unknown serialization mode");
   }
 
   // Write the tail
@@ -913,7 +928,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
     // Create the XML string.
     ostringstream ch;
     XMLSerializer x(ch);
-    x.setReferencesOnly(true);
+    x.setSaveReferences(true);
     if (!mode || mode[0] == 'S')
       x.setContentType(BASE);
     else if (mode[0] == 'P')

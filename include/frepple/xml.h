@@ -682,21 +682,8 @@ class XMLSerializer : public Serializer
       * You should call this method for the root object of your xml document,
       * and writeElement for all objects nested in it.
       * @see writeElement(const Keyword&, Object*)
-      * @see writeHeader
-      * @exception RuntimeException Generated when multiple root elements
-      *    are available for the output document.
       */
     DECLARE_EXPORT void writeElementWithHeader(const Keyword& tag, const Object* object);
-
-    /** This method writes the opening tag for an XML output.<br>
-      * You should call this method or writeElementWithHeader() when writing
-      * the first element of an xml document.
-      * @see writeElementWithHeader
-      * @exception RuntimeException Generated when multiple root elements
-      *    are available for the output document.
-      */
-    DECLARE_EXPORT void writeHeader(const Keyword&);
-    DECLARE_EXPORT void writeHeader(const Keyword&, const Keyword&, const string&);
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const

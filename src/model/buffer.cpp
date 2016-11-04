@@ -408,20 +408,16 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
   setChanged();
 
   // Delete previous events.
-  inspect("before ALLL erases");
   for (flowplanlist::iterator oo=flowplans.begin(); oo!=flowplans.end(); )
   {
     flowplanlist::Event *tmp = &*oo;
     ++oo;
     if (tmp->getEventType() == 3)
     {
-      inspect("before erase");
       flowplans.erase(tmp);
-      inspect("after erase");
       delete tmp;
     }
   }
-  inspect("after ALLL erases");
 
   // Null pointer passed. Change back to time independent min.
   if (!cal)

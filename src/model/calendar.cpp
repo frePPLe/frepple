@@ -425,26 +425,6 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
 }
 
 
-DECLARE_EXPORT void CalendarBucket::writeHeader(Serializer *o, const Keyword& tag) const
-{
-  // The header line has a variable number of attributes: start, end and/or priority
-  if (startdate != Date::infinitePast)
-  {
-    if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::priority, priority, Tags::start, startdate, Tags::end, enddate);
-    else
-      o->BeginObject(tag, Tags::priority, priority, Tags::start, startdate);
-  }
-  else
-  {
-    if (enddate != Date::infiniteFuture)
-      o->BeginObject(tag, Tags::priority, priority, Tags::end, enddate);
-    else
-      o->BeginObject(tag, Tags::priority, priority);
-  }
-}
-
-
 DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
 {
   if (cal == c)

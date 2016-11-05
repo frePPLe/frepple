@@ -363,6 +363,7 @@ DECLARE_EXPORT void Date::parse (const char* s, const char* fmt)
     return;
   }
   struct tm p;
+  memset(&p, 0, sizeof(struct tm));
   strptime(s, fmt, &p);
   // No clue whether daylight saving time is in effect...
   p.tm_isdst = -1;

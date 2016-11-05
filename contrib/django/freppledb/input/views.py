@@ -843,7 +843,7 @@ class OperationMaterialList(GridReport):
   basequeryset = OperationMaterial.objects.all()
   model = OperationMaterial
   frozenColumns = 1
-  help_url = 'user-guide/modeling-wizard/manufacturing-BOM/operation-materials.html'
+  help_url = 'user-guide/modeling-wizard/manufacturing-bom/operation-materials.html'
   
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationmaterial'"),
@@ -1014,7 +1014,7 @@ class SubOperationList(GridReport):
   basequeryset = SubOperation.objects.all()
   model = SubOperation
   frozenColumns = 1
-  help_url = None
+  help_url = 'user-guide/model-reference/suboperations.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),

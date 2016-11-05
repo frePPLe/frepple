@@ -30,6 +30,8 @@ Start populating the entities at the top of the list and work your way down.
 |        :doc:`manufacturing-orders` (references operations)
 |        :doc:`purchase-orders` (references items, suppliers and locations)
 |        :doc:`distribution-orders` (references items and locations)
+|  :doc:`buckets`
+|  :doc:`parameters`
 
 .. image:: _images/dependencies.png
    :alt: Model dependencies

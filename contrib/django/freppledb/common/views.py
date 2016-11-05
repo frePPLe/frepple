@@ -306,7 +306,7 @@ class UserList(GridReport):
   frozenColumns = 2
   multiselect = False
   permissions = (("change_user", "Can change user"),)
-  help_url = 'user-guide/user-interface/user-permissions-and-roles.html'
+  help_url = 'user-guide/user-interface/getting-around/user-permissions-and-roles.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -342,7 +342,7 @@ class GroupList(GridReport):
   frozenColumns = 0
   multiselect = False
   permissions = (("change_group", "Can change group"),)
-  help_url = 'user-guide/user-interface/user-permissions-and-roles.html'
+  help_url = 'user-guide/user-interface/getting-around/user-permissions-and-roles.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
@@ -360,7 +360,7 @@ class ParameterList(GridReport):
   model = Parameter
   adminsite = 'admin'
   frozenColumns = 1
-  help_url = 'user-guide/model-reference/parameter.html'
+  help_url = 'user-guide/model-reference/parameters.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -383,6 +383,7 @@ class CommentList(GridReport):
   editable = False
   multiselect = False
   frozenColumns = 0
+  help_url = 'user-guide/user-interface/getting-around/comments.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True),

@@ -59,7 +59,7 @@ menu.addItem("help", "wizard", url="/wizard/", window=True, prefix=True, label=_
 versionnumber=VERSION.split('.', 2)
 docurl="https://frepple.com/docs/"+versionnumber[0]+"."+versionnumber[1]+"/"
 #. Translators: Translation included with Django
-menu.addItem("help", "documentation", url=docurl, label=_('View documentation'), window=True, prefix=False, index=300)
+menu.addItem("help", "documentation", url=docurl, label=_('Documentation'), window=True, prefix=False, index=300)
 menu.addItem("help", "API", url="/api/", label=_('REST API help'), window=True, prefix=True, index=400)
 menu.addItem("help", "website", url="https://frepple.com", window=True, label=_('frePPLe website'), prefix=False, index=500)
 menu.addItem("help", "about", javascript="about_show()", label=_('About frePPLe'), index=600)

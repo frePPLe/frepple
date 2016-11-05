@@ -46,7 +46,8 @@ class OverviewReport(GridPivot):
     ('supply', {'title': _('supply')}),
     ('backlog', {'title': _('backlog')}),
     )
-
+  help_url = 'user-guide/user-interface/plan-analysis/demand-report.html'
+  
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:

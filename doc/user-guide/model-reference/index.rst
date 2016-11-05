@@ -11,7 +11,7 @@ a high level overview of the model objects and their relationships.
    :maxdepth: 2
 
    domain-model
-   parameter
+   parameters
    buffers
    calendars
    customers
@@ -36,3 +36,4 @@ a high level overview of the model objects and their relationships.
    setup-matrices
    skills
    suppliers
+   buckets

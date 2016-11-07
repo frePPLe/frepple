@@ -887,8 +887,8 @@ class loadData(object):
     self.loadItemDistributions()
     self.loadOperationMaterials()
     self.loadOperationResources()
-    self.loadOperationPlans()
     self.loadDemand()
+    self.loadOperationPlans()
     self.finalize()
 
     # Close the database connection

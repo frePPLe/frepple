@@ -246,6 +246,12 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
     return oper;
 
   // Case 2: Create a delivery operation automatically
+  if (!getItem())
+  {
+    // Not possible to create an operation when we don't know the item
+    const_cast<Demand*>(this)->oper = nullptr;
+    return nullptr;
+  }
   Location *l = getLocation();
   if (!l)
   {

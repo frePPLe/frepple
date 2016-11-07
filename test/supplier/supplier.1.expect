@@ -239,6 +239,9 @@
 	<operationplans>
 		<operationplan>
 			<id>2</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase Component C @ warehouse from Supplier of component B</name>
+			</operation>
 			<start>2015-06-06T00:00:00</start>
 			<end>2015-06-06T00:00:00</end>
 			<quantity>100</quantity>

@@ -24,51 +24,73 @@
       </suboperations>
     </operation>
   </operations>
-  <items>
-    <item name="item 1">
+    <demands>
+    <demand name="order for item 1">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1" />
       <operation name="Delivery 1 : 0 : 1" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </operation>
-    </item>
-    <item name="item 2">
+    </demand>
+    <demand name="order for item 2">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 2" />
       <operation name="Delivery 2 : 0 : 1" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </operation>
-    </item>
-    <item name="item 3">
+    </demand>
+    <demand name="order for item 3">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 3" />
       <operation name="Delivery 3 : 0 : 1" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </operation>
-    </item>
-    <item name="item 4">
+    </demand>
+    <demand name="order for item 4">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 4" />
       <operation name="Delivery 4 : 0 : 1" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </operation>
-    </item>
-    <item name="item 5">
+    </demand>
+    <demand name="order for item 5">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 5" />
       <operation name="Delivery 5 : 0 : 2" xsi:type="operation_routing">
         <suboperations>
           <suboperation>
-            <operation name="Delivery 5 step1 : 0 : 2"
-              xsi:type="operation_fixed_time">
+            <operation name="Delivery 5 step1 : 0 : 2" xsi:type="operation_fixed_time">
               <duration>PT10S</duration>
             </operation>
           </suboperation>
           <suboperation>
-            <operation name="Delivery 5 step2 : 0 : 2"
-              xsi:type="operation_fixed_time">
+            <operation name="Delivery 5 step2 : 0 : 2" xsi:type="operation_fixed_time">
               <duration>PT10S</duration>
             </operation>
           </suboperation>
         </suboperations>
       </operation>
-    </item>
-    <item name="item 6">
+    </demand>
+    <demand name="order for item 6">
+      <quantity>10</quantity>
+      <due>2009-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 6" />
       <operation name="Delivery 6 : 0 : 3" xsi:type="operation_fixed_time">
         <duration>PT10S</duration>
       </operation>
-    </item>
-  </items>
+    </demand>
+  </demands>
   <buffers>
     <buffer name="buffer item 1 : 1 : 1">
       <item name="item 1" />
@@ -259,44 +281,6 @@
     </resource>
     <resource name="Dangling resource : -1 : 0" />
   </resources>
-  <demands>
-    <demand name="order for item 1">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 1" />
-    </demand>
-    <demand name="order for item 2">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 2" />
-    </demand>
-    <demand name="order for item 3">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 3" />
-    </demand>
-    <demand name="order for item 4">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 4" />
-    </demand>
-    <demand name="order for item 5">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 5" />
-    </demand>
-    <demand name="order for item 6">
-      <quantity>10</quantity>
-      <due>2009-01-10T00:00:00</due>
-      <priority>1</priority>
-      <item name="item 6" />
-    </demand>
-  </demands>
 
 <?python
 actual_to_expected = {}

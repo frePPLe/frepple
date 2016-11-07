@@ -30,11 +30,6 @@
   <operations>
     <operation name="make end item" xsi:type="operation_fixed_time" duration="P1D"/>
   </operations>
-  <items>
-    <item name="end item">
-      <operation name="delivery end item" xsi:type="operation_fixed_time" duration="P1D"/>
-    </item>
-  </items>
   <buffers>
     <buffer name="end item">
       <producing name="make end item"/> <item name="end item"/>
@@ -63,6 +58,7 @@
   <demands>
     <demand name="order 1" quantity="10" due="2009-01-04T09:00:00" priority="1">
        <item name="end item"/>
+       <operation name="delivery end item" xsi:type="operation_fixed_time" duration="P1D"/>
     </demand>
   </demands>
 

@@ -999,6 +999,9 @@
 	<operationplans>
 		<operationplan>
 			<id>2</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 1 for option A @ location 1 from My supplier</name>
+			</operation>
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>15</quantity>
@@ -1015,6 +1018,9 @@
 		</operationplan>
 		<operationplan>
 			<id>3</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 1 for option B @ location 1 from My supplier</name>
+			</operation>
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>35</quantity>
@@ -1031,6 +1037,9 @@
 		</operationplan>
 		<operationplan>
 			<id>4</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 1 for option C @ location 1 from My supplier</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>7</quantity>
@@ -1047,6 +1056,9 @@
 		</operationplan>
 		<operationplan>
 			<id>5</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 2 for option A @ location 2 from My supplier</name>
+			</operation>
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>30</quantity>
@@ -1063,6 +1075,9 @@
 		</operationplan>
 		<operationplan>
 			<id>6</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 2 for option B @ location 2 from My supplier</name>
+			</operation>
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>35</quantity>
@@ -1079,6 +1094,9 @@
 		</operationplan>
 		<operationplan>
 			<id>7</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 2 for option C @ location 2 from My supplier</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>35</quantity>
@@ -1095,6 +1113,9 @@
 		</operationplan>
 		<operationplan>
 			<id>8</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option A @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-06-16T00:00:00</start>
 			<end>2014-06-23T00:00:00</end>
 			<quantity>30</quantity>
@@ -1111,6 +1132,9 @@
 		</operationplan>
 		<operationplan>
 			<id>9</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-06-24T00:00:00</start>
 			<end>2014-06-26T00:00:00</end>
 			<quantity>35</quantity>
@@ -1127,6 +1151,9 @@
 		</operationplan>
 		<operationplan>
 			<id>10</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-07-25T00:00:00</start>
 			<end>2014-07-27T00:00:00</end>
 			<quantity>50</quantity>
@@ -1143,6 +1170,9 @@
 		</operationplan>
 		<operationplan>
 			<id>11</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-08-25T00:00:00</start>
 			<end>2014-08-27T00:00:00</end>
 			<quantity>25</quantity>
@@ -1159,6 +1189,9 @@
 		</operationplan>
 		<operationplan>
 			<id>12</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-09-24T00:00:00</start>
 			<end>2014-09-26T00:00:00</end>
 			<quantity>20</quantity>
@@ -1175,6 +1208,9 @@
 		</operationplan>
 		<operationplan>
 			<id>13</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-10-25T00:00:00</start>
 			<end>2014-10-27T00:00:00</end>
 			<quantity>20</quantity>
@@ -1191,6 +1227,9 @@
 		</operationplan>
 		<operationplan>
 			<id>14</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-06-20T00:00:00</start>
 			<end>2014-06-21T00:00:00</end>
 			<quantity>35</quantity>
@@ -1207,6 +1246,9 @@
 		</operationplan>
 		<operationplan>
 			<id>15</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-07-21T00:00:00</start>
 			<end>2014-07-22T00:00:00</end>
 			<quantity>50</quantity>
@@ -1223,6 +1265,9 @@
 		</operationplan>
 		<operationplan>
 			<id>16</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-08-21T00:00:00</start>
 			<end>2014-08-22T00:00:00</end>
 			<quantity>75</quantity>
@@ -1239,6 +1284,9 @@
 		</operationplan>
 		<operationplan>
 			<id>17</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-09-20T00:00:00</start>
 			<end>2014-09-21T00:00:00</end>
 			<quantity>80</quantity>
@@ -1255,6 +1303,9 @@
 		</operationplan>
 		<operationplan>
 			<id>18</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
+			</operation>
 			<start>2014-10-21T00:00:00</start>
 			<end>2014-10-22T00:00:00</end>
 			<quantity>80</quantity>
@@ -1271,6 +1322,9 @@
 		</operationplan>
 		<operationplan>
 			<id>19</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 4 for option A @ location 4 from My supplier</name>
+			</operation>
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>20</quantity>
@@ -1287,6 +1341,9 @@
 		</operationplan>
 		<operationplan>
 			<id>20</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 4 for option B @ location 4 from My supplier</name>
+			</operation>
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>40</quantity>
@@ -1303,6 +1360,9 @@
 		</operationplan>
 		<operationplan>
 			<id>21</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component 4 for option C @ location 4 from My supplier</name>
+			</operation>
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>40</quantity>
@@ -1319,6 +1379,12 @@
 		</operationplan>
 		<operationplan>
 			<id>22</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 1 @ location 1</name>
+				<buffer>
+					<name>item 1 @ location 1</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 1 for item 1</name>
 			</demand>
@@ -1335,6 +1401,12 @@
 		</operationplan>
 		<operationplan>
 			<id>23</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 2 @ location 2</name>
+				<buffer>
+					<name>item 2 @ location 2</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 1 for item 2</name>
 			</demand>
@@ -1351,6 +1423,12 @@
 		</operationplan>
 		<operationplan>
 			<id>24</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 3 @ location 3</name>
+				<buffer>
+					<name>item 3 @ location 3</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 1 for item 3</name>
 			</demand>
@@ -1367,6 +1445,12 @@
 		</operationplan>
 		<operationplan>
 			<id>25</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 3 @ location 3</name>
+				<buffer>
+					<name>item 3 @ location 3</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 2 for item 3</name>
 			</demand>
@@ -1383,6 +1467,12 @@
 		</operationplan>
 		<operationplan>
 			<id>26</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 3 @ location 3</name>
+				<buffer>
+					<name>item 3 @ location 3</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 3 for item 3</name>
 			</demand>
@@ -1399,6 +1489,12 @@
 		</operationplan>
 		<operationplan>
 			<id>27</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 3 @ location 3</name>
+				<buffer>
+					<name>item 3 @ location 3</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 4 for item 3</name>
 			</demand>
@@ -1415,6 +1511,12 @@
 		</operationplan>
 		<operationplan>
 			<id>28</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 3 @ location 3</name>
+				<buffer>
+					<name>item 3 @ location 3</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 5 for item 3</name>
 			</demand>
@@ -1431,6 +1533,12 @@
 		</operationplan>
 		<operationplan>
 			<id>29</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item 4 @ location 4</name>
+				<buffer>
+					<name>item 4 @ location 4</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 1 for item 4</name>
 			</demand>

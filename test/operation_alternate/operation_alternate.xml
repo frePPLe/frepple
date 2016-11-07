@@ -12,18 +12,6 @@
   <!--
     Case 1: minimum priority choice.
   -->
-	<items>
-	  <item name="item 1">
-	    <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
-	      <flows>
-	        <flow xsi:type="flow_start">
-	          <buffer name="inventory item 1" />
-	          <quantity>-1</quantity>
-	        </flow>
-	      </flows>
-	    </operation>
-	  </item>
-  </items>
   <resources>
     <resource name="Resource 1 A">
       <cost>1</cost>
@@ -128,12 +116,21 @@
 	    <due>2009-01-11T00:00:00</due>
 	    <priority>1</priority>
 	    <item name="item 1" />
+	    <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
+	      <flows>
+	        <flow xsi:type="flow_start">
+	          <buffer name="inventory item 1" />
+	          <quantity>-1</quantity>
+	        </flow>
+	      </flows>
+	    </operation>
 	  </demand>
 	  <demand name="order prio 2 for item 1">
 	    <quantity>10</quantity>
 	    <due>2009-01-02T00:00:00</due>
 	    <priority>2</priority>
-	    <item name="item 1" />
+	    <item name="item 1"/>
+	    <operation name="delivery 1"/>
 	  </demand>
 	</demands>
 

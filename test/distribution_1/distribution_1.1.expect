@@ -237,6 +237,12 @@
 			<id>2</id>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship product A from product A @ Central WH to product A @ Local DC 2b</name>
+				<origin>
+					<name>product A @ Central WH</name>
+				</origin>
+				<destination>
+					<name>product A @ Local DC 2b</name>
+				</destination>
 			</operation>
 			<start>2015-06-06T00:00:00</start>
 			<end>2015-06-06T00:00:00</end>

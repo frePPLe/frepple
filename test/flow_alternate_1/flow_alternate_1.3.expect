@@ -414,6 +414,12 @@
 		</operationplan>
 		<operationplan>
 			<id>9</id>
+			<operation xsi:type="operation_delivery">
+				<name>Ship product @ factory</name>
+				<buffer>
+					<name>product @ factory</name>
+				</buffer>
+			</operation>
 			<demand>
 				<name>order 1</name>
 			</demand>

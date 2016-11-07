@@ -89,7 +89,7 @@ class export:
 
 
   def getPegging(self, opplan):
-    return json.dumps({ j.demand.name: j.quantity for j in opplan.pegging_demand })
+    return json.dumps({ j.demand.name: round(j.quantity, 4) for j in opplan.pegging_demand })
 
 
   def truncate(self, process):

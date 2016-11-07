@@ -8,6 +8,13 @@ The report shows the details of all material production into and consumption fro
 Field             Description
 ================= ==============================================================================
 Buffer            Buffer name.
+Type              Type of the operation:
+
+                  - MO: Manufacturing order
+                  - PO: Purchase order
+                  - DO: Distribution order
+                  - DLVR: Delivery of a sales order to a customer
+                  - STCK: On hand
 Operation         Name of the operation producing or consuming material.
 Quantity          Amount being produced (positive number) or consumed (negative number).
 Date              | Date of the stock movement.
@@ -21,9 +28,13 @@ Criticality       | Indication of the urgency of the operationplan.
                     not immediately impact the delivery of any demand.
                   | A criticality of 999 indicates an operationplan that isn't used at all to
                     meet any demand.
-Locked            Locked operationplans are frozen and can’t be touched during planning.
-                  Such operationplans model for instance confirmed supplier deliveries,
-                  work in progress operations, etc.
+Status            Status of the operationplan:
+
+                  - proposed: newly proposed by the planning tool
+                  - approved: approved by the planner, but not yet launched in the ERP system
+                  - confirmed: ongoing transaction, controlled by the ERP system and not changeable
+                    in frePPLe
+                  - closed: operation has finished 
 Operationplan     Identifier of the operation plan planning the stock movement.
 ================= ==============================================================================
 

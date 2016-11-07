@@ -8,6 +8,11 @@ The report shows the details of all loading on the resources.
 Field             Description
 ================= ==============================================================================
 Resource          Resource name.
+Type              Type of the operation:
+
+                  - MO: Manufacturing order
+                  - PO: Purchase order
+                  - DO: Distribution order
 Operation         | Name of the operation loading the resource.
                   | If the name is 'setup operation' this load plan shows a conversion of the
                     resource to a new setup.
@@ -24,9 +29,13 @@ Criticality       | Indication of the urgency of the operationplan.
                     not immediately impact the delivery of any demand.
                   | A criticality of 999 indicates an operationplan that isn't used at all to
                     meet any demand.
-Locked            Locked operationplans are frozen and can’t be touched during planning.
-                  Such operationplans model for instance confirmed supplier deliveries,
-                  work in progress operations, etc.
+Status            Status of the operationplan:
+
+                  - proposed: newly proposed by the planning tool
+                  - approved: approved by the planner, but not yet launched in the ERP system
+                  - confirmed: ongoing transaction, controlled by the ERP system and not changeable
+                    in frePPLe
+                  - closed: operation has finished
 Setup             Setup of the resource during this loading.
 Operationplan     Identifier of the operation plan loading the resource.
 ================= ==============================================================================

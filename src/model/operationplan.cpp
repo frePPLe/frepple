@@ -77,7 +77,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   Action action = MetaClass::decodeAction(in);
 
   // Check the order type
-  string ordtype("MO");
+  string ordtype;
   const DataValue* ordtypeval = in.get(Tags::ordertype);
   if (ordtypeval)
     ordtype = ordtypeval->getString();
@@ -89,7 +89,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
   Object *supval = nullptr;
   Object *orival = nullptr;
   Object *dmdval = nullptr;
-  if (ordtype == "MO")
+  if (ordtype == "MO" || ordtype.empty())
   {
     const DataValue* val = in.get(Tags::operation);
     if (!val && action==ADD)
@@ -220,14 +220,16 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
     if (opplan)
     {
       // Check whether previous and current operations match.
-      if (ordtype != opplan->getOrderType())
+      if (ordtype.empty())
+        ordtype = opplan->getOrderType();
+      else if (ordtype != opplan->getOrderType())
       {
         ostringstream ch;
         ch << "Operationplan identifier " << id
           << " defined multiple times for different order types";
         throw DataException(ch.str());
       }
-      if (ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
+      if (!ordtype.empty() && ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
       {
         ostringstream ch;
         ch << "Operationplan identifier " << id

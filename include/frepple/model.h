@@ -5769,35 +5769,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, BASE + WRITE_OBJECT);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
-      /*  TODO XXX write pegging?
-  // Write pegging info.
-  if (o->getContentType() == Serializer::PLANDETAIL)
-  {
-    // Write the upstream pegging
-    PeggingIterator k(this, false);
-    if (k) --k;
-    for (; k; --k)
-      o->writeElement(Tags::pegging,
-        Tags::level, -k.getLevel(),
-        Tags::operationplan, k.getOperationPlan()->getIdentifier(),
-        Tags::quantity, k.getQuantity()
-        );
-
-    // Write the downstream pegging
-    PeggingIterator l(this, true);
-    if (l) ++l;
-    for (; l; ++l)
-      o->writeElement(Tags::pegging,
-        Tags::level, l.getLevel(),
-        Tags::operationplan, l.getOperationPlan()->getIdentifier(),
-        Tags::quantity, l.getQuantity()
-        );
-        */
     }
 };
 

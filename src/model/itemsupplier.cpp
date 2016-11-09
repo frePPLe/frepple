@@ -268,26 +268,9 @@ DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
     new LoadDefault(this, i->getResource(), i->getResourceQuantity());
 
   // Insert in the list of ItemSupplier operations.
-  // We keep the list sorted by the operation name.
-  if (!i->firstOperation || getName() < i->firstOperation->getName())
-  {
-    // New head of the list
-    nextOperation = i->firstOperation;
-    i->firstOperation = this;
-  }
-  else
-  {
-    // Insert in the middle or at the tail
-    OperationItemSupplier* o = i->firstOperation;
-    while (o->nextOperation)
-    {
-      if (b->getName() < o->nextOperation->getName())
-        break;
-      o = o->nextOperation;
-    }
-    nextOperation = o->nextOperation;
-    o->nextOperation = this;
-  }
+  // The list is not sorted (for performance reasons).
+  nextOperation = i->firstOperation;
+  i->firstOperation = this;
 }
 
 

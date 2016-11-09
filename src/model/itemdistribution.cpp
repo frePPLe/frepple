@@ -265,26 +265,9 @@ DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
     new LoadDefault(this, i->getResource(), i->getResourceQuantity());
 
   // Insert in the list of ItemDistribution operations.
-  // We keep the list sorted by the operation name.
-  if (!i->firstOperation || getName() < i->firstOperation->getName())
-  {
-    // New head of the list
-    nextOperation = i->firstOperation;
-    i->firstOperation = this;
-  }
-  else
-  {
-    // Insert in the middle or at the tail
-    OperationItemDistribution* o = i->firstOperation;
-    while (o->nextOperation)
-    {
-      if (getName() < o->nextOperation->getName())
-        break;
-      o = o->nextOperation;
-    }
-    nextOperation = o->nextOperation;
-    o->nextOperation = this;
-  }
+  // The list is not sorted (for performance reasons).
+  nextOperation = i->firstOperation;
+  i->firstOperation = this;
 }
 
 

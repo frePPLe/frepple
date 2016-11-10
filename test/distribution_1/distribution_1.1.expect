@@ -88,7 +88,16 @@
 						<name>Regional DC 2</name>
 					</origin>
 					<destination>
-						<name>Region 2</name>
+						<name>Local DC 2b</name>
+					</destination>
+					<leadtime>P3D</leadtime>
+				</itemdistribution>
+				<itemdistribution>
+					<origin>
+						<name>Regional DC 2</name>
+					</origin>
+					<destination>
+						<name>Local DC 2a</name>
 					</destination>
 					<leadtime>P3D</leadtime>
 				</itemdistribution>
@@ -97,7 +106,16 @@
 						<name>Regional DC 1</name>
 					</origin>
 					<destination>
-						<name>Region 1</name>
+						<name>Local DC 1b</name>
+					</destination>
+					<leadtime>P3D</leadtime>
+				</itemdistribution>
+				<itemdistribution>
+					<origin>
+						<name>Regional DC 1</name>
+					</origin>
+					<destination>
+						<name>Local DC 1a</name>
 					</destination>
 					<leadtime>P3D</leadtime>
 				</itemdistribution>

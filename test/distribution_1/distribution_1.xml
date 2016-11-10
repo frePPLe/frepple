@@ -61,13 +61,25 @@
         </itemdistribution>
         <itemdistribution>
           <origin name="Regional DC 1" />
-          <destination name="Region 1"/>
+          <destination name="Local DC 1a"/>
+          <leadtime>P3D</leadtime>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="Regional DC 1" />
+          <destination name="Local DC 1b"/>
           <leadtime>P3D</leadtime>
           <priority>1</priority>
         </itemdistribution>
         <itemdistribution>
           <origin name="Regional DC 2" />
-          <destination name="Region 2"/>
+          <destination name="Local DC 2a"/>
+          <leadtime>P3D</leadtime>
+          <priority>1</priority>
+        </itemdistribution>
+        <itemdistribution>
+          <origin name="Regional DC 2" />
+          <destination name="Local DC 2b"/>
           <leadtime>P3D</leadtime>
           <priority>1</priority>
         </itemdistribution>

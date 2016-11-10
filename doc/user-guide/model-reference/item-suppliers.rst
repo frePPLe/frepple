@@ -20,9 +20,6 @@ item            item              | Reference to the item.
                                     belonging to that group.
 location        location          | Reference to the location where the supplier can be used
                                     to purchase this item.
-                                  | The location can point to a higher level in the location
-                                    hierarchy. The supplier can then be used at any of the
-                                    child locations.
                                   | The default value of this field is empty. In such case
                                     the supplier is valid at any location.
 cost            positive double   Purchasing cost.

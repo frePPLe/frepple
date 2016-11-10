@@ -798,12 +798,11 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
     {
       // Verify whether the ItemSupplier is applicable to the buffer location
       // We need to reject the following 2 mismatches:
-      //   - buffer location is not null, and is not a member of the
-      //     ItemSupplier location
+      //   - buffer location is not null, and is not the ItemSupplier location
       //   - buffer location is null, and the ItemSupplier location isn't
       if (supitem->getLocation())
       {
-        if ((getLocation() && !getLocation()->isMemberOf(supitem->getLocation()))
+        if ((getLocation() && getLocation() != supitem->getLocation())
           || !getLocation())
           continue;
       }
@@ -908,12 +907,11 @@ DECLARE_EXPORT void Buffer::buildProducingOperation()
     {
       // Verify whether the ItemDistribution is applicable to the buffer location
       // We need to reject the following 2 mismatches:
-      //   - buffer location is not null, and is not a member of the
-      //     ItemDistribution destination location
+      //   - buffer location is not null, and is the ItemDistribution destination location
       //   - buffer location is null, and the ItemDistribution destination location isn't
       if (itemdist->getDestination())
       {
-        if ((getLocation() && !getLocation()->isMemberOf(itemdist->getDestination()))
+        if ((getLocation() && getLocation() != itemdist->getDestination())
           || !getLocation())
           continue;
       }

@@ -16,14 +16,8 @@ item            item              | Reference to the item.
                                   | The item can point to a parent level in the item
                                     hierarchy. All child items can then be distributed using
                                     this definition.
-origin          location          | Origin location from where we can ship the item.
-                                  | The location can point to a higher level in the location
-                                    hierarchy. Any child location can then ship the item.
-                                  | The default value of this field is empty. In such case
-                                    any location can be used as origin.
-destination     location          | Destination location to where we can ship the item.
-                                  | The location can point to a higher level in the location
-                                    hierarchy. Any child location can then receive the item.
+origin          location          Origin location from where we can ship the item.                               
+destination     location          | Destination location to where we can ship the item.                                  
                                   | The default value of this field is empty. In such case
                                     any location can be used as destination.
 cost            positive double   Shipment cost.

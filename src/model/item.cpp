@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-template<class Item> DECLARE_EXPORT Tree utils::HasName<Item>::st;
-DECLARE_EXPORT const MetaCategory* Item::metadata;
-DECLARE_EXPORT const MetaClass* ItemDefault::metadata;
+template<class Item> Tree utils::HasName<Item>::st;
+const MetaCategory* Item::metadata;
+const MetaClass* ItemDefault::metadata;
 
 
 int Item::initialize()
@@ -51,7 +51,7 @@ int ItemDefault::initialize()
 }
 
 
-DECLARE_EXPORT Item::~Item()
+Item::~Item()
 {
   // Remove references from the buffers
   bufferIterator bufiter(this);

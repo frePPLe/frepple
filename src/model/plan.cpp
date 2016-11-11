@@ -25,9 +25,9 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT Plan* Plan::thePlan;
-DECLARE_EXPORT const MetaClass* Plan::metadata;
-DECLARE_EXPORT const MetaCategory* Plan::metacategory;
+Plan* Plan::thePlan;
+const MetaClass* Plan::metadata;
+const MetaCategory* Plan::metacategory;
 
 
 int Plan::initialize()
@@ -58,7 +58,7 @@ int Plan::initialize()
 }
 
 
-DECLARE_EXPORT Plan::~Plan()
+Plan::~Plan()
 {
   // Closing the logfile
   Environment::setLogFile("");
@@ -68,7 +68,7 @@ DECLARE_EXPORT Plan::~Plan()
 }
 
 
-DECLARE_EXPORT void Plan::setCurrent (Date l)
+void Plan::setCurrent (Date l)
 {
   // Update the time
   cur_Date = l;

@@ -26,7 +26,7 @@ namespace frepple
 
 
 /** @todo resource solver should be using a move command rather than direct move */
-DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
+void SolverMRP::solve(const Resource* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -470,7 +470,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Resource* res, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
+void SolverMRP::solve(const ResourceInfinite* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -498,7 +498,7 @@ DECLARE_EXPORT void SolverMRP::solve(const ResourceInfinite* res, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const ResourceBuckets* res, void* v)
+void SolverMRP::solve(const ResourceBuckets* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 

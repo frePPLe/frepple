@@ -25,7 +25,7 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void SolverMRP::solve(const BufferProcure* b, void* v)
+void SolverMRP::solve(const BufferProcure* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   bool safetystock = (data->state->q_qty == -1.0);

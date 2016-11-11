@@ -39,35 +39,35 @@ namespace utils
 {
 
 // Repository of all categories and commands
-DECLARE_EXPORT const MetaCategory* MetaCategory::firstCategory = nullptr;
-DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByTag;
-DECLARE_EXPORT MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
+const MetaCategory* MetaCategory::firstCategory = nullptr;
+MetaCategory::CategoryMap MetaCategory::categoriesByTag;
+MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
-DECLARE_EXPORT const MetaCategory* Object::metadata = nullptr;
+const MetaCategory* Object::metadata = nullptr;
 
 // Generic Python type for timeline events
-DECLARE_EXPORT PythonType* EventPythonType = nullptr;
+PythonType* EventPythonType = nullptr;
 
 // Repository of loaded modules
-DECLARE_EXPORT set<string> Environment::moduleRegistry;
+set<string> Environment::moduleRegistry;
 
 // Number of processors.
 // The value initialized here is updated when the getProcessorCores function
 // is called the first time.
-DECLARE_EXPORT int Environment::processorcores = -1;
+int Environment::processorcores = -1;
 
 // Output logging stream, whose input buffer is shared with either
 // Environment::logfile or cout.
-DECLARE_EXPORT ostream logger(cout.rdbuf());
+ostream logger(cout.rdbuf());
 
 // Output file stream
-DECLARE_EXPORT ofstream Environment::logfile;
+ofstream Environment::logfile;
 
 // Name of the log file
-DECLARE_EXPORT string Environment::logfilename;
+string Environment::logfilename;
 
 // Hash value computed only once
-DECLARE_EXPORT const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
+const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
 
 vector<PythonType*> Object::table;
 
@@ -97,7 +97,7 @@ void LibraryUtils::initialize()
 }
 
 
-DECLARE_EXPORT string Environment::searchFile(const string filename)
+string Environment::searchFile(const string filename)
 {
 #ifdef _MSC_VER
   static char pathseperator = '\\';
@@ -165,7 +165,7 @@ DECLARE_EXPORT string Environment::searchFile(const string filename)
 }
 
 
-DECLARE_EXPORT int Environment::getProcessorCores()
+int Environment::getProcessorCores()
 {
   // Previously detected already
   if (processorcores >= 1) return processorcores;
@@ -187,7 +187,7 @@ DECLARE_EXPORT int Environment::getProcessorCores()
 }
 
 
-DECLARE_EXPORT void Environment::setLogFile(const string& x)
+void Environment::setLogFile(const string& x)
 {
   // Bye bye message
   if (!logfilename.empty())
@@ -229,7 +229,7 @@ DECLARE_EXPORT void Environment::setLogFile(const string& x)
 }
 
 
-DECLARE_EXPORT void Environment::loadModule(string lib)
+void Environment::loadModule(string lib)
 {
   // Type definition of the initialization function
   typedef const char* (*func)();
@@ -313,7 +313,7 @@ DECLARE_EXPORT void Environment::loadModule(string lib)
 }
 
 
-DECLARE_EXPORT void MetaClass::addClass (const string& a, const string& b,
+void MetaClass::addClass (const string& a, const string& b,
     bool def, creatorDefault f)
 {
   // Find or create the category
@@ -342,7 +342,7 @@ DECLARE_EXPORT void MetaClass::addClass (const string& a, const string& b,
 }
 
 
-DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
+MetaCategory::MetaCategory (const string& a, const string& gr,
     size_t sz, readController f, findController s)
 {
   // Update registry
@@ -371,7 +371,7 @@ DECLARE_EXPORT MetaCategory::MetaCategory (const string& a, const string& gr,
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c)
+const MetaCategory* MetaCategory::findCategoryByTag(const char* c)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(Keyword::hash(c));
@@ -379,7 +379,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const char* c
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
+const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(h);
@@ -387,7 +387,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByTag(const hashtyp
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)
+const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(Keyword::hash(c));
@@ -395,7 +395,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ch
 }
 
 
-DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)
+const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h)
 {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
@@ -403,7 +403,7 @@ DECLARE_EXPORT const MetaCategory* MetaCategory::findCategoryByGroupTag(const ha
 }
 
 
-DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const char* c) const
+const MetaClass* MetaCategory::findClass(const char* c) const
 {
   // Look up in the registered classes
   MetaCategory::ClassMap::const_iterator j = classes.find(Keyword::hash(c));
@@ -411,7 +411,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const char* c) const
 }
 
 
-DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
+const MetaClass* MetaCategory::findClass(const hashtype h) const
 {
   // Look up in the registered classes
   MetaCategory::ClassMap::const_iterator j = classes.find(h);
@@ -419,7 +419,7 @@ DECLARE_EXPORT const MetaClass* MetaCategory::findClass(const hashtype h) const
 }
 
 
-DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
+const MetaClass* MetaClass::findClass(const char* c)
 {
   // Loop through all categories
   for (MetaCategory::CategoryMap::const_iterator i = MetaCategory::categoriesByTag.begin();
@@ -435,7 +435,7 @@ DECLARE_EXPORT const MetaClass* MetaClass::findClass(const char* c)
 }
 
 
-DECLARE_EXPORT void MetaClass::printClasses()
+void MetaClass::printClasses()
 {
   logger << "Registered classes:" << endl;
   // Loop through all categories
@@ -456,7 +456,7 @@ DECLARE_EXPORT void MetaClass::printClasses()
 }
 
 
-DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(const Keyword& key) const
+const MetaFieldBase* MetaClass::findField(const Keyword& key) const
 {
   for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getName() == key)
@@ -465,7 +465,7 @@ DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(const Keyword& key) con
 }
 
 
-DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(hashtype h) const
+const MetaFieldBase* MetaClass::findField(hashtype h) const
 {
   for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getHash() == h)
@@ -474,7 +474,7 @@ DECLARE_EXPORT const MetaFieldBase* MetaClass::findField(hashtype h) const
 }
 
 
-DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
+Action MetaClass::decodeAction(const char *x)
 {
   // Validate the action
   if (!x)
@@ -492,7 +492,7 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const char *x)
 }
 
 
-DECLARE_EXPORT Action MetaClass::decodeAction(const DataValueDict& atts)
+Action MetaClass::decodeAction(const DataValueDict& atts)
 {
   // Decode the string and return the default in the absence of the attribute
   const DataValue* c = atts.get(Tags::action);
@@ -500,7 +500,7 @@ DECLARE_EXPORT Action MetaClass::decodeAction(const DataValueDict& atts)
 }
 
 
-DECLARE_EXPORT bool MetaClass::raiseEvent(Object* v, Signal a) const
+bool MetaClass::raiseEvent(Object* v, Signal a) const
 {
   bool result(true);
   for (list<Functor*>::const_iterator i = subscribers[a].begin();
@@ -574,7 +574,7 @@ Object* MetaCategory::ControllerDefault (
 }
 
 
-DECLARE_EXPORT bool matchWildcard(const char* wild, const char *str)
+bool matchWildcard(const char* wild, const char *str)
 {
   // Empty arguments: always return a match
   if (!wild || !str) return 1;

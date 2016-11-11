@@ -23,7 +23,7 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaClass* SolverMRP::metadata;
+const MetaClass* SolverMRP::metadata;
 const Keyword SolverMRP::tag_iterationthreshold("iterationthreshold");
 const Keyword SolverMRP::tag_iterationaccuracy("iterationaccuracy");
 const Keyword SolverMRP::tag_lazydelay("lazydelay");
@@ -118,7 +118,7 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
 }
 
 
-DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
+bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
@@ -129,7 +129,7 @@ DECLARE_EXPORT bool SolverMRP::demand_comparison(const Demand* l1, const Demand*
 }
 
 
-DECLARE_EXPORT void SolverMRP::SolverMRPdata::commit()
+void SolverMRP::SolverMRPdata::commit()
 {
   // Check
   SolverMRP* solver = getSolver();
@@ -295,7 +295,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 }
 
 
-DECLARE_EXPORT void SolverMRP::update_user_exits()
+void SolverMRP::update_user_exits()
 {
   setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
   setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
@@ -305,7 +305,7 @@ DECLARE_EXPORT void SolverMRP::update_user_exits()
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(void *v)
+void SolverMRP::solve(void *v)
 {
   // Configure user exits
   update_user_exits();
@@ -368,7 +368,7 @@ DECLARE_EXPORT void SolverMRP::solve(void *v)
 }
 
 
-DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
+PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
 {
   // Parse the argument
   PyObject *dem = nullptr;
@@ -408,7 +408,7 @@ DECLARE_EXPORT PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
 }
 
 
-DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
+PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
@@ -428,7 +428,7 @@ DECLARE_EXPORT PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
 }
 
 
-DECLARE_EXPORT PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
+PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try

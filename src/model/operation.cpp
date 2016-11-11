@@ -24,16 +24,16 @@
 namespace frepple
 {
 
-template<class Operation> DECLARE_EXPORT Tree utils::HasName<Operation>::st;
-DECLARE_EXPORT const MetaCategory* Operation::metadata;
-DECLARE_EXPORT const MetaClass* OperationFixedTime::metadata,
+template<class Operation> Tree utils::HasName<Operation>::st;
+const MetaCategory* Operation::metadata;
+const MetaClass* OperationFixedTime::metadata,
                *OperationTimePer::metadata,
                *OperationRouting::metadata,
                *OperationSplit::metadata,
                *OperationAlternate::metadata,
                *OperationSetup::metadata;
-DECLARE_EXPORT Operation::Operationlist Operation::nosubOperations;
-DECLARE_EXPORT Operation* OperationSetup::setupoperation;
+Operation::Operationlist Operation::nosubOperations;
+Operation* OperationSetup::setupoperation;
 
 
 int Operation::initialize()
@@ -137,7 +137,7 @@ int OperationSetup::initialize()
 }
 
 
-DECLARE_EXPORT void Operation::removeSuperOperation(Operation *o)
+void Operation::removeSuperOperation(Operation *o)
 {
   if (!o) return;
   superoplist.remove(o);
@@ -157,7 +157,7 @@ DECLARE_EXPORT void Operation::removeSuperOperation(Operation *o)
 }
 
 
-DECLARE_EXPORT Operation::~Operation()
+Operation::~Operation()
 {
   // Delete all existing operationplans (even locked ones)
   deleteOperationPlans(true);
@@ -203,7 +203,7 @@ DECLARE_EXPORT Operation::~Operation()
 }
 
 
-DECLARE_EXPORT OperationRouting::~OperationRouting()
+OperationRouting::~OperationRouting()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -213,7 +213,7 @@ DECLARE_EXPORT OperationRouting::~OperationRouting()
 }
 
 
-DECLARE_EXPORT OperationSplit::~OperationSplit()
+OperationSplit::~OperationSplit()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -223,7 +223,7 @@ DECLARE_EXPORT OperationSplit::~OperationSplit()
 }
 
 
-DECLARE_EXPORT OperationAlternate::~OperationAlternate()
+OperationAlternate::~OperationAlternate()
 {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move
@@ -233,13 +233,13 @@ DECLARE_EXPORT OperationAlternate::~OperationAlternate()
 }
 
 
-DECLARE_EXPORT OperationPlan::iterator Operation::getOperationPlans() const
+OperationPlan::iterator Operation::getOperationPlans() const
 {
   return OperationPlan::iterator(this);
 }
 
 
-DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
+OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
     Demand* l, OperationPlan* ow, unsigned long i,
     bool makeflowsloads) const
 {
@@ -249,7 +249,7 @@ DECLARE_EXPORT OperationPlan* Operation::createOperationPlan (double q, Date s, 
 }
 
 
-DECLARE_EXPORT DateRange Operation::calculateOperationTime
+DateRange Operation::calculateOperationTime
 (Date thedate, Duration duration, bool forward,
  Duration *actualduration) const
 {
@@ -403,7 +403,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 }
 
 
-DECLARE_EXPORT DateRange Operation::calculateOperationTime
+DateRange Operation::calculateOperationTime
 (Date start, Date end, Duration *actualduration) const
 {
   // Switch start and end if required
@@ -533,7 +533,7 @@ DECLARE_EXPORT DateRange Operation::calculateOperationTime
 }
 
 
-DECLARE_EXPORT void Operation::initOperationPlan (OperationPlan* opplan,
+void Operation::initOperationPlan (OperationPlan* opplan,
     double q, const Date& s, const Date& e, Demand* l, OperationPlan* ow,
     unsigned long i, bool makeflowsloads) const
 {
@@ -572,13 +572,13 @@ Flow* Operation::findFlow(const Buffer* b, Date d) const
 }
 
 
-DECLARE_EXPORT void Operation::deleteOperationPlans(bool deleteLockedOpplans)
+void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 {
   OperationPlan::deleteOperationPlans(this, deleteLockedOpplans);
 }
 
 
-DECLARE_EXPORT OperationPlanState OperationFixedTime::setOperationPlanParameters
+OperationPlanState OperationFixedTime::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function, or locked operationplan.
@@ -637,7 +637,7 @@ DECLARE_EXPORT OperationPlanState OperationFixedTime::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
+bool OperationFixedTime::extraInstantiate(OperationPlan* o)
 {
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
@@ -746,7 +746,7 @@ DECLARE_EXPORT bool OperationFixedTime::extraInstantiate(OperationPlan* o)
 }
 
 
-DECLARE_EXPORT OperationPlanState
+OperationPlanState
 OperationTimePer::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
@@ -923,7 +923,7 @@ OperationTimePer::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
+OperationPlanState OperationRouting::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Invalid call to the function
@@ -996,7 +996,7 @@ DECLARE_EXPORT OperationPlanState OperationRouting::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
+bool OperationRouting::extraInstantiate(OperationPlan* o)
 {
   // Create step suboperationplans if they don't exist yet.
   if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
@@ -1036,7 +1036,7 @@ DECLARE_EXPORT bool OperationRouting::extraInstantiate(OperationPlan* o)
 }
 
 
-DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
+SearchMode decodeSearchMode(const string& c)
 {
   if (c == "PRIORITY")
     return PRIORITY;
@@ -1050,7 +1050,7 @@ DECLARE_EXPORT SearchMode decodeSearchMode(const string& c)
 }
 
 
-DECLARE_EXPORT OperationPlanState
+OperationPlanState
 OperationAlternate::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
  bool execute) const
@@ -1086,7 +1086,7 @@ OperationAlternate::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
+bool OperationAlternate::extraInstantiate(OperationPlan* o)
 {
   // Create a suboperationplan if one doesn't exist yet.
   // We use the first effective alternate by default.
@@ -1110,7 +1110,7 @@ DECLARE_EXPORT bool OperationAlternate::extraInstantiate(OperationPlan* o)
 }
 
 
-DECLARE_EXPORT OperationPlanState
+OperationPlanState
 OperationSplit::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
  bool execute) const
@@ -1134,7 +1134,7 @@ OperationSplit::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
+bool OperationSplit::extraInstantiate(OperationPlan* o)
 {
   if (o->lastsubopplan && o->lastsubopplan->getOperation() != OperationSetup::setupoperation)
     // Suboperationplans already exist. Nothing to do here.
@@ -1185,7 +1185,7 @@ DECLARE_EXPORT bool OperationSplit::extraInstantiate(OperationPlan* o)
 }
 
 
-DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
+OperationPlanState OperationSetup::setOperationPlanParameters
 (OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
 {
   // Find or create a loadplan
@@ -1283,7 +1283,7 @@ DECLARE_EXPORT OperationPlanState OperationSetup::setOperationPlanParameters
 }
 
 
-DECLARE_EXPORT void Operation::addSubOperationPlan(
+void Operation::addSubOperationPlan(
   OperationPlan* parent, OperationPlan* child, bool fast
   )
 {
@@ -1313,7 +1313,7 @@ DECLARE_EXPORT void Operation::addSubOperationPlan(
 }
 
 
-DECLARE_EXPORT void OperationSplit::addSubOperationPlan(
+void OperationSplit::addSubOperationPlan(
   OperationPlan* parent, OperationPlan* child, bool fast
   )
 {
@@ -1373,7 +1373,7 @@ DECLARE_EXPORT void OperationSplit::addSubOperationPlan(
 }
 
 
-DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
+void OperationAlternate::addSubOperationPlan(
   OperationPlan* parent, OperationPlan* child, bool fast
   )
 {
@@ -1448,7 +1448,7 @@ DECLARE_EXPORT void OperationAlternate::addSubOperationPlan(
 }
 
 
-DECLARE_EXPORT void OperationRouting::addSubOperationPlan
+void OperationRouting::addSubOperationPlan
   (OperationPlan* parent, OperationPlan* child, bool fast)
 {
   // Check
@@ -1579,7 +1579,7 @@ DECLARE_EXPORT void OperationRouting::addSubOperationPlan
 }
 
 
-DECLARE_EXPORT double Operation::setOperationPlanQuantity
+double Operation::setOperationPlanQuantity
   (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute, Date end) const
 {
   assert(oplan);
@@ -1710,7 +1710,7 @@ DECLARE_EXPORT double Operation::setOperationPlanQuantity
 }
 
 
-DECLARE_EXPORT double OperationRouting::setOperationPlanQuantity
+double OperationRouting::setOperationPlanQuantity
   (OperationPlan* oplan, double f, bool roundDown, bool upd, bool execute, Date end) const
 {
   assert(oplan);

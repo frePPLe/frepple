@@ -32,13 +32,13 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT bool HasLevel::recomputeLevels = false;
-DECLARE_EXPORT bool HasLevel::computationBusy = false;
-DECLARE_EXPORT int HasLevel::numberOfClusters = 0;
-DECLARE_EXPORT short HasLevel::numberOfLevels = 0;
+bool HasLevel::recomputeLevels = false;
+bool HasLevel::computationBusy = false;
+int HasLevel::numberOfClusters = 0;
+short HasLevel::numberOfLevels = 0;
 
 
-DECLARE_EXPORT void HasLevel::computeLevels()
+void HasLevel::computeLevels()
 {
   computationBusy = true;
   // Get exclusive access to this function in a multi-threaded environment.

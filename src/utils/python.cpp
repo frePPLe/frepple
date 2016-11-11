@@ -35,15 +35,15 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT PyObject* PythonLogicException = nullptr;
-DECLARE_EXPORT PyObject* PythonDataException = nullptr;
-DECLARE_EXPORT PyObject* PythonRuntimeException = nullptr;
+PyObject* PythonLogicException = nullptr;
+PyObject* PythonDataException = nullptr;
+PyObject* PythonRuntimeException = nullptr;
 
-DECLARE_EXPORT PyObject *PythonInterpreter::module = nullptr;
-DECLARE_EXPORT PyThreadState* PythonInterpreter::mainThreadState = nullptr;
+PyObject *PythonInterpreter::module = nullptr;
+PyThreadState* PythonInterpreter::mainThreadState = nullptr;
 
 
-DECLARE_EXPORT void Object::writeElement(
+void Object::writeElement(
   Serializer* o, const Keyword& tag, FieldCategory m
   ) const
 {
@@ -122,7 +122,7 @@ DECLARE_EXPORT void Object::writeElement(
 }
 
 
-DECLARE_EXPORT size_t Object::getSize() const
+size_t Object::getSize() const
 {
   const MetaClass& meta = getType();
   size_t tmp = meta.size;
@@ -154,7 +154,7 @@ PyObject* PythonInterpreter::createModule()
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::initialize()
+void PythonInterpreter::initialize()
 {
   int init = Py_IsInitialized();
   if (init)
@@ -226,7 +226,7 @@ DECLARE_EXPORT void PythonInterpreter::initialize()
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::finalize()
+void PythonInterpreter::finalize()
 {
   // Only valid if this is an embedded interpreter
   if (!mainThreadState) return;
@@ -238,7 +238,7 @@ DECLARE_EXPORT void PythonInterpreter::finalize()
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::addThread()
+void PythonInterpreter::addThread()
 {
   // Check whether the thread already has a Python state
   PyThreadState * myThreadState = PyGILState_GetThisThreadState();
@@ -254,7 +254,7 @@ DECLARE_EXPORT void PythonInterpreter::addThread()
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::deleteThread()
+void PythonInterpreter::deleteThread()
 {
   // Check whether the thread already has a Python state
   PyThreadState * tcur = PyGILState_GetThisThreadState();
@@ -267,7 +267,7 @@ DECLARE_EXPORT void PythonInterpreter::deleteThread()
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
+void PythonInterpreter::execute(const char* cmd)
 {
   // Capture global lock
   PyGILState_STATE state = PyGILState_Ensure();
@@ -306,7 +306,7 @@ DECLARE_EXPORT void PythonInterpreter::execute(const char* cmd)
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::executeFile(string filename)
+void PythonInterpreter::executeFile(string filename)
 {
   // Replacing ' with \' to escape the quotes in the Python command
   for (string::size_type pos = filename.find_first_of("'", 0);
@@ -325,7 +325,7 @@ DECLARE_EXPORT void PythonInterpreter::executeFile(string filename)
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
+void PythonInterpreter::registerGlobalMethod(
   const char* name, PyCFunction method, int flags, const char* doc, bool lock
 )
 {
@@ -380,14 +380,14 @@ DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod(
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::registerGlobalMethod
+void PythonInterpreter::registerGlobalMethod
 (const char* c, PyCFunctionWithKeywords f, int i, const char* d, bool b)
 {
   registerGlobalMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d, b);
 }
 
 
-DECLARE_EXPORT void PythonInterpreter::registerGlobalObject
+void PythonInterpreter::registerGlobalObject
 (const char* name, PyObject *obj, bool lock)
 {
   PyGILState_STATE state;
@@ -466,7 +466,7 @@ const PyTypeObject PythonType::PyTypeObjectTemplate =
 };
 
 
-DECLARE_EXPORT void PythonData::setDate(const Date d)
+void PythonData::setDate(const Date d)
 {
   if (obj) Py_DECREF(obj);
   PyDateTime_IMPORT;
@@ -489,7 +489,7 @@ DECLARE_EXPORT void PythonData::setDate(const Date d)
 }
 
 
-DECLARE_EXPORT Date PythonData::getDate() const
+Date PythonData::getDate() const
 {
   PyDateTime_IMPORT;
   if (PyDateTime_Check(obj))
@@ -524,14 +524,14 @@ DECLARE_EXPORT Date PythonData::getDate() const
 }
 
 
-DECLARE_EXPORT PythonData::PythonData(Object* p)
+PythonData::PythonData(Object* p)
 {
   obj = p ? static_cast<PyObject*>(p) : Py_None;
   Py_INCREF(obj);
 }
 
 
-DECLARE_EXPORT void PythonData::setObject(Object* val)
+void PythonData::setObject(Object* val)
 {
   if (obj) Py_DECREF(obj);
   obj = val ? static_cast<PyObject*>(val) : Py_None;
@@ -550,7 +550,7 @@ inline Object* PythonData::getObject() const
 }
 
 
-DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
+PythonType::PythonType(size_t base_size, const type_info* tp)
   : cppClass(tp)
 {
   // Allocate a new type object if it doesn't exist yet.
@@ -560,7 +560,7 @@ DECLARE_EXPORT PythonType::PythonType(size_t base_size, const type_info* tp)
 }
 
 
-DECLARE_EXPORT PythonType* Object::registerPythonType(int size, const type_info *t)
+PythonType* Object::registerPythonType(int size, const type_info *t)
 {
   // Scan the types already registered
   for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end(); ++i)
@@ -573,7 +573,7 @@ DECLARE_EXPORT PythonType* Object::registerPythonType(int size, const type_info 
 }
 
 
-DECLARE_EXPORT void Object::writeProperties(Serializer& o) const
+void Object::writeProperties(Serializer& o) const
 {
   if (!dict) return; // No custom fields here
 
@@ -621,7 +621,7 @@ DECLARE_EXPORT void Object::writeProperties(Serializer& o) const
 }
 
 
-DECLARE_EXPORT void Object::setProperty(
+void Object::setProperty(
   const string& name, const DataValue& value, short type, CommandManager* mgr
   )
 {
@@ -674,7 +674,7 @@ DECLARE_EXPORT void Object::setProperty(
 }
 
 
-DECLARE_EXPORT void Object::setBoolProperty(
+void Object::setBoolProperty(
   const string& name, bool value
   )
 {
@@ -699,7 +699,7 @@ DECLARE_EXPORT void Object::setBoolProperty(
 }
 
 
-DECLARE_EXPORT void Object::setDateProperty(
+void Object::setDateProperty(
   const string& name, Date value
   )
 {
@@ -724,7 +724,7 @@ DECLARE_EXPORT void Object::setDateProperty(
 }
 
 
-DECLARE_EXPORT void Object::setDoubleProperty(
+void Object::setDoubleProperty(
   const string& name, double value
   )
 {
@@ -749,7 +749,7 @@ DECLARE_EXPORT void Object::setDoubleProperty(
 }
 
 
-DECLARE_EXPORT void Object::setStringProperty(
+void Object::setStringProperty(
   const string& name, string value
   )
 {
@@ -766,7 +766,7 @@ DECLARE_EXPORT void Object::setStringProperty(
 }
 
 
-DECLARE_EXPORT void Object::setProperty(
+void Object::setProperty(
   const string& name, PyObject* value
   )
 {
@@ -791,7 +791,7 @@ DECLARE_EXPORT void Object::setProperty(
 }
 
 
-DECLARE_EXPORT bool Object::hasProperty(const string& name) const
+bool Object::hasProperty(const string& name) const
 {
   if (!dict)
     return false;
@@ -803,7 +803,7 @@ DECLARE_EXPORT bool Object::hasProperty(const string& name) const
 }
 
 
-DECLARE_EXPORT void Object::deleteProperty(const string& name)
+void Object::deleteProperty(const string& name)
 {
   if (!dict)
     return;
@@ -813,7 +813,7 @@ DECLARE_EXPORT void Object::deleteProperty(const string& name)
 }
 
 
-DECLARE_EXPORT bool Object::getBoolProperty(const string& name, bool def) const
+bool Object::getBoolProperty(const string& name, bool def) const
 {
   if (!dict)
     // Not a single property has been defined
@@ -841,7 +841,7 @@ DECLARE_EXPORT bool Object::getBoolProperty(const string& name, bool def) const
 }
 
 
-DECLARE_EXPORT Date Object::getDateProperty(const string& name, Date def) const
+Date Object::getDateProperty(const string& name, Date def) const
 {
   if (!dict)
     // Not a single property has been defined
@@ -869,7 +869,7 @@ DECLARE_EXPORT Date Object::getDateProperty(const string& name, Date def) const
 }
 
 
-DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) const
+double Object::getDoubleProperty(const string& name, double def) const
 {
   if (!dict)
     // Not a single property has been defined
@@ -897,7 +897,7 @@ DECLARE_EXPORT double Object::getDoubleProperty(const string& name, double def) 
 }
 
 
-DECLARE_EXPORT PyObject* Object::getPyObjectProperty(const string& name) const
+PyObject* Object::getPyObjectProperty(const string& name) const
 {
   if (!dict)
     // Not a single property has been defined
@@ -915,7 +915,7 @@ DECLARE_EXPORT PyObject* Object::getPyObjectProperty(const string& name) const
 }
 
 
-DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
+PyObject* Object::toXML(PyObject* self, PyObject* args)
 {
   try
   {
@@ -974,7 +974,7 @@ DECLARE_EXPORT PyObject* Object::toXML(PyObject* self, PyObject* args)
 }
 
 
-DECLARE_EXPORT void PythonType::addMethod
+void PythonType::addMethod
 (const char* method_name, PyCFunction f, int flags, const char* doc )
 {
   unsigned short i = 0;
@@ -1012,14 +1012,14 @@ DECLARE_EXPORT void PythonType::addMethod
 }
 
 
-DECLARE_EXPORT void PythonType::addMethod
+void PythonType::addMethod
 (const char* c, PyCFunctionWithKeywords f, int i, const char* d)
 {
   addMethod(c, reinterpret_cast<PyCFunction>(f), i | METH_KEYWORDS, d);
 }
 
 
-DECLARE_EXPORT int PythonType::typeReady()
+int PythonType::typeReady()
 {
   // Register the new type in the module
   PyGILState_STATE state = PyGILState_Ensure();
@@ -1039,7 +1039,7 @@ DECLARE_EXPORT int PythonType::typeReady()
 }
 
 
-DECLARE_EXPORT void PythonType::evalException()
+void PythonType::evalException()
 {
   // Rethrowing the exception to catch its type better
   try {
@@ -1068,7 +1068,7 @@ DECLARE_EXPORT void PythonType::evalException()
 }
 
 
-DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
+PythonFunction::PythonFunction(const string& n)
 {
   if (n.empty())
   {
@@ -1098,7 +1098,7 @@ DECLARE_EXPORT PythonFunction::PythonFunction(const string& n)
 }
 
 
-DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
+PythonFunction::PythonFunction(PyObject* p)
 {
   if (!p || p == Py_None)
   {
@@ -1134,7 +1134,7 @@ DECLARE_EXPORT PythonFunction::PythonFunction(PyObject* p)
 }
 
 
-DECLARE_EXPORT PythonData PythonFunction::call() const
+PythonData PythonFunction::call() const
 {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
@@ -1150,7 +1150,7 @@ DECLARE_EXPORT PythonData PythonFunction::call() const
 }
 
 
-DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p) const
+PythonData PythonFunction::call(const PyObject* p) const
 {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
@@ -1166,7 +1166,7 @@ DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p) const
 }
 
 
-DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const
+PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const
 {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
@@ -1182,7 +1182,7 @@ DECLARE_EXPORT PythonData PythonFunction::call(const PyObject* p, const PyObject
 }
 
 
-extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *name)
+extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
 {
   try
   {
@@ -1244,7 +1244,7 @@ extern "C" DECLARE_EXPORT PyObject* getattro_handler(PyObject *self, PyObject *n
 }
 
 
-extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
+extern "C" int setattro_handler(PyObject *self, PyObject *name, PyObject *value)
 {
   try
   {
@@ -1302,7 +1302,7 @@ extern "C" DECLARE_EXPORT int setattro_handler(PyObject *self, PyObject *name, P
 }
 
 
-extern "C" DECLARE_EXPORT PyObject* compare_handler(PyObject *self, PyObject *other, int op)
+extern "C" PyObject* compare_handler(PyObject *self, PyObject *other, int op)
 {
   try
   {
@@ -1333,7 +1333,7 @@ extern "C" DECLARE_EXPORT PyObject* compare_handler(PyObject *self, PyObject *ot
 }
 
 
-extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
+extern "C" PyObject* iternext_handler(PyObject *self)
 {
   try
   {
@@ -1347,7 +1347,7 @@ extern "C" DECLARE_EXPORT PyObject* iternext_handler(PyObject *self)
 }
 
 
-extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
+extern "C" PyObject* call_handler(PyObject* self, PyObject* args, PyObject* kwds)
 {
   try
   {
@@ -1361,7 +1361,7 @@ extern "C" DECLARE_EXPORT PyObject* call_handler(PyObject* self, PyObject* args,
 }
 
 
-extern "C" DECLARE_EXPORT PyObject* str_handler(PyObject* self)
+extern "C" PyObject* str_handler(PyObject* self)
 {
   try
   {

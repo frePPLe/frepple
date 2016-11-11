@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* LoadPlan::metadata;
+const MetaCategory* LoadPlan::metadata;
 
 
 int LoadPlan::initialize()
@@ -44,7 +44,7 @@ int LoadPlan::initialize()
 }
 
 
-DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
+LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 {
   assert(o);
   ld = const_cast<Load*>(r);
@@ -89,7 +89,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 }
 
 
-DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
+LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 {
   ld = const_cast<Load*>(r);
   oper = o;
@@ -123,7 +123,7 @@ DECLARE_EXPORT LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-DECLARE_EXPORT void LoadPlan::setResource(Resource* newres, bool check)
+void LoadPlan::setResource(Resource* newres, bool check)
 {
   // Nothing to do
   if (res == newres) return;
@@ -281,7 +281,7 @@ DECLARE_EXPORT void LoadPlan::setResource(Resource* newres, bool check)
 }
 
 
-DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
+LoadPlan* LoadPlan::getOtherLoadPlan() const
 {
   for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
     if (i->ld == ld && i != this) return i;
@@ -289,7 +289,7 @@ DECLARE_EXPORT LoadPlan* LoadPlan::getOtherLoadPlan() const
 }
 
 
-DECLARE_EXPORT void LoadPlan::update()
+void LoadPlan::update()
 {
   // Update the timeline data structure
   getResource()->getLoadPlans().update(
@@ -308,7 +308,7 @@ DECLARE_EXPORT void LoadPlan::update()
 }
 
 
-DECLARE_EXPORT string LoadPlan::getSetup(bool current) const
+string LoadPlan::getSetup(bool current) const
 {
   // This resource has no setupmatrix
   static string nosetup;
@@ -332,7 +332,7 @@ DECLARE_EXPORT string LoadPlan::getSetup(bool current) const
 }
 
 
-DECLARE_EXPORT LoadPlan::~LoadPlan()
+LoadPlan::~LoadPlan()
 {
   getResource()->setChanged();
   LoadPlan *prevldplan = nullptr;
@@ -371,7 +371,7 @@ DECLARE_EXPORT LoadPlan::~LoadPlan()
 }
 
 
-DECLARE_EXPORT void LoadPlan::setLoad(Load* newld)
+void LoadPlan::setLoad(Load* newld)
 {
   // No change
   if (newld == ld) return;

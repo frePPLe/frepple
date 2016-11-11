@@ -24,8 +24,8 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* SubOperation::metacategory;
-DECLARE_EXPORT const MetaClass* SubOperation::metadata;
+const MetaCategory* SubOperation::metacategory;
+const MetaClass* SubOperation::metadata;
 
 
 int SubOperation::initialize()
@@ -52,7 +52,7 @@ int SubOperation::initialize()
 }
 
 
-DECLARE_EXPORT SubOperation::~SubOperation()
+SubOperation::~SubOperation()
 {
   if (owner)
     owner->getSubOperations().remove(this);
@@ -61,7 +61,7 @@ DECLARE_EXPORT SubOperation::~SubOperation()
 }
 
 
-DECLARE_EXPORT void SubOperation::setOwner(Operation* o)
+void SubOperation::setOwner(Operation* o)
 {
   if (o == owner)
     // No change
@@ -93,7 +93,7 @@ DECLARE_EXPORT void SubOperation::setOwner(Operation* o)
 }
 
 
-DECLARE_EXPORT void SubOperation::setOperation(Operation* o)
+void SubOperation::setOperation(Operation* o)
 {
   if (o == oper) return;
 
@@ -110,7 +110,7 @@ DECLARE_EXPORT void SubOperation::setOperation(Operation* o)
 }
 
 
-DECLARE_EXPORT void SubOperation::setPriority(int pr)
+void SubOperation::setPriority(int pr)
 {
   if (prio == pr) return;
 

@@ -31,7 +31,7 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 }
 
 
-DECLARE_EXPORT void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
+void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
   if (!l->getSkill() && !l->getResource()->isGroup())
   {

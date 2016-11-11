@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-template<class Customer> DECLARE_EXPORT Tree utils::HasName<Customer>::st;
-DECLARE_EXPORT const MetaCategory* Customer::metadata;
-DECLARE_EXPORT const MetaClass* CustomerDefault::metadata;
+template<class Customer> Tree utils::HasName<Customer>::st;
+const MetaCategory* Customer::metadata;
+const MetaClass* CustomerDefault::metadata;
 
 
 int Customer::initialize()
@@ -53,7 +53,7 @@ int CustomerDefault::initialize()
 }
 
 
-DECLARE_EXPORT Customer::~Customer()
+Customer::~Customer()
 {
   // Remove all references from demands to this customer
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)

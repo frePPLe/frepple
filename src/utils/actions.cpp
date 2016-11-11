@@ -33,7 +33,7 @@ namespace utils
 //
 
 
-DECLARE_EXPORT void CommandList::add(Command* c)
+void CommandList::add(Command* c)
 {
   // Validity check
   if (!c) throw LogicException("Adding nullptr command to a command list");
@@ -53,7 +53,7 @@ DECLARE_EXPORT void CommandList::add(Command* c)
 }
 
 
-DECLARE_EXPORT void CommandList::rollback()
+void CommandList::rollback()
 {
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
@@ -73,7 +73,7 @@ DECLARE_EXPORT void CommandList::rollback()
 }
 
 
-DECLARE_EXPORT void CommandList::undo()
+void CommandList::undo()
 {
   // Undo all commands and delete them.
   // Note that undoing an operation that hasn't been executed yet or has been
@@ -84,7 +84,7 @@ DECLARE_EXPORT void CommandList::undo()
 }
 
 
-DECLARE_EXPORT void CommandList::commit()
+void CommandList::commit()
 {
   // Commit the commands
   for (Command *i = firstCommand; i;)
@@ -102,7 +102,7 @@ DECLARE_EXPORT void CommandList::commit()
 }
 
 
-DECLARE_EXPORT void CommandList::redo()
+void CommandList::redo()
 {
   // Redo the commands
   for (Command* c = firstCommand; c; c = c->next)
@@ -110,7 +110,7 @@ DECLARE_EXPORT void CommandList::redo()
 }
 
 
-DECLARE_EXPORT CommandList::~CommandList()
+CommandList::~CommandList()
 {
   if (firstCommand)
   {
@@ -126,7 +126,7 @@ DECLARE_EXPORT CommandList::~CommandList()
 //
 
 
-DECLARE_EXPORT CommandManager::Bookmark* CommandManager::setBookmark()
+CommandManager::Bookmark* CommandManager::setBookmark()
 {
   Bookmark* n = new Bookmark(currentBookmark);
   lastBookmark->nextBookmark = n;
@@ -137,7 +137,7 @@ DECLARE_EXPORT CommandManager::Bookmark* CommandManager::setBookmark()
 }
 
 
-DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
+void CommandManager::undoBookmark(CommandManager::Bookmark* b)
 {
   if (!b) throw LogicException("Can't undo nullptr bookmark");
 
@@ -157,7 +157,7 @@ DECLARE_EXPORT void CommandManager::undoBookmark(CommandManager::Bookmark* b)
 }
 
 
-DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
+void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 {
   if (!b) throw LogicException("Can't redo nullptr bookmark");
 
@@ -173,7 +173,7 @@ DECLARE_EXPORT void CommandManager::redoBookmark(CommandManager::Bookmark* b)
 }
 
 
-DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
+void CommandManager::rollback(CommandManager::Bookmark* b)
 {
   if (!b)
     throw LogicException("Can't rollback nullptr bookmark");
@@ -209,7 +209,7 @@ DECLARE_EXPORT void CommandManager::rollback(CommandManager::Bookmark* b)
 }
 
 
-DECLARE_EXPORT void CommandManager::commit()
+void CommandManager::commit()
 {
   if (firstBookmark.active) firstBookmark.commit();
   for (Bookmark* i = firstBookmark.nextBookmark; i; )
@@ -225,7 +225,7 @@ DECLARE_EXPORT void CommandManager::commit()
 }
 
 
-DECLARE_EXPORT void CommandManager::rollback()
+void CommandManager::rollback()
 {
   for (Bookmark* i = lastBookmark; i != &firstBookmark;)
   {
@@ -246,7 +246,7 @@ DECLARE_EXPORT void CommandManager::rollback()
 //
 
 
-DECLARE_EXPORT CommandSetProperty::CommandSetProperty(
+CommandSetProperty::CommandSetProperty(
   Object *o, const string& nm, const DataValue& value, short tp
   ) : obj(o), name(nm), type(tp)
 {
@@ -278,7 +278,7 @@ DECLARE_EXPORT CommandSetProperty::CommandSetProperty(
 }
 
 
-DECLARE_EXPORT void CommandSetProperty::undo()
+void CommandSetProperty::undo()
 {
   if (!obj || name.empty())
     return;
@@ -343,7 +343,7 @@ DECLARE_EXPORT void CommandSetProperty::undo()
 }
 
 
-DECLARE_EXPORT void CommandSetProperty::redo()
+void CommandSetProperty::redo()
 {
   if (!obj || name.empty())
     return;
@@ -412,7 +412,7 @@ DECLARE_EXPORT void CommandSetProperty::redo()
 //
 
 
-DECLARE_EXPORT void ThreadGroup::execute()
+void ThreadGroup::execute()
 {
   // CASE 1: No need to create worker threads when either a) only a single
   // worker is allowed or b) only a single function needs to be called.
@@ -525,7 +525,7 @@ DECLARE_EXPORT void ThreadGroup::execute()
 }
 
 
-DECLARE_EXPORT ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable()
+ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable()
 {
   lock_guard<mutex> l(lock);
   if (callables.empty())
@@ -582,7 +582,7 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
 //
 
 
-DECLARE_EXPORT PyObject* loadModule
+PyObject* loadModule
 (PyObject* self, PyObject* args, PyObject* kwds)
 {
 
@@ -611,7 +611,7 @@ DECLARE_EXPORT PyObject* loadModule
 }
 
 
-DECLARE_EXPORT void Environment::printModules()
+void Environment::printModules()
 {
   bool first = true;
   for (set<string>::const_iterator i = moduleRegistry.begin(); i != moduleRegistry.end(); ++i) {

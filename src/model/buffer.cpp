@@ -32,15 +32,15 @@
 namespace frepple
 {
 
-template<class Buffer> DECLARE_EXPORT Tree utils::HasName<Buffer>::st;
-DECLARE_EXPORT const MetaCategory* Buffer::metadata;
-DECLARE_EXPORT const MetaClass* BufferDefault::metadata,
+template<class Buffer> Tree utils::HasName<Buffer>::st;
+const MetaCategory* Buffer::metadata;
+const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
                *BufferProcure::metadata,
                *OperationInventory::metadata,
                *OperationDelivery::metadata;
-DECLARE_EXPORT const double Buffer::default_max = 1e37;
-DECLARE_EXPORT OperationFixedTime *Buffer::uninitializedProducing = nullptr;
+const double Buffer::default_max = 1e37;
+OperationFixedTime *Buffer::uninitializedProducing = nullptr;
 
 
 int Buffer::initialize()
@@ -156,7 +156,7 @@ Buffer* OperationDelivery::getBuffer() const
 }
 
 
-DECLARE_EXPORT void Buffer::inspect(const string msg) const
+void Buffer::inspect(const string msg) const
 {
   logger << "Inspecting buffer " << getName() << ": ";
   if (!msg.empty()) logger  << msg;
@@ -192,7 +192,7 @@ DECLARE_EXPORT void Buffer::inspect(const string msg) const
 }
 
 
-DECLARE_EXPORT void Buffer::setItem(Item* i)
+void Buffer::setItem(Item* i)
 {
   if (it == i)
     // No change
@@ -227,7 +227,7 @@ DECLARE_EXPORT void Buffer::setItem(Item* i)
 }
 
 
-DECLARE_EXPORT void Buffer::setOnHand(double f)
+void Buffer::setOnHand(double f)
 {
   // The dummy operation to model the inventory may need to be created
   Operation *o = Operation::find("Inventory " + string(getName()));
@@ -289,7 +289,7 @@ Buffer* OperationInventory::getBuffer() const
 }
 
 
-DECLARE_EXPORT double Buffer::getOnHand() const
+double Buffer::getOnHand() const
 {
   string invop = "Inventory " + string(getName());
   for (flowplanlist::const_iterator i = flowplans.begin(); i!=flowplans.end(); ++i)
@@ -305,7 +305,7 @@ DECLARE_EXPORT double Buffer::getOnHand() const
 }
 
 
-DECLARE_EXPORT double Buffer::getOnHand(Date d) const
+double Buffer::getOnHand(Date d) const
 {
   double tmp(0.0);
   for (flowplanlist::const_iterator oo=flowplans.begin();
@@ -323,7 +323,7 @@ DECLARE_EXPORT double Buffer::getOnHand(Date d) const
 }
 
 
-DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
+double Buffer::getOnHand(Date d1, Date d2, bool min) const
 {
   // Swap parameters if required
   if (d2 < d1)
@@ -368,7 +368,7 @@ DECLARE_EXPORT double Buffer::getOnHand(Date d1, Date d2, bool min) const
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimum(double m)
+void Buffer::setMinimum(double m)
 {
   // There is already a minimum calendar.
   if (min_cal)
@@ -399,7 +399,7 @@ DECLARE_EXPORT void Buffer::setMinimum(double m)
 }
 
 
-DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
+void Buffer::setMinimumCalendar(Calendar *cal)
 {
   // Resetting the same calendar
   if (min_cal == cal) return;
@@ -442,7 +442,7 @@ DECLARE_EXPORT void Buffer::setMinimumCalendar(Calendar *cal)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximum(double m)
+void Buffer::setMaximum(double m)
 {
   // There is already a maximum calendar.
   if (max_cal)
@@ -473,7 +473,7 @@ DECLARE_EXPORT void Buffer::setMaximum(double m)
 }
 
 
-DECLARE_EXPORT void Buffer::setMaximumCalendar(Calendar *cal)
+void Buffer::setMaximumCalendar(Calendar *cal)
 {
   // Resetting the same calendar
   if (max_cal == cal) return;
@@ -512,7 +512,7 @@ DECLARE_EXPORT void Buffer::setMaximumCalendar(Calendar *cal)
 }
 
 
-DECLARE_EXPORT void Buffer::deleteOperationPlans(bool deleteLocked)
+void Buffer::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for (flowlist::iterator i=flows.begin(); i!=flows.end(); ++i)
@@ -523,7 +523,7 @@ DECLARE_EXPORT void Buffer::deleteOperationPlans(bool deleteLocked)
 }
 
 
-DECLARE_EXPORT Buffer::~Buffer()
+Buffer::~Buffer()
 {
   // Delete all operationplans.
   // An alternative logic would be to delete only the flowplans for this
@@ -556,7 +556,7 @@ DECLARE_EXPORT Buffer::~Buffer()
 }
 
 
-DECLARE_EXPORT void Buffer::followPegging
+void Buffer::followPegging
 (PeggingIterator& iter, FlowPlan* curflowplan, double qty, double offset, short lvl)
 {
   if (!curflowplan->getOperationPlan()->getQuantity() || curflowplan->getBuffer()->getTool())
@@ -724,7 +724,7 @@ DECLARE_EXPORT void Buffer::followPegging
 }
 
 
-DECLARE_EXPORT Operation* BufferProcure::getOperation() const
+Operation* BufferProcure::getOperation() const
 {
   if (!oper)
   {
@@ -780,7 +780,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
 }
 
 
-DECLARE_EXPORT void Buffer::buildProducingOperation()
+void Buffer::buildProducingOperation()
 {
   if (producing_operation
     && producing_operation != uninitializedProducing

@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaClass* OperationPlan::metadata;
-DECLARE_EXPORT const MetaCategory* OperationPlan::metacategory;
-DECLARE_EXPORT unsigned long OperationPlan::counterMin = 2;
+const MetaClass* OperationPlan::metadata;
+const MetaCategory* OperationPlan::metacategory;
+unsigned long OperationPlan::counterMin = 2;
 
 Location* OperationPlan::loc = NULL;
 Location* OperationPlan::ori = NULL;
@@ -57,7 +57,7 @@ int OperationPlan::initialize()
 }
 
 
-void DECLARE_EXPORT OperationPlan::setChanged(bool b)
+void OperationPlan::setChanged(bool b)
 {
   if (owner)
     owner->setChanged(b);
@@ -69,7 +69,7 @@ void DECLARE_EXPORT OperationPlan::setChanged(bool b)
 }
 
 
-DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
+Object* OperationPlan::createOperationPlan(
   const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
   )
 {
@@ -568,7 +568,7 @@ DECLARE_EXPORT Object* OperationPlan::createOperationPlan(
 }
 
 
-DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
+OperationPlan* OperationPlan::findId(unsigned long l)
 {
   // We are garantueed that there are no operationplans that have an id equal
   // or higher than the current counter. This is garantueed by the
@@ -584,7 +584,7 @@ DECLARE_EXPORT OperationPlan* OperationPlan::findId(unsigned long l)
 }
 
 
-DECLARE_EXPORT bool OperationPlan::assignIdentifier()
+bool OperationPlan::assignIdentifier()
 {
   // Need to assure that ids are unique!
   static mutex onlyOne;  
@@ -620,7 +620,7 @@ DECLARE_EXPORT bool OperationPlan::assignIdentifier()
 }
 
 
-DECLARE_EXPORT bool OperationPlan::activate()
+bool OperationPlan::activate()
 {
   // At least a valid operation pointer must exist
   if (!oper)
@@ -688,7 +688,7 @@ DECLARE_EXPORT bool OperationPlan::activate()
 }
 
 
-DECLARE_EXPORT void OperationPlan::deactivate()
+void OperationPlan::deactivate()
 {
   // Mark as not activated
   id = 0;
@@ -704,7 +704,7 @@ DECLARE_EXPORT void OperationPlan::deactivate()
 }
 
 
-DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
+void OperationPlan::insertInOperationplanList()
 {
 
   // Check if already linked, or nothing to link
@@ -749,7 +749,7 @@ DECLARE_EXPORT void OperationPlan::insertInOperationplanList()
 }
 
 
-DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
+void OperationPlan::removeFromOperationplanList()
 {
   if (prev)
     // In the middle
@@ -769,7 +769,7 @@ DECLARE_EXPORT void OperationPlan::removeFromOperationplanList()
 }
 
 
-DECLARE_EXPORT void OperationPlan::updateOperationplanList()
+void OperationPlan::updateOperationplanList()
 {
   if (!oper) return;
 
@@ -813,7 +813,7 @@ DECLARE_EXPORT void OperationPlan::updateOperationplanList()
 }
 
 
-DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
+void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
 {
   // Check
   if (!o) return;
@@ -839,7 +839,7 @@ DECLARE_EXPORT void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
 };
 
 
-DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
+bool OperationPlan::operator < (const OperationPlan& a) const
 {
   // Different operations
   if (oper != a.oper)
@@ -854,7 +854,7 @@ DECLARE_EXPORT bool OperationPlan::operator < (const OperationPlan& a) const
 }
 
 
-DECLARE_EXPORT void OperationPlan::createFlowLoads()
+void OperationPlan::createFlowLoads()
 {
   // Initialized already, or nothing to initialize
   if (firstflowplan || firstloadplan || !oper)
@@ -883,7 +883,7 @@ DECLARE_EXPORT void OperationPlan::createFlowLoads()
 }
 
 
-DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
+void OperationPlan::deleteFlowLoads()
 {
   // If no flowplans and loadplans, the work is already done
   if (!firstflowplan && !firstloadplan) return;
@@ -903,7 +903,7 @@ DECLARE_EXPORT void OperationPlan::deleteFlowLoads()
 }
 
 
-DECLARE_EXPORT double OperationPlan::getTotalFlowAux(const Buffer* b) const
+double OperationPlan::getTotalFlowAux(const Buffer* b) const
 {
   double q = 0.0;
 
@@ -921,7 +921,7 @@ DECLARE_EXPORT double OperationPlan::getTotalFlowAux(const Buffer* b) const
 }
 
 
-DECLARE_EXPORT OperationPlan::~OperationPlan()
+OperationPlan::~OperationPlan()
 {
   // Delete the flowplans and loadplan
   deleteFlowLoads();
@@ -956,7 +956,7 @@ DECLARE_EXPORT OperationPlan::~OperationPlan()
 }
 
 
-void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o, bool fast)
+void OperationPlan::setOwner(OperationPlan* o, bool fast)
 {
   // Special case: the same owner is set twice
   if (owner == o) return;
@@ -969,7 +969,7 @@ void DECLARE_EXPORT OperationPlan::setOwner(OperationPlan* o, bool fast)
 }
 
 
-void DECLARE_EXPORT OperationPlan::setStart (Date d)
+void OperationPlan::setStart (Date d)
 {
   // Locked opplans don't move
   if (getLocked()) return;
@@ -1000,7 +1000,7 @@ void DECLARE_EXPORT OperationPlan::setStart (Date d)
 }
 
 
-void DECLARE_EXPORT OperationPlan::setEnd(Date d)
+void OperationPlan::setEnd(Date d)
 {
   // Locked opplans don't move
   if (getLocked()) return;
@@ -1030,7 +1030,7 @@ void DECLARE_EXPORT OperationPlan::setEnd(Date d)
 }
 
 
-DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
+void OperationPlan::resizeFlowLoadPlans()
 {
   // Update all flowplans
   for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
@@ -1059,7 +1059,7 @@ DECLARE_EXPORT void OperationPlan::resizeFlowLoadPlans()
 }
 
 
-DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
+OperationPlan::OperationPlan(const OperationPlan& src, bool init)
 {
   if (src.owner)
     throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
@@ -1095,7 +1095,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src, bool init)
 }
 
 
-DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
+OperationPlan::OperationPlan(const OperationPlan& src,
     OperationPlan* newOwner)
 {
   if (!newOwner)
@@ -1130,7 +1130,7 @@ DECLARE_EXPORT OperationPlan::OperationPlan(const OperationPlan& src,
 }
 
 
-DECLARE_EXPORT void OperationPlan::update()
+void OperationPlan::update()
 {
   if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)
   {
@@ -1165,7 +1165,7 @@ DECLARE_EXPORT void OperationPlan::update()
 }
 
 
-DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
+void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 {
   if (!o) return;
   for (OperationPlan *opplan = o->first_opplan; opplan; )
@@ -1178,7 +1178,7 @@ DECLARE_EXPORT void OperationPlan::deleteOperationPlans(Operation* o, bool delet
 }
 
 
-DECLARE_EXPORT double OperationPlan::getPenalty() const
+double OperationPlan::getPenalty() const
 {
   double penalty = 0;
   for (OperationPlan::LoadPlanIterator i = beginLoadPlans();
@@ -1193,7 +1193,7 @@ DECLARE_EXPORT double OperationPlan::getPenalty() const
 }
 
 
-DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
+bool OperationPlan::isExcess(bool strict) const
 {
   // Delivery operationplans aren't excess
   if (getDemand()) return false;
@@ -1253,7 +1253,7 @@ DECLARE_EXPORT bool OperationPlan::isExcess(bool strict) const
 }
 
 
-DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
+Duration OperationPlan::getUnavailable() const
 {
   Duration x;
   getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
@@ -1261,7 +1261,7 @@ DECLARE_EXPORT Duration OperationPlan::getUnavailable() const
 }
 
 
-DECLARE_EXPORT Object* OperationPlan::finder(const DataValueDict& key)
+Object* OperationPlan::finder(const DataValueDict& key)
 {
   const DataValue* val = key.get(Tags::id);
   return val ?
@@ -1270,7 +1270,7 @@ DECLARE_EXPORT Object* OperationPlan::finder(const DataValueDict& key)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setConfirmed(bool b)
+void OperationPlan::setConfirmed(bool b)
 {
   if (b)
   {
@@ -1288,7 +1288,7 @@ DECLARE_EXPORT void OperationPlan::setConfirmed(bool b)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setApproved(bool b)
+void OperationPlan::setApproved(bool b)
 {
   if (b)
   {
@@ -1306,7 +1306,7 @@ DECLARE_EXPORT void OperationPlan::setApproved(bool b)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setProposed(bool b)
+void OperationPlan::setProposed(bool b)
 {
   if (b)
   {
@@ -1324,7 +1324,7 @@ DECLARE_EXPORT void OperationPlan::setProposed(bool b)
 }
 
 
-DECLARE_EXPORT string OperationPlan::getStatus() const
+string OperationPlan::getStatus() const
 {
   if (flags & STATUS_APPROVED)
     return "approved";
@@ -1335,7 +1335,7 @@ DECLARE_EXPORT string OperationPlan::getStatus() const
 }
 
 
-DECLARE_EXPORT bool OperationPlan::isConstrained() const
+bool OperationPlan::isConstrained() const
 {
   for (PeggingIterator p(this); p; ++p)
   {
@@ -1348,7 +1348,7 @@ DECLARE_EXPORT bool OperationPlan::isConstrained() const
 }
 
 
-DECLARE_EXPORT void OperationPlan::setStatus(const string& s)
+void OperationPlan::setStatus(const string& s)
 {
   if (s == "approved")
   {
@@ -1373,7 +1373,7 @@ DECLARE_EXPORT void OperationPlan::setStatus(const string& s)
 }
 
 
-DECLARE_EXPORT void OperationPlan::freezeStatus(Date st, Date nd, double q)
+void OperationPlan::freezeStatus(Date st, Date nd, double q)
 {
   if (!getLocked()) return;
   dates = DateRange(st, nd);
@@ -1381,7 +1381,7 @@ DECLARE_EXPORT void OperationPlan::freezeStatus(Date st, Date nd, double q)
 }
 
 
-DECLARE_EXPORT void OperationPlan::setDemand(Demand* l)
+void OperationPlan::setDemand(Demand* l)
 {
   // No change
   if (l == dmd)
@@ -1445,7 +1445,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 }
 
 
-DECLARE_EXPORT double OperationPlan::getCriticality() const
+double OperationPlan::getCriticality() const
 {
   // Operationplan hasn't been set up yet
   if (!oper)

@@ -24,7 +24,7 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void Operation::updateProblems()
+void Operation::updateProblems()
 {
   // Find all operationplans, and delegate the problem detection to them
   if (getDetectProblems())

@@ -298,7 +298,7 @@ inline ostream & operator << (ostream & os, const Signal & d)
 typedef unsigned int hashtype;
 
 /** This stream is the general output for all logging and debugging messages. */
-extern DECLARE_EXPORT ostream logger;
+extern ostream logger;
 
 /** Auxilary structure for easy indenting in the log stream. */
 struct indent
@@ -376,13 +376,13 @@ class RuntimeException: public runtime_error
 
 
 /** @brief Python exception class matching with frepple::LogicException. */
-extern DECLARE_EXPORT PyObject* PythonLogicException;
+extern PyObject* PythonLogicException;
 
 /** @brief Python exception class matching with frepple::DataException. */
-extern DECLARE_EXPORT PyObject* PythonDataException;
+extern PyObject* PythonDataException;
 
 /** @brief Python exception class matching with frepple::RuntimeException. */
-extern DECLARE_EXPORT PyObject* PythonRuntimeException;
+extern PyObject* PythonRuntimeException;
 
 
 //
@@ -542,16 +542,16 @@ class PythonInterpreter
 {
   public:
     /** Initializes the interpreter. */
-    static DECLARE_EXPORT void initialize();
+    static void initialize();
 
     /** Finalizes the interpreter. */
-    static DECLARE_EXPORT void finalize();
+    static void finalize();
 
     /** Execute some python code. */
-    static DECLARE_EXPORT void execute(const char*);
+    static void execute(const char*);
 
     /** Execute a file with Python code. */
-    static DECLARE_EXPORT void executeFile(string);
+    static void executeFile(string);
 
     /** Register a new method in the main extension module.<br>
       * Arguments:
@@ -561,19 +561,19 @@ class PythonInterpreter
       *   expected by the C func.
       * - The __doc__ attribute, or nullptr.
       */
-    static DECLARE_EXPORT void registerGlobalMethod(
+    static void registerGlobalMethod(
       const char*, PyCFunction, int, const char*, bool = true
     );
 
     /** Register a new method in the main extension module. */
-    static DECLARE_EXPORT void registerGlobalMethod
+    static void registerGlobalMethod
     (const char*, PyCFunctionWithKeywords, int, const char*, bool = true);
 
     /** Add a new object in the main extension module. */
-    static DECLARE_EXPORT void registerGlobalObject(const char*, PyObject*, bool = true);
+    static void registerGlobalObject(const char*, PyObject*, bool = true);
 
     /** Return a pointer to the main extension module. */
-    static PyObject* getModule()
+    static DECLARE_EXPORT PyObject* getModule()
     {
       return module;
     }
@@ -584,7 +584,7 @@ class PythonInterpreter
       * to create a Python thread state as well.<br>
       * See the Python PyGILState_Ensure API.
       */
-    static DECLARE_EXPORT void addThread();
+    static void addThread();
 
     /** Delete a Python thread state.<br>
       * Each OS-level thread has a Python thread state.
@@ -592,22 +592,22 @@ class PythonInterpreter
       * to delete the Python thread state as well.<br>
       * See the Python PyGILState_Release API.
       */
-    static DECLARE_EXPORT void deleteThread();
+    static void deleteThread();
 
   private:
     /** Callback function to create the extension module. */
     static PyObject* createModule();
 
     /** A pointer to the frePPLe extension module. */
-    static DECLARE_EXPORT PyObject *module;
+    static PyObject *module;
 
     /** Python API: Used for redirecting the Python output to the same file
       * as the application.
       */
-    static DECLARE_EXPORT PyObject *python_log(PyObject*, PyObject*);
+    static PyObject *python_log(PyObject*, PyObject*);
 
     /** Main thread info. */
-    static DECLARE_EXPORT PyThreadState* mainThreadState;
+    static PyThreadState* mainThreadState;
 };
 
 
@@ -620,7 +620,7 @@ class PythonInterpreter
   * on http://www.codeproject.com/KB/string/wildcmp.aspx. No specific license
   * constraints apply on using the code.
   */
-DECLARE_EXPORT bool matchWildcard(const char*, const char*);
+bool matchWildcard(const char*, const char*);
 
 
 //
@@ -757,7 +757,7 @@ class Duration
       *  - Decimal values are not supported.
       *  - The alternate format as a date and time is not supported.
       */
-    DECLARE_EXPORT void parse(const char*);
+    void parse(const char*);
 
     /** Function to parse a string to a double, representing the
       * number of seconds.<br>
@@ -765,18 +765,18 @@ class Duration
       * decimal part of the duration.
       * @see parse(const char*)
       */
-    static DECLARE_EXPORT double parse2double(const char*);
+    static double parse2double(const char*);
 
     /** Write out a double as a time period string.
       * @see toCharBuffer()
       */
-    static DECLARE_EXPORT void double2CharBuffer(double, char*);
+    static void double2CharBuffer(double, char*);
 
     /** The maximum value for a Duration. */
-    DECLARE_EXPORT static const Duration MAX;
+    static const Duration MAX;
 
     /** The minimum value for a Duration. */
-    DECLARE_EXPORT static const Duration MIN;
+    static const Duration MIN;
 
   private:
     /** The time is stored as a number of seconds. */
@@ -790,7 +790,7 @@ class Duration
       * The output format is described with the string() method.
       * @see string()
       */
-    DECLARE_EXPORT void toCharBuffer(char*) const;
+    void toCharBuffer(char*) const;
 };
 
 
@@ -839,7 +839,7 @@ class Date
       * The default date format is %Y-%m-%dT%H:%M:%S, which is the standard
       * format defined in the XML Schema standard.
       */
-    static DECLARE_EXPORT string format;
+    static string format;
 
     /** The internal representation of a date is a single long value. */
     time_t lval;
@@ -906,7 +906,7 @@ class Date
     /** Constructor with year, month and day as arguments. Hours, minutes
       * and seconds can optionally be passed too.
       */
-    DECLARE_EXPORT Date(int year, int month, int day,
+    Date(int year, int month, int day,
         int hr=0, int min=0, int sec=0
         );
 
@@ -1036,7 +1036,7 @@ class Date
     }
 
     /** Function that parses a string according to the format string. */
-    DECLARE_EXPORT void parse(const char*, const char* = format.c_str());
+    void parse(const char*, const char* = format.c_str());
 
     /** Updates the default date format. */
     static void setFormat(const string& n)
@@ -1054,13 +1054,13 @@ class Date
       * we can represent.<br>
       * This value is normally 1971-01-01T00:00:00.
       */
-    static DECLARE_EXPORT const Date infinitePast;
+    static const Date infinitePast;
 
     /** A constant representing the infinite future, i.e. the latest time which
       * we can represent.<br>
       * This value is currently set to 2030-12-31T00:00:00.
       */
-    static DECLARE_EXPORT const Date infiniteFuture;
+    static const Date infiniteFuture;
 
     /** Return the number of seconds since january 1st. */
     long getSecondsYear() const
@@ -1111,7 +1111,7 @@ class Date
 
 #ifndef HAVE_STRPTIME
   private:
-    DECLARE_EXPORT char* strptime(const char *, const char *, struct tm *);
+    char* strptime(const char *, const char *, struct tm *);
 #endif
 };
 
@@ -1290,7 +1290,7 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data form
     }
 
     /** Convert the daterange to a string. */
-    DECLARE_EXPORT operator string() const;
+    operator string() const;
 
     /** Updates the default seperator. */
     static void setSeparator(const string& n)
@@ -1313,10 +1313,10 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data form
     Date end;
 
     /** Separator to be used when printing this string. */
-    static DECLARE_EXPORT string separator;
+    static string separator;
 
     /** Separator to be used when printing this string. */
-    static DECLARE_EXPORT size_t separatorlength;
+    static size_t separatorlength;
 };
 
 
@@ -1364,17 +1364,17 @@ class Keyword : public NonCopyable
 
     /** This is the constructor.<br>
       * The tag doesn't belong to an XML namespace. */
-    DECLARE_EXPORT Keyword(const string&);
+    Keyword(const string&);
 
     /** This is the constructor. The tag belongs to the XML namespace passed
       * as second argument.<br>
       * Note that we still require the first argument to be unique, since it
       * is used as a keyword for the Python extensions.
       */
-    DECLARE_EXPORT Keyword(const string&, const string&);
+    Keyword(const string&, const string&);
 
     /** Destructor. */
-    DECLARE_EXPORT ~Keyword();
+    ~Keyword();
 
     /** Returns the hash value of the tag. */
     hashtype getHash() const
@@ -1427,7 +1427,7 @@ class Keyword : public NonCopyable
       * The hash modulus is 954991 (which is the biggest prime number
       * lower than 1000000).
       */
-    static DECLARE_EXPORT hashtype hash(const char*);
+    static hashtype hash(const char*);
 
     /** This is the hash function.
       * @see hash(const char*)
@@ -1439,17 +1439,17 @@ class Keyword : public NonCopyable
 
     /** Finds a tag when passed a certain string. If no tag exists yet, it
       * will be created. */
-    static DECLARE_EXPORT const Keyword& find(const char*);
+    static const Keyword& find(const char*);
 
     /** Return a reference to a table with all defined tags. */
-    static DECLARE_EXPORT tagtable& getTags();
+    static tagtable& getTags();
 
     /** Prints a list of all tags that have been defined. This can be useful
       * for debugging and also for creating a good hashing function.<br>
       * GNU gperf is a program that can generate a perfect hash function for
       * a given set of symbols.
       */
-    static DECLARE_EXPORT void printTags();
+    static void printTags();
 
     /** Equality operator. */
     bool operator==(const Keyword& k) const
@@ -1490,22 +1490,22 @@ class Functor : public NonCopyable
 extern "C"
 {
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT PyObject* getattro_handler (PyObject*, PyObject*);
+  PyObject* getattro_handler (PyObject*, PyObject*);
 
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT int setattro_handler (PyObject*, PyObject*, PyObject*);
+  int setattro_handler (PyObject*, PyObject*, PyObject*);
 
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT PyObject* compare_handler (PyObject*, PyObject*, int);
+  PyObject* compare_handler (PyObject*, PyObject*, int);
 
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT PyObject* iternext_handler (PyObject*);
+  PyObject* iternext_handler (PyObject*);
 
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT PyObject* call_handler(PyObject*, PyObject*, PyObject*);
+  PyObject* call_handler(PyObject*, PyObject*, PyObject*);
 
   /** Handler function called from Python. Internal use only. */
-  DECLARE_EXPORT PyObject* str_handler(PyObject*);
+  PyObject* str_handler(PyObject*);
 }
 
 
@@ -1537,10 +1537,10 @@ class PythonType : public NonCopyable
        * This function should only be called from within a catch-block, since
        * internally it rethrows the exception!
        */
-    static DECLARE_EXPORT void evalException();
+    static void evalException();
 
     /** Constructor, sets the tp_base_size member. */
-    DECLARE_EXPORT PythonType(size_t, const type_info*);
+    PythonType(size_t, const type_info*);
 
     /** Return a pointer to the actual Python PyTypeObject. */
     inline PyTypeObject* type_object() const
@@ -1549,10 +1549,10 @@ class PythonType : public NonCopyable
     }
 
     /** Add a new method. */
-    DECLARE_EXPORT void addMethod(const char*, PyCFunction, int, const char*);
+    void addMethod(const char*, PyCFunction, int, const char*);
 
     /** Add a new method. */
-    DECLARE_EXPORT void addMethod(const char*, PyCFunctionWithKeywords, int, const char*);
+    void addMethod(const char*, PyCFunctionWithKeywords, int, const char*);
 
     /** Updates tp_name. */
     void setName (const string& n)
@@ -1652,7 +1652,7 @@ class PythonType : public NonCopyable
 
     /** This method needs to be called after the type information has all
       * been updated. It adds the type to the frepple module. */
-    DECLARE_EXPORT int typeReady();
+    int typeReady();
 
     /** Comparison operator. */
     bool operator == (const PythonType& i) const
@@ -1844,7 +1844,7 @@ class MetaClass : public NonCopyable
     virtual ~MetaClass() {}
 
     /** Initialize the data structure and register the class. */
-    DECLARE_EXPORT void addClass(const string&, const string&,
+    void addClass(const string&, const string&,
         bool = false, creatorDefault = nullptr);
 
     /** This constructor registers the metadata of a class. */
@@ -1880,13 +1880,13 @@ class MetaClass : public NonCopyable
       *  - 'R' for action REMOVE
       *  - Any other value will result in a data exception
       */
-    static DECLARE_EXPORT Action decodeAction(const char*);
+    static Action decodeAction(const char*);
 
     /** This method picks up the attribute named "ACTION" from the list and
       * calls the method decodeAction(const XML_Char*) to analyze it.
       * @see decodeAction(const XML_Char*)
       */
-    static DECLARE_EXPORT Action decodeAction(const DataValueDict&);
+    static Action decodeAction(const DataValueDict&);
 
     /** Sort two metaclass objects. This is used to sort entities on their
       * type information in a stable and platform independent way.
@@ -1927,7 +1927,7 @@ class MetaClass : public NonCopyable
       * event. If false is returned, one of the callbacks disapproved it and
       * the event action should be allowed to execute.
       */
-    DECLARE_EXPORT bool raiseEvent(Object* v, Signal a) const;
+    bool raiseEvent(Object* v, Signal a) const;
 
     /** Connect a new subscriber to the class. */
     void connect(Functor *c, Signal a) const
@@ -1943,11 +1943,11 @@ class MetaClass : public NonCopyable
 
     /** Print all registered factory methods to the standard output for
       * debugging purposes. */
-    static DECLARE_EXPORT void printClasses();
+    static void printClasses();
 
     /** Find a particular class by its name. If it can't be located the return
       * value is nullptr. */
-    static DECLARE_EXPORT const MetaClass* findClass(const char*);
+    static const MetaClass* findClass(const char*);
 
     /** Default constructor. */
     MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")) {}
@@ -2088,10 +2088,10 @@ class MetaClass : public NonCopyable
 		}
 
     /** Search a field. */
-    DECLARE_EXPORT const MetaFieldBase* findField(const Keyword&) const;
+    const MetaFieldBase* findField(const Keyword&) const;
 
     /** Search a field. */
-    DECLARE_EXPORT const MetaFieldBase* findField(hashtype) const;
+    const MetaFieldBase* findField(hashtype) const;
 
     typedef vector<MetaFieldBase*> fieldlist;
 
@@ -2198,29 +2198,29 @@ class MetaCategory : public MetaClass
 
     /** Looks up a category name in the registry. If the category can't be
       * located the return value is nullptr. */
-    static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const char*);
+    static const MetaCategory* findCategoryByTag(const char*);
 
     /** Looks up a category name in the registry. If the category can't be
       * located the return value is nullptr. */
-    static DECLARE_EXPORT const MetaCategory* findCategoryByTag(const hashtype);
+    static const MetaCategory* findCategoryByTag(const hashtype);
 
     /** Looks up a category name in the registry. If the category can't be
       * located the return value is nullptr. */
-    static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const char*);
+    static const MetaCategory* findCategoryByGroupTag(const char*);
 
     /** Looks up a category name in the registry. If the category can't be
       * located the return value is nullptr. */
-    static DECLARE_EXPORT const MetaCategory* findCategoryByGroupTag(const hashtype);
+    static const MetaCategory* findCategoryByGroupTag(const hashtype);
 
     /** Find a class in this category with a specified name.<br>
       * If the catrgory can't be found the return value is nullptr.
       */
-    DECLARE_EXPORT const MetaClass* findClass(const char*) const;
+    const MetaClass* findClass(const char*) const;
 
     /** Find a class in this category with a specified name.<br>
       * If the catrgory can't be found the return value is nullptr.
       */
-    DECLARE_EXPORT const MetaClass* findClass(const hashtype) const;
+    const MetaClass* findClass(const hashtype) const;
 
     /** Find an object given a dictionary of values. */
     Object* find(const DataValueDict& key) const
@@ -2236,11 +2236,11 @@ class MetaCategory : public MetaClass
 
     /** Compute the hash for "default" once and store it in this variable for
       * efficiency. */
-    static DECLARE_EXPORT const hashtype defaultHash;
+    static const hashtype defaultHash;
 
   private:
     /** Private constructor, called by registerCategory. */
-    DECLARE_EXPORT MetaCategory(const string&, const string&, size_t,
+    MetaCategory(const string&, const string&, size_t,
         readController, findController);
 
     /** A map of all classes registered for this category. */
@@ -2249,7 +2249,7 @@ class MetaCategory : public MetaClass
     /** This is the root for a linked list of all categories.
       * Categories are chained to the list in the order of their registration.
       */
-    static DECLARE_EXPORT const MetaCategory* firstCategory;
+    static const MetaCategory* firstCategory;
 
     /** A pointer to the next category in the singly linked list. */
     const MetaCategory* nextCategory;
@@ -2258,10 +2258,10 @@ class MetaCategory : public MetaClass
     findController findFunction;
 
     /** A map of all categories by their name. */
-    static DECLARE_EXPORT CategoryMap categoriesByTag;
+    static CategoryMap categoriesByTag;
 
     /** A map of all categories by their group name. */
-    static DECLARE_EXPORT CategoryMap categoriesByGroupTag;
+    static CategoryMap categoriesByGroupTag;
 };
 
 
@@ -2454,7 +2454,7 @@ class Serializer
     }
 
     /** Set the content type, by parsing its text description. */
-    DECLARE_EXPORT void setContentType(const string&);
+    void setContentType(const string&);
 
     /** Constructor with a given stream. */
     Serializer(ostream& os) { m_fp = &os; }
@@ -2581,7 +2581,7 @@ class Serializer
       * except for the root object.
       * @see writeElementWithHeader(const Keyword&, Object*)
       */
-    DECLARE_EXPORT virtual void writeElement(const Keyword&, const Object*, FieldCategory = BASE);
+    virtual void writeElement(const Keyword&, const Object*, FieldCategory = BASE);
 
     /** @see writeElement(const Keyword&, const Object*, mode) */
     void writeElement(const Keyword& t, const Object& o)
@@ -2721,7 +2721,7 @@ class DataKeyword
       * avoided where possible. Only the hash of an element can efficiently
       * be retrieved.
       */
-    DECLARE_EXPORT const char* getName() const;
+    const char* getName() const;
 
     /** Returns true when this element is an instance of this tag. This method
       * doesn't involve a string comparison and is extremely efficient. */
@@ -2996,7 +2996,7 @@ class XMLData : public DataValue
       * case insensitive. It thus matches a wider range of values:<br>
       *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
       */
-    DECLARE_EXPORT bool getBool() const;
+    bool getBool() const;
 
     Object* getObject() const
     {
@@ -3072,16 +3072,16 @@ class Environment
 {
   private:
     /** Caches the number of processor cores. */
-    static DECLARE_EXPORT int processorcores;
+    static int processorcores;
 
     /** A file where output is directed to. */
-    static DECLARE_EXPORT ofstream logfile;
+    static ofstream logfile;
 
     /** The name of the log file. */
-    static DECLARE_EXPORT string logfilename;
+    static string logfilename;
 
     /** A list of all loaded modules. */
-    static DECLARE_EXPORT set<string> moduleRegistry;
+    static set<string> moduleRegistry;
 
   public:
     /** Search for a file with a given name.<br>
@@ -3094,10 +3094,10 @@ class Environment
       *   - The library directory as configured during the compilation.
       *     This applies only to linux / unix.
       */
-    static DECLARE_EXPORT string searchFile(const string);
+    static string searchFile(const string);
 
     /** Returns the number of processor cores on your machine. */
-    static DECLARE_EXPORT int getProcessorCores();
+    static int getProcessorCores();
 
     /** Returns the name of the logfile. */
     static const string& getLogFile()
@@ -3111,7 +3111,7 @@ class Environment
       * If the filename starts with '+' the log file is appended to
       * instead of being overwritten.
       */
-    static DECLARE_EXPORT void setLogFile(const string& x);
+    static void setLogFile(const string& x);
 
     /** Type for storing parameters passed to a module that is loaded. */
     typedef map<string,XMLData> ParameterList;
@@ -3127,10 +3127,10 @@ class Environment
       *  - Unix systems supporting the dlopen function in the standard way.
       *    Some unix systems have other or deviating APIs. A pretty messy story :-<
       */
-    static DECLARE_EXPORT void loadModule(string lib);
+    static void loadModule(string lib);
 
     /** Print all modules that have been loaded. */
-    static DECLARE_EXPORT void printModules();
+    static void printModules();
 
     /** Sleep for a number of milliseconds. */
     static void sleep(unsigned int m)
@@ -3278,7 +3278,7 @@ class PythonData : public DataValue
 
     /** Convert a Python datetime.date or datetime.datetime object into a
       * frePPLe date. */
-    DECLARE_EXPORT Date getDate() const;
+    Date getDate() const;
 
     /** Convert a Python number or string into a C++ double. */
     inline double getDouble() const
@@ -3364,13 +3364,13 @@ class PythonData : public DataValue
     /** Return the frePPle Object referred to by the Python value.
       * If it points to a non-frePPLe object, the return value is nullptr.
       */
-    DECLARE_EXPORT Object* getObject() const;
+    Object* getObject() const;
 
     /** Constructor from a pointer to an Object.<br>
       * The metadata of the Object instances allow us to create a Python
       * object that works as a proxy for the C++ object.
       */
-    DECLARE_EXPORT PythonData(Object* p);
+    PythonData(Object* p);
 
     /** Convert a C++ string into a Unicode Python string. */
     inline PythonData(const string& val)
@@ -3458,7 +3458,7 @@ class PythonData : public DataValue
       obj = PyFloat_FromDouble(val);
     }
 
-    virtual DECLARE_EXPORT void setDate(const Date);
+    virtual void setDate(const Date);
 
     virtual void setString(const string& val)
     {
@@ -3480,7 +3480,7 @@ class PythonData : public DataValue
       Py_INCREF(obj);
     }
 
-    virtual DECLARE_EXPORT void setObject(Object*);
+    virtual void setObject(Object*);
 };
 
 
@@ -3494,10 +3494,10 @@ class PythonFunction : public PythonData
     PythonFunction() {}
 
     /** Constructor. */
-    DECLARE_EXPORT PythonFunction(const string&);
+    PythonFunction(const string&);
 
     /** Constructor. */
-    DECLARE_EXPORT PythonFunction(PyObject*);
+    PythonFunction(PyObject*);
 
     /** Copy constructor. */
     PythonFunction(const PythonFunction& o) : func(o.func)
@@ -3539,13 +3539,13 @@ class PythonFunction : public PythonData
     }
 
     /** Call the Python function without arguments. */
-    DECLARE_EXPORT PythonData call() const;
+    PythonData call() const;
 
     /** Call the Python function with one argument. */
-    DECLARE_EXPORT PythonData call(const PyObject*) const;
+    PythonData call(const PyObject*) const;
 
     /** Call the Python function with two arguments. */
-    DECLARE_EXPORT PythonData call(const PyObject*, const PyObject*) const;
+    PythonData call(const PyObject*, const PyObject*) const;
 
   private:
     /** A pointer to the Python object. */
@@ -3621,8 +3621,8 @@ class PythonDataValueDict : public DataValueDict
   */
 class Object : public PyObject
 {
-  friend DECLARE_EXPORT PyObject* getattro_handler(PyObject*, PyObject*);
-  friend DECLARE_EXPORT int setattro_handler(PyObject*, PyObject*, PyObject*);
+  friend PyObject* getattro_handler(PyObject*, PyObject*);
+  friend int setattro_handler(PyObject*, PyObject*, PyObject*);
 
   public:
     /** Constructor. */
@@ -3640,7 +3640,7 @@ class Object : public PyObject
     }
 
     /** Called while serializing the object. */
-    virtual DECLARE_EXPORT void writeElement(
+    virtual void writeElement(
       Serializer*, const Keyword&, FieldCategory = BASE
       ) const;
 
@@ -3655,44 +3655,44 @@ class Object : public PyObject
       *   3: double
       *   4: string
       */
-    DECLARE_EXPORT void setProperty(
+    void setProperty(
       const string& name, const DataValue& value, short type, CommandManager* mgr = nullptr
       );
 
     /** Set a custom property referring to a python object. */
-    DECLARE_EXPORT void setProperty(
+    void setProperty(
       const string& name, PyObject* value
       );
 
     /** Update a boolean property. */
-    DECLARE_EXPORT void setBoolProperty(const string&, bool);
+    void setBoolProperty(const string&, bool);
 
     /** Update a date property. */
-    DECLARE_EXPORT void setDateProperty(const string&, Date);
+    void setDateProperty(const string&, Date);
 
     /** Update a double property. */
-    DECLARE_EXPORT void setDoubleProperty(const string&, double);
+    void setDoubleProperty(const string&, double);
 
     /** Update a string property. */
-    DECLARE_EXPORT void setStringProperty(const string&, string);
+    void setStringProperty(const string&, string);
 
     /** Check whether a property with a certain name is set. */
-    DECLARE_EXPORT bool hasProperty(const string&) const;
+    bool hasProperty(const string&) const;
 
     /** Retrieve a boolean property. */
-    DECLARE_EXPORT bool getBoolProperty(const string&, bool=true) const;
+    bool getBoolProperty(const string&, bool=true) const;
 
     /** Retrieve a date property. */
-    DECLARE_EXPORT Date getDateProperty(const string&, Date=Date::infinitePast) const;
+    Date getDateProperty(const string&, Date=Date::infinitePast) const;
 
     /** Retrieve a double property. */
-    DECLARE_EXPORT double getDoubleProperty(const string&, double=0.0) const;
+    double getDoubleProperty(const string&, double=0.0) const;
 
     /** Retrieve a double property. */
-    DECLARE_EXPORT PyObject* getPyObjectProperty(const string&) const;
+    PyObject* getPyObjectProperty(const string&) const;
 
     /** Delete a property if it is set. */
-    DECLARE_EXPORT void deleteProperty(const string&);
+    void deleteProperty(const string&);
 
     /** Retrieve a string property.
       * This method needs to be defined inline. On windows the function
@@ -3719,7 +3719,7 @@ class Object : public PyObject
     }
 
     /** Method to write custom properties to a serializer. */
-    DECLARE_EXPORT void writeProperties(Serializer&) const;
+    void writeProperties(Serializer&) const;
 
     /** Returns whether an entity is real or dummy. */
     virtual bool getHidden() const
@@ -3735,7 +3735,7 @@ class Object : public PyObject
     }
 
     /** Return the number of bytes this object occupies in memory. */
-    virtual DECLARE_EXPORT size_t getSize() const;
+    virtual size_t getSize() const;
 
     /** This template function can generate a factory method for objects that
       * can be constructed with their default constructor.  */
@@ -3809,7 +3809,7 @@ class Object : public PyObject
       * written to it.<br>
       * If no argument is given the representation is returned as a string.
       */
-    static DECLARE_EXPORT PyObject* toXML(PyObject*, PyObject*);
+    static PyObject* toXML(PyObject*, PyObject*);
 
     /** A function to force an object to be destroyed by the Python garbage
       * collection.<br>
@@ -3888,9 +3888,9 @@ class Object : public PyObject
     }
 
     // TODO Only required to keep pointerfield to Object valid, used in problem.getOwner()
-    static DECLARE_EXPORT const MetaCategory* metadata;
+    static const MetaCategory* metadata;
 
-    DECLARE_EXPORT static PythonType* registerPythonType(int, const type_info*);
+    static PythonType* registerPythonType(int, const type_info*);
 
   protected:
     static vector<PythonType*> table;
@@ -4086,7 +4086,7 @@ class ThreadGroup : public NonCopyable
     }
 
     /** Execute all functions and wait for them to finish. */
-    DECLARE_EXPORT void execute();
+    void execute();
 
     /** Returns the number of parallel workers that is activated.<br>
       * By default we activate as many worker threads as there are cores on
@@ -4141,7 +4141,7 @@ class ThreadGroup : public NonCopyable
     /** This method selects the next function to be executed.
       * @see wrapper
       */
-    DECLARE_EXPORT callableWithArgument selectNextCallable();
+    callableWithArgument selectNextCallable();
 };
 
 
@@ -4312,7 +4312,7 @@ class Tree : public NonCopyable
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
-    DECLARE_EXPORT void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr)
+    void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr)
     {
       if (obj->nm == newname)
         return;
@@ -4342,13 +4342,13 @@ class Tree : public NonCopyable
       * is correct.<br>
       * The tree should be locked before calling this function.
       */
-    DECLARE_EXPORT void verify() const;
+    void verify() const;
 
     /** Remove all elements from the tree. */
-    DECLARE_EXPORT void clear();
+    void clear();
 
     /** Remove a node from the tree. */
-    DECLARE_EXPORT void erase(TreeNode* x);
+    void erase(TreeNode* x);
 
     /** Search for an element in the tree.<br>
       * Profiling shows this function has a significant impact on the CPU
@@ -4403,7 +4403,7 @@ class Tree : public NonCopyable
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
-    DECLARE_EXPORT TreeNode* insert(TreeNode* v, TreeNode* hint);
+    TreeNode* insert(TreeNode* v, TreeNode* hint);
 
   private:
     /** Restructure the tree such that the depth of the branches remains
@@ -4562,7 +4562,7 @@ class CommandSetField : public Command
 
   public:
     /** Constructor. */
-    DECLARE_EXPORT CommandSetField(Object *o, const MetaFieldBase *f, const DataValue& d)
+    CommandSetField(Object *o, const MetaFieldBase *f, const DataValue& d)
       : obj(o), fld(f), newdata(d)
     {
       if (!obj || !fld)
@@ -4578,7 +4578,7 @@ class CommandSetField : public Command
     }
 
     /** Undoes the field change. */
-    virtual DECLARE_EXPORT void rollback()
+    virtual void rollback()
     {
       if (!obj || !fld)
         return;
@@ -4589,14 +4589,14 @@ class CommandSetField : public Command
 
     /** Committing the change - nothing to be done as the change
       * is realized when creating the command. */
-    virtual DECLARE_EXPORT void commit()
+    virtual void commit()
     {
       obj = nullptr;
       fld = nullptr;
     }
 
     /** Undoes the field change. */
-    virtual DECLARE_EXPORT void undo()
+    virtual void undo()
     {
       if (!obj || !fld)
         return;
@@ -4604,7 +4604,7 @@ class CommandSetField : public Command
     }
 
     /** Redo the field change. */
-    virtual DECLARE_EXPORT void redo()
+    virtual void redo()
     {
       if (!obj || !fld)
         return;
@@ -4639,7 +4639,7 @@ class CommandSetProperty : public Command
 
   public:
     /** Constructor. */
-    DECLARE_EXPORT CommandSetProperty(Object*, const string&, const DataValue&, short);
+    CommandSetProperty(Object*, const string&, const DataValue&, short);
 
     /** Destructor. */
     virtual ~CommandSetProperty()
@@ -4649,7 +4649,7 @@ class CommandSetProperty : public Command
     }
 
     /** Undoes the field change. */
-    virtual DECLARE_EXPORT void rollback()
+    virtual void rollback()
     {
       if (obj && !name.empty())
         undo();
@@ -4659,19 +4659,19 @@ class CommandSetProperty : public Command
 
     /** Committing the change - nothing to be done as the change
       * is realized when creating the command. */
-    virtual DECLARE_EXPORT void commit()
+    virtual void commit()
     {
       obj = nullptr;
       name = "";
     }
 
     /** Undoes the property change. */
-    virtual DECLARE_EXPORT void undo();
+    virtual void undo();
 
     /** Redo the property change.
       * We assume the change was undone before.
       */
-    virtual DECLARE_EXPORT void redo();
+    virtual void redo();
 
     void clearObject()
     {
@@ -4697,7 +4697,7 @@ class CommandCreateObject : public Command
     Object* obj;
   public:
     /** Constructor. */
-    DECLARE_EXPORT CommandCreateObject(Object *o) : obj(o) { }
+    CommandCreateObject(Object *o) : obj(o) { }
 
     /** Destructor. */
     virtual ~CommandCreateObject()
@@ -4706,7 +4706,7 @@ class CommandCreateObject : public Command
     }
 
     /** Undoes the creation change. */
-    virtual DECLARE_EXPORT void rollback()
+    virtual void rollback()
     {
       if (obj) undo();
     }
@@ -4714,13 +4714,13 @@ class CommandCreateObject : public Command
     /** Committing the change - nothing to be done as the change
       * is realized before the command is created.
       */
-    virtual DECLARE_EXPORT void commit()
+    virtual void commit()
     {
       obj = nullptr;
     }
 
     /** Undoes the creation. */
-    virtual DECLARE_EXPORT void undo()
+    virtual void undo()
     {
       if (!obj)
         return;
@@ -4753,7 +4753,7 @@ class CommandCreateObject : public Command
     }
 
     /** Redoing the creation isn't possible and throws an exception. */
-    virtual DECLARE_EXPORT void redo()
+    virtual void redo()
     {
       throw DataException("Can't redo a create command");
     }
@@ -4849,27 +4849,27 @@ class CommandList : public Command
     }
 
     /** Append an additional command to the end of the list. */
-    DECLARE_EXPORT void add(Command* c);
+    void add(Command* c);
 
     /** Undoes all actions on the list.<br>
       * At the end it also clears the list of actions.
       */
-    virtual DECLARE_EXPORT void rollback();
+    virtual void rollback();
 
     /** Commits all actions on its list.<br>
       * At the end it also clears the list of actions.
       */
-    virtual DECLARE_EXPORT void commit();
+    virtual void commit();
 
     /** Undoes all actions on its list.<br>
       * The list of actions is left intact, so the changes can still be redone.
       */
-    virtual DECLARE_EXPORT void undo();
+    virtual void undo();
 
     /** Redoes all actions on its list.<br>
       * The list of actions is left intact, so the changes can still be undone.
       */
-    DECLARE_EXPORT void redo();
+    void redo();
 
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const
@@ -4885,7 +4885,7 @@ class CommandList : public Command
       * have been committed or undone. If this is not the case a warning
       * will be printed.
       */
-    virtual DECLARE_EXPORT ~CommandList();
+    virtual ~CommandList();
 };
 
 
@@ -5104,7 +5104,7 @@ class CommandManager
     }
 
     /** Add new setField command to the active bookmark. */
-    DECLARE_EXPORT void addCommandSetField(
+    void addCommandSetField(
       Object* o, const MetaFieldBase* f, const DataValue& d
       )
     {
@@ -5112,31 +5112,31 @@ class CommandManager
     }
 
     /** Create a new bookmark. */
-    DECLARE_EXPORT Bookmark* setBookmark();
+    Bookmark* setBookmark();
 
     /** Undo all commands in a bookmark (and its children).<br>
       * It can later be redone.<br>
       * The active bookmark in the manager is set to the parent of
       * argument bookmark.
       */
-    DECLARE_EXPORT void undoBookmark(Bookmark*);
+    void undoBookmark(Bookmark*);
 
     /** Redo all commands in a bookmark (and its children).<br>
       * It can later still be undone.<br>
       * The active bookmark in the manager is set to the argument bookmark.
       */
-    DECLARE_EXPORT void redoBookmark(Bookmark*);
+    void redoBookmark(Bookmark*);
 
     /** Undo all commands in a bookmark (and its children).<br>
       * It can no longer be redone. The bookmark does however still exist.
       */
-    DECLARE_EXPORT void rollback(Bookmark*);
+    void rollback(Bookmark*);
 
     /** Commit all commands. */
-    DECLARE_EXPORT void commit();
+    void commit();
 
     /** Rolling back all commands. */
-    DECLARE_EXPORT void rollback();
+    void rollback();
 };
 
 
@@ -5244,7 +5244,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
   private:
     /** Maintains a global list of all created entities. The list is keyed
       * by the name. */
-    static DECLARE_EXPORT Tree st;
+    static Tree st;
     typedef T* type;
 
   public:
@@ -5399,7 +5399,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     }
 
     /** Destructor. */
-    DECLARE_EXPORT ~HasName()
+    ~HasName()
     {
       st.erase(this);
     }
@@ -5452,7 +5452,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       *   'add_change' is the default value.
       * @see HasName
       */
-    static DECLARE_EXPORT Object* reader (
+    static Object* reader (
       const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = nullptr
       )
     {
@@ -5584,7 +5584,7 @@ class HasSource
     }
 
     /** Sets the source field. */
-    DECLARE_EXPORT void setSource(const string& c)
+    void setSource(const string& c)
     {
       source = c;
     }
@@ -5610,25 +5610,25 @@ class HasDescription : public HasSource
     }
 
     /** Returns the sub_category. */
-    DECLARE_EXPORT string getSubCategory() const
+    string getSubCategory() const
     {
       return subcat;
     }
 
     /** Returns the getDescription. */
-    DECLARE_EXPORT string getDescription() const
+    string getDescription() const
     {
       return descr;
     }
 
     /** Sets the category field. */
-    DECLARE_EXPORT void setCategory(const string& f)
+    void setCategory(const string& f)
     {
       cat = f;
     }
 
     /** Sets the sub_category field. */
-    DECLARE_EXPORT void setSubCategory(const string& f)
+    void setSubCategory(const string& f)
     {
       subcat = f;
     }
@@ -6480,7 +6480,7 @@ template <class A, class B, class C> class Association
         }
     };
 
-    static DECLARE_EXPORT Object* reader(
+    static Object* reader(
       const MetaClass* cat, const DataValueDict& in, CommandManager* mgr = nullptr
       )
     {
@@ -7355,7 +7355,7 @@ class LibraryUtils
 
 
 /** @brief This Python function loads a frepple extension module in memory. */
-DECLARE_EXPORT PyObject* loadModule(PyObject*, PyObject*, PyObject*);
+PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 
 
 /** @brief A template class to expose category classes which use a string

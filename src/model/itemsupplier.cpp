@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* ItemSupplier::metacategory;
-DECLARE_EXPORT const MetaClass* ItemSupplier::metadata;
-DECLARE_EXPORT const MetaClass* OperationItemSupplier::metadata;
+const MetaCategory* ItemSupplier::metacategory;
+const MetaClass* ItemSupplier::metadata;
+const MetaClass* OperationItemSupplier::metadata;
 
 
 int ItemSupplier::initialize()
@@ -54,7 +54,7 @@ int ItemSupplier::initialize()
 }
 
 
-DECLARE_EXPORT ItemSupplier::~ItemSupplier()
+ItemSupplier::~ItemSupplier()
 {
   // Delete the association from the related objects
   if (getSupplier())
@@ -71,7 +71,7 @@ DECLARE_EXPORT ItemSupplier::~ItemSupplier()
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier()
+ItemSupplier::ItemSupplier()
 {
   initType(metadata);
 
@@ -80,7 +80,7 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier()
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
 {
   setSupplier(s);
   setItem(r);
@@ -92,7 +92,7 @@ DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
 }
 
 
-DECLARE_EXPORT ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
 {
   setSupplier(s);
   setItem(r);
@@ -188,7 +188,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
 }
 
 
-DECLARE_EXPORT void ItemSupplier::deleteOperationPlans(bool b)
+void ItemSupplier::deleteOperationPlans(bool b)
 {
   for (OperationItemSupplier* i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
@@ -214,7 +214,7 @@ int OperationItemSupplier::initialize()
 }
 
 
-DECLARE_EXPORT OperationItemSupplier* OperationItemSupplier::findOrCreate(
+OperationItemSupplier* OperationItemSupplier::findOrCreate(
   ItemSupplier* i, Buffer *b
   )
 {
@@ -240,7 +240,7 @@ DECLARE_EXPORT OperationItemSupplier* OperationItemSupplier::findOrCreate(
 }
 
 
-DECLARE_EXPORT OperationItemSupplier::OperationItemSupplier(
+OperationItemSupplier::OperationItemSupplier(
   ItemSupplier* i, Buffer *b
   ) : supitem(i)
 {
@@ -299,13 +299,13 @@ OperationItemSupplier::~OperationItemSupplier()
 }
 
 
-DECLARE_EXPORT Buffer* OperationItemSupplier::getBuffer() const
+Buffer* OperationItemSupplier::getBuffer() const
 {
   return getFlows().begin()->getBuffer();
 }
 
 
-DECLARE_EXPORT void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
+void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
 {
   // This method can only trim operations not loading a resource
   if (getLoads().begin() != getLoads().end())
@@ -374,7 +374,7 @@ DECLARE_EXPORT void OperationItemSupplier::trimExcess(bool zero_or_minimum) cons
 }
 
 
-DECLARE_EXPORT Object* ItemSupplier::finder(const DataValueDict& d)
+Object* ItemSupplier::finder(const DataValueDict& d)
 {
   // Check item
   const DataValue* tmp = d.get(Tags::item);

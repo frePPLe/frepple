@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-template<class Skill> DECLARE_EXPORT Tree utils::HasName<Skill>::st;
-DECLARE_EXPORT const MetaCategory* Skill::metadata;
-DECLARE_EXPORT const MetaClass* SkillDefault::metadata;
+template<class Skill> Tree utils::HasName<Skill>::st;
+const MetaCategory* Skill::metadata;
+const MetaClass* SkillDefault::metadata;
 
 
 int Skill::initialize()
@@ -54,7 +54,7 @@ int SkillDefault::initialize()
 }
 
 
-DECLARE_EXPORT Skill::~Skill()
+Skill::~Skill()
 {
   // The ResourceSkill objects are automatically deleted by the destructor
   // of the Association list class.

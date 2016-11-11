@@ -24,11 +24,11 @@
 namespace frepple
 {
 
-template<class Demand> DECLARE_EXPORT Tree utils::HasName<Demand>::st;
-DECLARE_EXPORT const MetaCategory* Demand::metadata;
-DECLARE_EXPORT const MetaClass* DemandDefault::metadata;
+template<class Demand> Tree utils::HasName<Demand>::st;
+const MetaCategory* Demand::metadata;
+const MetaClass* DemandDefault::metadata;
 
-DECLARE_EXPORT OperationFixedTime *Demand::uninitializedDelivery = nullptr;
+OperationFixedTime *Demand::uninitializedDelivery = nullptr;
 
 
 int Demand::initialize()
@@ -58,7 +58,7 @@ int DemandDefault::initialize()
 }
 
 
-DECLARE_EXPORT void Demand::setQuantity(double f)
+void Demand::setQuantity(double f)
 {
   // Reject negative quantities, and no-change updates
   double delta(f - qty);
@@ -70,7 +70,7 @@ DECLARE_EXPORT void Demand::setQuantity(double f)
 }
 
 
-DECLARE_EXPORT Demand::~Demand()
+Demand::~Demand()
 {
   // Remove the delivery operationplans
   deleteOperationPlans(true);
@@ -93,7 +93,7 @@ DECLARE_EXPORT Demand::~Demand()
 }
 
 
-DECLARE_EXPORT void Demand::deleteOperationPlans
+void Demand::deleteOperationPlans
 (bool deleteLocked, CommandManager* cmds)
 {
   // Delete all delivery operationplans.
@@ -124,7 +124,7 @@ DECLARE_EXPORT void Demand::deleteOperationPlans
 }
 
 
-DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
+void Demand::removeDelivery(OperationPlan * o)
 {
   // Valid opplan check
   if (!o) return;
@@ -154,7 +154,7 @@ DECLARE_EXPORT void Demand::removeDelivery(OperationPlan * o)
 }
 
 
-DECLARE_EXPORT const Demand::OperationPlanList& Demand::getDelivery() const
+const Demand::OperationPlanList& Demand::getDelivery() const
 {
   // We need to check the sorting order of the list first! It could be disturbed
   // when operationplans are being moved around.
@@ -184,14 +184,14 @@ DECLARE_EXPORT const Demand::OperationPlanList& Demand::getDelivery() const
 }
 
 
-DECLARE_EXPORT OperationPlan* Demand::getLatestDelivery() const
+OperationPlan* Demand::getLatestDelivery() const
 {
   const Demand::OperationPlanList& l = getDelivery();
   return l.empty() ? nullptr : *(l.begin());
 }
 
 
-DECLARE_EXPORT OperationPlan* Demand::getEarliestDelivery() const
+OperationPlan* Demand::getEarliestDelivery() const
 {
   const Demand::OperationPlanList& l = getDelivery();
   OperationPlan *last = nullptr;
@@ -201,7 +201,7 @@ DECLARE_EXPORT OperationPlan* Demand::getEarliestDelivery() const
 }
 
 
-DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
+void Demand::addDelivery (OperationPlan * o)
 {
   // Dummy call to this function
   if (!o) return;
@@ -238,7 +238,7 @@ DECLARE_EXPORT void Demand::addDelivery (OperationPlan * o)
 }
 
 
-DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
+Operation* Demand::getDeliveryOperation() const
 {
   // Case 1: Operation specified on the demand itself,
   // or the delivery operation was computed earlier.
@@ -308,7 +308,7 @@ DECLARE_EXPORT Operation* Demand::getDeliveryOperation() const
 }
 
 
-DECLARE_EXPORT double Demand::getPlannedQuantity() const
+double Demand::getPlannedQuantity() const
 {
   double delivered(0.0);
   for (OperationPlanList::const_iterator i=deli.begin(); i!=deli.end(); ++i)
@@ -317,13 +317,13 @@ DECLARE_EXPORT double Demand::getPlannedQuantity() const
 }
 
 
-DECLARE_EXPORT PeggingIterator Demand::getPegging() const
+PeggingIterator Demand::getPegging() const
 {
   return PeggingIterator(this);
 }
 
 
-DECLARE_EXPORT Problem::List::iterator Demand::getConstraintIterator() const
+Problem::List::iterator Demand::getConstraintIterator() const
 {
   return constraints.begin();
 }

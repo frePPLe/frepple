@@ -24,11 +24,11 @@
 namespace frepple
 {
 
-template<class SetupMatrix> DECLARE_EXPORT Tree utils::HasName<SetupMatrix>::st;
-DECLARE_EXPORT const MetaCategory* SetupMatrix::metadata;
-DECLARE_EXPORT const MetaClass* SetupMatrixDefault::metadata;
-DECLARE_EXPORT const MetaClass* SetupMatrixRule::metadata;
-DECLARE_EXPORT const MetaCategory* SetupMatrixRule::metacategory;
+template<class SetupMatrix> Tree utils::HasName<SetupMatrix>::st;
+const MetaCategory* SetupMatrix::metadata;
+const MetaClass* SetupMatrixDefault::metadata;
+const MetaClass* SetupMatrixRule::metadata;
+const MetaCategory* SetupMatrixRule::metacategory;
 
 
 int SetupMatrix::initialize()
@@ -79,7 +79,7 @@ int SetupMatrixDefault::initialize()
 }
 
 
-DECLARE_EXPORT SetupMatrix::~SetupMatrix()
+SetupMatrix::~SetupMatrix()
 {
   // Destroy the rules.
   // Note that the rule destructor updates the firstRule field.
@@ -92,7 +92,7 @@ DECLARE_EXPORT SetupMatrix::~SetupMatrix()
 
 
 /*
-DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)  TODO Review for use as read controller for rules
+SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)  TODO Review for use as read controller for rules
 {
   // Pick up the priority attributes
   const DataValue *val = atts.get(Tags::priority);
@@ -156,7 +156,7 @@ DECLARE_EXPORT SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& att
 }
 */
 
-DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* kwdict)
+PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
@@ -194,7 +194,7 @@ DECLARE_EXPORT PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* ar
 }
 
 
-DECLARE_EXPORT void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
+void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
 {
   // Validate the arguments
   if (matrix)
@@ -229,7 +229,7 @@ DECLARE_EXPORT void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
 }
 
 
-DECLARE_EXPORT SetupMatrixRule::~SetupMatrixRule()
+SetupMatrixRule::~SetupMatrixRule()
 {
   // Maintain linked list
   if (nextRule) nextRule->prevRule = prevRule;
@@ -238,7 +238,7 @@ DECLARE_EXPORT SetupMatrixRule::~SetupMatrixRule()
 }
 
 
-DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
+void SetupMatrixRule::setPriority(const int n)
 {
   if (n == priority)
     return;
@@ -300,7 +300,7 @@ DECLARE_EXPORT void SetupMatrixRule::setPriority(const int n)
 }
 
 
-DECLARE_EXPORT SetupMatrixRule* SetupMatrix::calculateSetup
+SetupMatrixRule* SetupMatrix::calculateSetup
 (const string oldsetup, const string newsetup) const
 {
   // No need to look

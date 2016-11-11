@@ -32,7 +32,7 @@ bool compare_location(const pair<Location*, double>& a, const pair<Location*, do
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
+void SolverMRP::solve(const Demand* l, void* v)
 {
 	typedef list<pair<Location* , double > > SortedLocation;
 	// Set a bookmark at the current command
@@ -455,14 +455,14 @@ DECLARE_EXPORT void SolverMRP::solve(const Demand* l, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::scanExcess(CommandManager* mgr)
+void SolverMRP::scanExcess(CommandManager* mgr)
 {
   for(CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
     if (i->isActive()) scanExcess(&*i);
 }
 
 
-DECLARE_EXPORT void SolverMRP::scanExcess(CommandList* l)
+void SolverMRP::scanExcess(CommandList* l)
 {
   // Loop over all newly created operationplans found in the command stack
   for(CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)

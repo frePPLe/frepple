@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* ItemDistribution::metacategory;
-DECLARE_EXPORT const MetaClass* ItemDistribution::metadata;
-DECLARE_EXPORT const MetaClass* OperationItemDistribution::metadata;
+const MetaCategory* ItemDistribution::metacategory;
+const MetaClass* ItemDistribution::metadata;
+const MetaClass* OperationItemDistribution::metadata;
 
 
 int ItemDistribution::initialize()
@@ -54,7 +54,7 @@ int ItemDistribution::initialize()
 }
 
 
-DECLARE_EXPORT ItemDistribution::ItemDistribution()
+ItemDistribution::ItemDistribution()
 {
   initType(metadata);
 
@@ -63,7 +63,7 @@ DECLARE_EXPORT ItemDistribution::ItemDistribution()
 }
 
 
-DECLARE_EXPORT ItemDistribution::~ItemDistribution()
+ItemDistribution::~ItemDistribution()
 {
   // Delete the association from the related objects
   if (getOrigin())
@@ -99,7 +99,7 @@ DECLARE_EXPORT ItemDistribution::~ItemDistribution()
 }
 
 
-DECLARE_EXPORT void ItemDistribution::setItem(Item* i)
+void ItemDistribution::setItem(Item* i)
 {
   // Unlink from previous item
   if (it)
@@ -210,7 +210,7 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
 }
 
 
-DECLARE_EXPORT void ItemDistribution::deleteOperationPlans(bool b)
+void ItemDistribution::deleteOperationPlans(bool b)
 {
   for (OperationItemDistribution* i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
@@ -236,7 +236,7 @@ int OperationItemDistribution::initialize()
 }
 
 
-DECLARE_EXPORT OperationItemDistribution::OperationItemDistribution(
+OperationItemDistribution::OperationItemDistribution(
   ItemDistribution* i, Buffer *src, Buffer* dest
   ) : itemdist(i)
 {
@@ -296,7 +296,7 @@ OperationItemDistribution::~OperationItemDistribution()
 }
 
 
-DECLARE_EXPORT Buffer* OperationItemDistribution::getOrigin() const
+Buffer* OperationItemDistribution::getOrigin() const
 {
   for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() < 0.0)
@@ -305,7 +305,7 @@ DECLARE_EXPORT Buffer* OperationItemDistribution::getOrigin() const
 }
 
 
-DECLARE_EXPORT Buffer* OperationItemDistribution::getDestination() const
+Buffer* OperationItemDistribution::getDestination() const
 {
   for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() > 0.0)
@@ -314,7 +314,7 @@ DECLARE_EXPORT Buffer* OperationItemDistribution::getDestination() const
 }
 
 
-DECLARE_EXPORT Object* ItemDistribution::finder(const DataValueDict& d)
+Object* ItemDistribution::finder(const DataValueDict& d)
 {
   // Check item field
   const DataValue* tmp = d.get(Tags::item);

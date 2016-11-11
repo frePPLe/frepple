@@ -72,7 +72,7 @@ char* XMLInput::transcodeUTF8(const XMLCh* xercesChars)
 }
 
 
-DECLARE_EXPORT XMLInput::XMLInput() : objects(maxobjects), data(maxdata)
+XMLInput::XMLInput() : objects(maxobjects), data(maxdata)
 {
   if (!utf8_encoder)
   {
@@ -84,7 +84,7 @@ DECLARE_EXPORT XMLInput::XMLInput() : objects(maxobjects), data(maxdata)
 }
 
 
-DECLARE_EXPORT void  XMLInput::processingInstruction
+void  XMLInput::processingInstruction
 (const XMLCh *const target, const XMLCh *const data)
 {
   char* type = xercesc::XMLString::transcode(target);
@@ -124,7 +124,7 @@ DECLARE_EXPORT void  XMLInput::processingInstruction
 }
 
 
-DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
+void XMLInput::startElement(const XMLCh* const uri,
   const XMLCh* const ename, const XMLCh* const qname,
   const xercesc::Attributes& atts)
 {
@@ -387,7 +387,7 @@ DECLARE_EXPORT void XMLInput::startElement(const XMLCh* const uri,
 }
 
 
-DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
+void XMLInput::endElement(const XMLCh* const uri,
     const XMLCh* const ename,
     const XMLCh* const qname)
 {
@@ -703,14 +703,14 @@ DECLARE_EXPORT void XMLInput::endElement(const XMLCh* const uri,
 }
 
 
-DECLARE_EXPORT void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
+void XMLInput::characters(const XMLCh *const c, const XMLSize_t n)
 {
   if (reading && dataindex >= 0)
     data[dataindex].value.appendString(transcodeUTF8(c));
 }
 
 
-DECLARE_EXPORT void XMLInput::warning(const xercesc::SAXParseException& e)
+void XMLInput::warning(const xercesc::SAXParseException& e)
 {
   char* message = xercesc::XMLString::transcode(e.getMessage());
   logger << "Warning: " << message;
@@ -721,7 +721,7 @@ DECLARE_EXPORT void XMLInput::warning(const xercesc::SAXParseException& e)
 }
 
 
-DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e)
+void XMLInput::fatalError(const xercesc::SAXParseException& e)
 {
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
@@ -733,7 +733,7 @@ DECLARE_EXPORT void XMLInput::fatalError(const xercesc::SAXParseException& e)
 }
 
 
-DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e)
+void XMLInput::error(const xercesc::SAXParseException& e)
 {
   char* message = xercesc::XMLString::transcode(e.getMessage());
   ostringstream ch;
@@ -745,7 +745,7 @@ DECLARE_EXPORT void XMLInput::error(const xercesc::SAXParseException& e)
 }
 
 
-DECLARE_EXPORT XMLInput::~XMLInput()
+XMLInput::~XMLInput()
 {
   // Delete the xerces parser object
   delete parser;
@@ -848,7 +848,7 @@ void XMLInput::parse(xercesc::InputSource &in, Object *pRoot, bool validate)
 }
 
 
-DECLARE_EXPORT void XMLSerializer::escape(const string& x)
+void XMLSerializer::escape(const string& x)
 {
   for (const char* p = x.c_str(); *p; ++p)
   {
@@ -865,7 +865,7 @@ DECLARE_EXPORT void XMLSerializer::escape(const string& x)
 }
 
 
-DECLARE_EXPORT void XMLSerializer::incIndent()
+void XMLSerializer::incIndent()
 {
   indentstring[m_nIndent++] = '\t';
   if (m_nIndent > 40) m_nIndent = 40;
@@ -873,14 +873,14 @@ DECLARE_EXPORT void XMLSerializer::incIndent()
 }
 
 
-DECLARE_EXPORT void XMLSerializer::decIndent()
+void XMLSerializer::decIndent()
 {
   if (--m_nIndent < 0) m_nIndent = 0;
   indentstring[m_nIndent] = '\0';
 }
 
 
-DECLARE_EXPORT void Serializer::setContentType(const string& c)
+void Serializer::setContentType(const string& c)
 {
   if (c == "base")
     setContentType(BASE);
@@ -894,7 +894,7 @@ DECLARE_EXPORT void Serializer::setContentType(const string& c)
 }
 
 
-DECLARE_EXPORT void Serializer::writeElement
+void Serializer::writeElement
 (const Keyword& tag, const Object* object, FieldCategory m)
 {
   // Avoid nullptr pointers and skip hidden objects
@@ -924,7 +924,7 @@ DECLARE_EXPORT void Serializer::writeElement
 }
 
 
-DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, const Object* object)
+void XMLSerializer::writeElementWithHeader(const Keyword& tag, const Object* object)
 {
   // Root object can't be null...
   if (!object)
@@ -954,7 +954,7 @@ DECLARE_EXPORT void XMLSerializer::writeElementWithHeader(const Keyword& tag, co
 }
 
 
-DECLARE_EXPORT const XMLData* XMLDataValueDict::get(const Keyword& key) const
+const XMLData* XMLDataValueDict::get(const Keyword& key) const
 {
   for (int i = strt; i <= nd; ++i)
     if (fields[i].hash == key.getHash())
@@ -980,7 +980,7 @@ void XMLDataValueDict::print()
 }
 
 
-DECLARE_EXPORT bool XMLData::getBool() const
+bool XMLData::getBool() const
 {
   switch (getData()[0])
   {
@@ -997,7 +997,7 @@ DECLARE_EXPORT bool XMLData::getBool() const
 }
 
 
-DECLARE_EXPORT const char* DataKeyword::getName() const
+const char* DataKeyword::getName() const
 {
   if (ch) return ch;
   Keyword::tagtable::const_iterator i = Keyword::getTags().find(hash);
@@ -1007,7 +1007,7 @@ DECLARE_EXPORT const char* DataKeyword::getName() const
 }
 
 
-DECLARE_EXPORT Keyword::Keyword(const string& name) : strName(name)
+Keyword::Keyword(const string& name) : strName(name)
 {
   // Error condition: name is empty
   if (name.empty()) throw LogicException("Creating keyword without name");
@@ -1027,7 +1027,7 @@ DECLARE_EXPORT Keyword::Keyword(const string& name) : strName(name)
 }
 
 
-DECLARE_EXPORT Keyword::Keyword(const string& name, const string& nspace)
+Keyword::Keyword(const string& name, const string& nspace)
   : strName(name)
 {
   // Error condition: name is empty
@@ -1067,7 +1067,7 @@ void Keyword::check()
 }
 
 
-DECLARE_EXPORT Keyword::~Keyword()
+Keyword::~Keyword()
 {
   // Remove from the tag list
   tagtable::iterator i = getTags().find(dw);
@@ -1075,21 +1075,21 @@ DECLARE_EXPORT Keyword::~Keyword()
 }
 
 
-DECLARE_EXPORT const Keyword& Keyword::find(const char* name)
+const Keyword& Keyword::find(const char* name)
 {
   tagtable::const_iterator i = getTags().find(hash(name));
   return *(i!=getTags().end() ? i->second : new Keyword(name));
 }
 
 
-DECLARE_EXPORT Keyword::tagtable& Keyword::getTags()
+Keyword::tagtable& Keyword::getTags()
 {
   static tagtable alltags;
   return alltags;
 }
 
 
-DECLARE_EXPORT hashtype Keyword::hash(const char* c)
+hashtype Keyword::hash(const char* c)
 {
   if (c == 0 || *c == 0) return 0;
 
@@ -1104,14 +1104,14 @@ DECLARE_EXPORT hashtype Keyword::hash(const char* c)
 }
 
 
-DECLARE_EXPORT void Keyword::printTags()
+void Keyword::printTags()
 {
   for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
     logger << i->second->getName() << "   " << i->second->dw << endl;
 }
 
 
-DECLARE_EXPORT void XMLInputFile::parse(Object *pRoot, bool validate)
+void XMLInputFile::parse(Object *pRoot, bool validate)
 {
   // Check if string has been set
   if (filename.empty())

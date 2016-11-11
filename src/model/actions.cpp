@@ -29,7 +29,7 @@ namespace frepple
 //
 
 
-DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
+PyObject* readXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *filename = nullptr;
@@ -83,7 +83,7 @@ DECLARE_EXPORT PyObject* readXMLfile(PyObject* self, PyObject* args)
 //
 
 
-DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
+PyObject* readXMLdata(PyObject *self, PyObject *args)
 {
   // Pick up arguments
   char *data;
@@ -123,7 +123,7 @@ DECLARE_EXPORT PyObject* readXMLdata(PyObject *self, PyObject *args)
 //
 
 
-DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
+PyObject* saveXMLfile(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   char *filename;
@@ -165,7 +165,7 @@ DECLARE_EXPORT PyObject* saveXMLfile(PyObject* self, PyObject* args)
 //
 
 
-DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
+PyObject* savePlan(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   const char *filename = "plan.out";
@@ -295,7 +295,7 @@ DECLARE_EXPORT PyObject* savePlan(PyObject* self, PyObject* args)
 // MOVE OPERATIONPLAN
 //
 
-DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
+CommandMoveOperationPlan::CommandMoveOperationPlan
 (OperationPlan* o) : opplan(o)
 {
   if (!o)
@@ -322,7 +322,7 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
+CommandMoveOperationPlan::CommandMoveOperationPlan
 (OperationPlan* o, Date newstart, Date newend, double newQty)
   : opplan(o), firstCommand(nullptr)
 {
@@ -355,12 +355,12 @@ DECLARE_EXPORT CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::redo()  // @todo not implemented
+void CommandMoveOperationPlan::redo()  // @todo not implemented
 {
 }
 
 
-DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
+void CommandMoveOperationPlan::restore(bool del)
 {
   // Restore all suboperationplans and (optionally) delete the subcommands
   for (Command *c = firstCommand; c; )
@@ -383,7 +383,7 @@ DECLARE_EXPORT void CommandMoveOperationPlan::restore(bool del)
 // DELETE OPERATIONPLAN
 //
 
-DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
+CommandDeleteOperationPlan::CommandDeleteOperationPlan
 (OperationPlan* o) : opplan(o)
 {
   // Validate input
@@ -409,7 +409,7 @@ DECLARE_EXPORT CommandDeleteOperationPlan::CommandDeleteOperationPlan
 //
 
 
-DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
+PyObject* eraseModel(PyObject* self, PyObject* args)
 {
   // Pick up arguments
   PyObject *obj = nullptr;
@@ -470,7 +470,7 @@ DECLARE_EXPORT PyObject* eraseModel(PyObject* self, PyObject* args)
 //
 
 
-DECLARE_EXPORT PyObject* printModelSize(PyObject* self, PyObject* args)
+PyObject* printModelSize(PyObject* self, PyObject* args)
 {
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS

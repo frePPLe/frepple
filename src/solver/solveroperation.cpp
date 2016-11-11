@@ -24,7 +24,7 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT void SolverMRP::checkOperationCapacity
+void SolverMRP::checkOperationCapacity
   (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
 {
   unsigned short constrainedLoads = 0;
@@ -99,7 +99,7 @@ DECLARE_EXPORT void SolverMRP::checkOperationCapacity
 }
 
 
-DECLARE_EXPORT bool SolverMRP::checkOperation
+bool SolverMRP::checkOperation
 (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
 {
   // The default answer...
@@ -370,7 +370,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperation
 }
 
 
-DECLARE_EXPORT bool SolverMRP::checkOperationLeadTime
+bool SolverMRP::checkOperationLeadTime
 (OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
@@ -486,7 +486,7 @@ DECLARE_EXPORT bool SolverMRP::checkOperationLeadTime
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
+void SolverMRP::solve(const Operation* oper, void* v)
 {
   // Make sure we have a valid operation
   assert(oper);
@@ -628,7 +628,7 @@ DECLARE_EXPORT void SolverMRP::solve(const Operation* oper, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
+void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (v)
@@ -676,7 +676,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 
 
 // No need to take post- and pre-operation times into account
-DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
+void SolverMRP::solve(const OperationRouting* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -876,7 +876,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationRouting* oper, void* v)
 
 // No need to take post- and pre-operation times into account
 // @todo This method should only be allowed to create 1 operationplan
-DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
+void SolverMRP::solve(const OperationAlternate* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;
@@ -1337,7 +1337,7 @@ DECLARE_EXPORT void SolverMRP::solve(const OperationAlternate* oper, void* v)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const OperationSplit* oper, void* v)
+void SolverMRP::solve(const OperationSplit* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;

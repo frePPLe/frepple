@@ -29,25 +29,25 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT string Date::format("%Y-%m-%dT%H:%M:%S");
-DECLARE_EXPORT string DateRange::separator = " / ";
-DECLARE_EXPORT size_t DateRange::separatorlength = 3;
+string Date::format("%Y-%m-%dT%H:%M:%S");
+string DateRange::separator = " / ";
+size_t DateRange::separatorlength = 3;
 
 /* This is the earliest date that we can represent. This not the
  * traditional epoch start, but a year later. 1/1/1970 gave troubles
  * when using a timezone with positive offset to GMT.
  */
-DECLARE_EXPORT const Date Date::infinitePast("1971-01-01T00:00:00",true);
+const Date Date::infinitePast("1971-01-01T00:00:00",true);
 
 /* This is the latest date that we can represent. This is not the absolute
  * limit of the internal representation, but more a convenient end date. */
-DECLARE_EXPORT const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
+const Date Date::infiniteFuture("2030-12-31T00:00:00",true);
 
-DECLARE_EXPORT const Duration Duration::MAX(Date::infiniteFuture - Date::infinitePast);
-DECLARE_EXPORT const Duration Duration::MIN(Date::infinitePast - Date::infiniteFuture);
+const Duration Duration::MAX(Date::infiniteFuture - Date::infinitePast);
+const Duration Duration::MIN(Date::infinitePast - Date::infiniteFuture);
 
 
-DECLARE_EXPORT void Duration::toCharBuffer(char* t) const
+void Duration::toCharBuffer(char* t) const
 {
   if (!lval)
   {
@@ -90,7 +90,7 @@ DECLARE_EXPORT void Duration::toCharBuffer(char* t) const
 }
 
 
-DECLARE_EXPORT void Duration::double2CharBuffer(double val, char* t)
+void Duration::double2CharBuffer(double val, char* t)
 {
   if (!val)
   {
@@ -141,7 +141,7 @@ DECLARE_EXPORT void Duration::double2CharBuffer(double val, char* t)
 }
 
 
-DECLARE_EXPORT DateRange::operator string() const
+DateRange::operator string() const
 {
   // Start date
   char r[65];
@@ -157,7 +157,7 @@ DECLARE_EXPORT DateRange::operator string() const
 }
 
 
-DECLARE_EXPORT void Duration::parse (const char* s)
+void Duration::parse (const char* s)
 {
   long totalvalue = 0;
   long value = 0;
@@ -244,7 +244,7 @@ DECLARE_EXPORT void Duration::parse (const char* s)
 }
 
 
-DECLARE_EXPORT double Duration::parse2double (const char* s)
+double Duration::parse2double (const char* s)
 {
   double totalvalue = 0.0;
   long value = 0;
@@ -354,7 +354,7 @@ DECLARE_EXPORT double Duration::parse2double (const char* s)
 }
 
 
-DECLARE_EXPORT void Date::parse (const char* s, const char* fmt)
+void Date::parse (const char* s, const char* fmt)
 {
   if (!s)
   {
@@ -371,7 +371,7 @@ DECLARE_EXPORT void Date::parse (const char* s, const char* fmt)
 }
 
 
-DECLARE_EXPORT Date::Date
+Date::Date
 (int year, int month, int day, int hr, int min, int sec)
 {
   struct tm p;
@@ -391,7 +391,7 @@ DECLARE_EXPORT Date::Date
 // isn't available in your standard library.
 #ifndef HAVE_STRPTIME
 
-DECLARE_EXPORT char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
+char* Date::strptime(const char *buf, const char *fmt, struct tm *tm)
 {
   struct dtconv
   {

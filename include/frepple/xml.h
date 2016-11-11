@@ -147,7 +147,7 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     /** Handler called when a new element tag is encountered.
       * It pushes a new element on the stack and calls the current handler.
       */
-    DECLARE_EXPORT void startElement (const XMLCh* const, const XMLCh* const,
+    void startElement (const XMLCh* const, const XMLCh* const,
         const XMLCh* const, const xercesc::Attributes&);
 
     /** Handler called when closing element tag is encountered.
@@ -157,38 +157,38 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       * data section to the current handler, then pop it off the element
       * stack.
       */
-    DECLARE_EXPORT void endElement
+    void endElement
     (const XMLCh* const, const XMLCh* const, const XMLCh* const);
 
     /** Handler called when character data are read in.
       * The data string is add it to the current element data.
       */
-    DECLARE_EXPORT void characters(const XMLCh *const, const XMLSize_t);
+    void characters(const XMLCh *const, const XMLSize_t);
 
     /** Handler called by Xerces in fatal error conditions. It throws an
       * exception to abort the parsing procedure. */
-    DECLARE_EXPORT void fatalError (const xercesc::SAXParseException&);
+    void fatalError (const xercesc::SAXParseException&);
 
     /** Handler called by Xercess when reading a processing instruction. The
       * handler looks up the target in the repository and will call the
       * registered XMLinstruction.
       * @see XMLinstruction
       */
-    DECLARE_EXPORT void processingInstruction (const XMLCh *const, const XMLCh *const);
+    void processingInstruction (const XMLCh *const, const XMLCh *const);
 
     /** Handler called by Xerces in error conditions. It throws an exception
       * to abort the parsing procedure. */
-    DECLARE_EXPORT void error (const xercesc::SAXParseException&);
+    void error (const xercesc::SAXParseException&);
 
     /** Handler called by Xerces for warnings. */
-    DECLARE_EXPORT void warning (const xercesc::SAXParseException&);
+    void warning (const xercesc::SAXParseException&);
 
   public:
     /** Constructor. */
-    DECLARE_EXPORT XMLInput();
+    XMLInput();
 
     /** Destructor. */
-    virtual DECLARE_EXPORT ~XMLInput();
+    virtual ~XMLInput();
 
     /** This is the core parsing function, which triggers the XML parser to
       * start processing the input. It is normally called from the method
@@ -244,7 +244,7 @@ class XMLInputString : public XMLInput
     XMLInputString(const string& s) : data(s) {};
 
     /** Parse the specified string. */
-    DECLARE_EXPORT void parse(Object* pRoot, bool v = false)
+    void parse(Object* pRoot, bool v = false)
     {
       /* The MemBufInputSource expects the number of bytes as second parameter.
        * In our case this is the same as the number of characters, but this
@@ -307,7 +307,7 @@ class XMLInputFile : public XMLInput
       *    - read access to the input file is not available
       *    - the program doesn't support reading directories on your platform
       */
-    DECLARE_EXPORT void parse(Object*, bool=false);
+    void parse(Object*, bool=false);
 
   private:
     /** Name of the file to be opened. */
@@ -333,7 +333,7 @@ class XMLDataValueDict : public DataValueDict
       ) : fields(f), strt(st), nd(nd) {}
 
     /** Look up a certain keyword. */
-    DECLARE_EXPORT const XMLData* get(const Keyword& key) const;
+    const XMLData* get(const Keyword& key) const;
 
     /** Enlarge the dictiorary. */
     void enlarge()
@@ -342,7 +342,7 @@ class XMLDataValueDict : public DataValueDict
     }
 
     /** Auxilary debugging method. */
-    DECLARE_EXPORT void print();
+    void print();
 
   private:
     vector<XMLInput::fld>& fields;
@@ -683,7 +683,7 @@ class XMLSerializer : public Serializer
       * and writeElement for all objects nested in it.
       * @see writeElement(const Keyword&, Object*)
       */
-    DECLARE_EXPORT void writeElementWithHeader(const Keyword& tag, const Object* object);
+    void writeElementWithHeader(const Keyword& tag, const Object* object);
 
     /** Returns a pointer to the object that is currently being saved. */
     Object* getCurrentObject() const
@@ -726,7 +726,7 @@ class XMLSerializer : public Serializer
       * NOT work with other multibyte encodings (such as UTF-116 or UTF-32).
       * FrePPLe consistently uses UTF-8 in its internal representation.
       */
-    DECLARE_EXPORT void escape(const string&);
+    void escape(const string&);
 
     /** This variable keeps track of the indentation level.
       * @see incIndent, decIndent
@@ -741,10 +741,10 @@ class XMLSerializer : public Serializer
 
     /** Increase the indentation level. The indentation level is between
       * 0 and 40. */
-    DECLARE_EXPORT void incIndent();
+    void incIndent();
 
     /** Decrease the indentation level. */
-    DECLARE_EXPORT void decIndent();
+    void decIndent();
 
     /** This string defines what will be printed at the start of each XML
       * document. The default value is:

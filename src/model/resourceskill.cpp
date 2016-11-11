@@ -24,8 +24,8 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* ResourceSkill::metadata;
-DECLARE_EXPORT const MetaClass* ResourceSkillDefault::metadata;
+const MetaCategory* ResourceSkill::metadata;
+const MetaClass* ResourceSkillDefault::metadata;
 
 
 int ResourceSkill::initialize()
@@ -53,7 +53,7 @@ int ResourceSkill::initialize()
 }
 
 
-DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u)
+ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u)
 {
   setSkill(s);
   setResource(r);
@@ -62,7 +62,7 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u)
 }
 
 
-DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRange e)
+ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRange e)
 {
   setSkill(s);
   setResource(r);
@@ -72,7 +72,7 @@ DECLARE_EXPORT ResourceSkill::ResourceSkill(Skill* s, Resource* r, int u, DateRa
 }
 
 
-DECLARE_EXPORT ResourceSkill::~ResourceSkill()
+ResourceSkill::~ResourceSkill()
 {
   // Delete the associated from the related objects
   if (getResource())
@@ -167,7 +167,7 @@ PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 }
 
 
-DECLARE_EXPORT Object* ResourceSkill::finder(const DataValueDict& d)
+Object* ResourceSkill::finder(const DataValueDict& d)
 {
   // Check resource
   const DataValue* tmp = d.get(Tags::resource);

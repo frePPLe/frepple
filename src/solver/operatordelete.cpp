@@ -25,7 +25,7 @@ namespace frepple
 {
 
 
-DECLARE_EXPORT const MetaClass* OperatorDelete::metadata;
+const MetaClass* OperatorDelete::metadata;
 
 
 int OperatorDelete::initialize()
@@ -89,7 +89,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
 }
 
 
-DECLARE_EXPORT void OperatorDelete::solve(void *v)
+void OperatorDelete::solve(void *v)
 {
    // Loop over all buffers Push to stack, in order of level TODO
 
@@ -103,7 +103,7 @@ DECLARE_EXPORT void OperatorDelete::solve(void *v)
 }
 
 
-DECLARE_EXPORT void OperatorDelete::solve(OperationPlan* o, void* v)
+void OperatorDelete::solve(OperationPlan* o, void* v)
 {
   if (!o) return; // Null argument passed
 
@@ -126,7 +126,7 @@ DECLARE_EXPORT void OperatorDelete::solve(OperationPlan* o, void* v)
 }
 
 
-DECLARE_EXPORT void OperatorDelete::solve(const Resource* r, void* v)
+void OperatorDelete::solve(const Resource* r, void* v)
 {
   if (getLogLevel()>0)
     logger << "Scanning " << r << " for excess" << endl;
@@ -150,7 +150,7 @@ DECLARE_EXPORT void OperatorDelete::solve(const Resource* r, void* v)
 }
 
 
-DECLARE_EXPORT void OperatorDelete::solve(const Demand* d, void* v)
+void OperatorDelete::solve(const Demand* d, void* v)
 {
   if (getLogLevel()>1)
     logger << "Scanning " << d << " for excess" << endl;

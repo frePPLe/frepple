@@ -26,7 +26,7 @@ namespace frepple
 namespace utils
 {
 
-DECLARE_EXPORT void Tree::clear()
+void Tree::clear()
 {
   // Tree is already empty
   if (empty()) return;
@@ -359,7 +359,7 @@ void Tree::rotateRight(TreeNode* x)
 }
 
 
-DECLARE_EXPORT void Tree::verify() const
+void Tree::verify() const
 {
   // Checks for an empty tree
   if (empty() || begin() == end())

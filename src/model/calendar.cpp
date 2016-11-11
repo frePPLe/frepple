@@ -24,11 +24,11 @@
 namespace frepple
 {
 
-template<class Calendar> DECLARE_EXPORT Tree utils::HasName<Calendar>::st;
-DECLARE_EXPORT const MetaCategory* Calendar::metadata;
-DECLARE_EXPORT const MetaClass *CalendarDefault::metadata;
-DECLARE_EXPORT const MetaCategory* CalendarBucket::metacategory;
-DECLARE_EXPORT const MetaClass* CalendarBucket::metadata;
+template<class Calendar> Tree utils::HasName<Calendar>::st;
+const MetaCategory* Calendar::metadata;
+const MetaClass *CalendarDefault::metadata;
+const MetaCategory* CalendarBucket::metacategory;
+const MetaClass* CalendarBucket::metadata;
 
 
 int Calendar::initialize()
@@ -93,7 +93,7 @@ int CalendarDefault::initialize()
 
 /** Updates the value in a certain date range.<br>
   * This will create a new bucket if required. */
-DECLARE_EXPORT void Calendar::setValue(Date start, Date end, const double v)
+void Calendar::setValue(Date start, Date end, const double v)
 {
   CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(start));
   if (x && x->getStart() == start && x->getEnd() <= end)
@@ -113,7 +113,7 @@ DECLARE_EXPORT void Calendar::setValue(Date start, Date end, const double v)
 }
 
 
-DECLARE_EXPORT Calendar::~Calendar()
+Calendar::~Calendar()
 {
   // De-allocate all the dynamic memory used for the bucket objects
   while (firstBucket)
@@ -148,7 +148,7 @@ DECLARE_EXPORT Calendar::~Calendar()
 }
 
 
-DECLARE_EXPORT void Calendar::removeBucket(CalendarBucket* bkt, bool del)
+void Calendar::removeBucket(CalendarBucket* bkt, bool del)
 {
   // Verify the bucket is on this calendar indeed
   CalendarBucket *b = firstBucket;
@@ -197,7 +197,7 @@ CalendarBucket::~CalendarBucket()
 }
 
 
-DECLARE_EXPORT void CalendarBucket::setEnd(const Date d)
+void CalendarBucket::setEnd(const Date d)
 {
   // Check
   if (d < startdate)
@@ -208,7 +208,7 @@ DECLARE_EXPORT void CalendarBucket::setEnd(const Date d)
 }
 
 
-DECLARE_EXPORT void CalendarBucket::setStart(const Date d)
+void CalendarBucket::setStart(const Date d)
 {
   // Check
   if (d > enddate)
@@ -222,7 +222,7 @@ DECLARE_EXPORT void CalendarBucket::setStart(const Date d)
 }
 
 
-DECLARE_EXPORT void CalendarBucket::updateSort()
+void CalendarBucket::updateSort()
 {
   // Update the position in the list
   if (!cal) return;
@@ -271,7 +271,7 @@ DECLARE_EXPORT void CalendarBucket::updateSort()
 }
 
 
-DECLARE_EXPORT CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
+CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
 {
   CalendarBucket *curBucket = nullptr;
   double curPriority = DBL_MAX;
@@ -320,7 +320,7 @@ DECLARE_EXPORT CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
 }
 
 
-DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
+CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
 {
   CalendarBucket* bckt = new CalendarBucket();
   bckt->setCalendar(this);
@@ -331,7 +331,7 @@ DECLARE_EXPORT CalendarBucket* Calendar::addBucket(Date st, Date nd, double val)
 }
 
 
-DECLARE_EXPORT Object* CalendarBucket::reader(
+Object* CalendarBucket::reader(
   const MetaClass* cat, const DataValueDict& atts, CommandManager* mgr
   )
 {
@@ -425,7 +425,7 @@ DECLARE_EXPORT Object* CalendarBucket::reader(
 }
 
 
-DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
+void CalendarBucket::setCalendar(Calendar* c)
 {
   if (cal == c)
     return;
@@ -449,7 +449,7 @@ DECLARE_EXPORT void CalendarBucket::setCalendar(Calendar* c)
 }
 
 
-DECLARE_EXPORT Calendar::EventIterator::EventIterator
+Calendar::EventIterator::EventIterator
   (const Calendar* c, Date d, bool forward)
   : theCalendar(c), curDate(d)
 {
@@ -458,7 +458,7 @@ DECLARE_EXPORT Calendar::EventIterator::EventIterator
 }
 
 
-DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
+Calendar::EventIterator& Calendar::EventIterator::operator++()
 {
   if (!theCalendar)
     throw LogicException("Can't walk forward on event iterator of nullptr calendar.");
@@ -476,7 +476,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator++()
 }
 
 
-DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
+Calendar::EventIterator& Calendar::EventIterator::operator--()
 {
   if (!theCalendar)
     throw LogicException("Can't walk backward on event iterator of nullptr calendar.");
@@ -494,7 +494,7 @@ DECLARE_EXPORT Calendar::EventIterator& Calendar::EventIterator::operator--()
 }
 
 
-DECLARE_EXPORT void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
+void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
 {
   // FIRST CASE: Bucket that is continuously effective
   if (!b->offsetcounter)
@@ -605,7 +605,7 @@ DECLARE_EXPORT void Calendar::EventIterator::nextEvent(const CalendarBucket* b, 
 }
 
 
-DECLARE_EXPORT void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
+void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
 {
   // FIRST CASE: Bucket that is continuously effective
   if (!b->offsetcounter)
@@ -716,7 +716,7 @@ DECLARE_EXPORT void Calendar::EventIterator::prevEvent(const CalendarBucket* b, 
 }
 
 
-DECLARE_EXPORT PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
+PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args, PyObject* kwdict)
 {
   try
   {
@@ -742,7 +742,7 @@ DECLARE_EXPORT PyObject* Calendar::setPythonValue(PyObject* self, PyObject* args
 }
 
 
-DECLARE_EXPORT PyObject* Calendar::getEvents(
+PyObject* Calendar::getEvents(
   PyObject* self, PyObject* args
 )
 {
@@ -814,7 +814,7 @@ PyObject* CalendarEventIterator::iternext()
 }
 
 
-DECLARE_EXPORT void CalendarBucket::updateOffsets()
+void CalendarBucket::updateOffsets()
 {
   if (days==127 && !starttime && endtime==Duration(86400L))
   {

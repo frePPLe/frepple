@@ -23,11 +23,11 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* Flow::metadata;
-DECLARE_EXPORT const MetaClass* FlowStart::metadata;
-DECLARE_EXPORT const MetaClass* FlowEnd::metadata;
-DECLARE_EXPORT const MetaClass* FlowFixedStart::metadata;
-DECLARE_EXPORT const MetaClass* FlowFixedEnd::metadata;
+const MetaCategory* Flow::metadata;
+const MetaClass* FlowStart::metadata;
+const MetaClass* FlowEnd::metadata;
+const MetaClass* FlowFixedStart::metadata;
+const MetaClass* FlowFixedEnd::metadata;
 
 
 int Flow::initialize()
@@ -64,7 +64,7 @@ int Flow::initialize()
 }
 
 
-DECLARE_EXPORT Flow::~Flow()
+Flow::~Flow()
 {
   // Set a flag to make sure the level computation is triggered again
   HasLevel::triggerLazyRecomputation();
@@ -212,7 +212,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 }
 
 
-DECLARE_EXPORT Object* Flow::finder(const DataValueDict& d)
+Object* Flow::finder(const DataValueDict& d)
 {
   // Check operation
   const DataValue* tmp = d.get(Tags::operation);

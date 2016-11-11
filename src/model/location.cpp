@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-template<class Location> DECLARE_EXPORT Tree utils::HasName<Location>::st;
-DECLARE_EXPORT const MetaCategory* Location::metadata;
-DECLARE_EXPORT const MetaClass* LocationDefault::metadata;
+template<class Location> Tree utils::HasName<Location>::st;
+const MetaCategory* Location::metadata;
+const MetaClass* LocationDefault::metadata;
 
 
 int Location::initialize()
@@ -51,7 +51,7 @@ int LocationDefault::initialize()
 }
 
 
-DECLARE_EXPORT Location::~Location()
+Location::~Location()
 {
   // Remove all references from buffers to this location
   for (Buffer::iterator buf = Buffer::begin();

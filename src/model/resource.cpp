@@ -24,11 +24,11 @@
 namespace frepple
 {
 
-template<class Resource> DECLARE_EXPORT Tree utils::HasName<Resource>::st;
-DECLARE_EXPORT const MetaCategory* Resource::metadata;
-DECLARE_EXPORT const MetaClass* ResourceDefault::metadata;
-DECLARE_EXPORT const MetaClass* ResourceInfinite::metadata;
-DECLARE_EXPORT const MetaClass* ResourceBuckets::metadata;
+template<class Resource> Tree utils::HasName<Resource>::st;
+const MetaCategory* Resource::metadata;
+const MetaClass* ResourceDefault::metadata;
+const MetaClass* ResourceInfinite::metadata;
+const MetaClass* ResourceBuckets::metadata;
 
 Duration Resource::defaultMaxEarly(100*86400L);
 
@@ -86,7 +86,7 @@ int ResourceBuckets::initialize()
 }
 
 
-DECLARE_EXPORT void Resource::inspect(const string msg) const
+void Resource::inspect(const string msg) const
 {
   logger << "Inspecting resource " << getName() << ": ";
   if (!msg.empty()) logger  << msg;
@@ -118,7 +118,7 @@ DECLARE_EXPORT void Resource::inspect(const string msg) const
 }
 
 
-DECLARE_EXPORT void Resource::setMaximum(double m)
+void Resource::setMaximum(double m)
 {
   if (m < 0)
     throw DataException("Maximum capacity for resource '" + getName() + "' must be postive");
@@ -152,7 +152,7 @@ DECLARE_EXPORT void Resource::setMaximum(double m)
 }
 
 
-DECLARE_EXPORT void Resource::setMaximumCalendar(Calendar* c)
+void Resource::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;
@@ -190,7 +190,7 @@ DECLARE_EXPORT void Resource::setMaximumCalendar(Calendar* c)
 }
 
 
-DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(Calendar* c)
+void ResourceBuckets::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
   if (size_max_cal == c) return;
@@ -224,7 +224,7 @@ DECLARE_EXPORT void ResourceBuckets::setMaximumCalendar(Calendar* c)
 }
 
 
-DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
+void Resource::deleteOperationPlans(bool deleteLocked)
 {
   // Delete the operationplans
   for (loadlist::iterator i=loads.begin(); i!=loads.end(); ++i)
@@ -235,7 +235,7 @@ DECLARE_EXPORT void Resource::deleteOperationPlans(bool deleteLocked)
 }
 
 
-DECLARE_EXPORT Resource::~Resource()
+Resource::~Resource()
 {
   // Delete all operationplans
   // An alternative logic would be to delete only the loadplans for this
@@ -261,7 +261,7 @@ DECLARE_EXPORT Resource::~Resource()
 }
 
 
-DECLARE_EXPORT void Resource::updateSetups(const LoadPlan* ldplan)
+void Resource::updateSetups(const LoadPlan* ldplan)
 {
   // No updating required this resource
   if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation))

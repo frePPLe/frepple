@@ -24,8 +24,8 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* PeggingIterator::metadata;
-DECLARE_EXPORT const MetaCategory* PeggingDemandIterator::metadata;
+const MetaCategory* PeggingIterator::metadata;
+const MetaCategory* PeggingDemandIterator::metadata;
 
 
 int PeggingIterator::initialize()
@@ -62,7 +62,7 @@ int PeggingDemandIterator::initialize()
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const PeggingIterator& c)
+PeggingIterator::PeggingIterator(const PeggingIterator& c)
 : downstream(c.downstream), firstIteration(c.firstIteration), first(c.first), second_pass(c.second_pass)
 {
   initType(metadata);
@@ -73,7 +73,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const PeggingIterator& c)
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
+PeggingIterator::PeggingIterator(const Demand* d)
   : downstream(false), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
@@ -117,7 +117,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const Demand* d)
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
+PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
   : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
@@ -139,7 +139,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(const OperationPlan* opplan, boo
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
+PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
   : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
@@ -153,7 +153,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
 }
 
 
-DECLARE_EXPORT PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
+PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
   : downstream(b), firstIteration(true), first(false), second_pass(false)
 {
   initType(metadata);
@@ -167,7 +167,7 @@ DECLARE_EXPORT PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
 }
 
 
-DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
+PeggingIterator& PeggingIterator::operator--()
 {
   // Second pass
   if (second_pass)
@@ -198,7 +198,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator--()
 }
 
 
-DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
+PeggingIterator& PeggingIterator::operator++()
 {
   // Second pass
   if (second_pass)
@@ -229,7 +229,7 @@ DECLARE_EXPORT PeggingIterator& PeggingIterator::operator++()
 }
 
 
-DECLARE_EXPORT void PeggingIterator::followPegging
+void PeggingIterator::followPegging
 (const OperationPlan* op, double qty, double offset, short lvl)
 {
   // Zero quantity operationplans don't have further pegging
@@ -264,7 +264,7 @@ DECLARE_EXPORT void PeggingIterator::followPegging
 }
 
 
-DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
+PeggingIterator* PeggingIterator::next()
 {
   if (firstIteration)
     firstIteration = false;
@@ -279,7 +279,7 @@ DECLARE_EXPORT PeggingIterator* PeggingIterator::next()
 }
 
 
-DECLARE_EXPORT void PeggingIterator::updateStack
+void PeggingIterator::updateStack
 (const OperationPlan* op, double qty, double o, short lvl)
 {
   // Avoid very small pegging quantities

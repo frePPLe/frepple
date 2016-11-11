@@ -30,7 +30,7 @@ bool sortFlow(const Flow* lhs, const Flow* rhs)
 }
 
 
-DECLARE_EXPORT void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
+void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
 {
   // Note: This method is only called for consuming flows and for the leading
   // flow of an alternate group. See SolverMRP::checkOperation

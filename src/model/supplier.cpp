@@ -24,9 +24,9 @@
 namespace frepple
 {
 
-template<class Supplier> DECLARE_EXPORT Tree utils::HasName<Supplier>::st;
-DECLARE_EXPORT const MetaCategory* Supplier::metadata;
-DECLARE_EXPORT const MetaClass* SupplierDefault::metadata;
+template<class Supplier> Tree utils::HasName<Supplier>::st;
+const MetaCategory* Supplier::metadata;
+const MetaClass* SupplierDefault::metadata;
 
 
 int Supplier::initialize()
@@ -53,7 +53,7 @@ int SupplierDefault::initialize()
 }
 
 
-DECLARE_EXPORT Supplier::~Supplier()
+Supplier::~Supplier()
 {
 }
 

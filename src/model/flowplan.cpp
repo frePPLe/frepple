@@ -23,7 +23,7 @@
 namespace frepple
 {
 
-DECLARE_EXPORT const MetaCategory* FlowPlan::metadata;
+const MetaCategory* FlowPlan::metadata;
 
 
 int FlowPlan::initialize()
@@ -43,7 +43,7 @@ int FlowPlan::initialize()
 }
 
 
-DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f) 
+FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f) 
   : fl(const_cast<Flow*>(f)), oper(opplan)
 {
   assert(opplan && f);
@@ -77,7 +77,7 @@ DECLARE_EXPORT FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 }
 
 
-DECLARE_EXPORT void FlowPlan::update()
+void FlowPlan::update()
 {
   // Update the timeline data structure
   fl->getBuffer()->flowplans.update(
@@ -93,7 +93,7 @@ DECLARE_EXPORT void FlowPlan::update()
 }
 
 
-DECLARE_EXPORT void FlowPlan::setFlow(Flow* newfl)
+void FlowPlan::setFlow(Flow* newfl)
 {
   // No change
   if (newfl == fl) return;

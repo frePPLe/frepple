@@ -24,8 +24,8 @@
 namespace frepple
 {
 
-template<class Solver> DECLARE_EXPORT Tree utils::HasName<Solver>::st;
-DECLARE_EXPORT const MetaCategory* Solver::metadata;
+template<class Solver> Tree utils::HasName<Solver>::st;
+const MetaCategory* Solver::metadata;
 
 
 int Solver::initialize()
@@ -46,7 +46,7 @@ int Solver::initialize()
 }
 
 
-DECLARE_EXPORT PyObject *Solver::solve(PyObject *self, PyObject *args)
+PyObject *Solver::solve(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try

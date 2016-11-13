@@ -851,7 +851,7 @@ class loadData(object):
     print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
 
 
-  def run(self):
+  def runStatic(self):
     '''
     This function is expected to be run by the python interpreter in the
     frepple application.
@@ -887,12 +887,31 @@ class loadData(object):
     self.loadItemDistributions()
     self.loadOperationMaterials()
     self.loadOperationResources()
+    self.finalize()
+
+    # Close the database connection
+    self.cursor.close()
+
+
+  def runDynamic(self):
+    '''
+    This function is expected to be run by the python interpreter in the
+    frepple application.
+    It loads data from the database into the frepple memory.
+    '''
+    # Make sure the debug flag is not set!
+    # When it is set, the django database wrapper collects a list of all sql
+    # statements executed and their timings. This consumes plenty of memory
+    # and cpu time.
+    settings.DEBUG = False
+
+    # Create a database connection
+    self.cursor = connections[self.database].cursor()
+
+    # Sequential load of all entities
     self.loadDemand()
     self.loadOperationPlans()
     self.finalize()
 
     # Close the database connection
     self.cursor.close()
-
-    # Finalize
-    print('Done')

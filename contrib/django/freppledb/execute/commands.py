@@ -26,7 +26,7 @@ from freppledb.common.models import Parameter
 @PlanTaskRegistry.register
 class LoadData(PlanTask):
 
-  description = "Load data"
+  description = "Load static data"
   sequence = 100
   filter = None
 
@@ -34,7 +34,21 @@ class LoadData(PlanTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
     from freppledb.execute.load import loadData
-    loadData(database=database, filter=cls.filter).run()
+    loadData(database=database, filter=cls.filter).runStatic()
+
+
+@PlanTaskRegistry.register
+class LoadDynamicData(PlanTask):
+
+  description = "Load dynamic data"
+  sequence = 110
+  filter = None
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+    from freppledb.execute.load import loadData
+    loadData(database=database, filter=cls.filter).runDynamic()
     frepple.printsize()
 
 

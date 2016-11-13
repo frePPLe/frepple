@@ -92,7 +92,7 @@ Object* OperationPlan::createOperationPlan(
   if (ordtype == "MO" || ordtype.empty())
   {
     const DataValue* val = in.get(Tags::operation);
-    if (!val && action==ADD)
+    if (!val && action == ADD)
       throw DataException("Missing operation field");
     if (val)
     {
@@ -172,7 +172,11 @@ Object* OperationPlan::createOperationPlan(
       if (!dmdval)
         throw DataException("Empty demand field");
       else if (dmdval->getType().category != Demand::metadata)
-        throw DataException("Demand field on operationplan must be of type demand");
+      {
+        Demand* tmp = dynamic_cast<Demand*>(dmdval);
+        if (!tmp)
+          throw DataException("Demand field on operationplan must be of type demand");
+      }
     }
     val = in.get(Tags::item);
     if (!val && action == ADD)

@@ -2492,7 +2492,7 @@ class Serializer
     {
       bool tmp = writeHidden;
       writeHidden = b;
-      return b;
+      return tmp;
     }
 
     /** Start writing a new list. */

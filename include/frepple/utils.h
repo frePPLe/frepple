@@ -5669,9 +5669,11 @@ template <class T> class HasHierarchy : public HasName<T>
 {
   public:
     class memberIterator;
+    class memberRecursiveIterator;
     friend class memberIterator;
+    friend class memberRecursiveIterator;
     /** @brief This class models an STL-like iterator that allows us to
-      * iterate over the members.
+      * iterate over the immediate members.
       *
       * Objects of this class are created by the getMembers() method.
       */
@@ -5780,6 +5782,79 @@ template <class T> class HasHierarchy : public HasName<T>
         bool member_iter;
     };
 
+    /** @brief This class models an iterator that allows us to
+    * iterate over the members across all levels.
+    *
+    * Objects of this class are created by the getAllMembers() method.
+    */
+    class memberRecursiveIterator : public NonCopyable
+    {
+    public:
+      /** Constructor. */
+      memberRecursiveIterator(const T* x)
+      {
+        if (x)
+          members.push_back(const_cast<T*>(x));
+      }
+
+      /** Return the content of the current node. */
+      T& operator*() const
+      {
+        return *members.back();
+      }
+
+      /** Return the content of the current node. */
+      T* operator->() const
+      {
+        return members.back();
+      }
+
+      /** Pre-increment operator which moves the pointer to the next member. */
+      memberRecursiveIterator& operator++()
+      {
+        if (members.empty())
+          throw LogicException("Incrementing beyond end");
+        if (members.back()->first_child) 
+          // Go one more level down
+          members.push_back(members.back()->first_child);
+        else
+        {
+          do
+          {             
+            if (members.size() == 1)
+            {
+              // Don't stay at same level on the root
+              members.pop_back();
+              break;
+            }
+            else
+            {
+              members.back() = members.back()->next_brother;
+              if (members.back())
+                // Stay at same level
+                break;
+              else
+              {
+                members.pop_back();
+                if (members.empty())
+                  // No more nodes found
+                  break;
+              }
+            }
+          } while (true);
+        }
+        return *this;
+      }
+
+      bool empty()
+      {
+        return members.empty();
+      }
+
+    private:
+      vector<T*> members;
+    };
+
     /** Default constructor. */
     HasHierarchy() {}
 
@@ -5793,6 +5868,12 @@ template <class T> class HasHierarchy : public HasName<T>
 
     /** Return a member iterator. */
     memberIterator getMembers() const
+    {
+      return this;
+    }
+
+    /** Return an iterator over all members, across all member levels. */
+    memberRecursiveIterator getAllMembers() const
     {
       return this;
     }

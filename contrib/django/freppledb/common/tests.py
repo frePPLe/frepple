@@ -55,7 +55,8 @@ class ExcelTest(TransactionTestCase):
 
   def setUp(self):
     # Login
-    User.objects.create_superuser('admin', 'your@company.com', 'admin')
+    if not User.objects.filter(username="admin").count():
+      User.objects.create_superuser('admin', 'your@company.com', 'admin')
     self.client.login(username='admin', password='admin')
 
   def tearDown(self):
@@ -78,7 +79,9 @@ class ExcelTest(TransactionTestCase):
     countItemDistribution = input.models.ItemDistribution.objects.count()
     countOperationResource = input.models.OperationResource.objects.count()
     countLocation = input.models.Location.objects.count()
-    countOperationPlan = input.models.OperationPlan.objects.count()
+    countPurchaseOrder = input.models.PurchaseOrder.objects.count()
+    countDistributionOrder = input.models.DistributionOrder.objects.count()
+    countManufacturingOrder = input.models.ManufacturingOrder.objects.count()
     countOperation = input.models.Operation.objects.count()
     countResourceSkill = input.models.ResourceSkill.objects.count()
     countResource = input.models.Resource.objects.count()
@@ -119,7 +122,9 @@ class ExcelTest(TransactionTestCase):
     self.assertEqual(input.models.ItemSupplier.objects.count(), 0)
     self.assertEqual(input.models.OperationResource.objects.count(), 0)
     self.assertEqual(input.models.Location.objects.count(), 0)
-    self.assertEqual(input.models.OperationPlan.objects.count(), 0)
+    self.assertEqual(input.models.PurchaseOrder.objects.count(), 0)
+    self.assertEqual(input.models.DistributionOrder.objects.count(), 0)
+    self.assertEqual(input.models.ManufacturingOrder.objects.count(), 0)
     self.assertEqual(input.models.OperationPlanResource.objects.count(), 0)
     self.assertEqual(input.models.OperationPlanMaterial.objects.count(), 0)
     self.assertEqual(input.models.Operation.objects.count(), 0)
@@ -154,7 +159,9 @@ class ExcelTest(TransactionTestCase):
     self.assertEqual(input.models.ItemSupplier.objects.count(), countItemSupplier)
     self.assertEqual(input.models.OperationResource.objects.count(), countOperationResource)
     self.assertEqual(input.models.Location.objects.count(), countLocation)
-    self.assertEqual(input.models.OperationPlan.objects.count(), countOperationPlan)
+    self.assertEqual(input.models.PurchaseOrder.objects.count(), countPurchaseOrder)
+    self.assertEqual(input.models.DistributionOrder.objects.count(), countDistributionOrder)
+    self.assertEqual(input.models.ManufacturingOrder.objects.count(), countManufacturingOrder)
     self.assertEqual(input.models.Operation.objects.count(), countOperation)
     self.assertEqual(input.models.ResourceSkill.objects.count(), countResourceSkill)
     self.assertEqual(input.models.Resource.objects.count(), countResource)

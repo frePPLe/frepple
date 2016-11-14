@@ -26,6 +26,7 @@ from django.test.utils import override_settings
 
 import freppledb.output as output
 import freppledb.input as input
+import freppledb.common as common
 
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
@@ -49,7 +50,8 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(output.models.Problem.objects.count(), 0)
     self.assertEqual(input.models.OperationMaterial.objects.count(), 0)
     self.assertEqual(input.models.OperationPlanResource.objects.count(), 0)
-    self.assertEqual(input.models.OperationPlan.objects.count(), 0)
+    self.assertEqual(input.models.PurchaseOrder.objects.count(), 0)
+    self.assertEqual(common.models.Parameter.objects.count(), 0)
 
     # Create a new model
     management.call_command('frepple_createmodel', cluster='1', verbosity='0')
@@ -68,7 +70,7 @@ class execute_with_commands(TransactionTestCase):
 
 
 class execute_multidb(TransactionTestCase):
-  multi_db = True
+
   fixtures = ['demo']
 
   def setUp(self):

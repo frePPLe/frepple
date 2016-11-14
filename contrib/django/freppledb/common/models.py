@@ -403,8 +403,8 @@ class User(AbstractUser):
       update_fields=update_fields
       )
     if settings.DEFAULT_USER_GROUP and newuser:
-                  grp = Group.objects.all().using(using).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
-                  self.groups.add(grp.id)
+      grp = Group.objects.all().using(using).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
+      self.groups.add(grp.id)
     return usr
 
 
@@ -431,6 +431,8 @@ class User(AbstractUser):
 @receiver(pre_delete, sender=User)
 def delete_user(sender, instance, **kwargs):
   raise PermissionDenied
+
+
 class Comment(models.Model):
   id = models.AutoField(_('identifier'), primary_key=True)
   content_type = models.ForeignKey(

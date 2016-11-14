@@ -238,10 +238,16 @@ class Command(BaseCommand):
         name="currentdate",
         value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
         )
+
+      # Parameters
       Parameter.objects.using(database).create(
         name="plan.loglevel",
         value = "3"
         )
+      Parameter.objects.using(database).create(
+        name='loading_time_units', value='days',
+        description='Time units to be used for the resource report: hours, days, weeks'
+        ).save(using=database)
 
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current

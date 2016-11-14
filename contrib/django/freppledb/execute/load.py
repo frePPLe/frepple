@@ -77,18 +77,6 @@ class loadData(object):
     print('Current date: %s' % frepple.settings.current)
 
 
-  def finalize(self):
-    # Assure the operationplan ids will be unique.
-    # We call this method only at the end, as calling it earlier gives a slower
-    # performance to load operationplans
-    self.cursor.execute('''
-      select coalesce(max(id),1) + 1 as max_id
-      from operationplan
-      ''')
-    d = self.cursor.fetchone()
-    frepple.settings.id = d[0]
-
-
   def loadLocations(self):
     print('Importing locations...')
     cnt = 0
@@ -813,6 +801,16 @@ class loadData(object):
         opplan.demand = frepple.demand(name=i[8])
     print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
+    # Assure the operationplan ids will be unique.
+    # We call this method only at the end, as calling it earlier gives a slower
+    # performance to load operationplans
+    self.cursor.execute('''
+      select coalesce(max(id),1) + 1 as max_id
+      from operationplan
+      ''')
+    d = self.cursor.fetchone()
+    frepple.settings.id = d[0]
+
 
   def loadDemand(self):
     print('Importing demands...')
@@ -887,8 +885,7 @@ class loadData(object):
     self.loadItemDistributions()
     self.loadOperationMaterials()
     self.loadOperationResources()
-    self.finalize()
-
+ 
     # Close the database connection
     self.cursor.close()
 
@@ -911,7 +908,6 @@ class loadData(object):
     # Sequential load of all entities
     self.loadDemand()
     self.loadOperationPlans()
-    self.finalize()
 
     # Close the database connection
     self.cursor.close()

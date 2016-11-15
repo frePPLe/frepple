@@ -1960,9 +1960,11 @@ var tour = {
         '</div></div>'+
       '</div>'+
     '</div>' )
-    .modal({
-      backdrop: 'static',
-      keyboard: false
+    .modal({ //these 2 lines disable close when clicking outside the modal
+      //backdrop: 'static',
+      //keyboard: false
+    }).on('hidden.bs.modal', function () {
+      $('.tourpopover').popover('destroy');
     })
     .on('shown.bs.modal', function () {
       tour.showStep();

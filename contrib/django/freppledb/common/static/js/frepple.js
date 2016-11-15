@@ -340,7 +340,7 @@ jQuery.extend($.fn.fmatter, {
 
   detail : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (options['colModel']['popup']) return cellvalue;
+    if (options['colModel']['popup'] || rowdata.showdrilldown == '0') return cellvalue;
     return cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
   },
 

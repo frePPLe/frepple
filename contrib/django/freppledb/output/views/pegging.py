@@ -44,6 +44,7 @@ class ReportByDemand(GridReport):
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('type', title=_('type'), editable=False, sortable=False, width=100),
     #GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
     #GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
     GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
@@ -54,6 +55,7 @@ class ReportByDemand(GridReport):
     GridFieldText('expanded', editable=False, sortable=False, hidden=True),
     GridFieldText('current', editable=False, sortable=False, hidden=True),
     GridFieldText('due', editable=False, sortable=False, hidden=True),
+    GridFieldText('showdrilldown', editable=False, sortable=False, hidden=True),
     )
 
 
@@ -145,7 +147,8 @@ class ReportByDemand(GridReport):
       select
         pegging.due, operationplan.name, pegging.lvl, ops.pegged,
         pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
-        operationplan.status, operationplanresource.resource, operationplan.type
+        operationplan.status, operationplanresource.resource, operationplan.type,
+        case when operationplan.operation_id is not null then 1 else 0 end as show
       from pegging
       inner join operationplan
         on operationplan.id = pegging.opplan
@@ -180,6 +183,7 @@ class ReportByDemand(GridReport):
           'current': str(current),
           'operation': rec[1],
           'type': rec[10],
+          'showdrilldown': rec[11],
           'depth': rec[2],
           'quantity': str(rec[3]),
           'due': round((rec[0] - request.report_startdate).total_seconds() / horizon, 3),

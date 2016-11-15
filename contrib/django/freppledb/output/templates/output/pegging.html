@@ -27,9 +27,9 @@ function ganttcell(cellvalue, options, rowdata)
      };
      if (row >= layer.length) layer.push(data["enddate"]);
      if (data['status'] == 'confirmed')
-       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan_locked"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Id: ' + data["id"] + '<br>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
      else
-       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
+       result.push( '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) + '" width="' + Math.max(data["w"],1) + '" height="' + (gantt.rowsize-3) + '" class="opplan"><title>Operation: ' + data["operation"] + (data["description"] ? ('<br/>Description: ' + data["description"]) : '') + '<br/>Id: ' + data["id"] + '<br>Quantity: ' + data["quantity"] + '<br/>Start Date: ' + data["startdate"] + '<br/>End Date: ' + data["enddate"] + '</title></rect>');
   }
   result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
   result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
@@ -101,7 +101,3 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block tools %}{% tabs "input.demand" %}{% endblock %}
-
-{% comment %}
-TODO operation can be hidden and have no link
-{% endcomment %}

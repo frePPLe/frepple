@@ -89,7 +89,10 @@ class export:
 
 
   def getPegging(self, opplan):
-    return json.dumps({ j.demand.name: round(j.quantity, 4) for j in opplan.pegging_demand })
+    peg = { j.demand.name: round(j.quantity, 4) for j in opplan.pegging_demand }
+    # We need to double any backslash to assure that the string remains
+    # valid when passing it through postgresql (which eats them away)
+    return json.dumps(peg).replace("\\", "\\\\")
 
 
   def truncate(self, process):

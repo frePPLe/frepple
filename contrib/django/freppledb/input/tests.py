@@ -54,7 +54,7 @@ class DataLoadTest(TestCase):
     response = self.client.get('/data/input/operation/?format=json')
     self.assertContains(response, '"records":9,')
     response = self.client.get('/data/input/manufacturingorder/?format=json')
-    self.assertContains(response, '"records":0,')
+    self.assertContains(response, '"records":34,')
     response = self.client.get('/data/input/resource/?format=json')
     self.assertContains(response, '"records":3,')
     response = self.client.get('/data/input/suboperation/?format=json')

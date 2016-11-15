@@ -94,7 +94,7 @@ class execute_multidb(TransactionTestCase):
     # Check count in both databases
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
-    self.assertEqual(count1, 0)
+    self.assertEqual(count1, 156)
     self.assertEqual(count2, 0)
 
     # Erase second database

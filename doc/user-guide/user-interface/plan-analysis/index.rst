@@ -25,3 +25,4 @@ This series of screens is used to review the planning results.
    demand-gantt-report
    forecast-report
    performance-indicator-report
+   quoting-screen

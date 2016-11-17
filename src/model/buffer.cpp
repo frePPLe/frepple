@@ -654,7 +654,10 @@ void Buffer::followPegging
     double scale = curflowplan->getQuantity() / curflowplan->getOperationPlan()->getQuantity();
     double startQty = f->getCumulativeProduced() - f->getQuantity() + offset * scale;
     double endQty = startQty + qty * scale;
-    if (f->getCumulativeConsumed() <= startQty + ROUNDING_ERROR)
+    if (
+      (f->getQuantity() <= 0 && f->getCumulativeConsumed() + f->getQuantity() < endQty)
+      || (f->getQuantity() > 0 && f->getCumulativeConsumed() < endQty)
+      )
     {
       // CASE 2A: Not consumed enough yet: move forward
       while (f!=getFlowPlans().end()

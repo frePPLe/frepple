@@ -7611,7 +7611,7 @@ class Resource::OperationPlanIterator
     OperationPlan* next()
     {
       Resource::loadplanlist::Event* i = iter.next();
-      while (i && i->getEventType() == 1 && i->getQuantity() >= 0)
+      while (i && i->getEventType() == 1 && i->getQuantity() <= 0)
         i = iter.next();
       return i ? static_cast<LoadPlan*>(i)->getOperationPlan() : nullptr;
     }

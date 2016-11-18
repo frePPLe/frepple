@@ -167,7 +167,7 @@ class PathReport(GridReport):
       ]
     for i in ItemDistribution.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
-        origin__lft__lte=buffer.location.lft, origin__rght__gt=buffer.location.lft
+        origin__name=buffer.location.name
         ):
       i.item = buffer.item
       result.append( (level - 1, None, i, curqty, 0, None, realdepth - 1, pushsuper, i.location.name if i.location else None) )
@@ -186,7 +186,7 @@ class PathReport(GridReport):
     if Location.objects.using(db).count() > 1:
       # Multiple locations
       for i in ItemSupplier.objects.using(db).filter(
-        Q(location__isnull=True) | (Q(location__lft__lte=buffer.location.lft) & Q(location__rght__gt=buffer.location.lft)),
+        Q(location__isnull=True) | Q(location__name=buffer.location.name),
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
           i.item = buffer.item
@@ -194,10 +194,9 @@ class PathReport(GridReport):
           result.append(
             (level, None, i, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
             )
-      # TODO if the itemdistribution is at an aggregate location level, we should loop over all child locations
       for i in ItemDistribution.objects.using(db).filter(
-        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
-        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
+        Q(location__isnull=True) | Q(location__name=buffer.location.name),
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft    
         ):
           i.item = buffer.item
           i.location = buffer.location
@@ -205,8 +204,8 @@ class PathReport(GridReport):
             (level, None, i, curqty, 0, None, realdepth, pushsuper, i.location.name if i.location else None)
             )
       for i in Operation.objects.using(db).filter(
-        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
-        location__lft__lte=buffer.location.lft, location__rght__gt=buffer.location.lft
+        Q(location__isnull=True) | Q(location__name=buffer.location.name),
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft        
         ):
           i.item = buffer.item
           i.location = buffer.location

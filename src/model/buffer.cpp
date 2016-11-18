@@ -912,12 +912,16 @@ void Buffer::buildProducingOperation()
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is the ItemDistribution destination location
       //   - buffer location is null, and the ItemDistribution destination location isn't
+      if (getLocation() == itemdist->getOrigin())
+        continue;
       if (itemdist->getDestination())
       {
         if ((getLocation() && getLocation() != itemdist->getDestination())
           || !getLocation())
           continue;
       }
+      if (!itemdist->getOrigin())
+        continue;
 
       // Check if there is already a producing operation referencing this ItemDistribution
       if (producing_operation && producing_operation != uninitializedProducing)
@@ -943,15 +947,10 @@ void Buffer::buildProducingOperation()
         }
       }
 
-      // New operation needs to be created for each allowed source location
-      for (Location::iterator loc = Location::begin(); loc != Location::end(); ++loc)
-      {
-        // Skip unqualified locations
-        if (itemdist->getOrigin() && !loc->isMemberOf(itemdist->getOrigin()))
-          continue;
+      // New operation needs to be created 
 
         // Find or create the source buffer
-        Buffer* originbuf = findOrCreate(getItem(), &*loc);
+        Buffer* originbuf = findOrCreate(getItem(), &*itemdist->getOrigin());
 
         // Create new operation
         OperationItemDistribution *oper = new OperationItemDistribution(itemdist, originbuf, this);
@@ -1021,7 +1020,7 @@ void Buffer::buildProducingOperation()
             subop->setOwner(superop);
           }
         }
-      } // End loop over origin locations
+      
 
     } // End loop over itemdistributions
 

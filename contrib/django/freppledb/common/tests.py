@@ -295,159 +295,158 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 200)
     recordsnumber = input.models.Demand.objects.count()
     data = {
-          "name": "Order UFO 25",
-          "description": None,
-          "category": None,
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "110.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 25",
+        "description": None,
+        "category": None,
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "110.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }
     response = self.client.post('/api/input/demand/', data, format='json')
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 1)
-    self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 25').count(), 1)
+    self.assertEqual(input.models.Demand.objects.filter(name='Order UFO 25').count(), 1)
     data = {
-          "name": "Order UFO 26",
-          "description": None,
-          "category": None,
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "220.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 26",
+        "description": None,
+        "category": None,
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "220.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }
     response = self.client.post('/api/input/demand/', data, format='json')
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 2)
-    self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 26').count(), 1)
+    self.assertEqual(input.models.Demand.objects.filter(name='Order UFO 26').count(), 1)
 
     data = [{
-          "name": "Order UFO 27",
-          "description": None,
-          "category": "TEST DELETE",
-          "subcategory": None,
-          "item": "product",
-          "location": "factory 1",
-          "customer": "Customer near factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "220.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
-    },
-    {
-          "name": "Order UFO 28",
-          "description": None,
-          "category": "TEST DELETE",
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "220.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 27",
+        "description": None,
+        "category": "TEST DELETE",
+        "subcategory": None,
+        "item": "product",
+        "location": "factory 1",
+        "customer": "Customer near factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "220.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
+    }, {
+        "name": "Order UFO 28",
+        "description": None,
+        "category": "TEST DELETE",
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "220.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }]
     response = self.client.post('/api/input/demand/', data, format='json')
     self.assertEqual(response.status_code, 201)
     self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 4)
-    self.assertEqual(input.models.Demand.objects.filter(category = 'TEST DELETE').count(), 2)
+    self.assertEqual(input.models.Demand.objects.filter(category='TEST DELETE').count(), 2)
 
-    #Demand GET MULTIPART
+    # Demand GET MULTIPART
     response = self.client.get('/api/input/demand/Order UFO 25/')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 25').count(), 1)
-    #Demand OPTIONS
+    self.assertEqual(input.models.Demand.objects.filter(name='Order UFO 25').count(), 1)
+    # Demand OPTIONS
     response = self.client.options('/api/input/demand/Order UFO 25/')
     self.assertEqual(response.status_code, 200)
-    #Demand GET JSON tests
+    # Demand GET JSON tests
     response = self.client.get('/api/input/demand/Order UFO 26/', format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Demand.objects.filter(name = 'Order UFO 26').count(), 1)
-    #Demand PUT MULTIPART tests
+    self.assertEqual(input.models.Demand.objects.filter(name='Order UFO 26').count(), 1)
+    # Demand PUT MULTIPART tests
     data = {
-          "name": "Order UFO 25",
-          "description": "Put multipart",
-          "category": None,
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "110.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 25",
+        "description": "Put multipart",
+        "category": None,
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "110.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }
     response = self.client.put('/api/input/demand/Order UFO 25/', data, format='json')
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Demand.objects.count(), 18)
-    self.assertEqual(input.models.Demand.objects.filter(description = 'Put multipart').count(), 1)
-    #Demand PUT JSON tests
+    self.assertEqual(input.models.Demand.objects.filter(description='Put multipart').count(), 1)
+    # Demand PUT JSON tests
     data = {
-          "name": "Order UFO 26",
-          "description": "Put json",
-          "category": None,
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "110.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 26",
+        "description": "Put json",
+        "category": None,
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "110.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }
     response = self.client.put('/api/input/demand/Order UFO 26/', data, format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Demand.objects.count(), 18)
-    self.assertEqual(input.models.Demand.objects.filter(description = 'Put json').count(), 1)
-    #Demand PUT FORM tests
+    self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Demand.objects.filter(description='Put json').count(), 1)
+    # Demand PUT FORM tests
     data = {
-          "name": "Order UFO 26",
-          "description": "Put form",
-          "category": None,
-          "subcategory": None,
-          "item": "product",
-          "customer": "Customer near factory 1",
-          "location": "factory 1",
-          "due": "2013-12-01T00:00:00",
-          "status": "closed",
-          "operation": None,
-          "quantity": "110.0000",
-          "priority": 1,
-          "minshipment": None,
-          "maxlateness": None
+        "name": "Order UFO 26",
+        "description": "Put form",
+        "category": None,
+        "subcategory": None,
+        "item": "product",
+        "customer": "Customer near factory 1",
+        "location": "factory 1",
+        "due": "2013-12-01T00:00:00",
+        "status": "closed",
+        "operation": None,
+        "quantity": "110.0000",
+        "priority": 1,
+        "minshipment": None,
+        "maxlateness": None
     }
     response = self.client.put('/api/input/demand/Order UFO 26/', data, format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Demand.objects.count(), 18)
-    self.assertEqual(input.models.Demand.objects.filter(description = 'Put form').count(), 1)
+    self.assertEqual(input.models.Demand.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Demand.objects.filter(description='Put form').count(), 1)
 
-    #Demand DELETE tests
+    # Demand DELETE tests
     response = self.client.delete('/api/input/demand/Order UFO 26/', format='form')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/Order UFO 25/', format='json')
@@ -456,93 +455,94 @@ class freppleREST(APITestCase):
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/demand/?category=TEST DELETE', format='api')
     self.assertEqual(response.status_code, 204)
-    self.assertEqual(input.models.Customer.objects.filter(category = 'TEST DELETE').count(), 0)
+    self.assertEqual(input.models.Customer.objects.filter(category='TEST DELETE').count(), 0)
 
   def test_api_customer(self):
     response = self.client.get('/api/input/customer/')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.count(), 2)
+    recordsnumber = input.models.Customer.objects.count()
+    self.assertEqual(input.models.Customer.objects.count(), 3)
     response = self.client.options('/api/input/customer/')
     self.assertEqual(response.status_code, 200)
     data = {
-	  "name": "Customer near Area 51"
+        "name": "Customer near Area 51"
     }
     response = self.client.post('/api/input/customer/', data)
     self.assertEqual(response.status_code, 201)
-    self.assertEqual(input.models.Customer.objects.count(), 3)
-    self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 51').count(), 1)
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 1)
+    self.assertEqual(input.models.Customer.objects.filter(name='Customer near Area 51').count(), 1)
     data = {
-    "name": "Customer near Area 52"
+        "name": "Customer near Area 52"
     }
     response = self.client.post('/api/input/customer/', data, format='json')
     self.assertEqual(response.status_code, 201)
-    self.assertEqual(input.models.Customer.objects.count(), 4)
-    self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 52').count(), 1)
+    print(input.models.Customer.objects)
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 2)
+    self.assertEqual(input.models.Customer.objects.filter(name='Customer near Area 52').count(), 1)
     data = [{
-    "name": "Customer near Area 99",
-    "source": "TEST DELETE"
-    },{
-    "name": "Customer near Area 100",
-    "source": "TEST DELETE"
+      "name": "Customer near Area 99",
+      "source": "TEST DELETE"
+      }, {
+      "name": "Customer near Area 100",
+      "source": "TEST DELETE"
     }]
     response = self.client.post('/api/input/customer/', data, format='json')
     self.assertEqual(response.status_code, 201)
-    self.assertEqual(input.models.Customer.objects.count(), 6)
-    self.assertEqual(input.models.Customer.objects.filter(source = 'TEST DELETE').count(), 2)
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Customer.objects.filter(source='TEST DELETE').count(), 2)
 
-
-    #Customer GET MULTIPART
+    # Customer GET MULTIPART
     response = self.client.get('/api/input/customer/Customer near Area 51/')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 51').count(), 1)
-    #Customer OPTIONS
+    self.assertEqual(input.models.Customer.objects.filter(name='Customer near Area 51').count(), 1)
+    # Customer OPTIONS
     response = self.client.options('/api/input/customer/Customer near Area 51/')
     self.assertEqual(response.status_code, 200)
-    #Customer GET JSON tests
+    # Customer GET JSON tests
     response = self.client.get('/api/input/customer/Customer near Area 52/', format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.filter(name = 'Customer near Area 52').count(), 1)
-    #Customer PUT MULTIPART tests
+    self.assertEqual(input.models.Customer.objects.filter(name='Customer near Area 52').count(), 1)
+    # Customer PUT MULTIPART tests
     data = {
       "name": "Customer near Area 51",
       "description": "Patch multipart"
     }
     response = self.client.patch('/api/input/customer/Customer near Area 51/', data)
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.count(), 6)
-    self.assertEqual(input.models.Customer.objects.filter(description = 'Patch multipart').count(), 1)
-    #Customer PUT JSON tests
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Customer.objects.filter(description='Patch multipart').count(), 1)
+    # Customer PUT JSON tests
     data = {
       "name": "Customer near Area 52",
       "description": "Patch json"
     }
     response = self.client.patch('/api/input/customer/Customer near Area 52/', data, format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.count(), 6)
-    self.assertEqual(input.models.Customer.objects.filter(description = 'Patch json').count(), 1)
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Customer.objects.filter(description='Patch json').count(), 1)
 
-    #Customer PUT FORM tests
+    # Customer PUT FORM tests
     data = {
-            "name":"Customer near Area 52",
-            "description":"Patch json",
-            "category":None,
-            "subcategory":None,
-            "source":"Put json",
-            "lastmodified":"2015-12-04T10:18:40.048861"
+        "name": "Customer near Area 52",
+        "description": "Patch json",
+        "category": None,
+        "subcategory": None,
+        "source": "Put json",
+        "lastmodified": "2015-12-04T10:18:40.048861"
     }
 
     response = self.client.patch('/api/input/customer/Customer near Area 52/', data, format='json')
     self.assertEqual(response.status_code, 200)
-    self.assertEqual(input.models.Customer.objects.count(), 6)
-    self.assertEqual(input.models.Customer.objects.filter(source = 'Put json').count(), 1)
+    self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 4)
+    self.assertEqual(input.models.Customer.objects.filter(source='Put json').count(), 1)
 
-    #Customer DELETE tests
+    # Customer DELETE tests
     response = self.client.delete('/api/input/customer/Customer near Area 52/', format='form')
     self.assertEqual(response.status_code, 204)
-    response = self.client.delete('/api/input/customer/Customer near Area 51/',  format='json')
+    response = self.client.delete('/api/input/customer/Customer near Area 51/', format='json')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/customer/Customer near factory 1/', format='api')
     self.assertEqual(response.status_code, 204)
     response = self.client.delete('/api/input/customer/?source=TEST DELETE', format='json')
     self.assertEqual(response.status_code, 204)
-    self.assertEqual(input.models.Customer.objects.filter(source = 'TEST DELETE').count(), 0)
+    self.assertEqual(input.models.Customer.objects.filter(source='TEST DELETE').count(), 0)

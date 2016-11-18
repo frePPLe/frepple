@@ -88,7 +88,7 @@ class execute_multidb(TransactionTestCase):
         db2 = i
         break
     if not db2:
-      # Only a single database is configured and we skip this test
+        # Only a single database is configured and we skip this test
       return
 
     # Check count in both databases
@@ -182,8 +182,8 @@ class execute_simulation(TransactionTestCase):
     # Run the plan and measure the lateness
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
     initial_planned_late = output.models.Problem.objects.all().filter(name="late").aggregate(
-      count = Count('id'),
-      lateness = Sum('weight')
+      count=Count('id'),
+      lateness=Sum('weight')
       )
 
     # Run the simulation.

@@ -476,7 +476,6 @@ class freppleREST(APITestCase):
     }
     response = self.client.post('/api/input/customer/', data, format='json')
     self.assertEqual(response.status_code, 201)
-    print(input.models.Customer.objects)
     self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 2)
     self.assertEqual(input.models.Customer.objects.filter(name='Customer near Area 52').count(), 1)
     data = [{

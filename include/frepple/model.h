@@ -7042,6 +7042,7 @@ class Demand
     void setStatus(status s)
     {
       state = s;
+      setChanged();
     }
 
     /** Return the status as a string. */

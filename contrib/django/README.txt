@@ -23,7 +23,7 @@ The basic steps to set up a development environment:
   For the Django tests, the user should have sufficient privileges to create a
   new database schema.
 
-- Edit the file settings.py to point to your database schema.
+- Edit the file djangosettings.py to point to your database schema.
 
 - Initialize the database schema:
       frepplectl.py migrate

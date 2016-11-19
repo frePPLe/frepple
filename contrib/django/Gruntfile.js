@@ -62,11 +62,35 @@ module.exports = function (grunt) {
     watch: {
       files: ["**/*.less"],
       tasks: ["less"]
+    },
+    // Minify the javascript files
+    uglify: {
+      options: {
+        sourceMap: true,
+        banner: '/* frePPLe <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+          'Copyright (C) 2010-2016 by frePPLe bvba\n\n' +
+          'This library is free software; you can redistribute it and/or modify it\n' +
+          'under the terms of the GNU Affero General Public License as published\n' +
+          'by the Free Software Foundation; either version 3 of the License, or\n' +
+          '(at your option) any later version.\n\n' +
+          'This library is distributed in the hope that it will be useful,\n' +
+          'but WITHOUT ANY WARRANTY; without even the implied warranty of\n' +
+          'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero\n' +
+          'General Public License for more details.\n\n' +
+          'You should have received a copy of the GNU Affero General Public\n' +
+          'License along with this program.  If not, see <http://www.gnu.org/licenses/>.\n' +
+          '*/\n'
+      },
+      js: {
+        src: ['freppledb/common/static/js/frepple.js'],
+        dest: 'freppledb/common/static/js/frepple.min.js'
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.registerTask('default', ['less']);
 };

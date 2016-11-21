@@ -701,6 +701,10 @@ class loadData(object):
 
   def loadOperationPlans(self):   # TODO if we are going to replan anyway, we can skip loading the proposed operationplans
     print('Importing operationplans...')
+    if 'supply' in os.environ:
+      confirmed_filter = " and operationplan.status = 'confirmed'"
+    else:
+      confirmed_filter = ""
     cnt_mo = 0
     cnt_po = 0
     cnt_do = 0

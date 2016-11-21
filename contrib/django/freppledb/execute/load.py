@@ -724,9 +724,9 @@ class loadData(object):
       on dmd.name = operationplan.demand_id
       WHERE operationplan.owner_id IS NULL
         and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-        %s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+        %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
       ORDER BY operationplan.id ASC
-      ''' % self.filter_and)
+      ''' % (self.filter_and, confirmed_filter))
     for i in self.cursor.fetchall():
       try:
         if i[7] == 'MO':
@@ -790,9 +790,9 @@ class loadData(object):
         ) dmd
       on dmd.name = operationplan.demand_id
       WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
-        %s and operationplan.type = 'MO'
+        %s%s and operationplan.type = 'MO'
       ORDER BY operationplan.id ASC
-      ''' % self.filter_and)
+      ''' % (self.filter_and, confirmed_filter))
     for i in self.cursor.fetchall():
       cnt_mo += 1
       opplan = frepple.operationplan(

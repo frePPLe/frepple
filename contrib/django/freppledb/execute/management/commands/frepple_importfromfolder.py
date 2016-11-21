@@ -80,7 +80,10 @@ class Command(BaseCommand):
       except:
         raise CommandError("User '%s' not found" % options['user'] )
     else:
-      self.user = None
+      try:
+        self.user = User.objects.all().using(self.database).filter(is_superuser=True)[0]
+      except:
+        self.user = None
 
     now = datetime.now()
 
@@ -297,15 +300,16 @@ class Command(BaseCommand):
                 with transaction.atomic(using=self.database):
                   obj = form.save(commit=False)
                   obj.save(using=self.database)
-                  LogEntry(
-                    user_id=0,   # To change in the near future !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    content_type_id=content_type_id,
-                    object_id=obj.pk,
-                    object_repr=force_text(obj),
-                    action_flag=it and CHANGE or ADDITION,
-                    #. Translators: Translation included with Django
-                    change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
-                  ).save(using=self.database)
+                  if self.user:
+                    LogEntry(
+                      user_id=self.user.id,
+                      content_type_id=content_type_id,
+                      object_id=obj.pk,
+                      object_repr=force_text(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      #. Translators: Translation included with Django
+                      change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
+                    ).save(using=self.database)
                   if it:
                     changed += 1
                   else:

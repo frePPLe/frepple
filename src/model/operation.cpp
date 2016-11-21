@@ -1627,8 +1627,8 @@ double Operation::setOperationPlanQuantity
       curmin = getSizeMinimumCalendar()->getValue(end ? end : oplan->getDates().getEnd());
     else
       // Minimum is constant
-      curmin = getSizeMinimum();
-    if (f != 0.0 && curmin > 0.0 && f <= curmin + ROUNDING_ERROR)
+      curmin = getSizeMinimum();    
+    if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR)
     {
       if (roundDown)
       {
@@ -1662,9 +1662,30 @@ double Operation::setOperationPlanQuantity
       double q = mult * getSizeMultiple();
       if (q < curmin)
       {
-        q += getSizeMultiple();
-        if (q > getSizeMaximum())
-          throw DataException("Invalid sizing parameters for operation " + getName());
+        if (roundDown)
+        {
+          // Smaller than the minimum quantity, rounding down means... nothing
+          if (!execute)
+            return 0.0;
+          oplan->quantity = 0.0;
+          // Update the flow and loadplans, and mark for problem detection
+          if (upd)
+            oplan->update();
+          // Update the parent of an alternate operationplan
+          if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+          {
+            oplan->owner->quantity = 0.0;
+            if (upd)
+              oplan->owner->resizeFlowLoadPlans();
+          }
+          return 0.0;
+        }
+        else
+        {
+          q += getSizeMultiple();
+          if (q > getSizeMaximum())
+            throw DataException("Invalid sizing parameters for operation " + getName());
+        }
       }
       else if (q > getSizeMaximum())
       {

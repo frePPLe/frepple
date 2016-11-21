@@ -708,6 +708,7 @@ OPERATION	Purchase buffer 3	2009-01-09T12:00:00	2009-01-13T00:00:00	60
 OPERATION	Purchase buffer 3	2009-01-17T12:00:00	2009-01-21T00:00:00	60
 OPERATION	Purchase buffer 3	2009-01-28T12:00:00	2009-02-01T00:00:00	60
 OPERATION	Purchase buffer 3	2009-05-28T12:00:00	2009-06-01T00:00:00	60
+OPERATION	Purchase buffer 4	1971-01-01T00:00:00	1971-01-01T00:00:00	0
 OPERATION	Purchase buffer 5	2008-12-28T12:00:00	2009-01-01T00:00:00	105
 OPERATION	Purchase buffer 5	2009-01-07T12:00:00	2009-01-11T00:00:00	80
 OPERATION	Purchase buffer 5	2009-01-17T12:00:00	2009-01-21T00:00:00	50
@@ -813,6 +814,7 @@ PROBLEM	before current	Operation 'Purchase buffer 10' planned in the past	2008-1
 PROBLEM	before current	Operation 'Purchase buffer 11' planned in the past	2008-12-12T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 2' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 3' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase buffer 4' planned in the past	1971-01-01T00:00:00 / 1971-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 5' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 6' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 7' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00

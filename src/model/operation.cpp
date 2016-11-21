@@ -1628,7 +1628,7 @@ double Operation::setOperationPlanQuantity
     else
       // Minimum is constant
       curmin = getSizeMinimum();
-    if (f != 0.0 && curmin > 0.0 && f < curmin)
+    if (f != 0.0 && curmin > 0.0 && f <= curmin + ROUNDING_ERROR)
     {
       if (roundDown)
       {

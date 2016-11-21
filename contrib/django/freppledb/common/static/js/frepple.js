@@ -1,4 +1,3 @@
-
 // Django sets this variable in the admin/base.html template.
 window.__admin_media_prefix__ = "/static/admin/";
 
@@ -1912,6 +1911,7 @@ var tour = {
   tooltip: null,
   chapter: 0,
   step: 0,
+  intro: null,
   timeout: null,
 
   tooltip: '<div class="popover tourpopover" role="tooltip">' +
@@ -1919,6 +1919,73 @@ var tour = {
     '<div class="popover-content"></div>' +
     '</div>',
 
+  introtip: '<div class="popover tourpopover" role="tooltip">' +
+    '<div class="arrow"></div>' +
+    '<div class="popover-content" style="padding-bottom: 0"></div>' +
+    '<div class="popover-footer small"><label>' +
+    '<input style="vertical-align: bottom" type="checkbox" checked onclick="tour.displayHints(this.checked, true)">&nbsp;' +
+    gettext('Show hints') +
+    '</label></div></div>',
+  
+  displayHints: function(show, warn) {
+    if (show) {
+      // Reinitialize the intro hints
+      localStorage.removeItem("intro");
+      $("#showHints").addClass("toggle-on").removeClass("toggle-off");
+      tour.showIntroPage(null);
+    }
+    else {
+      // Marks the complete tour as seen    
+      localStorage.setItem("intro", "{}");
+      $("#showHints").addClass("toggle-off").removeClass("toggle-on");
+      //if (warn): TODO not working yet
+      //  $('.tourpopover-content').html("You can activate the hints again from the Help menu");
+      $('.tourpopover').popover('destroy');   
+    }
+  },
+
+  showIntroPage: function(pagestxt) {
+    // Get the intro data
+    if (pagestxt == null)
+    {
+      // First time visitor without intro list
+      var pages = {};
+      for (var key in introdata)
+        pages[key] = 0;
+      localStorage.setItem("intro", JSON.stringify(pages));
+    }
+    else
+    {
+      // Intro list already exists
+      if (pagestxt == '')
+        pagestxt = localStorage.getItem("intro");
+      var pages = JSON.parse(pagestxt);
+    }
+    
+    // Check if the page has an intro   
+    if (location.pathname in pages) {
+      // Display the page
+      tour.intro = introdata[location.pathname][pages[location.pathname]];
+      tour.showStep();
+      tour.intro = null;
+      
+      // Add an event handler to move to the next intro hint
+      $('html').on('click', function (event) {
+        if (!$(event.target).is("a"))
+          tour.showIntroPage('');
+        });
+      
+      // Remove the page from the to-see list 
+      pages[location.pathname] += 1;
+      if (pages[location.pathname] >= introdata[location.pathname].length)
+        delete pages[location.pathname];
+      localStorage.setItem("intro", JSON.stringify(pages));      
+    }
+    else
+      // No hints for this page
+      $('.tourpopover').popover('destroy');
+  },
+  
   start: function (args)
   {
     // Parse the arguments
@@ -2025,34 +2092,38 @@ var tour = {
   showStep: function()
   {
     $('.tourpopover').popover('destroy');
-    var stepData = tourdata[tour.chapter]['steps'][tour.step];
-    // Switch url if required
-    var nexthref = '';
-    var currsearch = '';
-    if ( location.search.lastIndexOf('&')>-1 )
-    {
-      currsearch = location.search.replace(location.search.slice(location.search.lastIndexOf('&')),''); //delete &tour=x,y,z
-    } else {
-      currsearch = ''; //delete ?tour=x,y,z
-    };
-    if (location.pathname+currsearch != url_prefix+stepData['url']) {
-      nexthref = url_prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-      if (nexthref.match(/\?/g || []).length == 2)
-        nexthref = url_prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-      window.location.href = nexthref;
-      return;
-    };
+    if (tour.intro)
+      // Intro popup
+      var stepData = tour.intro;
+    else {
+      // Guided tour
+      var stepData = tourdata[tour.chapter]['steps'][tour.step];    
+      // Switch url if required
+      var nexthref = '';
+      var currsearch = '';
+      if ( location.search.lastIndexOf('&')>-1 )
+        currsearch = location.search.replace(location.search.slice(location.search.lastIndexOf('&')),''); //delete &tour=x,y,z
+      else
+        currsearch = ''; //delete ?tour=x,y,z
+      if (location.pathname+currsearch != url_prefix+stepData['url']) {
+        nexthref = url_prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        if (nexthref.match(/\?/g || []).length == 2)
+          nexthref = url_prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
+        window.location.href = nexthref;
+        return;
+      };
+    }
+    
     // Callback
     if ('beforestep' in stepData)
       eval(stepData['beforestep']);
     // Display the tooltip
-    //tour.tooltip.html(stepData['description']);
     var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
-
+    $(stepData['element']).attr('role', 'button').attr('tabindex', '0');
     $(stepData['element']).popover({
       'html': true,
       'container': 'body',
-      'template': tour.tooltip,
+      'template': tour.intro ? tour.introtip : tour.tooltip,
       'title':'',
       'content': stepData['description'],
       'placement': stepData['position'],
@@ -2066,25 +2137,28 @@ var tour = {
     })
 
     // Update tour dialog
-    $('#tourmodalbody').html(tourdata[tour.chapter]['description']);
-    // Previous button
-    if (tour.chapter == 0 && tour.step == 0)
-      $("#tourprevious").prop('disabled', true);
-    else
-      $("#tourprevious").prop('disabled', false);
-    // Next button
-    if ((tour.chapter >= tourdata.length-1) && (tour.step >= tourdata[tour.chapter]['steps'].length-1))
-      $("#tournext").prop('disabled', true);
-    else
-      $("#tournext").prop('disabled', false);
-    // Autoplay
-    if (tour.autoplay)
-      tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
+    if (tour.intro == null) {      
+      $('#tourmodalbody').html(tourdata[tour.chapter]['description']);
+      // Previous button
+      if (tour.chapter == 0 && tour.step == 0)
+        $("#tourprevious").prop('disabled', true);
+      else
+        $("#tourprevious").prop('disabled', false);
+      // Next button
+      if ((tour.chapter >= tourdata.length-1) && (tour.step >= tourdata[tour.chapter]['steps'].length-1))
+        $("#tournext").prop('disabled', true);
+      else
+        $("#tournext").prop('disabled', false);
+      // Autoplay
+      if (tour.autoplay)
+        tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
+    }
+    
     // Callback
     if ('afterstep' in stepData)
       eval(stepData['afterstep']);
   },
-
+  
   toggleAutoplay: function()
   {
     if (tour.autoplay > 0)

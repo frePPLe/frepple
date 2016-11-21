@@ -487,6 +487,24 @@ tr.ui-state-highlight {
       color: @text-color;
     };
 }
+  
+/* Bottom line for the intro popover. */
+.popover-footer {
+  float:right;
+  padding-bottom: 9px;
+  padding-right: 14px;
+}
+
+/* Show hints */
+#showHints.toggle-off::before {
+  font-family: FontAwesome;
+  content: "\f204  ";  // toggle-off
+}
+
+#showHints.toggle-on::before {
+  font-family: FontAwesome;
+  content: "\f205  ";  // toggle-on
+}
 
 /*+++++++++++++++++++++++++++++++++++++*/
 /* jqgrid styles */

@@ -33,7 +33,7 @@ class MenuItem:
 
   def __init__(self, name, model=None, report=None, url=None, javascript=None,
                label=None, index=None, prefix=True, window=False,
-               separator=False):
+               separator=False, identifier=None):
     self.name = name
     self.url = url
     self.javascript = javascript
@@ -51,6 +51,7 @@ class MenuItem:
     self.prefix = prefix
     self.window = window
     self.separator = separator
+    self.identifier = identifier
     self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
 
   def __str__(self):
@@ -122,7 +123,7 @@ class Menu:
 
   def addItem(self, group, name, separator=False, report=None,
               url=None, javascript=None, label=None, index=None,
-              prefix=True, window=False, model=None):
+              prefix=True, window=False, model=None, identifier=None):
     for i in range(len(self._groups)):
       if self._groups[i][0] == group:
         # Found the group
@@ -149,7 +150,7 @@ class Menu:
         self._groups[i][3].append( MenuItem(
           name, report=report, url=url, javascript=javascript, label=label,
           index=index, prefix=prefix, window=window, separator=separator,
-          model=model
+          model=model, identifier=identifier
           ) )
         return
     # Couldn't locate the group

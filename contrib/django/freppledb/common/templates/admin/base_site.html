@@ -36,7 +36,15 @@ $(function() {
     $('[data-toggle="popover"]').popover();
     {% if request.GET.tour %}
     tour.start("{{request.GET.tour}}");
-    {%endif%}
+    {% else %}
+    var intro = localStorage.getItem("intro");
+    if (intro != "{}") {
+      tour.showIntroPage(intro);
+      $("#showHints").addClass("toggle-on");
+    }
+    else
+      $("#showHints").addClass("toggle-off");
+    {% endif %}
     $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
   });
 </script>

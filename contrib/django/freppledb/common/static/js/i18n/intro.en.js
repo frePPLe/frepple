@@ -39,6 +39,88 @@ var introdata = {
       position : 'top'
     }
     ],
+  "/data/input/demand/": [
+    {
+      element : 'h1 small',
+      description : 'The <strong>sales orders table</strong> represent all the orders placed by your customers.<br><br>' +
+        'The main fields are:<ul>' +
+        '<li style="list-style:initial">Name: Unique name of the demand.</li>' +
+        '<li style="list-style:initial">Quantity: Requested quantity.</li>' +
+        '<li style="list-style:initial">Item: Requested item.</li>' +
+        '<li style="list-style:initial">Location: Requested shipping location.</li>' +
+        '<li style="list-style:initial">Due: Due date of the demand.</li>' +
+        '<li style="list-style:initial">Customer: Customer placing the demand.</li>' +
+        '<li style="list-style:initial">Status: Status of the demand. Possible values are “open”, “closed”.</li>' +
+        '</ul>',
+      position : 'right'
+    }
+    ],
+  "/data/input/customer/": [
+    {
+      element : 'h1 small',
+      description : 'The <strong>customers table</strong> contains all the customers passing orders to your business.<br><br>' +
+        'The main fields are:<ul>' +
+        '<li style="list-style:initial">Name: Unique name of the customer.</li>' +
+        '<li style="list-style:initial">Description: Free format description.</li>' +
+        '</ul>',
+      position : 'right'
+    }
+    ],    
+  "/data/input/item/": [
+    {
+      element : 'h1 small',
+      description : 'The <strong>items table</strong> contains all the items that you want to manage in your supply chain.<br><br>' +
+        'The main fields are:<ul>' +
+        '<li style="list-style:initial">Name: Unique name of the item.</li>' +
+        '<li style="list-style:initial">Description: Free format description.</li>' +
+        '<li style="list-style:initial">Price: Cost or price of the item.</li>' +
+        '</ul>',
+      position : 'right'
+    }
+    ],    
+  "/data/input/location/": [
+    {
+      element : 'h1 small',
+      description : 'The <strong>locations table</strong> contains the different locations included in ' +
+        'your model. A location can be a warehouse, a distribution center, a factory, a shop...<br><br>' +
+        'The main fields are:<ul>' +
+        '<li style="list-style:initial">Name: Unique name of the location.</li>' +
+        '</ul>',
+      position : 'right'
+    }
+    ],    
+  "/data/input/buffer/": [
+      {
+        element : 'h1 small',
+        description : 'A buffer is a storage for a item. It represents a place where inventory of an item is kept. ' +
+          "It's often called SKU, i.e. it’s a unique item-location combination.<br><br>" +
+          'The main fields are:<ul>' +
+          '<li style="list-style:initial">Name: Name of the buffer. We recommend that you use the ' +
+          'format "item @ location"</li>' +
+          '<li style="list-style:initial">Location: Location of the buffer.</li>' +
+          '<li style="list-style:initial">Item: Item of the buffer.</li>' +
+          '<li style="list-style:initial">Onhand: Inventory level at the start of the time horizon. ' +
+          'Considered as 0 if left empty.</li>' +
+          '</ul>',
+        position : 'right'
+      }
+      ],    
+    "/data/input/skill/": [
+      {
+        element : 'h1 small',
+        description : 'A <strong>skill</strong> defines a certain property that can be assigned to resources.<br><br>' +
+          'A load models the association of an operation and a resource. A load can specify a skill required on the resource.<br><br>" +
+          'The main fields are:<ul>' +
+          '<li style="list-style:initial">Name: Name of the buffer. We recommend that you use the ' +
+          'format "item @ location"</li>' +
+          '<li style="list-style:initial">Location: Location of the buffer.</li>' +
+          '<li style="list-style:initial">Item: Item of the buffer.</li>' +
+          '<li style="list-style:initial">Onhand: Inventory level at the start of the time horizon. ' +
+          'Considered as 0 if left empty.</li>' +
+          '</ul>',
+        position : 'right'
+      }
+      ],      
   "/resource/": [
      {
       element : 'h1 small',

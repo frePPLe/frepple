@@ -19,8 +19,16 @@ Different types of buffers exist:
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-name             non-empty string  | Name of the buffer.
+name             non-empty string  | Unique name of the buffer.
                                    | This is the key field and a required attribute.
+                                   | You have to use the convention of using "item @ location"
+                                     as the buffer name.
+item             item              | Item being stored in the buffer.
+                                   | This is a required field.
+location         location          | Location of the buffer.
+                                   | This is a required field.
+                                   | The working hours and holidays for the buffer are taken
+                                     from the ‘available’ calendar of the location.
 description      string            Free format description.
 category         string            Free format category.
 subcategory      string            | Free format subcategory.
@@ -32,12 +40,6 @@ owner            buffer            | Buffers can be organized in a hierarchical 
                                      a hierarchy.
 members          list of buffer    | Buffers can be organized in a hierarchical tree.
                                    | This field defines a list of child buffers.
-location         location          | Location of the buffer.
-                                   | Default is null.
-                                   | The working hours and holidays for the buffer are taken
-                                     from the ‘available’ calendar of the location.
-item             item              | Item being stored in the buffer.
-                                   | Default is null.
 onhand           double            | Inventory level at the start of the time horizon.
                                    | Default is 0.
 minimum          double            | Desired minimum inventory, aka safety stock.

@@ -14,7 +14,7 @@ at a certain location.
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================
-name            non-empty string  | Name of the item.
+name            non-empty string  | Unique name of the item.
                                   | This is the key field and a required attribute.
 description     string            Free format description.
 category        string            Free format category.

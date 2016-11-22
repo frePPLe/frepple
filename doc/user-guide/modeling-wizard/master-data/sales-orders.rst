@@ -11,7 +11,7 @@ You should also consider adding the closed orders if you plan to use the forecas
 ============== ================= ===========================================================
 Field          Type              Description
 ============== ================= ===========================================================
-name           non-empty string  Name of the demand, must be unique (E.g : Order1, SO125124...)
+name           non-empty string  Unique name of the demand (E.g: Order1, SO125124...)
 quantity       number            Requested quantity.
 item           item              Requested item.
 location       location          Requested shipping location.

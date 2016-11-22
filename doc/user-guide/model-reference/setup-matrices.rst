@@ -51,7 +51,7 @@ Based on this matrix:
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-name         non-empty string  | Name of the setup matrix.
+name         non-empty string  | Unique name of the setup matrix.
                                | This is the key field and a required attribute.
 rules        list of setup     A read-only list of rules in this matrix.
              matrix rules

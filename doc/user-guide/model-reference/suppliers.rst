@@ -9,7 +9,7 @@ A supplier ships us items.
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-name             non-empty string  | Name of the supplier.
+name             non-empty string  | Unique name of the supplier.
                                    | This is the key field and a required attribute.
 description      string            Free format description.
 category         string            Free format category.

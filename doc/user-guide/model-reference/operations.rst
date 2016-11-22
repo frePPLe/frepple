@@ -36,7 +36,7 @@ Different operation types exist:
 ====================== ================= ===========================================================
 Field                  Type              Description
 ====================== ================= ===========================================================
-name                   non-empty string  | Name of the operation.
+name                   non-empty string  | Unique name of the operation.
                                          | This is the key field and a required attribute.
 item                   item              | Reference to the item being produced.
                                          | If left unspecified we will try to determine the item

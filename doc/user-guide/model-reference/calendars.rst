@@ -29,7 +29,7 @@ buckets and combine the results in the following way:
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-name         non-empty string  Name of the calendar.
+name         non-empty string  Unique name of the calendar.
                                This is the key field and a required attribute.
 default      double            The default value of the calendar when no bucket is
                                effective.

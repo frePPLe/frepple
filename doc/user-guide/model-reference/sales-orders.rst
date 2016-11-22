@@ -11,7 +11,7 @@ These can be actual customer orders, or forecasted demands.
 ============== ================= ===========================================================
 Field          Type              Description
 ============== ================= ===========================================================
-name           non-empty string  | Name of the demand.
+name           non-empty string  | Unique name of the demand.
                                  | This is the key field and a required attribute.
 description    string            Free format description.
 category       string            Free format category.

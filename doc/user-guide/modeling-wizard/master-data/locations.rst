@@ -12,7 +12,7 @@ Note that you don't need to put in the location table your supplier or customer 
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-name         non-empty string  Name of the location.
+name         non-empty string  Unique name of the location.
 ============ ================= ===========================================================
 
 .. rubric:: Advanced topics

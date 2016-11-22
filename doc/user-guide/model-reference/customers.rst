@@ -14,7 +14,7 @@ FrePPLe uses customers only from reporting purposes, no real planning logic is c
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-name         non-empty string  Name of the customer.
+name         non-empty string  Unique name of the customer.
                                This is the key field and a required attribute.
 description  string            Free format description.
 category     string            Free format category.

@@ -31,7 +31,7 @@ Different types of resources exist:
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-name             non-empty string  | Name of the resource.
+name             non-empty string  | Unique name of the resource.
                                    | This is the key field and a required attribute.
 description      string            Free format description.
 category         string            Free format category.

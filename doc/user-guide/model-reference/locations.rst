@@ -13,7 +13,7 @@ and holidays of resources, buffers and operations in that location.
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
-name         non-empty string  | Name of the location.
+name         non-empty string  | Unique name of the location.
                                | This is the key field and a required attribute.
 description  string            Free format description.
 category     string            Free format category.

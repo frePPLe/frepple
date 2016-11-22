@@ -1399,14 +1399,12 @@ function about_show()
            '</div>'+
            '<div class="modal-body">'+
              '<div class="row">';
-      content += '' +
-               '<div class="col-sm-5"><br/><br/>' +
-                 '<p><a href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
-                 '<p><a href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
-               '</div>' +
-
-               '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
+      content += '<div class="col-sm-5"><br/><br/>' +
+         '<p><a target="_blank" href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+         '<p><a target="_blank" href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+         '<p><a target="_blank" href="https://frepple.com/docs/' + data.version.replace(".beta","") + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
+         '</div>' +
+         '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
       for (var i in data.apps)
           content += '<br>&nbsp;&nbsp;' + data.apps[i];
       content += '</div>' +

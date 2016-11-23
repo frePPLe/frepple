@@ -41,6 +41,7 @@ Calendar bucket
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================
+value        double            The actual time-varying value.
 start        dateTime          | Start date of the validity of this bucket.
                                | When left unspecified, the entry is effective from the
                                  infinite past.
@@ -74,5 +75,4 @@ endtime      duration          | Time when this entry becomes ineffective on val
                                  in the valid date horizon.
                                | The default value is PT23H59M59S, ie right before
                                  midnight of the next day.
-value        double            The actual time-varying value.
 ============ ================= ===========================================================

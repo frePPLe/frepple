@@ -11,7 +11,7 @@ Each of these refer to child-operations.
 Field            Type              Description
 ================ ================= ===========================================================
 operation        operation         Sub-operation.
-owner            operation         Parent operation
+owner            operation         Parent operation.
 priority         integer           | For alternate operations: Priority of this alternate.
                                    | For routing operations: Sequence number of the step.
                                    | For split operations: Proportion of the demand planned

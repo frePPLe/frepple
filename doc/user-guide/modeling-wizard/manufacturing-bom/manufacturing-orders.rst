@@ -4,7 +4,7 @@ Manufacturing orders
 
 The manufacturing orders table contains the confirmed manufacturing orders in your supply chain.
 
-Note that frepple will populate this table with proposed manufacuring orders when generating the plan.
+When generating a plan frepple will add new proposed manufacturing orders to this table.
 
 For a first simplified model, this table can be left empty, frepple will generate proposed manufacturing orders to meet the plan.
 

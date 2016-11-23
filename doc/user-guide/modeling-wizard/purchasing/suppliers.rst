@@ -2,7 +2,7 @@
 Suppliers
 =========
 
-This table contains all the suppliers you are purchasing items from.
+This table contains all suppliers you are purchasing items from.
 
 
 .. rubric:: Key Fields

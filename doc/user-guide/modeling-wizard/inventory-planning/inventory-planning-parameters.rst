@@ -11,8 +11,8 @@ done for raw materials, intermediate materials and/or end items.
 =====================================  ================= ========================================================================================
 Field                                  Type              Description
 =====================================  ================= ========================================================================================
-buffer                                 non-empty string  The bufer name for which safety stock and reorder quantity should be computed
-roq type                               non-empty string  | The ROQ type should be one of the following :
+buffer                                 non-empty string  The buffer name for which safety stock and reorder quantity should be computed.
+roq type                               non-empty string  | The reorder quantity policy should be one of the following :
                                                          | calculated : The ROQ is calculated to optimize your order cost.
                                                          | quantity : The ROQ is a fixed quantity defined by the user.
                                                          | period of cover : The ROQ covers a given number of forecast periods.
@@ -20,7 +20,7 @@ roq minimum period of cover            number            | This field should be 
                                                          | It reprensents the number of months of forecast the ROQ should be equal to.
 roq minimum quantity                   number            | This field should be populated if the ROQ type is equal to "quantity".
                                                          | It reprensents the number the ROQ should be equal to.
-safety stock type                      non-empty string  | The safety stock type should be one of the following :
+safety stock type                      non-empty string  | The safety stock policy should be one of the following :
                                                          | calculated : The safety stock is calculated based on a service level.
                                                          | quantity : The safety stock is a fixed quantity defined by the user.
                                                          | period of cover : The safety stock covers a given number of forecast periods.

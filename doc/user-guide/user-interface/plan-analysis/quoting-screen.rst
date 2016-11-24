@@ -10,6 +10,8 @@ The order quoting screen lets you fill in a form with all information for
 a new order. It allows you to quickly calculate the feasible delivery date
 of the order which you can promise to your customer. 
 
+This functionality is often called **capable to promise**.
+
 As the quoting screen interacts with the plan in memory and we incrementally
 plan the new order, you get a reply very fast - within a few seconds.
 A planner or sales person can easily simulate different alternatives while
@@ -17,9 +19,8 @@ the customer is waiting on the phone.
 
 Compared to ERP systems that compute a delivery date with a fixed procurement
 and manufacturing lead time, the quoting service dynamically computes a
-delivery date considering:
-
- -    
+delivery date considering the current  material available, current free capacity
+and all other constraints. 
 
 Note that it is also possible to interact with the quoting service from
 external systems. In this way you can provide the same functionality

@@ -10,27 +10,32 @@
     <div class="col-md-12">
 
 {% if action_list %}
-      <table id="change-history">
-        <thead>
-        <tr>
-            {% comment %}Translators: Translation included with Django {% endcomment %}
-            <th scope="col">{% trans 'Date/time'|capfirst %}</th>
-            {% comment %}Translators: Translation included with Django {% endcomment %}
-            <th scope="col">{% trans 'user'|capfirst %}</th>
-            {% comment %}Translators: Translation included with Django {% endcomment %}
-            <th scope="col">{% trans 'action'|capfirst %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for action in action_list %}
-        <tr>
-            <th scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</th>
-            <td>{{ action.user.get_username }}{% if action.user.get_full_name %} ({{ action.user.get_full_name }}){% endif %}</td>
-            <td>{{ action.change_message }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+      <div class="panel">
+        <div class="panel-body table-responsive">
+          <table class="table table-condensed" id="change-history">
+            <thead>
+            <tr>
+                {% comment %}Translators: Translation included with Django {% endcomment %}
+                <th scope="col">{% trans 'Date/time'|capfirst %}</th>
+                {% comment %}Translators: Translation included with Django {% endcomment %}
+                <th scope="col">{% trans 'user'|capfirst %}</th>
+                {% comment %}Translators: Translation included with Django {% endcomment %}
+                <th scope="col">{% trans 'action'|capfirst %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for action in action_list %}
+            <tr>
+                <th scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</th>
+                <td>{{ action.user.get_username }}{% if action.user.get_full_name %} ({{ action.user.get_full_name }}){% endif %}</td>
+                <td>{{ action.change_message }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
 {% else %}
 {% comment %}Translators: Translation included with Django {% endcomment %}
     <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>

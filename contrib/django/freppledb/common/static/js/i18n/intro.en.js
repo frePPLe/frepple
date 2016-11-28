@@ -2,41 +2,10 @@ var introdata = {
   '/': [
     {
       element : '#cockpitcrumb',
-      description : "The <strong>cockpit</strong> is a dashboard with widgets to give an overall health of the supply chain:" +
-                    "<ul><li style='list-style:initial'>Purchase orders</li>" +
-                    "<li style='list-style:initial'>Manufacturing orders</li>" +
-                    "<li style='list-style:initial'>Distribution orders</li>" +
-                    "<li style='list-style:initial'>Late orders</li>" +
-                    "<li style='list-style:initial'>Resource utilization</li>" +
-                    "<li style='list-style:initial'>Delivery performance</li>" +
-                    "<li style='list-style:initial'>...</li></ul>" +
-                    "The dashboard can easily be personalized by each user.",
+      description : "The cockpit is a <strong>dashboard</strong> providing an overview of " +
+      		"the overall health of the supply chain.<br><br>" +
+          "The dashboard can be personalized by each user.",
       position : 'right'
-    },
-    {
-      element : '#Purchasing',
-      description : "The purchasing section contains:<br>" +
-      "<ul><li style='list-style:initial'>The <strong>purchase orders widget</strong> provides as quick summary of the purchase orders</li>" +
-      "<li style='list-style:initial'>The <strong>purchase order analysis</strong> highlights purchase orders that are critical and need expediting</li>" +
-      "</ul>",
-      position : 'top'
-    },
-    {
-      element : '#Distribution',
-      description : "The distribution section contains:<br>" +
-      "<ul><li style='list-style:initial'>The <strong>distribution orders widget</strong> provides as quick summary of the distribution orders</li>" +
-      "<li style='list-style:initial'>The <strong>stockout risk widget</strong> shows per location how many items are running low on inventory</li>" +
-      "</ul>",
-      position : 'top'
-    },
-    {
-      element : '#Manufacturing',
-      description : "The manufacturing section contains :<br>" +
-      "<ul><li style='list-style:initial'>The <strong>manufacuring orders widget</strong> provides as quick summary of the manufacturing orders</li>" +
-      "<li style='list-style:initial'>The <strong>resource utilization widget</strong> lets you find out how loaded your resources are</li>" +
-      "<li style='list-style:initial'>The <strong>capacity alerts widget</strong> displays any alert associated to capacity</li>" +
-      "</ul>",
-      position : 'top'
     }
   ],
   "/data/input/demand/": [
@@ -50,7 +19,7 @@ var introdata = {
         '<li style="list-style:initial">Location: Requested shipping location.</li>' +
         '<li style="list-style:initial">Due: Due date of the demand.</li>' +
         '<li style="list-style:initial">Customer: Customer placing the demand.</li>' +
-        '<li style="list-style:initial">Status: Status of the demand. Possible values are “open”, “closed”.</li>' +
+        '<li style="list-style:initial">Status: Status of the demand. Possible values are "open", "closed".</li>' +
         '</ul>',
       position : 'right'
     }
@@ -150,7 +119,7 @@ var introdata = {
   "/flowplan/": [
     {
       element : 'h1 small',
-      description : 'The report shows the <strong>details of all material production and consumption</plan>.<br><br>' +
+      description : 'The report shows the <strong>details of all material production and consumption</strong>.<br><br>' +
         'This report is typically accessed as a drilldown from other reports, or to export detailed ' +
         'plan information to external systems.',
       position : 'right'
@@ -177,7 +146,7 @@ var introdata = {
       description : 'This report shows the <strong>resource utilization</strong> per time bucket.<br><br>' +
         'For each resource and time bucket the report shows:<br>' +
         '<ul><li style="list-style:initial">Available resource-hours</li>' +
-        '<li style="list-style:initial"><i class="fa fa-square" aria-hidden="true" style="color:#F6BD0F"></i>&nbsp;Unvailable resource-hours, suchs off-shift time, weekends and holidays</li>' +
+        '<li style="list-style:initial"><i class="fa fa-square" aria-hidden="true" style="color:#F6BD0F"></i>&nbsp;Unvailable resource-hours due to off-shift, weekends and holidays</li>' +
         '<li style="list-style:initial"><i class="fa fa-square" aria-hidden="true" style="color:#2B95EC"></i>&nbsp;Setup resource-hours, ie time involved in changeovers</li>' +
         '<li style="list-style:initial"><i class="fa fa-square" aria-hidden="true" style="color:#AFD8F8"></i>&nbsp;Load resource-hours</li>' +
         '<li style="list-style:initial"><i class="fa fa-square" aria-hidden="true" style="color:#8BBA00"></i>&nbsp;Free resource-hours, available capacity not yet utilized</li>' +
@@ -420,7 +389,7 @@ var introdata = {
   "/execute/": [
     {
       element : 'h1 small',
-      description : 'This screen allows you to perform <strong>a number of administrative actions</strong>.<br><br>' +
+      description : 'From this screen you can launch <strong>a number of administrative actions</strong>.<br><br>' +
         'The main one is the <strong>plan generation</strong>, the top one in the list.',
       position : 'right'
     }

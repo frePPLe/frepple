@@ -77,6 +77,7 @@ try:
   DEBUG = 'runserver' in sys.argv
 except:
   DEBUG = False
+DEBUG_JS = DEBUG
 
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and
@@ -145,6 +146,7 @@ USE_L10N = True        # Represent data in the local format
 USE_I18N = True        # Use translated strings
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'freppledb.common.contextprocessors.debug',
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',

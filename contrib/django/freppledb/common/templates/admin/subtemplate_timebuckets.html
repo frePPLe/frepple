@@ -10,7 +10,7 @@
       <div class="modal-body">
 
       <form method="get" action="#">
-      <input type="hidden" name="horizonbuckets" id="horizonbuckets" value="{{request.user.horizonbuckets}}">
+      <input type="hidden" name="horizonbuckets" id="horizonbuckets"{% if request.user.horizonbuckets %} value="{{request.user.horizonbuckets}}"{% endif %}>
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
       <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
           <div class="row" style="padding-bottom: 15px">

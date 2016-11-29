@@ -570,7 +570,9 @@ var grid = {
                   type: 'POST',
                   url: '/horizon/',
                   data: {
-                    horizonbuckets: $('#horizonbuckets').val(),
+                    horizonbuckets: $('#horizonbuckets').val() ? 
+                      $('#horizonbuckets').val() : 
+                      $("#horizonbucketsul li a").first().text(),
                     horizonstart: $('#horizonstart').val(),
                     horizonend: $('#horizonend').val(),
                     horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),

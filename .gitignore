@@ -69,6 +69,7 @@ build
 .cproject
 .project
 .pydevproject
+.tern-project
 
 # Packaging
 *.deb

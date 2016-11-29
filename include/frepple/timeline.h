@@ -75,7 +75,12 @@ template <class type> class TimeLine
       public:
         virtual ~Event() {};
 
-        /** Return the even type. */
+        /** Return the even type. 
+          *  - 1: change on hand
+          *  - 2: set on hand
+          *  - 3: set min on hand
+          *  - 4: set max on hand
+          */
         inline unsigned short getEventType() const
         {
           return tp;

@@ -51,7 +51,8 @@ class Report(GridReport):
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/problem-report.html'
   rows = (
-    GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
+    #. Translators: Translation included with Django
+    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
     GridFieldText('entity', title=_('entity'), editable=False, align='center'),  # TODO choices=getEntities
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames

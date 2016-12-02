@@ -47,7 +47,7 @@ class OverviewReport(GridPivot):
     ('backlog', {'title': _('backlog')}),
     )
   help_url = 'user-guide/user-interface/plan-analysis/demand-report.html'
-  
+
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
@@ -190,6 +190,7 @@ class DetailReport(GridReport):
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/demand-detail-report.html'
   rows = (
+    #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra="role:'input/item'"),
@@ -219,14 +220,14 @@ def OperationPlans(request):
 
   # Collect list of selected sales orders
   so_list = request.GET.getlist('demand')
-  
+
   # Collect operationplans associated with the sales order(s)
   id_list = []
   for dm in Demand.objects.all().using(request.database).filter(pk__in=so_list).only('plan'):
     for op in dm.plan['pegging']:
       id_list.append(op['opplan'])
-  
-  # Collect details on the operationplans    
+
+  # Collect details on the operationplans
   result = []
   for o in PurchaseOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
     result.append({

@@ -74,7 +74,8 @@ class BaseReport(GridReport):
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/constraint-report.html'
   rows = (
-    GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
+    #. Translators: Translation included with Django
+    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), editable=False, formatter='detail', extra="role:'input/demand'"),
     GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'),
     #. Translators: Translation included with Django

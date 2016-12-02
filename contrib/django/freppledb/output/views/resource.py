@@ -37,7 +37,7 @@ class OverviewReport(GridPivot):
   permissions = (("view_resource_report", "Can view resource report"),)
   editable = False
   help_url = 'user-guide/user-interface/plan-analysis/resource-report.html'
-  
+
   rows = (
     GridFieldText('resource', title=_('resource'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/resource'"),
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
@@ -172,7 +172,7 @@ class DetailReport(GridReport):
   editable = False
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/resource-detail-report.html'
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -190,7 +190,8 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
+    #. Translators: Translation included with Django
+    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),

@@ -159,7 +159,7 @@ class DetailReport(GridReport):
   editable = False
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/inventory-detail-report.html'
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -177,7 +177,8 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    GridFieldInteger('id', title=_('id'),  key=True,editable=False, hidden=True),
+    #. Translators: Translation included with Django
+    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra="role:'input/buffer'"),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra="role:'input/operation'"),

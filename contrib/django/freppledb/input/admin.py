@@ -131,7 +131,7 @@ class OperationResource_inline(MultiDBTabularInline):
   fields = ('resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup')
   sfieldsets = (
     (None, {'fields': ['resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup']}),
-    (_('Alternates'), {'fields': ('name', 'priority', 'search')}),
+    (_('alternates'), {'fields': ('name', 'priority', 'search')}),
     )
   extra = 0
   exclude = ('source',)
@@ -333,7 +333,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('item', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
-    (_('Alternates'), {'fields': ('name', 'priority', 'search'), }),
+    (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operationmaterial_change", "permissions": "input.change_operationmaterial"},

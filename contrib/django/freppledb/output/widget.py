@@ -37,7 +37,7 @@ from freppledb.output.models import Problem
 
 class LateOrdersWidget(Widget):
   name = "late_orders"
-  title = _("Late orders")
+  title = _("late orders")
   tooltip = _("Shows orders that will be delivered after their due date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -91,7 +91,7 @@ Dashboard.register(LateOrdersWidget)
 
 class ShortOrdersWidget(Widget):
   name = "short_orders"
-  title = _("Short orders")
+  title = _("short orders")
   tooltip = _("Shows orders that are not planned completely")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -145,7 +145,7 @@ Dashboard.register(ShortOrdersWidget)
 
 class ManufacturingOrderWidget(Widget):
   name = "manufacturing_orders"
-  title = _("Manufacturing orders")
+  title = _("manufacturing orders")
   tooltip = _("Shows manufacturing orders by start date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -343,7 +343,7 @@ Dashboard.register(ManufacturingOrderWidget)
 
 class DistributionOrderWidget(Widget):
   name = "distribution_orders"
-  title = _("Distribution orders")
+  title = _("distribution orders")
   tooltip = _("Shows distribution orders by start date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -546,7 +546,7 @@ Dashboard.register(DistributionOrderWidget)
 
 class PurchaseOrderWidget(Widget):
   name = "purchase_orders"
-  title = _("Purchase orders")
+  title = _("purchase orders")
   tooltip = _("Shows purchase orders by ordering date")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -757,7 +757,7 @@ Dashboard.register(PurchaseOrderWidget)
 
 class PurchaseQueueWidget(Widget):
   name = "purchase_queue"
-  title = _("Purchase queue")
+  title = _("purchase queue")
   tooltip = _("Display a list of new purchase orders")
   permissions = (("view_purchaseorder", "Can view purchase orders"),)
   asynchronous = True
@@ -798,7 +798,7 @@ Dashboard.register(PurchaseQueueWidget)
 
 class DistributionQueueWidget(Widget):
   name = "distribution_queue"
-  title = _("Distribution queue")
+  title = _("distribution queue")
   tooltip = _("Display a list of new distribution orders")
   permissions = (("view_distributionorder", "Can view distribution orders"),)
   asynchronous = True
@@ -838,7 +838,7 @@ Dashboard.register(DistributionQueueWidget)
 
 class ShippingQueueWidget(Widget):
   name = "shipping_queue"
-  title = _("Shipping queue")
+  title = _("shipping queue")
   tooltip = _("Display a list of new distribution orders")
   permissions = (("view_distributionorder", "Can view distribution orders"),)
   asynchronous = True
@@ -879,7 +879,7 @@ Dashboard.register(ShippingQueueWidget)
 
 class ResourceQueueWidget(Widget):
   name = "resource_queue"
-  title = _("Resource queue")
+  title = _("resource queue")
   tooltip = _("Display planned activities for the resources")
   permissions = (("view_resource_report", "Can view resource report"),)
   asynchronous = True
@@ -919,7 +919,7 @@ Dashboard.register(ResourceQueueWidget)
 
 class PurchaseAnalysisWidget(Widget):
   name = "purchase_order_analysis"
-  title = _("Purchase order analysis")
+  title = _("purchase order analysis")
   tooltip = _("Analyse the urgency of existing purchase orders")
   permissions = (("view_purchaseorder", "Can view purchase orders"),)
   asynchronous = True
@@ -956,7 +956,7 @@ Dashboard.register(PurchaseAnalysisWidget)
 
 class AlertsWidget(Widget):
   name = "alerts"
-  title = _("Alerts")
+  title = _("alerts")
   tooltip = _("Overview of all alerts in the plan")
   permissions = (("view_problem_report", "Can view problem report"),)
   asynchronous = True
@@ -999,7 +999,7 @@ Dashboard.register(AlertsWidget)
 
 class DemandAlertsWidget(AlertsWidget):
   name = "demand_alerts"
-  title = _("Demand alerts")
+  title = _("demand alerts")
   url = '/problem/?entity=demand'
   entities = 'demand'
 
@@ -1008,7 +1008,7 @@ Dashboard.register(DemandAlertsWidget)
 
 class CapacityAlertsWidget(AlertsWidget):
   name = "capacity_alerts"
-  title = _("Capacity alerts")
+  title = _("capacity alerts")
   url = '/problem/?entity=capacity'
   entities = 'capacity'
 
@@ -1017,7 +1017,7 @@ Dashboard.register(CapacityAlertsWidget)
 
 class MaterialAlertsWidget(AlertsWidget):
   name = "material_alerts"
-  title = _("Material alerts")
+  title = _("material alerts")
   url = '/problem/?entity=material'
   entities = 'material'
 
@@ -1026,7 +1026,7 @@ Dashboard.register(MaterialAlertsWidget)
 
 class ResourceLoadWidget(Widget):
   name = "resource_utilization"
-  title = _("Resource utilization")
+  title = _("resource utilization")
   tooltip = _("Shows the resources with the highest utilization")
   permissions = (("view_resource_report", "Can view resource report"),)
   asynchronous = True
@@ -1128,7 +1128,7 @@ Dashboard.register(ResourceLoadWidget)
 
 class InventoryByLocationWidget(Widget):
   name = "inventory_by_location"
-  title = _("Inventory by location")
+  title = _("inventory by location")
   tooltip = _("Display the locations with the highest inventory value")
   asynchronous = True
   limit = 5
@@ -1223,7 +1223,7 @@ Dashboard.register(InventoryByLocationWidget)
 
 class InventoryByItemWidget(Widget):
   name = "inventory_by_item"
-  title = _("Inventory by item")
+  title = _("inventory by item")
   tooltip = _("Display the items with the highest inventory value")
   asynchronous = True
   limit = 20
@@ -1314,7 +1314,7 @@ Dashboard.register(InventoryByItemWidget)
 
 class DeliveryPerformanceWidget(Widget):
   name = "delivery_performance"
-  title = _("Delivery performance")
+  title = _("delivery performance")
   tooltip = _("Shows the percentage of demands that are planned to be shipped completely on time")
   asynchronous = True
   green = 90

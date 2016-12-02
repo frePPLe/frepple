@@ -61,9 +61,9 @@ class Calendar(AuditModel):
   class Meta(AuditModel.Meta):
     db_table = 'calendar'
     #. Translators: Translation included with Django
-    verbose_name = _('Calendar')
+    verbose_name = _('calendar')
     #. Translators: Translation included with Django
-    verbose_name_plural = _('Calendars')
+    verbose_name_plural = _('calendars')
     ordering = ['name']
 
 
@@ -72,7 +72,7 @@ class CalendarBucket(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   #. Translators: Translation included with Django
-  calendar = models.ForeignKey(Calendar, verbose_name=_('Calendar'), related_name='buckets')
+  calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030, 12, 31))
   value = models.DecimalField(
@@ -201,7 +201,7 @@ class Operation(AuditModel):
   effective_end = models.DateTimeField(
     _('effective end'), null=True, blank=True,
     help_text=_('Validity end date')
-    )  
+    )
   fence = models.DurationField(
     _('release fence'), null=True, blank=True,
     help_text=_("Operationplans within this time window from the current day are expected to be released to production ERP")
@@ -326,7 +326,7 @@ class Buffer(AuditModel, HierarchyModel):
   minimum = models.DecimalField(
     _('minimum'), null=True, blank=True,
     max_digits=15, decimal_places=4,
-    default="0.00", help_text=_('Safety stock')
+    default="0.00", help_text=_('safety stock')
     )
   minimum_calendar = models.ForeignKey(
     Calendar, verbose_name=_('minimum calendar'),
@@ -409,9 +409,9 @@ class SetupRule(AuditModel):
 class Resource(AuditModel, HierarchyModel):
   # Types of resources
   types = (
-    ('default', _('Default')),
-    ('buckets', _('Buckets')),
-    ('infinite', _('Infinite')),
+    ('default', _('default')),
+    ('buckets', _('buckets')),
+    ('infinite', _('infinite')),
   )
 
   # Database fields

@@ -27,6 +27,7 @@ from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
 
+
 class CalendarBucket_inline(MultiDBTabularInline):
   model = CalendarBucket
   extra = 0
@@ -39,12 +40,12 @@ class CalendarBucket_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('calendar', ('startdate', 'enddate'), 'value', 'priority')}),
-    (_('Repeating pattern'), {
+    (_('repeating pattern'), {
       'fields': (('starttime', 'endtime'), ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')),
       }),
     )
   tabs = [
-    {"name": 'edit', "label": _("edit"), "view":  "admin:input_calendarbucket_change", "permissions": "input.change_calendarbucket"},
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_calendarbucket_change", "permissions": "input.change_calendarbucket"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_calendarbucket_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_calendarbucket_history"},
@@ -145,7 +146,7 @@ class Item_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_item_change", "permissions": "input.change_item"},
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_item"},
-    {"name": 'whereused', "label": _("where used"),"view": "whereused_item"},
+    {"name": 'whereused', "label": _("where used"), "view": "whereused_item"},
     {"name": 'plan', "label": _("plan"), "view": "output_demand_plandetail"},
     {"name": 'plandetail', "label": _("plan detail"), "view": "output_demandplan_plandetail"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_item_comment"},
@@ -206,7 +207,7 @@ class Operation_admin(MultiDBModelAdmin):
   inlines = [ SubOperation_inline, OperationMaterial_inline, OperationResource_inline, ]
   fieldsets = (
     (None, {'fields': ('name', 'type', 'location', 'description', 'category', 'subcategory')}),
-    (_('Planning parameters'), {
+    (_('planning parameters'), {
       'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
        }),
     )
@@ -215,7 +216,7 @@ class Operation_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
     {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    #{"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
+    # {"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django
@@ -237,10 +238,10 @@ class Buffer_admin(MultiDBModelAdmin):
   fieldsets = (
     (None, {
       'fields': ('item', 'location', 'description', 'owner', 'category', 'subcategory')}),
-    (_('Inventory'), {
+    (_('inventory'), {
       'fields': ('onhand',)
       }),
-    (_('Planning parameters'), {
+    (_('planning parameters'), {
       'fields': ('type', 'minimum', 'minimum_calendar', 'min_interval'),
       }),
     )
@@ -332,7 +333,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('item', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
-    (_('Alternates'), {'fields': ('name', 'priority', 'search'),}),
+    (_('Alternates'), {'fields': ('name', 'priority', 'search'), }),
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operationmaterial_change", "permissions": "input.change_operationmaterial"},
@@ -349,7 +350,7 @@ class OperationResource_admin(MultiDBModelAdmin):
   save_on_top = True
   fieldsets = (
     (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
-    (_('Alternates'), {'fields': ('name', 'priority', 'search'),}),
+    (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operationresource_change", "permissions": "input.change_operationresource"},
@@ -401,7 +402,7 @@ class Demand_admin(MultiDBModelAdmin):
       'name', 'item', 'location', 'customer', 'description', 'category',
       'subcategory', 'due', 'quantity', 'priority', 'status', 'owner'
       )}),
-    (_('Planning parameters'), {'fields': (
+    (_('planning parameters'), {'fields': (
       'operation', 'minshipment', 'maxlateness'
       )}),
     )
@@ -409,7 +410,7 @@ class Demand_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_demand_change", "permissions": "input.change_demand"},
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_demand"},
-    {"name": 'constraint', "label": _("why short or late?"),"view": "output_constraint_demand"},
+    {"name": 'constraint', "label": _("why short or late?"), "view": "output_constraint_demand"},
     {"name": 'plan', "label": _("plan"), "view": "output_demand_pegging"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_demand_comment"},
     #. Translators: Translation included with Django

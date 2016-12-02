@@ -81,14 +81,14 @@ class PathReport(GridReport):
   a specific item.
   '''
   template = 'input/path.html'
-  title = _("Supply path")
+  title = _("supply path")
   filterable = False
   frozenColumns = 0
   editable = False
   default_sort = None
   multiselect = False
   help_url = 'user-guide/user-interface/supply-path-where-used.html'
-  
+
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
     GridFieldText('operation', title=_('operation'), editable=False, sortable=False, formatter='detail', extra="role:'input/operation'"),
@@ -128,7 +128,7 @@ class PathReport(GridReport):
     return {
       'title': capfirst(
         force_text(reportclass.objecttype._meta.verbose_name) + " " + args[0] +
-        ": " + force_text(reportclass.downstream and _("Where Used") or _("Supply Path"))
+        ": " + force_text(reportclass.downstream and _("where used") or _("supply path"))
         ),
       'downstream': reportclass.downstream,
       'active_tab': reportclass.downstream and 'whereused' or 'supplypath',
@@ -196,7 +196,7 @@ class PathReport(GridReport):
             )
       for i in ItemDistribution.objects.using(db).filter(
         Q(location__isnull=True) | Q(location__name=buffer.location.name),
-        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft    
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
           i.item = buffer.item
           i.location = buffer.location
@@ -205,7 +205,7 @@ class PathReport(GridReport):
             )
       for i in Operation.objects.using(db).filter(
         Q(location__isnull=True) | Q(location__name=buffer.location.name),
-        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft        
+        item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft
         ):
           i.item = buffer.item
           i.location = buffer.location
@@ -575,7 +575,7 @@ class SetupMatrixList(GridReport):
   basequeryset = SetupMatrix.objects.all()
   model = SetupMatrix
   frozenColumns = 1
-  help_url = 'user-guide/model-reference/setup-matrices.html'  
+  help_url = 'user-guide/model-reference/setup-matrices.html'
 
   rows = (
     #. Translators: Translation included with Django
@@ -752,7 +752,7 @@ class ItemList(GridReport):
   frozenColumns = 1
   editable = True
   help_url = 'user-guide/modeling-wizard/master-data/items.html'
-  
+
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/item'"),
@@ -775,7 +775,7 @@ class SkillList(GridReport):
   model = Skill
   frozenColumns = 1
   help_url = 'user-guide/model-reference/skills.html'
-  
+
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/skill'"),
@@ -793,7 +793,7 @@ class ResourceSkillList(GridReport):
   model = ResourceSkill
   frozenColumns = 1
   help_url = 'user-guide/model-reference/resource-skills.html'
-  
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/resourceskill'"),
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra="role:'input/resource'"),
@@ -843,7 +843,7 @@ class OperationMaterialList(GridReport):
   model = OperationMaterial
   frozenColumns = 1
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/operation-materials.html'
-  
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/operationmaterial'"),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
@@ -870,7 +870,7 @@ class DemandList(GridReport):
   model = Demand
   frozenColumns = 1
   help_url = 'user-guide/modeling-wizard/master-data/sales-orders.html'
-  
+
   rows = (
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'input/demand'"),
@@ -940,7 +940,7 @@ class CalendarBucketList(GridReport):
   model = CalendarBucket
   frozenColumns = 3
   help_url = 'user-guide/model-reference/calendars.html'
-  
+
   rows = (
     GridFieldInteger('id', title=_('identifier'), formatter='detail', extra="role:'input/calendarbucket'"),
     GridFieldText('calendar', title=_('calendar'), field_name='calendar__name', formatter='detail', extra="role:'input/calendar'"),

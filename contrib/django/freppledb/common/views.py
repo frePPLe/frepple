@@ -60,7 +60,7 @@ def AboutView(request):
 @staff_member_required
 def cockpit(request):
   return render_to_response('index.html', {
-    'title': _('Cockpit'),
+    'title': _('cockpit'),
     'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
     },
     context_instance=RequestContext(request)
@@ -123,19 +123,19 @@ def wizard(request):
                 cursor.execute('''
                   insert into buffer
                     (name, item_id, location_id, onhand, source, lastmodified)
-                  select item.name || ' @ ' || location.name, 
+                  select item.name || ' @ ' || location.name,
                     item.name, location.name, 0, 'wizard', now()
                   from item
                   cross join location
                   except
                   select name, item_id, location_id, 0, 'wizard', now()
                   from buffer
-                  ''')           
+                  ''')
         except Exception as e:
           errors.append(str(e))
     except Exception as e:
       errors.append(str(e))
-      
+
     if errors:
       logger.error("Error saving wizard updates: %s" % "".join(errors))
       return HttpResponseServerError('Error saving wizard updates: %s' % "<br/>".join(errors))
@@ -152,7 +152,7 @@ def wizard(request):
 
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
-    label=_("Language"),
+    label=_("language"),
     initial="auto",
     choices=User.languageList
     )
@@ -477,4 +477,3 @@ def detail(request, app, model, object_id):
 
   # Open the tab
   return newtab['viewfunc'](request, object_id)
-

@@ -80,7 +80,7 @@ class CrumbsNode(Node):
       title = variable_title.resolve(context)
     except:
       title = req.get_full_path()
-    if title != _('Cockpit'):
+    if title != _('cockpit'):
       # Don't handle the cockpit screen in the crumbs
       try:
         # Check if the same title is already in the crumbs.
@@ -392,13 +392,13 @@ class MenuNode(Node):
       empty = True
       kept_back = None
       for j in i[1]:
-        if j[2].has_permission(req.user):          
+        if j[2].has_permission(req.user):
           if j[2].separator:
             kept_back = (j[1], j[2], j[2].can_add(req.user) )
           else:
             if kept_back:
               group[1].append(kept_back)
-              kept_back = None        
+              kept_back = None
             group[1].append( (j[1], j[2], j[2].can_add(req.user) ) )
             empty = False
       if not empty:

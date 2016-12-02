@@ -90,6 +90,9 @@ alert-danger {
   color: #000;
 }
 
+legend {
+  text-transform: capitalize;
+}
 /* Navigation bar */
 
 .nav {
@@ -115,12 +118,14 @@ alert-danger {
 */
 
 .navbar {
+  text-transform: capitalize;
   margin-bottom: 0px;
   .dropdown-menu .divider {
     margin: 7px 0; //the default is 8px but would not show in chrome
   }
   .dropdown-menu>li>a { /*fix django admin*/
     font-size: @font-size-base;
+
   }
   .navbar-nav>li>.dropdown-menu {
     margin-top: 0px;
@@ -487,7 +492,7 @@ tr.ui-state-highlight {
       color: @text-color;
     };
 }
-  
+
 /* Bottom line for the intro popover. */
 .popover-footer {
   float:right;
@@ -708,4 +713,3 @@ background-color: @table-bg-accent;
 .bootstrap-datetimepicker-widget {
     white-space: initial;
 }
-

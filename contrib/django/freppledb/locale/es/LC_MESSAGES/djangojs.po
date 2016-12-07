@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-02 12:15+0100\n"
-"PO-Revision-Date: 2016-06-01 16:31+0200\n"
+"POT-Creation-Date: 2016-12-05 15:05+0100\n"
+"PO-Revision-Date: 2016-12-06 09:08+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: common/static/js/frepple.js:171 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -82,7 +82,7 @@ msgid "Frozen columns"
 msgstr "Columnas fijas"
 
 #: common/static/js/frepple.js:546 common/static/js/frepple.js:1880
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Customize"
 msgstr "Personalizar"
 
@@ -286,7 +286,7 @@ msgstr "Importación... premir Cerrar no termina el processo."
 
 #: common/static/js/frepple.js:2641 common/static/js/frepple.min.js:13
 msgid "Show hints"
-msgstr ""
+msgstr "Mostrar sugerencias"
 
 #: common/static/js/frepple.js:2731 common/static/js/frepple.min.js:13
 msgid "Guided tour"
@@ -309,14 +309,6 @@ msgstr "Siguiente"
 msgid "Pause"
 msgstr "Detener"
 
-#: common/static/js/frepple.min.js:12
-msgid "retry"
-msgstr "volver a intentar"
-
-#: common/static/js/frepple.min.js:12
-msgid "customize"
-msgstr "personalizar"
-
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/ganttchart.js:236
 #, javascript-format
@@ -326,17 +318,24 @@ msgstr "%s asignado fuera de %s"
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:197
 msgid "remove this demand from planning"
-msgstr ""
+msgstr "eliminar esta demanda por parte de la planificación"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:198
 msgid "Plan selected demands backward from their due date"
 msgstr ""
+"planificación de las demandas seleccionadas justo antes de fecha limite"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:199
 msgid "Plan selected demands forward from the current date"
-msgstr ""
+msgstr "planificación de las demandas seleccionadas cuanto antes"
+
+#~ msgid "retry"
+#~ msgstr "volver a intentar"
+
+#~ msgid "customize"
+#~ msgstr "personalizar"
 
 #~ msgid "The database returned"
 #~ msgstr "La base de datos devolvió"

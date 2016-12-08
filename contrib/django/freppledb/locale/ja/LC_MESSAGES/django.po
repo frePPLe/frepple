@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 09:45+0100\n"
+"PO-Revision-Date: 2016-12-08 11:36+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -1677,11 +1677,6 @@ msgstr ""
 msgid "constrained demand"
 msgstr "条件つき要求"
 
-#: input/admin.py:235 input/models.py:882
-#| msgid "Inventory"
-msgid "inventory"
-msgstr ""
-
 #: input/models.py:23
 msgid "minimum cost"
 msgstr "最小コスト"
@@ -2064,8 +2059,6 @@ msgid "setup matrix rules"
 msgstr "マトリックスルールをセットアップ"
 
 #: input/models.py:405
-#, fuzzy
-#| msgid "Default"
 msgid "default"
 msgstr "デフォルト"
 
@@ -3056,24 +3049,24 @@ msgstr ""
 msgid "Sales"
 msgstr ""
 
-#: menu.py:24
-msgid "Inventory"
+#: input/admin.py:235 input/models.py:882 menu.py:24
+msgid "inventory"
 msgstr "在庫"
 
-#: menu.py:25
-msgid "Capacity"
+#: menu.py:25 output/views/constraint.py:22
+msgid "capacity"
 msgstr "能力"
 
 #: menu.py:26
-msgid "Purchasing"
+msgid "purchasing"
 msgstr ""
 
 #: menu.py:27
-msgid "Distribution"
+msgid "distribution"
 msgstr ""
 
 #: menu.py:28
-msgid "Manufacturing"
+msgid "manufacturing"
 msgstr ""
 
 #: menu.py:30
@@ -3217,10 +3210,6 @@ msgstr "要求数量"
 #: output/views/constraint.py:21
 msgid "material"
 msgstr "材料"
-
-#: output/views/constraint.py:22
-msgid "capacity"
-msgstr "能力"
 
 #: output/views/constraint.py:28
 msgid "underload"

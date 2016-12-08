@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 10:09+0100\n"
+"PO-Revision-Date: 2016-12-08 11:36+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -1769,11 +1769,6 @@ msgstr "planning parameters"
 msgid "constrained demand"
 msgstr "constrained vraag"
 
-#: input/admin.py:235 input/models.py:882
-#| msgid "Inventory"
-msgid "inventory"
-msgstr "voorraad"
-
 #: input/models.py:23
 msgid "minimum cost"
 msgstr "minimum kost"
@@ -3154,28 +3149,28 @@ msgid "Display the locations with the highest inventory value"
 msgstr "Toon de locaties met de hoogste voorraadkost"
 
 #: menu.py:23
-msgid "Sales"
-msgstr "Verkoop"
+msgid "sales"
+msgstr "verkoop"
 
-#: menu.py:24
-msgid "Inventory"
-msgstr "Voorraad"
+#: input/admin.py:235 input/models.py:882 menu.py:24
+msgid "inventory"
+msgstr "voorraad"
 
-#: menu.py:25
-msgid "Capacity"
-msgstr "Capaciteit"
+#: menu.py:25 output/views/constraint.py:22
+msgid "capacity"
+msgstr "capaciteit"
 
 #: menu.py:26
-msgid "Purchasing"
-msgstr "Aankoop"
+msgid "purchasing"
+msgstr "aankoop"
 
 #: menu.py:27
-msgid "Distribution"
-msgstr "Distributie"
+msgid "distribution"
+msgstr "distributie"
 
 #: menu.py:28
-msgid "Manufacturing"
-msgstr "Productie"
+msgid "manufacturing"
+msgstr "productie"
 
 #: menu.py:30
 msgid "Help"
@@ -3320,10 +3315,6 @@ msgstr "gevraagde hoeveelheid"
 #: output/views/constraint.py:21
 msgid "material"
 msgstr "materiaal"
-
-#: output/views/constraint.py:22
-msgid "capacity"
-msgstr "capaciteit"
 
 #: output/views/constraint.py:28
 msgid "underload"

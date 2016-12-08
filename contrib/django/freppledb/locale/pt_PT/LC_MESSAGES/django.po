@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 11:23+0100\n"
+"PO-Revision-Date: 2016-12-08 11:37+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt\n"
@@ -1778,10 +1778,6 @@ msgstr "parâmetros de planeamento"
 msgid "constrained demand"
 msgstr "procura restringida"
 
-#: input/admin.py:235 input/models.py:882
-msgid "inventory"
-msgstr "inventário"
-
 #: input/models.py:23
 msgid "minimum cost"
 msgstr "custo mínimo"
@@ -3142,28 +3138,28 @@ msgid "Display the locations with the highest inventory value"
 msgstr "Localizações com inventários mais altos"
 
 #: menu.py:23
-msgid "Sales"
-msgstr "Vendas"
+msgid "sales"
+msgstr "vendas"
 
-#: menu.py:24
-msgid "Inventory"
-msgstr "Inventário"
+#: input/admin.py:235 input/models.py:882 menu.py:24
+msgid "inventory"
+msgstr "inventário"
 
-#: menu.py:25
-msgid "Capacity"
-msgstr "Capacidade"
+#: menu.py:25 output/views/constraint.py:22
+msgid "capacity"
+msgstr "capacidade"
 
 #: menu.py:26
-msgid "Purchasing"
-msgstr "Compras"
+msgid "purchasing"
+msgstr "compras"
 
 #: menu.py:27
-msgid "Distribution"
-msgstr "Distribuição"
+msgid "distribution"
+msgstr "distribuição"
 
 #: menu.py:28
-msgid "Manufacturing"
-msgstr "Produção"
+msgid "manufacturing"
+msgstr "produção"
 
 #: menu.py:30
 msgid "Help"
@@ -3304,10 +3300,6 @@ msgstr "quantidade da necessidade"
 #: output/views/constraint.py:21
 msgid "material"
 msgstr "material"
-
-#: output/views/constraint.py:22
-msgid "capacity"
-msgstr "capacidade"
 
 #: output/views/constraint.py:28
 msgid "underload"

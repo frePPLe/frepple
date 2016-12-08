@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 09:43+0100\n"
+"PO-Revision-Date: 2016-12-08 11:35+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -1666,10 +1666,6 @@ msgstr "parametri di pianificazione"
 msgid "constrained demand"
 msgstr "domanda vincolata"
 
-#: input/admin.py:235 input/models.py:882
-msgid "inventory"
-msgstr "scorte"
-
 #: input/models.py:23
 msgid "minimum cost"
 msgstr "costo minimo"
@@ -3046,27 +3042,27 @@ msgid "Display the locations with the highest inventory value"
 msgstr ""
 
 #: menu.py:23
-msgid "Sales"
+msgid "sales"
 msgstr ""
 
-#: menu.py:24
-msgid "Inventory"
-msgstr "Scorte"
+#: input/admin.py:235 input/models.py:882 menu.py:24
+msgid "inventory"
+msgstr "scorte"
 
-#: menu.py:25
-msgid "Capacity"
-msgstr "Capacità"
+#: menu.py:25 output/views/constraint.py:22
+msgid "capacity"
+msgstr "capacità"
 
 #: menu.py:26
-msgid "Purchasing"
+msgid "purchasing"
 msgstr ""
 
 #: menu.py:27
-msgid "Distribution"
+msgid "distribution"
 msgstr ""
 
 #: menu.py:28
-msgid "Manufacturing"
+msgid "manufacturing"
 msgstr ""
 
 #: menu.py:30
@@ -3212,10 +3208,6 @@ msgstr "Quantità dell'Ordine"
 #: output/views/constraint.py:21
 msgid "material"
 msgstr "materiale"
-
-#: output/views/constraint.py:22
-msgid "capacity"
-msgstr "capacità"
 
 #: output/views/constraint.py:28
 msgid "underload"
@@ -3431,10 +3423,8 @@ msgid "capacity alerts"
 msgstr ""
 
 #: output/widget.py:1013
-#, fuzzy
-#| msgid "material excess"
 msgid "material alerts"
-msgstr "eccesso di materiale"
+msgstr ""
 
 #: output/widget.py:1022
 #| msgid "utilization %"

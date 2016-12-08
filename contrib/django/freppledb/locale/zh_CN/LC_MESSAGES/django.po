@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 10:34+0100\n"
+"PO-Revision-Date: 2016-12-08 11:37+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -1672,10 +1672,6 @@ msgstr "计划参数"
 msgid "constrained demand"
 msgstr "限制的需求"
 
-#: input/admin.py:235 input/models.py:882
-msgid "inventory"
-msgstr "库存"
-
 #: input/models.py:23
 msgid "minimum cost"
 msgstr "最低成本"
@@ -3050,27 +3046,27 @@ msgid "Display the locations with the highest inventory value"
 msgstr "显示最高库存值的仓库"
 
 #: menu.py:23
-msgid "Sales"
+msgid "sales"
 msgstr "销售"
 
-#: menu.py:24
-msgid "Inventory"
+#: input/admin.py:235 input/models.py:882 menu.py:24
+msgid "inventory"
 msgstr "库存"
 
-#: menu.py:25
-msgid "Capacity"
+#: menu.py:25 output/views/constraint.py:22
+msgid "capacity"
 msgstr "产能"
 
 #: menu.py:26
-msgid "Purchasing"
+msgid "purchasing"
 msgstr "购买"
 
 #: menu.py:27
-msgid "Distribution"
+msgid "distribution"
 msgstr "分配"
 
 #: menu.py:28
-msgid "Manufacturing"
+msgid "manufacturing"
 msgstr "生产制造"
 
 #: menu.py:30
@@ -3214,10 +3210,6 @@ msgstr "需要量"
 #: output/views/constraint.py:21
 msgid "material"
 msgstr "物料"
-
-#: output/views/constraint.py:22
-msgid "capacity"
-msgstr "容量"
 
 #: output/views/constraint.py:28
 msgid "underload"

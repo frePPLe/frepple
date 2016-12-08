@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-08 11:34+0100\n"
+"PO-Revision-Date: 2016-12-08 21:04+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -55,7 +55,7 @@ msgstr "REST API Help"
 
 #: common/menu.py:51
 msgid "Show hints"
-msgstr ""
+msgstr "Montrer les conseils"
 
 #: common/menu.py:53
 msgid "Guided tour"
@@ -63,11 +63,11 @@ msgstr "Visite guidée"
 
 #: common/menu.py:54 common/views.py:173 common/widget.py:47
 msgid "Modeling wizard"
-msgstr ""
+msgstr "Assistant de modélisation"
 
 #: common/menu.py:58
 msgid "Documentation"
-msgstr ""
+msgstr "Documentation"
 
 #: common/menu.py:59
 msgid "REST API help"
@@ -79,7 +79,7 @@ msgstr "Site web frePPLe"
 
 #: common/menu.py:61
 msgid "About frePPLe"
-msgstr ""
+msgstr "A propos de frePPLe"
 
 #: common/models.py:41 input/models.py:480
 msgid "Unique identifier"
@@ -158,7 +158,7 @@ msgstr "utilisé"
 
 #: common/models.py:222
 msgid "busy"
-msgstr ""
+msgstr "occupé"
 
 #: common/models.py:230 execute/models.py:37
 #: execute/templates/execute/execute.html:514 execute/views.py:69
@@ -180,19 +180,19 @@ msgstr "scénarios"
 
 #: common/models.py:272
 msgid "progress"
-msgstr ""
+msgstr "progression"
 
 #: common/models.py:272
 msgid "Model completion level"
-msgstr ""
+msgstr "Niveau d'achèvement du modèle"
 
 #: common/models.py:273
 msgid "documentation URL"
-msgstr ""
+msgstr "documentation URL"
 
 #: common/models.py:274
 msgid "wizard URL"
-msgstr ""
+msgstr "URL de l'assistant"
 
 #: common/models.py:288
 msgid "Detect automatically"
@@ -334,7 +334,7 @@ msgstr "Copié de %s."
 #: common/report.py:2331 inventoryplanning/views.py:1243
 #, python-format
 msgid "Changed %s."
-msgstr ""
+msgstr "Modifié %s."
 
 #: common/report.py:1048 common/report.py:1278 common/report.py:1454
 #: common/report.py:2331 inventoryplanning/views.py:1243
@@ -505,7 +505,7 @@ msgstr "personnaliser"
 #: common/templates/admin/base_site_grid.html:183
 #: common/templates/admin/base_site_gridpivot.html:185
 msgid "help"
-msgstr ""
+msgstr "Aide"
 
 #: common/templates/admin/base_site_gridpivot.html:154
 msgid "display table"
@@ -604,6 +604,8 @@ msgid ""
 "First, enter a username and password. Then, you'll be able to edit more user "
 "options."
 msgstr ""
+"Commencez par entrer un nom d'utilisateur et un mot de passe. Vous pourrez "
+"ensuite éditer plus d'options d'utilisateurs."
 
 #: common/templates/admin/user/add_form.html:8
 msgid "Enter a username and password."
@@ -615,7 +617,7 @@ msgstr "Nombre d'enregistrments par page"
 
 #: common/templates/common/wizard.html:291 common/widget.py:89
 msgid "overall progress"
-msgstr ""
+msgstr "Progression totale"
 
 #: common/templates/index.html:92 execute/templates/execute/execute.html:43
 msgid "failed"
@@ -780,45 +782,45 @@ msgstr "Mes préférences"
 #: output/views/demand.py:216 output/views/problem.py:48
 #: output/views/resource.py:201
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: common/views.py:357
 msgid "username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: common/views.py:359
 msgid "email address"
-msgstr ""
+msgstr "adresse email"
 
 #: common/views.py:361
 msgid "first name"
-msgstr ""
+msgstr "Prénom"
 
 #: common/views.py:363
 #| msgid "last modified"
 msgid "last name"
-msgstr ""
+msgstr "Nom"
 
 #: common/views.py:365
 msgid "active"
-msgstr ""
+msgstr "actif"
 
 #: common/views.py:367
 msgid "superuser status"
-msgstr ""
+msgstr "statut du superutilisateur"
 
 #: common/views.py:369
 msgid "date joined"
-msgstr ""
+msgstr "date d'adhésion"
 
 #: common/views.py:371
 #| msgid "last modified"
 msgid "last login"
-msgstr ""
+msgstr "dernière connexion"
 
 #: common/views.py:381
 msgid "groups"
-msgstr ""
+msgstr "groupes"
 
 #: common/views.py:435
 msgid "model"
@@ -867,6 +869,7 @@ msgstr ""
 #: common/widget.py:48
 msgid "Get started quick and easy to fill out the data tables"
 msgstr ""
+"Commencez rapidement et facilement en remplissant les tables de données"
 
 #: common/widget.py:109
 msgid "News"
@@ -879,7 +882,7 @@ msgstr "Voir les dernières nouvelles du site web frePPLe"
 #: common/widget.py:122
 #| msgid "locations"
 msgid "My Actions"
-msgstr ""
+msgstr "Mes actions"
 
 #: common/widget.py:123
 msgid "Display a list of the entities you recently changed"
@@ -900,7 +903,7 @@ msgstr "Afficher une liste des commentaires récents"
 #: execute/commands.py:60
 #| msgid "Generate a constrained plan"
 msgid "Generate supply plan"
-msgstr ""
+msgstr "Générer un plan d'approvisionnement"
 
 #: execute/menu.py:16 execute/widget.py:20
 msgid "Execute"
@@ -980,7 +983,7 @@ msgstr ""
 
 #: execute/templates/execute/execute.html:317
 msgid "optional planning steps"
-msgstr ""
+msgstr "Etapes optionnelles de planification"
 
 #: execute/templates/execute/execute.html:326
 msgid ""
@@ -989,6 +992,10 @@ msgid ""
 "case of shortages the demand is planned late or short.\">Constrained plan</"
 "span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Générer un plan d'approvisionnement qui respecte toutes les "
+"contraintes.<br>Dans le cas de quantités insuffisantes la demande sera "
+"planifiée soit en retard soit partiellement.\">ontraintes su plan</span>"
 
 #: execute/templates/execute/execute.html:329
 msgid ""
@@ -998,6 +1005,11 @@ msgid ""
 "<br>The demand is always met completely and on time.\">Unconstrained plan</"
 "span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Générer un plan d'approvisionnement qui montre les "
+"problèmes de de matériel, de capacité et d'opération qui empêchent la "
+"demande d'être planifiée à l'heure.<br>La demande est toujours entièrement "
+"planifiée et à temps.\">Plan non contraint</span>"
 
 #: execute/templates/execute/execute.html:333 output/models.py:55
 msgid "constraints"
@@ -1059,7 +1071,7 @@ msgstr "Fichier de données"
 
 #: execute/templates/execute/execute.html:420
 msgid "Import/Export data files in folder"
-msgstr ""
+msgstr "Importer/Exporter des fichiers de données dans un répertoire"
 
 #: execute/templates/execute/execute.html:434
 msgid ""
@@ -1067,16 +1079,21 @@ msgid ""
 "the names of data objects and the first line in the file must contain the "
 "field names."
 msgstr ""
+"Importer les fichiers CSV depuis le répertoire de données configuré. The "
+"noms de fichier doivent être identiques aux noms des objets de données et la "
+"première ligne dans le ficher doit contenir le nom des champs."
 
 #: execute/templates/execute/execute.html:448
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
 "orders) as a set of CSV files."
 msgstr ""
+"Exporte le plan (ordres d'achat, ordres de distribution et ordres de "
+"fabrication) comme un ensemble de fichiers CSV."
 
 #: execute/templates/execute/execute.html:453
 msgid "file name"
-msgstr ""
+msgstr "Nom de fichier"
 
 #: execute/templates/execute/execute.html:454
 msgid "size"
@@ -1085,7 +1102,7 @@ msgstr "taille"
 #: execute/templates/execute/execute.html:455
 #| msgid "save changes"
 msgid "changed"
-msgstr ""
+msgstr "Modifié"
 
 #: execute/templates/execute/execute.html:476
 msgid "web service"
@@ -1101,7 +1118,7 @@ msgstr "Démarrer le service web."
 
 #: execute/templates/execute/execute.html:490
 msgid "Stop"
-msgstr ""
+msgstr "Arrêter"
 
 #: execute/templates/execute/execute.html:492
 msgid "Stop the web service."
@@ -1196,16 +1213,19 @@ msgid ""
 "<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title="
 "\"Filter parameters define which transactions are getting exported\">"
 msgstr ""
+"<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title="
+"\"Les paramètre de filtre définissent quelles transactions seront exportées"
+"\">"
 
 #: execute/templates/execute/execute.html:697
 msgid "Apply filter parameters."
-msgstr ""
+msgstr "Appliquer les paramètres de filtre."
 
 #: execute/templates/execute/execute.html:724
 #| msgid ""
 #| "Import data changes in the last %(delta)s days from the ERP into frePPLe."
 msgid "Import data from the Odoo into frePPLe."
-msgstr ""
+msgstr "Importer des données depuis Odoo dans frePPLe."
 
 #: execute/templates/execute/execute.html:738
 msgid "Generate buckets"
@@ -1275,7 +1295,7 @@ msgstr "Désolé, vous n'avez pas les droits d'exécution..."
 
 #: execute/templates/execute/logfrepple.html:4
 msgid "download complete log file"
-msgstr ""
+msgstr "Télécharger le fichier de log au complet."
 
 #: execute/views.py:52
 msgid "Task status"
@@ -1334,12 +1354,12 @@ msgstr "prévision"
 #: forecast/commands.py:416 forecast/commands.py:437
 #| msgid "Generate model"
 msgid "Generate forecast"
-msgstr ""
+msgstr "Générer la prévision"
 
 #: forecast/menu.py:18 forecast/templates/forecast.html:4
 #: forecast/views.py:1634 input/views.py:63
 msgid "Forecast editor"
-msgstr ""
+msgstr "Editeur de prévision"
 
 #: forecast/models.py:23
 msgid "Automatic"
@@ -1373,7 +1393,7 @@ msgstr "Intermittent"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1718
 msgctxt "forecast method"
 msgid "Moving average"
-msgstr ""
+msgstr "Moyenne mobile"
 
 #: forecast/models.py:29
 msgid "Manual"
@@ -1381,7 +1401,7 @@ msgstr "Manuel"
 
 #: forecast/models.py:30
 msgid "Aggregate"
-msgstr ""
+msgstr "Aggrégé"
 
 #: forecast/models.py:37 forecast/views.py:66 forecast/views.py:805
 #: forecast/views.py:1394 forecast/views.py:1403 forecast/views.py:1409
@@ -1510,20 +1530,20 @@ msgstr "planifié"
 
 #: forecast/models.py:65
 msgid "Use this forecast for planning"
-msgstr ""
+msgstr "Utiliser cette prévision pour la planiifcation"
 
 #: forecast/models.py:68 forecast/views.py:106
 #: inventoryplanning/templates/inventoryplanning/drp.html:1725
 msgid "estimated forecast error"
-msgstr ""
+msgstr "Erreur de prévision estimée"
 
 #: forecast/models.py:72
 msgid "calculated forecast method"
-msgstr ""
+msgstr "Méthode de prévision calculée"
 
 #: forecast/models.py:75
 msgid "calculated standard deviation"
-msgstr ""
+msgstr "Ecart-type calculé"
 
 #: forecast/models.py:82
 msgid "forecasts"
@@ -1564,7 +1584,7 @@ msgstr "commandes ouvertes"
 #: forecast/templates/forecast/forecast.html:189
 #: forecast/templates/forecast/forecast.html:285 forecast/views.py:117
 msgid "planned orders"
-msgstr ""
+msgstr "commandes planifiées"
 
 #: forecast/models.py:726 forecast/models.py:736
 #: forecast/templates/forecast/forecast.html:179 forecast/views.py:112
@@ -1593,7 +1613,7 @@ msgstr "prévision totale"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1067
 #: inventoryplanning/templates/inventoryplanning/drp.html:1088
 msgid "forecast net"
-msgstr ""
+msgstr "prévision nette"
 
 #: forecast/models.py:730 forecast/models.py:740
 #: forecast/templates/forecast/forecast.html:187 forecast/views.py:116
@@ -1632,7 +1652,7 @@ msgstr "afficher unités"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1063
 #: inventoryplanning/templates/inventoryplanning/drp.html:1084
 msgid "forecast override"
-msgstr ""
+msgstr "ajustage de prévision"
 
 #: forecast/templates/forecast/forecast.html:191
 #: forecast/templates/forecast/forecast.html:286 forecast/views.py:118
@@ -1645,54 +1665,59 @@ msgstr "méthode"
 
 #: forecast/views.py:84
 msgid "forecast report"
-msgstr ""
+msgstr "rapport de prévision"
 
 #: forecast/views.py:105
 #: inventoryplanning/templates/inventoryplanning/drp.html:1724
 msgid "selected forecast method"
-msgstr ""
+msgstr "méthode de prévisoin sélectionnée"
 
 #: forecast/views.py:412 forecast/views.py:416 forecast/views.py:616
 #: forecast/views.py:620
 msgid "No time field specified"
-msgstr ""
+msgstr "Pas de champ de date spécifié"
 
 #: forecast/views.py:419 forecast/views.py:623
 msgid "No adjustment field specified"
-msgstr ""
+msgstr "Pas de champ d'ajustage spécifié"
 
 #: forecast/views.py:422 forecast/views.py:626
 msgid ""
 "Recognized fields for list layout: forecast, bucket, start date, end date, "
 "forecast override, orders adjustment"
 msgstr ""
+"Champs reconnus pour la disposition de la liste: prévision, maille "
+"temporelle, date de début, date de fin, ajustage de prévision, ajustage de "
+"commandes"
 
 #: forecast/views.py:423 forecast/views.py:627
 msgid ""
 "Recognized fields for pivot layout: forecast, data field, [bucket names*]"
 msgstr ""
+"Champs reconnus pour la disposition en pivot: Prévision, champ de données, "
+"[nom des mailles temporelles*]"
 
 #: forecast/views.py:460 forecast/views.py:505 forecast/views.py:663
 #: forecast/views.py:708
 #, python-format
 msgid "Bucket '%(name)s' not found"
-msgstr ""
+msgstr "Maille temporelle '%(name)s' not found"
 
 #: forecast/views.py:465 forecast/views.py:482 forecast/views.py:510
 #: forecast/views.py:517 forecast/views.py:668 forecast/views.py:685
 #: forecast/views.py:713 forecast/views.py:720
 #, python-format
 msgid "Invalid number: %(value)s"
-msgstr ""
+msgstr "Nombre invalide: %(value)s"
 
 #: forecast/views.py:522 forecast/views.py:725
 msgid "No time bucket specified"
-msgstr ""
+msgstr "Aucune maille temporelle spécifiée"
 
 #: forecast/views.py:543 forecast/views.py:746
 #, python-format
 msgid "Uploaded data successfully: processed %d records"
-msgstr ""
+msgstr "Données téléchargées avec succès: %d enregistrements traités"
 
 #: forecast/views.py:807 input/models.py:838 input/models.py:966
 #: input/views.py:919 output/widget.py:68 output/widget.py:123
@@ -1727,15 +1752,15 @@ msgstr "prix"
 
 #: forecast/widget.py:29
 msgid "Show the value of all sales order and forecast"
-msgstr ""
+msgstr "Montrer la valeur de toutes les commandes et les prévisions"
 
 #: forecast/widget.py:217
 msgid "Forecast error"
-msgstr ""
+msgstr "erreur de prévision"
 
 #: forecast/widget.py:218
 msgid "Show the evolution of the SMAPE forecast error"
-msgstr ""
+msgstr "Montrer l'évolution de l'erreur de forecast SMAPE"
 
 #: input/admin.py:37
 msgid "repeating pattern"
@@ -1792,31 +1817,31 @@ msgstr "calendriers"
 
 #: input/models.py:78 input/views.py:987
 msgid "Monday"
-msgstr ""
+msgstr "Lundi"
 
 #: input/models.py:80 input/views.py:989
 msgid "Tuesday"
-msgstr ""
+msgstr "Mardi"
 
 #: input/models.py:82 input/views.py:991
 msgid "Wednesday"
-msgstr ""
+msgstr "Mercredi"
 
 #: input/models.py:84 input/views.py:993
 msgid "Thursday"
-msgstr ""
+msgstr "Jeudi"
 
 #: input/models.py:86 input/views.py:995
 msgid "Friday"
-msgstr ""
+msgstr "Vendredi"
 
 #: input/models.py:88 input/views.py:997
 msgid "Saturday"
-msgstr ""
+msgstr "Samedi"
 
 #: input/models.py:90 input/views.py:999
 msgid "Sunday"
-msgstr ""
+msgstr "Dimanche"
 
 #: input/models.py:91 input/views.py:1000
 msgid "start time"
@@ -2077,7 +2102,7 @@ msgstr "minimum"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1776
 #: inventoryplanning/views.py:152
 msgid "safety stock"
-msgstr ""
+msgstr "stock de sécurité"
 
 #: input/models.py:325 input/views.py:599
 msgid "minimum calendar"
@@ -2093,7 +2118,7 @@ msgstr "Intervalle minimum"
 
 #: input/models.py:331
 msgid "Batching window for grouping replenishments in batches"
-msgstr ""
+msgstr "Fenêtre des lots pour grouper les approvisionnements par lots"
 
 #: input/models.py:344 input/models.py:1020
 #: inventoryplanning/templates/inventoryplanning/drp.html:1203
@@ -2256,22 +2281,22 @@ msgstr "Encours consommé/produit au début ou à la fin de l'operation"
 #: input/models.py:563
 #| msgid "Optional name of this load"
 msgid "Optional name of this operation material"
-msgstr ""
+msgstr "Nom optionnel pour ce matériel opération"
 
 #: input/models.py:567
 #| msgid "Priority of this load in a group of alternates"
 msgid "Priority of this operation material in a group of alternates"
-msgstr ""
+msgstr "Priorité de ce matériel opération dans un groupe d'alternatives"
 
 #: input/models.py:584
 #| msgid "operation"
 msgid "operation material"
-msgstr ""
+msgstr "matériel opération"
 
 #: input/models.py:585 input/views.py:876
 #| msgid "operations"
 msgid "operation materials"
-msgstr ""
+msgstr "matériels opération"
 
 #: input/models.py:609
 msgid "Optional name of this load"
@@ -2288,12 +2313,12 @@ msgstr "Setup nécessaire pour cette opération sur cette ressource"
 #: input/models.py:631
 #| msgid "Operation report"
 msgid "operation resource"
-msgstr ""
+msgstr "ressource opération"
 
 #: input/models.py:632 input/views.py:848
 #| msgid "Operation report"
 msgid "operation resources"
-msgstr ""
+msgstr "ressources opération"
 
 #: input/models.py:646 input/models.py:663 input/models.py:954
 #: input/views.py:734 input/views.py:1226 output/widget.py:774
@@ -2451,7 +2476,7 @@ msgstr "ordre de distribution"
 #: input/models.py:886 input/models.py:1125
 #| msgid "customers"
 msgid "customer shipment"
-msgstr ""
+msgstr "Expédition client"
 
 #: input/models.py:891 input/views.py:1106 input/views.py:1174
 #: input/views.py:1247
@@ -2461,7 +2486,7 @@ msgstr "proposé"
 
 #: input/models.py:892
 msgid "approved"
-msgstr ""
+msgstr "approuvé"
 
 #: input/models.py:893 input/views.py:1107 input/views.py:1175
 #: input/views.py:1248
@@ -2479,7 +2504,7 @@ msgstr "Statut de la commande"
 
 #: input/models.py:909
 msgid "Order type"
-msgstr ""
+msgstr "Type de commande"
 
 #: input/models.py:912 input/views.py:1145 input/views.py:1218
 #: inventoryplanning/templates/inventoryplanning/drp.html:1394
@@ -2542,12 +2567,12 @@ msgstr "date de fin"
 #: input/models.py:1014
 #| msgid "operationplans"
 msgid "operationplan resource"
-msgstr ""
+msgstr "ressource plan opération"
 
 #: input/models.py:1015
 #| msgid "operationplans"
 msgid "operationplan resources"
-msgstr ""
+msgstr "ressources plan opération"
 
 #: input/models.py:1025
 #: inventoryplanning/templates/inventoryplanning/drp.html:1392
@@ -2558,12 +2583,12 @@ msgstr "date"
 #: input/models.py:1034
 #| msgid "operationplan quantity"
 msgid "operationplan material"
-msgstr ""
+msgstr "matériel plan opération"
 
 #: input/models.py:1035
 #| msgid "operationplans"
 msgid "operationplan materials"
-msgstr ""
+msgstr "matériels plan opération"
 
 #: input/models.py:1057 input/views.py:1129 output/widget.py:339
 msgid "distribution orders"
@@ -2580,7 +2605,7 @@ msgstr "ordres de fabrication"
 #: input/models.py:1126
 #| msgid "customers"
 msgid "customer shipments"
-msgstr ""
+msgstr "Expéditions client"
 
 #: input/templates/input/path.html:263
 msgid "Too many objects to display"
@@ -2595,7 +2620,7 @@ msgstr[1] "%(name)s - %(count)d matches"
 
 #: input/views.py:80 inventoryplanning/views.py:119
 msgid "Distribution planning"
-msgstr ""
+msgstr "Planification de la distribution"
 
 #: input/views.py:128 output/views/pegging.py:38
 msgid "depth"
@@ -2632,15 +2657,15 @@ msgstr "demandes"
 
 #: inventoryplanning/admin.py:24
 msgid "Reorder quantity"
-msgstr ""
+msgstr "Quantité de réapprovisionnement"
 
 #: inventoryplanning/admin.py:31
 msgid "Safety stock quantity"
-msgstr ""
+msgstr "Quantité de stock de sécurité"
 
 #: inventoryplanning/commands.py:257
 msgid "Compute inventory parameters"
-msgstr ""
+msgstr "Calculer les paramètres d'inventaire"
 
 #: inventoryplanning/models.py:21
 #: inventoryplanning/templates/inventoryplanning/drp.html:1713
@@ -2661,103 +2686,106 @@ msgstr "Poisson"
 #: inventoryplanning/models.py:24
 msgctxt "forecast method"
 msgid "Negative Binomial"
-msgstr ""
+msgstr "Binomial négative"
 
 #: inventoryplanning/models.py:30
 msgid "calculated"
-msgstr ""
+msgstr "calculé"
 
 #: inventoryplanning/models.py:32
 #: inventoryplanning/templates/inventoryplanning/drp.html:1796
 #: inventoryplanning/templates/inventoryplanning/drp.html:1835
 msgid "period of cover"
-msgstr ""
+msgstr "période de couverture"
 
 #: inventoryplanning/models.py:38 inventoryplanning/views.py:89
 msgid "ROQ type"
-msgstr ""
+msgstr "type de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:41 inventoryplanning/views.py:91
 msgid "ROQ minimum quantity"
-msgstr ""
+msgstr "quantité minimale de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:45 inventoryplanning/views.py:92
 msgid "ROQ maximum quantity"
-msgstr ""
+msgstr "quantité maximale de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:49 inventoryplanning/views.py:93
 msgid "ROQ multiple quantity"
-msgstr ""
+msgstr "quantité multiple de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:53 inventoryplanning/views.py:94
 msgid "ROQ minimum period of cover"
 msgstr ""
+"quantité minimale de périodes de couvertures de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:56 inventoryplanning/views.py:95
 msgid "ROQ maximum period of cover"
 msgstr ""
+"quantité maximale de périodes de couvertures de point de réapprovisionnement"
 
 #: inventoryplanning/models.py:59 inventoryplanning/views.py:104
 msgid "lead time deviation"
-msgstr ""
+msgstr "déviation du temps de réapprovisionnement"
 
 #: inventoryplanning/models.py:62 inventoryplanning/views.py:105
 msgid "demand deviation"
-msgstr ""
+msgstr "déviation des commandes"
 
 #: inventoryplanning/models.py:66 inventoryplanning/views.py:96
 msgid "safety stock type"
-msgstr ""
+msgstr "type de stock de sécurité"
 
 #: inventoryplanning/models.py:69
 #: inventoryplanning/templates/inventoryplanning/drp.html:1805
 #: inventoryplanning/views.py:103
 msgid "service level"
-msgstr ""
+msgstr "taux de service"
 
 #: inventoryplanning/models.py:73 inventoryplanning/views.py:98
 msgid "safety stock minimum quantity"
-msgstr ""
+msgstr "quantité minimale de stock de sécurité"
 
 #: inventoryplanning/models.py:77 inventoryplanning/views.py:99
 msgid "safety stock maximum quantity"
-msgstr ""
+msgstr "quantité maximale de stock de sécurité"
 
 #: inventoryplanning/models.py:81 inventoryplanning/views.py:100
 msgid "safety stock multiple quantity"
-msgstr ""
+msgstr "quantité multiple de stock de sécurité"
 
 #: inventoryplanning/models.py:85 inventoryplanning/views.py:101
 msgid "safety stock minimum period of cover"
-msgstr ""
+msgstr "stock de sécurité minimal en périodes de couverture"
 
 #: inventoryplanning/models.py:88 inventoryplanning/views.py:102
 msgid "safety stock maximum period of cover"
-msgstr ""
+msgstr "stock de sécurité maximal en périodes de couverture"
 
 #: inventoryplanning/models.py:91 inventoryplanning/views.py:106
 msgid "Do not stock"
-msgstr ""
+msgstr "Ne pas stocker"
 
 #: inventoryplanning/models.py:92
 msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
 msgstr ""
+"Force un stock de sécurité à 0 et une quantitié de réapprovisionnement à 1"
 
 #: inventoryplanning/models.py:97
 msgid "inventory planning parameter"
-msgstr ""
+msgstr "paramètre de planification d'inventaire"
 
 #: inventoryplanning/models.py:98 inventoryplanning/views.py:78
 msgid "inventory planning parameters"
-msgstr ""
+msgstr "paramètres de planification d'inventaire"
 
 #: inventoryplanning/models.py:125
 msgid "calculated reorder quantity"
-msgstr ""
+msgstr "quantité de réapprovisionnement calculée"
 
 #: inventoryplanning/models.py:126
 msgid "calculated safety stock"
-msgstr ""
+msgstr "stock de sécurité calculé"
 
 #: inventoryplanning/models.py:132
 #: inventoryplanning/templates/inventoryplanning/drp.html:562
@@ -2767,78 +2795,78 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1775
 #: inventoryplanning/views.py:153
 msgid "reorder quantity"
-msgstr ""
+msgstr "quantité de réapprovisionnement"
 
 #: inventoryplanning/models.py:133
 msgid "safety stock value"
-msgstr ""
+msgstr "valeur du stock de sécurité"
 
 #: inventoryplanning/models.py:134
 msgid "reorder quantity value"
-msgstr ""
+msgstr "valeur de la quantité de réapprovisionnement"
 
 #: inventoryplanning/models.py:138 inventoryplanning/views.py:155
 msgid "overdue sales orders"
-msgstr ""
+msgstr "commandes en retard"
 
 #: inventoryplanning/models.py:139 inventoryplanning/views.py:156
 msgid "open sales orders"
-msgstr ""
+msgstr "commandes ouverts"
 
 #: inventoryplanning/models.py:140 inventoryplanning/views.py:159
 msgid "proposed purchases"
-msgstr ""
+msgstr "achats proposés"
 
 #: inventoryplanning/models.py:141 inventoryplanning/views.py:160
 msgid "proposed transfers"
-msgstr ""
+msgstr "transferts proposés"
 
 #: inventoryplanning/models.py:142 inventoryplanning/views.py:157
 msgid "open purchases"
-msgstr ""
+msgstr "ahcats ouverts"
 
 #: inventoryplanning/models.py:143 inventoryplanning/views.py:158
 msgid "open transfers"
-msgstr ""
+msgstr "transferts ouverts"
 
 #: inventoryplanning/models.py:144
 msgid "onhand value"
-msgstr ""
+msgstr "valeur du stock"
 
 #: inventoryplanning/models.py:145
 msgid "overdue sales orders value"
-msgstr ""
+msgstr "valeur des commandes en retard"
 
 #: inventoryplanning/models.py:146
 msgid "open sales orders value"
-msgstr ""
+msgstr "valeurs des commandes ouvertes"
 
 #: inventoryplanning/models.py:147
 msgid "proposed purchases value"
-msgstr ""
+msgstr "valeur des achats proposés"
 
 #: inventoryplanning/models.py:148
 msgid "proposed transfers value"
-msgstr ""
+msgstr "valeur des transferts proposés"
 
 #: inventoryplanning/models.py:149
 msgid "open purchases value"
-msgstr ""
+msgstr "valeur des achats ouverts"
 
 #: inventoryplanning/models.py:150
 msgid "open transfers value"
-msgstr ""
+msgstr "valeurs des transfert ouverts"
 
 #: inventoryplanning/models.py:151 inventoryplanning/views.py:150
 msgid "local forecast"
-msgstr ""
+msgstr "prévision locale"
 
 #: inventoryplanning/models.py:152
 #: inventoryplanning/templates/inventoryplanning/drp.html:568
 #: inventoryplanning/templates/inventoryplanning/drp.html:581
 #: inventoryplanning/views.py:151
 msgid "dependent demand"
-msgstr ""
+msgstr "commandes dépendantes"
 
 #: inventoryplanning/models.py:153
 #: inventoryplanning/templates/inventoryplanning/drp.html:569
@@ -2849,100 +2877,100 @@ msgstr "demande totale"
 
 #: inventoryplanning/models.py:154
 msgid "local forecast value"
-msgstr ""
+msgstr "valeur de la prévision locale"
 
 #: inventoryplanning/models.py:155
 msgid "dependent demand value"
-msgstr ""
+msgstr "valeur des commandes dépendantes"
 
 #: inventoryplanning/models.py:156
 msgid "total demand value"
-msgstr ""
+msgstr "valeur totale des commandes"
 
 #: inventoryplanning/models.py:157 inventoryplanning/views.py:149
 #: inventoryplanning/widget.py:24
 msgid "stockout risk"
-msgstr ""
+msgstr "risque de rupture de stock"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:70
 msgid "Unsaved changes"
-msgstr ""
+msgstr "Modifications non sauvegardées"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:73
 msgid "Do you want to save your changes first?"
-msgstr ""
+msgstr "Voulez-vous d'abord enregistrer vos modifications"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:111
 #: inventoryplanning/templates/inventoryplanning/drp.html:513
 msgid "Error retrieving data"
-msgstr ""
+msgstr "Error lors de la récupératoin des données"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:531
 #: inventoryplanning/templates/inventoryplanning/drp.html:543
 msgid "total orders 3 years ago"
-msgstr ""
+msgstr "commandes totales il y a 3 ans"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:532
 #: inventoryplanning/templates/inventoryplanning/drp.html:544
 msgid "orders adjustment 3 years ago"
-msgstr ""
+msgstr "ajustement des commandes il y a 3 ans"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:533
 #: inventoryplanning/templates/inventoryplanning/drp.html:545
 msgid "total orders 2 years ago"
-msgstr ""
+msgstr "commandes totales il y a 2 ans"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:534
 #: inventoryplanning/templates/inventoryplanning/drp.html:546
 msgid "orders adjustment 2 years ago"
-msgstr ""
+msgstr "ajustement des commandes il y a 2 ans"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:535
 #: inventoryplanning/templates/inventoryplanning/drp.html:547
 msgid "total orders 1 year ago"
-msgstr ""
+msgstr "commandes totales il y a 1 an"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:536
 #: inventoryplanning/templates/inventoryplanning/drp.html:548
 msgid "orders adjustment 1 year ago"
-msgstr ""
+msgstr "ajustement des commandes il y a 1 an"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:541
 #: inventoryplanning/templates/inventoryplanning/drp.html:553
 msgid "total forecast"
-msgstr ""
+msgstr "prévision totale"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:563
 #: inventoryplanning/templates/inventoryplanning/drp.html:576
 #: inventoryplanning/templates/inventoryplanning/drp.html:844
 msgid "reorder quantity override"
-msgstr ""
+msgstr "ajustage de la quantité de réapprovisionnement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:565
 #: inventoryplanning/templates/inventoryplanning/drp.html:578
 #: inventoryplanning/templates/inventoryplanning/drp.html:848
 msgid "safety stock override"
-msgstr ""
+msgstr "ajustage du stock de sécurité"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:566
 #: inventoryplanning/templates/inventoryplanning/drp.html:579
 msgid "starting inventory"
-msgstr ""
+msgstr "inventaire de départ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:567
 #: inventoryplanning/templates/inventoryplanning/drp.html:580
 msgid "local demand"
-msgstr ""
+msgstr "commandes locales"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:570
 #: inventoryplanning/templates/inventoryplanning/drp.html:583
 msgid "confirmed supply"
-msgstr ""
+msgstr "réapprovisionnement confirmé"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:571
 #: inventoryplanning/templates/inventoryplanning/drp.html:584
 msgid "proposed supply"
-msgstr ""
+msgstr "réapprovisionnement proposé"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:572
 #: inventoryplanning/templates/inventoryplanning/drp.html:585
@@ -2953,7 +2981,7 @@ msgstr "approvisionnement total"
 #: inventoryplanning/templates/inventoryplanning/drp.html:573
 #: inventoryplanning/templates/inventoryplanning/drp.html:586
 msgid "ending inventory"
-msgstr ""
+msgstr "inventaire de fin"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:850
 #: inventoryplanning/templates/inventoryplanning/drp.html:943
@@ -2983,17 +3011,17 @@ msgstr "stock consommé"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1574
 #: inventoryplanning/templates/inventoryplanning/drp.html:1581
 msgid "no grouping"
-msgstr ""
+msgstr "pas de groupement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1575
 #: inventoryplanning/templates/inventoryplanning/drp.html:1582
 msgid "group by item"
-msgstr ""
+msgstr "grouper par pièce"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1576
 #: inventoryplanning/templates/inventoryplanning/drp.html:1583
 msgid "group by location"
-msgstr ""
+msgstr "grouper par emplacement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1610
 msgid "detail"
@@ -3001,39 +3029,39 @@ msgstr "détail"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1619
 msgid "Recalculate"
-msgstr ""
+msgstr "Recalculer"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1619
 msgid "simulate changes without saving"
-msgstr ""
+msgstr "simuler les changements sans sauvegarder"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1624
 msgid "no"
-msgstr ""
+msgstr "non"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1644
 msgid "attributes"
-msgstr ""
+msgstr "attributs"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1647
 msgid "transactions"
-msgstr ""
+msgstr "transactions"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1659
 msgid "Item attributes"
-msgstr ""
+msgstr "Attributs pièce"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1668
 msgid "Buffer attributes"
-msgstr ""
+msgstr "Attributs SKU"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1677
 msgid "Location attributes"
-msgstr ""
+msgstr "Attributs d'emplacement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1686
 msgid "Supply information"
-msgstr ""
+msgstr "Information d'approvisionnement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1707
 msgid "forecast method"
@@ -3046,23 +3074,23 @@ msgstr "Manuel"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1743
 msgid "new item comment"
-msgstr ""
+msgstr "nouveau commentaire pièce"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1744
 msgid "new item-location comment"
-msgstr ""
+msgstr "nouveau commentaire emplacement-pièce"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1745
 msgid "new location comment"
-msgstr ""
+msgstr "Nouveau commentaire emplacement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1748
 msgid "no comments yet"
-msgstr ""
+msgstr "Pas encore de commentaires"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1782
 msgid "economic order quantity"
-msgstr ""
+msgstr "quantitié économique d'achat"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1782
 #: inventoryplanning/templates/inventoryplanning/drp.html:1789
@@ -3074,59 +3102,60 @@ msgstr "unités"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1812
 msgid "demand standard deviation"
-msgstr ""
+msgstr "écart type des commandes"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1818
 msgid "lead time standard deviation"
-msgstr ""
+msgstr "écart type du temps de réapprivionnement"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1847
 msgid "don't stock"
-msgstr ""
+msgstr "ne pas stocker"
 
 #: inventoryplanning/views.py:154
 msgid "on hand"
-msgstr ""
+msgstr "en stock"
 
 #: inventoryplanning/views.py:822
 msgid "Buy"
-msgstr ""
+msgstr "Acheter"
 
 #: inventoryplanning/views.py:838
 msgid "Transport"
-msgstr ""
+msgstr "Transporter"
 
 #: inventoryplanning/views.py:864
 msgid "Manufacture"
-msgstr ""
+msgstr "Fabriquer"
 
 #: inventoryplanning/views.py:1283 inventoryplanning/views.py:1325
 #: inventoryplanning/views.py:1370 inventoryplanning/views.py:1393
 #: inventoryplanning/views.py:1416 inventoryplanning/views.py:1439
 msgid "Invalid number"
-msgstr ""
+msgstr "Nombre invalide"
 
 #: inventoryplanning/views.py:1343
 #| msgid "forecast consumed"
 msgid "No forecast found"
-msgstr ""
+msgstr "Pas de prévision trouvée"
 
 #: inventoryplanning/widget.py:25
 msgid ""
 "Display how well the current inventory position covers the forecasted demand"
 msgstr ""
+"Afficher la façon dont l'inventaire actuel couvre la demande prévisionnelle"
 
 #: inventoryplanning/widget.py:152
 msgid "green"
-msgstr ""
+msgstr "vert"
 
 #: inventoryplanning/widget.py:153
 msgid "yellow"
-msgstr ""
+msgstr "jaune"
 
 #: inventoryplanning/widget.py:154
 msgid "red"
-msgstr ""
+msgstr "rouge"
 
 #: inventoryplanning/widget.py:168
 msgid "Inventory by location"
@@ -3166,15 +3195,15 @@ msgstr "Aide"
 
 #: odoo/commands.py:48 odoo/commands.py:130
 msgid "Read Odoo data"
-msgstr ""
+msgstr "Lire les donneés Odoo"
 
 #: odoo/commands.py:185
 msgid "Write results to Odoo"
-msgstr ""
+msgstr "Ecrire les résultats vers Odoo"
 
 #: odoo/views.py:52
 msgid "Invalid configuration parameters"
-msgstr ""
+msgstr "Paramètres de configuration invalides"
 
 #: odoo/views.py:139 openbravo/views.py:91
 msgid "No proposed data records selected"
@@ -3230,7 +3259,7 @@ msgstr "backlog"
 #: output/templates/output/operation.html:256 output/views/operation.py:35
 #| msgid "locked starts"
 msgid "proposed starts"
-msgstr ""
+msgstr "débuts proposés"
 
 #: output/templates/output/operation.html:117 output/views/operation.py:36
 msgid "total starts"
@@ -3240,7 +3269,7 @@ msgstr "début global"
 #: output/templates/output/operation.html:258 output/views/operation.py:37
 #| msgid "proposed"
 msgid "proposed ends"
-msgstr ""
+msgstr "fins proposés"
 
 #: output/templates/output/operation.html:121 output/views/operation.py:38
 msgid "total ends"
@@ -3249,12 +3278,12 @@ msgstr "fin total"
 #: output/templates/output/operation.html:255
 #| msgid "produced and consumed"
 msgid "approved and confirmed starts"
-msgstr ""
+msgstr "débuts confirmés et approuvés"
 
 #: output/templates/output/operation.html:257
 #| msgid "produced and consumed"
 msgid "approved and confirmed ends"
-msgstr ""
+msgstr "fins approuvées et confirmées"
 
 #: output/templates/output/pegging.html:96
 msgid "zoom in"
@@ -3267,17 +3296,17 @@ msgstr "zoom arrière"
 #: output/templates/output/pegging.html:98
 msgctxt "Gantt"
 msgid "earlier"
-msgstr ""
+msgstr "antérieur"
 
 #: output/templates/output/pegging.html:99
 msgctxt "Gantt"
 msgid "later"
-msgstr ""
+msgstr "postérieur"
 
 #: output/templates/output/pegging.html:100
 msgctxt "Gantt"
 msgid "reset"
-msgstr ""
+msgstr "réinitialiser"
 
 #: output/templates/output/resource.html:237 output/views/constraint.py:27
 msgid "overload"
@@ -3358,7 +3387,7 @@ msgstr "Rapport de demande"
 
 #: output/views/demand.py:40
 msgid "net forecast"
-msgstr ""
+msgstr "Prévision nette"
 
 #: output/views/demand.py:41
 msgid "orders"
@@ -3560,7 +3589,7 @@ msgstr "Livraison à temps"
 #: planningboard/menu.py:15 planningboard/views.py:34
 #| msgid "plan date"
 msgid "Plan editor"
-msgstr ""
+msgstr "Editeur de plan"
 
 #: planningboard/models.py:24
 msgid "Messages"
@@ -3568,7 +3597,7 @@ msgstr "Messages"
 
 #: planningboard/models.py:32 planningboard/models.py:33
 msgid "chat history"
-msgstr ""
+msgstr "Historique des conversations"
 
 #: quoting/views.py:36
 msgid "Quotes"

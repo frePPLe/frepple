@@ -60,6 +60,72 @@ DATABASES = {
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),
     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
+   'scenario1': {
+     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'NAME': 'scenario1_4.0',
+     'USER': 'frepple',     # Role name when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'PASSWORD': 'frepple', # Role password when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'HOST': '',            # When using TCP sockets specify the hostname,
+                            # the ip4 address or the ip6 address here.
+                            # Leave as an empty string to use Unix domain
+                            # socket ("local" lines in pg_hba.conf).
+     'PORT': '',            # Leave to empty string when using Unix domain sockets.
+                            # Specify the port number when using a TCP socket.
+     'OPTIONS': {},         # Backend specific configuration parameters.
+     'TEST': {
+       'NAME': 'test_scenario1' # Database name used when running the test suite.
+       },
+     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),
+     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+     },
+   'scenario2': {
+     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'NAME': 'scenario2_4.0',
+     'USER': 'frepple',     # Role name when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'PASSWORD': 'frepple', # Role password when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'HOST': '',            # When using TCP sockets specify the hostname,
+                            # the ip4 address or the ip6 address here.
+                            # Leave as an empty string to use Unix domain
+                            # socket ("local" lines in pg_hba.conf).
+     'PORT': '',            # Leave to empty string when using Unix domain sockets.
+                            # Specify the port number when using a TCP socket.
+     'OPTIONS': {},         # Backend specific configuration parameters.
+     'TEST': {
+       'NAME': 'test_scenario2' # Database name used when running the test suite.
+       },
+     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),
+     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+     },
+   'scenario3': {
+     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'NAME': 'scenario3_4.0',
+     'USER': 'frepple',     # Role name when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'PASSWORD': 'frepple', # Role password when using md5 authentication.
+                            # Leave as an empty string when using peer or
+                            # ident authencation.
+     'HOST': '',            # When using TCP sockets specify the hostname,
+                            # the ip4 address or the ip6 address here.
+                            # Leave as an empty string to use Unix domain
+                            # socket ("local" lines in pg_hba.conf).
+     'PORT': '',            # Leave to empty string when using Unix domain sockets.
+                            # Specify the port number when using a TCP socket.
+     'OPTIONS': {},         # Backend specific configuration parameters.
+     'TEST': {
+       'NAME': 'test_scenario3' # Database name used when running the test suite.
+       },
+     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),
+     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+     },
   }
 
 LANGUAGE_CODE = 'en'
@@ -347,4 +413,4 @@ DEFAULT_DASHBOARD = [
 ]
 
 # Port number for the CherryPy web server
-PORT = 8010
+PORT = 8000

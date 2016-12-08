@@ -66,7 +66,9 @@
 {% getDashboard as dashboard %}
 {% for row in dashboard %}
     <div class="row">
-    <div class="col-md-12 col-sm-12"><h1 style="float: left; cursor: move;">{{ row.rowname }}</h1></div>
+    <div class="col-md-12 col-sm-12">
+      <h1 style="float: left; cursor: move;">{% trans row.rowname %}</h1>
+    </div>
 
 
 	    <div class="horizontal-form" id="{{ row.rowname }}">

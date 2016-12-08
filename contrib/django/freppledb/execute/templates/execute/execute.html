@@ -125,6 +125,11 @@
         var el = $('#uploadResponse');
         el.val(data);
         el.scrollTop(el[0].scrollHeight - el.height());
+        // Resetting the value of filename. This is only done to avoid a 
+        // corner case where Internet Explorer is uploading a cached
+        // (potentially outdated or even deleted) file.
+        // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads
+        $('#spreadsheet').val('');
       },
       xhrFields: {
         onprogress: function (e) {

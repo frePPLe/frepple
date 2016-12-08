@@ -26,7 +26,7 @@ def add_extra_model_fields(sender, **kwargs):
     elif fieldtype == 'boolean':
       field = models.NullBooleanField(label, null=True, blank=True, db_index=True)
     elif fieldtype == 'number':
-      field = models.DecimalField(label, max_digits=15, decimal_places=4, null=True, blank=True, db_index=True)
+      field = models.DecimalField(label, max_digits=15, decimal_places=6, null=True, blank=True, db_index=True)
     elif fieldtype == 'integer':
       field = models.IntegerField(label, null=True, blank=True, db_index=True)
     elif fieldtype == 'date':

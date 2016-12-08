@@ -52,7 +52,8 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import Field, CharField, IntegerField, AutoField, DurationField, DateField, DateTimeField
+from django.db.models.fields import Field, CharField, IntegerField, AutoField, DurationField
+from django.db.models.fields import DateField, DateTimeField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
@@ -1083,11 +1084,18 @@ class GridReport(View):
           ### Case 1: The first line is read as a header line
           if rownumber == 1:
 
+            # Collect required fields
+            required_fields = set()         
+            for i in reportclass.model._meta.fields:
+              if not i.blank and i.default == NOT_PROVIDED:
+                required_fields.add(i.name)
+                
+            # Validate all columns
             for col in row:
               col = col.strip().strip('#').lower()
               if col == "":
                 headers.append(False)
-                continue
+                continue              
               ok = False
               for i in reportclass.model._meta.fields:
                 if col == i.name.lower() or col == i.verbose_name.lower():
@@ -1095,6 +1103,7 @@ class GridReport(View):
                     headers.append(i)
                   else:
                     headers.append(False)
+                  required_fields.discard(i.name)
                   ok = True
                   break
               if not ok:
@@ -1103,11 +1112,11 @@ class GridReport(View):
               if col == reportclass.model._meta.pk.name.lower() or \
                  col == reportclass.model._meta.pk.verbose_name.lower():
                 has_pk_field = True
-            if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
-              # The primary key is not an auto-generated id and it is not mapped in the input...
+            if required_fields:
+              # We are missing some required fields
               errors = True
-              # Translators: Translation included with Django
-              yield force_text(_('Some keys were missing: %(keys)s') % {'keys': reportclass.model._meta.pk.name}) + '\n '
+              #. Translators: Translation included with Django
+              yield force_text(_('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}) + '\n '
             # Abort when there are errors
             if errors:
               break
@@ -1246,18 +1255,25 @@ class GridReport(View):
 
         ### Case 1: The first line is read as a header line
         if rownumber == 1:
+          # Collect required fields
+          required_fields = set()         
+          for i in reportclass.model._meta.fields:
+            if not i.blank and i.default == NOT_PROVIDED:
+              required_fields.add(i.name)
+          # Validate all columns
           for col in row:
             col = str(col.value).strip().strip('#').lower()
             if col == "":
               headers.append(False)
-              continue
-            ok = False
+              continue            
+            ok = False                                    
             for i in reportclass.model._meta.fields:
               if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
                 if i.editable is True:
                   headers.append(i)
                 else:
                   headers.append(False)
+                required_fields.discard(i.name)
                 ok = True
                 break
             if not ok:
@@ -1266,11 +1282,11 @@ class GridReport(View):
             if col == reportclass.model._meta.pk.name.lower() or \
                col == reportclass.model._meta.pk.verbose_name.lower():
               has_pk_field = True
-          if not has_pk_field and not isinstance(reportclass.model._meta.pk, AutoField):
-            # The primary key is not an auto-generated id and it is not mapped in the input...
+          if required_fields:
+            # We are missing some required fields
             errors = True
             #. Translators: Translation included with Django
-            yield force_text(_('Some keys were missing: %(keys)s') % {'keys': reportclass.model._meta.pk.name}) + '\n '
+            yield force_text(_('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}) + '\n '
           # Abort when there are errors
           if errors > 0:
             break
@@ -2099,6 +2115,14 @@ def importWorkbook(request):
           rownum += 1
           if rownum == 1:
             # Process the header row with the field names
+            
+            # Collect required fields
+            required_fields = set()
+            for i in model._meta.fields:
+              if not i.blank and i.default == NOT_PROVIDED:
+                required_fields.add(i.name)
+                
+            # Validate all columns
             header_ok = True
             for cell in row:
               ok = False
@@ -2107,13 +2131,14 @@ def importWorkbook(request):
                 headers.append(False)
                 continue
               else:
-                value = value.lower()
+                value = value.lower()              
               for i in model._meta.fields:
                 if value == i.name.lower() or value == i.verbose_name.lower():
                   if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                    headers.append(i)
+                    headers.append(i)                    
                   else:
                     headers.append(False)
+                  required_fields.discard(i.name)
                   ok = True
                   break
               if not ok:
@@ -2124,12 +2149,12 @@ def importWorkbook(request):
               if value == model._meta.pk.name.lower() \
                 or value == model._meta.pk.verbose_name.lower():
                   has_pk_field = True
-            if not has_pk_field and not isinstance(model._meta.pk, AutoField):
-              # The primary key is not an auto-generated id and it is not mapped in the input...
-              header_ok = False
+            if required_fields:
+              # We are missing some required fields
+              header_ok = True
               yield force_text(string_concat(
                 # Translators: Translation included with django
-                model._meta.verbose_name, ': ', _('Some keys were missing: %(keys)s') % {'keys': model._meta.pk.name}
+                model._meta.verbose_name, ': ', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}
                 )) + '\n'
               numerrors += 1
             if not header_ok:

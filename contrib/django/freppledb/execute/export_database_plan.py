@@ -89,7 +89,7 @@ class export:
 
 
   def getPegging(self, opplan):
-    peg = { j.demand.name: round(j.quantity, 4) for j in opplan.pegging_demand }
+    peg = { j.demand.name: round(j.quantity, 6) for j in opplan.pegging_demand }
     # We need to double any backslash to assure that the string remains
     # valid when passing it through postgresql (which eats them away)
     return json.dumps(peg).replace("\\", "\\\\")
@@ -180,7 +180,7 @@ class export:
       process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          i.entity, i.name, owner.name,
          i.description, str(i.start), str(i.end),
-         round(i.weight, 4)
+         round(i.weight, 6)
       )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
     if self.verbosity:
@@ -200,7 +200,7 @@ class export:
            d.name, i.entity, i.name,
            isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
            i.description, str(i.start), str(i.end),
-           round(i.weight, 4)
+           round(i.weight, 6)
          )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
     if self.verbosity:
@@ -217,8 +217,8 @@ class export:
           if isinstance(i, frepple.operation_inventory):
             # Export inventory  
             yield (
-              i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
+              i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 6),
+              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
@@ -229,8 +229,8 @@ class export:
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
-              i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
+              i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 6),
+              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.destination.item.name, j.operation.destination.location.name,
@@ -243,8 +243,8 @@ class export:
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
             yield (
-              i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
+              i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 6),
+              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N',
@@ -256,8 +256,8 @@ class export:
           elif not i.hidden:
             # Export MO
             yield (
-              i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
+              i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 6),
+              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               '\\N', '\\N', '\\N', '\\N', '\\N',
@@ -268,8 +268,8 @@ class export:
           elif j.demand or (j.owner and j.owner.demand):
             # Export shipments (with automatically created delivery operations)
             yield (
-              i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 4),
-              str(j.start), str(j.end), round(j.criticality, 4), j.delay,
+              i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 6),
+              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N', j.operation.buffer.location.name, '\\N',
@@ -375,8 +375,8 @@ class export:
       for j in i.flowplans:
         process.stdin.write(("%s\t%s\t%s\t%s\t%s\n" % (
            j.operationplan.id, j.buffer.name,
-           round(j.quantity, 4),
-           str(j.date), round(j.onhand, 4)
+           round(j.quantity, 6),
+           str(j.date), round(j.onhand, 6)
            )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
     if self.verbosity:
@@ -399,7 +399,7 @@ class export:
         if j.quantity < 0:
           process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\n" % (
             j.operationplan.id, j.resource.name,
-            round(-j.quantity, 4),
+            round(-j.quantity, 6),
             str(j.startdate), str(j.enddate),
             j.setup and j.setup or "\\N"
             )).encode(self.encoding))
@@ -450,11 +450,11 @@ class export:
       for j in i.plan(buckets):
         process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          i.name, str(j['start']),
-         round(j['available'], 4),
-         round(j['unavailable'], 4),
-         round(j['setup'], 4),
-         round(j['load'], 4),
-         round(j['free'], 4)
+         round(j['available'], 6),
+         round(j['unavailable'], 6),
+         round(j['setup'], 6),
+         round(j['load'], 6),
+         round(j['free'], 6)
          )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
     if self.verbosity:

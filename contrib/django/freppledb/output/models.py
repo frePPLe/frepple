@@ -28,7 +28,7 @@ class Problem(models.Model):
   description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)
   enddate = models.DateTimeField(_('end date'), db_index=True)
-  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
+  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=6)
 
   def __str__(self):
     return str(self.description)
@@ -50,7 +50,7 @@ class Constraint(models.Model):
   description = models.CharField(_('description'), max_length=1000)
   startdate = models.DateTimeField(_('start date'), db_index=True)
   enddate = models.DateTimeField(_('end date'), db_index=True)
-  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=4)
+  weight = models.DecimalField(_('weight'), max_digits=15, decimal_places=6)
 
   def __str__(self):
     return str(self.demand) + ' ' + str(self.description)
@@ -65,11 +65,11 @@ class Constraint(models.Model):
 class ResourceSummary(models.Model):
   resource = models.CharField(_('resource'), max_length=300)
   startdate = models.DateTimeField(_('startdate'))
-  available = models.DecimalField(_('available'), max_digits=15, decimal_places=4, null=True)
-  unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=4, null=True)
-  setup = models.DecimalField(_('setup'), max_digits=15, decimal_places=4, null=True)
-  load = models.DecimalField(_('load'), max_digits=15, decimal_places=4, null=True)
-  free = models.DecimalField(_('free'), max_digits=15, decimal_places=4, null=True)
+  available = models.DecimalField(_('available'), max_digits=15, decimal_places=6, null=True)
+  unavailable = models.DecimalField(_('unavailable'), max_digits=15, decimal_places=6, null=True)
+  setup = models.DecimalField(_('setup'), max_digits=15, decimal_places=6, null=True)
+  load = models.DecimalField(_('load'), max_digits=15, decimal_places=6, null=True)
+  free = models.DecimalField(_('free'), max_digits=15, decimal_places=6, null=True)
 
   class Meta:
     db_table = 'out_resourceplan'

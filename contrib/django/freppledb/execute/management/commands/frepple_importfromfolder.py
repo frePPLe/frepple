@@ -27,7 +27,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, transaction, models
-from django.db.models.fields import Field, AutoField
+from django.db.models.fields import Field, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
@@ -221,12 +221,19 @@ class Command(BaseCommand):
 
         ### Case 1: The first line is read as a header line
         if rownumber == 1:
-
+          
+          # Collect required fields
+          required_fields = set()         
+          for i in model._meta.fields:
+            if not i.blank and i.default == NOT_PROVIDED:
+              required_fields.add(i.name)
+              
+          # Validate all columns
           for col in row:
             col = col.strip().strip('#').lower()
             if col == "":
               headers.append(False)
-              continue
+              continue            
             ok = False
             for i in model._meta.fields:
               if col == i.name.lower() or col == i.verbose_name.lower():
@@ -234,6 +241,7 @@ class Command(BaseCommand):
                   headers.append(i)
                 else:
                   headers.append(False)
+                required_fields.discard(i.name)
                 ok = True
                 break
             if not ok:
@@ -242,12 +250,11 @@ class Command(BaseCommand):
             if col == model._meta.pk.name.lower() or \
                col == model._meta.pk.verbose_name.lower():
               has_pk_field = True
-          if not has_pk_field and not isinstance(model._meta.pk, AutoField):
-            # The primary key is not an auto-generated id and it is not mapped in the input...
+          if required_fields:
+            # We are missing some required fields
             errors = True
-            # Translators: Translation included with Django
-            print('%s Error: Some keys were missing: %s' % (datetime.now(),model._meta.pk.name), file=self.logfile)
-            errorcount += 1
+            print('%s Error: Some keys were missing: %s' % (datetime.now(), ', '.join(required_fields)))
+            errorcount += 1            
           # Abort when there are errors
           if errors:
             break

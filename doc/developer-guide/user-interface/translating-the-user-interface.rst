@@ -2,17 +2,23 @@
 Translating the user interface
 ==============================
 
-This section provides step by step instructions on how to translate the user
-interface to your favourite language.
+This section provides step by step instructions on how to translate the user interface to your favourite language.
 
 .. Hint::
 
-   We are very keen on receiving translations for additional languages. And
-   it's an easy way for you to contribute back to the frePPLe community.
+   We are very keen on receiving translations for additional languages. And it's an easy way for you to contribute back to the frePPLe community.
 
-#. Edit the file contrib\django\djangosettings.py (or bin\djangosettings.py
-   in the binary Windows installation). Add the language code and description
-   to the variable LANGUAGES:
+**1. Add support for an addicional language**
+
+  You may skip this step if you just want to improve already existing translations.
+
+  Copy the directory *contrib/django/freppledb/locale/en* to a new subdirectory with the name of your language code.
+
+  The possible language codes can be found on the `World Wide Web Consortium <http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes>`_.
+
+  If you want to create instalation packages including the new language then the installer also needs updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward editing.
+
+  To get it working you must also add the new language to *contrib/django/djangosettings.py* (or *bin\\djangosettings.py* in the binary Windows installation). Add the new language code and description to the variable LANGUAGES:
 
    ::
 
@@ -29,41 +35,30 @@ interface to your favourite language.
         ('zh-tw', ugettext('Traditional Chinese')),
       )
 
-#. Install an editor for gettext catalogs (.po files).
+**2. Pick an editor**
 
-   Highly recommended is the poedit tool, which can be downloaded from
-   http://www.poedit.net/
+  For the translation process you should install an editor for gettext catalogs (.po files).
 
-#. If you intend only to improve a translation you can edit the language PO files
-   in contrib\django\freppledb\locale\ folder.
+  Highly recommended, and can be downloaded for free, is the `Poedit tool <https://poedit.net/>`_.
 
-#. Copy the directory contrib\django\freppledb\locale\en to a new subdirectory
-   with the name of your language code.
+**3. Start translating**
 
-   The possible language codes can be found on
-   http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
+   Navigate to *contrib/django/freppledb/locale/* go to the folder with the language you intend to translate, and use your editor to open the *django.po* and *djangojs.po* files.
 
-#. Use poedit to open the files django.po and djangojs.po in the directories
-   you just copied. There are around 500 strings to be translated, which should
-   take about half a day's work.
+   In these files you will find all the strings that may be translated.
 
-#. You can now test the translations, after a restart of the web server.
+   .. Hint::
 
-   Update your user preferences to use the new language. If your browser has
-   the new language as the preferred language, this isn't required.
+     Some strings may include HTML tags or Python code, i.e.:
 
-#. The installer also needs updating to recognize the new language.
+       %(title)s for %(entity)s
 
-   The files contrib\installer\parameters.ini and contrib\installer\frepple.nsi
-   need straightforward editing.
+     in this case just copy the entire string and translate "for", resulting in:
 
-#. Interactive modules.
+       %(title)s para %(entity)s
 
-   If you have the more advanced interactive planning modules intalled, these may have
-   their own translation files (ex: ''contrib\\django\\freppledb\\forecast\\static\\forecast\\po" folder).
+**3. Test the translations**
 
-   These files will then need to be compiled into the translation.js file, requiring Grunt
-   and angular-gettext installed.
+   You can now test the translations, after a restart of the web server.
 
-   Optionaly you may send us the updated PO file and we will send you the compiled
-   translation.js file back.
+   Update your user preferences to use the language you translated. If your browser has the language as the preferred language, this isn't required.

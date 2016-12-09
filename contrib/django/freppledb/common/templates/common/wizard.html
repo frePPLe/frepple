@@ -240,7 +240,7 @@
       newrow += (result[0]==result[1]) ? gettext("mark as not done") : gettext("mark as done");
       newrow += '</span></button>';
       newrow += '</td><td>';
-      newrow += '<a class="btn btn-primary btn-xs" href="https://frepple.com/docs/{% version%}/'+list[step].fields.url_doc+'" target="_frepplecom"><span class="text-capitalize">'+gettext("information")+'</span></a>';
+      newrow += '<a class="btn btn-primary btn-xs" href="https://frepple.com/docs/{% version_short %}'+list[step].fields.url_doc+'" target="_frepplecom"><span class="text-capitalize">'+gettext("information")+'</span></a>';
       newrow += '</td><td>';
       if (Object.keys(automaticList).indexOf(list[step].pk) > -1) {
         newrow += '<button class="autoBtn btn btn-primary btn-xs" data-value1="'+list[step].pk+'"><span class="text-capitalize">';

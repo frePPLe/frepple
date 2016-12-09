@@ -2,9 +2,12 @@
 Modeling concepts
 =================
 
-| Concepts as items, locations, customers, demands... don’t need a much of
-  an explanation.
-| Some other concepts need some introduction before you get your hands dirty.
+Before you start your journey to load your data in frePPLe, we need to 
+explain you a few modeling basics.
+
+Concepts as items, locations, customers, demands... don’t need a much of
+an introduction. But, some other concepts need some introduction before you
+get your hands dirty.
 
 **Buffer**
 
@@ -79,3 +82,17 @@ The picture below shows a simple network with 3 levels.
    :alt: Modeling - putting it together
    :width: 100%
    :align: center
+
+Once you will have populate your data in frePPLe, you can verify the 
+correctness of your model by visualizing the network you have defined.
+This is done with the :doc:`../user-interface/plan-analysis/supply-path-where-used`
+report.
+
+You can try to look at the supply path of some sales orders
+in any of the demo models:
+
+ - Open the sales order list from the menu "sales / sales orders"
+ - Select any sales order from the list by clicking on the triangle next
+   to its name.
+ - Select "supply path" from the available tabs.
+ 

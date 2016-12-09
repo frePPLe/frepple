@@ -116,11 +116,11 @@ int main (int argc, char *argv[])
 
     // 2: Read and the model
     logger << "Create the model with callbacks:" << endl;
-    FreppleReadXMLFile("callback.xml",true,false);
+    FreppleReadXMLFile("callback.xml", true, false);
 
     // 3: Plan erase the model
     logger << "Plan the model:" << endl;
-    utils::PythonInterpreter::execute("frepple.solver_mrp(name=\"MRP\", constraints=0).solve()");
+    utils::PythonInterpreter::execute("frepple.solver_mrp(constraints=0).solve()");
 
     // 4: Plan erase the model
     logger << "Erase the model:" << endl;

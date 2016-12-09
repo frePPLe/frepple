@@ -52,7 +52,9 @@ maxlateness    duration          | The maximum delay that can be accepted to sat
                                    a case. 
 minshipment    positive double   | The minimum quantity allowed for the shipment
                                    operationplans that satisfy this demand.
-                                 | The default is 1.
+                                 | If this field is not specified, we compute a default
+                                   value as round_up(quantity / 10). This means that we allow
+                                   the demand to be met only with at most 10 partial deliveries.
 constraints    list of problem   | This field returns the list of reasons why the demand
                                    was planned late or short.
                                  | The field is export-only.

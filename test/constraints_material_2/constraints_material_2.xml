@@ -1,500 +1,506 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<name>Material constraint test model</name>
-	<description>
-		This model tests the solver code in situations where a supplying operation is
-		available.
-		- 1: simple test of a material constraint when the quantity-per of the flows
-		     is different than 1.0
-		- 2: identical to 1, but now including also now enforcing integer quantities
-		- 3: same as 1, but now the make operation consumes from 2 more materials
-		- 4: similar to 3, but with an updated supply picture on the additional
-		     materials. The constraining material is first b, then c and then b again.
-		- 5: based on 1, but with of an alternate producing operation and different
-		     quantities on each alternate.
-		- 6: based on 1, but with a routing producing operation with multiple flows.
-	</description>
-	<current>2009-01-01T00:00:00</current>
-	<buffers>
-	  <buffer name="buffer 1">
-	    <item name="item 1" />
-	    <producing name="make 1" />
-	  </buffer>
-	  <buffer name="buffer 2">
-	    <item name="item 2" />
-	    <producing name="make 2" size_multiple="1" />
-	  </buffer>
-	  <buffer name="buffer 3">
-	    <item name="item 3" />
-	    <producing name="make 3" />
-	  </buffer>
-	  <buffer name="buffer 4">
-	    <item name="item 4" />
-	    <producing name="make 4" />
-	  </buffer>
-	  <buffer name="buffer 5">
-	    <item name="item 5" />
-	    <producing name="make 5" xsi:type="operation_alternate">
-	      <suboperations>
-	        <suboperation>
-	          <operation name="make 5 from 5a" />
-	          <priority>1</priority>
-	        </suboperation>
-	        <suboperation>
-	          <operation name="make 5 from 5b" />
-	          <priority>2</priority>
-	        </suboperation>
-	      </suboperations>
-	    </producing>
-	  </buffer>
-	  <buffer name="buffer 6">
-	    <item name="item 6" />
-	    <producing name="make 6" xsi:type="operation_routing">
-	      <suboperations>
+    <name>Material constraint test model</name>
+    <description>
+        This model tests the solver code in situations where a supplying operation is
+        available.
+        - 1: simple test of a material constraint when the quantity-per of the flows
+             is different than 1.0
+        - 2: identical to 1, but now including also now enforcing integer quantities
+        - 3: same as 1, but now the make operation consumes from 2 more materials
+        - 4: similar to 3, but with an updated supply picture on the additional
+             materials. The constraining material is first b, then c and then b again.
+        - 5: based on 1, but with of an alternate producing operation and different
+             quantities on each alternate.
+        - 6: based on 1, but with a routing producing operation with multiple flows.
+    </description>
+    <current>2009-01-01T00:00:00</current>
+    <buffers>
+      <buffer name="buffer 1">
+        <item name="item 1" />
+        <producing name="make 1" />
+      </buffer>
+      <buffer name="buffer 2">
+        <item name="item 2" />
+        <producing name="make 2" size_multiple="1" />
+      </buffer>
+      <buffer name="buffer 3">
+        <item name="item 3" />
+        <producing name="make 3" />
+      </buffer>
+      <buffer name="buffer 4">
+        <item name="item 4" />
+        <producing name="make 4" />
+      </buffer>
+      <buffer name="buffer 5">
+        <item name="item 5" />
+        <producing name="make 5" xsi:type="operation_alternate">
+          <suboperations>
+            <suboperation>
+              <operation name="make 5 from 5a" />
+              <priority>1</priority>
+            </suboperation>
+            <suboperation>
+              <operation name="make 5 from 5b" />
+              <priority>2</priority>
+            </suboperation>
+          </suboperations>
+        </producing>
+      </buffer>
+      <buffer name="buffer 6">
+        <item name="item 6" />
+        <producing name="make 6" xsi:type="operation_routing">
+          <suboperations>
           <suboperation>
-	          <operation name="make 6 step 1" xsi:type="operation_fixed_time"
-	            duration="P1D" />
+              <operation name="make 6 step 1" xsi:type="operation_fixed_time"
+                duration="P1D" />
           </suboperation>
           <suboperation>
-	          <operation name="make 6 step 2" xsi:type="operation_fixed_time"
-	            duration="P1D" />
+              <operation name="make 6 step 2" xsi:type="operation_fixed_time"
+                duration="P1D" />
           </suboperation>
           <suboperation>
-	          <operation name="make 6 step 3" xsi:type="operation_fixed_time"
-	            duration="P1D" />
+              <operation name="make 6 step 3" xsi:type="operation_fixed_time"
+                duration="P1D" />
           </suboperation>
-	      </suboperations>
-	    </producing>
-	  </buffer>
-	  <buffer name="constraint buffer 1">
-	    <item name="item 1" />
-	  </buffer>
-	  <buffer name="constraint buffer 2">
-	    <item name="item 2" />
-	  </buffer>
-	  <buffer name="constraint buffer 3a">
-	    <item name="item 3" />
-	  </buffer>
-	  <buffer name="constraint buffer 3b">
-	    <item name="item 3" />
-	  </buffer>
-	  <buffer name="constraint buffer 3c">
-	    <item name="item 3" />
-	  </buffer>
-	  <buffer name="constraint buffer 4a">
-	    <item name="item 4" />
-	  </buffer>
-	  <buffer name="constraint buffer 4b">
-	    <item name="item 4" />
-	  </buffer>
-	  <buffer name="constraint buffer 4c">
-	    <item name="item 4" />
-	  </buffer>
-	  <buffer name="constraint buffer 5a">
-	    <item name="item 5" />
-	  </buffer>
-	  <buffer name="constraint buffer 5b">
-	    <item name="item 5" />
-	  </buffer>
-	  <buffer name="constraint buffer 6">
-	    <item name="item 6" />
-	  </buffer>
-	</buffers>
-	<flows>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 1" />
-	    <buffer name="constraint buffer 1" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 1" />
-	    <buffer name="buffer 1" />
-	    <quantity>5</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 1" />
-	    <buffer name="constraint buffer 1" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 1" />
-	    <buffer name="buffer 1" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 2" />
-	    <buffer name="constraint buffer 2" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 2" />
-	    <buffer name="buffer 2" />
-	    <quantity>5</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 2" />
-	    <buffer name="constraint buffer 2" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 2" />
-	    <buffer name="buffer 2" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 3a" />
-	    <buffer name="constraint buffer 3a" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 3b" />
-	    <buffer name="constraint buffer 3b" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 3c" />
-	    <buffer name="constraint buffer 3c" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 3" />
-	    <buffer name="buffer 3" />
-	    <quantity>5</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 3" />
-	    <buffer name="constraint buffer 3a" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 3" />
-	    <buffer name="constraint buffer 3b" />
-	    <quantity>-1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 3" />
-	    <buffer name="constraint buffer 3c" />
-	    <quantity>-3</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 3" />
-	    <buffer name="buffer 3" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 4a" />
-	    <buffer name="constraint buffer 4a" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 4b" />
-	    <buffer name="constraint buffer 4b" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 4c" />
-	    <buffer name="constraint buffer 4c" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 4" />
-	    <buffer name="buffer 4" />
-	    <quantity>5</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 4" />
-	    <buffer name="constraint buffer 4a" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 4" />
-	    <buffer name="constraint buffer 4b" />
-	    <quantity>-1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 4" />
-	    <buffer name="constraint buffer 4c" />
-	    <quantity>-3</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 4" />
-	    <buffer name="buffer 4" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 5a" />
-	    <buffer name="constraint buffer 5a" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 5b" />
-	    <buffer name="constraint buffer 5b" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 5" />
-	    <buffer name="buffer 5" />
-	    <quantity>5</quantity>
-	  </flow>
-	  <!--  Adding this flow makes the model fail: the operation search on the
-	    suboperation is greedily consuming all material on the material 5b for a
-	    maximum promise. When we later check the flows on the top operationplan
-	    all supply of material 5b is gone already...
-	    <flow xsi:type="flow_start">
-	    <operation name="make 5" />
-	    <buffer name="constraint buffer 5b" />
-	    <quantity>-1</quantity>
-	    </flow>
-	  -->
-	  <flow xsi:type="flow_start">
-	    <operation name="make 5 from 5a" />
-	    <buffer name="constraint buffer 5a" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 5 from 5a" />
-	    <buffer name="buffer 5" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 5 from 5b" />
-	    <buffer name="constraint buffer 5b" />
-	    <quantity>-5</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 5" />
-	    <buffer name="buffer 5" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 6" />
-	    <buffer name="constraint buffer 6" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 6" />
-	    <buffer name="buffer 6" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 6 step 1" />
-	    <buffer name="constraint buffer 6" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 6 step 1" />
-	    <buffer name="buffer 6" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 6 step 2" />
-	    <buffer name="buffer 6" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 6 step 3" />
-	    <buffer name="buffer 6" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <!--  Adding this flow makes the model fail: the operation search on the
-	    suboperation is greedily consuming all material on the material 6 for a
-	    maximum promise. When we later check the flows on the top operationplan
-	    all supply of material 6 is gone already...
-	    <flow xsi:type="flow_start">
-	    <operation name="make 6" />
-	    <buffer name="constraint buffer 6" />
-	    <quantity>-1</quantity>
-	    </flow>
-	  -->
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 6" />
-	    <buffer name="buffer 6" />
-	    <quantity>-2</quantity>
-	  </flow>
-	</flows>
-	<!-- DYNAMIC data CASE 1 -->
-	<demands>
-	  <demand name="order prio 1 for item 1">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 1" />
-      <location name="factory" />
-      <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="1001">
+          </suboperations>
+        </producing>
+      </buffer>
+      <buffer name="constraint buffer 1">
+        <item name="item 1" />
+      </buffer>
+      <buffer name="constraint buffer 2">
+        <item name="item 2" />
+      </buffer>
+      <buffer name="constraint buffer 3a">
+        <item name="item 3" />
+      </buffer>
+      <buffer name="constraint buffer 3b">
+        <item name="item 3" />
+      </buffer>
+      <buffer name="constraint buffer 3c">
+        <item name="item 3" />
+      </buffer>
+      <buffer name="constraint buffer 4a">
+        <item name="item 4" />
+      </buffer>
+      <buffer name="constraint buffer 4b">
+        <item name="item 4" />
+      </buffer>
+      <buffer name="constraint buffer 4c">
+        <item name="item 4" />
+      </buffer>
+      <buffer name="constraint buffer 5a">
+        <item name="item 5" />
+      </buffer>
+      <buffer name="constraint buffer 5b">
+        <item name="item 5" />
+      </buffer>
+      <buffer name="constraint buffer 6">
+        <item name="item 6" />
+      </buffer>
+    </buffers>
+    <flows>
+      <flow xsi:type="flow_end">
+        <operation name="supply 1" />
+        <buffer name="constraint buffer 1" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 1" />
+        <buffer name="buffer 1" />
+        <quantity>5</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 1" />
+        <buffer name="constraint buffer 1" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="delivery 1" />
+        <buffer name="buffer 1" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 2" />
+        <buffer name="constraint buffer 2" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 2" />
+        <buffer name="buffer 2" />
+        <quantity>5</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 2" />
+        <buffer name="constraint buffer 2" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="delivery 2" />
+        <buffer name="buffer 2" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 3a" />
+        <buffer name="constraint buffer 3a" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 3b" />
+        <buffer name="constraint buffer 3b" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 3c" />
+        <buffer name="constraint buffer 3c" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 3" />
+        <buffer name="buffer 3" />
+        <quantity>5</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 3" />
+        <buffer name="constraint buffer 3a" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 3" />
+        <buffer name="constraint buffer 3b" />
+        <quantity>-1</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 3" />
+        <buffer name="constraint buffer 3c" />
+        <quantity>-3</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="delivery 3" />
+        <buffer name="buffer 3" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 4a" />
+        <buffer name="constraint buffer 4a" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 4b" />
+        <buffer name="constraint buffer 4b" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 4c" />
+        <buffer name="constraint buffer 4c" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 4" />
+        <buffer name="buffer 4" />
+        <quantity>5</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 4" />
+        <buffer name="constraint buffer 4a" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 4" />
+        <buffer name="constraint buffer 4b" />
+        <quantity>-1</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 4" />
+        <buffer name="constraint buffer 4c" />
+        <quantity>-3</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="delivery 4" />
+        <buffer name="buffer 4" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 5a" />
+        <buffer name="constraint buffer 5a" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 5b" />
+        <buffer name="constraint buffer 5b" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 5" />
+        <buffer name="buffer 5" />
+        <quantity>5</quantity>
+      </flow>
+      <!--  Adding this flow makes the model fail: the operation search on the
+        suboperation is greedily consuming all material on the material 5b for a
+        maximum promise. When we later check the flows on the top operationplan
+        all supply of material 5b is gone already...
+        <flow xsi:type="flow_start">
+        <operation name="make 5" />
+        <buffer name="constraint buffer 5b" />
+        <quantity>-1</quantity>
+        </flow>
+      -->
+      <flow xsi:type="flow_start">
+        <operation name="make 5 from 5a" />
+        <buffer name="constraint buffer 5a" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 5 from 5a" />
+        <buffer name="buffer 5" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 5 from 5b" />
+        <buffer name="constraint buffer 5b" />
+        <quantity>-5</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="delivery 5" />
+        <buffer name="buffer 5" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="supply 6" />
+        <buffer name="constraint buffer 6" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 6" />
+        <buffer name="buffer 6" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_start">
+        <operation name="make 6 step 1" />
+        <buffer name="constraint buffer 6" />
+        <quantity>-2</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 6 step 1" />
+        <buffer name="buffer 6" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 6 step 2" />
+        <buffer name="buffer 6" />
+        <quantity>1</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 6 step 3" />
+        <buffer name="buffer 6" />
+        <quantity>1</quantity>
+      </flow>
+      <!--  Adding this flow makes the model fail: the operation search on the
+        suboperation is greedily consuming all material on the material 6 for a
+        maximum promise. When we later check the flows on the top operationplan
+        all supply of material 6 is gone already...
+        <flow xsi:type="flow_start">
+        <operation name="make 6" />
+        <buffer name="constraint buffer 6" />
+        <quantity>-1</quantity>
+        </flow>
+      -->
+      <flow xsi:type="flow_start">
+        <operation name="delivery 6" />
+        <buffer name="buffer 6" />
+        <quantity>-2</quantity>
+      </flow>
+    </flows>
+    <!-- DYNAMIC data CASE 1 -->
+    <demands>
+      <demand name="order prio 1 for item 1">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 1" />
+        <location name="factory" />
+        <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time" />
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="1001">
       <operation name="supply 1"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>25</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 2 -->
-	<demands>
-	  <demand name="order prio 1 for item 2">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 2" />
-      <location name="factory" />
-      <operation name="delivery 2" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="2001">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>25</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
+    <!-- DYNAMIC data CASE 2 -->
+    <demands>
+      <demand name="order prio 1 for item 2">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 2" />
+        <location name="factory" />
+        <operation name="delivery 2" duration="P1D" xsi:type="operation_fixed_time" />
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="2001">
       <operation name="supply 2"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>25</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 3 -->
-	<demands>
-	  <demand name="order prio 1 for item 3">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 3" />
-      <location name="factory" />
-      <operation name="delivery 3" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="3001">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>25</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
+    <!-- DYNAMIC data CASE 3 -->
+    <demands>
+      <demand name="order prio 1 for item 3">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 3" />
+        <location name="factory" />
+        <operation name="delivery 3" duration="P1D" xsi:type="operation_fixed_time" />
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="3001">
       <operation name="supply 3a"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>25</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="3002">
-	    <operation name="supply 3b"/>
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>25</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="3002">
+        <operation name="supply 3b"/>
       <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>2</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="3003">
+        <end>2009-01-01T00:00:00</end>
+        <quantity>2</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="3003">
       <operation name="supply 3b"/>
-	    <start>2009-01-20T00:00:00</start>
-	    <end>2009-01-20T00:00:00</end>
-	    <quantity>2</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="3004">
+        <start>2009-01-20T00:00:00</start>
+        <end>2009-01-20T00:00:00</end>
+        <quantity>2</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="3004">
       <operation name="supply 3c"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>30</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 4 -->
-	<demands>
-	  <demand name="order prio 1 for item 4">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 4" />
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>30</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
+    <!-- DYNAMIC data CASE 4 -->
+    <demands>
+      <demand name="order prio 1 for item 4">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 4" />
       <location name="factory" />
       <operation name="delivery 4" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="4001">
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="4001">
       <operation name="supply 4a"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>50</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="4002">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>50</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="4002">
       <operation name="supply 4b"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>2</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="4003">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>2</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="4003">
       <operation name="supply 4b"/>
-	    <start>2009-01-20T00:00:00</start>
-	    <end>2009-01-20T00:00:00</end>
-	    <quantity>8</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="4004">
+        <start>2009-01-20T00:00:00</start>
+        <end>2009-01-20T00:00:00</end>
+        <quantity>8</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="4004">
       <operation name="supply 4b"/>
-	    <start>2009-01-22T00:00:00</start>
-	    <end>2009-01-22T00:00:00</end>
-	    <quantity>2</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="4005">
+        <start>2009-01-22T00:00:00</start>
+        <end>2009-01-22T00:00:00</end>
+        <quantity>2</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="4005">
       <operation name="supply 4c"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>12</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="4006">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>12</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="4006">
       <operation name="supply 4c"/>
-	    <start>2009-01-21T00:00:00</start>
-	    <end>2009-01-21T00:00:00</end>
-	    <quantity>21</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 5 -->
-	<demands>
-	  <demand name="order prio 1 for item 5">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 5" />
-      <location name="factory" />
-      <operation name="delivery 5" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="5001">
+        <start>2009-01-21T00:00:00</start>
+        <end>2009-01-21T00:00:00</end>
+        <quantity>21</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
+    <!-- DYNAMIC data CASE 5 -->
+    <demands>
+      <demand name="order prio 1 for item 5">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 5" />
+        <location name="factory" />
+        <operation name="delivery 5" duration="P1D" xsi:type="operation_fixed_time" />
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="5001">
       <operation name="supply 5a"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="5002">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>10</quantity>
+        <status>confirmed</status>
+      </operationplan>
+      <operationplan id="5002">
       <operation name="supply 5b"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>20</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 6 -->
-	<demands>
-	  <demand name="order prio 1 for item 6">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 6" />
-      <location name="factory" />
-      <operation name="delivery 6" duration="P1D" xsi:type="operation_fixed_time" />
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="6001">
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>20</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
+    <!-- DYNAMIC data CASE 6 -->
+    <demands>
+      <demand name="order prio 1 for item 6">
+        <quantity>100</quantity>
+        <minshipment>1</minshipment>
+        <due>2009-01-10T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 6" />
+        <location name="factory" />
+        <operation name="delivery 6" duration="P1D" xsi:type="operation_fixed_time" />
+      </demand>
+    </demands>
+    <operationplans>
+      <operationplan id="6001">
       <operation name="supply 6"/>
-	    <start>2009-01-01T00:00:00</start>
-	    <end>2009-01-01T00:00:00</end>
-	    <quantity>50</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
+        <start>2009-01-01T00:00:00</start>
+        <end>2009-01-01T00:00:00</end>
+        <quantity>50</quantity>
+        <status>confirmed</status>
+      </operationplan>
+    </operationplans>
 
 <?python
 print("CREATING CONSTRAINED PLAN")

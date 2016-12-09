@@ -1,103 +1,130 @@
-BUFFER	component A	1971-01-01T00:00:00	20	20
-BUFFER	component A	2009-01-01T00:00:00	-5	15
-BUFFER	component A	2009-01-17T00:00:00	-5	10
-BUFFER	component A	2009-02-03T00:00:00	-1	9
-BUFFER	component A	2009-02-06T00:00:00	-1	8
-BUFFER	component A	2009-02-13T00:00:00	-1	7
-BUFFER	component A	2009-02-16T00:00:00	-1	6
-BUFFER	component A	2009-03-10T00:00:00	-1	5
-BUFFER	component A	2009-03-13T00:00:00	-1	4
-BUFFER	component A	2009-03-16T00:00:00	-1	3
-BUFFER	component A	2009-04-14T00:00:00	-3	0
-BUFFER	component A	2009-05-31T00:00:00	7	7
-BUFFER	component A	2009-05-31T00:00:00	-7	0
-BUFFER	component A	2009-07-14T00:00:00	3	3
-BUFFER	component A	2009-07-14T00:00:00	-3	0
-BUFFER	component B1	2009-01-02T00:00:00	-5	-5
-BUFFER	component B1	2009-01-18T00:00:00	-5	-10
-BUFFER	component B1	2009-02-04T00:00:00	-1	-11
-BUFFER	component B1	2009-02-07T00:00:00	-1	-12
-BUFFER	component B1	2009-02-14T00:00:00	-1	-13
-BUFFER	component B1	2009-02-17T00:00:00	-1	-14
-BUFFER	component B1	2009-03-11T00:00:00	-1	-15
-BUFFER	component B1	2009-03-14T00:00:00	-1	-16
-BUFFER	component B1	2009-03-17T00:00:00	-1	-17
-BUFFER	component B1	2009-04-15T00:00:00	-3	-20
-BUFFER	component B1	2009-06-01T00:00:00	-7	-27
-BUFFER	component B1	2009-07-15T00:00:00	-3	-30
-BUFFER	component B2	2009-01-02T00:00:00	-5	-5
-BUFFER	component B2	2009-01-18T00:00:00	-5	-10
-BUFFER	component B2	2009-02-04T00:00:00	-1	-11
-BUFFER	component B2	2009-02-07T00:00:00	-1	-12
-BUFFER	component B2	2009-02-14T00:00:00	-1	-13
-BUFFER	component B2	2009-02-17T00:00:00	-1	-14
-BUFFER	component B2	2009-03-11T00:00:00	-1	-15
-BUFFER	component B2	2009-03-14T00:00:00	-1	-16
-BUFFER	component B2	2009-03-17T00:00:00	-1	-17
-BUFFER	component B2	2009-04-15T00:00:00	-3	-20
-BUFFER	component B2	2009-06-01T00:00:00	-7	-27
-BUFFER	component B2	2009-07-15T00:00:00	-3	-30
-BUFFER	component C	2009-01-08T00:00:00	-5	-5
-BUFFER	component C	2009-01-24T00:00:00	-5	-10
-BUFFER	component C	2009-02-08T00:00:00	-1	-11
-BUFFER	component C	2009-02-09T00:00:00	-1	-12
-BUFFER	component C	2009-02-19T00:00:00	-1	-13
-BUFFER	component C	2009-02-19T00:00:00	-1	-14
-BUFFER	component C	2009-03-15T00:00:00	-1	-15
-BUFFER	component C	2009-03-19T00:00:00	-1	-16
-BUFFER	component C	2009-03-19T00:00:00	-1	-17
-BUFFER	component C	2009-04-19T00:00:00	-3	-20
-BUFFER	component C	2009-06-09T00:00:00	-7	-27
-BUFFER	component C	2009-07-19T00:00:00	-3	-30
-BUFFER	component D	1971-01-01T00:00:00	30	30
-BUFFER	component D	2009-01-01T00:00:00	-5	25
-BUFFER	component D	2009-01-17T00:00:00	-5	20
-BUFFER	component D	2009-02-03T00:00:00	-1	19
-BUFFER	component D	2009-02-06T00:00:00	-1	18
-BUFFER	component D	2009-02-13T00:00:00	-1	17
-BUFFER	component D	2009-02-16T00:00:00	-1	16
-BUFFER	component D	2009-03-10T00:00:00	-1	15
-BUFFER	component D	2009-03-13T00:00:00	-1	14
-BUFFER	component D	2009-03-16T00:00:00	-1	13
-BUFFER	component D	2009-04-14T00:00:00	-3	10
-BUFFER	component D	2009-05-31T00:00:00	-7	3
-BUFFER	component D	2009-07-14T00:00:00	-3	0
-BUFFER	product	2009-01-09T00:00:00	5	5
-BUFFER	product	2009-01-09T00:00:00	-5	0
-BUFFER	product	2009-01-25T00:00:00	5	5
-BUFFER	product	2009-01-25T00:00:00	-5	0
-BUFFER	product	2009-02-09T00:00:00	1	1
-BUFFER	product	2009-02-10T00:00:00	1	2
-BUFFER	product	2009-02-10T00:00:00	-1	1
-BUFFER	product	2009-02-10T00:00:00	-1	0
-BUFFER	product	2009-02-20T00:00:00	1	1
-BUFFER	product	2009-02-20T00:00:00	1	2
-BUFFER	product	2009-02-20T00:00:00	-1	1
-BUFFER	product	2009-02-20T00:00:00	-1	0
-BUFFER	product	2009-03-16T00:00:00	1	1
-BUFFER	product	2009-03-20T00:00:00	1	2
-BUFFER	product	2009-03-20T00:00:00	1	3
-BUFFER	product	2009-03-20T00:00:00	-1	2
-BUFFER	product	2009-03-20T00:00:00	-1	1
-BUFFER	product	2009-03-20T00:00:00	-1	0
-BUFFER	product	2009-04-20T00:00:00	3	3
-BUFFER	product	2009-04-20T00:00:00	-3	0
-BUFFER	product	2009-06-10T00:00:00	7	7
-BUFFER	product	2009-06-10T00:00:00	-7	0
-BUFFER	product	2009-07-20T00:00:00	3	3
-BUFFER	product	2009-07-20T00:00:00	-3	0
-BUFFER	subassembly	2009-01-01T00:00:00	-5	-5
-BUFFER	subassembly	2009-01-17T00:00:00	-5	-10
-BUFFER	subassembly	2009-02-03T00:00:00	-1	-11
-BUFFER	subassembly	2009-02-06T00:00:00	-1	-12
-BUFFER	subassembly	2009-02-13T00:00:00	-1	-13
-BUFFER	subassembly	2009-02-16T00:00:00	-1	-14
-BUFFER	subassembly	2009-03-10T00:00:00	-1	-15
-BUFFER	subassembly	2009-03-13T00:00:00	-1	-16
-BUFFER	subassembly	2009-03-16T00:00:00	-1	-17
-BUFFER	subassembly	2009-04-14T00:00:00	-3	-20
-BUFFER	subassembly	2009-05-31T00:00:00	-7	-27
-BUFFER	subassembly	2009-07-14T00:00:00	-3	-30
+BUFFER	component A @ factory	1971-01-01T00:00:00	20	20
+BUFFER	component A @ factory	2009-01-01T00:00:00	-5	15
+BUFFER	component A @ factory	2009-01-17T00:00:00	-5	10
+BUFFER	component A @ factory	2009-02-03T00:00:00	-1	9
+BUFFER	component A @ factory	2009-02-06T00:00:00	-1	8
+BUFFER	component A @ factory	2009-02-13T00:00:00	-1	7
+BUFFER	component A @ factory	2009-02-16T00:00:00	-1	6
+BUFFER	component A @ factory	2009-03-10T00:00:00	-1	5
+BUFFER	component A @ factory	2009-03-13T00:00:00	-1	4
+BUFFER	component A @ factory	2009-03-16T00:00:00	-1	3
+BUFFER	component A @ factory	2009-04-14T00:00:00	-3	0
+BUFFER	component A @ factory	2009-05-31T00:00:00	2	2
+BUFFER	component A @ factory	2009-05-31T00:00:00	-2	0
+BUFFER	component A @ factory	2009-06-04T00:00:00	2	2
+BUFFER	component A @ factory	2009-06-04T00:00:00	-2	0
+BUFFER	component A @ factory	2009-06-08T00:00:00	2	2
+BUFFER	component A @ factory	2009-06-08T00:00:00	-2	0
+BUFFER	component A @ factory	2009-06-13T00:00:00	1	1
+BUFFER	component A @ factory	2009-06-13T00:00:00	-1	0
+BUFFER	component A @ factory	2009-07-14T00:00:00	3	3
+BUFFER	component A @ factory	2009-07-14T00:00:00	-3	0
+BUFFER	component B1 @ factory	2009-01-02T00:00:00	-5	-5
+BUFFER	component B1 @ factory	2009-01-18T00:00:00	-5	-10
+BUFFER	component B1 @ factory	2009-02-04T00:00:00	-1	-11
+BUFFER	component B1 @ factory	2009-02-07T00:00:00	-1	-12
+BUFFER	component B1 @ factory	2009-02-14T00:00:00	-1	-13
+BUFFER	component B1 @ factory	2009-02-17T00:00:00	-1	-14
+BUFFER	component B1 @ factory	2009-03-11T00:00:00	-1	-15
+BUFFER	component B1 @ factory	2009-03-14T00:00:00	-1	-16
+BUFFER	component B1 @ factory	2009-03-17T00:00:00	-1	-17
+BUFFER	component B1 @ factory	2009-04-15T00:00:00	-3	-20
+BUFFER	component B1 @ factory	2009-06-01T00:00:00	-2	-22
+BUFFER	component B1 @ factory	2009-06-05T00:00:00	-2	-24
+BUFFER	component B1 @ factory	2009-06-09T00:00:00	-2	-26
+BUFFER	component B1 @ factory	2009-06-14T00:00:00	-1	-27
+BUFFER	component B1 @ factory	2009-07-15T00:00:00	-3	-30
+BUFFER	component B2 @ factory	2009-01-02T00:00:00	-5	-5
+BUFFER	component B2 @ factory	2009-01-18T00:00:00	-5	-10
+BUFFER	component B2 @ factory	2009-02-04T00:00:00	-1	-11
+BUFFER	component B2 @ factory	2009-02-07T00:00:00	-1	-12
+BUFFER	component B2 @ factory	2009-02-14T00:00:00	-1	-13
+BUFFER	component B2 @ factory	2009-02-17T00:00:00	-1	-14
+BUFFER	component B2 @ factory	2009-03-11T00:00:00	-1	-15
+BUFFER	component B2 @ factory	2009-03-14T00:00:00	-1	-16
+BUFFER	component B2 @ factory	2009-03-17T00:00:00	-1	-17
+BUFFER	component B2 @ factory	2009-04-15T00:00:00	-3	-20
+BUFFER	component B2 @ factory	2009-06-01T00:00:00	-2	-22
+BUFFER	component B2 @ factory	2009-06-05T00:00:00	-2	-24
+BUFFER	component B2 @ factory	2009-06-09T00:00:00	-2	-26
+BUFFER	component B2 @ factory	2009-06-14T00:00:00	-1	-27
+BUFFER	component B2 @ factory	2009-07-15T00:00:00	-3	-30
+BUFFER	component C @ factory	2009-01-08T00:00:00	-5	-5
+BUFFER	component C @ factory	2009-01-24T00:00:00	-5	-10
+BUFFER	component C @ factory	2009-02-08T00:00:00	-1	-11
+BUFFER	component C @ factory	2009-02-09T00:00:00	-1	-12
+BUFFER	component C @ factory	2009-02-19T00:00:00	-1	-13
+BUFFER	component C @ factory	2009-02-19T00:00:00	-1	-14
+BUFFER	component C @ factory	2009-03-15T00:00:00	-1	-15
+BUFFER	component C @ factory	2009-03-19T00:00:00	-1	-16
+BUFFER	component C @ factory	2009-03-19T00:00:00	-1	-17
+BUFFER	component C @ factory	2009-04-19T00:00:00	-3	-20
+BUFFER	component C @ factory	2009-06-04T00:00:00	-2	-22
+BUFFER	component C @ factory	2009-06-08T00:00:00	-2	-24
+BUFFER	component C @ factory	2009-06-12T00:00:00	-2	-26
+BUFFER	component C @ factory	2009-06-16T00:00:00	-1	-27
+BUFFER	component C @ factory	2009-07-19T00:00:00	-3	-30
+BUFFER	component D @ factory	1971-01-01T00:00:00	30	30
+BUFFER	component D @ factory	2009-01-01T00:00:00	-5	25
+BUFFER	component D @ factory	2009-01-17T00:00:00	-5	20
+BUFFER	component D @ factory	2009-02-03T00:00:00	-1	19
+BUFFER	component D @ factory	2009-02-06T00:00:00	-1	18
+BUFFER	component D @ factory	2009-02-13T00:00:00	-1	17
+BUFFER	component D @ factory	2009-02-16T00:00:00	-1	16
+BUFFER	component D @ factory	2009-03-10T00:00:00	-1	15
+BUFFER	component D @ factory	2009-03-13T00:00:00	-1	14
+BUFFER	component D @ factory	2009-03-16T00:00:00	-1	13
+BUFFER	component D @ factory	2009-04-14T00:00:00	-3	10
+BUFFER	component D @ factory	2009-05-31T00:00:00	-2	8
+BUFFER	component D @ factory	2009-06-04T00:00:00	-2	6
+BUFFER	component D @ factory	2009-06-08T00:00:00	-2	4
+BUFFER	component D @ factory	2009-06-13T00:00:00	-1	3
+BUFFER	component D @ factory	2009-07-14T00:00:00	-3	0
+BUFFER	product @ factory	2009-01-09T00:00:00	5	5
+BUFFER	product @ factory	2009-01-09T00:00:00	-5	0
+BUFFER	product @ factory	2009-01-25T00:00:00	5	5
+BUFFER	product @ factory	2009-01-25T00:00:00	-5	0
+BUFFER	product @ factory	2009-02-09T00:00:00	1	1
+BUFFER	product @ factory	2009-02-10T00:00:00	1	2
+BUFFER	product @ factory	2009-02-10T00:00:00	-1	1
+BUFFER	product @ factory	2009-02-10T00:00:00	-1	0
+BUFFER	product @ factory	2009-02-20T00:00:00	1	1
+BUFFER	product @ factory	2009-02-20T00:00:00	1	2
+BUFFER	product @ factory	2009-02-20T00:00:00	-1	1
+BUFFER	product @ factory	2009-02-20T00:00:00	-1	0
+BUFFER	product @ factory	2009-03-16T00:00:00	1	1
+BUFFER	product @ factory	2009-03-20T00:00:00	1	2
+BUFFER	product @ factory	2009-03-20T00:00:00	1	3
+BUFFER	product @ factory	2009-03-20T00:00:00	-1	2
+BUFFER	product @ factory	2009-03-20T00:00:00	-1	1
+BUFFER	product @ factory	2009-03-20T00:00:00	-1	0
+BUFFER	product @ factory	2009-04-20T00:00:00	3	3
+BUFFER	product @ factory	2009-04-20T00:00:00	-3	0
+BUFFER	product @ factory	2009-06-05T00:00:00	2	2
+BUFFER	product @ factory	2009-06-05T00:00:00	-2	0
+BUFFER	product @ factory	2009-06-09T00:00:00	2	2
+BUFFER	product @ factory	2009-06-09T00:00:00	-2	0
+BUFFER	product @ factory	2009-06-13T00:00:00	2	2
+BUFFER	product @ factory	2009-06-13T00:00:00	-2	0
+BUFFER	product @ factory	2009-06-17T00:00:00	1	1
+BUFFER	product @ factory	2009-06-17T00:00:00	-1	0
+BUFFER	product @ factory	2009-07-20T00:00:00	3	3
+BUFFER	product @ factory	2009-07-20T00:00:00	-3	0
+BUFFER	subassembly @ factory	2009-01-01T00:00:00	-5	-5
+BUFFER	subassembly @ factory	2009-01-17T00:00:00	-5	-10
+BUFFER	subassembly @ factory	2009-02-03T00:00:00	-1	-11
+BUFFER	subassembly @ factory	2009-02-06T00:00:00	-1	-12
+BUFFER	subassembly @ factory	2009-02-13T00:00:00	-1	-13
+BUFFER	subassembly @ factory	2009-02-16T00:00:00	-1	-14
+BUFFER	subassembly @ factory	2009-03-10T00:00:00	-1	-15
+BUFFER	subassembly @ factory	2009-03-13T00:00:00	-1	-16
+BUFFER	subassembly @ factory	2009-03-16T00:00:00	-1	-17
+BUFFER	subassembly @ factory	2009-04-14T00:00:00	-3	-20
+BUFFER	subassembly @ factory	2009-05-31T00:00:00	-2	-22
+BUFFER	subassembly @ factory	2009-06-04T00:00:00	-2	-24
+BUFFER	subassembly @ factory	2009-06-08T00:00:00	-2	-26
+BUFFER	subassembly @ factory	2009-06-13T00:00:00	-1	-27
+BUFFER	subassembly @ factory	2009-07-14T00:00:00	-3	-30
 DEMAND	order 1	2009-01-25T00:00:00	5
 DEMAND	order 2	2009-01-09T00:00:00	5
 DEMAND	order 3a	2009-02-10T00:00:00	1
@@ -107,7 +134,10 @@ DEMAND	order 4b	2009-02-20T00:00:00	1
 DEMAND	order 5a	2009-03-20T00:00:00	1
 DEMAND	order 5b	2009-03-20T00:00:00	1
 DEMAND	order 5c	2009-03-20T00:00:00	1
-DEMAND	order 6	2009-06-10T00:00:00	7
+DEMAND	order 6	2009-06-17T00:00:00	1
+DEMAND	order 6	2009-06-13T00:00:00	2
+DEMAND	order 6	2009-06-09T00:00:00	2
+DEMAND	order 6	2009-06-05T00:00:00	2
 DEMAND	order 6	2009-04-20T00:00:00	3
 DEMAND	order 7	2009-07-20T00:00:00	3
 RESOURCE	assemble	2009-01-01T00:00:00	1	1
@@ -131,7 +161,13 @@ RESOURCE	assemble	2009-03-20T00:00:00	-1	0
 RESOURCE	assemble	2009-04-14T00:00:00	1	1
 RESOURCE	assemble	2009-04-20T00:00:00	-1	0
 RESOURCE	assemble	2009-05-31T00:00:00	1	1
-RESOURCE	assemble	2009-06-10T00:00:00	-1	0
+RESOURCE	assemble	2009-06-04T00:00:00	1	2
+RESOURCE	assemble	2009-06-05T00:00:00	-1	1
+RESOURCE	assemble	2009-06-08T00:00:00	1	2
+RESOURCE	assemble	2009-06-09T00:00:00	-1	1
+RESOURCE	assemble	2009-06-13T00:00:00	1	2
+RESOURCE	assemble	2009-06-13T00:00:00	-1	1
+RESOURCE	assemble	2009-06-17T00:00:00	-1	0
 RESOURCE	assemble	2009-07-14T00:00:00	1	1
 RESOURCE	assemble	2009-07-20T00:00:00	-1	0
 RESOURCE	operator A & B	2009-01-01T00:00:00	1	1
@@ -177,7 +213,19 @@ RESOURCE	operator A & B	2009-04-19T00:00:00	-1	0
 RESOURCE	operator A & B	2009-05-31T00:00:00	1	1
 RESOURCE	operator A & B	2009-06-01T00:00:00	1	2
 RESOURCE	operator A & B	2009-06-01T00:00:00	-1	1
-RESOURCE	operator A & B	2009-06-09T00:00:00	-1	0
+RESOURCE	operator A & B	2009-06-04T00:00:00	1	2
+RESOURCE	operator A & B	2009-06-04T00:00:00	-1	1
+RESOURCE	operator A & B	2009-06-05T00:00:00	1	2
+RESOURCE	operator A & B	2009-06-05T00:00:00	-1	1
+RESOURCE	operator A & B	2009-06-08T00:00:00	1	2
+RESOURCE	operator A & B	2009-06-08T00:00:00	-1	1
+RESOURCE	operator A & B	2009-06-09T00:00:00	1	2
+RESOURCE	operator A & B	2009-06-09T00:00:00	-1	1
+RESOURCE	operator A & B	2009-06-12T00:00:00	-1	0
+RESOURCE	operator A & B	2009-06-13T00:00:00	1	1
+RESOURCE	operator A & B	2009-06-14T00:00:00	1	2
+RESOURCE	operator A & B	2009-06-14T00:00:00	-1	1
+RESOURCE	operator A & B	2009-06-16T00:00:00	-1	0
 RESOURCE	operator A & B	2009-07-14T00:00:00	1	1
 RESOURCE	operator A & B	2009-07-15T00:00:00	1	2
 RESOURCE	operator A & B	2009-07-15T00:00:00	-1	1
@@ -202,24 +250,21 @@ RESOURCE	operator C	2009-03-20T00:00:00	-1	1
 RESOURCE	operator C	2009-03-20T00:00:00	-1	0
 RESOURCE	operator C	2009-04-19T00:00:00	1	1
 RESOURCE	operator C	2009-04-20T00:00:00	-1	0
-RESOURCE	operator C	2009-06-09T00:00:00	1	1
-RESOURCE	operator C	2009-06-10T00:00:00	-1	0
+RESOURCE	operator C	2009-06-04T00:00:00	1	1
+RESOURCE	operator C	2009-06-05T00:00:00	-1	0
+RESOURCE	operator C	2009-06-08T00:00:00	1	1
+RESOURCE	operator C	2009-06-09T00:00:00	-1	0
+RESOURCE	operator C	2009-06-12T00:00:00	1	1
+RESOURCE	operator C	2009-06-13T00:00:00	-1	0
+RESOURCE	operator C	2009-06-16T00:00:00	1	1
+RESOURCE	operator C	2009-06-17T00:00:00	-1	0
 RESOURCE	operator C	2009-07-19T00:00:00	1	1
 RESOURCE	operator C	2009-07-20T00:00:00	-1	0
-OPERATION	Deliver product	2009-01-09T00:00:00	2009-01-09T00:00:00	5
-OPERATION	Deliver product	2009-01-25T00:00:00	2009-01-25T00:00:00	5
-OPERATION	Deliver product	2009-02-10T00:00:00	2009-02-10T00:00:00	1
-OPERATION	Deliver product	2009-02-10T00:00:00	2009-02-10T00:00:00	1
-OPERATION	Deliver product	2009-02-20T00:00:00	2009-02-20T00:00:00	1
-OPERATION	Deliver product	2009-02-20T00:00:00	2009-02-20T00:00:00	1
-OPERATION	Deliver product	2009-03-20T00:00:00	2009-03-20T00:00:00	1
-OPERATION	Deliver product	2009-03-20T00:00:00	2009-03-20T00:00:00	1
-OPERATION	Deliver product	2009-03-20T00:00:00	2009-03-20T00:00:00	1
-OPERATION	Deliver product	2009-04-20T00:00:00	2009-04-20T00:00:00	3
-OPERATION	Deliver product	2009-06-10T00:00:00	2009-06-10T00:00:00	7
-OPERATION	Deliver product	2009-07-20T00:00:00	2009-07-20T00:00:00	3
-OPERATION	Procure component A	2009-01-01T00:00:00	2009-05-31T00:00:00	7
-OPERATION	Procure component A	2009-02-14T00:00:00	2009-07-14T00:00:00	3
+OPERATION	Purchase component A @ factory	2009-01-01T00:00:00	2009-05-31T00:00:00	2
+OPERATION	Purchase component A @ factory	2009-01-05T00:00:00	2009-06-04T00:00:00	2
+OPERATION	Purchase component A @ factory	2009-01-09T00:00:00	2009-06-08T00:00:00	2
+OPERATION	Purchase component A @ factory	2009-01-14T00:00:00	2009-06-13T00:00:00	1
+OPERATION	Purchase component A @ factory	2009-02-14T00:00:00	2009-07-14T00:00:00	3
 OPERATION	assemble product	2009-01-01T00:00:00	2009-01-09T00:00:00	5
 OPERATION	assemble product	2009-01-17T00:00:00	2009-01-25T00:00:00	5
 OPERATION	assemble product	2009-02-03T00:00:00	2009-02-09T00:00:00	1
@@ -230,7 +275,10 @@ OPERATION	assemble product	2009-03-10T00:00:00	2009-03-16T00:00:00	1
 OPERATION	assemble product	2009-03-13T00:00:00	2009-03-20T00:00:00	1
 OPERATION	assemble product	2009-03-16T00:00:00	2009-03-20T00:00:00	1
 OPERATION	assemble product	2009-04-14T00:00:00	2009-04-20T00:00:00	3
-OPERATION	assemble product	2009-05-31T00:00:00	2009-06-10T00:00:00	7
+OPERATION	assemble product	2009-05-31T00:00:00	2009-06-05T00:00:00	2
+OPERATION	assemble product	2009-06-04T00:00:00	2009-06-09T00:00:00	2
+OPERATION	assemble product	2009-06-08T00:00:00	2009-06-13T00:00:00	2
+OPERATION	assemble product	2009-06-13T00:00:00	2009-06-17T00:00:00	1
 OPERATION	assemble product	2009-07-14T00:00:00	2009-07-20T00:00:00	3
 OPERATION	assemble product step A	2009-01-01T00:00:00	2009-01-02T00:00:00	5
 OPERATION	assemble product step A	2009-01-17T00:00:00	2009-01-18T00:00:00	5
@@ -242,7 +290,10 @@ OPERATION	assemble product step A	2009-03-10T00:00:00	2009-03-11T00:00:00	1
 OPERATION	assemble product step A	2009-03-13T00:00:00	2009-03-14T00:00:00	1
 OPERATION	assemble product step A	2009-03-16T00:00:00	2009-03-17T00:00:00	1
 OPERATION	assemble product step A	2009-04-14T00:00:00	2009-04-15T00:00:00	3
-OPERATION	assemble product step A	2009-05-31T00:00:00	2009-06-01T00:00:00	7
+OPERATION	assemble product step A	2009-05-31T00:00:00	2009-06-01T00:00:00	2
+OPERATION	assemble product step A	2009-06-04T00:00:00	2009-06-05T00:00:00	2
+OPERATION	assemble product step A	2009-06-08T00:00:00	2009-06-09T00:00:00	2
+OPERATION	assemble product step A	2009-06-13T00:00:00	2009-06-14T00:00:00	1
 OPERATION	assemble product step A	2009-07-14T00:00:00	2009-07-15T00:00:00	3
 OPERATION	assemble product step B	2009-01-02T00:00:00	2009-01-08T00:00:00	5
 OPERATION	assemble product step B	2009-01-18T00:00:00	2009-01-24T00:00:00	5
@@ -254,7 +305,10 @@ OPERATION	assemble product step B	2009-03-11T00:00:00	2009-03-13T00:00:00	1
 OPERATION	assemble product step B	2009-03-14T00:00:00	2009-03-16T00:00:00	1
 OPERATION	assemble product step B	2009-03-17T00:00:00	2009-03-19T00:00:00	1
 OPERATION	assemble product step B	2009-04-15T00:00:00	2009-04-19T00:00:00	3
-OPERATION	assemble product step B	2009-06-01T00:00:00	2009-06-09T00:00:00	7
+OPERATION	assemble product step B	2009-06-01T00:00:00	2009-06-04T00:00:00	2
+OPERATION	assemble product step B	2009-06-05T00:00:00	2009-06-08T00:00:00	2
+OPERATION	assemble product step B	2009-06-09T00:00:00	2009-06-12T00:00:00	2
+OPERATION	assemble product step B	2009-06-14T00:00:00	2009-06-16T00:00:00	1
 OPERATION	assemble product step B	2009-07-15T00:00:00	2009-07-19T00:00:00	3
 OPERATION	assemble product step C	2009-01-08T00:00:00	2009-01-09T00:00:00	5
 OPERATION	assemble product step C	2009-01-24T00:00:00	2009-01-25T00:00:00	5
@@ -266,15 +320,21 @@ OPERATION	assemble product step C	2009-03-15T00:00:00	2009-03-16T00:00:00	1
 OPERATION	assemble product step C	2009-03-19T00:00:00	2009-03-20T00:00:00	1
 OPERATION	assemble product step C	2009-03-19T00:00:00	2009-03-20T00:00:00	1
 OPERATION	assemble product step C	2009-04-19T00:00:00	2009-04-20T00:00:00	3
-OPERATION	assemble product step C	2009-06-09T00:00:00	2009-06-10T00:00:00	7
+OPERATION	assemble product step C	2009-06-04T00:00:00	2009-06-05T00:00:00	2
+OPERATION	assemble product step C	2009-06-08T00:00:00	2009-06-09T00:00:00	2
+OPERATION	assemble product step C	2009-06-12T00:00:00	2009-06-13T00:00:00	2
+OPERATION	assemble product step C	2009-06-16T00:00:00	2009-06-17T00:00:00	1
 OPERATION	assemble product step C	2009-07-19T00:00:00	2009-07-20T00:00:00	3
-PROBLEM	material excess	Buffer 'component A' has material excess of 20	1971-01-01T00:00:00 / 2009-04-14T00:00:00
-PROBLEM	material excess	Buffer 'component D' has material excess of 30	1971-01-01T00:00:00 / 2009-07-14T00:00:00
-PROBLEM	material excess	Buffer 'product' has material excess of 1	2009-02-09T00:00:00 / 2009-02-10T00:00:00
-PROBLEM	material excess	Buffer 'product' has material excess of 1	2009-03-16T00:00:00 / 2009-03-20T00:00:00
+PROBLEM	material excess	Buffer 'component A @ factory' has material excess of 20	1971-01-01T00:00:00 / 2009-04-14T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'component D @ factory' has material excess of 30	1971-01-01T00:00:00 / 2009-07-14T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'component D @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'product @ factory' has material excess of 1	2009-02-09T00:00:00 / 2009-02-10T00:00:00
+PROBLEM	material excess	Buffer 'product @ factory' has material excess of 1	2009-03-16T00:00:00 / 2009-03-20T00:00:00
 PROBLEM	late	Demand 'order 2' planned P4D after its due date	2009-01-05T00:00:00 / 2009-01-09T00:00:00
-PROBLEM	late	Demand 'order 6' planned P51D after its due date	2009-04-20T00:00:00 / 2009-06-10T00:00:00
+PROBLEM	late	Demand 'order 6' planned P58D after its due date	2009-04-20T00:00:00 / 2009-06-17T00:00:00
 PROBLEM	short	Demand 'order 7' planned 7 units short	2009-07-20T00:00:00 / 2009-07-20T00:00:00
 DEMAND CONSTRAINT	order 2	Operation 'assemble product step A' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
-DEMAND CONSTRAINT	order 6	Buffer 'component A' has material shortage of 7	2009-04-07T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order 7	Buffer 'component D' has material shortage of 7	2009-07-07T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order 6	Buffer 'component A @ factory' has material shortage of 7	2009-04-07T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order 6	Resource 'operator A & B' has capacity shortage of 1	2009-06-03T00:00:00 / 2009-06-04T00:00:00	
+DEMAND CONSTRAINT	order 7	Buffer 'component D @ factory' has material shortage of 7	2009-07-07T00:00:00 / 2030-12-31T00:00:00	

@@ -21,9 +21,9 @@
     <calendar name="Capacity">
       <default>0</default>
       <buckets>
-				<!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
-				<bucket start="2013-12-01T00:00:00" end="2014-06-30T00:00:00"
-				  days="62" value="20" />
+        <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+        <bucket start="2013-12-01T00:00:00" end="2014-06-30T00:00:00"
+          days="62" value="20" />
       </buckets>
     </calendar>
   </calendars>
@@ -63,6 +63,7 @@
   <demands>
     <demand name="1. order">
       <quantity>120</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
@@ -106,6 +107,7 @@
   <demands>
     <demand name="2. order 01">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -113,6 +115,7 @@
     </demand>
     <demand name="2. order 02">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -120,6 +123,7 @@
     </demand>
     <demand name="2. order 03">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -127,6 +131,7 @@
     </demand>
     <demand name="2. order 04">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -134,6 +139,7 @@
     </demand>
     <demand name="2. order 05">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -141,6 +147,7 @@
     </demand>
     <demand name="2. order 06">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -148,6 +155,7 @@
     </demand>
     <demand name="2. order 07">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -155,6 +163,7 @@
     </demand>
     <demand name="2. order 08">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -162,6 +171,7 @@
     </demand>
     <demand name="2. order 09">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -169,6 +179,7 @@
     </demand>
     <demand name="2. order 10">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -176,6 +187,7 @@
     </demand>
     <demand name="2. order 11">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -183,6 +195,7 @@
     </demand>
     <demand name="2. order 12">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -190,6 +203,7 @@
     </demand>
     <demand name="2. order 13">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -197,6 +211,7 @@
     </demand>
     <demand name="2. order 14">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -204,6 +219,7 @@
     </demand>
     <demand name="2. order 15">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -211,6 +227,7 @@
     </demand>
     <demand name="2. order 16">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -218,6 +235,7 @@
     </demand>
     <demand name="2. order 17">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>2</priority>
       <item name="2. end item" />
@@ -233,9 +251,9 @@
       <calendar name="3. Working hours">
       <default>0</default>
       <buckets>
-				<!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
-				<bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
-				  days="28" value="1" />
+        <!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+        <bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
+          days="28" value="1" />
       </buckets>
     </calendar>
   </calendars>
@@ -277,6 +295,7 @@
   <demands>
     <demand name="3. order 01">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -284,6 +303,7 @@
     </demand>
     <demand name="3. order 02">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -291,6 +311,7 @@
     </demand>
     <demand name="3. order 03">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -298,6 +319,7 @@
     </demand>
     <demand name="3. order 04">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -305,6 +327,7 @@
     </demand>
     <demand name="3. order 05">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -312,6 +335,7 @@
     </demand>
     <demand name="3. order 06">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -319,6 +343,7 @@
     </demand>
     <demand name="3. order 07">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -326,6 +351,7 @@
     </demand>
     <demand name="3. order 08">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -333,6 +359,7 @@
     </demand>
     <demand name="3. order 09">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -340,6 +367,7 @@
     </demand>
     <demand name="3. order 10">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -347,6 +375,7 @@
     </demand>
     <demand name="3. order 11">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -354,6 +383,7 @@
     </demand>
     <demand name="3. order 12">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -361,6 +391,7 @@
     </demand>
     <demand name="3. order 13">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -368,6 +399,7 @@
     </demand>
     <demand name="3. order 14">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -375,6 +407,7 @@
     </demand>
     <demand name="3. order 15">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -382,6 +415,7 @@
     </demand>
     <demand name="3. order 16">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -389,6 +423,7 @@
     </demand>
     <demand name="3. order 17">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>3</priority>
       <item name="3. end item" />
@@ -408,13 +443,13 @@
       <default>0</default>
       <buckets>
         <!-- Holiday period. -->
-				<bucket start="2014-02-16T00:00:00" end="2014-02-22T00:00:00"
-				  value="0" priority="1" />
-				<bucket start="2014-03-09T00:00:00" end="2014-03-15T00:00:00"
-				  value="0" priority="1" />
-				<!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
-				<bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
-				  days="28" value="1" priority="2" />
+        <bucket start="2014-02-16T00:00:00" end="2014-02-22T00:00:00"
+          value="0" priority="1" />
+        <bucket start="2014-03-09T00:00:00" end="2014-03-15T00:00:00"
+          value="0" priority="1" />
+        <!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+        <bucket start="2000-12-01T00:00:00" end="2020-06-30T00:00:00"
+          days="28" value="1" priority="2" />
       </buckets>
     </calendar>
   </calendars>
@@ -456,6 +491,7 @@
   <demands>
     <demand name="4. order 01">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -463,6 +499,7 @@
     </demand>
     <demand name="4. order 02">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -470,6 +507,7 @@
     </demand>
     <demand name="4. order 03">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -477,6 +515,7 @@
     </demand>
     <demand name="4. order 04">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -484,6 +523,7 @@
     </demand>
     <demand name="4. order 05">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -491,6 +531,7 @@
     </demand>
     <demand name="4. order 06">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -498,6 +539,7 @@
     </demand>
     <demand name="4. order 07">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -505,6 +547,7 @@
     </demand>
     <demand name="4. order 08">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -512,6 +555,7 @@
     </demand>
     <demand name="4. order 09">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -519,6 +563,7 @@
     </demand>
     <demand name="4. order 10">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -526,6 +571,7 @@
     </demand>
     <demand name="4. order 11">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -533,6 +579,7 @@
     </demand>
     <demand name="4. order 12">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -540,6 +587,7 @@
     </demand>
     <demand name="4. order 13">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -547,6 +595,7 @@
     </demand>
     <demand name="4. order 14">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -554,6 +603,7 @@
     </demand>
     <demand name="4. order 15">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -561,6 +611,7 @@
     </demand>
     <demand name="4. order 16">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />
@@ -568,6 +619,7 @@
     </demand>
     <demand name="4. order 17">
       <quantity>7</quantity>
+      <minshipment>1</minshipment>
       <due>2014-03-06T00:00:00</due>
       <priority>4</priority>
       <item name="4. end item" />

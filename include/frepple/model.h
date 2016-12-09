@@ -7173,11 +7173,17 @@ class Demand
 
     /** Return the minimum shipment quantity allowed in satisfying this
       * demand.<br>
-      * The default value is 1.
+      * The default value is -1.0. In this case we apply a minimum shipment
+      * such that we have at most "DefaultMaxShipments" partial deliveries.
       */
     double getMinShipment() const
-    {
-      return minShipment;
+    {      
+      if (minShipment >= 0.0)
+        // Explicitly set value of the field
+        return minShipment;
+      else
+        // Automatically suggest a value
+        return ceil(getQuantity() / DefaultMaxShipments);
     }
 
     /** Updates the maximum allowed lateness for this demand.<br>
@@ -7186,7 +7192,7 @@ class Demand
       */
     virtual void setMinShipment(double m)
     {
-      if (m < 0.0)
+      if (m < 0.0 && m != -1.0)
         throw DataException("The minumum demand shipment quantity must be positive");
       minShipment = m;
     }
@@ -7254,6 +7260,12 @@ class Demand
   private:
     static OperationFixedTime *uninitializedDelivery;
 
+    /** Maximum number of partial shipments we use by default.
+      * Unless the user specified a value for the minshipments field, we use
+      * this default to compute a minshipment value.
+      */
+    static const int DefaultMaxShipments = 10;
+
     /** Requested item. */
     Item *it = nullptr;
 
@@ -7282,7 +7294,7 @@ class Demand
     Duration maxLateness = Duration::MAX;
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
-    double minShipment = 1.0;
+    double minShipment = -1.0;
 
     /** Hide this demand or not. */
     bool hidden = false;

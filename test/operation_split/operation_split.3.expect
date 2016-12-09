@@ -910,6 +910,7 @@
 			</location>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item 2</name>
@@ -922,6 +923,7 @@
 			</location>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>20</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item 3</name>
@@ -934,6 +936,7 @@
 			</location>
 			<due>2014-07-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item 4</name>
@@ -946,6 +949,7 @@
 			</location>
 			<due>2014-01-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>20</minshipment>
 		</demand>
 		<demand>
 			<name>order 2 for item 3</name>
@@ -958,6 +962,7 @@
 			</location>
 			<due>2014-08-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 3 for item 3</name>
@@ -970,6 +975,7 @@
 			</location>
 			<due>2014-09-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 4 for item 3</name>
@@ -982,6 +988,7 @@
 			</location>
 			<due>2014-10-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 5 for item 3</name>
@@ -994,6 +1001,7 @@
 			</location>
 			<due>2014-11-01T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 	</demands>
 	<operationplans>

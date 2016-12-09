@@ -107,6 +107,7 @@
 			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>2</minshipment>
 		</demand>
 		<demand>
 			<name>2. order</name>
@@ -119,6 +120,7 @@
 			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>3. order</name>
@@ -131,6 +133,7 @@
 			</location>
 			<due>2013-03-06T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>4</minshipment>
 		</demand>
 	</demands>
 	<skills>

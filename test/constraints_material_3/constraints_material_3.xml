@@ -1,243 +1,247 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<name>Material constraint test model</name>
-	<description>
-		This model tests the buffer solver code in situations where the minimum onhand
-		limit is varying.
-		- 1: Scenario of a constant, non-zero limit.
-		- 2: Same as 1, but now the supply is limited. The inventory target can't be
-		     reached and all supply is used to satisfy demand.
-		- 3: Same as 1, but with minimum target varying DEcreasing over time.
-		- 4: Same as 3, but with minimum target varying INcreasing over time.
-	</description>
-	<current>2009-01-01T00:00:00</current>
-	<buffers>
-	  <buffer name="buffer 1">
-	    <item name="item 1" />
-	    <producing name="make 1" />
-	    <minimum>4</minimum>
-	    <onhand>10</onhand>
-	  </buffer>
-	  <buffer name="constraint buffer 1">
-	    <item name="item 1" />
-	  </buffer>
-	  <buffer name="buffer 2">
-	    <item name="item 2" />
-	    <producing name="make 2" />
-	    <minimum>4</minimum>
-	    <onhand>10</onhand>
-	  </buffer>
-	  <buffer name="constraint buffer 2">
-	    <item name="item 2" />
-	  </buffer>
-	  <buffer name="buffer 3">
-	    <item name="item 3" />
-	    <producing name="make 3" />
-	    <minimum_calendar name="min inv for buffer 3">
-	      <buckets>
-	        <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
-	        <bucket start="2009-01-12T00:00:00" value="2" priority="1"/>
-	      </buckets>
-	    </minimum_calendar>
-	    <onhand>10</onhand>
-	  </buffer>
-	  <buffer name="constraint buffer 3">
-	    <item name="item 3" />
-	  </buffer>
-	  <buffer name="buffer 4">
-	    <item name="item 4" />
-	    <producing name="make 4" />
-	    <minimum_calendar name="min inv for buffer 4">
-	      <buckets>
-	        <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
-	        <bucket start="2009-01-12T00:00:00" value="6" priority="1"/>
-	      </buckets>
-	    </minimum_calendar>
-	    <onhand>10</onhand>
-	  </buffer>
-	  <buffer name="constraint buffer 4">
-	    <item name="item 4" />
-	  </buffer>
-	</buffers>
-	<flows>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 1" />
-	    <buffer name="constraint buffer 1" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 1" />
-	    <buffer name="buffer 1" />
-	    <quantity>2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 1" />
-	    <buffer name="constraint buffer 1" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 1" />
-	    <buffer name="buffer 1" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 2" />
-	    <buffer name="constraint buffer 2" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 2" />
-	    <buffer name="buffer 2" />
-	    <quantity>2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 2" />
-	    <buffer name="constraint buffer 2" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 2" />
-	    <buffer name="buffer 2" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 3" />
-	    <buffer name="constraint buffer 3" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 3" />
-	    <buffer name="buffer 3" />
-	    <quantity>2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 3" />
-	    <buffer name="constraint buffer 3" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 3" />
-	    <buffer name="buffer 3" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="supply 4" />
-	    <buffer name="constraint buffer 4" />
-	    <quantity>1</quantity>
-	  </flow>
-	  <flow xsi:type="flow_end">
-	    <operation name="make 4" />
-	    <buffer name="buffer 4" />
-	    <quantity>2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="make 4" />
-	    <buffer name="constraint buffer 4" />
-	    <quantity>-2</quantity>
-	  </flow>
-	  <flow xsi:type="flow_start">
-	    <operation name="delivery 4" />
-	    <buffer name="buffer 4" />
-	    <quantity>-2</quantity>
-	  </flow>
-	</flows>
-	<!-- DYNAMIC data CASE 1 -->
-	<demands>
-	  <demand name="order for item 1">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <item name="item 1" />
+  <name>Material constraint test model</name>
+  <description>
+        This model tests the buffer solver code in situations where the minimum onhand
+        limit is varying.
+        - 1: Scenario of a constant, non-zero limit.
+        - 2: Same as 1, but now the supply is limited. The inventory target can't be
+             reached and all supply is used to satisfy demand.
+        - 3: Same as 1, but with minimum target varying DEcreasing over time.
+        - 4: Same as 3, but with minimum target varying INcreasing over time.
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <buffers>
+    <buffer name="buffer 1">
+      <item name="item 1" />
+      <producing name="make 1" />
+      <minimum>4</minimum>
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="constraint buffer 1">
+      <item name="item 1" />
+    </buffer>
+    <buffer name="buffer 2">
+      <item name="item 2" />
+      <producing name="make 2" />
+      <minimum>4</minimum>
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="constraint buffer 2">
+      <item name="item 2" />
+    </buffer>
+    <buffer name="buffer 3">
+      <item name="item 3" />
+      <producing name="make 3" />
+      <minimum_calendar name="min inv for buffer 3">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
+          <bucket start="2009-01-12T00:00:00" value="2" priority="1"/>
+        </buckets>
+      </minimum_calendar>
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="constraint buffer 3">
+      <item name="item 3" />
+    </buffer>
+    <buffer name="buffer 4">
+      <item name="item 4" />
+      <producing name="make 4" />
+      <minimum_calendar name="min inv for buffer 4">
+        <buckets>
+          <bucket start="2009-01-01T00:00:00" value="4" priority="2"/>
+          <bucket start="2009-01-12T00:00:00" value="6" priority="1"/>
+        </buckets>
+      </minimum_calendar>
+      <onhand>10</onhand>
+    </buffer>
+    <buffer name="constraint buffer 4">
+      <item name="item 4" />
+    </buffer>
+  </buffers>
+  <flows>
+    <flow xsi:type="flow_end">
+      <operation name="supply 1" />
+      <buffer name="constraint buffer 1" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make 1" />
+      <buffer name="buffer 1" />
+      <quantity>2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="make 1" />
+      <buffer name="constraint buffer 1" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery 1" />
+      <buffer name="buffer 1" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply 2" />
+      <buffer name="constraint buffer 2" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make 2" />
+      <buffer name="buffer 2" />
+      <quantity>2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="make 2" />
+      <buffer name="constraint buffer 2" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery 2" />
+      <buffer name="buffer 2" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply 3" />
+      <buffer name="constraint buffer 3" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make 3" />
+      <buffer name="buffer 3" />
+      <quantity>2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="make 3" />
+      <buffer name="constraint buffer 3" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery 3" />
+      <buffer name="buffer 3" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="supply 4" />
+      <buffer name="constraint buffer 4" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="make 4" />
+      <buffer name="buffer 4" />
+      <quantity>2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="make 4" />
+      <buffer name="constraint buffer 4" />
+      <quantity>-2</quantity>
+    </flow>
+    <flow xsi:type="flow_start">
+      <operation name="delivery 4" />
+      <buffer name="buffer 4" />
+      <quantity>-2</quantity>
+    </flow>
+  </flows>
+  <!-- DYNAMIC data CASE 1 -->
+  <demands>
+    <demand name="order for item 1">
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <due>2009-01-10T00:00:00</due>
+      <item name="item 1" />
       <operation name="delivery 1" xsi:type="operation_fixed_time">
-	      <size_maximum>10</size_maximum>
-	      <duration>P1D</duration>
-	    </operation>
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="1001">
+        <size_maximum>10</size_maximum>
+        <duration>P1D</duration>
+      </operation>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan id="1001">
       <operation name="supply 1"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>100</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="1002">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="1002">
       <operation name="supply 1"/>
-	    <start>2009-01-17T00:00:00</start>
-	    <end>2009-01-17T00:00:00</end>
-	    <quantity>200</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 2 -->
-	<demands>
-	  <demand name="order for item 2">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <item name="item 2" />
+      <start>2009-01-17T00:00:00</start>
+      <end>2009-01-17T00:00:00</end>
+      <quantity>200</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
+  <!-- DYNAMIC data CASE 2 -->
+  <demands>
+    <demand name="order for item 2">
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <due>2009-01-10T00:00:00</due>
+      <item name="item 2" />
       <operation name="delivery 2" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="2001">
+        <duration>P1D</duration>
+      </operation>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan id="2001">
       <operation name="supply 2"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>100</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="2002">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="2002">
       <operation name="supply 2"/>
-	    <start>2009-01-17T00:00:00</start>
-	    <end>2009-01-17T00:00:00</end>
-	    <quantity>50</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 3 -->
-	<demands>
-	  <demand name="order for item 3">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <item name="item 3" />
+      <start>2009-01-17T00:00:00</start>
+      <end>2009-01-17T00:00:00</end>
+      <quantity>50</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
+  <!-- DYNAMIC data CASE 3 -->
+  <demands>
+    <demand name="order for item 3">
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <due>2009-01-10T00:00:00</due>
+      <item name="item 3" />
       <operation name="delivery 3" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="3001">
+        <duration>P1D</duration>
+      </operation>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan id="3001">
       <operation name="supply 3"/>
-	    <start>2009-01-15T00:00:00</start>
-	    <end>2009-01-15T00:00:00</end>
-	    <quantity>1000</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
-	<!-- DYNAMIC data CASE 4 -->
-	<demands>
-	  <demand name="order for item 4">
-	    <quantity>100</quantity>
-	    <due>2009-01-10T00:00:00</due>
-	    <item name="item 4" />
-	    <operation name="delivery 4" xsi:type="operation_fixed_time">
-	      <duration>P1D</duration>
-	    </operation>      
-	  </demand>
-	</demands>
-	<operationplans>
-	  <operationplan id="4001">
+      <start>2009-01-15T00:00:00</start>
+      <end>2009-01-15T00:00:00</end>
+      <quantity>1000</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
+  <!-- DYNAMIC data CASE 4 -->
+  <demands>
+    <demand name="order for item 4">
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <due>2009-01-10T00:00:00</due>
+      <item name="item 4" />
+      <operation name="delivery 4" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>      
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan id="4001">
       <operation name="supply 4"/>
-	    <start>2009-01-15T00:00:00</start>
-	    <end>2009-01-15T00:00:00</end>
-	    <quantity>1000</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	</operationplans>
+      <start>2009-01-15T00:00:00</start>
+      <end>2009-01-15T00:00:00</end>
+      <quantity>1000</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
 
-<?python
+  <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

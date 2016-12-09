@@ -229,6 +229,7 @@
       <description>This order consumes all capacity on A, and then
       searches capacity on B.</description>
       <quantity>140</quantity>
+      <minshipment>1</minshipment>
       <due>2015-01-14T00:00:00</due>
       <priority>11</priority>
       <item name="2. end item"/>
@@ -332,6 +333,7 @@
       the requested quantity is the same.
       </description>
       <quantity>140</quantity>
+      <minshipment>1</minshipment>
       <due>2015-02-14T00:00:00</due>
       <priority>11</priority>
       <item name="3. end item"/>

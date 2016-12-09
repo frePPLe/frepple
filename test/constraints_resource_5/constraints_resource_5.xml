@@ -92,6 +92,7 @@
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">
       <quantity>201</quantity>
+      <minshipment>1</minshipment>
       <due>2009-03-06T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
@@ -100,6 +101,7 @@
     <!-- Demand model 2: search for capacity forward in time -->
     <demand name="2. order">
       <quantity>201</quantity>
+      <minshipment>1</minshipment>
       <due>2009-01-10T00:00:00</due>
       <priority>1</priority>
       <item name="2. end item" />

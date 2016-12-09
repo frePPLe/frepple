@@ -252,7 +252,7 @@ class PathReport(GridReport):
     # Currently we don't account for such situations.
     # TODO usage search doesn't find item distributions from that location
     counter = 1
-    #operations = set()
+    operations = set()
     while len(root) > 0:
       # Pop the current node from the stack
       level, parent, curoperation, curqty, issuboperation, parentoper, realdepth, pushsuper, location = root.pop()
@@ -272,12 +272,15 @@ class PathReport(GridReport):
           continue
 
       # Avoid showing the same operation twice.
-      # This feature is disabled by default a) because it is not intuitive to understand
-      # where operations are skipped, and b) because the quantity of each occurrence might
-      # be different.
-      # In some models the duplication is confusing and you can enable this feature.
-      #if curoperation in operations: continue
-      #operations.add(curoperation)
+      # This feature is enabled by default. Without it we cannot correctly display
+      # supply paths with loops (which are normally a modeling error).
+      # The use of this feature has some drawbacks  a) because it is not intuitive 
+      # to understand where operations are skipped in the path, and b) because
+      # the quantity of each occurrence might be different.
+      # You may choose can disable this feature by commenting out the next 3 lines.
+      if curoperation in operations: 
+        continue
+      operations.add(curoperation)
 
       # Find the next level
       hasChildren = False

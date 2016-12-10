@@ -8,7 +8,7 @@ This section provides step by step instructions on how to translate the user int
 
    We are very keen on receiving translations for additional languages. And it's an easy way for you to contribute back to the frePPLe community.
 
-**1. Add support for an addicional language**
+**1. Add support for an additional language**
 
   You may skip this step if you just want to improve already existing translations.
 
@@ -39,7 +39,7 @@ This section provides step by step instructions on how to translate the user int
 
   For the translation process you should install an editor for gettext catalogs (.po files).
 
-  Highly recommended, and can be downloaded for free, is the `Poedit tool <https://poedit.net/>`_.
+  Highly recommended is the free `Poedit tool <https://poedit.net/>`_.
 
 **3. Start translating**
 
@@ -53,7 +53,7 @@ This section provides step by step instructions on how to translate the user int
 
        %(title)s for %(entity)s
 
-     in this case just copy the entire string and translate "for", resulting in:
+     In this case just copy the entire string and translate "for", resulting in:
 
        %(title)s para %(entity)s
 

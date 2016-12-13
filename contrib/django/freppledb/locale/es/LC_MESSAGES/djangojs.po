@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-06 09:08+0100\n"
+"PO-Revision-Date: 2016-12-13 09:30+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -41,7 +41,7 @@ msgstr "Cerrar"
 
 #: common/static/js/frepple.js:251 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
-msgstr "En primer lugar, guardar o cancelar los cambios"
+msgstr "Guarde o cancele sus cambios primero"
 
 #: common/static/js/frepple.js:257 common/static/js/frepple.js:1782
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
@@ -92,7 +92,7 @@ msgstr "OK"
 
 #: common/static/js/frepple.js:556 common/static/js/frepple.min.js:11
 msgid "Reset"
-msgstr "Reset"
+msgstr "Resetear"
 
 #: common/static/js/frepple.js:846 common/static/js/frepple.js:867
 #: common/static/js/frepple.min.js:11
@@ -102,7 +102,7 @@ msgstr "Exportar CSV o archivo de Excel"
 #: common/static/js/frepple.js:849 common/static/js/frepple.js:870
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
-msgstr "Exportación de formato"
+msgstr "Exportar formato"
 
 #: common/static/js/frepple.js:851 common/static/js/frepple.js:873
 #: common/static/js/frepple.min.js:11
@@ -118,7 +118,7 @@ msgstr "Lista de CSV"
 #: common/static/js/frepple.js:1118 common/static/js/frepple.js:1351
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Export"
-msgstr "Exportación"
+msgstr "Exportar"
 
 #: common/static/js/frepple.js:872 common/static/js/frepple.min.js:11
 msgid "Spreadsheet table"
@@ -187,7 +187,7 @@ msgstr "Exportación exitosa"
 #: common/static/js/frepple.js:1383 common/static/js/frepple.js:1384
 #: common/static/js/frepple.js:1537 common/static/js/frepple.min.js:12
 msgid "Error during export"
-msgstr "Error en exportación"
+msgstr "Error durante la exportación"
 
 #: common/static/js/frepple.js:1385 common/static/js/frepple.js:1539
 #: common/static/js/frepple.js:1571 common/static/js/frepple.min.js:12
@@ -196,7 +196,7 @@ msgstr "Volver a intentar"
 
 #: common/static/js/frepple.js:1423 common/static/js/frepple.min.js:12
 msgid "export"
-msgstr "exportación"
+msgstr "exportar"
 
 #: common/static/js/frepple.js:1568 common/static/js/frepple.min.js:12
 msgid "Error getting data"
@@ -228,7 +228,7 @@ msgstr "Tres columnas"
 
 #: common/static/js/frepple.js:1759 common/static/js/frepple.min.js:12
 msgid "Four columns"
-msgstr "Quatro columnas"
+msgstr "Cuatro columnas"
 
 #: common/static/js/frepple.js:1765 common/static/js/frepple.min.js:12
 msgid "Add widget"
@@ -282,7 +282,7 @@ msgstr "Importar"
 
 #: common/static/js/frepple.js:2187 common/static/js/frepple.min.js:11
 msgid "Importing... pressing Close button will not stop the process."
-msgstr "Importación... premir Cerrar no termina el processo."
+msgstr "Importando… presionar el botón Cerrar no termina el proceso."
 
 #: common/static/js/frepple.js:2641 common/static/js/frepple.min.js:13
 msgid "Show hints"
@@ -318,18 +318,17 @@ msgstr "%s asignado fuera de %s"
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:197
 msgid "remove this demand from planning"
-msgstr "eliminar esta demanda por parte de la planificación"
+msgstr "eliminar esta demanda de la planificación"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:198
 msgid "Plan selected demands backward from their due date"
-msgstr ""
-"planificación de las demandas seleccionadas justo antes de fecha limite"
+msgstr "Planifique las demandas seleccionadas desde su fecha de vencimiento"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:199
 msgid "Plan selected demands forward from the current date"
-msgstr "planificación de las demandas seleccionadas cuanto antes"
+msgstr "Planifique las demandas seleccionadas a partir de la fecha actual"
 
 #~ msgid "retry"
 #~ msgstr "volver a intentar"

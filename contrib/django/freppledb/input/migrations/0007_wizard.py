@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
       ('Manufacturing Capacity', 800, '/user-guide/modeling-wizard/manufacturing-capacity/index.html', null, false, null),
       ('Resources', 810, '/user-guide/modeling-wizard/manufacturing-capacity/resources.html', '/data/input/resource/', false, 'Manufacturing Capacity'),
       ('Operation Resources', 820, '/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html', '/data/input/operationresource/', false, 'Manufacturing Capacity'),  
-      ('Plan generation', 900, '/user-guide/modeling-wizard/plan-generation.html', '/execute/', false, 'Plan generation')
+      ('Plan generation', 900, '/user-guide/modeling-wizard/generate-plan.html', '/execute/', false, 'Plan generation')
       ''',
       '''
       delete from common_wizard where name in (

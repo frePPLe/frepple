@@ -572,7 +572,7 @@
 								<input class="empty_all" type="checkbox" name="all" value="1"><br>
 								{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
 								<label for="empty_{{ item.1.model | model_name }}">
-								 <input class="empty_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" {% if group.0 != _("Admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">{{ group.0 }} - {{ item.0 }}
+								 <input class="empty_entity" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">{{ group.0 }} - {{ item.0 }}
 								</label><br>
 								{% endif %}{% endfor %}{% endfor %}
 							</td>

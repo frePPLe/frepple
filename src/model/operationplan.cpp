@@ -367,8 +367,11 @@ Object* OperationPlan::createOperationPlan(
       oper = new OperationItemSupplier(itemsupplier, destbuffer);
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
-      new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier", "operation",
-        start, end, quantity);
+      new ProblemInvalidData(
+        opplan, 
+        "Purchase orders on unauthorized supplier", "operationplan",
+        start, end, quantity
+        );
     }
     else
       // Create the operationplan
@@ -469,7 +472,7 @@ Object* OperationPlan::createOperationPlan(
       oper = new OperationItemDistribution(itemdist, originbuffer, destbuffer);
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
-      new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operation",
+      new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operationplan",
         start, end, quantity);
     }
     else

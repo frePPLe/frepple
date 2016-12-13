@@ -8530,6 +8530,8 @@ class ProblemInvalidData : public Problem
         return static_cast<Resource*>(owner);
       if (entity == "operation")
         return static_cast<Operation*>(owner);
+      if (entity == "operationplan")
+        return static_cast<OperationPlan*>(owner);
       throw LogicException("Unknown problem entity type");
     }
 

@@ -23,6 +23,7 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
+#include <signal.h>
 using namespace std;
 
 
@@ -54,8 +55,22 @@ void usage()
 }
 
 
+void handler(int sig) 
+{
+  cout << "Planning engine terminated with signal " << sig << endl;
+  exit(1);
+}
+
+
 int main (int argc, char *argv[])
 {
+  // Install signal handlers
+  signal(SIGABRT, handler);
+  signal(SIGFPE, handler);
+  signal(SIGILL, handler);
+  signal(SIGINT, handler);
+  signal(SIGSEGV, handler);
+  signal(SIGTERM, handler);
 
   // Storing the chosen options...
   bool validate = false;

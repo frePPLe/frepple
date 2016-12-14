@@ -304,7 +304,6 @@ class UserList(GridReport):
   basequeryset = User.objects.all()
   model = User
   frozenColumns = 2
-  multiselect = False
   permissions = (("change_user", "Can change user"),)
   help_url = 'user-guide/user-interface/getting-around/user-permissions-and-roles.html'
 
@@ -334,20 +333,18 @@ class GroupList(GridReport):
   '''
   A list report to show groups.
   '''
-  template = 'admin/base_site_grid.html'
   #. Translators: Translation included with Django
   title = _("groups")
   basequeryset = Group.objects.all()
   model = Group
-  frozenColumns = 0
-  multiselect = False
+  frozenColumns = 1
   permissions = (("change_group", "Can change group"),)
   help_url = 'user-guide/user-interface/getting-around/user-permissions-and-roles.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
     #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), key=True, width=200),
+    GridFieldText('name', title=_('name'), width=200),
     )
 
 

@@ -1247,7 +1247,7 @@ class Command(BaseCommand):
               creationDate, scheduledDeliveryDate, product, warehouse,
               businessPartner, objectid
               ))
-        else:
+        elif open_transactions:
           self.idcounter += 1
           insert.append((
             self.idcounter, reference, 'confirmed', orderedQuantity - deliveredQuantity,

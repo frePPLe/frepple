@@ -221,9 +221,9 @@ class Parameter(AuditModel):
 
 class Scenario(models.Model):
   scenarioStatus = (
-    ('free', _('Free')),
-    ('in use', _('In use')),
-    ('busy', _('Busy')),
+    ('free', _('free')),
+    ('in use', _('in use')),
+    ('busy', _('busy')),
   )
 
   # Database fields

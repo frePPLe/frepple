@@ -188,7 +188,7 @@ class DetailReport(GridReport):
     GridFieldDateTime('flowdate', title=_('date'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
-    GridFieldBool('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
+    GridFieldText('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
     GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False, sortable=False),
     )

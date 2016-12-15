@@ -102,18 +102,20 @@ class export:
     if self.cluster == -1:
       # Complete export for the complete model
       process.stdin.write("truncate table out_problem, out_resourceplan, out_constraint;\n".encode(self.encoding))
-      process.stdin.write('''
-        delete from operationplanmaterial
-        using operationplan
-        where operationplanmaterial.operationplan_id = operationplan.id
-        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
-        delete from operationplanresource
-        using operationplan
-        where operationplanresource.operationplan_id = operationplan.id
-        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
-        '''.encode(self.encoding))
+      process.stdin.write("truncate table operationplanmaterial, operationplanresource;\n".encode(self.encoding)) 
+# Above line is a temporary solution until we have a correct version of this block of code 
+#       process.stdin.write('''
+#         delete from operationplanmaterial
+#         using operationplan
+#         where operationplanmaterial.operationplan_id = operationplan.id
+#         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
+#         '''.encode(self.encoding))
+#       process.stdin.write('''
+#         delete from operationplanresource
+#         using operationplan
+#         where operationplanresource.operationplan_id = operationplan.id
+#         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK');\n
+#         '''.encode(self.encoding))
       process.stdin.write('''
         delete from operationplan
         where (status='proposed' or status is null) or type = 'STCK';\n

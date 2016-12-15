@@ -180,6 +180,8 @@ class DetailReport(GridReport):
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra="role:'input/buffer'"),
+    GridFieldInteger('operationplan__id', title=_('id'), editable=False),    
+    GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),

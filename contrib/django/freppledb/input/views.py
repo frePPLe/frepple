@@ -1048,6 +1048,9 @@ class ManufacturingOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'"),
+    GridFieldText('reference', title=_('reference'),
+      editable='freppledb.openbravo' not in settings.INSTALLED_APPS
+      ),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),

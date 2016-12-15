@@ -190,13 +190,14 @@ class DetailReport(GridReport):
     return {'active_tab': 'plandetail'}
 
   rows = (
-    #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
+    GridFieldInteger('id', title='internal id', key=True, editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
+    GridFieldInteger('operationplan__id', title=_('id'), editable=False),    
+    GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
+    GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
+    GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
     GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False, sortable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),

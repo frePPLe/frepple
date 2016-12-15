@@ -167,16 +167,19 @@ class ManufacturingOrderWidget(Widget):
     var domain_x = [];
     var data = [];
     var max_value = 0.0;
+    var max_units = 0.0;
     var max_count = 0.0;
     $("#mo_overview").find("tr").each(function() {
       var name = $(this).children('td').first();
       var count = name.next();
-      var value = count.next()
-      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      var units = count.next();
+      var value = units.next();
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
-      if (el[2] > max_value) max_value = el[2];
+      if (el[2] > max_units) max_units = el[2];
+      if (el[3] > max_value) max_value = el[3];
       });
 
     // Define axis domains
@@ -201,7 +204,9 @@ class ManufacturingOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#mo_tooltip").css("display", "block").html(d[0] + "<br>" + + d[1] + " / %s " + d[2] + "%s");
+        $("#mo_tooltip")
+          .css("display", "block")
+          .html(d[0] + "<br>" + d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s");
         })
       .on("mousemove", function(){
         $("#mo_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
@@ -236,7 +241,7 @@ class ManufacturingOrderWidget(Widget):
     // Draw the lines
     var line_value = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[2]); });
+      .y(function(d) { return y_value(d[3]); });
     var line_count = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
       .y(function(d) { return y_count(d[1]); });
@@ -251,7 +256,7 @@ class ManufacturingOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (settings.CURRENCY[0], settings.CURRENCY[1])
+    ''' % (force_text(_("units")), settings.CURRENCY[0], settings.CURRENCY[1])
 
   @classmethod
   def render(cls, request=None):
@@ -275,33 +280,51 @@ class ManufacturingOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(quantity)),0)
+         count(*), coalesce(round(sum(quantity)),0),
+         coalesce(round(sum(quantity * cost)),0)         
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
         and status in ('confirmed', 'proposed')
-        and type = 'MO'
+        and operationplan.type = 'MO'
+      left outer join operation
+        on operationplan.operation_id = operation.name        
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 1, null, null, count(*), coalesce(round(sum(quantity)),0)
+      select 
+        1, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(quantity * cost)),0)         
       from operationplan
+      inner join operation
+        on operationplan.operation_id = operation.name
       where status = 'confirmed'
-        and type = 'MO'
+        and operationplan.type = 'MO'
       union all
-      select 2, null, null, count(*), coalesce(round(sum(quantity)),0)
+      select 
+        2, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(quantity * cost)),0)        
       from operationplan
+      inner join operation
+        on operationplan.operation_id = operation.name
       where status = 'proposed'
         and startdate < %%s + interval '%s day'
-         and type = 'MO'
+        and operationplan.type = 'MO'
       union all
-      select 3, null, null, count(*), coalesce(round(sum(quantity)),0)
+      select 
+        3, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(quantity * cost)),0)        
       from operationplan
+      inner join operation
+        on operationplan.operation_id = operation.name
       where status = 'proposed'
         and startdate < %%s + interval '%s day'
-         and type = 'MO'
+        and operationplan.type = 'MO'
       order by 1, 3
       ''' % (fence1, fence2)
     cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, current, current))
@@ -311,26 +334,29 @@ class ManufacturingOrderWidget(Widget):
       ]
     for rec in cursor.fetchall():
       if rec[0] == 0:
-        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4], rec[5]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")), 
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
@@ -365,16 +391,19 @@ class DistributionOrderWidget(Widget):
     var domain_x = [];
     var data = [];
     var max_value = 0.0;
+    var max_units = 0.0;
     var max_count = 0.0;
     $("#do_overview").find("tr").each(function() {
       var name = $(this).children('td').first();
       var count = name.next();
-      var value = count.next()
-      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      var units = count.next();
+      var value = units.next()
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
-      if (el[2] > max_value) max_value = el[2];
+      if (el[2] > max_units) max_units = el[2];
+      if (el[3] > max_value) max_value = el[3];
       });
 
     // Define axis domains
@@ -399,7 +428,7 @@ class DistributionOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#do_tooltip").css("display", "block").html(d[0] + "<br>"+ d[1] + " / %s " + d[2] + "%s");
+        $("#do_tooltip").css("display", "block").html(d[0] + "<br>"+ d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s");
         })
       .on("mousemove", function(){
         $("#do_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
@@ -434,7 +463,7 @@ class DistributionOrderWidget(Widget):
     // Draw the lines
     var line_value = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[2]); });
+      .y(function(d) { return y_value(d[3]); });
     var line_count = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
       .y(function(d) { return y_count(d[1]); });
@@ -449,7 +478,7 @@ class DistributionOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (settings.CURRENCY[0], settings.CURRENCY[1])
+    ''' % (force_text(_("units")), settings.CURRENCY[0], settings.CURRENCY[1])
 
   @classmethod
   def render(cls, request=None):
@@ -473,7 +502,8 @@ class DistributionOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(item.price * quantity)),0)
+         count(*), coalesce(round(sum(quantity)),0),
+         coalesce(round(sum(item.price * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -486,20 +516,29 @@ class DistributionOrderWidget(Widget):
         and type = 'DO'
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select 
+        1, null, null, count(*), 
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
       where status = 'confirmed' and type = 'DO'
       union all
-      select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select 
+        2, null, null, count(*), 
+        coalesce(round(sum(item.price)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
       where status = 'proposed' and startdate < %%s + interval '%s day'
       and type = 'DO'
       union all
-      select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select
+        3, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -514,26 +553,28 @@ class DistributionOrderWidget(Widget):
       ]
     for rec in cursor.fetchall():
       if rec[0] == 0:
-        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4], rec[5]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4],
-          settings.CURRENCY[1], request.prefix,
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")), 
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")), 
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
@@ -572,16 +613,19 @@ class PurchaseOrderWidget(Widget):
     var domain_x = [];
     var data = [];
     var max_value = 0.0;
+    var max_units = 0.0;
     var max_count = 0.0;
     $("#po_overview").find("tr").each(function() {
       var name = $(this).children('td').first();
       var count = name.next();
-      var value = count.next()
-      var el = [name.text(), parseFloat(count.text()), parseFloat(value.text())];
+      var units = count.next()
+      var value = units.next()
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
-      if (el[2] > max_value) max_value = el[2];
+      if (el[2] > max_units) max_units = el[2];
+      if (el[3] > max_value) max_value = el[3];
       });
 
     // Define axis domains
@@ -606,7 +650,7 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#po_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + " / %s " + d[2] + "%s")
+        $("#po_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s")
         })
       .on("mousemove", function(){
         $("#po_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
@@ -641,7 +685,7 @@ class PurchaseOrderWidget(Widget):
     // Draw the lines
     var line_value = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[2]); });
+      .y(function(d) { return y_value(d[3]); });
     var line_count = d3.svg.line()
       .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
       .y(function(d) { return y_count(d[1]); });
@@ -656,7 +700,7 @@ class PurchaseOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (settings.CURRENCY[0], settings.CURRENCY[1])
+    ''' % (force_text(_("units")), settings.CURRENCY[0], settings.CURRENCY[1])
 
   @classmethod
   def render(cls, request=None):
@@ -682,7 +726,8 @@ class PurchaseOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(item.price * quantity)),0)
+         count(*), coalesce(round(sum(quantity)),0),
+         coalesce(round(sum(item.price * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -694,19 +739,28 @@ class PurchaseOrderWidget(Widget):
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 1, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select 
+        1, null, null, count(*), 
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
       where status = 'confirmed' %s and type = 'PO'
       union all
-      select 2, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select
+        2, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
       where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
       union all
-      select 3, null, null, count(*), coalesce(round(sum(item.price * quantity)),0)
+      select 
+        3, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(item.price * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -725,26 +779,29 @@ class PurchaseOrderWidget(Widget):
       ]
     for rec in cursor.fetchall():
       if rec[0] == 0:
-        result.append('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4]))
+        result.append('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4], rec[5]))
       elif rec[0] == 1:
-        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4],
+        result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[4],
           settings.CURRENCY[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
           ))
       elif rec[0] == 2 and fence1:
         limit_fence1 = current + timedelta(days=fence1)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
           ))
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
-        result.append('<div class="col-xs-4"><h2>%s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], settings.CURRENCY[0], rec[4], settings.CURRENCY[1],
+        result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
+          rec[3], rec[4], force_text(_("units")),
+          settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})

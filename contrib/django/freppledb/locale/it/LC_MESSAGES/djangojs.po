@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-02-29 17:15+0100\n"
+"PO-Revision-Date: 2016-12-16 12:52+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -23,31 +23,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: common/static/js/frepple.js:171 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
-msgstr ""
+msgstr "Ci sono su questa pagina delle modifiche non salvate"
 
 #: common/static/js/frepple.js:223 common/static/js/frepple.min.js:11
 msgid "Error saving data"
-msgstr ""
+msgstr "Errore nel salvataggio dei dati"
 
 #: common/static/js/frepple.js:229 common/static/js/frepple.js:543
 #: common/static/js/frepple.js:1372 common/static/js/frepple.js:1526
 #: common/static/js/frepple.js:2178 common/static/js/frepple.js:2199
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
-msgstr ""
+msgstr "Chiuso"
 
 #: common/static/js/frepple.js:251 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
-msgstr ""
+msgstr "Salva o cancella prima le tue modifiche"
 
 #: common/static/js/frepple.js:257 common/static/js/frepple.js:1782
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: common/static/js/frepple.js:258 common/static/js/frepple.js:555
 #: common/static/js/frepple.js:858 common/static/js/frepple.js:881
@@ -60,32 +60,32 @@ msgstr "Cancella"
 
 #: common/static/js/frepple.js:401 common/static/js/frepple.min.js:11
 msgid "Click to select record"
-msgstr ""
+msgstr "Clicca per selezionare la riga"
 
 #: common/static/js/frepple.js:447 common/static/js/frepple.min.js:11
 msgid "Selected options"
-msgstr ""
+msgstr "Opzioni selezionate"
 
 #: common/static/js/frepple.js:454 common/static/js/frepple.min.js:11
 msgid "Available options"
-msgstr ""
+msgstr "Opzioni disponibili"
 
 #: common/static/js/frepple.js:495 common/static/js/frepple.min.js:11
 msgid "Selected Cross"
-msgstr ""
+msgstr "Selezione trasversale"
 
 #: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "Available Cross"
-msgstr ""
+msgstr "Disponibilità trasversale"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
-msgstr ""
+msgstr "Colonne congelate"
 
 #: common/static/js/frepple.js:546 common/static/js/frepple.js:1880
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Customize"
-msgstr ""
+msgstr "Personalizzare"
 
 #: common/static/js/frepple.js:554 common/static/js/frepple.min.js:11
 msgid "OK"
@@ -93,50 +93,50 @@ msgstr "OK"
 
 #: common/static/js/frepple.js:556 common/static/js/frepple.min.js:11
 msgid "Reset"
-msgstr ""
+msgstr "Ripristinare"
 
 #: common/static/js/frepple.js:846 common/static/js/frepple.js:867
 #: common/static/js/frepple.min.js:11
 msgid "Export CSV or Excel file"
-msgstr ""
+msgstr "Esporta file excel o CSV"
 
 #: common/static/js/frepple.js:849 common/static/js/frepple.js:870
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
-msgstr ""
+msgstr "Esporta il formato"
 
 #: common/static/js/frepple.js:851 common/static/js/frepple.js:873
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet list"
-msgstr ""
+msgstr "lista dei fogli di lavoro"
 
 #: common/static/js/frepple.js:852 common/static/js/frepple.js:875
 #: common/static/js/frepple.min.js:11
 msgid "CSV list"
-msgstr ""
+msgstr "lista dei file CSV"
 
 #: common/static/js/frepple.js:857 common/static/js/frepple.js:880
 #: common/static/js/frepple.js:1118 common/static/js/frepple.js:1351
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Export"
-msgstr ""
+msgstr "Esporta"
 
 #: common/static/js/frepple.js:872 common/static/js/frepple.min.js:11
 msgid "Spreadsheet table"
-msgstr ""
+msgstr "tabella del foglio di lavoro"
 
 #: common/static/js/frepple.js:874 common/static/js/frepple.min.js:11
 msgid "CSV table"
-msgstr ""
+msgstr "tabella CSV"
 
 #: common/static/js/frepple.js:984 common/static/js/frepple.min.js:11
 msgid "Delete data"
-msgstr ""
+msgstr "Cancellare i dati"
 
 #: common/static/js/frepple.js:987 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr ""
+msgstr "Stai cancellando  %s oggetti E TUTTI GLI INSERIMENTI AFFERENTI!"
 
 #: common/static/js/frepple.js:990 common/static/js/frepple.js:1038
 #: common/static/js/frepple.js:1357 common/static/js/frepple.js:1429
@@ -146,53 +146,53 @@ msgstr "Conferma"
 
 #: common/static/js/frepple.js:1012 common/static/js/frepple.min.js:12
 msgid "Error deleting data"
-msgstr ""
+msgstr "Errore nel cancellare i dati"
 
 #: common/static/js/frepple.js:1032 common/static/js/frepple.min.js:12
 msgid "Copy data"
-msgstr ""
+msgstr "Copiare i dati"
 
 #: common/static/js/frepple.js:1035 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to duplicate %s objects"
-msgstr ""
+msgstr "Stai per duplicare %s oggetti"
 
 #: common/static/js/frepple.js:1060 common/static/js/frepple.min.js:12
 msgid "Error copying data"
-msgstr ""
+msgstr "Errore nel copiare i dati"
 
 #: common/static/js/frepple.js:1096 common/static/js/frepple.min.js:12
 msgid "Export Plan"
-msgstr ""
+msgstr "Esportare il piano"
 
 #: common/static/js/frepple.js:1165 common/static/js/frepple.js:1178
 #: common/static/js/frepple.min.js:12
 msgid "Filtered where"
-msgstr ""
+msgstr "Dove filtrato"
 
 #: common/static/js/frepple.js:1354 common/static/js/frepple.min.js:12
 msgid "export selected records to "
-msgstr ""
+msgstr "esporta gli inserimenti selezionati in"
 
 #: common/static/js/frepple.js:1364 common/static/js/frepple.js:1518
 #: common/static/js/frepple.min.js:12
 msgid "connecting to "
-msgstr ""
+msgstr "Connessione a"
 
 #: common/static/js/frepple.js:1371 common/static/js/frepple.js:1525
 #: common/static/js/frepple.min.js:12
 msgid "Export successful"
-msgstr ""
+msgstr "Esportare con successo"
 
 #: common/static/js/frepple.js:1383 common/static/js/frepple.js:1384
 #: common/static/js/frepple.js:1537 common/static/js/frepple.min.js:12
 msgid "Error during export"
-msgstr ""
+msgstr "Errore nell'esportazione"
 
 #: common/static/js/frepple.js:1385 common/static/js/frepple.js:1539
 #: common/static/js/frepple.js:1571 common/static/js/frepple.min.js:12
 msgid "Retry"
-msgstr ""
+msgstr "Riprova"
 
 #: common/static/js/frepple.js:1423 common/static/js/frepple.min.js:12
 msgid "export"
@@ -200,67 +200,67 @@ msgstr "esporta"
 
 #: common/static/js/frepple.js:1568 common/static/js/frepple.min.js:12
 msgid "Error getting data"
-msgstr ""
+msgstr "Errore nell'ottenere i dati"
 
 #: common/static/js/frepple.js:1727 common/static/js/frepple.min.js:12
 msgid "Customize a dashboard row"
-msgstr ""
+msgstr "Personalizza una riga del cruscotto"
 
 #: common/static/js/frepple.js:1733 common/static/js/frepple.min.js:12
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: common/static/js/frepple.js:1739 common/static/js/frepple.min.js:12
 msgid "Layout"
-msgstr ""
+msgstr "Disposizione"
 
 #: common/static/js/frepple.js:1745 common/static/js/frepple.min.js:12
 msgid "Single column"
-msgstr ""
+msgstr "Colonna singola"
 
 #: common/static/js/frepple.js:1748 common/static/js/frepple.min.js:12
 msgid "Two columns"
-msgstr ""
+msgstr "Due Colonne"
 
 #: common/static/js/frepple.js:1755 common/static/js/frepple.min.js:12
 msgid "Three columns"
-msgstr ""
+msgstr "Tre colonne"
 
 #: common/static/js/frepple.js:1759 common/static/js/frepple.min.js:12
 msgid "Four columns"
-msgstr ""
+msgstr "Quattro colonne"
 
 #: common/static/js/frepple.js:1765 common/static/js/frepple.min.js:12
 msgid "Add widget"
-msgstr ""
+msgstr "Aggiungi widget"
 
 #: common/static/js/frepple.js:1783 common/static/js/frepple.min.js:12
 msgid "Delete"
-msgstr ""
+msgstr "Cancella"
 
 #: common/static/js/frepple.js:1785 common/static/js/frepple.min.js:12
 msgid "Add new below"
-msgstr ""
+msgstr "Aggiungi nuovo sotto"
 
 #: common/static/js/frepple.js:1786 common/static/js/frepple.min.js:12
 msgid "Add new above"
-msgstr ""
+msgstr "Aggiungi nuovo sopra"
 
 #: common/static/js/frepple.js:2123 common/static/js/frepple.min.js:11
 msgid "Installed apps"
-msgstr ""
+msgstr "Apps installate"
 
 #: common/static/js/frepple.js:2143 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
-msgstr ""
+msgstr "Errore nel leggere le informazioni della versione"
 
 #: common/static/js/frepple.js:2164 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
-msgstr ""
+msgstr "Importa file Excel o CSV"
 
 #: common/static/js/frepple.js:2168 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr ""
+msgstr "Carica un file Excel o di testo formattato CSV"
 
 #: common/static/js/frepple.js:2169 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
@@ -268,7 +268,7 @@ msgstr "La prima riga dovrebbe contenere i nomi dei campi."
 
 #: common/static/js/frepple.js:2171 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr ""
+msgstr "Cancella prima tutti gli esistenti inserimenti E LE TABELLE AFFERENTI"
 
 #: common/static/js/frepple.js:2172 common/static/js/frepple.min.js:11
 msgid "Data file"
@@ -276,65 +276,55 @@ msgstr "file di dati"
 
 #: common/static/js/frepple.js:2177 common/static/js/frepple.min.js:11
 msgid "Import"
-msgstr "Importa dati"
+msgstr "Importa "
 
 #: common/static/js/frepple.js:2187 common/static/js/frepple.min.js:11
 msgid "Importing... pressing Close button will not stop the process."
 msgstr ""
+"Importazione .... premendo il pulsante close non fermerai l'elaborazione"
 
 #: common/static/js/frepple.js:2641 common/static/js/frepple.min.js:13
 msgid "Show hints"
-msgstr ""
+msgstr "Mostra suggerimenti"
 
 #: common/static/js/frepple.js:2731 common/static/js/frepple.min.js:13
 msgid "Guided tour"
-msgstr ""
+msgstr "Tour guidato"
 
 #: common/static/js/frepple.js:2738 common/static/js/frepple.min.js:13
 msgid "Previous"
-msgstr ""
+msgstr "Precedente"
 
 #: common/static/js/frepple.js:2739 common/static/js/frepple.js:2880
 #: common/static/js/frepple.min.js:13
 msgid "Play"
-msgstr ""
+msgstr "Play"
 
 #: common/static/js/frepple.js:2740 common/static/js/frepple.min.js:13
 msgid "Next"
-msgstr ""
+msgstr "Successivo"
 
 #: common/static/js/frepple.js:2887 common/static/js/frepple.min.js:13
 msgid "Pause"
-msgstr ""
+msgstr "Pausa"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/ganttchart.js:236
 #, javascript-format
 msgid "%s allocated out of %s"
-msgstr ""
+msgstr "%s allocati fuori da %s"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:197
 msgid "remove this demand from planning"
-msgstr ""
+msgstr "rimuovi questa domanda dalla pianificazione"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:198
 msgid "Plan selected demands backward from their due date"
-msgstr ""
+msgstr "Pianifica le domande selezionate a ritroso dalla loro data di scadenza"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:199
 msgid "Plan selected demands forward from the current date"
-msgstr ""
-
-#, fuzzy
-#~| msgid "Cancel"
-#~ msgid "Cancel task"
-#~ msgstr "Cancella"
-
-#~ msgid "Table"
-#~ msgstr "Tabella"
-
-#~ msgid "List"
-#~ msgstr "Lista"
+msgstr "Pianifica le domande selezionate in avanti dalla data corrente"

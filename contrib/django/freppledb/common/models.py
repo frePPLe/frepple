@@ -252,12 +252,21 @@ class Scenario(models.Model):
         for db in dbs:
           if db not in scs:
             if db == DEFAULT_DB_ALIAS:
-              Scenario(name=db, status="In use", description='Production database').save()
+              Scenario(name=db, status="In use", description='Production').save()
             else:
               Scenario(name=db, status="Free").save()
     except:
       # Failures are acceptable - eg when the default database has not been intialized yet
       pass
+
+  def __lt__ (self, other):
+    # Default database is always first in the list
+    if self.name == DEFAULT_DB_ALIAS:
+      return True
+    elif other.name == DEFAULT_DB_ALIAS:
+      return False
+    # Other databases are sorted by their description
+    return (self.description or self.name) < (other.description or other.name)
 
   class Meta:
     db_table = "common_scenario"
@@ -268,6 +277,7 @@ class Scenario(models.Model):
     verbose_name_plural = _('scenarios')
     verbose_name = _('scenario')
     ordering = ['name']
+
 
 class Wizard(models.Model):
   # Database fields

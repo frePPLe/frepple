@@ -570,8 +570,8 @@ var grid = {
                   type: 'POST',
                   url: '/horizon/',
                   data: {
-                    horizonbuckets: $('#horizonbuckets').val() ? 
-                      $('#horizonbuckets').val() : 
+                    horizonbuckets: $('#horizonbuckets').val() ?
+                      $('#horizonbuckets').val() :
                       $("#horizonbucketsul li a").first().text(),
                     horizonstart: $('#horizonstart').val(),
                     horizonend: $('#horizonend').val(),
@@ -1526,7 +1526,7 @@ function getURLparameters()
 function selectDatabase()
 {
   // Find new database and current database
-  var db = $(this).text();
+  var db = $(this).attr("data-database");
 
   // Change the location
   if (database == db)
@@ -1534,14 +1534,14 @@ function selectDatabase()
   else if (database == 'default')
   {
     if (window.location.pathname == '/')
-      window.location.href = "/"+db+"/";
+      window.location.href = "/" + db + "/";
     else
-      window.location.href = window.location.href.replace(window.location.pathname, "/"+db+window.location.pathname);
+      window.location.href = window.location.href.replace(window.location.pathname, "/" + db + window.location.pathname);
   }
   else if (db == 'default')
     window.location.href = window.location.href.replace("/"+database+"/", "/");
   else
-    window.location.href = window.location.href.replace("/"+database+"/", "/"+db+"/");
+    window.location.href = window.location.href.replace("/"+database+"/", "/" + db + "/");
 }
 
 
@@ -1926,7 +1926,7 @@ var tour = {
     '<input style="vertical-align: bottom" type="checkbox" checked onclick="tour.displayHints(this.checked, true)">&nbsp;' +
     gettext('Show hints') +
     '</label></div></div>',
-  
+
   displayHints: function(show, warn) {
     if (show) {
       // Reinitialize the intro hints
@@ -1935,12 +1935,12 @@ var tour = {
       tour.showIntroPage(null);
     }
     else {
-      // Marks the complete tour as seen    
+      // Marks the complete tour as seen
       localStorage.setItem("intro", "{}");
       $("#showHints").addClass("toggle-off").removeClass("toggle-on");
       //if (warn): TODO not working yet
       //  $('.tourpopover-content').html("You can activate the hints again from the Help menu");
-      $('.tourpopover').popover('destroy');   
+      $('.tourpopover').popover('destroy');
     }
   },
 
@@ -1961,31 +1961,31 @@ var tour = {
         pagestxt = localStorage.getItem("intro");
       var pages = JSON.parse(pagestxt);
     }
-    
-    // Check if the page has an intro   
+
+    // Check if the page has an intro
     if (location.pathname in pages) {
       // Display the page
       tour.intro = introdata[location.pathname][pages[location.pathname]];
       tour.showStep();
       tour.intro = null;
-      
+
       // Add an event handler to move to the next intro hint
       $('html').on('click', function (event) {
         if (!$(event.target).is("a"))
           tour.showIntroPage('');
         });
-      
-      // Remove the page from the to-see list 
+
+      // Remove the page from the to-see list
       pages[location.pathname] += 1;
       if (pages[location.pathname] >= introdata[location.pathname].length)
         delete pages[location.pathname];
-      localStorage.setItem("intro", JSON.stringify(pages));      
+      localStorage.setItem("intro", JSON.stringify(pages));
     }
     else
       // No hints for this page
       $('.tourpopover').popover('destroy');
   },
-  
+
   start: function (args)
   {
     // Parse the arguments
@@ -2097,7 +2097,7 @@ var tour = {
       var stepData = tour.intro;
     else {
       // Guided tour
-      var stepData = tourdata[tour.chapter]['steps'][tour.step];    
+      var stepData = tourdata[tour.chapter]['steps'][tour.step];
       // Switch url if required
       var nexthref = '';
       var currsearch = '';
@@ -2113,7 +2113,7 @@ var tour = {
         return;
       };
     }
-    
+
     // Callback
     if ('beforestep' in stepData)
       eval(stepData['beforestep']);
@@ -2137,7 +2137,7 @@ var tour = {
     })
 
     // Update tour dialog
-    if (tour.intro == null) {      
+    if (tour.intro == null) {
       $('#tourmodalbody').html(tourdata[tour.chapter]['description']);
       // Previous button
       if (tour.chapter == 0 && tour.step == 0)
@@ -2153,12 +2153,12 @@ var tour = {
       if (tour.autoplay)
         tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
     }
-    
+
     // Callback
     if ('afterstep' in stepData)
       eval(stepData['afterstep']);
   },
-  
+
   toggleAutoplay: function()
   {
     if (tour.autoplay > 0)

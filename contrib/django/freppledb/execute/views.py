@@ -248,6 +248,8 @@ def wrapTask(request, action):
             request.prefix = ''
     elif 'update' in request.POST:
       # Note: update is immediate and synchronous.
+      if not request.user.has_perm('execute.release_scenario'):
+        raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
         if request.POST.get(sc.name, 'off') == 'on':
           sc.description = request.POST.get('description', None)

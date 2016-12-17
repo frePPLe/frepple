@@ -135,33 +135,23 @@ class MultiDBMiddleware(object):
   """
   def process_request(self, request):
     request.user = auth.get_user(request)
-    for i in Scenario.objects.all().only('name', 'status'):
+    if not request.user or request.user.is_anonymous():
+      return
+    for i in request.user.scenarios:
+      if i.name == DEFAULT_DB_ALIAS:
+        default_scenario = i
       try:
-        if settings.DATABASES[i.name]['regexp'].match(request.path) and i.name != DEFAULT_DB_ALIAS:
-          if i.status != 'In use':
-            raise Http404('Scenario not in use')
+        if settings.DATABASES[i.name]['regexp'].match(request.path):
           request.prefix = '/%s' % i.name
           request.path_info = request.path_info[len(request.prefix):]
           request.path = request.path[len(request.prefix):]
           request.database = i.name
-          if request.user and not request.user.is_anonymous():
-            superuser = request.user.scenarios.get(i.name)
-            if superuser != None:
-              request.user._state.db = i.name
-              request.user.is_superuser = superuser
-            else:
-              raise Http404('Access to this scenario is not allowed')
+          request.scenario = i
+          request.user._state.db = i.name
+          request.user.is_superuser = i.is_superuser
           return
-      except Http404:
-        raise
       except:
         pass
     request.prefix = ''
     request.database = DEFAULT_DB_ALIAS
-    if request.user and not request.user.is_anonymous():
-      superuser = request.user.scenarios.get(DEFAULT_DB_ALIAS)
-      if superuser != None:
-        request.user._state.db = DEFAULT_DB_ALIAS
-        request.user.is_superuser = superuser
-      else:
-        raise Http404('Access to this scenario is not allowed')
+    request.scenario = default_scenario

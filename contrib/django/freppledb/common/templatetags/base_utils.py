@@ -323,12 +323,16 @@ def duration(value):
 duration.is_safe = True
 register.filter('duration', duration)
 
-def sortdatabases(dict):
-  datablist = sorted(list(dict.keys()), key=str.lower)
-  return datablist
 
-sortdatabases.is_sase = True
-register.filter('sortdatabases', sortdatabases)
+#
+# A filter to order a list
+#
+
+def sortList(inputList):
+  return sorted(inputList)
+
+register.filter('sortList', sortList)
+
 
 #
 # Filters to get metadata of a model

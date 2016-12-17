@@ -20,6 +20,7 @@ from django.contrib.auth.models import Permission
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.db import DEFAULT_DB_ALIAS
+from django.db.models import Q
 
 from freppledb.common.models import User, Scenario
 
@@ -103,22 +104,25 @@ class MultiDBBackend(ModelBackend):
     try:
       user = User.objects.get(pk=user_id)
 
-      # Now populate a dictionary with scenarios in which the user is active, and
+      # Populate a dictionary with scenarios in which the user is active, and
       # whether he's a superuser in them.
-      user.scenarios = {}
-      if user.is_active:
-        user.scenarios[DEFAULT_DB_ALIAS] = user.is_superuser
-      for db in Scenario.objects.filter(status='In use').values('name'):
-        if db['name'] == DEFAULT_DB_ALIAS:
-          # Already populated above
-          continue
-        try:
-          user2 = User.objects.using(db['name']).get(username=user.username)
-          if user2.is_active:
-            user.scenarios[db['name']] = user2.is_superuser
-        except:
-          # Silently ignore errors. Eg user doesn't exist in scenario
-          pass
+      user.scenarios = []
+      for db in Scenario.objects.filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
+        if not db.description:
+          db.description = db.name
+        if db.name == DEFAULT_DB_ALIAS:
+          if user.is_active:
+            db.is_superuser = user.is_superuser
+            user.scenarios.append(db)
+        else:
+          try:
+            user2 = User.objects.using(db.name).get(username=user.username)
+            if user2.is_active:
+              db.is_superuser = user2.is_superuser
+              user.scenarios.append(db)
+          except:
+            # Silently ignore errors. Eg user doesn't exist in scenario
+            pass
       return user
     except User.DoesNotExist:
       return None

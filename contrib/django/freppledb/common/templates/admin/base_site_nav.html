@@ -82,11 +82,12 @@ $(function() {
 			<div class="col-sm-2 pull-right">
 			  <div class="selectdb ">
 				{% if user.scenarios|length > 1 %}
-					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.database }}">
-					{{ request.database }}&nbsp;<span class="caret"></span>
+					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.scenario.name }}">
+					{{ request.scenario.description }}&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="database">
-					{% for db in user.scenarios|sortdatabases %}<li><a>{{ db }}</a></li>{% endfor %}
+					{% for sc in user.scenarios|sortList %}<li><a data-database="{{ sc.name }}">{{ sc.description }}</a></li>{% endfor %}
 					</ul>
 				{% endif %}
 				</div>

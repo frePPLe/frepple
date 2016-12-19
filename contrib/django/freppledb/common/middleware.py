@@ -137,6 +137,7 @@ class MultiDBMiddleware(object):
     request.user = auth.get_user(request)
     if not request.user or request.user.is_anonymous():
       return
+    default_scenario = None
     for i in request.user.scenarios:
       if i.name == DEFAULT_DB_ALIAS:
         default_scenario = i
@@ -154,4 +155,7 @@ class MultiDBMiddleware(object):
         pass
     request.prefix = ''
     request.database = DEFAULT_DB_ALIAS
-    request.scenario = default_scenario
+    if default_scenario:
+      request.scenario = default_scenario
+    else:      
+      request.scenario = Scenario(name=DEFAULT_DB_ALIAS)

@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-06-02 10:57+0200\n"
+"PO-Revision-Date: 2016-12-23 15:24+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: common/static/js/frepple.js:171 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -65,27 +65,27 @@ msgstr "取消"
 
 #: common/static/js/frepple.js:401 common/static/js/frepple.min.js:11
 msgid "Click to select record"
-msgstr ""
+msgstr "单击以选择记录"
 
 #: common/static/js/frepple.js:447 common/static/js/frepple.min.js:11
 msgid "Selected options"
-msgstr ""
+msgstr "选定的选项"
 
 #: common/static/js/frepple.js:454 common/static/js/frepple.min.js:11
 msgid "Available options"
-msgstr ""
+msgstr "可用的选项"
 
 #: common/static/js/frepple.js:495 common/static/js/frepple.min.js:11
 msgid "Selected Cross"
-msgstr ""
+msgstr "选定的交叉"
 
 #: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "Available Cross"
-msgstr ""
+msgstr "可用的交叉"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
-msgstr ""
+msgstr "冻结的列"
 
 #: common/static/js/frepple.js:546 common/static/js/frepple.js:1880
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
@@ -168,7 +168,7 @@ msgstr "复制数据出错"
 
 #: common/static/js/frepple.js:1096 common/static/js/frepple.min.js:12
 msgid "Export Plan"
-msgstr ""
+msgstr "导出计划"
 
 #: common/static/js/frepple.js:1165 common/static/js/frepple.js:1178
 #: common/static/js/frepple.min.js:12
@@ -177,17 +177,17 @@ msgstr "过滤哪里"
 
 #: common/static/js/frepple.js:1354 common/static/js/frepple.min.js:12
 msgid "export selected records to "
-msgstr ""
+msgstr "导出选定记录到"
 
 #: common/static/js/frepple.js:1364 common/static/js/frepple.js:1518
 #: common/static/js/frepple.min.js:12
 msgid "connecting to "
-msgstr ""
+msgstr "现在连接至"
 
 #: common/static/js/frepple.js:1371 common/static/js/frepple.js:1525
 #: common/static/js/frepple.min.js:12
 msgid "Export successful"
-msgstr "输出成功"
+msgstr "导出成功"
 
 #: common/static/js/frepple.js:1383 common/static/js/frepple.js:1384
 #: common/static/js/frepple.js:1537 common/static/js/frepple.min.js:12
@@ -201,63 +201,63 @@ msgstr "重审"
 
 #: common/static/js/frepple.js:1423 common/static/js/frepple.min.js:12
 msgid "export"
-msgstr ""
+msgstr "导出"
 
 #: common/static/js/frepple.js:1568 common/static/js/frepple.min.js:12
 msgid "Error getting data"
-msgstr ""
+msgstr "获取数据错误"
 
 #: common/static/js/frepple.js:1727 common/static/js/frepple.min.js:12
 msgid "Customize a dashboard row"
-msgstr ""
+msgstr "自定义仪表板行"
 
 #: common/static/js/frepple.js:1733 common/static/js/frepple.min.js:12
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: common/static/js/frepple.js:1739 common/static/js/frepple.min.js:12
 msgid "Layout"
-msgstr ""
+msgstr "布置"
 
 #: common/static/js/frepple.js:1745 common/static/js/frepple.min.js:12
 msgid "Single column"
-msgstr ""
+msgstr "单列"
 
 #: common/static/js/frepple.js:1748 common/static/js/frepple.min.js:12
 msgid "Two columns"
-msgstr ""
+msgstr "两列"
 
 #: common/static/js/frepple.js:1755 common/static/js/frepple.min.js:12
 msgid "Three columns"
-msgstr ""
+msgstr "三列"
 
 #: common/static/js/frepple.js:1759 common/static/js/frepple.min.js:12
 msgid "Four columns"
-msgstr ""
+msgstr "四列"
 
 #: common/static/js/frepple.js:1765 common/static/js/frepple.min.js:12
 msgid "Add widget"
-msgstr ""
+msgstr "添加小工"
 
 #: common/static/js/frepple.js:1783 common/static/js/frepple.min.js:12
 msgid "Delete"
-msgstr ""
+msgstr "删除"
 
 #: common/static/js/frepple.js:1785 common/static/js/frepple.min.js:12
 msgid "Add new below"
-msgstr ""
+msgstr "添加新在下面"
 
 #: common/static/js/frepple.js:1786 common/static/js/frepple.min.js:12
 msgid "Add new above"
-msgstr ""
+msgstr "添加新在上面"
 
 #: common/static/js/frepple.js:2123 common/static/js/frepple.min.js:11
 msgid "Installed apps"
-msgstr ""
+msgstr "已安装的应用程序"
 
 #: common/static/js/frepple.js:2143 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
-msgstr ""
+msgstr "读取版本信息的错误"
 
 #: common/static/js/frepple.js:2164 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
@@ -285,15 +285,15 @@ msgstr "导入"
 
 #: common/static/js/frepple.js:2187 common/static/js/frepple.min.js:11
 msgid "Importing... pressing Close button will not stop the process."
-msgstr ""
+msgstr "导入中…按关闭按钮不会停止进程。"
 
 #: common/static/js/frepple.js:2641 common/static/js/frepple.min.js:13
 msgid "Show hints"
-msgstr ""
+msgstr "显示提示"
 
 #: common/static/js/frepple.js:2731 common/static/js/frepple.min.js:13
 msgid "Guided tour"
-msgstr "指引行动 "
+msgstr "导游服务"
 
 #: common/static/js/frepple.js:2738 common/static/js/frepple.min.js:13
 msgid "Previous"
@@ -310,7 +310,7 @@ msgstr "下一个"
 
 #: common/static/js/frepple.js:2887 common/static/js/frepple.min.js:13
 msgid "Pause"
-msgstr ""
+msgstr "暂停"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/ganttchart.js:236
@@ -321,17 +321,17 @@ msgstr "%s 分配出 %s"
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:197
 msgid "remove this demand from planning"
-msgstr ""
+msgstr "从规划中删除这种需求"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:198
 msgid "Plan selected demands backward from their due date"
-msgstr ""
+msgstr "从它的截止日期逆向计划选定的需求"
 
 #: planningboard/static/js/frepple-planningboard.min.js:12
 #: planningboard/static/planningboard/src/planningboard.js:199
 msgid "Plan selected demands forward from the current date"
-msgstr ""
+msgstr "从它的截止日期预先计划选定的需求"
 
 #~ msgid "out of"
 #~ msgstr "分配出"

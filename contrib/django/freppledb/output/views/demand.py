@@ -39,7 +39,7 @@ class OverviewReport(GridPivot):
   model = Item
   permissions = (("view_demand_report", "Can view demand report"),)
   rows = (
-    GridFieldText('item', title=_('item'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/item'"),
+    GridFieldText('item', title=_('item'), key=True, editable=False, field_name='name', formatter='detail', extra='"role":"input/item"'),
     )
   crosses = (
     ('demand', {'title': _('demand')}),
@@ -192,10 +192,10 @@ class DetailReport(GridReport):
   rows = (
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
-    GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra="role:'input/demand'"),
-    GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra="role:'input/item'"),
-    GridFieldText('customer', title=_('customer'), field_name='demand__customer', editable=False, formatter='detail', extra="role:'input/customer'"),
-    GridFieldText('location', title=_('location'), field_name='demand__location', editable=False, formatter='detail', extra="role:'input/location'"),
+    GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra='"role":"input/demand"'),
+    GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('customer', title=_('customer'), field_name='demand__customer', editable=False, formatter='detail', extra='"role":"input/customer"'),
+    GridFieldText('location', title=_('location'), field_name='demand__location', editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),

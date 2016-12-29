@@ -309,7 +309,7 @@ class UserList(GridReport):
 
   rows = (
     #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra="role:'common/user'"),
+    GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra='"role":"common/user"'),
     #. Translators: Translation included with Django
     GridFieldText('username', title=_('username')),
     #. Translators: Translation included with Django
@@ -342,7 +342,7 @@ class GroupList(GridReport):
   help_url = 'user-guide/user-interface/getting-around/user-permissions-and-roles.html'
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'auth/group'"),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"auth/group"'),
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), width=200),
     )
@@ -361,7 +361,7 @@ class ParameterList(GridReport):
 
   rows = (
     #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/parameter'"),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra='"role":"common/parameter"'),
     GridFieldText('value', title=_('value')),
     GridFieldText('description', title=_('description')),
     GridFieldText('source', title=_('source')),
@@ -388,7 +388,7 @@ class CommentList(GridReport):
     #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center', width=80),
     GridFieldText('model', title=_('model'), field_name='content_type__model', editable=False, align='center'),
-    GridFieldText('object_pk', title=_('object id'), field_name='object_pk', editable=False, align='center', extra='formatter:objectfmt'),
+    GridFieldText('object_pk', title=_('object id'), field_name='object_pk', editable=False, align='center', extra='"formatter":"objectfmt"'),
     GridFieldText('comment', title=_('comment'), width=400, editable=False, align='center'),
     GridFieldText('app', title="app", hidden=True, field_name='content_type__app_label')
     )
@@ -405,7 +405,7 @@ class BucketList(GridReport):
   help_url = 'user-guide/model-reference/buckets.html'
   rows = (
     #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra="role:'common/bucket'"),
+    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra='"role":"common/bucket"'),
     GridFieldText('description', title=_('description')),
     GridFieldInteger('level', title=_('level')),
     GridFieldText('source', title=_('source')),
@@ -423,7 +423,7 @@ class BucketDetailList(GridReport):
   frozenColumns = 2
   help_url = 'user-guide/model-reference/buckets.html'
   rows = (
-    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra="role:'common/bucket'"),
+    GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra='"role":"common/bucket"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     #. Translators: Translation included with Django

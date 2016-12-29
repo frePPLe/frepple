@@ -39,8 +39,8 @@ class OverviewReport(GridPivot):
   help_url = 'user-guide/user-interface/plan-analysis/resource-report.html'
 
   rows = (
-    GridFieldText('resource', title=_('resource'), key=True, editable=False, field_name='name', formatter='detail', extra="role:'input/resource'"),
-    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra="role:'input/location'"),
+    GridFieldText('resource', title=_('resource'), key=True, editable=False, field_name='name', formatter='detail', extra='"role":"input/resource"'),
+    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     )
   crosses = (
@@ -191,15 +191,15 @@ class DetailReport(GridReport):
 
   rows = (
     GridFieldInteger('id', title='internal id', key=True, editable=False, hidden=True),
-    GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra="role:'input/resource'"),
+    GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra='"role":"input/resource"'),
     GridFieldInteger('operationplan__id', title=_('id'), editable=False),    
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
-    GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra='"role":"input/operation"'),
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra="role:'input/demand'", width=300, editable=False, sortable=False),
+    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
     GridFieldBool('operationplan__status', title=_('status'), editable=False),

@@ -43,7 +43,7 @@ class ReportByDemand(GridReport):
   help_url = 'user-guide/user-interface/plan-analysis/demand-gantt-report.html'
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
-    GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra='"role":"input/operation"'),
     GridFieldText('type', title=_('type'), editable=False, sortable=False, width=100),
     #GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
     #GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),

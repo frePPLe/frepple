@@ -163,24 +163,24 @@ class GridField(object):
       self.field_name = self.name
 
   def __str__(self):
-    o = [ "name:'%s',index:'%s',editable:%s,label:'%s',align:'%s',title:false" %
+    o = [ '"name":"%s","index":"%s","editable":%s,"label":"%s","align":"%s","title":false' %
           (self.name or '', self.name or '', self.editable and "true" or "false",
            force_text(self.title).title().replace("'", "\\'"), self.align
            ), ]
     if self.key:
-      o.append( ",key:true" )
+      o.append( ',"key":true' )
     if not self.sortable:
-      o.append(",sortable:false")
+      o.append(',"sortable":false')
     if not self.search:
-      o.append(",search:false")
+      o.append(',"search":false')
     if self.formatter:
-      o.append(",formatter:'%s'" % self.formatter)
+      o.append(',"formatter":"%s"' % self.formatter)
     if self.unformat:
-      o.append(",unformat:'%s'" % self.unformat)
+      o.append(',"unformat":"%s"' % self.unformat)
     if self.searchrules:
-      o.append(",searchrules:{%s}" % self.searchrules)
+      o.append(',"searchrules":{%s}' % self.searchrules)
     if self.hidden:
-      o.append(",hidden:true")
+      o.append(',"hidden":true')
     if self.extra:
       o.append(",%s" % force_text(self.extra))
     return ''.join(o)
@@ -203,44 +203,44 @@ class GridField(object):
 
 class GridFieldDateTime(GridField):
   formatter = 'date'
-  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
+  extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
   width = 140
 
 
 class GridFieldTime(GridField):
   formatter = 'time'
-  extra = "formatoptions:{srcformat:'H:i:s',newformat:'H:i:s'}"
+  extra = '"formatoptions":{"srcformat":"H:i:s","newformat":"H:i:s"}'
   width = 80
 
 
 class GridFieldDate(GridField):
   formatter = 'date'
-  extra = "formatoptions:{srcformat:'Y-m-d',newformat:'Y-m-d'}"
+  extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
   width = 140
 
 
 class GridFieldInteger(GridField):
   formatter = 'integer'
-  extra = "formatoptions:{defaultValue: ''}"
+  extra = '"formatoptions":{"defaultValue": ""}'
   width = 70
-  searchrules = 'integer:true'
+  searchrules = '"integer":true'
 
 
 class GridFieldNumber(GridField):
   formatter = 'number'
-  extra = "formatoptions:{defaultValue: ''}"
+  extra = '"formatoptions":{"defaultValue": ""}'
   width = 70
-  searchrules = 'number:true'
+  searchrules = '"number":true'
 
 
 class GridFieldBool(GridField):
-  extra = "formatoptions:{disabled:false}, edittype:'checkbox', editoptions:{value:'True:False'}"
+  extra = '"formatoptions":{"disabled":false}, "edittype":"checkbox", "editoptions":{"value":"True:False"}'
   width = 60
 
 
 class GridFieldLastModified(GridField):
   formatter = 'date'
-  extra = "formatoptions:{srcformat:'Y-m-d H:i:s',newformat:'Y-m-d H:i:s'}"
+  extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
   title = _('last modified')
   editable = False
   width = 140
@@ -257,7 +257,7 @@ class GridFieldChoice(GridField):
 
   def __init__(self, name, **kwargs):
     super(GridFieldChoice, self).__init__(name, **kwargs)
-    e = ["formatter:'select', edittype:'select', editoptions:{value:'"]
+    e = ['"formatter":"select", "edittype":"select", "editoptions":{"value":"']
     first = True
     for i in kwargs["choices"]:
       if first:
@@ -266,13 +266,13 @@ class GridFieldChoice(GridField):
       else:
         e.append(";%s:" % i[0])
       e.append(i[1])
-    e.append("'}")
+    e.append('"}')
     self.extra = string_concat(*e)
 
 
 class GridFieldCurrency(GridField):
   formatter = 'currency'
-  extra = "formatoptions:{prefix:'%s', suffix:'%s', defaultValue:''}" % settings.CURRENCY
+  extra = '"formatoptions":{"prefix":"%s", "suffix":"%s", "defaultValue":""}' % settings.CURRENCY
   width = 80
 
 
@@ -537,14 +537,14 @@ class GridReport(View):
   def _render_colmodel(cls, is_popup=False, mode="graph"):
     result = []
     if is_popup:
-      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false}")
+      result.append('{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false}')
     count = -1
     for i in cls.rows:
       count += 1
-      result.append("{%s,width:%s,counter:%d%s%s,searchoptions:{searchhidden: true}}" % (
+      result.append('{%s,"width":%s,"counter":%d%s%s,"searchoptions":{"searchhidden": true}}' % (
          i, i.width, count,
-         count < cls.frozenColumns and ',frozen:true' or '',
-         is_popup and ',popup:true' or ''
+         count < cls.frozenColumns and ',"frozen":true' or '',
+         is_popup and ',"popup":true' or ''
          ))
     return ',\n'.join(result)
 
@@ -1571,23 +1571,23 @@ class GridPivot(GridReport):
   def _render_colmodel(cls, is_popup=False, mode="graph"):
     result = []
     if is_popup:
-      result.append("{name:'select',label:gettext('Select'),width:75,align:'center',sortable:false,search:false,fixed:true}")
+      result.append('{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false,"fixed":true}')
     count = -1
     for i in cls.rows:
       count += 1
-      result.append("{%s,width:%s,counter:%d,frozen:true%s,searchoptions:{searchhidden: true},fixed:true}" % (
+      result.append('{%s,"width":%s,"counter":%d,"frozen":true%s,"searchoptions":{"searchhidden": true},"fixed":true}' % (
          i, i.width, count,
-         is_popup and ',popup:true' or ''
+         is_popup and ',"popup":true' or ''
          ))
     if mode == "graph":
       result.append(
-        "{name:'graph',index:'graph',editable:false,label:' ',title:false,"
-        "sortable:false,formatter:'graph',searchoptions:{searchhidden: true},fixed:false}"
+        '{"name":"graph","index":"graph","editable":false,"label":" ","title":false,'
+        '"sortable":false,"formatter":"graph","searchoptions":{"searchhidden": true},"fixed":false}'
         )
     else:
       result.append(
-        "{name:'columns',label:' ',sortable:false,width:150,align:'left',"
-        "formatter:grid.pivotcolumns,search:false,frozen:true,title:false }"
+        '{"name":"columns","label":" ","sortable":false,"width":150,"align":"left",'
+        '"formatter":"grid.pivotcolumns","search":false,"frozen":true,"title":false }'
         )
     return ',\n'.join(result)
 

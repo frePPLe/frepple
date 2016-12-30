@@ -133,7 +133,7 @@ AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h perl.h python.h pthread.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC

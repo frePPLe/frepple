@@ -288,9 +288,6 @@ Object* OperationPlan::createOperationPlan(
     case ADD_CHANGE: ;
   }
 
-  // Return the existing operationplan
-  if (opplan) return opplan;
-
   // Get start, end, quantity and status fields
   const DataValue* startfld = in.get(Tags::start);
   Date start;
@@ -303,6 +300,17 @@ Object* OperationPlan::createOperationPlan(
   const DataValue* quantityfld = in.get(Tags::quantity);
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
   const DataValue* statusfld = in.get(Tags::status);
+
+  // Return the existing operationplan
+  if (opplan)
+  {
+    if (quantityfld || startfld || endfld)
+      opplan->getOperation()->setOperationPlanParameters(
+        opplan, quantityfld ? quantity : opplan->getQuantity(),
+        start, end
+      );
+    return opplan;
+  }
 
   // Create a new operation plan
   if (ordtype == "PO")
@@ -1429,7 +1437,9 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::operation) && !attr.isA(Tags::id)
-          && !attr.isA(Tags::action) && !attr.isA(Tags::type))
+          && !attr.isA(Tags::action) && !attr.isA(Tags::type)
+          && !attr.isA(Tags::start) && !attr.isA(Tags::end)
+          && !attr.isA(Tags::quantity))
         {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)

@@ -150,7 +150,6 @@
 			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item B</name>
@@ -163,7 +162,6 @@
 			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item C</name>
@@ -176,7 +174,6 @@
 			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 1 for item D</name>
@@ -189,7 +186,6 @@
 			</location>
 			<due>2015-01-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 2 for item A</name>
@@ -202,7 +198,6 @@
 			</location>
 			<due>2015-02-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 2 for item B</name>
@@ -215,7 +210,6 @@
 			</location>
 			<due>2015-02-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 2 for item C</name>
@@ -228,7 +222,6 @@
 			</location>
 			<due>2015-02-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 		<demand>
 			<name>order 2 for item D</name>
@@ -241,7 +234,6 @@
 			</location>
 			<due>2015-02-01T00:00:00</due>
 			<priority>1</priority>
-			<minshipment>10</minshipment>
 		</demand>
 	</demands>
 	<operationplans>

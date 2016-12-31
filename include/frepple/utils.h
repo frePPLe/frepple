@@ -2013,10 +2013,11 @@ class MetaClass : public NonCopyable
       double (Cls::*getfunc)(void) const,
       void (Cls::*setfunc)(double) = nullptr,
       double d = 0.0,
-      unsigned int c = BASE
+      unsigned int c = BASE,
+      bool (Cls::*isdfltfunc)(void) const = nullptr
       )
 		{
-      fields.push_back( new MetaFieldDouble<Cls>(k, getfunc, setfunc, d, c) );
+      fields.push_back( new MetaFieldDouble<Cls>(k, getfunc, setfunc, d, c, isdfltfunc) );
 		}
 
     template <class Cls, class Ptr> inline void addPointerField(
@@ -6762,12 +6763,15 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
 
     typedef double (Cls::*getFunction)(void) const;
 
+    typedef bool (Cls::*isDefaultFunction)(void) const;
+
     MetaFieldDouble(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = nullptr,
         double d = 0.0,
-        unsigned int c = BASE
-        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
+        unsigned int c = BASE,
+        isDefaultFunction dfltfunc = nullptr
+        ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d), isDfltFunc(dfltfunc)
     {
       if (getfunc == nullptr)
         throw DataException("Getter function can't be nullptr");
@@ -6795,20 +6799,31 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
     {
       if (getFlag(DONT_SERIALIZE))
         return;
-      double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      if (tmp != def)
-        output.writeElement(getName(), tmp);
+      if (isDfltFunc)
+      {
+        if (!(static_cast<Cls*>(output.getCurrentObject())->*isDfltFunc)())
+          output.writeElement(getName(), (static_cast<Cls*>(output.getCurrentObject())->*getf)());
+      }
+      else
+      {
+        double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+        if (tmp != def)
+          output.writeElement(getName(), tmp);
+      }
     }
 
   protected:
     /** Get function. */
-    getFunction getf;
+    getFunction getf = nullptr;
 
     /** Set function. */
-    setFunction setf;
+    setFunction setf = nullptr;
 
-    /** Defaut value. */
+    /** Default value. */
     double def;
+
+    /** Set function. */
+    isDefaultFunction isDfltFunc = nullptr;
 };
 
 

@@ -7186,6 +7186,11 @@ class Demand
         return ceil(getQuantity() / DefaultMaxShipments);
     }
 
+    bool isMinShipmentDefault() const
+    {
+      return minShipment == -1.0;
+    }
+
     /** Updates the maximum allowed lateness for this demand.<br>
       * The default value is infinite.<br>
       * The argument must be a positive time period.
@@ -7244,8 +7249,7 @@ class Demand
       Plannable::registerFields<Cls>(m);
       m->addDateField<Cls>(Tags::due, &Cls::getDue, &Cls::setDue);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX);
-      m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1, DONT_SERIALIZE);
+      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX, BASE + PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatusString, &Cls::setStatusString, "open");
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_OBJECT);
@@ -7389,7 +7393,7 @@ class DemandDefault : public Demand
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, 1);
+      m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment, &Cls::setMinShipment, -1, BASE + PLAN, &Cls::isMinShipmentDefault);
     }
 };
 

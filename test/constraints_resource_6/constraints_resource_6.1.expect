@@ -343,6 +343,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>1</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 01</name>
@@ -356,6 +357,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 02</name>
@@ -369,6 +371,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 03</name>
@@ -382,6 +385,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 04</name>
@@ -395,6 +399,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 05</name>
@@ -408,6 +413,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 06</name>
@@ -421,6 +427,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 07</name>
@@ -434,6 +441,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 08</name>
@@ -447,6 +455,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 09</name>
@@ -460,6 +469,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 10</name>
@@ -473,6 +483,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 11</name>
@@ -486,6 +497,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 12</name>
@@ -499,6 +511,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 13</name>
@@ -512,6 +525,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 14</name>
@@ -525,6 +539,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 15</name>
@@ -538,6 +553,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 16</name>
@@ -551,6 +567,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>2. order 17</name>
@@ -564,6 +581,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>2</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 01</name>
@@ -577,6 +595,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 02</name>
@@ -590,6 +609,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 03</name>
@@ -603,6 +623,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 04</name>
@@ -616,6 +637,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 05</name>
@@ -629,6 +651,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 06</name>
@@ -642,6 +665,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 07</name>
@@ -655,6 +679,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 08</name>
@@ -668,6 +693,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 09</name>
@@ -681,6 +707,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 10</name>
@@ -694,6 +721,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 11</name>
@@ -707,6 +735,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 12</name>
@@ -720,6 +749,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 13</name>
@@ -733,6 +763,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 14</name>
@@ -746,6 +777,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 15</name>
@@ -759,6 +791,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 16</name>
@@ -772,6 +805,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>3. order 17</name>
@@ -785,6 +819,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>3</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 01</name>
@@ -798,6 +833,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 02</name>
@@ -811,6 +847,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 03</name>
@@ -824,6 +861,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 04</name>
@@ -837,6 +875,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 05</name>
@@ -850,6 +889,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 06</name>
@@ -863,6 +903,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 07</name>
@@ -876,6 +917,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 08</name>
@@ -889,6 +931,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 09</name>
@@ -902,6 +945,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 10</name>
@@ -915,6 +959,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 11</name>
@@ -928,6 +973,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 12</name>
@@ -941,6 +987,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 13</name>
@@ -954,6 +1001,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 14</name>
@@ -967,6 +1015,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 15</name>
@@ -980,6 +1029,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 16</name>
@@ -993,6 +1043,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 		<demand>
 			<name>4. order 17</name>
@@ -1006,6 +1057,7 @@
 			</location>
 			<due>2014-03-06T00:00:00</due>
 			<priority>4</priority>
+			<minshipment>1</minshipment>
 		</demand>
 	</demands>
 </plan>

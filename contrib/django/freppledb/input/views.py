@@ -163,7 +163,7 @@ class PathReport(GridReport):
   def findUsage(reportclass, buffer, db, level, curqty, realdepth, pushsuper):
     result = [
       (level - 1, None, i.operation, curqty, 0, None, realdepth, pushsuper, buffer.location.name if buffer.location else None)
-      for i in buffer.item.operationmaterials.filter(quantity__lt=0).only('operation').using(db)
+      for i in buffer.item.operationmaterials.filter(quantity__lt=0).filter(operation__location__name=buffer.location.name).only('operation').using(db)
       ]
     for i in ItemDistribution.objects.using(db).filter(
         item__lft__lte=buffer.item.lft, item__rght__gt=buffer.item.lft,
@@ -299,10 +299,10 @@ class PathReport(GridReport):
             resources = None
           try:
             downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             downstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.location.name), item=curoperation.item, location=curlocation)
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
         elif isinstance(curoperation, ItemDistribution):
           name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
           optype = "distribution"
@@ -318,10 +318,10 @@ class PathReport(GridReport):
             resources = None
           try:
             downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, location))
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=curoperation.item, location=curlocation)
-            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
         else:
           name = curoperation.name
           optype = curoperation.type
@@ -336,10 +336,10 @@ class PathReport(GridReport):
               root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
             try:
               downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
-              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )
+              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, True) )
             except Buffer.DoesNotExist:
               downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=x.item, location=curlocation)
-              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, False) )
+              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, True) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -371,10 +371,10 @@ class PathReport(GridReport):
             resources = None
           try:
             upstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
-            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
-            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
         else:
           curprodflow = None
           name = curoperation.name
@@ -392,7 +392,7 @@ class PathReport(GridReport):
               item=y.item,
               location=curoperation.location
               )
-            root.extend( reportclass.findReplenishment(b, request.database, level + 2, curqty, realdepth + 1, False) )
+            root.extend( reportclass.findReplenishment(b, request.database, level + 2, curqty, realdepth + 1, True) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level + 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -452,18 +452,63 @@ class UpstreamItemPath(PathReport):
   def getRoot(reportclass, request, entity):
     from django.core.exceptions import ObjectDoesNotExist
     try:
+      locs = set()
+      result = []
       it = Item.objects.using(request.database).get(name=entity)
       if reportclass.downstream:
         # Find all buffers where the item is being stored and walk downstream
-        result = []
         for b in Buffer.objects.filter(item=it).using(request.database):
-          result.extend( reportclass.findUsage(b, request.database, 0, 1, 0, False) )
+          locs.add(b.location.name)
+          result.extend( reportclass.findUsage(b, request.database, 0, 1, 0, True) )
+        # Add item locations that can be replenished
+        for itmdist in ItemDistribution.objects.using(request.database).filter(
+          item__lft__lte=it.lft, item__rght__gt=it.lft
+          ):
+            if itmdist.location.name in locs:
+              continue
+            locs.add(itmdist.location.name)
+            itmdist.item = it
+            result.append(
+              (0, None, itmdist, 1, 0, None, 0, False, itmdist.location.name)
+              )
+        # Add item locations that can be replenished
+        for itmsup in Operation.objects.using(request.database).filter(          
+          item__lft__lte=it.lft, item__rght__gt=it.lft
+          ):
+            if itmsup.location.name in locs:
+              continue
+            locs.add(itmsup.location.name)
+            itmsup.item = it            
+            result.append(
+              (0, None, itmsup, 1, 0, None, 0, False, itmsup.location.name)
+              )        
         return result
       else:
         # Find the supply path of all buffers of this item
-        result = []
         for b in Buffer.objects.filter(item=entity).using(request.database):
-          result.extend( reportclass.findReplenishment(b, request.database, 0, 1, 0, False) )
+          result.extend( reportclass.findReplenishment(b, request.database, 0, 1, 0, True) )
+        # Add item locations that can be replenished
+        for itmdist in ItemDistribution.objects.using(request.database).filter(
+          item__lft__lte=it.lft, item__rght__gt=it.lft
+          ):
+            if itmdist.location.name in locs:
+              continue
+            locs.add(itmdist.location.name)
+            itmdist.item = it
+            result.append(
+              (0, None, itmdist, 1, 0, None, 0, False, itmdist.location.name)
+              )
+        # Add item locations that can be replenished
+        for itmsup in Operation.objects.using(request.database).filter(          
+          item__lft__lte=it.lft, item__rght__gt=it.lft
+          ):
+            if itmsup.location.name in locs:
+              continue
+            locs.add(itmsup.location.name)
+            itmsup.item = it            
+            result.append(
+              (0, None, itmsup, 1, 0, None, 0, False, itmsup.location.name)
+              )        
         return result
     except ObjectDoesNotExist:
       raise Http404("item %s doesn't exist" % entity)
@@ -479,9 +524,9 @@ class UpstreamBufferPath(PathReport):
     try:
       buf = Buffer.objects.using(request.database).get(name=entity)
       if reportclass.downstream:
-        return reportclass.findUsage(buf, request.database, 0, 1, 0, False)
+        return reportclass.findUsage(buf, request.database, 0, 1, 0, True)
       else:
-        return reportclass.findReplenishment(buf, request.database, 0, 1, 0, False)
+        return reportclass.findReplenishment(buf, request.database, 0, 1, 0, True)
     except ObjectDoesNotExist:
       raise Http404("buffer %s doesn't exist" % entity)
 

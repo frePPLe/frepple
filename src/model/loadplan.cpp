@@ -288,6 +288,30 @@ LoadPlan* LoadPlan::getOtherLoadPlan() const
   throw LogicException("No matching loadplan found");
 }
 
+string LoadPlan::getStatus() const
+{
+  if (flags & STATUS_CONFIRMED)
+    return "confirmed";
+  else
+    return "proposed";
+}
+
+void LoadPlan::setStatus(const string& s)
+{
+  if (!getOperationPlan()->getLocked() && s == "confirmed")
+    throw DataException("OperationPlanResource locked while OperationPlan is not");
+  if (s == "confirmed")
+  {
+    flags |= STATUS_CONFIRMED;
+  }
+  else if (s == "proposed")
+  {
+    flags &= ~STATUS_CONFIRMED;
+  }
+  else
+    throw DataException("invalid operationplanresource status:" + s);
+}
+
 
 void LoadPlan::update()
 {

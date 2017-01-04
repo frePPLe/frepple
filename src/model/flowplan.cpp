@@ -81,6 +81,30 @@ FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
 }
 
 
+string FlowPlan::getStatus() const
+{
+  if (flags & STATUS_CONFIRMED)
+    return "confirmed";
+  else
+    return "proposed";
+}
+
+void FlowPlan::setStatus(const string& s)
+{
+  if (!getOperationPlan()->getLocked() && s=="confirmed")
+    throw DataException("OperationPlanMaterial locked while OperationPlan is not");
+  if (s == "confirmed")
+  {
+    flags |= STATUS_CONFIRMED;
+  }
+  else if (s == "proposed")
+  {
+    flags &= ~STATUS_CONFIRMED;
+  }
+  else
+    throw DataException("invalid operationplanmaterial status:" + s);
+}
+
 void FlowPlan::update()
 {
   // Update the timeline data structure

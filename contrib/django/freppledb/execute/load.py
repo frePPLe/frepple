@@ -814,6 +814,54 @@ class loadData(object):
       ''')
     d = self.cursor.fetchone()
     frepple.settings.id = d[0]
+    
+  def loadOperationPlanMaterials(self):
+    print('Importing operationplanmaterials...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      select quantity, flowdate, operationplan_id, buffer, status 
+      from operationplanmaterial
+      where status <> 'proposed'
+    ''')
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        opplan = frepple.operationplan(id=i[2])
+        if opplan.status not in ("confirmed","approved"):
+          pass
+        for fl in opplan.flowplans:
+          if fl.buffer.name == i[3]:
+            fl.status = "confirmed"
+            if i[1]:
+              fl.date = i[1]
+            fl.quantity = i[0]
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d operationplanmaterials in %.2f seconds' % (cnt, time() - starttime))
+    
+  def loadOperationPlanResources(self):
+    print('Importing operationplanresources...')
+    cnt = 0
+    starttime = time()
+    self.cursor.execute('''
+      select resource, quantity, operationplan_id
+      from operationplanresource
+      where status <> 'proposed'
+    ''')
+    for i in self.cursor.fetchall():
+      cnt += 1
+      try:
+        opplan = frepple.operationplan(id=i[2])
+        if opplan.status not in ("confirmed","approved"):
+          pass
+        for lo in opplan.loadplans:
+          if lo.resource.name == i[0]:
+            lo.status = "confirmed"
+            lo.quantity = i[1]
+      except Exception as e:
+        print("Error:", e)
+    print('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))
 
 
   def loadDemand(self):
@@ -912,6 +960,9 @@ class loadData(object):
     # Sequential load of all entities
     self.loadDemand()
     self.loadOperationPlans()
+    self.loadOperationPlanMaterials()
+    self.loadOperationPlanResources()
+    
 
     # Close the database connection
     self.cursor.close()

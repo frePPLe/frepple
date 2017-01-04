@@ -1048,7 +1048,13 @@ class OperationPlan(AuditModel):
     ordering = ['id']
 
 
-class OperationPlanResource(models.Model):
+class OperationPlanResource(AuditModel):
+    # Possible status
+  OPRstatus = (
+    ('proposed', _('proposed')),
+    ('confirmed', _('confirmed')),
+  )
+  
   # Database fields
   resource = models.CharField(_('resource'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
@@ -1058,9 +1064,13 @@ class OperationPlanResource(models.Model):
   startdate = models.DateTimeField(_('startdate'), db_index=True)
   enddate = models.DateTimeField(_('enddate'), db_index=True)
   setup = models.CharField(_('setup'), max_length=300, null=True)
+  status = models.CharField(
+    _('status'), null=True, blank=True, max_length=20, choices=OPRstatus,
+    help_text=_('Status of the OperationPlanResource')
+    )
 
   def __str__(self):
-      return "%s %s %s" % (self.resource, self.startdate, self.enddate)
+      return "%s %s %s %s" % (self.resource, self.startdate, self.enddate, self.status)
 
   class Meta:
     db_table = 'operationplanresource'
@@ -1069,7 +1079,13 @@ class OperationPlanResource(models.Model):
     verbose_name_plural = _('operationplan resources')
 
 
-class OperationPlanMaterial(models.Model):
+class OperationPlanMaterial(AuditModel):
+  # Possible status
+  OPMstatus = (
+    ('proposed', _('proposed')), 
+    ('confirmed', _('confirmed')),
+  )
+  
   # Database fields
   buffer = models.CharField(_('buffer'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
@@ -1078,9 +1094,13 @@ class OperationPlanMaterial(models.Model):
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=6)
   flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=15, decimal_places=6)
+  status = models.CharField(
+    _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
+    help_text=_('Status of the OperationPlanMaterial')
+    )
 
   def __str__(self):
-    return "%s %s %s" % (self.buffer, self.flowdate, self.quantity)
+    return "%s %s %s %s" % (self.buffer, self.flowdate, self.quantity, self.status)
 
   class Meta:
     db_table = 'operationplanmaterial'

@@ -1120,6 +1120,7 @@ class ManufacturingOrderList(GridReport):
   else:
     actions = [
       {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]
@@ -1173,9 +1174,9 @@ class DistributionOrderList(GridReport):
   else:
     actions = [
       {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
-      {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("canceled")}, "function": "grid.setStatus('canceled')"},
     ]
 
 
@@ -1227,6 +1228,7 @@ class PurchaseOrderList(GridReport):
   else:
     actions = [
       {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
+      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]

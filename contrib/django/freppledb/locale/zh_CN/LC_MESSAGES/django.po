@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-23 15:24+0100\n"
+"PO-Revision-Date: 2017-01-04 09:30+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0beta1\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -98,6 +98,7 @@ msgstr "拥有者"
 msgid "Hierarchical parent"
 msgstr "父类"
 
+# Translation for "source" and "resource" must be different
 #: common/models.py:179 common/report.py:2141 common/views.py:412
 #: common/views.py:456 common/views.py:476 forecast/views.py:74
 #: forecast/views.py:815 input/views.py:600 input/views.py:618
@@ -108,7 +109,7 @@ msgstr "父类"
 #: input/views.py:1060 input/views.py:1092 input/views.py:1160
 #: input/views.py:1233 inventoryplanning/views.py:107
 msgid "source"
-msgstr "来源"
+msgstr "源"
 
 #: common/models.py:180 common/models.py:308 common/models.py:517
 #: common/report.py:238 common/report.py:2144 planningboard/models.py:27
@@ -2187,6 +2188,7 @@ msgstr "配置"
 msgid "Setup of the resource at the start of the plan"
 msgstr "在计划开始时的资源配置"
 
+# translation for "source" and "resource" must e different
 #: input/models.py:470 input/models.py:498 input/models.py:592
 #: input/models.py:698 input/models.py:773 input/models.py:999
 #: input/views.py:743 input/views.py:773 input/views.py:834 input/views.py:857

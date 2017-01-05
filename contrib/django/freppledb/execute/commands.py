@@ -177,7 +177,7 @@ class ExportPlanToXML(PlanTask):
   @staticmethod
   def run(database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
-    frepple.saveXMLfile("output.1.xml","STANDARD")
+    frepple.saveXMLfile("output.1.xml","BASE")
     #frepple.saveXMLfile("output.2.xml","PLAN")
     #frepple.saveXMLfile("output.3.xml","PLANDETAIL")
 

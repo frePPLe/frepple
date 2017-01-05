@@ -366,21 +366,32 @@ class export:
     starttime = time()
     process.stdin.write(
       ('COPY operationplanmaterial '
-      '(operationplan_id, buffer, quantity, flowdate, onhand) '
+      '(operationplan_id, buffer, quantity, flowdate, onhand, status, lastmodified) '
       'FROM STDIN;\n').encode(self.encoding)
       )
+    currentTime = self.timestamp
+    updates = []
     for i in frepple.buffers():
       if self.cluster != -1 and self.cluster != i.cluster:
         continue
       for j in i.flowplans:
-        process.stdin.write(("%s\t%s\t%s\t%s\t%s\n" % (
-           j.operationplan.id, j.buffer.name,
-           round(j.quantity, 6),
-           str(j.date), round(j.onhand, 6)
-           )).encode(self.encoding))
+        #if the record is confirmed, it is already in the table.
+        if j.status == 'confirmed':
+          updates.append('''
+          update operationplanmaterial
+          set onhand=%s, flowdate='%s'
+          where status = 'confirmed' and buffer = '%s' and operationplan_id = %s
+          ''' % (round(j.onhand, 6),str(j.date), j.buffer.name, j.operationplan.id ))
+        else:
+          process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+             j.operationplan.id, j.buffer.name,
+             round(j.quantity, 6),
+             str(j.date), round(j.onhand, 6), j.status, currentTime
+             )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
+    process.stdin.write('\n'.join(updates).encode(self.encoding))
     if self.verbosity:
-      print('Exported operationplan materials in %.2f seconds' % (time() - starttime))
+      print('Exported operationplan materials in %.2f seconds' % (time() - starttime))    
 
 
   def exportOperationPlanResources(self, process):
@@ -389,19 +400,20 @@ class export:
     starttime = time()
     process.stdin.write(
       ('COPY operationplanresource '
-      '(operationplan_id, resource, quantity, startdate, enddate, setup) '
+      '(operationplan_id, resource, quantity, startdate, enddate, setup, status, lastmodified) '
       'FROM STDIN;\n').encode(self.encoding)
       )
+    currentTime = self.timestamp
     for i in frepple.resources():
       if self.cluster != -1 and self.cluster != i.cluster:
         continue
       for j in i.loadplans:
         if j.quantity < 0:
-          process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\n" % (
+          process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
             j.operationplan.id, j.resource.name,
             round(-j.quantity, 6),
             str(j.startdate), str(j.enddate),
-            j.setup and j.setup or "\\N"
+            j.setup and j.setup or "\\N", j.status, currentTime
             )).encode(self.encoding))
     process.stdin.write('\\.\n'.encode(self.encoding))
     if self.verbosity:
@@ -510,7 +522,8 @@ class export:
       DatabasePipe(
         self,
         export.exportOperationplans, export.exportOperationPlanMaterials,
-        export.exportOperationPlanResources, export.exportPegging
+        export.exportOperationPlanResources, 
+        export.exportPegging
         )
       )
     # Start all threads

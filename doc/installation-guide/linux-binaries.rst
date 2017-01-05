@@ -20,7 +20,7 @@ distributions:
    .. image:: _images/fedorainstall.png
 
 #. | **Ubuntu LTS**
-   | A 64-bit binary package for Ubuntu 14 is available.
+   | A 64-bit binary package for Ubuntu 16 is available.
 
 Other Linux distributions aren't really a problem, but you'll need to build
 the frePPLe package from the source .deb or .rpm files, as described on the

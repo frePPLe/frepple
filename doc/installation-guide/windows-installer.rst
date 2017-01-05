@@ -11,7 +11,7 @@ license agreement, the installer will guide you to select:
 * The language and database connection parameters
 * Whether or not to register the server as a service
 
-The installer has been tested on Windows 7, Windows 8 and Windows 10.
+The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 10.
 
 #. **Start the installer**
 
@@ -52,9 +52,9 @@ The installer has been tested on Windows 7, Windows 8 and Windows 10.
 
      PostgreSQL 9.4 or higher is required by frePPLe.
      You can:
-     
+
      * either use the postgreSQL included with frePPLe
-     
+
      * either install and configure PostgreSQL yourself (advanced users only)
 
      If you choose to download and install PostgreSQL manually please follow these instructions:

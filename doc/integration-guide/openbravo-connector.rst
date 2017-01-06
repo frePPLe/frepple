@@ -9,6 +9,9 @@ Openbravo connector
 FrePPLe provides an integration with `Openbravo <http://www.openbravo.com>`_, a
 leading open source agile ERP system.
 
+Overview
+--------
+
 The connector provides the following functionality:
 
 * Two-way integration:
@@ -20,14 +23,15 @@ The connector provides the following functionality:
   * Uploads new production requirements, purchase requisitions and expected
     delivery date of sales orders from frePPLe to Openbravo.
 
-* Uses the standard XML web service to access Openbravo.
+* Uses the standard web services API to access Openbravo.
+  No changes are required on Openbravo side.
 
 * For optimal performance the connector allows net-change download. Only the
   objects that have been created or changed in Openbravo within a certain time
   frame are extracted.
 
 * You can still maintain additional data in the frePPLe user interface. I.e.
-  Openbravo doesn’t need to be the only source of data for your model.
+  Openbravo doesn't need to be the only source of data for your frePPLe model.
 
 * | Easy to customize.
   | The connector uses the standard Openbravo web services (see 
@@ -42,14 +46,86 @@ The connector provides the following functionality:
     is recommended, as it provides an additional web service that provides
     a better workflow for the end users.
 
-**Configuring the connector**
+
+Importing data from Openbravo into frePPLe
+------------------------------------------
+
+You can run the import interface in 2 ways:
+
+* | **Interactively from the frePPLe user interface.**
+  | The execute screen has a specific section where you can launch the import
+    connector.
+  | You can specify the number of days of recent changes you want to extract
+    from Openbravo.
+
+  .. image:: _images/openbravo-import.png
+	 :alt: Import from openbravo
+
+* | **From the command line script.**
+  | The script is especially handy when you want to run the interface
+    automatically, e.g. with a cron job.
+  | Issue one of the commands below. The second command runs an incremental
+    import of the Openbravo objects that have been changed in the last 7 days.
+
+  ::
+
+    frepplectl openbravo_import
+    frepplectl openbravo_import --delta=7
+
+Exporting data from frePPLe to Openbravo
+----------------------------------------
+
+You can bring the planning results to Openbravo in three ways:
+
+* | **Incremental export from the frePPLe user interface**
+  | User can select proposed purchase orders, distribution orders or manufacturing
+    orders in the frePPLe screens, and then use the action menu to bring them
+    immediately to Openbravo.
+
+  .. image:: _images/openbravo-export-incremental.png
+     :alt: Export to openbravo
+
+* | **Bulk export from the frePPLe user interface.**
+  | The execute screen has a specific section where you can launch the export
+    connector. This allows to export all proposed transactions meeting certain
+    criteria to Openbravo.
+  | Three parameters define a filter criterion to select which transactions
+    will be included in the bulk exports.
+
+  .. image:: _images/openbravo-export.png
+     :alt: Export to openbravo
+
+* | **Bulk export from the command line.**
+  | Issue the command below. The script is especially handy when you want to
+    run the interface automatically.
+
+  ::
+
+     frepplectl openbravo_export
+
+It is possible to combine both the incremental and bulk export in the same frePPLe
+instance. For instance, proposed purchase orders for a total value less than a certain 
+dollar threshold can be exported automatically to Openbravo. Proposed purchase orders
+above the threshold are then reviewed in frePPLe by the planner, and export 
+incrementally upon the planners' approval.
+
+Technical configuration
+-----------------------
 
 * | **Edit the configuration file djangosettings.py**
   | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
     (Windows).
   | Assure that the freppledb.openbravo is included in the setting
     INSTALLED_APPS which defines the enabled extensions. By default
-    it is enabled.
+    it is not enabled.
+
+* | **Migrate your frePPLe database**
+  | Run the migrate command to add some extra fields in the database, and load the 
+    connector parameters.
+    
+  ::
+
+     frepplectl migrate
 
 * | **Configure the following parameters**
   | In the frePPLe user interface, the menu item 'admin/parameters' opens a
@@ -61,60 +137,34 @@ The connector provides the following functionality:
 
   * | openbravo.password: Password for the connection
     | For improved security it is recommended to specify this password in the
-      setting OPENBRAVO_PASSWORDS in the djangosettings.py file rather then this
-      parameter.
+      setting OPENBRAVO_PASSWORDS in the djangosettings.py file rather then 
+      using this parameter.
 
   * | openbravo.date_format: Date format for openbravo webservice filter
     | Date format defaults to  %Y-%m-%d (i.e. YYYY-MM-DD) but can here be changed
       to other formats like %m-%d-%Y (i.e. MM-DD-YYYY).
 
-**Importing data from Openbravo to frePPLe**
+  * | openbravo.exportPurchasingPlan 
+    | By default we export purchase requisitions and manufacturing work orders. 
+    | By switching this flag to true, we will export to the purchaseplan object instead, 
+      which is where the Openbravo MRP run normally stores its results. Switch this 
+      flag to true only if you have specific customizations using the purchaseplan table.
 
-You can run the import interface in 2 ways:
+  * | openbravo.filter_export_purchase_order
+    | Filter expression purchase orders for bulk export of purchase orders.
+  
+  * | openbravo.filter_export_manufacturing_orderfilter:
+    | Filter expression for bulk export of manufacturing orders.
+  
+  * | openbravo.filter_export_distribution_order
+    | Filter expression for bulk export of distribution orders.
 
-* | **Interactively from the frePPLe user interface.**
-  | The execute screen has a specific section where you can launch the import
-    connector.
-  | You can specify the number of days of recent changes you want to extract
-    from Openbravo.
+Data mapping details
+--------------------
 
-.. image:: _images/openbravo-import.png
-   :alt: Import from openbravo
-
-* | **From the command line script.**
-  | The script is especially handy when you want to run the interface
-    automatically.
-  | Issue one of the commands below.
-
-  ::
-
-    frepplectl openbravo_import
-    frepplectl openbravo_import --delta=7
-
-**Exporting data from frePPLe to Openbravo**
-
-You can run the connector in 2 ways:
-
-* | **Interactively from the frePPLe user interface.**
-  | The execute screen has a specific section where you can launch the export
-    connector.
-
-.. image:: _images/openbravo-export.png
-   :alt: Export to openbravo
-
-* | **From the command line.**
-  | Issue the command below. The script is especially handy when you want to
-    run the interface automatically.
-
-  ::
-
-     frepplectl openbravo_export
-
-**Mapping details**
-
-The connector doesn’t cover all possible configurations of Openbravo and
-frePPLe. The connector is very likely to require some customization to fit
-the particular setup of the ERP and the planning requirements in frePPLe.
+The connector doesn't cover all possible configurations of Openbravo and
+frePPLe. The connector is quite likely to require some customization to fit
+the particular setup of the Openbravo and the planning requirements in frePPLe.
 
 :download:`Download mapping documentation as SVG <_images/openbravo-integration.svg>`
 

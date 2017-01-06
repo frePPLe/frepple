@@ -169,7 +169,9 @@ class ManufacturingOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    $("#mo_overview").find("tr").each(function() {
+    var nth = Math.ceil($("#mo_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var myticks = [];
+    $("#mo_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
       var units = count.next();
@@ -180,6 +182,7 @@ class ManufacturingOrderWidget(Widget):
       if (el[1] > max_count) max_count = el[1];
       if (el[2] > max_units) max_units = el[2];
       if (el[3] > max_value) max_value = el[3];
+      if (idx %% nth == 0) myticks.push(name.text());
       });
 
     // Define axis domains
@@ -216,8 +219,7 @@ class ManufacturingOrderWidget(Widget):
         });
 
     // Draw x-axis
-    var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+    var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -393,7 +395,9 @@ class DistributionOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    $("#do_overview").find("tr").each(function() {
+    var nth = Math.ceil($("#do_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var myticks = [];
+    $("#do_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
       var units = count.next();
@@ -404,8 +408,9 @@ class DistributionOrderWidget(Widget):
       if (el[1] > max_count) max_count = el[1];
       if (el[2] > max_units) max_units = el[2];
       if (el[3] > max_value) max_value = el[3];
+      if (idx %% nth == 0) myticks.push(name.text());
       });
-
+      
     // Define axis domains
     var x = d3.scale.ordinal()
       .domain(domain_x)
@@ -438,8 +443,7 @@ class DistributionOrderWidget(Widget):
         });
 
     // Draw x-axis
-    var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+    var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -511,9 +515,9 @@ class DistributionOrderWidget(Widget):
       left outer join item
         on operationplan.item_id = item.name
         and status in ('confirmed', 'proposed')
-      where bucket_id = %%s and common_bucketdetail.enddate > %%s
-        and common_bucketdetail.startdate < %%s
         and type = 'DO'
+      where bucket_id = %%s and common_bucketdetail.enddate > %%s
+        and common_bucketdetail.startdate < %%s        
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
       select 
@@ -615,7 +619,9 @@ class PurchaseOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    $("#po_overview").find("tr").each(function() {
+    var nth = Math.ceil($("#po_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var myticks = [];
+    $("#po_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
       var units = count.next()
@@ -626,6 +632,7 @@ class PurchaseOrderWidget(Widget):
       if (el[1] > max_count) max_count = el[1];
       if (el[2] > max_units) max_units = el[2];
       if (el[3] > max_value) max_value = el[3];
+      if (idx %% nth == 0) myticks.push(name.text());
       });
 
     // Define axis domains
@@ -660,8 +667,7 @@ class PurchaseOrderWidget(Widget):
         });
 
     // Draw x-axis
-    var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+    var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")

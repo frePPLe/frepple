@@ -1587,7 +1587,7 @@ class GridPivot(GridReport):
     else:
       result.append(
         '{"name":"columns","label":" ","sortable":false,"width":150,"align":"left",'
-        '"formatter":"grid.pivotcolumns","search":false,"frozen":true,"title":false }'
+        '"formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false }'
         )
     return ',\n'.join(result)
 

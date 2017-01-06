@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-16 13:34+0100\n"
+"PO-Revision-Date: 2017-01-06 18:24+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 2.0beta1\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -62,7 +62,7 @@ msgid "Guided tour"
 msgstr "Tour guidato"
 
 #: common/menu.py:54 common/views.py:173 common/widget.py:47
-msgid "Modeling wizard"
+msgid "Wizard to load your data"
 msgstr "wizard di modellizzazione"
 
 #: common/menu.py:58
@@ -87,11 +87,10 @@ msgid "Unique identifier"
 msgstr "Identificativo"
 
 #: common/models.py:42 common/models.py:275 forecast/views.py:811
-#: input/models.py:935 input/views.py:596 input/views.py:640
-#: input/views.py:670 input/views.py:692 input/views.py:714 input/views.py:797
-#: input/views.py:923 input/views.py:1088 output/models.py:18
-#: output/models.py:40 output/views/constraint.py:76
-#: output/views/problem.py:52 quoting/views.py:58
+#: input/models.py:935 input/views.py:596 input/views.py:640 input/views.py:670
+#: input/views.py:692 input/views.py:714 input/views.py:797 input/views.py:923
+#: input/views.py:1088 output/models.py:18 output/models.py:40
+#: output/views/constraint.py:76 output/views/problem.py:52 quoting/views.py:58
 msgid "owner"
 msgstr "dipendenza"
 
@@ -130,13 +129,12 @@ msgstr "valore"
 #: forecast/views.py:1402 input/models.py:34 input/models.py:106
 #: input/models.py:127 input/models.py:143 input/models.py:176
 #: input/models.py:306 input/models.py:412 input/models.py:637
-#: input/models.py:821 input/views.py:590 input/views.py:636
-#: input/views.py:666 input/views.py:689 input/views.py:711 input/views.py:794
-#: input/views.py:916 input/views.py:961 input/views.py:1020
-#: inventoryplanning/views.py:86 inventoryplanning/views.py:161
-#: inventoryplanning/views.py:790 inventoryplanning/views.py:799
-#: output/models.py:21 output/models.py:43 output/views/constraint.py:77
-#: output/views/problem.py:53 quoting/views.py:51
+#: input/models.py:821 input/views.py:590 input/views.py:636 input/views.py:666
+#: input/views.py:689 input/views.py:711 input/views.py:794 input/views.py:916
+#: input/views.py:961 input/views.py:1020 inventoryplanning/views.py:86
+#: inventoryplanning/views.py:161 inventoryplanning/views.py:790
+#: inventoryplanning/views.py:799 output/models.py:21 output/models.py:43
+#: output/views/constraint.py:77 output/views/problem.py:53 quoting/views.py:51
 msgid "description"
 msgstr "descrizione"
 
@@ -219,10 +217,9 @@ msgstr "dimensione della pagina"
 #: execute/views.py:63 forecast/models.py:716 input/models.py:66
 #: input/models.py:264 input/models.py:496 input/models.py:534
 #: input/models.py:590 input/models.py:653 input/models.py:728
-#: input/models.py:900 input/views.py:731 input/views.py:761
-#: input/views.py:833 input/views.py:855 input/views.py:883 input/views.py:980
-#: input/views.py:1054 input/views.py:1082 input/views.py:1144
-#: input/views.py:1217
+#: input/models.py:900 input/views.py:731 input/views.py:761 input/views.py:833
+#: input/views.py:855 input/views.py:883 input/views.py:980 input/views.py:1054
+#: input/views.py:1082 input/views.py:1144 input/views.py:1217
 #: inventoryplanning/templates/inventoryplanning/drp.html:1391
 #: planningboard/models.py:22
 msgid "identifier"
@@ -783,9 +780,9 @@ msgstr "Aggiornamento preferenze fallito"
 msgid "My preferences"
 msgstr "Mie preferenze"
 
-#: common/views.py:355 output/views/buffer.py:212
-#: output/views/constraint.py:71 output/views/demand.py:216
-#: output/views/problem.py:48 output/views/resource.py:201
+#: common/views.py:355 output/views/buffer.py:212 output/views/constraint.py:71
+#: output/views/demand.py:216 output/views/problem.py:48
+#: output/views/resource.py:201
 msgid "id"
 msgstr "id"
 
@@ -1912,8 +1909,7 @@ msgstr "suddivisione"
 
 #: input/models.py:175 input/models.py:309 input/models.py:421
 #: input/models.py:549 input/models.py:908 input/views.py:132
-#: input/views.py:597 input/views.py:641 input/views.py:886
-#: input/views.py:1023
+#: input/views.py:597 input/views.py:641 input/views.py:886 input/views.py:1023
 #: inventoryplanning/templates/inventoryplanning/drp.html:1291
 #: inventoryplanning/templates/inventoryplanning/drp.html:1393
 #: output/views/buffer.py:214 output/views/pegging.py:40
@@ -1927,9 +1923,9 @@ msgstr "Priorità tra tutte le alternative"
 
 #: input/models.py:191 input/models.py:278 input/models.py:504
 #: input/models.py:553 input/models.py:599 input/models.py:690
-#: input/models.py:765 input/views.py:741 input/views.py:771
-#: input/views.py:836 input/views.py:860 input/views.py:888
-#: input/views.py:1034 input/views.py:1058
+#: input/models.py:765 input/views.py:741 input/views.py:771 input/views.py:836
+#: input/views.py:860 input/views.py:888 input/views.py:1034
+#: input/views.py:1058
 #: inventoryplanning/templates/inventoryplanning/drp.html:1297
 msgid "effective start"
 msgstr "inizo effettivo"
@@ -1942,9 +1938,9 @@ msgstr "Validità della data d'inizio"
 
 #: input/models.py:195 input/models.py:282 input/models.py:508
 #: input/models.py:557 input/models.py:603 input/models.py:694
-#: input/models.py:769 input/views.py:742 input/views.py:772
-#: input/views.py:837 input/views.py:861 input/views.py:889
-#: input/views.py:1035 input/views.py:1059
+#: input/models.py:769 input/views.py:742 input/views.py:772 input/views.py:837
+#: input/views.py:861 input/views.py:889 input/views.py:1035
+#: input/views.py:1059
 #: inventoryplanning/templates/inventoryplanning/drp.html:1298
 msgid "effective end"
 msgstr "fine effettiva"
@@ -2044,10 +2040,9 @@ msgstr "Metodo di selezione delle alternative preferite"
 #: input/models.py:257 input/models.py:266 input/models.py:536
 #: input/models.py:591 input/models.py:931 input/views.py:129
 #: input/views.py:856 input/views.py:884 input/views.py:1055
-#: input/views.py:1083 output/views/buffer.py:215
-#: output/views/constraint.py:23 output/views/operation.py:31
-#: output/views/pegging.py:39 output/views/resource.py:204
-#: output/widget.py:896
+#: input/views.py:1083 output/views/buffer.py:215 output/views/constraint.py:23
+#: output/views/operation.py:31 output/views/pegging.py:39
+#: output/views/resource.py:204 output/widget.py:896
 msgid "operation"
 msgstr "operazione"
 
@@ -2531,9 +2526,9 @@ msgstr "Riferimento esterno di questo ordine"
 #: input/models.py:922 input/views.py:1089 input/views.py:1158
 #: input/views.py:1231
 #: inventoryplanning/templates/inventoryplanning/drp.html:1403
-#: output/views/buffer.py:219 output/views/resource.py:210
-#: output/widget.py:776 output/widget.py:817 output/widget.py:857
-#: output/widget.py:898 output/widget.py:934
+#: output/views/buffer.py:219 output/views/resource.py:210 output/widget.py:776
+#: output/widget.py:817 output/widget.py:857 output/widget.py:898
+#: output/widget.py:934
 msgid "criticality"
 msgstr "Criticità"
 

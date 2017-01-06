@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2017-01-04 09:30+0100\n"
+"PO-Revision-Date: 2017-01-06 18:27+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -62,7 +62,7 @@ msgid "Guided tour"
 msgstr "使用指南"
 
 #: common/menu.py:54 common/views.py:173 common/widget.py:47
-msgid "Modeling wizard"
+msgid "Wizard to load your data"
 msgstr "建模向导"
 
 #: common/menu.py:58
@@ -98,7 +98,7 @@ msgstr "拥有者"
 msgid "Hierarchical parent"
 msgstr "父类"
 
-# Translation for "source" and "resource" must be different
+# Translation for "source" and "origin" must be different
 #: common/models.py:179 common/report.py:2141 common/views.py:412
 #: common/views.py:456 common/views.py:476 forecast/views.py:74
 #: forecast/views.py:815 input/views.py:600 input/views.py:618
@@ -2347,6 +2347,7 @@ msgstr "产品供应商"
 msgid "item suppliers"
 msgstr "产品供应商"
 
+# "origin" translation must be different from "source" translation
 #: input/models.py:738 input/models.py:945 input/views.py:764
 #: input/views.py:1152
 #: inventoryplanning/templates/inventoryplanning/drp.html:1292

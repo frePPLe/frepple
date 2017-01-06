@@ -143,7 +143,7 @@ def wizard(request):
       return HttpResponse(content="OK")
 
   return render_to_response('common/wizard.html', {
-    'title': _('Modeling wizard'),
+    'title': _('Wizard to load your data'),
     'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
     },
     context_instance=RequestContext(request)

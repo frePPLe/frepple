@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-05 15:05+0100\n"
-"PO-Revision-Date: 2016-12-23 15:25+0100\n"
+"PO-Revision-Date: 2017-01-06 18:32+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_TW\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0beta1\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -63,7 +63,7 @@ msgid "Guided tour"
 msgstr "建模嚮導"
 
 #: common/menu.py:54 common/views.py:173 common/widget.py:47
-msgid "Modeling wizard"
+msgid "Wizard to load your data"
 msgstr "建模嚮導"
 
 #: common/menu.py:58
@@ -99,6 +99,7 @@ msgstr "擁有者"
 msgid "Hierarchical parent"
 msgstr "父類"
 
+# translations for "source" and "origin" must be different
 #: common/models.py:179 common/report.py:2141 common/views.py:412
 #: common/views.py:456 common/views.py:476 forecast/views.py:74
 #: forecast/views.py:815 input/views.py:600 input/views.py:618
@@ -109,7 +110,7 @@ msgstr "父類"
 #: input/views.py:1060 input/views.py:1092 input/views.py:1160
 #: input/views.py:1233 inventoryplanning/views.py:107
 msgid "source"
-msgstr "来源"
+msgstr "源"
 
 #: common/models.py:180 common/models.py:308 common/models.py:517
 #: common/report.py:238 common/report.py:2144 planningboard/models.py:27
@@ -2406,6 +2407,7 @@ msgstr "產品供應商"
 msgid "item suppliers"
 msgstr "產品供應商"
 
+# translations for "origin" and "source" must be different.
 #: input/models.py:738 input/models.py:945 input/views.py:764
 #: input/views.py:1152
 #: inventoryplanning/templates/inventoryplanning/drp.html:1292

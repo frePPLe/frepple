@@ -51,11 +51,11 @@ Dashboard.register(WelcomeWidget)
 
 class WizardWidget(Widget):
   name = "wizard"
-  title = _("Modeling wizard")
+  title = _("Wizard to load your data")
   tooltip = _("Get started quick and easy to fill out the data tables")
   asynchronous = False
   url = '/wizard/'
-  
+
   def render(self, request=None):
     from freppledb.common.middleware import _thread_locals
     try:
@@ -72,7 +72,7 @@ class WizardWidget(Widget):
       where owner_id is not null
       group by owner_id
       )
-      select 'Overall progress', 
+      select 'Overall progress',
         coalesce(sum(steps_complete),0),
         coalesce(sum(greatest(steps_total,1)),1)
       from summary
@@ -86,8 +86,8 @@ class WizardWidget(Widget):
       )
       ''')
 
-    result = ['<div class="table-reponsive"><table style="width: 100%"><thead>']    
-    first = True  
+    result = ['<div class="table-reponsive"><table style="width: 100%"><thead>']
+    first = True
     for label, complete, total in cursor.fetchall():
       progress = int(complete / total * 100)
       if first:

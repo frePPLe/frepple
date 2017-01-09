@@ -65,12 +65,11 @@ template <class type> class TimeLine
         Date dt;
         unsigned short tp;
         double qty;
-        double oh;
-        double cum_prod;
-        Event* next;
-        Event* prev;
-        Event(unsigned short t, double q = 0.0)
-          : tp(t), qty(q), oh(0), cum_prod(0), next(NULL), prev(NULL) {};
+        double oh = 0;
+        double cum_prod = 0;
+        Event* next = nullptr;
+        Event* prev = nullptr;
+        Event(unsigned short t, double q = 0.0) : tp(t), qty(q) {};
 
       public:
         virtual ~Event() {};
@@ -119,7 +118,7 @@ template <class type> class TimeLine
         /** Return a pointer to the owning timeline. */
         virtual TimeLine<type>* getTimeLine() const
         {
-          return NULL;
+          return nullptr;
         }
 
         /** These functions return the minimum boundary valid at the time of
@@ -166,7 +165,6 @@ template <class type> class TimeLine
           */
         bool operator < (const Event& fl2) const
         {
-          assert (&fl2);
           if (getDate() != fl2.getDate())
             return getDate() < fl2.getDate();
           else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
@@ -192,10 +190,10 @@ template <class type> class TimeLine
         double new_oh;
 
       protected:
-        EventSetOnhand *prevSet;
+        EventSetOnhand *prevSet = nullptr;
 
       public:
-        EventSetOnhand(Date d, double q=0.0) : Event(2), new_oh(q), prevSet(NULL)
+        EventSetOnhand(Date d, double q=0.0) : Event(2), new_oh(q)
         {
           this->dt = d;
           this->initType(EventPythonType->type_object());
@@ -212,7 +210,7 @@ template <class type> class TimeLine
         TimeLine<type>* tmline;
 
       protected:
-        EventMinQuantity *prevMin;
+        EventMinQuantity *prevMin = nullptr;
 
       public:
         virtual TimeLine<type>* getTimeLine() const
@@ -221,7 +219,7 @@ template <class type> class TimeLine
         }
 
         EventMinQuantity(Date d, TimeLine<type>* t, double f=0.0)
-          : Event(3), newMin(f), tmline(t), prevMin(NULL)
+          : Event(3), newMin(f), tmline(t)
         {
           this->dt = d;
           this->initType(EventPythonType->type_object());
@@ -252,7 +250,7 @@ template <class type> class TimeLine
         TimeLine<type>* tmline;
 
       protected:
-        EventMaxQuantity *prevMax;
+        EventMaxQuantity *prevMax = nullptr;
 
       public:
         virtual TimeLine<type>* getTimeLine() const
@@ -261,7 +259,7 @@ template <class type> class TimeLine
         }
 
         EventMaxQuantity(Date d, TimeLine<type>* t, double f=0.0)
-          : Event(4), newMax(f), tmline(t), prevMax(NULL)
+          : Event(4), newMax(f), tmline(t)
         {
           this->dt = d;
           this->initType(EventPythonType->type_object());
@@ -285,7 +283,7 @@ template <class type> class TimeLine
       protected:
         const Event* cur;
       public:
-        const_iterator() : cur(NULL) {}
+        const_iterator() : cur(nullptr) {}
 
         const_iterator(const Event* e) : cur(e) {};
 
@@ -407,7 +405,8 @@ template <class type> class TimeLine
         }
     };
 
-    TimeLine() : first(NULL), last(NULL), lastMax(NULL), lastMin(NULL), lastSet(NULL) {}
+    TimeLine() {}
+
     int size() const
     {
       int cnt(0);
@@ -432,7 +431,7 @@ template <class type> class TimeLine
 
     iterator end()
     {
-      return iterator(NULL);
+      return iterator(nullptr);
     }
 
     const_iterator begin() const
@@ -452,12 +451,12 @@ template <class type> class TimeLine
 
     const_iterator end() const
     {
-      return const_iterator(NULL);
+      return const_iterator(nullptr);
     }
 
     bool empty() const
     {
-      return first==NULL;
+      return first == nullptr;
     }
 
     void insert(Event*);
@@ -533,7 +532,7 @@ template <class type> class TimeLine
         while(m && d < m->getDate()) m = m->prevMin;
       else
         while(m && d <= m->getDate()) m = m->prevMin;
-      return m ? m : NULL;
+      return m ? m : nullptr;
     }
 
     /** This functions returns the maximum event valid at a certain date. */
@@ -544,7 +543,7 @@ template <class type> class TimeLine
         while(m && d < m->getDate()) m = m->prevMax;
       else
         while(m && d <= m->getDate()) m = m->prevMax;
-      return m ? m : NULL;
+      return m ? m : nullptr;
     }
 
     /** Return the lowest excess inventory level between this event
@@ -609,19 +608,19 @@ template <class type> class TimeLine
 
   private:
     /** A pointer to the first event in the timeline. */
-    Event* first;
+    Event* first = nullptr;
 
     /** A pointer to the last event in the timeline. */
-    Event* last;
+    Event* last = nullptr;
 
     /** A pointer to the last maximum change. */
-    EventMaxQuantity *lastMax;
+    EventMaxQuantity *lastMax = nullptr;
 
     /** A pointer to the last minimum change. */
-    EventMinQuantity *lastMin;
+    EventMinQuantity *lastMin = nullptr;
 
     /** A pointer to the last fixed onhand. */
-    EventSetOnhand *lastSet;
+    EventSetOnhand *lastSet = nullptr;
 };
 
 
@@ -661,7 +660,7 @@ template <class type> void TimeLine<type>::insert (Event* e)
       // First element
       last = e;
     e->next = first;
-    e->prev = NULL;
+    e->prev = nullptr;
     first = e;
     e->oh = qty;
     if (qty>0) e->cum_prod = qty;
@@ -795,8 +794,8 @@ template <class type> void TimeLine<type>::erase(Event* e)
     last = e->prev;
 
   // Clear prev and next pointers
-  e->prev = NULL;
-  e->next = NULL;
+  e->prev = nullptr;
+  e->next = nullptr;
 
   switch (e->getEventType())
   {
@@ -971,7 +970,7 @@ template <class type> bool TimeLine<type>::check() const
 {
   double expectedOH = 0.0;
   double expectedCumProd = 0.0;
-  const Event *prev = NULL;
+  const Event *prev = nullptr;
   for (const_iterator i = begin(); i!=end(); ++i)
   {
     // Problem 1: The onhands don't add up properly

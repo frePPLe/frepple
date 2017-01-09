@@ -56,6 +56,10 @@
       font-family: @icon-font-name;
       color: @breadcrumb-color;
     }
+	> a {
+	  color: @navbar-default-link-color;
+	  text-decoration: none;
+	}
   }
 }
 
@@ -255,7 +259,7 @@ span.underline { //fix for odoo theme
 }
 
 a:link, a:visited {
-    color: @navbar-default-link-color;
+    color: @link-color;
     text-decoration: none;
 }
 
@@ -417,7 +421,7 @@ div.ContextMenu ul li {
 
 /* Marking of edited and selected items. */
 
-.dirty-cell {
+.dirty-cell, input.ng-dirty {
   background: @brand-danger;
 }
 

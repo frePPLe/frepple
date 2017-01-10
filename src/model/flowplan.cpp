@@ -23,14 +23,18 @@
 namespace frepple
 {
 
-const MetaCategory* FlowPlan::metadata;
+  const MetaClass* FlowPlan::metadata;
+  const MetaCategory* FlowPlan::metacategory;
 
 
 int FlowPlan::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans");
-  registerFields<FlowPlan>(const_cast<MetaCategory*>(metadata));
+  metacategory = MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans", reader);
+  metadata = MetaClass::registerClass<FlowPlan>(
+    "flowplan", "flowplan"
+    );
+  registerFields<FlowPlan>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
@@ -38,7 +42,7 @@ int FlowPlan::initialize()
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
   x.supportsetattro();
-  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
@@ -99,13 +103,13 @@ void FlowPlan::setFlow(Flow* newfl)
   if (newfl == fl) return;
 
   // Verify the data
-  if (!newfl) throw LogicException("Can't switch to nullptr flow");
+  if (!newfl) throw DataException("Can't switch to nullptr flow");
 
   // Remove from the old buffer, if there is one
   if (fl)
   {
     if (fl->getOperation() != newfl->getOperation())
-      throw LogicException("Only switching to a flow on the same operation is allowed");
+      throw DataException("Only switching to a flow on the same operation is allowed");
     fl->getBuffer()->flowplans.erase(this);
     fl->getBuffer()->setChanged();
   }
@@ -119,6 +123,27 @@ void FlowPlan::setFlow(Flow* newfl)
   );
   fl->getBuffer()->setChanged();
   fl->getOperation()->setChanged();
+}
+
+
+void FlowPlan::setItem(Item* newItem)
+{
+  // Verify the data
+  if (!newItem)
+    throw DataException("Can't switch to nullptr flow");
+
+  if (fl && fl->getBuffer())
+  {
+    if (newItem == fl->getBuffer()->getItem())
+      // No change
+      return;
+    else
+      // Already set
+      throw DataException("Item can be set only once on a flowplan");
+  }
+
+  // We are not expecting to use this method in this way...
+  throw LogicException("Not implemented");
 }
 
 
@@ -155,5 +180,42 @@ PyObject* FlowPlanIterator::iternext()
   Py_INCREF(fl);
   return const_cast<FlowPlan*>(fl);
 }
+
+
+Object* FlowPlan::reader(
+  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
+)
+{
+  // Pick up the forecast attribute. An error is reported if it's missing.
+  const DataValue* opplanElement = in.get(Tags::operationplan);
+  if (!opplanElement)
+    throw DataException("Missing operationplan field");
+  Object* opplanobject = opplanElement->getObject();
+  if (!opplanobject || opplanobject->getType() != *OperationPlan::metadata)
+    throw DataException("Invalid operationplan field");
+  OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+
+  // Pick up the item.
+  const DataValue* itemElement = in.get(Tags::item);
+  if (!itemElement)
+    throw DataException("Item must be provided");
+  Object* itemobject = itemElement->getObject();
+  if (!itemobject || itemobject->getType().category != Item::metadata)
+    throw DataException("Invalid item field");
+  Item* itm = static_cast<Item*>(itemobject);
+
+  // Find the flow for this item on the operationplan.
+  // If multiple exist, we pick up the first one.
+  // If none is found, we throw a data error.
+  auto flplniter = opplan->getFlowPlans();
+  FlowPlan* flpln;
+  while ((flpln = flplniter.next() ))
+  {
+    if (flpln->getItem() == itm)
+      return flpln;
+  }
+  return nullptr;
+}
+
 
 } // end namespace

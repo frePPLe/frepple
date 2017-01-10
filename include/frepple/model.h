@@ -5669,9 +5669,13 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Points to the next flowplan owned by the same operationplan. */
     FlowPlan *nextFlowPlan = nullptr;
 
+    /** Finds the flowplan on the operationplan when we read data. */
+    static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
+
   public:
 
-    static const MetaCategory* metadata;
+    static const MetaClass *metadata;
+    static const MetaCategory *metacategory;
     static int initialize();
     virtual const MetaClass& getType() const { return *metadata; }
 
@@ -5687,13 +5691,35 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Returns the buffer, a convenient shortcut. */
     Buffer* getBuffer() const
     {
-      return fl->getBuffer();
+      return fl ? fl->getBuffer() : nullptr;
     }
 
     /** Returns the operation, a convenient shortcut. */
     Operation* getOperation() const
     {
-      return fl->getOperation();
+      return fl ? fl->getOperation() : nullptr;
+    }
+
+    /** Returns the item being produced or consumed. */
+    Item* getItem() const
+    {
+      return (fl && fl->getBuffer()) ? fl->getBuffer()->getItem() : nullptr;
+    }
+
+    /** Update the flowplan to a different item.
+    * The new flow must belong to the same operation.
+    */
+    void setItem(Item*);
+
+    /** Update the operationplan.
+      * This can only be called once.
+      */
+    void setOperationPlan(OperationPlan* o)
+    {
+      if (oper && oper != o)
+        throw DataException("Can't change the operationplan of a flowplan");
+      else
+        oper = o;
     }
 
     /** Update the flow of an already existing flowplan.<br>
@@ -5769,9 +5795,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, nullptr, BASE + WRITE_OBJECT);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, &Cls::setOperationPlan, BASE + WRITE_OBJECT + PARENT);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
     }

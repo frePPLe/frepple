@@ -775,23 +775,6 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="flowplan">
-    <xsd:sequence>
-      <xsd:element name="date" type="xsd:dateTime" />
-      <xsd:element name="quantity" type="xsd:double" />
-      <xsd:element name="onhand" type="xsd:double" />
-      <xsd:element name="minimum" type="xsd:double" />
-      <xsd:element name="maximum" type="xsd:double" />
-      <xsd:element name="operationplan" type="operationplan" />
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="flowplanlist">
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="flowplan" type="flowplan" />
-    </xsd:choice>
-  </xsd:complexType>
-
   <!-- LOAD -->
   <xsd:complexType name="load">
     <xsd:annotation>
@@ -966,6 +949,31 @@
     </xsd:choice>
   </xsd:complexType>
 
+  <!-- FLOWPLAN -->
+  <xsd:complexType name="flowplan">
+  	<xsd:choice minOccurs="0" maxOccurs="unbounded"> 
+      <xsd:element name="operationplan" type="operationplan" />
+      <xsd:element name="buffer" type="buffer" />
+      <xsd:element name="item" type="item" />
+      <xsd:element name="quantity" type="xsd:double" />
+      <xsd:element name="date" type="xsd:dateTime" />
+      <xsd:element name="onhand" type="xsd:double" />
+      <xsd:element name="minimum" type="xsd:double" />
+      <xsd:element name="maximum" type="xsd:double" />
+    </xsd:choice>
+    <xsd:attribute name="quantity" type="xsd:double" />
+    <xsd:attribute name="onhand" type="xsd:double" />
+    <xsd:attribute name="minimum" type="xsd:double" />
+    <xsd:attribute name="maximum" type="xsd:double" />
+    <xsd:attribute name="date" type="xsd:dateTime" />
+  </xsd:complexType>
+  
+  <xsd:complexType name="flowplanlist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="flowplan" type="flowplan" />
+    </xsd:choice>
+  </xsd:complexType>
+  
   <!-- OPERATIONPLAN -->
   <xsd:simpleType name="ordertype">
     <xsd:restriction base="xsd:string">
@@ -1007,6 +1015,7 @@
       <xsd:element name="stringproperty" type="stringproperty" />
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
+      <xsd:element name="flowplans" type="flowplanlist" />
     </xsd:choice>
     <xsd:attribute name="ordertype" type="ordertype" />
     <xsd:attribute name="id" type="xsd:unsignedLong" />

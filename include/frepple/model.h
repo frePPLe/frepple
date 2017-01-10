@@ -5660,6 +5660,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
     friend class OperationPlan::FlowPlanIterator;
   private:
+    static const short STATUS_CONFIRMED = 1;
     /** Points to the flow instantiated by this flowplan. */
     Flow *fl = nullptr;
 
@@ -5671,6 +5672,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Finds the flowplan on the operationplan when we read data. */
     static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
+    /** Is this operationplanmaterial locked? 
+        LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
+    */
+    short flags = 0;
 
   public:
 
@@ -5682,6 +5687,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Constructor. */
     explicit FlowPlan(OperationPlan*, const Flow*);
 
+       bool isConfirmed() const
+    {
+      return flags&STATUS_CONFIRMED;
+    }
     /** Returns the flow of which this is an plan instance. */
     Flow* getFlow() const
     {
@@ -5733,6 +5742,15 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       return oper;
     }
 
+    /** Return the status of the operationplanmaterial.
+    * The status string is one of the following:
+    *   - proposed
+    *   - confirmed
+    */
+    string getStatus() const;
+
+    /** Update the status of the operationplanmaterial. */
+    void setStatus(const string&);
     /** Destructor. */
     virtual ~FlowPlan()
     {
@@ -5741,6 +5759,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       b->flowplans.erase(this);
     }
 
+    void setQuantityAPI(double quantity) 
+    {
+      setQuantity(quantity, false, true, true);
+    }
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up (false)
@@ -5748,16 +5770,35 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * The second parameter is to flag whether we want to actually perform
       * the resizing, or only to simulate it.
       */
-    double setQuantity(double qty, bool b=false, bool u=true, bool e=true)
+    double setQuantity(double quantity, bool b=false, bool u=true, bool e=true)
     {
+      if (isConfirmed())
+      {
+         if (e)
+         {
+           // Update the timeline data structure
+           getFlow()->getBuffer()->flowplans.update(
+             this,
+             quantity,
+             getDate()
+           );
+
+           // Mark the operation and buffer as having changed. This will trigger the
+           // recomputation of their problems
+           fl->getBuffer()->setChanged();
+           fl->getOperation()->setChanged();
+         }
+        return qty;
+      }
+      
       if (!getFlow()->getEffective().within(getDate())) return 0.0;
       if (getFlow()->getType() == *FlowFixedEnd::metadata
         || getFlow()->getType() == *FlowFixedStart::metadata)
       {
         // Fixed quantity flows only allow resizing to 0
-        if (qty == 0.0 && oper->getQuantity()!= 0.0)
+        if (quantity == 0.0 && oper->getQuantity()!= 0.0)
           return oper->setQuantity(0.0, b, u) ? getFlow()->getQuantity() : 0.0;
-        else if (qty != 0.0 && oper->getQuantity()== 0.0)
+        else if (quantity != 0.0 && oper->getQuantity()== 0.0)
           return oper->setQuantity(
             (oper->getOperation()->getSizeMinimum()<=0) ? 0.001
               : oper->getOperation()->getSizeMinimum(),
@@ -5765,7 +5806,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       }
       else
         // Normal, proportional flows
-        return oper->setQuantity(qty / getFlow()->getQuantity(), b, u, e) * getFlow()->getQuantity();
+        return oper->setQuantity(quantity / getFlow()->getQuantity(), b, u, e) * getFlow()->getQuantity();
       throw LogicException("Unreachable code reached");
     }
 
@@ -5788,10 +5829,30 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       return fl->getHidden();
     }
 
+    void setDate(Date d)
+    {
+      if (isConfirmed())
+      {
+        // Update the timeline data structure
+        getFlow()->getBuffer()->flowplans.update(
+          this,
+          getQuantity(),
+          d
+        );
+
+        // Mark the operation and buffer as having changed. This will trigger the
+        // recomputation of their problems
+        fl->getBuffer()->setChanged();
+        fl->getOperation()->setChanged();
+      }
+      else {
+        throw DataException("Unhandled case: Cannot change a date of a proposed FlowPlan");
+      }
+    }
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addDateField<Cls>(Tags::date, &Cls::getDate);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity);
+      m->addDateField<Cls>(Tags::date, &Cls::getDate, &Cls::setDate);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantityAPI);
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
@@ -5807,19 +5868,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
 inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 {
-  if (fl->getOperationPlan()->getLocked())
-  {
-    if (getQuantity() < 0)
-    {
-      if (!fl->getOperationPlan()->getConsumeMaterial())
-        return 0.0;
-    }
-    else
-    {
-      if (!fl->getOperationPlan()->getProduceMaterial())
-        return 0.0;
-    }
-  }
+  if (fl->isConfirmed())
+    return fl->getQuantity();
   return getEffective().within(fl->getDate()) ?
     fl->getOperationPlan()->getQuantity() * getQuantity() :
     0.0;
@@ -5828,19 +5878,8 @@ inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
 
 inline double FlowFixedStart::getFlowplanQuantity(const FlowPlan* fl) const
 {
-  if (fl->getOperationPlan()->getLocked())
-  {
-    if (getQuantity() < 0)
-    {
-      if (!fl->getOperationPlan()->getConsumeMaterial())
-        return 0.0;
-    }
-    else
-    {
-      if (!fl->getOperationPlan()->getProduceMaterial())
-        return 0.0;
-    }
-  }
+  if (fl->isConfirmed())
+    return fl->getQuantity();
   return getEffective().within(fl->getDate()) ?
     getQuantity() :
     0.0;
@@ -5849,19 +5888,8 @@ inline double FlowFixedStart::getFlowplanQuantity(const FlowPlan* fl) const
 
 inline double FlowFixedEnd::getFlowplanQuantity(const FlowPlan* fl) const
 {
-  if (fl->getOperationPlan()->getLocked())
-  {
-    if (getQuantity() < 0)
-    {
-      if (!fl->getOperationPlan()->getConsumeMaterial())
-        return 0.0;
-    }
-    else
-    {
-      if (!fl->getOperationPlan()->getProduceMaterial())
-        return 0.0;
-    }
-  }
+  if (fl->isConfirmed())
+    return fl->getQuantity();
   return getEffective().within(fl->getDate()) ?
     getQuantity() :
     0.0;
@@ -7509,6 +7537,15 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return start_or_end == START;
     }
 
+        /** Return the status of the operationplanmaterial.
+    * The status string is one of the following:
+    *   - proposed
+    *   - confirmed
+    */
+    string getStatus() const;
+
+    /** Update the status of the operationplanmaterial. */
+    void setStatus(const string&);
     /** Destructor. */
     virtual ~LoadPlan();
 
@@ -7543,6 +7580,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return getQuantity() < 0 || ld->getHidden();
     }
 
+    /** Override the setQuantity of the TimeLine class, this is needed for the
+      * registerFields function
+    */
+    void setQuantity(double quantity)
+    {
+      qty = quantity;
+    }
     /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the
       * capacity consumption ends.<br>
@@ -7559,10 +7603,11 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addDateField<Cls>(Tags::date, &Cls::getDate);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity);
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
+      m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
       m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DONT_SERIALIZE);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
@@ -7580,6 +7625,10 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
+    static const short STATUS_CONFIRMED = 1;
+
+    /** Is this operationplanmaterial locked? */
+    short flags = 0;
     /** This type is used to differentiate loadplans aligned with the START date
       * or the END date of operationplan. */
     enum type {START, END};

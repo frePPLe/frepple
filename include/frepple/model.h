@@ -5856,6 +5856,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
+      m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, &Cls::setOperationPlan, BASE + WRITE_OBJECT + PARENT);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr);

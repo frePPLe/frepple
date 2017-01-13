@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: 4.0.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-11 13:27+0100\n"
-"PO-Revision-Date: 2017-01-11 13:37+0100\n"
+"PO-Revision-Date: 2017-01-13 12:51+0100\n"
 "Last-Translator: Keiichiro Yamamoto <k.yanmar@gmail.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.11\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:44
@@ -1939,11 +1939,11 @@ msgstr "製造オーダー"
 
 #: input/models.py:934 input/models.py:1133
 msgid "purchase order"
-msgstr "製造オーダー"
+msgstr "購入注文"
 
 #: input/models.py:935 input/models.py:1110
 msgid "distribution order"
-msgstr "流通オーダー"
+msgstr "配信順序"
 
 #: input/models.py:936 input/models.py:1179
 msgid "customer shipment"

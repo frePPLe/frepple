@@ -960,12 +960,14 @@
       <xsd:element name="onhand" type="xsd:double" />
       <xsd:element name="minimum" type="xsd:double" />
       <xsd:element name="maximum" type="xsd:double" />
+      <xsd:element name="status" type="xsd:string" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
     <xsd:attribute name="date" type="xsd:dateTime" />
+    <xsd:attribute name="status" type="xsd:string" />
   </xsd:complexType>
   
   <xsd:complexType name="flowplanlist">

@@ -274,61 +274,178 @@
   <operationplans>
     <!-- WIP on fixed_time operation -->
     <operationplan id="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00"
-      locked="true" consume_material="false">
+      locked="true">
       <operation name="Oper1"/>
+      <flowplans>
+        <flowplan>
+          <item name="In1"/>
+          <status>confirmed</status>
+          <quantity>-5</quantity>
+          <date>2013-12-31T00:00:00</date>          
+        </flowplan>
+        <flowplan>
+          <item name="In2"/>
+          <status>confirmed</status>
+          <quantity>-8</quantity>
+          <date>2013-12-31T00:00:00</date>          
+        </flowplan>
+      </flowplans>
     </operationplan>
     <operationplan id="1002" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00"
-      locked="true" produce_material="false">
+      locked="true">
       <operation name="Oper1"/>
+      <flowplans>
+        <flowplan>
+          <item name="In1"/>
+          <status>confirmed</status>
+          <quantity>-5</quantity>
+          <date>2014-02-02T00:00:00</date>          
+        </flowplan>
+        <flowplan>
+          <item name="In2"/>
+          <status>confirmed</status>
+          <quantity>-2</quantity>
+          <date>2014-02-05T00:00:00</date>          
+        </flowplan>
+      </flowplans>
     </operationplan>
     <operationplan id="1003" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00"
-      locked="true" consume_capacity="false">
+      locked="true">
       <operation name="Oper1"/>
+      <flowplans>
+        <flowplan>
+          <item name="In1"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-02-28T00:00:00</date>          
+        </flowplan>
+        <flowplan>
+          <item name="In2"/>
+          <status>confirmed</status>
+          <quantity>-20</quantity>
+          <date>2014-02-28T00:00:00</date>          
+        </flowplan>
+      </flowplans>
     </operationplan>
-    <operationplan id="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" locked="true"
-      consume_material="false" consume_capacity="false" produce_material="false">
+    <operationplan id="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" locked="true">
       <operation name="Oper1"/>
     </operationplan>
     <!-- WIP on routing operation -->
     <operationplan id="3004" quantity="10" start="2014-01-01T00:00:00" end="2014-01-02T00:00:00" locked="true">
       <operation name="Oper3"/>
+      <flowplans>
+        <flowplan>
+          <item name="In3"/>
+          <status>confirmed</status>
+          <quantity>-5</quantity>
+          <date>2014-01-01T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
-    <operationplan id="3005" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"
-      produce_material="false" consume_material="false" consume_capacity="false">
+    <operationplan id="3005" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
       <operation name="Oper3"/>
+      <flowplans>
+        <flowplan>
+          <item name="In3"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-02-01T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
-    <operationplan id="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"
-      produce_material="false" consume_material="false" consume_capacity="false">
+    <operationplan id="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
       <owner id="3005"><operation name="Oper3"/></owner>
       <operation name="Oper3B"/>
+      <flowplans>
+        <flowplan>
+          <item name="In3B"/>
+          <status>confirmed</status>
+          <quantity>-2</quantity>
+          <date>2014-02-02T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
-    <operationplan id="3007" quantity="7" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true"
-      produce_material="false" consume_material="false" consume_capacity="false">
+    <operationplan id="3007" quantity="7" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
       <owner id="3005"><operation name="Oper3"/></owner>
       <operation name="Oper3A"/>
+      <flowplans>
+        <flowplan>
+          <item name="In3A"/>
+          <status>confirmed</status>
+          <quantity>-7</quantity>
+          <date>2014-02-02T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <!-- WIP on alternate operation -->
-    <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" locked="true"
-      produce_material="false" consume_material="false" consume_capacity="false">
+    <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" locked="true">
       <operation name="Oper4"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4"/>
+          <status>confirmed</status>
+          <quantity>-8</quantity>
+          <date>2014-01-01T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <operationplan id="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
       <operation name="Oper4"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-02-01T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <operationplan id="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
       <owner id="4006"><operation name="Oper4"/></owner>
       <operation name="Oper4B"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4B"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-01-31T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <operationplan id="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
       <operation name="Oper4"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-03-02T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <operationplan id="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="false">
       <owner id="4008"/>
       <operation name="Oper4B"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4B"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-03-01T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
     <operationplan id="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
       <owner id="4008"/>
       <operation name="Oper4A"/>
+      <flowplans>
+        <flowplan>
+          <item name="In4"/>
+          <status>confirmed</status>
+          <quantity>-10</quantity>
+          <date>2014-03-02T00:00:00</date>          
+        </flowplan>        
+      </flowplans>
     </operationplan>
   </operationplans>
 

@@ -380,7 +380,7 @@ class export:
           updates.append('''
           update operationplanmaterial
           set onhand=%s, flowdate='%s'
-          where status = 'confirmed' and buffer = '%s' and operationplan_id = %s
+          where status = 'confirmed' and buffer = '%s' and operationplan_id = %s;
           ''' % (round(j.onhand, 6),str(j.date), j.buffer.name, j.operationplan.id ))
         else:
           process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (

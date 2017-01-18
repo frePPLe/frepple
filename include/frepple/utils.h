@@ -75,6 +75,7 @@ typedef int Py_ssize_t;
 
 #ifndef DOXYGEN
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>

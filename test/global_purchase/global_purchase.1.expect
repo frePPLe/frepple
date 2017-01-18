@@ -36,7 +36,7 @@ PROBLEM	material shortage	Buffer 'item B @ WH3' has material shortage of 10	1971
 PROBLEM	material shortage	Buffer 'item B @ WH4' has material shortage of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item B @ WH5' has material excess of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'item B @ WH6' has material shortage of 10	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	Demand 'order B1' planned P31D after its due date	2015-12-01T00:00:00 / 2016-01-01T00:00:00
+PROBLEM	late	40 units of demand 'order B1' planned up to 31.0 days after its due date	2015-12-01T00:00:00 / 2016-01-01T00:00:00
 DEMAND CONSTRAINT	order B1	Operation 'Ship item B @ WH4' planned in the past	2015-12-01T00:00:00 / 2015-12-01T00:00:00	
 DEMAND CONSTRAINT	order B1	Operation 'Ship item B from item B @ DC2 to item B @ WH4' planned in the past	2015-12-22T00:00:00 / 2016-01-01T00:00:00	
 DEMAND CONSTRAINT	order B1	Operation 'Ship item B @ WH2' planned in the past	2015-12-01T00:00:00 / 2015-12-01T00:00:00	

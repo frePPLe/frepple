@@ -45,7 +45,7 @@ PROBLEM	invalid data	No replenishment defined for '2. component A @ factory'	197
 PROBLEM	material excess	Buffer '2. component B @ factory' has material excess of 10	1971-01-01T00:00:00 / 2009-02-01T00:00:00
 PROBLEM	invalid data	No replenishment defined for '2. component B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	short	Demand '2. order 1' planned 10 units short	2009-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	late	Demand '2. order 1' planned P32D after its due date	2009-01-01T00:00:00 / 2009-02-02T00:00:00
+PROBLEM	late	20 units of demand '2. order 1' planned up to 32.0 days after its due date	2009-01-01T00:00:00 / 2009-02-02T00:00:00
 DEMAND CONSTRAINT	2. order 1	Operation '2. make end item' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	2. order 1	Buffer '2. component A @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	2. order 1	Buffer '2. component B @ factory' has material shortage of 10	2009-02-01T00:00:00 / 2030-12-31T00:00:00	

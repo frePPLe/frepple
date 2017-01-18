@@ -135,7 +135,7 @@ PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 50	2009-
 PROBLEM	material excess	Buffer 'ink @ factory 1' has material excess of 20	2009-01-13T10:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'product @ factory 2' has material excess of 10	1971-01-01T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	material excess	Buffer 'thread @ factory 1' has material excess of 547	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	Demand 'Demand 1' planned P15DT1H after its due date	2009-01-01T00:00:00 / 2009-01-16T01:00:00
+PROBLEM	late	100 units of demand 'Demand 1' planned up to 15.0 days after its due date	2009-01-01T00:00:00 / 2009-01-16T01:00:00
 DEMAND CONSTRAINT	Demand 1	Operation 'Deliver product from factory 1 - 1 day' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Operation 'Pack product @ factory 1' planned in the past	2008-12-31T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	Demand 1	Operation 'Make fabric @ factory 1' planned in the past	2008-12-27T20:00:00 / 2009-01-01T00:00:00	

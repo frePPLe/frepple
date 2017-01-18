@@ -49,14 +49,14 @@ PROBLEM	material excess	Buffer 'buffer F' has material excess of 15	1971-01-01T0
 PROBLEM	invalid data	No replenishment defined for 'buffer F'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer G' has material excess of 35	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer G'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	Demand 'order A' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	10 units of demand 'order A' planned up to 5.0 days after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order B' planned 10 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order C' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	20 units of demand 'order C' planned up to 5.0 days after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	unplanned	Demand 'order D' is not planned	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	short	Demand 'order E' planned 10 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order F' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	20 units of demand 'order F' planned up to 5.0 days after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	excess	Demand 'order G' planned 10 units excess	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order G' planned P5D after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	late	30 units of demand 'order G' planned up to 5.0 days after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 DEMAND CONSTRAINT	order A	Buffer 'buffer A' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order B	Buffer 'buffer B' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order C	Buffer 'buffer C' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	

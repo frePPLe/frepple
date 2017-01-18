@@ -54,9 +54,9 @@ OPERATION	Ship product A from product A @ Regional DC 2 to product A @ Local DC 
 PROBLEM	material excess	Buffer 'product A @ Central WH' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'product A @ Local DC 2b' has material excess of 100	2015-06-06T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	Distribution orders on unauthorized lanes	1971-01-01T00:00:00 / 2015-06-06T00:00:00
-PROBLEM	late	Demand 'order 1a for product A' planned P20D after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
-PROBLEM	late	Demand 'order 1b for product A' planned P20D after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
-PROBLEM	late	Demand 'order 3 for product A' planned P10D after its due date	2015-01-01T00:00:00 / 2015-01-11T00:00:00
+PROBLEM	late	50 units of demand 'order 1a for product A' planned up to 20.0 days after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
+PROBLEM	late	50 units of demand 'order 1b for product A' planned up to 20.0 days after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
+PROBLEM	late	100 units of demand 'order 3 for product A' planned up to 10.0 days after its due date	2015-01-01T00:00:00 / 2015-01-11T00:00:00
 DEMAND CONSTRAINT	order 1a for product A	Operation 'Ship product A from product A @ Regional DC 1 to product A @ Local DC 1a' planned in the past	2014-12-29T00:00:00 / 2015-01-01T00:00:00	
 DEMAND CONSTRAINT	order 1a for product A	Operation 'Ship product A from product A @ Central WH to product A @ Regional DC 1' planned in the past	2014-12-22T00:00:00 / 2015-01-01T00:00:00	
 DEMAND CONSTRAINT	order 1a for product A	Operation 'Purchase product A @ Central WH from Supplier 1' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00	

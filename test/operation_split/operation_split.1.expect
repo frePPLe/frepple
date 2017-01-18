@@ -169,9 +169,9 @@ OPERATION	make item 4 option B	2014-01-17T00:00:00	2014-01-22T00:00:00	30
 OPERATION	make item 4 option C	2014-01-02T00:00:00	2014-01-12T00:00:00	10
 OPERATION	make item 4 option C	2014-01-12T00:00:00	2014-01-22T00:00:00	30
 PROBLEM	material excess	Buffer 'item 1 @ location 1' has material excess of 30	2014-01-11T00:00:00 / 2014-01-16T00:00:00
-PROBLEM	late	Demand 'order 1 for item 1' planned P15D after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
-PROBLEM	late	Demand 'order 1 for item 2' planned P15D after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
-PROBLEM	late	Demand 'order 1 for item 4' planned P21D after its due date	2014-01-01T00:00:00 / 2014-01-22T00:00:00
+PROBLEM	late	100 units of demand 'order 1 for item 1' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
+PROBLEM	late	200 units of demand 'order 1 for item 2' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
+PROBLEM	late	200 units of demand 'order 1 for item 4' planned up to 21.0 days after its due date	2014-01-01T00:00:00 / 2014-01-22T00:00:00
 DEMAND CONSTRAINT	order 1 for item 1	Operation 'make item 1 option C' planned in the past	2013-12-22T00:00:00 / 2014-01-01T00:00:00	
 DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option C @ location 1 from My supplier' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00	
 DEMAND CONSTRAINT	order 1 for item 1	Operation 'Purchase component 1 for option A @ location 1 from My supplier' planned in the past	2013-12-28T00:00:00 / 2014-01-04T00:00:00	

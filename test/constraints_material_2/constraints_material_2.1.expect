@@ -141,9 +141,9 @@ PROBLEM	invalid data	No replenishment defined for 'constraint buffer 6'	1971-01-
 PROBLEM	short	Demand 'order prio 1 for item 1' planned 68.75 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 2' planned 70 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 3' planned 90 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 3' planned P11D after its due date	2009-01-10T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	late	5 units of demand 'order prio 1 for item 3' planned up to 11.0 days after its due date	2009-01-10T00:00:00 / 2009-01-21T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 4' planned 72.5 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	late	Demand 'order prio 1 for item 4' planned P13D after its due date	2009-01-10T00:00:00 / 2009-01-23T00:00:00
+PROBLEM	late	23 units of demand 'order prio 1 for item 4' planned up to 13.0 days after its due date	2009-01-10T00:00:00 / 2009-01-23T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 5' planned 75 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	short	Demand 'order prio 1 for item 6' planned 50 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 DEMAND CONSTRAINT	order prio 1 for item 1	Buffer 'constraint buffer 1' has material shortage of 55	2009-01-09T00:00:00 / 2030-12-31T00:00:00	

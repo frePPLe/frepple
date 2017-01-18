@@ -34,5 +34,5 @@ OPERATION	make end item	2009-01-17T00:00:00	2009-01-18T00:00:00	10
 OPERATION	make end item	2009-01-18T00:00:00	2009-01-19T00:00:00	10
 OPERATION	make end item	2009-01-19T00:00:00	2009-01-20T00:00:00	10
 PROBLEM	material excess	Buffer 'end item' has material excess of 20	2009-01-15T12:00:00 / 2009-01-19T00:00:00
-PROBLEM	late	Demand 'order 5' planned P1D after its due date	2009-01-20T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	late	10 units of demand 'order 5' planned up to 1.0 days after its due date	2009-01-20T00:00:00 / 2009-01-21T00:00:00
 DEMAND CONSTRAINT	order 5	Resource 'Resource' has capacity shortage of 1	2009-01-18T00:00:00 / 2009-01-19T00:00:00	

@@ -196,28 +196,28 @@ PROBLEM	material excess	Buffer '1. end item' has material excess of 60	2014-02-1
 PROBLEM	material excess	Buffer '2. end item' has material excess of 60	2014-02-14T23:59:59 / 2014-03-06T00:00:00
 PROBLEM	material excess	Buffer '3. end item' has material excess of 60	2014-02-13T23:59:59 / 2014-03-06T00:00:00
 PROBLEM	material excess	Buffer '4. end item' has material excess of 40	2014-02-13T23:59:59 / 2014-03-06T00:00:00
-PROBLEM	late	Demand '1. order' planned P11D after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
-PROBLEM	late	Demand '2. order 12' planned P4D after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
-PROBLEM	late	Demand '2. order 13' planned P4D after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
-PROBLEM	late	Demand '2. order 14' planned P4D after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
-PROBLEM	late	Demand '2. order 15' planned P11D after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
-PROBLEM	late	Demand '2. order 16' planned P11D after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
-PROBLEM	late	Demand '2. order 17' planned P11D after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
-PROBLEM	late	Demand '3. order 12' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '3. order 13' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '3. order 14' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '3. order 15' planned P8D after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
-PROBLEM	late	Demand '3. order 16' planned P8D after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
-PROBLEM	late	Demand '3. order 17' planned P8D after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
-PROBLEM	late	Demand '4. order 09' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '4. order 10' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '4. order 11' planned P1D after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
-PROBLEM	late	Demand '4. order 12' planned P15D after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
-PROBLEM	late	Demand '4. order 13' planned P15D after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
-PROBLEM	late	Demand '4. order 14' planned P15D after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
-PROBLEM	late	Demand '4. order 15' planned P22D after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
-PROBLEM	late	Demand '4. order 16' planned P22D after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
-PROBLEM	late	Demand '4. order 17' planned P22D after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
+PROBLEM	late	40 units of demand '1. order' planned up to 11.0 days after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
+PROBLEM	late	4 units of demand '2. order 12' planned up to 4.0 days after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
+PROBLEM	late	7 units of demand '2. order 13' planned up to 4.0 days after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
+PROBLEM	late	7 units of demand '2. order 14' planned up to 4.0 days after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
+PROBLEM	late	7 units of demand '2. order 15' planned up to 11.0 days after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
+PROBLEM	late	7 units of demand '2. order 16' planned up to 11.0 days after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
+PROBLEM	late	7 units of demand '2. order 17' planned up to 11.0 days after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
+PROBLEM	late	4 units of demand '3. order 12' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '3. order 13' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '3. order 14' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '3. order 15' planned up to 8.0 days after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
+PROBLEM	late	7 units of demand '3. order 16' planned up to 8.0 days after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
+PROBLEM	late	7 units of demand '3. order 17' planned up to 8.0 days after its due date	2014-03-06T00:00:00 / 2014-03-14T00:00:00
+PROBLEM	late	3 units of demand '4. order 09' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '4. order 10' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '4. order 11' planned up to 1.0 days after its due date	2014-03-06T00:00:00 / 2014-03-07T00:00:00
+PROBLEM	late	7 units of demand '4. order 12' planned up to 15.0 days after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
+PROBLEM	late	7 units of demand '4. order 13' planned up to 15.0 days after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
+PROBLEM	late	7 units of demand '4. order 14' planned up to 15.0 days after its due date	2014-03-06T00:00:00 / 2014-03-21T00:00:00
+PROBLEM	late	7 units of demand '4. order 15' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
+PROBLEM	late	7 units of demand '4. order 16' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
+PROBLEM	late	7 units of demand '4. order 17' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
 DEMAND CONSTRAINT	1. order	Resource '1. Resource' has capacity shortage of 40	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 12	Resource '2. Resource' has capacity shortage of 4	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 13	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	

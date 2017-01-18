@@ -169,27 +169,27 @@ PROBLEM	material excess	Buffer '5. buffer' has material excess of 2	2009-01-10T0
 PROBLEM	material excess	Buffer '5. buffer' has material excess of 5	2009-01-20T00:00:00 / 2009-01-27T00:00:00
 PROBLEM	early	Demand '1. order 3' planned P1DT12H before its due date	2009-01-10T00:00:00 / 2009-01-11T12:00:00
 PROBLEM	early	Demand '1. order 4' planned PT12H before its due date	2009-01-10T00:00:00 / 2009-01-10T12:00:00
-PROBLEM	late	Demand '1. order 8' planned P11D after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00
+PROBLEM	late	6 units of demand '1. order 8' planned up to 11.0 days after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00
 PROBLEM	early	Demand '2. order 1' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
 PROBLEM	early	Demand '2. order 2' planned PT12H before its due date	2009-01-12T00:00:00 / 2009-01-12T12:00:00
-PROBLEM	late	Demand '2. order 4' planned PT12H after its due date	2009-01-10T12:00:00 / 2009-01-11T00:00:00
-PROBLEM	late	Demand '2. order 5' planned P3D after its due date	2009-01-08T00:00:00 / 2009-01-11T00:00:00
+PROBLEM	late	6 units of demand '2. order 4' planned up to 0.5 days after its due date	2009-01-10T12:00:00 / 2009-01-11T00:00:00
+PROBLEM	late	6 units of demand '2. order 5' planned up to 3.0 days after its due date	2009-01-08T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	unplanned	Demand '2. order 6' is not planned	2009-01-14T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	late	Demand '2. order 7' planned P17D after its due date	2009-01-04T00:00:00 / 2009-01-21T00:00:00
+PROBLEM	late	6 units of demand '2. order 7' planned up to 17.0 days after its due date	2009-01-04T00:00:00 / 2009-01-21T00:00:00
 PROBLEM	early	Demand '2. order 8' planned P6D before its due date	2009-01-22T00:00:00 / 2009-01-28T00:00:00
 PROBLEM	early	Demand '3. order 3' planned P1DT12H before its due date	2009-01-10T00:00:00 / 2009-01-11T12:00:00
 PROBLEM	early	Demand '3. order 4' planned PT12H before its due date	2009-01-10T00:00:00 / 2009-01-10T12:00:00
 PROBLEM	early	Demand '4. order 1' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
 PROBLEM	early	Demand '4. order 2' planned PT12H before its due date	2009-01-12T00:00:00 / 2009-01-12T12:00:00
-PROBLEM	late	Demand '4. order 3' planned PT12H after its due date	2009-01-11T12:00:00 / 2009-01-12T00:00:00
-PROBLEM	late	Demand '4. order 4' planned P1DT12H after its due date	2009-01-10T12:00:00 / 2009-01-12T00:00:00
-PROBLEM	late	Demand '4. order 5' planned P4D after its due date	2009-01-08T00:00:00 / 2009-01-12T00:00:00
+PROBLEM	late	1 units of demand '4. order 3' planned up to 0.5 days after its due date	2009-01-11T12:00:00 / 2009-01-12T00:00:00
+PROBLEM	late	1 units of demand '4. order 4' planned up to 1.5 days after its due date	2009-01-10T12:00:00 / 2009-01-12T00:00:00
+PROBLEM	late	1 units of demand '4. order 5' planned up to 4.0 days after its due date	2009-01-08T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	early	Demand '4. order 6' planned P2D before its due date	2009-01-12T00:00:00 / 2009-01-14T00:00:00
-PROBLEM	late	Demand '4. order 7' planned P8D after its due date	2009-01-04T00:00:00 / 2009-01-12T00:00:00
+PROBLEM	late	3 units of demand '4. order 7' planned up to 8.0 days after its due date	2009-01-04T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	early	Demand '4. order 8' planned P6D before its due date	2009-01-22T00:00:00 / 2009-01-28T00:00:00
-PROBLEM	late	Demand '5. order 5' planned P7D after its due date	2009-01-08T00:00:00 / 2009-01-15T00:00:00
-PROBLEM	late	Demand '5. order 6' planned P11D after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00
-PROBLEM	late	Demand '5. order 8' planned P22D after its due date	2009-01-14T00:00:00 / 2009-02-05T00:00:00
+PROBLEM	late	1 units of demand '5. order 5' planned up to 7.0 days after its due date	2009-01-08T00:00:00 / 2009-01-15T00:00:00
+PROBLEM	late	10 units of demand '5. order 6' planned up to 11.0 days after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00
+PROBLEM	late	20 units of demand '5. order 8' planned up to 22.0 days after its due date	2009-01-14T00:00:00 / 2009-02-05T00:00:00
 DEMAND CONSTRAINT	1. order 8	Operation '1. Deliver item 20 days' planned in the past	2008-12-23T00:00:00 / 2009-01-14T00:00:00	
 DEMAND CONSTRAINT	5. order 5	Resource '5. resource' has capacity shortage of 1	2009-01-05T00:00:00 / 2009-01-07T00:00:00	
 DEMAND CONSTRAINT	5. order 6	Resource '5. resource' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-13T00:00:00	

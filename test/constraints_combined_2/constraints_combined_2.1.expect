@@ -4999,16 +4999,16 @@ OPERATION	10 step 07	2012-01-10T00:35:00	2012-01-10T01:58:20	500
 OPERATION	10 step 07	2012-01-10T01:58:20	2012-01-10T03:21:40	500
 OPERATION	10 step 07	2012-01-10T03:21:40	2012-01-10T04:45:00	500
 PROBLEM	material excess	Buffer '05 step 04 @ Line 1' has material excess of 500	2012-01-07T00:00:00 / 2012-01-09T00:00:00
-PROBLEM	late	Demand 'Order 001 01' planned P1DT23H45M after its due date	2012-01-01T00:00:00 / 2012-01-02T23:45:00
-PROBLEM	late	Demand 'Order 001 02' planned P3DT3H31M40S after its due date	2012-01-01T00:00:00 / 2012-01-04T03:31:40
-PROBLEM	late	Demand 'Order 001 03' planned P4DT7H18M20S after its due date	2012-01-01T00:00:00 / 2012-01-05T07:18:20
-PROBLEM	late	Demand 'Order 001 04' planned P5DT11H5M after its due date	2012-01-01T00:00:00 / 2012-01-06T11:05:00
-PROBLEM	late	Demand 'Order 001 05' planned P8DT14H51M40S after its due date	2012-01-01T00:00:00 / 2012-01-09T14:51:40
-PROBLEM	late	Demand 'Order 001 06' planned P2DT13H38M20S after its due date	2012-01-01T00:00:00 / 2012-01-03T13:38:20
-PROBLEM	late	Demand 'Order 001 07' planned P3DT17H25M after its due date	2012-01-01T00:00:00 / 2012-01-04T17:25:00
-PROBLEM	late	Demand 'Order 001 08' planned P4DT21H11M40S after its due date	2012-01-01T00:00:00 / 2012-01-05T21:11:40
-PROBLEM	late	Demand 'Order 001 09' planned P8DT58M20S after its due date	2012-01-01T00:00:00 / 2012-01-09T00:58:20
-PROBLEM	late	Demand 'Order 001 10' planned P9DT4H45M after its due date	2012-01-01T00:00:00 / 2012-01-10T04:45:00
+PROBLEM	late	5000 units of demand 'Order 001 01' planned up to 2.0 days after its due date	2012-01-01T00:00:00 / 2012-01-02T23:45:00
+PROBLEM	late	5000 units of demand 'Order 001 02' planned up to 3.1 days after its due date	2012-01-01T00:00:00 / 2012-01-04T03:31:40
+PROBLEM	late	5000 units of demand 'Order 001 03' planned up to 4.3 days after its due date	2012-01-01T00:00:00 / 2012-01-05T07:18:20
+PROBLEM	late	5000 units of demand 'Order 001 04' planned up to 5.5 days after its due date	2012-01-01T00:00:00 / 2012-01-06T11:05:00
+PROBLEM	late	5000 units of demand 'Order 001 05' planned up to 8.6 days after its due date	2012-01-01T00:00:00 / 2012-01-09T14:51:40
+PROBLEM	late	5000 units of demand 'Order 001 06' planned up to 2.6 days after its due date	2012-01-01T00:00:00 / 2012-01-03T13:38:20
+PROBLEM	late	5000 units of demand 'Order 001 07' planned up to 3.7 days after its due date	2012-01-01T00:00:00 / 2012-01-04T17:25:00
+PROBLEM	late	5000 units of demand 'Order 001 08' planned up to 4.9 days after its due date	2012-01-01T00:00:00 / 2012-01-05T21:11:40
+PROBLEM	late	5000 units of demand 'Order 001 09' planned up to 8.0 days after its due date	2012-01-01T00:00:00 / 2012-01-09T00:58:20
+PROBLEM	late	5000 units of demand 'Order 001 10' planned up to 9.2 days after its due date	2012-01-01T00:00:00 / 2012-01-10T04:45:00
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 07' planned in the past	2011-12-30T22:36:40 / 2011-12-31T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 06' planned in the past	2011-12-30T23:51:40 / 2011-12-31T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 05' planned in the past	2011-12-30T23:10:00 / 2011-12-31T00:00:00	

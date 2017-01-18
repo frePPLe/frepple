@@ -24,5 +24,5 @@ OPERATION	make subassembly	2009-01-01T00:00:00	2009-01-03T00:00:00	2
 PROBLEM	material excess	Buffer 'Raw material @ factory' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'Raw material @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'subassembly @ factory' has material excess of 15	1971-01-01T00:00:00 / 2009-01-03T00:00:00
-PROBLEM	late	Demand 'order 1' planned P6D after its due date	2009-01-03T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	late	7 units of demand 'order 1' planned up to 6.0 days after its due date	2009-01-03T00:00:00 / 2009-01-09T00:00:00
 DEMAND CONSTRAINT	order 1	Operation 'make end item' planned in the past	2008-12-26T00:00:00 / 2009-01-02T00:00:00	

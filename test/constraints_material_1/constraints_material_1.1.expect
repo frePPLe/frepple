@@ -50,9 +50,9 @@ PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T
 PROBLEM	short	Demand 'order prio 3 for item 1' planned 5 units short	2009-01-12T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 2' planned 5 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 3' planned 3 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order prio 3 for item 3' planned P15D after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
+PROBLEM	late	2 units of demand 'order prio 3 for item 3' planned up to 15.0 days after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	short	Demand 'order prio 3 for item 4' planned 6 units short	2009-01-05T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	late	Demand 'order prio 3 for item 4' planned P15D after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
+PROBLEM	late	2 units of demand 'order prio 3 for item 4' planned up to 15.0 days after its due date	2009-01-05T00:00:00 / 2009-01-20T00:00:00
 DEMAND CONSTRAINT	order prio 3 for item 1	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order prio 3 for item 2	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order prio 3 for item 3	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	

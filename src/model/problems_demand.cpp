@@ -125,11 +125,26 @@ void Demand::updateProblems()
 
 string ProblemLate::getDescription() const
 {
-  assert(getDemand() && !getDemand()->getDelivery().empty());
-  Duration t(getDemand()->getLatestDelivery()->getDates().getEnd()
-      - getDemand()->getDue());
-  return string("Demand '") + getDemand()->getName() + "' planned "
-      + string(t) + " after its due date";
+  Demand *dmd = getDemand();
+  assert(dmd && !dmd->getDelivery().empty());
+  Duration delay;
+  double plannedlate = 0;
+  for (Demand::OperationPlanList::const_iterator i = dmd->getDelivery().begin();
+    i != dmd->getDelivery().end();
+    ++i)
+  {
+    Duration tmp = (*i)->getDates().getEnd() - getDemand()->getDue();
+    if (tmp > 0L)
+    {
+      if (tmp > delay)
+        delay = tmp;
+      plannedlate += (*i)->getQuantity();
+    }
+  }
+  ostringstream ch;
+  ch << (int)(plannedlate + 0.5) << " units of demand '" << getDemand()->getName() 
+    << "' planned up to " << fixed << setprecision(1) << (delay / 86400.0) << " days after its due date";
+  return ch.str();
 }
 
 

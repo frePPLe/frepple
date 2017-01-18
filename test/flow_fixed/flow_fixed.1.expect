@@ -256,7 +256,7 @@ PROBLEM	material excess	Buffer '5. end item' has material excess of 3	1971-01-01
 PROBLEM	material excess	Buffer '5. end item' has material excess of 2	2013-02-19T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer '6. end item' has material excess of 3	1971-01-01T00:00:00 / 2013-02-06T00:00:00
 PROBLEM	material excess	Buffer '6. end item' has material excess of 1	2013-02-19T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	late	Demand '1. order 3' planned P11D after its due date	2013-02-20T00:00:00 / 2013-03-03T00:00:00
-PROBLEM	late	Demand '2. order 1' planned P7D after its due date	2013-01-20T00:00:00 / 2013-01-27T00:00:00
+PROBLEM	late	50 units of demand '1. order 3' planned up to 11.0 days after its due date	2013-02-20T00:00:00 / 2013-03-03T00:00:00
+PROBLEM	late	10 units of demand '2. order 1' planned up to 7.0 days after its due date	2013-01-20T00:00:00 / 2013-01-27T00:00:00
 DEMAND CONSTRAINT	1. order 3	Buffer '1. fixed consumption item' has material shortage of 2	2013-02-18T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	2. order 1	Operation '2. deliver co-product' planned before fence	2013-01-19T00:00:00 / 2013-01-20T00:00:00	

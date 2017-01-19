@@ -104,7 +104,7 @@ class exportStaticModel(object):
             self.timestamp
           )
           for i in frepple.calendars()
-          if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source and not i.source == 'common_bucket')
         ])
       cursor.executemany(
         "update calendar \
@@ -116,7 +116,7 @@ class exportStaticModel(object):
             i.name
           )
           for i in frepple.calendars()
-          if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)
+          if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source and not i.source == 'common_bucket')
         ])
       print('Exported calendars in %.2f seconds' % (time() - starttime))
 
@@ -127,7 +127,7 @@ class exportStaticModel(object):
       cursor.execute("SELECT max(id) FROM calendarbucket")
       cnt = cursor.fetchone()[0] or 1
       for c in frepple.calendars():
-        if c.hidden:
+        if c.hidden or c.source == 'common_bucket':
           continue
         if self.source and self.source != c.source:
           continue
@@ -276,7 +276,7 @@ class exportStaticModel(object):
       print('Exported suboperations in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationPlanMaterials(self, cursor):
+  def exportOperationMaterials(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation materials...")
       starttime = time()
@@ -325,7 +325,7 @@ class exportStaticModel(object):
       print('Exported operation materials in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationPlanResources(self, cursor):
+  def exportOperationResources(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting operation resources...")
       starttime = time()
@@ -670,50 +670,6 @@ class exportStaticModel(object):
       print('Exported demands in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationPlans(self, cursor):
-    '''
-    Only locked operationplans are exported. That because we assume that
-    all of those were given as input.
-    '''
-    with transaction.atomic(using=self.database, savepoint=False):
-      print("Exporting operationplans...")
-      starttime = time()
-      cursor.execute("SELECT id FROM operationplan")
-      primary_keys = set([ i[0] for i in cursor.fetchall() ])
-      cursor.executemany(
-        "insert into operationplan \
-        (id,operation_id,quantity,startdate,enddate,status,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s)",
-        [
-         (
-           i.id, i.operation.name, round(i.quantity, 6),
-           str(i.start), str(i.end), i.status, i.source, self.timestamp
-         )
-         for i in frepple.operationplans()
-         if i.locked and not i.operation.hidden and i.id not in primary_keys and (not self.source or self.source == i.source)
-        ])
-      cursor.executemany(
-        "update operationplan \
-         set operation_id=%s, quantity=%s, startdate=%s, enddate=%s, status=%s, source=%s, lastmodified=%s \
-         where id=%s",
-        [
-         (
-           i.operation.name, round(i.quantity, 6),
-           str(i.start), str(i.end), i.status, i.source, self.timestamp, i.id
-         )
-         for i in frepple.operationplans()
-         if i.locked and not i.operation.hidden and i.id in primary_keys and (not self.source or self.source == i.source)
-        ])
-      cursor.executemany(
-        "update operationplan set owner_id=%s where id=%s",
-        [
-          (i.owner.id, i.id)
-          for i in frepple.operationplans()
-          if i.owner and not i.operation.hidden and i.locked and (not self.source or self.source == i.source)
-        ])
-      print('Exported operationplans in %.2f seconds' % (time() - starttime))
-
-
   def exportResources(self, cursor):
     with transaction.atomic(using=self.database, savepoint=False):
       print("Exporting resources...")
@@ -972,13 +928,13 @@ class exportStaticModel(object):
         self.exportSubOperations(cursor)
         self.exportOperationPlans(cursor)
         self.exportBuffers(cursor)
-        self.exportOperationPlanMaterials(cursor)
+        self.exportOperationMaterials(cursor)
         self.exportSetupMatrices(cursor)
         self.exportSetupMatricesRules(cursor)
         self.exportResources(cursor)
         self.exportSkills(cursor)
         self.exportResourceSkills(cursor)
-        self.exportOperationPlanResources(cursor)
+        self.exportOperationResources(cursor)
         self.exportCustomers(cursor)
         self.exportSuppliers(cursor)
         self.exportItemSuppliers(cursor)
@@ -996,9 +952,9 @@ class exportStaticModel(object):
         self.exportSetupMatrices(cursor)
         self.exportResources(cursor)
         tasks = (
-          DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportOperationPlans, self.exportParameters),
-          DatabaseTask(self, self.exportBuffers, self.exportOperationPlanMaterials, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
-          DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportOperationPlanResources),
+          DatabaseTask(self, self.exportCalendarBuckets, self.exportSubOperations, self.exportParameters),
+          DatabaseTask(self, self.exportBuffers, self.exportOperationMaterials, self.exportSuppliers, self.exportItemSuppliers, self.exportItemDistributions),
+          DatabaseTask(self, self.exportSetupMatricesRules, self.exportSkills, self.exportResourceSkills, self.exportOperationResources),
           DatabaseTask(self, self.exportCustomers, self.exportDemands),
           )
         # Start all threads

@@ -993,7 +993,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           SubOperation::iterator subiter((*altIter)->getOperation()->getSubOperations());
           while (SubOperation *o = subiter.next())
           {
-            Flow *g = o->getOperation()->findFlow(buf, ask_date);            
+            Flow *g = o->getOperation()->findFlow(buf, ask_date);
             if (g && g->getQuantity() > 0.0)
             {
               sub_flow_qty_per += g->getQuantity();
@@ -1002,7 +1002,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
                 throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                   + "' for buffer '" + data->state->curBuffer->getName() + "'");
               fixed_flow = g_is_fixed;
-            }              
+            }
           }
         }
 
@@ -1014,7 +1014,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           data->constrainedPlanning = originalPlanningMode;
           throw DataException("Invalid producing operation '" + oper->getName()
               + "' for buffer '" + buf->getName() + "'");
-        }       
+        }
       }
       else
         // Default value is 1.0, if no matching flow is required
@@ -1052,6 +1052,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
       // Create a sub operationplan
       data->state->q_date = ask_date;
+      data->state->q_date_max = ask_date;
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
@@ -1105,6 +1106,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         // reply to return
         data->state->q_qty = data->state->a_qty;
         data->state->q_date = origQDate;
+        data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
         if (fixed_flow)
@@ -1214,6 +1216,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       else
         data->state->q_qty = a_qty / bestFlowPer;
       data->state->q_date = bestQDate;
+      data->state->q_date_max = bestQDate;
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
@@ -1225,6 +1228,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Only now we know how long that top-operation lasts in total.
       data->state->q_qty = data->state->a_qty;
       data->state->q_date = origQDate;
+      data->state->q_date_max = origQDate;
       data->state->curOwnerOpplan->createFlowLoads();
       data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
 
@@ -1287,6 +1291,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Recreate the ask
     data->state->q_qty = a_qty / firstFlowPer;
     data->state->q_date = origQDate;
+    data->state->q_date_max = origQDate;
     data->state->curDemand = nullptr;
     data->state->curOwnerOpplan = a->getOperationPlan();
     data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
@@ -1297,6 +1302,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // Expand flows of the top operationplan.
     data->state->q_qty = data->state->a_qty;
     data->state->q_date = origQDate;
+    data->state->q_date_max = origQDate;
     data->state->curOwnerOpplan->createFlowLoads();
     data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
 

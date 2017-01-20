@@ -11,7 +11,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.0.beta\n"
+"Project-Id-Version: 4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-11 13:27+0100\n"
 "PO-Revision-Date: 2017-01-11 13:40+0100\n"

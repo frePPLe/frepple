@@ -24,7 +24,7 @@ setup(
   url = 'http://frepple.com',
   author = 'frePPLe bvba',
   author_email = 'jdetaeye@frepple.com',
-  version = '2.2.beta',
+  version = '4.0',
   packages = ['addons.frepple','addons.frepple.controllers'],
   data_files = [
      ('addons/frepple', ['addons/frepple/frepple_data.xml']),

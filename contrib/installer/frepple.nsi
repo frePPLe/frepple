@@ -25,7 +25,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "4.0"
+!define PRODUCT_VERSION "4.1.beta"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -135,8 +135,8 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
-VIProductVersion "4.0.0.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "4.0.0.0"
+VIProductVersion "4.1.0.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "4.1.0.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"

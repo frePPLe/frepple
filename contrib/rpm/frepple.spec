@@ -16,7 +16,7 @@
 #
 Summary: Free Production PLanning
 Name: frepple
-Version: 4.0
+Version: 4.1.beta
 Release: 1%{?dist}
 License: AGPLv3+
 Group: Applications/Productivity

@@ -26,7 +26,7 @@ from django.utils.encoding import force_text
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.models import Comment, Wizard
+from freppledb.common.models import Comment
 
 
 class WelcomeWidget(Widget):

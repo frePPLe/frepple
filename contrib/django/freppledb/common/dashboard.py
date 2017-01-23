@@ -104,8 +104,6 @@ class Dashboard:
             # Create a dummy contenttype in the app
             content_type = ContentType.objects.get_or_create(model="permission", app_label="auth")[0]
           # Create the permission object
-          # TODO: cover the case where the permission refers to a permission of a model in the same app.
-          # TODO: cover the case where app X wants to refer to a permission defined in app Y.
           p = Permission.objects.get_or_create(codename=k[0], content_type=content_type)[0]
           p.name = k[1]
           p.save()
@@ -155,7 +153,7 @@ class Widget:
   @classmethod
   def has_permission(cls, user):
     for perm in cls.permissions:
-      if not user.has_perm("%s.%s" % (cls.getAppLabel(), perm[0])):
+      if not user.has_perm("auth.%s" % perm[0]):
         return False
     return True
 

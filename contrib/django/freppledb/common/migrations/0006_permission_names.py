@@ -15,24 +15,29 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import models, migrations
-import freppledb.common.fields
-
-from freppledb.common.migrate import AttributeMigration
+from django.db import migrations
 
 
-class Migration(AttributeMigration):
+class Migration(migrations.Migration):
 
   dependencies = [
-    ('openbravo', '0001_initial'),
-    ]
-
-  extends_app_label = 'input'
+    ('common', '0003_wizard'),
+  ]
 
   operations = [
-     migrations.AddField(
-       model_name='itemsupplier',
-       name='vendoritemname',
-       field=models.CharField(verbose_name='vendor item name', null=True, blank=True, max_length=300, db_index=True)
-       )
-    ]
+    # Irreversible migration
+    migrations.RunSQL(
+      '''
+      update auth_permission
+      set content_type_id = 
+         (select id from django_content_type where app_label = 'auth' and model = 'permission')
+      where content_type_id in (select id from django_content_type where model = 'reports')
+      '''
+    ),
+    # Irreversible migration
+    migrations.RunSQL(
+      '''
+      delete from django_content_type where model = 'reports'
+      '''
+    ),
+  ]

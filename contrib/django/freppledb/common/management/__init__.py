@@ -65,8 +65,10 @@ def removePermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwa
   removeModelPermissions("common", "scenario", db)
   removeModelPermissions("admin", "logentry", db)
   removeModelPermissions("contenttypes", "contenttype", db)
-  removeModelPermissions("auth", "permission", db)
-  
+  Permission.objects.all().filter(codename="add_permission").delete()
+  Permission.objects.all().filter(codename="change_permission").delete()
+  Permission.objects.all().filter(codename="delete_permission").delete()
+
   
 signals.post_syncdb.connect(removePermissions)
 signals.post_syncdb.connect(createExtraPermissions)

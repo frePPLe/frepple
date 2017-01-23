@@ -662,6 +662,8 @@ class GridReport(View):
         for name in reportclass.model.__base__._meta.get_all_field_names():
           if name == sortfield:
             return query.order_by(asc and sort or ('-%s' % sort))
+      if sort in query.query.extra_select:
+        return query.order_by(asc and sort or ('-%s' % sort))
     # Sorting by a non-existent field name: ignore the filter
     return query
 

@@ -1193,7 +1193,8 @@ class PurchaseOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return PurchaseOrder.objects.all().extra(select={
-      'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg), '')"
+      'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg), '')",
+      'total_price': "price*quantity"
       })
 
   rows = (
@@ -1210,6 +1211,8 @@ class PurchaseOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldNumber('item__price', title=_('price'), editable=False),
+    GridFieldNumber('total_price', title=_('total price'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
@@ -1232,3 +1235,20 @@ class PurchaseOrderList(GridReport):
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]
+
+  @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      # Adding custom item attributes
+      for f in getAttributeFields(Item, related_name_prefix="item"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="location"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom supplier attributes
+      for f in getAttributeFields(Supplier, related_name_prefix="supplier"):
+        f.editable = False
+        reportclass.rows += (f,)

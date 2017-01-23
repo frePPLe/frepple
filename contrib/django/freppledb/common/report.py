@@ -494,7 +494,7 @@ class GridReport(View):
   def dispatch(self, request, *args, **kwargs):
     # Verify the user is authorized to view the report
     for perm in self.permissions:
-      if not request.user.has_perm("%s.%s" % (self.getAppLabel(), perm[0])):
+      if not request.user.has_perm("auth.%s" % perm[0]):
         return HttpResponseForbidden('<h1>%s</h1>' % _('Permission denied'))
 
     # Unescape special characters in the arguments.

@@ -183,7 +183,7 @@ def wrapTask(request, action):
   task = None
   # A
   if action == 'frepple_run':
-    if not request.user.has_perm('execute.generate_plan'):
+    if not request.user.has_perm('auth.generate_plan'):
       raise Exception('Missing execution privileges')
     constraint = 0
     for value in request.POST.getlist('constraint'):
@@ -203,31 +203,25 @@ def wrapTask(request, action):
     # Update the session object
     request.session['plantype'] = request.POST.get('plantype')
     request.session['constraint'] = constraint
-  # B
-  elif action == 'frepple_createmodel':
-    task = Task(name='generate model', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s " \
-      "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s" % (
-        request.POST['clusters'], request.POST['demands'], request.POST['fcst'], request.POST['levels'],
-        request.POST['rsrc_number'], request.POST['rsrc_size'], request.POST['components'],
-        request.POST['components_per'], request.POST['deliver_lt'], request.POST['procure_lt']
-        )
-    task.save(using=request.database)
   # C
   elif action == 'frepple_flush':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='empty database', submitted=now, status='Waiting', user=request.user)
     if not request.POST.get('all'):
       task.arguments = "--models=%s" % ','.join(request.POST.getlist('entities'))
     task.save(using=request.database)
   # D
   elif action == 'loaddata':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['datafile'])
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
     worker_database = DEFAULT_DB_ALIAS
     if 'copy' in request.POST:
-      if not request.user.has_perm('execute.copy_scenario'):
+      if not request.user.has_perm('auth.copy_scenario'):
         raise Exception('Missing execution privileges')
       source = request.POST.get('source', DEFAULT_DB_ALIAS)
       for sc in Scenario.objects.all():
@@ -236,7 +230,7 @@ def wrapTask(request, action):
           task.save()
     elif 'release' in request.POST:
       # Note: release is immediate and synchronous.
-      if not request.user.has_perm('execute.release_scenario'):
+      if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
         if request.POST.get(sc.name, 'off') == 'on' and sc.status != 'Free':
@@ -248,7 +242,7 @@ def wrapTask(request, action):
             request.prefix = ''
     elif 'update' in request.POST:
       # Note: update is immediate and synchronous.
-      if not request.user.has_perm('execute.release_scenario'):
+      if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
         if request.POST.get(sc.name, 'off') == 'on':
@@ -258,10 +252,14 @@ def wrapTask(request, action):
       raise Exception('Invalid scenario task')
   # F
   elif action == 'frepple_backup':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='backup database', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   # G
   elif action == 'frepple_createbuckets':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')        
     task = Task(name='generate buckets', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--start=%s --end=%s --weekstart=%s" % (
       request.POST['start'], request.POST['end'], request.POST['weekstart']
@@ -269,11 +267,15 @@ def wrapTask(request, action):
     task.save(using=request.database)
   # H
   elif action == 'openbravo_import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')
     task = Task(name='Openbravo import', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--delta=%s" % request.POST['delta']
     task.save(using=request.database)
   # I
   elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
     if 'filter_export' in request.POST:
       task.arguments = "--filter"
@@ -285,10 +287,14 @@ def wrapTask(request, action):
     task.save(using=request.database)
   # M
   elif action == 'frepple_importfromfolder':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   # N
   elif action == 'frepple_exporttofolder':
+    if not request.user.has_perm('auth.run_db'):
+      raise Exception('Missing execution privileges')    
     task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   else:

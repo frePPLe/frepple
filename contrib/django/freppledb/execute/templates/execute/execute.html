@@ -287,8 +287,8 @@
 <div class="row">
 	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px; min-width: 600px">
 
-	{% if perms.execute %}
-	  {% if perms.execute.generate_plan %}
+	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.run_db %}
+	  {% if perms.auth.generate_plan %}
 	  <div class="panel panel-default">
 		  <div class="panel-heading" data-parent="#tasks" role="tab" id="eersteHeading" data-toggle="collapse" data-target="#eersteAccord">
 		    <h4 class="panel-title">
@@ -496,7 +496,7 @@
 									<td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
 					      </tr>
 					      {% endifnotequal %}{% endfor %}
-					      {% if perms.execute.copy_scenario %}
+					      {% if perms.auth.copy_scenario %}
 					      <tr>
 					        <td><button  class="btn btn-primary" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
 					        </td>
@@ -517,7 +517,7 @@
 					        </td>
 					      </tr>
 					      {% endif %}
-					      {% if perms.execute.release_scenario %}
+					      {% if perms.auth.release_scenario %}
 					      <tr>
 					        <td><button class="btn btn-primary" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
 					        <td  style="padding: 0px 15px;" colspan="3">{% trans "release selected scenarios"|capfirst %}</td>
@@ -535,8 +535,8 @@
 		</div>
 	  {% endif %}
 
+      {% if perms.auth.run_db %}
 	  <div class="panel panel-default">
-		  {% if perms.execute.run_db %}
 		  <div class="panel-heading" data-parent="#tasks" role="tab" id="vijfdeHeading" data-toggle="collapse" data-target="#vijfdeAccord">
 		    <h4 class="panel-title">
 		      <a role="button">{% trans "Back up the database" %}</a>
@@ -619,7 +619,7 @@
 		</div>
 	  {% endif %}
 
-	  {% if openbravo %}
+	  {% if openbravo and perms.auth.run_db %}
 	  <div class="panel panel-default">
 		  <div class="panel-heading" data-parent="#tasks" role="tab" id="achtsteHeading" data-toggle="collapse" data-target="#achtsteAccord">
 		    <h4 class="panel-title">
@@ -701,7 +701,7 @@
     </div>
     {% endif %}
 
-	  {% if perms.execute.run_db %}
+	  {% if perms.auth.run_db %}
 	  <div class="panel panel-default">
 		  <div class="panel-heading" data-parent="#tasks" role="tab" id="tiendeHeading" data-toggle="collapse" data-target="#tiendeAccord">
 		    <h4 class="panel-title">

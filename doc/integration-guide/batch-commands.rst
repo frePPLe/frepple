@@ -11,11 +11,6 @@ Usage::
 
 Type 'frepplectl.py help <subcommand>' for help on a specific subcommand.
 
-Some subcommands optionally expect application names as arguments. The frePPLe
-user interface has the following applications: "input", "output", "execute",
-"common", "auth", "forecast" (Enterprise Edition only) and "quoting" (Enterprise
-Edition only).
-
 Commonly used subcommands are:
 
 * | **dumpdata**:

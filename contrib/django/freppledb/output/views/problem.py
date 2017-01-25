@@ -56,7 +56,7 @@ class Report(GridReport):
     GridFieldText('entity', title=_('entity'), editable=False, align='center'),  # TODO choices=getEntities
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
-    GridFieldText('owner', title=_('owner'), editable=False, extra='"formatter":"probfmt"'),
+    GridFieldText('owner', title=_('owner'), editable=False, extra='"formatter":probfmt'),
     GridFieldText('description', title=_('description'), editable=False, width=350),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),

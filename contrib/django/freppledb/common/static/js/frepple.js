@@ -1201,7 +1201,6 @@ var ERPconnection = {
 //----------------------------------------------------------------------------
 
 var activeButton = null;
-var contextMenu = null;
 
 $(function() {
 
@@ -1286,52 +1285,6 @@ $(function() {
 
 // Capture mouse clicks on the page so any active menu can be deactivated.
 $(document).mousedown(function (event) {
-
-  if (contextMenu && $(event.target).parent('.ui-menu-item').length < 1)
-  {
-    // Hide any context menu
-    contextMenu.css('display', 'none');
-    contextMenu = null;
-  }
-
-  // We clicked on a context menu. Display that now.
-  if ($(event.target).hasClass('context'))
-  {
-    // Find the id of the menu to display
-    contextMenu = $('#' + $(event.target).attr('role') + "context");
-
-    // Get the entity name.
-    if ($(event.target).hasClass('cross'))
-    {
-      var item = $(event.target).closest("tr.jqgrow")[0].id;
-      item = admin_escape(item);
-      var params = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[jQuery.jgrid.getCellIndex($(event.target).closest("td,th"))];
-      params['value'] = item;
-    }
-    else
-    {
-      var item = $(event.target).parent().text();
-      item = admin_escape(item);
-      var params = {value: item};
-    }
-
-    // Build the URLs for the menu
-    contextMenu.find('a').each( function() {
-      $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) {
-        var key = match.substring(1,match.length-1);
-        return key in params ? params[key] : match;
-        }))
-    });
-
-    // Display the menu at the right location
-    $(contextMenu).css({
-      left: event.pageX,
-      top: event.pageY,
-      display: 'block'
-      });
-    event.preventDefault();
-    event.stopImmediatePropagation();
-  }
 
   // If there is no active button, exit.
   if (!activeButton || event.target == activeButton) return;

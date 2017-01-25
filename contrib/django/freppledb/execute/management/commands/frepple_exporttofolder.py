@@ -21,7 +21,7 @@ import os
 from _datetime import datetime
 from optparse import make_option
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.core.management.base import BaseCommand, CommandError
 
 from freppledb.common.models import User
@@ -49,29 +49,29 @@ class Command(BaseCommand):
   requires_system_checks = False
 
   statements = [
-      ("purchaseorder.csv", 
-        '''COPY 
-        (select source, lastmodified, id, status , reference, quantity, 
-        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
-        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality, 
-        owner_id, item_id, location_id, supplier_id from operationplan 
-        where status='proposed' and type='PO') 
-        TO STDOUT WITH CSV HEADER'''
-        ),
-      ("distributionorder.csv", 
-        '''COPY 
-        (select source, lastmodified, id, status, reference, quantity, 
-        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
+      ("purchaseorder.csv",
+        '''COPY
+        (select source, lastmodified, id, status , reference, quantity,
+        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
         to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality,
-        plan, destination_id, item_id, origin_id from operationplan 
-        where status='proposed' and type='DO') 
+        owner_id, item_id, location_id, supplier_id from operationplan
+        where status='proposed' and type='PO')
         TO STDOUT WITH CSV HEADER'''
         ),
-      ("manufacturingorder.csv", 
-       '''COPY 
+      ("distributionorder.csv",
+        '''COPY
+        (select source, lastmodified, id, status, reference, quantity,
+        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
+        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, criticality,
+        plan, destination_id, item_id, origin_id from operationplan
+        where status='proposed' and type='DO')
+        TO STDOUT WITH CSV HEADER'''
+        ),
+      ("manufacturingorder.csv",
+       '''COPY
        (select source, lastmodified, id , status ,reference ,quantity,
-       to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate, 
-       to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate, 
+       to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
+       to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
        criticality, operation_id, owner_id, plan, item_id
        from operationplan where status='proposed' and type='MO')
        TO STDOUT WITH CSV HEADER'''
@@ -126,12 +126,7 @@ class Command(BaseCommand):
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'exporttofolder.log'), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
 
-        #Define our connection string
-        conn_string = "host='localhost' dbname='"+settings.DATABASES[self.database]['NAME']+"' user='"+settings.DATABASES[self.database]['USER']+"' password='"+settings.DATABASES[self.database]['PASSWORD']+"'"
-
-        conn = psycopg2.connect(conn_string)
-
-        cursor = conn.cursor()
+        cursor = connections[self.database].cursor()
 
         task.status = '0%'
         task.save(using=self.database)
@@ -155,13 +150,11 @@ class Command(BaseCommand):
             print("%s Failed to export to %s" % (datetime.now(),filename), file=self.logfile)
             if task:
               task.message = '%s' % e
-            conn = psycopg2.connect(conn_string)
-            cursor = conn.cursor()
+            cursor = connections[self.database].cursor()
 
           task.status = str(int(i/cnt*100))+'%'
           task.save(using=self.database)
 
-        conn.close()
         print("%s Exported %s file(s)\n" % (datetime.now(),cnt-errors), file=self.logfile)
 
       else:

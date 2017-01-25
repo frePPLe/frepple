@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import psycopg2
 import os
 
 from _datetime import datetime
@@ -27,7 +26,6 @@ from django.core.management.base import BaseCommand, CommandError
 from freppledb.common.models import User
 from freppledb import VERSION
 from freppledb.execute.models import Task
-from django.contrib.admin.models import LogEntry
 
 class Command(BaseCommand):
   help = "Exports tables from the frePPLe database to CSV files in a folder"
@@ -119,7 +117,7 @@ class Command(BaseCommand):
       task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
 
-       # Execute
+      # Execute
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
@@ -150,7 +148,6 @@ class Command(BaseCommand):
             print("%s Failed to export to %s" % (datetime.now(),filename), file=self.logfile)
             if task:
               task.message = '%s' % e
-            cursor = connections[self.database].cursor()
 
           task.status = str(int(i/cnt*100))+'%'
           task.save(using=self.database)

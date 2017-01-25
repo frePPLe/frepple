@@ -27,6 +27,7 @@ from django.utils.translation import ungettext
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
 
+from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
 from freppledb.input.models import Skill, Buffer, Customer, Demand
 from freppledb.input.models import Item, OperationResource, OperationMaterial
@@ -1178,6 +1179,23 @@ class DistributionOrderList(GridReport):
       {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
     ]
+
+  @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      # Adding custom item attributes
+      for f in getAttributeFields(Item, related_name_prefix="item"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="origin"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="destination"):
+        f.editable = False
+        reportclass.rows += (f,)
 
 
 class PurchaseOrderList(GridReport):

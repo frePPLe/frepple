@@ -3,7 +3,7 @@
 #
 
 nobasedir = $(datadir)/frepple
-nobase_DATA = frepple.xsd frepple_core.xsd
+nobase_DATA = frepple.xsd
 
 pkgsysconfdir = $(sysconfdir)/frepple
 pkgsysconf_DATA = license.xml init.xml

@@ -118,7 +118,7 @@ class Command(BaseCommand):
       # TODO avoid having to delete the environment variables. Use options directly?
       PlanTaskRegistry.autodiscover()
       for i in PlanTaskRegistry.reg:
-        if options['env']:
+        if 'env' in options:
           # Options specified
           if i.label and i.label[0] in os.environ:
             del os.environ[i.label[0]]

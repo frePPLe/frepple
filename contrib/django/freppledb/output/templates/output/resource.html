@@ -35,6 +35,11 @@ function drawGraphs(jsondata)
   {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
 
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -79,8 +84,16 @@ function drawGraphs(jsondata)
         'load': tmp[3],
         'perc': tmp[4]
         });
-      if (tmp[0] + tmp[1] > max_y) max_y = tmp[0] + tmp[1] ;
-      if (tmp[1] + tmp[2] + tmp[3] > max_y) max_y = tmp[1] + tmp[2] + tmp[3] ;
+      if (1 in fields)
+      {
+        if (tmp[0] + tmp[1] > max_y) max_y = tmp[0] + tmp[1];
+        if (tmp[1] + tmp[2] + tmp[3] > max_y) max_y = tmp[1] + tmp[2] + tmp[3];
+      }
+      else
+      {
+        if (tmp[0] > max_y) max_y = tmp[0];
+        if (tmp[2] + tmp[3] > max_y) max_y = tmp[2] + tmp[3];
+      }
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -136,7 +149,7 @@ function drawGraphs(jsondata)
           free = 0;
           load = d['available'] - d['setup'];
         }
-        if (d['unavailable'] > 0)
+        if (d['unavailable'] > 0 && 1 in fields)
         {
           newtop = top + d['unavailable'];
           bucket.append("rect")
@@ -146,7 +159,7 @@ function drawGraphs(jsondata)
             .style("fill","#F6BD0F");
           top = newtop;
         }
-        if (d['setup'] > 0)
+        if (d['setup'] > 0 && 2 in fields)
         {
           newtop = top + d['setup'];
           bucket.append("rect")
@@ -156,7 +169,7 @@ function drawGraphs(jsondata)
             .style("fill","#2B95EC");
           top = newtop;
         }
-        if (load > 0)
+        if (load > 0 && 3 in fields)
         {
           newtop = top + load;
           bucket.append("rect")
@@ -216,46 +229,64 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('unavailable')|capfirst}}", "#F6BD0F"],
-      [2, "{{_('setup')|capfirst}}", "#2B95EC"],
-      [3, "{{_('load')|capfirst}}", "#AFD8F8"],
-      [0, "{{_('free')|capfirst}}", "#8BBA00"],
-      [0, "{{_('overload')|capfirst}}", "#FF0000"]
+      ["{{_('available')|capfirst}}", "#000000", -1],
+      ["{{_('unavailable')|capfirst}}", "#F6BD0F", 1],
+      ["{{_('setup')|capfirst}}", "#2B95EC", 2],
+      ["{{_('load')|capfirst}}", "#AFD8F8", 3],
+      ["{{_('free')|capfirst}}", "#8BBA00", -2],
+      ["{{_('overload')|capfirst}}", "#FF0000", -2]
       ];
+    var visible = 0;
     for (var i in codes)
     {
+      if (codes[i][2] == -1)
+        continue;
+      else if (codes[i][2] >= 0 && !(codes[i][2] in fields))
+        continue;
       legend.append("rect")
         .attr("x", width + 82)
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", codes[i][2])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
+        .style("fill", codes[i][1])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
       legend.append("text")
         .attr("x", width + 76)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text(codes[i][1])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
+        .text(codes[i][0])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      visible += 1;
     }{% endif %}
     });
 }
 {% endif %}
 {% if args.0 or mode == "table" %}
-function crosses (cellvalue, options, rowdata) {
-  var result = cellvalue[0] + '<br/>' + cellvalue[1] + '<br/>' + cellvalue[2] + '<br/>';
-  if (cellvalue[3] != 0.0)
-    result += cellvalue[3] + '<a href="{{request.prefix}}/loadplan/' +
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 3:
+        if (cellvalue[3] != 0.0)
+          result += cellvalue[3] + '<a href="{{request.prefix}}/loadplan/' +
                                              admin_escape(rowdata['resource']) +
                                              '/?startdate__lt=' + options['colModel']['enddate'] +
                                              '&amp;enddate__gt=' + options['colModel']['startdate'] +
                                              '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0<br/>';
-  if (cellvalue[4] > 95)
-    result += '<span class="highutil">' + cellvalue[4] + '%</span>';
-  else
-    result += cellvalue[4] + '%';
+        else
+          result += '0.0</br>';
+        break;
+      case 4:
+        if (cellvalue[4] > 95)
+          result += '<span class="highutil">' + cellvalue[4] + '%</span></br>';
+        else
+          result += cellvalue[4] + '%</br>';
+        break;
+      default:
+        result += cellvalue[cross_idx[i]] + '</br>';
+    }
   return result;
 };
 {% endif %}{% endblock %}

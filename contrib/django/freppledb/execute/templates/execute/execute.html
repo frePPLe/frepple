@@ -5,6 +5,13 @@
 
   var refresh = null;
 
+  function extraPreference() {
+    return {
+       "height": Math.round($("#gbox_grid").height() - 48),
+       "refresh": (refresh !== null)
+       };
+  }
+
   function updateRefresh()
   {
     if (refresh !== null)
@@ -22,6 +29,7 @@
         }, 5000);
       $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
     }
+    grid.saveColumnConfiguration();
   }
 
   function status (cellvalue, options, rowdata) {
@@ -245,7 +253,7 @@
       resizeWidth: false,
       resizeHeight: true,
       onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);},
-      onDragEnd: function (e, $el, opt) {}
+      onDragEnd: function (e, $el, opt) {grid.saveColumnConfiguration();}
     });
 
   });

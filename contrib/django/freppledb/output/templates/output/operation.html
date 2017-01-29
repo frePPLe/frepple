@@ -28,6 +28,11 @@ function drawGraphs(jsondata)
   {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
 
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -71,8 +76,14 @@ function drawGraphs(jsondata)
         'proposed_end': tmp[2],
         'total_end': tmp[3]
         });
-      if (tmp[1] > max_y) max_y = tmp[1] ;
-      if (tmp[3] > max_y) max_y = tmp[3] ;
+      if (tmp[1] > max_y && 1 in fields)
+        max_y = tmp[1];
+      else if (tmp[0] > max_y && 0 in fields)
+        max_y = tmp[0];
+      if (tmp[3] > max_y && 3 in fields)
+        max_y = tmp[3];
+      else if (tmp[2] > max_y && 2 in fields)
+        max_y = tmp[2];
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -117,7 +128,7 @@ function drawGraphs(jsondata)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
-        if (d['total_start'] > d['proposed_start'])
+        if (d['total_start'] > d['proposed_start'] && 0 in fields)
         {
           top = y(d['total_start'] - d['proposed_start']);
           bucket.append("rect")
@@ -140,7 +151,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['proposed_start'] > 0)
+        if (d['proposed_start'] > 0 && 1 in fields)
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
@@ -165,7 +176,7 @@ function drawGraphs(jsondata)
               });
         }
         top = y(0);
-        if (d['total_end'] > d['proposed_end'])
+        if (d['total_end'] > d['proposed_end'] && 2 in fields)
         {
           top = y(d['total_end'] - d['proposed_end']);
           bucket.append("rect")
@@ -187,7 +198,7 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }
-        if (d['proposed_end'] > 0)
+        if (d['proposed_end'] > 0 && 3 in fields)
         {
           var newtop = y(d['total_end']);
           bucket.append("rect")
@@ -241,25 +252,25 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('approved and confirmed starts')|capfirst}}", "#113C5E"],
-      [2, "{{_('proposed starts')|capfirst}}", "#2B95EC"],
-      [3, "{{_('approved and confirmed ends')|capfirst}}", "#7B5E08"],
-      [4, "{{_('proposed ends')|capfirst}}", "#F6BD0F"],
+      ["{{_('approved and confirmed starts')|capfirst}}", "#113C5E"],
+      ["{{_('proposed starts')|capfirst}}", "#2B95EC"],
+      ["{{_('approved and confirmed ends')|capfirst}}", "#7B5E08"],
+      ["{{_('proposed ends')|capfirst}}", "#F6BD0F"],
       ];
-    for (var i in codes)
+    for (var i in cross_idx)
     {
       legend.append("rect")
         .attr("x", width + 82)
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", codes[i][2])
+        .style("fill", codes[cross_idx[i]][1])
         .attr("transform", "translate(0," + (i*20+10) + ")");
       legend.append("text")
         .attr("x", width + 76)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text(codes[i][1])
+        .text(codes[cross_idx[i]][0])
         .attr("transform", "translate(0," + (i*20+10) + ")");
     }{% endif %}
     });
@@ -269,42 +280,52 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
-  if (cellvalue[0] != 0.0)
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 0:
+        if (cellvalue[0] != 0.0)
     result += cellvalue[0] + '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                         admin_escape(rowdata['operation']) +
                                                          '&amp;startdate__gte=' + options['colModel']['startdate'] +
-                                                         '&amp;startdate__lt=' + options['colModel']['enddate'] +
+                                                               '&amp;startdate__lt=' + options['colModel']['enddate'] +
                                                          '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0</br>';
-
-  if (cellvalue[1] != 0.0)
+		    else
+		      result += '0.0</br>';
+        break;
+      case 1:
+			  if (cellvalue[1] != 0.0)
     result += cellvalue[1] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                            admin_escape(rowdata['operation']) +
+                                                                  admin_escape(rowdata['operation']) +
                                                             '&startdate__gte=' + options['colModel']['startdate'] +
-                                                            '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0<br/>';
-
-  if (cellvalue[2] != 0.0)
+                                                                  '&amp;startdate__lt=' + options['colModel']['enddate'] +
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+			  else
+			    result += '0.0<br/>';
+			  break;
+	    case 2:
+			  if (cellvalue[2] != 0.0)
     result += cellvalue[2] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                            admin_escape(rowdata['operation']) +
+                                                                  admin_escape(rowdata['operation']) +
                                                             '&enddate__gte=' + options['colModel']['startdate'] +
-                                                            '&amp;enddate__lt=' + options['colModel']['enddate'] +
+                                                                  '&amp;enddate__lt=' + options['colModel']['enddate'] +
                                                             '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0<br/>';
-
-  if (cellvalue[3] != 0.0)
+			  else
+			    result += '0.0<br/>';
+			  break;
+      case 3:
+			  if (cellvalue[3] != 0.0)
     result += cellvalue[3] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                            admin_escape(rowdata['operation']) +
+                                                                  admin_escape(rowdata['operation']) +
                                                             '&enddate__gte=' + options['colModel']['startdate'] +
-                                                            '&amp;enddate__lt=' + options['colModel']['enddate'] +
-                                                            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0<br/>';
-
+                                                                  '&amp;enddate__lt=' + options['colModel']['enddate'] +
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+			  else
+			    result += '0.0<br/>';
+        break;
+      default:
+        result += cellvalue[cross_idx[i]] + '</br>';
+    }
   return result;
 };
 {% endif %}{% endblock %}

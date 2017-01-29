@@ -139,6 +139,7 @@ class Command(BaseCommand):
       tables.discard('common_user')
       tables.discard('common_user_groups')
       tables.discard('common_user_user_permissions')
+      tables.discard('common_preference')
       tables.discard('django_admin_log')
       tables.discard('django_content_type')
       tables.discard('execute_log')

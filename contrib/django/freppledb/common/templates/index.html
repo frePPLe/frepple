@@ -5,7 +5,7 @@
 {% block content_title %}
 <div class="row">
 	<div class="col-xs-12">
-	  <h1 style="float: left;">
+	  <h1 style="float: left; cursor: move;">
 	   {% trans "cockpit"|capfirst %}
 	  </h1>
 	  <h1 style="float: right;">
@@ -19,34 +19,9 @@
 
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/static/js/d3.min.js"></script>
-
 <script>
   $(function() {
-    $(".cockpitcolumn").each( function() {
-        Sortable.create($(this)[ 0 ], {
-          group: "widgets",
-          handle: ".panel-heading",
-          animation: 100
-        });
-      });
-
-    $("#workarea").each( function() {
-        Sortable.create($(this)[ 0 ], {
-          group: "cockpit",
-          handle: "h1",
-          animation: 100
-        });
-      });
-
-    $(".panel-toggle").click(function() {
-      var icon = $(this);
-      icon.toggleClass("fa-minus fa-plus");
-      icon.closest(".panel").find(".panel-body").toggle();
-    });
-
-    $(".panel-close").click(function() {
-      $(this).closest(".panel").remove();
-    });
+	  dashboard.dragAndDrop();
 
     $("#horizonbucketsul li a").click(function(){
       $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
@@ -57,40 +32,54 @@
       $("#horizonunit1").html($(this).text() + '  <span class="caret"></span>');
       $("#horizonunit").val($(this).prop('name'));
     });
+
   });
 
 </script>
 {% endblock %}
 
 {% block content %}
-{% getDashboard as dashboard %}
+{% getDashboard as dashboard hiddenwidgets %}
 {% for row in dashboard %}
-    <div class="row">
-    <div class="col-md-12 col-sm-12">
-      <h1 style="float: left; cursor: move; text-transform: capitalize;">{% trans row.rowname %}</h1>
-    </div>
+    <div class="row" data-cockpit-row="{{ row.rowname }}">
+      <div class="col-md-11">
+         <h1 style="float: left; cursor: move; text-transform: capitalize">{{ row.rowname }}</h1>
+      </div>
+	  <div class="col-md-1">
+	     <h1 class="pull-right">
+	      <button class="btn btn-xs btn-primary" onclick="dashboard.customize('{{ row.rowname }}')" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
+	     </h1>
+      </div>
 
-
-	    <div class="horizontal-form" id="{{ row.rowname }}">
+	    <div class="horizontal-form"  id="{{ row.rowname }}">
 					{% for cols in row.cols %}
 					<div class="cockpitcolumn col-md-{{cols.width}} col-sm-12">
-						  {% for widget in cols.widgets %}<div class="panel panel-default" data-cockpit-widget="{{widget.name}}">
-						  <div class="panel-heading" data-toggle="tooltip" data-placement="top" title="{{widget.tooltip|escape}}">
-							    <span class='fa fa-times pull-right panel-close'></span>
-							    <span class='fa fa-minus pull-right panel-toggle'></span>
-							    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down pull-right portlet-export'></span></a>{% endif %}
-							    {% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>{% else %}<span style="cursor: default">{{widget.title|upper}}</span>{% endif %}
-						  </div>
-						  <div class="panel-body">{% if widget.asynchronous %}<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>{% else %}{{widget.render|safe}}{% endif %}</div>
+						  {% for widget in cols.widgets %}
+						  <div class="panel panel-default" data-cockpit-widget="{{widget.name}}">
+							  <div class="panel-heading" data-toggle="tooltip" data-placement="top" title="{{widget.tooltip|escape}}">
+							        <span class='fa fa-times pull-right panel-close'></span>
+							        <span class='fa fa-minus pull-right panel-toggle'></span>
+							        {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down pull-right portlet-export'></span></a>
+						            {% endif %}
+						            {% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>
+								    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
+								    {% endif %}
+							  </div>
+							  <div class="panel-body">
+							    {% if widget.asynchronous %}
+							    <div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading">
+							    </div>
+							    {% else %}{{widget.render|safe}}{% endif %}
+						    </div>
 						  </div>
 						  {% endfor %}
 					</div>
 			    {% endfor %}
 	    </div>
+      </div>
 
-    </div>
-
-		{% for col in row.cols %}{% if forloop.first %}<script>{% endif %}
+		{% for col in row.cols %}
+		  {% if forloop.first %}<script>{% endif %}
 				{% for widget in col.widgets %}
 			     {% if widget.asynchronous %}$.ajax({
 				      url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
@@ -105,9 +94,15 @@
 				    });
 				  {% else %}{{widget.javascript|safe}}
 				  {% endif %}
-				{% endfor %}
+			  {% endfor %}
 				{% if forloop.last %}</script>{% endif %}
+		  {% endfor %}
 		{% endfor %}
-{% endfor %}
-{% include "admin/subtemplate_timebuckets.html" %}
+		{% include "admin/subtemplate_timebuckets.html" %}
+<script>
+var hiddenwidgets = [
+{% for key, value in hiddenwidgets.items%}{% if not forloop.first %},
+{% endif %}  ["{{key|escapejs}}","{{value.title|escapejs}}"]{% endfor %}
+];
+</script>
 {% endblock %}

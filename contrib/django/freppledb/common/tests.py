@@ -49,6 +49,18 @@ class DataLoadTest(TestCase):
 
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
+class UserPreferenceTest(TestCase):
+
+  def test_get_set_preferences(self):
+    user = User.objects.all().get(username='admin')
+    before = user.getPreference('test')
+    self.assertIsNone(before)
+    user.setPreference('test', {'a': 1, 'b': 'c'})
+    after = user.getPreference('test')
+    self.assertEqual(after, {'a': 1, 'b': 'c'})
+
+
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class ExcelTest(TransactionTestCase):
 
   fixtures = ['demo']
@@ -461,7 +473,7 @@ class freppleREST(APITestCase):
     response = self.client.get('/api/input/customer/')
     self.assertEqual(response.status_code, 200)
     recordsnumber = input.models.Customer.objects.count()
-    self.assertEqual(input.models.Customer.objects.count(), 3)
+    self.assertEqual(input.models.Customer.objects.count(), 3) # Different between Enterprise Edition and Community Edition
     response = self.client.options('/api/input/customer/')
     self.assertEqual(response.status_code, 200)
     data = {

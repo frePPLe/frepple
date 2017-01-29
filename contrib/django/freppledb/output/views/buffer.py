@@ -20,7 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Buffer, OperationPlanMaterial
+from freppledb.boot import getAttributeFields
+from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldBool, GridFieldInteger
 
@@ -46,6 +47,20 @@ class OverviewReport(GridPivot):
     ('consumed', {'title': _('consumed')}),
     ('endoh', {'title': _('end inventory')}),
     )
+
+  @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      reportclass.attr_sql = ''
+      # Adding custom item attributes
+      for f in getAttributeFields(Item, related_name_prefix="item", initially_hidden=True):
+        reportclass.rows += (f,)
+        reportclass.attr_sql += 'item.%s, ' % f.name.split('__')[-1]
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="location", initially_hidden=True):
+        reportclass.rows += (f,)
+        reportclass.attr_sql += 'location.%s, ' % f.name.split('__')[-1]
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -93,10 +108,16 @@ class OverviewReport(GridPivot):
 
     # Execute the actual query
     query = '''
-      select buf.name as row1, buf.item_id as row2, buf.location_id as row3,
-             d.bucket as col1, d.startdate as col2, d.enddate as col3,
-             coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
-             coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
+      select
+        invplan.buffer_id, item.name, location.name, %s
+        invplan.bucket, invplan.startdate, invplan.enddate,
+        invplan.consumed, invplan.produced
+      from (
+        select
+          buf.name as buffer_id,
+          d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
+          coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
+          coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
         from (%s) buf
         -- Multiply with buckets
         cross join (
@@ -116,9 +137,16 @@ class OverviewReport(GridPivot):
         and operationplanmaterial.flowdate < %%s
         -- Grouping and sorting
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
-        order by %s, d.startdate
+        ) invplan
+      left outer join buffer on
+        invplan.buffer_id = buffer.name
+      left outer join item on
+        buffer.item_id = item.name
+      left outer join location on
+        buffer.location_id = location.name
+      order by %s, invplan.startdate
       ''' % (
-        basesql, sortsql
+        reportclass.attr_sql, basesql, sortsql
       )
     cursor.execute(query, baseparams + (request.report_bucket, request.report_startdate, request.report_enddate,
         request.report_startdate, request.report_enddate))
@@ -126,25 +154,35 @@ class OverviewReport(GridPivot):
     # Build the python result
     prevbuf = None
     for row in cursor.fetchall():
+      numfields = len(row)
       if row[0] != prevbuf:
         prevbuf = row[0]
         startoh = startohdict.get(prevbuf, 0)
-        endoh = startoh + float(row[6] - row[7])
+        endoh = startoh + float(row[numfields-2] - row[numfields-1])
       else:
         startoh = endoh
-        endoh += float(row[6] - row[7])
-      yield {
+        endoh += float(row[numfields-2] - row[numfields-1])
+      res =  {
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
-        'bucket': row[3],
-        'startdate': row[4].date(),
-        'enddate': row[5].date(),
+        'bucket': row[numfields-5],
+        'startdate': row[numfields-4].date(),
+        'enddate': row[numfields-3].date(),
         'startoh': round(startoh, 1),
-        'produced': round(row[6], 1),
-        'consumed': round(row[7], 1),
+        'produced': round(row[numfields-2], 1),
+        'consumed': round(row[numfields-1], 1),
         'endoh': round(endoh, 1),
         }
+      # Add attribute fields
+      idx = 3
+      for f in getAttributeFields(Item, related_name_prefix="item"):
+        res[f.field_name] = row[idx]
+        idx += 1
+      for f in getAttributeFields(Location, related_name_prefix="location"):
+        res[f.field_name] = row[idx]
+        idx += 1
+      yield res
 
 
 class DetailReport(GridReport):

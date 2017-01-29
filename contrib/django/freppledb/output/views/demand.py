@@ -25,7 +25,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, ManufacturingOrder, DeliveryOrder
+from freppledb.boot import getAttributeFields
+from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
+from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, OperationPlan, DeliveryOrder
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
@@ -49,6 +51,15 @@ class OverviewReport(GridPivot):
   help_url = 'user-guide/user-interface/plan-analysis/demand-report.html'
 
   @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      reportclass.attr_sql = ''
+      # Adding custom item attributes
+      for f in getAttributeFields(Item, initially_hidden=True):
+        reportclass.attr_sql += 'item.%s, ' % f.name.split('__')[-1]
+
+  @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
@@ -59,8 +70,8 @@ class OverviewReport(GridPivot):
     else:
       return {}
 
-  @staticmethod
-  def query(request, basequery, sortsql='1 asc'):
+  @classmethod
+  def query(reportclass, request, basequery, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
     cursor = connections[request.database].cursor()
 
@@ -98,8 +109,8 @@ class OverviewReport(GridPivot):
 
     # Execute the query
     query = '''
-        select y.name as row1,
-               y.bucket as col1, y.startdate as col2, y.enddate as col3,
+        select y.name, %s
+               y.bucket, y.startdate, y.enddate,
                min(y.orders),
                min(y.planned)
         from (
@@ -148,9 +159,9 @@ class OverviewReport(GridPivot):
         group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
         ) y
         -- Ordering and grouping
-        group by y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
+        group by %s y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
-       ''' % (basesql, sortsql)
+       ''' % (reportclass.attr_sql, basesql, reportclass.attr_sql, sortsql)
     cursor.execute(query, baseparams + (
       request.report_bucket, request.report_startdate,
       request.report_enddate, request.report_startdate,
@@ -161,19 +172,25 @@ class OverviewReport(GridPivot):
     # Build the python result
     previtem = None
     for row in cursor.fetchall():
+      numfields = len(row)
       if row[0] != previtem:
         backlog = startbacklogdict.get(row[0], 0)
         previtem = row[0]
-      backlog += float(row[4]) - float(row[5])
-      yield {
+      backlog += float(row[numfields-2]) - float(row[numfields-1])
+      res = {
         'item': row[0],
-        'bucket': row[1],
-        'startdate': row[2].date(),
-        'enddate': row[3].date(),
-        'demand': round(row[4], 1),
-        'supply': round(row[5], 1),
-        'backlog': round(backlog, 1)
+        'bucket': row[numfields-5],
+        'startdate': row[numfields-4].date(),
+        'enddate': row[numfields-3].date(),
+        'demand': round(row[numfields-2], 1),
+        'supply': round(row[numfields-1], 1),
+        'backlog': round(backlog, 1),
         }
+      idx = 1
+      for f in getAttributeFields(Item):
+        res[f.field_name] = row[idx]
+        idx += 1
+      yield res
 
 
 class DetailReport(GridReport):

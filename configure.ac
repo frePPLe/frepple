@@ -143,7 +143,7 @@ AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADERS([ext/slist slist vector map set stack])
+AC_CHECK_HEADERS([ext/slist slist vector map set stack tuple])
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE

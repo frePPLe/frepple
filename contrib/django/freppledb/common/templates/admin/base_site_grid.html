@@ -4,6 +4,7 @@
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
 
+var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
 var editrow;
@@ -44,7 +45,14 @@ $(function() {
     sortname: "{{sidx}}",
     page: {{page}},
     hidegrid: false,
+    resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
+    onSortCol: function (index, columnIndex, sortOrder) {
+      $('#grid').setGridParam('sortname',columnIndex);
+      $('#grid').setGridParam('sortorder',sortOrder);
+      grid.saveColumnConfiguration();
+    },
+    onPaging: grid.saveColumnConfiguration,
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns
     autowidth: true,{% if filters %}
@@ -85,9 +93,20 @@ $(function() {
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
   {% if reportclass.height %}$("#grid").gridResize({
-     handles: 's', minHeight: {{reportclass.height}}
+     handles: 's', minHeight: {{reportclass.height}},
+     resize: function() {
+       // Save the configuration if we don't get any more resizing events in 200ms.
+       clearTimeout(resizing);
+       resizing = setTimeout(grid.saveColumnConfiguration, 200);
+       }
      });
-  {% endif %}{% endif %}
+  {% endif %}{% endif %}{% if filters %}
+  var f = grid.getFilterGroup(initialfilter, true);
+  if (f)
+	{
+	  $('#curfilter').html(gettext("Filtered where") + " " + f);
+	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
+	}{% endif %}
   $("#grid").on('input', function() {
 	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
@@ -160,7 +179,8 @@ $(function() {
 {% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig"><span class="fa fa-clock-o"></span></button>
 {% endif %}{% if hasaddperm %}<button class="btn btn-xs btn-primary" id="csvimport" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show()"><span class="fa fa-arrow-up"></span></button>
 {% endif %}<button class="btn btn-xs btn-primary" onclick="grid.showExport(true)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><span class="fa fa-arrow-down"></span></button>
-{% if reportclass.help_url %}<button class="btn btn-xs btn-primary" onclick="window.open('https://frepple.com/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>{% endif %}{% endblock %}
+<button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>{% endblock %}
+{% if reportclass.help_url %}<button class="btn btn-xs btn-primary" onclick="window.open('https://frepple.com/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>{% endif %}
 </div>
 
 </div>

@@ -63,7 +63,7 @@ class DataLoadTest(TestCase):
   def test_csv_upload(self):
     self.assertEqual(
       [(i.name, i.category or u'') for i in Location.objects.all()],
-      [(u'All locations', u''), (u'factory 1', u''), (u'factory 2', u'')]
+      [(u'All locations', u''), (u'factory 1', u''), (u'factory 2', u'')]  # Test result is different in Enterprise Edition
       )
     try:
       data = tempfile.TemporaryFile(mode='w+b')
@@ -79,5 +79,5 @@ class DataLoadTest(TestCase):
       data.close()
     self.assertEqual(
       [(i.name, i.category or u'') for i in Location.objects.order_by('name')],
-      [(u'All locations', u''), (u'factory 1', u''), (u'factory 2', u''), (u'factory 3', u'cat1'), (u'factory 4', u'')]
+      [(u'All locations', u''), (u'factory 1', u''), (u'factory 2', u''), (u'factory 3', u'cat1'), (u'factory 4', u'')]  # Test result is different in Enterprise Edition
       )

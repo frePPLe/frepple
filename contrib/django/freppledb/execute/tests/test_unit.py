@@ -88,7 +88,7 @@ class execute_multidb(TransactionTestCase):
         db2 = i
         break
     if not db2:
-        # Only a single database is configured and we skip this test
+      # Only a single database is configured and we skip this test
       return
 
     # Check count in both databases

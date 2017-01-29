@@ -15,11 +15,15 @@ var editcol;
   return res;
 };{% endblock %}
 
+var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
+var editrow;
+var editcol;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.first %},{% endif %}{'name':'{{f.name}}','startdate':'{{f.startdate|date:"Y-m-d"}}','enddate':'{{f.enddate|date:"Y-m-d"}}'}{% endfor %} ];
-{% endif %}var cross = [
+{% endif %}var cross_idx = [{{cross_idx}}];
+var cross = [
 {{cross_list|safe}}
 ];
 
@@ -53,7 +57,14 @@ $(function() {
     iconSet: "fontAwesome",
     guiStyle: "bootstrapPrimary",
     hidegrid: false,
+    resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
+    onSortCol: function (index, columnIndex, sortOrder) {
+      $('#grid').setGridParam('sortname',columnIndex);
+      $('#grid').setGridParam('sortorder',sortOrder);
+      grid.saveColumnConfiguration();
+    },
+    onPaging: grid.saveColumnConfiguration,
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
     searching: {
@@ -82,11 +93,25 @@ $(function() {
 	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}
+  {% endif %}{% if filters %}var f = grid.getFilterGroup(initialfilter, true);
+  if (f)
+	{
+	  $('#curfilter').html(gettext("Filtered where") + " " + f);
+	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
+	}{% endif %}
   jQuery("#gridmode").click(function() {grid.displayMode("table");});
   jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}
+  {% if reportclass.height %}$("#grid").gridResize({
+     handles: 's', minHeight: {{reportclass.height}},
+     resize: function() {
+       // Save the configuration if we don't get any more resizing events in 200ms.
+       clearTimeout(resizing);
+       resizing = setTimeout(grid.saveColumnConfiguration, 200);
+       }
+     });
   {% endif %}
+{% endif %}
 
 	$(window).bind('resize', function() {
 	  $("#grid")
@@ -153,6 +178,9 @@ $(function() {
 		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false)" >
 		    <span data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 		  </button>
+      <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(true);">
+        <span data-toggle="tooltip" data-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench"></span>
+      </button>
   {% if reportclass.help_url %}
   <button class="btn btn-xs btn-primary" onclick="window.open('https://frepple.com/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>

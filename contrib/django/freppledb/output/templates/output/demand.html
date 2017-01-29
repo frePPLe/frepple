@@ -28,6 +28,11 @@ function drawGraphs(jsondata)
   {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
 
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -71,10 +76,14 @@ function drawGraphs(jsondata)
         'supply': tmp[1],
         'backlog': tmp[2]
         });
-      if (tmp[2] < min_y) min_y = tmp[2];
-      if (tmp[0] > max_y) max_y = tmp[0];
-      if (tmp[1] > max_y) max_y = tmp[1];
-      if (tmp[2] > max_y) max_y = tmp[2];
+      if (tmp[2] < min_y && 2 in fields)
+        min_y = tmp[2];
+      if (tmp[0] > max_y && 0 in fields)
+        max_y = tmp[0];
+      if (tmp[1] > max_y && 1 in fields)
+        max_y = tmp[1];
+      if (tmp[2] > max_y && 2 in fields)
+        max_y = tmp[2];
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -119,7 +128,7 @@ function drawGraphs(jsondata)
       .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
-        if (d['demand'] > 0)
+        if (d['demand'] > 0 && 0 in fields)
         {
           my_y = y(d['demand']);
           bucket.append("rect")
@@ -129,7 +138,7 @@ function drawGraphs(jsondata)
             .attr("y", my_y)
             .style("fill","#2B95EC");
         }
-        if (d['supply'] > 0)
+        if (d['supply'] > 0 && 1 in fields)
         {
           my_y = y(d['supply']);
           bucket.append("rect")
@@ -141,13 +150,16 @@ function drawGraphs(jsondata)
       });
 
     // Create D3 line
-    var line = d3.svg.line()
-      .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
-      .y(function(d) { return y(d['backlog']); });
-    svg.append("svg:path")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line(data));
+    if (2 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['backlog']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
 
     // Display Y-Axis
     var yAxis = d3.svg.axis()
@@ -183,45 +195,59 @@ function drawGraphs(jsondata)
       [2, "{{_('supply')|capfirst}}", "#F6BD0F"],
       [3, "{{_('backlog')|capfirst}}", "#8BBA00"]
       ];
+    var visible = 0;
     for (var i in codes)
     {
+      if (!(codes[i][0] in fields))
+        continue;
       legend.append("rect")
         .attr("x", width + 82)
         .attr("width", 18)
         .attr("height", 18)
         .style("fill", codes[i][2])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
       legend.append("text")
         .attr("x", width + 76)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(codes[i][1])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      visible += 1;
     }{% endif %}
     });
 }
 {% endif %}
 {% if args.0 or mode == "table" %}
-function crosses (cellvalue, options, rowdata) {
-  var result = cellvalue[0] + '<br/>';
-  if (cellvalue[0] != 0.0)
-    result = cellvalue[0] + '<a href="{{request.prefix}}/demandplan/' +
-      admin_escape(rowdata['item']) +
-      '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
-      '&amp;demand__due__lt=' + options['colModel']['enddate'] +
-      '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result = '0.0<br/>';
-  if (cellvalue[1] != 0.0)
-    result += cellvalue[1] +  '<a href="{{request.prefix}}/demandplan/' +
-      admin_escape(rowdata['item']) +
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 0:
+        if (cellvalue[cross_idx[i]] != 0.0)
+          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/demandplan/' +
+                                                                    admin_escape(rowdata['item']) +
+                                                                    '/?o=5a&amp;due__gte=' + options['colModel']['startdate'] +
+                                                                    '&amp;due__lt=' + options['colModel']['enddate'] +
+                                                                    '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+        else
+          result += '0.0</br>';
+        break;
+      case 1:
+        if (cellvalue[cross_idx[i]] != 0.0)
+          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/demandplan/' +
+                                                                  admin_escape(rowdata['item']) +
       '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
       '&amp;enddate__lt=' + options['colModel']['enddate'] +
-      '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
-  else
-    result += '0.0<br/>';
-  result += cellvalue[2];
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+        else
+          result += '0.0</br>';
+        break;
+      default:
+        result += cellvalue[cross_idx[i]] + '</br>';
+    }
   return result;
 };
 {% endif %}{% endblock %}

@@ -1175,7 +1175,7 @@ class Command(BaseCommand):
       cursor.executemany(
           "update itemsupplier \
             set vendoritemname=%%s, source=%%s, leadtime=%%s, sizeminimum=%%s, sizemultiple=%%s, cost=%%s, priority=%%s, effective_end=%%s,\
-             lastmodified='%s' where item_id=%%s and location_id=%%s and supplier_id=%%s" % self.date,
+             lastmodified='%s' where item_id=%%s and supplier_id=%%s" % self.date,
           update
         )
 
@@ -1371,8 +1371,7 @@ class Command(BaseCommand):
         print("Importing purchasing plan...")
 
       # Remove existing approved records from frePPLe
-      cursor.execute("delete from purchase_order where status = 'approved'")
-      cursor.execute("delete from distribution_order where status = 'approved'")
+      cursor.execute("delete from operationplan where type in ('PO','DO') and status = 'approved'")      
         
       # Get all input records.
       # There is no incremental mode for the purchasing plan. 
@@ -1384,17 +1383,17 @@ class Command(BaseCommand):
       
       # Recreate approved purchase orders
       cursor.executemany(
-        "insert into purchase_order \
-            (id,reference,item_id,location_id,supplier_id,quantity,enddate,startdate,source,status,lastmodified) \
-            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'approved','%s')" % self.date,
+        "insert into operationplan \
+            (id,reference,item_id,location_id,supplier_id,quantity,enddate,startdate,source,type,status,lastmodified) \
+            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'PO','approved','%s')" % self.date,
         insert_po
         )
 
       # Recreate approved distribution orders
       cursor.executemany(
-        "insert into distribution_order \
-            (id,reference,item_id,destination_id,origin_id,quantity,enddate,source,status,consume_material,lastmodified) \
-            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'approved',false,'%s')" % self.date,
+        "insert into operationplan \
+            (id,reference,item_id,destination_id,origin_id,quantity,enddate,source,type,status,consume_material,lastmodified) \
+            values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,'DO','approved',false,'%s')" % self.date,
         insert_do
         )
 

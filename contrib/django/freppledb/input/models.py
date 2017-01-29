@@ -317,8 +317,8 @@ class SubOperation(AuditModel):
 class Buffer(AuditModel, HierarchyModel):
   # Types of buffers
   types = (
-    ('default', _('Default')),
-    ('infinite', _('Infinite')),
+    ('default', _('default')),
+    ('infinite', _('infinite')),
   )
 
   # Fields common to all buffer types

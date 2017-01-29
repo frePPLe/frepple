@@ -59,8 +59,6 @@ build
 *.stackdump
 
 # Extra
-/bin/mod_forecast.xsd
-/bin/mod_lpsolver.xsd
 /doc/html
 /test/*/output.*.xml
 

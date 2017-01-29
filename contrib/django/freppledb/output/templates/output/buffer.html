@@ -28,6 +28,11 @@ function drawGraphs(jsondata)
   {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
 
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -69,12 +74,14 @@ function drawGraphs(jsondata)
         'bucket': bckt,
         'startinv': tmp[0],
         'consumed': tmp[2],
-        'produced': tmp[1]
+        'produced': tmp[1],
+        'endinv': tmp[3]
         });
-      if (tmp[0] < min_y) min_y = tmp[0];
-      if (tmp[0] > max_y) max_y = tmp[0];
-      if (tmp[1] > max_y) max_y = tmp[1];
-      if (tmp[2] > max_y) max_y = tmp[2];
+      for (var i in cross_idx)
+      {
+        if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
+        if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
+      }
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -120,7 +127,7 @@ function drawGraphs(jsondata)
       .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
-        if (d['produced'] > 0)
+        if (d['produced'] > 0 && 1 in fields)
         {
           my_y = y(d['produced']);
           bucket.append("rect")
@@ -130,7 +137,7 @@ function drawGraphs(jsondata)
             .attr("y", my_y)
             .style("fill","#2B95EC");
         }
-        if (d['consumed'] > 0)
+        if (d['consumed'] > 0 && 2 in fields)
         {
           my_y = y(d['consumed']);
           bucket.append("rect")
@@ -142,13 +149,26 @@ function drawGraphs(jsondata)
       });
 
     // Create D3 line
-    var line = d3.svg.line()
-      .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
-      .y(function(d) { return y(d['startinv']); });
-    svg.append("svg:path")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line(data));
+    if (0 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['startinv']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
+    else if (3 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['endinv']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#7B5E08")
+        .attr("d", line(data));
+    }
 
     // Display Y-Axis
     var yAxis = d3.svg.axis()
@@ -191,56 +211,70 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('produced')|capfirst}}", "#2B95EC"],
-      [2, "{{_('consumed')|capfirst}}", "#F6BD0F"],
-      [3, "{{_('start inventory')|capfirst}}", "#8BBA00"]
+      ["{{_('start inventory')|capfirst}}", "#8BBA00"],
+      ["{{_('produced')|capfirst}}", "#2B95EC"],
+      ["{{_('consumed')|capfirst}}", "#F6BD0F"],
+      ["{{_('end inventory')|capfirst}}", "#7B5E08"]
       ];
-    for (var i in codes)
+    for (var i in cross_idx)
     {
       legend.append("rect")
         .attr("x", width + 82)
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", codes[i][2])
+        .style("fill", codes[cross_idx[i]][1])
         .attr("transform", "translate(0," + (i*20+10) + ")");
       legend.append("text")
         .attr("x", width + 76)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text(codes[i][1])
+        .text(codes[cross_idx[i]][0])
         .attr("transform", "translate(0," + (i*20+10) + ")");
     }{% endif %}
     });
 }
 {% endif %}
 {% if args.0 or mode == "table" %}
-function crosses (cellvalue, options, rowdata) {
-  var result = cellvalue[0] + '<br/>';
-  if (cellvalue[1] != 0.0)
-    result += cellvalue[1] + "<a href='{{request.prefix}}/flowplan/" +  admin_escape(rowdata['buffer']) +
-                                          "/?flowdate__gte=" + options['colModel']['startdate'] +"&amp;flowdate__lt=" +
-                                          options['colModel']['enddate'] +
-                                          "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
-  else
-    result += '0.0<br/>';
-  if (cellvalue[2] != 0.0)
-    result += cellvalue[2] + "<a href='{{request.prefix}}/flowplan/" +  admin_escape(rowdata['buffer']) +
-                                            "/?flowdate__gte=" + options['colModel']['startdate'] +"&amp;flowdate__lt=" +
-                                            options['colModel']['enddate'] +
-                                            "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
-  else
-    result += '0.0<br/>';
-  if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
-    result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
-                                            admin_escape(rowdata['buffer']) +
-                                            "/?flowdate__gte=" +
-                                            options['colModel']['startdate'] +
-                                            "&amp;flowdate__lt=" +
-                                            options['colModel']['enddate'] +
-                                            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
-  else
-    result += cellvalue[3];
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 1:
+        if (cellvalue[1] != 0.0)
+           result += cellvalue[1] + "<a href='{{request.prefix}}/flowplan/" +
+                                                  admin_escape(rowdata['buffer']) +
+                                                  "/?flowdate__gte=" + options['colModel']['startdate'] +
+                                                  "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+                                                  "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+        else
+          result += '0.0</br>';
+        break;
+      case 2:
+        if (cellvalue[2] != 0.0)
+           result += cellvalue[2] + "<a href='{{request.prefix}}/flowplan/" +
+                                                  admin_escape(rowdata['buffer']) +
+                                                  "/?flowdate__gte=" + options['colModel']['startdate'] +
+                                                  "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+                                                  "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+        else
+          result += '0.0<br/>';
+        break;
+      case 3:
+        if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
+           result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
+                                                    admin_escape(rowdata['buffer']) +
+                                                    "/?flowdate__gte=" + options['colModel']['startdate'] +
+                                                    "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+                                                    "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+        else
+          result += cellvalue[3] + '<br/>';
+        break;
+      default:
+        result += cellvalue[cross_idx[i]] + '</br>';
+    }
   return result;
 };
 {% endif %}{% endblock %}

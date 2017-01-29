@@ -2,7 +2,6 @@
 window.__admin_media_prefix__ = "/static/admin/";
 
 
-
 // Adjust the breadcrumbs such that it fits on a single line.
 // This function is called when the window is resized.
 function breadcrumbs_reflow()
@@ -381,6 +380,18 @@ var grid = {
    // popup is closed and the selected id is passed to the calling page.
    selected: undefined,
 
+   // Function used to summarize by returning the last value
+   summary_last: function(val, name, record)
+   {
+     return record[name];
+   },
+
+   // Function used to summarize by returning the first value
+   summary_first: function(val, name, record)
+   {
+     return val || record[name];
+   },
+
    setSelectedRow: function(id)
    {
      if (grid.selected != undefined)
@@ -410,15 +421,378 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (i in cross)
+    for (i in cross_idx)
     {
       if (result != '') result += '<br/>';
-      if (cross[i]['editable'])
-        result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
+      if (cross[cross_idx[i]]['editable'])
+        result += '<span class="editablepivotcol">' + cross[cross_idx[i]]['name'] + '</span>';
       else
-        result += cross[i]['name'];
+        result += cross[cross_idx[i]]['name'];
     }
     return result;
+  },
+
+  // Render the customization popup window
+  showCustomize: function (pivot)
+  {
+    var colModel = $("#grid")[0].p.colModel;
+    var maxfrozen = 0;
+    var skipped = 0;
+    var graph = false;
+
+    var row0 = ""+
+      '<div class="row">' +
+      '<div class="col-xs-6">' +
+        '<div class="panel panel-default"><div class="panel-heading">'+ gettext("Selected options") + '</div>' +
+          '<div class="panel-body">' +
+            '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+          '</div>' +
+        '</div>'+
+      '</div>' +
+      '<div class="col-xs-6">' +
+        '<div class="panel panel-default"><div class="panel-heading">' + gettext("Available options") + '</div>' +
+          '<div class="panel-body">' +
+            '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    row1= "";
+    row2= "";
+
+    var val0s = ""; //selected columns
+    var val0a = ""; //available columns
+    var val1s = ""; //selected columns
+    var val1a = ""; //available columns
+
+    for (var i in colModel)
+    {
+      if (colModel[i].name == 'graph')
+        graph = true;
+      else if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '' && !('alwayshidden' in colModel[i]))
+      {
+        if (colModel[i].frozen) maxfrozen = parseInt(i,10) + 1 - skipped;
+        if (!colModel[i].hidden) {
+          val0s += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
+        } else {
+          val0a += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
+        }
+      }
+      else
+        skipped++;
+    }
+
+    if (pivot)
+    {
+      // Add list of crosses
+      var row1 = ''+
+      '<div class="row">' +
+        '<div class="col-xs-6">' +
+          '<div class="panel panel-default">' +
+            '<div class="panel-heading">' +
+              gettext('Selected Cross') +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="col-xs-6">' +
+          '<div class="panel panel-default">' +
+            '<div class="panel-heading">' +
+              gettext('Available Cross') +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+      for (var j in cross_idx)
+      {
+        val1s += '<li class="list-group-item" id="' + (100+parseInt(cross_idx[j],10)) + '" style="cursor: move;">' + cross[cross_idx[j]]['name'] + '</li>';
+      }
+      for (var j in cross)
+      {
+        if (cross_idx.indexOf(parseInt(j,10)) > -1) continue;
+        val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + cross[j]['name'] + '</li>';
+      }
+    }
+    else
+    {
+      // Add selection of number of frozen columns
+      row2 = '<div class="row"><div class="col-xs-12">' +
+        gettext("Frozen columns") +
+        '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center;" min="0" max="4" step="1" value="' + maxfrozen + '">' +
+       '</div></div>';
+    }
+
+    row0 = row0.replace('placeholder0',val0s);
+    row0 = row0.replace('placeholder1',val0a);
+    if (pivot) {
+      row1 = row1.replace('placeholder0',val1s);
+      row1 = row1.replace('placeholder1',val1a);
+    }
+
+    $('#popup').html(''+
+      '<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-label=' + gettext("Close") + '>' +
+              '<span aria-hidden="true">&times;</span>' +
+            '</button>'+
+            '<h4 class="modal-title">'+gettext("Customize")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body">'+
+            row0 +
+            row1 +
+            row2 +
+          '</div>' +
+          '<div class="modal-footer">'+
+            '<input type="submit" id="okCustbutton" role="button" class="btn btn-danger pull-left" value="'+gettext("OK")+'">'+
+            '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Reset')+'">'+
+          '</div>'+
+        '</div>'+
+      '</div>' )
+    .modal('show');
+
+    var Rows = document.getElementById("Rows");
+    var DroppointRows = document.getElementById("DroppointRows");
+    Sortable.create(Rows, {
+      group: {
+        name: 'Rows',
+        put: ['DroppointRows']
+      },
+      animation: 100
+    });
+    Sortable.create(DroppointRows, {
+      group: {
+        name: 'DroppointRows',
+        put: ['Rows']
+      },
+      animation: 100
+    });
+
+    if (pivot) {
+      var Crosses = document.getElementById("Crosses");
+      var DroppointCrosses = document.getElementById("DroppointCrosses");
+      Sortable.create(Crosses, {
+        group: {
+          name: 'Crosses',
+          put: ['DroppointCrosses']
+        },
+        animation: 100
+      });
+      Sortable.create(DroppointCrosses, {
+        group: {
+          name: 'DroppointCrosses',
+          put: ['Crosses']
+        },
+        animation: 100
+      });
+    }
+
+    $('#resetCustbutton').on('click', function() {
+      var result = {};
+      result[reportkey] = null;
+      if (typeof url_prefix != 'undefined')
+        var url = url_prefix + '/settings/';
+      else
+        var url = '/settings/';
+      $.ajax({
+       url: url,
+       type: 'POST',
+       contentType: 'application/json; charset=utf-8',
+       data: JSON.stringify(result),
+       success: function() {window.location.href = window.location.href;},
+       error: function (result, stat, errorThrown) {
+         $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+             '<div class="modal-content">'+
+             '<div class="modal-header">'+
+               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+               '<h4 class="modal-title">{% trans "Error retrieving data" %}</h4>'+
+             '</div>'+
+             '<div class="modal-body">'+
+               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+             '</div>'+
+             '<div class="modal-footer">'+
+             '</div>'+
+           '</div>'+
+           '</div>' ).modal('show');
+         }
+       });
+     });
+
+    $('#okCustbutton').on('click', function() {
+      var colModel = $("#grid")[0].p.colModel;
+      var perm = [];
+      var hiddenrows = [];
+      if (colModel[0].name == "cb") perm.push(0);
+      cross_idx = [];
+      if (!graph)
+        $("#grid").jqGrid('destroyFrozenColumns');
+
+      $('#Rows li').each(function() {
+        val = parseInt(this.id,10);
+        if (val < 100)
+        {
+            $("#grid").jqGrid("showCol", colModel[val].name);
+            perm.push(val);
+         }
+      });
+
+      $('#DroppointRows li').each(function() {
+        val = parseInt(this.id,10);
+        if (val < 100)
+        {
+          hiddenrows.push(val);
+          if (pivot)
+            $("#grid").jqGrid('setColProp', colModel[val].name, {frozen:false});
+          $("#grid").jqGrid("hideCol", colModel[val].name);
+         }
+      });
+
+      $('#Crosses li').each(function() {
+        val = parseInt(this.id,10);
+        if (val >= 100)
+        {
+          cross_idx.push(val-100);
+         }
+      });
+
+      var numfrozen = 0;
+      if (pivot)
+      {
+        var firstnonfrozen = 0;
+        for (var i in colModel)
+          if ("counter" in colModel[i])
+            numfrozen = i+1;
+          else
+            perm.push(parseInt(i,10));
+      }
+      else
+        numfrozen = parseInt($("#frozen").val())
+      for (var i in hiddenrows)
+        perm.push(hiddenrows[i]);
+      $("#grid").jqGrid("remapColumns", perm, true);
+      var skipped = 0;
+      for (var i in colModel)
+        if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null)
+          $("#grid").jqGrid('setColProp', colModel[i].name, {frozen:i-skipped<numfrozen});
+        else
+          skipped++;
+      if (!graph)
+        $("#grid").jqGrid('setFrozenColumns');
+      $("#grid").trigger('reloadGrid');
+      grid.saveColumnConfiguration();
+      $('#popup').modal("hide");
+    });
+  },
+
+  // Save the customized column configuration
+  saveColumnConfiguration : function(pgButton, indx)
+  {
+    // This function can be called with different arguments:
+    //   - no arguments, when called from our code
+    //   - paging button string, when called from jqgrid paging event
+    //   - number argument, when called from jqgrid resizeStop event
+    //   - function argument, when you want to run a callback function after the save
+    var colArray = new Array();
+    var colModel = $("#grid")[0].p.colModel;
+    var maxfrozen = 0;
+    var pivot = false;
+    var skipped = 0;
+    var page = $('#grid').getGridParam('page');
+    if (typeof pgButton === 'string')
+    {
+      // JQgrid paging gives only the current page
+      if (pgButton.indexOf("next") >= 0)
+        ++page;
+      else if (pgButton.indexOf("prev") >= 0)
+        --page;
+      else if (pgButton.indexOf("last") >= 0)
+        page = $("#grid").getGridParam('lastpage');
+      else if (pgButton.indexOf("first") >= 0)
+        page = 1;
+      else if (pgButton.indexOf("user") >= 0)
+        page = $('input.ui-pg-input').val();
+    }
+    else if (typeof indx != 'undefined' && colModel[indx].name == "operationplans")
+      // We're resizing a Gantt chart column. Not too clean to trigger the redraw here, but so be it...
+      gantt.redraw();
+    for (var i in colModel)
+    {
+      if (colModel[i].name != "rn" && colModel[i].name != "cb" && "counter" in colModel[i] && !('alwayshidden' in colModel[i]))
+      {
+        colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
+        if (colModel[i].frozen) maxfrozen = parseInt(i) + 1 - skipped;
+      }
+      else if (colModel[i].name == 'columns' || colModel[i].name == 'graph')
+        pivot = true;
+      else
+        skipped++;
+    }
+    var result = {};
+    var filter = $('#grid').getGridParam("postData").filters;
+    if (typeof filter !== 'undefined' && filter.rules != [])
+      result[reportkey] = {
+        "rows": colArray,
+        "page": page,
+        "filter": filter
+        };
+    else
+      result[reportkey] = {
+        "rows": colArray,
+        "page": page,
+        };
+    var sidx = $('#grid').getGridParam('sortname');
+    if (sidx !== '')
+    {
+      // Report is sorted
+      result[reportkey]['sidx'] = sidx;
+      result[reportkey]['sord'] = $('#grid').getGridParam('sortorder');
+    }
+    if (pivot)
+      result[reportkey]['crosses'] = cross_idx;
+    else
+      result[reportkey]['frozen'] = maxfrozen;
+    if(typeof extraPreference == 'function')
+    {
+      var extra = extraPreference();
+      for (var idx in extra)
+        result[reportkey][idx] = extra[idx];
+    }
+    if (typeof url_prefix != 'undefined')
+      var url = url_prefix + '/settings/';
+    else
+      var url = '/settings/';
+    $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(result),
+      success: function() {
+        if (typeof pgButton === 'function')
+          pgButton();
+      },
+      error: function (result, stat, errorThrown) {
+        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+            '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '</div>'+
+          '</div>'+
+          '</div>' ).modal('show');
+      }
+    });
   },
 
   //This function is called when a cell is just being selected in an editable
@@ -539,7 +913,7 @@ var grid = {
     iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
-      up: 'fa fa-clock-o',
+      up: 'fa fa-chevron-up',
       down: 'fa fa-chevron-down',
       previous: 'fa fa-chevron-left',
       next: 'fa fa-chevron-right',
@@ -783,7 +1157,7 @@ var grid = {
       overlay: 0,
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
-
+        grid.saveColumnConfiguration();
         var s = grid.getFilterGroup(jQuery("#fbox_grid").jqFilter('filterData'), true);
         if (s)
         {
@@ -808,7 +1182,7 @@ var grid = {
           $('#curfilter').html("");
           $('#filter').removeClass("btn-danger").addClass("btn-primary");
         }
-
+        grid.saveColumnConfiguration();
         return true;
         }
       });
@@ -1195,6 +1569,339 @@ var ERPconnection = {
 
     }
 } //end Code for ERP integration
+
+//----------------------------------------------------------------------------
+// Code for sending dashboard configuration to the server.
+//----------------------------------------------------------------------------
+
+var dashboard = {
+  dragAndDrop: function() {
+
+    $(".cockpitcolumn").each( function() {
+      Sortable.create($(this)[ 0 ], {
+        group: "widgets",
+        handle: ".panel-heading",
+        animation: 100,
+        onEnd: function (e) { dashboard.save();}
+      });
+    });
+
+    $("#workarea").each( function() {
+      Sortable.create($(this)[ 0 ], {
+        group: "cockpit",
+        handle: "h1",
+        animation: 100,
+        onEnd: function (e) { dashboard.save();}
+      });
+    });
+
+      //stop: dashboard.save
+    $(".panel-toggle").click(function() {
+      var icon = $(this);
+      icon.toggleClass("fa-minus fa-plus");
+      icon.closest(".panel").find(".panel-body").toggle();
+      });
+    $(".panel-close").click(function() {
+      $(this).closest(".panel").remove();
+      dashboard.save();
+      });
+  },
+
+  save : function(reload)
+  {
+    // Loop over all rows
+    var results = [];
+    $("[data-cockpit-row]").each(function() {
+      var rowname = $(this).attr("data-cockpit-row");
+      var cols = [];
+      // Loop over all columns in the row
+      $(".cockpitcolumn", this).each(function() {
+        var width = 12;
+        if ($(this).hasClass("col-md-12"))
+          width = 12;
+        else if ($(this).hasClass("col-md-11"))
+          width = 11;
+        else if ($(this).hasClass("col-md-10"))
+          width = 10;
+        else if ($(this).hasClass("col-md-9"))
+          width = 9;
+        else if ($(this).hasClass("col-md-8"))
+          width = 8;
+        else if ($(this).hasClass("col-md-7"))
+          width = 7;
+        else if ($(this).hasClass("col-md-6"))
+          width = 6;
+        else if ($(this).hasClass("col-md-5"))
+          width = 5;
+        else if ($(this).hasClass("col-md-4"))
+          width = 4;
+        else if ($(this).hasClass("col-md-3"))
+          width = 3;
+        else if ($(this).hasClass("col-md-2"))
+          width = 2;
+        // Loop over all widgets in the column
+        var widgets = [];
+        $("[data-cockpit-widget]", this).each(function() {
+          widgets.push( [$(this).attr("data-cockpit-widget"),{}] );
+        });
+        cols.push( {'width': width, 'widgets': widgets});
+      });
+      if (cols.length > 0)
+        results.push( {'rowname': rowname, 'cols': cols});
+    });
+
+    // Send to the server
+    if (typeof url_prefix != 'undefined')
+        var url = url_prefix + '/settings/';
+      else
+        var url = '/settings/';
+    $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({"freppledb.common.cockpit": results}),
+      success: function () {
+        if ($.type(reload) === "string")
+          window.location.href = window.location.href;
+      },
+      error: function (result, stat, errorThrown) {
+        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+            '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+            '</div>'+
+          '</div>'+
+          '</div>' ).modal('show');
+      }
+      });
+  },
+
+  customize: function(rowname)
+  {
+    // Detect the current layout of this row
+    var layout = "";
+    $("[data-cockpit-row='" + rowname + "'] .cockpitcolumn").each(function() {
+      if (layout != "")
+        layout += " - ";
+      if ($(this).hasClass("col-md-12"))
+        layout += "100%";
+      else if ($(this).hasClass("col-md-11"))
+        layout += "92%";
+      else if ($(this).hasClass("col-md-10"))
+        layout += "83%";
+      else if ($(this).hasClass("col-md-9"))
+        layout += "75%";
+      else if ($(this).hasClass("col-md-8"))
+        layout += "67%";
+      else if ($(this).hasClass("col-md-7"))
+        layout += "58%";
+      else if ($(this).hasClass("col-md-6"))
+        layout += "50%";
+      else if ($(this).hasClass("col-md-5"))
+        layout += "42%";
+      else if ($(this).hasClass("col-md-4"))
+        layout += "33%";
+      else if ($(this).hasClass("col-md-3"))
+        layout += "25%";
+      else if ($(this).hasClass("col-md-2"))
+        layout += "17%";
+      });
+
+    var txt = '<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+        '<div class="modal-header">' +
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+          '<h4 class="modal-title">' + gettext("Customize a dashboard row") + '</h4>' +
+        '</div>' +
+      '<div class="modal-body">' +
+        '<form class="form-horizontal">' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_name">' + gettext("Name") + ':</label>' +
+       '<div class="col-md-9">' +
+       '<input id="id_name" class="form-control" type="text" value="' + rowname + '">' +
+         '</div></div>' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_layout2">' + gettext("Layout") + ':</label>' +
+       '<div class="col-md-9 dropdown dropdown-submit-input">' +
+     '<button class="btn btn-default dropdown-toggle" id="id_layout2" name="layout" type="button" data-toggle="dropdown" aria-haspopup="true">' +
+       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
+     '</button>' +
+     '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
+     '<li class="dropdown-header">' + gettext("Single column") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">100%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Two columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">67% - 33%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">50% - 50%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">33% - 67%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">25% - 75%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Three columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">50% - 25% - 25%</a></li>' +
+     '<li><a onclick="dashboard.setlayout(this)">33% - 33% - 33%</a></li>' +
+     '<li class="divider"></li>' +
+     '<li class="dropdown-header">' + gettext("Four columns") + '</li>' +
+     '<li><a onclick="dashboard.setlayout(this)">25% - 25% - 25% - 25%</a></li>' +
+     '</ul></div>' +
+       '</div>' +
+
+         '<div class="form-group">' +
+       '<label class="col-md-3 control-label" for="id_widget2">' + gettext("Add widget") + ':</label>' +
+       '<div class="col-md-9 dropdown dropdown-submit-input">' +
+     '<button class="btn btn-default dropdown-toggle" id="id_widget2" type="button" data-toggle="dropdown">' +
+     '<span id="id_widget">-</span>&nbsp;<span class="caret"></span>' +
+     '</button>' +
+     '<ul class="dropdown-menu col-sm-9" aria-labelledby="id_widget2" id="id_widgetul">';
+
+       var numwidgets = hiddenwidgets.length;
+       for (var i = 0; i < numwidgets; i++)
+         txt += '<li><a onclick="dashboard.setwidget(' + i + ')">' + hiddenwidgets[i][1] + '</a></li>';
+
+       txt +=
+     '</ul></div><span id="newwidgetname" style="display:none"></span>' +
+       '</div>' +
+
+     '</form></div>' +
+     '<div class="modal-footer">' +
+       '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Delete') + '">' +
+       '<input type="submit" role="button" onclick=\'$("#popup").modal("hide")\' class="btn btn-primary pull-right" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
+       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
+     '</div>' +
+
+     '</div></div></div>';
+
+      $('#popup').html(txt).modal('show');
+  },
+
+  setlayout: function(elem) {
+    $("#id_layout").text($(elem).text());
+  },
+
+  setwidget: function(idx) {
+    $("#id_widget").text(hiddenwidgets[idx][1]);
+    $("#newwidgetname").text(hiddenwidgets[idx][0]);
+  },
+
+  saveCustomization: function(rowname) {
+	// Update the name
+    var newname = $("#id_name").val();
+    if (rowname != newname)
+    {
+      // Make sure name is unique
+      var cnt = 2;
+      while ($("[data-cockpit-row='" + newname + "']").length > 1)
+        newname = $("#id_name").val() + ' - ' + (cnt++);
+
+      // Update
+      $("[data-cockpit-row='" + rowname + "'] .col-md-11 h1").text(newname);
+      $("[data-cockpit-row='" + rowname + "'] h1 button").attr("onclick", "dashboard.customize('" + newname + "')");
+      $("[data-cockpit-row='" + rowname + "'] .horizontal-form").attr("id", newname);
+      $("[data-cockpit-row='" + rowname + "']").attr("data-cockpit-row", newname);
+    }
+
+    // Update the layout
+    var newlayout = $("#id_layout").text().split("-");
+    var colindex = 0;
+    var lastcol = null;
+    // Loop over existing columns
+    $("[id='" + rowname + "'] .cockpitcolumn").each(function() {
+      if (colindex < newlayout.length)
+      {
+        // Resize existing column
+        lastcol = this;
+        $(this).removeClass("col-md-1 col-md-2 col-md-3 col-md-4 col-md-5 col-md-6 col-md-7 col-md-8 col-md-9 col-md-10 col-md-11 col-md-12");
+        $(this).addClass("col-md-" + Math.round(0.12 * parseInt(newlayout[colindex])));
+      }
+      else
+      {
+        // Remove this column, after moving all widgets to the previous column
+        $("[data-cockpit-widget]", this).appendTo(lastcol);
+        $(this).remove();
+      }
+      colindex++;
+    });
+    while(colindex < newlayout.length)
+    {
+      // Adding extra columns
+      lastcol = $('<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[colindex])) + ' col-sm-12"></div>').insertAfter(lastcol);
+      colindex++;
+    }
+
+    // Adding new widget
+    var newwidget = $("#newwidgetname").text();
+    if (newwidget != '')
+    {
+      $('<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>').appendTo(lastcol);
+      dashboard.save("true"); // Force reload of the page
+    }
+    else
+      dashboard.save();
+
+    // Almost done
+    dashboard.dragAndDrop();
+    $('#popup').modal('hide');
+  },
+
+  deleteRow: function(rowname) {
+    $("[data-cockpit-row='" + rowname + "']").remove();
+    dashboard.save();
+    $('#popup').modal('hide');
+  },
+
+  addRow: function(rowname, position_above) {
+	// Make sure name is unique
+	var newname = $("#id_name").val();
+	var cnt = 2;
+	while ($("[data-cockpit-row='" + newname + "']").length >= 1)
+      newname = $("#id_name").val() + ' - ' + (cnt++);
+
+    // Build new content
+    var newelements = '<div class="row" data-cockpit-row="' + newname + '">' +
+      '<div class="col-md-11"><h1 style="float: left">' + newname + '</h1></div>' +
+      '<div class="col-md-1"><h1 class="pull-right">' +
+        '<button class="btn btn-xs btn-primary" onclick="dashboard.customize(\'' + newname + '\')" data-toggle="tooltip" data-placement="top" data-original-title="' + gettext("Customize") + '"><span class="fa fa-wrench"></span></button>' +
+      '</h1></div>' +
+
+      '<div class="horizontal-form" id="' + newname + '">';
+    var newlayout = $("#id_layout").text().split("-");
+    var newwidget = $("#newwidgetname").text();
+    for (var i = 0; i < newlayout.length; i++)
+    {
+      newelements += '<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[i])) + ' col-sm-12">';
+      if (i == 0 && newwidget != '')
+        newelements += '<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>';
+      newelements += '</div>';
+    }
+    newelements += '</div></div></div>';
+
+    // Insert in page
+    if (position_above)
+      $("[data-cockpit-row='" + rowname + "']").first().before($(newelements));
+    else
+      $("[data-cockpit-row='" + rowname + "']").last().after($(newelements));
+
+    // Almost done
+    if (newwidget != '')
+      // Force reload of the page when adding a widget
+      dashboard.save("true");
+    else
+      dashboard.save();
+    dashboard.dragAndDrop();
+    $('#popup').modal('hide');
+  }
+
+}
 
 //----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.

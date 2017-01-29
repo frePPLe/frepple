@@ -303,7 +303,7 @@ class export:
         destination_id character varying(300),
         origin_id character varying(300),        
         location_id character varying(300),
-        supplier_id character varying(300),  
+        supplier_id character varying(300),
         demand_id character varying(300),
         due timestamp with time zone,
         id integer NOT NULL

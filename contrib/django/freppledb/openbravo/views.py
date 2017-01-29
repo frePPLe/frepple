@@ -111,7 +111,7 @@ def Upload(request):
   if request.database not in openbravo_organization_ids:
     query = urllib.parse.quote("name='%s'" % openbravo_organization)
     data = get_data(
-      "/openbravo/ws/dal/Organization?where=%s&includeChildren=false" % query,
+      "/ws/dal/Organization?where=%s&includeChildren=false" % query,
       openbravo_host, openbravo_user, openbravo_password
       )
     conn = iterparse(StringIO(data), events=('start', 'end'))
@@ -180,7 +180,7 @@ def Upload(request):
       #'<?xml version="1.0" encoding="UTF-8"?>',
       '<ob:Openbravo xmlns:ob="http://www.openbravo.com">',
       ]
-    if exportPurchasingPlan:
+    if exportPurchasingPlan.lower() == 'true':      
       identifier = uuid4().hex
       url = "/ws/dal/MRPPurchasingRun"
       body.append('''<MRPPurchasingRun id="%s">
@@ -241,7 +241,71 @@ def Upload(request):
         </ob:Openbravo>
         ''')
     else:
-      raise Exception("Incremental export as a requisition not implemented yet") # TODO
+      
+      # Look up the id of the Openbravo user
+      query = urllib.parse.quote("name='%s'" % openbravo_user)
+      data = get_data(
+        "/ws/dal/ADUser?where=%s&includeChildren=false" % query,
+        openbravo_host,
+        openbravo_user,
+        openbravo_password
+        )
+      openbravo_user_id = None
+      for event, elem in iterparse(StringIO(data), events=('start', 'end')):
+        if event != 'end' or elem.tag != 'ADUser':
+          continue
+        openbravo_user_id = elem.get('id')
+      if not openbravo_user_id:
+        raise CommandError("Can't find user id in Openbravo")
+      
+      identifier = uuid4().hex
+      url = "/ws/dal/ProcurementRequisition"
+      
+      body.append('''<ProcurementRequisition id="%s">
+        <organization id="%s" entity-name="Organization"/>
+        <active>true</active>
+        <documentNo>frePPLe %s</documentNo>
+        <description>frePPLe export of %s</description>
+        <createPO>true</createPO>
+        <documentStatus>DR</documentStatus>
+        <userContact id="%s" entity-name="ADUser" identifier="%s"/>
+        <processNow>true</processNow>
+        <procurementRequisitionLineList>''' % (
+          identifier, openbravo_organization_ids[request.database],
+          now, now, openbravo_user_id, openbravo_user
+        ))
+        
+      count = 0
+      for obj in cleaned_records:
+        count = count + 1
+        businessPartner = ''
+        if isinstance(obj, PurchaseOrder):
+          transaction_type = 'PO'
+          if obj.supplier and obj.supplier.source:
+            businessPartner = '<businessPartner id="%s"/>' % obj.supplier.source
+            # TODO: where to store the destination of a purchase order
+            body.append('''<ProcurementRequisitionLine>
+              <active>true</active>
+              <requisition id="%s" entity-name="ProcurementRequisition"/>
+              <product id="%s" entity-name="Product"/>
+              <quantity>%s</quantity>
+              <uOM id="100" entity-name="UOM" identifier="Unit"/>
+              <requisitionLineStatus>O</requisitionLineStatus>
+              <needByDate>%s.0Z</needByDate>
+              <lineNo>%s</lineNo>
+              </ProcurementRequisitionLine>
+              ''' % (
+              identifier, obj.item.source, obj.quantity,
+              datetime.strftime(obj.enddate, "%Y-%m-%d %H:%M:%S"),
+              count
+              ))        
+        else:
+          raise
+      body.append('''</procurementRequisitionLineList>
+        </ProcurementRequisition>
+        </ob:Openbravo>
+        ''')
+       
 
     try:
       # Send the data to openbravo

@@ -290,6 +290,7 @@ DEFAULT_DASHBOARD = [
     ]},
   ]},
 ]
+GLOBAL_PREFERENCES = {}
 
 # Port number for the CherryPy web server
 PORT = 8000

@@ -1097,7 +1097,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra="role:'input/operation'"),
+    GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
@@ -1126,6 +1126,19 @@ class ManufacturingOrderList(GridReport):
       {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
       ]
 
+  @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      # Adding custom operation attributes
+      for f in getAttributeFields(Operation, related_name_prefix="operation"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="location"):
+        f.editable = False
+        reportclass.rows += (f,)
+        
 
 class DistributionOrderList(GridReport):
   '''

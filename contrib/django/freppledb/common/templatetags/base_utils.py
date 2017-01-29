@@ -472,8 +472,9 @@ class DashboardNode(Node):
   r'''
   A tag to return HTML code for the dashboard.
   '''
-  def __init__(self, varname):
+  def __init__(self, varname, hiddenvarname):
       self.varname = varname
+      self.hiddenvarname = hiddenvarname
 
   def render(self, context):
     from freppledb.common.dashboard import Dashboard
@@ -481,16 +482,23 @@ class DashboardNode(Node):
       req = context['request']
     except:
       return ''  # No request found in the context
-
     reg = Dashboard.buildList()
-    context[self.varname] = [
-      { 'rowname': rown['rowname'], 'cols': [
-          {'width': i['width'], 'widgets': [ reg[j[0]](**j[1]) for j in i['widgets'] if j[0] in reg and reg[j[0]].has_permission(req.user)]} for i in rown['cols']
-        ]
-      } for rown in settings.DEFAULT_DASHBOARD
-      ]
+    mydashboard = req.user.getPreference("freppledb.common.cockpit", database=req.database)
+    if not mydashboard:
+      mydashboard = settings.DEFAULT_DASHBOARD
+    context[self.hiddenvarname] = { i: j for i, j in reg.items() }
+    context[self.varname] = []
+    for i in mydashboard:
+      cols = []
+      for j in i['cols']:
+        widgets = []
+        for k in j['widgets']:
+          if k[0] in reg and reg[k[0]].has_permission(req.user):
+            widgets.append(reg[k[0]](**k[1]))
+            context[self.hiddenvarname].pop(k[0], None)
+        cols.append( {'width': j['width'], 'widgets': widgets}  )
+      context[self.varname].append( {'rowname': i['rowname'], 'cols': cols} )
     return ''
-
 
   def __repr__(self):
     return "<getDashboard Node>"
@@ -498,10 +506,10 @@ class DashboardNode(Node):
 
 def getDashboard(parser, token):
   tokens = token.contents.split()
-  if len(tokens) < 3:
-      raise TemplateSyntaxError("'%s' tag requires 3 arguments" % tokens[0])
+  if len(tokens) < 4:
+      raise TemplateSyntaxError("'%s' tag requires 4 arguments" % tokens[0])
   if tokens[1] != 'as':
       raise TemplateSyntaxError("First argument to '%s' tag must be 'as'" % tokens[0])
-  return DashboardNode(tokens[2])
+  return DashboardNode(tokens[2], tokens[3])
 
 register.tag('getDashboard', getDashboard)

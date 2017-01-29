@@ -25,11 +25,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import NoReverseMatch, reverse
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
+from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
+
+from freppledb.common.fields import JSONField
 
 
 
@@ -436,6 +439,78 @@ class User(AbstractUser):
     verbose_name = _('user')
     # Translators: Translation included with Django
     verbose_name_plural = _('users')
+    
+
+  def getPreference(self, prop, default=None, database=DEFAULT_DB_ALIAS):
+    try:
+      result = None
+      for p in UserPreference.objects.all().using(database).filter(property=prop).filter(Q(user__isnull=True) | Q(user=self.id)).order_by('-user').only('user', 'value'):
+        if result:
+          result.update(p.value)
+        else:
+          result = p.value
+      return result if result else default
+    except ValueError:
+      logger.error("Invalid preference '%s' of user '%s'" % (prop, self.username))
+      return default
+    except:
+      return default
+    
+
+  def setPreference(self, prop, val, database=DEFAULT_DB_ALIAS):
+    if val is None:
+      if prop in settings.GLOBAL_PREFERENCES and self.is_superuser:
+        # Delete global preferences
+        UserPreference.objects.all().using(database).get_or_create(user__isnull=True,property=prop).delete()
+      # Delete user preferences
+      try:
+        self.preferences.using(database).get(property=prop).delete()
+      except UserPreference.DoesNotExist:
+        # No such preferences exists now
+        pass
+    else:      
+      if prop in settings.GLOBAL_PREFERENCES:        
+        val_global = { k: v for k, v in val.items() if k in settings.GLOBAL_PREFERENCES[prop] }
+        val_user = { k: v for k, v in val.items() if not k in settings.GLOBAL_PREFERENCES[prop] }
+        if val_global and self.is_superuser:
+          # A superuser can save global preferences for this property
+          pref = UserPreference.objects.all().using(database).get_or_create(user__isnull=True, property=prop)[0]
+          pref.value = val_global          
+          pref.save(update_fields=['value'], using=database)
+        if val_user:
+          # Everyone can save his personal preferences for this property
+          pref = UserPreference.objects.all().using(database).get_or_create(user=self, property=prop)[0]
+          pref.value = val_user
+          pref.save(update_fields=['value'], using=database)
+      else:
+        # No global preferences configured for this property        
+        pref = UserPreference.objects.all().using(database).get_or_create(user=self, property=prop)[0]
+        pref.value = val
+        pref.save(update_fields=['value'], using=database)
+      
+      
+class UserPreference(models.Model):
+
+  class UserPreferenceManager(models.Manager):
+    def get_by_natural_key(self, usr, prop):  
+      return self.get(user=usr, property=prop)
+
+  objects = UserPreferenceManager()
+  
+  id = models.AutoField(_('identifier'), primary_key=True)
+  # Translators: Translation included with Django
+  user = models.ForeignKey(User, verbose_name=_('user'), blank=False, null=True, editable=False, related_name='preferences')
+  property = models.CharField(max_length=100, blank=False, null=False)
+  value = JSONField(max_length=1000, blank=False, null=False)
+
+  def natural_key(self):
+    return (self.user, self.property)
+
+  class Meta:
+    db_table = "common_preference"
+    unique_together = (('user', 'property'),)
+    verbose_name = 'preference'
+    verbose_name_plural = 'preferences'
 
 
 @receiver(pre_delete, sender=User)

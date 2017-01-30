@@ -18,6 +18,7 @@
 from django.db import connections
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.utils.text import capfirst
 
 from freppledb.boot import getAttributeFields
@@ -47,16 +48,16 @@ class OverviewReport(GridPivot):
     GridFieldText('subcategory', title=_('subcategory'), editable=False, field_name='subcategory', initially_hidden=True),
     GridFieldText('type', title=_('type'), editable=False, field_name='type', initially_hidden=True),
     GridFieldNumber('maximum', title=_('maximum'), editable=False, field_name='maximum', initially_hidden=True),
-    GridFieldText('maximum_calendar', title=_('maximum calendar'), editable=False, field_name='maximum_calendar', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('maximum_calendar', title=_('maximum calendar'), editable=False, field_name='maximum_calendar__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldCurrency('cost', title=_('cost'), editable=False, field_name='cost', initially_hidden=True),
     GridFieldDuration('maxearly', title=_('maxearly'), editable=False, field_name='maxearly', initially_hidden=True),
-    GridFieldText('setupmatrix', title=_('setupmatrix'), editable=False, field_name='setupmatrix', formatter='detail', extra='"role":"input/setupmatrix"', initially_hidden=True),
+    GridFieldText('setupmatrix', title=_('setupmatrix'), editable=False, field_name='setupmatrix__name', formatter='detail', extra='"role":"input/setupmatrix"', initially_hidden=True),
     GridFieldText('setup', title=_('setup'), editable=False, field_name='setup', initially_hidden=True),
     GridFieldText('location__name', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
-    GridFieldText('location__description', title=_('description'), editable=False, field_name='location__description', initially_hidden=True),
-    GridFieldText('location__category', title=_('category'), editable=False, field_name='location__category', initially_hidden=True),
-    GridFieldText('location__subcategory', title=_('subcategory'), editable=False, field_name='location__subcategory', initially_hidden=True),
-    GridFieldText('location__available', title=_('available'), editable=False, field_name='location__available', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')), editable=False, initially_hidden=True),
+    GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')), editable=False, initially_hidden=True),
+    GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
+    GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     )
   crosses = (

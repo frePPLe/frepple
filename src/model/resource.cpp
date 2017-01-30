@@ -92,6 +92,7 @@ void Resource::inspect(const string msg) const
   if (!msg.empty()) logger  << msg;
   logger << endl;
 
+  OperationPlan *opplan = nullptr;
   for (loadplanlist::const_iterator oo = getLoadPlans().begin();
     oo != getLoadPlans().end();
     ++oo)
@@ -102,7 +103,12 @@ void Resource::inspect(const string msg) const
     switch (oo->getEventType())
     {
     case 1:
-      logger << ", oper:" << static_cast<const LoadPlan*>(&*oo)->getOperationPlan()->getOperation() << endl;
+      opplan = static_cast<const LoadPlan*>(&*oo)->getOperationPlan();
+      logger << ", id: " << opplan->getIdentifier() 
+        << ", oper:" << opplan->getOperation()
+        << ", quantity: " << opplan->getQuantity()        
+        << ", dates: " << opplan->getDates()
+        << endl;
       break;
     case 2:
       logger << ", event set-onhand" << endl;

@@ -237,7 +237,7 @@ Object* Flow::finder(const DataValueDict& d)
   if (hasEffectiveEnd)
     effective_end = hasEffectiveEnd->getDate();
   const DataValue* hasPriority = d.get(Tags::priority);
-  int priority;
+  int priority = 1;
   if (hasPriority)
     priority = hasPriority->getInt();
   const DataValue* hasName = d.get(Tags::name);

@@ -123,7 +123,7 @@ void HasLevel::computeLevels()
           continue;
         }
         cur_cluster = ++numberOfClusters;
-        if (numberOfClusters >= UINT_MAX)
+        if (numberOfClusters >= INT_MAX)
           throw LogicException("Too many clusters");
       }
 

@@ -162,6 +162,7 @@ void Buffer::inspect(const string msg) const
   if (!msg.empty()) logger  << msg;
   logger << endl;
 
+  OperationPlan *opplan = nullptr;
   double curmin = 0.0;
   for (flowplanlist::const_iterator oo = getFlowPlans().begin();
     oo != getFlowPlans().end();
@@ -176,7 +177,12 @@ void Buffer::inspect(const string msg) const
     switch(oo->getEventType())
     {
       case 1:
-        logger << ", oper:" << static_cast<const FlowPlan*>(&*oo)->getOperationPlan()->getOperation() << endl;
+        opplan = static_cast<const FlowPlan*>(&*oo)->getOperationPlan();
+        logger << ", id: " << opplan->getIdentifier()
+          << ", oper:" << opplan->getOperation()
+          << ", quantity: " << opplan->getQuantity()
+          << ", dates: " << opplan->getDates()
+          << endl;
         break;
       case 2:
         logger << ", event set-onhand" << endl;
@@ -761,7 +767,6 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
     return nullptr;
 
   // Return existing buffer if it exists
-  Buffer* destbuffer = nullptr;
   Item::bufferIterator buf_iter(itm);
   while (Buffer* tmpbuf = buf_iter.next())
   {
@@ -773,7 +778,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
   stringstream o;
   o << itm->getName() << " @ " << loc->getName();
   Buffer* b;
-  while (b = find(o.str()))
+  while ( (b = find(o.str())) )
     o << '*';
   b = new BufferDefault();
   b->setItem(itm);
@@ -799,6 +804,9 @@ void Buffer::buildProducingOperation()
     Item::supplierlist::const_iterator supitem_iter = item->getSupplierIterator();
     while (ItemSupplier *supitem = supitem_iter.next())
     {
+      if (supitem->getPriority() == 0)
+        continue;
+      
       // Verify whether the ItemSupplier is applicable to the buffer location
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is not the ItemSupplier location
@@ -908,6 +916,10 @@ void Buffer::buildProducingOperation()
     Item::distributionIterator itemdist_iter = item->getDistributionIterator();
     while (ItemDistribution *itemdist = itemdist_iter.next())
     {
+
+      if (itemdist->getPriority() == 0)
+        continue;
+      
       // Verify whether the ItemDistribution is applicable to the buffer location
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is the ItemDistribution destination location
@@ -1028,6 +1040,9 @@ void Buffer::buildProducingOperation()
     Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
     while (Operation *itemoper = itemoper_iter.next())
     {
+      if (itemoper->getPriority() == 0)
+        continue;
+      
       // Verify whether the operation is applicable to the buffer
       if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
         continue;

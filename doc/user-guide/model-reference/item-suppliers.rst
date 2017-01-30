@@ -43,4 +43,6 @@ priority        integer           | Priority of this supplier among all supplier
                                   | A lower number indicates that this supplier is preferred
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
+                                  | When the priority is 0, the item supplier is not
+                                    actively used during planning.                                     
 =============== ================= ===========================================================

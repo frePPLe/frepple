@@ -33,6 +33,8 @@ priority        integer           | Priority of this shipment among all other me
                                   | A lower number indicates that this shipment is preferred
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
+                                  | When the priority is 0, the item distribution is not
+                                    actively used during planning. 
 resource        resource          | Optionally, it refers to a resource that represents the
                                     distribution capacity.
                                   | The referenced resource will typically be of type

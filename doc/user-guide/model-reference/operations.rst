@@ -55,6 +55,8 @@ priority               integer           | Priority of this operation to produce
                                            producing the same item-location, or the same item-location
                                            can also be replenished with :doc:`purchase orders<item-suppliers>`
                                            and/or :doc:`distribution orders<item-distributions>`.
+                                         | When the priority is 0, the operation is not actively used
+                                           during planning. 
 description            string            Free format description.
 category               string            Free format category.
 subcategory            string            Free format subcategory.

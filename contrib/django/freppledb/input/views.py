@@ -1174,7 +1174,8 @@ class DistributionOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return DistributionOrder.objects.all().extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)"
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)",
+      'total_price': "price*quantity"
       })
 
   rows = (
@@ -1191,6 +1192,9 @@ class DistributionOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')),
+      editable=False),
+    GridFieldCurrency('total_price', title=_('total price'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
@@ -1205,8 +1209,6 @@ class DistributionOrderList(GridReport):
       initially_hidden=True, editable=False),
     GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False),
-    GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')),
-      initially_hidden=True, editable=False),
     GridFieldText('item__source', title=string_concat(_('item'), ' - ', _('source')),
       initially_hidden=True, editable=False),
     GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
@@ -1312,8 +1314,8 @@ class PurchaseOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
-    GridFieldNumber('item__price', title=string_concat(_('item'), ' - ', _('price')), editable=False),
-    GridFieldNumber('total_price', title=_('total price'), editable=False),
+    GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')), editable=False),
+    GridFieldCurrency('total_price', title=_('total price'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),

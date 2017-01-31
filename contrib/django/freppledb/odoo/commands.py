@@ -62,7 +62,7 @@ class OdooReadData(PlanTask):
         for idx in (100, 101, 110):
           stdLoad = PlanTaskRegistry.getTask(sequence=idx)
           if stdLoad:
-            stdLoad.filter = "source is null or source<>'odoo_%s'" % cls.mode
+            stdLoad.filter = "(source is null or source<>'odoo_%s')" % cls.mode
             stdLoad.description = "Load non-Odoo data"
         return 1
     else:

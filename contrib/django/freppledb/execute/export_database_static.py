@@ -968,6 +968,19 @@ class exportStaticModel(object):
       if self.source:
         cursor.execute("delete from operationmaterial where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationplanmaterial 
+          where operationplan_id in (select id from operationplan 
+                inner join demand on operationplan.demand_id = demand.name
+                where demand.source = %s and demand.lastmodified <> %s
+                )''', (self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationplanresource 
+          where operationplan_id in (select id from operationplan 
+                inner join demand on operationplan.demand_id = demand.name
+                where demand.source = %s and demand.lastmodified <> %s
+                )''', (self.source, self.timestamp))
+        cursor.execute("delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)", (self.source, self.timestamp))
         cursor.execute("delete from demand where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from itemsupplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from itemdistribution where source = %s and lastmodified <> %s", (self.source, self.timestamp))

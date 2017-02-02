@@ -91,8 +91,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
 
 void OperatorDelete::solve(void *v)
 {
-   // Loop over all buffers Push to stack, in order of level TODO
-
+  // Loop over all buffers Push to stack, in order of level TODO
   // Clean up all buffers in the list
   while(!buffersToScan.empty())
   {
@@ -107,14 +106,19 @@ void OperatorDelete::solve(OperationPlan* o, void* v)
 {
   if (!o) return; // Null argument passed
 
-  // Mark all buffers we consume from
-  pushBuffers(o, true);
+  // Mark all buffers.
+  // The batching solver doesn't like that we push both consumers and 
+  // producers, but ideally we would pass true for both arguments.
+  pushBuffers(o, true, false);
 
   // Delete the operationplan
+  if (!o->getLocked())
+  {
   if (cmds)
     cmds->add(new CommandDeleteOperationPlan(o));
   else
     delete o;
+  }
 
   // Propagate to all upstream buffers
   while(!buffersToScan.empty())
@@ -137,7 +141,7 @@ void OperatorDelete::solve(const Resource* r, void* v)
   {
     if (i->getEventType() == 1)
       // Add all buffers into which material is produced to the stack
-      pushBuffers(static_cast<const LoadPlan*>(&*i)->getOperationPlan(), false);
+      pushBuffers(static_cast<const LoadPlan*>(&*i)->getOperationPlan(), false, true);
   }
 
   // Process all buffers found, and their upstream colleagues
@@ -169,16 +173,16 @@ void OperatorDelete::solve(const Demand* d, void* v)
         candidate = *i;
         break;
       }
-      if (!candidate) break;
+    if (!candidate) break;
 
-      // Push the buffer on the stack in which the deletion creates excess inventory
-      pushBuffers(candidate, true);
+    // Push the buffer on the stack in which the deletion creates excess inventory
+    pushBuffers(candidate, true, false);
 
-      // Delete only the delivery, immediately or through a delete command
-      if (cmds)
-        cmds->add(new CommandDeleteOperationPlan(candidate));
-      else
-        delete candidate;
+    // Delete only the delivery, immediately or through a delete command
+    if (cmds)
+      cmds->add(new CommandDeleteOperationPlan(candidate));
+    else
+      delete candidate;
   }
 
   // Propagate to all upstream buffers
@@ -191,14 +195,14 @@ void OperatorDelete::solve(const Demand* d, void* v)
 }
 
 
-void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming)
+void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming, bool producing)
 {
   // Loop over all flowplans
   for (OperationPlan::FlowPlanIterator i = o->beginFlowPlans(); i != o->endFlowPlans(); ++i)
   {
     // Skip flowplans we're not interested in
-    if ((consuming && i->getQuantity() >= 0)
-      || (!consuming && i->getQuantity() <= 0))
+    if (!(consuming && i->getQuantity() < 0)
+      && !(producing && i->getQuantity() > 0))
       continue;
 
     // Check if the buffer is already found on the stack
@@ -219,22 +223,132 @@ void OperatorDelete::pushBuffers(OperationPlan* o, bool consuming)
 
   // Recursive call for all suboperationplans
   for (OperationPlan::iterator subopplan(o); subopplan != OperationPlan::end(); ++subopplan)
-    pushBuffers(&*subopplan, consuming);
+    pushBuffers(&*subopplan, consuming, producing);
 }
 
 
 void OperatorDelete::solve(const Buffer* b, void* v)
 {
   if (getLogLevel()>1)
-    logger << "Scanning " << b << " for excess" << endl;
+    logger << "Scanning buffer " << b << endl;
 
-  Buffer::flowplanlist::const_iterator fiter = b->getFlowPlans().rbegin();
+  Buffer::flowplanlist::const_iterator fiter = b->getFlowPlans().begin();
   Buffer::flowplanlist::const_iterator fend = b->getFlowPlans().end();
   if (fiter == fend)
     return; // There isn't a single flowplan in the buffer
-  double excess = fiter->getOnhand() - fiter->getMin();
 
-  // Find the earliest occurence of the excess
+  // STEP 1: Remove shortages from the buffer
+  // Delete the earliest unlocked producer(s) before the start of a material shortage.
+  double unresolvable = 0.0;
+  while (fiter != fend)
+  {
+    if (fiter->getQuantity() >= 0
+      || !(fiter->getOnhand() < -ROUNDING_ERROR + unresolvable && fiter->isLastOnDate())
+      )
+    {
+      // Not a consumer or no shortage start
+      ++fiter;
+      continue;
+    }
+
+    // Recurse backward to find consumers we can resize
+    double cur_shortage = fiter->getOnhand() + unresolvable;
+    Buffer::flowplanlist::const_iterator fiter2 = fiter;
+    ++fiter; // increment to an event after the shortage start, because the iterator 
+             // can get invalidated in the next loop
+    while (cur_shortage <= -ROUNDING_ERROR && fiter2 != fend)
+    {
+      if (fiter2->getQuantity() >= 0 || fiter2->getEventType() != 1)
+      {
+        // Not a consuming flowplan
+        --fiter2;
+        continue;
+      }
+      FlowPlan* fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
+      if (fp->getOperationPlan()->getLocked())
+      {
+        // No excess producer, or it's locked
+        --fiter2;
+        continue;
+      }
+
+      // Decrement the iterator here, because it can get invalidated later on
+      while (
+        fiter2 != fend
+        && fiter2->getEventType() == 1
+        && static_cast<const FlowPlan*>(&*fiter2)->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
+        )
+        --fiter2;
+
+      // Resize or delete the candidate operationplan
+      if (cur_shortage < fp->getQuantity() + ROUNDING_ERROR)
+      {
+        // The complete operationplan is shortage.
+        // Reduce the excess
+        cur_shortage -= fp->getQuantity();
+        // Add downstream buffers to the stack
+        pushBuffers(fp->getOperationPlan(), false, true);
+        // Log message
+        if (getLogLevel() > 0)
+          logger << "Removing shortage operationplan: "
+            << fp->getOperationPlan()->getIdentifier() 
+            << " (" << fp->getOperationPlan()->getOperation()
+            << ", " << fp->getOperationPlan()->getQuantity()
+            << ", " << fp->getOperationPlan()->getDates()
+            << ")" << endl;
+        // Delete operationplan
+        if (cmds)
+          cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+        else
+          delete fp->getOperationPlan();
+      }
+      else
+      {
+        // Reduce the operationplan
+        double newsize = fp->setQuantity(fp->getQuantity() - cur_shortage, false, false);
+        if (newsize == fp->getQuantity())
+          // No resizing is feasible
+          continue;
+        // Add downstream buffers to the stack
+        pushBuffers(fp->getOperationPlan(), false, true);
+        // Reduce the shortage
+        cur_shortage -= fp->getQuantity() - newsize;
+        if (getLogLevel() > 0)
+          logger << "Resizing shortage operationplan to " << newsize << ": "          
+            << fp->getOperationPlan()->getIdentifier()
+            << " (" << fp->getOperationPlan()->getOperation()
+            << ", " << fp->getOperationPlan()->getQuantity()
+            << ", " << fp->getOperationPlan()->getDates()
+            << ")" << endl;
+        // Resize operationplan
+        if (cmds)
+          // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
+          cmds->add(new CommandMoveOperationPlan(
+            fp->getOperationPlan(), fp->getOperationPlan()->getDates().getStart(),
+            Date::infinitePast, newsize
+          ));
+        else
+          fp->getOperationPlan()->setQuantity(newsize);
+      }
+    }
+
+    // Damn... We can't resolve it
+    if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR)
+    {
+      unresolvable += cur_shortage;
+      logger << "Can't resolve shortage problem in buffer " << b << endl;
+    }
+  }
+
+  // STEP 2: Remove excess inventory at the end of the planning horizon.
+  // Delete the earliest unlocked producer(s) that leave(s) excess at any later
+  // point in the horizon.
+  fiter = b->getFlowPlans().rbegin();
+  if (fiter == fend)
+    return;
+  double excess = fiter->getOnhand() - fiter->getMin();
+  if (excess > ROUNDING_ERROR)
+  {
   fiter = b->getFlowPlans().begin();
   while (excess > ROUNDING_ERROR && fiter != fend)
   {
@@ -254,7 +368,6 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       ++fiter;
       continue;
     }
-    assert(fp);
 
     // Increment the iterator here, because it can get invalidated later on
     while (
@@ -269,14 +382,15 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       // Reduce the excess
       excess -= fp->getQuantity();
       // Add upstream buffers to the stack
-      pushBuffers(fp->getOperationPlan(), true);
+        pushBuffers(fp->getOperationPlan(), true, false);
       // Log message
       if (getLogLevel()>0)
-        logger << "Removing excess operationplan: '"
-          << fp->getOperationPlan()->getOperation()
-          << "'  " << fp->getOperationPlan()->getDates()
-          << "  " << fp->getOperationPlan()->getQuantity()
-          << endl;
+          logger << "Removing excess operationplan: "
+            << fp->getOperationPlan()->getIdentifier()
+            << " (" << fp->getOperationPlan()->getOperation()
+            << ", " << fp->getOperationPlan()->getQuantity()
+            << ", " << fp->getOperationPlan()->getDates()
+            << ")" << endl;
       // Delete operationplan
       if (cmds)
         cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
@@ -291,23 +405,26 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         // No resizing is feasible
         continue;
       // Add upstream buffers to the stack
-      pushBuffers(fp->getOperationPlan(), true);
+        pushBuffers(fp->getOperationPlan(), true, false);
       // Reduce the excess
       excess -= fp->getQuantity() - newsize;
       if (getLogLevel()>0)
-        logger << "Resizing excess operationplan to " << newsize << ": '"
-          << fp->getOperationPlan()->getOperation()
-          << "'  " << fp->getOperationPlan()->getDates()
-          << "  " << fp->getOperationPlan()->getQuantity()
-          << endl;
+          logger << "Resizing excess operationplan to " << newsize << ": "
+            << fp->getOperationPlan()->getIdentifier()
+            << " (" << fp->getOperationPlan()->getOperation()
+            << ", " << fp->getOperationPlan()->getQuantity()
+            << ", " << fp->getOperationPlan()->getDates()
+            << ")" << endl;
       // Resize operationplan
       if (cmds)
+          // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
         cmds->add(new CommandMoveOperationPlan(
           fp->getOperationPlan(), Date::infinitePast,
-          fp->getOperationPlan()->getDates().getEnd(), newsize)
-          );
+            fp->getOperationPlan()->getDates().getEnd(), newsize
+            ));
       else
         fp->getOperationPlan()->setQuantity(newsize);
+      }
     }
   }
 }

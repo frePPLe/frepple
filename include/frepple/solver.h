@@ -73,14 +73,12 @@ class OperatorDelete : public Solver
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaClass* metadata;
 
-  private:
     /** Auxilary function to push consuming or producing buffers of an
-      * operationplan to the stack.<br>
-      * When the argument is true, we push the consumers.
-      * When the argument is false, we push the producers.
+      * operationplan to the stack.
       */
-	  void pushBuffers(OperationPlan*, bool);
+    void pushBuffers(OperationPlan*, bool consuming, bool producing);
 
+  private:
 	  /** A list of buffers still to scan for excess. */
 	  vector<Buffer*> buffersToScan;   // TODO Use a different data structure to allow faster lookups and sorting?
 

@@ -337,9 +337,17 @@ jQuery.extend($.fn.fmatter, {
   },
 
   detail : function(cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (options['colModel']['popup'] || rowdata.showdrilldown == '0') return cellvalue;
-    return cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
+    var result = cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {
+      return '';
+    }
+    if (options['colModel']['popup'] || rowdata.showdrilldown === '0') {
+      return cellvalue;
+    }
+    if (rowdata.hasOwnProperty('type') && (rowdata.type === 'purchase' || rowdata.type === 'distribution' || rowdata.type === 'shipping' )) {
+      return cellvalue; //don't show links for non existing operations
+    }
+    return result;
   },
 
   demanddetail : function(cellvalue, options, rowdata) {

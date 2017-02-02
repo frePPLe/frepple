@@ -64,13 +64,17 @@ void handler(int sig)
 
 int main (int argc, char *argv[])
 {
-  // Install signal handlers
+  // Install signal handlers.
+  // In a debug build we don't do it, to allow debuggers to handle the
+  // signal themselves.
+#if !defined(DEBUG)
   signal(SIGABRT, handler);
   signal(SIGFPE, handler);
   signal(SIGILL, handler);
   signal(SIGINT, handler);
   signal(SIGSEGV, handler);
   signal(SIGTERM, handler);
+#endif
 
   // Storing the chosen options...
   bool validate = false;

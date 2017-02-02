@@ -80,7 +80,7 @@ class BaseReport(GridReport):
     GridFieldText('entity', title=_('entity'), editable=False, width=80, align='center'),
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), editable=False, width=100, align='center'),
-    GridFieldText('owner', title=_('owner'), editable=False, extra='"formatter":"probfmt"'),
+    GridFieldText('owner', title=_('owner'), editable=False, extra='"formatter":probfmt'),
     GridFieldText('description', title=_('description'), editable=False, width=350),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),

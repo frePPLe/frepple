@@ -1205,7 +1205,7 @@ class GridReport(View):
             # Collect required fields
             required_fields = set()         
             for i in reportclass.model._meta.fields:
-              if not i.blank and i.default == NOT_PROVIDED:
+              if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
                 required_fields.add(i.name)
                 
             # Validate all columns
@@ -1245,6 +1245,14 @@ class GridReport(View):
               fields=tuple([i.name for i in headers if isinstance(i, Field)]),
               formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
+            
+            # Get natural keys for the class
+            natural_key = None
+            if hasattr(reportclass.model.objects, 'get_by_natural_key'):
+              if reportclass.model._meta.unique_together: 
+                natural_key = reportclass.model._meta.unique_together[0]
+              elif hasattr(reportclass.model, 'natural_key'):
+                natural_key = reportclass.model.natural_key
 
           ### Case 2: Skip empty rows and comments rows
           elif len(row) == 0 or row[0].startswith('#'):
@@ -1275,6 +1283,19 @@ class GridReport(View):
                 except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
                   it = None
+              elif natural_key:
+                # A natural key exists for this model
+                try:
+                  # Build the natural key
+                  key = []
+                  for x in natural_key:
+                    key.append(d.get(x, None))
+                  # Try to find an existing record using the natural key
+                  it = reportclass.model.objects.get_by_natural_key(*key)              
+                  form = UploadForm(d, instance=it)
+                except reportclass.model.DoesNotExist:
+                  form = UploadForm(d)
+                  it = None               
               else:
                 # No primary key required for this model
                 form = UploadForm(d)
@@ -1376,7 +1397,7 @@ class GridReport(View):
           # Collect required fields
           required_fields = set()         
           for i in reportclass.model._meta.fields:
-            if not i.blank and i.default == NOT_PROVIDED:
+            if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
               required_fields.add(i.name)
           # Validate all columns
           for col in row:
@@ -1416,6 +1437,14 @@ class GridReport(View):
             formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
             )
 
+          # Get natural keys for the class
+          natural_key = None
+          if hasattr(reportclass.model.objects, 'get_by_natural_key'):
+            if reportclass.model._meta.unique_together: 
+              natural_key = reportclass.model._meta.unique_together[0]
+            elif hasattr(reportclass.model, 'natural_key'):
+              natural_key = reportclass.model.natural_key
+                    
         ### Case 2: Skip empty rows and comments rows
         elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
           continue
@@ -1454,6 +1483,19 @@ class GridReport(View):
               try:
                 # Try to find an existing record with the same primary key
                 it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                form = UploadForm(d, instance=it)
+              except reportclass.model.DoesNotExist:
+                form = UploadForm(d)
+                it = None
+            elif natural_key:
+              # A natural key exists for this model
+              try:
+                # Build the natural key
+                key = []
+                for x in natural_key:
+                  key.append(d.get(x, None))
+                # Try to find an existing record using the natural key
+                it = reportclass.model.objects.get_by_natural_key(*key)              
                 form = UploadForm(d, instance=it)
               except reportclass.model.DoesNotExist:
                 form = UploadForm(d)
@@ -2262,7 +2304,7 @@ def importWorkbook(request):
             # Collect required fields
             required_fields = set()
             for i in model._meta.fields:
-              if not i.blank and i.default == NOT_PROVIDED:
+              if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
                 required_fields.add(i.name)
                 
             # Validate all columns
@@ -2308,6 +2350,15 @@ def importWorkbook(request):
               fields=tuple([i.name for i in headers if isinstance(i, Field)]),
               formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
+            
+            # Get natural keys for the class
+            natural_key = None
+            if hasattr(model.objects, 'get_by_natural_key'):
+              if model._meta.unique_together: 
+                natural_key = model._meta.unique_together[0]
+              elif hasattr(model, 'natural_key'):
+                natural_key = model.natural_key
+
           else:
             # Process a data row
             # Step 1: Build a dictionary with all data fields
@@ -2345,6 +2396,19 @@ def importWorkbook(request):
               except model.DoesNotExist:
                 form = uploadform(d)
                 it = None
+            elif natural_key:
+              # A natural key exists for this model
+              try:
+                # Build the natural key
+                key = []
+                for x in natural_key:
+                  key.append(d.get(x, None))
+                # Try to find an existing record using the natural key
+                it = model.objects.get_by_natural_key(*key)              
+                form = uploadform(d, instance=it)
+              except model.DoesNotExist:
+                form = uploadform(d)
+                it = None                             
             else:
               # No primary key required for this model
               form = uploadform(d)

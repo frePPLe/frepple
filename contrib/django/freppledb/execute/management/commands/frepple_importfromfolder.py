@@ -27,7 +27,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, transaction, models
-from django.db.models.fields import Field, NOT_PROVIDED
+from django.db.models.fields import Field, NOT_PROVIDED, AutoField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
@@ -40,7 +40,6 @@ from freppledb.common.report import GridReport
 from freppledb import VERSION
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
-from _datetime import datetime
 
 
 class Command(BaseCommand):
@@ -225,7 +224,7 @@ class Command(BaseCommand):
           # Collect required fields
           required_fields = set()         
           for i in model._meta.fields:
-            if not i.blank and i.default == NOT_PROVIDED:
+            if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
               required_fields.add(i.name)
               
           # Validate all columns
@@ -266,6 +265,14 @@ class Command(BaseCommand):
             formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=self.database, localize=True)) or f.formfield(localize=True)
             )
 
+          # Get natural keys for the class
+          natural_key = None
+          if hasattr(model.objects, 'get_by_natural_key'):
+            if model._meta.unique_together: 
+              natural_key = model._meta.unique_together[0]
+            elif hasattr(model, 'natural_key'):
+              natural_key = model.natural_key
+
         ### Case 2: Skip empty rows and comments rows
         elif len(row) == 0 or row[0].startswith('#'):
           continue
@@ -296,6 +303,19 @@ class Command(BaseCommand):
               except model.DoesNotExist:
                 form = UploadForm(d)
                 it = None
+            elif natural_key:
+              # A natural key exists for this model
+              try:
+                # Build the natural key
+                key = []
+                for x in natural_key:
+                  key.append(d.get(x, None))
+                # Try to find an existing record using the natural key
+                it = model.objects.get_by_natural_key(*key)            
+                form = UploadForm(d, instance=it)
+              except model.DoesNotExist:
+                form = UploadForm(d)
+                it = None                
             else:
               # No primary key required for this model
               form = UploadForm(d)

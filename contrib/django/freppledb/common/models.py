@@ -35,7 +35,6 @@ from django.utils.text import capfirst
 from freppledb.common.fields import JSONField
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -586,6 +585,15 @@ class BucketDetail(AuditModel):
   name = models.CharField(_('name'), max_length=300, db_index=True)
   startdate = models.DateTimeField(_('start date'))
   enddate = models.DateTimeField(_('end date'))
+
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, bucket, startdate):
+      return self.get(bucket=bucket, startdate=startdate)
+  
+  def natural_key(self):
+    return (self.bucket, self.startdate)
+  
+  objects = Manager()
 
   def __str__(self):
     return "%s %s" % (self.bucket.name or "", self.startdate)

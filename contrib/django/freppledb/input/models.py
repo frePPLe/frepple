@@ -22,7 +22,7 @@ from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.fields import JSONField
-from freppledb.common.models import HierarchyModel, AuditModel
+from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
 
 
 searchmode = (
@@ -98,6 +98,15 @@ class CalendarBucket(AuditModel):
   starttime = models.TimeField(_('start time'), blank=True, null=True, default=time(0, 0, 0))
   endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23, 59, 59))
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, calendar, startdate, enddate):
+      return self.get(calendar=calendar, startdate=startdate, enddate=enddate)
+  
+  def natural_key(self):
+    return (self.calendar, self.startdate, self.enddate)
+  
+  objects = Manager()
+
   def __str__(self):
     return "%s" % self.id
 
@@ -106,6 +115,7 @@ class CalendarBucket(AuditModel):
     db_table = 'calendarbucket'
     verbose_name = _('calendar bucket')
     verbose_name_plural = _('calendar buckets')
+    unique_together = (('calendar', 'startdate', 'enddate'),)
 
 
 class Location(AuditModel, HierarchyModel):
@@ -302,16 +312,26 @@ class SubOperation(AuditModel):
     help_text=_("Validity end date")
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, operation, priority, suboperation):
+      return self.get(operation=operation, priority=priority, suboperation=suboperation)
+  
+  def natural_key(self):
+    return (self.operation, self.priority, self.suboperation)
+
   def __str__(self):
-    return self.operation.name \
-      + "   " + str(self.priority) \
-      + "   " + self.suboperation.name
+    return ("%s   %s   %s" % (
+      self.operation.name if self.operation else None, 
+      self.priority, 
+      self.suboperation.name if self.suboperation else None
+      ))
 
   class Meta(AuditModel.Meta):
     db_table = 'suboperation'
     ordering = ['operation', 'priority', 'suboperation']
     verbose_name = _('suboperation')
     verbose_name_plural = _('suboperations')
+    unique_together = (('operation', 'priority', 'suboperation'),)
 
 
 class Buffer(AuditModel, HierarchyModel):
@@ -362,6 +382,13 @@ class Buffer(AuditModel, HierarchyModel):
     _('min_interval'), null=True, blank=True,
     help_text=_('Batching window for grouping replenishments in batches')
     )
+
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, item, location):
+      return self.get(item=item, location=location)
+  
+  def natural_key(self):
+    return (self.item, self.location)
 
   def __str__(self):
     return self.name
@@ -420,8 +447,18 @@ class SetupRule(AuditModel):
     help_text=_("Cost of the conversion")
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, setupmatrix, priority):
+      return self.get(setupmatrix=setupmatrix, priority=priority)
+  
+  def natural_key(self):
+    return (self.setupmatrix, self.priority)
+
   def __str__(self):
-    return "%s - %s" % (self.setupmatrix.name, self.priority)
+    return "%s - %s" % (
+      self.setupmatrix.name if self.setupmatrix else None,
+      self.priority
+      )
 
   class Meta(AuditModel.Meta):
     ordering = ['priority']
@@ -547,6 +584,13 @@ class ResourceSkill(AuditModel):
     help_text=_('Priority of this skill in a group of alternates')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, resource, skill):
+      return self.get(resource=resource, skill=skill)
+  
+  def natural_key(self):
+    return (self.resource, self.skill)
+
   class Meta(AuditModel.Meta):
     db_table = 'resourceskill'
     unique_together = (('resource', 'skill'),)
@@ -608,11 +652,27 @@ class OperationMaterial(AuditModel):
     help_text=_('Method to select preferred alternate')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, operation, item, effective_start):
+      return self.get(operation=operation, item=item, effective_start=effective_start)
+  
+  def natural_key(self):
+    return (self.operation, self.item, self.effective_start)
+  
+  objects = Manager()
+  
   def __str__(self):
-    return '%s - %s' % (
-      self.operation.name if self.operation else None,
-      self.item.name if self.item else None
-      )
+    if self.effective_start:
+      return '%s - %s - %s' % (
+        self.operation.name if self.operation else None,
+        self.item.name if self.item else None,
+        self.effective_start
+        )
+    else:
+      return '%s - %s' % (
+        self.operation.name if self.operation else None,
+        self.item.name if self.item else None
+        )
 
   class Meta(AuditModel.Meta):
     db_table = 'operationmaterial'
@@ -669,9 +729,28 @@ class OperationResource(AuditModel):
     help_text=_('Method to select preferred alternate')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, operation, resource, effective_start):
+      return self.get(operation=operation, resource=resource, effective_start=effective_start)
+  
+  def natural_key(self):
+    return (self.operation, self.resource, self.effective_start)
+  
+  objects = Manager()
+  
   def __str__(self):
-    return '%s - %s' % (self.operation.name, self.resource.name)
-
+    if self.effective_start:
+      return '%s - %s - %s' % (
+        self.operation.name if self.operation else None,
+        self.resource.name if self.resource else None,
+        self.effective_start
+        )
+    else:
+      return '%s - %s' % (
+        self.operation.name if self.operation else None,
+        self.resource.name if self.resource else None
+        )
+      
   class Meta(AuditModel.Meta):
     db_table = 'operationresource'
     unique_together = (('operation', 'resource', 'effective_start'),)
@@ -758,6 +837,15 @@ class ItemSupplier(AuditModel):
     help_text=_('Frozen fence for creating new procurements')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, item, location, supplier, effective_start):
+      return self.get(item=item, location=location, supplier=supplier, effective_start=effective_start)
+  
+  def natural_key(self):
+    return (self.item, self.location, self.supplier, self.effective_start)
+  
+  objects = Manager()
+
   def __str__(self):
     return '%s - %s - %s' % (
       self.supplier.name if self.supplier else 'No supplier',
@@ -833,6 +921,15 @@ class ItemDistribution(AuditModel):
     _('fence'), null=True, blank=True,
     help_text=_('Frozen fence for creating new shipments')
     )
+
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, item, location, origin, effective_start):
+      return self.get(item=item, location=location, origin=origin, effective_start=effective_start)
+  
+  def natural_key(self):
+    return (self.item, self.location, self.origin, self.effective_start)
+  
+  objects = Manager()
 
   def __str__(self):
     return '%s - %s - %s' % (
@@ -946,7 +1043,7 @@ class OperationPlan(AuditModel):
 
   # Database fields
   # Common fields
-  id = models.IntegerField(
+  id = models.AutoField(
     _('identifier'), primary_key=True,
     help_text=_('Unique identifier of an operationplan')
     )
@@ -1022,6 +1119,18 @@ class OperationPlan(AuditModel):
     blank=True, db_index=True
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, reference):
+      # Note: we are not enforcing the uniqueness of this natural key in the database
+      return self.get(reference=reference)
+  
+  def natural_key(self):
+    return (self.reference)
+  
+  objects = Manager()
+
+  natural_key = ('reference',)
+  
   def __str__(self):
     return str(self.id)
 
@@ -1069,14 +1178,27 @@ class OperationPlanResource(AuditModel):
     help_text=_('Status of the OperationPlanResource')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, operationplan, resource):
+      # Note: we are not enforcing the uniqueness of this natural key in the database
+      return self.get(operationplan=operationplan, resource=resource)
+  
+  def natural_key(self):
+    return (self.operationplan, self.resource)
+  
+  objects = Manager()
+
   def __str__(self):
       return "%s %s %s %s" % (self.resource, self.startdate, self.enddate, self.status)
 
+  natural_key = ('operationplan', 'resource')
+  
   class Meta:
     db_table = 'operationplanresource'
     ordering = ['resource', 'startdate']
     verbose_name = _('operationplan resource')
     verbose_name_plural = _('operationplan resources')
+    
 
 
 class OperationPlanMaterial(AuditModel):
@@ -1099,19 +1221,29 @@ class OperationPlanMaterial(AuditModel):
     help_text=_('Status of the OperationPlanMaterial')
     )
 
+  class Manager(MultiDBManager):
+    def get_by_natural_key(self, operationplan, buffer):
+      # Note: we are not enforcing the uniqueness of this natural key in the database
+      return self.get(operationplan=operationplan, buffer=buffer)
+  
+  def natural_key(self):
+    return (self.operationplan, self.buffer)
+
   def __str__(self):
     return "%s %s %s %s" % (self.buffer, self.flowdate, self.quantity, self.status)
 
+  natural_key = ('operationplan', 'resource')
+  
   class Meta:
     db_table = 'operationplanmaterial'
     ordering = ['buffer', 'flowdate']
     verbose_name = _('operationplan material')
     verbose_name_plural = _('operationplan materials')
-
+    
 
 class DistributionOrder(OperationPlan):
 
-  class DistributionOrderManager(models.Manager):
+  class DistributionOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
       return super(DistributionOrder.DistributionOrderManager, self).get_queryset() \
@@ -1133,7 +1265,7 @@ class DistributionOrder(OperationPlan):
 
 class PurchaseOrder(OperationPlan):
 
-  class PurchaseOrderManager(models.Manager):
+  class PurchaseOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
       return super(PurchaseOrder.PurchaseOrderManager, self).get_queryset() \
@@ -1156,7 +1288,7 @@ class PurchaseOrder(OperationPlan):
 
 class ManufacturingOrder(OperationPlan):
 
-  class ManufacturingOrderManager(models.Manager):
+  class ManufacturingOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
       return super(ManufacturingOrder.ManufacturingOrderManager, self).get_queryset() \

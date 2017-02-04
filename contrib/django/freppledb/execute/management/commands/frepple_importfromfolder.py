@@ -315,7 +315,11 @@ class Command(BaseCommand):
                 form = UploadForm(d, instance=it)
               except model.DoesNotExist:
                 form = UploadForm(d)
-                it = None                
+                it = None  
+              except model.MultipleObjectsReturned:
+                print('%s Error: Row %s: Key fields not unique' % (datetime.now(), rownumber), file=self.logfile)
+                errorcount += 1
+                continue
             else:
               # No primary key required for this model
               form = UploadForm(d)

@@ -1495,11 +1495,18 @@ class GridReport(View):
                 for x in natural_key:
                   key.append(d.get(x, None))
                 # Try to find an existing record using the natural key
-                it = reportclass.model.objects.get_by_natural_key(*key)              
+                it = reportclass.model.objects.get_by_natural_key(*key)
                 form = UploadForm(d, instance=it)
               except reportclass.model.DoesNotExist:
                 form = UploadForm(d)
                 it = None
+              except reportclass.model.MultipleObjectsReturned:
+                yield force_text(
+                  _('Row %(rownum)s: %(message)s') % {
+                    'rownum': rownumber, 'message': force_text(_(
+                      'Key fields not unique'))
+                  }) + '\n '
+                continue
             else:
               # No primary key required for this model
               form = UploadForm(d)
@@ -2408,7 +2415,14 @@ def importWorkbook(request):
                 form = uploadform(d, instance=it)
               except model.DoesNotExist:
                 form = uploadform(d)
-                it = None                             
+                it = None      
+              except model.MultipleObjectsReturned:
+                yield force_text(
+                  _('Row %(rownum)s: %(message)s') % {
+                    'rownum': rownum, 'message': force_text(_(
+                      'Key fields not unique'))
+                  }) + '\n '
+                continue
             else:
               # No primary key required for this model
               form = uploadform(d)

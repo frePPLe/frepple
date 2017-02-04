@@ -18,10 +18,10 @@
 import os
 
 from django.conf import settings
-from django.core import management, serializers
+from django.core import management
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Sum, Count, Q
-from django.test import TransactionTestCase, TestCase
+from django.test import TransactionTestCase
 from django.test.utils import override_settings
 
 import freppledb.output as output
@@ -131,38 +131,38 @@ class execute_multidb(TransactionTestCase):
     self.assertNotEqual(count2, count1new)
 
 
-class FixtureTest(TestCase):
+class FixtureTest(TransactionTestCase):
 
-  def setUp(self):
-    self.fixture_dir = os.path.join(settings.FREPPLE_APP, 'freppledb', 'input', 'fixtures')
-
-  def test_fixture_small_demo(self):
-    try:
-      full_path = os.path.join(self.fixture_dir, 'demo.json')
-      objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects:
-        True
-    except Exception as e:
-      self.fail("Invalid fixture: %s" % e)
-
+  def test_fixture_demo(self):
+    self.assertEqual(common.models.Bucket.objects.count(), 0)
+    management.call_command('loaddata', "demo.json", verbosity=0)
+    self.assertGreater(common.models.Bucket.objects.count(), 0)
+    
   def test_fixture_jobshop(self):
-    try:
-      full_path = os.path.join(self.fixture_dir, 'jobshop.json')
-      objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects:
-        True
-    except Exception as e:
-      self.fail("Invalid fixture: %s" % e)
+    self.assertEqual(common.models.Bucket.objects.count(), 0)
+    management.call_command('loaddata', "jobshop.json", verbosity=0)
+    self.assertGreater(common.models.Bucket.objects.count(), 0)
 
   def test_fixture_unicode_test(self):
-    try:
-      full_path = os.path.join(self.fixture_dir, 'unicode_test.json')
-      objects = serializers.deserialize("json", open(full_path, 'r'))
-      for obj in objects:
-        True
-    except Exception as e:
-      self.fail("Invalid fixture: %s" % e)
+    self.assertEqual(common.models.Bucket.objects.count(), 0)
+    management.call_command('loaddata', "unicode_test.json", verbosity=0)
+    self.assertGreater(common.models.Bucket.objects.count(), 0)
 
+  def test_fixture_parameter_test(self):
+    self.assertEqual(common.models.Parameter.objects.count(), 0)
+    management.call_command('loaddata', "parameters.json", verbosity=0)
+    self.assertGreater(common.models.Parameter.objects.count(), 0)
+
+  def test_fixture_dates_test(self):
+    self.assertEqual(common.models.Bucket.objects.count(), 0)
+    management.call_command('loaddata', "dates.json", verbosity=0)
+    self.assertGreater(common.models.Bucket.objects.count(), 0)
+
+  def test_fixture_flow_line_test(self):
+    self.assertEqual(common.models.Bucket.objects.count(), 0)
+    management.call_command('loaddata', "flow_line.json", verbosity=0)
+    self.assertGreater(common.models.Bucket.objects.count(), 0)
+    
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_simulation(TransactionTestCase):

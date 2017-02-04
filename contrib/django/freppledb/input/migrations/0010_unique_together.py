@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
     ),
     migrations.AlterUniqueTogether(
       name='calendarbucket',
-      unique_together=set([('calendar', 'startdate', 'enddate')]),
+      unique_together=set([('calendar', 'startdate', 'enddate', 'priority')]),
     ),
     migrations.AlterUniqueTogether(
       name='suboperation',

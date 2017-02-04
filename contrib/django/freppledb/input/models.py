@@ -99,11 +99,13 @@ class CalendarBucket(AuditModel):
   endtime = models.TimeField(_('end time'), blank=True, null=True, default=time(23, 59, 59))
 
   class Manager(MultiDBManager):
-    def get_by_natural_key(self, calendar, startdate, enddate):
-      return self.get(calendar=calendar, startdate=startdate, enddate=enddate)
+    def get_by_natural_key(self, calendar, startdate, enddate, priority):
+      return self.get(
+        calendar=calendar, startdate=startdate, enddate=enddate, priority=priority
+        )
   
   def natural_key(self):
-    return (self.calendar, self.startdate, self.enddate)
+    return (self.calendar, self.startdate, self.enddate, self.priority)
   
   objects = Manager()
 
@@ -115,7 +117,7 @@ class CalendarBucket(AuditModel):
     db_table = 'calendarbucket'
     verbose_name = _('calendar bucket')
     verbose_name_plural = _('calendar buckets')
-    unique_together = (('calendar', 'startdate', 'enddate'),)
+    unique_together = (('calendar', 'startdate', 'enddate', 'priority'),)
 
 
 class Location(AuditModel, HierarchyModel):

@@ -20,7 +20,7 @@ import freppledb.input.models
 
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
 
-from rest_framework.serializers import ModelSerializer
+from freppledb.common.api.serializers import ModelSerializer
 
 
 class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
@@ -349,7 +349,7 @@ class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.OperationMaterial
-      fields = ('id', 'operation', 'quantity', 'type', 'effective_start', 'effective_end',
+      fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
                 'name', 'priority', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
@@ -358,7 +358,7 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
 class OperationMaterialAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
-    filter_fields = ('id', 'operation', 'quantity', 'type', 'effective_start', 'effective_end',
+    filter_fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
                 'name', 'priority', 'search', 'source', 'lastmodified')
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):

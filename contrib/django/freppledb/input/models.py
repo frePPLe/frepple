@@ -321,6 +321,8 @@ class SubOperation(AuditModel):
   def natural_key(self):
     return (self.operation, self.priority, self.suboperation)
 
+  objects = Manager()
+  
   def __str__(self):
     return ("%s   %s   %s" % (
       self.operation.name if self.operation else None, 
@@ -392,6 +394,8 @@ class Buffer(AuditModel, HierarchyModel):
   def natural_key(self):
     return (self.item, self.location)
 
+  objects = Manager()
+  
   def __str__(self):
     return self.name
 
@@ -456,6 +460,8 @@ class SetupRule(AuditModel):
   def natural_key(self):
     return (self.setupmatrix, self.priority)
 
+  objects = Manager()
+  
   def __str__(self):
     return "%s - %s" % (
       self.setupmatrix.name if self.setupmatrix else None,
@@ -592,6 +598,8 @@ class ResourceSkill(AuditModel):
   
   def natural_key(self):
     return (self.resource, self.skill)
+
+  objects = Manager()
 
   class Meta(AuditModel.Meta):
     db_table = 'resourceskill'
@@ -1230,7 +1238,9 @@ class OperationPlanMaterial(AuditModel):
   
   def natural_key(self):
     return (self.operationplan, self.buffer)
-
+  
+  objects = Manager()
+  
   def __str__(self):
     return "%s %s %s %s" % (self.buffer, self.flowdate, self.quantity, self.status)
 
@@ -1313,7 +1323,7 @@ class ManufacturingOrder(OperationPlan):
 
 class DeliveryOrder(OperationPlan):
 
-  class DeliveryOrderManager(models.Manager):
+  class DeliveryOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
       return super(DeliveryOrder.DeliveryOrderManager, self).get_queryset() \

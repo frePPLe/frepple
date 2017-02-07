@@ -16,13 +16,12 @@
 #
 
 from rest_framework_bulk.serializers import BulkListSerializer, BulkSerializerMixin
-from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 
-from rest_framework.serializers import ModelSerializer
+from freppledb.common.api.serializers import ModelSerializer
 from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieveUpdateDestroyAPIView
 
 import freppledb.common.models
-from rest_framework import filters
+
 
 class BucketSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:

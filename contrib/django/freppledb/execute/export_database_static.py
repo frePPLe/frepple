@@ -320,7 +320,7 @@ class exportStaticModel(object):
             self.timestamp, i.operation.name, i.buffer.item.name, i.effective_start
           )
           for i in flows(self.source)
-          if (i.operation.name, i.buffer.name) in primary_keys
+          if (i.operation.name, i.buffer.name, i.effective_start) in primary_keys
         ])
       print('Exported operation materials in %.2f seconds' % (time() - starttime))
 

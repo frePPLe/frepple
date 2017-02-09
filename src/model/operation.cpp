@@ -1621,11 +1621,11 @@ double Operation::setOperationPlanQuantity
   else
   {
     // All others respect constraints
-    double curmin;
+    double curmin = 0.0;
     if (getSizeMinimumCalendar())
       // Minimum varies over time
       curmin = getSizeMinimumCalendar()->getValue(end ? end : oplan->getDates().getEnd());
-    else
+    if (curmin < getSizeMinimum())
       // Minimum is constant
       curmin = getSizeMinimum();    
     if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR)

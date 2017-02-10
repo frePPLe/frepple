@@ -410,7 +410,7 @@ void SolverMRP::solve(const Resource* res, void* v)
       ++iterations;
     }
     while (HasOverload && newDate && iterations < MAX_LOOP);
-    if (iterations)
+    if (iterations >= MAX_LOOP)
       logger << indent(res->getLevel()) << "   Warning: no free capacity slot found after " << MAX_LOOP << " iterations" << endl;
     data->state->q_loadplan = old_q_loadplan;
 

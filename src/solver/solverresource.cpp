@@ -309,6 +309,7 @@ void SolverMRP::solve(const Resource* res, void* v)
 
     // Loop to find a later date where the operationplan will fit
     Date newDate;
+    auto iterations = 0;
     do
     {
       // Search for a date where we go below the maximum load.
@@ -406,8 +407,11 @@ void SolverMRP::solve(const Resource* res, void* v)
           // have any up-time after the specified date.
           break;
       }
+      ++iterations;
     }
-    while (HasOverload && newDate);
+    while (HasOverload && newDate && iterations < MAX_LOOP);
+    if (iterations)
+      logger << indent(res->getLevel()) << "   Warning: no free capacity slot found after " << MAX_LOOP << " iterations" << endl;
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen

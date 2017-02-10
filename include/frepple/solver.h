@@ -368,6 +368,9 @@ class SolverMRP : public Solver
       */
     static const short FENCE = 8;
 
+    /** Used internally to avoid inefficient loops. */
+    static const unsigned short MAX_LOOP = 500;
+
     int getCluster() const
     {
       return cluster;

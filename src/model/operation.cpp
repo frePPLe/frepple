@@ -613,7 +613,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters
       if (q < curmin)
         q = curmin;
     }
-    else if (q < getSizeMinimum())
+    if (q < getSizeMinimum())
       // Minimum size is constant over time
       q = getSizeMinimum();
   }
@@ -761,7 +761,7 @@ OperationTimePer::setOperationPlanParameters
   {
     if (getSizeMinimumCalendar())
     {
-      // Minimum varies over time.
+      // Respect time varying minimum.
       // This configuration is not really supported: when the size changes
       // a different minimum size could be effective. The planning results
       // in a constrained plan can be not optimal or incorrect.
@@ -771,8 +771,8 @@ OperationTimePer::setOperationPlanParameters
       if (q < curmin)
         q = curmin;
     }
-    else if (q < getSizeMinimum())
-      // Minimum is constant over time
+    if (q < getSizeMinimum())
+      // Respect constant minimum value
       q = getSizeMinimum();
   }
   if (q > getSizeMaximum())
@@ -1617,6 +1617,12 @@ double Operation::setOperationPlanQuantity
         oplan->update();
     }
     return f;
+  }
+  else if (fabs(f - oplan->quantity) < ROUNDING_ERROR)
+  {
+    // No real change
+    if (!execute)
+      return oplan->quantity;
   }
   else
   {

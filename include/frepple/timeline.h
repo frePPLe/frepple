@@ -103,6 +103,13 @@ template <class type> class TimeLine
           return next ? (next->dt != dt) : true;
         }
 
+        /** Return true if there is no other event at the same date. */
+        inline bool isOnlyEventOnDate() const
+        {
+          return (!next || next->getDate() != getDate())
+            && (!prev || prev->getDate() != getDate());
+        }
+
         /** Return the onhand before this date. */
         inline double getOnhandBeforeDate() const
         {

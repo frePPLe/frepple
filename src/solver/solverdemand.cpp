@@ -303,7 +303,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 					  // Oops, we didn't get a proper answer we can use for the next loop.
 					  // Print a warning and simply try one day later.
 					  if (loglevel > 0)
-						  logger << "Warning: Demand '" << l << "': Lazy retry" << endl;
+						  logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
 					  plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
 				  }
 				  else

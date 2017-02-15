@@ -513,3 +513,13 @@ def getDashboard(parser, token):
   return DashboardNode(tokens[2], tokens[3])
 
 register.tag('getDashboard', getDashboard)
+
+#
+# A tag to return a setting.
+#
+
+@register.assignment_tag
+def setting(key):
+  return getattr(settings, key)
+
+setting.is_safe = True

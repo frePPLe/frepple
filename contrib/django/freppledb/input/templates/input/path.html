@@ -64,40 +64,18 @@ var minlevel = 0;
 var maxlevel = 0;
 
 
-function clickedShaped(event)
+function clickedShaped(d)
 {
+  var result = '';
 
-  // Analyze where we have clicked
-  var type = $(this).children("use").prop("href").baseVal;
-  var tgt = $(this).children("text").prop('textContent');
-  if (tgt === undefined) return;
+  if (typeof(d) === undefined || typeof(d) ==='') return;
+  if (d.hasOwnProperty('type') && (d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
+    return; //don't show links for non existing operations
+  } else {
+    var result = escape('/detail/input/'+d.type+'/'+d.name+'/');
+  }
 
-  // Find which contextmenu to use
-  if (type == '#alternate' || type == '#split' || type == '#routing')
-    type = '#operation';
-  var contextMenu = $(type + 'context');
-
-  // Find the id of the menu to display.
-  name_escaped = admin_escape(tgt);
-
-  // Build the URLs for the menu
-  var params = {value: name_escaped};
-  contextMenu.find('a').each( function() {
-    $(this).attr('href', $(this).attr('id').replace(/{\w+}/g, function(match, number) {
-    var key = match.substring(1,match.length-1);
-    return key in params ? params[key] : match;
-    }
-    ))
-  });
-
-  // Display the menu at the right location
-  $(contextMenu).css({
-    left: d3.event.pageX,
-    top: d3.event.pageY,
-    display: 'block'
-    });
-  d3.event.preventDefault();
-  d3.event.stopImmediatePropagation();
+  window.open(result, "_self");
 }
 
 
@@ -150,7 +128,6 @@ function tick(e)
        + 'L' + d.target.x + ',' + d.target.y;
   });
 }
-
 
 function drawGraph(jsondata)
 {
@@ -308,7 +285,7 @@ function drawGraph(jsondata)
   shapes = shapes.data(nodes, function(d) { return d.id; });
 
   // Add new nodes
-  var g = shapes.enter().append('svg:g').on('click', clickedShaped);
+  var g = shapes.enter().append('svg:g').on('click', function(d) {clickedShaped(d);});
   g.append("svg:use")
     .attr("xlink:href", function(d) { return "#" + d.type; })
     .attr("transform", function(d) {
@@ -400,7 +377,7 @@ ExpandColClick: true,
 {% block before_table %}
 <div class="row" id="graphrow" style="min-height: 100px; text-align: center;">
 <div id="graph" class="col-md-12" style="min-height: 100px; clear: both; height: 345px; overflow: hidden;">
-<svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet">
+<svg id="svggraph" width="100%" preserveAspectRatio="xMinYMin meet" style="cursor: move;">
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
     <polygon points="0,-5 10,0 0,5" style="fill: #000;">
@@ -435,4 +412,3 @@ ExpandColClick: true,
 </div><span id="graph-resize-handle" class="fa fa-bars handle"></span>
 </div>
 {% endblock %}
-

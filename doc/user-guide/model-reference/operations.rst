@@ -74,7 +74,8 @@ size_minimum_calendar  calendar          | A calendar to define the minimum size
                                            when this value varies over time. The end date of the
                                            operationplan determines which date we use as lookup in the
                                            calendar.
-                                         | If this field is used, the size_minimum field is ignored.
+                                         | If both the size_minimum and size_minimum_calendar are 
+                                           specified, we use the highest value.
 size_multiple          positive double   A lotsize quantity for operationplans.
 size_maximum           positive double   | The maximum quantity for operationplans.
                                          | Note that this value limits the size of individual

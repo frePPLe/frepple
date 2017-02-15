@@ -19,14 +19,14 @@ import jwt
 import re
 import threading
 
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import login
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
-from django.http import Http404
-from django.conf import settings
+from django.http import HttpResponseNotFound
 
 from freppledb.common.models import Scenario, User
 
@@ -134,28 +134,49 @@ class MultiDBMiddleware(object):
     - is_superuser
   """
   def process_request(self, request):
-    request.user = auth.get_user(request)
-    if not request.user or request.user.is_anonymous():
-      return
-    default_scenario = None
-    for i in request.user.scenarios:
-      if i.name == DEFAULT_DB_ALIAS:
-        default_scenario = i
-      try:
-        if settings.DATABASES[i.name]['regexp'].match(request.path):
-          request.prefix = '/%s' % i.name
-          request.path_info = request.path_info[len(request.prefix):]
-          request.path = request.path[len(request.prefix):]
-          request.database = i.name
-          request.scenario = i
-          request.user._state.db = i.name
-          request.user.is_superuser = i.is_superuser
-          return
-      except:
-        pass
-    request.prefix = ''
-    request.database = DEFAULT_DB_ALIAS
-    if default_scenario:
-      request.scenario = default_scenario
-    else:      
-      request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+    request.user = auth.get_user(request)    
+    if not hasattr(request.user, 'scenarios'):
+      # A scenario list is not available on the request
+      for i in settings.DATABASES:
+        try:
+          if settings.DATABASES[i]['regexp'].match(request.path):
+            scenario = Scenario.objects.get(name=i)
+            if scenario.status != 'In use':
+              print ('boom')
+              return HttpResponseNotFound('Scenario not in use') 
+            request.prefix = '/%s' % i
+            request.path_info = request.path_info[len(request.prefix):]
+            request.path = request.path[len(request.prefix):]
+            request.database = i
+            return
+        except Exception as e:
+          print(e)
+          pass
+      request.prefix = ''
+      request.database = DEFAULT_DB_ALIAS
+    else:
+      # A list of scenarios is already available
+      if not request.user or request.user.is_anonymous():
+        return
+      default_scenario = None
+      for i in request.user.scenarios:
+        if i.name == DEFAULT_DB_ALIAS:
+          default_scenario = i
+        try:
+          if settings.DATABASES[i.name]['regexp'].match(request.path):
+            request.prefix = '/%s' % i.name
+            request.path_info = request.path_info[len(request.prefix):]
+            request.path = request.path[len(request.prefix):]
+            request.database = i.name
+            request.scenario = i
+            request.user._state.db = i.name
+            request.user.is_superuser = i.is_superuser
+            return
+        except:
+          pass
+      request.prefix = ''
+      request.database = DEFAULT_DB_ALIAS
+      if default_scenario:
+        request.scenario = default_scenario
+      else:      
+        request.scenario = Scenario(name=DEFAULT_DB_ALIAS)

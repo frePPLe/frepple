@@ -350,7 +350,8 @@
       <location name="factory"/>
       <duration>P7D</duration>
       <size_multiple>1</size_multiple>
-      <size_minimum>100</size_minimum>  <!-- Ignored because there is a calendar! -->
+	  <!-- We use the max between this constant and time varying minimum -->
+      <size_minimum>1</size_minimum>
       <size_minimum_calendar name="4. ROQ calendar">
         <default>10</default>
         <buckets>
@@ -584,7 +585,8 @@
       <location name="factory"/>
       <duration>P7D</duration>
       <size_multiple>1</size_multiple>
-      <size_minimum>100</size_minimum>  <!-- Ignored because there is a calendar! -->
+	  <!-- We use the max between this constant and time varying minimum -->
+      <size_minimum>20</size_minimum>
       <size_minimum_calendar name="5. ROQ calendar">
         <default>50</default>
         <buckets>

@@ -97,6 +97,37 @@ template <class type> class TimeLine
           return oh;
         }
 
+        /** Verify whether the next event is on the same date or not. */
+        inline bool isLastOnDate() const
+        {
+          return next ? (next->dt != dt) : true;
+        }
+
+        /** Return true if there is no other event at the same date. */
+        inline bool isOnlyEventOnDate() const
+        {
+          return (!next || next->getDate() != getDate())
+            && (!prev || prev->getDate() != getDate());
+        }
+
+        /** Return the onhand before this date. */
+        inline double getOnhandBeforeDate() const
+        {
+          const Event *tmp = this;
+          while (tmp->prev && tmp->prev->dt == dt)
+             tmp = tmp->prev;
+          return tmp ? tmp->oh : 0;
+        }
+        
+        /** Return the onhand after this date. */
+        inline double getOnhandAfterDate() const
+        {
+          const Event *tmp = this;
+          while (tmp->next && tmp->next->dt == dt)
+            tmp = tmp->next;
+          return tmp ? tmp->oh : oh;
+        }
+
         /** Return the total produced quantity till the current date. */
         inline double getCumulativeProduced() const
         {

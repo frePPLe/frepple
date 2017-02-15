@@ -26,8 +26,7 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.boot import getAttributeFields
-from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
-from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, OperationPlan, DeliveryOrder
+from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, DeliveryOrder
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 

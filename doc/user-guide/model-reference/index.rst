@@ -11,7 +11,8 @@ a high level overview of the model objects and their relationships.
    :maxdepth: 2
 
    domain-model
-   parameters
+   buckets
+   business-rule
    buffers
    calendars
    customers
@@ -28,7 +29,9 @@ a high level overview of the model objects and their relationships.
    operation-resources
    operationplan-materials
    operationplan-resources
+   parameters
    purchase-orders
+   segment
    suboperations
    resources
    resource-skills
@@ -36,4 +39,4 @@ a high level overview of the model objects and their relationships.
    setup-matrices
    skills
    suppliers
-   buckets
+

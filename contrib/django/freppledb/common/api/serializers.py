@@ -63,12 +63,8 @@ class ModelSerializer(DefaultModelSerializer):
       i for i in self.validators
       if not isinstance(i, UniqueTogetherValidator) or not i.fields == self.natural_key
       ]
-
-  #def update(self, instance, validated_data):    
-  #  x = super().update(instance, validated_data)
-  #  print ('update', instance, validated_data, x, self.context)
-  #  return x
-
+      
+      
   def create(self, validated_data):
     
     if self.pk in validated_data or not self.natural_key:

@@ -44,7 +44,11 @@ class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
   filter_backends = (filters.DjangoFilterBackend,)
 
   def get_queryset(self):
-      return super().get_queryset().using(self.request.database)
+    return super().get_queryset().using(self.request.database)
+
+  def get_serializer(self, *args, **kwargs):
+    kwargs['partial'] = True
+    return super().get_serializer(*args, **kwargs)
 
   def allow_bulk_destroy(self, qs, filtered):
     # Safety check to prevent deleting all records in the database table

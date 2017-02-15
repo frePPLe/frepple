@@ -328,12 +328,12 @@ jQuery.extend($.fn.fmatter, {
     var minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
     var seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
     if (days > 0)
-      return days + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + seconds;
+      return days + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     if (hours > 0)
-      return hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + seconds;
+      return hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     if (minutes > 0)
-      return minutes + ((seconds < 10) ? ":0" : ":") + seconds;
-    return seconds;
+      return minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+    return seconds.toFixed(3);
   },
 
   detail : function(cellvalue, options, rowdata) {

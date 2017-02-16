@@ -93,18 +93,18 @@ class execute_multidb(TransactionTestCase):
 
     # Check count in both databases
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
+    input.models.OperationPlanMaterial.objects.all().using(db2).delete()
     count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertGreater(count1, 140)
     self.assertEqual(count2, 0)
-
     # Erase second database
     count1 = input.models.Demand.objects.all().using(db1).count()
     management.call_command('frepple_flush', database=db2)
     count1new = input.models.Demand.objects.all().using(db1).count()
+    input.models.Demand.objects.all().using(db2).delete()
     count2 = input.models.Demand.objects.all().using(db2).count()
     self.assertEqual(count1new, count1)
     self.assertEqual(count2, 0)
-
     # Copy the db1 into db2.
     # We need to close the transactions, since they can block the copy
     transaction.commit(using=db1)
@@ -113,13 +113,11 @@ class execute_multidb(TransactionTestCase):
     count1 = input.models.OperationPlan.objects.all().filter(type='PO').using(db1).count()
     count2 = input.models.OperationPlan.objects.all().filter(type='PO').using(db2).count()
     self.assertEqual(count1, count2)
-
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply', database=db1)
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     self.assertNotEqual(count1, 0)
-
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan
@@ -137,7 +135,7 @@ class FixtureTest(TransactionTestCase):
     self.assertEqual(common.models.Bucket.objects.count(), 0)
     management.call_command('loaddata', "demo.json", verbosity=0)
     self.assertGreater(common.models.Bucket.objects.count(), 0)
-    
+
   def test_fixture_jobshop(self):
     self.assertEqual(common.models.Bucket.objects.count(), 0)
     management.call_command('loaddata', "jobshop.json", verbosity=0)

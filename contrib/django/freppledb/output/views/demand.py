@@ -83,23 +83,26 @@ class OverviewReport(GridPivot):
       select items.name, coalesce(req.qty, 0) - coalesce(pln.qty, 0)
       from (%s) items
       left outer join (
-        select item_id, sum(quantity) qty
+        select parent.name, sum(quantity) qty
         from demand
+        inner join item on demand.item_id = item.name
+        inner join item parent on item.lft between parent.lft and parent.rght
         where status in ('open', 'quote')
         and due < %%s
-        group by item_id
+        group by parent.name
         ) req
-      on req.item_id = items.name
+      on req.name = items.name
       left outer join (
-        select demand.item_id, sum(operationplan.quantity) qty
+        select parent.name, sum(operationplan.quantity) qty
         from operationplan
-        inner join demand
-        on operationplan.demand_id = demand.name
-        and operationplan.owner_id is null
-        and operationplan.enddate < %%s
-        group by demand.item_id
+        inner join demand on operationplan.demand_id = demand.name        
+          and operationplan.owner_id is null
+          and operationplan.enddate < %%s
+        inner join item on demand.item_id = item.name
+        inner join item parent on item.lft between parent.lft and parent.rght
+        group by parent.name
         ) pln
-      on pln.item_id = items.name
+      on pln.name = items.name
       ''' % basesql
     cursor.execute(query, baseparams + (request.report_startdate, request.report_startdate))
     for row in cursor.fetchall():
@@ -132,15 +135,13 @@ class OverviewReport(GridPivot):
           inner join item
           on item.lft between items.lft and items.rght
           -- Planned quantity
-          left outer join demand
-          on item.name = demand.item_id
           left outer join operationplan
-          on demand.name = operationplan.demand_id
+          on operationplan.type = 'DLVR'
+          and operationplan.item_id = item.name
           and d.startdate <= operationplan.enddate
           and d.enddate > operationplan.enddate
           and operationplan.enddate >= %%s
           and operationplan.enddate < %%s
-          and operationplan.owner_id is null
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x
@@ -199,7 +200,6 @@ class DetailReport(GridReport):
   template = 'output/demandplan.html'
   title = _("Demand plan detail")
   model = DeliveryOrder
-  basequeryset = DeliveryOrder.objects.all()
   permissions = (("view_demand_report", "Can view demand report"),)
   frozenColumns = 0
   editable = False
@@ -218,6 +218,20 @@ class DetailReport(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldDateTime('due', field_name='demand__due', title=_('due date'), editable=False),
     )
+  
+  @ classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if args and args[0]:
+      try:
+        itm = Item.objects.all().using(request.database).get(name=args[0])
+        lft = itm.lft
+        rght = itm.rght
+      except Item.DoesNotExist:
+        lft = 1
+        rght = 1
+      return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
+    else:
+      return DeliveryOrder.objects.all()
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):

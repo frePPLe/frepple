@@ -135,15 +135,13 @@ class OverviewReport(GridPivot):
           inner join item
           on item.lft between items.lft and items.rght
           -- Planned quantity
-          left outer join demand
-          on item.name = demand.item_id
           left outer join operationplan
-          on demand.name = operationplan.demand_id
+          on operationplan.type = 'DLVR'
+          and operationplan.item_id = item.name
           and d.startdate <= operationplan.enddate
           and d.enddate > operationplan.enddate
           and operationplan.enddate >= %%s
           and operationplan.enddate < %%s
-          and operationplan.owner_id is null
           -- Grouping
           group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
         ) x

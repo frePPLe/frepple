@@ -26,12 +26,16 @@ from freppledb.input.models import Calendar, Operation
 
 
 menu.addItem(
-  "inventory", "locations", url="/data/input/location/",
-  report=freppledb.input.views.LocationList, index=1100, model=Location
+  "inventory", "distribution orders", url="/data/input/distributionorder/",
+  report=freppledb.input.views.DistributionOrderList, index=50, model=DistributionOrder
   )
 menu.addItem(
   "inventory", "buffer admin", url="/data/input/buffer/",
   report=freppledb.input.views.BufferList, index=1200, model=Buffer
+  )
+menu.addItem(
+  "inventory", "item distributions", url="/data/input/itemdistribution/",
+  report=freppledb.input.views.ItemDistributionList, index=1300, model=ItemDistribution
   )
 menu.addItem(
   "sales", "demand", url="/data/input/demand/",
@@ -40,6 +44,10 @@ menu.addItem(
 menu.addItem(
   "sales", "item", url="/data/input/item/",
   report=freppledb.input.views.ItemList, index=1100, model=Item
+  )
+menu.addItem(
+  "sales", "locations", url="/data/input/location/",
+  report=freppledb.input.views.LocationList, index=1150, model=Location
   )
 menu.addItem(
   "sales", "customer", url="/data/input/customer/",
@@ -72,14 +80,6 @@ menu.addItem(
 menu.addItem(
   "capacity", "setup matrices", url="/data/input/setupmatrix/",
   report=freppledb.input.views.SetupMatrixList, index=1400, model=SetupMatrix
-  )
-menu.addItem(
-  "distribution", "distribution orders", url="/data/input/distributionorder/",
-  report=freppledb.input.views.DistributionOrderList, index=100, model=DistributionOrder
-  )
-menu.addItem(
-  "distribution", "item distributions", url="/data/input/itemdistribution/",
-  report=freppledb.input.views.ItemDistributionList, index=1100, model=ItemDistribution
   )
 menu.addItem(
   "manufacturing", "manufacturing orders", url="/data/input/manufacturingorder/",

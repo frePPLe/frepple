@@ -44,8 +44,8 @@ class execute_with_commands(TransactionTestCase):
 
   def test_exportimportfromfolder(self):
 
-    # Run frePPLe on the test database.
-    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    # Run frePPLe on the test database. No longer needed because records are already in the fixture, in Enterprise conficts with webservice
+    #management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
 
     self.assertTrue(input.models.ManufacturingOrder.objects.count() > 30)
     self.assertTrue(input.models.PurchaseOrder.objects.count() > 20)
@@ -70,4 +70,3 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(input.models.DistributionOrder.objects.count(), countDO)
     self.assertEqual(input.models.PurchaseOrder.objects.count(), countPO)
     self.assertEqual(input.models.ManufacturingOrder.objects.count(), countMO)
-

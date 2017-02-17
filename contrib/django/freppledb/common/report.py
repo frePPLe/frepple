@@ -272,6 +272,20 @@ class GridFieldChoice(GridField):
     self.extra = string_concat(*e)
 
 
+class GridFieldBoolNullable(GridFieldChoice):
+  width = 60
+
+  def __init__(self, name, **kwargs):
+    kwargs['choices'] = (
+      ('', ''),
+      #. Translators: Translation included with Django
+      ('False', _('Yes')),
+      #. Translators: Translation included with Django
+      ('True', _('No'))
+      )
+    super().__init__(name, **kwargs)
+
+
 class GridFieldCurrency(GridField):
   formatter = 'currency'
   extra = '"formatoptions":{"prefix":"%s", "suffix":"%s", "defaultValue":""}' % settings.CURRENCY

@@ -16,8 +16,8 @@
 #
 
 import base64
-import http.client
-from urllib.parse import urlparse
+from urllib.error import URLError
+from urllib.request import urlopen, Request
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,33 +29,31 @@ def get_data(url, host, user, password, method='GET', headers=None, xmldoc=''):
   '''
   # Connect to Openbravo
   if not url or not host or not user or not password:
-    raise Exception("Invalid configuration")
-  full_url = urlparse("%s%s" % (host, url))
-  if full_url.scheme == 'https':
-    webservice = http.client.HTTPSConnection(host=full_url.netloc)
+    raise Exception("Invalid configuration")  
+
+  # Prepare HTTP(S) request  
+  if xmldoc:
+    data = xmldoc.encode(encoding='utf_8')
   else:
-    webservice = http.client.HTTPConnection(host=full_url.netloc)
-  if full_url.query:
-    webservice.putrequest(method, "%s?%s" % (full_url.path, full_url.query))
-  else:
-    webservice.putrequest(method, full_url.path)
-  webservice.putheader("Host", full_url.netloc)
-  webservice.putheader("User-Agent", "frePPLe-Openbravo connector")
-  webservice.putheader("Content-type", 'text/xml; charset=\"UTF-8\"')
-  webservice.putheader("Content-length", "%s" % len(xmldoc))
+    data = None 
+  req = Request("%s%s" % (host, url), method=method, data=data)
+  req.add_header("User-Agent", "frePPLe-Openbravo connector")
+  req.add_header("Content-type", 'text/xml; charset=\"UTF-8\"')
+  if xmldoc:
+    req.add_header("Content-length", "%s" % len(xmldoc))
   encoded = base64.encodestring(('%s:%s' % (user, password)).encode('utf-8'))[:-1]
-  webservice.putheader("Authorization", "Basic %s" % encoded.decode('ascii'))
+  req.add_header("Authorization", "Basic %s" % encoded.decode('ascii'))
   if headers:
     for key, value in headers.items():
-      webservice.putheader(key, "%s" % value)
-  webservice.endheaders()
-  webservice.send(xmldoc.encode(encoding='utf_8'))
-
-  # Get the Openbravo response
-  response = webservice.getresponse()
-  result = response.read().decode("utf-8")
-  if response.status != http.client.OK:
+      req.add_header(key, "%s" % value)
+      
+  # Send the request and read the response
+  result = None
+  try:
+    with urlopen(req, data) as response:
+      return response.read().decode("utf-8")
+  except URLError as e:
     logger.error("Failed %s connection to %s%s" % (method, host, url))
-    logger.error(result)
-    raise Exception(response.reason)
-  return result
+    if result:
+      logger.error(result)
+    raise e

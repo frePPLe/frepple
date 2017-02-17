@@ -814,6 +814,8 @@ class Command(BaseCommand):
         lineNo = elem.find("lineNo").text
         unique_name = "%s %s %s" % (organization, documentno, lineNo)
         tmp = elem.find("scheduledDeliveryDate").text
+        if not tmp:
+          tmp =  elem.find("orderDate").text
         if tmp:
           scheduledDeliveryDate = datetime.strptime(tmp, '%Y-%m-%dT%H:%M:%S.%fZ')
         else:

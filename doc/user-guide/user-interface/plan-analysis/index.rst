@@ -7,7 +7,7 @@ This series of screens is used to review the planning results.
 .. toctree::
    :maxdepth: 2
 
-   distribution-planning
+   inventory-planning
    forecast-editor
    plan-editor
    supply-path-where-used

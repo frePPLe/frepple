@@ -1,12 +1,12 @@
 ============================
-Distribution planning screen
+Inventory planning screen
 ============================
 
 .. Important::
 
    This module is only available in the Enterprise Edition.
 
-The distribution planning screen is designed for distribution-intensive
+The inventory planning screen is designed for inventory-intensive
 planning problems. It provides a one-stop screen from which the user
 can conveniently perform the following actions:
 
@@ -37,7 +37,7 @@ can conveniently perform the following actions:
     | See the documentation of the inventory planning module to understand each
       parameter.
 
-    .. image:: ../_images/distribution-planning-forecast.png
+    .. image:: ../_images/inventory-planning-forecast.png
 
     |
 
@@ -51,7 +51,7 @@ can conveniently perform the following actions:
       button to immediately see the updated inventory plan and replenishment
       transactions.
 
-    .. image:: ../_images/distribution-planning-plan.png
+    .. image:: ../_images/inventory-planning-plan.png
 
     |
 
@@ -67,14 +67,14 @@ can conveniently perform the following actions:
       the planner to immediately export the transaction immediately towards 
       the ERP system.
 
-    .. image:: ../_images/distribution-planning-transactions.png
+    .. image:: ../_images/inventory-planning-transactions.png
 
     |
 
   - | A next tab shows **free-text comments** on the item, location and
       item-location. New comments can be added.
 
-    .. image:: ../_images/distribution-planning-comments.png
+    .. image:: ../_images/inventory-planning-comments.png
 
     |
 
@@ -82,4 +82,4 @@ can conveniently perform the following actions:
   - | The last tab shows the **editing history** of the item, location and
       item-location.
 
-    .. image:: ../_images/distribution-planning-history.png
+    .. image:: ../_images/inventory-planning-history.png

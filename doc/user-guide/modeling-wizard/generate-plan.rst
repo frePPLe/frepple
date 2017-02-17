@@ -45,13 +45,13 @@ The forecast calculated by the forecast solver is displayed in the forecast repo
 and in the forecast editor.
 
 The ROQ and safety stock values calculated by the inventory planning solver can be 
-found in the DRP screen under Distribution/Distribution planning menu.
+found in the Inventory Planning screen under Inventory/Inventory Planning menu.
 
-The generated distribution orders (when applicable) can be found under the Distribution/Distribution orders menu.
+The generated distribution orders (when applicable) can be found under the Inventory/Distribution Orders menu.
 
-The generated manufacturing orders (when applicable) can be found under the Manufacturing/Manufacturing orders menu.
+The generated manufacturing orders (when applicable) can be found under the Manufacturing/Manufacturing Orders menu.
 
-The generated purchase orders (when applicable) can be found under the Purchasing/Purchase orders menu.
+The generated purchase orders (when applicable) can be found under the Purchasing/Purchase Orders menu.
 
 Note that all the generated orders (purchase, distribution and manufacturing) will have status equal to "proposed" 
 as they still have to be approved by the planner to be sent to your ERP system.

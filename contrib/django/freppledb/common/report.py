@@ -1230,6 +1230,7 @@ class GridReport(View):
                 continue              
               ok = False
               for i in reportclass.model._meta.fields:
+                # Try with translated field names
                 if col == i.name.lower() or col == i.verbose_name.lower():
                   if i.editable is True:
                     headers.append(i)
@@ -1238,6 +1239,16 @@ class GridReport(View):
                   required_fields.discard(i.name)
                   ok = True
                   break
+                # Try with English field names
+                with translation.override('en'):
+                  if col == i.name.lower() or col == i.verbose_name.lower():
+                    if i.editable is True:
+                      headers.append(i)
+                    else:
+                      headers.append(False)
+                    required_fields.discard(i.name)
+                    ok = True
+                    break               
               if not ok:
                 headers.append(False)
                 yield force_text(_('Skipping field %(column)s') % {'column': col}) + '\n '
@@ -1421,6 +1432,7 @@ class GridReport(View):
               continue            
             ok = False                                    
             for i in reportclass.model._meta.fields:
+              # Try with translated field names            
               if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
                 if i.editable is True:
                   headers.append(i)
@@ -1429,6 +1441,16 @@ class GridReport(View):
                 required_fields.discard(i.name)
                 ok = True
                 break
+              # Try with English field names
+              with translation.override('en'):
+                if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
+                  if i.editable is True:
+                    headers.append(i)
+                  else:
+                    headers.append(False)
+                  required_fields.discard(i.name)
+                  ok = True
+                  break
             if not ok:
               headers.append(False)
               yield force_text(_('Skipping unknown field %(column)s') % {'column': col}) + '\n '
@@ -2281,10 +2303,17 @@ def importWorkbook(request):
       model = None
       contenttype_id = None
       for m, ct in all_models:
+        # Try with translated model names
         if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
           model = m
           contenttype_id = ct
           break
+        # Try with English model names
+        with translation.override('en'):
+          if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+            model = m
+            contenttype_id = ct
+            break
       if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
         yield force_text(_("Ignoring data in worksheet: %s") % ws_name) + '\n'
       elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
@@ -2339,6 +2368,7 @@ def importWorkbook(request):
               else:
                 value = value.lower()              
               for i in model._meta.fields:
+                # Try with translated field names
                 if value == i.name.lower() or value == i.verbose_name.lower():
                   if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
                     headers.append(i)                    
@@ -2347,7 +2377,18 @@ def importWorkbook(request):
                   required_fields.discard(i.name)
                   ok = True
                   break
+                # Try with English field names
+                with translation.override('en'):
+                  if value == i.name.lower() or value == i.verbose_name.lower():
+                    if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
+                      headers.append(i)                    
+                    else:
+                      headers.append(False)
+                    required_fields.discard(i.name)
+                    ok = True
+                    break                
               if not ok:
+                headers.append(False)
                 yield force_text(string_concat(
                   model._meta.verbose_name, ': ', _('Skipping unknown field %(column)s') % {'column': value}
                   )) + '\n'

@@ -27,11 +27,10 @@ from django.test.utils import override_settings
 import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
-
+from freppledb.common.models import Parameter
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_with_commands(TransactionTestCase):
-
   fixtures = ["demo"]
 
   def setUp(self):
@@ -75,6 +74,9 @@ class execute_multidb(TransactionTestCase):
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
+    param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
+    param.value = 'false'
+    param.save()
 
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
@@ -160,7 +162,7 @@ class FixtureTest(TransactionTestCase):
     self.assertEqual(common.models.Bucket.objects.count(), 0)
     management.call_command('loaddata', "flow_line.json", verbosity=0)
     self.assertGreater(common.models.Bucket.objects.count(), 0)
-    
+
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_simulation(TransactionTestCase):
@@ -170,6 +172,9 @@ class execute_simulation(TransactionTestCase):
   def setUp(self):
     # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
+    param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
+    param.value = 'true'
+    param.save()
 
   def tearDown(self):
     del os.environ['FREPPLE_TEST']

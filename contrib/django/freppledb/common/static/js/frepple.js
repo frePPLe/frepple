@@ -292,48 +292,59 @@ jQuery.extend($.fn.fmatter, {
     return cellvalue + "%";
   },
   duration : function(cellvalue, options, rowdata) {
+    var days = 0;
+    var hours = 0;
+    var minutes =0;
+    var seconds = 0;
+    var sign = 1;
+    var d = [];
+    var t = [];
+
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (typeof cellvalue === "number")
-      var seconds = cellvalue;
-    else {
-      var d = cellvalue.split(" ");
+    if (typeof cellvalue === "number") {
+      seconds = cellvalue;
+      sign = Math.sign(seconds);
+    } else {
+      sign = (cellvalue.indexOf('-') > -1)?-1:1;
+      d = cellvalues.replace(/ +/g, " ").split(" ");
       if (d.length == 1)
       {
-        var t = cellvalue.split(":");
-        var days = 0;
+        t = cellvalue.split(":");
+        days = 0;
       }
       else
       {
-        var t = d[1].split(":");
-        var days = (d[0]!='' ? parseFloat(d[0]) : 0);
+        t = d[1].split(":");
+        days = (d[0]!='' ? parseFloat(d[0]) : 0);
       }
       switch (t.length)
       {
         case 0: // Days only
-          var seconds = days * 86400;
+          seconds = Math.abs(days) * 86400;
           break;
         case 1: // Days, seconds
-          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0);
+          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0);
           break;
-        case 2: // Days, hours and seconds
-          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
+        case 2: // Days, minutes and seconds
+          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
           break;
         default:
           // Days, hours, minutes, seconds
-          var seconds = days * 86400 + (t[0]!='' ? parseFloat(t[0]) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
       }
     }
-    var days   = Math.floor(seconds / 86400);
-    var hours   = Math.floor((seconds - (days * 86400)) / 3600);
-    var minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
-    var seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+    seconds = Math.abs(seconds); //remove the sign
+    days = Math.floor(seconds / 86400);
+    hours = Math.floor((seconds - (days * 86400)) / 3600);
+    minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
+    seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
     if (days > 0)
-      return days + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+      return (sign*days).toString() + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     if (hours > 0)
-      return hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+      return (sign*hours).toString() + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     if (minutes > 0)
-      return minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
-    return seconds.toFixed(3);
+      return (sign*minutes).toString() + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+    return (sign*seconds).toFixed(3);
   },
 
   detail : function(cellvalue, options, rowdata) {

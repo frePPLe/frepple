@@ -306,7 +306,7 @@ jQuery.extend($.fn.fmatter, {
       sign = Math.sign(seconds);
     } else {
       sign = (cellvalue.indexOf('-') > -1)?-1:1;
-      d = cellvalues.replace(/ +/g, " ").split(" ");
+      d = cellvalue.replace(/ +/g, " ").split(" ");
       if (d.length == 1)
       {
         t = cellvalue.split(":");

@@ -15,18 +15,23 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime
 import json
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import HttpResponse, Http404
 from django.db.models.fields import CharField
+from django.http import HttpResponse, Http404
+from django.http.response import StreamingHttpResponse, HttpResponseServerError
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 from django.utils.translation import string_concat
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
+from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix
@@ -35,12 +40,15 @@ from freppledb.input.models import Item, OperationResource, OperationMaterial
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
 from freppledb.input.models import ItemDistribution, DistributionOrder, PurchaseOrder
-from freppledb.input.models import OperationPlan
+from freppledb.input.models import OperationPlan, OperationPlanMaterial, OperationPlanResource
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
 from freppledb.common.report import GridFieldChoice, GridFieldDuration
 from freppledb.admin import data_site
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 @staff_member_required
@@ -1399,3 +1407,189 @@ class PurchaseOrderList(GridReport):
       for f in getAttributeFields(Supplier, related_name_prefix="supplier"):
         f.editable = False
         reportclass.rows += (f,)
+
+
+class OperationPlanDetail(View):
+  
+  def getData(self, request):
+    
+    # Read the results from the database
+    ids = request.GET.getlist('id')
+    first = True
+    if not ids:
+      yield "[]"
+      raise StopIteration
+    try:
+      opplans = [ x for x in OperationPlan.objects.all().using(request.database).filter(id__in=ids).select_related("operation") ]
+      opplanmats = [ x for x in OperationPlanMaterial.objects.all().using(request.database).filter(operationplan__id__in=ids).values() ]
+      opplanrscs = [ x for x in OperationPlanResource.objects.all().using(request.database).filter(operationplan__id__in=ids).values() ]
+    except Exception as e:
+      logger.error("Error retrieving operationplan data: %s" % e)
+      yield "[]"
+      raise StopIteration
+    
+    # Store my permissions
+    view_PO = request.user.has_perm("input.view_purchaseorder")
+    view_MO = request.user.has_perm("input.view_manufacturingorder")
+    view_DO = request.user.has_perm("input.view_distributionorder")
+    view_OpplanMaterial = request.user.has_perm("input.view_operationplanmaterial")
+    view_OpplanResource = request.user.has_perm("input.view_operationplanresource")
+    
+    # Loop over all operationplans
+    for opplan in opplans:
+      
+      # Check permissions
+      if opplan.type == "DO" and not view_DO:
+        continue
+      if opplan.type == "PO" and not view_PO:
+        continue
+      if opplan.type == "MO" and not view_MO:
+        continue
+         
+      try:
+        # Base information      
+        res = {
+           "id": opplan.id,
+           "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
+           "end": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
+           "quantity": float(opplan.quantity),
+           "criticality": float(opplan.criticality),
+           "delay": opplan.delay.total_seconds()
+           }
+        if opplan.reference:
+          res['reference'] = opplan.reference
+        if opplan.operation:
+          res['operation'] = {
+            "name": opplan.operation.name,
+            "type": "operation_%s" % opplan.operation.type
+            }
+         
+        # Information on materials
+        if view_OpplanMaterial:
+          firstmat = True
+          for m in opplanmats:
+            if m['operationplan_id'] != opplan.id:
+              continue
+            if firstmat:
+              firstmat = False
+              res['flowplans'] = []
+            res['flowplans'].append({
+              "date": m['flowdate'].strftime("%Y-%m-%dT%H:%M:%S"),
+              "quantity": float(m['quantity']),
+              "onhand": float(m['onhand']),
+              "buffer": {
+                "name": m['buffer']
+                }
+              })
+  
+          # Information on resources
+          if view_OpplanResource:
+            firstres = True
+            for m in opplanrscs:
+              if m['operationplan_id'] != opplan.id:
+                continue
+              if firstres:
+                firstres = False
+                res['loadplans'] = []
+              res['loadplans'].append({
+                "date": m['startdate'].strftime("%Y-%m-%dT%H:%M:%S"),
+                "quantity": float(m['quantity']),
+                "resource": {
+                  "name": m['resource']
+                  }
+                })
+       
+        # Final result
+        if first:
+          yield "[%s" % json.dumps(res)
+          first = False
+        else:
+          yield ',%s' % json.dumps(res)
+      except Exception as e:
+        # Ignore exceptions and move on
+        logger.error("Error retrieving operationplan: %s" % e)
+      yield "]"
+
+
+  @method_decorator(csrf_exempt)
+  def dispatch(self, request, *args, **kwargs):
+      return super().dispatch(request, *args, **kwargs)
+
+
+  @method_decorator(staff_member_required)
+  def get(self, request):
+    # Only accept ajax requests on this URL
+    if not request.is_ajax():
+      raise Http404('Only ajax requests allowed')
+    
+    # Stream back the response
+    response = StreamingHttpResponse(
+      content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET,
+      streaming_content=self.getData(request)
+      )
+    response['Cache-Control'] = "no-cache, no-store"
+    return response
+    
+    
+  @method_decorator(staff_member_required)
+  def post(self, request):
+    # Only accept ajax requests on this URL
+    if not request.is_ajax():
+      raise Http404('Only ajax requests allowed')
+
+    # Parse the posted data
+    try:
+      data = json.JSONDecoder().decode(request.read().decode(request.encoding or settings.DEFAULT_CHARSET))
+    except Exception as e:
+      logger.error("Error updating operationplan data: %s" % e)
+      return HttpResponseServerError("Error updating operationplan data", content_type='text/html')
+    
+    update_PO = request.user.has_perm("input.change_purchaseorder")
+    update_MO = request.user.has_perm("input.change_manufacturingorder")
+    update_DO = request.user.has_perm("input.change_distributionorder")
+
+    for opplan_data in data:
+      try:
+        # Read the object from the database
+        opplan = OperationPlan.objects.all().using(request.database).get(id=opplan_data.get('id', None))
+
+        # Check permissions
+        if opplan.type == "DO" and not update_DO:
+          continue
+        if opplan.type == "PO" and not update_PO:
+          continue
+        if opplan.type == "MO" and not update_MO:
+          continue
+
+        # Update fields
+        save = False
+        if "start" in opplan_data:
+          # Update start date          
+          opplan.startdate = datetime.strptime(opplan_data['start'], "%Y-%m-%dT%H:%M:%S")
+          save = True
+        if "end" in opplan_data:
+          # Update end date
+          opplan.enddate = datetime.strptime(opplan_data['end'], "%Y-%m-%dT%H:%M:%S")
+          save = True
+        if "quantity" in opplan_data:
+          # Update quantity
+          opplan.quantity = opplan_data['quantity']
+          save = True
+        if "reference" in opplan_data:
+          # Update reference
+          opplan.reference = opplan_data['reference']
+          save = True
+        
+        # Save if changed
+        if save:
+          opplan.save(
+            using=request.database,
+            update_fields=["startdate", "enddate", "quantity", "reference", "lastmodified"]
+            )
+      except OperationPlan.DoesNotExist:
+        # Silently ignore
+        pass
+      except Exception as e:
+        # Swallow the exception and move on
+        logger.error("Error updating operationplan: %s" % e)          
+    return HttpResponse(content="OK")    

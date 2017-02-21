@@ -60,6 +60,7 @@ urlpatterns = patterns(
   url(r'^supplypath/operation/(.+)/$', freppledb.input.views.UpstreamOperationPath.as_view(), name="supplypath_operation"),
   url(r'^whereused/operation/(.+)/$', freppledb.input.views.DownstreamOperationPath.as_view(), name="whereused_operation"),
   url(r'^search/$', freppledb.input.views.search, name="search"),
+  url(r'^operationplan/$', freppledb.input.views.OperationPlanDetail.as_view(), name="operationplandetail"),
 
   # REST API framework
   (r'^api/input/buffer/$', freppledb.input.serializers.BufferAPI.as_view()),

@@ -1169,7 +1169,8 @@ class OperationPlanResource(AuditModel):
   # Database fields
   resource = models.CharField(_('resource'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
-    OperationPlan, verbose_name=_('operationplan'), db_index=True
+    OperationPlan, verbose_name=_('operationplan'), db_index=True,
+    related_name="resources"
     )
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=6)
   startdate = models.DateTimeField(_('startdate'), db_index=True)
@@ -1213,7 +1214,8 @@ class OperationPlanMaterial(AuditModel):
   # Database fields
   buffer = models.CharField(_('buffer'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
-    OperationPlan, verbose_name=_('operationplan'), db_index=True
+    OperationPlan, verbose_name=_('operationplan'), db_index=True,
+    related_name="materials"
     )
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=6)
   flowdate = models.DateTimeField(_('date'), db_index=True)

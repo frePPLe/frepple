@@ -170,19 +170,15 @@ int Environment::getProcessorCores()
   // Previously detected already
   if (processorcores >= 1) return processorcores;
 
-  // Detect the number of cores on the machine
-#ifdef WIN32
-  // Windows
-  SYSTEM_INFO sysinfo;
-  GetSystemInfo(&sysinfo);
-  processorcores = sysinfo.dwNumberOfProcessors;
-#else
-  // Linux, Solaris and AIX.
-  // Tough luck for other platforms.
-  processorcores = sysconf(_SC_NPROCESSORS_ONLN);
-#endif
-  // Detection failed...
-  if (processorcores<1) processorcores = 1;
+  char *envvar = getenv("FREPPLE_CPU");
+  if (envvar)
+    // Environment variable overrides the default (if it is a valid number)
+    processorcores = atoi(envvar);
+  if (processorcores < 0)
+    // Autodetect the number of cores on your machine
+    processorcores = thread::hardware_concurrency();
+  if (processorcores < 1) 
+    processorcores = 1;
   return processorcores;
 }
 

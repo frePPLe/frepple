@@ -133,6 +133,7 @@ using namespace std;
 #endif
 
 // Header for multithreading
+#include <thread>
 #if defined(HAVE_PTHREAD_H)
 #include <pthread.h>
 #elif defined(WIN32)

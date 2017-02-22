@@ -1114,7 +1114,7 @@ class OperationPlan(AuditModel):
     )
   due = models.DateTimeField(
     _('due'), help_text=_('Due date of the demand/forecast'),
-    null=True, blank=True
+    null=True, blank=True, editable=False
     )
   name = models.CharField(
     _('name'), max_length=1000, null=True, 
@@ -1306,7 +1306,10 @@ class ManufacturingOrder(OperationPlan):
 
   def save(self, *args, **kwargs):
     self.type = 'MO'
-    self.supplier = self.item = self.location = self.origin = self.destination = None
+    self.supplier = self.origin = self.destination = None
+    if self.operation:
+      self.item = self.operation.item
+      self.location = self.operation.location     
     super(ManufacturingOrder, self).save(*args, **kwargs)
 
   class Meta:
@@ -1329,7 +1332,10 @@ class DeliveryOrder(OperationPlan):
 
   def save(self, *args, **kwargs):
     self.type = 'DLVR'
-    self.supplier = self.item = self.location = self.origin = self.destination = self.operation = self.owner = None
+    self.supplier = self.origin = self.destination = self.operation = self.owner = None
+    if self.demand:
+      self.item = self.demand.item
+      self.location = self.demand.location
     super(DeliveryOrder, self).save(*args, **kwargs)
 
   class Meta:

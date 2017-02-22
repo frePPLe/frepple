@@ -452,7 +452,7 @@ class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.DeliveryOrder
-      fields = ('id', 'reference', 'status', 'demand', 'forecast', 'item', 'location', 'quantity',
+      fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
                 'startdate', 'enddate', 'due', 'delay', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
@@ -462,7 +462,7 @@ class DeliveryOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.DeliveryOrder.objects.all()
     serializer_class = DeliveryOrderSerializer
 
-    filter_fields = ('id', 'reference', 'status', 'demand', 'forecast', 'item', 'location', 'quantity',
+    filter_fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
                 'startdate', 'enddate', 'due', 'delay', 'source', 'lastmodified')
 
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):

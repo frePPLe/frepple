@@ -216,17 +216,17 @@ class DetailReport(GridReport):
 
   rows = (
     #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
+    GridFieldInteger('id', title=_('internal id'), key=True, editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra='"role":"input/buffer"'),
-    GridFieldInteger('operationplan__id', title=_('id'), editable=False),    
+    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),    
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra='"role":"input/operation"'),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),
-    GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
     GridFieldText('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
+    GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     )

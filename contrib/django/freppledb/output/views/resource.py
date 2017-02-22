@@ -226,7 +226,7 @@ class DetailReport(GridReport):
   title = _("Resource detail report")
   model = OperationPlanResource
   permissions = (("view_resource_report", "Can view resource report"),)
-  frozenColumns = 0
+  frozenColumns = 3
   editable = False
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/resource-detail-report.html'
@@ -263,16 +263,19 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title='internal id', key=True, editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra='"role":"input/resource"'),
-    GridFieldInteger('operationplan__id', title=_('id'), editable=False),    
+    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),    
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
-    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
+    GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('operationplan__operation__location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra='"role":"input/operation"'),
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
-    GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
-    GridFieldText('pegging', title=_('demand quantity'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
-    GridFieldNumber('quantity', title=_('load quantity'), editable=False),
+    GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False),
+    GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False),
-    GridFieldBool('operationplan__status', title=_('status'), editable=False),
+    GridFieldNumber('operationplan__delay', title=_('delay'), editable=False),
+    GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
+    GridFieldNumber('quantity', title=_('load quantity'), editable=False),    
     GridFieldText('setup', title=_('setup'), editable=False),
     )

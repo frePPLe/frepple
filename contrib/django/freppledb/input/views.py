@@ -1092,7 +1092,7 @@ class ManufacturingOrderList(GridReport):
   title = _("manufacturing orders")
   basequeryset = ManufacturingOrder.objects.all()
   model = ManufacturingOrder
-  frozenColumns = 1
+  frozenColumns = 2
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html'
 
   @ classmethod
@@ -1106,23 +1106,23 @@ class ManufacturingOrderList(GridReport):
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
+    GridFieldText('operation__item__name', title=_('item'), formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('operation__location__name', title=_('location'), formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus),
-    GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
+    GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True),
     GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True),
     GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True),
     GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True),
-    GridFieldText('operation__item__name', title=string_concat(_('operation'), ' - ', _('item')), formatter='detail', extra='"role":"input/item"', initially_hidden=True),
-    GridFieldText('operation__location__name', title=string_concat(_('operation'), ' - ', _('location')), formatter='detail', extra='"role":"input/location"', initially_hidden=True),
     GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True),
     GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True),
     GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True),
@@ -1176,7 +1176,7 @@ class DistributionOrderList(GridReport):
   title = _("distribution orders")
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
-  frozenColumns = 1
+  frozenColumns = 2
   help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
 
   @ classmethod
@@ -1191,21 +1191,21 @@ class DistributionOrderList(GridReport):
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus,
-      editable='freppledb.openbravo' not in settings.INSTALLED_APPS
-      ),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('destination', title=_('destination'), field_name='destination__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus,
+      editable='freppledb.openbravo' not in settings.INSTALLED_APPS
+      ),
     GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')),
       editable=False),
     GridFieldCurrency('total_price', title=_('total price'), editable=False),
-    GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
+    GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
@@ -1298,7 +1298,7 @@ class PurchaseOrderList(GridReport):
   title = _("purchase orders")
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
-  frozenColumns = 1
+  frozenColumns = 2
   help_url = 'user-guide/modeling-wizard/purchasing/purchase-orders.html'
 
   @ classmethod
@@ -1313,20 +1313,20 @@ class PurchaseOrderList(GridReport):
     GridFieldText('reference', title=_('reference'),
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldChoice('status', title=_('status'),
-      choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
-      ),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('supplier', title=_('supplier'), field_name='supplier__name', formatter='detail', extra='"role":"input/supplier"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldChoice('status', title=_('status'),
+      choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
+      ),
     GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')), editable=False),
     GridFieldCurrency('total_price', title=_('total price'), editable=False),
-    GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
+    GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item

@@ -15,6 +15,7 @@
 #
 
 from freppledb.menu import menu
+from freppledb.input.models import DeliveryOrder
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
 import freppledb.output.views.problem
@@ -25,7 +26,7 @@ import freppledb.output.views.kpi
 
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
 menu.addItem("sales", "demand report", url="/demand/", report=freppledb.output.views.demand.OverviewReport, index=200)
-menu.addItem("sales", "demand detail report", url="/demandplan/", report=freppledb.output.views.demand.DetailReport, index=300)
+menu.addItem("sales", "demand detail report", url="/demandplan/", report=freppledb.output.views.demand.DetailReport, index=300, model=DeliveryOrder)
 menu.addItem("sales", "problem report", url="/problem/?entity=demand", report=freppledb.output.views.problem.Report, index=400)
 menu.addItem("sales", "constraint report", url="/constraint/", report=freppledb.output.views.constraint.BaseReport, index=500)
 menu.addItem("admin", "kpi report", url="/kpi/", report=freppledb.output.views.kpi.Report, index=200)

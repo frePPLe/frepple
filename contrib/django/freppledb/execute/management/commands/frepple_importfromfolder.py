@@ -19,6 +19,7 @@ import os
 import csv
 import codecs
 from datetime import datetime
+import gzip
 from optparse import make_option
 
 from django.conf import settings
@@ -119,7 +120,7 @@ class Command(BaseCommand):
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
         for ifile in os.listdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-          if not ifile.endswith('.csv'):
+          if not ifile.endswith('.csv') and not ifile.endswith('.csv.gz'):
             continue
           filename0 = ifile.split('.')[0]
 
@@ -378,27 +379,32 @@ class Command(BaseCommand):
 
       # Detect the encoding of the data by scanning the BOM.
       # Skip the BOM header if it is found.
-      self.reader = open(datafile,'rb')
+    
+      if datafile.endswith(".gz"):
+        file_open = gzip.open
+      else:
+        file_open = open
+      self.reader = file_open(datafile, 'rb')
       data = self.reader.read(5)
       self.reader.close()
       if data.startswith(codecs.BOM_UTF32_BE):
-        self.reader = open(datafile, "rt", encoding='utf_32_be')
+        self.reader = file_open(datafile, "rt", encoding='utf_32_be')
         self.reader.read(1)
       elif data.startswith(codecs.BOM_UTF32_LE):
-        self.reader = open(datafile, "rt", encoding='utf_32_le')
+        self.reader = file_open(datafile, "rt", encoding='utf_32_le')
         self.reader.read(1)
       elif data.startswith(codecs.BOM_UTF16_BE):
-        self.reader = open(datafile, "rt", encoding='utf_16_be')
+        self.reader = file_open(datafile, "rt", encoding='utf_16_be')
         self.reader.read(1)
       elif data.startswith(codecs.BOM_UTF16_LE):
-        self.reader = open(datafile, "rt", encoding='utf_16_le')
+        self.reader = file_open(datafile, "rt", encoding='utf_16_le')
         self.reader.read(1)
       elif data.startswith(codecs.BOM_UTF8):
-        self.reader = open(datafile, "rt", encoding='utf_8')
+        self.reader = file_open(datafile, "rt", encoding='utf_8')
         self.reader.read(1)
       else:
         # No BOM header found. We assume the data is encoded in the default CSV character set.
-        self.reader = open(datafile, "rt", encoding=settings.CSV_CHARSET)
+        self.reader = file_open(datafile, "rt", encoding=settings.CSV_CHARSET)
 
       # Open the file
       self.csvreader = csv.reader(self.reader, **kwds)

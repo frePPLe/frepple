@@ -1458,14 +1458,14 @@ class OperationPlanDetail(View):
            "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S"),
            "quantity": float(opplan.quantity),
            "criticality": float(opplan.criticality),
-           "delay": opplan.delay.total_seconds()
+           "delay": opplan.delay.total_seconds(),
+           "status": opplan.status,
+           "reference": opplan.reference
            }
         if opplan.plan:
           res["pegging_demand"] = []
           for d, q in opplan.plan.items():
             res["pegging_demand"].append({"demand": {"name": d}, "quantity": q})
-        if opplan.reference:
-          res['reference'] = opplan.reference
         if opplan.operation:
           res['operation'] = {
             "name": opplan.operation.name,
@@ -1583,6 +1583,11 @@ class OperationPlanDetail(View):
           # Update quantity
           opplan.quantity = opplan_data['quantity']
           save = True
+        if "status" in opplan_data:
+          # Status quantity
+          opplan.status = opplan_data['status']
+          save = True
+          
         if "reference" in opplan_data:
           # Update reference
           opplan.reference = opplan_data['reference']

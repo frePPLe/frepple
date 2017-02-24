@@ -1,0 +1,63 @@
+<style>
+#setQuantity.ng-dirty {
+  background: none;
+}
+</style>
+
+<table class="table">
+  <thead>
+    <tr>
+      <td>
+        <b id="thead1" style="text-transform: capitalize;" translate>manufactoring order</b>
+      </td>
+      <td>
+        <b id="thead2" style="text-transform: capitalize;">{{operationplan.operation.name}}</b>
+      </td>
+      <tbody>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>identifier</b></td>
+          <td id="idrow">{{operationplan.id}}</td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>start</b></td>
+          <td id="startrow">
+            <input id="setStart" type="text" size="9" class="vDateField form-control" value="{{operationplan.start|formatdate}}" disabled>
+          </td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>end</b></td>
+          <td id="endrow">
+            <input id="setEnd" type="text" size="9" class="vDateField form-control" value="{{operationplan.end|formatdate}}" disabled>
+          </td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>quantity</b></td>
+          <td id="quantityrow">
+            <input id="setQuantity" class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" ng-change="" disabled>
+          </td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>criticality</b></td>
+          <td id="criticalityrow">{{operationplan.criticality}}</td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>delay</b></td>
+          <td id="delayrow">{{operationplan.delay}}</td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>reference</b></td>
+          <td id="testrow">{{operationplan.reference}}</td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>status</b></td>
+          <td id="statusrow">
+            <div class="btn-group" role="group">
+              <button id="proposedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled" translate>proposed</button>
+              <button id="approvedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled" translate>approved</button>
+              <button id="confirmedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled" translate>confirmed</button>
+              <button id="closedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled" translate>closed</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+</table>

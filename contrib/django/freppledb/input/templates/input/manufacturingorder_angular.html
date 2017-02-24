@@ -1,0 +1,73 @@
+{% extends "admin/base_site_grid.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript" src="{{STATIC_URL}}js/angular.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/angular-websocket.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}common/src/module.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}input/src/module.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/item.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/location.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/customer.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/demand.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/buffer.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/resource.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/operation.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/operationplan.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}input/src/model.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/resourcespanelDrv.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/bufferspanelDrv.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/demandpeggingpanelDrv.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/operationplanpanelDrv.js"></script>
+{# <script type="text/javascript" src="{{STATIC_URL}}js/input-translations.js"></script>#}
+
+<script type="text/javascript">
+  function extraPreference() {
+    return {
+      "height": $("#gbox_grid").height() - 48,
+      "width": $("#fields").width()
+    };
+  }
+
+  var language="{{LANGUAGE_CODE}}";
+  //var preferences="{{preferences|safe}}".replace(/'/g, '"');
+  var version='{% version_short %}';
+  // var itemlist={{itemlist|safe}};
+  // var customerlist={{customerlist|safe}};
+  // var locationlist={{locationlist|safe}};
+
+  $(function() {
+    $("#workarea").css('overflow-x','visible');
+    var resizeoptions={
+      handleSelector: "#resize-handle",
+      resizeWidth: false,
+      resizeHeight: true,
+      onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);}
+    }
+    $("#resize-handle").css({'display':'inline-block'});
+    $("#content-main").resizable({
+      handleSelector: "#resize-handle",
+      resizeWidth: false,
+      resizeHeight: true,
+      onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);},
+      onDragEnd: function (e, $el, opt) {grid.saveColumnConfiguration();}
+    });
+  });
+</script>
+{% endblock %}
+{% block extracontainer %}ng-app="operationplandetailapp"{% endblock %}
+{% block extra_grid %}onSelectRow: function(rowid){angular.element('#controller').scope().displayInfo(rowid);}, {% endblock %}
+
+{# {% block extracontainer %}data-ng-app='frepple.bottomdetail' style="overflow-y: visible;"{% endblock %}#}
+{% block after_table %}
+<div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
+{% endblock %}

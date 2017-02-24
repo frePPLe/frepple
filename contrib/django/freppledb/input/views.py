@@ -284,11 +284,11 @@ class PathReport(GridReport):
       # Avoid showing the same operation twice.
       # This feature is enabled by default. Without it we cannot correctly display
       # supply paths with loops (which are normally a modeling error).
-      # The use of this feature has some drawbacks  a) because it is not intuitive 
+      # The use of this feature has some drawbacks  a) because it is not intuitive
       # to understand where operations are skipped in the path, and b) because
       # the quantity of each occurrence might be different.
       # You may choose can disable this feature by commenting out the next 3 lines.
-      if curoperation in operations: 
+      if curoperation in operations:
         continue
       operations.add(curoperation)
 
@@ -482,16 +482,16 @@ class UpstreamItemPath(PathReport):
               (0, None, itmdist, 1, 0, None, 0, False, itmdist.location.name)
               )
         # Add item locations that can be replenished
-        for itmsup in Operation.objects.using(request.database).filter(          
+        for itmsup in Operation.objects.using(request.database).filter(
           item__lft__lte=it.lft, item__rght__gt=it.lft
           ):
             if itmsup.location.name in locs:
               continue
             locs.add(itmsup.location.name)
-            itmsup.item = it            
+            itmsup.item = it
             result.append(
               (0, None, itmsup, 1, 0, None, 0, False, itmsup.location.name)
-              )        
+              )
         return result
       else:
         # Find the supply path of all buffers of this item
@@ -509,16 +509,16 @@ class UpstreamItemPath(PathReport):
               (0, None, itmdist, 1, 0, None, 0, False, itmdist.location.name)
               )
         # Add item locations that can be replenished
-        for itmsup in Operation.objects.using(request.database).filter(          
+        for itmsup in Operation.objects.using(request.database).filter(
           item__lft__lte=it.lft, item__rght__gt=it.lft
           ):
             if itmsup.location.name in locs:
               continue
             locs.add(itmsup.location.name)
-            itmsup.item = it            
+            itmsup.item = it
             result.append(
               (0, None, itmsup, 1, 0, None, 0, False, itmsup.location.name)
-              )        
+              )
         return result
     except ObjectDoesNotExist:
       raise Http404("item %s doesn't exist" % entity)
@@ -1089,10 +1089,14 @@ class ManufacturingOrderList(GridReport):
   '''
   A list report to show manufacturing orders.
   '''
+  template = 'input/manufacturingorder_angular.html'
   title = _("manufacturing orders")
   basequeryset = ManufacturingOrder.objects.all()
   model = ManufacturingOrder
   frozenColumns = 2
+  multiselect = True
+  editable = True
+  height = 250
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html'
 
   @ classmethod
@@ -1135,7 +1139,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True),
     GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True),
-    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),  
+    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     )
 
@@ -1167,7 +1171,7 @@ class ManufacturingOrderList(GridReport):
       for f in getAttributeFields(Location, related_name_prefix="location"):
         f.editable = False
         reportclass.rows += (f,)
-        
+
 
 class DistributionOrderList(GridReport):
   '''
@@ -1209,7 +1213,7 @@ class DistributionOrderList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
-    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')), 
+    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
       initially_hidden=True, editable=False),
     GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
       initially_hidden=True, editable=False),
@@ -1221,7 +1225,7 @@ class DistributionOrderList(GridReport):
       initially_hidden=True, editable=False),
     GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
       initially_hidden=True, editable=False),
-    # Optional fields referencing the origin location 
+    # Optional fields referencing the origin location
     GridFieldText('origin__description', title=string_concat(_('origin'), ' - ', _('description')),
       initially_hidden=True, editable=False),
     GridFieldText('origin__category', title=string_concat(_('origin'), ' - ', _('category')),
@@ -1229,16 +1233,16 @@ class DistributionOrderList(GridReport):
     GridFieldText('origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
       initially_hidden=True, editable=False),
     GridFieldText('origin__available', title=string_concat(_('origin'), ' - ', _('available')),
-      initially_hidden=True, field_name='origin__available__name', formatter='detail', 
+      initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False),
     GridFieldText('origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
-      initially_hidden=True, field_name='origin__owner__name', formatter='detail', 
+      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False),
     GridFieldText('origin__source', title=string_concat(_('origin'), ' - ', _('source')),
       initially_hidden=True, editable=False),
     GridFieldLastModified('origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),    
-    # Optional fields referencing the destination location 
+      initially_hidden=True, editable=False),
+    # Optional fields referencing the destination location
     GridFieldText('destination__description', title=string_concat(_('destination'), ' - ', _('description')),
       initially_hidden=True, editable=False),
     GridFieldText('destination__category', title=string_concat(_('destination'), ' - ', _('category')),
@@ -1249,12 +1253,12 @@ class DistributionOrderList(GridReport):
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False),
     GridFieldText('destination__owner', title=string_concat(_('destination'), ' - ', _('owner')),
-      initially_hidden=True, field_name='origin__owner__name', formatter='detail', 
+      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False),
     GridFieldText('destination__source', title=string_concat(_('destination'), ' - ', _('source')),
       initially_hidden=True, editable=False),
     GridFieldLastModified('destination__lastmodified', title=string_concat(_('destination'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),    
+      initially_hidden=True, editable=False),
     )
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
@@ -1342,7 +1346,7 @@ class PurchaseOrderList(GridReport):
       initially_hidden=True, editable=False),
     GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
       initially_hidden=True, editable=False),
-    # Optional fields referencing the location 
+    # Optional fields referencing the location
     GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')),
       initially_hidden=True, editable=False),
     GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')),
@@ -1358,7 +1362,7 @@ class PurchaseOrderList(GridReport):
     GridFieldText('location__source', title=string_concat(_('location'), ' - ', _('source')),
       initially_hidden=True, editable=False),
     GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),    
+      initially_hidden=True, editable=False),
     # Optional fields referencing the supplier
     GridFieldText('supplier__description', title=string_concat(_('supplier'), ' - ', _('description')),
       initially_hidden=True, editable=False),
@@ -1372,7 +1376,7 @@ class PurchaseOrderList(GridReport):
     GridFieldText('supplier__source', title=string_concat(_('supplier'), ' - ', _('source')),
       initially_hidden=True, editable=False),
     GridFieldLastModified('supplier__lastmodified', title=string_concat(_('supplier'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),        
+      initially_hidden=True, editable=False),
     )
 
   if 'freppledb.openbravo' in settings.INSTALLED_APPS:
@@ -1410,9 +1414,9 @@ class PurchaseOrderList(GridReport):
 
 
 class OperationPlanDetail(View):
-  
+
   def getData(self, request):
-    
+
     # Read the results from the database
     ids = request.GET.getlist('id')
     first = True
@@ -1427,17 +1431,17 @@ class OperationPlanDetail(View):
       logger.error("Error retrieving operationplan data: %s" % e)
       yield "[]"
       raise StopIteration
-    
+
     # Store my permissions
     view_PO = request.user.has_perm("input.view_purchaseorder")
     view_MO = request.user.has_perm("input.view_manufacturingorder")
     view_DO = request.user.has_perm("input.view_distributionorder")
     view_OpplanMaterial = request.user.has_perm("input.view_operationplanmaterial")
     view_OpplanResource = request.user.has_perm("input.view_operationplanresource")
-    
+
     # Loop over all operationplans
     for opplan in opplans:
-      
+
       # Check permissions
       if opplan.type == "DO" and not view_DO:
         continue
@@ -1445,17 +1449,21 @@ class OperationPlanDetail(View):
         continue
       if opplan.type == "MO" and not view_MO:
         continue
-         
+
       try:
-        # Base information      
+        # Base information
         res = {
            "id": opplan.id,
            "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
-           "end": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
+           "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S"),
            "quantity": float(opplan.quantity),
            "criticality": float(opplan.criticality),
            "delay": opplan.delay.total_seconds()
            }
+        if opplan.plan:
+          res["pegging_demand"] = []
+          for d, q in opplan.plan.items():
+            res["pegging_demand"].append({"demand": {"name": d}, "quantity": q})
         if opplan.reference:
           res['reference'] = opplan.reference
         if opplan.operation:
@@ -1463,7 +1471,7 @@ class OperationPlanDetail(View):
             "name": opplan.operation.name,
             "type": "operation_%s" % opplan.operation.type
             }
-         
+
         # Information on materials
         if view_OpplanMaterial:
           firstmat = True
@@ -1481,7 +1489,7 @@ class OperationPlanDetail(View):
                 "name": m['buffer']
                 }
               })
-  
+
           # Information on resources
           if view_OpplanResource:
             firstres = True
@@ -1498,7 +1506,7 @@ class OperationPlanDetail(View):
                   "name": m['resource']
                   }
                 })
-       
+
         # Final result
         if first:
           yield "[%s" % json.dumps(res)
@@ -1521,7 +1529,7 @@ class OperationPlanDetail(View):
     # Only accept ajax requests on this URL
     if not request.is_ajax():
       raise Http404('Only ajax requests allowed')
-    
+
     # Stream back the response
     response = StreamingHttpResponse(
       content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET,
@@ -1529,8 +1537,8 @@ class OperationPlanDetail(View):
       )
     response['Cache-Control'] = "no-cache, no-store"
     return response
-    
-    
+
+
   @method_decorator(staff_member_required)
   def post(self, request):
     # Only accept ajax requests on this URL
@@ -1543,7 +1551,7 @@ class OperationPlanDetail(View):
     except Exception as e:
       logger.error("Error updating operationplan data: %s" % e)
       return HttpResponseServerError("Error updating operationplan data", content_type='text/html')
-    
+
     update_PO = request.user.has_perm("input.change_purchaseorder")
     update_MO = request.user.has_perm("input.change_manufacturingorder")
     update_DO = request.user.has_perm("input.change_distributionorder")
@@ -1564,7 +1572,7 @@ class OperationPlanDetail(View):
         # Update fields
         save = False
         if "start" in opplan_data:
-          # Update start date          
+          # Update start date
           opplan.startdate = datetime.strptime(opplan_data['start'], "%Y-%m-%dT%H:%M:%S")
           save = True
         if "end" in opplan_data:
@@ -1579,7 +1587,7 @@ class OperationPlanDetail(View):
           # Update reference
           opplan.reference = opplan_data['reference']
           save = True
-        
+
         # Save if changed
         if save:
           opplan.save(
@@ -1591,5 +1599,5 @@ class OperationPlanDetail(View):
         pass
       except Exception as e:
         # Swallow the exception and move on
-        logger.error("Error updating operationplan: %s" % e)          
-    return HttpResponse(content="OK")    
+        logger.error("Error updating operationplan: %s" % e)
+    return HttpResponse(content="OK")

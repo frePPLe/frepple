@@ -57,7 +57,7 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
           if (debug) {
             console.log("Operation get '" + operplan.id + "': ", response.data);
           }
-          operplan.extend(response.data[0]);console.log(operplan);
+          operplan.extend(response.data[0]);
           return operplan;
         }
       );

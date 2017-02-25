@@ -115,7 +115,7 @@ class Command(BaseCommand):
 
         # Open the logfile
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'importfromfolder.log'), "a")
-        print("%s Started import from folder\n" % datetime.now(), file=self.logfile)
+        print("%s Started import from folder\n" % datetime.now(), file=self.logfile, flush=True)
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
@@ -130,14 +130,14 @@ class Command(BaseCommand):
             if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
-              print("%s Matched a model to file: %s" % (datetime.now(),ifile), file=self.logfile)
+              print("%s Matched a model to file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
               break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-            print("%s Ignoring data in file: %s" % (datetime.now(),ifile), file=self.logfile)
+            print("%s Ignoring data in file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
           elif self.user and not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
             # Check permissions
-            print("%s You don't have permissions to add: %s" % (datetime.now(),ifile), file=self.logfile)
+            print("%s You don't have permissions to add: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
           else:
             deps = set([model])
             GridReport.dependent_models(model, deps)
@@ -151,17 +151,17 @@ class Command(BaseCommand):
         cnt = len(models)
         for ifile, model, contenttype_id, dependencies in models:
           i += 1
-          print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile)
-          filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
+          print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
+          filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile, flush=True)
           errors += self.parseCSVloadfromfolder(model, filetoparse)
-          print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile)
+          print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile, flush=True)
           task.status = str(int(10+i/cnt*80))+'%'
           task.save(using=self.database)
 
       else:
         errors += 1
         cnt = 0
-        print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile)
+        print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile, flush=True)
 
       # Task update
       if errors:
@@ -176,7 +176,7 @@ class Command(BaseCommand):
       task.finished = datetime.now()
 
     except Exception as e:
-      print("%s Failed" % datetime.now(), file=self.logfile)
+      print("%s Failed" % datetime.now(), file=self.logfile, flush=True)
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
@@ -191,7 +191,7 @@ class Command(BaseCommand):
       task.finished = datetime.now()
       task.save(using=self.database)
       if self.logfile:
-        print('%s End of import from folder\n' % datetime.now(), file=self.logfile)
+        print('%s End of import from folder\n' % datetime.now(), file=self.logfile, flush=True)
         self.logfile.close()
 
 
@@ -246,14 +246,14 @@ class Command(BaseCommand):
                 break
             if not ok:
               headers.append(False)
-              print('%s Warning: Skipping field %s' % (datetime.now(), col), file=self.logfile)
+              print('%s Warning: Skipping field %s' % (datetime.now(), col), file=self.logfile, flush=True)
             if col == model._meta.pk.name.lower() or \
                col == model._meta.pk.verbose_name.lower():
               has_pk_field = True
           if required_fields:
             # We are missing some required fields
             errors = True
-            print('%s Error: Some keys were missing: %s' % (datetime.now(), ', '.join(required_fields)))
+            print('%s Error: Some keys were missing: %s' % (datetime.now(), ', '.join(required_fields)), file=self.logfile, flush=True)
             errorcount += 1            
           # Abort when there are errors
           if errors:
@@ -318,7 +318,7 @@ class Command(BaseCommand):
                 form = UploadForm(d)
                 it = None  
               except model.MultipleObjectsReturned:
-                print('%s Error: Row %s: Key fields not unique' % (datetime.now(), rownumber), file=self.logfile)
+                print('%s Error: Row %s: Key fields not unique' % (datetime.now(), rownumber), file=self.logfile, flush=True)
                 errorcount += 1
                 continue
             else:
@@ -349,22 +349,22 @@ class Command(BaseCommand):
               except Exception as e:
                 # Validation fails
                 for error in form.non_field_errors():
-                  print('%s Error: Row %s: %s' % (datetime.now(), rownumber, error), file=self.logfile)
+                  print('%s Error: Row %s: %s' % (datetime.now(), rownumber, error), file=self.logfile, flush=True)
                   errorcount += 1
                 for field in form:
                   for error in field.errors:
-                    print('%s Error: Row %s field %s: %s' % (datetime.now(), rownumber, field.name, error), file=self.logfile)
+                    print('%s Error: Row %s field %s: %s' % (datetime.now(), rownumber, field.name, error), file=self.logfile, flush=True)
                     errorcount += 1
 
           except Exception as e:
-            print("%s Error: Exception during upload: %s" % (datetime.now(),e) , file=self.logfile)
+            print("%s Error: Exception during upload: %s" % (datetime.now(),e) , file=self.logfile, flush=True)
             errorcount += 1
 
       # Report all failed records
       if not errors:
-        print('%s Uploaded data successfully: changed %d and added %d records' % (datetime.now(), changed, added), file=self.logfile)
+        print('%s Uploaded data successfully: changed %d and added %d records' % (datetime.now(), changed, added), file=self.logfile, flush=True)
       else:
-        print('%s Error: Invalid data format - skipping the file \n' % datetime.now(), file=self.logfile)
+        print('%s Error: Invalid data format - skipping the file \n' % datetime.now(), file=self.logfile, flush=True)
       return errorcount
 
 

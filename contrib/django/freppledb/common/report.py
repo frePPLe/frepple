@@ -1130,6 +1130,9 @@ class GridReport(View):
             models.append(models.pop(i))
             j = i
             ok = False
+          elif models[i][1] == models[j][1] and models[i][0] > models[j][0]:
+            models.append(models.pop(i))
+            ok = False            
           j += 1
     return models
 

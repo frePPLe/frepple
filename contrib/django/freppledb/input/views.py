@@ -1089,7 +1089,7 @@ class ManufacturingOrderList(GridReport):
   '''
   A list report to show manufacturing orders.
   '''
-  template = 'input/manufacturingorder_angular.html'
+  template = 'input/manufacturingorder.html'
   title = _("manufacturing orders")
   basequeryset = ManufacturingOrder.objects.all()
   model = ManufacturingOrder
@@ -1460,7 +1460,8 @@ class OperationPlanDetail(View):
            "criticality": float(opplan.criticality),
            "delay": opplan.delay.total_seconds(),
            "status": opplan.status,
-           "reference": opplan.reference
+           "reference": opplan.reference,
+           "type": opplan.type
            }
         if opplan.plan:
           res["pegging_demand"] = []

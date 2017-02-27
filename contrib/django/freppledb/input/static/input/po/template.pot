@@ -1,0 +1,89 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:35
+msgid "Continue"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:26
+msgid "Do you want to save your changes first?"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:30
+msgid "Please be patient, the chart may take some time to complete."
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:34
+msgid "Save"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:29
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:56
+msgid "approved"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+msgid "closed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+msgid "confirmed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:40
+msgid "criticality"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:23
+msgid "database transaction failed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:44
+msgid "delay"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:28
+msgid "end"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:22
+msgid "gantt chart rows limit"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
+msgid "identifier"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:11
+msgid "manufacturing order"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:55
+msgid "proposed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:34
+msgid "quantity"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:48
+msgid "reference"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:22
+msgid "start"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:52
+msgid "status"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:21
+msgid "unsaved changes"
+msgstr ""

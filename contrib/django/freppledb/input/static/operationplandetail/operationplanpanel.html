@@ -8,7 +8,7 @@
   <thead>
     <tr>
       <td>
-        <b id="thead1" style="text-transform: capitalize;" translate>manufacturing order</b>
+        <b id="thead1" style="text-transform: capitalize;">{{opptype[operationplan.type]}}&nbsp;</b>
       </td>
       <td>
         <b id="thead2" style="text-transform: capitalize;">{{operationplan.operation.name}}</b>
@@ -17,6 +17,18 @@
         <tr>
           <td><b style="text-transform: capitalize;" translate>identifier</b></td>
           <td id="idrow">{{operationplan.id}}</td>
+        </tr>
+        <tr>
+          <td><b style="text-transform: capitalize;" translate>reference</b></td>
+          <td id="testrow">{{operationplan.reference}}</td>
+        </tr>
+        <tr ng-if="operationplan.type === 'DO'">
+          <td><b style="text-transform: capitalize;" translate>origin</b></td>
+          <td id="testrow">{{operationplan.origin.name}}</td>
+        </tr>
+        <tr ng-if="operationplan.type === 'PO'">
+          <td><b style="text-transform: capitalize;" translate>supplier</b></td>
+          <td id="testrow">{{operationplan.supplier.name}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>start</b></td>
@@ -43,10 +55,6 @@
         <tr>
           <td><b style="text-transform: capitalize;" translate>delay</b></td>
           <td id="delayrow">{{operationplan.delay}}</td>
-        </tr>
-        <tr>
-          <td><b style="text-transform: capitalize;" translate>reference</b></td>
-          <td id="testrow">{{operationplan.reference}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>status</b></td>

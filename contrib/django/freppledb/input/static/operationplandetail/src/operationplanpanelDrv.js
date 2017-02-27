@@ -34,6 +34,12 @@ function showoperationplanDrv($window) {
 
   function linkfunc(scope, elem, attrs) {
     //need to watch all of these because a webservice may change them on the fly
+    scope.opptype={ //just a translation
+      'MO': gettext('Manufacturing Order'),
+      'PO': gettext('Purchase Order'),
+      'DO': gettext('Distribution Order')
+    }
+
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function () {
       if (typeof scope.operationplan !== 'undefined' && Object.keys(scope.operationplan).length > 0) {
 

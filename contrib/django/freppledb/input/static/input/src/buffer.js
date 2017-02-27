@@ -1,33 +1,41 @@
 /*
- * Copyright (C) 2016 by frePPLe bvba
+ * Copyright (C) 2017 by frePPLe bvba
  *
- * All information contained herein is, and remains the property of frePPLe.
- * You are allowed to use and modify the source code, as long as the software is used
- * within your company.
- * You are not allowed to distribute the software, either in the form of source code
- * or in the form of compiled binaries.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 angular.module('frepple.input').factory('Buffer', BufferFactory);
 
 BufferFactory.$inject = ['$http', 'getURLprefix', 'Item', 'Location'];
 
-function BufferFactory ($http, getURLprefix, Item, Location) {  
-  
+function BufferFactory ($http, getURLprefix, Item, Location) {
+
   var debug = false;
-  
+
   function Buffer(data) {
-    if (data) 
+    if (data)
       this.extend(data);
   };
-  
+
   Buffer.prototype = {
     extend: extend,
     get: get,
     save: save,
-    remove: remove 
+    remove: remove
   };
-  
+
   return Buffer;
 
   function extend(data) {
@@ -53,14 +61,14 @@ function BufferFactory ($http, getURLprefix, Item, Location) {
       .get(getURLprefix() + '/api/input/buffer/' + encodeURIComponent(buf.name) + "/")
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Buffer get '" + buf.name + "': ", response.data);
           buf.extend(response.data);
           return buf;
           }
         );
   };
-  
+
   // REST API PUT
   function save() {
     var buf = this;
@@ -68,14 +76,14 @@ function BufferFactory ($http, getURLprefix, Item, Location) {
       .put(getURLprefix() + '/api/input/buffer/' + encodeURIComponent(buf.name) + "/", buf)
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Buffer save '" + buf.name + "': ", response.data);
           buf.extend(response.data);
           return buf;
           }
         );
   };
-  
+
   // REST API DELETE
   function remove() {
     var buf = this;
@@ -83,7 +91,7 @@ function BufferFactory ($http, getURLprefix, Item, Location) {
       .delete(getURLprefix() + '/api/input/buffer/' + encodeURIComponent(buf.name) + "/")
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Buffer delete '" + buf.name + "': ", response.data);
           return buf;
           }

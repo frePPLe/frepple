@@ -1,35 +1,43 @@
 /*
- * Copyright (C) 2016 by frePPLe bvba
+ * Copyright (C) 2017 by frePPLe bvba
  *
- * All information contained herein is, and remains the property of frePPLe.
- * You are allowed to use and modify the source code, as long as the software is used
- * within your company.
- * You are not allowed to distribute the software, either in the form of source code
- * or in the form of compiled binaries.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 angular.module('frepple.input').factory('Resource', ResourceFactory);
 
 ResourceFactory.$inject = ['$http', 'getURLprefix', 'Location'];
 
-function ResourceFactory($http, getURLprefix, Location) {  
-  
+function ResourceFactory($http, getURLprefix, Location) {
+
   var debug = false;
-  
+
   function Resource(data) {
-    if (data) 
+    if (data)
       this.extend(data);
   };
-  
+
   Resource.prototype = {
     extend: extend,
     get: get,
     save: save,
-    remove: remove 
+    remove: remove
   };
-  
+
   return Resource;
-  
+
   function extend(data) {
     angular.forEach(data, function(value, key) {
       switch (key) {
@@ -49,14 +57,14 @@ function ResourceFactory($http, getURLprefix, Location) {
       .get(getURLprefix() + '/api/input/resource/' + encodeURIComponent(res) + "/")
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Resource get '" + res.name + "': ", response.data);
           res.extend(response.data);
           return res;
           }
         );
   };
-  
+
   // REST API PUT
   function save() {
     var res = this;
@@ -64,14 +72,14 @@ function ResourceFactory($http, getURLprefix, Location) {
       .put(getURLprefix() + '/api/input/resource/' + encodeURIComponent(red.name) + "/", res)
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Resource save '" + res.name + "': ", response.data);
           res.extend(response.data);
           return res;
           }
         );
   };
-  
+
   // REST API DELETE
   function remove() {
     var res = this;
@@ -79,10 +87,10 @@ function ResourceFactory($http, getURLprefix, Location) {
       .delete(getURLprefix() + '/api/input/resource/' + encodeURIComponent(res) + "/")
       .then(
         function (response) {
-          if (debug) 
+          if (debug)
             console.log("Resource delete '" + res.name + "': ", response.data);
           return res;
           }
         );
-  };  
+  };
 };

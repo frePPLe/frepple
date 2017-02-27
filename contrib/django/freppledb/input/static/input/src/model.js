@@ -1,11 +1,19 @@
 /*
- * Copyright (C) 2016 by frePPLe bvba
+ * Copyright (C) 2017 by frePPLe bvba
  *
- * All information contained herein is, and remains the property of frePPLe.
- * You are allowed to use and modify the source code, as long as the software is used
- * within your company.
- * You are not allowed to distribute the software, either in the form of source code
- * or in the form of compiled binaries.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 'use strict';
@@ -14,8 +22,8 @@ angular.module('frepple.input').service('Model', ModelService);
 
 ModelService.$inject = ['Buffer', 'Demand', 'Item', 'Location', 'Operation', 'Resource'];
 
-function ModelService (Buffer, Demand, Item, Location, Operation, Resource) {  
-  
+function ModelService (Buffer, Demand, Item, Location, Operation, Resource) {
+
   var masterdata = {
     demands: {},
     operations: {},
@@ -26,9 +34,9 @@ function ModelService (Buffer, Demand, Item, Location, Operation, Resource) {
   };
 
   // Populate all master data from a json document
-  function load(jsondoc) {    
+  function load(jsondoc) {
     for (var i in jsondoc.items)
-      masterdata.items[jsondoc.items[i].name] = new Item(jsondoc.items[i]); 
+      masterdata.items[jsondoc.items[i].name] = new Item(jsondoc.items[i]);
     for (var i in jsondoc.operations)
       masterdata.operations[jsondoc.operations[i].name] = new Operation(jsondoc.operations[i]);
     for (var i in jsondoc.demands)
@@ -40,7 +48,7 @@ function ModelService (Buffer, Demand, Item, Location, Operation, Resource) {
     for (var i in jsondoc.resources)
       masterdata.resources[jsondoc.resources[i].name] = new Resource(jsondoc.resources[i]);
   }
-  
+
   var service = {
     masterdata: masterdata,
     load: load,

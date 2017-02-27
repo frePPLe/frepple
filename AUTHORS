@@ -97,3 +97,28 @@ FrePPLe redistributes parts of the following third party software components:
     Copyright The OpenSSL Project and Eric Young
     License http://www.openssl.org/source/license.html
     See http://www.openssl.org/
+
+* contrib\django\freppledb\common\static\js\angular.min.js
+    Redistributed AngularJS v1.5.5 angular.min.js
+    (c) 2010-2016 Google, Inc.
+    See http://angularjs.org
+
+* contrib\django\freppledb\common\static\js\angular.min.js
+    Redistributed AngularJS angular.min.js
+    (c) 2010-2016 Google, Inc.
+    See http://angularjs.org
+
+* contrib\django\freppledb\common\static\js\angular-cookies.min.js
+    Redistributed AngularJS angular-cookies.min.js
+    (c) 2010-2016 Google, Inc.
+    See http://angularjs.org
+
+* contrib\django\freppledb\common\static\js\angular-gettext.min.js
+    Redistributed angular-gettext.min.js
+    Licensed under the MIT license
+    See http://angular-gettext.rocketeer.be/
+
+* contrib\django\freppledb\common\static\js\angular-websocket.min.js
+    Redistributed angular-websocket.min.js
+    Licensed under the MIT license
+    See https://github.com/AngularClass/angular-websocket

@@ -40,45 +40,6 @@
 
   <script type="text/javascript">
     $(function() {
-      $("#gantt-panel").resizable({
-        handleSelector: "#resize-handle",
-        resizeWidth: false,
-        resizeHeight: true,
-        onDrag: function(e, $el, opt) {
-          var height = $('#gantt-panel').height();
-          angular.element('#controller').scope().ganttpanelheight = height;
-          $('#gantt-rownames').height(height - angular.element('#controller').scope().timescaleheight);
-          $('#gantt-div').height(height - angular.element('#controller').scope().timescaleheight);
-          $('#gantt-rownames').height(height - angular.element('#controller').scope().timescaleheight);
-          if (angular.element('#controller').scope().scrollbar !== (window.innerWidth > document.documentElement.clientWidth)) {
-            angular.element('#controller').scope().$apply()
-          }
-        },
-        onDragEnd: function(e, $el, opt) {
-          angular.element('#controller').scope().PreferenceSvc.save('height',$('#gantt-panel').height());
-          angular.element('#controller').scope().$apply();
-        }
-      });
-
-      $(window).bind('resize', function() {
-        var height = $('#gantt-panel').height();
-        angular.element('#controller').scope().ganttpanelheight = height;
-        angular.element('#controller').scope().ganttpanelwidth = Math.floor($('#gantt-panel').width());
-        $('#gantt-rownames').height(height - angular.element('#controller').scope().timescaleheight);
-        $('#timeaxis-div')
-          .width(angular.element('#controller').scope().ganttpanelwidth - 250 - 20);
-        $('#gantt-div')
-          .height(height - angular.element('#controller').scope().timescaleheight)
-          .width(angular.element('#controller').scope().ganttpanelwidth - 250 - 20);
-        $('#gantt-rownames').height(height - angular.element('#controller').scope().timescaleheight);
-        angular.element('#controller').scope().$apply;
-
-        $("#demandlist").setGridWidth($('#bottomhalf').width());
-        $("#resourcelist").setGridWidth($('#bottomhalf').width());
-        $("#bufferlist").setGridWidth($('#bottomhalf').width());
-        $("#operationlist").setGridWidth($('#bottomhalf').width());
-      });
-
 
     });
   </script>

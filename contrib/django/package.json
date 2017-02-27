@@ -6,7 +6,9 @@
   "author": "frePPLe bvba",
   "license": "AGPL-3.0",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "angular-gettext": "^2.3.8"
+  },
   "devDependencies": {
     "bootstrap": "^3.3.6",
     "grunt": ">=1.0.1",

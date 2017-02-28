@@ -32,7 +32,6 @@ from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport
 from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPlanResource
-from freppledb.output.models import Problem
 
 
 class LateOrdersWidget(Widget):
@@ -77,7 +76,7 @@ class LateOrdersWidget(Widget):
         )
       ]
     alt = False
-    cursor.execute(cls.query % limit)
+    cursor.execute(cls.query, (limit,))
     for rec in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
         alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), rec[3].date(), int(rec[1])
@@ -131,7 +130,7 @@ class ShortOrdersWidget(Widget):
         )
       ]
     alt = False
-    cursor.execute(cls.query % limit)
+    cursor.execute(cls.query, (limit,))
     for rec in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
         alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), int(rec[1])
@@ -858,7 +857,6 @@ class PurchaseQueueWidget(Widget):
 Dashboard.register(PurchaseQueueWidget)
 
 
-
 class DistributionQueueWidget(Widget):
   name = "distribution_queue"
   title = _("distribution queue")
@@ -1168,16 +1166,14 @@ class ResourceLoadWidget(Widget):
                   coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0),
                   coalesce(sum(out_resourceplan.free),0)
                 from out_resourceplan
-                where out_resourceplan.startdate >= '%s'
-                  and out_resourceplan.startdate < '%s'
+                where out_resourceplan.startdate >= %s
+                  and out_resourceplan.startdate < %s
                 group by resource
                 order by 2 desc
-              ''' % (request.report_startdate, request.report_enddate)
-    cursor.execute(query)
+                limit %s
+              ''' 
+    cursor.execute(query, (request.report_startdate, request.report_enddate, limit))
     for res in cursor.fetchall():
-      limit -= 1
-      if limit < 0:
-        break
       result.append('<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>' % (
         request.prefix, urlquote(res[0]), res[0], res[1]
         ))
@@ -1260,7 +1256,7 @@ class InventoryByLocationWidget(Widget):
              inner join item on buffer.item_id = item.name
              group by location_id
              order by 2 desc
-             limit 30'''
+             limit %s'''
 
   @classmethod
   def render(cls, request=None):
@@ -1270,11 +1266,8 @@ class InventoryByLocationWidget(Widget):
       '<table style="display:none">'
       ]
     cursor = connections[request.database].cursor()
-    cursor.execute(cls.query)
+    cursor.execute(cls.query, (limit,))
     for res in cursor.fetchall():
-      limit -= 1
-      if limit < 0:
-        break
       result.append('<tr><td>%s</td><td>%.2f</td></tr>' % (
         res[0], res[1]
         ))
@@ -1360,12 +1353,10 @@ class InventoryByItemWidget(Widget):
                inner join item on buffer.item_id = item.name
                group by item.name
                order by 2 desc
+               limit %s
               '''
-    cursor.execute(query)
+    cursor.execute(query, (limit,))
     for res in cursor.fetchall():
-      limit -= 1
-      if limit < 0:
-        break
       result.append('<tr><td>%s</td><td>%.2f</td></tr>' % (
         res[0], res[1]
         ))

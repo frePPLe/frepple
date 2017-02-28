@@ -61,19 +61,13 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
   }); //end watchGroup
 
   function displayInfo(rowid) {
-    var row = jQuery("#grid").getRowData(rowid); //console.log(rowid);console.log(row.id);
-    if (typeof parseInt(row.id) === 'number') { //console.log(row.id);
-      $scope.operationplan.id = parseInt(row.id);
+    var row = jQuery("#grid").getRowData(rowid);
+      //console.log(rowid);console.log(row.id);
+      $scope.operationplan = new OperationPlan();
+      $scope.operationplan.id = (typeof rowid === undefined)?undefined:parseInt(rowid);
       $scope.operationplan.get().catch(function (response) {
         errorPopup(response.data);
       });
-    } else {
-      $scope.operationplan = new OperationPlan(); console.log(operationplan.id);
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-primary").prop("disabled", "disabled");
-  	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-primary").prop("disabled", "disabled");
-    }
-    //$scope.operationplan.reference = row.reference;
-    //$scope.operationplan.status = row.status;
     //console.log($scope.operationplan);
   }
   $scope.displayInfo = displayInfo;

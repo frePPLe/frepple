@@ -70,6 +70,8 @@
       onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);},
       onDragEnd: function (e, $el, opt) {grid.saveColumnConfiguration();}
     });
+    $("#save").on('click', function() {angular.element('#controller').scope().displayInfo(undefined);});
+    $("#undo").on('click', function() {angular.element('#controller').scope().displayInfo(undefined);});
   });
 </script>
 {% endblock %}

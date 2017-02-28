@@ -549,9 +549,9 @@ class loadData(object):
             )
           if i[3]:
             x.maximum_calendar = frepple.calendar(name=i[3])
-          if i[7]:
+          if i[7] is not None:
             x.maxearly = i[7].total_seconds()
-          if i[2]:
+          if i[2] is not None:
             x.maximum = i[2]
         else:
           raise ValueError("Resource type '%s' not recognized" % i[5])

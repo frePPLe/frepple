@@ -1,6 +1,6 @@
 <style>
 #setQuantity.ng-dirty {
-  background: none;
+  background: none !important;
 }
 </style>
 
@@ -16,7 +16,7 @@
       <tbody>
         <tr>
           <td><b style="text-transform: capitalize;" translate>identifier</b></td>
-          <td id="idrow">{{operationplan.id}}</td>
+          <td id="idrow">{{(operationplan.hasOwnProperty('id'))?'':operationplan.id}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>reference</b></td>

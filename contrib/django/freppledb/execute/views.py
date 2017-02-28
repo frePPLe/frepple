@@ -121,7 +121,7 @@ class TaskReport(GridReport):
       uploadfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
       if os.path.isdir(uploadfolder):
         for file in os.listdir(uploadfolder):
-          if file.endswith('.csv') or file.endswith('.log'):
+          if file.endswith(('.csv', '.csv.gz', '.log')):
             filestoupload.append([
               file,
               strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(uploadfolder, file)).st_mtime)),

@@ -40,7 +40,10 @@
 
   <script type="text/javascript">
     $(function() {
-
+      setTimeout(function () {
+        //very simple way to adjust grid width without introducing a new watch in angular controller
+        $('#grid').setGridWidth($('#content-main').width());
+      }, 50);
     });
   </script>
 

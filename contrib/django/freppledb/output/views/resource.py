@@ -69,7 +69,7 @@ class OverviewReport(GridPivot):
     ('load', {'title': _('load')}),
     ('utilization', {'title': _('utilization %')}),
     )
-  
+
   @classmethod
   def initialize(reportclass, request):
     if reportclass._attributes_added != 2:
@@ -126,18 +126,18 @@ class OverviewReport(GridPivot):
     query = '''
       select res.name, res.description, res.category, res.subcategory,
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
-        res.setupmatrix_id, res.setup, location.name, location.description, 
+        res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
         coalesce(max(plan_summary.avg_util),0) as avgutil,
-        %s 
+        %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
         coalesce(sum(out_resourceplan.unavailable),0) * (case when res.type = 'buckets' then 1 else %f end) as unavailable,
         coalesce(sum(out_resourceplan.load),0) * (case when res.type = 'buckets' then 1 else %f end) as loading,
         coalesce(sum(out_resourceplan.setup),0) * (case when res.type = 'buckets' then 1 else %f end) as setup
       from (%s) res
-      left outer join location 
-        on res.location_id = location.name 
+      left outer join location
+        on res.location_id = location.name
       -- Multiply with buckets
       cross join (
                    select name as bucket, startdate, enddate
@@ -169,8 +169,8 @@ class OverviewReport(GridPivot):
       -- Grouping and sorting
       group by res.name, res.description, res.category, res.subcategory,
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
-        res.setupmatrix_id, res.setup, location.name, location.description, 
-        location.category, location.subcategory, location.available_id, 
+        res.setupmatrix_id, res.setup, location.name, location.description,
+        location.category, location.subcategory, location.available_id,
         %s d.bucket, d.startdate
       order by %s, d.startdate
       ''' % (
@@ -192,11 +192,11 @@ class OverviewReport(GridPivot):
       else:
         util = 0
       result = {
-        'resource': row[0], 'description': row[1], 'category': row[2], 
+        'resource': row[0], 'description': row[1], 'category': row[2],
         'subcategory': row[3], 'type': row[4], 'maximum': row[5],
         'maximum_calendar': row[6], 'cost': row[7], 'maxearly': row[8],
-        'setupmatrix': row[9], 'setup': row[10], 
-        'location__name': row[11], 'location__description': row[12], 
+        'setupmatrix': row[9], 'setup': row[10],
+        'location__name': row[11], 'location__description': row[12],
         'location__category': row[13], 'location__subcategory': row[14],
         'location__available': row[15],
         'avgutil': round(row[16], 2),
@@ -222,13 +222,14 @@ class DetailReport(GridReport):
   '''
   A list report to show OperationPlanResources.
   '''
-  template = 'output/loadplan.html'
+  template = 'input/operationplanreport.html'
   title = _("Resource detail report")
   model = OperationPlanResource
   permissions = (("view_resource_report", "Can view resource report"),)
   frozenColumns = 3
   editable = False
   multiselect = False
+  height = 250
   help_url = 'user-guide/user-interface/plan-analysis/resource-detail-report.html'
 
   @ classmethod
@@ -240,7 +241,7 @@ class DetailReport(GridReport):
     return base.select_related().extra(select={
       'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
       })
-    
+
   @classmethod
   def initialize(reportclass, request):
     if reportclass._attributes_added != 2:
@@ -253,7 +254,7 @@ class DetailReport(GridReport):
       for f in getAttributeFields(Resource, related_name_prefix="resource"):
         f.editable = False
         reportclass.rows += (f,)
-        
+
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
@@ -263,7 +264,7 @@ class DetailReport(GridReport):
   rows = (
     GridFieldInteger('id', title='internal id', key=True, editable=False, hidden=True),
     GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra='"role":"input/resource"'),
-    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),    
+    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operationplan__operation__location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
@@ -276,6 +277,6 @@ class DetailReport(GridReport):
     GridFieldNumber('operationplan__delay', title=_('delay'), editable=False),
     GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
-    GridFieldNumber('quantity', title=_('load quantity'), editable=False),    
+    GridFieldNumber('quantity', title=_('load quantity'), editable=False),
     GridFieldText('setup', title=_('setup'), editable=False),
     )

@@ -189,13 +189,14 @@ class DetailReport(GridReport):
   '''
   A list report to show OperationPlanMaterial.
   '''
-  template = 'output/flowplan.html'
+  template = 'input/operationplanreport.html'
   title = _("Inventory detail report")
   model = OperationPlanMaterial
   permissions = (('view_inventory_report', 'Can view inventory report'),)
   frozenColumns = 0
   editable = False
   multiselect = False
+  height = 250
   help_url = 'user-guide/user-interface/plan-analysis/inventory-detail-report.html'
 
   @ classmethod
@@ -218,7 +219,7 @@ class DetailReport(GridReport):
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('internal id'), key=True, editable=False, hidden=True),
     GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra='"role":"input/buffer"'),
-    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),    
+    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra='"role":"input/operation"'),

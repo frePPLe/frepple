@@ -33,15 +33,17 @@ function showoperationplanDrv($window) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    //need to watch all of these because a webservice may change them on the fly
     scope.opptype={ //just a translation
       'MO': gettext('Manufacturing Order'),
       'PO': gettext('Purchase Order'),
       'DO': gettext('Distribution Order')
     }
-
-    scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function () {
-      if (typeof scope.operationplan !== 'undefined' && Object.keys(scope.operationplan).length > 0) {
+    //need to watch all of these because a webservice may change them on the fly
+    scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
+      //console.log(oldValue);
+      //console.log(newValue);
+      //console.log(typeof scope.operationplan.id !== 'undefined' && typeof scope.operationplan.id !== 'NaN');
+      if (typeof scope.operationplan.id !== 'undefined' && !isNaN(scope.operationplan.id)) {
 
         angular.element(elem).find('input[disabled]').attr('disabled',false);
         angular.element(elem).find('button[disabled]').attr('disabled',false);
@@ -58,6 +60,11 @@ function showoperationplanDrv($window) {
           angular.element(elem).find('#statusrow .btn').removeClass('active');
           angular.element(elem).find('#'+scope.operationplan.status+'Btn').addClass('active');
         }
+      } else { //what to show when there is no operationplan
+        angular.element(elem).find('input').attr('disabled','disabled');
+        angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled','disabled');
+        angular.element(elem).find("#setStart").val('');
+        angular.element(elem).find("#setEnd").val('');
       }
     }); //watch end
 

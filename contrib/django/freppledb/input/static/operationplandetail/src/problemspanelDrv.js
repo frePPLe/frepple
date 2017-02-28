@@ -43,7 +43,7 @@ function showproblemspanelDrv($window) {
                     '<tbody></tbody>' +
                   '</table>';
 
-    scope.$watch('operationplan.id', function () {
+    scope.$watchGroup(['operationplan.id','operationplan.problems.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationproblems').empty().append(template);
       var rows = '<tr><td colspan="3">'+gettext('no problems')+'<td></tr>';
 

@@ -40,7 +40,7 @@ function showoperationpeggingpanelDrv($window) {
                     '<tbody></tbody>' +
                   '</table>';
 
-    scope.$watch('operationplan.id', function () {
+    scope.$watchGroup(['operationplan.id','operationplan.pegging_demand.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationdemandpegging').empty().append(template);
       var rows='<tr><td colspan="2">'+gettext('no demands')+'<td></tr>';
 

@@ -44,7 +44,7 @@ function showbufferspanelDrv($window) {
                     '<tbody></tbody>' +
                   '</table>';
 
-    scope.$watch('operationplan.id', function () {
+    scope.$watchGroup(['operationplan.id','operationplan.flowplans.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationflowplans').empty().append(template);
       var rows='<tr><td colspan="3">'+gettext('no movements')+'<td></tr>';
 

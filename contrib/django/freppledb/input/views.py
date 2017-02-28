@@ -1089,7 +1089,7 @@ class ManufacturingOrderList(GridReport):
   '''
   A list report to show manufacturing orders.
   '''
-  template = 'input/manufacturingorder.html'
+  template = 'input/operationplanreport.html'
   title = _("manufacturing orders")
   basequeryset = ManufacturingOrder.objects.all()
   model = ManufacturingOrder
@@ -1098,6 +1098,12 @@ class ManufacturingOrderList(GridReport):
   editable = True
   height = 250
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html'
+
+  # @classmethod
+  # def extra_context(reportclass, request, *args, **kwargs):
+  #   return {
+  #     'jsondata': ManufacturingOrder.objects.all(),
+  #     }
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
@@ -1177,10 +1183,14 @@ class DistributionOrderList(GridReport):
   '''
   A list report to show distribution orders.
   '''
+  template = 'input/operationplanreport.html'
   title = _("distribution orders")
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
   frozenColumns = 2
+  multiselect = True
+  editable = True
+  height = 250
   help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
 
   @ classmethod
@@ -1299,10 +1309,14 @@ class PurchaseOrderList(GridReport):
   '''
   A list report to show purchase orders.
   '''
+  template = 'input/operationplanreport.html'
   title = _("purchase orders")
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
   frozenColumns = 2
+  multiselect = True
+  editable = True
+  height = 250
   help_url = 'user-guide/modeling-wizard/purchasing/purchase-orders.html'
 
   @ classmethod
@@ -1588,7 +1602,7 @@ class OperationPlanDetail(View):
           # Status quantity
           opplan.status = opplan_data['status']
           save = True
-          
+
         if "reference" in opplan_data:
           # Update reference
           opplan.reference = opplan_data['reference']

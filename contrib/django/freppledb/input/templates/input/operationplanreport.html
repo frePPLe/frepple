@@ -82,7 +82,7 @@ beforeSelectRow: function(rowid){
   if (rowid !== lastid) {
     angular.element('#controller').scope().displayInfo(rowid);
     lastid = rowid;
-    $("#grid").jqGrid("resetSelection");
+    $(this).jqGrid("resetSelection");
   } else {
     angular.element('#controller').scope().displayInfo(undefined);
     lastid = '';
@@ -92,9 +92,19 @@ onSelectAll: function(aRowids){
   angular.element('#controller').scope().displayInfo(undefined);
   lastid = '';
 },
+//onCellSelect: function(rowid){  $(this).jqGrid("resetSelection");$(this).jqGrid('setSelection', rowid, true); grid.markSelectedRow;},
 {% endblock %}
 
 {# {% block extracontainer %}data-ng-app='frepple.bottomdetail' style="overflow-y: visible;"{% endblock %}#}
 {% block after_table %}
+<div class="row">
+  <div class="col-md-12">
+    <table id="gridANG" class="table table-striped" style="background-color: white"></table>
+    <div id="gridpagerANG"></div>
+  </div>
+</div>
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
+<script type="text/javascript">
+  //console.log('manufacturingorder.html');
+</script>
 {% endblock %}

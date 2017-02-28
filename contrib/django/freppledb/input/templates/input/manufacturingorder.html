@@ -53,6 +53,7 @@
   // var itemlist={{itemlist|safe}};
   // var customerlist={{customerlist|safe}};
   // var locationlist={{locationlist|safe}};
+  var lastid = '';
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
@@ -76,7 +77,22 @@
 </script>
 {% endblock %}
 {% block extracontainer %}ng-app="operationplandetailapp"{% endblock %}
-{% block extra_grid %}onSelectRow: function(rowid){angular.element('#controller').scope().displayInfo(rowid);}, {% endblock %}
+{% block extra_grid %}
+beforeSelectRow: function(rowid){
+  if (rowid !== lastid) {
+    angular.element('#controller').scope().displayInfo(rowid);
+    lastid = rowid;
+    $("#grid").jqGrid("resetSelection");
+  } else {
+    angular.element('#controller').scope().displayInfo(undefined);
+    lastid = '';
+  }
+},
+onSelectAll: function(aRowids){
+  angular.element('#controller').scope().displayInfo(undefined);
+  lastid = '';
+},
+{% endblock %}
 
 {# {% block extracontainer %}data-ng-app='frepple.bottomdetail' style="overflow-y: visible;"{% endblock %}#}
 {% block after_table %}

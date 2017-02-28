@@ -62,12 +62,17 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
 
   function displayInfo(rowid) {
     var row = jQuery("#grid").getRowData(rowid);
-      //console.log(rowid);console.log(row.id);
-      $scope.operationplan = new OperationPlan();
-      $scope.operationplan.id = (typeof rowid === undefined)?undefined:parseInt(rowid);
-      $scope.operationplan.get().catch(function (response) {
-        errorPopup(response.data);
-      });
+    $scope.operationplan = new OperationPlan();
+    if (row.hasOwnProperty('buffer') || row.hasOwnProperty('resource')) {
+      rowid = row.operationplan__id;
+      $scope.operationplan.editable = false;
+    } else {
+      $scope.operationplan.editable = true;
+    }
+    $scope.operationplan.id = (typeof rowid === undefined)?undefined:parseInt(rowid);
+    $scope.operationplan.get().catch(function (response) {
+      errorPopup(response.data);
+    });
     //console.log($scope.operationplan);
   }
   $scope.displayInfo = displayInfo;

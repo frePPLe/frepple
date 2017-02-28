@@ -66,6 +66,10 @@ function showoperationplanDrv($window) {
         angular.element(elem).find("#setStart").val('');
         angular.element(elem).find("#setEnd").val('');
       }
+      if (!scope.operationplan.editable) {
+        angular.element(elem).find('input').attr('disabled','disabled').css('cursor', 'default');
+        angular.element(elem).find('#statusrow .btn').attr('disabled','disabled');
+      }
     }); //watch end
 
     angular.element(elem).find(".vDateField").datetimepicker({

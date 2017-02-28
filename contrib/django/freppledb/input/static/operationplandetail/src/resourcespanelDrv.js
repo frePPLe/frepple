@@ -31,7 +31,7 @@ function showresourcespanelDrv($window) {
   };
   return directive;
 
-  function linkfunc(scope, elem, attrs, transclude) {
+  function linkfunc(scope, elem, attrs) {
     var template = '<table class="table"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettext("resource")+'</b>' +
                     '</td><td>' +
@@ -40,7 +40,9 @@ function showresourcespanelDrv($window) {
                     '<tbody></tbody>' +
                   '</table>';
 
-    scope.$watch('operationplan.id', function () {
+    scope.$watchGroup(['operationplan.id','operationplan.loadplans.length'], function (newValue,oldValue) {
+      //console.log(oldValue);
+      //console.log(newValue);
       angular.element(document).find('#attributes-operationresources').empty().append(template);
       var rows='<tr><td colspan="2">'+gettext('no resources')+'<td></tr>';
 

@@ -56,7 +56,7 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   }
 
   //REST API GET
-  function get() {
+  function get(callback) {
     var operplan = this;//console.log(getURLprefix() + '/operationplan/?encodeURIComponent(operplan.id)');
     return $http
       .get(getURLprefix() + '/operationplan/?id=' + encodeURIComponent(operplan.id))
@@ -66,6 +66,9 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
             console.log("Operation get '" + operplan.id + "': ", response.data);
           }
           operplan.extend(response.data[0]);
+          if (typeof callback === 'function') {
+            callback(operplan);
+          }
           return operplan;
         }
       );

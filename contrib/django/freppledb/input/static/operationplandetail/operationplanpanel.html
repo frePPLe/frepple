@@ -7,8 +7,8 @@
 <table class="table">
   <thead>
     <tr>
-      <td>
-        <b id="thead1" style="text-transform: capitalize;">{{opptype[operationplan.type]}}&nbsp;</b>
+      <td style="min-with: 250px; width:30%">
+        <b id="thead1" style="text-transform: capitalize;" >{{opptype[operationplan.type]}}&nbsp;</b>
       </td>
       <td>
         <b id="thead2" style="text-transform: capitalize;">{{operationplan.operation.name}}</b>
@@ -45,7 +45,7 @@
         <tr>
           <td><b style="text-transform: capitalize;" translate>quantity</b></td>
           <td id="quantityrow">
-            <input id="setQuantity" class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" ng-change="" disabled>
+            <input id="setQuantity" class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" disabled>
           </td>
         </tr>
         <tr>

@@ -83,21 +83,42 @@
 {% endblock %}
 {% block extracontainer %}ng-app="operationplandetailapp"{% endblock %}
 {% block extra_grid %}
+
+  
+afterEditCell: function(rowid, cellname, value, iRow, iCol){
+  angular.element('#controller').scope().displayInfo(rowid);
+  return grid.afterEditCell(rowid, cellname, value, iRow, iCol);
+},
+
+
 beforeSelectRow: function(rowid){
-  if (rowid !== lastid) {
+  var selection = $(this).jqGrid('getGridParam','selarrrow');
+  if (selection.includes("" + rowid)) {
+     var prev = selection.length - 1;
+     while (selection[prev] == rowid)
+     {
+       --prev;
+       if (prev < 0)
+         break;
+     }
+     angular.element('#controller').scope().displayInfo(
+       prev >= 0 ? selection[prev] : undefined
+       );
+  }
+  else if (rowid !== lastid) {
     angular.element('#controller').scope().displayInfo(rowid);
     lastid = rowid;
-    $(this).jqGrid("resetSelection");
   } else {
     angular.element('#controller').scope().displayInfo(undefined);
     lastid = '';
   }
+  return true;
 },
+
 onSelectAll: function(aRowids){
   angular.element('#controller').scope().displayInfo(undefined);
   lastid = '';
 },
-//onCellSelect: function(rowid){  $(this).jqGrid("resetSelection");$(this).jqGrid('setSelection', rowid, true); grid.markSelectedRow;},
 {% endblock %}
 
 {# {% block extracontainer %}data-ng-app='frepple.bottomdetail' style="overflow-y: visible;"{% endblock %}#}

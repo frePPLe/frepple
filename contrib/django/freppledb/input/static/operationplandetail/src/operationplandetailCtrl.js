@@ -26,29 +26,37 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
   $scope.test = "angular controller";
   $scope.operationplan = new OperationPlan();
 
-  $scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], function(newValue, oldValue) {
-    //console.log(oldValue); console.log(newValue);
-    if (oldValue[0] === newValue[0] && typeof oldValue[0] !== 'undefined') { //is a change to the current operationplan
+  // This template function will pass the values to the grid, function(id,column,value)
+  // will set the row as "edited", and trigger "save undo" buttons.
+  // If the function does not exist it makes no sense to watch for changes on the bottom part.
+  $scope.displayongrid = displayongrid;
 
-      if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1] !== newValue[1]) {
-        //console.log(oldValue[1]);console.log(newValue[1]);
-        $scope.displayongrid("startdate");
+  if (typeof $scope.displayongrid === 'function') {
+    //watch is only needed if we can update the grid
+    $scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], function(newValue, oldValue) {
+      //console.log(oldValue); console.log(newValue);
+      if (oldValue[0] === newValue[0] && typeof oldValue[0] !== 'undefined') { //is a change to the current operationplan
+
+        if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1] !== newValue[1]) {
+          //console.log(oldValue[1]);console.log(newValue[1]);
+          $scope.displayongrid($scope.operationplan.id,"startdate",$scope.operationplan.start);
+        }
+        if (typeof oldValue[2] !== 'undefined' && typeof newValue[2] !== 'undefined' && oldValue[2] !== newValue[2]) {
+          //console.log(oldValue[2]);console.log(newValue[2]);
+          $scope.displayongrid($scope.operationplan.id,"enddate",$scope.operationplan.end);
+        }
+        if (typeof oldValue[3] !== 'undefined' && typeof newValue[3] !== 'undefined' && oldValue[3] !== newValue[3]) {
+          //console.log(oldValue[3]);console.log(newValue[3]);
+          $scope.displayongrid($scope.operationplan.id,"quantity",$scope.operationplan.quantity);
+        }
+        if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
+          //console.log(oldValue[4]);console.log(newValue[4]);
+          $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
+        }
       }
-      if (typeof oldValue[2] !== 'undefined' && typeof newValue[2] !== 'undefined' && oldValue[2] !== newValue[2]) {
-        //console.log(oldValue[2]);console.log(newValue[2]);
-        $scope.displayongrid("enddate");
-      }
-      if (typeof oldValue[3] !== 'undefined' && typeof newValue[3] !== 'undefined' && oldValue[3] !== newValue[3]) {
-        //console.log(oldValue[3]);console.log(newValue[3]);
-        $scope.displayongrid("quantity");
-      }
-      if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
-        //console.log(oldValue[4]);console.log(newValue[4]);
-        $scope.displayongrid("status");
-      }
-    }
-    oldValue[0] = newValue[0];
-  }); //end watchGroup
+      oldValue[0] = newValue[0];
+    }); //end watchGroup
+  }
 
   function displayInfo(row) {
     //console.log(row);
@@ -101,7 +109,6 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
 
   function displayonpanel(rowid,columnid,value) {
     //console.log(rowid,columnid,value);
-
     angular.element(document).find("#" + $scope.operationplan.id).removeClass("edited").addClass("edited");
     if (rowid === $scope.operationplan.id.toString()) {
       if (columnid === "startdate") {
@@ -120,28 +127,5 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
   }
   $scope.displayonpanel = displayonpanel;
 
-  function displayongrid(columnid) {
-    angular.element(document).find("#" + $scope.operationplan.id).removeClass("edited").addClass("edited");
-    if (columnid === "startdate") {
-      angular.element(document).find("#grid").jqGrid("setCell", $scope.operationplan.id, "startdate", $scope.operationplan.start, "dirty-cell");
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    }
-    if (columnid === "enddate") {
-      jQuery("#grid").jqGrid("setCell", $scope.operationplan.id, "enddate", $scope.operationplan.end, "dirty-cell");
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    }
-    if (columnid === "quantity") {
-      jQuery("#grid").jqGrid("setCell", $scope.operationplan.id, "quantity", $scope.operationplan.quantity, "dirty-cell");
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    }
-    if (columnid === "status") {
-      jQuery("#grid").jqGrid("setCell", $scope.operationplan.id, "status", $scope.operationplan.status, "dirty-cell");
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    }
   }
-  $scope.displayongrid = displayongrid;
 }

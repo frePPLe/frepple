@@ -134,6 +134,29 @@ beforeSubmitCell: function(rowid, cellname, value, iRow, iCol) {
 </div>
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
 <script type="text/javascript">
-  //console.log('manufacturingorder.html');
+//controller will call this function to pass values to the glyphicon-credit-card
+function displayongrid(id, columnid, value) {
+  angular.element(document).find("#" + id).removeClass("edited").addClass("edited");
+  if (columnid === "startdate") {
+    angular.element(document).find("#grid").jqGrid("setCell", id, "startdate", value, "dirty-cell");
+    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+  }
+  if (columnid === "enddate") {
+    jQuery("#grid").jqGrid("setCell", id, "enddate", value, "dirty-cell");
+    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+  }
+  if (columnid === "quantity") {
+    jQuery("#grid").jqGrid("setCell", id, "quantity", value, "dirty-cell");
+    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+  }
+  if (columnid === "status") {
+    jQuery("#grid").jqGrid("setCell", id, "status", value, "dirty-cell");
+    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+  }
+}
 </script>
 {% endblock %}

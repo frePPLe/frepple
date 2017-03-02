@@ -121,7 +121,7 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
         $scope.$apply(function() {$scope.operationplan.quantity = parseInt(value);});
       }
       if (columnid === "status") {
-        $scope.$apply(function() {$scope.operationplan.status = value;});
+        $scope.refreshstatus(value);
       }
     }
   }

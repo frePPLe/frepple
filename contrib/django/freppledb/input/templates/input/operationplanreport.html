@@ -85,25 +85,30 @@
 {% block extracontainer %}ng-app="operationplandetailapp"{% endblock %}
 {% block extra_grid %}
 afterEditCell: function(rowid, cellname, value, iRow, iCol){
-  var row = jQuery("#grid").getRowData(rowid);
-  angular.element('#controller').scope().displayInfo(row);
+  if (rowid !== lastid) {
+    var row = jQuery("#grid").getRowData(rowid);
+    angular.element('#controller').scope().displayInfo(row);
+  }
   return grid.afterEditCell(rowid, cellname, value, iRow, iCol);
 },
-beforeSelectRow: function(rowid){
+beforeSelectRow: function(rowid,e){
   var selection = $(this).jqGrid('getGridParam','selarrrow');
   var row = '';
+  if (rowid === lastid && e.target.firstChild !== null) {
+    if (e.target.firstChild.name !== 'status') {
+      return true;
+    }
+  }
   if (selection.includes("" + rowid)) {
-     var prev = selection.length - 1;
-     while (selection[prev] == rowid)
-     {
-       --prev;
-       if (prev < 0)
-         break;
-     }
-     row = $(this).getRowData(selection[prev]);
-     angular.element('#controller').scope().displayInfo(
-       prev >= 0 ? row : undefined
-       );
+    var prev = selection.length - 1;
+    while (selection[prev] == rowid) {
+      --prev;
+      if (prev < 0) {
+        break;
+      }
+    }
+    row = $(this).getRowData(selection[prev]);
+    angular.element('#controller').scope().displayInfo(prev >= 0 ? row : undefined);
   }
   else if (rowid !== lastid) {
     row = $(this).getRowData(rowid);

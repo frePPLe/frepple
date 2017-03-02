@@ -127,5 +127,4 @@ function operationplanCtrl($scope, OperationPlan) { //console.log("loads control
   }
   $scope.displayonpanel = displayonpanel;
 
-  }
 }

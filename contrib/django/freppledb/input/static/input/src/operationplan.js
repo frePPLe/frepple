@@ -22,7 +22,7 @@ OperationPlanFactory.$inject = ['$http', 'getURLprefix', 'Operation', 'Location'
 
 function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
 
-  var debug = true;
+  var debug = false;
 
   function OperationPlan(data) {
     if (data) {

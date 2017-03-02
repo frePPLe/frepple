@@ -16,10 +16,13 @@ The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 '''
 from datetime import timedelta, datetime, date
+import io
 import json
 import os
 from psycopg2.extensions import adapt
 from subprocess import Popen, PIPE
+import sys
+import tempfile
 from time import time
 from threading import Thread
 
@@ -42,34 +45,81 @@ class DatabasePipe(Thread):
   def run(self):
     test = 'FREPPLE_TEST' in os.environ
 
-    # Start a PSQL process
+    # Pass the database password to the psql environment
     my_env = os.environ
     if settings.DATABASES[self.owner.database]['PASSWORD']:
       my_env['PGPASSWORD'] = settings.DATABASES[self.owner.database]['PASSWORD']
-    process = Popen("psql -q -w %s%s%s%s" % (
+    
+    if sys.platform in ['windows','win32','win64']:
+      # Windows style export: Python pipes output to a PSQL process
+
+      # Start a PSQL process
+      process = Popen("psql -q -w %s%s%s%s" % (
        settings.DATABASES[self.owner.database]['USER'] and ("-U %s " % settings.DATABASES[self.owner.database]['USER']) or '',
        settings.DATABASES[self.owner.database]['HOST'] and ("-h %s " % settings.DATABASES[self.owner.database]['HOST']) or '',
        settings.DATABASES[self.owner.database]['PORT'] and ("-p %s " % settings.DATABASES[self.owner.database]['PORT']) or '',
        settings.DATABASES[self.owner.database]['TEST']['NAME'] if test else settings.DATABASES[self.owner.database]['NAME'],
-     ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
-    if process.returncode is None:
-      # PSQL session is still running
-      process.stdin.write("SET statement_timeout = 0;\n".encode(self.owner.encoding))
-      process.stdin.write("SET client_encoding = 'UTF8';\n".encode(self.owner.encoding))
+      ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
 
-    # Run the functions sequentially
-    try:
-      for f in self.functions:
-        f(self.owner, process)
-    finally:
-      msg = process.communicate()[1]
-      if msg:
-        print(msg)
-      # Close the pipe and PSQL process
+
       if process.returncode is None:
-        # PSQL session is still running.
-        process.stdin.write('\\q\n'.encode(self.owner.database))
-      process.stdin.close()
+        # PSQL session is still running
+        process.stdin.write("SET statement_timeout = 0;\n".encode(self.owner.encoding))
+        process.stdin.write("SET client_encoding = 'UTF8';\n".encode(self.owner.encoding))
+
+        def writeFunction(msg):
+          process.stdin.write(msg.encode(self.owner.encoding))
+
+        # Send the output of all functions through the pipe
+        try:
+          for f in self.functions:
+            f(self.owner, writeFunction)
+        finally:
+          msg = process.communicate()[1]
+          if msg:
+            print(msg)
+          # Close the pipe and PSQL process
+          if process.returncode is None:
+            # PSQL session is still running.
+            writeFunction('\\q\n')
+          process.stdin.close()
+
+    else:
+      # Linux style export: Python writes a temporary file read with a PSQL process
+
+      (fd, fname) = tempfile.mkstemp(text=True)
+      try:
+
+        # Write the temporary file
+        with io.open(fd, 'wb', closefd=False) as fp:
+          
+          def writeFunction(msg):
+            fp.write(msg.encode(self.owner.encoding))
+          
+          for f in self.functions:
+            f(self.owner, writeFunction)
+
+        # Load the temporary file into the database
+        args = ["psql", "-f", fname, "-q", "-w"]
+        if settings.DATABASES[self.owner.database]['USER']:
+          args.append('-U')
+          args.append(settings.DATABASES[self.owner.database]['USER'])
+        if settings.DATABASES[self.owner.database]['HOST']:
+          args.append('-h')
+          args.append(settings.DATABASES[self.owner.database]['HOST'])
+        if settings.DATABASES[self.owner.database]['PORT']:
+          args.append('-p')
+          args.append(settings.DATABASES[self.owner.database]['PORT'])
+        if test:
+          args.append(settings.DATABASES[self.owner.database]['TEST']['NAME'])
+        else:
+          args.append(settings.DATABASES[self.owner.database]['NAME'])
+        status = os.spawnvpe(os.P_WAIT, "psql", args, my_env)
+        if status:
+          print("PSQL export process aborted with exit code %s" % status)
+      finally:
+        os.unlink(fname)
+        pass
 
 
 class export:
@@ -101,66 +151,66 @@ class export:
     starttime = time()
     if self.cluster == -1:
       # Complete export for the complete model
-      process.stdin.write("truncate table out_problem, out_resourceplan, out_constraint;\n".encode(self.encoding))
-      process.stdin.write('''
+      process("truncate table out_problem, out_resourceplan, out_constraint;\n")
+      process('''
         delete from operationplanmaterial
         using operationplan
         where operationplanmaterial.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanmaterial.status = 'proposed');\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
+        ''')
+      process('''
         delete from operationplanresource
         using operationplan
         where operationplanresource.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanresource.status = 'proposed');\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
+        ''')
+      process('''
         delete from operationplan
         where (status='proposed' or status is null) or type = 'STCK';\n
-        '''.encode(self.encoding))
+        ''')
     else:
       # Partial export for a single cluster
-      process.stdin.write('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n'.encode(self.encoding))
+      process('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n')
       for i in frepple.items():
         if i.cluster == self.cluster:
-          process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
-      process.stdin.write("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n".encode(self.encoding))
-      process.stdin.write('''
+          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      process("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
+      process('''
         delete from operationplanmaterial
         where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
+        ''')
+      process('''
         delete from out_problem
         where entity = 'demand' and owner in (
           select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
           );\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
+        ''')
+      process('''
         delete from out_problem
         where entity = 'material'
         and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
-        '''.encode(self.encoding))
-      process.stdin.write('''
+        ''')
+      process('''
         delete from operationplan
         using cluster_keys
         where (status='proposed' or status is null or type='STCK')
         and item_id = cluster_keys.name;\n
-        '''.encode(self.encoding))
-      process.stdin.write("truncate table cluster_keys;\n".encode(self.encoding))
+        ''')
+      process("truncate table cluster_keys;\n")
       for i in frepple.resources():
         if i.cluster == self.cluster:
-          process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
-      process.stdin.write("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n".encode(self.encoding))
-      process.stdin.write('delete from operationplanresource using cluster_keys where resource = cluster_keys.name;\n'.encode(self.encoding))
-      process.stdin.write('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name;\n'.encode(self.encoding))
-      process.stdin.write("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name;\n".encode(self.encoding))
-      process.stdin.write('truncate table cluster_keys;\n'.encode(self.encoding))
+          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      process("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
+      process('delete from operationplanresource using cluster_keys where resource = cluster_keys.name;\n')
+      process('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name;\n')
+      process("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name;\n")
+      process('truncate table cluster_keys;\n')
       for i in frepple.operations():
         if i.cluster == self.cluster:
-          process.stdin.write(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)).encode(self.encoding))
-      process.stdin.write("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n".encode(self.encoding))
-      process.stdin.write("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n".encode(self.encoding)) # TODO not correct in new data model
-      process.stdin.write("drop table cluster_keys;\n".encode(self.encoding))
+          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      process("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n")
+      process("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n") # TODO not correct in new data model
+      process("drop table cluster_keys;\n")
     if self.verbosity:
       print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
@@ -169,7 +219,7 @@ class export:
     if self.verbosity:
       print("Exporting problems...")
     starttime = time()
-    process.stdin.write('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n'.encode(self.encoding))
+    process('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n')
     for i in frepple.problems():
       if isinstance(i.owner, frepple.operationplan):
         owner = i.owner.operation
@@ -177,12 +227,12 @@ class export:
         owner = i.owner
       if self.cluster != -1 and owner.cluster != self.cluster:
         continue
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+      process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          i.entity, i.name, owner.name,
          i.description, str(i.start), str(i.end),
          round(i.weight, 6)
-      )).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
+      )))
+    process('\\.\n')
     if self.verbosity:
       print('Exported problems in %.2f seconds' % (time() - starttime))
 
@@ -191,18 +241,18 @@ class export:
     if self.verbosity:
       print("Exporting constraints...")
     starttime = time()
-    process.stdin.write('COPY out_constraint (demand,entity,name,owner,description,startdate,enddate,weight) FROM STDIN;\n'.encode(self.encoding))
+    process('COPY out_constraint (demand,entity,name,owner,description,startdate,enddate,weight) FROM STDIN;\n')
     for d in frepple.demands():
       if self.cluster != -1 and self.cluster != d.cluster:
         continue
       for i in d.constraints:
-        process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+        process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
            d.name, i.entity, i.name,
            isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
            i.description, str(i.start), str(i.end),
            round(i.weight, 6)
-         )).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
+         )))
+    process('\\.\n')
     if self.verbosity:
       print('Exported constraints in %.2f seconds' % (time() - starttime))
 
@@ -283,7 +333,7 @@ class export:
     starttime = time()
 
     # Export operationplans to a temporary table
-    process.stdin.write('''
+    process('''
       create temporary table tmp_operationplan (
         name character varying(1000),
         type character varying(5) NOT NULL,
@@ -308,20 +358,20 @@ class export:
         due timestamp with time zone,
         id integer NOT NULL
       ); 
-      '''.encode(self.encoding))
-    process.stdin.write('''COPY tmp_operationplan
+      ''')
+    process('''COPY tmp_operationplan
       (name,type,status,reference,quantity,startdate,enddate,
       criticality,delay,plan,source,lastmodified,
       operation_id,owner_id,
       item_id,destination_id,origin_id,
       location_id,supplier_id,
-      demand_id,due,id) FROM STDIN;\n'''.encode(self.encoding))
+      demand_id,due,id) FROM STDIN;\n''')
     for p in getOperationPlans():
-      process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
+      process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p))
+    process('\\.\n')
 
     # Merge temp table into the actual table
-    process.stdin.write('''
+    process('''
       update operationplan 
         set name=tmp.name, type=tmp.type, status=tmp.status, reference=tmp.reference, 
         quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
@@ -333,8 +383,8 @@ class export:
         due=tmp.due
       from tmp_operationplan as tmp
       where operationplan.id = tmp.id;
-      '''.encode(self.encoding))
-    process.stdin.write('''
+      ''')
+    process('''
       insert into operationplan
         (name,type,status,reference,quantity,startdate,enddate,
         criticality,delay,plan,source,lastmodified,
@@ -354,7 +404,7 @@ class export:
         from operationplan 
         where operationplan.id = tmp_operationplan.id
         );
-      '''.encode(self.encoding))
+      ''')
     
     if self.verbosity:
       print('Exported operationplans in %.2f seconds' % (time() - starttime))
@@ -364,10 +414,10 @@ class export:
     if self.verbosity:
       print("Exporting operationplan materials...")
     starttime = time()
-    process.stdin.write(
+    process(
       ('COPY operationplanmaterial '
       '(operationplan_id, buffer, quantity, flowdate, onhand, status, lastmodified) '
-      'FROM STDIN;\n').encode(self.encoding)
+      'FROM STDIN;\n')
       )
     currentTime = self.timestamp
     updates = []
@@ -383,13 +433,13 @@ class export:
           where status = 'confirmed' and buffer = %s and operationplan_id = %s;
           ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.name), j.operationplan.id ))
         else:
-          process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
              j.operationplan.id, j.buffer.name,
              round(j.quantity, 6),
              str(j.date), round(j.onhand, 6), j.status, currentTime
-             )).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
-    process.stdin.write('\n'.join(updates).encode(self.encoding))
+             )))
+    process('\\.\n')
+    process('\n'.join(updates))
     if self.verbosity:
       print('Exported operationplan materials in %.2f seconds' % (time() - starttime))    
 
@@ -398,10 +448,10 @@ class export:
     if self.verbosity:
       print("Exporting operationplan resources...")
     starttime = time()
-    process.stdin.write(
+    process(
       ('COPY operationplanresource '
       '(operationplan_id, resource, quantity, startdate, enddate, setup, status, lastmodified) '
-      'FROM STDIN;\n').encode(self.encoding)
+      'FROM STDIN;\n')
       )
     currentTime = self.timestamp
     for i in frepple.resources():
@@ -409,13 +459,13 @@ class export:
         continue
       for j in i.loadplans:
         if j.quantity < 0:
-          process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
             j.operationplan.id, j.resource.name,
             round(-j.quantity, 6),
             str(j.startdate), str(j.enddate),
             j.setup and j.setup or "\\N", j.status, currentTime
-            )).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
+            )))
+    process('\\.\n')
     if self.verbosity:
       print('Exported operationplan resources in %.2f seconds' % (time() - starttime))
 
@@ -457,18 +507,18 @@ class export:
       startdate += timedelta(days=1)
 
     # Loop over all reporting buckets of all resources
-    process.stdin.write('COPY out_resourceplan (resource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n'.encode(self.encoding))
+    process('COPY out_resourceplan (resource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n')
     for i in frepple.resources():
       for j in i.plan(buckets):
-        process.stdin.write(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+        process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
          i.name, str(j['start']),
          round(j['available'], 6),
          round(j['unavailable'], 6),
          round(j['setup'], 6),
          round(j['load'], 6),
          round(j['free'], 6)
-         )).encode(self.encoding))
-    process.stdin.write('\\.\n'.encode(self.encoding))
+         )))
+    process('\\.\n')
     if self.verbosity:
       print('Exported resourceplans in %.2f seconds' % (time() - starttime))
 

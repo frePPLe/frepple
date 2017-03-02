@@ -102,6 +102,7 @@ module.exports = function (grunt) {
               'freppledb/input/static/input/src/item.js',
               'freppledb/input/static/input/src/location.js',
               'freppledb/input/static/input/src/operation.js',
+          'freppledb/input/static/input/src/operationplan.js',
               'freppledb/input/static/input/src/resource.js',
               'freppledb/input/static/input/src/model.js',
               ],
@@ -109,14 +110,13 @@ module.exports = function (grunt) {
       },
       operationplandetail: {
         src: [
-              'freppledb/input/static/operationplandetail/src/bufferspanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',
               'freppledb/input/static/operationplandetail/src/module.js',
               'freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js',
-              'freppledb/input/static/operationplandetail/src/operationplandetailDrv.js',
               'freppledb/input/static/operationplandetail/src/problemspanelDrv.js',
               'freppledb/input/static/operationplandetail/src/resourcespanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/operationplandetail-translations.js'
+              'freppledb/input/static/operationplandetail/src/bufferspanelDrv.js',
+              'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',              
+              'freppledb/input/static/operationplandetail/src/operationplandetailDrv.js'              
               ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
       }

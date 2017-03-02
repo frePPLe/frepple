@@ -40,9 +40,6 @@ function showoperationplanDrv($window) {
     }
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
-      //console.log(oldValue);
-      //console.log(newValue);
-      //console.log(typeof scope.operationplan.id !== 'undefined' && typeof scope.operationplan.id !== 'NaN');
       if (typeof scope.operationplan.id !== 'undefined' && !isNaN(scope.operationplan.id)) {
 
         angular.element(elem).find('input[disabled]').attr('disabled',false);

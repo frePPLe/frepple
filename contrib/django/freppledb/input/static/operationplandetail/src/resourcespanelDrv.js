@@ -41,8 +41,6 @@ function showresourcespanelDrv($window) {
                   '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.loadplans.length'], function (newValue,oldValue) {
-      //console.log(oldValue);
-      //console.log(newValue);
       angular.element(document).find('#attributes-operationresources').empty().append(template);
       var rows='<tr><td colspan="2">'+gettext('no resources')+'<td></tr>';
 

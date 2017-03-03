@@ -36,7 +36,9 @@ function showoperationplanDrv($window) {
     scope.opptype={ //just a translation
       'MO': gettext('Manufacturing Order'),
       'PO': gettext('Purchase Order'),
-      'DO': gettext('Distribution Order')
+      'DO': gettext('Distribution Order'),
+      'STCK': gettext('Stock'),
+      'DLVR': gettext('Delivery'),
     }
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
@@ -97,7 +99,9 @@ function showoperationplanDrv($window) {
           return;
         }
         if (e.target.id === 'setStart') {
-          scope.$apply(function () {scope.operationplan.start=new moment(e.date).format("YYYY-MM-DDTHH:mm:ss");});
+          scope.$apply(function () {
+            scope.operationplan.start=new moment(e.date).format("YYYY-MM-DDTHH:mm:ss");
+          });
         }
         if (e.target.id === 'setEnd') {
           scope.$apply(function () {scope.operationplan.end=new moment(e.date).format("YYYY-MM-DDTHH:mm:ss");});

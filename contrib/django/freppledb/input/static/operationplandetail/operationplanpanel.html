@@ -21,27 +21,27 @@
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>reference</b></td>
-          <td id="testrow">{{operationplan.reference}}</td>
+          <td id="referencerow">{{operationplan.reference}}</td>
         </tr>
         <tr data-ng-if="operationplan.item  !== null">
           <td><b style="text-transform: capitalize;" translate>item</b></td>
-          <td id="testrow">{{operationplan.item}}</td>
+          <td id="itemrow">{{operationplan.item}}</td>
         </tr>
-        <tr ng-if="operationplan.supplier  !== null && Object.keys(operationplan).length>0">
+        <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined">
           <td><b style="text-transform: capitalize;" translate>supplier</b></td>
-          <td id="testrow">{{operationplan.supplier}}</td>
+          <td id="supplierrow">{{operationplan.supplier}}</td>
         </tr>
         <tr ng-if="operationplan.location !== null">
           <td><b style="text-transform: capitalize;" translate>location</b></td>
-          <td id="testrow">{{operationplan.location}}</td>
+          <td id="locationrow">{{operationplan.location}}</td>
         </tr>
-        <tr ng-if="operationplan.origin !== null && Object.keys(operationplan).length>0">
+        <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined">
           <td><b style="text-transform: capitalize;" translate>origin</b></td>
-          <td id="testrow">{{operationplan.origin}}</td>
+          <td id="originrow">{{operationplan.origin}}</td>
         </tr>
-        <tr ng-if="operationplan.destination !== null && Object.keys(operationplan).length>0">
+        <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined">
           <td><b style="text-transform: capitalize;" translate>destination</b></td>
-          <td id="testrow">{{operationplan.destination}}</td>
+          <td id="destinationrow">{{operationplan.destination}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>start</b></td>
@@ -67,7 +67,7 @@
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>delay</b></td>
-          <td id="delayrow">{{operationplan.delay}}</td>
+          <td id="delayrow">{{(operationplan.delay / 86400)|number:0}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>status</b></td>

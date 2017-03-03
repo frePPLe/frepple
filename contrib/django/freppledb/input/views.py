@@ -1475,7 +1475,13 @@ class OperationPlanDetail(View):
            "delay": opplan.delay.total_seconds(),
            "status": opplan.status,
            "reference": opplan.reference,
-           "type": opplan.type
+           "type": opplan.type,
+           "name": opplan.name,
+           "destination": opplan.destination_id,
+           "location": opplan.location_id,
+           "origin": opplan.origin_id,
+           "supplier": opplan.supplier_id,
+           "item": opplan.item_id
            }
         if opplan.plan:
           res["pegging_demand"] = []

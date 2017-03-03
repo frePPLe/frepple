@@ -11,7 +11,8 @@
         <b id="thead1" style="text-transform: capitalize;" >{{opptype[operationplan.type]}}&nbsp;</b>
       </td>
       <td>
-        <b id="thead2" style="text-transform: capitalize;">{{operationplan.operation.name}}</b>
+        <b id="thead2" style="text-transform: capitalize;" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}</b>
+        <b id="thead2" style="text-transform: capitalize;" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}</b>
       </td>
       <tbody>
         <tr>
@@ -22,13 +23,25 @@
           <td><b style="text-transform: capitalize;" translate>reference</b></td>
           <td id="testrow">{{operationplan.reference}}</td>
         </tr>
-        <tr ng-if="operationplan.type === 'DO'">
-          <td><b style="text-transform: capitalize;" translate>origin</b></td>
-          <td id="testrow">{{operationplan.origin.name}}</td>
+        <tr data-ng-if="operationplan.item  !== null">
+          <td><b style="text-transform: capitalize;" translate>item</b></td>
+          <td id="testrow">{{operationplan.item}}</td>
         </tr>
-        <tr ng-if="operationplan.type === 'PO'">
+        <tr ng-if="operationplan.supplier  !== null && Object.keys(operationplan).length>0">
           <td><b style="text-transform: capitalize;" translate>supplier</b></td>
-          <td id="testrow">{{operationplan.supplier.name}}</td>
+          <td id="testrow">{{operationplan.supplier}}</td>
+        </tr>
+        <tr ng-if="operationplan.location !== null">
+          <td><b style="text-transform: capitalize;" translate>location</b></td>
+          <td id="testrow">{{operationplan.location}}</td>
+        </tr>
+        <tr ng-if="operationplan.origin !== null && Object.keys(operationplan).length>0">
+          <td><b style="text-transform: capitalize;" translate>origin</b></td>
+          <td id="testrow">{{operationplan.origin}}</td>
+        </tr>
+        <tr ng-if="operationplan.destination !== null && Object.keys(operationplan).length>0">
+          <td><b style="text-transform: capitalize;" translate>destination</b></td>
+          <td id="testrow">{{operationplan.destination}}</td>
         </tr>
         <tr>
           <td><b style="text-transform: capitalize;" translate>start</b></td>

@@ -87,6 +87,7 @@ const Keyword Tags::flowplan("flowplan");
 const Keyword Tags::flowplans("flowplans");
 const Keyword Tags::flows("flows");
 const Keyword Tags::fromsetup("fromsetup");
+const Keyword Tags::hasSuperOperations("hasSuperOperations");
 const Keyword Tags::headeratts("headeratts");
 const Keyword Tags::headerstart("headerstart");
 const Keyword Tags::hidden("hidden");

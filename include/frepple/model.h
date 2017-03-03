@@ -2905,6 +2905,14 @@ class Operation : public HasName<Operation>,
       return superoplist;
     }
 
+    /** Returns a reference to the list of super-operations, i.e. operations
+    * using the current Operation as a sub-Operation.
+    */
+    bool hasSuperOperations() const
+    {
+      return !superoplist.empty();
+    }
+
     /** Register a super-operation, i.e. an operation having this one as a
       * sub-operation. */
     void addSuperOperation(Operation * o)
@@ -2964,6 +2972,7 @@ class Operation : public HasName<Operation>,
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, BASE + WRITE_OBJECT);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, BASE + WRITE_OBJECT);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::hasSuperOperations, &Cls::hasSuperOperations, nullptr, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
 

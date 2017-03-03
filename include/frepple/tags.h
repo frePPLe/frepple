@@ -88,6 +88,7 @@ class Tags
     static const Keyword flowplans;
     static const Keyword flows;
     static const Keyword fromsetup;
+    static const Keyword hasSuperOperations; 
     static const Keyword headeratts;
     static const Keyword headerstart;
     static const Keyword hidden;

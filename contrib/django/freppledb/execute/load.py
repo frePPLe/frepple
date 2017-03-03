@@ -641,7 +641,7 @@ class loadData(object):
     cnt = 0
     print('Auto-update operation items...')
     for oper in frepple.operations():
-      if oper.hidden or oper.item:
+      if oper.hidden or oper.item or oper.hasSuperOperation:
         continue
       item = None
       for fl in oper.flows:

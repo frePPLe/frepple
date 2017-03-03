@@ -202,11 +202,11 @@ class ResourceSkill_inline(MultiDBTabularInline):
 
 class Operation_admin(MultiDBModelAdmin):
   model = Operation
-  raw_id_fields = ('location',)
+  raw_id_fields = ('location', 'item')
   save_on_top = True
   inlines = [ SubOperation_inline, OperationMaterial_inline, OperationResource_inline, ]
   fieldsets = (
-    (None, {'fields': ('name', 'type', 'location', 'description', 'category', 'subcategory')}),
+    (None, {'fields': ('name', 'type', 'item', 'location', 'description', 'category', 'subcategory')}),
     (_('planning parameters'), {
       'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
        }),

@@ -115,8 +115,8 @@ module.exports = function (grunt) {
               'freppledb/input/static/operationplandetail/src/problemspanelDrv.js',
               'freppledb/input/static/operationplandetail/src/resourcespanelDrv.js',
               'freppledb/input/static/operationplandetail/src/bufferspanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',              
-              'freppledb/input/static/operationplandetail/src/operationplandetailDrv.js'              
+              'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',
+              'freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js'
               ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
       }

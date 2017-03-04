@@ -158,8 +158,6 @@ class Command(BaseCommand):
       destinationscenario.lastrefresh = datetime.today()
       if 'description' in options:
         destinationscenario.description = options['description']
-      else:
-        destinationscenario.description = "Copied from scenario '%s'" % source
       destinationscenario.save()
 
       # Give access to the destination scenario to:

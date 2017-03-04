@@ -152,7 +152,7 @@ class Command(BaseCommand):
         for ifile, model, contenttype_id, dependencies in models:
           i += 1
           print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
-          filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile, flush=True)
+          filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
           errors += self.parseCSVloadfromfolder(model, filetoparse)
           print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile, flush=True)
           task.status = str(int(10+i/cnt*80))+'%'

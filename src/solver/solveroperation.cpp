@@ -862,10 +862,6 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->a_date = top_q_date + delay;
   }
 
-  // Check reply date is later than requested date
-  assert(data->state->a_date >= top_q_date);
-  assert(data->state->a_qty >= 0);
-
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()

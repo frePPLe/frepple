@@ -378,6 +378,14 @@ jQuery.extend($.fn.fmatter, {
 
   graph : function (cellvalue, options, rowdata) {
     return '<div class="graph" style="height:80px"></div>';
+  },
+
+  longstring : function (cellvalue, options, rowdata) {
+    if (typeof cellvalue === 'string') {
+      return '<span data-toggle="tooltip" data-placement="bottom" data-original-title="'+cellvalue+'">'+cellvalue+'</span>';
+    } else {
+      return "";
+    }
   }
 });
 jQuery.extend($.fn.fmatter.percentage, {

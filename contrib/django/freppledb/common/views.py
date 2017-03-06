@@ -378,7 +378,7 @@ class ParameterList(GridReport):
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra='"role":"common/parameter"'),
     GridFieldText('value', title=_('value')),
-    GridFieldText('description', title=_('description')),
+    GridFieldText('description', title=_('description'), formatter='longstring'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )

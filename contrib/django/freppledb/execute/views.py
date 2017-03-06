@@ -70,7 +70,7 @@ class TaskReport(GridReport):
     GridFieldDateTime('started', title=_('started'), editable=False, align='center'),
     GridFieldDateTime('finished', title=_('finished'), editable=False, align='center'),
     GridFieldText('status', title=_('status'), editable=False, align='center', extra="formatter:status"),
-    GridFieldText('message', title=_('message'), editable=False, width=500),
+    GridFieldText('message', title=_('message'), editable=False, width=500, formatter='longstring'),
     GridFieldText('arguments', title=_('arguments'), editable=False),
     #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),

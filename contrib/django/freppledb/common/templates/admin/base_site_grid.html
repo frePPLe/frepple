@@ -69,7 +69,7 @@ $(function() {
       width: 550,
       height: 300
     },
-
+    gridComplete: function() {$('#grid [data-toggle="tooltip"]').tooltip({"delay": {"show": 500}});},
     loadError: function(xhr,st,err) {
       if (xhr.status == 200)
       {

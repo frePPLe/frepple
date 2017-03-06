@@ -84,7 +84,7 @@ var introdata = {
         'The main fields are:<ul>' +
         '<li style="list-style:initial">Name: Unique name of the item.</li>' +
         '<li style="list-style:initial">Description: Free format description.</li>' +
-        '<li style="list-style:initial">Price: Cost or price of the item.</li>' +
+        '<li style="list-style:initial">Cost: Cost or price of the item.</li>' +
         '</ul>',
       position : 'right'
     }

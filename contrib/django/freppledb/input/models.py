@@ -177,7 +177,7 @@ class Item(AuditModel, HierarchyModel):
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
     max_digits=15, decimal_places=6,
-    help_text=_("Selling price of the item")
+    help_text=_("Cost of the item")
     )
 
   def __str__(self):

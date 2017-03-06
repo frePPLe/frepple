@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
         model_name='item',
         name='cost',
-        field=models.DecimalField(null=True, blank=True, help_text='Selling price of the item', max_digits=15, decimal_places=6, verbose_name='cost'),
+        field=models.DecimalField(null=True, blank=True, help_text='Cost of the item', max_digits=15, decimal_places=6, verbose_name='cost'),
     ),
     migrations.RunSQL(
         '''

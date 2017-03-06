@@ -4016,7 +4016,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
     /** Default constructor. */
     explicit Item() {}
 
-    /** Return the selling price of the item.<br>
+    /** Return the cost of the item.<br>
       * The default value is 0.0.
       */
     double getCost() const
@@ -4024,7 +4024,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return cost;
     }
 
-    /** Update the selling price of the item. */
+    /** Update the cost of the item. */
     void setCost(const double c)
     {
       if (c >= 0)

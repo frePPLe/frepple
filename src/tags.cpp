@@ -139,7 +139,6 @@ const Keyword Tags::plan("plan");
 const Keyword Tags::planned_quantity("planned_quantity");
 const Keyword Tags::plantype("plantype");
 const Keyword Tags::posttime("posttime");
-const Keyword Tags::price("price");
 const Keyword Tags::priority("priority");
 const Keyword Tags::problem("problem");
 const Keyword Tags::problems("problems");

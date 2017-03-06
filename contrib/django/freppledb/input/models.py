@@ -103,10 +103,10 @@ class CalendarBucket(AuditModel):
       return self.get(
         calendar=calendar, startdate=startdate, enddate=enddate, priority=priority
         )
-  
+
   def natural_key(self):
     return (self.calendar, self.startdate, self.enddate, self.priority)
-  
+
   objects = Manager()
 
   def __str__(self):
@@ -174,8 +174,8 @@ class Item(AuditModel, HierarchyModel):
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
-  price = models.DecimalField(
-    _('price'), null=True, blank=True,
+  cost = models.DecimalField(
+    _('cost'), null=True, blank=True,
     max_digits=15, decimal_places=6,
     help_text=_("Selling price of the item")
     )
@@ -317,16 +317,16 @@ class SubOperation(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, operation, priority, suboperation):
       return self.get(operation=operation, priority=priority, suboperation=suboperation)
-  
+
   def natural_key(self):
     return (self.operation, self.priority, self.suboperation)
 
   objects = Manager()
-  
+
   def __str__(self):
     return ("%s   %s   %s" % (
-      self.operation.name if self.operation else None, 
-      self.priority, 
+      self.operation.name if self.operation else None,
+      self.priority,
       self.suboperation.name if self.suboperation else None
       ))
 
@@ -360,11 +360,11 @@ class Buffer(AuditModel, HierarchyModel):
     default='default'
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), 
+    Location, verbose_name=_('location'),
     db_index=True, blank=False, null=False
     )
   item = models.ForeignKey(
-    Item, verbose_name=_('item'), 
+    Item, verbose_name=_('item'),
     db_index=True, blank=False, null=False
     )
   onhand = models.DecimalField(
@@ -390,12 +390,12 @@ class Buffer(AuditModel, HierarchyModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, item, location):
       return self.get(item=item, location=location)
-  
+
   def natural_key(self):
     return (self.item, self.location)
 
   objects = Manager()
-  
+
   def __str__(self):
     return self.name
 
@@ -456,12 +456,12 @@ class SetupRule(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, setupmatrix, priority):
       return self.get(setupmatrix=setupmatrix, priority=priority)
-  
+
   def natural_key(self):
     return (self.setupmatrix, self.priority)
 
   objects = Manager()
-  
+
   def __str__(self):
     return "%s - %s" % (
       self.setupmatrix.name if self.setupmatrix else None,
@@ -595,7 +595,7 @@ class ResourceSkill(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, resource, skill):
       return self.get(resource=resource, skill=skill)
-  
+
   def natural_key(self):
     return (self.resource, self.skill)
 
@@ -665,12 +665,12 @@ class OperationMaterial(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, operation, item, effective_start):
       return self.get(operation=operation, item=item, effective_start=effective_start)
-  
+
   def natural_key(self):
     return (self.operation, self.item, self.effective_start)
-  
+
   objects = Manager()
-  
+
   def __str__(self):
     if self.effective_start:
       return '%s - %s - %s' % (
@@ -695,7 +695,7 @@ class OperationResource(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(
-    Operation, verbose_name=_('operation'), 
+    Operation, verbose_name=_('operation'),
     db_index=True, related_name='operationresources',
     blank=False, null=False
     )
@@ -742,12 +742,12 @@ class OperationResource(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, operation, resource, effective_start):
       return self.get(operation=operation, resource=resource, effective_start=effective_start)
-  
+
   def natural_key(self):
     return (self.operation, self.resource, self.effective_start)
-  
+
   objects = Manager()
-  
+
   def __str__(self):
     if self.effective_start:
       return '%s - %s - %s' % (
@@ -760,7 +760,7 @@ class OperationResource(AuditModel):
         self.operation.name if self.operation else None,
         self.resource.name if self.resource else None
         )
-      
+
   class Meta(AuditModel.Meta):
     db_table = 'operationresource'
     unique_together = (('operation', 'resource', 'effective_start'),)
@@ -850,10 +850,10 @@ class ItemSupplier(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, item, location, supplier, effective_start):
       return self.get(item=item, location=location, supplier=supplier, effective_start=effective_start)
-  
+
   def natural_key(self):
     return (self.item, self.location, self.supplier, self.effective_start)
-  
+
   objects = Manager()
 
   def __str__(self):
@@ -935,10 +935,10 @@ class ItemDistribution(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, item, location, origin, effective_start):
       return self.get(item=item, location=location, origin=origin, effective_start=effective_start)
-  
+
   def natural_key(self):
     return (self.item, self.location, self.origin, self.effective_start)
-  
+
   objects = Manager()
 
   def __str__(self):
@@ -1117,7 +1117,7 @@ class OperationPlan(AuditModel):
     null=True, blank=True, editable=False
     )
   name = models.CharField(
-    _('name'), max_length=1000, null=True, 
+    _('name'), max_length=1000, null=True,
     blank=True, db_index=True
     )
 
@@ -1125,14 +1125,14 @@ class OperationPlan(AuditModel):
     def get_by_natural_key(self, reference):
       # Note: we are not enforcing the uniqueness of this natural key in the database
       return self.get(reference=reference)
-  
+
   def natural_key(self):
     return (self.reference)
-  
+
   objects = Manager()
 
   natural_key = ('reference',)
-  
+
   def __str__(self):
     return str(self.id)
 
@@ -1165,7 +1165,7 @@ class OperationPlanResource(AuditModel):
     ('proposed', _('proposed')),
     ('confirmed', _('confirmed')),
   )
-  
+
   # Database fields
   resource = models.CharField(_('resource'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
@@ -1185,32 +1185,32 @@ class OperationPlanResource(AuditModel):
     def get_by_natural_key(self, operationplan, resource):
       # Note: we are not enforcing the uniqueness of this natural key in the database
       return self.get(operationplan=operationplan, resource=resource)
-  
+
   def natural_key(self):
     return (self.operationplan, self.resource)
-  
+
   objects = Manager()
 
   def __str__(self):
       return "%s %s %s %s" % (self.resource, self.startdate, self.enddate, self.status)
 
   natural_key = ('operationplan', 'resource')
-  
+
   class Meta:
     db_table = 'operationplanresource'
     ordering = ['resource', 'startdate']
     verbose_name = _('operationplan resource')
     verbose_name_plural = _('operationplan resources')
-    
+
 
 
 class OperationPlanMaterial(AuditModel):
   # Possible status
   OPMstatus = (
-    ('proposed', _('proposed')), 
+    ('proposed', _('proposed')),
     ('confirmed', _('confirmed')),
   )
-  
+
   # Database fields
   buffer = models.CharField(_('buffer'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
@@ -1229,23 +1229,23 @@ class OperationPlanMaterial(AuditModel):
     def get_by_natural_key(self, operationplan, buffer):
       # Note: we are not enforcing the uniqueness of this natural key in the database
       return self.get(operationplan=operationplan, buffer=buffer)
-  
+
   def natural_key(self):
     return (self.operationplan, self.buffer)
-  
+
   objects = Manager()
-  
+
   def __str__(self):
     return "%s %s %s %s" % (self.buffer, self.flowdate, self.quantity, self.status)
 
   natural_key = ('operationplan', 'resource')
-  
+
   class Meta:
     db_table = 'operationplanmaterial'
     ordering = ['buffer', 'flowdate']
     verbose_name = _('operationplan material')
     verbose_name_plural = _('operationplan materials')
-    
+
 
 class DistributionOrder(OperationPlan):
 
@@ -1309,7 +1309,7 @@ class ManufacturingOrder(OperationPlan):
     self.supplier = self.origin = self.destination = None
     if self.operation:
       self.item = self.operation.item
-      self.location = self.operation.location     
+      self.location = self.operation.location
     super(ManufacturingOrder, self).save(*args, **kwargs)
 
   class Meta:

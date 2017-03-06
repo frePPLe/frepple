@@ -23,7 +23,7 @@ owner           item              | Items are organized in a hierarchical tree.
                                   | This field defines the parent item.
 members         list of item      | Items are organized in a hierarchical tree.
                                   | This field defines a list of child items.
-price           double            | Cost or price of the item.
+cost            double            | Cost or price of the item.
                                   | Depending on the precise usage and business goal it should
                                     be evaluated which cost to load into this field: purchase
                                     cost, booking value, selling price...

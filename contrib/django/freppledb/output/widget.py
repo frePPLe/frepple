@@ -506,7 +506,7 @@ class DistributionOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(item.price * quantity)),0)
+         coalesce(round(sum(item.cost * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -522,7 +522,7 @@ class DistributionOrderWidget(Widget):
       select 
         1, null, null, count(*), 
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -530,8 +530,8 @@ class DistributionOrderWidget(Widget):
       union all
       select 
         2, null, null, count(*), 
-        coalesce(round(sum(item.price)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost)),0),
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -541,7 +541,7 @@ class DistributionOrderWidget(Widget):
       select
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -732,7 +732,7 @@ class PurchaseOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(item.price * quantity)),0)
+         coalesce(round(sum(item.cost * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -747,7 +747,7 @@ class PurchaseOrderWidget(Widget):
       select 
         1, null, null, count(*), 
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -756,7 +756,7 @@ class PurchaseOrderWidget(Widget):
       select
         2, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -765,7 +765,7 @@ class PurchaseOrderWidget(Widget):
       select 
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.price * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -1251,7 +1251,7 @@ class InventoryByLocationWidget(Widget):
       .call(yAxis);
     '''
 
-  query = '''select location_id, coalesce(sum(buffer.onhand * item.price),0)
+  query = '''select location_id, coalesce(sum(buffer.onhand * item.cost),0)
              from buffer
              inner join item on buffer.item_id = item.name
              group by location_id
@@ -1348,7 +1348,7 @@ class InventoryByItemWidget(Widget):
       '<table style="display:none">'
       ]
     cursor = connections[request.database].cursor()
-    query = '''select item.name, coalesce(sum(buffer.onhand * item.price),0)
+    query = '''select item.name, coalesce(sum(buffer.onhand * item.cost),0)
                from buffer
                inner join item on buffer.item_id = item.name
                group by item.name

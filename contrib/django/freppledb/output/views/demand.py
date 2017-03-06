@@ -269,7 +269,7 @@ def OperationPlans(request):
       'startdate': str(o.startdate.date()),
       'enddate': str(o.enddate.date()),
       'quantity': float(o.quantity),
-      'value': float(o.quantity * o.item.price),
+      'value': float(o.quantity * o.item.cost),
       'criticality': float(o.criticality)
     })
   for o in DistributionOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):
@@ -282,7 +282,7 @@ def OperationPlans(request):
       'startdate': str(o.startdate),
       'enddate': str(o.enddate),
       'quantity': float(o.quantity),
-      'value': float(o.quantity * o.item.price),
+      'value': float(o.quantity * o.item.cost),
       'criticality': float(o.criticality)
     })
   for o in ManufacturingOrder.objects.all().using(request.database).filter(id__in=id_list, status='proposed'):

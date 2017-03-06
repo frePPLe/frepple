@@ -818,7 +818,7 @@ class ItemList(GridReport):
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),
     GridFieldText('owner', title=_('owner'), field_name='owner__name'),
-    GridFieldCurrency('price', title=_('price')),
+    GridFieldCurrency('cost', title=_('cost')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
@@ -1197,7 +1197,7 @@ class DistributionOrderList(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     return DistributionOrder.objects.all().extra(select={
       'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg)",
-      'total_price': "price*quantity"
+      'total_cost': "cost*quantity"
       })
 
   rows = (
@@ -1214,9 +1214,9 @@ class DistributionOrderList(GridReport):
     GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus,
       editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')),
+    GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       editable=False),
-    GridFieldCurrency('total_price', title=_('total price'), editable=False),
+    GridFieldCurrency('total_cost', title=_('total cost'), editable=False),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
@@ -1323,7 +1323,7 @@ class PurchaseOrderList(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     return PurchaseOrder.objects.all().extra(select={
       'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(operationplan.plan) order by key desc) peg), '')",
-      'total_price': "price*quantity"
+      'total_cost': "cost*quantity"
       })
 
   rows = (
@@ -1340,8 +1340,8 @@ class PurchaseOrderList(GridReport):
     GridFieldChoice('status', title=_('status'),
       choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldCurrency('item__price', title=string_concat(_('item'), ' - ', _('price')), editable=False),
-    GridFieldCurrency('total_price', title=_('total price'), editable=False),
+    GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False),
+    GridFieldCurrency('total_cost', title=_('total cost'), editable=False),
     GridFieldNumber('criticality', title=_('criticality'), editable=False),
     GridFieldDuration('delay', title=_('delay'), editable=False),
     GridFieldText('demand', title=_('demands'), editable=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),

@@ -101,14 +101,14 @@ class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ItemSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Item
-      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'price', 'source', 'lastmodified')
+      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial=True
 
 class ItemAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Item.objects.all()
-    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'price', 'source', 'lastmodified')
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
     serializer_class = ItemSerializer
 
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -398,7 +398,7 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
 class ManufacturingOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.ManufacturingOrder.objects.all()
     serializer_class = ManufacturingOrderSerializer
-    
+
     filter_fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
                 'criticality', 'delay', 'owner', 'source', 'lastmodified')
 

@@ -332,7 +332,7 @@ class loadData(object):
     self.cursor.execute('''
       SELECT
         name, description, owner_id,
-        price, category, subcategory, source %s
+        cost, category, subcategory, source %s
       FROM item %s
       ''' % (attrsql, self.filter_where))
     for i in self.cursor.fetchall():
@@ -342,7 +342,7 @@ class loadData(object):
         if i[2]:
           x.owner = frepple.item(name=i[2])
         if i[3]:
-          x.price = i[3]
+          x.cost = i[3]
         idx = 7
         for a in attrs:
           setattr(x, a, i[idx])
@@ -768,7 +768,7 @@ class loadData(object):
             status=i[5], source=i[6]
             )
           opplan = None
-        else:          
+        else:
           print("Warning: unhandled operationplan type '%s'" % i[7])
           continue
         if i[14] and opplan:
@@ -814,13 +814,13 @@ class loadData(object):
       ''')
     d = self.cursor.fetchone()
     frepple.settings.id = d[0]
-    
+
   def loadOperationPlanMaterials(self):
     print('Importing operationplanmaterials...')
     cnt = 0
     starttime = time()
     self.cursor.execute('''
-      select quantity, flowdate, operationplan_id, buffer, status 
+      select quantity, flowdate, operationplan_id, buffer, status
       from operationplanmaterial
       where status <> 'proposed'
     ''')
@@ -839,7 +839,7 @@ class loadData(object):
       except Exception as e:
         print("Error:", e)
     print('Loaded %d operationplanmaterials in %.2f seconds' % (cnt, time() - starttime))
-    
+
   def loadOperationPlanResources(self):
     print('Importing operationplanresources...')
     cnt = 0
@@ -937,7 +937,7 @@ class loadData(object):
     self.loadItemDistributions()
     self.loadOperationMaterials()
     self.loadOperationResources()
- 
+
     # Close the database connection
     self.cursor.close()
 
@@ -962,7 +962,7 @@ class loadData(object):
     self.loadOperationPlans()
     self.loadOperationPlanMaterials()
     self.loadOperationPlanResources()
-    
+
 
     # Close the database connection
     self.cursor.close()

@@ -338,7 +338,7 @@ class Command(BaseCommand):
           it = Item.objects.using(database).create(
             name='Component %04d' % i,
             category='Procured',
-            price=str(round(random.uniform(0, 100)))
+            cost=str(round(random.uniform(0, 100)))
             )
           ld = abs(round(random.normalvariate(procure_lt, procure_lt / 3)))
           Buffer.objects.using(database).create(
@@ -357,7 +357,7 @@ class Command(BaseCommand):
             sizeminimum=80,
             sizemultiple=10,
             priority=1,
-            cost=it.price
+            cost=it.cost
             )
           comps.append(it)
         task.status = '12%'
@@ -375,7 +375,7 @@ class Command(BaseCommand):
           it = Item.objects.using(database).create(
             name='Itm %05d' % i,
             category=random.choice(categories),
-            price=str(round(random.uniform(100, 200)))
+            cost=str(round(random.uniform(100, 200)))
             )
 
           # Level 0 buffer
@@ -445,7 +445,7 @@ class Command(BaseCommand):
               it_tmp = Item.objects.using(database).create(
                 name='Itm %05d L%02d' % (i, k+1),
                 category=random.choice(categories),
-                price=str(round(random.uniform(100, 200)))
+                cost=str(round(random.uniform(100, 200)))
                 )
               buf = Buffer.objects.using(database).create(
                 name='%s @ %s' % (it_tmp.name, loc.name),

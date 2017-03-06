@@ -373,7 +373,7 @@ class Simulator(object):
 
     # Measure the current inventory
     inv = Buffer.objects.all().using(self.database).filter(onhand__gt=0).aggregate(
-      val=Sum(F('onhand') * F('item__price')),
+      val=Sum(F('onhand') * F('item__cost')),
       qty=Sum(F('onhand'))
       )
     if inv['val']:
@@ -390,7 +390,7 @@ class Simulator(object):
 
     # Measure the current order book
     dmd = Demand.objects.all().using(self.database).filter(status='open').aggregate(
-      val=Sum(F('quantity') * F('item__price')),
+      val=Sum(F('quantity') * F('item__cost')),
       qty=Sum(F('quantity')),
       cnt=Count(F('name'))
       )
@@ -440,7 +440,7 @@ class Simulator(object):
         print("      Opening MO %s - %d of %s" % (op.id, op.quantity, op.operation.name))
       for fl in op.operation.operationmaterials.all().using(self.database):
         if not op.operation.location or not fl.item:
-          continue                
+          continue
         elif fl.type == 'start':
           buf = Buffer.objects.select_for_update().using(self.database).get(item=fl.item, location=op.operation.location)
           buf.onhand += fl.quantity * op.quantity
@@ -564,7 +564,7 @@ class Simulator(object):
       if not fl.item or not oper.location:
         continue
       buf = Buffer.objects.using(self.database).get(item=fl.item, location=oper.location)
-      if fl.type in ('start', 'end') or not fl.type:        
+      if fl.type in ('start', 'end') or not fl.type:
         if consume:
           buf.onhand += qty * fl.quantity
           buf.save(using=self.database)
@@ -665,8 +665,8 @@ class Simulator(object):
     for dmd in Demand.objects.using(self.database).filter(due__lt=nd, status='open').order_by('priority', 'due'):
       oper = dmd.operation
       if oper:
-        # Case 1: Delivery operation specified        
-        ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)        
+        # Case 1: Delivery operation specified
+        ship_qty = self.checkAvailable(dmd.quantity, dmd.minshipment or 0, oper, False)
         if ship_qty > 0:
           # Execute all operation materials on the delivery operation
           self.checkAvailable(ship_qty, 0, oper, True)

@@ -29,6 +29,7 @@ import freppledb.input
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class cookbooktest(TransactionTestCase):
+  reset_sequences = True
 
   def setUp(self):
     # Make sure the test database is used

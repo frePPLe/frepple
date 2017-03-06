@@ -202,7 +202,7 @@ class exportStaticModel(object):
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
             i.location and i.location.name or None, round(i.cost, 6),
             isinstance(i, frepple.operation_alternate) and i.search or None,
-            i.description, i.category, i.subcategory, i.source, 
+            i.description, i.category, i.subcategory, i.source,
             i.item.name if i.item else None, i.priority if i.priority != 1 else None,
             i.effective_start if i.effective_start != default_start else None,
             i.effective_end if i.effective_end != default_end else None,
@@ -230,7 +230,7 @@ class exportStaticModel(object):
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
             i.location and i.location.name or None, round(i.cost, 6),
             isinstance(i, frepple.operation_alternate) and i.search or None,
-            i.description, i.category, i.subcategory, i.source, self.timestamp, 
+            i.description, i.category, i.subcategory, i.source, self.timestamp,
             i.item.name if i.item else None, i.priority,
             i.effective_start if i.effective_start != default_start else None,
             i.effective_end if i.effective_end != default_end else None,
@@ -851,11 +851,11 @@ class exportStaticModel(object):
       primary_keys = set([ i[0] for i in cursor.fetchall() ])
       cursor.executemany(
         "insert into item \
-        (name,description,price,category,subcategory,source,lastmodified) \
+        (name,description,cost,category,subcategory,source,lastmodified) \
         values(%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.name, i.description, round(i.price, 6), i.category, 
+            i.name, i.description, round(i.cost, 6), i.category,
             i.subcategory, i.source, self.timestamp
           )
           for i in frepple.items()
@@ -863,11 +863,11 @@ class exportStaticModel(object):
         ])
       cursor.executemany(
         "update item \
-         set description=%s, price=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
+         set description=%s, cost=%s, category=%s, subcategory=%s, source=%s, lastmodified=%s \
          where name=%s",
         [
           (
-            i.description, round(i.price, 6), i.category, i.subcategory,
+            i.description, round(i.cost, 6), i.category, i.subcategory,
             i.source, self.timestamp, i.name
           )
           for i in frepple.items()
@@ -940,7 +940,7 @@ class exportStaticModel(object):
         self.exportItemSuppliers(cursor)
         self.exportItemDistributions(cursor),
         self.exportDemands(cursor)
-        
+
       else:
         # OPTION 2: Parallel export of entities in groups.
         # The groups are running in separate threads, and all functions in a group
@@ -969,14 +969,14 @@ class exportStaticModel(object):
         cursor.execute("delete from operationmaterial where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute('''
-          delete from operationplanmaterial 
-          where operationplan_id in (select id from operationplan 
+          delete from operationplanmaterial
+          where operationplan_id in (select id from operationplan
                 inner join demand on operationplan.demand_id = demand.name
                 where demand.source = %s and demand.lastmodified <> %s
                 )''', (self.source, self.timestamp))
         cursor.execute('''
-          delete from operationplanresource 
-          where operationplan_id in (select id from operationplan 
+          delete from operationplanresource
+          where operationplan_id in (select id from operationplan
                 inner join demand on operationplan.demand_id = demand.name
                 where demand.source = %s and demand.lastmodified <> %s
                 )''', (self.source, self.timestamp))
@@ -988,16 +988,16 @@ class exportStaticModel(object):
         cursor.execute('''
           delete from operationplanmaterial
           where operationplan_id in (
-            select operationplan.id 
-            from operationplan 
+            select operationplan.id
+            from operationplan
             where operationplan.source = %s and operationplan.lastmodified <> %s
             )
           ''', (self.source, self.timestamp))
         cursor.execute('''
           delete from operationplanresource
           where operationplan_id in (
-            select operationplan.id 
-            from operationplan 
+            select operationplan.id
+            from operationplan
             where operationplan.source = %s and operationplan.lastmodified <> %s
             )
           ''', (self.source, self.timestamp))

@@ -288,6 +288,7 @@ function drawGraph(jsondata)
   var g = shapes.enter().append('svg:g').on('click', function(d) {clickedShaped(d);});
   g.append("svg:use")
     .attr("xlink:href", function(d) { return "#" + d.type; })
+    .style("opacity", function(d) { return (d.suboperindex > 0) ? 0.75 : 1; })
     .attr("transform", function(d) {
        if (d.numsuboperations)
        {

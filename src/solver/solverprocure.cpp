@@ -376,7 +376,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // Increment the cost
   if (b->getItem() && data->state->a_qty > 0.0)
-    data->state->a_cost += data->state->a_qty * b->getItem()->getPrice();
+    data->state->a_cost += data->state->a_qty * b->getItem()->getCost();
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

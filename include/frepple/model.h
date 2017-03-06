@@ -4019,18 +4019,18 @@ class Item : public HasHierarchy<Item>, public HasDescription
     /** Return the selling price of the item.<br>
       * The default value is 0.0.
       */
-    double getPrice() const
+    double getCost() const
     {
-      return price;
+      return cost;
     }
 
     /** Update the selling price of the item. */
-    void setPrice(const double c)
+    void setCost(const double c)
     {
       if (c >= 0)
-        price = c;
+        cost = c;
       else
-        throw DataException("Item price must be positive");
+        throw DataException("Item cost must be positive");
     }
 
     /** Returns a constant reference to the list of items this supplier can deliver. */
@@ -4122,7 +4122,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
-      m->addDoubleField<Cls>(Tags::price, &Cls::getPrice, &Cls::setPrice, 0);
+      m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost, 0);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_OBJECT);
       m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_OBJECT);
@@ -4138,8 +4138,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
       */
     Operation* deliveryOperation = nullptr;
 
-    /** Selling price of the item. */
-    double price = 0.0;
+    /** Cost of the item. */
+    double cost = 0.0;
 
     /** This is a list of suppliers this item has. */
     supplierlist suppliers;

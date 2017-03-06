@@ -517,7 +517,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
     else
       cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced() - cumproduced;
     if (data->state->a_qty > cumproduced)
-      data->state->a_cost += (data->state->a_qty - cumproduced) * b->getItem()->getPrice();
+      data->state->a_cost += (data->state->a_qty - cumproduced) * b->getItem()->getCost();
   }
 
   // Message
@@ -636,7 +636,7 @@ void SolverMRP::solve(const BufferInfinite* b, void* v)
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
   if (b->getItem())
-    data->state->a_cost += data->state->q_qty * b->getItem()->getPrice();
+    data->state->a_cost += data->state->q_qty * b->getItem()->getCost();
 
   // Message
   if (data->getSolver()->getLogLevel()>1)

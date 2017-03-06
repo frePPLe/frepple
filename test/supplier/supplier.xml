@@ -25,7 +25,7 @@
 	  </supplier>
   </suppliers>
   <items>
-    <item name="Component group A and B" price="1">
+    <item name="Component group A and B" cost="1">
 	    <itemsuppliers>
 	      <itemsupplier>
           <supplier name="Supplier of components A and B" />
@@ -42,7 +42,7 @@
     Item B has 2 suppliers: one defined at the item level, and one
     at the group level.
     -->
-    <item name="Component B" price="1">
+    <item name="Component B" cost="1">
       <owner name="Component group A and B"/>
 	    <itemsuppliers>
 	      <itemsupplier>
@@ -53,7 +53,7 @@
 	    </itemsuppliers>
 	  </item>
     <!-- Item C has a single supplier. -->
-    <item name="Component C" price="1">
+    <item name="Component C" cost="1">
       <itemsuppliers>
 	      <itemsupplier>
           <supplier name="Supplier of component C" />
@@ -65,7 +65,7 @@
 	    </itemsuppliers>
     </item>
     <!-- Item D has no supplier. -->
-    <item name="Component D" price="1"/>
+    <item name="Component D" cost="1"/>
   </items>
 
   <buffers>
@@ -146,7 +146,7 @@
     </demand>
   </demands>
   <operationplans>
-    <operationplan ordertype="PO" end="2015-06-06T00:00:00" 
+    <operationplan ordertype="PO" end="2015-06-06T00:00:00"
       quantity="100" status="confirmed">
       <item name="Component C"/>
       <location name="warehouse"/>

@@ -46,7 +46,7 @@
 			<owner>
 				<name>Component group A and B</name>
 			</owner>
-			<price>1</price>
+			<cost>1</cost>
 			<itemsuppliers>
 				<itemsupplier>
 					<supplier>
@@ -58,7 +58,7 @@
 		</item>
 		<item>
 			<name>Component C</name>
-			<price>1</price>
+			<cost>1</cost>
 			<itemsuppliers>
 				<itemsupplier>
 					<supplier>
@@ -81,11 +81,11 @@
 		</item>
 		<item>
 			<name>Component D</name>
-			<price>1</price>
+			<cost>1</cost>
 		</item>
 		<item>
 			<name>Component group A and B</name>
-			<price>1</price>
+			<cost>1</cost>
 			<itemsuppliers>
 				<itemsupplier>
 					<supplier>

@@ -34,7 +34,7 @@
   </locations>
   <items>
     <!-- DEFAULT NETWORK FOR ALL PRODUCTS -->
-    <item name="All items" price="10">
+    <item name="All items" cost="10">
       <itemsuppliers>
         <itemsupplier>
           <supplier name="Supplier 1" />

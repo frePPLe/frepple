@@ -60,7 +60,7 @@
 	<items>
 		<item>
 			<name>All products</name>
-			<price>1</price>
+			<cost>1</cost>
 			<itemsuppliers>
 				<itemsupplier>
 					<supplier>
@@ -144,7 +144,7 @@
 			<owner>
 				<name>All products</name>
 			</owner>
-			<price>2</price>
+			<cost>2</cost>
 			<itemdistributions>
 				<itemdistribution>
 					<origin>

@@ -31,7 +31,7 @@
   </suppliers>
   <items>
     <!-- DEFAULT NETWORK FOR ALL PRODUCTS -->
-    <item name="All products" price="1">
+    <item name="All products" cost="1">
 	    <itemsuppliers>
 	      <itemsupplier>
           <supplier name="Supplier 1" />
@@ -88,7 +88,7 @@
     <!-- ITEM USING DEFAULT DISTRIBUTION AND PURCHASING -->
     <item name="product A">
       <owner name="All products"/>
-      <price>2</price>
+      <cost>2</cost>
     </item>
   </items>
 
@@ -151,14 +151,14 @@
   </demands>
 
   <operationplans>
-    <operationplan ordertype="DO" end="2015-06-06T00:00:00" 
+    <operationplan ordertype="DO" end="2015-06-06T00:00:00"
       quantity="100" status="confirmed">
       <item name="product A"/>
       <location name="Local DC 2b"/>
       <origin name="Central WH"/>
     </operationplan>
   </operationplans>
-  
+
 <?python
 print("SAVING MODEL IN XML FORMAT")
 frepple.saveXMLfile("output.1.xml")

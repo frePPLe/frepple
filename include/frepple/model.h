@@ -3698,6 +3698,11 @@ class OperationAlternate : public Operation
       search = decodeSearchMode(a);
     }
 
+    virtual string getOrderType() const
+    {
+      return "ALT";
+    }
+
     /** A operation of this type enforces the following rules on its
       * operationplans:
       *  - Very simple, call the method with the same name on the alternate

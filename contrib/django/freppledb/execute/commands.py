@@ -65,23 +65,30 @@ class SupplyPlanning(PlanTask):
       return 1
     else:
       return -1
+    
+  # Auxiliary functions for debugging
+  # Rename to activate
+  @classmethod
+  def DISABLED_debugResource(cls, res, mode):
+    # if res.name != 'my favorite resource': return
+    print("=> Situation on resource", res.name)
+    for j in res.loadplans:
+      print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
+ 
+  # Auxiliary functions for debugging
+  # Rename to activate
+  @classmethod
+  def DISABLED_debugDemand(cls, dem, mode):
+    if dem.name == 'my favorite demand':
+      print("=> Starting to plan demand ", dem.name)
+      cls.solver.loglevel = 2
+    else:
+      cls.solver.loglevel = 0
 
-  @staticmethod
-  def run(database=DEFAULT_DB_ALIAS, **kwargs):
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    print("parent")
     import frepple
-    # Auxiliary functions for debugging
-    def debugResource(res, mode):
-      # if res.name != 'my favorite resource': return
-      print("=> Situation on resource", res.name)
-      for j in res.loadplans:
-        print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
-
-    def debugDemand(dem, mode):
-      if dem.name == 'my favorite demand':
-        print("=> Starting to plan demand ", dem.name)
-        solver.loglevel = 2
-      else:
-        solver.loglevel = 0
 
     # Create a solver where the plan type are defined by an environment variable
     try:
@@ -92,7 +99,7 @@ class SupplyPlanning(PlanTask):
       constraint = int(os.environ['FREPPLE_CONSTRAINT'])
     except:
       constraint = 15  # Default is with all constraints enabled
-    solver = frepple.solver_mrp(
+    cls.solver = frepple.solver_mrp(
       constraints=constraint,
       plantype=plantype,
       loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
@@ -101,12 +108,14 @@ class SupplyPlanning(PlanTask):
       rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
       plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
       iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0'))
-      #userexit_resource=debugResource,
-      #userexit_demand=debugDemand
       )
+    if hasattr(cls, 'debugResource'):
+      cls.solver.userexit_resource = cls.debugResource
+    if hasattr(cls, 'debugDemand'):
+      cls.solver.userexit_demand = cls.debugDemand
     print("Plan type: ", plantype)
     print("Constraints: ", constraint)
-    solver.solve()
+    cls.solver.solve()
     frepple.printsize()
 
 
@@ -186,7 +195,7 @@ class ExportPlanToXML(PlanTask):
 class EraseModel(PlanTask):
 
   description = "Erase model"
-  sequence = 600
+  sequence = 700
 
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):

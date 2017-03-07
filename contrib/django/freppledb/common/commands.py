@@ -38,7 +38,12 @@ class PlanTaskRegistry:
     elif task.sequence is None:
       print("Warning: PlanTask doesn't have a sequence")
     else:
-      # Adding a new task to the registry
+      # Remove a previous task at the same sequence
+      for t in cls.reg:
+        if t.sequence == task.sequence:
+          cls.reg.remove(t)
+          break
+      # Adding the new task to the registry
       cls.reg.append(task)
     return task
 

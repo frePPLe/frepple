@@ -467,6 +467,7 @@
 			<start>2009-02-08T09:00:00</start>
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
 			<id>11</id>
@@ -476,6 +477,7 @@
 			<start>2009-02-15T09:00:00</start>
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
 			<id>13</id>
@@ -485,6 +487,7 @@
 			<start>2009-02-22T09:00:00</start>
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 	</operationplans>
 </plan>

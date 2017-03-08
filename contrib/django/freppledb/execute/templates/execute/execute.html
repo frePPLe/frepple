@@ -25,6 +25,7 @@
     {
       // Enable the refresh which is currently inactive
       refresh = setInterval(function() {
+        $(".tooltip").tooltip('hide');
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
       $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
@@ -133,7 +134,7 @@
         var el = $('#uploadResponse');
         el.val(data);
         el.scrollTop(el[0].scrollHeight - el.height());
-        // Resetting the value of filename. This is only done to avoid a 
+        // Resetting the value of filename. This is only done to avoid a
         // corner case where Internet Explorer is uploading a cached
         // (potentially outdated or even deleted) file.
         // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads

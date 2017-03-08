@@ -345,12 +345,12 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="price" type="positiveDouble" />
+      <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="itemsuppliers" type="itemsupplierlist" />
       <xsd:element name="itemdistributions" type="itemdistributionlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
-    <xsd:attribute name="price" type="positiveDouble" />
+    <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>
 
   <xsd:complexType name="itemlist">

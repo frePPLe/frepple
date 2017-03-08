@@ -201,6 +201,7 @@
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
+      $(".tooltip").tooltip('hide');
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
     // Checkboxes for workbook export

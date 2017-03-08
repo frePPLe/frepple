@@ -383,7 +383,7 @@ jQuery.extend($.fn.fmatter, {
   longstring : function (cellvalue, options, rowdata) {
     if (typeof cellvalue === 'string') {
       var tipcontent = cellvalue.replace(/"/g,"\'"); //there can be no double quotes in a tooltip, not even slashed.
-      return '<span data-toggle="tooltip" data-placement="bottom" data-original-title="'+tipcontent+'">'+cellvalue+'</span>';
+      return '<span data-toggle="tooltip" data-placement="left" data-original-title="'+tipcontent+'">'+cellvalue+'</span>';
     } else {
       return "";
     }

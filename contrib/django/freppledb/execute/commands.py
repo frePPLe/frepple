@@ -87,7 +87,6 @@ class SupplyPlanning(PlanTask):
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-    print("parent")
     import frepple
 
     # Create a solver where the plan type are defined by an environment variable

@@ -201,10 +201,14 @@ class ModelTabs(Node):
     from freppledb.admin import data_site
     from django.core.urlresolvers import reverse
     try:
-      # Look up the admin class to use
+      # Look up the admin class to use    
       model = Variable(self.model).resolve(context)
+      if not model:
+        return ''
       if isinstance(model, Options):
         ct = ContentType.objects.get(app_label=model.app_label, model=model.object_name.lower())
+      elif isinstance(model, models.Model):
+        ct = ContentType.objects.get(app_label=model._meta.app_label, model=model._meta.object_name.lower())
       else:
         model = model.split(".")
         ct = ContentType.objects.get(app_label=model[0], model=model[1])
@@ -233,7 +237,7 @@ class ModelTabs(Node):
               continue
         # Append to the results
         result.append(
-          '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s">%s</a></li>' % (
+          '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s" target="_self">%s</a></li>' % (
           'class="active" ' if active_tab == tab['name'] else '',
           context['request'].prefix,
           reverse(tab['view'], args=(obj,)),

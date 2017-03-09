@@ -82,7 +82,11 @@
   });
 </script>
 {% endblock %}
-{% block extracontainer %}ng-app="operationplandetailapp"{% endblock %}
+
+{% block extracontainer %}data-ng-app="operationplandetailapp"{% endblock %}
+
+{% block tools %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
+
 {% block extra_grid %}
 afterEditCell: function(rowid, cellname, value, iRow, iCol){
   if (rowid !== lastid) {
@@ -129,7 +133,6 @@ beforeSubmitCell: function(rowid, cellname, value, iRow, iCol) {
 },
 {% endblock %}
 
-{# {% block extracontainer %}data-ng-app='frepple.bottomdetail' style="overflow-y: visible;"{% endblock %}#}
 {% block after_table %}
 <div class="row">
   <div class="col-md-12">

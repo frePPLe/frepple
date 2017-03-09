@@ -142,7 +142,6 @@ class Tags
     static const Keyword plantype;
     static const Keyword posttime;    
     static const Keyword pretime;
-    static const Keyword price;
     static const Keyword priority;
     static const Keyword problem;
     static const Keyword problems;

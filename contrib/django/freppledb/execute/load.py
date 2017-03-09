@@ -820,7 +820,8 @@ class loadData(object):
     cnt = 0
     starttime = time()
     self.cursor.execute('''
-      select quantity, flowdate, operationplan_id, buffer, status
+      select 
+        quantity, flowdate, operationplan_id, item_id, location_id, status
       from operationplanmaterial
       where status <> 'proposed'
     ''')
@@ -831,11 +832,13 @@ class loadData(object):
         if opplan.status not in ("confirmed","approved"):
           pass
         for fl in opplan.flowplans:
-          if fl.buffer.name == i[3]:
-            fl.status = "confirmed"
-            if i[1]:
-              fl.date = i[1]
-            fl.quantity = i[0]
+          if fl.buffer.item and fl.buffer.item.name == i[3] \
+            and fl.buffer.location and fl.buffer.location.name == i[4]:
+              fl.status = "confirmed"
+              if i[1]:
+                fl.date = i[1]
+              fl.quantity = i[0]
+              break
       except Exception as e:
         print("Error:", e)
     print('Loaded %d operationplanmaterials in %.2f seconds' % (cnt, time() - starttime))

@@ -1768,7 +1768,7 @@ class Command(BaseCommand):
         [ (i[0], i[1], i[2], j) for i, j in flows.items() ]
         )
       cursor.executemany(
-        "insert into resourceload \
+        "insert into operationresource \
           (operation_id,resource_id,quantity,source,lastmodified) \
           values(%%s,%%s,%%s,'openbravo','%s')" % self.date,
         loads
@@ -1777,6 +1777,6 @@ class Command(BaseCommand):
       if self.verbosity > 0:
         print("Inserted %d operations" % len(operations))
         print("Inserted %d suboperations" % len(suboperations))
-        print("Inserted %d flows" % len(flows))
-        print("Inserted %d loads" % len(loads))
+        print("Inserted %d operation materials" % len(flows))
+        print("Inserted %d operation resources" % len(loads))
         print("Imported processplans in %.2f seconds" % (time() - starttime))

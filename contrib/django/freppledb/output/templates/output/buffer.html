@@ -245,30 +245,30 @@ function crosses (cellvalue, options, rowdata)
       case 1:
         if (cellvalue[1] != 0.0)
            result += cellvalue[1] + "<a href='{{request.prefix}}/flowplan/" +
-                                                  admin_escape(rowdata['buffer']) +
-                                                  "/?flowdate__gte=" + options['colModel']['startdate'] +
-                                                  "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-                                                  "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
         else
           result += '0.0</br>';
         break;
       case 2:
         if (cellvalue[2] != 0.0)
            result += cellvalue[2] + "<a href='{{request.prefix}}/flowplan/" +
-                                                  admin_escape(rowdata['buffer']) +
-                                                  "/?flowdate__gte=" + options['colModel']['startdate'] +
-                                                  "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-                                                  "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
         else
           result += '0.0<br/>';
         break;
       case 3:
         if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
            result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
-                                                    admin_escape(rowdata['buffer']) +
-                                                    "/?flowdate__gte=" + options['colModel']['startdate'] +
-                                                    "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-                                                    "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+             admin_escape(rowdata['buffer']) +
+             "/?flowdate__gte=" + options['colModel']['startdate'] +
+             "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
         else
           result += cellvalue[3] + '<br/>';
         break;

@@ -1507,7 +1507,7 @@ class OperationPlanDetail(View):
               "quantity": float(m['quantity']),
               "onhand": float(m['onhand']),
               "buffer": {
-                "name": m['buffer']
+                "name": "%s @ %s" % (m['item_id'], m['location_id'])
                 }
               })
 
@@ -1534,10 +1534,11 @@ class OperationPlanDetail(View):
           first = False
         else:
           yield ',%s' % json.dumps(res)
+        yield "]"
       except Exception as e:
         # Ignore exceptions and move on
         logger.error("Error retrieving operationplan: %s" % e)
-      yield "]"
+      
 
 
   @method_decorator(csrf_exempt)

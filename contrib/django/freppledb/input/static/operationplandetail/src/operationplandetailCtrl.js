@@ -58,7 +58,7 @@ function operationplanCtrl($scope, OperationPlan) {
     $scope.operationplan = new OperationPlan();
 
     if (typeof row !== 'undefined') {
-      if (row.hasOwnProperty('buffer') || row.hasOwnProperty('resource')) {
+      if (row.hasOwnProperty('operationplan__id')) {
         rowid = row.operationplan__id;
         $scope.operationplan.editable = false;
       } else {

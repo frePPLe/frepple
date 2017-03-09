@@ -21,21 +21,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
   dependencies = [
-    ('input', '0011_demand_priority'),
+      ('input', '0012_rename_price_to_cost'),
   ]
 
   operations = [
-    migrations.AddField(
-      model_name='item',
-      name='cost',
-      field=models.DecimalField(null=True, blank=True, help_text='Cost of the item', max_digits=15, decimal_places=6, verbose_name='cost'),
+    migrations.AlterModelOptions(
+      name='operationplanmaterial',
+      options={'verbose_name_plural': 'operationplan materials', 'ordering': ['item', 'location', 'flowdate'], 'verbose_name': 'operationplan material'},
     ),
-    migrations.RunSQL('''
-      update item
-      set cost = price
-      '''),
     migrations.RemoveField(
-      model_name='item',
-      name='price',
+      model_name='operationplanmaterial',
+      name='buffer',
+    ),
+    migrations.AddField(
+      model_name='operationplanmaterial',
+      name='item',
+      field=models.ForeignKey(blank=True, to='input.Item', related_name='operationplanmaterials', null=True, verbose_name='item'),
+    ),
+    migrations.AddField(
+      model_name='operationplanmaterial',
+      name='location',
+      field=models.ForeignKey(blank=True, to='input.Location', related_name='operationplanmaterials', null=True, verbose_name='location'),
     )
   ]

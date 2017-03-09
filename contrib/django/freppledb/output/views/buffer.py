@@ -23,7 +23,7 @@ from django.utils.encoding import force_text
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
-from freppledb.common.report import GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import GridFieldDateTime, GridFieldInteger
 
 
 class OverviewReport(GridPivot):
@@ -89,17 +89,21 @@ class OverviewReport(GridPivot):
       inner join buffer
       on buffer.lft between buffers.lft and buffers.rght
       inner join (
-      select operationplanmaterial.buffer as buffer, operationplanmaterial.onhand as onhand
-      from operationplanmaterial,
-        (select buffer, max(id) as id
-         from operationplanmaterial
-         where flowdate < '%s'
-         group by buffer
-        ) maxid
-      where maxid.buffer = operationplanmaterial.buffer
-      and maxid.id = operationplanmaterial.id
+        select operationplanmaterial.item_id,
+          operationplanmaterial.location_id, 
+          operationplanmaterial.onhand as onhand
+        from operationplanmaterial,
+          (select item_id, location_id, max(id) as id
+           from operationplanmaterial
+           where flowdate < '%s'
+           group by item_id, location_id
+          ) maxid
+        where maxid.item_id = operationplanmaterial.item_id
+          and maxid.location_id = operationplanmaterial.location_id
+        and maxid.id = operationplanmaterial.id
       ) oh
-      on oh.buffer = buffer.name
+      on oh.item_id = buffer.item_id
+      and oh.location_id = buffer.location_id
       group by buffers.name
       ''' % (basesql, request.report_startdate)
     cursor.execute(query, baseparams)
@@ -109,12 +113,12 @@ class OverviewReport(GridPivot):
     # Execute the actual query
     query = '''
       select
-        invplan.buffer_id, item.name, location.name, %s
+        invplan.name, invplan.item_id, invplan.location_id, %s
         invplan.bucket, invplan.startdate, invplan.enddate,
         invplan.consumed, invplan.produced
       from (
         select
-          buf.name as buffer_id,
+          buf.name, buf.item_id, buf.location_id,
           d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
           coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
           coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
@@ -130,7 +134,8 @@ class OverviewReport(GridPivot):
         on buffer.lft between buf.lft and buf.rght
         -- Consumed and produced quantities
         left join operationplanmaterial
-        on buffer.name = operationplanmaterial.buffer
+        on buffer.item_id = operationplanmaterial.item_id
+        and buffer.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
         and operationplanmaterial.flowdate >= %%s
@@ -139,7 +144,7 @@ class OverviewReport(GridPivot):
         group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
         ) invplan
       left outer join buffer on
-        invplan.buffer_id = buffer.name
+        invplan.name = buffer.name
       left outer join item on
         buffer.item_id = item.name
       left outer join location on
@@ -201,8 +206,11 @@ class DetailReport(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    if args and args[0]:
-      base = OperationPlanMaterial.objects.filter(buffer__exact=args[0])
+    if len(args) and args[0]:
+      dlmtr = args[0].find(" @ ")
+      base = OperationPlanMaterial.objects.filter(
+        item=args[0][:dlmtr], location=args[0][dlmtr+3:]
+        )
     else:
       base = OperationPlanMaterial.objects
     return base.select_related().extra(select={
@@ -218,7 +226,8 @@ class DetailReport(GridReport):
   rows = (
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('internal id'), key=True, editable=False, hidden=True),
-    GridFieldText('buffer', title=_('buffer'), editable=False, formatter='detail', extra='"role":"input/buffer"'),
+    GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),

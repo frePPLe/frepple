@@ -1212,7 +1212,14 @@ class OperationPlanMaterial(AuditModel):
   )
 
   # Database fields
-  buffer = models.CharField(_('buffer'), max_length=300, db_index=True)
+  item = models.ForeignKey(
+    Item, verbose_name=_('item'), related_name='operationplanmaterials',
+    null=True, blank=True, db_index=True
+    )
+  location = models.ForeignKey(
+    Location, verbose_name=_('location'), null=True, blank=True,
+    related_name='operationplanmaterials', db_index=True
+    )
   operationplan = models.ForeignKey(
     OperationPlan, verbose_name=_('operationplan'), db_index=True,
     related_name="materials"
@@ -1226,23 +1233,23 @@ class OperationPlanMaterial(AuditModel):
     )
 
   class Manager(MultiDBManager):
-    def get_by_natural_key(self, operationplan, buffer):
+    def get_by_natural_key(self, operationplan, item, location):
       # Note: we are not enforcing the uniqueness of this natural key in the database
-      return self.get(operationplan=operationplan, buffer=buffer)
+      return self.get(operationplan=operationplan, item=item, location=location)
 
   def natural_key(self):
-    return (self.operationplan, self.buffer)
+    return (self.operationplan, self.item, self.location)
 
   objects = Manager()
 
   def __str__(self):
-    return "%s %s %s %s" % (self.buffer, self.flowdate, self.quantity, self.status)
+    return "%s @ %s %s %s %s" % (self.item_id, self.location_id, self.flowdate, self.quantity, self.status)
 
-  natural_key = ('operationplan', 'resource')
+  natural_key = ('operationplan', 'item', 'location')
 
   class Meta:
     db_table = 'operationplanmaterial'
-    ordering = ['buffer', 'flowdate']
+    ordering = ['item', 'location', 'flowdate']
     verbose_name = _('operationplan material')
     verbose_name_plural = _('operationplan materials')
 

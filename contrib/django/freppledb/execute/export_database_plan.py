@@ -417,7 +417,7 @@ class export:
     starttime = time()
     process(
       ('COPY operationplanmaterial '
-      '(operationplan_id, buffer, quantity, flowdate, onhand, status, lastmodified) '
+      '(operationplan_id, item_id, location_id, quantity, flowdate, onhand, status, lastmodified) '
       'FROM STDIN;\n')
       )
     currentTime = self.timestamp
@@ -431,11 +431,13 @@ class export:
           updates.append('''
           update operationplanmaterial
           set onhand=%s, flowdate='%s'
-          where status = 'confirmed' and buffer = %s and operationplan_id = %s;
-          ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.name), j.operationplan.id ))
+          where status = 'confirmed' and item_id = %s
+            and location_id = %s and operationplan_id = %s;
+          ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.item.name), 
+                 adapt(j.buffer.location.name), j.operationplan.id ))
         else:
-          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-             j.operationplan.id, j.buffer.name,
+          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+             j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
              round(j.quantity, 6),
              str(j.date), round(j.onhand, 6), j.status, currentTime
              )))

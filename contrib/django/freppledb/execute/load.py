@@ -541,7 +541,7 @@ class loadData(object):
             )
           if i[3]:
             x.maximum_calendar = frepple.calendar(name=i[3])
-          if i[7]:
+          if i[7] is not None:
             x.maxearly = i[7]
         elif not i[5] or i[5] == "default":
           x = frepple.resource_default(

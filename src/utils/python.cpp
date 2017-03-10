@@ -184,6 +184,8 @@ void PythonInterpreter::initialize()
       "class redirect:\n"
       "\tdef write(self,str):\n"
       "\t\tfrepple.log(str)\n"
+      "\tdef flush(self):\n"
+      "\t\tpass\n"
       "sys.stdout = redirect()\n"
       "sys.stderr = redirect()"
     );

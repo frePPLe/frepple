@@ -124,8 +124,11 @@ void Object::writeElement(
 
 size_t Object::getSize() const
 {
+  // Default size
   const MetaClass& meta = getType();
   size_t tmp = meta.size;
+
+  // ... plus the size of fields consuming extra memory
   if (meta.category)
     for (MetaClass::fieldlist::const_iterator i = meta.category->getFields().begin(); i != meta.category->getFields().end(); ++i)
       if (!(*i)->getFlag(COMPUTED))
@@ -133,6 +136,21 @@ size_t Object::getSize() const
   for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
     if (!(*i)->getFlag(COMPUTED))
       tmp += (*i)->getSize(this);
+
+  // ... plus the size of a custom Python attributes
+  if (dict)
+  {
+    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    tmp += _PySys_GetSizeOf(dict);
+    while (PyDict_Next(dict, &pos, &key, &value)) 
+    {
+      tmp += _PySys_GetSizeOf(key);
+      tmp += _PySys_GetSizeOf(value);
+    }
+    PyGILState_Release(pythonstate);
+  }
   return tmp;
 }
 

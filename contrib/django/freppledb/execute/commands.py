@@ -86,6 +86,10 @@ class SupplyPlanning(PlanTask):
       cls.solver.loglevel = 0
 
   @classmethod
+  def DISABLED_debugOperation(cls, oper, mode):
+    return
+
+  @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
@@ -112,6 +116,8 @@ class SupplyPlanning(PlanTask):
       cls.solver.userexit_resource = cls.debugResource
     if hasattr(cls, 'debugDemand'):
       cls.solver.userexit_demand = cls.debugDemand
+    if hasattr(cls, 'debugOperation'):
+      cls.solver.userexit_operation = cls.debugOperation
     print("Plan type: ", plantype)
     print("Constraints: ", constraint)
     cls.solver.solve()

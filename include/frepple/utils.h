@@ -107,9 +107,11 @@ using namespace gnu_cxx;
 
 // STL include files
 #ifndef DOXYGEN
+#include <string>
 #include <list>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <string>
 #include <stack>
 #include <vector>
@@ -5574,11 +5576,143 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
 };
 
 
+/** @brief Implements a pool of re-usable string values, following the
+  * flyweight design pattern.
+  */
+class PooledString
+{
+  private:    
+    /** Pool of strings. */
+    typedef unordered_map<string, unsigned int> pool_type;
+    static pool_type pool;
+
+    /** Pointer to an element in the pool. */
+    pool_type::value_type* ptr = nullptr;
+
+    void clear()
+    {
+      if (!ptr) return;
+      if (--(ptr->second) == 0) 
+      {
+        // Remove from the pool
+        pool.erase(ptr->first);
+      }      
+    }
+
+    void insert(const string& v)
+    {
+      if (v.empty())
+        ptr = nullptr;
+      else
+      {
+        auto tmp = pool.insert(pool_type::value_type(v,1));
+        if (!tmp.second)          
+          ++(tmp.first->second);
+        ptr = &*(tmp.first);
+      }
+    }
+
+  public:
+    /** Default constructor with empty pointer. */
+    PooledString() {}
+
+    /** Constructor from string. */
+    explicit PooledString(const string& val)
+    {
+      insert(val);
+    }
+
+    /** Copy constructor. */
+    explicit PooledString(const PooledString& other) : ptr(other.ptr)
+    {
+      if (ptr) ++(ptr->second);
+    }
+
+    /** Assignment operator. */
+    PooledString &operator=(const PooledString &other)
+    {
+      if (ptr != other.ptr)
+      {
+        clear();
+        ptr = other.ptr;
+        if (ptr) ++(ptr->second);
+      }
+      return *this;
+    }
+
+    /** String assignment operator. */
+    PooledString &operator=(const string &val)
+    {
+      if (ptr)
+      {
+        if (ptr->first != val)
+          clear();
+        insert(val);
+      }
+      else
+      {
+        // Currently empty
+        if (!val.empty())
+          insert(val);
+      }
+      return *this;
+    }
+
+
+    /** Destructor. */
+    ~PooledString()
+    {
+      clear();
+    }
+
+    inline explicit operator bool() const 
+    {
+      return ptr != nullptr;
+    }
+
+    /** Equality operator. */
+    inline bool operator==(const PooledString &other) const 
+    {
+      return ptr == other.ptr;
+    }
+    
+    /** Inequality operator. */
+    inline bool operator!=(const PooledString &other) const 
+    {
+      return ptr != other.ptr;
+    }
+
+    /** Conversion to string. */
+    operator const string&() const
+    {
+      static string nullstring;
+      if (ptr)
+        return ptr->first;
+      else
+        return nullstring;
+    }
+
+    /* Return true if the string is empty. */
+    inline bool empty() const
+    {
+      return !ptr;
+    }
+
+    /* Debugging function. */
+    static void print()
+    {
+      for (auto i = pool.begin(); i != pool.end(); ++i)
+        logger << "   " << i->first << "   " << i->second << endl;
+    }
+};
+
+
 /** @brief This is a decorator class for all objects having a source field. */
 class HasSource
 {
   private:
-    string source;
+    PooledString source;
+
   public:
     /** Returns the source field. */
     string getSource() const
@@ -5651,9 +5785,9 @@ class HasDescription : public HasSource
     }
 
   private:
-    string cat;
-    string subcat;
-    string descr;
+    PooledString cat;
+    PooledString subcat;
+    PooledString descr;
 };
 
 

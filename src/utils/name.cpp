@@ -26,6 +26,10 @@ namespace frepple
 namespace utils
 {
 
+// Static stringpool table
+PooledString::pool_type PooledString::pool;
+
+
 void Tree::clear()
 {
   // Tree is already empty

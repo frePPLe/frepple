@@ -6024,10 +6024,10 @@ class SetupMatrixRule : public Object
     }
   private:
     /** Original setup. */
-    string from;
+    PooledString from;
 
     /** New setup. */
-    string to;
+    PooledString to;
 
     /** Changeover time. */
     Duration duration;
@@ -6523,7 +6523,7 @@ class Resource : public HasHierarchy<Resource>,
     SetupMatrix *setupmatrix = nullptr;
 
     /** Current setup. */
-    string setup;
+    PooledString setup;
 
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);
@@ -6910,7 +6910,7 @@ class Load
     double qty = 1.0;
 
     /** Required setup. */
-    string setup;
+    PooledString setup;
 
     /** Mode to select the preferred alternates. */
     SearchMode search = PRIORITY;

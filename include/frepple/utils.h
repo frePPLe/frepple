@@ -5622,6 +5622,12 @@ class PooledString
       insert(val);
     }
 
+    /** Constructor from a character pointer. */
+    PooledString(const char* const val)
+    {
+      insert(string(val));
+    }
+
     /** Copy constructor. */
     explicit PooledString(const PooledString& other) : ptr(other.ptr)
     {

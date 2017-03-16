@@ -5617,19 +5617,19 @@ class PooledString
     PooledString() {}
 
     /** Constructor from string. */
-    explicit PooledString(const string& val)
+    PooledString(const string& val)
     {
       insert(val);
     }
 
     /** Constructor from a character pointer. */
-    PooledString(const char* const val)
+    PooledString(const char* val)
     {
       insert(string(val));
     }
 
     /** Copy constructor. */
-    explicit PooledString(const PooledString& other) : ptr(other.ptr)
+    PooledString(const PooledString& other) : ptr(other.ptr)
     {
       if (ptr) ++(ptr->second);
     }

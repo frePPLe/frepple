@@ -45,7 +45,7 @@ function showproblemspanelDrv($window) {
 
     scope.$watchGroup(['operationplan.id','operationplan.problems.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationproblems').empty().append(template);
-      var rows = '<tr><td colspan="3">'+gettext('no problems')+'<td></tr>';
+      var rows = '<tr><td colspan="3">'+gettext('no problems')+'</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('problems')) {

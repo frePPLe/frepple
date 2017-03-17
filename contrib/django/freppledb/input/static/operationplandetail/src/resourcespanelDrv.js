@@ -42,7 +42,7 @@ function showresourcespanelDrv($window) {
 
     scope.$watchGroup(['operationplan.id','operationplan.loadplans.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationresources').empty().append(template);
-      var rows='<tr><td colspan="2">'+gettext('no resources')+'<td></tr>';
+      var rows='<tr><td colspan="2">'+gettext('no resources')+'</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('loadplans')) {

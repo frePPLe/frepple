@@ -42,9 +42,11 @@ class Command(BaseCommand):
 
     # First retrieve the column names from that table
     sql = '''
-    select column_name, data_type from information_schema.columns where table_name = '%s' and column_name <> 'lastmodified'
-    '''  % table
-    cursor.execute(sql)
+    select column_name, data_type 
+    from information_schema.columns 
+    where table_name = %s and column_name <> 'lastmodified'
+    '''
+    cursor.execute(sql, (table,))
     nb_of_rows = cursor.rowcount
 
     # Then build a sql request like this
@@ -168,7 +170,7 @@ class Command(BaseCommand):
     n = Command.extractTable(database,file_object, 'common_bucketdetail', 'common.bucketdetail')
     if n>0:
       file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'preference', 'common.preference')
+    n = Command.extractTable(database,file_object, 'common_preference', 'common.userpreference')
     if n>0:
       file_object.write(",\n")
     n = Command.extractTable(database,file_object, 'operationplan', 'input.operationplan')

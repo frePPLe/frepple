@@ -58,7 +58,7 @@ class Command(BaseCommand):
       column[row][1]=columns[1]
       row = row + 1
       if columns[1] == "interval":
-        sql = sql + "greatest(0,extract(epoch from %s)) as %s" % (columns[0], columns[0])
+        sql = sql + "case when extract(epoch from %s)<0 then 0 else extract(epoch from %s) end as %s" % (columns[0], columns[0])
       else:
         sql = sql + columns[0]
       if row < nb_of_rows:
@@ -166,6 +166,9 @@ class Command(BaseCommand):
     if n>0:
       file_object.write(",\n")
     n = Command.extractTable(database,file_object, 'common_bucketdetail', 'common.bucketdetail')
+    if n>0:
+      file_object.write(",\n")
+    n = Command.extractTable(database,file_object, 'preference', 'common.preference')
     if n>0:
       file_object.write(",\n")
     n = Command.extractTable(database,file_object, 'operationplan', 'input.operationplan')

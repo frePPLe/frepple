@@ -58,7 +58,7 @@ class Command(BaseCommand):
       column[row][1]=columns[1]
       row = row + 1
       if columns[1] == "interval":
-        sql = sql + "case when extract(epoch from %s)<0 then 0 else extract(epoch from %s) end as %s" % (columns[0], columns[0])
+        sql = sql + "case when extract(epoch from %s)<0 then 0 else extract(epoch from %s) end as %s" % (columns[0], columns[0], columns[0])
       else:
         sql = sql + columns[0]
       if row < nb_of_rows:

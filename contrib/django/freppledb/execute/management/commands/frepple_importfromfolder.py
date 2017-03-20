@@ -289,7 +289,7 @@ class Command(BaseCommand):
               if colnum >= len(headers):
                 break
               if isinstance(headers[colnum], Field):
-                d[headers[colnum].name] = col
+                d[headers[colnum].name] = col.strip()
               colnum += 1
 
             # Step 2: Fill the form with data, either updating an existing

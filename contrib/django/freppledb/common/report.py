@@ -1297,7 +1297,7 @@ class GridReport(View):
                 if colnum >= len(headers):
                   break
                 if isinstance(headers[colnum], Field):
-                  d[headers[colnum].name] = col
+                  d[headers[colnum].name] = col.strip()
                 colnum += 1
 
               # Step 2: Fill the form with data, either updating an existing
@@ -1512,6 +1512,9 @@ class GridReport(View):
                       data = data.replace(microsecond=0)
                     else:
                       data = data.replace(microsecond=0) + timedelta(seconds=1)
+                else:
+                  if isinstance(data, str):
+                    data = data.strip()
                 d[headers[colnum].name] = data
               colnum += 1
 
@@ -2447,6 +2450,9 @@ def importWorkbook(request):
                       data = data.replace(microsecond=0)
                     else:
                       data = data.replace(microsecond=0) + timedelta(seconds=1)
+                else:
+                  if isinstance(data, str):
+                    data = data.strip()              
                 d[headers[colnum].name] = data
               colnum += 1
             # Step 2: Fill the form with data, either updating an existing

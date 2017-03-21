@@ -12,8 +12,12 @@ any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
 
-* The name must match the data object they store: eg demand.csv, item.csv, ...
-
+* | The file name must start with the name of the data object they store.
+  | The file name must end with the extension .csv or or .csv.gz. Files
+    with the extension .csv.gz are expected to compressed in gzip format.
+  | Some examples of valid file names are item.csv.gz, item.csv, demand.csv,
+    demand.part1.csv
+    
 * The first line of the file should contain the field names
 
 * The file should be in CSV format. The delimiter depends on the default

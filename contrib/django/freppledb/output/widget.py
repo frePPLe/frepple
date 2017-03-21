@@ -1005,8 +1005,11 @@ class PurchaseAnalysisWidget(Widget):
     alt = False
     for po in PurchaseOrder.objects.using(db).filter(status='confirmed').order_by('criticality','enddate')[:limit]:
       result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', escape(po.item.name), escape(po.supplier.name),
-        po.enddate.date(), int(po.quantity), int(po.criticality) if po.criticality else ""
+        alt and ' class="altRow"' or '', escape(po.itesm.name if po.item else ''), 
+        escape(po.supplier.name if po.supplier else ''),
+        po.enddate.date() if po.enddate else '', 
+        int(po.quantity) if po.quantity else '', 
+        int(po.criticality) if po.criticality else ''
         ))
       alt = not alt
     result.append('</table></div>')

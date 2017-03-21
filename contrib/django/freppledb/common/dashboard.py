@@ -16,11 +16,14 @@
 #
 
 from importlib import import_module
+import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseNotAllowed, HttpResponseForbidden, HttpResponseServerError
+
+logger = logging.getLogger(__name__)
 
 
 class Dashboard:
@@ -86,6 +89,7 @@ class Dashboard:
         return HttpResponseForbidden()
       return w.render(request)
     except Exception as e:
+      logger.error("Exception rendering widget %s: %s" % (w.name, e))
       if settings.DEBUG:
         return HttpResponseServerError("Server error: %s" % e)
       else:

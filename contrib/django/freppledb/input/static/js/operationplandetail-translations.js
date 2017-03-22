@@ -1,0 +1,5 @@
+angular.module('gettext').run(['gettextCatalog', function (gettextCatalog) {
+/* jshint -W100 */
+    gettextCatalog.setStrings('ru', {"approved":"утвержден","closed":"закрыт","confirmed":"подтвержден","Continue":"продолжить","criticality":"критичность","database transaction failed":"ошибка транзакции базы данных","delay":"задержка","destination":"адресат","Do you want to save your changes first?":"хотите сначала сохранить изменения?","end":"финиш","gantt chart rows limit":"ограничение строк диаграммы Ганта","identifier":"ид. номер","item":"товар","location":"местоположение","origin":"происхождение","Please be patient, the chart may take some time to complete.":"ожидайте, построение диаграммы может занять некоторое время.","proposed":"сформирован","quantity":"количество","reference":"ссылка","Save":"сохранить","start":"старт","status":"состояние","supplier":"поставщик","The Gantt chart is limited to {{rowlimit}} rows.":"диаграмма Ганта ограничена {{rowlimit}} строками.","unsaved changes":"несохраненные изменения"});
+/* jshint +W100 */
+}]);

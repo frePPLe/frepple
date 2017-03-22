@@ -1504,7 +1504,10 @@ class GridReport(View):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  data = str(data) if data is not None else None
+                  if isinstance(data, float):                    
+                    data = "%.6f" % data
+                  else:
+                    data = str(data) if data is not None else None
                 elif isinstance(headers[colnum], (DateField, DateTimeField)):
                   if isinstance(data, datetime):
                     # Rounding to second
@@ -2442,7 +2445,10 @@ def importWorkbook(request):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  data = str(data) if data is not None else None
+                  if isinstance(data, float):                    
+                    data = "%.6f" % data
+                  else:
+                    data = str(data) if data is not None else None
                 elif isinstance(headers[colnum], (DateField, DateTimeField)):
                   if isinstance(data, datetime):
                     # Rounding to second

@@ -271,18 +271,6 @@ class Operation(AuditModel):
   def __str__(self):
     return self.name
 
-  def save(self, *args, **kwargs):
-    # Reset fields that are not used for specific operation types
-    if self.type != 'time_per':
-      self.duration_per = None
-    if self.type != 'alternate':
-      self.search = None
-    if self.type is not None and self.type not in ['time_per', 'fixed_time', '']:
-      self.duration = None
-
-    # Call the real save() method
-    super(Operation, self).save(*args, **kwargs)
-
   class Meta(AuditModel.Meta):
     db_table = 'operation'
     verbose_name = _('operation')
@@ -532,15 +520,6 @@ class Resource(AuditModel, HierarchyModel):
   # Methods
   def __str__(self):
     return self.name
-
-  def save(self, *args, **kwargs):
-    if self.type == 'infinite':
-      # These fields are not relevant for infinite resources
-      self.maximum = None
-      self.maximum_calendar_id = None
-      self.maxearly = None
-    # Call the real save() method
-    super(Resource, self).save(*args, **kwargs)
 
   class Meta(AuditModel.Meta):
     db_table = 'resource'

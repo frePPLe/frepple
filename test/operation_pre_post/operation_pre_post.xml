@@ -124,6 +124,7 @@
       </flows>
     </operation>
   	<operation name="3. supply raw material">
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <location name="factory"/>
   		<flows>
         <flow xsi:type="flow_end">

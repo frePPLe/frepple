@@ -248,7 +248,6 @@ PROBLEM	material shortage	Buffer '1. fixed consumption item' has material shorta
 PROBLEM	material excess	Buffer '2. fixed production co-product' has material excess of 4	1971-01-01T00:00:00 / 2013-01-19T00:00:00
 PROBLEM	material excess	Buffer '2. fixed production co-product' has material excess of 1	2013-02-06T00:00:00 / 2013-02-19T00:00:00
 PROBLEM	material excess	Buffer '2. main product' has material excess of 1200	2013-01-19T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for '2. main product'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer '3. end item' has material excess of 3	1971-01-01T00:00:00 / 2013-02-06T00:00:00
 PROBLEM	material excess	Buffer '3. end item' has material excess of 2	2013-02-19T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer '4. end item' has material excess of 7	1971-01-01T00:00:00 / 2013-02-06T00:00:00

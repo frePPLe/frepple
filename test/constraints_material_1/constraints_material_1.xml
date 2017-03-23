@@ -28,7 +28,8 @@
           <item name="item 1" />
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows> 
+      <priority>0</priority><!-- disallow automatic supply generation -->      
     </operation>    
     <operation name="supply 2">
       <location name="factory" />     
@@ -37,7 +38,8 @@
           <item name="item 2" />
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows>
+      <priority>0</priority><!-- disallow automatic supply generation -->      
     </operation>    
     <operation name="supply 3">
       <location name="factory" />     
@@ -46,7 +48,8 @@
           <item name="item 3" />
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows> 
+      <priority>0</priority><!-- disallow automatic supply generation -->      
     </operation>    
     <operation name="supply 4">
       <location name="factory" />     
@@ -55,7 +58,8 @@
           <item name="item 4" />
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows>
+      <priority>0</priority><!-- disallow automatic supply generation -->      
     </operation>    
   </operations>
   <!-- DYNAMIC data CASE 1 -->

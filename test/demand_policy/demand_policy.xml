@@ -34,6 +34,7 @@
   <operations>
     <operation name="supply item A" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item A" />
@@ -43,6 +44,7 @@
     </operation>
     <operation name="supply item B" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item B" />
@@ -52,6 +54,7 @@
     </operation>    
     <operation name="supply item C" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item C" />
@@ -61,6 +64,7 @@
     </operation>    
     <operation name="supply item D" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item D" />
@@ -70,6 +74,7 @@
     </operation>    
     <operation name="supply item E" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item E" />
@@ -79,6 +84,7 @@
     </operation>    
     <operation name="supply item F" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item F" />
@@ -88,6 +94,7 @@
     </operation>    
     <operation name="supply item G" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">        
           <item name="item G" />

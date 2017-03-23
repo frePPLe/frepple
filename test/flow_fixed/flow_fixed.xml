@@ -51,6 +51,7 @@
           <quantity>1</quantity>
         </flow>
       </flows>
+      <priority>0</priority>
     </operation>
   </operations>
   <operationplans>
@@ -101,7 +102,7 @@
     <buffer name="2. fixed production co-product">
       <item name="2. fixed production co-product"/>
       <onhand>4</onhand>
-      <producing name="2. make product" xsi:type="operation_fixed_time" duration="P1D">
+      <producing name="2. make product" xsi:type="operation_fixed_time" duration="P1D">      
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="2. main product"/>

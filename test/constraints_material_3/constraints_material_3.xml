@@ -61,7 +61,9 @@
   </buffers>
   <flows>
     <flow xsi:type="flow_end">
-      <operation name="supply 1" />
+      <operation name="supply 1">
+        <priority>0</priority><!-- disallow automatic supply generation -->
+      </operation>
       <buffer name="constraint buffer 1" />
       <quantity>1</quantity>
     </flow>
@@ -81,7 +83,9 @@
       <quantity>-2</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="supply 2" />
+      <operation name="supply 2">
+        <priority>0</priority><!-- disallow automatic supply generation -->
+      </operation>
       <buffer name="constraint buffer 2" />
       <quantity>1</quantity>
     </flow>
@@ -101,7 +105,9 @@
       <quantity>-2</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="supply 3" />
+      <operation name="supply 3">
+        <priority>0</priority><!-- disallow automatic supply generation -->
+      </operation>
       <buffer name="constraint buffer 3" />
       <quantity>1</quantity>
     </flow>
@@ -121,7 +127,9 @@
       <quantity>-2</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="supply 4" />
+      <operation name="supply 4">
+        <priority>0</priority><!-- disallow automatic supply generation -->
+      </operation>
       <buffer name="constraint buffer 4" />
       <quantity>1</quantity>
     </flow>

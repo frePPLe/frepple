@@ -106,6 +106,7 @@
   <operations>
     <operation name="2. supply component A" xsi:type="operation_fixed_time">
       <location name="factory"/>
+      <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
         <flow xsi:type="flow_end">
           <item name="2. component A"/>

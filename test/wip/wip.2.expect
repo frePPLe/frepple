@@ -170,22 +170,14 @@ PROBLEM	invalid data	No replenishment defined for 'In4'	1971-01-01T00:00:00 / 20
 PROBLEM	invalid data	No replenishment defined for 'In4A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In4B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out1' has material excess of 40	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out2' has material excess of 80	2014-01-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out3' has material excess of 20	2014-01-02T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out3A' has material excess of 27	2013-12-31T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out3A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out3B' has material excess of 22	2014-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out3B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out3C' has material excess of 20	2014-01-02T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out3C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out4' has material excess of 30	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out4A' has material excess of 20	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out4A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out4B' has material excess of 10	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'Out4B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'Res3A' has capacity shortage of 1	2014-02-02T00:00:00 / 2014-02-03T00:00:00
 PROBLEM	overload	Resource 'Res3B' has capacity shortage of 1	2014-02-03T00:00:00 / 2014-02-04T00:00:00
 PROBLEM	before current	Operation 'Oper1' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00

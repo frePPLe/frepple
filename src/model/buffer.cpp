@@ -1137,6 +1137,33 @@ void Buffer::buildProducingOperation()
     item = item->getOwner();
   }
 
+  // Last resort: check if there are already operations producing in this buffer.
+  // If there exists only 1 we use that operation. Inventory operation or operations
+  // with 0 priority are skipped.
+  if (producing_operation == uninitializedProducing)
+  {
+    const Flow* found = nullptr;
+    for (auto tmp = getFlows().begin(); tmp != getFlows().end(); ++tmp)
+    {
+      if (tmp->getQuantity() > 0 
+        && tmp->getOperation()->getType() != *OperationInventory::metadata
+        && tmp->getOperation()->getPriority() )
+      {
+        if (found)
+        {
+          // Found a second operation producing this item. Abort the mission...
+          found = nullptr;
+          break;
+        }
+        else
+          // Found a first operation producing this item
+          found = &*tmp;
+      }
+      if (found)
+        producing_operation = found->getOperation();
+    }
+  }
+
   if (producing_operation == uninitializedProducing)
   {
     // No producer could be generated. No replenishment will be possible.

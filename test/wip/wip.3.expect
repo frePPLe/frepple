@@ -200,6 +200,9 @@
 		</buffer>
 		<buffer>
 			<name>Out1</name>
+			<producing>
+				<name>Oper1</name>
+			</producing>
 			<item>
 				<name>Out1</name>
 			</item>
@@ -218,6 +221,9 @@
 		</buffer>
 		<buffer>
 			<name>Out3</name>
+			<producing xsi:type="operation_routing">
+				<name>Oper3</name>
+			</producing>
 			<item>
 				<name>Out3</name>
 			</item>
@@ -227,6 +233,9 @@
 		</buffer>
 		<buffer>
 			<name>Out3A</name>
+			<producing>
+				<name>Oper3A</name>
+			</producing>
 			<item>
 				<name>Out3A</name>
 			</item>
@@ -236,6 +245,9 @@
 		</buffer>
 		<buffer>
 			<name>Out3B</name>
+			<producing>
+				<name>Oper3B</name>
+			</producing>
 			<item>
 				<name>Out3B</name>
 			</item>
@@ -245,6 +257,9 @@
 		</buffer>
 		<buffer>
 			<name>Out3C</name>
+			<producing>
+				<name>Oper3C</name>
+			</producing>
 			<item>
 				<name>Out3C</name>
 			</item>
@@ -254,6 +269,9 @@
 		</buffer>
 		<buffer>
 			<name>Out4</name>
+			<producing xsi:type="operation_alternate">
+				<name>Oper4</name>
+			</producing>
 			<item>
 				<name>Out4</name>
 			</item>
@@ -263,6 +281,9 @@
 		</buffer>
 		<buffer>
 			<name>Out4A</name>
+			<producing>
+				<name>Oper4A</name>
+			</producing>
 			<item>
 				<name>Out3A</name>
 			</item>
@@ -272,6 +293,9 @@
 		</buffer>
 		<buffer>
 			<name>Out4B</name>
+			<producing>
+				<name>Oper4B</name>
+			</producing>
 			<item>
 				<name>Out4B</name>
 			</item>
@@ -836,6 +860,7 @@
 			<end>2014-01-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
 			<id>4006</id>
@@ -846,6 +871,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
 			<id>4008</id>
@@ -856,6 +882,7 @@
 			<end>2014-03-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
 			<id>4017</id>

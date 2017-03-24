@@ -3,8 +3,11 @@ Sales orders
 ============
 
 The sales orders table contains all the orders placed by your customers.
-You should also consider adding the closed orders if you plan to use the forecast module.
+Orders in the status "open" will be planned.
 
+You should also add sales order history to this table if you want frePPLe
+to generate a statistical forecast. The sales history should be included
+using the "closed" status.
 
 .. rubric:: Key Fields
 

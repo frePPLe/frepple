@@ -18,7 +18,6 @@ It accompanies the implementation wizard available in the user interface.
    master-data/index
    purchasing/index
    distribution/index
-   demand-forecasting/index
    inventory-planning/index
    manufacturing-bom/index
    manufacturing-capacity/index

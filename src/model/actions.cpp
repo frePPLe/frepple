@@ -591,12 +591,22 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "operation resource    \t" << countLoads << "\t" << memLoads  << endl;
     total += memsize + memFlows + memLoads;
 
-    // Calendars (which includes the buckets)
+    // Calendars and calendar buckets
     memsize = 0;
+    size_t countBuckets(0), memBuckets(0);
     for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end(); ++cl)
+    {
       memsize += cl->getSize();
-    logger << "Calendar              \t" << Calendar::size() << "\t" << memsize  << endl;
+      for (auto bckt = cl->getBuckets(); bckt != CalendarBucket::iterator::end(); ++bckt)
+      {
+        ++countBuckets;
+        memBuckets += bckt->getSize();
+      }
+    }
+    logger << "Calendar              \t" << Calendar::size() << "\t" << memsize << endl;
     total += memsize;
+    logger << "Calendar buckets      \t" << countBuckets << "\t" << memBuckets << endl;
+    total += memBuckets;
 
     // Items
     memsize = 0;

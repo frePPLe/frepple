@@ -23,7 +23,7 @@ from django.utils.encoding import force_text
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
-from freppledb.common.report import GridFieldDateTime, GridFieldInteger
+from freppledb.common.report import GridFieldDateTime, GridFieldInteger, GridFieldDuration
 
 
 class OverviewReport(GridPivot):
@@ -239,7 +239,8 @@ class DetailReport(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),
     GridFieldText('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
-    GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False),
-    GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False),
+    GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     )

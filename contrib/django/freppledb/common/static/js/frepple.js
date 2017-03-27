@@ -380,6 +380,23 @@ jQuery.extend($.fn.fmatter, {
     return '<div class="graph" style="height:80px"></div>';
   },
 
+  color : function (cellvalue, options, rowdata) {
+    var thenumber = parseInt(cellvalue);
+    if (!isNaN(thenumber)) {
+      if (thenumber >= 100) {
+        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+Math.round(cellvalue)+'%</div>';
+      } else if (thenumber === 0) {
+        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+Math.round(cellvalue)+'%</div>';
+      } else if (thenumber < 0) {
+        return '';
+      } else {
+        thenumber = Math.round(thenumber/100*255);
+        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
+      }
+    } else {
+      return '';
+    }
+  },
   longstring : function (cellvalue, options, rowdata) {
     if (typeof cellvalue === 'string') {
       var tipcontent = cellvalue.replace(/"/g,"\'"); //there can be no double quotes in a tooltip, not even slashed.

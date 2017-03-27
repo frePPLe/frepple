@@ -90,7 +90,7 @@ class OverviewReport(GridPivot):
       on buffer.lft between buffers.lft and buffers.rght
       inner join (
         select operationplanmaterial.item_id,
-          operationplanmaterial.location_id, 
+          operationplanmaterial.location_id,
           operationplanmaterial.onhand as onhand
         from operationplanmaterial,
           (select item_id, location_id, max(id) as id
@@ -232,6 +232,7 @@ class DetailReport(GridReport):
     GridFieldText('location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
+    GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldDateTime('flowdate', title=_('date'), editable=False),

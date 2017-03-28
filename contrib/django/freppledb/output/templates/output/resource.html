@@ -112,8 +112,8 @@ function drawGraphs(jsondata)
           window.location = url_prefix
             +"/loadplan/"
             +admin_escape(d['resource'])
-            +"/?startdate__gte="+timebuckets[d['bucket']]['startdate']
-            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
+            +"/?operationplan__startdate__lt="+timebuckets[d['bucket']]['enddate']
+            +"&operationplan__enddate__gt="+timebuckets[d['bucket']]['startdate'];
 
           var coord = d3.mouse(document.body);
           d3.event.stopPropagation();
@@ -272,8 +272,8 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[3] != 0.0)
           result += cellvalue[3] + '<a href="{{request.prefix}}/loadplan/' +
                                              admin_escape(rowdata['resource']) +
-                                             '/?startdate__lt=' + options['colModel']['enddate'] +
-                                             '&amp;enddate__gt=' + options['colModel']['startdate'] +
+                                             '/?operationplan__startdate__lt=' + options['colModel']['enddate'] +
+                                             '&amp;operationplan__enddate__gt=' + options['colModel']['startdate'] +
                                              '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
         else
           result += '0.0</br>';

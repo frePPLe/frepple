@@ -1044,6 +1044,10 @@ class OperationPlan(AuditModel):
     _('quantity'), max_digits=15,
     decimal_places=6, default='1.00'
     )
+  color = models.DecimalField(
+    _('color'), max_digits=15, null=True, blank=True,
+    decimal_places=6, default='0.00'
+    )
   startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
   criticality = models.DecimalField(

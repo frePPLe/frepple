@@ -1478,11 +1478,12 @@ class OperationPlanDetail(View):
            "location": opplan.location_id,
            "origin": opplan.origin_id,
            "supplier": opplan.supplier_id,
-           "item": opplan.item_id
+           "item": opplan.item_id,
+           "color": float(opplan.color)
            }
-        if opplan.plan:
+        if opplan.plan and 'pegging' in opplan.plan:
           res["pegging_demand"] = []
-          for d, q in opplan.plan.items():
+          for d, q in opplan.plan['pegging'].items():
             res["pegging_demand"].append({"demand": {"name": d}, "quantity": q})
         if opplan.operation:
           res['operation'] = {

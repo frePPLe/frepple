@@ -279,9 +279,9 @@ class GridFieldBoolNullable(GridFieldChoice):
     kwargs['choices'] = (
       ('', ''),
       #. Translators: Translation included with Django
-      ('False', _('Yes')),
+      ('False', _('No')),
       #. Translators: Translation included with Django
-      ('True', _('No'))
+      ('True', _('Yes'))
       )
     super().__init__(name, **kwargs)
 
@@ -1132,7 +1132,7 @@ class GridReport(View):
             ok = False
           elif models[i][1] == models[j][1] and models[i][0] > models[j][0]:
             models.append(models.pop(i))
-            ok = False            
+            ok = False
           j += 1
     return models
 
@@ -1220,17 +1220,17 @@ class GridReport(View):
           if rownumber == 1:
 
             # Collect required fields
-            required_fields = set()         
+            required_fields = set()
             for i in reportclass.model._meta.fields:
               if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
                 required_fields.add(i.name)
-                
+
             # Validate all columns
             for col in row:
               col = col.strip().strip('#').lower()
               if col == "":
                 headers.append(False)
-                continue              
+                continue
               ok = False
               for i in reportclass.model._meta.fields:
                 # Try with translated field names
@@ -1251,7 +1251,7 @@ class GridReport(View):
                       headers.append(False)
                     required_fields.discard(i.name)
                     ok = True
-                    break               
+                    break
               if not ok:
                 headers.append(False)
                 yield force_text(_('Skipping field %(column)s') % {'column': col}) + '\n '
@@ -1273,11 +1273,11 @@ class GridReport(View):
               fields=tuple([i.name for i in headers if isinstance(i, Field)]),
               formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
-            
+
             # Get natural keys for the class
             natural_key = None
             if hasattr(reportclass.model.objects, 'get_by_natural_key'):
-              if reportclass.model._meta.unique_together: 
+              if reportclass.model._meta.unique_together:
                 natural_key = reportclass.model._meta.unique_together[0]
               elif hasattr(reportclass.model, 'natural_key'):
                 natural_key = reportclass.model.natural_key
@@ -1319,11 +1319,11 @@ class GridReport(View):
                   for x in natural_key:
                     key.append(d.get(x, None))
                   # Try to find an existing record using the natural key
-                  it = reportclass.model.objects.get_by_natural_key(*key)              
+                  it = reportclass.model.objects.get_by_natural_key(*key)
                   form = UploadForm(d, instance=it)
                 except reportclass.model.DoesNotExist:
                   form = UploadForm(d)
-                  it = None               
+                  it = None
               else:
                 # No primary key required for this model
                 form = UploadForm(d)
@@ -1423,7 +1423,7 @@ class GridReport(View):
         ### Case 1: The first line is read as a header line
         if rownumber == 1:
           # Collect required fields
-          required_fields = set()         
+          required_fields = set()
           for i in reportclass.model._meta.fields:
             if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
               required_fields.add(i.name)
@@ -1432,10 +1432,10 @@ class GridReport(View):
             col = str(col.value).strip().strip('#').lower()
             if col == "":
               headers.append(False)
-              continue            
-            ok = False                                    
+              continue
+            ok = False
             for i in reportclass.model._meta.fields:
-              # Try with translated field names            
+              # Try with translated field names
               if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
                 if i.editable is True:
                   headers.append(i)
@@ -1479,11 +1479,11 @@ class GridReport(View):
           # Get natural keys for the class
           natural_key = None
           if hasattr(reportclass.model.objects, 'get_by_natural_key'):
-            if reportclass.model._meta.unique_together: 
+            if reportclass.model._meta.unique_together:
               natural_key = reportclass.model._meta.unique_together[0]
             elif hasattr(reportclass.model, 'natural_key'):
               natural_key = reportclass.model.natural_key
-                    
+
         ### Case 2: Skip empty rows and comments rows
         elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
           continue
@@ -1504,7 +1504,7 @@ class GridReport(View):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  if isinstance(data, float):                    
+                  if isinstance(data, float):
                     data = "%.6f" % data
                   else:
                     data = str(data) if data is not None else None
@@ -2359,13 +2359,13 @@ def importWorkbook(request):
           rownum += 1
           if rownum == 1:
             # Process the header row with the field names
-            
+
             # Collect required fields
             required_fields = set()
             for i in model._meta.fields:
               if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
                 required_fields.add(i.name)
-                
+
             # Validate all columns
             header_ok = True
             for cell in row:
@@ -2375,12 +2375,12 @@ def importWorkbook(request):
                 headers.append(False)
                 continue
               else:
-                value = value.lower()              
+                value = value.lower()
               for i in model._meta.fields:
                 # Try with translated field names
                 if value == i.name.lower() or value == i.verbose_name.lower():
                   if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                    headers.append(i)                    
+                    headers.append(i)
                   else:
                     headers.append(False)
                   required_fields.discard(i.name)
@@ -2390,12 +2390,12 @@ def importWorkbook(request):
                 with translation.override('en'):
                   if value == i.name.lower() or value == i.verbose_name.lower():
                     if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                      headers.append(i)                    
+                      headers.append(i)
                     else:
                       headers.append(False)
                     required_fields.discard(i.name)
                     ok = True
-                    break                
+                    break
               if not ok:
                 headers.append(False)
                 yield force_text(string_concat(
@@ -2421,11 +2421,11 @@ def importWorkbook(request):
               fields=tuple([i.name for i in headers if isinstance(i, Field)]),
               formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
               )
-            
+
             # Get natural keys for the class
             natural_key = None
             if hasattr(model.objects, 'get_by_natural_key'):
-              if model._meta.unique_together: 
+              if model._meta.unique_together:
                 natural_key = model._meta.unique_together[0]
               elif hasattr(model, 'natural_key'):
                 natural_key = model.natural_key
@@ -2445,7 +2445,7 @@ def importWorkbook(request):
                   if isinstance(data, numericTypes):
                     data = int(data)
                 elif isinstance(headers[colnum], DurationField):
-                  if isinstance(data, float):                    
+                  if isinstance(data, float):
                     data = "%.6f" % data
                   else:
                     data = str(data) if data is not None else None
@@ -2458,7 +2458,7 @@ def importWorkbook(request):
                       data = data.replace(microsecond=0) + timedelta(seconds=1)
                 else:
                   if isinstance(data, str):
-                    data = data.strip()              
+                    data = data.strip()
                 d[headers[colnum].name] = data
               colnum += 1
             # Step 2: Fill the form with data, either updating an existing
@@ -2481,11 +2481,11 @@ def importWorkbook(request):
                 for x in natural_key:
                   key.append(d.get(x, None))
                 # Try to find an existing record using the natural key
-                it = model.objects.get_by_natural_key(*key)              
+                it = model.objects.get_by_natural_key(*key)
                 form = uploadform(d, instance=it)
               except model.DoesNotExist:
                 form = uploadform(d)
-                it = None      
+                it = None
               except model.MultipleObjectsReturned:
                 yield force_text(
                   _('Row %(rownum)s: %(message)s') % {

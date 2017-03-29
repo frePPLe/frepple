@@ -796,9 +796,13 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
       if (delay < data->state->a_date - q_date)
         delay = data->state->a_date - q_date;
       OperationPlanState at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
-        data->state->curOwnerOpplan, 0.01, //data->state->curOwnerOpplan->getQuantity(),
+        data->state->curOwnerOpplan, 0.01,
         data->state->a_date, Date::infinitePast, false, false
         );
+      if (at.end < top_q_date + (data->state->a_date - q_date))
+        // Minimum routing delay is assumed to be equal to the delay of the step.
+        // TODO this assumption is not really generic
+        at.end = top_q_date + (data->state->a_date - q_date);
       if (at.end > max_Date) max_Date = at.end;
     }
   }

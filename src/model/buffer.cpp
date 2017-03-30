@@ -1159,9 +1159,9 @@ void Buffer::buildProducingOperation()
           // Found a first operation producing this item
           found = &*tmp;
       }
-      if (found)
-        producing_operation = found->getOperation();
     }
+    if (found)
+      producing_operation = found->getOperation();
   }
 
   if (producing_operation == uninitializedProducing)

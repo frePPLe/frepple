@@ -376,7 +376,7 @@ class Command(BaseCommand):
           delete
           )
         cursor.executemany(
-          'update demand set customer_id=null where customer_id=%s',
+          'delete from demand where customer_id=%s',
           delete
           )
         cursor.executemany(

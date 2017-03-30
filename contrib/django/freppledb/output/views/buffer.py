@@ -228,8 +228,8 @@ class DetailReport(GridReport):
   rows = (
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('internal id'), key=True, editable=False, hidden=True),
-    GridFieldText('item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
-    GridFieldText('location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
+    GridFieldText('item', title=_('item'), field_name='item__name', editable=False, formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('location', title=_('location'), field_name='location__name', editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),

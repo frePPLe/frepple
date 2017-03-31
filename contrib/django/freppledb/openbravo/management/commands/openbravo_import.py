@@ -375,6 +375,26 @@ class Command(BaseCommand):
           'update customer set owner_id=null where owner_id=%s',
           delete
           )
+        cursor.executemany('''
+          delete from operationplanmaterial where operationplan_id in (
+           select id from operationplan 
+           inner join demand on operationplan.demand_id = demand.name
+           where customer_id=%s
+          )''',
+          delete
+          )          
+        cursor.executemany('''
+          delete from operationplanresource where operationplan_id in (
+           select id from operationplan 
+           inner join demand on operationplan.demand_id = demand.name
+           where customer_id=%s
+          )''',
+          delete
+          )          
+        cursor.executemany(
+          'delete from operationplan where demand_id in (select name from demand where customer_id=%s)',
+          delete
+          )          
         cursor.executemany(
           'delete from demand where customer_id=%s',
           delete

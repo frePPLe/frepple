@@ -235,7 +235,7 @@ function drawGraph(jsondata)
   }
 
   // Oh dear, that's too much to visualize sensibly
-  if (links.length > 200 || nodes.length > 200)
+  if (links.length > 400 || nodes.length > 400)
   {
     $('#graph').html("<br/>&nbsp;{% trans 'Too many objects to display' %}");
     return;

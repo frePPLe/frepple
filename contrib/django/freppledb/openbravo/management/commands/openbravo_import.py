@@ -506,6 +506,20 @@ class Command(BaseCommand):
           'update supplier set owner_id=null where owner_id=%s',
           delete
           )
+        cursor.executemany('''
+          delete from operationplanmaterial where operationplan_id in (
+           select id from operationplan 
+           where supplier_id=%s
+          )''',
+          delete
+          )          
+        cursor.executemany('''
+          delete from operationplanresource where operationplan_id in (
+           select id from operationplan 
+           where supplier_id=%s
+          )''',
+          delete
+          )            
         cursor.executemany(
           'delete from operationplan where supplier_id=%s',
           delete
@@ -1316,6 +1330,18 @@ class Command(BaseCommand):
           lastmodified='%s', item_id=%%s, location_id=%%s, supplier_id=%%s, type='PO' \
           where source=%%s" % self.date,
         update)
+      cursor.executemany('''
+        delete from operationplanmaterial 
+        where operationplan_id in (
+          select id from operationplan where source=%s
+        )''', delete
+        )
+      cursor.executemany('''
+        delete from operationplanresource
+        where operationplan_id in (
+          select id from operationplan where source=%s
+        )''', delete
+        )      
       cursor.executemany(
         "delete from operationplan where source=%s",
         delete)
@@ -1393,6 +1419,16 @@ class Command(BaseCommand):
         print("Importing purchasing plan...")
 
       # Remove existing approved records from frePPLe
+      cursor.execute('''
+        delete from operationplanmaterial 
+        where operationplan_id in (
+          select id from operationplan where type in ('PO','DO') and status = 'approved'
+        )''')
+      cursor.execute('''
+        delete from operationplanresource
+        where operationplan_id in (
+          select id from operationplan where type in ('PO','DO') and status = 'approved'
+        )''') 
       cursor.execute("delete from operationplan where type in ('PO','DO') and status = 'approved'")      
         
       # Get all input records.
@@ -1495,6 +1531,18 @@ class Command(BaseCommand):
 
       # Delete closed/canceled/deleted work requirements
       deleted = [ (i,) for i in unused_keys ]
+      cursor.executemany('''
+        delete from operationplanmaterial 
+        where operationplan_id in (
+          select id from operationplan where source=%s
+        )''', deleted
+        )
+      cursor.executemany('''
+        delete from operationplanresource
+        where operationplan_id in (
+          select id from operationplan where source=%s
+        )''', deleted
+        )
       cursor.executemany("delete from operationplan where source=%s", deleted)
 
       # Create or update operationplans
@@ -1563,6 +1611,18 @@ class Command(BaseCommand):
         print("Importing product boms...")
 
       # Reset the current operations
+      cursor.execute('''
+        DELETE FROM operationplanmaterial 
+        where operationplan_id in (
+          select id from operationplan where operation_id like 'Product BOM %'
+        )'''
+        )
+      cursor.execute('''
+        DELETE FROM operationplanresource
+        where operationplan_id in (
+          select id from operationplan where operation_id like 'Product BOM %'
+        )'''
+        )
       cursor.execute("DELETE FROM operationplan where operation_id like 'Product BOM %'")  # TODO allow incremental load!
       cursor.execute("DELETE FROM suboperation where operation_id like 'Product BOM %'")
       cursor.execute("DELETE FROM operationresource where operation_id like 'Product BOM %'")

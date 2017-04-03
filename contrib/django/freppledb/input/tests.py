@@ -66,7 +66,7 @@ class DataLoadTest(TestCase):
       [(u'All locations', u''), (u'factory 1', u''), (u'factory 2', u'')]  # Test result is different in Enterprise Edition
       )
     try:
-      data = tempfile.TemporaryFile(mode='w+b')
+      data = tempfile.NamedTemporaryFile(mode='w+b')
       data.write(b'name,category\n')
       data.write(b'factory 3,cat1\n')
       data.write(b'factory 4,\n')

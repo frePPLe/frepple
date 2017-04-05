@@ -43,83 +43,12 @@ class DatabasePipe(Thread):
     self.functions = f
 
   def run(self):
-    test = 'FREPPLE_TEST' in os.environ
-
     # Pass the database password to the psql environment
-    my_env = os.environ
-    if settings.DATABASES[self.owner.database]['PASSWORD']:
-      my_env['PGPASSWORD'] = settings.DATABASES[self.owner.database]['PASSWORD']
-    
-    if sys.platform in ['windows','win32','win64']:
-      # Windows style export: Python pipes output to a PSQL process
-
-      # Start a PSQL process
-      process = Popen("psql -q -w %s%s%s%s" % (
-       settings.DATABASES[self.owner.database]['USER'] and ("-U %s " % settings.DATABASES[self.owner.database]['USER']) or '',
-       settings.DATABASES[self.owner.database]['HOST'] and ("-h %s " % settings.DATABASES[self.owner.database]['HOST']) or '',
-       settings.DATABASES[self.owner.database]['PORT'] and ("-p %s " % settings.DATABASES[self.owner.database]['PORT']) or '',
-       settings.DATABASES[self.owner.database]['TEST']['NAME'] if test else settings.DATABASES[self.owner.database]['NAME'],
-      ), stdin=PIPE, stderr=PIPE, bufsize=0, shell=True, env=my_env)
-
-
-      if process.returncode is None:
-        # PSQL session is still running
-        process.stdin.write("SET statement_timeout = 0;\n".encode(self.owner.encoding))
-        process.stdin.write("SET client_encoding = 'UTF8';\n".encode(self.owner.encoding))
-
-        def writeFunction(msg):
-          process.stdin.write(msg.encode(self.owner.encoding))
-
-        # Send the output of all functions through the pipe
-        try:
-          for f in self.functions:
-            f(self.owner, writeFunction)
-        finally:
-          msg = process.communicate()[1]
-          if msg:
-            print(msg)
-          # Close the pipe and PSQL process
-          if process.returncode is None:
-            # PSQL session is still running.
-            writeFunction('\\q\n')
-          process.stdin.close()
-
-    else:
-      # Linux style export: Python writes a temporary file read with a PSQL process
-
-      (fd, fname) = tempfile.mkstemp(text=True)
-      try:
-
-        # Write the temporary file
-        with io.open(fd, 'wb', closefd=False) as fp:
-          
-          def writeFunction(msg):
-            fp.write(msg.encode(self.owner.encoding))
-          
-          for f in self.functions:
-            f(self.owner, writeFunction)
-
-        # Load the temporary file into the database
-        args = ["psql", "-f", fname, "-q", "-w"]
-        if settings.DATABASES[self.owner.database]['USER']:
-          args.append('-U')
-          args.append(settings.DATABASES[self.owner.database]['USER'])
-        if settings.DATABASES[self.owner.database]['HOST']:
-          args.append('-h')
-          args.append(settings.DATABASES[self.owner.database]['HOST'])
-        if settings.DATABASES[self.owner.database]['PORT']:
-          args.append('-p')
-          args.append(settings.DATABASES[self.owner.database]['PORT'])
-        if test:
-          args.append(settings.DATABASES[self.owner.database]['TEST']['NAME'])
-        else:
-          args.append(settings.DATABASES[self.owner.database]['NAME'])
-        status = os.spawnvpe(os.P_WAIT, "psql", args, my_env)
-        if status:
-          print("PSQL export process aborted with exit code %s" % status)
-      finally:
-        os.unlink(fname)
-        pass
+    try:
+      for f in self.functions:
+        f(self.owner)
+    finally:
+      pass
 
 
 class export:
@@ -145,127 +74,154 @@ class export:
     return json.dumps(peg).replace("\\", "\\\\")
 
 
-  def truncate(self, process):
+  def truncate(self):
+    cursor = connections[self.database].cursor()
     if self.verbosity:
       print("Emptying database plan tables...")
     starttime = time()
     if self.cluster == -1:
       # Complete export for the complete model
-      process("truncate table out_problem, out_resourceplan, out_constraint;\n")
-      process('''
+      cursor.execute("truncate table out_problem, out_resourceplan, out_constraint;\n")
+      cursor.execute('''
         delete from operationplanmaterial
         using operationplan
         where operationplanmaterial.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanmaterial.status = 'proposed');\n
         ''')
-      process('''
+      cursor.execute('''
         delete from operationplanresource
         using operationplan
         where operationplanresource.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanresource.status = 'proposed');\n
         ''')
-      process('''
+      cursor.execute('''
         delete from operationplan
         where (status='proposed' or status is null) or type = 'STCK';\n
         ''')
     else:
       # Partial export for a single cluster
-      process('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n')
+      cursor.execute('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n')
       for i in frepple.items():
         if i.cluster == self.cluster:
-          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      process("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
-      process('''
+          cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      cursor("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
+      cursor.execute('''
         delete from operationplanmaterial
-        where buffer in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
+        using cluster_keys
+        where operationplanmaterial.item_id = cluster_keys.name;\n
         ''')
-      process('''
+      cursor.execute('''
         delete from out_problem
         where entity = 'demand' and owner in (
           select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
           );\n
         ''')
-      process('''
+      cursor.execute('''
         delete from out_problem
         where entity = 'material'
         and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
         ''')
-      process('''
+      cursor.execute('''
+        delete from operationplanresource
+        where operationplan_id in (
+          select id from operationplan
+          inner join cluster_keys on cluster_keys.name = operationplan.item_id
+          where (status='proposed' or status is null or type='STCK')
+        );\n
+        ''')
+      cursor.execute('''
         delete from operationplan
         using cluster_keys
         where (status='proposed' or status is null or type='STCK')
         and item_id = cluster_keys.name;\n
         ''')
-      process("truncate table cluster_keys;\n")
+      cursor.execute("truncate table cluster_keys;\n")
       for i in frepple.resources():
         if i.cluster == self.cluster:
-          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      process("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
-      process('delete from operationplanresource using cluster_keys where resource = cluster_keys.name;\n')
-      process('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name;\n')
-      process("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name;\n")
-      process('truncate table cluster_keys;\n')
+          cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      cursor.execute("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
+      cursor.execute('delete from operationplanresource using cluster_keys where resource = cluster_keys.name;\n')
+      cursor.execute('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name;\n')
+      cursor.execute("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name;\n")
+      cursor.execute('truncate table cluster_keys;\n')
       for i in frepple.operations():
         if i.cluster == self.cluster:
-          process(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      process("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n")
-      process("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n") # TODO not correct in new data model
-      process("drop table cluster_keys;\n")
+          cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
+      cursor.execute("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n")
+      cursor.execute("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n") # TODO not correct in new data model
+      cursor.execute("drop table cluster_keys;\n")
     if self.verbosity:
       print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
-  def exportProblems(self, process):
+  def exportProblems(self):
     if self.verbosity:
       print("Exporting problems...")
     starttime = time()
-    process('COPY out_problem (entity, name, owner, description, startdate, enddate, weight) FROM STDIN;\n')
-    for i in frepple.problems():
-      if isinstance(i.owner, frepple.operationplan):
-        owner = i.owner.operation
-      else:
-        owner = i.owner
-      if self.cluster != -1 and owner.cluster != self.cluster:
-        continue
-      process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         i.entity, i.name, owner.name,
-         i.description, str(i.start), str(i.end),
-         round(i.weight, 6)
-      )))
-    process('\\.\n')
+    cursor = connections[self.database].cursor()
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
+      for i in frepple.problems():
+        if isinstance(i.owner, frepple.operationplan):
+          owner = i.owner.operation
+        else:
+          owner = i.owner
+        if self.cluster != -1 and owner.cluster != self.cluster:
+          continue
+        print(("%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+           i.entity, i.name, owner.name,
+           i.description, str(i.start), str(i.end),
+           round(i.weight, 6)
+        )),file=tmp)
+      tmp.seek(0)
+      cursor.copy_from(
+      tmp,
+      'out_problem',
+      columns=('entity','name','owner', 'description', 'startdate', 'enddate', 'weight')
+      )
+      tmp.close()
     if self.verbosity:
       print('Exported problems in %.2f seconds' % (time() - starttime))
 
 
-  def exportConstraints(self, process):
+  def exportConstraints(self):
     if self.verbosity:
       print("Exporting constraints...")
     starttime = time()
-    process('COPY out_constraint (demand,entity,name,owner,description,startdate,enddate,weight) FROM STDIN;\n')
-    for d in frepple.demands():
-      if self.cluster != -1 and self.cluster != d.cluster:
-        continue
-      for i in d.constraints:
-        process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-           d.name, i.entity, i.name,
-           isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
-           i.description, str(i.start), str(i.end),
-           round(i.weight, 6)
-         )))
-    process('\\.\n')
+    cursor = connections[self.database].cursor()
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
+      for d in frepple.demands():
+        if self.cluster != -1 and self.cluster != d.cluster:
+          continue
+        for i in d.constraints:
+          print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+             d.name, i.entity, i.name,
+             isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
+             i.description, str(i.start), str(i.end),
+             round(i.weight, 6)
+           )),file=tmp)
+      tmp.seek(0)
+      cursor.copy_from(
+        tmp,
+        'out_constraint',
+        columns=('demand','entity','name','owner','description','startdate','enddate','weight')
+        )
+      tmp.close()
     if self.verbosity:
       print('Exported constraints in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationplans(self, process):
+  def exportOperationplans(self):
 
     def getOperationPlans():
-      for i in frepple.operations():        
+      for i in frepple.operations():
         if self.cluster != -1 and self.cluster != i.cluster:
           continue
-        for j in i.operationplans:     
+        for j in i.operationplans:
+          color = int(j.delay / 86400)
+          delay = j.delay
+
           if isinstance(i, frepple.operation_inventory):
-            # Export inventory  
+            # Export inventory
             yield (
               i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 6),
               str(j.start), str(j.end), round(j.criticality, 6), j.delay,
@@ -274,7 +230,7 @@ class export:
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              j.id
+              color, j.id
               )
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
@@ -288,7 +244,7 @@ class export:
               '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              j.id
+              color, j.id
               )
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
@@ -301,7 +257,7 @@ class export:
               j.operation.buffer.location.name, j.operation.itemsupplier.supplier.name,
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              j.id
+              color, j.id
               )
           elif not i.hidden:
             # Export MO
@@ -314,7 +270,7 @@ class export:
               i.location.name if i.location else '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              j.id
+              color, j.id
               )
           elif j.demand or (j.owner and j.owner.demand):
             # Export shipments (with automatically created delivery operations)
@@ -326,24 +282,25 @@ class export:
               j.operation.buffer.item.name, '\\N', '\\N', j.operation.buffer.location.name, '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              j.id
+              color, j.id
               )
 
     if self.verbosity:
       print("Exporting operationplans...")
     starttime = time()
+    cursor = connections[self.database].cursor()
 
     # Export operationplans to a temporary table
-    process('''
+    cursor.execute('''
       create temporary table tmp_operationplan (
         name character varying(1000),
         type character varying(5) NOT NULL,
         status character varying(20),
         reference character varying(300),
-        quantity numeric(15,4) NOT NULL,
+        quantity numeric(15,6) NOT NULL,
         startdate timestamp with time zone,
         enddate timestamp with time zone,
-        criticality numeric(15,4),
+        criticality numeric(15,6),
         delay numeric,
         plan json,
         source character varying(300),
@@ -352,132 +309,137 @@ class export:
         owner_id integer,
         item_id character varying(300),
         destination_id character varying(300),
-        origin_id character varying(300),        
+        origin_id character varying(300),
         location_id character varying(300),
         supplier_id character varying(300),
         demand_id character varying(300),
         due timestamp with time zone,
+        color numeric(15,6),
         id integer NOT NULL
-      ); 
+      );
       ''')
-    process('''COPY tmp_operationplan
-      (name,type,status,reference,quantity,startdate,enddate,
-      criticality,delay,plan,source,lastmodified,
-      operation_id,owner_id,
-      item_id,destination_id,origin_id,
-      location_id,supplier_id,
-      demand_id,due,id) FROM STDIN;\n''')
-    for p in getOperationPlans():
-      process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % p))
-    process('\\.\n')
+    with tempfile.TemporaryFile(mode="w+t",encoding='utf-8') as tmp:
+      for p in getOperationPlans():
+        print("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % p, file=tmp)
+      tmp.seek(0)
+      cursor.copy_from(file=tmp,table='tmp_operationplan')
+      tmp.close()
 
     # Merge temp table into the actual table
-    process('''
-      update operationplan 
-        set name=tmp.name, type=tmp.type, status=tmp.status, reference=tmp.reference, 
+    cursor.execute('''
+      update operationplan
+        set name=tmp.name, type=tmp.type, status=tmp.status, reference=tmp.reference,
         quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
-        criticality=tmp.criticality, delay=tmp.delay * interval '1 second', 
+        criticality=tmp.criticality, delay=tmp.delay * interval '1 second',
         plan=tmp.plan, source=tmp.source,
         lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
         item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
         location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
-        due=tmp.due
+        due=tmp.due, color=tmp.color
       from tmp_operationplan as tmp
       where operationplan.id = tmp.id;
       ''')
-    process('''
+    cursor.execute('''
       insert into operationplan
         (name,type,status,reference,quantity,startdate,enddate,
         criticality,delay,plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,
-        demand_id,due,id)
+        demand_id,due,color,id)
       select name,type,status,reference,quantity,startdate,enddate,
         criticality,delay * interval '1 second',plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,
-        demand_id,due,id
+        demand_id,due,color,id
       from tmp_operationplan
       where not exists (
-        select 1 
-        from operationplan 
+        select 1
+        from operationplan
         where operationplan.id = tmp_operationplan.id
         );
       ''')
-    
+
     if self.verbosity:
       print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationPlanMaterials(self, process):
+  def exportOperationPlanMaterials(self):
     if self.verbosity:
       print("Exporting operationplan materials...")
     starttime = time()
-    process(
-      ('COPY operationplanmaterial '
-      '(operationplan_id, item_id, location_id, quantity, flowdate, onhand, status, lastmodified) '
-      'FROM STDIN;\n')
-      )
+    cursor = connections[self.database].cursor()
     currentTime = self.timestamp
     updates = []
-    for i in frepple.buffers():
-      if self.cluster != -1 and self.cluster != i.cluster:
-        continue
-      for j in i.flowplans:
-        #if the record is confirmed, it is already in the table.
-        if j.status == 'confirmed':
-          updates.append('''
-          update operationplanmaterial
-          set onhand=%s, flowdate='%s'
-          where status = 'confirmed' and item_id = %s
-            and location_id = %s and operationplan_id = %s;
-          ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.item.name), 
-                 adapt(j.buffer.location.name), j.operationplan.id ))
-        else:
-          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-             j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
-             round(j.quantity, 6),
-             str(j.date), round(j.onhand, 6), j.status, currentTime
-             )))
-    process('\\.\n')
-    process('\n'.join(updates))
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
+      for i in frepple.buffers():
+        if self.cluster != -1 and self.cluster != i.cluster:
+          continue
+        for j in i.flowplans:
+          #if the record is confirmed, it is already in the table.
+          if j.status == 'confirmed':
+            updates.append('''
+            update operationplanmaterial
+            set onhand=%s, flowdate='%s'
+            where status = 'confirmed' and item_id = %s
+              and location_id = %s and operationplan_id = %s;
+            ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.item.name),
+                   adapt(j.buffer.location.name), j.operationplan.id ))
+          else:
+            print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+               j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
+               round(j.quantity, 6),
+               str(j.date), round(j.onhand, 6), j.status, currentTime
+               )), file=tmp)
+
+      tmp.seek(0)
+      cursor.copy_from(
+        tmp,
+        'operationplanmaterial',
+        columns=('operationplan_id', 'item_id', 'location_id', 'quantity', 'flowdate', 'onhand', 'status', 'lastmodified')
+        )
+      tmp.close()
+    if len(updates) > 0:
+      cursor.execute('\n'.join(updates))
     if self.verbosity:
-      print('Exported operationplan materials in %.2f seconds' % (time() - starttime))    
+      print('Exported operationplan materials in %.2f seconds' % (time() - starttime))
 
 
-  def exportOperationPlanResources(self, process):
+  def exportOperationPlanResources(self):
     if self.verbosity:
       print("Exporting operationplan resources...")
     starttime = time()
-    process(
-      ('COPY operationplanresource '
-      '(operationplan_id, resource, quantity, startdate, enddate, setup, status, lastmodified) '
-      'FROM STDIN;\n')
-      )
+    cursor = connections[self.database].cursor()
     currentTime = self.timestamp
-    for i in frepple.resources():
-      if self.cluster != -1 and self.cluster != i.cluster:
-        continue
-      for j in i.loadplans:
-        if j.quantity < 0:
-          process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-            j.operationplan.id, j.resource.name,
-            round(-j.quantity, 6),
-            str(j.startdate), str(j.enddate),
-            j.setup and j.setup or "\\N", j.status, currentTime
-            )))
-    process('\\.\n')
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
+      for i in frepple.resources():
+        if self.cluster != -1 and self.cluster != i.cluster:
+          continue
+        for j in i.loadplans:
+          if j.quantity < 0:
+            print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+              j.operationplan.id, j.resource.name,
+              round(-j.quantity, 6),
+              str(j.startdate), str(j.enddate),
+              j.setup and j.setup or "\\N", j.status, currentTime
+              )),file=tmp)
+      tmp.seek(0)
+      cursor.copy_from(
+        tmp,
+        'operationplanresource',
+        columns=('operationplan_id', 'resource', 'quantity', 'startdate', 'enddate', 'setup', 'status', 'lastmodified')
+        )
+      tmp.close()
     if self.verbosity:
       print('Exported operationplan resources in %.2f seconds' % (time() - starttime))
 
 
-  def exportResourceplans(self, process):
+  def exportResourceplans(self):
     if self.verbosity:
       print("Exporting resourceplans...")
     starttime = time()
-
+    cursor = connections[self.database].cursor()
     # Determine start and end date of the reporting horizon
     # The start date is computed as 5 weeks before the start of the earliest loadplan in
     # the entire plan.
@@ -510,23 +472,29 @@ class export:
       startdate += timedelta(days=1)
 
     # Loop over all reporting buckets of all resources
-    process('COPY out_resourceplan (resource,startdate,available,unavailable,setup,load,free) FROM STDIN;\n')
-    for i in frepple.resources():
-      for j in i.plan(buckets):
-        process(("%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
-         i.name, str(j['start']),
-         round(j['available'], 6),
-         round(j['unavailable'], 6),
-         round(j['setup'], 6),
-         round(j['load'], 6),
-         round(j['free'], 6)
-         )))
-    process('\\.\n')
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
+      for i in frepple.resources():
+        for j in i.plan(buckets):
+          print(("%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+           i.name, str(j['start']),
+           round(j['available'], 6),
+           round(j['unavailable'], 6),
+           round(j['setup'], 6),
+           round(j['load'], 6),
+           round(j['free'], 6)
+           )),file=tmp)
+      tmp.seek(0)
+      cursor.copy_from(
+        tmp,
+        'out_resourceplan',
+        columns=('resource','startdate','available','unavailable','setup','load','free')
+        )
+      tmp.close()
     if self.verbosity:
       print('Exported resourceplans in %.2f seconds' % (time() - starttime))
 
 
-  def exportPegging(self, process):
+  def exportPegging(self):
 
     def getDemandPlan():
       for i in frepple.demands():
@@ -568,16 +536,19 @@ class export:
 
     # Export process
     tasks = (
+       DatabasePipe(
+         self,
+         export.exportResourceplans,
+         export.exportProblems,
+         export.exportConstraints
+         ),
       DatabasePipe(
         self,
-        export.exportResourceplans, export.exportProblems, export.exportConstraints
+        export.exportOperationplans,
+         export.exportOperationPlanMaterials,
+         export.exportOperationPlanResources,
+         export.exportPegging
         ),
-      DatabasePipe(
-        self,
-        export.exportOperationplans, export.exportOperationPlanMaterials,
-        export.exportOperationPlanResources, 
-        export.exportPegging
-        )
       )
     # Start all threads
     for i in tasks:
@@ -627,24 +598,16 @@ class export:
 
     # Send all output to the PSQL process through a pipe
     try:
-      self.truncate(process)
-      self.exportProblems(process)
-      self.exportConstraints(process)
-      self.exportOperationplans(process)
-      self.exportOperationPlanMaterials(process)
-      self.exportOperationPlanResources(process)
-      self.exportResourceplans(process)
-      self.exportPegging(process)
-    finally:
-      # Print any error messages
-      msg = process.communicate()[1]
-      if msg:
-        print(msg)
-      # Close the pipe and PSQL process
-      if process.returncode is None:
-        # PSQL session is still running.
-        process.stdin.write('\\q\n'.encode(self.encoding))
-      process.stdin.close()
+      self.truncate()
+      self.exportProblems()
+      self.exportConstraints()
+      self.exportOperationplans()
+      self.exportOperationPlanMaterials()
+      self.exportOperationPlanResources()
+      self.exportResourceplans()
+      self.exportPegging()
+    except:
+      print('An error occured during the sequential export')
 
     if self.verbosity:
       cursor = connections[self.database].cursor()

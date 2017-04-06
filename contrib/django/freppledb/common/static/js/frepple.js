@@ -391,7 +391,6 @@ jQuery.extend($.fn.fmatter, {
 
   color : function (cellvalue, options, rowdata) {
   	var thenumber = parseInt(cellvalue);
-    console.log(thenumber);
     if (rowdata.inventory_item)
     {
 	    if (!isNaN(thenumber)) {
@@ -406,18 +405,19 @@ jQuery.extend($.fn.fmatter, {
 	        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
 	      }
       }
-    } else {  console.log(cellvalue, rowdata);
+    } else {
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
-    		return '<div class="invStatus" style="text-align: center; background-color: #f00">unused</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+gettext("unused")+'</div>';
       } else if (thenumber < 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+ (-thenumber)+' days early</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+ (-thenumber)+' '+gettext("days early")+'</div>';
       } else if (thenumber === 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000">on time</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+gettext("on time")+'</div>';
       } else if (thenumber >= 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+thenumber+' days late</div>';
-      } else {
-        thenumber = Math.round(thenumber/100*255);
-        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+thenumber+' days late</div>';
+        if (thenumber > 7) {
+          return '<div class="invStatus" style="text-align: center; background-color: #f00">'+thenumber+' '+gettext("days late")+'</div>';
+        } else {
+          return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">'+thenumber+' '+gettext("days late")+'</div>';
+        }
       }
     }
     return '';

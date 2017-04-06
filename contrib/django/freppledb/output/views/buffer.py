@@ -235,6 +235,7 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra='"role":"input/operation"'),
+    GridFieldText('operationplan__operation__description', title=_('description'), editable=False, initially_hidden=True),    
     GridFieldDateTime('flowdate', title=_('date'), editable=False),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('onhand', title=_('onhand'), editable=False),

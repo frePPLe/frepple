@@ -272,6 +272,7 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operationplan__operation__location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra='"role":"input/operation"'),
+    GridFieldText('operationplan__operation__description', title=_('description'), editable=False, initially_hidden=True),
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False),

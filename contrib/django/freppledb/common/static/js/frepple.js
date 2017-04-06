@@ -380,23 +380,6 @@ jQuery.extend($.fn.fmatter, {
     return '<div class="graph" style="height:80px"></div>';
   },
 
-  color : function (cellvalue, options, rowdata) {
-    var thenumber = parseInt(cellvalue);
-    if (!isNaN(thenumber)) {
-      if (thenumber >= 100) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+Math.round(cellvalue)+'%</div>';
-      } else if (thenumber === 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+Math.round(cellvalue)+'%</div>';
-      } else if (thenumber < 0) {
-        return '';
-      } else {
-        thenumber = Math.round(thenumber/100*255);
-        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
-      }
-    } else {
-      return '';
-    }
-  },
   longstring : function (cellvalue, options, rowdata) {
     if (typeof cellvalue === 'string') {
       var tipcontent = cellvalue.replace(/"/g,"\'"); //there can be no double quotes in a tooltip, not even slashed.
@@ -404,6 +387,39 @@ jQuery.extend($.fn.fmatter, {
     } else {
       return "";
     }
+  },
+
+  color : function (cellvalue, options, rowdata) {
+  	var thenumber = parseInt(cellvalue);
+    if (rowdata.inventory_item)
+    {
+	    if (!isNaN(thenumber)) {
+	      if (thenumber >= 100) {
+	        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+Math.round(cellvalue)+'%</div>';
+	      } else if (thenumber === 0) {
+	        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+Math.round(cellvalue)+'%</div>';
+	      } else if (thenumber < 0) {
+	        return '';
+	      } else {
+	        thenumber = Math.round(thenumber/100*255);
+	        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
+	      }
+      }
+    } else {
+    	if (rowdata.criticality == 999)
+    		return '<div class="invStatus" style="text-align: center; background-color: #f00">unused</div>';
+    	else if (thenumber < 0)
+        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+ (-thenumber)+' days early</div>';
+    	else if (thenumber == 0)
+        return '<div class="invStatus" style="text-align: center; background-color: #008000">on time</div>';
+    	else if (thenumber >= 10)
+        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+thenumber+' days late</div>';
+    	else {
+        thenumber = Math.round(thenumber/100*255);
+        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+thenumber+' days late</div>';
+      }
+    }
+    return '';
   }
 });
 jQuery.extend($.fn.fmatter.percentage, {

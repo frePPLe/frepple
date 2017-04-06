@@ -86,6 +86,11 @@ $(function() {
       editcol = iCol;
       return value;
     }, {% endif %}
+    loadComplete: function() {
+      $(".invStatus").each( function(value) {
+        $(this).parent().css('background',$(this).css('background-color'));
+      });
+    },
     {% block extra_grid %}{% endblock %}
     height: {% if reportclass.height %}{% if "height" in preferences %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}{% else %}($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63{% endif %}
     });{% if reportclass.frozenColumns > 0 %}

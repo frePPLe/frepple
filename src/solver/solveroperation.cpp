@@ -158,20 +158,18 @@ bool SolverMRP::checkOperation
     {
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan,data);
-      // Return false if no capacity is available
-      if (data.state->a_qty==0.0)
+      while (data.state->a_date <= orig_q_date_max && data.state->a_qty == 0.0)
       {
-        while (data.state->a_date <= orig_q_date_max)
-        {
-          opplan->getOperation()->setOperationPlanParameters
-            (opplan, orig_opplan_qty,
-             orig_q_date_max,
-             Date::infinitePast);
-          data.state->forceLate = true;
-          checkOperationCapacity(opplan,data);
-        }
-        return false;
+        // Repeat the check until we exceed the maximum acceptable delay date
+        opplan->getOperation()->setOperationPlanParameters
+          (opplan, orig_opplan_qty,
+            Date::infinitePast,
+            data.state->a_date);
+        checkOperationCapacity(opplan,data);
       }
+      if (data.state->a_qty == 0.0)
+        // Return false if no capacity is available
+        return false;
     }
 
     // Check material

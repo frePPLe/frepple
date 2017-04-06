@@ -391,6 +391,7 @@ jQuery.extend($.fn.fmatter, {
 
   color : function (cellvalue, options, rowdata) {
   	var thenumber = parseInt(cellvalue);
+    console.log(thenumber);
     if (rowdata.inventory_item)
     {
 	    if (!isNaN(thenumber)) {
@@ -405,16 +406,16 @@ jQuery.extend($.fn.fmatter, {
 	        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
 	      }
       }
-    } else {
-    	if (rowdata.criticality == 999)
+    } else {  console.log(cellvalue, rowdata);
+      if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
     		return '<div class="invStatus" style="text-align: center; background-color: #f00">unused</div>';
-    	else if (thenumber < 0)
+      } else if (thenumber < 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000">'+ (-thenumber)+' days early</div>';
-    	else if (thenumber == 0)
+      } else if (thenumber === 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000">on time</div>';
-    	else if (thenumber >= 10)
+      } else if (thenumber >= 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #f00">'+thenumber+' days late</div>';
-    	else {
+      } else {
         thenumber = Math.round(thenumber/100*255);
         return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+thenumber+' days late</div>';
       }

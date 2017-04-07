@@ -391,7 +391,7 @@ jQuery.extend($.fn.fmatter, {
 
   color : function (cellvalue, options, rowdata) {
   	var thenumber = parseInt(cellvalue);
-    if (rowdata.inventory_item)
+    if (rowdata.inventory_item || rowdata.leadtime)
     {
 	    if (!isNaN(thenumber)) {
 	      if (thenumber >= 100) {

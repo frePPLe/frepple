@@ -30,16 +30,23 @@ The changes are:
 <script type="text/javascript" src="{{STATIC_URL}}js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
 $(function() {
-  $('#id_username').focus();
+  if (!!window.MSInputMethodContext && !!document.documentMode) {
+  	// You are using internet explorer.
+  	// See http://stackoverflow.com/questions/21825157/internet-explorer-11-detection 
+  	$("#row1").html(
+  	  '<br>Internet Explorer is no longer supported.<br>'
+      + 'Microsoft doesn\'t keep this browser up to date with the modern '
+      + 'web technologies used by frePPLe.<br><br>'
+      + 'Please Google <strong>Chrome</strong>, Mozilla <strong>Firefox</strong>, '
+      + 'Microsoft <strong>Edge</strong>, Apple <strong>Safari</strong> '
+      + 'or another modern browser.'
+      );
+  	$('#row2').hide();
+  }
+  else
+    $('#id_username').focus();
 });
 </script>
-<!--[if lte IE 9]>
-<script type="text/javascript">
-$(function() {
-  $('#login-form').hide();
-});
-</script>
-<![endif]-->
 
 {% endblock %}
 
@@ -81,7 +88,7 @@ $(function() {
 
 
 <div class="row" id="content-main" >
-  <div  class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:left;">
+  <div id="row1" class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:left;">
 		<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form" >{% csrf_token %}
 		  <div class="form-group">
 		    {% if not form.this_is_the_login_form.errors %}{{ form.username.errors }}{% endif %}
@@ -104,17 +111,9 @@ $(function() {
 	</div>
 </div>
 
-<!--[if lte IE 9]><br/><span style="font-weight: bold">FrePPLe does NOT support Internet Explorer <= 9!</span><br/><br/>
-Upgrade to Internet Explorer >= 10, or use a better browser: Chrome, Firefox, Safari or Opera.
-<![endif]-->
-
-<script type="text/javascript">
-document.getElementById('id_username').focus()
-</script>
-
 {% checkPassword "admin" "admin" as recommend_reset %}
 {% if recommend_reset %}
-<div class="row">
+<div class="row" id="row2">
 <div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
 {% blocktrans %}The user "admin" has password "admin".<br/>
 We suggest changing this password.{% endblocktrans %}

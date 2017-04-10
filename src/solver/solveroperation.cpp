@@ -157,15 +157,24 @@ bool SolverMRP::checkOperation
     if (isCapacityConstrained())
     {
       // Verify the capacity. This can move the operationplan early or late.
-      checkOperationCapacity(opplan,data);
+      checkOperationCapacity(opplan,data);      
       while (data.state->a_date <= orig_q_date_max && data.state->a_qty == 0.0)
       {
-        // Repeat the check until we exceed the maximum acceptable delay date
-        opplan->getOperation()->setOperationPlanParameters
-          (opplan, orig_opplan_qty,
-            Date::infinitePast,
-            data.state->a_date);
+        // Try a new date, until we are above the acceptable date
+        Date prev = data.state->a_date;
+        opplan->getOperation()->setOperationPlanParameters(
+          opplan, orig_opplan_qty, Date::infinitePast, data.state->a_date
+          );
         checkOperationCapacity(opplan,data);
+        if (data.state->a_date == prev && data.state->a_qty == 0.0)
+        {
+          // Tough luck
+          opplan->getOperation()->setOperationPlanParameters(
+            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast
+          );
+          data.state->forceLate = true;
+          checkOperationCapacity(opplan, data);
+        }
       }
       if (data.state->a_qty == 0.0)
         // Return false if no capacity is available

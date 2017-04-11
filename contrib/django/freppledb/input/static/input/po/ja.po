@@ -1,0 +1,154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:35
+msgid "Continue"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:26
+msgid "Do you want to save your changes first?"
+msgstr "最初に変更を保存しますか？"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:30
+msgid "Please be patient, the chart may take some time to complete."
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:34
+msgid "Save"
+msgstr "保存"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:29
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:56
+msgid "approved"
+msgstr "承認済み"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+msgid "closed"
+msgstr "クローズ"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+msgid "confirmed"
+msgstr "確認済み"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:40
+msgid "criticality"
+msgstr "緊急度"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:23
+msgid "database transaction failed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:44
+msgid "delay"
+msgstr "遅れ"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:28
+msgid "end"
+msgstr "終了"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:22
+msgid "gantt chart rows limit"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
+msgid "identifier"
+msgstr "識別子"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:11
+msgid "manufacturing order"
+msgstr "製造オーダー"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:55
+msgid "proposed"
+msgstr "提案済み"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:34
+msgid "quantity"
+msgstr "数量"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:48
+msgid "reference"
+msgstr "参照"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:22
+msgid "start"
+msgstr "開始"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:52
+msgid "status"
+msgstr "ステータス"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:21
+msgid "unsaved changes"
+msgstr ""
+
+#~ msgid "Automatic"
+#~ msgstr "自動"
+
+#~ msgid "comments"
+#~ msgstr "コメント"
+
+#~ msgid "Constant"
+#~ msgstr "一定"
+
+#~ msgid "customer"
+#~ msgstr "顧客"
+
+#~ msgid "customers"
+#~ msgstr "顧客"
+
+#~ msgid "forecast"
+#~ msgstr "予測"
+
+#~ msgid "forecast baseline"
+#~ msgstr "ベースライン予測"
+
+#~ msgid "Forecast method"
+#~ msgstr "予測方式"
+
+#~ msgid "Help"
+#~ msgstr "ヘルプ"
+
+#~ msgid "Intermittent"
+#~ msgstr "断続する"
+
+#~ msgid "item"
+#~ msgstr "商品"
+
+#~ msgid "items"
+#~ msgstr "商品"
+
+#~ msgid "location"
+#~ msgstr "地域"
+
+#~ msgid "locations"
+#~ msgstr "地域"
+
+#~ msgid "Manual"
+#~ msgstr "主導"
+
+#~ msgid "open orders"
+#~ msgstr "注文を開く"
+
+#~ msgid "parameters"
+#~ msgstr "パラメーター"
+
+#~ msgid "Seasonal"
+#~ msgstr "季節の"
+
+#~ msgid "total orders"
+#~ msgstr "注文の合計"

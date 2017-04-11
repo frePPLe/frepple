@@ -1,0 +1,238 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:35
+msgid "Continue"
+msgstr "Continuar"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:26
+msgid "Do you want to save your changes first?"
+msgstr "Quer guardar as alterações primeiro?"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:30
+msgid "Please be patient, the chart may take some time to complete."
+msgstr "Aguarde, o diagrama pode demorar um pouco a completar."
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:34
+msgid "Save"
+msgstr "Guardar"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:29
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr "O diagrama de Gantt está limitado a {{rowlimit}} linhas."
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:56
+msgid "approved"
+msgstr "aprovado"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+msgid "closed"
+msgstr "fechado"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+msgid "confirmed"
+msgstr "confirmado"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:40
+msgid "criticality"
+msgstr "criticalidade"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:23
+msgid "database transaction failed"
+msgstr "falha na transacção da base de dados"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:44
+msgid "delay"
+msgstr "atraso"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:28
+msgid "end"
+msgstr "fim"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:22
+msgid "gantt chart rows limit"
+msgstr "limite de linhas do diagrama de Gantt"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
+msgid "identifier"
+msgstr "identificador"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:11
+msgid "manufacturing order"
+msgstr "ordem de produção"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:55
+msgid "proposed"
+msgstr "proposto"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:34
+msgid "quantity"
+msgstr "quantidade"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:48
+msgid "reference"
+msgstr "referência"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:22
+msgid "start"
+msgstr "início"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:52
+msgid "status"
+msgstr "estado"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:21
+msgid "unsaved changes"
+msgstr "alterações não gravadas"
+
+#~ msgid "aggregate"
+#~ msgstr "agregada"
+
+#~ msgid "attributes"
+#~ msgstr "atributos"
+
+#~ msgid "Automatic"
+#~ msgstr "Automático"
+
+#~ msgid "comments"
+#~ msgstr "comentários"
+
+#~ msgid "Configure time buckets"
+#~ msgstr "Configurar intervalos de tempo"
+
+#~ msgid "Constant"
+#~ msgstr "Constante"
+
+#~ msgid "customer"
+#~ msgstr "cliente"
+
+#~ msgid "customers"
+#~ msgstr "clientes"
+
+#~ msgid "Display value"
+#~ msgstr "Mostrar valor"
+
+#~ msgid "Estimated forecast error"
+#~ msgstr "Erro estimado da previsão"
+
+#~ msgid "forecast"
+#~ msgstr "previsão"
+
+#~ msgid "forecast baseline"
+#~ msgstr "linha de base das previsões"
+
+#~ msgid "Forecast method"
+#~ msgstr "Método de previsão"
+
+#~ msgid "forecast override"
+#~ msgstr "forçar previsão"
+
+#~ msgid "Help"
+#~ msgstr "Ajuda"
+
+#~ msgid "history"
+#~ msgstr "história"
+
+#~ msgid "Intermittent"
+#~ msgstr "Intermitente"
+
+#~ msgid "item"
+#~ msgstr "artigo"
+
+#~ msgid "items"
+#~ msgstr "artigos"
+
+#~ msgid "location"
+#~ msgstr "localização"
+
+#~ msgid "locations"
+#~ msgstr "localizações"
+
+#~ msgid "Manual"
+#~ msgstr "Manual"
+
+#~ msgid "Moving average"
+#~ msgstr "Média móvel"
+
+#~ msgid "new customer comment"
+#~ msgstr "novo comentário de cliente"
+
+#~ msgid "new item comment"
+#~ msgstr "novo comentário de artigo"
+
+#~ msgid "new item-location comment"
+#~ msgstr "novo comentário de artigo-localização"
+
+#~ msgid "new location comment"
+#~ msgstr "novo comentário de localização"
+
+#~ msgid "No comments yet"
+#~ msgstr "sem comentários"
+
+#~ msgid "open orders"
+#~ msgstr "ordens abertas"
+
+#~ msgid "orders adjustment 1 years ago"
+#~ msgstr "ajuste de ordens há 1 ano"
+
+#~ msgid "orders adjustment 2 years ago"
+#~ msgstr "ajuste de ordens há 2 anos"
+
+#~ msgid "orders adjustment 3 years ago"
+#~ msgstr "ajuste de ordens há 3 anos"
+
+#~ msgid "parameters"
+#~ msgstr "parâmetros"
+
+#~ msgid "Recalculate"
+#~ msgstr "Recalcular"
+
+#~ msgid "save changes to the database"
+#~ msgstr "salvar alterações na base de dados"
+
+#~ msgid "Seasonal"
+#~ msgstr "Sazonal"
+
+#~ msgid "Select forecast method, only possible at single item/location/customer level"
+#~ msgstr "Seleccionar método de forecast, só possível a um nível artigo/localização/cliente não agregado"
+
+#~ msgid "Select panel sequence"
+#~ msgstr "Seleccionar sequência dos painéis"
+
+#~ msgid "Selected forecast method"
+#~ msgstr "Seleccionar método de previsão"
+
+#~ msgid "Simulate changes without saving"
+#~ msgstr "Simular sem salvar alterações"
+
+#~ msgid "total forecast"
+#~ msgstr "previsão total"
+
+#~ msgid "total orders"
+#~ msgstr "total de ordens"
+
+#~ msgid "total orders 1 years ago"
+#~ msgstr "total de ordens há 1 ano"
+
+#~ msgid "total orders 2 years ago"
+#~ msgstr "total de ordens há 2 anos"
+
+#~ msgid "total orders 3 years ago"
+#~ msgstr "total de ordens há 3 anos"
+
+#~ msgid "Undo"
+#~ msgstr "Desfazer"
+
+#~ msgid "Undo changes"
+#~ msgstr "Reverter alterações"

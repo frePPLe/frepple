@@ -16,7 +16,6 @@ This series of screens is used to review the planning results.
    inventory-report
    inventory-detail-report
    resource-report
-   resource-gantt-report
    resource-detail-report
    operation-report
    operation-detail-report

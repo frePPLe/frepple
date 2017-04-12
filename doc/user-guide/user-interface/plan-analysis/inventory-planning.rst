@@ -1,14 +1,14 @@
-============================
+=========================
 Inventory planning screen
-============================
+=========================
 
 .. Important::
 
    This module is only available in the Enterprise Edition.
 
-The inventory planning screen is designed for inventory-intensive
-planning problems. It provides a one-stop screen from which the user
-can conveniently perform the following actions:
+The inventory planning screen allows the management of the inventory policies
+at the decoupling points in the supply chain. It provides a one-stop screen
+from which the user can conveniently perform the following actions:
 
   - | The top section of the screen allows to filter and sort item-locations
       according to planning metrics and various attributes.

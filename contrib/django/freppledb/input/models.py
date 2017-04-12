@@ -991,6 +991,16 @@ class Demand(AuditModel, HierarchyModel):
     _('maximum lateness'), null=True, blank=True,
     help_text=_("Maximum lateness allowed when planning this demand")
     )
+  delay = models.DurationField(
+    _('delay'), null=True, blank=True, editable=False
+    )
+  plannedquantity = models.DecimalField(
+    _('planned quantity'), max_digits=15, decimal_places=6, null=True, blank=True, editable=False,
+    help_text=_('Quantity planned for delivery')
+    )
+  deliverydate = models.DateTimeField(
+    _('delivery date'), help_text=_('Delivery date of the demand'), null=True, blank=True, editable=False,
+    )
   plan = JSONField(default="{}", null=True, blank=True, editable=False)
 
   # Convenience methods

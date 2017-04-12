@@ -19,13 +19,27 @@ from django.db import migrations, models
 import freppledb.common.fields
 from django.conf import settings
 
+def createAdminUser(apps, schema_editor):
+  if not schema_editor.connection.alias == 'default':
+    return
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
+  usr.first_name = 'admin'
+  usr.last_name = 'admin'
+  usr.date_joined = datetime(2000, 1, 1)
+  usr.horizontype = True
+  usr.horizonlength = 6
+  usr.horizonunit = "month"
+  usr.language = "auto"
+  usr.save()
 
 class Migration(migrations.Migration):
 
   dependencies = [
     ('common', '0006_permission_names'),
   ]
-  
+
   operations = [
     migrations.CreateModel(
       name='UserPreference',

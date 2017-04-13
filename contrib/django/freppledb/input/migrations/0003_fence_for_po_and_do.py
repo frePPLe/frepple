@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import models, migrations
+from django.db import migrations
 import freppledb.common.fields
 
 class Migration(migrations.Migration):

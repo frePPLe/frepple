@@ -16,7 +16,7 @@
 #
 
 from django.db import models, migrations
-import freppledb.common.fields
+
 
 class Migration(migrations.Migration):
 

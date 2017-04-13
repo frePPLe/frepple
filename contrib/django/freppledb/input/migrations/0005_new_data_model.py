@@ -17,7 +17,6 @@
 
 from django.db import migrations, models
 from django.db.models import F, Q
-import django.utils.timezone
 
 from freppledb.common.fields import JSONField
 

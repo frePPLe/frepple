@@ -117,13 +117,15 @@ class execute_multidb(TransactionTestCase):
     self.assertEqual(count1, count2)
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
+    count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply', database=db1)
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     self.assertNotEqual(count1, 0)
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan
-    management.call_command('frepple_run', plantype=1, constraint=0, database=db2)
+    count1new = input.models.OperationPlanMaterial.objects.all().using(db1).count()
+    management.call_command('frepple_run', plantype=1, constraint=0, env='supply', database=db2)
     count1new = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertEqual(count1new, count1)

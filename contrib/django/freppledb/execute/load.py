@@ -480,7 +480,7 @@ class loadData(object):
           b.mininterval = i[8].total_seconds()
       else:
         raise ValueError("Buffer type '%s' not recognized" % i[7])
-      if i[11] == 'tool':
+      if i[10] == 'tool':
         b.tool = True
       if i[5]:
         b.minimum = i[5]

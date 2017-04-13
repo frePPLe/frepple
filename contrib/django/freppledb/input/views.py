@@ -923,6 +923,7 @@ class DemandList(GridReport):
   '''
   A list report to show sales orders.
   '''
+  template = 'input/demand.html'
   title = _("sales orders")
   basequeryset = Demand.objects.all()
   model = Demand
@@ -936,8 +937,11 @@ class DemandList(GridReport):
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('customer', title=_('customer'), field_name='customer__name', formatter='detail', extra='"role":"input/customer"'),
     GridFieldChoice('status', title=_('status'), choices=Demand.demandstatus),
-    GridFieldDateTime('due', title=_('due')),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldDateTime('due', title=_('due')),
+    GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatter":delayfmt'),
+    GridFieldNumber('plannedquantity', title=_('planned quantity'), editable=False, extra='"formatter":plannedquantityfmt'),
+    GridFieldDateTime('deliverydate', title=_('delivery date'), editable=False),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category')),
     GridFieldText('subcategory', title=_('subcategory')),

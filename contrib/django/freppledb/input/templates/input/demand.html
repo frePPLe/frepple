@@ -1,0 +1,97 @@
+{% extends "admin/base_site_grid.html" %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+
+function delayfmt(cellvalue, options, rowdata) {
+  var days = 0;
+  var hours = 0;
+  var minutes =0;
+  var seconds = 0;
+  var sign = 1;
+  var d = [];
+  var t = [];
+
+  if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
+  if (typeof cellvalue === "number") {
+    seconds = cellvalue;
+    sign = Math.sign(seconds);
+  } else {
+    sign = (cellvalue.indexOf('-') > -1)?-1:1;
+    d = cellvalue.replace(/ +/g, " ").split(" ");
+    if (d.length == 1)
+    {
+      t = cellvalue.split(":");
+      days = 0;
+    }
+    else
+    {
+      t = d[1].split(":");
+      days = (d[0]!='' ? parseFloat(d[0]) : 0);
+    }
+    switch (t.length)
+    {
+      case 0: // Days only
+        seconds = Math.abs(days) * 86400;
+        break;
+      case 1: // Days, seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0);
+        break;
+      case 2: // Days, minutes and seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
+        break;
+      default:
+        // Days, hours, minutes, seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+    }
+  }
+  seconds = Math.abs(seconds); //remove the sign
+  days = Math.floor(seconds / 86400);
+  hours = Math.floor((seconds - (days * 86400)) / 3600);
+  minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
+  seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+
+  var thecolor0 = '';
+  var thecolor1 = '';
+  if (options.colModel.name === 'delay') {
+    var thenumber = sign * days + hours/24 + minutes/60*24 + seconds/3600/24;
+    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
+    thecolor1 = '</div>';
+    if (thenumber <= 0) {
+      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
+    } else if (thenumber > 7) {
+      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #f00">';
+    } else {
+      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">';
+    }
+  }
+
+  if (days > 0)
+    return thecolor0 + (sign*days).toString() + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
+  if (hours > 0)
+    return thecolor0 + (sign*hours).toString() + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
+  if (minutes > 0)
+    return thecolor0 + (sign*minutes).toString() + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
+  return thecolor0 + (sign*seconds).toFixed(3) + thecolor1;
+}
+
+function plannedquantityfmt(cellvalue, options, rowdata) { console.log(rowdata);
+  var thecolor0 = '';
+  var thecolor1 = '';
+  if (parseFloat(rowdata.quantity) - parseFloat(rowdata.plannedquantity) > 0) {
+    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #f00">';
+    thecolor1 = '</div>'
+  } else if (parseFloat(rowdata.quantity) - parseFloat(rowdata.plannedquantity) <= 0) {
+    //thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
+    //thecolor1 = '</div>'
+  }
+
+  if ( isNaN(parseFloat(cellvalue)) ) {
+    return '';
+  } else {
+    return thecolor0 + parseFloat(cellvalue).toFixed(2) + thecolor1;
+  }
+}
+
+</script>
+{% endblock %}

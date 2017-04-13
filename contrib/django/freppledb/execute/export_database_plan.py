@@ -362,6 +362,22 @@ class export:
         where operationplan.id = tmp_operationplan.id
         );
       ''')
+    
+    #update demand table specific fields
+    cursor.execute('''
+        with cte as (
+          select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
+          from operationplan 
+          where type = 'DLVR'
+          group by demand_id, due
+        )
+        update demand
+          set delay = cte.delay,
+          plannedquantity = cte.plannedquantity,
+          deliverydate = cte.deliverydate
+        from cte
+        where cte.demand_id = demand.name
+      ''')
 
     if self.verbosity:
       print('Exported operationplans in %.2f seconds' % (time() - starttime))

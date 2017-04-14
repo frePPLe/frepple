@@ -1,15 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from datetime import datetime
-
-from django.db import migrations, models
-import django.contrib.auth.models
-import freppledb.common.fields
-import django.core.validators
-import django.utils.timezone
-from django.conf import settings
-
-
 #
 # Copyright (C) 2016 by frePPLe bvba
 #
@@ -26,6 +14,15 @@ from django.conf import settings
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from datetime import datetime
+
+from django.db import migrations, models
+import django.contrib.auth.models
+import freppledb.common.fields
+import django.core.validators
+import django.utils.timezone
+from django.conf import settings
+
 
 def createAdminUser(apps, schema_editor):
   if not schema_editor.connection.alias == 'default':

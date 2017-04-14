@@ -378,6 +378,16 @@ class export:
         from cte
         where cte.demand_id = demand.name
       ''')
+    cursor.execute('''
+      update demand
+        set delay = null,
+        plannedquantity = null,
+        deliverydate = null
+      where (delay is not null or plannedquantity is not null or deliverydate is not null)
+      and not exists(
+        select 1 from operationplan where type = 'DLVR' and operationplan.demand_id = demand.name
+        )
+      ''')
 
     if self.verbosity:
       print('Exported operationplans in %.2f seconds' % (time() - starttime))

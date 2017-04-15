@@ -9,4 +9,4 @@ jdcal == 1.0.1
 Markdown == 2.6.4
 openpyxl == 2.3.4
 PyJWT == 1.4.0
-https://github.com/frePPLe/django/tarball/frepple_4.0
+https://github.com/frePPLe/django/tarball/frepple_4.1

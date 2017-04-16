@@ -329,7 +329,7 @@ Object* OperationPlan::createOperationPlan(
         if (destbuffer)
         {
           stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "'' and location'" << static_cast<Location*>(locval) << "'";
+          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location'" << static_cast<Location*>(locval) << "'";
           throw DataException(o.str());
         }
         destbuffer = tmpbuf;
@@ -411,7 +411,7 @@ Object* OperationPlan::createOperationPlan(
         if (destbuffer)
         {
           stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "'' and location '" << static_cast<Location*>(locval) << "'";
+          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(locval) << "'";
           throw DataException(o.str());
         }
         destbuffer = tmpbuf;
@@ -460,7 +460,7 @@ Object* OperationPlan::createOperationPlan(
           if (originbuffer)
           {
             stringstream o;
-            o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "'' and location '" << static_cast<Location*>(orival) << "'";
+            o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(orival) << "'";
             throw DataException(o.str());
           }
           originbuffer = &*bufiter;
@@ -513,7 +513,7 @@ Object* OperationPlan::createOperationPlan(
         if (destbuffer)
         {
           stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "'' and location '" << static_cast<Location*>(locval) << "'";
+          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(locval) << "'";
           throw DataException(o.str());
         }
         destbuffer = tmpbuf;

@@ -275,7 +275,8 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
 {
   CalendarBucket *curBucket = nullptr;
   double curPriority = DBL_MAX;
-  long timeInWeek = INT_MIN;
+  int date_weekday = -1;
+  Duration date_time;
   for (CalendarBucket *b = firstBucket; b; b = b->nextBucket)
   {
     if (b->getStart() > d)
@@ -287,7 +288,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
             (!fwd && d > b->getStart() && d <= b->getEnd())
            ))
     {
-      if (!b->offsetcounter)
+      if (b->isContinuouslyEffective())
       {
         // Continuously effective
         curPriority = b->getPriority();
@@ -295,24 +296,34 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
       }
       else
       {
-        // There are ineffective periods during the week
-        if (timeInWeek == INT_MIN)
+        // There are ineffective periods during the week        
+        if (date_weekday < 0)
         {
-          // Lazy initialization
-          timeInWeek = d.getSecondsWeek();
-          // Special case: asking backward while at first second of the week
-          if (!fwd && timeInWeek == 0L) timeInWeek = 604800L;
-        }
-        // Check all intervals
-        for (short i=0; i<b->offsetcounter; i+=2)
-          if ((fwd && timeInWeek >= b->offsets[i] && timeInWeek < b->offsets[i+1]) ||
-              (!fwd && timeInWeek > b->offsets[i] && timeInWeek <= b->offsets[i+1]))
+          // Lazily get the details on the date, if not done already
+          struct tm datedetail;
+          d.getInfo(&datedetail);
+          date_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
+          date_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+          if (!date_time && !fwd)
           {
+            date_time = Duration(86400L);
+            if (--date_weekday < 0)
+              date_weekday = 6;
+          }
+        }
+        if (b->days & (1 << date_weekday))
+        {
+          // Effective on the requested date
+          if ((fwd && date_time >= b->starttime && date_time < b->endtime) ||
+              (!fwd && date_time > b->starttime && date_time <= b->endtime))
+          {
+            // Also falls within the effective hours.
             // All conditions are met!
             curPriority = b->getPriority();
             curBucket = &*b;
             break;
           }
+        }
       }
     }
   }
@@ -497,7 +508,7 @@ Calendar::EventIterator& Calendar::EventIterator::operator--()
 void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
 {
   // FIRST CASE: Bucket that is continuously effective
-  if (!b->offsetcounter)
+  if (b->isContinuouslyEffective())
   {
     // Evaluate the start date of the bucket
     if (refDate < b->startdate && b->priority <= lastPriority && (
@@ -526,80 +537,83 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
 
   // SECOND CASE: Interruptions in effectivity.
 
-  // Jump to the start date
-  bool allowEqualAtStart = false;
-  if (refDate < b->startdate && (
-    b->startdate < curDate ||
-    (b->startdate == curDate && b->priority <= curPriority)
-    ))
+  // Find details on the reference date
+  bool effectiveAtStart = false;
+  Date tmp = refDate;
+  struct tm datedetail;
+  if (refDate < b->startdate)
+    tmp = b->startdate;
+  tmp.getInfo(&datedetail);
+  int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
+  Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+  if (
+    refDate < b->startdate && ref_time >= b->starttime
+    && ref_time < b->endtime && (b->days & (1 << ref_weekday))
+    )
+      effectiveAtStart = true;
+
+  if (ref_time >= b->starttime && !effectiveAtStart
+    && ref_time < b->endtime && (b->days & (1 << ref_weekday)))
   {
-    refDate = b->startdate;
-    allowEqualAtStart = true;
-  }
-
-  // Find position in the week
-  long timeInWeek = refDate.getSecondsWeek();
-
-  // Loop over all effective days in the week in which refDate falls
-  for (short i=0; i<b->offsetcounter; i += 2)
-  {
-    // Start and end date of this effective period
-    Date st = refDate + Duration(b->offsets[i] - timeInWeek);
-    Date nd = refDate + Duration(b->offsets[i+1] - timeInWeek);
-
-    // Move to next week if required
-    bool canReturn = true;
-    if (refDate >= nd)
+    // Entry is currently effective.
+    if (!b->starttime && b->endtime == Duration(86400L))
     {
-      st += Duration(86400L*7);
-      nd += Duration(86400L*7);
-      canReturn = false;
-    }
-
-    // Check enddate and startdate are not violated
-    if (st < b->startdate)
-    {
-      if (nd < b->startdate)
-        continue;  // No overlap with overall effective dates
-      else
-        st = b->startdate;
-    }
-    if (nd >= b->enddate)
-    {
-      if (st >= b->enddate)
-        continue;  // No overlap with effective range
-      else
-        nd = b->enddate;
-    }
-
-    if ((refDate < st || (allowEqualAtStart && refDate == st)) && b->priority <= lastPriority)
-    {
-      if (st > curDate || (st == curDate && b->priority > curPriority))
+      // The next event is the start of the next ineffective day
+      tmp -= ref_time;
+      while (b->days & (1 << ref_weekday))
       {
-        // Another bucket is doing better already
-        if (canReturn) break;
-        else continue;
+        if (++ref_weekday > 6)
+          ref_weekday = 0;
+        tmp += Duration(86400L);
       }
-      // The effective start on this weekday qualifies as the next event
-      curDate = st;
+    }
+    else
+      // The next event is the end date on the current day
+      tmp += b->endtime - ref_time;
+    if (tmp > b->enddate)
+      tmp = b->enddate;
+
+    // Evaluate the result
+    if (refDate < tmp && tmp <= curDate && lastBucket == b)
+    {
+      curDate = tmp;
+      curBucket = theCalendar->findBucket(tmp);
+      curPriority = curBucket ? curBucket->priority : INT_MAX;
+    }
+  }
+  else
+  {
+    // Reference date is before the start time on an effective date
+    // or it is after the end time of an effective date
+    // or it is on an ineffective day.
+
+    // The next event is the start date, either today or on the next 
+    // effective day.
+    tmp += b->starttime - ref_time;
+    if (ref_time >= b->endtime && (b->days & (1 << ref_weekday)))
+    {
+      if (++ref_weekday > 6)
+        ref_weekday = 0;
+      tmp += Duration(86400L);
+    }
+    while (!(b->days & (1 << ref_weekday)))
+    {
+      if (++ref_weekday > 6)
+        ref_weekday = 0;
+      tmp += Duration(86400L);
+    }
+    if (tmp >= b->enddate)
+      return;
+
+    // Evaluate the result
+    if (refDate < tmp && b->priority <= lastPriority && (
+      tmp < curDate ||
+      (tmp == curDate && b->priority <= curPriority)
+      ))
+    {
+      curDate = tmp;
       curBucket = b;
       curPriority = b->priority;
-      if (canReturn) return;
-    }
-    if (refDate < nd && lastBucket == b)
-    {
-      if (nd > curDate || (nd == curDate && b->priority > curPriority))
-      {
-        // Another bucket is doing better already
-        if (canReturn) break;
-        else continue;
-      }
-      // This bucket is currently effective.
-      // The effective end on this weekday qualifies as the next event.
-      curDate = nd;
-      curBucket = theCalendar->findBucket(nd);
-      curPriority = curBucket ? curBucket->priority : INT_MAX;
-      if (canReturn) return;
     }
   }
 }
@@ -608,7 +622,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
 void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
 {
   // FIRST CASE: Bucket that is continuously effective
-  if (!b->offsetcounter)
+  if (b->isContinuouslyEffective())
   {
     // First evaluate the end date of the bucket
     if (refDate > b->enddate && b->priority <= lastPriority && (
@@ -637,80 +651,89 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
 
   // SECOND CASE: Interruptions in effectivity.
 
-  // Jump to the end date
-  bool allowEqualAtEnd = false;
-  if (refDate > b->enddate && (
-    b->enddate > curDate ||
-    (b->enddate == curDate && b->priority < curPriority)
-    ))
+  // Find details on the reference date
+  bool effectiveAtEnd = false;
+  Date tmp = refDate;
+  struct tm datedetail;
+  if (refDate > b->enddate)
+    tmp = b->enddate;
+  tmp.getInfo(&datedetail);
+  int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
+  Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+  if (!ref_time)
   {
-    refDate = b->enddate;
-    allowEqualAtEnd = true;
+    ref_time = Duration(86400L);
+    if (--ref_weekday < 0)
+      ref_weekday = 6;
   }
+  if (
+    refDate > b->enddate && ref_time > b->starttime
+    && ref_time <= b->endtime && (b->days & (1 << ref_weekday))
+    )
+    effectiveAtEnd = true;
 
-  // Find position in the week
-  long timeInWeek = refDate.getSecondsWeek();
-
-  // Loop over all effective days in the week in which refDate falls
-  for (short i=b->offsetcounter-1; i>=0; i-=2)
+  if (ref_time > b->starttime && !effectiveAtEnd
+    && ref_time <= b->endtime && (b->days & (1 << ref_weekday)))
   {
-    // Start and end date of this effective period
-    Date st = refDate + Duration(b->offsets[i] - timeInWeek);
-    Date nd = refDate + Duration(b->offsets[i+1] - timeInWeek);
-
-    // Move to previous week if required
-    bool canReturn = true;
-    if (refDate <= st)
+    // Entry is currently effective.
+    if (!b->starttime && b->endtime == Duration(86400L))
     {
-      st -= Duration(86400L*7);
-      nd -= Duration(86400L*7);
-      canReturn = false;
-    }
-
-    // Check enddate and startdate are not violated
-    if (st <= b->startdate)
-    {
-      if (nd <= b->startdate)
-        continue;  // No overlap with overall effective dates
-      else
-        st = b->startdate;
-    }
-    if (nd > b->enddate)
-    {
-      if (st > b->enddate)
-        continue;  // No overlap with effective range
-      else
-        nd = b->enddate;
-    }
-
-    if ((refDate > nd || (allowEqualAtEnd && refDate == nd))
-      && b->priority <= lastPriority)
-    {
-      if (nd < curDate || (nd == curDate && b->priority <= curPriority))
+      // The previous event is the end of the previous infective day
+      tmp += Duration(86400L) - ref_time;
+      while (b->days & (1 << ref_weekday))
       {
-        // Another bucket is doing better already
-        if (canReturn) break;
-        else continue;
+        if (--ref_weekday < 0)
+          ref_weekday = 6;
+        tmp -= Duration(86400L);
       }
-      // The effective end on this weekday qualifies as the next event
-      curDate = nd;
-      curBucket = b;
-      if (canReturn) return;
     }
-    if (refDate > st && lastBucket == b)
+    else
+      // The previous event is the start date on the current day
+      tmp += b->starttime - ref_time;
+    if (tmp < b->startdate)
+      tmp = b->startdate;
+
+    // Evaluate the result
+    if (refDate > tmp && tmp > curDate && lastBucket == b)
     {
-      if (st < curDate || (st == curDate && b->priority <= curPriority))
-      {
-        // Another bucket is doing better already
-        if (canReturn) break;
-        else continue;
-      }
-      // This bucket is currently effective.
-      // The effective end on this weekday qualifies as the next event.
-      curDate = st;
-      curBucket = theCalendar->findBucket(st, false);
+      curDate = tmp;
+      curBucket = theCalendar->findBucket(tmp, false);
       curPriority = curBucket ? curBucket->priority : INT_MAX;
-      if (canReturn) return;
+    }
+  }
+  else
+  {
+    // Reference date is before the start time on an effective date
+    // or it is after the end time of an effective date
+    // or it is on an ineffective day.
+
+    // The previous event is the end time, either today or on the previous 
+    // effective day.
+    tmp += b->endtime - ref_time;
+    if (ref_time <= b->starttime && (b->days & (1 << ref_weekday)))
+    {
+      if (--ref_weekday < 0)
+        ref_weekday = 6;
+      tmp -= Duration(86400L);
+    }
+    while (!(b->days & (1 << ref_weekday)))
+    {
+      if (--ref_weekday < 0)
+        ref_weekday = 6;
+      tmp -= Duration(86400L);
+    }
+    if (tmp < b->startdate)
+      return;
+
+    // Evaluate the result
+    if (refDate > tmp && b->priority <= lastPriority && (
+      tmp > curDate ||
+      (tmp == curDate && b->priority < curPriority)
+      ))
+    {
+      curDate = tmp;
+      curBucket = b;
+      curPriority = b->priority;
     }
   }
 }
@@ -811,47 +834,6 @@ PyObject* CalendarEventIterator::iternext()
   else
     --eventiter;
   return result;
-}
-
-
-void CalendarBucket::updateOffsets()
-{
-  if (days==127 && !starttime && endtime==Duration(86400L))
-  {
-    // Bucket is effective continuously. No need to update the structure.
-    offsetcounter = 0;
-    return;
-  }
-
-  offsetcounter = -1;
-  short tmp = days;
-  for (short i=0; i<=6; ++i)
-  {
-    // Loop over all days in the week
-    if (tmp & 1)
-    {
-      if (offsetcounter>=1 && (offsets[offsetcounter] == 86400*i + starttime))
-        // Special case: the start date of todays offset entry
-        // is the end date yesterdays entry. We can just update the
-        // end date of that entry.
-        offsets[offsetcounter] = 86400*i + endtime;
-      else
-      {
-        // New offset pair
-        offsets[++offsetcounter] = 86400*i + starttime;
-        offsets[++offsetcounter] = 86400*i + endtime;
-      }
-    }
-    tmp = tmp>>1; // Shift to the next bit
-  }
-
-  // Special case: there is no gap between the end of the last event in the
-  // week and the next event in the following week.
-  if (offsetcounter >= 1 && offsets[0]==0 && offsets[offsetcounter]==86400*7)
-  {
-    offsets[0] = offsets[offsetcounter-1] - 86400*7;
-    offsets[offsetcounter] = 86400*7 + offsets[1];
-  }
 }
 
 } // end namespace

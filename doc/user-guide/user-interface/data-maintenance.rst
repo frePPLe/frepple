@@ -25,17 +25,6 @@ Data can be edited in different ways:
     apply the changes in Excel and upload the new file.
   | See :doc:`getting-around/importing-data`.
 
-* | **Load a fixture**
-  | A fixture is a predefined dataset that can easily be loaded from a file.
-  | This is very useful for demo data or data templates.
-  | See :doc:`execute`
-
-* | **Direct upload into the database**
-  | The database schema of frePPLe is pretty straightforward. There are no
-    database procedures or foreign keys using internal identifiers.
-  | You can use the ETL tools of your choice to develop data interfaces from
-    your source systems.
-
 .. image:: _images/edit-table.png
    :alt: Edit using a table
 

@@ -38,11 +38,11 @@
 				  days="62" starttime="PT9H" endtime="PT17H" value="1" priority="10"/>
 				<!-- Lower priority to override the previous bucket definition -->
 				<bucket start="2012-02-01T00:00:00" end="2012-02-03T00:00:00"
-				  value="0" priority="0"/>
+				  value="0" priority="1"/>
 				<bucket start="2012-02-09T00:00:00" end="2012-02-10T00:00:00"
-				  value="0" priority="0"/>
+				  value="0" priority="1"/>
 				<bucket start="2012-02-11T00:00:00" end="2012-02-12T00:00:00"
-                value="0" priority="0"/>
+                  value="0" priority="3"/>
 			</buckets>
 		</calendar>
 

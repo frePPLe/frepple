@@ -144,19 +144,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     /** Value of this bucket.*/
     double val = 0.0;
 
-    /** An internally managed data structure to keep the offsets
-      * inside the week where the entry changes effectivity.
-      * TODO This type of data structure is not good when the DST changes during the week. Need to reimplement without this offset data structure!
-      */
-    long offsets[14];
-
-    /** An internal counter for the number of indices used in the
-      * offset array. */
-    short offsetcounter = 0;
-
-    /** Updates the offsets data structure. */
-    void updateOffsets();
-
     /** Keep all calendar buckets sorted in ascending order of start date
       * and use the priority as a tie breaker.
       */
@@ -255,7 +242,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       if (p<0 || p>127)
         throw DataException("Calendar bucket days must be between 0 and 127");
       days = p;
-      updateOffsets();
     }
 
     /** Return the time of the day when the entry becomes valid.<br>
@@ -272,7 +258,13 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       if (t > 86400L || t < 0L)
         throw DataException("Calendar bucket start time must be between 0 and 86400 seconds");
       starttime = t;
-      updateOffsets();
+      if (starttime > endtime)
+      {
+        // Swap the start and end time
+        Duration tmp = starttime;
+        starttime = endtime;
+        endtime = tmp;
+      }
     }
 
     /** Return the time of the day when the entry becomes invalid.<br>
@@ -289,7 +281,13 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       if (t > 86400L || t < 0L)
         throw DataException("Calendar bucket end time must be between 0 and 86400 seconds");
       endtime = t;
-      updateOffsets();
+      if (starttime > endtime)
+      {
+        // Swap the start and end time
+        Duration tmp = starttime;
+        starttime = endtime;
+        endtime = tmp;
+      }
     }
 
     /** Convert the value of the bucket to a boolean value. */
@@ -298,6 +296,15 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       return val != 0;
     }
 
+    /** Returns true if the bucket is continuously effective between
+      * its start and end date, in other words it is effective 24 hours 
+      * a day and 7 days per week.
+      */
+    bool isContinuouslyEffective() const
+    {
+      return days == 127 && !starttime && endtime == Duration(86400L);
+    }
+    
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaCategory* metacategory;
     static const MetaClass* metadata;

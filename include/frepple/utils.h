@@ -863,6 +863,7 @@ class Date
       parse(s);
     }
 
+  public:
     /** A utility function that uses the C function localtime to compute the
       * details of the current time: day of the week, day of the month,
       * day of the year, hour, minutes, seconds
@@ -883,8 +884,6 @@ class Date
         #error A multi-threading safe localtime function is required
       #endif
     }
-
-  public:
 
     /** Constructor initialized with a long value. */
     Date(const time_t l) : lval(l)

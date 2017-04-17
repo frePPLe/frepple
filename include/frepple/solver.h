@@ -989,7 +989,7 @@ class SolverMRP : public Solver
         {
           bool operator() (const OperationItemSupplier* const& lhs, const OperationItemSupplier* const& rhs) const
           {
-            return rhs->getName() < lhs->getName();           
+            return lhs->getName() < rhs->getName();           
           }
         };
         set<const OperationItemSupplier*, order_operationitemsuppliers> purchase_operations;

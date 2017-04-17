@@ -138,7 +138,7 @@ void SolverMRP::SolverMRPdata::commit()
 
   // Message
   if (solver->getLogLevel()>0)
-    logger << "Start solving cluster " << cluster << " at " << Date::now() << endl;
+    logger << "Start solving cluster " << cluster << endl;
 
   // Solve the planning problem
   try
@@ -246,7 +246,7 @@ void SolverMRP::SolverMRPdata::commit()
 
   // Message
   if (solver->getLogLevel()>0)
-    logger << "End solving cluster " << cluster << " at " << Date::now() << endl;
+    logger << "End solving cluster " << cluster << endl;
 }
 
 

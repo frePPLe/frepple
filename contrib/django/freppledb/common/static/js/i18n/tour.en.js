@@ -196,7 +196,7 @@ var tourdata = [
              "you have correctly filled in all data.<br>" +
              "&nbsp;- <i>Operations</i> are shown as rectangles.<br>" +
              "&nbsp;- <i>Resources</i> are shown as circles.<br>" +
-             "&nbsp;- <i>Buffers</i>/SKUs are shown as triangles.<br>" +
+             "&nbsp;- <i>Buffers</i>/item @ location are shown as triangles.<br>" +
              "&nbsp;- The lines between operations and buffers are <i>flows</i>.<br>" +
              "&nbsp;- The dotted lines between operations and resources are <i>loads</i>.<br>",
            position : 'bottom'
@@ -394,7 +394,7 @@ var tourdata = [
            {
              url: "/buffer/",
              element : 'h1 small',
-             description : "This report shows the <b>inventory profile</b> of all SKUs.<br>" +
+             description : "This report shows the <b>inventory profile</b> of all item @ locations.<br>" +
                "It displays how much inventory we plan to have for each raw<br>" +
                "material, end product or intermediate product.",
              position : 'right'

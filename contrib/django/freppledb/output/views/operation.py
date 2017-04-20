@@ -21,7 +21,7 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.input.models import Operation
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import GridPivot, GridFieldText
 
 
 class OverviewReport(GridPivot):

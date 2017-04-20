@@ -24,9 +24,10 @@ from django.utils.text import capfirst
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Location, OperationPlanResource, Operation
 from freppledb.common.models import Parameter
-from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency,\
-  GridFieldDuration
-from freppledb.common.report import GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldBool, GridFieldInteger
+from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency
+from freppledb.common.report import GridFieldLastModified, GridFieldDuration
+from freppledb.common.report import GridFieldDateTime, GridFieldInteger
+from freppledb.common.report import GridFieldNumber, GridFieldText
 
 
 class OverviewReport(GridPivot):
@@ -239,7 +240,7 @@ class DetailReport(GridReport):
     else:
       base = OperationPlanResource.objects
     return base.select_related().extra(select={
-      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan) order by key desc) peg)"
+      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan->'pegging') order by key desc) peg)"
       })
 
   @classmethod
@@ -272,7 +273,24 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operationplan__operation__location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operationplan__operation', title=_('operation'), editable=False, formatter='detail', extra='"role":"input/operation"'),
-    GridFieldText('operationplan__operation__description', title=_('description'), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__description', title=string_concat(_('operation'), ' - ', _('description')), editable=False, initially_hidden=True),    
+    GridFieldText('operationplan__operation__category', title=string_concat(_('operation'), ' - ', _('category')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__type', title=string_concat(_('operation'), ' - ', _('type')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True),
+    GridFieldInteger('operationplan__operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True),
+    GridFieldCurrency('operationplan__operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
+    GridFieldText('operationplan__operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), initially_hidden=True),
+    GridFieldText('operationplan__operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
+    GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),    
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
     GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False),

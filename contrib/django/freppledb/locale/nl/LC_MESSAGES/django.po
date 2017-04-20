@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-17 10:38+0100\n"
-"PO-Revision-Date: 2017-03-17 12:31+0100\n"
+"PO-Revision-Date: 2017-04-20 13:05+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0beta4\n"
+"X-Generator: Poedit 1.8.11\n"
 "X-Poedit-Basepath: /home/johan/workspace/frepple-enterprise/contrib/django/"
 "freppledb\n"
 
@@ -399,7 +399,7 @@ msgstr "Onbekend veld %(column)s overslaan"
 
 #: common/report.py:1539 common/report.py:2474
 msgid "Key fields not unique"
-msgstr ""
+msgstr "Sleutelvelden niet uniek"
 
 #: common/report.py:1979 common/report.py:2112 forecast/views.py:404
 #: forecast/views.py:608
@@ -1647,7 +1647,7 @@ msgstr "ingeplande netto forecast"
 #: inventoryplanning/templates/inventoryplanning/drp.html:770
 #| msgid "Demand report"
 msgid "Demand outlier"
-msgstr ""
+msgstr "Exceptionele vraag"
 
 #: forecast/views.py:68
 msgid "method"
@@ -1758,11 +1758,11 @@ msgstr "Toon de evolutie van de SMAPE forecast error"
 
 #: forecast/widget.py:359
 msgid "Demand history outliers"
-msgstr ""
+msgstr "Exceptionele vraag"
 
 #: forecast/widget.py:360
 msgid "Displays outliers detected in the demand history"
-msgstr ""
+msgstr "Toon exceptionele vraag in de historiek"
 
 #: forecast/widget.py:389 input/models.py:1225
 #: inventoryplanning/templates/inventoryplanning/drp.html:1588
@@ -2492,7 +2492,7 @@ msgstr "Externe referentie van deze order"
 
 #: input/models.py:1062 inventoryplanning/models.py:316
 msgid "color"
-msgstr ""
+msgstr "kleur"
 
 #: input/models.py:1068 input/views.py:1159 input/views.py:1252
 #: input/views.py:1376
@@ -2663,7 +2663,7 @@ msgstr "Bereken stockparameters"
 
 #: inventoryplanning/commands.py:835
 msgid "Generate inventory rebalancing requests"
-msgstr ""
+msgstr "Genereer stock rebalancing orders"
 
 #: inventoryplanning/models.py:24
 #: inventoryplanning/templates/inventoryplanning/drp.html:1948
@@ -2771,7 +2771,7 @@ msgstr "voorraad planning parameters"
 
 #: inventoryplanning/models.py:148 inventoryplanning/views.py:81
 msgid "query"
-msgstr ""
+msgstr "query"
 
 #: inventoryplanning/models.py:152
 msgid "sku_count"
@@ -2779,7 +2779,7 @@ msgstr "sku_aantal"
 
 #: inventoryplanning/models.py:153
 msgid "Number of sku in the segment"
-msgstr ""
+msgstr "Aantal sku in het segment"
 
 #: inventoryplanning/models.py:227
 msgid "ROQ Minimum Quantity"
@@ -2819,7 +2819,7 @@ msgstr "Safety Stock Maximum Dekkingsperiode"
 
 #: inventoryplanning/models.py:242
 msgid "Business Rule"
-msgstr ""
+msgstr "Business rule"
 
 #: inventoryplanning/models.py:245 inventoryplanning/views.py:100
 #: inventoryplanning/views.py:143 inventoryplanning/views.py:144
@@ -3061,7 +3061,7 @@ msgstr "groepeer per lokatie"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1795
 #: inventoryplanning/templates/inventoryplanning/drp.html:1801
 msgid "no segment"
-msgstr ""
+msgstr "Geen segment"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1831
 msgid "detail"
@@ -3161,7 +3161,7 @@ msgstr "beperkt door"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2107
 #: inventoryplanning/templates/inventoryplanning/drp.html:2123
 msgid "between"
-msgstr ""
+msgstr "tussen"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2097
 msgid "computed economic reorder quantity"
@@ -3173,11 +3173,11 @@ msgstr "Zet de safety stock op 0 en de reorder hoeveelheid op 1"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2155
 msgid "true"
-msgstr ""
+msgstr "waar"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
 msgid "false"
-msgstr ""
+msgstr "onwaar"
 
 #: inventoryplanning/views.py:73
 msgid "segments"
@@ -3189,11 +3189,11 @@ msgstr "sku aantal"
 
 #: inventoryplanning/views.py:93
 msgid "business rules"
-msgstr ""
+msgstr "business rules"
 
 #: inventoryplanning/views.py:101
 msgid "business rule"
-msgstr ""
+msgstr "business rule"
 
 #: inventoryplanning/views.py:195
 msgid "on hand"
@@ -3649,7 +3649,7 @@ msgstr "Plan editor"
 
 #: planningboard/models.py:32 planningboard/models.py:33
 msgid "chat history"
-msgstr ""
+msgstr "chat historiek"
 
 #: quoting/views.py:34
 msgid "quotes"

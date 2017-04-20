@@ -15,10 +15,15 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.core.management import call_command
 from django.db import migrations, models
 import django.utils.timezone
 import datetime
 import freppledb.common.fields
+
+
+def loadParameters(apps, schema_editor):
+  call_command('loaddata', "parameters.json", app_label="input", verbosity=0)
 
 
 class Migration(migrations.Migration):
@@ -722,6 +727,7 @@ class Migration(migrations.Migration):
             name='buffer',
             unique_together=set([('item', 'location')]),
         ),
+        migrations.RunPython(loadParameters),
         migrations.RunSQL(
           '''
           insert into common_wizard 
@@ -758,5 +764,5 @@ class Migration(migrations.Migration):
              'Operation Resources', 'Plan generation'
              )
           '''
-        ),               
+        ),
     ]

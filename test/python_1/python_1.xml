@@ -47,7 +47,7 @@ except Exception as e:
 # can easily achieve better performance.
 # Obviously a different test configuration will give different results.
 # E.g. when running many small XML messages rather than a huge data file...
-create_files(200000)
+create_files(10000)
 start = os.times()
 frepple.readXMLfile("items.xml",False)
 end = os.times()

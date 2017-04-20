@@ -321,7 +321,6 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
             // All conditions are met!
             curPriority = b->getPriority();
             curBucket = &*b;
-            break;
           }
         }
       }

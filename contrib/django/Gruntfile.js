@@ -67,6 +67,9 @@ module.exports = function (grunt) {
     // Extract translations
     nggettext_extract: {
       pot: {
+        options: {
+          msgmerge: true
+        },
         files: {
           'freppledb/input/static/input/po/template.pot': ['freppledb/input/static/operationplandetail/*.html']
         }

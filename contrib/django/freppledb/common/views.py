@@ -438,6 +438,7 @@ class BucketDetailList(GridReport):
   frozenColumns = 2
   help_url = 'user-guide/model-reference/buckets.html'
   rows = (
+    GridFieldInteger('id', title=_('identifier'), key=True, hidden=True),
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra='"role":"common/bucket"'),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date')),

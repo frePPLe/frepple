@@ -12,89 +12,108 @@ msgstr ""
 "X-Generator: Poedit 2.0.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:35
+#: freppledb/input/static/operationplandetail/operationplandetail.html:52
 msgid "Continue"
 msgstr "Continuar"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:26
+#: freppledb/input/static/operationplandetail/operationplandetail.html:43
 msgid "Do you want to save your changes first?"
 msgstr "¿Quieres guardar los cambios primero?"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:30
+#: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:34
+#: freppledb/input/static/operationplandetail/operationplandetail.html:51
 msgid "Save"
 msgstr "Guardar"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:29
+#: freppledb/input/static/operationplandetail/operationplandetail.html:46
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:56
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:87
 msgid "approved"
 msgstr "aprobado"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:89
 msgid "closed"
 msgstr "cerrado"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:88
 msgid "confirmed"
 msgstr "confirmado"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:40
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:75
 msgid "criticality"
 msgstr "criticidad"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:23
+#: freppledb/input/static/operationplandetail/operationplandetail.html:40
 msgid "database transaction failed"
 msgstr "error en la transacción de base de datos"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:44
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:79
 msgid "delay"
 msgstr "retraso"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:28
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:53
+msgid "destination"
+msgstr "destino"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:63
 msgid "end"
 msgstr "fin"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:22
+#: freppledb/input/static/operationplandetail/operationplandetail.html:39
 msgid "gantt chart rows limit"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:29
 msgid "identifier"
 msgstr "identificador"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:11
-msgid "manufacturing order"
-msgstr "órdenes de producción"
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:37
+msgid "item"
+msgstr "artículo"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:55
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:45
+msgid "location"
+msgstr "ubicación"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:49
+msgid "origin"
+msgstr "origen"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:86
 msgid "proposed"
 msgstr "propuesto"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:34
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:69
 msgid "quantity"
 msgstr "cantidad"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:48
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:33
 msgid "reference"
 msgstr "referencia"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:22
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
 msgid "start"
 msgstr "inicio"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:52
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:83
 msgid "status"
 msgstr "estado"
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:21
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:41
+msgid "supplier"
+msgstr "proveedor"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:38
 msgid "unsaved changes"
 msgstr "cambios sin guardar"
+
+#~ msgid "manufacturing order"
+#~ msgstr "órdenes de producción"
 
 #~ msgid "aggregate"
 #~ msgstr "agregada"
@@ -147,14 +166,8 @@ msgstr "cambios sin guardar"
 #~ msgid "Intermittent"
 #~ msgstr "Intermitente"
 
-#~ msgid "item"
-#~ msgstr "artículo"
-
 #~ msgid "items"
 #~ msgstr "artículos"
-
-#~ msgid "location"
-#~ msgstr "ubicación"
 
 #~ msgid "locations"
 #~ msgstr "ubicaciones"

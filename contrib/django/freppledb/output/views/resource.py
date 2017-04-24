@@ -240,7 +240,8 @@ class DetailReport(GridReport):
     else:
       base = OperationPlanResource.objects
     return base.select_related().extra(select={
-      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan->'pegging') order by key desc) peg)"
+      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan->'pegging') order by key desc) peg)",
+      'duration': "(operationplan.enddate - operationplan.startdate)"
       })
 
   @classmethod
@@ -291,14 +292,15 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), initially_hidden=True),
     GridFieldText('operationplan__operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
     GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),    
-    GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False),
-    GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False),
+    GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
+    GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
+    GridFieldDuration('duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
+    GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
-    GridFieldNumber('quantity', title=_('load quantity'), editable=False),
+    GridFieldNumber('quantity', title=_('load quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('setup', title=_('setup'), editable=False),
     )

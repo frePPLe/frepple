@@ -1,18 +1,11 @@
 #
 # Copyright (C) 2007-2013 by frePPLe bvba
 #
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
 #
 
 from optparse import make_option
@@ -163,11 +156,7 @@ class Command(BaseCommand):
           year_start = datetime(year, 1, 1)
           year_end = datetime(year + 1, 1, 1)
           week_start = curdate - timedelta((dayofweek + 6) % 7 + 1 - weekstart)
-          week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)
-          if week_start < year_start:
-            week_start = year_start
-          if week_end > year_end:
-            week_end = year_end
+          week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)          
 
           # Create buckets
           if year != prev_year:
@@ -196,9 +185,12 @@ class Command(BaseCommand):
               ).save(using=database)
           if week_start != prev_week:
             prev_week = week_start
+            # we need to avoid weeks 00
+            # we will therefore take the name of the week starting the monday
+            # included in that week
             BucketDetail(
               bucket=w,
-              name=curdate.strftime("%y W%W"),
+              name=(week_start+timedelta(days=(7-week_start.weekday()) % 7)).strftime("%y W%W"),
               startdate=week_start,
               enddate=week_end,
               ).save(using=database)

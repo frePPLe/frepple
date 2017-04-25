@@ -1,0 +1,117 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:87
+msgid "approved"
+msgstr "утвержден"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:89
+msgid "closed"
+msgstr "закрыт"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:88
+msgid "confirmed"
+msgstr "подтвержден"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:53
+msgid "Continue"
+msgstr "Продолжить"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:75
+msgid "criticality"
+msgstr "критичность"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:41
+msgid "database transaction failed"
+msgstr "ошибка транзакции базы данных"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:79
+msgid "delay"
+msgstr "задержка"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:53
+msgid "destination"
+msgstr "адресат"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:44
+msgid "Do you want to save your changes first?"
+msgstr "хотите сохранить изменения?"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:63
+msgid "end"
+msgstr "окончание"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:40
+msgid "gantt chart rows limit"
+msgstr "ограничение строк диаграммы Ганта"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:29
+msgid "identifier"
+msgstr "ид. номер"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:37
+msgid "item"
+msgstr "товарная позиция"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:45
+msgid "location"
+msgstr "местоположение"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:49
+msgid "origin"
+msgstr "передача из"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:48
+msgid "Please be patient, the chart may take some time to complete."
+msgstr "ожидайте, построение диаграммы может занять некоторое время."
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:86
+msgid "proposed"
+msgstr "сформирован"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:69
+msgid "quantity"
+msgstr "количество"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:33
+msgid "reference"
+msgstr "ссылка"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:52
+msgid "Save"
+msgstr "сохранить"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+msgid "start"
+msgstr "старт"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:83
+msgid "status"
+msgstr "состояние"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:41
+msgid "supplier"
+msgstr "поставщик"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:47
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr "диаграмма Ганта ограничена {{rowlimit}} строками."
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:39
+msgid "unsaved changes"
+msgstr "несохраненные изменения"
+
+#~ msgid "manufacturing order"
+#~ msgstr "производственный заказ"

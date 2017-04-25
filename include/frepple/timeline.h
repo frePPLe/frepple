@@ -103,6 +103,12 @@ template <class type> class TimeLine
           return next ? (next->dt != dt) : true;
         }
 
+        /** Verify whether the previous event is on the same date or not. */
+        inline bool isFirstOnDate() const
+        {
+          return prev ? (prev->dt != dt) : true;
+        }
+
         /** Return true if there is no other event at the same date. */
         inline bool isOnlyEventOnDate() const
         {
@@ -114,18 +120,28 @@ template <class type> class TimeLine
         inline double getOnhandBeforeDate() const
         {
           const Event *tmp = this;
-          while (tmp->prev && tmp->prev->dt == dt)
+          while (tmp && tmp->dt == dt)
+          {
+            if (!tmp->prev)
+              return tmp->oh;
+            else
              tmp = tmp->prev;
-          return tmp ? tmp->oh : 0;
+          }
+          return tmp->oh;
         }
         
         /** Return the onhand after this date. */
         inline double getOnhandAfterDate() const
         {
           const Event *tmp = this;
-          while (tmp->next && tmp->next->dt == dt)
+          while (tmp && tmp->dt == dt)
+          {
+            if (!tmp->next)
+              return tmp->oh;
+            else
             tmp = tmp->next;
-          return tmp ? tmp->oh : oh;
+          }            
+          return tmp->oh;
         }
 
         /** Return the total produced quantity till the current date. */
@@ -201,6 +217,8 @@ template <class type> class TimeLine
           else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
             return getQuantity() > fl2.getQuantity();
           else
+            // Using a pointer comparison as tie breaker. This can give
+            // results that are not reproducible across platforms and runs.
             return this < &fl2;
         }
     };

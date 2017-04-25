@@ -134,14 +134,9 @@ template <class type> class TimeLine
         inline double getOnhandAfterDate() const
         {
           const Event *tmp = this;
-          while (tmp && tmp->dt == dt)
-          {
-            if (!tmp->next)
-              return tmp->oh;
-            else
+          while (tmp->next && tmp->next->dt == dt)
             tmp = tmp->next;
-          }            
-          return tmp->oh;
+          return tmp ? tmp->oh : oh;
         }
 
         /** Return the total produced quantity till the current date. */

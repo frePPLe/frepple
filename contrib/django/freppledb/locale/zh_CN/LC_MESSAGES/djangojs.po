@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-17 10:38+0100\n"
-"PO-Revision-Date: 2017-03-17 14:56+0100\n"
+"PO-Revision-Date: 2017-04-27 14:08+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0beta4\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: common/static/js/frepple.js:170 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -335,7 +335,7 @@ msgstr "结束"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/problemspanelDrv.js:48
 msgid "no problems"
-msgstr ""
+msgstr "没有任何问题"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/resourcespanelDrv.js:36
@@ -352,7 +352,7 @@ msgstr "数量"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/resourcespanelDrv.js:45
 msgid "no resources"
-msgstr ""
+msgstr "没有资源"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/bufferspanelDrv.js:36
@@ -373,7 +373,7 @@ msgstr "日期"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/bufferspanelDrv.js:49
 msgid "no movements"
-msgstr ""
+msgstr "没有移动"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
@@ -383,7 +383,7 @@ msgstr "需求"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
 msgid "no demands"
-msgstr ""
+msgstr "没有需求"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplanpanelDrv.js:37
@@ -403,16 +403,16 @@ msgstr "配送订单"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplanpanelDrv.js:40
 msgid "Stock"
-msgstr ""
+msgstr "库存"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplanpanelDrv.js:41
 msgid "Delivery"
-msgstr ""
+msgstr "交付"
 
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:30
 msgid "inventory status"
-msgstr ""
+msgstr "库存状况"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/ganttchart.js:409

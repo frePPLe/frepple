@@ -22,7 +22,7 @@ msgstr "你要保存更改嗎?"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "Please be patient, the chart may take some time to complete."
-msgstr ""
+msgstr "請耐心等待，圖表可能需要一段時間才能完成。"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
 msgid "Save"
@@ -30,7 +30,7 @@ msgstr "保存"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr ""
+msgstr "甘特圖僅限於{{rowlimit}}行。"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:87
 msgid "approved"
@@ -66,7 +66,7 @@ msgstr "結束"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:39
 msgid "gantt chart rows limit"
-msgstr ""
+msgstr "甘特圖行數限制"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:29
 msgid "identifier"
@@ -98,7 +98,7 @@ msgstr "參考"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:57
 msgid "start"
-msgstr "開始"
+msgstr "開啟"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:83
 msgid "status"

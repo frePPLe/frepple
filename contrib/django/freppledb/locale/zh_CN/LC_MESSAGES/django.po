@@ -11,10 +11,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.2.beta\n"
+"Project-Id-Version: 4.1.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-17 10:38+0100\n"
-"PO-Revision-Date: 2017-03-17 14:55+0100\n"
+"PO-Revision-Date: 2017-04-27 14:08+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0beta4\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -398,7 +398,7 @@ msgstr "跳过未知字段 %(column)s"
 
 #: common/report.py:1539 common/report.py:2474
 msgid "Key fields not unique"
-msgstr ""
+msgstr "关键字段不唯一"
 
 #: common/report.py:1979 common/report.py:2112 forecast/views.py:404
 #: forecast/views.py:608
@@ -1076,7 +1076,7 @@ msgstr "清影管理"
 
 #: execute/templates/execute/execute.html:522
 msgid "label"
-msgstr ""
+msgstr "标签"
 
 #: execute/templates/execute/execute.html:523
 msgid "last refresh"
@@ -1625,7 +1625,7 @@ msgstr "已计划淨预报"
 #: inventoryplanning/templates/inventoryplanning/drp.html:770
 #| msgid "Demand report"
 msgid "Demand outlier"
-msgstr ""
+msgstr "需求异常值"
 
 #: forecast/views.py:68
 msgid "method"
@@ -1734,11 +1734,11 @@ msgstr "显示演变的SMAPE预报错误"
 #: forecast/widget.py:359
 #| msgid "demand distribution"
 msgid "Demand history outliers"
-msgstr ""
+msgstr "需求历史异常值"
 
 #: forecast/widget.py:360
 msgid "Displays outliers detected in the demand history"
-msgstr ""
+msgstr "显示发现的异常值在需求历史里"
 
 #: forecast/widget.py:389 input/models.py:1225
 #: inventoryplanning/templates/inventoryplanning/drp.html:1588
@@ -1834,7 +1834,7 @@ msgstr "客户"
 #: input/models.py:173
 #| msgid "Cost of the conversion"
 msgid "Cost of the item"
-msgstr ""
+msgstr "对象成本"
 
 #: input/models.py:182 input/views.py:841
 msgid "items"
@@ -2462,7 +2462,7 @@ msgstr "这个单的外部参考"
 
 #: input/models.py:1062 inventoryplanning/models.py:316
 msgid "color"
-msgstr ""
+msgstr "颜色"
 
 #: input/models.py:1068 input/views.py:1159 input/views.py:1252
 #: input/views.py:1376
@@ -2516,7 +2516,7 @@ msgstr "结束日期"
 #: input/models.py:1178
 #| msgid "operationplan resource"
 msgid "Status of the OperationPlanResource"
-msgstr ""
+msgstr "OperationPlanResource的状态"
 
 #: input/models.py:1199
 msgid "operationplan resource"
@@ -2529,7 +2529,7 @@ msgstr "操作计划的资源"
 #: input/models.py:1229
 #| msgid "operationplan material"
 msgid "Status of the OperationPlanMaterial"
-msgstr ""
+msgstr "OperationPlanMaterial的状态"
 
 #: input/models.py:1250
 msgid "operationplan material"
@@ -2568,7 +2568,7 @@ msgstr[0] "%(name)s - %(count)d 匹配"
 #: input/views.py:89 inventoryplanning/views.py:160
 #| msgid "inventory planning parameter"
 msgid "Inventory planning"
-msgstr ""
+msgstr "库存计划"
 
 #: input/views.py:137 output/views/pegging.py:38
 msgid "depth"
@@ -2605,7 +2605,7 @@ msgstr "改变状态为%(status)s"
 #: output/views/resource.py:264
 #| msgid "inventory"
 msgid "inventory status"
-msgstr ""
+msgstr "库存状况"
 
 #: input/views.py:1161 input/views.py:1254 input/views.py:1378
 #: output/views/buffer.py:237 output/views/resource.py:274
@@ -2615,7 +2615,7 @@ msgstr "需求"
 #: input/views.py:1251 input/views.py:1375
 #| msgid "total forecast"
 msgid "total cost"
-msgstr ""
+msgstr "总成本"
 
 #: inventoryplanning/admin.py:31 inventoryplanning/models.py:310
 #: inventoryplanning/templates/inventoryplanning/drp.html:619
@@ -2638,7 +2638,7 @@ msgstr "计算库存参数"
 #: inventoryplanning/commands.py:835
 #| msgid "inventory planning parameters"
 msgid "Generate inventory rebalancing requests"
-msgstr ""
+msgstr "生成库存重新平衡请求"
 
 #: inventoryplanning/models.py:24
 #: inventoryplanning/templates/inventoryplanning/drp.html:1948
@@ -2746,16 +2746,16 @@ msgstr "库存计划参数"
 
 #: inventoryplanning/models.py:148 inventoryplanning/views.py:81
 msgid "query"
-msgstr ""
+msgstr "查询"
 
 #: inventoryplanning/models.py:152
 #| msgid "count"
 msgid "sku_count"
-msgstr ""
+msgstr "sku_数"
 
 #: inventoryplanning/models.py:153
 msgid "Number of sku in the segment"
-msgstr ""
+msgstr "在这段的SKU数量"
 
 #: inventoryplanning/models.py:227
 msgid "ROQ Minimum Quantity"
@@ -2796,7 +2796,7 @@ msgstr "安全库存最大的包含时期"
 
 #: inventoryplanning/models.py:242
 msgid "Business Rule"
-msgstr ""
+msgstr "业务规则"
 
 #: inventoryplanning/models.py:245 inventoryplanning/views.py:100
 #: inventoryplanning/views.py:143 inventoryplanning/views.py:144
@@ -2806,7 +2806,7 @@ msgstr ""
 #: inventoryplanning/views.py:151 inventoryplanning/views.py:152
 #| msgid "arguments"
 msgid "segment"
-msgstr ""
+msgstr "段"
 
 #: inventoryplanning/models.py:303
 msgid "calculated reorder quantity"
@@ -3039,7 +3039,7 @@ msgstr "按地点分组"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1795
 #: inventoryplanning/templates/inventoryplanning/drp.html:1801
 msgid "no segment"
-msgstr ""
+msgstr "没有段"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1831
 msgid "detail"
@@ -3072,7 +3072,7 @@ msgstr "产品属性"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1889
 #| msgid "Inventory"
 msgid "Inventory status"
-msgstr ""
+msgstr "库存状况"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1898
 msgid "Buffer attributes"
@@ -3109,7 +3109,7 @@ msgstr "还没有注释"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2022
 #| msgid "calculated safety stock"
 msgid "computed safety stock"
-msgstr ""
+msgstr "已计算的安全库存"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2023
 #: inventoryplanning/templates/inventoryplanning/drp.html:2042
@@ -3135,50 +3135,50 @@ msgstr "交货时间标准偏差"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2104
 #| msgid "constrained demand"
 msgid "constrained by"
-msgstr ""
+msgstr "受制于"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2057
 #: inventoryplanning/templates/inventoryplanning/drp.html:2072
 #: inventoryplanning/templates/inventoryplanning/drp.html:2107
 #: inventoryplanning/templates/inventoryplanning/drp.html:2123
 msgid "between"
-msgstr ""
+msgstr "之间"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2097
 #| msgid "economic order quantity"
 msgid "computed economic reorder quantity"
-msgstr ""
+msgstr "已计算的经济再订购数量"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2147
 #| msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
 msgid "Sets safety stock to 0 and reorder quantity to 1"
-msgstr ""
+msgstr "将安全库存设为0，再订购数量为1"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2155
 msgid "true"
-msgstr ""
+msgstr "真实"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
 msgid "false"
-msgstr ""
+msgstr "虚假"
 
 #: inventoryplanning/views.py:73
 #| msgid "arguments"
 msgid "segments"
-msgstr ""
+msgstr "这些段"
 
 #: inventoryplanning/views.py:82
 #| msgid "count"
 msgid "sku count"
-msgstr ""
+msgstr "sku数量"
 
 #: inventoryplanning/views.py:93
 msgid "business rules"
-msgstr ""
+msgstr "业务的规则"
 
 #: inventoryplanning/views.py:101
 msgid "business rule"
-msgstr ""
+msgstr "业务规则"
 
 #: inventoryplanning/views.py:195
 msgid "on hand"
@@ -3472,7 +3472,7 @@ msgstr "资源报告"
 #: output/views/resource.py:47
 #| msgid "setup matrix"
 msgid "setupmatrix"
-msgstr ""
+msgstr "设置矩阵"
 
 #: output/views/resource.py:54 output/views/resource.py:63
 msgid "utilization %"

@@ -176,6 +176,7 @@ LANGUAGES = (
   ('nl', ugettext('Dutch')),
   ('pt', ugettext('Portuguese')),
   ('pt-br', ugettext('Brazilian Portuguese')),
+  ('ru', ugettext('Russian')),
   ('zh-cn', ugettext('Simplified Chinese')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )

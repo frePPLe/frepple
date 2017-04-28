@@ -32,7 +32,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
-from freppledb.common.fields import JSONField
+from freppledb.common.fields import JSONBField
 
 
 logger = logging.getLogger(__name__)
@@ -500,7 +500,7 @@ class UserPreference(models.Model):
   # Translators: Translation included with Django
   user = models.ForeignKey(User, verbose_name=_('user'), blank=False, null=True, editable=False, related_name='preferences')
   property = models.CharField(max_length=100, blank=False, null=False)
-  value = JSONField(max_length=1000, blank=False, null=False)
+  value = JSONBField(max_length=1000, blank=False, null=False)
 
   def natural_key(self):
     return (self.user, self.property)

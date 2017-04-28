@@ -21,7 +21,7 @@ from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.fields import JSONField
+from freppledb.common.fields import JSONBField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
 
 
@@ -1001,7 +1001,7 @@ class Demand(AuditModel, HierarchyModel):
   deliverydate = models.DateTimeField(
     _('delivery date'), help_text=_('Delivery date of the demand'), null=True, blank=True, editable=False,
     )
-  plan = JSONField(default="{}", null=True, blank=True, editable=False)
+  plan = JSONBField(default="{}", null=True, blank=True, editable=False)
 
   # Convenience methods
   def __str__(self):
@@ -1067,7 +1067,7 @@ class OperationPlan(AuditModel):
   delay = models.DurationField(
     _('delay'), null=True, blank=True, editable=False
     )
-  plan = JSONField(default="{}", null=True, blank=True, editable=False)
+  plan = JSONBField(default="{}", null=True, blank=True, editable=False)
   # Used only for manufacturing orders
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),

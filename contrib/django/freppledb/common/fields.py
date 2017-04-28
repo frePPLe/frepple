@@ -76,9 +76,14 @@ class JSONField(models.TextField, metaclass=models.SubfieldBase):
     return json.dumps(value)
 
   def db_type(self, connection):
-    # PostgreSQL also has a jsonb field. The difference is that jsonb is
-    # 1) much more efficient in querying the field, 2) allows indexes to
-    # be defined on the content, but 3) takes a bit more time to update.
-    # The JSON fields is sufficient for us since we just want to store the
-    # JSON data without complex operations.
+    # A json field stores the data as a text string, that is parsed whenever
+    # a json operation is performed on the field.
     return 'json'
+
+
+class JSONBField(JSONField):
+  def db_type(self, connection):
+    # A jsonb field is 1) much more efficient in querying the field, 
+    # 2) allows indexes to be defined on the content, but 3) takes a bit
+    # more time to update.
+    return 'jsonb'

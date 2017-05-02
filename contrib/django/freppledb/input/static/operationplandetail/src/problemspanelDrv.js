@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showproblemspanelDrv', showproblemspanelDrv);
 
-showproblemspanelDrv.$inject = ['$window'];
+showproblemspanelDrv.$inject = ['$window', 'gettextCatalog'];
 
-function showproblemspanelDrv($window) {
+function showproblemspanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -34,18 +34,18 @@ function showproblemspanelDrv($window) {
   function linkfunc(scope, elem, attrs) {
     var rows='';
     var template = '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("problems")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("problems")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("start")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("start")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("end")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("end")+'</b>' +
                     '</td></tr></thead>' +
                     '<tbody></tbody>' +
                   '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.problems.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationproblems').empty().append(template);
-      var rows = '<tr><td colspan="3">'+gettext('no problems')+'</td></tr>';
+      var rows = '<tr><td colspan="3">'+gettextCatalog.getString('no problems')+'</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('problems')) {

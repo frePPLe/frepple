@@ -16,17 +16,37 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:41
+msgid "Delivery"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:39
+msgid "Distribution Order"
+msgstr "配信順序"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:43
 msgid "Do you want to save your changes first?"
 msgstr "最初に変更を保存しますか？"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:37
+msgid "Manufacturing Order"
+msgstr "製造オーダー"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:38
+msgid "Purchase Order"
+msgstr "購入注文"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
 msgid "Save"
 msgstr "保存"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:40
+msgid "Stock"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
@@ -35,6 +55,10 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:87
 msgid "approved"
 msgstr "承認済み"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:36
+msgid "buffer"
+msgstr "バッファ"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:89
 msgid "closed"
@@ -52,15 +76,24 @@ msgstr "緊急度"
 msgid "database transaction failed"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:42
+msgid "date"
+msgstr "日時"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:79
 msgid "delay"
 msgstr "遅れ"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
+msgid "demand"
+msgstr "需要"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:53
 msgid "destination"
 msgstr "宛先"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:63
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
 msgid "end"
 msgstr "終了"
 
@@ -80,15 +113,43 @@ msgstr "商品"
 msgid "location"
 msgstr "地域"
 
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+msgid "no demands"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
+#| msgid "comments"
+msgid "no movements"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:48
+msgid "no problems"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
+msgid "no resources"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:40
+msgid "onhand"
+msgstr "利用可能"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:49
 msgid "origin"
 msgstr "起源"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:37
+msgid "problems"
+msgstr "問題"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:86
 msgid "proposed"
 msgstr "提案済み"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:69
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:38
 msgid "quantity"
 msgstr "数量"
 
@@ -96,7 +157,12 @@ msgstr "数量"
 msgid "reference"
 msgstr "参照"
 
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
+msgid "resource"
+msgstr "リソース"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
 msgid "start"
 msgstr "開始"
 
@@ -112,14 +178,8 @@ msgstr "供給者"
 msgid "unsaved changes"
 msgstr "ページに未保存の変更があります"
 
-#~ msgid "manufacturing order"
-#~ msgstr "製造オーダー"
-
 #~ msgid "Automatic"
 #~ msgstr "自動"
-
-#~ msgid "comments"
-#~ msgstr "コメント"
 
 #~ msgid "Constant"
 #~ msgstr "一定"

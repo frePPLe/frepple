@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showoperationpeggingpanelDrv', showoperationpeggingpanelDrv);
 
-showoperationpeggingpanelDrv.$inject = ['$window'];
+showoperationpeggingpanelDrv.$inject = ['$window', 'gettextCatalog'];
 
-function showoperationpeggingpanelDrv($window) {
+function showoperationpeggingpanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -33,16 +33,16 @@ function showoperationpeggingpanelDrv($window) {
 
   function linkfunc(scope, elem, attrs, transclude) {
     var template = '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("demand")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("demand")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("quantity")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +
                     '<tbody></tbody>' +
                   '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.pegging_demand.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationdemandpegging').empty().append(template);
-      var rows='<tr><td colspan="2">'+gettext('no demands')+'</td></tr>';
+      var rows='<tr><td colspan="2">'+gettextCatalog.getString('no demands')+'</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('pegging_demand')) {

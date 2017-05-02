@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showoperationplanDrv', showoperationplanDrv);
 
-showoperationplanDrv.$inject = ['$window'];
+showoperationplanDrv.$inject = ['$window', 'gettextCatalog'];
 
-function showoperationplanDrv($window) {
+function showoperationplanDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -34,11 +34,11 @@ function showoperationplanDrv($window) {
 
   function linkfunc(scope, elem, attrs) {
     scope.opptype={ //just a translation
-      'MO': gettext('Manufacturing Order'),
-      'PO': gettext('Purchase Order'),
-      'DO': gettext('Distribution Order'),
-      'STCK': gettext('Stock'),
-      'DLVR': gettext('Delivery'),
+      'MO': gettextCatalog.getString('Manufacturing Order'),
+      'PO': gettextCatalog.getString('Purchase Order'),
+      'DO': gettextCatalog.getString('Distribution Order'),
+      'STCK': gettextCatalog.getString('Stock'),
+      'DLVR': gettextCatalog.getString('Delivery'),
     }
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {

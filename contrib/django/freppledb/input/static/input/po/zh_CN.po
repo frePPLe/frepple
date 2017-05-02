@@ -16,17 +16,37 @@ msgstr ""
 msgid "Continue"
 msgstr "继续"
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:41
+msgid "Delivery"
+msgstr "交付"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:39
+msgid "Distribution Order"
+msgstr "配送订单"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:43
 msgid "Do you want to save your changes first?"
 msgstr "你先要保存更改吗?"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:37
+msgid "Manufacturing Order"
+msgstr "生产单"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "Please be patient, the chart may take some time to complete."
 msgstr "请耐心等待，图表可能需要一段时间才能完成。"
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:38
+msgid "Purchase Order"
+msgstr "采购订单"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
 msgid "Save"
 msgstr "保存"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:40
+msgid "Stock"
+msgstr "库存"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
@@ -35,6 +55,10 @@ msgstr "甘特图仅限于{{rowlimit}}行。"
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:87
 msgid "approved"
 msgstr "经核准的"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:36
+msgid "buffer"
+msgstr "缓冲"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:89
 msgid "closed"
@@ -52,15 +76,24 @@ msgstr "危急程度"
 msgid "database transaction failed"
 msgstr "数据库事务失败"
 
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:42
+msgid "date"
+msgstr "日期"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:79
 msgid "delay"
 msgstr "延期"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
+msgid "demand"
+msgstr "需求"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:53
 msgid "destination"
 msgstr "终点"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:63
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
 msgid "end"
 msgstr "结束"
 
@@ -80,15 +113,42 @@ msgstr "产品"
 msgid "location"
 msgstr "地点"
 
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+msgid "no demands"
+msgstr "没有需求"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
+msgid "no movements"
+msgstr "没有移动"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:48
+msgid "no problems"
+msgstr "没有问题"
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
+msgid "no resources"
+msgstr "没有资源"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:40
+msgid "onhand"
+msgstr "现有库存量"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:49
 msgid "origin"
 msgstr "来源"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:37
+msgid "problems"
+msgstr "问题"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:86
 msgid "proposed"
 msgstr "提议"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:69
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:38
 msgid "quantity"
 msgstr "数量"
 
@@ -96,7 +156,12 @@ msgstr "数量"
 msgid "reference"
 msgstr "参考"
 
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
+msgid "resource"
+msgstr "资源"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
 msgid "start"
 msgstr "开启"
 
@@ -112,9 +177,6 @@ msgstr "供应商"
 msgid "unsaved changes"
 msgstr "不保存更改"
 
-#~ msgid "manufacturing order"
-#~ msgstr "生产单"
-
 #~ msgid "aggregate"
 #~ msgstr "总计"
 
@@ -123,9 +185,6 @@ msgstr "不保存更改"
 
 #~ msgid "Automatic"
 #~ msgstr "自动"
-
-#~ msgid "comments"
-#~ msgstr "注释"
 
 #~ msgid "Configure time buckets"
 #~ msgstr "配置时间段"

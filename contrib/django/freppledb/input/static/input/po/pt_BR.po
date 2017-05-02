@@ -16,17 +16,37 @@ msgstr ""
 msgid "Continue"
 msgstr "Continuar"
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:41
+msgid "Delivery"
+msgstr "Entrega"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:39
+msgid "Distribution Order"
+msgstr "Ordem de Distribuição"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:43
 msgid "Do you want to save your changes first?"
 msgstr "Quer guardar as alterações primeiro?"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:37
+msgid "Manufacturing Order"
+msgstr "Ordem de Produção"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "Please be patient, the chart may take some time to complete."
 msgstr "Aguarde, o diagrama pode demorar um pouco a completar."
 
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:38
+msgid "Purchase Order"
+msgstr "Ordem de Compra"
+
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
 msgid "Save"
 msgstr "Guardar"
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:40
+msgid "Stock"
+msgstr "Stock"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
@@ -35,6 +55,10 @@ msgstr "O diagrama de Gantt está limitado a {{rowlimit}} linhas."
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:87
 msgid "approved"
 msgstr "aprovado"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:36
+msgid "buffer"
+msgstr "reserva"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:89
 msgid "closed"
@@ -52,15 +76,24 @@ msgstr "criticalidade"
 msgid "database transaction failed"
 msgstr "falha na transacção da base de dados"
 
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:42
+msgid "date"
+msgstr "data"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:79
 msgid "delay"
 msgstr "atraso"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
+msgid "demand"
+msgstr "vendas"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:53
 msgid "destination"
 msgstr "destino"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:63
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
 msgid "end"
 msgstr "fim"
 
@@ -80,15 +113,42 @@ msgstr "artigo"
 msgid "location"
 msgstr "localização"
 
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+msgid "no demands"
+msgstr "sem ordens de venda"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
+msgid "no movements"
+msgstr "sem movimentos"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:48
+msgid "no problems"
+msgstr "sem problemas"
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
+msgid "no resources"
+msgstr "sem recursos"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:40
+msgid "onhand"
+msgstr "em mãos"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:49
 msgid "origin"
 msgstr "origem"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:37
+msgid "problems"
+msgstr "problemas"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:86
 msgid "proposed"
 msgstr "proposto"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:69
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:38
 msgid "quantity"
 msgstr "quantidade"
 
@@ -96,7 +156,12 @@ msgstr "quantidade"
 msgid "reference"
 msgstr "referência"
 
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
+msgid "resource"
+msgstr "recurso"
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
 msgid "start"
 msgstr "início"
 
@@ -112,9 +177,6 @@ msgstr "fornecedor"
 msgid "unsaved changes"
 msgstr "alterações não gravadas"
 
-#~ msgid "manufacturing order"
-#~ msgstr "ordem de produção"
-
 #~ msgid "aggregate"
 #~ msgstr "agregada"
 
@@ -123,9 +185,6 @@ msgstr "alterações não gravadas"
 
 #~ msgid "Automatic"
 #~ msgstr "Automático"
-
-#~ msgid "comments"
-#~ msgstr "comentários"
 
 #~ msgid "Configure time buckets"
 #~ msgstr "Configurar intervalos de tempo"

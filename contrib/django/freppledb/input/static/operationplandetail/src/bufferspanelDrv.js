@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showbufferspanelDrv', showbufferspanelDrv);
 
-showbufferspanelDrv.$inject = ['$window'];
+showbufferspanelDrv.$inject = ['$window', 'gettextCatalog'];
 
-function showbufferspanelDrv($window) {
+function showbufferspanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -33,20 +33,20 @@ function showbufferspanelDrv($window) {
 
   function linkfunc(scope, elem, attrs, transclude) {
     var template = '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("buffer")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("buffer")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("quantity")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("onhand")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("onhand")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("date")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("date")+'</b>' +
                     '</td></tr></thead>' +
                     '<tbody></tbody>' +
                   '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.flowplans.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationflowplans').empty().append(template);
-      var rows='<tr><td colspan="3">'+gettext('no movements')+'<td></tr>';
+      var rows='<tr><td colspan="3">'+gettextCatalog.getString('no movements')+'<td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('flowplans')) {

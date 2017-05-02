@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showresourcespanelDrv', showresourcespanelDrv);
 
-showresourcespanelDrv.$inject = ['$window'];
+showresourcespanelDrv.$inject = ['$window', 'gettextCatalog'];
 
-function showresourcespanelDrv($window) {
+function showresourcespanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -33,16 +33,16 @@ function showresourcespanelDrv($window) {
 
   function linkfunc(scope, elem, attrs) {
     var template = '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("resource")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("resource")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettext("quantity")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +
                     '<tbody></tbody>' +
                   '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.loadplans.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationresources').empty().append(template);
-      var rows='<tr><td colspan="2">'+gettext('no resources')+'</td></tr>';
+      var rows='<tr><td colspan="2">'+gettextCatalog.getString('no resources')+'</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('loadplans')) {

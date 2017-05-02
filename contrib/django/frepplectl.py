@@ -25,7 +25,10 @@ import os
 import sys
 
 if __name__ == "__main__":
+  # Initialize django
   os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+  import django
+  django.setup()
 
   # Synchronize the scenario table with the settings
   from freppledb.common.models import Scenario

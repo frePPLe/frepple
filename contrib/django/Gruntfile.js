@@ -71,7 +71,7 @@ module.exports = function (grunt) {
           msgmerge: true
         },
         files: {
-          'freppledb/input/static/input/po/template.pot': ['freppledb/input/static/operationplandetail/*.html']
+          'freppledb/input/static/input/po/template.pot': ['freppledb/input/static/operationplandetail/*.html', 'freppledb/input/static/operationplandetail/src/*.js']
         }
       },
     },

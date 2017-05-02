@@ -1488,7 +1488,11 @@ class OperationPlanDetail(View):
         if opplan.plan and 'pegging' in opplan.plan:
           res["pegging_demand"] = []
           for d, q in opplan.plan['pegging'].items():
-            res["pegging_demand"].append({"demand": {"name": d}, "quantity": q})
+            res["pegging_demand"].append({
+              "demand": {"name": d},
+              "quantity": q,
+              "due": Demand.objects.all().using(request.database).get(name=d).due.strftime("%Y-%m-%dT%H:%M:%S")
+              })
         if opplan.operation:
           res['operation'] = {
             "name": opplan.operation.name,

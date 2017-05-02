@@ -35,6 +35,10 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
     var template = '<table class="table"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("demand")+'</b>' +
                     '</td><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
+                    '</td><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("due")+'</b>' +
+                    '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +
                     '<tbody></tbody>' +
@@ -48,7 +52,10 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('pegging_demand')) {
           rows='';
           angular.forEach(scope.operationplan.pegging_demand, function(thedemand) {
-            rows += '<tr><td>'+thedemand.demand.name+'</td><td>'+thedemand.quantity+'</td></tr>';
+            rows += '<tr><td>' + thedemand.demand.name +
+              '</td><td>' + scope.operationplan.item +
+              '</td><td>' + thedemand.due +
+              '</td><td>'+thedemand.quantity+'</td></tr>';
           });
         }
       }

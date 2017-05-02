@@ -71,7 +71,7 @@ module.exports = function (grunt) {
           msgmerge: true
         },
         files: {
-          'freppledb/input/static/input/po/template.pot': ['freppledb/input/static/operationplandetail/*.html', 'freppledb/input/static/operationplandetail/src/*.js']
+          'freppledb/common/static/common/po/template.pot': ['freppledb/input/static/operationplandetail/*.html', 'freppledb/input/static/operationplandetail/src/*.js']
         }
       },
     },
@@ -80,7 +80,9 @@ module.exports = function (grunt) {
     nggettext_compile: {
       all: {
         files: {
-          'freppledb/input/static/js/operationplandetail-translations.js': ['freppledb/input/static/input/po/*.po']
+          'freppledb/common/static/js/i18n/angular-freppletranslations.js': [
+            'freppledb/common/static/common/po/*.po'
+          ]
         }
       },
     },

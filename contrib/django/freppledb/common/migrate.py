@@ -32,20 +32,23 @@ class AttributeMigration(migrations.Migration):
   extends_app_label = 'input'
 
   def __init__(self, name, app_label):
-    # Make the migration believe that it's running in the "input" app.
-    # This is required to make changes to models from that app.
-    super(AttributeMigration, self).__init__(name, self.extends_app_label)
-    self.my_app_label = app_label
-    self.app_label = self.extends_app_label
+    super().__init__(name, app_label)
+    self.real_app_label = app_label
 
+  def mutate_state(self, project_state, preserve=True):
+    self.app_label = self.extends_app_label
+    state = super().mutate_state(project_state, preserve)
+    self.app_label = self.real_app_label
+    return state
+    
   def apply(self, project_state, schema_editor, collect_sql=False):
-    super(AttributeMigration, self).apply(project_state, schema_editor, collect_sql)
-    # After applying the changes, we register the changes as a migration
-    # that is owned by the current app, rather the "extends_app_label" app.
-    self.app_label = self.my_app_label
+    self.app_label = self.extends_app_label
+    state = super().apply(project_state, schema_editor, collect_sql)
+    self.app_label = self.real_app_label
+    return state
 
   def unapply(self, project_state, schema_editor, collect_sql=False):
-    super(AttributeMigration, self).unapply(project_state, schema_editor, collect_sql)
-    # After unapplying the changes, we make django believe that this migration
-    # is owned by the current app, rather the "extends_app_label" app it extends.
-    self.app_label = self.my_app_label
+    self.app_label = self.extends_app_label
+    state = super().unapply(project_state, schema_editor, collect_sql)
+    self.app_label = self.real_app_label
+    return state

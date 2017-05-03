@@ -18,7 +18,6 @@
 import os.path
 import subprocess
 from datetime import datetime
-from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -30,42 +29,45 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  help = '''
-  This command creates a database dump of the frePPLe database.
 
-  The psql command needs to be in the path, otherwise this command
-  will fail.
-  '''
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to backup'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    )
+  help = '''
+    This command creates a database dump of the frePPLe database.
+  
+    The psql command needs to be in the path, otherwise this command
+    will fail.
+    '''
 
   requires_system_checks = False
 
+
   def get_version(self):
     return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to restore into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      'dump', help='Database dump file to restore.'
+      )
 
-  def handle(self, *args, **options):
+
+  def handle(self, **options):
 
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
@@ -77,7 +79,7 @@ class Command(BaseCommand):
     task = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
@@ -88,13 +90,11 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='restore database', submitted=now, started=now, status='0%', user=user)
-      task.arguments = args and args[0] or None
+      task.arguments = options['dump']
       task.save(using=database)
 
       # Validate options
-      if not args:
-        raise CommandError("No dump file specified")
-      if not os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, args[0])):
+      if not os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, options['dump'])):
         raise CommandError("Dump file not found")
 
       # Run the restore command
@@ -109,10 +109,10 @@ class Command(BaseCommand):
       if settings.DATABASES[database]['PORT']:
         cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
       cmd.append(settings.DATABASES[database]['NAME'])
-      cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, args[0])))
+      cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, options['dump'])))
       ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
       if ret:
-        raise Exception("Run of run psql failed")
+        raise Exception("Run of psql failed")
 
       # Task update
       # We need to recreate a new task record, since the previous one is lost during the restoration.

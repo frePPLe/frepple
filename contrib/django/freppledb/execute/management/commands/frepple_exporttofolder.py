@@ -18,7 +18,6 @@
 import os
 
 from _datetime import datetime
-from optparse import make_option
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.core.management.base import BaseCommand, CommandError
@@ -28,24 +27,13 @@ from freppledb import VERSION
 from freppledb.execute.models import Task
 
 class Command(BaseCommand):
-  help = "Exports tables from the frePPLe database to CSV files in a folder"
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load the data into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      )
-  )
+  
+  help = '''
+    Exports tables from the frePPLe database to CSV files in a folder
+    '''
 
   requires_system_checks = False
-
+  
   statements = [
       ("purchaseorder.csv",
         '''COPY
@@ -79,19 +67,33 @@ class Command(BaseCommand):
        )
       ]
 
+
   def get_version(self):
     return VERSION
 
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', 
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load the data into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+
+
   def handle(self, *args, **options):
     # Pick up the options
-    if 'database' in options:
-      self.database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      self.database = DEFAULT_DB_ALIAS
+    self.database = options['database']
     if self.database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % self.database )
 
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         self.user = User.objects.all().using(self.database).get(username=options['user'])
       except:
@@ -106,7 +108,7 @@ class Command(BaseCommand):
     errors = 0
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:

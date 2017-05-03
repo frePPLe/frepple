@@ -22,8 +22,8 @@ from django.contrib.contenttypes.models import ContentType
 from freppledb.common.management import removeModelPermissions
 
 
-def updatePermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
-  removeModelPermissions("execute", "task", db)
+def updatePermissions(using=DEFAULT_DB_ALIAS, **kwargs):
+  removeModelPermissions("execute", "task", using)
   p = Permission.objects.get_or_create(
     codename='run_db',
     content_type=ContentType.objects.get(model="permission", app_label="auth")
@@ -32,4 +32,4 @@ def updatePermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwa
   p.save()
 
 
-signals.post_syncdb.connect(updatePermissions)
+signals.post_migrate.connect(updatePermissions)

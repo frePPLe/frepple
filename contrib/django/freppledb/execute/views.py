@@ -16,18 +16,17 @@
 #
 
 import os
-import os.path
 import sys
 import re
 from datetime import datetime
 from subprocess import Popen
 from time import localtime, strftime
 
+from django.apps import apps
 from django.conf import settings
 from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
-from django.db.models import get_apps
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
@@ -93,10 +92,9 @@ class TaskReport(GridReport):
     # Loop over all fixtures of all apps and directories
     fixtures = set()
     folders = list(settings.FIXTURE_DIRS)
-    for app in get_apps():
-      if app.__name__.startswith('django'):
-        continue
-      folders.append(os.path.join(os.path.dirname(app.__file__), 'fixtures'))
+    for app in apps.get_app_configs():
+      if not app.name.startswith('django'):
+        folders.append(os.path.join(os.path.dirname(app.path), app.label, 'fixtures'))
     for f in folders:
       try:
         for root, dirs, files in os.walk(f):

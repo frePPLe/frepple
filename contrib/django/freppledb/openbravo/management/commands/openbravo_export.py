@@ -16,7 +16,6 @@
 #
 
 from io import StringIO
-from optparse import make_option
 from datetime import datetime
 from time import time
 import urllib
@@ -27,53 +26,49 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
+from freppledb import VERSION
 from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
 from freppledb.openbravo.utils import get_data
 
 
 class Command(BaseCommand):
+  
   help = "Upload planning results from frePPle into an Openbravo instance"
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates the frePPLe database to export from'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    make_option(
-      '--filter', action="store_true", dest='filter', default = False,
-      help='Use filter set for automated exports'
-      ),
-    )
-
   requires_system_checks = False
+
+
+  def get_version(self):
+    return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(      
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates the frePPLe database to export from'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      '--filter', action="store_true", default=False,
+      help='Use filter set for automated exports'
+      )
 
   def handle(self, **options):
 
     # Pick up the options
-    if 'verbosity' in options:
-      self.verbosity = int(options['verbosity'] or '1')
-    else:
-      self.verbosity = 1
-    if 'user' in options:
-      user = options['user']
-    else:
-      user = ''
-    if 'database' in options:
-      self.database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      self.database = DEFAULT_DB_ALIAS
+    self.verbosity = int(options['verbosity'])
+    user = options['user']
+    self.database = options['database']
     if self.database not in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
-    self.filteredexport = 'filter' in options
+    self.filteredexport = options['filter']
 
     # Pick up configuration parameters
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)

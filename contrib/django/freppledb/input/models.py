@@ -72,7 +72,10 @@ class CalendarBucket(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   #. Translators: Translation included with Django
-  calendar = models.ForeignKey(Calendar, verbose_name=_('calendar'), related_name='buckets')
+  calendar = models.ForeignKey(
+    Calendar, verbose_name=_('calendar'), related_name='buckets',
+    on_delete=models.CASCADE
+    )
   startdate = models.DateTimeField(_('start date'), null=True, blank=True)
   enddate = models.DateTimeField(_('end date'), null=True, blank=True, default=datetime(2030, 12, 31))
   value = models.DecimalField(
@@ -133,8 +136,8 @@ class Location(AuditModel, HierarchyModel):
     )
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
-    null=True, blank=True,
-    help_text=_('Calendar defining the working hours and holidays of this location')
+    null=True, blank=True, on_delete=models.CASCADE,
+    help_text=_('Calendar defining the working hours and holidays of this location')    
     )
 
   def __str__(self):
@@ -209,10 +212,12 @@ class Operation(AuditModel):
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
   item = models.ForeignKey(
     Item, verbose_name=_('item'), null=True, blank=True,
-    db_index=True, related_name='operations'
+    db_index=True, related_name='operations',
+    on_delete=models.CASCADE
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), db_index=True
+    Location, verbose_name=_('location'), db_index=True,
+    on_delete=models.CASCADE
     )
   priority = models.IntegerField(
     _('priority'), default=1, null=True, blank=True,
@@ -283,7 +288,8 @@ class SubOperation(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
-    related_name='suboperations', help_text=_("Parent operation")
+    related_name='suboperations', help_text=_("Parent operation"),
+    on_delete=models.CASCADE
     )
   priority = models.IntegerField(
     _('priority'), default=1,
@@ -291,7 +297,8 @@ class SubOperation(AuditModel):
     )
   suboperation = models.ForeignKey(
     Operation, verbose_name=_('suboperation'),
-    related_name='superoperations', help_text=_("Child operation")
+    related_name='superoperations', help_text=_("Child operation"),
+    on_delete=models.CASCADE
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
@@ -348,12 +355,12 @@ class Buffer(AuditModel, HierarchyModel):
     default='default'
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'),
-    db_index=True, blank=False, null=False
+    Location, verbose_name=_('location'), db_index=True, blank=False, 
+    null=False, on_delete=models.CASCADE
     )
   item = models.ForeignKey(
-    Item, verbose_name=_('item'),
-    db_index=True, blank=False, null=False
+    Item, verbose_name=_('item'), db_index=True, blank=False, 
+    null=False, on_delete=models.CASCADE
     )
   onhand = models.DecimalField(
     _('onhand'), null=True, blank=True,
@@ -367,7 +374,7 @@ class Buffer(AuditModel, HierarchyModel):
     )
   minimum_calendar = models.ForeignKey(
     Calendar, verbose_name=_('minimum calendar'),
-    null=True, blank=True,
+    null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar storing a time-dependent safety stock profile')
     )
   min_interval = models.DurationField(
@@ -421,7 +428,8 @@ class SetupRule(AuditModel):
   '''
   # Database fields
   setupmatrix = models.ForeignKey(
-    SetupMatrix, verbose_name=_('setup matrix'), related_name='rules'
+    SetupMatrix, verbose_name=_('setup matrix'), related_name='rules',
+    on_delete=models.CASCADE
     )
   priority = models.IntegerField(_('priority'))
   fromsetup = models.CharField(
@@ -492,11 +500,11 @@ class Resource(AuditModel, HierarchyModel):
     )
   maximum_calendar = models.ForeignKey(
     Calendar, verbose_name=_('maximum calendar'),
-    null=True, blank=True,
+    null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the resource size varying over time')
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'),
+    Location, verbose_name=_('location'), on_delete=models.CASCADE,
     null=True, blank=True, db_index=True
     )
   cost = models.DecimalField(
@@ -509,7 +517,7 @@ class Resource(AuditModel, HierarchyModel):
     )
   setupmatrix = models.ForeignKey(
     SetupMatrix, verbose_name=_('setup matrix'),
-    null=True, blank=True, db_index=True,
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE,
     help_text=_('Setup matrix defining the conversion time and cost')
     )
   setup = models.CharField(
@@ -552,11 +560,11 @@ class ResourceSkill(AuditModel):
   id = models.AutoField(_('identifier'), primary_key=True)
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), db_index=True, related_name='skills',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   skill = models.ForeignKey(
     Skill, verbose_name=_('skill'), db_index=True, related_name='resources',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
@@ -602,12 +610,12 @@ class OperationMaterial(AuditModel):
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
     db_index=True, related_name='operationmaterials',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   item = models.ForeignKey(
     Item, verbose_name=_('item'),
     db_index=True, related_name='operationmaterials',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
     _('quantity'), default='1.00',
@@ -676,16 +684,16 @@ class OperationResource(AuditModel):
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
     db_index=True, related_name='operationresources',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), db_index=True,
     related_name='operationresources',
-    blank=False, null=False
+    blank=False, null=False, on_delete=models.CASCADE
     )
   skill = models.ForeignKey(
     Skill, verbose_name=_('skill'), related_name='operationresources',
-    null=True, blank=True, db_index=True
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
     _('quantity'), default='1.00',
@@ -769,16 +777,16 @@ class ItemSupplier(AuditModel):
   item = models.ForeignKey(
     Item, verbose_name=_('item'),
     db_index=True, related_name='itemsuppliers',
-    null=False, blank=False
+    null=False, blank=False, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), null=True, blank=True,
-    db_index=True, related_name='itemsuppliers'
+    db_index=True, related_name='itemsuppliers', on_delete=models.CASCADE
     )
   supplier = models.ForeignKey(
     Supplier, verbose_name=_('supplier'),
     db_index=True, related_name='suppliers',
-    null=False, blank=False
+    null=False, blank=False, on_delete=models.CASCADE
     )
   leadtime = models.DurationField(
     _('lead time'), null=True, blank=True,
@@ -813,7 +821,7 @@ class ItemSupplier(AuditModel):
     )
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), null=True, blank=True,
-    db_index=True, related_name='itemsuppliers',
+    db_index=True, related_name='itemsuppliers', on_delete=models.CASCADE,
     help_text=_("Resource to model the supplier capacity")
     )
   resource_qty = models.DecimalField(
@@ -855,14 +863,15 @@ class ItemDistribution(AuditModel):
   item = models.ForeignKey(
     Item, verbose_name=_('item'),
     db_index=True, related_name='distributions',
-    null=False, blank=False
+    null=False, blank=False, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), null=True, blank=True,
-    db_index=True, related_name='itemdistributions_destination'
+    db_index=True, related_name='itemdistributions_destination',
+    on_delete=models.CASCADE
     )
   origin = models.ForeignKey(
-    Location, verbose_name=_('origin'),
+    Location, verbose_name=_('origin'), on_delete=models.CASCADE,
     db_index=True, related_name='itemdistributions_origin'
     )
   leadtime = models.DurationField(
@@ -898,7 +907,7 @@ class ItemDistribution(AuditModel):
     )
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), null=True, blank=True,
-    db_index=True, related_name='itemdistributions',
+    db_index=True, related_name='itemdistributions', on_delete=models.CASCADE,
     help_text=_("Resource to model the distribution capacity")
     )
   resource_qty = models.DecimalField(
@@ -955,13 +964,15 @@ class Demand(AuditModel, HierarchyModel):
     _('subcategory'), max_length=300, null=True, blank=True, db_index=True
     )
   customer = models.ForeignKey(
-    Customer, verbose_name=_('customer'), db_index=True
+    Customer, verbose_name=_('customer'), 
+    db_index=True, on_delete=models.CASCADE
     )
   item = models.ForeignKey(
-    Item, verbose_name=_('item'), db_index=True
+    Item, verbose_name=_('item'), db_index=True, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), db_index=True
+    Location, verbose_name=_('location'), 
+    db_index=True, on_delete=models.CASCADE
     )
   due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
   status = models.CharField(
@@ -972,7 +983,7 @@ class Demand(AuditModel, HierarchyModel):
   operation = models.ForeignKey(
     Operation,
     verbose_name=_('delivery operation'), null=True, blank=True,
-    related_name='used_demand',
+    related_name='used_demand', on_delete=models.CASCADE,
     help_text=_('Operation used to satisfy this demand')
     )
   quantity = models.DecimalField(
@@ -1071,39 +1082,40 @@ class OperationPlan(AuditModel):
   # Used only for manufacturing orders
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
-    db_index=True, null=True, blank=True
+    db_index=True, null=True, blank=True, on_delete=models.CASCADE
     )
   owner = models.ForeignKey(
     'self', verbose_name=_('owner'), null=True, blank=True,
-    related_name='xchildren', help_text=_('Hierarchical parent')
+    related_name='xchildren', help_text=_('Hierarchical parent'),
+    on_delete=models.CASCADE
     )
   # Used for purchase orders and distribution orders
   item = models.ForeignKey(
-    Item, verbose_name=_('item'),
+    Item, verbose_name=_('item'), on_delete=models.CASCADE,
     null=True, blank=True, db_index=True
     )
   # Used only for distribution orders
   origin = models.ForeignKey(
     Location, verbose_name=_('origin'), null=True, blank=True,
-    related_name='origins', db_index=True
+    related_name='origins', db_index=True, on_delete=models.CASCADE
     )
   destination = models.ForeignKey(
-    Location, verbose_name=_('destination'),
+    Location, verbose_name=_('destination'), on_delete=models.CASCADE,
     null=True, blank=True, related_name='destinations', db_index=True
     )
   # Used only for purchase orders
   supplier = models.ForeignKey(
     Supplier, verbose_name=_('supplier'),
-    null=True, blank=True, db_index=True
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'),
-    null=True, blank=True, db_index=True
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   # Used for delivery operationplans
   demand = models.ForeignKey(
     Demand, verbose_name=_('demand'),
-    null=True, blank=True, db_index=True
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   due = models.DateTimeField(
     _('due'), help_text=_('Due date of the demand/forecast'),
@@ -1163,7 +1175,7 @@ class OperationPlanResource(AuditModel):
   resource = models.CharField(_('resource'), max_length=300, db_index=True)
   operationplan = models.ForeignKey(
     OperationPlan, verbose_name=_('operationplan'), db_index=True,
-    related_name="resources"
+    related_name="resources", on_delete=models.CASCADE
     )
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=6)
   startdate = models.DateTimeField(_('startdate'), db_index=True)
@@ -1207,15 +1219,16 @@ class OperationPlanMaterial(AuditModel):
   # Database fields
   item = models.ForeignKey(
     Item, verbose_name=_('item'), related_name='operationplanmaterials',
-    null=True, blank=True, db_index=True
+    null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), null=True, blank=True,
-    related_name='operationplanmaterials', db_index=True
+    related_name='operationplanmaterials', db_index=True,
+    on_delete=models.CASCADE
     )
   operationplan = models.ForeignKey(
     OperationPlan, verbose_name=_('operationplan'), db_index=True,
-    related_name="materials"
+    related_name="materials", on_delete=models.CASCADE
     )
   quantity = models.DecimalField(_('quantity'), max_digits=15, decimal_places=6)
   flowdate = models.DateTimeField(_('date'), db_index=True)

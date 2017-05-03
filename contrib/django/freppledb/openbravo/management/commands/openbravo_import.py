@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from optparse import make_option
+
 from datetime import datetime, timedelta, date
 from time import time
 from xml.etree.cElementTree import iterparse
@@ -25,6 +25,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, connections, DEFAULT_DB_ALIAS
 from django.conf import settings
 
+from freppledb import VERSION
 from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
 from freppledb.openbravo.utils import get_data as get_data_base
@@ -34,50 +35,40 @@ class Command(BaseCommand):
 
   help = "Loads data from an Openbravo instance into the frePPLe database"
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--delta', action='store', dest='delta', type="float", default='3650',
-      help='Number of days for which we extract changed openbravo data'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    )
-
   requires_system_checks = False
 
-  def handle(self, **options):
 
+  def get_version(self):
+    return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(      
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--delta', type=float, default=3650,
+      help='Number of days for which we extract changed openbravo data'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS, 
+      help='Nominates the frePPLe database to load'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+
+
+  def handle(self, **options):
     # Pick up the options
-    if 'verbosity' in options:
-      self.verbosity = int(options['verbosity'] or '1')
-    else:
-      self.verbosity = 1
-    if 'user' in options:
-      user = options['user']
-    else:
-      user = ''
-    if 'database' in options:
-      self.database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      self.database = DEFAULT_DB_ALIAS
+    self.verbosity = options['verbosity']
+    user = options['user']
+    self.database = options['database']
     if self.database not in settings.DATABASES.keys():
       raise CommandError("No database settings known for '%s'" % self.database )
-    if 'delta' in options:
-      self.delta = float(options['delta'] or '3650')
-      self.incremental = (self.delta < 3650)
-    else:
-      self.delta = 3650
-      self.incremental = False
+    self.delta = int(options['delta'])
+    self.incremental = (self.delta < 3650)
 
     # Pick up configuration s
     self.openbravo_user = Parameter.getValue("openbravo.user", self.database)

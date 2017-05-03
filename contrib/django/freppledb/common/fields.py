@@ -40,7 +40,7 @@ class DurationField(models.DecimalField):
 #
 # This code is very loosely inspired on the code found at:
 #    https://github.com/bradjasper/django-jsonfield
-class JSONField(models.TextField, metaclass=models.SubfieldBase):
+class JSONField(models.TextField):
 
   def __init__(self, *args, **kwargs):
     self.dump_kwargs = kwargs.pop('dump_kwargs', {

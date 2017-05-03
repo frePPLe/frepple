@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import random
-from optparse import make_option
 from datetime import timedelta, datetime, date
 
 from django.conf import settings
@@ -59,69 +58,70 @@ class Command(BaseCommand):
       on a different platform or version can give different results).
     '''
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--cluster', dest='cluster', type="int",
-      help='Number of end items', default=100
-      ),
-    make_option(
-      '--demand', dest='demand', type="int",
-      help='Demands per end item', default=30),
-    make_option(
-      '--forecast_per_item', dest='forecast_per_item', type="int",
-      help='Monthly forecast per end item', default=30
-      ),
-    make_option(
-      '--level', dest='level', type="int",
-      help='Depth of bill-of-material', default=5
-      ),
-    make_option(
-      '--resource', dest='resource', type="int",
-      help='Number of resources', default=60
-      ),
-    make_option(
-      '--resource_size', dest='resource_size', type="int",
-      help='Size of each resource', default=5
-      ),
-    make_option(
-      '--components', dest='components', type="int",
-      help='Total number of components', default=200
-      ),
-    make_option(
-      '--components_per', dest='components_per', type="int",
-      help='Number of components per end item', default=4
-      ),
-    make_option(
-      '--deliver_lt', dest='deliver_lt', type="int",
-      help='Average delivery lead time of orders', default=30
-      ),
-    make_option(
-      '--procure_lt', dest='procure_lt', type="int",
-      help='Average procurement lead time', default=40
-      ),
-    make_option(
-      '--currentdate', dest='currentdate', type="string",
-      help='Current date of the plan in YYYY-MM-DD format'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to populate'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-  )
-
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
+
+
+  def add_arguments(self, parser):
+    parser.add_argument(    
+      '--user',
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--cluster', type=int,
+      help='Number of end items', default=100
+      )
+    parser.add_argument(
+      '--demand', type=int,
+      help='Demands per end item', default=30
+      )
+    parser.add_argument(
+      '--forecast_per_item', type=int,
+      help='Monthly forecast per end item', default=30
+      )
+    parser.add_argument(
+      '--level', type=int,
+      help='Depth of bill-of-material', default=5
+      )
+    parser.add_argument(
+      '--resource', type=int,
+      help='Number of resources', default=60
+      )
+    parser.add_argument(
+      '--resource_size', type=int,
+      help='Size of each resource', default=5
+      )
+    parser.add_argument(
+      '--components', type=int,
+      help='Total number of components', default=200
+      )
+    parser.add_argument(
+      '--components_per', type=int,
+      help='Number of components per end item', default=4
+      )
+    parser.add_argument(
+      '--deliver_lt', type=int,
+      help='Average delivery lead time of orders', default=30
+      )
+    parser.add_argument(
+      '--procure_lt', type=int,
+      help='Average procurement lead time', default=40
+      )
+    parser.add_argument(
+      '--currentdate',
+      help='Current date of the plan in YYYY-MM-DD format'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to populate'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
 
 
   def handle(self, **options):
@@ -133,63 +133,27 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    if 'verbosity' in options:
-      verbosity = int(options['verbosity'])
-    else:
-      verbosity = 1
-    if 'cluster' in options:
-      cluster = int(options['cluster'])
-    else:
-      cluster = 100
-    if 'demand' in options:
-      demand = int(options['demand'])
-    else:
-      demand = 30
-    if 'forecast_per_item' in options:
-      forecast_per_item = int(options['forecast_per_item'])
-    else:
-      forecast_per_item = 50
-    if 'level' in options:
-      level = int(options['level'])
-    else:
-      level = 5
-    if 'resource' in options:
-      resource = int(options['resource'])
-    else:
-      resource = 60
-    if 'resource_size' in options:
-      resource_size = int(options['resource_size'])
-    else:
-      resource_size = 5
-    if 'components' in options:
-      components = int(options['components'])
-    else:
-      components = 200
-    if 'components_per' in options:
-      components_per = int(options['components_per'])
-    else:
-      components_per = 5
-    if components == 0:
+    verbosity = int(options['verbosity'])
+    cluster = int(options['cluster'])
+    demand = int(options['demand'])
+    forecast_per_item = int(options['forecast_per_item'])
+    level = int(options['level'])
+    resource = int(options['resource'])
+    resource_size = int(options['resource_size'])
+    components = int(options['components'])
+    components_per = int(options['components_per'])
+    if components <= 0:
       components_per = 0
-    if 'deliver_lt' in options:
-      deliver_lt = int(options['deliver_lt'])
-    else:
-      deliver_lt = 30
-    if 'procure_lt' in options:
-      procure_lt = int(options['procure_lt'])
-    else:
-      procure_lt = 40
-    if 'currentdate' in options:
-      currentdate = options['currentdate'] or datetime.strftime(date.today(), '%Y-%m-%d')
+    deliver_lt = int(options['deliver_lt'])
+    procure_lt = int(options['procure_lt'])
+    if options['currentdate']:
+      currentdate = options['currentdate']
     else:
       currentdate = datetime.strftime(date.today(), '%Y-%m-%d')
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
@@ -203,7 +167,7 @@ class Command(BaseCommand):
     task = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
@@ -234,20 +198,9 @@ class Command(BaseCommand):
       # Plan start date
       if verbosity > 0:
         print("Updating current date...")
-      Parameter.objects.using(database).create(
-        name="currentdate",
-        value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
-        )
-
-      # Parameters
-      Parameter.objects.using(database).create(
-        name="plan.loglevel",
-        value = "3"
-        )
-      Parameter.objects.using(database).create(
-        name='loading_time_units', value='days',
-        description='Time units to be used for the resource report: hours, days, weeks'
-        ).save(using=database)
+      param = Parameter.objects.using(database).get_or_create(name="currentdate")[0]
+      param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
+      param.save(using=database)
 
       # Planning horizon
       # minimum 10 daily buckets, weekly buckets till 40 days after current

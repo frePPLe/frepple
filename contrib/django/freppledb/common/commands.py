@@ -21,6 +21,11 @@ from operator import attrgetter
 import os
 import sys
 
+if __name__ == "__main__":
+  # Initialize django
+  import django
+  django.setup()
+
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.encoding import force_text
@@ -178,10 +183,6 @@ if __name__ == "__main__":
     database = os.environ['FREPPLE_DATABASE'] or DEFAULT_DB_ALIAS
   except:
     database = DEFAULT_DB_ALIAS
-
-  # Initialize django
-  import django
-  django.setup()
 
   # Use the test database if we are running the test suite
   if 'FREPPLE_TEST' in os.environ:

@@ -20,4 +20,4 @@ from freppledb.common.management import createViewPermissions
 from freppledb.input import models as input_models
 
 
-signals.post_syncdb.connect(createViewPermissions, input_models)
+signals.post_migrate.connect(createViewPermissions, input_models)

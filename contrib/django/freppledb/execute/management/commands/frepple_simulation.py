@@ -17,7 +17,6 @@
 
 from datetime import datetime, timedelta
 import importlib
-from optparse import make_option
 
 from django.conf import settings
 from django.core import management
@@ -25,6 +24,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Sum, Max, Count, F
 
+from freppledb import VERSION
 from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
 from freppledb.input.models import PurchaseOrder, DistributionOrder, Buffer, Demand, Item
@@ -48,41 +48,7 @@ def load_class(full_class_string):
 
 
 class Command(BaseCommand):
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--horizon', dest='horizon', type='int', default='60',
-      help='Number of days into the future to simulate'
-      ),
-    make_option(
-      '--step', dest='step', type='int', default='1',
-      help='Time increments for the current_date within the simulation horizon. Set to 1 for daily plans, and 7 for weekly plans.'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load data from and export results into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    make_option(
-      '--simulator', dest='simulator', type='string', default=None,
-      help='Class implementation the logic to simlate the activity in a bucket'
-      ),
-    make_option(
-      '--initial', dest='initial', type='string', default=None,
-      help='Fixture to load the initial state of the model'
-      ),
-    make_option(
-      '--pause', dest='pause', action="store_true", default=False,
-      help='Allows to stop the simulation at the end of each step'
-      ),
-  )
+  
   help = '''
   Runs a simulation to measure the plan performance.
 
@@ -115,15 +81,51 @@ class Command(BaseCommand):
 
   requires_system_checks = False
 
+
+  def get_version(self):
+    return VERSION
+
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--horizon', type=int, default=60,
+      help='Number of days into the future to simulate'
+      )
+    parser.add_argument(
+      '--step', type=int, default=1,
+      help='Time increments for the current_date within the simulation horizon. Set to 1 for daily plans, and 7 for weekly plans.'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      '--simulator',
+      help='Class implementation the logic to simlate the activity in a bucket'
+      )
+    parser.add_argument(
+      '--initial',
+      help='Fixture to load the initial state of the model'
+      ),
+    parser.add_argument(
+      '--pause', action="store_true", default=False,
+      help='Allows to stop the simulation at the end of each step'
+      )
+  
+  
   def handle(self, **options):
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
@@ -136,7 +138,7 @@ class Command(BaseCommand):
     param = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
@@ -149,24 +151,16 @@ class Command(BaseCommand):
         task = Task(name='plan simulation', submitted=now, started=now, status='0%', user=user)
 
       # Validate options
-      if 'horizon' in options:
-        horizon = int(options['horizon'])
-        if horizon < 0:
-          raise ValueError("Invalid horizon: %s" % options['horizon'])
-        task.arguments = "--horizon=%d" % horizon
-      else:
-        horizon = 60
-      if 'step' in options:
-        step = int(options['step'])
-        if step < 0:
-          raise ValueError("Invalid step: %s" % options['step'])
-        task.arguments = "--step=%d" % step
-      else:
-        step = 1
-      if 'verbosity' in options:
-        verbosity = int(options['verbosity'])
-      else:
-        verbosity = 0
+      task.arguments = ""
+      horizon = int(options['horizon'])
+      if horizon < 0:
+        raise ValueError("Invalid horizon: %s" % options['horizon'])
+      task.arguments += "--horizon=%d" % horizon
+      step = int(options['step'])
+      if step < 0:
+        raise ValueError("Invalid step: %s" % options['step'])
+      task.arguments += " --step=%d" % step
+      verbosity = int(options['verbosity'])
 
       # Log task
       task.save(using=database)

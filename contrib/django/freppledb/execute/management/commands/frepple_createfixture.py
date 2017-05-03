@@ -7,8 +7,8 @@
 # You are not allowed to distribute the software, either in the form of source code
 # or in the form of compiled binaries.
 #
-import codecs,json
-from optparse import make_option
+import codecs
+import json
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -21,20 +21,23 @@ class Command(BaseCommand):
   help = '''
   This command dumps the content of the database in a fixture format file.
   '''
-  option_list = BaseCommand.option_list + (
-
-    make_option(
-      '--database', action='store', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load data from and export results into'
-      ),
-  )
-  args = 'output json file'
-
-
+    
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
+
+
+  def add_arguments(self, parser):
+    parser.add_argument(    
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      'output', help='file name to write the data to'
+      )
+
 
   @staticmethod
   def extractTable(database, file, table, model):
@@ -103,88 +106,83 @@ class Command(BaseCommand):
     return nb_of_rows
 
 
-
-
   def handle(self, *args, **options):
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    file_object  = codecs.open(args[0], "w","utf-8")
-    #open the square bracket
-    file_object.write("[\n")
-    n = Command.extractTable(database,file_object, 'calendar', 'input.calendar')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'calendarbucket', 'input.calendarbucket')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'location', 'input.location')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'customer', 'input.customer')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'item', 'input.item')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operation', 'input.operation')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'suboperation', 'input.suboperation')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'buffer', 'input.buffer')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'resource', 'input.resource')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operationmaterial', 'input.operationmaterial')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operationresource', 'input.operationresource')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'supplier', 'input.supplier')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'itemsupplier', 'input.itemsupplier')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'itemdistribution', 'input.itemdistribution')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'demand', 'input.demand')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'common_parameter', 'common.parameter')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'common_bucket', 'common.bucket')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'common_bucketdetail', 'common.bucketdetail')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'common_preference', 'common.userpreference')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operationplan', 'input.operationplan')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operationplanmaterial', 'input.operationplanmaterial')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'operationplanresource', 'input.operationplanresource')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'out_resourceplan', 'output.resourcesummary')
-    if n>0:
-      file_object.write(",\n")
-    n = Command.extractTable(database,file_object, 'out_problem', 'output.problem')
-    #close the square bracket
-    file_object.write("\n]")
+    with codecs.open(options['output'], "w","utf-8") as file_object:
+      #open the square bracket
+      file_object.write("[\n")
+      n = Command.extractTable(database,file_object, 'calendar', 'input.calendar')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'calendarbucket', 'input.calendarbucket')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'location', 'input.location')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'customer', 'input.customer')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'item', 'input.item')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operation', 'input.operation')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'suboperation', 'input.suboperation')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'buffer', 'input.buffer')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'resource', 'input.resource')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operationmaterial', 'input.operationmaterial')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operationresource', 'input.operationresource')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'supplier', 'input.supplier')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'itemsupplier', 'input.itemsupplier')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'itemdistribution', 'input.itemdistribution')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'demand', 'input.demand')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'common_parameter', 'common.parameter')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'common_bucket', 'common.bucket')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'common_bucketdetail', 'common.bucketdetail')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'common_preference', 'common.userpreference')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operationplan', 'input.operationplan')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operationplanmaterial', 'input.operationplanmaterial')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'operationplanresource', 'input.operationplanresource')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'out_resourceplan', 'output.resourcesummary')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'out_problem', 'output.problem')
+      #close the square bracket
+      file_object.write("\n]")

@@ -20,7 +20,6 @@ import csv
 import codecs
 from datetime import datetime
 import gzip
-from optparse import make_option
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
@@ -44,37 +43,40 @@ from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 
 
 class Command(BaseCommand):
-  help = "Loads CSV files from a folder into the frePPLe database"
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load the data into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-  )
-  args = 'CSV file(s)'
-
+  
+  help = '''
+    Loads CSV files from the configured FILEUPLOADFOLDER folder into the frePPLe database.    
+    The data files should have the extension .csv or .csv.gz, and the file name should
+    start with the name of the data model.
+    '''
+  
   requires_system_checks = False
+
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load the data into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+
 
   def get_version(self):
     return VERSION
 
-  def handle(self, *args, **options):
+
+  def handle(self, **options):
     # Pick up the options
-    if 'database' in options:
-      self.database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      self.database = DEFAULT_DB_ALIAS
+    self.database = options['database']
     if self.database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % self.database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         self.user = User.objects.all().using(self.database).get(username=options['user'])
       except:
@@ -89,9 +91,10 @@ class Command(BaseCommand):
 
     task = None
     self.logfile = None
+    errors = 0
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
@@ -102,7 +105,6 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user)
-      task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
 
       # Choose the right self.delimiter and language
@@ -110,7 +112,6 @@ class Command(BaseCommand):
       translation.activate(settings.LANGUAGE_CODE)
 
       # Execute
-      errors = 0
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile

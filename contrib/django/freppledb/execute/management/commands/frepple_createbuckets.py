@@ -8,7 +8,6 @@
 # or in the form of compiled binaries.
 #
 
-from optparse import make_option
 from datetime import timedelta, datetime, date
 
 from django.core.management.base import BaseCommand, CommandError
@@ -27,38 +26,39 @@ class Command(BaseCommand):
   This command initializes the date bucketization table in the database.
   '''
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--start', dest='start', type='string',
-      help='Start date in YYYY-MM-DD format'
-      ),
-    make_option(
-      '--end', dest='end', type='string',
-      help='End date in YYYY-MM-DD format'
-      ),
-    make_option(
-      '--weekstart', dest='weekstart', type='int', default=1,
-      help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'
-      ),
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to populate date information into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-  )
-
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
+
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--start', default='2011-1-1',
+      help='Start date in YYYY-MM-DD format'
+      )
+    parser.add_argument(
+      '--end', default='2019-1-1',
+      help='End date in YYYY-MM-DD format'
+      )
+    parser.add_argument(
+      '--weekstart', type=int, default=1,
+      choices=[0, 1, 2, 3, 4, 5, 6],
+      help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'
+      ),
+    parser.add_argument(
+      '--user', 
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to populate date information into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
 
 
   def handle(self, **options):
@@ -70,27 +70,13 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up the options
-    if 'start' in options:
-      start = options['start'] or '2011-1-1'
-    else:
-      start = '2011-1-1'
-    if 'end' in options:
-      end = options['end'] or '2019-1-1'
-    else:
-      end = '2019-1-1'
-    if 'weekstart' in options:
-      weekstart = int(options['weekstart'])
-      if weekstart < 0 or weekstart > 6:
-        raise CommandError("Invalid weekstart %s" % weekstart)
-    else:
-      weekstart = 1
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    start = options['start']
+    end = options['end']
+    weekstart = int(options['weekstart'])
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
@@ -102,7 +88,7 @@ class Command(BaseCommand):
     task = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:

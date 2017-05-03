@@ -18,7 +18,7 @@
 import os
 import sys
 from datetime import datetime
-from optparse import make_option
+import subprocess
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
@@ -30,37 +30,39 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
+  
   help = "Loads an XML file into the frePPLe database"
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load data from and export results into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-  )
-  args = 'XMLfile(s)'
-
+  
   requires_system_checks = False
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      'file', nargs='+', 
+      help='XML data files to load'
+      )
+
 
   def get_version(self):
     return VERSION
 
-  def handle(self, *args, **options):
+
+  def handle(self, **options):
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
@@ -72,7 +74,7 @@ class Command(BaseCommand):
     task = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
@@ -83,11 +85,8 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='load XML file', submitted=now, started=now, status='0%', user=user)
-      task.arguments = ' '.join(['"%s"' % i for i in args])
+      task.arguments = ' '.join(options['file'])
       task.save(using=database)
-
-      if not args:
-        raise CommandError("No XML input file given")
 
       # Execute
       # TODO: if frePPLe is available as a module, we don't really need to spawn another process.
@@ -107,7 +106,7 @@ class Command(BaseCommand):
       else:
         # Other executables
         os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
-      cmdline = [ '"%s"' % i for i in args ]
+      cmdline = [ '"%s"' % i for i in options['file'] ]
       cmdline.insert(0, 'frepple')
       cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP, 'freppledb', 'execute', 'loadxml.py') )
       (out,ret) = subprocess.run(' '.join(cmdline))

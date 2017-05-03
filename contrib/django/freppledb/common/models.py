@@ -23,11 +23,11 @@ from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import NoReverseMatch, reverse
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
@@ -46,7 +46,8 @@ class HierarchyModel(models.Model):
   name = models.CharField(_('name'), max_length=300, primary_key=True,
                           help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
-                            related_name='xchildren', help_text=_('Hierarchical parent'))
+                            related_name='xchildren', help_text=_('Hierarchical parent'),
+                            on_delete=models.CASCADE)
 
   def save(self, *args, **kwargs):
     # Trigger recalculation of the hieracrhy.
@@ -289,7 +290,8 @@ class Wizard(models.Model):
   url_doc = models.URLField(_('documentation URL'), max_length=500, null=True, blank=True)
   url_internaldoc = models.URLField(_('wizard URL'), max_length=500, null=True, blank=True)
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
-                            related_name='xchildren', help_text=_('Hierarchical parent'))
+                            related_name='xchildren', help_text=_('Hierarchical parent'),
+                            on_delete=models.CASCADE)
   status = models.BooleanField(blank=True, default=True)
 
   def __str__(self):
@@ -498,7 +500,9 @@ class UserPreference(models.Model):
   
   id = models.AutoField(_('identifier'), primary_key=True)
   # Translators: Translation included with Django
-  user = models.ForeignKey(User, verbose_name=_('user'), blank=False, null=True, editable=False, related_name='preferences')
+  user = models.ForeignKey(User, verbose_name=_('user'), blank=False,
+    null=True, editable=False, related_name='preferences',
+    on_delete=models.CASCADE)
   property = models.CharField(max_length=100, blank=False, null=False)
   value = JSONBField(max_length=1000, blank=False, null=False)
 
@@ -522,15 +526,21 @@ class Comment(models.Model):
   content_type = models.ForeignKey(
     # Translators: Translation included with Django
     ContentType, verbose_name=_('content type'),
-    related_name="content_type_set_for_%(class)s"
+    related_name="content_type_set_for_%(class)s",
+    on_delete=models.CASCADE
     )
   # Translators: Translation included with Django
   object_pk = models.TextField(_('object id'))
   content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
   comment = models.TextField(_('comment'), max_length=3000)
   # Translators: Translation included with Django
-  user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
-  lastmodified = models.DateTimeField(_('last modified'), default=timezone.now, editable=False)
+  user = models.ForeignKey(
+    User, verbose_name=_('user'), blank=True, null=True,
+    editable=False, on_delete=models.CASCADE
+    )
+  lastmodified = models.DateTimeField(
+    _('last modified'), default=timezone.now, editable=False
+    )
 
   class Meta:
       db_table = "common_comment"
@@ -580,7 +590,9 @@ class Bucket(AuditModel):
 class BucketDetail(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
-  bucket = models.ForeignKey(Bucket, verbose_name=_('bucket'), db_index=True)
+  bucket = models.ForeignKey(
+    Bucket, verbose_name=_('bucket'), db_index=True, on_delete=models.CASCADE
+    )
   # Translators: Translation included with Django
   name = models.CharField(_('name'), max_length=300, db_index=True)
   startdate = models.DateTimeField(_('start date'))

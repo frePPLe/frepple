@@ -145,15 +145,6 @@ STATIC_URL = '/static/'
 USE_L10N = True        # Represent data in the local format
 USE_I18N = True        # Use translated strings
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'freppledb.common.contextprocessors.debug',
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.static',
-)
-
 STATICFILES_DIRS = ()
 if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
   STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)

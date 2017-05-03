@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from optparse import make_option
 from datetime import datetime
 
 from django.apps import apps
@@ -31,54 +30,55 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
+  
   help = '''
-  This command empties the contents of all data tables in the frePPLe database.
-
-  The results are similar to the 'flush input output' command, with the
-  difference that some tables are not emptied and some performance related
-  tweaks.
-  Another difference is that the initial_data fixture is not loaded.
-  '''
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    make_option(
-      '--models', dest='models', type='string',
-      help='Comma-separated list of models to erase'
-      )
-    )
+    This command empties the contents of all data tables in the frePPLe database.
+  
+    The results are similar to the 'flush input output' command, with the
+    difference that some tables are not emptied and some performance related
+    tweaks.
+    Another difference is that the initial_data fixture is not loaded.
+    '''
 
   requires_system_checks = False
 
+
   def get_version(self):
     return VERSION
+  
+    
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user',
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--database', action='store', dest='database',
+      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to delete data from'
+      ),
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      ),
+    parser.add_argument(
+      '--models',
+      help='Comma-separated list of models to erase'
+      )
+
 
   def handle(self, **options):
     # Pick up options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
-    if 'models' in options and options['models']:
+    if options['models']:
       models = options['models'].split(',')
     else:
       models = None
@@ -87,7 +87,7 @@ class Command(BaseCommand):
     task = None
     try:
       # Initialize the task
-      if 'task' in options and options['task']:
+      if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:

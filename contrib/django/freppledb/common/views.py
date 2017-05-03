@@ -17,7 +17,7 @@
 
 import json
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -59,11 +59,11 @@ def AboutView(request):
 
 @staff_member_required
 def cockpit(request):
-  return render_to_response('index.html', {
-    'title': _('cockpit'),
-    'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
-    },
-    context_instance=RequestContext(request)
+  return render(request, 'index.html', 
+    context= {
+      'title': _('cockpit'),
+      'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
+      }
     )
 
 
@@ -142,11 +142,11 @@ def wizard(request):
     else:
       return HttpResponse(content="OK")
 
-  return render_to_response('common/wizard.html', {
-    'title': _('Wizard to load your data'),
-    'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
-    },
-    context_instance=RequestContext(request)
+  return render(request, 'common/wizard.html', 
+    context = {
+      'title': _('Wizard to load your data'),
+      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
+      }
     )
 
 
@@ -254,14 +254,14 @@ def preferences(request):
   for l in User.languageList:
     if l[0] == request.user.language:
       LANGUAGE = l[1]
-  return render_to_response('common/preferences.html', {
-     'title': _('My preferences'),
-     'form': form,
-     },
-     context_instance=RequestContext(request, {
-        'THEMES': settings.THEMES,
-        "LANGUAGE": LANGUAGE
-        }))
+  return render(request, 'common/preferences.html', 
+    context = {
+      'title': _('My preferences'),
+      'form': form,
+      'THEMES': settings.THEMES,
+      'LANGUAGE': LANGUAGE
+      }
+    )
 
 
 class HorizonForm(forms.Form):

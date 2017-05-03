@@ -16,9 +16,7 @@
 #
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import DEFAULT_DB_ALIAS
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
@@ -26,13 +24,15 @@ from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 from rest_framework import filters
 
+
 @staff_member_required
 @csrf_protect
 def APIIndexView(request):
-  return render_to_response('rest_framework/index.html', {
+  return render(request, 'rest_framework/index.html', 
+    context = {
      'title': _('REST API Help'),
-     },
-    context_instance=RequestContext(request))
+      }
+    )
 
                                
 class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):

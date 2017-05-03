@@ -725,12 +725,12 @@ class GridReport(View):
       # We only validate the first level field, and not the fields
       # on related models.
       sortfield = sort.split('__')[0]
-      for name in reportclass.model._meta.get_all_field_names():
-        if name == sortfield:
+      for field in reportclass.model._meta.get_fields():
+        if field.name == sortfield:
           return query.order_by(asc and sort or ('-%s' % sort))
       if reportclass.model.__base__ and reportclass.model.__base__ != models.Model:
-        for name in reportclass.model.__base__._meta.get_all_field_names():
-          if name == sortfield:
+        for field in reportclass.model.__base__._meta.get_fields():
+          if field.name == sortfield:
             return query.order_by(asc and sort or ('-%s' % sort))
       if sort in query.query.extra_select:
         return query.order_by(asc and sort or ('-%s' % sort))
@@ -1414,7 +1414,7 @@ class GridReport(View):
           yield returnvalue + '\n '
 
       # Loop through the data records
-      wb = load_workbook(filename=request.FILES['csv_file'], use_iterators=True, data_only=True)
+      wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
       ws = wb.worksheets[0]
       has_pk_field = False
       for row in ws.iter_rows():

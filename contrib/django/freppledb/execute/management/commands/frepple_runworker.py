@@ -19,7 +19,6 @@ import logging
 import time
 from datetime import datetime, timedelta
 from threading import Thread
-from optparse import make_option
 
 from django.db import DEFAULT_DB_ALIAS
 from django.core import management
@@ -57,37 +56,35 @@ def checkActive(database=DEFAULT_DB_ALIAS):
 
 
 class Command(BaseCommand):
+  
   help = '''Processes the job queue of a database.
     The command is intended only to be used internally by frePPLe, not by an API or user.
     '''
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates a specific database to load data from and export results into'
-      ),
-    make_option(
-      '--continuous', action="store_true", dest='continuous',
-      default=False, help='Keep the worker alive after the queue is empty'
-      ),
-  )
+  
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      '--continuous', action="store_true",
+      default=False, help='Keep the worker alive after the queue is empty'
+      )
 
 
   def handle(self, *args, **options):
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'continuous' in options:
-      continuous = options['continuous']
-    else:
-      continuous = False
+    continuous = options['continuous']
 
     # Check if a worker already exists
     if checkActive(database):

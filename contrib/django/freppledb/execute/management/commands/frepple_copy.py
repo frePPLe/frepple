@@ -17,7 +17,6 @@
 
 import os
 import subprocess
-from optparse import make_option
 from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
@@ -36,33 +35,40 @@ class Command(BaseCommand):
   The pg_dump and psql commands need to be in the path, otherwise
   this command will fail.
   '''
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--force', action="store_true", dest='force',
-      default=False, help='Overwrite scenarios already in use'
-      ),
-    make_option(
-      '--description', dest='description', type='string',
-      help='Description of the destination scenario'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    )
-  args = 'source_database destination_database'
-
+  
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
 
 
-  def handle(self, *args, **options):
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user',
+      help='User running the command'
+      ),
+    parser.add_argument(
+      '--force', action="store_true", default=False,
+      help='Overwrite scenarios already in use'
+      )
+    parser.add_argument(
+      '--description',
+      help='Description of the destination scenario'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      'source', help='source database to copy'
+      )
+    parser.add_argument(
+      'destination', help='destination database to copy'
+      )
+
+
+  def handle(self, **options):
     # Make sure the debug flag is not set!
     # When it is set, the django database wrapper collects a list of all sql
     # statements executed and their timings. This consumes plenty of memory
@@ -71,12 +77,9 @@ class Command(BaseCommand):
     settings.DEBUG = False
 
     # Pick up options
-    if 'force' in options:
-      force = options['force']
-    else:
-      force = False
+    force = options['force']
     test = 'FREPPLE_TEST' in os.environ
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().get(username=options['user'])
       except:
@@ -106,16 +109,14 @@ class Command(BaseCommand):
     # Validate the arguments
     destinationscenario = None
     try:
-      if len(args) != 2:
-        raise CommandError("Command takes exactly 2 arguments.")
-      task.arguments = "%s %s" % (args[0], args[1])
+      task.arguments = "%s %s" % (options['source'], options['destination'])
       task.save()
-      source = args[0]
+      source = options['source']
       try:
         sourcescenario = Scenario.objects.get(pk=source)
       except:
         raise CommandError("No source database defined with name '%s'" % source)
-      destination = args[1]
+      destination = options['destination']
       try:
         destinationscenario = Scenario.objects.get(pk=destination)
       except:

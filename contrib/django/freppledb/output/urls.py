@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
@@ -29,8 +29,8 @@ import freppledb.output.views.kpi
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = patterns(
-  '',  # Prefix
+urlpatterns = [
+  
   url(r'^buffer/(.+)/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plandetail"),
   url(r'^buffer/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plan"),
   url(r'^demand/operationplans/$', freppledb.output.views.demand.OperationPlans, name="output_demand_operationplans"),
@@ -54,4 +54,5 @@ urlpatterns = patterns(
   url(r'^demandplan/(.+)/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_demandplan_plandetail"),
   url(r'^demandplan/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_buffer_plan"),
   url(r'^kpi/$', freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
-  )
+  
+  ]

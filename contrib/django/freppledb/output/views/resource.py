@@ -240,7 +240,7 @@ class DetailReport(GridReport):
     else:
       base = OperationPlanResource.objects
     return base.select_related().extra(select={
-      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from json_each_text(plan->'pegging') order by key desc) peg)",
+      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(plan->'pegging') order by key desc) peg)",
       'duration': "(operationplan.enddate - operationplan.startdate)"
       })
 

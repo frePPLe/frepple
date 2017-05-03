@@ -19,7 +19,6 @@ import os
 import re
 import subprocess
 from datetime import datetime
-from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -41,37 +40,35 @@ class Command(BaseCommand):
   The pg_dump command needs to be in the path, otherwise this command
   will fail.
   '''
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to backup'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    )
 
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
 
-  def handle(self, **options):
+  
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user',
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to backup'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
 
+
+  def handle(self, **options):
     # Pick up the options
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
+    if options['user']:
       try:
         user = User.objects.all().using(database).get(username=options['user'])
       except:

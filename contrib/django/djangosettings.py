@@ -19,7 +19,7 @@
 r'''
 Main Django configuration file.
 '''
-import os, sys, locale
+import os, sys
 
 try:
   DEBUG = 'runserver' in sys.argv
@@ -35,12 +35,12 @@ ADMINS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
-# FrePPLe only supports the 'postgresql_psycopg2' database.
+# FrePPLe only supports the postgresql database.
 # Create additional entries in this dictionary to define scenario schemas.
 
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'ENGINE': 'django.db.backends.postgresql',
     'NAME': 'frepple',
     'USER': 'frepple',     # Role name when using md5 authentication.
                            # Leave as an empty string when using peer or
@@ -62,7 +62,7 @@ DATABASES = {
     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
    'scenario1': {
-     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'ENGINE': 'django.db.backends.postgresql',
      'NAME': 'scenario1_4.0',
      'USER': 'frepple',     # Role name when using md5 authentication.
                             # Leave as an empty string when using peer or
@@ -84,7 +84,7 @@ DATABASES = {
      'SECRET_WEBTOKEN_KEY': SECRET_KEY,
      },
    'scenario2': {
-     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'ENGINE': 'django.db.backends.postgresql',
      'NAME': 'scenario2_4.0',
      'USER': 'frepple',     # Role name when using md5 authentication.
                             # Leave as an empty string when using peer or
@@ -106,7 +106,7 @@ DATABASES = {
      'SECRET_WEBTOKEN_KEY': SECRET_KEY,
      },
    'scenario3': {
-     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+     'ENGINE': 'django.db.backends.postgresql',
      'NAME': 'scenario3_4.0',
      'USER': 'frepple',     # Role name when using md5 authentication.
                             # Leave as an empty string when using peer or
@@ -180,14 +180,6 @@ LANGUAGES = (
   ('zh-cn', ugettext('Simplified Chinese')),
   ('zh-tw', ugettext('Traditional Chinese')),
 )
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-   #('django.template.loaders.cached.Loader', (
-     'django.template.loaders.filesystem.Loader',
-     'django.template.loaders.app_directories.Loader',
-   #))
-   )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -269,27 +261,27 @@ LOCALE_PATHS = (
     os.path.normpath(os.path.join(os.path.dirname(django.contrib.admindocs.__file__),'locale')),
 )
 
-TEMPLATES_TODO = [ #to be used in the future, now interferes with middleware
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            #os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
+TEMPLATES = [
+  {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [
+      #os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
+      ],
+    'APP_DIRS': True,
+    'OPTIONS': {
+      'builtins': [
+        'freppledb.common.templatetags'
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
-                # list if you haven't customized them:
-                'django.contrib.auth.context_processors.auth',
-                'django.template.context_processors.debug',
-                'django.template.context_processors.i18n',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'django.template.context_processors.tz',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+      'context_processors': [
+        'freppledb.common.contextprocessors.debug',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
+        'django.contrib.messages.context_processors.messages',
+        'django.template.context_processors.i18n',
+        'django.template.context_processors.static',
+        ],
+      },  
+  },
 ]
 
 LOGGING = {

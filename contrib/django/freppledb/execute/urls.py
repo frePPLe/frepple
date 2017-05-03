@@ -15,19 +15,20 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 import freppledb.execute.views
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = patterns(
-  '',   # Prefix
+urlpatterns = [
+  
   url(r'^execute/$', freppledb.execute.views.TaskReport.as_view(), name="execute"),
   url(r'^execute/logfrepple/$', freppledb.execute.views.logfile, name="execute_view_log"),
   url(r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask, name="execute_launch"),
   url(r'^execute/cancel/(.+)/$', freppledb.execute.views.CancelTask, name="execute_cancel"),
   url(r'^execute/viewfile/(.+)$', freppledb.execute.views.ViewFile, name="execute_view_file"),
   url(r'^execute/logdownload/$', freppledb.execute.views.DownloadLogFile, name="execute_download_log"),
-)
+
+  ]

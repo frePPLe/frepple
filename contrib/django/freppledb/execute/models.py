@@ -44,7 +44,10 @@ class Task(models.Model):
   status = models.CharField(_('status'), max_length=20, editable=False)
   message = models.TextField(_('message'), max_length=200, null=True, editable=False)
   #. Translators: Translation included with Django
-  user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True, editable=False)
+  user = models.ForeignKey(
+    User, verbose_name=_('user'), blank=True, null=True, 
+    editable=False, on_delete=models.CASCADE
+    )
 
   def __str__(self):
     return "%s - %s - %s" % (self.id, self.name, self.status)

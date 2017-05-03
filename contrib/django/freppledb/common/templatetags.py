@@ -18,10 +18,11 @@
 from decimal import Decimal
 import json
 
-from django.db import models
+from django.apps import apps
 from django.contrib.admin.utils import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.conf import settings
+from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
@@ -439,24 +440,26 @@ class ModelDependenciesNode(Node):
   '''
   def render(self, context):
     res = {}
-    for i in models.get_models(include_auto_created=True):
-      deps = []
-      i_name = "%s.%s" % (i._meta.app_label, i._meta.model_name)
-      for j in i._meta.get_all_related_objects_with_model():
-        if j[0].related_model == i:
-          continue
-        j_name = "%s.%s" % (j[0].related_model._meta.app_label, j[0].related_model._meta.model_name)
-        # Some ugly (but unavoidable...) hard-codes related to the proxy models
-        if j_name == 'input.operationplan':
-          if i_name in ('input.supplier', 'item.itemsupplier', 'input.location', 'input.item'):
-            deps.append('input.purchaseorder')
-          if i_name in ('input.itemdistribution', 'input.location'):
-            deps.append('input.distributionorder')
-          if i_name in ('input.operation', 'input.location'):
-            deps.append('input.manufacturingorder')
-        elif not j_name in ('input.purchaseorder', 'input.manufacturingorder', 'input.distributionorder'):
-          deps.append(j_name)
-      res[i_name] = deps
+    for a in apps.app_configs:
+      for i in apps.get_app_config(a).get_models():
+        deps = []
+        i_name = "%s.%s" % (i._meta.app_label, i._meta.model_name)
+        for f in i._meta.get_fields():
+          if (f.one_to_many or f.one_to_one) and f.auto_created and not f.concrete:
+            if f.related_model == i:
+              continue
+            j_name = "%s.%s" % (f.related_model._meta.app_label, f.related_model._meta.model_name)
+            # Some ugly (but unavoidable...) hard-codes related to the proxy models
+            if j_name == 'input.operationplan':
+              if i_name in ('input.supplier', 'item.itemsupplier', 'input.location', 'input.item'):
+                deps.append('input.purchaseorder')
+              if i_name in ('input.itemdistribution', 'input.location'):
+                deps.append('input.distributionorder')
+              if i_name in ('input.operation', 'input.location'):
+                deps.append('input.manufacturingorder')
+            elif not j_name in ('input.purchaseorder', 'input.manufacturingorder', 'input.distributionorder'):
+              deps.append(j_name)
+        res[i_name] = deps
     return json.dumps(res)
 
   def __repr__(self):

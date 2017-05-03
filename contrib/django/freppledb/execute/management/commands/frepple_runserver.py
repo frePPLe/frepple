@@ -15,9 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import socket
-import sys
-from threading import Thread
-from optparse import make_option
 from cherrypy.wsgiserver import CherryPyWSGIServer
 
 from django.conf import settings
@@ -34,45 +31,40 @@ class Command(BaseCommand):
     Runs a multithreaded web server for frePPLe.
   '''
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      "--port", dest="port", type="int",
-      help="Port number of the server."
-      ),
-    make_option(
-      "--address", dest="address", type="string",
-      help="IP address for the server to listen."
-      ),
-    make_option(
-      "--threads", dest="threads", type="int",
-      help="Number of server threads (default: 25)."
-      ),
-    )
-
   requires_system_checks = False
+
 
   def get_version(self):
     return VERSION
 
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      "--port", type=int, default=settings.PORT,
+      help="Port number of the server."
+      )
+    parser.add_argument(
+      "--address", help="IP address for the server to listen."
+      ),
+    parser.add_argument(
+      "--threads", type=int, default=25,
+      help="Number of server threads (default: 25)."
+      )
+
+
   def handle(self, **options):
     # Determine the port number
-    if 'port' in options:
-      port = int(options['port'] or settings.PORT)
-    else:
-      port = settings.PORT
+    port = options['port']
 
     # Determine the number of threads
-    if 'threads' in options:
-      threads = int(options['threads'] or 25)
-      if threads < 1:
-        raise Exception("Invalid number of threads: %s" % threads)
-    else:
-      threads = 25
+    threads = options['threads']
+    if threads < 1:
+      raise Exception("Invalid number of threads: %s" % threads)
 
     # Determine the IP-address to listen on:
     # - either as command line argument
     # - either 0.0.0.0 by default, which means all active IPv4 interfaces
-    address = 'address' in options and options['address'] or '0.0.0.0'
+    address = options['address'] or '0.0.0.0'
 
     # Validate the address and port number
     try:

@@ -16,10 +16,7 @@
 #
 
 import os
-import sys
 from datetime import datetime
-from importlib import import_module
-from optparse import make_option
 import subprocess
 
 from django.core.management.base import BaseCommand, CommandError
@@ -29,45 +26,52 @@ from django.conf import settings
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.common.models import User
 from freppledb.execute.models import Task
+from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--constraint', dest='constraint', type='choice', default='15',
-      choices=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'],
-      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'
-      ),
-    make_option(
-      '--plantype', dest='plantype', type='choice', choices=['1', '2'],
-      default='1', help='Plan type: 1=constrained, 2=unconstrained'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load data from and export results into'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    make_option(
-      '--env', dest='env', type='string',
-      help='A comma separated list of extra settings passed as environment variables to the engine'
-      ),
-    make_option(
-      '--background', dest='background', action='store_true', default=False,
-      help='Run the planning engine in the background (default = False)'
-      ),
-  )
+  
   help = "Runs frePPLe to generate a plan"
 
   requires_system_checks = False
-
+  
+  
+  def get_version(self):
+    return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', dest='user',
+      help='User running the command'
+      )
+    parser.add_argument(
+      '--constraint', dest='constraint', type=int, default=15,
+      choices=range(0, 15),
+      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'
+      )
+    parser.add_argument(
+      '--plantype', dest='plantype', type=int, choices=[1, 2],
+      default=1, help='Plan type: 1=constrained, 2=unconstrained'
+      )
+    parser.add_argument(
+      '--database', dest='database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      '--task', dest='task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      '--env', dest='env',
+      help='A comma separated list of extra settings passed as environment variables to the engine'
+      )
+    parser.add_argument(
+      '--background', dest='background', action='store_true', default=False,
+      help='Run the planning engine in the background (default = False)'
+      )
+    
+  
   def handle(self, **options):
     # Pick up the options
     if 'database' in options:
@@ -109,8 +113,6 @@ class Command(BaseCommand):
         constraint = 15
       if 'plantype' in options:
         plantype = int(options['plantype'])
-        if plantype < 1 or plantype > 2:
-          raise ValueError("Invalid plan type: %s" % options['plantype'])
       else:
         plantype = 1
 

@@ -20,10 +20,10 @@ from django.db.models import signals
 from freppledb.common.management import removeModelPermissions
 
 
-def removePermissions(app, created_models, verbosity, db=DEFAULT_DB_ALIAS, **kwargs):
-  removeModelPermissions("output", "problem", db)
-  removeModelPermissions("output", "constraint", db)
-  removeModelPermissions("output", "resourcesummary", db)
+def removePermissions(using=DEFAULT_DB_ALIAS, **kwargs):
+  removeModelPermissions("output", "problem", using)
+  removeModelPermissions("output", "constraint", using)
+  removeModelPermissions("output", "resourcesummary", using)
 
 
-signals.post_syncdb.connect(removePermissions)
+signals.post_migrate.connect(removePermissions)

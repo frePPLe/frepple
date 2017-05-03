@@ -13,50 +13,48 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from optparse import make_option
 
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
+from freppledb import VERSION
+
 
 class Command(BaseCommand):
 
   help = "Loads data from an Odoo instance into the frePPLe database"
 
-  option_list = BaseCommand.option_list + (
-    make_option(
-      '--user', dest='user', type='string',
-      help='User running the command'
-      ),
-    make_option(
-      '--database', action='store', dest='database',
-      default=DEFAULT_DB_ALIAS, help='Nominates the frePPLe database to load'
-      ),
-    make_option(
-      '--task', dest='task', type='int',
-      help='Task identifier (generated automatically if not provided)'
-      ),
-    )
-
   requires_system_checks = False
+
+
+  def get_version(self):
+    return VERSION
+  
+  
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates the frePPLe database to load'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+
 
   def handle(self, **options):
 
     # Pick up the options
-    if 'verbosity' in options:
-      self.verbosity = int(options['verbosity'] or '1')
-    else:
-      self.verbosity = 1
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
+    self.verbosity = int(options['verbosity'])
+    database = options['database']
     if database not in settings.DATABASES.keys():
-      raise CommandError("No database settings known for '%s'" % self.database )
-
-    if 'user' in options and options['user']:
+      raise CommandError("No database settings known for '%s'" % self.database)
+    if options['user']:
       management.call_command(
         'frepple_run',
         env="odoo_read_2",

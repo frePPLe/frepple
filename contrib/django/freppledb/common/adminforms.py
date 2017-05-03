@@ -16,10 +16,10 @@
 #
 
 from functools import update_wrapper
+import json
 
 from django.conf.urls import url
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.contrib.admin.options import get_content_type_for_model
 from django.contrib import messages
@@ -30,12 +30,14 @@ from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.template.response import SimpleTemplateResponse, TemplateResponse
+from django.shortcuts import render
+from django.template.response import TemplateResponse
+from django.urls import reverse
+from django.utils import six
 from django.utils.encoding import force_text
+from django.utils.html import escape, escapejs, format_html
+from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
-from django.utils.html import escape, escapejs
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.decorators import method_decorator
@@ -70,7 +72,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         return self.admin_site.admin_view(view)(*args, **kwargs)
       return update_wrapper(wrapper, view)
 
-    urls = super(MultiDBModelAdmin, self).get_urls()
+    urls = super().get_urls()
     my_urls = [
       url(r'^(.+)/comment/$', wrap(self.comment_view), name='%s_%s_comment' % (self.model._meta.app_label, self.model._meta.model_name)),
       ]
@@ -79,7 +81,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
   def save_form(self, request, form, change):
     # Execute the standard behavior
-    obj = super(MultiDBModelAdmin, self).save_form(request, form, change)
+    obj = super().save_form(request, form, change)
     # FrePPLe specific addition
     if change:
       old_pk = unquote(request.path_info.rsplit("/", 2)[1])
@@ -99,31 +101,34 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
   def get_queryset(self, request):
     # Tell Django to get objects from the 'other' database.
-    return super(MultiDBModelAdmin, self).get_queryset(request).using(request.database)
+    return super().get_queryset(request).using(request.database)
 
 
-  def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+  def formfield_for_foreignkey(self, db_field, request, **kwargs):
     # Tell Django to get objects from the 'other' database.
-    return super(MultiDBModelAdmin, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
+    return super().formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
 
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     # Tell Django to get objects from the 'other' database.
-    return super(MultiDBModelAdmin, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
+    return super().formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
 
 
-  def log_addition(self, request, obj):
+  def log_addition(self, request, obj, message):
     """
     Log that an object has been successfully added.
     """
     from django.contrib.admin.models import ADDITION
-    LogEntry(
+    entry = LogEntry(
       user_id=request.user.pk,
       content_type_id=ContentType.objects.get_for_model(obj).pk,
-      object_id=smart_text(obj.pk),
+      object_id=obj.pk,
       object_repr=force_text(obj)[:200],
-      action_flag=ADDITION
-    ).save(using=request.database)
+      action_flag=ADDITION,
+      change_message=message if isinstance(message, str) else json.dumps(message)
+    )
+    entry.save(using=request.database)
+    return entry
 
 
   def log_change(self, request, obj, message):
@@ -137,10 +142,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       obj.pk = obj.new_pk
       obj.save(using=request.database)
       # b) All linked fields need updating.
-      for related in obj._meta.get_all_related_objects():
-        related.related_model._base_manager.using(request.database) \
-          .filter(**{related.field.name: old_pk}) \
-          .update(**{related.field.name: obj})
+      for related in obj._meta.get_fields():
+        if (related.one_to_many or related.one_to_one) and related.auto_created and not related.concrete:
+          related.related_model._base_manager.using(request.database) \
+            .filter(**{related.field.name: old_pk}) \
+            .update(**{related.field.name: obj})
       # c) Move the comments and audit trail to the new key
       model_type = ContentType.objects.get_for_model(obj)
       Comment.objects.using(request.database) \
@@ -153,14 +159,16 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       obj.pk = old_pk
       obj.delete(using=request.database)
       obj.pk = obj.new_pk
-    LogEntry(
+    entry = LogEntry(
       user_id=request.user.pk,
       content_type_id=ContentType.objects.get_for_model(obj).pk,
       object_id=smart_text(obj.pk),
       object_repr=force_text(obj)[:200],
       action_flag=CHANGE,
-      change_message=message
-    ).save(using=request.database)
+      change_message=message if isinstance(message, str) else json.dumps(message)
+      )
+    entry.save(using=request.database)
+    return entry
 
 
   def log_deletion(self, request, obj, object_repr):
@@ -169,56 +177,57 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         before the deletion.
     """
     from django.contrib.admin.models import DELETION
-    LogEntry(
+    entry = LogEntry(
       user_id=request.user.id,
       content_type_id=ContentType.objects.get_for_model(self.model).pk,
       object_id=smart_text(obj.pk),
       object_repr=force_text(object_repr)[:200],
       action_flag=DELETION
-    ).save(using=request.database)
+    )
+    entry.save(using=request.database)
+    return entry
 
 
   def history_view(self, request, object_id, extra_context=None):
     "The 'history' admin view for this model."
-    # First check if the object exists and the user can see its history.
-    request.session['lasttab'] = 'history'
+    # First check if the user can see this history.
     model = self.model
     obj = self.get_object(request, unquote(object_id))
     if obj is None:
-      # Translators: Translation included with Django
-      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {
-        'name': force_text(model._meta.verbose_name),
-        'key': escape(object_id),
-      })
+        return self._get_obj_does_not_exist_redirect(request, model._meta, object_id)
+
+    if not self.has_change_permission(request, obj):
+        raise PermissionDenied
 
     # Then get the history for this object.
     opts = model._meta
     app_label = opts.app_label
     action_list = LogEntry.objects.using(request.database).filter(
-      object_id=unquote(object_id),
-      content_type=get_content_type_for_model(model)
+        object_id=unquote(object_id),
+        content_type=get_content_type_for_model(model)
     ).select_related().order_by('action_time')
 
-    context = dict(self.admin_site.each_context(request),
-      title=capfirst(force_text(opts.verbose_name) + " " + unquote(object_id)),
-      action_list=action_list,
-      module_name=capfirst(force_text(opts.verbose_name_plural)),
-      object=obj,
-      app_label=app_label,
-      opts=opts,
-      active_tab='history',
-      object_id=object_id,
-      model=ContentType.objects.get_for_model(model).model,
-      )
+    context = dict(
+        self.admin_site.each_context(request),
+        # Translators: Translation included with Django
+        title=_('Change history: %s') % force_text(obj),
+        action_list=action_list,
+        module_name=capfirst(force_text(opts.verbose_name_plural)),
+        object=obj,
+        object_id=quote(object_id),
+        opts=opts,
+        active_tab='history',
+        preserved_filters=self.get_preserved_filters(request),
+    )
     context.update(extra_context or {})
 
     request.current_app = self.admin_site.name
 
     return TemplateResponse(request, self.object_history_template or [
-      "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
-      "admin/%s/object_history.html" % app_label,
-      "admin/object_history.html"
-      ], context)
+        "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
+        "admin/%s/object_history.html" % app_label,
+        "admin/object_history.html"
+    ], context)
 
 
   def response_add(self, request, obj, post_url_continue=None):
@@ -228,123 +237,206 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     opts = obj._meta
     pk_value = obj._get_pk_val()
     preserved_filters = self.get_preserved_filters(request)
-
-    msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
+    obj_url = request.prefix + reverse(
+        'admin:%s_%s_change' % (opts.app_label, opts.model_name),
+        args=(quote(pk_value),),
+        current_app=self.admin_site.name,
+    )
+    # Add a link to the object's change form if the user can edit the obj.
+    if self.has_change_permission(request, obj):
+        obj_repr = format_html('<a href="{}">{}</a>', urlquote(obj_url), obj)
+    else:
+        obj_repr = force_text(obj)
+    msg_dict = {
+        'name': force_text(opts.verbose_name),
+        'obj': obj_repr,
+    }
     # Here, we distinguish between different save types by checking for
     # the presence of keys in request.POST.
+
     if '_popup' in request.POST:
-      to_field = request.POST.get('_to_field')
-      if to_field:
-        attr = str(to_field)
-      else:
-        attr = obj._meta.pk.attname
-      value = obj.serializable_value(attr)
-      return SimpleTemplateResponse('admin/popup_response.html', {
-        'pk_value': escape(pk_value),  # for possible backwards-compatibility
-        'value': escape(value),
-        'obj': escapejs(obj)
+        to_field = request.POST.get('_to_field')
+        if to_field:
+            attr = str(to_field)
+        else:
+            attr = obj._meta.pk.attname
+        value = obj.serializable_value(attr)
+        popup_response_data = json.dumps({
+            'value': six.text_type(value),
+            'obj': six.text_type(obj),
+        })
+        return TemplateResponse(request, self.popup_response_template or [
+            'admin/%s/%s/popup_response.html' % (opts.app_label, opts.model_name),
+            'admin/%s/popup_response.html' % opts.app_label,
+            'admin/popup_response.html',
+        ], {
+            'popup_response_data': popup_response_data,
         })
 
-    elif "_continue" in request.POST:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      if post_url_continue is None:
-        post_url_continue = request.prefix + reverse(
-          'admin:%s_%s_change' % (opts.app_label, opts.model_name),
-          args=(quote(pk_value),),
-          current_app=self.admin_site.name
-          )
-      post_url_continue = add_preserved_filters(
-        {'preserved_filters': preserved_filters, 'opts': opts},
-        post_url_continue
+    elif "_continue" in request.POST or (
+            # Redirecting after "Save as new".
+            "_saveasnew" in request.POST and self.save_as_continue and
+            self.has_change_permission(request, obj)
+    ):
+        msg = format_html(
+          # Translators: Translation included with Django
+          _('The {name} "{obj}" was added successfully. You may edit it again below.'),
+          **msg_dict
         )
-      return HttpResponseRedirect(post_url_continue)
+        self.message_user(request, msg, messages.SUCCESS)
+        if post_url_continue is None:
+            post_url_continue = obj_url
+        post_url_continue = add_preserved_filters(
+            {'preserved_filters': preserved_filters, 'opts': opts},
+            post_url_continue
+        )
+        return HttpResponseRedirect(post_url_continue)
 
     elif "_addanother" in request.POST:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may add another %(name)s below.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + request.path
-      redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
-      return HttpResponseRedirect(redirect_url)
+        msg = format_html(
+          # Translators: Translation included with Django
+          _('The {name} "{obj}" was added successfully. You may add another {name} below.'),
+          **msg_dict
+        )
+        self.message_user(request, msg, messages.SUCCESS)
+        redirect_url = request.prefix + request.path
+        redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
+        return HttpResponseRedirect(redirect_url)
 
     else:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was added successfully.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      # Redirect to previous url
-      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['crumbs'][request.prefix][-2][2]))
+        msg = format_html(
+            # Translators: Translation included with Django
+            _('The {name} "{obj}" was added successfully.'),
+            **msg_dict
+        )
+        self.message_user(request, msg, messages.SUCCESS)
+        return self.response_post_save_add(request, obj)
+
+
+  def response_post_save_add(self, request, obj):
+    """
+    Figure out where to redirect after the 'Save' button has been pressed
+    when adding a new object.
+    """
+    opts = self.model._meta
+    if self.has_change_permission(request, None):
+        post_url = request.prefix + reverse('admin:%s_%s_changelist' %
+                           (opts.app_label, opts.model_name),
+                           current_app=self.admin_site.name)
+        preserved_filters = self.get_preserved_filters(request)
+        post_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url)
+    else:
+        post_url = request.prefix
+    return HttpResponseRedirect(post_url)
 
 
   def response_change(self, request, obj):
     """
     Determines the HttpResponse for the change_view stage.
     """
+
     if '_popup' in request.POST:
-      to_field = request.POST.get('_to_field')
-      attr = str(to_field) if to_field else obj._meta.pk.attname
-      # Retrieve the `object_id` from the resolved pattern arguments.
-      value = request.resolver_match.args[0]
-      new_value = obj.serializable_value(attr)
-      return SimpleTemplateResponse('admin/popup_response.html', {
-        'action': 'change',
-        'value': escape(value),
-        'obj': escapejs(obj),
-        'new_value': escape(new_value),
-      })
+        opts = obj._meta
+        to_field = request.POST.get('_to_field')
+        attr = str(to_field) if to_field else opts.pk.attname
+        # Retrieve the `object_id` from the resolved pattern arguments.
+        value = request.resolver_match.args[0]
+        new_value = obj.serializable_value(attr)
+        popup_response_data = json.dumps({
+            'action': 'change',
+            'value': six.text_type(value),
+            'obj': six.text_type(obj),
+            'new_value': six.text_type(new_value),
+        })
+        return TemplateResponse(request, self.popup_response_template or [
+            'admin/%s/%s/popup_response.html' % (opts.app_label, opts.model_name),
+            'admin/%s/popup_response.html' % opts.app_label,
+            'admin/popup_response.html',
+        ], {
+            'popup_response_data': popup_response_data,
+        })
 
     opts = self.model._meta
     pk_value = obj._get_pk_val()
     preserved_filters = self.get_preserved_filters(request)
 
-    msg_dict = {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
+    msg_dict = {
+        'name': force_text(opts.verbose_name),
+        'obj': format_html('<a href="{}">{}</a>', urlquote(request.path), obj),
+    }
     if "_continue" in request.POST:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was changed successfully. You may edit it again below.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + request.path
-      redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
-      return HttpResponseRedirect(redirect_url)
+        msg = format_html(
+            # Translators: Translation included with Django
+            _('The {name} "{obj}" was changed successfully. You may edit it again below.'),
+            **msg_dict
+        )
+        self.message_user(request, msg, messages.SUCCESS)
+        redirect_url = request.prefix + request.path
+        redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
+        return HttpResponseRedirect(redirect_url)
 
     elif "_saveasnew" in request.POST:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may edit it again below.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + reverse(
-        'admin:%s_%s_change' % (opts.app_label, opts.model_name),
-        args=(pk_value,),
-        current_app=self.admin_site.name
+        msg = format_html(
+            # Translators: Translation included with Django
+            _('The {name} "{obj}" was added successfully. You may edit it again below.'),
+            **msg_dict
         )
-      redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
-      return HttpResponseRedirect(redirect_url)
+        self.message_user(request, msg, messages.SUCCESS)
+        redirect_url = request.prefix + reverse('admin:%s_%s_change' %
+                               (opts.app_label, opts.model_name),
+                               args=(pk_value,),
+                               current_app=self.admin_site.name)
+        redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
+        return HttpResponseRedirect(redirect_url)
 
     elif "_addanother" in request.POST:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was added successfully. You may add another %(name)s below.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      redirect_url = request.prefix + reverse(
-        'admin:%s_%s_add' % (opts.app_label, opts.model_name),
-        current_app=self.admin_site.name
+        msg = format_html(
+            # Translators: Translation included with Django
+            _('The {name} "{obj}" was changed successfully. You may add another {name} below.'),
+            **msg_dict
         )
-      redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
-      return HttpResponseRedirect(redirect_url)
+        self.message_user(request, msg, messages.SUCCESS)
+        redirect_url = request.prefix + reverse('admin:%s_%s_add' %
+                               (opts.app_label, opts.model_name),
+                               current_app=self.admin_site.name)
+        redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
+        return HttpResponseRedirect(redirect_url)
 
     else:
-      # Translators: Translation included with Django
-      msg = _('The %(name)s "%(obj)s" was changed successfully.') % msg_dict
-      self.message_user(request, msg, messages.SUCCESS)
-      # Redirect to previous url
-      return HttpResponseRedirect("%s%s" % (request.prefix, request.session['crumbs'][request.prefix][-2][2]))
+        msg = format_html(
+            # Translators: Translation included with Django
+            _('The {name} "{obj}" was changed successfully.'),
+            **msg_dict
+        )
+        self.message_user(request, msg, messages.SUCCESS)
+        return self.response_post_save_change(request, obj)    
 
 
+  def response_post_save_change(self, request, obj):
+    """
+    Figure out where to redirect after the 'Save' button has been pressed
+    when editing an existing object.
+    """
+    opts = self.model._meta
+
+    if self.has_change_permission(request, None):
+        post_url = request.prefix + reverse('admin:%s_%s_changelist' %
+                           (opts.app_label, opts.model_name),
+                           current_app=self.admin_site.name)
+        preserved_filters = self.get_preserved_filters(request)
+        post_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, post_url)
+    else:
+        post_url = request.prefix
+    return HttpResponseRedirect(post_url)
+  
+      
   @csrf_protect_m
   @transaction.atomic
   def change_view(self, request, object_id, form_url='', extra_context=None):
     request.session['lasttab'] = 'edit'
     new_extra_context = extra_context or {}
     new_extra_context['title'] = capfirst(force_text(self.model._meta.verbose_name) + ' ' + unquote(object_id))
-    return super(MultiDBModelAdmin, self).change_view(request, object_id, form_url, new_extra_context)
+    return super().change_view(request, object_id, form_url, new_extra_context)
 
 
   @csrf_protect_m
@@ -378,15 +470,16 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         request.prefix, request.path
         ))
     else:
-      return render_to_response('common/comments.html', {
-        'title': capfirst(force_text(modelinstance._meta.verbose_name) + " " + object_id),
-        'model': self.model._meta.model_name,
-        'opts': self.model._meta,
-        'object_id': quote(object_id),
-        'active_tab': 'comments',
-        'comments': comments
-        },
-        context_instance=RequestContext(request))
+      return render(request, 'common/comments.html', 
+        context = {
+          'title': capfirst(force_text(modelinstance._meta.verbose_name) + " " + object_id),
+          'model': self.model._meta.model_name,
+          'opts': self.model._meta,
+          'object_id': quote(object_id),
+          'active_tab': 'comments',
+          'comments': comments
+          }
+        )
 
 
   def response_delete(self, request, obj_display, obj_id):
@@ -397,17 +490,27 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     opts = self.model._meta
 
     if '_popup' in request.POST:
-      return SimpleTemplateResponse('admin/popup_response.html', {
-        'action': 'delete',
-        'value': escape(obj_id),
-      })
+        popup_response_data = json.dumps({
+            'action': 'delete',
+            'value': str(obj_id),
+        })
+        return TemplateResponse(request, self.popup_response_template or [
+            'admin/%s/%s/popup_response.html' % (opts.app_label, opts.model_name),
+            'admin/%s/popup_response.html' % opts.app_label,
+            'admin/popup_response.html',
+        ], {
+            'popup_response_data': popup_response_data,
+        })
 
-    self.message_user(request,
-      # Translators: Translation included with Django
-      _('The %(name)s "%(obj)s" was deleted successfully.') % {
-          'name': force_text(opts.verbose_name),
-          'obj': force_text(obj_display),
-      }, messages.SUCCESS)
+    self.message_user(
+        request,
+        # Translators: Translation included with Django
+        _('The %(name)s "%(obj)s" was deleted successfully.') % {
+            'name': force_text(opts.verbose_name),
+            'obj': force_text(obj_display),
+        },
+        messages.SUCCESS,
+    )  
 
     # Delete this entity page from the crumbs
     del request.session['crumbs'][request.prefix][-1]
@@ -416,9 +519,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     return HttpResponseRedirect("%s%s" % (request.prefix, request.session['crumbs'][request.prefix][-1][2]))
 
 
+
   @csrf_protect_m
-  @transaction.atomic
   def delete_view(self, request, object_id, extra_context=None):
+    with transaction.atomic(using=request.database):
+      return self._delete_view(request, object_id, extra_context)
+
+
+  def _delete_view(self, request, object_id, extra_context):
     """
     The 'delete' admin view for this model.
     """
@@ -435,8 +543,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       raise PermissionDenied
 
     if obj is None:
-      # Translators: Translation included with Django
-      raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_text(opts.verbose_name), 'key': escape(object_id)})
+      return self._get_obj_does_not_exist_redirect(request, opts, object_id)
 
     # frePPLe specific selection of the database
     using = request.database
@@ -457,7 +564,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       deleted_objects = [ replace_url(i) for i in deleted_objects ]
       protected = [ replace_url(i) for i in protected ]
 
-    if request.POST:  # The user has already confirmed the deletion.
+    if request.POST and not protected:  # The user has confirmed the deletion.
       if perms_needed:
         raise PermissionDenied
       obj_display = force_text(obj)

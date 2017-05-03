@@ -945,10 +945,63 @@ class loadOperationResources(LoadTask):
 
 
 @PlanTaskRegistry.register
+class loadDemand(LoadTask):
+
+  description = "Importing demands"
+  sequence = 107
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+
+    if cls.filter:
+      filter_and = "and %s " % cls.filter
+      filter_where = "where %s " % cls.filter
+    else:
+      filter_and = ""
+      filter_where = ""
+
+    with connections[database].chunked_cursor() as cursor:
+      cnt = 0
+      starttime = time()
+      cursor.execute('''
+        SELECT
+          name, due, quantity, priority, item_id,
+          operation_id, customer_id, owner_id, minshipment, maxlateness,
+          category, subcategory, source, location_id, status
+        FROM demand
+        WHERE (status IS NULL OR status ='open' OR status = 'quote') %s
+        ''' % filter_and)
+      for i in cursor:
+        cnt += 1
+        try:
+          x = frepple.demand(
+            name=i[0], due=i[1], quantity=i[2], priority=i[3], status=i[14],
+            item=frepple.item(name=i[4]), category=i[10], subcategory=i[11],
+            source=i[12]
+            )
+          if i[5]:
+            x.operation = frepple.operation(name=i[5])
+          if i[6]:
+            x.customer = frepple.customer(name=i[6])
+          if i[7]:
+            x.owner = frepple.demand(name=i[7])
+          if i[8]:
+            x.minshipment = i[8]
+          if i[9] is not None:
+            x.maxlateness = i[9].total_seconds()
+          if i[13]:
+            x.location = frepple.location(name=i[13])
+        except Exception as e:
+          print("Error:", e)
+      print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
+
+
+@PlanTaskRegistry.register
 class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, we can skip loading the proposed operationplans
 
   description = "Importing operationplans"
-  sequence = 107
+  sequence = 108
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1083,7 +1136,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
 class loadOperationPlanMaterials(LoadTask):
 
   description = "Importing operationplanmaterials"
-  sequence = 108
+  sequence = 109
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1121,7 +1174,7 @@ class loadOperationPlanMaterials(LoadTask):
 class loadOperationPlanResources(LoadTask):
 
   description = "Importing operationplanresources"
-  sequence = 109
+  sequence = 110
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1148,56 +1201,3 @@ class loadOperationPlanResources(LoadTask):
         except Exception as e:
           print("Error:", e)
       print('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))
-
-
-@PlanTaskRegistry.register
-class loadDemand(LoadTask):
-
-  description = "Importing demands"
-  sequence = 110
-
-  @classmethod
-  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-    import frepple
-
-    if cls.filter:
-      filter_and = "and %s " % cls.filter
-      filter_where = "where %s " % cls.filter
-    else:
-      filter_and = ""
-      filter_where = ""
-
-    with connections[database].chunked_cursor() as cursor:
-      cnt = 0
-      starttime = time()
-      cursor.execute('''
-        SELECT
-          name, due, quantity, priority, item_id,
-          operation_id, customer_id, owner_id, minshipment, maxlateness,
-          category, subcategory, source, location_id, status
-        FROM demand
-        WHERE (status IS NULL OR status ='open' OR status = 'quote') %s
-        ''' % filter_and)
-      for i in cursor:
-        cnt += 1
-        try:
-          x = frepple.demand(
-            name=i[0], due=i[1], quantity=i[2], priority=i[3], status=i[14],
-            item=frepple.item(name=i[4]), category=i[10], subcategory=i[11],
-            source=i[12]
-            )
-          if i[5]:
-            x.operation = frepple.operation(name=i[5])
-          if i[6]:
-            x.customer = frepple.customer(name=i[6])
-          if i[7]:
-            x.owner = frepple.demand(name=i[7])
-          if i[8]:
-            x.minshipment = i[8]
-          if i[9] is not None:
-            x.maxlateness = i[9].total_seconds()
-          if i[13]:
-            x.location = frepple.location(name=i[13])
-        except Exception as e:
-          print("Error:", e)
-      print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))

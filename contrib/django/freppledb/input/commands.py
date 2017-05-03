@@ -19,11 +19,9 @@ from time import time
 from datetime import datetime
 
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.utils.translation import ugettext_lazy as _
 
 from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.common.models import Parameter
 from freppledb.input.models import Resource, Item
 
 
@@ -965,7 +963,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
 
     with connections[database].chunked_cursor() as cursor:
       if 'supply' in os.environ:
-        confirmed_filter = " and operationplan.status = 'confirmed'"
+        confirmed_filter = " and operationplan.status in ('confirmed', 'approved')"
       else:
         confirmed_filter = ""
       cnt_mo = 0

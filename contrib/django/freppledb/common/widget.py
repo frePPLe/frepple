@@ -125,7 +125,6 @@ Dashboard.register(NewsWidget)
 
 class RecentActionsWidget(Widget):
   name = "recent_actions"
-  #. Translators: Translation included with Django
   title = _("My Actions")
   tooltip = _("Display a list of the entities you recently changed")
   asynchronous = False

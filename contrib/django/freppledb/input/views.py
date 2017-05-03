@@ -1323,9 +1323,13 @@ class PurchaseOrderList(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    return PurchaseOrder.objects.all().extra(select={
+    return PurchaseOrder.objects.all().extra(
+      tables=["itemsupplier"],
+      where=['operationplan.supplier_id = itemsupplier.supplier_id and operationplan.item_id = itemsupplier.item_id'],
+      select={
       'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg), '')",
-      'total_cost': "cost*quantity"
+      'total_cost': "coalesce(itemsupplier.cost, item.cost) * quantity",
+      'unit_cost': "coalesce(itemsupplier.cost, item.cost)"
       })
 
   rows = (
@@ -1341,7 +1345,7 @@ class PurchaseOrderList(GridReport):
     GridFieldChoice('status', title=_('status'),
       choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
       ),
-    GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldCurrency('unit_cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),

@@ -21,10 +21,10 @@
       <div class="panel" id="attributes-operationplan" data="operationplan" showoperationplan-drv style="margin-bottom: 50px;"></div>
     </div>
     <div class="col-md-6">
-      <div class="panel" id="attributes-operationproblems" data="operationplan" showproblemspanel-drv></div>
-      <div class="panel" id="attributes-operationresources" data="operationplan" showresourcespanel-drv></div>
-      <div class="panel" id="attributes-operationflowplans" data="operationplan" showbufferspanel-drv></div>
-      <div class="panel" id="attributes-operationdemandpegging" data="operationplan" showoperationpeggingpanel-drv></div>
+      <div class="panel" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1" data="operationplan" showproblemspanel-drv></div>
+      <div class="panel" id="attributes-operationresources" data-ng-if="operationplan.id !== -1" data="operationplan" showresourcespanel-drv></div>
+      <div class="panel" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1" data="operationplan" showbufferspanel-drv></div>
+      <div class="panel" id="attributes-operationdemandpegging" data-ng-if="operationplan.id !== -1" data="operationplan" showoperationpeggingpanel-drv></div>
     </div>
   </div>
   <!-- row end  -->

@@ -4,6 +4,7 @@
 }
 #opplan-attributes-drvtable tbody tr td {
     border: 0px;
+    vertical-align: middle;
 }
 #opplan-attributes-drvtable thead tr td {
   border-bottom-width: 1px;
@@ -25,68 +26,85 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td><b style="text-transform: capitalize;" translate>identifier</b></td>
+    <tr data-ng-if="!operationplan.id === -1">
+      <td><b style="text-transform: capitalize;">{{'identifier'|translate}}</b></td>
       <td id="idrow">{{(operationplan.hasOwnProperty('id') && operationplan.id > -1)?operationplan.id:''}}</td>
     </tr>
-    <tr>
-      <td><b style="text-transform: capitalize;" translate>reference</b></td>
+    <tr data-ng-if="!operationplan.id === -1">
+      <td><b style="text-transform: capitalize;">{{'reference'|translate}}</b></td>
       <td id="referencerow">{{operationplan.reference}}</td>
     </tr>
-    <tr data-ng-if="operationplan.item  !== null">
+    <tr data-ng-if="operationplan.item  !== null && operationplan.id !== -1">
       <td><b style="text-transform: capitalize;" translate>item</b></td>
       <td id="itemrow">{{operationplan.item}}</td>
     </tr>
-    <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined">
-      <td><b style="text-transform: capitalize;" translate>supplier</b></td>
+    <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize;">{{'supplier'|translate}}</b></td>
       <td id="supplierrow">{{operationplan.supplier}}</td>
     </tr>
-    <tr ng-if="operationplan.location !== null">
-      <td><b style="text-transform: capitalize;" translate>location</b></td>
+    <tr ng-if="operationplan.location !== null && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize;">{{'location'|translate}}</b></td>
       <td id="locationrow">{{operationplan.location}}</td>
     </tr>
-    <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined">
-      <td><b style="text-transform: capitalize;" translate>origin</b></td>
+    <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize;">{{'origin'|translate}}</b></td>
       <td id="originrow">{{operationplan.origin}}</td>
     </tr>
-    <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined">
-      <td><b style="text-transform: capitalize;" translate>destination</b></td>
+    <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize;">{{'destination'|translate}}</b></td>
       <td id="destinationrow">{{operationplan.destination}}</td>
     </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>start</b></td>
+      <td><b style="text-transform: capitalize;">{{'start date'|translate}}</b>&nbsp;
+        <small data-ng-if="operationplan.colmodel.startdate">({{ operationplan.colmodel.startdate.type|translate }})</small>
+      </td>
       <td id="startrow">
         <input id="setStart" type="text" size="9" class="vDateField form-control" value="{{operationplan.start|formatdate}}" disabled>
       </td>
     </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>end</b></td>
+      <td><b style="text-transform: capitalize;">{{'end date'|translate}}</b>&nbsp;
+        <small data-ng-if="operationplan.colmodel.enddate">({{ operationplan.colmodel.enddate.type|translate }})</small>
+      </td>
       <td id="endrow">
         <input id="setEnd" type="text" size="9" class="vDateField form-control" value="{{operationplan.end|formatdate}}" disabled>
       </td>
     </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>quantity</b></td>
+      <td><b style="text-transform: capitalize;">{{'quantity'|translate}}</b>&nbsp;
+        <small data-ng-if="operationplan.colmodel.quantity">({{ operationplan.colmodel.quantity.type|translate }})</small>
+      </td>
       <td id="quantityrow">
         <input id="setQuantity" class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" disabled>
       </td>
     </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>criticality</b></td>
+      <td><b style="text-transform: capitalize;">{{'criticality'|translate}}</b>&nbsp;
+        <small data-ng-if="operationplan.colmodel.criticality">({{ operationplan.colmodel.criticality.type|translate }})</small>
+      </td>
       <td id="criticalityrow">{{operationplan.criticality}}</td>
     </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>delay</b></td>
+      <td><b style="text-transform: capitalize;">{{'delay'|translate}}</b>&nbsp;
+        <small data-ng-if="operationplan.colmodel.delay">({{ operationplan.colmodel.delay.type|translate }})</small>
+      </td>
       <td id="delayrow">{{(operationplan.delay / 86400)|number:0}}</td>
     </tr>
+    <tr data-ng-repeat="(key, value) in operationplan.colmodel" 
+      data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color'].indexOf(key) == -1">
+      <td><b style="text-transform: capitalize;">{{value.label|translate}}</b>&nbsp;
+        <small>({{ value.type|translate }})</small>
+      </td>
+      <td>{{(operationplan[key])|number:0}}</td>
+    </tr>
     <tr>
-      <td><b style="text-transform: capitalize;" translate>status</b></td>
+      <td><b style="text-transform: capitalize;">{{'status'|translate}}</b></td>
       <td id="statusrow">
         <div class="btn-group" role="group">
-          <button id="proposedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled" translate>proposed</button>
-          <button id="approvedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled" translate>approved</button>
-          <button id="confirmedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled" translate>confirmed</button>
-          <button id="closedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled" translate>closed</button>
+          <button id="proposedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled">{{'proposed'|translate}}</button>
+          <button id="approvedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled">{{'approved'|translate}}</button>
+          <button id="confirmedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled">{{'confirmed'|translate}}</button>
+          <button id="closedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled">{{'closed'|translate}}</button>
         </div>
       </td>
     </tr>

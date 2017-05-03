@@ -25,6 +25,7 @@ operationplanCtrl.$inject = ['$scope', 'OperationPlan'];
 function operationplanCtrl($scope, OperationPlan) {
   $scope.test = "angular controller";
   $scope.operationplan = new OperationPlan();
+  $scope.aggregatedopplan = null;
 
   // This template function will pass the values to the grid, function(id,column,value)
   // will set the row as "edited", and trigger "save undo" buttons.
@@ -34,7 +35,7 @@ function operationplanCtrl($scope, OperationPlan) {
   if (typeof $scope.displayongrid === 'function') {
     //watch is only needed if we can update the grid
     $scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], function(newValue, oldValue) {
-      if (oldValue[0] === newValue[0] && typeof oldValue[0] !== 'undefined') { //is a change to the current operationplan
+      if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') { //is a change to the current operationplan
 
         if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1] !== newValue[1]) {
           $scope.displayongrid($scope.operationplan.id,"startdate",$scope.operationplan.start);
@@ -52,6 +53,108 @@ function operationplanCtrl($scope, OperationPlan) {
       oldValue[0] = newValue[0];
     }); //end watchGroup
   }
+
+  function processAggregatedInfo(selectionData, colModel) {
+    console.log(selectionData);
+    console.log(colModel);
+    var aggColModel = [];
+    var aggregatedopplan = {};
+    aggregatedopplan.colmodel = {};
+    var temp = 0;
+    angular.forEach (colModel, function(value,key) {
+      if (value.hasOwnProperty('summaryType')) {
+        aggColModel.push([key, value.name, value.summaryType, value.formatter]);
+        aggregatedopplan[value.name] = null;
+        aggregatedopplan.colmodel[value.name] = {'type': value.summaryType, 'label': value.label};
+      }
+    });
+    //console.log(aggColModel);
+    angular.forEach (selectionData, function(opplan) {
+      angular.forEach (aggColModel, function(field) {
+        if (field[2] === 'sum') {// console.log(field[1],parseFloat(opplan[field[1]]));
+          if (!isNaN(parseFloat(opplan[field[1]]))) {
+            if (aggregatedopplan[field[1]] === null) {
+              aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
+            } else {
+              aggregatedopplan[field[1]] += parseFloat(opplan[field[1]]);
+            }
+          }
+        } else if (field[2] === 'max') {
+
+          if ( ['color','number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") { //console.log(opplan[field[1]]);
+            if (parseFloat(opplan[field[1]])) {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
+              } else {
+                aggregatedopplan[field[1]] = Math.max(aggregatedopplan[field[1]], parseFloat(opplan[field[1]]));
+              }
+            }
+          } else if (field[3] === 'duration') { //console.log(field[1],opplan[field[1]],field[3]);
+            temp = new moment.duration(opplan[field[1]]).asSeconds();
+            if (temp._d !== 'Invalid Date') {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = temp;
+              } else {
+                aggregatedopplan[field[1]] = Math.max(aggregatedopplan[field[1]], temp);
+              }
+            }
+          } else if (field[3] === 'date') {
+            temp = new moment(opplan[field[1]]);
+            if (temp._d !== 'Invalid Date') {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = temp;
+              } else {
+                aggregatedopplan[field[1]] = moment.max(aggregatedopplan[field[1]], temp);
+              }
+            }
+          }
+
+        } else if (field[2] === 'min') { //console.log(field[1],opplan[field[1]],field[3]);
+
+          if ( ['color','number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") {
+            //console.log(field[1],opplan[field[1]],field[3]);
+            temp = parseFloat(opplan[field[1]]);
+            if (!isNaN(temp)) {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = temp;
+              } else {
+                aggregatedopplan[field[1]] = Math.min(aggregatedopplan[field[1]], temp);
+              }
+              //console.log( Math.min(aggregatedopplan[field[1]], temp));
+            }
+          }  else if (field[3] === 'duration') { //console.log(field[1],opplan[field[1]],field[3]);
+            temp = new moment.duration(opplan[field[1]]).asSeconds();
+            if (temp._d !== 'Invalid Date') {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = temp;
+              } else {
+                aggregatedopplan[field[1]] = Math.min(aggregatedopplan[field[1]], temp);
+              }
+            }
+          } else if (field[3] === 'date') {
+            temp = new moment(opplan[field[1]]);
+            if (temp._d !== 'Invalid Date') {
+              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+                aggregatedopplan[field[1]] = temp;
+              } else {
+                aggregatedopplan[field[1]] = moment.min(aggregatedopplan[field[1]], temp);
+              }
+            }
+          }
+
+        }
+      });
+    });
+    $scope.operationplan = new OperationPlan();
+    aggregatedopplan.start = aggregatedopplan.startdate;
+    aggregatedopplan.end = aggregatedopplan.enddate;
+    aggregatedopplan.id = -1;
+    aggregatedopplan.type = selectionData[0].type;
+    $scope.$apply(function(){ $scope.operationplan.extend(aggregatedopplan); });
+
+    //console.log($scope.operationplan);
+  }
+  $scope.processAggregatedInfo = processAggregatedInfo;
 
   function displayInfo(row) {
     var rowid=(typeof row === 'undefined')?undefined:row.id;
@@ -87,9 +190,11 @@ function operationplanCtrl($scope, OperationPlan) {
       }
     }
 
-    $scope.operationplan.get(callback).catch(function (response) {
-      errorPopup(response.data);
-    });
+    if (typeof $scope.operationplan.id === 'undefined') {
+      $scope.$apply(function(){$scope.operationplan = new OperationPlan();});
+    } else {
+      $scope.operationplan.get(callback);
+    }
   }
   $scope.displayInfo = displayInfo;
 

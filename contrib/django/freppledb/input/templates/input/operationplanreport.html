@@ -88,48 +88,151 @@
 {% block tools %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block extra_grid %}
-afterEditCell: function(rowid, cellname, value, iRow, iCol){
-  if (rowid !== lastid) {
-    var row = jQuery("#grid").getRowData(rowid);
-    angular.element('#controller').scope().displayInfo(row);
-  }
-  return grid.afterEditCell(rowid, cellname, value, iRow, iCol);
-},
-beforeSelectRow: function(rowid,e){
+onCellSelect: function(rowid,iCol,cellcontent,e) { //console.log("onCellSelect");
+  var colModel = $(this).jqGrid ('getGridParam', 'colModel');
   var selection = $(this).jqGrid('getGridParam','selarrrow');
-  var row = '';
-  if (rowid === lastid && e.target.firstChild !== null) {
-    if (e.target.firstChild.name !== 'status') {
-      return true;
-    }
-  }
-  if (selection.includes("" + rowid)) {
-    var prev = selection.length - 1;
-    while (selection[prev] == rowid) {
-      --prev;
-      if (prev < 0) {
-        break;
+
+  var rowiddata = jQuery("#grid").getRowData(rowid);
+  if (typeof $("tr#" + rowid + " .edit-cell").children().first().val() !== 'undefined') {
+    if (typeof $("tr#" + rowid + " .edit-cell").children().first().attr("id") !== 'undefined') {
+      colname=$("tr#" + rowid + " .edit-cell").children().first().attr("id").split("_")[1];
+      if (typeof colname !== 'undefined') {
+        rowiddata[colname] = $("tr#" + rowid + " .edit-cell").children().first().val();
       }
     }
-    row = $(this).getRowData(selection[prev]);
-    angular.element('#controller').scope().displayInfo(prev >= 0 ? row : undefined);
   }
-  else if (rowid !== lastid) {
-    row = $(this).getRowData(rowid);
-    angular.element('#controller').scope().displayInfo(row);
-    lastid = rowid;
-  } else {
+
+  //selection = $(this).jqGrid('getGridParam','selarrrow');
+  var selectiondata = [];
+  var rowdata={};
+  var colname = "";
+  var editedval = "";
+  jQuery.each(selection , function(index,item){
+    rowdata = jQuery("#grid").getRowData(item);
+    editedval = $("#" + item + " .edit-cell").children().first().val();
+
+    if (typeof $("#" + item + " .edit-cell").children().first().val() !== 'undefined') {
+      if (typeof $("#" + item + " .edit-cell").children().first().attr("id") !== 'undefined') {
+        colname=$("#" + item + " .edit-cell").children().first().attr("id").split("_")[1];
+        if (typeof colname !== 'undefined') {
+          rowdata[colname] = $("#" + item + " .edit-cell").children().first().val();
+        }
+      }
+    }
+    selectiondata.push(rowdata);
+  });
+
+  if (selection.indexOf(rowid) === -1) { //console.log('not in selection');
+    selectiondata.push(rowiddata);
+    if ($(this).jqGrid ('getGridParam', 'multiselect')) {
+      if (cellcontent.indexOf('class="cbox"') > -1) { //console.log("clicking on selection checkbox");
+        //do nothing
+      } else { //console.log("clicking on random cell");
+        selection.push(rowid);
+        //$(this).jqGrid('setSelection', rowid, true);
+        $("#gview_grid tr#"+rowid+" .cbox").prop('checked',true);
+        $("#gview_grid tr#"+rowid).removeClass('success').addClass('success');
+      }
+    }
+
+    if (selectiondata.length > 1) { //console.log('multiple lines are selected');
+      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+    } else { //console.log('only the rowid line is selected');
+      angular.element('#controller').scope().displayInfo(rowiddata);
+    }
+  } else {  //console.log('rowid is in selection');
+
+    if (cellcontent.indexOf('class="cbox"') > -1) { //console.log("clicking on selection checkbox");
+
+  } else { //console.log("clicking on random cell");
+      $("#gview_grid tr#"+rowid+" .cbox").prop('checked',false);
+      $("#gview_grid tr#"+rowid).removeClass('success').removeClass('success');
+      selection.splice(selection.indexOf(rowid),1);
+    }
+
+    selectiondata=[];
+    jQuery.each(selection , function(index,item){
+      rowdata = jQuery("#grid").getRowData(item);
+      editedval = $("#" + item + " .edit-cell").children().first().val();
+
+      if (typeof $("#" + item + " .edit-cell").children().first().val() !== 'undefined') {
+        if ($("#" + item).hasClass('success')) {
+          //console.log(item);
+          if (typeof $("#" + item + " .edit-cell").children().first().attr("id") !== 'undefined') {
+            colname=$("#" + item + " .edit-cell").children().first().attr("id").split("_")[1];
+            if (typeof colname !== 'undefined') {
+              rowdata[colname] = $("#" + item + " .edit-cell").children().first().val();
+            }
+          }
+        }
+      }
+      if (item !== rowid) {selectiondata.push(rowdata);}
+    });
+    //console.log(rowid);
+    //keep this rowdata if being edited
+    if (typeof $("tr#" + rowid + " .edit-cell").children().first().attr("id") !== 'undefined') {
+      //console.log(rowid);
+      colname=$("tr#" + rowid + " .edit-cell").children().first().attr("id").split("_")[1];
+      if (typeof colname !== 'undefined') {
+        //console.log('keep it selected');
+        //console.log(selection, rowid, rowiddata);
+        //if (selection.indexOf(rowid) === -1) {
+          selectiondata.push(rowiddata);
+          //selection.push(rowid);
+        //}
+        //$("#grid").jqGrid('setSelection', rowid, true);
+        $("#gview_grid tr#"+rowid+" .cbox").prop('checked',true);
+        $("#gview_grid tr#"+rowid).removeClass('success').addClass('success');
+      }
+    }
+    //console.log(selection);
+    //console.log(selectiondata);
+
+    if (selectiondata.length > 1) { //console.log('multiple lines will be shown');
+      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+    } else if (selectiondata.length === 1) { //console.log('only the remainder row will be shown');
+      angular.element('#controller').scope().displayInfo(selectiondata[0]);
+    } else { //console.log('nothing to show');
+      angular.element('#controller').scope().displayInfo(undefined);
+    }
+
+  }
+
+},
+onSelectAll: function(aRowids,status){ //console.log('onSelectAll');
+  var selection = $(this).jqGrid('getGridParam','selarrrow');
+  var selectiondata = [];
+  jQuery.each(selection , function(index,item){
+    selectiondata.push(jQuery("#grid").getRowData(item));
+  });
+  if (status === true) {
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  } else { //console.log('else');
     angular.element('#controller').scope().displayInfo(undefined);
-    lastid = '';
   }
-  return true;
 },
-onSelectAll: function(aRowids){
-  angular.element('#controller').scope().displayInfo(undefined);
-  lastid = '';
-},
-beforeSubmitCell: function(rowid, cellname, value, iRow, iCol) {
-  angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
+beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {//console.log('beforesavecell');
+  $("#grid").jqGrid('setSelection', rowid, true);
+  var selection = $(this).jqGrid('getGridParam','selarrrow');
+  var selectiondata = [];
+  var temprow = jQuery("#grid").getRowData(rowid);
+
+  jQuery.each(selection , function(index,item){ //console.log(item, item === rowid);
+    if (item === rowid) { //console.log('update cell data');
+      //update temprow
+      temprow[cellname] = value;
+
+      selectiondata.push(temprow);
+    } else {
+      selectiondata.push(jQuery("#grid").getRowData(item));
+    }
+  });
+
+  if (selection.length > 1) { //console.log(selectiondata);
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  } else {
+    angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
+  }
 },
 {% endblock %}
 

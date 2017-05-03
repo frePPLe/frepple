@@ -55,8 +55,8 @@ function operationplanCtrl($scope, OperationPlan) {
   }
 
   function processAggregatedInfo(selectionData, colModel) {
-    console.log(selectionData);
-    console.log(colModel);
+    //console.log(selectionData);
+    //console.log(colModel);
     var aggColModel = [];
     var aggregatedopplan = {};
     aggregatedopplan.colmodel = {};
@@ -81,7 +81,7 @@ function operationplanCtrl($scope, OperationPlan) {
           }
         } else if (field[2] === 'max') {
 
-          if ( ['color','number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") { //console.log(opplan[field[1]]);
+          if ( ['color','number','currency'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") { //console.log(opplan[field[1]]);
             if (parseFloat(opplan[field[1]])) {
               if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
                 aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);

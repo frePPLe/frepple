@@ -324,7 +324,7 @@ class UserList(GridReport):
 
   rows = (
     #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True, formatter='detail', extra='"role":"common/user"'),
+    GridFieldInteger('id', title=_('id'), key=True, formatter='admin', extra='"role":"common/user"'),
     #. Translators: Translation included with Django
     GridFieldText('username', title=_('username')),
     #. Translators: Translation included with Django

@@ -247,9 +247,7 @@ class ModelTabs(Node):
       result.append('</ul></div></div>')
       return '\n'.join(result)
     except:
-      if settings.TEMPLATE_DEBUG:
-        raise
-      return ''
+      raise
 
 
 def get_modeltabs(parser, token):

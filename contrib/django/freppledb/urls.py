@@ -26,7 +26,7 @@ from freppledb.admin import data_site
 
 urlpatterns = [
   
-  # Kept for backward compatibility - redirect /data/ to /
+  # Redirect admin index page /data/ to /
   url(r'^data/$', RedirectView.as_view(url='/')),
 
   # Handle browser icon and robots.txt

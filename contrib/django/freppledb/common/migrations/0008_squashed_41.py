@@ -17,10 +17,7 @@
 from datetime import datetime
 
 from django.db import migrations, models
-import django.contrib.auth.models
 import freppledb.common.fields
-import django.core.validators
-import django.utils.timezone
 from django.conf import settings
 
 
@@ -45,6 +42,7 @@ class Migration(migrations.Migration):
     replaces = [('common', '0002_defaultuser'), ('common', '0003_wizard'), ('common', '0006_permission_names'), ('common', '0007_preferences')]
 
     dependencies = [
+      ('common', '0001_initial'),
       ('contenttypes', '0002_remove_content_type_name'),
       ('auth', '0006_require_contenttypes_0002'),
     ]

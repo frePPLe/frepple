@@ -324,5 +324,4 @@ if DEBUG:
   sys.modules['djangosettings'] = module
 
 # Some Django settings we don't like to be overriden
-TEMPLATE_DEBUG = DEBUG
 MANAGERS = ADMINS

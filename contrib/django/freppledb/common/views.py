@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.core.urlresolvers import reverse, resolve
 from django.db import connections, transaction
-from django.template import RequestContext, loader, TemplateDoesNotExist
+from django.template import loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
@@ -90,7 +90,7 @@ def handler500(request):
     template = loader.get_template("500.html")
   except TemplateDoesNotExist:
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
-  return HttpResponseServerError(template.render(RequestContext(request)))
+  return HttpResponseServerError(template.render({}, request))
 
 
 ###############################################

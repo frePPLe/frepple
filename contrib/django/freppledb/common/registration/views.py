@@ -1,10 +1,27 @@
+#
+# Copyright (C) 2007-2017 by frePPLe bvba
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template import loader
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 from django.conf import settings
 from django.views.generic import *
@@ -16,7 +33,7 @@ from django.contrib.auth import get_user_model
 
 
 class ResetPasswordRequestView(FormView):
-  template_name = "registration/test_template.html"    # code for template is given below the view's code
+  template_name = "registration/forgotpassword_form.html"    # code for template is given below the view's code
   success_url = '/data/login/'
   form_class = PasswordResetRequestForm
 
@@ -54,15 +71,25 @@ class ResetPasswordRequestView(FormView):
               'token': default_token_generator.make_token(user),
               'protocol': 'http',
               }
-          subject_template_name = 'registration/password_reset_subject.txt'
-          # copied from django/contrib/admin/templates/registration/password_reset_subject.txt to templates directory
-          email_template_name = 'registration/password_reset_email.html'
-          # copied from django/contrib/admin/templates/registration/password_reset_email.html to templates directory
-          subject = loader.render_to_string(subject_template_name, c)
+          subject = loader.render_to_string('registration/password_reset_subject.txt', c)
           # Email subject *must not* contain newlines
           subject = ''.join(subject.splitlines())
-          email = loader.render_to_string(email_template_name, c)
-          send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+          from_email = settings.DEFAULT_FROM_EMAIL
+          message_txt = loader.render_to_string('registration/password_reset_email.txt', c)
+
+          email_message = EmailMultiAlternatives(
+            subject, message_txt,
+            from_email, [user.email]
+            )
+
+        #  send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+          try:
+            message_html = loader.render_to_string('registration/password_reset_email.html', c)
+          except TemplateDoesNotExist:
+            pass
+          else:
+            email_message.attach_alternative(message_html, 'text/html')
+          email_message.send()
         result = self.form_valid(form)
         messages.success(request, 'An email has been sent to ' + data + ". Please check its inbox to continue reseting password.")
         return result
@@ -85,13 +112,25 @@ class ResetPasswordRequestView(FormView):
               'token': default_token_generator.make_token(user),
               'protocol': 'http',
               }
-          subject_template_name = 'registration/password_reset_subject.txt'
-          email_template_name = 'registration/password_reset_email.html'
-          subject = loader.render_to_string(subject_template_name, c)
+          subject = loader.render_to_string('registration/password_reset_subject.txt', c)
           # Email subject *must not* contain newlines
           subject = ''.join(subject.splitlines())
-          email = loader.render_to_string(email_template_name, c)
-          send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+          from_email = settings.DEFAULT_FROM_EMAIL
+          message_txt = loader.render_to_string('registration/password_reset_email.txt', c)
+
+          email_message = EmailMultiAlternatives(
+            subject, message_txt,
+            from_email, [user.email]
+            )
+
+        #  send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+          try:
+            message_html = loader.render_to_string('registration/password_reset_email.html', c)
+          except TemplateDoesNotExist:
+            pass
+          else:
+            email_message.attach_alternative(message_html, 'text/html')
+          email_message.send()
         result = self.form_valid(form)
         messages.success(request, 'Email has been sent to ' + data + "'s email address. Please check its inbox to continue reseting password.")
         return result
@@ -103,7 +142,7 @@ class ResetPasswordRequestView(FormView):
 
 
 class PasswordResetConfirmView(FormView):
-  template_name = "registration/test_template.html"
+  template_name = "registration/forgotpassword_form.html"
   success_url = '/'
   form_class = SetPasswordForm
 

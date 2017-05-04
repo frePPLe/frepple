@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2007-2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,7 @@ import freppledb.common.serializers
 import freppledb.common.dashboard
 
 from freppledb.common.api.views import APIIndexView
+from freppledb.common.registration.views import ResetPasswordRequestView, PasswordResetConfirmView
 
 
 # Automatically add these URLs when the application is installed
@@ -32,7 +33,7 @@ urlpatterns = [
 
   # Cockpit screen
   url(r'^$', freppledb.common.views.cockpit, name='cockpit'),
-  
+
   # Wizard screen
   url(r'^wizard/$', freppledb.common.views.wizard, name='wizard'),
 
@@ -75,5 +76,9 @@ urlpatterns = [
   url(r'^api/$', APIIndexView),
 
   url(r'^about/$', freppledb.common.views.AboutView, name="about"),
-  
+
+  # Forgotten password
+  url(r'^data/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
+  url(r'^data/reset_password/$', ResetPasswordRequestView.as_view(), name="reset_password"),
+
   ]

@@ -357,7 +357,7 @@ jQuery.extend($.fn.fmatter, {
     }
     return result;
   },
-  
+
   detail : function(cellvalue, options, rowdata) {
     var result = cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {
@@ -2055,7 +2055,7 @@ $(function() {
         if (data.value === null)
           return '<span><p style="margin-top: 5px; margin-bottom: 1px;">'+data.label+'</p><li  role="separator" class="divider"></li></span>';
         else
-          return '<li><a href="'+ url_prefix + data.url + admin_escape(data.value) + '/" >' + data.value + '</a></li>';
+          return '<li><a style="display: block" href="'+ url_prefix + data.url + admin_escape(data.value) + '/" >' + data.value + '</a></li>';
       },
     }
   });

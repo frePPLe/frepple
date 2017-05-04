@@ -347,6 +347,17 @@ jQuery.extend($.fn.fmatter, {
     return (sign*seconds).toFixed(3);
   },
 
+  admin : function(cellvalue, options, rowdata) {
+    var result = cellvalue + "<a href='/data/" + options.colModel.role + "/key/change/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {
+      return '';
+    }
+    if (options['colModel']['popup'] || rowdata.showdrilldown === '0') {
+      return cellvalue;
+    }
+    return result;
+  },
+  
   detail : function(cellvalue, options, rowdata) {
     var result = cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {

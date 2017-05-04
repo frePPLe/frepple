@@ -112,10 +112,13 @@ $(function() {
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);
 	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
 	}{% endif %}
-  $("#grid").on('input', function() {
-	  $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-	  $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-	  });
+  $("#grid").on('input', function(event) {
+    // to prevent firefox from triggering save/undo on checkbox select
+    if (!$(event.target).parent().hasClass('td_cbox')) {
+      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    }
+	});
 
 	$(window).bind('resize', function() {
     var h = $(window).height() - $("#grid").offset().top - 63;

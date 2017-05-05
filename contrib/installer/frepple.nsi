@@ -130,6 +130,7 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "Japanese"
 !insertmacro MUI_LANGUAGE "Portuguese"
 !insertmacro MUI_LANGUAGE "PortugueseBR"
+!insertmacro MUI_LANGUAGE "Russian"
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_LANGUAGE "TradChinese"
@@ -430,6 +431,9 @@ Section -Post
       Goto ok2
     StrCmp $6 "Brazilian Portuguese" 0 +3
       StrCpy $6 "pt-br"
+      Goto ok2
+    StrCmp $6 "Russian" 0 +3
+      StrCpy $6 "ru"
       Goto ok2
     StrCmp $6 "Simplified Chinese" 0 +3
       StrCpy $6 "zh_cn"

@@ -121,7 +121,7 @@ class Command(BaseCommand):
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
         for ifile in os.listdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-          if not ifile.endswith('.csv') and not ifile.endswith('.csv.gz'):
+          if not ifile.lower().endswith('.csv') and not ifile.lower().endswith('.csv.gz'):
             continue
           filename0 = ifile.split('.')[0]
 
@@ -381,7 +381,7 @@ class Command(BaseCommand):
       # Detect the encoding of the data by scanning the BOM.
       # Skip the BOM header if it is found.
     
-      if datafile.endswith(".gz"):
+      if datafile.lower().endswith(".gz"):
         file_open = gzip.open
       else:
         file_open = open

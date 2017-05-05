@@ -109,14 +109,18 @@ class Command(BaseCommand):
     # Validate the arguments
     destinationscenario = None
     try:
-      task.arguments = "%s %s" % (options['source'], options['destination'])
-      task.save()
       source = options['source']
+      destination = options['destination']
+      task.arguments = "%s %s" % (source, destination)
+      if options['description']:
+        task.arguments += '--description="%s"' % options['description'].replace('"', '\\"')
+      if force:
+        task.arguments += " --force"
+      task.save()
       try:
         sourcescenario = Scenario.objects.get(pk=source)
       except:
         raise CommandError("No source database defined with name '%s'" % source)
-      destination = options['destination']
       try:
         destinationscenario = Scenario.objects.get(pk=destination)
       except:

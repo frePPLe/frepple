@@ -15,15 +15,16 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import logging
-import time
 from datetime import datetime, timedelta
+import logging
+import os
+import time
 from threading import Thread
 
-from django.db import DEFAULT_DB_ALIAS
+from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS, connections
 
 from freppledb import VERSION
 from freppledb.common.models import Parameter
@@ -80,11 +81,17 @@ class Command(BaseCommand):
 
 
   def handle(self, *args, **options):
+    
     # Pick up the options
     database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
     continuous = options['continuous']
+
+    # Use the test database if we are running the test suite
+    if 'FREPPLE_TEST' in os.environ:
+      connections[database].close()
+      settings.DATABASES[database]['NAME'] = settings.DATABASES[database]['TEST']['NAME']
 
     # Check if a worker already exists
     if checkActive(database):
@@ -113,32 +120,25 @@ class Command(BaseCommand):
         # A
         if task.name == 'generate plan':
           kwargs = {}
-          for i in task.arguments.split():
-            j = i.split('=')
-            if len(j) > 1:
-              kwargs[j[0][2:]] = j[1]
-            else:
-              kwargs[j[0][2:]] = True
+          if task.arguments:
+            for i in task.arguments.split():
+              j = i.split('=')
+              if len(j) > 1:
+                kwargs[j[0][2:]] = j[1]
+              else:
+                kwargs[j[0][2:]] = True
           if 'background' in kwargs:
             background = True
           management.call_command('frepple_run', database=database, task=task.id, **kwargs)
-        # B
-        elif task.name == 'generate model':
-          args = {}
-          for i in task.arguments.split():
-            key, val = i.split('=')
-            args[key[2:]] = val
-          management.call_command('frepple_flush', database=database)
-          management.call_command('frepple_createmodel', database=database, task=task.id, verbosity=0, **args)
         # C
         elif task.name == 'empty database':
           # Erase the database contents
-          args = {}
+          kwargs = {}
           if task.arguments:
             for i in task.arguments.split():
               key, val = i.split('=')
-              args[key[2:]] = val
-          management.call_command('frepple_flush', database=database, task=task.id, **args)
+              kwargs[key[2:]] = val
+          management.call_command('frepple_flush', database=database, task=task.id, **kwargs)
         # D
         elif task.name == 'load dataset':
           args = task.arguments.split()
@@ -146,27 +146,29 @@ class Command(BaseCommand):
         # E
         elif task.name == 'copy scenario':
           args = task.arguments.split()
-          management.call_command('frepple_copy', args[0], args[1], force=True, task=task.id)
+          management.call_command('frepple_copy', *args, task=task.id)
         # F
         elif task.name == 'backup database':
           management.call_command('frepple_backup', database=database, task=task.id)
         # G
         elif task.name == 'generate buckets':
           args = {}
-          for i in task.arguments.split():
-            key, val = i.split('=')
-            args[key[2:]] = val
+          if task.arguments:
+            for i in task.arguments.split():
+              key, val = i.split('=')
+              args[key[2:]] = val
           management.call_command('frepple_createbuckets', database=database, task=task.id, **args)
         # J
         elif task.name == 'Openbravo import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-          args = {}
-          for i in task.arguments.split():
-            key, val = i.split('=')
-            args[key[2:]] = val
-          management.call_command('openbravo_import', database=database, task=task.id, verbosity=0, **args)
+          kwargs = {}
+          if task.arguments:
+            for i in task.arguments.split():
+              key, val = i.split('=')
+              kwargs[key[2:]] = val
+          management.call_command('openbravo_import', database=database, task=task.id, verbosity=0, **kwargs)
         # K
         elif task.name == 'Openbravo export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-          if '--filter' in task.arguments:
+          if task.arguments and '--filter' in task.arguments:
             management.call_command('openbravo_export', database=database, task=task.id, verbosity=0, filter=True)
           else:
             management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)

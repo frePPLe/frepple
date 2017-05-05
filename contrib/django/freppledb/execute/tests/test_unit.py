@@ -15,7 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import base64
+import json
 import os
+from time import sleep
 
 from django.conf import settings
 from django.core import management
@@ -36,7 +39,10 @@ class execute_with_commands(TransactionTestCase):
   def setUp(self):
     # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
-
+    param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
+    param.value = 'false'
+    param.save()
+    
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
 
@@ -200,3 +206,77 @@ class execute_simulation(TransactionTestCase):
       "Some demands weren't shipped"
       )
     # TODO add comparison with initial_planned_late
+
+
+@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
+class remote_commands(TransactionTestCase):
+  
+  fixtures = ["demo"]
+
+  def setUp(self):
+    # Make sure the test database is used
+    os.environ['FREPPLE_TEST'] = "YES"
+    param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
+    param.value = 'false'
+    param.save()
+    
+  def tearDown(self):
+    del os.environ['FREPPLE_TEST']
+
+  def test_remote_command(self):
+    # Create a header for basic authentication
+    headers = {
+      'HTTP_AUTHORIZATION': 'Basic ' + base64.b64encode('admin:admin'.encode()).decode()
+      }
+    
+    # Run a plan
+    response = self.client.post(
+      '/execute/api/frepple_run/', 
+      {'constraint': 1, 'plantype': 1},
+      **headers
+      )
+    self.assertEqual(response.status_code, 200)
+    taskinfo = json.loads(response.content.decode())
+    taskid = taskinfo['taskid']
+    self.assertEqual(taskid, 1)
+    
+    # Wait 10 seconds for the plan the finish
+    cnt = 0
+    while cnt <= 10: 
+      response = self.client.get(
+        '/execute/api/status/?id=%s' % taskid, 
+        **headers
+        )
+      self.assertEqual(response.status_code, 200)
+      taskinfo = json.loads(response.content.decode())
+      if taskinfo[str(taskid)]['status'] == "Done":
+        break
+      sleep(1)
+      cnt += 1
+    self.assertLess(cnt, 10, "Running task taking too long")
+    
+    # Copy a plan
+    response = self.client.post(
+      '/execute/api/frepple_flush/',
+      {},
+      **headers
+      )
+    self.assertEqual(response.status_code, 200)
+    taskinfo = json.loads(response.content.decode())
+    taskid = taskinfo['taskid']
+    self.assertEqual(taskid, 2)
+    
+    # Wait 10 seconds for the flush the finish
+    cnt = 0
+    while cnt <= 10: 
+      response = self.client.get(
+        '/execute/api/status/?id=%s' % taskid, 
+        **headers
+        )
+      self.assertEqual(response.status_code, 200)
+      taskinfo = json.loads(response.content.decode())
+      if taskinfo[str(taskid)]['status'] == "Done":
+        break
+      sleep(1)
+      cnt += 1
+    self.assertLess(cnt, 10, "Running task taking too long")

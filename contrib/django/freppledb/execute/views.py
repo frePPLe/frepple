@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
 import os
 import sys
 import re
@@ -30,13 +31,14 @@ from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, HttpResponse, StreamingHttpResponse
 from django.contrib import messages
 from django.utils.encoding import force_text
 
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.execute.models import Task
+from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
 from freppledb.common.report import exportWorkbook, importWorkbook
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
@@ -134,12 +136,42 @@ class TaskReport(GridReport):
       'fenceconstrained': constraint & 8,
       'scenarios': Scenario.objects.all(),
       'fixtures': fixtures,
+      'odoo': 'freppledb.odoo' in settings.INSTALLED_APPS,
       'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
       'planning_options': planning_options,
       'current_options': request.session.get('env', [ i[0] for i in planning_options ]),
       'filestoupload': filestoupload,
       'datafolderconfigured': 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]
       }
+
+
+@csrf_exempt
+@basicauthentication(allow_logged_in=True)
+def APITask(request, action):
+  try:
+    if action == 'status':
+      response = {}
+      args = request.GET.getlist('id')
+      if args:
+        tasks = Task.objects.all().using(request.database).filter(id__in=args)
+      else:
+        tasks = Task.objects.all().using(request.database).filter(finished__isnull=True)
+      for t in tasks:
+        response[t.id] = {
+          'name': t.name, 'submitted': str(t.submitted),
+          'started': str(t.started), 'finished': str(t.finished),
+          'arguments': t.arguments, 'status': t.status,
+          'message': t.message, 'user': t.user.username if t.user else None
+          }          
+    else:
+      task = wrapTask(request, action)
+      if task:
+        response = {'taskid': task.id, 'message': 'Successfully launched task'}
+      else:
+        response = {'message': "No task was launched"}
+  except Exception as e:
+    response = {'message': 'Exception launching task: %s' % e}
+  return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 @staff_member_required
@@ -190,9 +222,9 @@ def wrapTask(request, action):
       except:
         pass
     task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype'))
+    task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype', 1))
     env = []
-    for value in request.POST.getlist('optional'):
+    for value in request.POST.getlist('env'):
       env.append(value)
     if env:
       task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
@@ -206,14 +238,15 @@ def wrapTask(request, action):
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
     task = Task(name='empty database', submitted=now, status='Waiting', user=request.user)
-    if not request.POST.get('all'):
-      task.arguments = "--models=%s" % ','.join(request.POST.getlist('entities'))
+    models = ','.join(request.POST.getlist('models'))
+    if models:
+      task.arguments = "--models=%s" % models
     task.save(using=request.database)
   # D
   elif action == 'loaddata':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['datafile'])
+    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
@@ -222,9 +255,14 @@ def wrapTask(request, action):
       if not request.user.has_perm('auth.copy_scenario'):
         raise Exception('Missing execution privileges')
       source = request.POST.get('source', DEFAULT_DB_ALIAS)
+      destination = request.POST.getlist('destination')
+      force = request.POST.get('force', False)
       for sc in Scenario.objects.all():
-        if request.POST.get(sc.name, 'off') == 'on' and sc.status == 'Free':
-          task = Task(name='copy scenario', submitted=now, status='Waiting', user=request.user, arguments="%s %s" % (source, sc.name))
+        arguments = "%s %s" % (source, sc.name)
+        if force:
+          arguments += ' --force'
+        if request.POST.get(sc.name, 'off') == 'on' or sc.name in destination:
+          task = Task(name='copy scenario', submitted=now, status='Waiting', user=request.user, arguments=arguments)
           task.save()
     elif 'release' in request.POST:
       # Note: release is immediate and synchronous.
@@ -259,29 +297,39 @@ def wrapTask(request, action):
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
     task = Task(name='generate buckets', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--start=%s --end=%s --weekstart=%s" % (
-      request.POST['start'], request.POST['end'], request.POST['weekstart']
-      )
+    arguments = []
+    start = request.POST.get('start', None)
+    if start:
+      arguments.append("--start=%s" % start)
+    end = request.POST.get('start', None)
+    if end:
+      arguments.append("--end=%s" % end)
+    weekstart = request.POST.get('weekstart', None)
+    if weekstart:
+      arguments.append("--weekstart=%s" % weekstart)
+    if arguments:
+      task.arguments = " ".join(arguments)
     task.save(using=request.database)
   # H
   elif action == 'openbravo_import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
     task = Task(name='Openbravo import', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--delta=%s" % request.POST['delta']
+    delta = request.POST.get('delta', None)
+    if delta:
+      task.arguments = "--delta=%s" % delta
     task.save(using=request.database)
   # I
   elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
     task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
-    if 'filter_export' in request.POST:
+    if request.POST.get('filter', False):
       task.arguments = "--filter"
     task.save(using=request.database)
   # J
   elif action == 'odoo_import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
     task = Task(name='Odoo import', submitted=now, status='Waiting', user=request.user)
-    #task.arguments = "--filter"
     task.save(using=request.database)
   # M
   elif action == 'frepple_importfromfolder':
@@ -297,7 +345,7 @@ def wrapTask(request, action):
     task.save(using=request.database)
   else:
     # Task not recognized
-    raise Exception('Invalid launching task')
+    raise Exception("Invalid task name '%s'" % action)
 
   # Launch a worker process, making sure it inherits the right
   # environment variables from this parent

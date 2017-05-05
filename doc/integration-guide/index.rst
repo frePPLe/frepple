@@ -24,4 +24,5 @@ interaction with the frePPLe planning engine.
    odoo-connector
    openbravo-connector   
    batch-commands
+   remote-commands
    low-level-integration/index

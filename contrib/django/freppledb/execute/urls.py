@@ -30,5 +30,5 @@ urlpatterns = [
   url(r'^execute/cancel/(.+)/$', freppledb.execute.views.CancelTask, name="execute_cancel"),
   url(r'^execute/viewfile/(.+)$', freppledb.execute.views.ViewFile, name="execute_view_file"),
   url(r'^execute/logdownload/$', freppledb.execute.views.DownloadLogFile, name="execute_download_log"),
-
+  url(r'^execute/api/(.+)/$', freppledb.execute.views.APITask, name="execute_api"),
   ]

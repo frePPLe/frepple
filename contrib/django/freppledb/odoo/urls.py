@@ -15,15 +15,14 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from freppledb.odoo.views import Upload
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = patterns(
-  '',  # Prefix
+urlpatterns = [
   # Model list reports, which override standard admin screens
   url(r'^odoo/upload/$', Upload, name="odoo_upload"),
-  )
+  ]

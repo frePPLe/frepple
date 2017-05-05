@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2007-2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -40,7 +40,7 @@ packages = [# Required for django standalone deployment
             'rest_framework_bulk', 'rest_framework_filters', 'markdown',
             # Added to package a more complete python library with frePPLe
             'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
-            'poplib', 'imaplib', 'telnetlib',
+            'poplib', 'imaplib', 'telnetlib', 'pytz',
             # Added for unicode and internationalization
             'encodings',
             # Added for cx_freeze binaries

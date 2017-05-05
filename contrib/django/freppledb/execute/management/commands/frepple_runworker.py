@@ -103,6 +103,7 @@ class Command(BaseCommand):
 
     # Process the queue
     logger.info("Worker starting to process jobs in the queue")
+    idle_loop_done = False
     while True:
       try:
         task = Task.objects.all().using(database).filter(status='Waiting').order_by('id')[0]
@@ -112,7 +113,15 @@ class Command(BaseCommand):
           time.sleep(5)
           continue
         else:
-          break
+          # Special case: we need to permit a single idle loop before shutting down 
+          # the worker. If we shut down immediately, a newly launched task could think
+          # that a work is already running - while it just shut down.
+          if idle_loop_done:            
+            break
+          else:            
+            idle_loop_done = True
+            time.sleep(5)
+            continue
       try:
         logger.info("starting task %d at %s" % (task.id, datetime.now()))
         background = False

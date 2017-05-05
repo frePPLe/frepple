@@ -1089,7 +1089,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
             opplan.demand = frepple.demand(name=i[14])
         except Exception as e:
           print("Error:", e)
-    with connections[database].chunked_cursor() as cursor:          
+    with connections[database].chunked_cursor() as cursor:
       cursor.execute('''
         SELECT
           operationplan.operation_id, operationplan.id, operationplan.quantity,
@@ -1201,3 +1201,15 @@ class loadOperationPlanResources(LoadTask):
         except Exception as e:
           print("Error:", e)
       print('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))
+
+
+@PlanTaskRegistry.register
+class PlanSize(LoadTask):
+
+  description = "Plan Size"
+  sequence = 120
+
+  @staticmethod
+  def run(database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+    frepple.printsize()

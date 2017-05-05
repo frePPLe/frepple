@@ -327,7 +327,7 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
       "start"
       ],
       stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-      creationflags=DETACHED_PROCESS
+      creationflags=CREATE_NO_WINDOW
       )
 
 cx_Logging.Info("Starting the web server")

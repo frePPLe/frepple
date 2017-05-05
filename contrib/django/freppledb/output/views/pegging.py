@@ -72,7 +72,7 @@ class ReportByDemand(GridReport):
       with dmd as (
         select
           due,
-          cast(json_array_elements(plan->'pegging')->>'opplan' as integer) opplan
+          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as integer) opplan
         from demand
         where name = %s
         )
@@ -135,9 +135,9 @@ class ReportByDemand(GridReport):
           row_number() over () as rownum, opplan, due, lvl, quantity
         from (select
           due,
-          cast(json_array_elements(plan->'pegging')->>'opplan' as integer) as opplan,
-          cast(json_array_elements(plan->'pegging')->>'level' as integer) as lvl,
-          cast(json_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
+          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as integer) as opplan,
+          cast(jsonb_array_elements(plan->'pegging')->>'level' as integer) as lvl,
+          cast(jsonb_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
           from demand
           where name = %s
           ) d1

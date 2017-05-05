@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2017 by frePPLe bvba
+# Copyright (C) 2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -18,13 +18,13 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template import loader
+from django.template import loader, TemplateDoesNotExist
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 
 from django.conf import settings
-from django.views.generic import *
+from django.views.generic import FormView
 from freppledb.common.registration.forms import PasswordResetRequestForm, SetPasswordForm
 from django.contrib import messages
 from freppledb.common.models import User
@@ -33,7 +33,7 @@ from django.contrib.auth import get_user_model
 
 
 class ResetPasswordRequestView(FormView):
-  template_name = "registration/forgotpassword_form.html"    # code for template is given below the view's code
+  template_name = "registration/forgotpassword_form.html"
   success_url = '/data/login/'
   form_class = PasswordResetRequestForm
 
@@ -69,7 +69,7 @@ class ResetPasswordRequestView(FormView):
               'uid': urlsafe_base64_encode(force_bytes(user.pk)),
               'user': user,
               'token': default_token_generator.make_token(user),
-              'protocol': 'http',
+              'protocol': 'https' if request.is_secure() else 'http'
               }
           subject = loader.render_to_string('registration/password_reset_subject.txt', c)
           # Email subject *must not* contain newlines
@@ -82,7 +82,6 @@ class ResetPasswordRequestView(FormView):
             from_email, [user.email]
             )
 
-        #  send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
           try:
             message_html = loader.render_to_string('registration/password_reset_email.html', c)
           except TemplateDoesNotExist:
@@ -91,7 +90,7 @@ class ResetPasswordRequestView(FormView):
             email_message.attach_alternative(message_html, 'text/html')
           email_message.send()
         result = self.form_valid(form)
-        messages.success(request, 'An email has been sent to ' + data + ". Please check its inbox to continue reseting password.")
+        messages.success(request, 'An email has been sent to ' + data + ". Please check your inbox to continue resetting your password.")
         return result
       result = self.form_invalid(form)
       messages.error(request, 'No user is associated with this email address')
@@ -110,7 +109,7 @@ class ResetPasswordRequestView(FormView):
               'uid': urlsafe_base64_encode(force_bytes(user.pk)),
               'user': user,
               'token': default_token_generator.make_token(user),
-              'protocol': 'http',
+              'protocol': 'https' if request.is_secure() else 'http'
               }
           subject = loader.render_to_string('registration/password_reset_subject.txt', c)
           # Email subject *must not* contain newlines
@@ -123,7 +122,6 @@ class ResetPasswordRequestView(FormView):
             from_email, [user.email]
             )
 
-        #  send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
           try:
             message_html = loader.render_to_string('registration/password_reset_email.html', c)
           except TemplateDoesNotExist:
@@ -132,7 +130,7 @@ class ResetPasswordRequestView(FormView):
             email_message.attach_alternative(message_html, 'text/html')
           email_message.send()
         result = self.form_valid(form)
-        messages.success(request, 'Email has been sent to ' + data + "'s email address. Please check its inbox to continue reseting password.")
+        messages.success(request, 'Email has been sent to ' + data + "'s email address. Please check your inbox to continue resetting your password.")
         return result
       result = self.form_invalid(form)
       messages.error(request, 'This username does not exist in the system.')

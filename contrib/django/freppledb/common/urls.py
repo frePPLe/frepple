@@ -78,7 +78,7 @@ urlpatterns = [
   url(r'^about/$', freppledb.common.views.AboutView, name="about"),
 
   # Forgotten password
-  url(r'^data/reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
-  url(r'^data/reset_password/$', ResetPasswordRequestView.as_view(), name="reset_password"),
+  url(r'^reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
+  url(r'^reset_password/$', ResetPasswordRequestView.as_view(), name="reset_password"),
 
   ]

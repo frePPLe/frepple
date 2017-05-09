@@ -23,10 +23,6 @@ import sys
 
 sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
 
-# Add default command lines
-if len(sys.argv) == 1:
-  sys.argv.append("py2exe")
-
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment
             'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
@@ -58,6 +54,7 @@ import freppledb
 import django_admin_bootstrapped
 import bootstrap3
 import rest_framework
+import pytz
 from distutils.sysconfig import get_python_lib
 data_files = [
   ('freppleservice.py', 'freppleservice.py'),
@@ -81,6 +78,19 @@ for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_frame
            os.path.join(targetdir, dirpath[root_path_length:], f),
            ))
 
+# Add some special data files into the zip archive
+zip_files = []
+for srcdir, targetdir in [ 
+  (os.path.join(pytz.__path__[0], "zoneinfo"), os.path.join("pytz", "zoneinfo")) 
+  ]:
+    root_path_length = len(srcdir) + 1
+    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
+      for f in filenames:
+        zip_files.append((
+             os.path.join(dirpath, f),
+             os.path.join(targetdir, dirpath[root_path_length:], f),
+             ))
+  
 # Run the cx_Freeze program
 cx_Freeze.setup(
   version = freppledb.VERSION.replace(".beta", ".0"),
@@ -99,6 +109,7 @@ cx_Freeze.setup(
       "excludes": excludes,
       "include_files": data_files,
       "include_msvcr": True,
+      "zip_includes": zip_files,
       },
     },
   executables = [

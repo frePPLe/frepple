@@ -166,6 +166,16 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
 
    .. image:: _images/winservice.png
 
+.. tip::
+
+  If you want to run frePPLe as a service and you use the PostgreSQL database
+  provided by the installer, you need to update the service such that it runs
+  with the same log on as the user that installed frePPLe.
+  
+  By default the service is registered to run using the local system account, 
+  which will not allow it to connect to the PostgreSQL database. You'll get a
+  server 500 error message in this case.
+
 #. **Open your browser http\://localhost:8000/**
 
    You can type in the URL manually or double click the system tray icon.

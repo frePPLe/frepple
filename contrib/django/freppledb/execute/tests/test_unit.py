@@ -30,7 +30,8 @@ from django.test.utils import override_settings
 import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, User
+
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_with_commands(TransactionTestCase):
@@ -42,7 +43,7 @@ class execute_with_commands(TransactionTestCase):
     param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
     param.value = 'false'
     param.save()
-    
+
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
 
@@ -210,7 +211,7 @@ class execute_simulation(TransactionTestCase):
 
 @override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class remote_commands(TransactionTestCase):
-  
+
   fixtures = ["demo"]
 
   def setUp(self):
@@ -219,7 +220,8 @@ class remote_commands(TransactionTestCase):
     param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
     param.value = 'false'
     param.save()
-    
+    User.objects.create_superuser('admin', 'your@company.com', 'admin')
+
   def tearDown(self):
     del os.environ['FREPPLE_TEST']
 
@@ -228,33 +230,34 @@ class remote_commands(TransactionTestCase):
     headers = {
       'HTTP_AUTHORIZATION': 'Basic ' + base64.b64encode('admin:admin'.encode()).decode()
       }
-    
+
     # Run a plan
     response = self.client.post(
-      '/execute/api/frepple_run/', 
+      '/execute/api/frepple_run/',
       {'constraint': 1, 'plantype': 1},
       **headers
       )
+
     self.assertEqual(response.status_code, 200)
     taskinfo = json.loads(response.content.decode())
-    taskid = taskinfo['taskid']
-    self.assertEqual(taskid, 1)
-    
+    taskid0 = taskinfo['taskid']
+    self.assertGreater(taskid0, 0)
+
     # Wait 10 seconds for the plan the finish
     cnt = 0
-    while cnt <= 10: 
+    while cnt <= 10:
       response = self.client.get(
-        '/execute/api/status/?id=%s' % taskid, 
+        '/execute/api/status/?id=%s' % taskid0,
         **headers
         )
       self.assertEqual(response.status_code, 200)
       taskinfo = json.loads(response.content.decode())
-      if taskinfo[str(taskid)]['status'] == "Done":
+      if taskinfo[str(taskid0)]['status'] == "Done":
         break
       sleep(1)
       cnt += 1
     self.assertLess(cnt, 10, "Running task taking too long")
-    
+
     # Copy a plan
     response = self.client.post(
       '/execute/api/frepple_flush/',
@@ -263,20 +266,20 @@ class remote_commands(TransactionTestCase):
       )
     self.assertEqual(response.status_code, 200)
     taskinfo = json.loads(response.content.decode())
-    taskid = taskinfo['taskid']
-    self.assertEqual(taskid, 2)
-    
+    taskid1 = taskinfo['taskid']
+    self.assertEqual(taskid1, taskid0 + 1)
+
     # Wait 10 seconds for the flush the finish
     cnt = 0
-    while cnt <= 10: 
+    while cnt <= 20:
       response = self.client.get(
-        '/execute/api/status/?id=%s' % taskid, 
+        '/execute/api/status/?id=%s' % taskid1,
         **headers
         )
       self.assertEqual(response.status_code, 200)
       taskinfo = json.loads(response.content.decode())
-      if taskinfo[str(taskid)]['status'] == "Done":
+      if taskinfo[str(taskid1)]['status'] == "Done":
         break
       sleep(1)
       cnt += 1
-    self.assertLess(cnt, 10, "Running task taking too long")
+    self.assertLess(cnt, 20, "Running task taking too long")

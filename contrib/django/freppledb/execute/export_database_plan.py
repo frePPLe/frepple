@@ -88,13 +88,19 @@ class export:
         delete from operationplanmaterial
         using operationplan
         where operationplanmaterial.operationplan_id = operationplan.id
-        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanmaterial.status = 'proposed');\n
+        and ((operationplan.status='proposed' or operationplan.status is null) 
+             or operationplan.type = 'STCK' 
+             or operationplanmaterial.status = 'proposed'
+             or operationplanmaterial.status is null)
         ''')
       cursor.execute('''
         delete from operationplanresource
         using operationplan
         where operationplanresource.operationplan_id = operationplan.id
-        and ((operationplan.status='proposed' or operationplan.status is null) or operationplan.type = 'STCK' or operationplanresource.status = 'proposed');\n
+        and ((operationplan.status='proposed' or operationplan.status is null)
+             or operationplan.type = 'STCK' 
+             or operationplanresource.status = 'proposed'
+             or operationplanresource.status is null)
         ''')
       cursor.execute('''
         delete from operationplan

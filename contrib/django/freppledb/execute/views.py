@@ -155,7 +155,7 @@ def APITask(request, action):
       if args:
         tasks = Task.objects.all().using(request.database).filter(id__in=args)
       else:
-        tasks = Task.objects.all().using(request.database).filter(finished__isnull=True)
+        tasks = Task.objects.all().using(request.database).filter(finished__isnull=True, status__ne='Canceled')
       for t in tasks:
         response[t.id] = {
           'name': t.name, 'submitted': str(t.submitted),

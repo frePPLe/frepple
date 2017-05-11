@@ -209,14 +209,14 @@ class DetailReport(GridReport):
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
     GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra='"role":"input/demand"'),
-    GridFieldText('item', title=_('item'), field_name='demand__item', editable=False, formatter='detail', extra='"role":"input/item"'),
-    GridFieldText('customer', title=_('customer'), field_name='demand__customer', editable=False, formatter='detail', extra='"role":"input/customer"'),
-    GridFieldText('location', title=_('location'), field_name='demand__location', editable=False, formatter='detail', extra='"role":"input/location"'),
+    GridFieldText('item', title=_('item'), field_name='item__name', editable=False, formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('customer', title=_('customer'), field_name='demand__customer__name', editable=False, formatter='detail', extra='"role":"input/customer"'),
+    GridFieldText('location', title=_('location'), field_name='location__name', editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
     GridFieldDateTime('startdate', title=_('start date'), editable=False),
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
-    GridFieldDateTime('due', field_name='demand__due', title=_('due date'), editable=False),
+    GridFieldDateTime('due', field_name='due', title=_('due date'), editable=False),
     )
   
   @ classmethod

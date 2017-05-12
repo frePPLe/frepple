@@ -80,7 +80,21 @@ $(function() {
         $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
-    onSelectRow: grid.markSelectedRow,
+    beforeEditCell: function(rowid,iCol,cellcontent,e) { //console.log('BSG beforeEditCell');
+      if ($(e.target).hasClass('cbox') === false) {
+        $(this).jqGrid('setSelection', rowid, false);
+      }
+    },
+    onSelectRow: function(rowid, status, e) { //console.log('BSG onSelectRow');
+      var selection = $(this).jqGrid('getGridParam','selarrrow');
+
+      if (typeof e !== 'undefined' && $(e.target).hasClass('cbox') > -1 && $(e.target).parent().parent().hasClass('success') && typeof $('tr[id="' + rowid + '"] .edit-cell').children().first().val() !== 'undefined' ) {
+        //console.log('BSG onSelectRow Cbox');
+        $(this).jqGrid('resetSelection', rowid);
+        $('tr[id="' + rowid + '"]').addClass('edit-cell');
+      }
+      grid.markSelectedRow;
+    },
     formatCell: function(rowid, cellname, value, iRow, iCol) {
       editrow = iRow;
       editcol = iCol;

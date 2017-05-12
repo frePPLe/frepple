@@ -23,12 +23,10 @@ from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
-from django.test.utils import override_settings
 
 import freppledb.input as input
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_with_commands(TransactionTestCase):
 
   fixtures = ["demo"]

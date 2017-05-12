@@ -14,15 +14,13 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import time
+
 import os
 import os.path
 
-from django.conf import settings
 from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase, TransactionTestCase
-from django.test.utils import override_settings
 
 from freppledb.common.models import User
 import freppledb.common as common
@@ -31,7 +29,6 @@ import freppledb.input as input
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):
 
   def setUp(self):
@@ -48,7 +45,6 @@ class DataLoadTest(TestCase):
     self.fail("Didn't find expected number of parameters")
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class UserPreferenceTest(TestCase):
 
   def test_get_set_preferences(self):
@@ -60,7 +56,6 @@ class UserPreferenceTest(TestCase):
     self.assertEqual(after, {'a': 1, 'b': 'c'})
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class ExcelTest(TransactionTestCase):
 
   fixtures = ['demo']
@@ -207,7 +202,6 @@ class ExcelTest(TransactionTestCase):
     self.run_workbook("pt-br")
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class freppleREST(APITestCase):
 
 

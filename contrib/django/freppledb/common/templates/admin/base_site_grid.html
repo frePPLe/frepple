@@ -93,7 +93,7 @@ $(function() {
         $(this).jqGrid('resetSelection', rowid);
         $('tr[id="' + rowid + '"]').addClass('edit-cell');
       }
-      grid.markSelectedRow;
+      grid.markSelectedRow();
     },
     formatCell: function(rowid, cellname, value, iRow, iCol) {
       editrow = iRow;

@@ -25,7 +25,6 @@ from django.core import management
 from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Sum, Count, Q
 from django.test import TransactionTestCase
-from django.test.utils import override_settings
 
 import freppledb.output as output
 import freppledb.input as input
@@ -33,7 +32,6 @@ import freppledb.common as common
 from freppledb.common.models import Parameter, User
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_with_commands(TransactionTestCase):
   fixtures = ["demo"]
 
@@ -173,7 +171,6 @@ class FixtureTest(TransactionTestCase):
     self.assertGreater(common.models.Bucket.objects.count(), 0)
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class execute_simulation(TransactionTestCase):
 
   fixtures = ["demo"]
@@ -209,7 +206,6 @@ class execute_simulation(TransactionTestCase):
     # TODO add comparison with initial_planned_late
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class remote_commands(TransactionTestCase):
 
   fixtures = ["demo"]

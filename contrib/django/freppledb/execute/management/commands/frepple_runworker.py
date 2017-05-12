@@ -107,6 +107,7 @@ class Command(BaseCommand):
     while True:
       try:
         task = Task.objects.all().using(database).filter(status='Waiting').order_by('id')[0]
+        idle_loop_done = False
       except:
         # No more tasks found
         if continuous:
@@ -216,7 +217,7 @@ class Command(BaseCommand):
         logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
     # Remove the parameter again
     try:
-      Parameter.objects.all().using(self.database).get(pk='Worker alive').delete()
+      Parameter.objects.all().using(database).get(pk='Worker alive').delete()
     except:
       pass
     # Exit

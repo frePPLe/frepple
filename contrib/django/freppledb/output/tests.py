@@ -15,12 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf import settings
 from django.test import TestCase
-from django.test.utils import override_settings
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class OutputTest(TestCase):
 
   fixtures = ["demo"]

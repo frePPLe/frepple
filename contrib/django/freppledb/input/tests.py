@@ -16,14 +16,11 @@
 #
 import tempfile
 
-from django.conf import settings
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from freppledb.input.models import Location
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class DataLoadTest(TestCase):
 
   fixtures = ["demo"]

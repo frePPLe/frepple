@@ -531,6 +531,7 @@ frepple.saveplan("output.1.xml")
 
 # Changing the priorities to prove the results are independent of
 # the planning order - as long as no constraints are hit.
+random.seed(10)
 for d in frepple.demands():
   d.priority = random.randint(1, 100)
 frepple.settings.current = datetime.date(2014,1,1)

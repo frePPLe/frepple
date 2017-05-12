@@ -21,13 +21,11 @@ from django.conf import settings
 from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TransactionTestCase
-from django.test.utils import override_settings
 
 from freppledb.common.models import User
 import freppledb.input
 
 
-@override_settings(INSTALLED_APPS=settings.INSTALLED_APPS + ('django.contrib.sessions',))
 class cookbooktest(TransactionTestCase):
   reset_sequences = True
 

@@ -75,7 +75,7 @@ function delayfmt(cellvalue, options, rowdata) {
   return thecolor0 + (sign*seconds).toFixed(3) + thecolor1;
 }
 
-function plannedquantityfmt(cellvalue, options, rowdata) { console.log(rowdata);
+function plannedquantityfmt(cellvalue, options, rowdata) {
   var thecolor0 = '';
   var thecolor1 = '';
   if (parseFloat(rowdata.quantity) - parseFloat(rowdata.plannedquantity) > 0) {

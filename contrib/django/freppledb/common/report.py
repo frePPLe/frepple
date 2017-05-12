@@ -2338,7 +2338,7 @@ def importWorkbook(request):
 
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
-      yield force_text(_("Processing data in worksheet: %s") % ws_name) + '\n'
+      yield '<strong>'+force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
       ws = wb.get_sheet_by_name(name=ws_name)
       rownum = 0
       has_pk_field = False
@@ -2399,8 +2399,8 @@ def importWorkbook(request):
               if not ok:
                 headers.append(False)
                 yield force_text(string_concat(
-                  model._meta.verbose_name, ': ', _('Skipping unknown field %(column)s') % {'column': value}
-                  )) + '\n'
+                  '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': value}, '</samp></div>'
+                  ))
                 numerrors += 1
               if value == model._meta.pk.name.lower() \
                 or value == model._meta.pk.verbose_name.lower():
@@ -2410,8 +2410,8 @@ def importWorkbook(request):
               header_ok = True
               yield force_text(string_concat(
                 # Translators: Translation included with django
-                model._meta.verbose_name, ': ', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}
-                )) + '\n'
+                '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp></div>'
+                ))
               numerrors += 1
             if not header_ok:
               # Can't process this worksheet
@@ -2488,10 +2488,10 @@ def importWorkbook(request):
                 it = None
               except model.MultipleObjectsReturned:
                 yield force_text(
-                  _('Row %(rownum)s: %(message)s') % {
+                  '</br>' + '<samp style="padding-left: 15px;">' + _('Row %(rownum)s: %(message)s') % {
                     'rownum': rownum, 'message': force_text(_(
                       'Key fields not unique'))
-                  }) + '\n '
+                  }) + '</samp></div>'
                 continue
             else:
               # No primary key required for this model
@@ -2519,23 +2519,23 @@ def importWorkbook(request):
               except Exception:
                 # Validation fails
                 for error in form.non_field_errors():
-                  yield force_text(string_concat(
-                    model._meta.verbose_name, ': ', _('Row %(rownum)s: %(message)s') % {
-                      'rownum': rownum, 'message': error
+                  yield force_text(string_concat('<div style="padding-bottom: 10px">',
+                    _('Row %(rownum)s: %(message)s') % {
+                      'rownum': rownum, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
                     })) + '\n'
                   numerrors += 1
                 for field in form:
                   for error in field.errors:
-                    yield force_text(string_concat(
-                      model._meta.verbose_name, ': ', _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
+                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
+                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
                         'rownum': rownum, 'data': d[field.name],
-                        'field': field.name, 'message': error
+                        'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
                       })) + '\n'
                     numerrors += 1
       # Report status of the import
-      yield string_concat(
-        model._meta.verbose_name, ": ",
+      yield string_concat('<strong>',
+        model._meta.verbose_name, ": ",'</strong></br>',
         _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
           {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}
-        ) + '\n'
-    yield force_text(_("Done")) + '\n'
+        ) + '</strong></br></br>'
+    yield force_text(_("Done"))

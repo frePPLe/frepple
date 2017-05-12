@@ -110,8 +110,10 @@
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
             '<h4 class="modal-title">'+gettext("Uploading spreadsheet")+'</h4>'+
           '</div>'+
-          '<div class="modal-body">'+
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" class="form-control" rows="10" style="resize: vertical; background-color: inherit; border: none" readonly="readonly"></textarea></div>'  +
+          '<div class="modal-body" style="padding-right: 0;">'+
+          '<br/><div style="margin: 5px 0">' +
+            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none"></div>'+
+          '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
@@ -124,7 +126,7 @@
     var data = new FormData();
     data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
     $('#uploadResponse').css('display','block');
-    $('#uploadResponse').text(gettext('Importing... pressing Close button will not stop the process.'));
+    $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
     $.ajax({
       type: 'post',
       url: '{{request.prefix}}/execute/launch/importworkbook/',
@@ -132,7 +134,7 @@
       data: data,
       success: function (data) {
         var el = $('#uploadResponse');
-        el.val(data);
+        el.html(data);
         el.scrollTop(el[0].scrollHeight - el.height());
         // Resetting the value of filename. This is only done to avoid a
         // corner case where Internet Explorer is uploading a cached
@@ -143,7 +145,7 @@
       xhrFields: {
         onprogress: function (e) {
           var el = $('#uploadResponse');
-          el.val(e.currentTarget.response);
+          el.html(e.currentTarget.response);
           el.scrollTop(el[0].scrollHeight - el.height());
         }
       },
@@ -163,13 +165,13 @@
         data: new FormData($("#uploadform")[0]),
         success: function (data) {
           var el = $('#uploadResponse');
-          el.val(data);
+          el.html(data);
           el.scrollTop(el[0].scrollHeight - el.height());
         },
         xhrFields: {
           onprogress: function (e) {
             var el = $('#uploadResponse');
-            el.val(e.currentTarget.response);
+            el.html(e.currentTarget.response);
             el.scrollTop(el[0].scrollHeight - el.height());
           }
         },

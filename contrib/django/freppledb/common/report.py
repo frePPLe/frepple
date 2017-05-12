@@ -992,90 +992,99 @@ class GridReport(View):
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
       for rec in json.JSONDecoder().decode(request.read().decode(request.encoding or settings.DEFAULT_CHARSET)):
         if 'delete' in rec:
-          # Deleting records
+          # Deleting records          
           for key in rec['delete']:
+            sid = transaction.savepoint()
             try:
-              with transaction.atomic(using=request.database, savepoint=False):
-                obj = reportclass.model.objects.using(request.database).get(pk=key)
-                obj.delete()
-                LogEntry(
-                  user_id=request.user.id,
-                  content_type_id=content_type_id,
-                  object_id=force_text(key),
-                  object_repr=force_text(key)[:200],
-                  action_flag=DELETION
-                ).save(using=request.database)
+              obj = reportclass.model.objects.using(request.database).get(pk=key)
+              obj.delete()
+              LogEntry(
+                user_id=request.user.id,
+                content_type_id=content_type_id,
+                object_id=force_text(key),
+                object_repr=force_text(key)[:200],
+                action_flag=DELETION
+              ).save(using=request.database)
+              transaction.savepoint_commit(sid)
             except reportclass.model.DoesNotExist:
+              transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
             except Exception as e:
+              transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(e))
               resp.write('<br/>')
         elif 'copy' in rec:
-          # Copying records
+          # Copying records          
           for key in rec['copy']:
+            sid = transaction.savepoint()
             try:
-              with transaction.atomic(using=request.database, savepoint=False):
-                obj = reportclass.model.objects.using(request.database).get(pk=key)
-                if isinstance(reportclass.model._meta.pk, CharField):
-                  # The primary key is a string
-                  obj.pk = "Copy of %s" % key
-                elif isinstance(reportclass.model._meta.pk, AutoField):
-                  # The primary key is an auto-generated number
-                  obj.pk = None
-                else:
-                  raise Exception(_("Can't copy %s") % reportclass.model._meta.app_label)
-                obj.save(using=request.database, force_insert=True)
-                LogEntry(
-                  user_id=request.user.pk,
-                  content_type_id=content_type_id,
-                  object_id=obj.pk,
-                  object_repr=force_text(obj),
-                  action_flag=ADDITION,
-                  change_message=_('Copied from %s.') % key
+              obj = reportclass.model.objects.using(request.database).get(pk=key)
+              if isinstance(reportclass.model._meta.pk, CharField):
+                # The primary key is a string
+                obj.pk = "Copy of %s" % key
+              elif isinstance(reportclass.model._meta.pk, AutoField):
+                # The primary key is an auto-generated number
+                obj.pk = None
+              else:
+                raise Exception(_("Can't copy %s") % reportclass.model._meta.app_label)
+              obj.save(using=request.database, force_insert=True)
+              LogEntry(
+                user_id=request.user.pk,
+                content_type_id=content_type_id,
+                object_id=obj.pk,
+                object_repr=force_text(obj),
+                action_flag=ADDITION,
+                change_message=_('Copied from %s.') % key
                 ).save(using=request.database)
+              transaction.savepoint_commit(sid)
             except reportclass.model.DoesNotExist:
+              transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
               resp.write('<br/>')
             except Exception as e:
+              transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(e))
               resp.write('<br/>')
         else:
           # Editing records
-          try:
-            with transaction.atomic(using=request.database, savepoint=False):
-              obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
-              del rec['id']
-              for i in rec:
-                if rec[i] == '\xa0':   # Workaround for Jqgrid issue: date field can't be set to blank
-                  rec[i] = None
-              UploadForm = modelform_factory(
-                reportclass.model,
-                fields=tuple(rec.keys()),
-                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
-                )
-              form = UploadForm(rec, instance=obj)
-              if form.has_changed():
-                obj = form.save(commit=False)
-                obj.save(using=request.database)
-                LogEntry(
-                  user_id=request.user.pk,
-                  content_type_id=content_type_id,
-                  object_id=obj.pk,
-                  object_repr=force_text(obj),
-                  action_flag=CHANGE,
-                  #. Translators: Translation included with Django
-                  change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                ).save(using=request.database)
+          sid = transaction.savepoint()        
+          try:            
+            obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
+            del rec['id']
+            for i in rec:
+              if rec[i] == '\xa0':   # Workaround for Jqgrid issue: date field can't be set to blank
+                rec[i] = None
+            UploadForm = modelform_factory(
+              reportclass.model,
+              fields=tuple(rec.keys()),
+              formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database)) or f.formfield()
+              )
+            form = UploadForm(rec, instance=obj)
+            if form.has_changed():
+              obj = form.save(commit=False)
+              obj.save(using=request.database)
+              LogEntry(
+                user_id=request.user.pk,
+                content_type_id=content_type_id,
+                object_id=obj.pk,
+                object_repr=force_text(obj),
+                action_flag=CHANGE,
+                #. Translators: Translation included with Django
+                change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+              ).save(using=request.database)
+            transaction.savepoint_commit(sid)
           except reportclass.model.DoesNotExist:
+            transaction.savepoint_rollback(sid)
             ok = False
             resp.write(escape(_("Can't find %s" % rec['id'])))
             resp.write('<br/>')
           except (ValidationError, ValueError):
+            transaction.savepoint_rollback(sid)
             ok = False
             for error in form.non_field_errors():
               resp.write(escape('%s: %s' % (rec['id'], error)))
@@ -1085,6 +1094,7 @@ class GridReport(View):
                 resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))
                 resp.write('<br/>')
           except Exception as e:
+            transaction.savepoint_rollback(sid)
             ok = False
             resp.write(escape(e))
             resp.write('<br/>')

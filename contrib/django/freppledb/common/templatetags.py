@@ -27,6 +27,7 @@ from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
 from freppledb.common.models import User
@@ -205,7 +206,7 @@ class ModelTabs(Node):
       # Look up the admin class to use    
       model = Variable(self.model).resolve(context)
       if not model:
-        return ''
+        return mark_safe('')
       if isinstance(model, Options):
         ct = ContentType.objects.get(app_label=model.app_label, model=model.object_name.lower())
       elif isinstance(model, models.Model):
@@ -215,7 +216,7 @@ class ModelTabs(Node):
         ct = ContentType.objects.get(app_label=model[0], model=model[1])
       admn = data_site._registry[ct.model_class()]
       if not hasattr(admn, 'tabs'):
-        return ''
+        return mark_safe('')
 
       # Render the admin class
       result = ['<div class="row"><div id="tabs" class="col-md-12 form-inline hor-align-right"><ul class="nav nav-tabs">']
@@ -245,7 +246,7 @@ class ModelTabs(Node):
           force_text(tab['label']).capitalize()
           ))
       result.append('</ul></div></div>')
-      return '\n'.join(result)
+      return mark_safe('\n'.join(result))
     except:
       raise
 
@@ -261,7 +262,7 @@ def get_modeltabs(parser, token):
     raise TemplateSyntaxError("'%s' tag requires 1 argument" % bits[0])
   return ModelTabs(bits[1])
 
-get_modeltabs.is_safe = True
+
 register.tag('tabs', get_modeltabs)
 
 
@@ -276,8 +277,6 @@ def version():
   '''
   return VERSION
 
-version.is_safe = True
-
 
 @register.simple_tag
 def version_short():
@@ -285,9 +284,7 @@ def version_short():
   A simple tag returning the version of the frePPLe application.
   '''
   versionnumber = VERSION.split('.', 2)
-  return versionnumber[0]+"."+versionnumber[1]
-
-version_short.is_safe = True
+  return '%s.%s' % (versionnumber[0], versionnumber[1])
 
 
 #
@@ -323,8 +320,7 @@ def duration(value):
   except Exception:
     return ''
 
-duration.is_safe = True
-register.filter('duration', duration)
+register.filter('duration', duration, is_safe=True)
 
 
 #
@@ -523,8 +519,6 @@ register.tag('getDashboard', getDashboard)
 # A tag to return a setting.
 #
 
-@register.assignment_tag
+@register.simple_tag
 def setting(key):
-  return getattr(settings, key)
-
-setting.is_safe = True
+  return mark_safe(getattr(settings, key))

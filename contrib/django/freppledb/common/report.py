@@ -994,7 +994,7 @@ class GridReport(View):
         if 'delete' in rec:
           # Deleting records          
           for key in rec['delete']:
-            sid = transaction.savepoint()
+            sid = transaction.savepoint(using=request.database)
             try:
               obj = reportclass.model.objects.using(request.database).get(pk=key)
               obj.delete()
@@ -1019,7 +1019,7 @@ class GridReport(View):
         elif 'copy' in rec:
           # Copying records          
           for key in rec['copy']:
-            sid = transaction.savepoint()
+            sid = transaction.savepoint(using=request.database)
             try:
               obj = reportclass.model.objects.using(request.database).get(pk=key)
               if isinstance(reportclass.model._meta.pk, CharField):
@@ -1052,7 +1052,7 @@ class GridReport(View):
               resp.write('<br/>')
         else:
           # Editing records
-          sid = transaction.savepoint()        
+          sid = transaction.savepoint(using=request.database)        
           try:            
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
             del rec['id']

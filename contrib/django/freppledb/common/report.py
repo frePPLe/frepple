@@ -992,7 +992,7 @@ class GridReport(View):
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
       for rec in json.JSONDecoder().decode(request.read().decode(request.encoding or settings.DEFAULT_CHARSET)):
         if 'delete' in rec:
-          # Deleting records          
+          # Deleting records
           for key in rec['delete']:
             sid = transaction.savepoint(using=request.database)
             try:
@@ -1017,7 +1017,7 @@ class GridReport(View):
               resp.write(escape(e))
               resp.write('<br/>')
         elif 'copy' in rec:
-          # Copying records          
+          # Copying records
           for key in rec['copy']:
             sid = transaction.savepoint(using=request.database)
             try:
@@ -1191,11 +1191,11 @@ class GridReport(View):
       '''
       # Check permissions
       if not reportclass.model:
-        yield force_text(_('Invalid upload request')) + '\n '
+        yield force_text(_('Invalid upload request')) + '</br>'
         return
       permname = get_permission_codename('add', reportclass.model._meta)
       if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
-        yield force_text(_('Permission denied')) + '\n '
+        yield force_text(_('Permission denied')) + '</br>'
         return
 
       # Choose the right delimiter and language
@@ -1218,7 +1218,7 @@ class GridReport(View):
         if 'erase' in request.POST:
           returnvalue = reportclass.erase(request)
           if returnvalue:
-            yield returnvalue + '\n '
+            yield string_concat('</br>', '<samp style="padding-left: 15px;">', returnvalue, '</samp></br>')
             errors = True
 
         # Loop through the data records
@@ -1264,15 +1264,19 @@ class GridReport(View):
                     break
               if not ok:
                 headers.append(False)
-                yield force_text(_('Skipping field %(column)s') % {'column': col}) + '\n '
+                yield force_text(string_concat(
+                  '</br>', '<samp style="padding-left: 15px;">', force_text(_('Skipping field %(column)s') % {'column': col}), '</samp>'
+                  ))
               if col == reportclass.model._meta.pk.name.lower() or \
                  col == reportclass.model._meta.pk.verbose_name.lower():
                 has_pk_field = True
             if required_fields:
               # We are missing some required fields
               errors = True
-              #. Translators: Translation included with Django
-              yield force_text(_('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}) + '\n '
+              yield force_text(string_concat(
+                # Translators: Translation included with django
+                '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp>'
+                ))
             # Abort when there are errors
             if errors:
               break
@@ -1361,24 +1365,24 @@ class GridReport(View):
                 except Exception as e:
                   # Validation fails
                   for error in form.non_field_errors():
-                    yield force_text(
+                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
                       _('Row %(rownum)s: %(message)s') % {
-                        'rownum': rownumber, 'message': error
-                      }) + '\n '
+                        'rownum': rownumber, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
+                      }))
                   for field in form:
                     for error in field.errors:
-                      yield force_text(
+                      yield force_text(string_concat('<div style="padding-bottom: 10px">',
                         _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
                           'rownum': rownumber, 'data': d[field.name],
-                          'field': field.name, 'message': error
-                        }) + '\n '
+                          'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp>'
+                        }))
             except Exception as e:
-              yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
+              yield '</br><samp>' + force_text(_("Exception during upload: %(message)s") % {'message': e}) + '</samp>'
 
       # Report all failed records
-      yield force_text(
+      yield '</br><strong>' + force_text(
           _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-          ) + '\n '
+          ) + '</strong></br>'
 
 
   @classmethod
@@ -1421,7 +1425,7 @@ class GridReport(View):
         returnvalue = reportclass.erase(request)
         if returnvalue:
           errors = True
-          yield returnvalue + '\n '
+          yield string_concat('</br>', '<samp style="padding-left: 15px;">', returnvalue, '</samp></br>')
 
       # Loop through the data records
       wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
@@ -1466,15 +1470,19 @@ class GridReport(View):
                   break
             if not ok:
               headers.append(False)
-              yield force_text(_('Skipping unknown field %(column)s') % {'column': col}) + '\n '
+              yield force_text(string_concat(
+                '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': col}, '</samp></div>'
+                ))
             if col == reportclass.model._meta.pk.name.lower() or \
                col == reportclass.model._meta.pk.verbose_name.lower():
               has_pk_field = True
           if required_fields:
             # We are missing some required fields
             errors = True
-            #. Translators: Translation included with Django
-            yield force_text(_('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}) + '\n '
+            yield force_text(string_concat(
+              # Translators: Translation included with django
+              '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp>'
+              ))
           # Abort when there are errors
           if errors > 0:
             break
@@ -1557,11 +1565,10 @@ class GridReport(View):
                 it = None
               except reportclass.model.MultipleObjectsReturned:
                 yield force_text(
-                  _('Row %(rownum)s: %(message)s') % {
+                  '</br>' + '<samp style="padding-left: 15px;">' + _('Row %(rownum)s: %(message)s') % {
                     'rownum': rownumber, 'message': force_text(_(
                       'Key fields not unique'))
-                  }) + '\n '
-                continue
+                  }) + '</samp>'
             else:
               # No primary key required for this model
               form = UploadForm(d)
@@ -1589,24 +1596,24 @@ class GridReport(View):
               except Exception as e:
                 # Validation fails
                 for error in form.non_field_errors():
-                  yield force_text(
+                  yield force_text(string_concat('<div style="padding-bottom: 10px">',
                     _('Row %(rownum)s: %(message)s') % {
-                      'rownum': rownumber, 'message': error
-                    }) + '\n '
+                      'rownum': rownumber, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
+                    }))
                 for field in form:
                   for error in field.errors:
-                    yield force_text(
+                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
                       _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
                         'rownum': rownumber, 'data': d[field.name],
-                        'field': field.name, 'message': error
-                      }) + '\n '
+                        'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
+                      }))
           except Exception as e:
             yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
 
     # Report all failed records
-    yield force_text(
-      _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-      ) + '\n '
+    yield '</br><strong>' + force_text(
+        _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
+        ) + '</strong></br>'
 
 
   @classmethod
@@ -2532,7 +2539,7 @@ def importWorkbook(request):
                   yield force_text(string_concat('<div style="padding-bottom: 10px">',
                     _('Row %(rownum)s: %(message)s') % {
                       'rownum': rownum, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                    })) + '\n'
+                    }))
                   numerrors += 1
                 for field in form:
                   for error in field.errors:
@@ -2540,12 +2547,11 @@ def importWorkbook(request):
                       _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
                         'rownum': rownum, 'data': d[field.name],
                         'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                      })) + '\n'
+                      }))
                     numerrors += 1
       # Report status of the import
       yield string_concat('<strong>',
-        model._meta.verbose_name, ": ",'</strong></br>',
+        model._meta.verbose_name, ": ",'</br>',
         _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
-          {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}
-        ) + '</strong></br></br>'
+          {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</strong></br></br>')
     yield force_text(_("Done"))

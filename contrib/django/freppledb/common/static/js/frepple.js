@@ -1337,6 +1337,7 @@ var grid = {
   markSelectedRow: function(id)
   {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
+
     if (sel > 0)
     {
       $("#copy_selected").prop('disabled', false).addClass("bold");
@@ -2190,7 +2191,7 @@ function import_show(url)
             '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
             gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
           '</form>' +
-          '<br/><div style="margin: 5px 0"><textarea id="uploadResponse" class="form-control" rows="10" style="resize: vertical; display: none; background-color: inherit; border: none;" readonly="readonly"></textarea></div>'  +
+          '<br/><div style="margin: 5px 0"><div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div></div>'  +
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
@@ -2203,7 +2204,7 @@ function import_show(url)
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
     $('#uploadResponse').css('display','block');
-    $('#uploadResponse').text(gettext('Importing... pressing Close button will not stop the process.'));
+    $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
     $('#importbutton').css('display','none');
     $('#uploadform').css('display','none');
     $.ajax({
@@ -2213,16 +2214,16 @@ function import_show(url)
       data: new FormData($("#uploadform")[0]),
       success: function (data) {
         var el = $('#uploadResponse');
-        el.val(data);
+        el.html(data);
         el.scrollTop(el[0].scrollHeight - el.height());
-        $('#cancelbutton').val(gettext('Close'));
+        $('#cancelbutton').html(gettext('Close'));
         $('#importbutton').hide();
         $("#grid").trigger("reloadGrid");
       },
       xhrFields: {
         onprogress: function (e) {
           var el = $('#uploadResponse');
-          el.val(e.currentTarget.response);
+          el.html(e.currentTarget.response);
           el.scrollTop(el[0].scrollHeight - el.height());
         }
       },

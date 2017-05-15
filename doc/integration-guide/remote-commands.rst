@@ -21,31 +21,62 @@ The following URLS are available.
   | **GET /execute/api/status/?id=<taskid>**:
   | Returns the list of all running and pending tasks. The second format
     returns the details of a specific task.
+    
+Example usage with curl::
+
+   curl -u admin:admin http://localhost:8000/execute/api/status/?id=26 
 
 * | **POST /execute/api/frepple_run/?constraint=15&plantype=1&env=supply** 
   | Generates a plan.
 
+Example usage with curl::
+
+   curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://localhost:8000/execute/api/frepple_run/
+
 * | **POST /execute/api/frepple_flush/?models=input.demand,input.operationplan** 
-  | Returns the list of all running and pending tasks. The second format
-    returns the details of a specific task.
+  | Emptying database for models given in input.
+    
+Example usage with curl::
+   
+   curl -u admin:admin --data "models=input.demand,input.operationplan" http://localhost:8000/execute/api/frepple_flush/
 
 * | **POST /execute/api/frepple_importfromfolder/**
   | Load CSV-formatted data files from a configured data folder into the
     frePPLe database.
+    
+Example usage with curl::
+
+   curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_importfromfolder/   
 
 * | **POST /execute/api/frepple_exporttofolder/**
   | Dump planning results in CSV-formatted data files into a configured
     data folder on the frePPLe server.
+    
+Example usage with curl::
+    
+   curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_exporttofolder/
 
 * | **POST /execute/api/loaddata/?fixture=demo**
   | Loads a predefined dataset.
   
+Example usage with curl::
+
+    curl -u admin:admin --data "fixture=manufacturing_demo" http://localhost:8000/execute/api/loaddata/
+  
 * | **POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1**
   | Creates a copy of a database into a scenario.
+  
+Example usage with curl::
+
+    curl -u admin:admin --data "copy=1&source=production&destination=scenario1&force=1" http://localhost:8000/execute/api/frepple_copy/
 
 * | **POST /execute/api/frepple_backup/**
   | Backs up the content of the database to a file (which stays on the
     frePPLe application server).
+    
+Example usage with curl::  
+
+    curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_backup/  
 
 * | **POST /execute/api/openbravo_import/?delta=7**
   | Execute the Openbravo import connector, which downloads data from Openbravo.

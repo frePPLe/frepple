@@ -1052,8 +1052,8 @@ class GridReport(View):
               resp.write('<br/>')
         else:
           # Editing records
-          sid = transaction.savepoint(using=request.database)        
-          try:            
+          sid = transaction.savepoint(using=request.database)
+          try:
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
             del rec['id']
             for i in rec:
@@ -1374,7 +1374,7 @@ class GridReport(View):
                       yield force_text(string_concat('<div style="padding-bottom: 10px">',
                         _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
                           'rownum': rownumber, 'data': d[field.name],
-                          'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp>'
+                          'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
                         }))
             except Exception as e:
               yield '</br><samp>' + force_text(_("Exception during upload: %(message)s") % {'message': e}) + '</samp>'
@@ -1471,7 +1471,7 @@ class GridReport(View):
             if not ok:
               headers.append(False)
               yield force_text(string_concat(
-                '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': col}, '</samp></div>'
+                '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': col}, '</samp>'
                 ))
             if col == reportclass.model._meta.pk.name.lower() or \
                col == reportclass.model._meta.pk.verbose_name.lower():

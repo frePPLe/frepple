@@ -104,7 +104,7 @@
 
     // Create dialog box
     $('#popup').modal({keyboard: false, backdrop:'static'});
-    $("#popup").html('<div class="modal-dialog">'+
+    var modalcontent = '<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -116,10 +116,12 @@
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
-        '</div>'+
-        '</div>'+
-    '</div>' )
+            '<input type="submit" id="closemodalbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close Window')+'">';
+    if (document.queryCommandSupported('copy')) {
+      modalcontent += '<input type="submit" id=flexiblebutton" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">';
+    }
+    modalcontent += '</div>'+'</div>'+'</div>';
+    $("#popup").html(modalcontent)
     .modal('show');
 
     // Upload the file
@@ -136,6 +138,9 @@
         var el = $('#uploadResponse');
         el.html(data);
         el.scrollTop(el[0].scrollHeight - el.height());
+        if (document.queryCommandSupported('copy')) {
+          $('#copytoclipboard').show();
+        }
         // Resetting the value of filename. This is only done to avoid a
         // corner case where Internet Explorer is uploading a cached
         // (potentially outdated or even deleted) file.
@@ -180,6 +185,15 @@
         });
      }
     )
+  }
+
+  function CopyToClipboard() {
+    if (document.queryCommandSupported('copy') === true) {
+      var sometextcontent = document.createRange();
+      sometextcontent.selectNode(document.getElementById("uploadResponse"));
+      window.getSelection().addRange(sometextcontent);
+      document.execCommand('copy');
+    }
   }
 
   $(function() {

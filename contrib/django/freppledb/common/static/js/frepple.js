@@ -2177,7 +2177,7 @@ function import_show(url)
   $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').modal({keyboard: false, backdrop:'static'});
-  $('#popup').html('<div class="modal-dialog">'+
+  var modalcontent = '<div class="modal-dialog">'+
       '<div class="modal-content">'+
         '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
@@ -2196,10 +2196,11 @@ function import_show(url)
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
             '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+            '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">' +
         '</div>'+
       '</div>'+
-    '</div>' )
-  .modal('show');
+    '</div>';
+  $('#popup').html(modalcontent).modal('show');
 
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
@@ -2218,6 +2219,15 @@ function import_show(url)
         el.scrollTop(el[0].scrollHeight - el.height());
         $('#cancelbutton').html(gettext('Close'));
         $('#importbutton').hide();
+        if (document.queryCommandSupported('copy')) {
+          $('#copytoclipboard').show();
+          $('#copytoclipboard').on('click', function() {
+            var sometextcontent = document.createRange();
+            sometextcontent.selectNode(document.getElementById("uploadResponse"));
+            window.getSelection().addRange(sometextcontent);
+            document.execCommand('copy');
+          });
+        }
         $("#grid").trigger("reloadGrid");
       },
       xhrFields: {

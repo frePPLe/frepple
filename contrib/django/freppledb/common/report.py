@@ -882,7 +882,7 @@ class GridReport(View):
         if isinstance(reportclass.minBucketLevel, collections.Callable):
           minlvl = reportclass.minBucketLevel(request)
           bucketnames = bucketnames.filter(level__gte=minlvl)
-      else:
+        else:
           bucketnames = bucketnames.filter(level__gte=reportclass.minBucketLevel)
       bucketnames = bucketnames.order_by('-level').values_list('name', flat=True)
     else:

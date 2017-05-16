@@ -67,7 +67,7 @@ class BaseReport(GridReport):
   A list report to show constraints.
   '''
   template = 'output/constraint.html'
-  title = _("Constraint report")
+  title = _("Constraint report")  
   basequeryset = Constraint.objects.all()
   model = Constraint
   permissions = (("view_constraint_report", "Can view constraint report"),)
@@ -75,6 +75,7 @@ class BaseReport(GridReport):
   editable = False
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/constraint-report.html'
+  detail_post_title = _('constrained demand')
   detailmodel = None
   rows = (
     #. Translators: Translation included with Django
@@ -97,7 +98,7 @@ class BaseReport(GridReport):
       return {
         'active_tab': 'constraint',
         'title': force_text(reportclass.detailmodel._meta.verbose_name) + " " + args[0],
-        'post_title': _('constrained demand') if reportclass.detailmodel != Demand else _('why short or late?')
+        'post_title': reportclass.detail_post_title
         }
     else:
       return {'active_tab': 'constraint'}
@@ -108,6 +109,8 @@ class ReportByDemand(BaseReport):
   template = 'output/constraint_demand.html'
   
   detailmodel = Demand
+  
+  detail_post_title = _('why short or late?')
   
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):

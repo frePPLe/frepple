@@ -36,6 +36,7 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/demand.html'
   title = _('Demand report')
+  post_title = _('plan')
   basequeryset = Item.objects.all()
   model = Item
   permissions = (("view_demand_report", "Can view demand report"),)
@@ -63,8 +64,7 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
-        'title': capfirst(force_text(Item._meta.verbose_name) + " " + args[0]),
-        'post_title': ': ' + capfirst(force_text(_('plan'))),
+        'title': force_text(Item._meta.verbose_name) + " " + args[0],        
         }
     else:
       return {}
@@ -237,7 +237,13 @@ class DetailReport(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'plandetail'
-    return {'active_tab': 'plandetail'}
+      return {
+        'active_tab': 'plandetail',
+        'title': force_text(Item._meta.verbose_name) + " " + args[0],
+        'post_title': _("Demand plan detail")
+        }
+    else:
+      return {'active_tab': 'plandetail'}
 
 
 @staff_member_required

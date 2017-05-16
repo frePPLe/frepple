@@ -367,6 +367,10 @@ class GridReport(View):
   # The title of the report. Used for the window title
   title = ''
 
+  # A optional text shown after the title in the content.
+  # It is however not added in the page title or the breadcrumb name
+  post_title = ''
+  
   # Link to the documentation
   help_url = None
 
@@ -933,6 +937,7 @@ class GridReport(View):
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_text(reportclass.title), 'entity': force_text(args[0])}) or reportclass.title,
+        'post_title': reportclass.post_title,
         'preferences': prefs,
         'reportkey': reportkey,
         'colmodel': reportclass._render_colmodel(is_popup, prefs, mode),

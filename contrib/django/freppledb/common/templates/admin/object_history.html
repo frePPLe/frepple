@@ -1,9 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block content_title %}<div class="row"><div class="col-md-12">{% block tools %}{% endblock %}<h1 style="float:left">{{title|capfirst|force_escape}}: {% trans 'change history'|capfirst|force_escape %}</h1>
-</div></div>{% tabs opts %}
-{% endblock %}
+{% block content_title %}{{ block.super }}{% tabs opts %}{% endblock %}
 
 {% block content %}
   <div id="content-main" class="row">
@@ -16,11 +14,11 @@
             <thead>
             <tr>
                 {% comment %}Translators: Translation included with Django {% endcomment %}
-                <th scope="col">{% trans 'Date/time'|capfirst %}</th>
+                <th scope="col">{% trans 'Date/time' %}</th>
                 {% comment %}Translators: Translation included with Django {% endcomment %}
-                <th scope="col">{% trans 'user'|capfirst %}</th>
+                <th scope="col">{% trans 'User' %}</th>
                 {% comment %}Translators: Translation included with Django {% endcomment %}
-                <th scope="col">{% trans 'action'|capfirst %}</th>
+                <th scope="col">{% trans 'Action' %}</th>
             </tr>
             </thead>
             <tbody>

@@ -91,7 +91,7 @@ class PathReport(GridReport):
   a specific item.
   '''
   template = 'input/path.html'
-  title = _("supply path")
+  title = ''
   filterable = False
   frozenColumns = 0
   editable = False
@@ -136,10 +136,8 @@ class PathReport(GridReport):
     else:
       request.session['lasttab'] = 'supplypath'
     return {
-      'title': capfirst(
-        force_text(reportclass.objecttype._meta.verbose_name) + " " + args[0] +
-        ": " + force_text(reportclass.downstream and _("where used") or _("supply path"))
-        ),
+      'title': force_text(reportclass.objecttype._meta.verbose_name) + " " + args[0],
+      'post_title': _("where used") if reportclass.downstream else _("supply path"),
       'downstream': reportclass.downstream,
       'active_tab': reportclass.downstream and 'whereused' or 'supplypath',
       'model': reportclass.objecttype._meta

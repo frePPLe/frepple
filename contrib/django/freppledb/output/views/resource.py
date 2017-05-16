@@ -93,8 +93,8 @@ class OverviewReport(GridPivot):
       request.session['lasttab'] = 'plan'
       return {
         'units': reportclass.getUnits(request),
-        'title': capfirst(force_text(Resource._meta.verbose_name) + " " + args[0]),
-        'post_title': ': ' + capfirst(force_text(_('plan'))),
+        'title': force_text(Resource._meta.verbose_name) + " " + args[0],
+        'post_title': _('plan'),
         }
     else:
       return {'units': reportclass.getUnits(request)}
@@ -261,7 +261,12 @@ class DetailReport(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'plandetail'
-      return {'active_tab': 'plandetail', 'model': Resource}
+      return {
+        'active_tab': 'plandetail', 
+        'model': Resource,
+        'title': force_text(Resource._meta.verbose_name) + " " + args[0],
+        'post_title': _('plan detail')
+        }
     else:
       return {'active_tab': 'plandetail', 'model': None}
 

@@ -210,11 +210,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     context = dict(
         self.admin_site.each_context(request),
         # Translators: Translation included with Django
-        title=_('Change history: %s') % force_text(obj),
+        title=force_text(opts.verbose_name) + " " + unquote(object_id),
+        post_title=_('Change history'),
         action_list=action_list,
         module_name=capfirst(force_text(opts.verbose_name_plural)),
         object=obj,
-        object_id=quote(object_id),
+        object_id=object_id,
         opts=opts,
         active_tab='history',
         preserved_filters=self.get_preserved_filters(request),
@@ -435,7 +436,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   def change_view(self, request, object_id, form_url='', extra_context=None):
     request.session['lasttab'] = 'edit'
     new_extra_context = extra_context or {}
-    new_extra_context['title'] = capfirst(force_text(self.model._meta.verbose_name) + ' ' + unquote(object_id))
+    new_extra_context['title'] = force_text(self.model._meta.verbose_name) + ' ' + unquote(object_id)
+    # Translators: Translation included with Django
+    new_extra_context['post_title'] = _('edit')
     return super().change_view(request, object_id, form_url, new_extra_context)
 
 
@@ -472,7 +475,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     else:
       return render(request, 'common/comments.html', 
         context = {
-          'title': capfirst(force_text(modelinstance._meta.verbose_name) + " " + object_id),
+          'title': force_text(modelinstance._meta.verbose_name) + " " + object_id,
+          'post_title': _('comments'),
           'model': self.model._meta.model_name,
           'opts': self.model._meta,
           'object_id': quote(object_id),
@@ -582,6 +586,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
       title=capfirst(object_name + ' ' + unquote(object_id)),
       object_name=object_name,
       object=obj,
+      object_id=obj,
       deleted_objects=deleted_objects,
       model_count=dict(model_count).items(),
       perms_lacking=perms_needed,

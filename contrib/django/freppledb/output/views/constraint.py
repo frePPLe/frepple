@@ -15,12 +15,14 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.db.models import Count
+from django.utils.encoding import force_text
 
 from freppledb.output.models import Constraint
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
+from freppledb.input.models import Demand, Resource, Buffer, Operation
 
 
 entities = (
@@ -73,6 +75,7 @@ class BaseReport(GridReport):
   editable = False
   multiselect = False
   help_url = 'user-guide/user-interface/plan-analysis/constraint-report.html'
+  detailmodel = None
   rows = (
     #. Translators: Translation included with Django
     GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
@@ -89,15 +92,23 @@ class BaseReport(GridReport):
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
-    if args and args[0]:
+    if args and args[0] and reportclass.detailmodel:
       request.session['lasttab'] = 'constraint'
-    return {'active_tab': 'constraint'}
+      return {
+        'active_tab': 'constraint',
+        'title': force_text(reportclass.detailmodel._meta.verbose_name) + " " + args[0],
+        'post_title': _('constrained demand') if reportclass.detailmodel != Demand else _('why short or late?')
+        }
+    else:
+      return {'active_tab': 'constraint'}
 
 
 class ReportByDemand(BaseReport):
 
   template = 'output/constraint_demand.html'
-
+  
+  detailmodel = Demand
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -111,6 +122,8 @@ class ReportByBuffer(BaseReport):
 
   template = 'output/constraint_buffer.html'
 
+  detailmodel = Buffer
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -124,6 +137,8 @@ class ReportByOperation(BaseReport):
 
   template = 'output/constraint_operation.html'
 
+  detailmodel = Operation
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -137,6 +152,8 @@ class ReportByResource(BaseReport):
 
   template = 'output/constraint_resource.html'
 
+  detailmodel = Resource
+  
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:

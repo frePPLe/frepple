@@ -74,9 +74,8 @@ class Command(BaseCommand):
     nb_of_rows = cursor.rowcount
 
     # Then start writing into the file
-    results = cursor.fetchall()
     row=0
-    for i in results:
+    for i in cursor:
       row = row+1
       firstLoop = True
       for j in range(0,len(column)):
@@ -92,7 +91,7 @@ class Command(BaseCommand):
           file.write(",")
         if column[j][1] in set(['numeric','integer']):
           file.write("\"%s\":%s" % (columnName,value))
-        elif column[j][1] == 'json':
+        elif column[j][1] == 'jsonb':
           file.write("\"%s\":%s" % (columnName, json.dumps(value)))
         elif column[j][1] == 'boolean' and value:
           file.write("\"%s\":true" % (columnName))

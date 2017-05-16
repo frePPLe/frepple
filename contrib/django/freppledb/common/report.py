@@ -871,13 +871,20 @@ class GridReport(View):
     # Pick up the list of time buckets
     if reportclass.hasTimeBuckets:
       reportclass.getBuckets(request, args, kwargs)
-      if not reportclass.maxBucketLevel:
-        bucketnames = Bucket.objects.order_by('-level').values_list('name', flat=True)
-      elif isinstance(reportclass.maxBucketLevel, collections.Callable):
-        maxlvl = reportclass.maxBucketLevel(request)
-        bucketnames = Bucket.objects.order_by('-level').filter(level__lte=maxlvl).values_list('name', flat=True)
+      bucketnames = Bucket.objects.using(request.database)
+      if reportclass.maxBucketLevel:
+        if isinstance(reportclass.maxBucketLevel, collections.Callable):
+          maxlvl = reportclass.maxBucketLevel(request)
+          bucketnames = bucketnames.filter(level__lte=maxlvl)
+        else:
+          bucketnames = bucketnames.filter(level__lte=reportclass.maxBucketLevel)
+      if reportclass.minBucketLevel:
+        if isinstance(reportclass.minBucketLevel, collections.Callable):
+          minlvl = reportclass.minBucketLevel(request)
+          bucketnames = bucketnames.filter(level__gte=minlvl)
       else:
-        bucketnames = Bucket.objects.order_by('-level').filter(level__lte=reportclass.maxBucketLevel).values_list('name', flat=True)
+          bucketnames = bucketnames.filter(level__gte=reportclass.minBucketLevel)
+      bucketnames = bucketnames.order_by('-level').values_list('name', flat=True)
     else:
       bucketnames = None
     fmt = request.GET.get('format', None)

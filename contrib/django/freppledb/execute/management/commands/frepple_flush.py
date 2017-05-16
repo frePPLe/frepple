@@ -132,6 +132,8 @@ class Command(BaseCommand):
       if 'operationplan' in tables:
         tables.add('operationplanmaterial')
         tables.add('operationplanresource')
+      if 'resource' in tables and not 'out_resourceplan' in tables:
+        tables.add('out_resourceplan')
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
       tables.discard('auth_group')

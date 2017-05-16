@@ -1198,11 +1198,11 @@ class GridReport(View):
       '''
       # Check permissions
       if not reportclass.model:
-        yield force_text(_('Invalid upload request')) + '</br>'
+        yield '<div>' + force_text(_('Invalid upload request')) + '</div>'
         return
       permname = get_permission_codename('add', reportclass.model._meta)
       if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
-        yield force_text(_('Permission denied')) + '</br>'
+        yield '<div>' + force_text(_('Permission denied')) + '</div>'
         return
 
       # Choose the right delimiter and language
@@ -1215,6 +1215,7 @@ class GridReport(View):
       rownumber = 0
       changed = 0
       added = 0
+      numerrors = 0
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
       # Handle the complete upload as a single database transaction
@@ -1225,11 +1226,12 @@ class GridReport(View):
         if 'erase' in request.POST:
           returnvalue = reportclass.erase(request)
           if returnvalue:
-            yield string_concat('</br>', '<samp style="padding-left: 15px;">', returnvalue, '</samp></br>')
+            yield string_concat('<div>', returnvalue, '</div>')
             errors = True
 
         # Loop through the data records
         has_pk_field = False
+        yield force_text(string_concat('<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">', _("worksheet"), '</th><th>', _("row"), '</th><th>', _("field"), '</th><th>', _("value"), '</th><th>', _("error"), '</th></tr>', '<tbody>'))
         for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
           rownumber += 1
 
@@ -1272,8 +1274,9 @@ class GridReport(View):
               if not ok:
                 headers.append(False)
                 yield force_text(string_concat(
-                  '</br>', '<samp style="padding-left: 15px;">', force_text(_('Skipping field %(column)s') % {'column': col}), '</samp>'
+                  '<tr><td class="sr-only">' + reportclass.model._meta.verbose_name + '</td><td></td><td></td><td></td><td>' + _('Skipping unknown field %(column)s') % {'column': value} + '</td></tr>'
                   ))
+                numerrors += 1
               if col == reportclass.model._meta.pk.name.lower() or \
                  col == reportclass.model._meta.pk.verbose_name.lower():
                 has_pk_field = True
@@ -1282,8 +1285,9 @@ class GridReport(View):
               errors = True
               yield force_text(string_concat(
                 # Translators: Translation included with django
-                '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp>'
+                '<tr><td class="sr-only">' + reportclass.model._meta.verbose_name + '</td><td></td><td></td><td></td><td>' + _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)} + '</td></tr>'
                 ))
+              numerrors += 1
             # Abort when there are errors
             if errors:
               break
@@ -1372,24 +1376,27 @@ class GridReport(View):
                 except Exception as e:
                   # Validation fails
                   for error in form.non_field_errors():
-                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                      _('Row %(rownum)s: %(message)s') % {
-                        'rownum': rownumber, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                      }))
+                    yield force_text(string_concat(
+                      '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td>', rownumber, '</td><td></td><td></td><td>', error, '</td></tr>'
+                      ))
+                    numerrors += 1
                   for field in form:
                     for error in field.errors:
-                      yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                        _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                          'rownum': rownumber, 'data': d[field.name],
-                          'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                        }))
+                      yield force_text(string_concat(
+                        '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td>', rownumber, '</td><td>', field.name, '</td><td>', d[field.name], '</td><td>', error, '</td></tr>'
+                        ))
+                      numerrors += 1
             except Exception as e:
-              yield '</br><samp>' + force_text(_("Exception during upload: %(message)s") % {'message': e}) + '</samp>'
+              yield force_text(string_concat(
+                '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td></td><td></td><td></td><td>', e, '</td></tr>'
+                ))
+              numerrors += 1
 
       # Report all failed records
-      yield '</br><strong>' + force_text(
-          _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-          ) + '</strong></br>'
+      theClass = "success"
+      if numerrors > 0:
+        theClass = "danger"
+      yield force_text(string_concat('<tr class="', theClass, '"><th class="sr-only">', reportclass.model._meta.verbose_name, '</th><th colspan="4">', _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</td></tr></tbody></table></div>'))
 
 
   @classmethod
@@ -1405,11 +1412,11 @@ class GridReport(View):
     '''
     # Check permissions
     if not reportclass.model:
-      yield force_text(_('Invalid upload request')) + '\n '
+      yield '<div>' + force_text(_('Invalid upload request')) + '</div>'
       return
     permname = get_permission_codename('add', reportclass.model._meta)
     if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
-      yield force_text(_('Permission denied')) + '\n '
+      yield '<div>' + force_text(_('Permission denied')) + '</div>'
       return
 
     # Choose the right language
@@ -1421,6 +1428,7 @@ class GridReport(View):
     rownumber = 0
     changed = 0
     added = 0
+    numerrors = 0
     content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
 
     # Handle the complete upload as a single database transaction
@@ -1432,12 +1440,14 @@ class GridReport(View):
         returnvalue = reportclass.erase(request)
         if returnvalue:
           errors = True
+          numerrors += 1
           yield string_concat('</br>', '<samp style="padding-left: 15px;">', returnvalue, '</samp></br>')
 
       # Loop through the data records
       wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
       ws = wb.worksheets[0]
       has_pk_field = False
+      yield force_text(string_concat('<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">', _("worksheet"), '</th><th>', _("row"), '</th><th>', _("field"), '</th><th>', _("value"), '</th><th>', _("error"), '</th></tr>', '<tbody>'))
       for row in ws.iter_rows():
         rownumber += 1
 
@@ -1478,8 +1488,9 @@ class GridReport(View):
             if not ok:
               headers.append(False)
               yield force_text(string_concat(
-                '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': col}, '</samp>'
+                '<tr><td class="sr-only">' + reportclass.model._meta.verbose_name + '</td><td></td><td></td><td></td><td>' + _('Skipping unknown field %(column)s') % {'column': col} + '</td></tr>'
                 ))
+              numerrors += 1
             if col == reportclass.model._meta.pk.name.lower() or \
                col == reportclass.model._meta.pk.verbose_name.lower():
               has_pk_field = True
@@ -1488,8 +1499,9 @@ class GridReport(View):
             errors = True
             yield force_text(string_concat(
               # Translators: Translation included with django
-              '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp>'
+              '<tr><td class="sr-only">' + reportclass.model._meta.verbose_name + '</td><td></td><td></td><td></td><td>' + _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)} + '</td></tr>'
               ))
+            numerrors += 1
           # Abort when there are errors
           if errors > 0:
             break
@@ -1571,11 +1583,11 @@ class GridReport(View):
                 form = UploadForm(d)
                 it = None
               except reportclass.model.MultipleObjectsReturned:
-                yield force_text(
-                  '</br>' + '<samp style="padding-left: 15px;">' + _('Row %(rownum)s: %(message)s') % {
-                    'rownum': rownumber, 'message': force_text(_(
-                      'Key fields not unique'))
-                  }) + '</samp>'
+                yield force_text(string_concat(
+                  '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', force_text(_(
+                    'Key fields not unique')), '</td></tr>'
+                  ))
+                numerrors += 1
             else:
               # No primary key required for this model
               form = UploadForm(d)
@@ -1603,24 +1615,27 @@ class GridReport(View):
               except Exception as e:
                 # Validation fails
                 for error in form.non_field_errors():
-                  yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                    _('Row %(rownum)s: %(message)s') % {
-                      'rownum': rownumber, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                    }))
+                  yield force_text(string_concat(
+                    '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td>', rownumber, '</td><td></td><td></td><td>', error, '</td></tr>'
+                    ))
+                  numerrors += 1
                 for field in form:
                   for error in field.errors:
-                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                        'rownum': rownumber, 'data': d[field.name],
-                        'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                      }))
+                    yield force_text(string_concat(
+                      '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td>', rownumber, '</td><td>', field.name, '</td><td>', d[field.name], '</td><td>', error, '</td></tr>'
+                      ))
+                    numerrors += 1
           except Exception as e:
-            yield force_text(_("Exception during upload: %(message)s") % {'message': e}) + '\n '
+            yield force_text(string_concat(
+              '<tr><td class="sr-only">', reportclass.model._meta.verbose_name, '</td><td></td><td></td><td></td><td>', e, '</td></tr>'
+              ))
+            numerrors += 1
 
     # Report all failed records
-    yield '</br><strong>' + force_text(
-        _('Uploaded data successfully: changed %(changed)d and added %(added)d records') % {'changed': changed, 'added': added}
-        ) + '</strong></br>'
+    theClass = "success"
+    if numerrors > 0:
+      theClass = "danger"
+    yield force_text(string_concat('<tr class="', theClass, '"><th class="sr-only">', reportclass.model._meta.verbose_name, '</th><th colspan="4">', _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</td></tr></tbody></table></div>'))
 
 
   @classmethod
@@ -2362,7 +2377,8 @@ def importWorkbook(request):
 
     # Process all rows in each worksheet
     for ws_name, model, contenttype_id, dependencies in models:
-      yield '<strong>'+force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+      yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+      yield force_text(string_concat('<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">', _("worksheet"), '</th><th>', _("row"), '</th><th>', _("field"), '</th><th>', _("value"), '</th><th>', _("error"), '</th></tr>', '<tbody>'))
       ws = wb.get_sheet_by_name(name=ws_name)
       rownum = 0
       has_pk_field = False
@@ -2423,7 +2439,7 @@ def importWorkbook(request):
               if not ok:
                 headers.append(False)
                 yield force_text(string_concat(
-                  '</br>', '<samp style="padding-left: 15px;">', _('Skipping unknown field %(column)s') % {'column': value}, '</samp></div>'
+                  '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Skipping unknown field %(column)s') % {'column': value} + '</td></tr>'
                   ))
                 numerrors += 1
               if value == model._meta.pk.name.lower() \
@@ -2434,7 +2450,7 @@ def importWorkbook(request):
               header_ok = True
               yield force_text(string_concat(
                 # Translators: Translation included with django
-                '</br>', '<samp style="padding-left: 15px;">', _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)}, '</samp></div>'
+                '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)} + '</td></tr>'
                 ))
               numerrors += 1
             if not header_ok:
@@ -2511,11 +2527,10 @@ def importWorkbook(request):
                 form = uploadform(d)
                 it = None
               except model.MultipleObjectsReturned:
-                yield force_text(
-                  '</br>' + '<samp style="padding-left: 15px;">' + _('Row %(rownum)s: %(message)s') % {
-                    'rownum': rownum, 'message': force_text(_(
-                      'Key fields not unique'))
-                  }) + '</samp></div>'
+                yield force_text(string_concat(
+                  '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', force_text(_(
+                    'Key fields not unique')), '</td></tr>'
+                  ))
                 continue
             else:
               # No primary key required for this model
@@ -2543,22 +2558,20 @@ def importWorkbook(request):
               except Exception:
                 # Validation fails
                 for error in form.non_field_errors():
-                  yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                    _('Row %(rownum)s: %(message)s') % {
-                      'rownum': rownum, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                    }))
+                  yield force_text(string_concat(
+                    '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', error, '</td></tr>'
+                    ))
                   numerrors += 1
                 for field in form:
                   for error in field.errors:
-                    yield force_text(string_concat('<div style="padding-bottom: 10px">',
-                      _('Row %(rownum)s field %(field)s: %(data)s: %(message)s') % {
-                        'rownum': rownum, 'data': d[field.name],
-                        'field': field.name, 'message': '</br><samp style="padding-left: 15px;">'+error+'</samp></div>'
-                      }))
+                    yield force_text(string_concat(
+                      '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td>', field.name, '</td><td>', d[field.name], '</td><td>', error, '</td></tr>'
+                      ))
                     numerrors += 1
       # Report status of the import
-      yield string_concat('<strong>',
-        model._meta.verbose_name, ": ",'</br>',
-        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') %
-          {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</strong></br></br>')
-    yield force_text(_("Done"))
+      theClass = "success"
+      if numerrors > 0:
+        theClass = "danger"
+      yield force_text(string_concat('<tr class="', theClass, '"><th class="sr-only">', model._meta.verbose_name, '</th><th colspan="4">', _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</td></tr></tbody></table></div>'))
+
+    yield force_text(string_concat('<div><strong>', _("Done"), '</strong></div>'))

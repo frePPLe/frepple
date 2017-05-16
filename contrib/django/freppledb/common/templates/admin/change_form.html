@@ -67,10 +67,7 @@ fieldset th {
 </style>
 {{block.super}}{% endblock %}
 
-{% block content_title %}
-{% comment %}Translators: Translation included with Django {% endcomment %}
-<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|escape}}: {% trans "edit"|capfirst|force_escape %}</h1>{% endif %}
-{% if object_id %}{% tabs opts %}{% endif %}</div></div>{% endblock %}
+{% block content_title %}{{ block.super }}{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
 
 {% block content %}<div id="content-main" class="row"><div class="col-md-12">
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}

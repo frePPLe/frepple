@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.admin.utils import unquote
 from django.db import connections
-from django.http import Http404
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.input.models import Demand
@@ -62,6 +62,18 @@ class ReportByDemand(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     return Demand.objects.filter(name__exact=unquote(args[0])).values('name')
+
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      return {
+        'active_tab': 'plan',
+        'title': force_text(Demand._meta.verbose_name) + " " + args[0],
+        'post_title': _('plan')
+        }
+    else:
+      return {}
 
 
   @classmethod

@@ -21,8 +21,12 @@ The following URLS are available.
   | **GET /execute/api/status/?id=<taskid>**:
   | Returns the list of all running and pending tasks. The second format
     returns the details of a specific task.
+
+  Example usage with curl to retrieve status for active task::
     
-  Example usage with curl::
+      curl -u admin:admin http://localhost:8000/execute/api/status/    
+    
+  Example usage with curl to retrieve status of task with id 26::
 
       curl -u admin:admin http://localhost:8000/execute/api/status/?id=26 
 

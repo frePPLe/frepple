@@ -50,8 +50,8 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
-        'title': capfirst(force_text(Operation._meta.verbose_name) + " " + args[0]),
-        'post_title': ': ' + capfirst(force_text(_('plan'))),
+        'title': force_text(Operation._meta.verbose_name) + " " + args[0],
+        'post_title': _('plan')
         }
     else:
       return {}

@@ -6,7 +6,7 @@
 {{block.super}}{% endblock %}
 
 {% comment %}Translators: Translation included with Django {% endcomment %}
-{% block content_title %}<div><h1 style="color:#333">{{title|escape}}: {% trans "Delete"|capfirst|force_escape %}</h1>{% block tools %}{% endblock %}</div>{% endblock %}
+{% block content_title %}{{ block.super }}{% tabs opts %}{% endblock %}
 {% block content %}
 {% if perms_lacking %}
     {% comment %}Translators: Translation included with Django {% endcomment %}

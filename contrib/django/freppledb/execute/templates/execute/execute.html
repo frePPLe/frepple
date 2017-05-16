@@ -118,7 +118,7 @@
         '<div class="modal-footer">'+
             '<input type="submit" id="closemodalbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close Window')+'">';
     if (document.queryCommandSupported('copy')) {
-      modalcontent += '<input type="submit" id=flexiblebutton" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">';
+      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">';
     }
     modalcontent += '</div>'+'</div>'+'</div>';
     $("#popup").html(modalcontent)

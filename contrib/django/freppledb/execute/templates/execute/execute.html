@@ -4,6 +4,7 @@
 <script type="text/javascript">
 
   var refresh = null;
+  var xhr = {abort: function () {}};
 
   function extraPreference() {
     return {
@@ -116,10 +117,11 @@
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
-            '<input type="submit" id="closemodalbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close Window')+'">';
+            '<input type="submit" id="closemodalbutton" onclick="CancelImport()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
     if (document.queryCommandSupported('copy')) {
-      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">';
+      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
     }
+    modalcontent += '<input type="submit" id="cancelimportbutton" onclick="CancelImport()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel import"|capfirst %}">';
     modalcontent += '</div>'+'</div>'+'</div>';
     $("#popup").html(modalcontent)
     .modal('show');
@@ -129,7 +131,7 @@
     data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
     $('#uploadResponse').css('display','block');
     $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
-    $.ajax({
+    xhr = $.ajax({
       type: 'post',
       url: '{{request.prefix}}/execute/launch/importworkbook/',
       cache: false,
@@ -141,6 +143,7 @@
         if (document.queryCommandSupported('copy')) {
           $('#copytoclipboard').show();
         }
+        $('#cancelimportbutton').hide();
         // Resetting the value of filename. This is only done to avoid a
         // corner case where Internet Explorer is uploading a cached
         // (potentially outdated or even deleted) file.
@@ -156,7 +159,7 @@
       },
       processData: false,
       contentType: false
-      });
+    }); //end AJAX
   }
   {
     // Nothing to import
@@ -182,9 +185,17 @@
         },
         processData: false,
         contentType: false
-        });
+      }); //end AJAX
      }
     )
+  }
+
+  function CancelImport(){
+    xhr.abort();
+    $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
+    $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
+    $('#cancelimportbutton').hide();
+    $('#copytoclipboard').show();
   }
 
   function CopyToClipboard() {

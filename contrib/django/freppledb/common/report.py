@@ -370,7 +370,7 @@ class GridReport(View):
   # A optional text shown after the title in the content.
   # It is however not added in the page title or the breadcrumb name
   post_title = ''
-  
+
   # Link to the documentation
   help_url = None
 
@@ -2347,92 +2347,83 @@ def importWorkbook(request):
   '''
   # Build a list of all contenttypes
   all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
-  with transaction.atomic(using=request.database):
-    # Find all models in the workbook
-    wb = load_workbook(filename=request.FILES['spreadsheet'], read_only=True, data_only=True)
-    models = []
-    for ws_name in wb.get_sheet_names():
-      # Find the model
-      model = None
-      contenttype_id = None
-      for m, ct in all_models:
-        # Try with translated model names
-        if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
-          model = m
-          contenttype_id = ct
-          break
-        # Try with English model names
-        with translation.override('en'):
+  try:
+    with transaction.atomic(using=request.database):
+      # Find all models in the workbook
+      wb = load_workbook(filename=request.FILES['spreadsheet'], read_only=True, data_only=True)
+      models = []
+      for ws_name in wb.get_sheet_names():
+        # Find the model
+        model = None
+        contenttype_id = None
+        for m, ct in all_models:
+          # Try with translated model names
           if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
             model = m
             contenttype_id = ct
             break
-      if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-        yield force_text(_("Ignoring data in worksheet: %s") % ws_name) + '\n'
-      elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
-        # Check permissions
-        yield force_text(_("You don't permissions to add: %s") % ws_name) + '\n'
-      else:
-        deps = set([model])
-        GridReport.dependent_models(model, deps)
-        models.append( (ws_name, model, contenttype_id, deps) )
+          # Try with English model names
+          with translation.override('en'):
+            if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+              model = m
+              contenttype_id = ct
+              break
+        if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+          yield force_text(_("Ignoring data in worksheet: %s") % ws_name) + '\n'
+        elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
+          # Check permissions
+          yield force_text(_("You don't permissions to add: %s") % ws_name) + '\n'
+        else:
+          deps = set([model])
+          GridReport.dependent_models(model, deps)
+          models.append( (ws_name, model, contenttype_id, deps) )
 
-    # Sort the list of models, based on dependencies between models
-    models = GridReport.sort_models(models)
+      # Sort the list of models, based on dependencies between models
+      models = GridReport.sort_models(models)
 
-    # Process all rows in each worksheet
-    for ws_name, model, contenttype_id, dependencies in models:
-      yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
-      yield force_text(string_concat('<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">', _("worksheet"), '</th><th>', _("row"), '</th><th>', _("field"), '</th><th>', _("value"), '</th><th>', _("error"), '</th></tr>', '<tbody>'))
-      ws = wb.get_sheet_by_name(name=ws_name)
-      rownum = 0
-      has_pk_field = False
-      headers = []
-      uploadform = None
-      changed = 0
-      added = 0
-      numerrors = 0
+      # Process all rows in each worksheet
+      for ws_name, model, contenttype_id, dependencies in models:
+        yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+        yield force_text(string_concat('<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">', _("worksheet"), '</th><th>', _("row"), '</th><th>', _("field"), '</th><th>', _("value"), '</th><th>', _("error"), '</th></tr>', '<tbody>'))
+        ws = wb.get_sheet_by_name(name=ws_name)
+        rownum = 0
+        has_pk_field = False
+        headers = []
+        uploadform = None
+        changed = 0
+        added = 0
+        numerrors = 0
 
-      try:
-        # The admin model of the class can define some fields to exclude from the import
-        exclude = data_site._registry[model].exclude
-      except:
-        exclude = None
+        try:
+          # The admin model of the class can define some fields to exclude from the import
+          exclude = data_site._registry[model].exclude
+        except:
+          exclude = None
 
-      for row in ws.iter_rows():
-        with transaction.atomic(using=request.database):
-          rownum += 1
-          if rownum == 1:
-            # Process the header row with the field names
+        for row in ws.iter_rows():
+          with transaction.atomic(using=request.database):
+            rownum += 1
+            if rownum == 1:
+              # Process the header row with the field names
 
-            # Collect required fields
-            required_fields = set()
-            for i in model._meta.fields:
-              if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                required_fields.add(i.name)
-
-            # Validate all columns
-            header_ok = True
-            for cell in row:
-              ok = False
-              value = cell.value
-              if not value:
-                headers.append(False)
-                continue
-              else:
-                value = value.lower()
+              # Collect required fields
+              required_fields = set()
               for i in model._meta.fields:
-                # Try with translated field names
-                if value == i.name.lower() or value == i.verbose_name.lower():
-                  if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                    headers.append(i)
-                  else:
-                    headers.append(False)
-                  required_fields.discard(i.name)
-                  ok = True
-                  break
-                # Try with English field names
-                with translation.override('en'):
+                if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
+                  required_fields.add(i.name)
+
+              # Validate all columns
+              header_ok = True
+              for cell in row:
+                ok = False
+                value = cell.value
+                if not value:
+                  headers.append(False)
+                  continue
+                else:
+                  value = value.lower()
+                for i in model._meta.fields:
+                  # Try with translated field names
                   if value == i.name.lower() or value == i.verbose_name.lower():
                     if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
                       headers.append(i)
@@ -2441,142 +2432,154 @@ def importWorkbook(request):
                     required_fields.discard(i.name)
                     ok = True
                     break
-              if not ok:
-                headers.append(False)
-                yield force_text(string_concat(
-                  '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Skipping unknown field %(column)s') % {'column': value} + '</td></tr>'
-                  ))
-                numerrors += 1
-              if value == model._meta.pk.name.lower() \
-                or value == model._meta.pk.verbose_name.lower():
-                  has_pk_field = True
-            if required_fields:
-              # We are missing some required fields
-              header_ok = True
-              yield force_text(string_concat(
-                # Translators: Translation included with django
-                '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)} + '</td></tr>'
-                ))
-              numerrors += 1
-            if not header_ok:
-              # Can't process this worksheet
-              break
-            uploadform = modelform_factory(
-              model,
-              fields=tuple([i.name for i in headers if isinstance(i, Field)]),
-              formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-              )
-
-            # Get natural keys for the class
-            natural_key = None
-            if hasattr(model.objects, 'get_by_natural_key'):
-              if model._meta.unique_together:
-                natural_key = model._meta.unique_together[0]
-              elif hasattr(model, 'natural_key'):
-                natural_key = model.natural_key
-
-          else:
-            # Process a data row
-            # Step 1: Build a dictionary with all data fields
-            d = {}
-            colnum = 0
-            for cell in row:
-              # More fields in data row than headers. Move on to the next row.
-              if colnum >= len(headers):
-                break
-              if isinstance(headers[colnum], Field):
-                data = cell.value
-                if isinstance(headers[colnum], (IntegerField, AutoField)):
-                  if isinstance(data, numericTypes):
-                    data = int(data)
-                elif isinstance(headers[colnum], DurationField):
-                  if isinstance(data, float):
-                    data = "%.6f" % data
-                  else:
-                    data = str(data) if data is not None else None
-                elif isinstance(headers[colnum], (DateField, DateTimeField)):
-                  if isinstance(data, datetime):
-                    # Rounding to second
-                    if data.microsecond < 500000:
-                      data = data.replace(microsecond=0)
-                    else:
-                      data = data.replace(microsecond=0) + timedelta(seconds=1)
-                else:
-                  if isinstance(data, str):
-                    data = data.strip()
-                d[headers[colnum].name] = data
-              colnum += 1
-            # Step 2: Fill the form with data, either updating an existing
-            # instance or creating a new one.
-            if has_pk_field:
-              # A primary key is part of the input fields
-              try:
-                with transaction.atomic(using=request.database):
-                  # Try to find an existing record with the same primary key
-                  it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
-                  form = uploadform(d, instance=it)
-              except model.DoesNotExist:
-                form = uploadform(d)
-                it = None
-            elif natural_key:
-              # A natural key exists for this model
-              try:
-                # Build the natural key
-                key = []
-                for x in natural_key:
-                  key.append(d.get(x, None))
-                # Try to find an existing record using the natural key
-                it = model.objects.get_by_natural_key(*key)
-                form = uploadform(d, instance=it)
-              except model.DoesNotExist:
-                form = uploadform(d)
-                it = None
-              except model.MultipleObjectsReturned:
-                yield force_text(string_concat(
-                  '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', force_text(_(
-                    'Key fields not unique')), '</td></tr>'
-                  ))
-                continue
-            else:
-              # No primary key required for this model
-              form = uploadform(d)
-              it = None
-            # Step 3: Validate the data and save to the database
-            if form.has_changed():
-              try:
-                with transaction.atomic(using=request.database):
-                  obj = form.save(commit=False)
-                  obj.save(using=request.database)
-                  LogEntry(
-                    user_id=request.user.pk,
-                    content_type_id=contenttype_id,
-                    object_id=obj.pk,
-                    object_repr=force_text(obj),
-                    action_flag=it and CHANGE or ADDITION,
-                    #. Translators: Translation included with Django
-                    change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                  ).save(using=request.database)
-                  if it:
-                    changed += 1
-                  else:
-                    added += 1
-              except Exception:
-                # Validation fails
-                for error in form.non_field_errors():
+                  # Try with English field names
+                  with translation.override('en'):
+                    if value == i.name.lower() or value == i.verbose_name.lower():
+                      if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
+                        headers.append(i)
+                      else:
+                        headers.append(False)
+                      required_fields.discard(i.name)
+                      ok = True
+                      break
+                if not ok:
+                  headers.append(False)
                   yield force_text(string_concat(
-                    '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', error, '</td></tr>'
+                    '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Skipping unknown field %(column)s') % {'column': value} + '</td></tr>'
                     ))
                   numerrors += 1
-                for field in form:
-                  for error in field.errors:
+                if value == model._meta.pk.name.lower() \
+                  or value == model._meta.pk.verbose_name.lower():
+                    has_pk_field = True
+              if required_fields:
+                # We are missing some required fields
+                header_ok = True
+                yield force_text(string_concat(
+                  # Translators: Translation included with django
+                  '<tr><td class="sr-only">' + ws_name + '</td><td></td><td></td><td></td><td>' + _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)} + '</td></tr>'
+                  ))
+                numerrors += 1
+              if not header_ok:
+                # Can't process this worksheet
+                break
+              uploadform = modelform_factory(
+                model,
+                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+                )
+
+              # Get natural keys for the class
+              natural_key = None
+              if hasattr(model.objects, 'get_by_natural_key'):
+                if model._meta.unique_together:
+                  natural_key = model._meta.unique_together[0]
+                elif hasattr(model, 'natural_key'):
+                  natural_key = model.natural_key
+
+            else:
+              # Process a data row
+              # Step 1: Build a dictionary with all data fields
+              d = {}
+              colnum = 0
+              for cell in row:
+                # More fields in data row than headers. Move on to the next row.
+                if colnum >= len(headers):
+                  break
+                if isinstance(headers[colnum], Field):
+                  data = cell.value
+                  if isinstance(headers[colnum], (IntegerField, AutoField)):
+                    if isinstance(data, numericTypes):
+                      data = int(data)
+                  elif isinstance(headers[colnum], DurationField):
+                    if isinstance(data, float):
+                      data = "%.6f" % data
+                    else:
+                      data = str(data) if data is not None else None
+                  elif isinstance(headers[colnum], (DateField, DateTimeField)):
+                    if isinstance(data, datetime):
+                      # Rounding to second
+                      if data.microsecond < 500000:
+                        data = data.replace(microsecond=0)
+                      else:
+                        data = data.replace(microsecond=0) + timedelta(seconds=1)
+                  else:
+                    if isinstance(data, str):
+                      data = data.strip()
+                  d[headers[colnum].name] = data
+                colnum += 1
+              # Step 2: Fill the form with data, either updating an existing
+              # instance or creating a new one.
+              if has_pk_field:
+                # A primary key is part of the input fields
+                try:
+                  with transaction.atomic(using=request.database):
+                    # Try to find an existing record with the same primary key
+                    it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
+                    form = uploadform(d, instance=it)
+                except model.DoesNotExist:
+                  form = uploadform(d)
+                  it = None
+              elif natural_key:
+                # A natural key exists for this model
+                try:
+                  # Build the natural key
+                  key = []
+                  for x in natural_key:
+                    key.append(d.get(x, None))
+                  # Try to find an existing record using the natural key
+                  it = model.objects.get_by_natural_key(*key)
+                  form = uploadform(d, instance=it)
+                except model.DoesNotExist:
+                  form = uploadform(d)
+                  it = None
+                except model.MultipleObjectsReturned:
+                  yield force_text(string_concat(
+                    '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', force_text(_(
+                      'Key fields not unique')), '</td></tr>'
+                    ))
+                  continue
+              else:
+                # No primary key required for this model
+                form = uploadform(d)
+                it = None
+              # Step 3: Validate the data and save to the database
+              if form.has_changed():
+                try:
+                  with transaction.atomic(using=request.database):
+                    obj = form.save(commit=False)
+                    obj.save(using=request.database)
+                    LogEntry(
+                      user_id=request.user.pk,
+                      content_type_id=contenttype_id,
+                      object_id=obj.pk,
+                      object_repr=force_text(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      #. Translators: Translation included with Django
+                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                    ).save(using=request.database)
+                    if it:
+                      changed += 1
+                    else:
+                      added += 1
+                except Exception:
+                  # Validation fails
+                  for error in form.non_field_errors():
                     yield force_text(string_concat(
-                      '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td>', field.name, '</td><td>', d[field.name], '</td><td>', error, '</td></tr>'
+                      '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td></td><td></td><td>', error, '</td></tr>'
                       ))
                     numerrors += 1
-      # Report status of the import
-      theClass = "success"
-      if numerrors > 0:
-        theClass = "danger"
-      yield force_text(string_concat('<tr class="', theClass, '"><th class="sr-only">', model._meta.verbose_name, '</th><th colspan="4">', _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</td></tr></tbody></table></div>'))
+                  for field in form:
+                    for error in field.errors:
+                      yield force_text(string_concat(
+                        '<tr><td class="sr-only">', ws_name, '</td><td>', rownum, '</td><td>', field.name, '</td><td>', d[field.name], '</td><td>', error, '</td></tr>'
+                        ))
+                      numerrors += 1
+        # Report status of the import
+        theClass = "success"
+        if numerrors > 0:
+          theClass = "danger"
+        yield force_text(string_concat('<tr class="', theClass, '"><th class="sr-only">', model._meta.verbose_name, '</th><th colspan="4">', _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors}, '</td></tr></tbody></table></div>'))
 
-    yield force_text(string_concat('<div><strong>', _("Done"), '</strong></div>'))
+      yield force_text(string_concat('<div><strong>', _("Done"), '</strong></div>'))
+  except GeneratorExit:
+    print('ConnectionAborted')

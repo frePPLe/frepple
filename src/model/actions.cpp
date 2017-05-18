@@ -538,10 +538,21 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
 
     // Setup matrices
     memsize = 0;
+    size_t countSetupRules(0), memSetupRules(0);
     for (SetupMatrix::iterator s = SetupMatrix::begin(); s != SetupMatrix::end(); ++s)
+    {
       memsize += s->getSize();
+      SetupMatrixRule::iterator iter = s->getRules();
+      while (SetupMatrixRule *sr = iter.next())
+      {
+        ++countSetupRules;
+        memSetupRules += sr->getSize();
+      }
+    }
     logger << "Setup matrix          \t" << SetupMatrix::size() << "\t" << memsize << endl;
+    logger << "Setup matrix rules    \t" << countSetupRules << "\t" << memSetupRules << endl;
     total += memsize;
+    total += memSetupRules;
 
     // Resources
     memsize = 0;
@@ -566,6 +577,7 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "Skill                 \t" << Skill::size() << "\t" << memsize << endl;
     logger << "Resource skill        \t" << countResourceSkills << "\t" << memResourceSkills << endl;
     total += memsize;
+    total += memResourceSkills;
 
     // Operations, flows and loads
     size_t countFlows(0), memFlows(0), countLoads(0), memLoads(0);

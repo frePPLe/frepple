@@ -2986,6 +2986,15 @@ class Operation : public HasName<Operation>,
       HasLevel::registerFields<Cls>(m);
     }
 
+    /** Return the memory size. */
+    virtual size_t getSize() const
+    {
+      size_t tmp = Object::getSize();
+      // Add the memory for the superoperation list: 3 pointers per superoperation
+      tmp += superoplist.size() * 3 * sizeof(Operation*);
+      return tmp;
+    }
+
   protected:
     void initOperationPlan(OperationPlan*, double,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
@@ -3554,6 +3563,15 @@ class OperationRouting : public Operation
       m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_OBJECT);
     }
 
+    /** Return the memory size. */
+    virtual size_t getSize() const
+    {
+      size_t tmp = Operation::getSize();
+      // Add the memory for the steps: 3 pointers per step
+      tmp += steps.size() * 3 * sizeof(Operation*);
+      return tmp;
+    }
+
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual bool extraInstantiate(OperationPlan* o);
@@ -3666,6 +3684,15 @@ class OperationSplit : public Operation
       m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_OBJECT);
     }
 
+    /** Return the memory size. */
+    virtual size_t getSize() const
+    {
+      size_t tmp = Operation::getSize();
+      // Add the memory for the suboperation list: 3 pointers per alternates
+      tmp += alternates.size() * 3 * sizeof(Operation*);
+      return tmp;
+    }
+
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
     virtual bool extraInstantiate(OperationPlan* o);
@@ -3752,6 +3779,15 @@ class OperationAlternate : public Operation
     {
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_OBJECT);
+    }
+
+    /** Return the memory size. */
+    virtual size_t getSize() const
+    {
+      size_t tmp = Operation::getSize();
+      // Add the memory for the suboperation list: 3 pointers per alternates
+      tmp += alternates.size() * 3 * sizeof(Operation*);
+      return tmp;
     }
 
   protected:
@@ -6999,6 +7035,15 @@ class Demand
       * plans (including locked ones).
       */
     virtual ~Demand();
+
+    /** Return the memory size. */
+    virtual size_t getSize() const
+    {
+      size_t tmp = Object::getSize();
+      // Add the memory for the list of deliveries: 2 pointers per delivery
+      tmp += deli.size() * 2 * sizeof(OperationPlan*);
+      return tmp;
+    }
 
     /** Returns the quantity of the demand. */
     double getQuantity() const

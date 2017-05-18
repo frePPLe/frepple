@@ -865,7 +865,16 @@ bool OperationPlan::operator < (const OperationPlan& a) const
     return dates.getStart() < a.dates.getStart();
 
   // Sort based on quantity
-  return quantity >= a.quantity;
+  if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
+    return quantity >= a.quantity;
+  
+  // Sort based on raw identifier
+  if (getRawIdentifier() != a.getRawIdentifier())
+    return getRawIdentifier() > a.getRawIdentifier();
+  else
+    // Using a pointer comparison as tie breaker. This can give
+    // results that are not reproducible across platforms and runs.
+    return this < &a;
 }
 
 

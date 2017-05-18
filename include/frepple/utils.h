@@ -206,6 +206,7 @@ namespace frepple
 
 // Forward declarations
 class CommandMoveOperationPlan;
+class OperationPlan;
 
 namespace utils
 {

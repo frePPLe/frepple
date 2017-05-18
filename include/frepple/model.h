@@ -5758,7 +5758,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     void setFlow(Flow*);
 
     /** Returns the operationplan owning this flowplan. */
-    OperationPlan* getOperationPlan() const
+    virtual OperationPlan* getOperationPlan() const
     {
       return oper;
     }
@@ -7494,7 +7494,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     explicit LoadPlan(OperationPlan*, const Load*);
 
     /** Return the operationplan owning this loadplan. */
-    OperationPlan* getOperationPlan() const
+    virtual OperationPlan* getOperationPlan() const
     {
       return oper;
     }

@@ -85,6 +85,9 @@ template <class type> class TimeLine
           return tp;
         }
 
+        /** Return the owning operationplan. */
+        virtual OperationPlan* getOperationPlan() const = 0;
+
         /** Return the quantity. */
         inline double getQuantity() const
         {
@@ -212,9 +215,14 @@ template <class type> class TimeLine
           else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
             return getQuantity() > fl2.getQuantity();
           else
-            // Using a pointer comparison as tie breaker. This can give
-            // results that are not reproducible across platforms and runs.
-            return this < &fl2;
+          {
+            OperationPlan* op1 = getOperationPlan();
+            OperationPlan* op2 = fl2.getOperationPlan();
+            if (op1 && op2)
+              return *op1 < *op2;
+            else
+              return op1 == nullptr;
+          }
         }
     };
 
@@ -241,6 +249,11 @@ template <class type> class TimeLine
         {
           this->dt = d;
           this->initType(EventPythonType->type_object());
+        }
+
+        virtual OperationPlan* getOperationPlan() const
+        {
+          return nullptr;
         }
     };
 
@@ -281,6 +294,11 @@ template <class type> class TimeLine
           else
             return prevMin ? prevMin->newMin : 0.0;
         }
+
+        virtual OperationPlan* getOperationPlan() const
+        {
+          return nullptr;
+        }
     };
 
     /** @brief A timeline event representing a change of the maximum target. */
@@ -318,6 +336,11 @@ template <class type> class TimeLine
         {
           if (inclusive) return newMax;
           else return prevMax ? prevMax->newMax : 0.0;
+        }
+
+        virtual OperationPlan* getOperationPlan() const
+        {
+          return nullptr;
         }
     };
 

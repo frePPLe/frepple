@@ -45,9 +45,6 @@ MetaCategory::CategoryMap MetaCategory::categoriesByGroupTag;
 
 const MetaCategory* Object::metadata = nullptr;
 
-// Generic Python type for timeline events
-PythonType* EventPythonType = nullptr;
-
 // Repository of loaded modules
 set<string> Environment::moduleRegistry;
 

@@ -26,11 +26,6 @@
 #include <cmath>
 #endif
 
-namespace frepple
-{
-namespace utils
-{
-
 
 DECLARE_EXPORT extern PythonType* EventPythonType;
 
@@ -1070,7 +1065,5 @@ template <class type> bool TimeLine<type>::check() const
   return true;
 }
 
-} // end namespace
-} // end namespace
 #endif
 

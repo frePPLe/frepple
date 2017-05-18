@@ -33,7 +33,6 @@
 
 #include "frepple/utils.h"
 #include "frepple/xml.h"
-#include "frepple/timeline.h"
 using namespace frepple::utils;
 
 namespace frepple
@@ -54,6 +53,7 @@ class OperationPlan;
 class Item;
 class ItemSupplier;
 class ItemDistribution;
+template <class T> class TimeLine;
 class Operation;
 class OperationPlanState;
 class OperationFixedTime;
@@ -2501,6 +2501,9 @@ class OperationPlan
 
     inline Item* getItem() const;
  };
+
+
+#include "frepple/timeline.h"
 
 
 /** @brief An operation represents an activity: these consume and produce material,

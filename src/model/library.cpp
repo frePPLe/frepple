@@ -25,6 +25,9 @@
 namespace frepple
 {
 
+// Generic Python type for timeline events
+PythonType* EventPythonType = nullptr;
+
 void LibraryModel::initialize()
 {
   // Initialize only once

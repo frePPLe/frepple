@@ -2174,6 +2174,7 @@ function about_show()
 
 function import_show(url)
 {
+  var xhr = {abort: function () {}};
   $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').modal({keyboard: false, backdrop:'static'});
@@ -2195,6 +2196,7 @@ function import_show(url)
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
+            '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Cancel Import')+'" style="display: none;">'+
             '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
             '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">' +
         '</div>'+
@@ -2206,9 +2208,19 @@ function import_show(url)
     if ($("#csv_file").val() == "") return;
     $('#uploadResponse').css('display','block');
     $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
-    $('#importbutton').css('display','none');
+    $('#importbutton').hide();
     $('#uploadform').css('display','none');
-    $.ajax({
+    $('#copytoclipboard').on('click', function() {
+      var sometextcontent = document.createRange();
+      sometextcontent.selectNode(document.getElementById("uploadResponse"));
+      window.getSelection().addRange(sometextcontent);
+      document.execCommand('copy');
+    });
+    $('#cancelimportbutton').show().on('click', function() {
+      xhr.abort();
+      $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
+    });
+    xhr = $.ajax({
       type: 'post',
       url: typeof(url) != 'undefined' ? url : '',
       cache: false,
@@ -2219,14 +2231,9 @@ function import_show(url)
         el.scrollTop(el[0].scrollHeight - el.height());
         $('#cancelbutton').html(gettext('Close'));
         $('#importbutton').hide();
+        $('#cancelimportbutton').show();
         if (document.queryCommandSupported('copy')) {
           $('#copytoclipboard').show();
-          $('#copytoclipboard').on('click', function() {
-            var sometextcontent = document.createRange();
-            sometextcontent.selectNode(document.getElementById("uploadResponse"));
-            window.getSelection().addRange(sometextcontent);
-            document.execCommand('copy');
-          });
         }
         $("#grid").trigger("reloadGrid");
       },
@@ -2236,6 +2243,11 @@ function import_show(url)
           el.html(e.currentTarget.response);
           el.scrollTop(el[0].scrollHeight - el.height());
         }
+      },
+      error: function() {
+        $('#cancelimportbutton').hide();
+        $('#copytoclipboard').show();
+        $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
       },
       processData: false,
       contentType: false

@@ -5612,6 +5612,15 @@ class PooledString
     }
 
   public:
+
+    static pair<size_t, size_t> getSize()
+    {
+      return make_pair(
+        pool.size(),
+        pool.size() * (sizeof(pool_type::value_type) + 4 * sizeof(void*))
+        );
+    }
+
     /** Default constructor with empty pointer. */
     PooledString() {}
 

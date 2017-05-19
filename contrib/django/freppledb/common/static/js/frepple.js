@@ -2231,7 +2231,7 @@ function import_show(url)
         el.scrollTop(el[0].scrollHeight - el.height());
         $('#cancelbutton').html(gettext('Close'));
         $('#importbutton').hide();
-        $('#cancelimportbutton').show();
+        $('#cancelimportbutton').hide();
         if (document.queryCommandSupported('copy')) {
           $('#copytoclipboard').show();
         }

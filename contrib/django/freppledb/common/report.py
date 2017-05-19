@@ -1279,7 +1279,7 @@ class GridReport(View):
                       break
                 if not ok:
                   headers.append(False)
-                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': value})
+                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': col})
                   numerrors += 1
                 if col == reportclass.model._meta.pk.name.lower() or \
                    col == reportclass.model._meta.pk.verbose_name.lower():

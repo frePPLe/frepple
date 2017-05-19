@@ -3172,10 +3172,19 @@ class PythonData : public DataValue
       Py_INCREF(obj);
     }
 
-    /** Copy constructor.<br>
-      * The reference counter isn't increased.
-      */
-    PythonData(const PythonData& o) : obj(o) {}
+    /** Destructor. */
+    ~PythonData()
+    {
+      if (obj)
+        Py_DECREF(obj);
+    }
+
+    /** Copy constructor. */
+    PythonData(const PythonData& o) : obj(o) 
+    {
+      if (obj)
+        Py_INCREF(obj);
+    }
 
     /** Constructor from an existing Python object. */
     PythonData(const PyObject* o)
@@ -3195,6 +3204,8 @@ class PythonData : public DataValue
     /** This conversion operator casts the object back to a PyObject pointer. */
     operator PyObject*() const
     {
+      if (obj)
+        Py_INCREF(obj);
       return obj;
     }
 

@@ -690,6 +690,10 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
     total += memsize;
     logger << "Problem               \t" << count << "\t" << memsize << endl;
 
+    // Shared string pool
+    auto tmp = PooledString::getSize();
+    logger << "String pool           \t" << tmp.first << "\t" << tmp.second << endl;
+
     // TOTAL
     logger << "Total                 \t\t" << total << endl << endl;
   }

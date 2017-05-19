@@ -636,7 +636,7 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
     logger << "Item                  \t" << Item::size() << "\t" << memsize  << endl;
     logger << "Item suppliers        \t" << countItemSuppliers << "\t" << memItemSuppliers << endl;
     logger << "Item distributions    \t" << countItemDistributions << "\t" << memItemDistributions << endl;
-    total += memsize + memItemSuppliers;
+    total += memsize + memItemSuppliers + memItemDistributions;
 
     // Demands
     memsize = 0;

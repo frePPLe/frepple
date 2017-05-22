@@ -2207,12 +2207,13 @@ function import_show(url)
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
     $('#uploadResponse').css('display','block');
-    $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
+    $('#uploadResponse').html(gettext('Importing...'));
     $('#importbutton').hide();
     $('#uploadform').css('display','none');
     $('#copytoclipboard').on('click', function() {
       var sometextcontent = document.createRange();
       sometextcontent.selectNode(document.getElementById("uploadResponse"));
+      window.getSelection().removeAllRanges();
       window.getSelection().addRange(sometextcontent);
       document.execCommand('copy');
     });

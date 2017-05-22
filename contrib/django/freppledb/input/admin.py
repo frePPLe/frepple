@@ -110,6 +110,7 @@ class Supplier_admin(MultiDBModelAdmin):
   exclude = ('source',)
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_supplier_change", "permissions": "input.change_supplier"},
+    {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_supplier"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_supplier_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_supplier_history"},

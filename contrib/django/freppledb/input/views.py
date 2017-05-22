@@ -1319,9 +1319,25 @@ class PurchaseOrderList(GridReport):
   height = 250
   help_url = 'user-guide/modeling-wizard/purchasing/purchase-orders.html'
 
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'purchaseorders'
+      return {
+        'active_tab': 'purchaseorders', 
+        'model': Supplier,
+        'title': force_text(Supplier._meta.verbose_name) + " " + args[0],
+        'post_title': _('purchase orders')
+        }
+    else:
+      return {'active_tab': 'purchaseorders'}
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    return PurchaseOrder.objects.all().extra(
+    q = PurchaseOrder.objects.all()
+    if args and args[0]:
+      q = q.filter(supplier=args[0])
+    return q.extra(
       tables=["itemsupplier"],
       where=['operationplan.supplier_id = itemsupplier.supplier_id and operationplan.item_id = itemsupplier.item_id'],
       select={

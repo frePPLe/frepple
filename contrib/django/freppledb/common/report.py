@@ -1401,7 +1401,7 @@ class GridReport(View):
           theClass = "danger"
         yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors})
       except GeneratorExit:
-        logging.('Connection Aborted')
+        logging.warning('Connection Aborted')
 
   @classmethod
   def parseSpreadsheetUpload(reportclass, request):

@@ -74,6 +74,10 @@ class Location_admin(MultiDBModelAdmin):
   exclude = ('source',)
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_location_change", "permissions": "input.change_location"},
+    {"name": 'inboundorders', "label": _("inbound distribution"), "view": "input_distributionorder_in_by_location"},
+    {"name": 'outboundorders', "label": _("outbound distribution"), "view": "input_distributionorder_out_by_location"},
+    {"name": 'manufacturingorders', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_location"},
+    {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_location"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_location_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_location_history"},

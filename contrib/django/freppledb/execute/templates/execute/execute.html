@@ -130,7 +130,7 @@
     var data = new FormData();
     data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
     $('#uploadResponse').css('display','block');
-    $('#uploadResponse').html(gettext('Importing... pressing Close button will not stop the process.'));
+    $('#uploadResponse').html(gettext('Importing...'));
     xhr = $.ajax({
       type: 'post',
       url: '{{request.prefix}}/execute/launch/importworkbook/',
@@ -202,6 +202,7 @@
     if (document.queryCommandSupported('copy') === true) {
       var sometextcontent = document.createRange();
       sometextcontent.selectNode(document.getElementById("uploadResponse"));
+      window.getSelection().removeAllRanges();
       window.getSelection().addRange(sometextcontent);
       document.execCommand('copy');
     }

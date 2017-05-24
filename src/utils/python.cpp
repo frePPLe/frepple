@@ -546,6 +546,8 @@ Date PythonData::getDate() const
 
 PythonData::PythonData(Object* p)
 {
+  if (obj)
+    Py_DECREF(obj);
   obj = p ? static_cast<PyObject*>(p) : Py_None;
   Py_INCREF(obj);
 }

@@ -824,7 +824,7 @@ PyObject* CalendarEventIterator::iternext()
   else
     // Unknown calendar type we can't iterate
     return nullptr;
-  PyObject* result = Py_BuildValue("(N,N)",
+  PyObject* result = Py_BuildValue("(O,O)",
       static_cast<PyObject*>(PythonData(eventiter.getDate())),
       static_cast<PyObject*>(x)
       );

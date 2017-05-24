@@ -1237,7 +1237,14 @@ class GridReport(View):
 
           # Loop through the data records
           has_pk_field = False
-          yield '<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr><tbody>' % (_("worksheet"), _("row"), _("field"), _("value"), _("error"))
+          yield ('<div class="table-responsive">'
+                 '<table class="table table-condensed" style="white-space: nowrap;">'
+                 '<thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></thead>'
+                 '</tr><tbody>') % (
+                   capfirst(_("worksheet")), capfirst(_("row")), 
+                   capfirst(_("field")), capfirst(_("value")), 
+                   capfirst(_("error"))
+                   )
           for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
             rownumber += 1
 
@@ -1378,11 +1385,11 @@ class GridReport(View):
                   except Exception as e:
                     # Validation fails
                     for error in form.non_field_errors():
-                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownum, error)
+                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
                       numerrors += 1
                     for field in form:
                       for error in field.errors:
-                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownum, _(field.name), d[field.name], error)
+                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
                         numerrors += 1
               except Exception as e:
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
@@ -1394,7 +1401,7 @@ class GridReport(View):
           theClass = "danger"
         yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors})
       except GeneratorExit:
-        print('Connection Aborted')
+        logging.warning('Connection Aborted')
 
   @classmethod
   def parseSpreadsheetUpload(reportclass, request):
@@ -1445,7 +1452,14 @@ class GridReport(View):
         wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
         ws = wb.worksheets[0]
         has_pk_field = False
-        yield '<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr><tbody>' % (_("worksheet"), _("row"), _("field"), _("value"), _("error"))
+        yield ('<div class="table-responsive">'
+               '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
+               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+               '</thead><tbody>') % (
+                 capfirst(_("worksheet")), capfirst(_("row")), 
+                 capfirst(_("field")), capfirst(_("value")),
+                 capfirst(_("error"))
+                 )
         for row in ws.iter_rows():
           rownumber += 1
 
@@ -1622,7 +1636,7 @@ class GridReport(View):
         theClass = "danger"
       yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors})
     except GeneratorExit:
-      print('Connection Aborted')
+      logger.warning('Connection Aborted')
 
 
   @classmethod
@@ -2301,7 +2315,6 @@ def exportWorkbook(request):
       for rec in query.values_list(*fields):
         ws.append([ _getCellValue(f) for f in rec ])
     except Exception as e:
-      print(e)
       pass  # Silently ignore the error and move on to the next entity.
 
   # Not a single entity to export
@@ -2366,7 +2379,14 @@ def importWorkbook(request):
       # Process all rows in each worksheet
       for ws_name, model, contenttype_id, dependencies in models:
         yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
-        yield '<div class="table-responsive"><table class="table table-condensed" style="white-space: nowrap;"><thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr><tbody>' % (_("worksheet"), _("row"), _("field"), _("value"), _("error"))
+        yield ('<div class="table-responsive">'
+               '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
+               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+               '</thead><tbody>') % (
+                 capfirst(_("worksheet")), capfirst(_("row")),
+                 capfirst(_("field")), capfirst(_("value")),
+                 capfirst(_("error"))
+                 )
         ws = wb.get_sheet_by_name(name=ws_name)
         rownum = 0
         has_pk_field = False
@@ -2552,4 +2572,4 @@ def importWorkbook(request):
         yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors})
       yield '<div><strong>%s</strong></div>' % _("Done")
   except GeneratorExit:
-    print('Connection Aborted')
+    logger.warning('Connection Aborted')

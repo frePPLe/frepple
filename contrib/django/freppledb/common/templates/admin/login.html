@@ -45,6 +45,11 @@ $(function() {
   }
   else
     $('#id_username').focus();
+
+  $("#login-form").on('submit', function() {
+    $("#id_password").val($.trim($("#id_password").val()));
+  });
+
 });
 </script>
 

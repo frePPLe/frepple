@@ -61,7 +61,7 @@
 							        <span class='fa fa-minus pull-right panel-toggle'></span>
 							        {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down pull-right portlet-export'></span></a>
 						            {% endif %}
-						            {% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}</a>
+						            {% if widget.url %}<a href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
 								    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
 								    {% endif %}
 							  </div>

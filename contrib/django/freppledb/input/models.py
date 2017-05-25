@@ -987,7 +987,7 @@ class Demand(AuditModel, HierarchyModel):
     help_text=_('Operation used to satisfy this demand')
     )
   quantity = models.DecimalField(
-    _('quantity'), max_digits=15, decimal_places=6
+    _('quantity'), max_digits=15, decimal_places=6, default=1
     )
   priority = models.IntegerField(
     _('priority'), default=10,

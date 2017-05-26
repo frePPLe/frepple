@@ -1125,11 +1125,9 @@ class ManufacturingOrderList(GridReport):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
       q = q.filter(location=args[0])
-      return q.extra(select={
-        'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)"
-      })
-    else:
-      return {'active_tab': 'manufacturingorders'}
+    return q.extra(select={
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)"
+    })
 
 
   rows = (

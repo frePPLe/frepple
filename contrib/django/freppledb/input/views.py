@@ -1106,12 +1106,31 @@ class ManufacturingOrderList(GridReport):
   #   return {
   #     'jsondata': ManufacturingOrder.objects.all(),
   #     }
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'manufacturingorders'
+      return {
+        'active_tab': 'manufacturingorders',
+        'model': Location,
+        'title': force_text(Location._meta.verbose_name) + " " + args[0],
+        'post_title': _('manufacturing orders')
+      }
+    else:
+      return {'active_tab': 'manufacturingorders'}
+
 
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    return ManufacturingOrder.objects.all().extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)"
+    q = ManufacturingOrder.objects.all()
+    if args and args[0]:
+      q = q.filter(location=args[0])
+      return q.extra(select={
+        'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)"
       })
+    else:
+      return {'active_tab': 'manufacturingorders'}
+
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'"),
@@ -1194,9 +1213,40 @@ class DistributionOrderList(GridReport):
   height = 250
   help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
 
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      if request.path.split('/')[-2] == 'in':
+        return {
+          'active_tab': 'inboundorders',
+          'model': Location,
+          'title': force_text(DistributionOrder._meta.verbose_name) + " " + args[0],
+          'post_title': _('inbound distribution')
+          }
+      elif request.path.split('/')[-2] == 'out':
+        return {
+          'active_tab': 'outboundorders',
+          'model': Location,
+          'title': force_text(DistributionOrder._meta.verbose_name) + " " + args[0],
+          'post_title': _('outbound distribution')
+          }
+      else:
+        return {'active_tab': 'edit'}
+    else:
+      return {'active_tab': 'edit'}
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
-    return DistributionOrder.objects.all().extra(select={
+    q = DistributionOrder.objects.all()
+    if args and args[0]:
+      if request.path.split('/')[-2] == 'out':
+        q = q.filter(origin_id=args[0])
+      elif request.path.split('/')[-2] == 'in':
+        q = q.filter(destination_id=args[0])
+      else:
+        q = q.filter(location=args[0])
+    return q.extra(select={
       'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)",
       'total_cost': "cost*quantity"
       })
@@ -1323,12 +1373,20 @@ class PurchaseOrderList(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'purchaseorders'
-      return {
-        'active_tab': 'purchaseorders', 
-        'model': Supplier,
-        'title': force_text(Supplier._meta.verbose_name) + " " + args[0],
-        'post_title': _('purchase orders')
-        }
+      if request.path.split('/')[-3] == 'supplier':
+        return {
+          'active_tab': 'purchaseorders',
+          'model': Supplier,
+          'title': force_text(Supplier._meta.verbose_name) + " " + args[0],
+          'post_title': _('purchase orders')
+          }
+      elif request.path.split('/')[-3] == 'location':
+        return {
+          'active_tab': 'purchaseorders',
+          'model': Location,
+          'title': force_text(Location._meta.verbose_name) + " " + args[0],
+          'post_title': _('purchase orders')
+          }
     else:
       return {'active_tab': 'purchaseorders'}
 
@@ -1336,14 +1394,17 @@ class PurchaseOrderList(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
-      q = q.filter(supplier=args[0])
+      if request.path.split('/')[-3] == 'supplier':
+        q = q.filter(supplier=args[0])
+      elif request.path.split('/')[-3] == 'location':
+        q = q.filter(location=args[0])
     return q.extra(
       tables=["itemsupplier"],
       where=['operationplan.supplier_id = itemsupplier.supplier_id and operationplan.item_id = itemsupplier.item_id'],
       select={
-      'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg), '')",
-      'total_cost': "coalesce(itemsupplier.cost, item.cost) * quantity",
-      'unit_cost': "coalesce(itemsupplier.cost, item.cost)"
+        'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg), '')",
+        'total_cost': "coalesce(itemsupplier.cost, item.cost) * quantity",
+        'unit_cost': "coalesce(itemsupplier.cost, item.cost)"
       })
 
   rows = (

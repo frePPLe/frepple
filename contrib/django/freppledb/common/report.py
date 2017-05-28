@@ -1428,8 +1428,7 @@ class GridReport(View):
       translation.activate(request.LANGUAGE_CODE)
 
     # Init
-    headers = []
-    rownumber = 0
+    datarows = 0
     changed = 0
     added = 0
     numerrors = 0
@@ -1448,10 +1447,7 @@ class GridReport(View):
             numerrors += 1
             yield '</br><samp style="padding-left: 15px;">%s</samp></br>' % returnvalue
 
-        # Loop through the data records
-        wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
-        ws = wb.worksheets[0]
-        has_pk_field = False
+        # Header in output
         yield ('<div class="table-responsive">'
                '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
@@ -1460,35 +1456,34 @@ class GridReport(View):
                  capfirst(_("field")), capfirst(_("value")),
                  capfirst(_("error"))
                  )
-        for row in ws.iter_rows():
-          rownumber += 1
-
-          ### Case 1: The first line is read as a header line
-          if rownumber == 1:
-            # Collect required fields
-            required_fields = set()
-            for i in reportclass.model._meta.fields:
-              if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                required_fields.add(i.name)
-            # Validate all columns
-            for col in row:
-              col = str(col.value).strip().strip('#').lower()
-              if col == "":
-                headers.append(False)
-                continue
-              ok = False
+        
+        # Loop through the data records
+        wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
+        numsheets = len(wb.get_sheet_names())
+        for ws_name in wb.get_sheet_names():
+          headers = []
+          rownumber = 0
+          ws = wb.get_sheet_by_name(name=ws_name)
+          has_pk_field = False
+          for row in ws.iter_rows():
+            rownumber += 1            
+  
+            ### Case 1: The first line is read as a header line
+            if rownumber == 1:
+              # Collect required fields
+              required_fields = set()
               for i in reportclass.model._meta.fields:
-                # Try with translated field names
-                if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
-                  if i.editable is True:
-                    headers.append(i)
-                  else:
-                    headers.append(False)
-                  required_fields.discard(i.name)
-                  ok = True
-                  break
-                # Try with English field names
-                with translation.override('en'):
+                if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
+                  required_fields.add(i.name)
+              # Validate all columns
+              for col in row:
+                col = str(col.value).strip().strip('#').lower()
+                if col == "":
+                  headers.append(False)
+                  continue
+                ok = False
+                for i in reportclass.model._meta.fields:
+                  # Try with translated field names
                   if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
                     if i.editable is True:
                       headers.append(i)
@@ -1497,144 +1492,180 @@ class GridReport(View):
                     required_fields.discard(i.name)
                     ok = True
                     break
-              if not ok:
-                headers.append(False)
-                yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': col})
-                numerrors += 1
-              if col == reportclass.model._meta.pk.name.lower() or \
-                 col == reportclass.model._meta.pk.verbose_name.lower():
-                has_pk_field = True
-            if required_fields:
-              # We are missing some required fields
-              errors = True
-              #. Translators: Translation included with django
-              yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
-              numerrors += 1
-            # Abort when there are errors
-            if errors > 0:
-              break
-
-            # Create a form class that will be used to validate the data
-            UploadForm = modelform_factory(
-              reportclass.model,
-              fields=tuple([i.name for i in headers if isinstance(i, Field)]),
-              formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-              )
-
-            # Get natural keys for the class
-            natural_key = None
-            if hasattr(reportclass.model.objects, 'get_by_natural_key'):
-              if reportclass.model._meta.unique_together:
-                natural_key = reportclass.model._meta.unique_together[0]
-              elif hasattr(reportclass.model, 'natural_key'):
-                natural_key = reportclass.model.natural_key
-
-          ### Case 2: Skip empty rows and comments rows
-          elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
-            continue
-
-          ### Case 3: Process a data row
-          else:
-            try:
-              # Step 1: Build a dictionary with all data fields
-              d = {}
-              colnum = 0
-              for col in row:
-                # More fields in data row than headers. Move on to the next row.
-                if colnum >= len(headers):
-                  break
-                if isinstance(headers[colnum], Field):
-                  data = col.value
-                  if isinstance(headers[colnum], (IntegerField, AutoField)):
-                    if isinstance(data, numericTypes):
-                      data = int(data)
-                  elif isinstance(headers[colnum], DurationField):
-                    if isinstance(data, float):
-                      data = "%.6f" % data
-                    else:
-                      data = str(data) if data is not None else None
-                  elif isinstance(headers[colnum], (DateField, DateTimeField)):
-                    if isinstance(data, datetime):
-                      # Rounding to second
-                      if data.microsecond < 500000:
-                        data = data.replace(microsecond=0)
+                  # Try with English field names
+                  with translation.override('en'):
+                    if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
+                      if i.editable is True:
+                        headers.append(i)
                       else:
-                        data = data.replace(microsecond=0) + timedelta(seconds=1)
-                  else:
-                    if isinstance(data, str):
-                      data = data.strip()
-                  d[headers[colnum].name] = data
-                colnum += 1
-
-              # Step 2: Fill the form with data, either updating an existing
-              # instance or creating a new one.
-              if has_pk_field:
-                # A primary key is part of the input fields
-                try:
-                  # Try to find an existing record with the same primary key
-                  it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
-                  form = UploadForm(d, instance=it)
-                except reportclass.model.DoesNotExist:
-                  form = UploadForm(d)
-                  it = None
-              elif natural_key:
-                # A natural key exists for this model
-                try:
-                  # Build the natural key
-                  key = []
-                  for x in natural_key:
-                    key.append(d.get(x, None))
-                  # Try to find an existing record using the natural key
-                  it = reportclass.model.objects.get_by_natural_key(*key)
-                  form = UploadForm(d, instance=it)
-                except reportclass.model.DoesNotExist:
-                  form = UploadForm(d)
-                  it = None
-                except reportclass.model.MultipleObjectsReturned:
-                  yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _('Key fields not unique'))
+                        headers.append(False)
+                      required_fields.discard(i.name)
+                      ok = True
+                      break
+                if not ok:
+                  headers.append(False)
+                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
+                    reportclass.model._meta.verbose_name, 
+                    _('Skipping unknown field %(column)s') % {'column': col}
+                    )
                   numerrors += 1
-              else:
-                # No primary key required for this model
-                form = UploadForm(d)
-                it = None
-
-              # Step 3: Validate the data and save to the database
-              if form.has_changed():
-                try:
-                  with transaction.atomic(using=request.database):
-                    obj = form.save(commit=False)
-                    obj.save(using=request.database)
-                    LogEntry(
-                      user_id=request.user.pk,
-                      content_type_id=content_type_id,
-                      object_id=obj.pk,
-                      object_repr=force_text(obj),
-                      action_flag=it and CHANGE or ADDITION,
-                      #. Translators: Translation included with Django
-                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                    ).save(using=request.database)
-                    if it:
-                      changed += 1
+                if col == reportclass.model._meta.pk.name.lower() or \
+                   col == reportclass.model._meta.pk.verbose_name.lower():
+                  has_pk_field = True
+              if required_fields:
+                # We are missing some required fields
+                errors = True
+                #. Translators: Translation included with django
+                yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
+                  reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {
+                    'keys': ', '.join(required_fields)
+                    }
+                  )
+                numerrors += 1
+              # Abort when there are errors
+              if errors > 0:
+                break
+  
+              # Create a form class that will be used to validate the data
+              UploadForm = modelform_factory(
+                reportclass.model,
+                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+                )
+  
+              # Get natural keys for the class
+              natural_key = None
+              if hasattr(reportclass.model.objects, 'get_by_natural_key'):
+                if reportclass.model._meta.unique_together:
+                  natural_key = reportclass.model._meta.unique_together[0]
+                elif hasattr(reportclass.model, 'natural_key'):
+                  natural_key = reportclass.model.natural_key
+  
+            ### Case 2: Skip empty rows and comments rows
+            elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
+              continue
+  
+            ### Case 3: Process a data row
+            else:
+              datarows += 1
+              try:
+                # Step 1: Build a dictionary with all data fields
+                d = {}
+                colnum = 0
+                for col in row:
+                  # More fields in data row than headers. Move on to the next row.
+                  if colnum >= len(headers):
+                    break
+                  if isinstance(headers[colnum], Field):
+                    data = col.value
+                    if isinstance(headers[colnum], (IntegerField, AutoField)):
+                      if isinstance(data, numericTypes):
+                        data = int(data)
+                    elif isinstance(headers[colnum], DurationField):
+                      if isinstance(data, float):
+                        data = "%.6f" % data
+                      else:
+                        data = str(data) if data is not None else None
+                    elif isinstance(headers[colnum], (DateField, DateTimeField)):
+                      if isinstance(data, datetime):
+                        # Rounding to second
+                        if data.microsecond < 500000:
+                          data = data.replace(microsecond=0)
+                        else:
+                          data = data.replace(microsecond=0) + timedelta(seconds=1)
                     else:
-                      added += 1
-                except Exception as e:
-                  # Validation fails
-                  for error in form.non_field_errors():
-                    yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
+                      if isinstance(data, str):
+                        data = data.strip()
+                    d[headers[colnum].name] = data
+                  colnum += 1
+  
+                # Step 2: Fill the form with data, either updating an existing
+                # instance or creating a new one.
+                if has_pk_field:
+                  # A primary key is part of the input fields
+                  try:
+                    # Try to find an existing record with the same primary key
+                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                    form = UploadForm(d, instance=it)
+                  except reportclass.model.DoesNotExist:
+                    form = UploadForm(d)
+                    it = None
+                elif natural_key:
+                  # A natural key exists for this model
+                  try:
+                    # Build the natural key
+                    key = []
+                    for x in natural_key:
+                      key.append(d.get(x, None))
+                    # Try to find an existing record using the natural key
+                    it = reportclass.model.objects.get_by_natural_key(*key)
+                    form = UploadForm(d, instance=it)
+                  except reportclass.model.DoesNotExist:
+                    form = UploadForm(d)
+                    it = None
+                  except reportclass.model.MultipleObjectsReturned:
+                    yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
+                      reportclass.model._meta.verbose_name, 
+                      rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber), 
+                      _('Key fields not unique')
+                      )
                     numerrors += 1
-                  for field in form:
-                    for error in field.errors:
-                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
+                else:
+                  # No primary key required for this model
+                  form = UploadForm(d)
+                  it = None
+
+                # Step 3: Validate the data and save to the database
+                if form.has_changed():
+                  try:
+                    with transaction.atomic(using=request.database):
+                      obj = form.save(commit=False)
+                      obj.save(using=request.database)
+                      LogEntry(
+                        user_id=request.user.pk,
+                        content_type_id=content_type_id,
+                        object_id=obj.pk,
+                        object_repr=force_text(obj),
+                        action_flag=it and CHANGE or ADDITION,
+                        #. Translators: Translation included with Django
+                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                      ).save(using=request.database)
+                      if it:
+                        changed += 1
+                      else:
+                        added += 1
+                  except Exception as e:
+                    # Validation fails
+                    for error in form.non_field_errors():
+                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
+                        reportclass.model._meta.verbose_name,
+                        rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
+                        error
+                        )
                       numerrors += 1
-            except Exception as e:
-              yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
-              numerrors += 1
+                    for field in form:
+                      for error in field.errors:
+                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                          reportclass.model._meta.verbose_name,
+                          rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber), 
+                          _(field.name), d[field.name], error
+                          )
+                        numerrors += 1
+              except Exception as e:
+                yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
+                  reportclass.model._meta.verbose_name, e
+                  )
+                numerrors += 1
 
       # Report all failed records
       theClass = "success"
       if numerrors > 0:
         theClass = "danger"
-      yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors})
+      yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (
+        theClass, reportclass.model._meta.verbose_name, 
+        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {
+          'rows': datarows, 'changed': changed, 'added': added, 'errors': numerrors
+          })
     except GeneratorExit:
       logger.warning('Connection Aborted')
 

@@ -1215,14 +1215,15 @@ class DistributionOrderList(GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      if request.path.split('/')[-2] == 'in':
+      path = request.path.split('/')[-2]
+      if path == 'in':
         return {
           'active_tab': 'inboundorders',
           'model': Location,
           'title': force_text(DistributionOrder._meta.verbose_name) + " " + args[0],
           'post_title': _('inbound distribution')
           }
-      elif request.path.split('/')[-2] == 'out':
+      elif path == 'out':
         return {
           'active_tab': 'outboundorders',
           'model': Location,
@@ -1238,9 +1239,10 @@ class DistributionOrderList(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[-2] == 'out':
+      path = request.path.split('/')[-2]
+      if path == 'out':
         q = q.filter(origin_id=args[0])
-      elif request.path.split('/')[-2] == 'in':
+      elif path == 'in':
         q = q.filter(destination_id=args[0])
       else:
         q = q.filter(location=args[0])
@@ -1371,14 +1373,15 @@ class PurchaseOrderList(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'purchaseorders'
-      if request.path.split('/')[-3] == 'supplier':
+      path = request.path.split('/')[-3]
+      if path == 'supplier':
         return {
           'active_tab': 'purchaseorders',
           'model': Supplier,
           'title': force_text(Supplier._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
-      elif request.path.split('/')[-3] == 'location':
+      elif path == 'location':
         return {
           'active_tab': 'purchaseorders',
           'model': Location,
@@ -1392,9 +1395,10 @@ class PurchaseOrderList(GridReport):
   def basequeryset(reportclass, request, args, kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[-3] == 'supplier':
+      path = request.path.split('/')[-3]
+      if path == 'supplier':
         q = q.filter(supplier=args[0])
-      elif request.path.split('/')[-3] == 'location':
+      elif path == 'location':
         q = q.filter(location=args[0])
     return q.extra(
       tables=["itemsupplier"],

@@ -177,7 +177,7 @@ void Buffer::inspect(const string msg) const
     switch(oo->getEventType())
     {
       case 1:
-        opplan = static_cast<const FlowPlan*>(&*oo)->getOperationPlan();
+        opplan = oo->getOperationPlan();
         logger << ", id: " << opplan->getIdentifier()
           << ", oper:" << opplan->getOperation()
           << ", quantity: " << opplan->getQuantity()

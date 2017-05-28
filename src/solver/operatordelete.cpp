@@ -141,7 +141,7 @@ void OperatorDelete::solve(const Resource* r, void* v)
   {
     if (i->getEventType() == 1)
       // Add all buffers into which material is produced to the stack
-      pushBuffers(static_cast<const LoadPlan*>(&*i)->getOperationPlan(), false, true);
+      pushBuffers(i->getOperationPlan(), false, true);
   }
 
   // Process all buffers found, and their upstream colleagues
@@ -276,7 +276,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       while (
         fiter2 != fend
         && fiter2->getEventType() == 1
-        && static_cast<const FlowPlan*>(&*fiter2)->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
+        && fiter2->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
         )
         --fiter2;
 
@@ -373,7 +373,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
     while (
       fiter != fend
       && fiter->getEventType() == 1
-      && static_cast<const FlowPlan*>(&*fiter)->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
+      && fiter->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
       )
         ++fiter;
     if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR)

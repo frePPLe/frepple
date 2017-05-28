@@ -1126,7 +1126,7 @@ class ManufacturingOrderList(GridReport):
     if args and args[0]:
       q = q.filter(location=args[0])
     return q.extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)"
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)"
     })
 
 
@@ -1247,7 +1247,7 @@ class DistributionOrderList(GridReport):
       else:
         q = q.filter(location=args[0])
     return q.extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg)",
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
       'total_cost': "cost*quantity"
       })
 
@@ -1404,7 +1404,7 @@ class PurchaseOrderList(GridReport):
       tables=["itemsupplier"],
       where=['operationplan.supplier_id = itemsupplier.supplier_id and operationplan.item_id = itemsupplier.item_id'],
       select={
-        'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc) peg), '')",
+        'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg), '')",
         'total_cost': "coalesce(itemsupplier.cost, item.cost) * quantity",
         'unit_cost': "coalesce(itemsupplier.cost, item.cost)"
       })

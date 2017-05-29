@@ -1069,8 +1069,14 @@ class OperationPlan(AuditModel):
     _('color'), max_digits=15, null=True, blank=True,
     decimal_places=6, default='0.00'
     )
-  startdate = models.DateTimeField(_('start date'), help_text=_('start date'), null=True, blank=True)
-  enddate = models.DateTimeField(_('end date'), help_text=_('end date'), null=True, blank=True)
+  startdate = models.DateTimeField(
+    _('start date'), help_text=_('start date'),
+    null=True, blank=True, db_index=True
+    )
+  enddate = models.DateTimeField(
+    _('end date'), help_text=_('end date'),
+    null=True, blank=True, db_index=True
+    )
   criticality = models.DecimalField(
     _('criticality'), max_digits=15,
     decimal_places=6, null=True, blank=True, editable=False

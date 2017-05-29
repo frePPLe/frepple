@@ -37,7 +37,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("onhand")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("expected onhand")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("date")+'</b>' +
                     '</td></tr></thead>' +

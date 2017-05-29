@@ -84,7 +84,11 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     obj = super().save_form(request, form, change)
     # FrePPLe specific addition
     if change:
-      old_pk = unquote(request.path_info.rsplit("/", 2)[1])
+      path = request.path_info.rsplit("/", 3)
+      if path[-2] == 'change':
+        old_pk = unquote(path[1])
+      else:
+        old_pk = unquote(path[-2])
       if old_pk != (isinstance(obj.pk, str) and obj.pk or str(obj.pk)):
         # The object was renamed. We continue handling the updates on the
         # old object. Only at the very end we will rename whatever needs to

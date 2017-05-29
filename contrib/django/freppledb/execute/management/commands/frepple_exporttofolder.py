@@ -1,21 +1,15 @@
 #
-# Copyright (C) 2011-2016 by frePPLe bvba
+# Copyright (C) 2016 by frePPLe bvba
 #
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
 #
 
 import os
+import gzip
 
 from _datetime import datetime
 from django.conf import settings
@@ -35,34 +29,37 @@ class Command(BaseCommand):
   requires_system_checks = False
   
   statements = [
-      ("purchaseorder.csv",
+      ("purchaseorder.csv.gz",
+       "export",
         '''COPY
         (select source, lastmodified, id, status , reference, quantity,
         to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
         to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
         criticality, EXTRACT(EPOCH FROM delay) as delay,
         owner_id, item_id, location_id, supplier_id from operationplan
-        where status='proposed' and type='PO')
+        where status <> 'confirmed' and type='PO')
         TO STDOUT WITH CSV HEADER'''
         ),
-      ("distributionorder.csv",
+      ("distributionorder.csv.gz",
+       "export",
         '''COPY
         (select source, lastmodified, id, status, reference, quantity,
         to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
         to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
         criticality, EXTRACT(EPOCH FROM delay) as delay,
         plan, destination_id, item_id, origin_id from operationplan
-        where status='proposed' and type='DO')
+        where status <> 'confirmed' and type='DO')
         TO STDOUT WITH CSV HEADER'''
         ),
-      ("manufacturingorder.csv",
+      ("manufacturingorder.csv.gz",
+       "export",
        '''COPY
        (select source, lastmodified, id , status ,reference ,quantity,
        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
        criticality, EXTRACT(EPOCH FROM delay) as delay,
        operation_id, owner_id, plan, item_id
-       from operationplan where status='proposed' and type='MO')
+       from operationplan where status <> 'confirmed' and type='MO')
        TO STDOUT WITH CSV HEADER'''
        )
       ]
@@ -123,9 +120,11 @@ class Command(BaseCommand):
       task.save(using=self.database)
 
       # Execute
-      if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
+      if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):        
 
         # Open the logfile
+        # The log file remains in the upload folder as different folders can be specified
+        # We do not want t create one log file per folder
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'exporttofolder.log'), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
 
@@ -137,11 +136,19 @@ class Command(BaseCommand):
         i=0
         cnt = len(self.statements)
 
-        for filename, sqlquery in self.statements:
+        for filename, export, sqlquery in self.statements:
           print("%s Started export of %s" % (datetime.now(),filename), file=self.logfile)
+          
+          #make sure export folder exists
+          exportFolder = os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], export)
+          if not os.path.isdir(exportFolder):
+            os.makedirs(exportFolder)
 
-          try:
-            csv_datafile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], filename), "w")
+          try:            
+            if filename.lower().endswith(".gz"):
+              csv_datafile = gzip.open(os.path.join(exportFolder, filename), "w")
+            else:
+              csv_datafile = open(os.path.join(exportFolder, filename), "w")
 
             cursor.copy_expert(sqlquery,csv_datafile)
 

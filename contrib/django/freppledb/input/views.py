@@ -1572,6 +1572,7 @@ class OperationPlanDetail(View):
               "quantity": q,
               "due": Demand.objects.all().using(request.database).get(name=d).due.strftime("%Y-%m-%dT%H:%M:%S")
               })
+          res["pegging_demand"].sort(key=lambda f: (f['demand']['name'], f['due']))
         if opplan.operation:
           res['operation'] = {
             "name": opplan.operation.name,

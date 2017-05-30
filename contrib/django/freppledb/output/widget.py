@@ -206,16 +206,11 @@ class ManufacturingOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#mo_tooltip")
-          .css("display", "block")
-          .html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
         })
-      .on("mousemove", function(event){
-        $("#mo_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
-        })
-      .on("mouseout", function(){
-        $("#mo_tooltip").css("display", "none")
-        });
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
@@ -362,7 +357,7 @@ class ManufacturingOrderWidget(Widget):
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
-    result.append('</div><div id="mo_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed;"></div>')
+    result.append('</div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(ManufacturingOrderWidget)
@@ -432,14 +427,11 @@ class DistributionOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#do_tooltip").css("display", "block").html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
         })
-      .on("mousemove", function(event){
-        $("#do_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
-        })
-      .on("mouseout", function(){
-        $("#do_tooltip").css("display", "none");
-        });
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
@@ -582,7 +574,7 @@ class DistributionOrderWidget(Widget):
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
-    result.append('</div><div id="do_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
+    result.append('</div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(DistributionOrderWidget)
@@ -656,14 +648,11 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#po_tooltip").css("display", "block").html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
         })
-      .on("mousemove", function(event){
-        $("#po_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
-        })
-      .on("mouseout", function(){
-        $("#po_tooltip").css("display", "none");
-        });
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
@@ -827,7 +816,7 @@ class PurchaseOrderWidget(Widget):
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
           ))
-    result.append('</div><div id="po_tooltip" class="tooltip-inner" style="display: none; z-index:10000; position:fixed"></div>')
+    result.append('</div>')
     return HttpResponse('\n'.join(result))
 
 Dashboard.register(PurchaseOrderWidget)

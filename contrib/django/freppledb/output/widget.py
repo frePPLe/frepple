@@ -168,7 +168,7 @@ class ManufacturingOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    var nth = Math.ceil($("#mo_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var nth = Math.ceil($("#mo_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
     $("#mo_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
@@ -282,7 +282,7 @@ class ManufacturingOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(quantity * cost)),0)         
+         coalesce(round(sum(quantity * cost)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -290,25 +290,25 @@ class ManufacturingOrderWidget(Widget):
         and status in ('confirmed', 'proposed')
         and operationplan.type = 'MO'
       left outer join operation
-        on operationplan.operation_id = operation.name        
+        on operationplan.operation_id = operation.name
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 
+      select
         1, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)         
+        coalesce(round(sum(quantity * cost)),0)
       from operationplan
       inner join operation
         on operationplan.operation_id = operation.name
       where status = 'confirmed'
         and operationplan.type = 'MO'
       union all
-      select 
+      select
         2, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)        
+        coalesce(round(sum(quantity * cost)),0)
       from operationplan
       inner join operation
         on operationplan.operation_id = operation.name
@@ -316,10 +316,10 @@ class ManufacturingOrderWidget(Widget):
         and startdate < %%s + interval '%s day'
         and operationplan.type = 'MO'
       union all
-      select 
+      select
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)        
+        coalesce(round(sum(quantity * cost)),0)
       from operationplan
       inner join operation
         on operationplan.operation_id = operation.name
@@ -356,7 +356,7 @@ class ManufacturingOrderWidget(Widget):
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], rec[4], force_text(_("units")), 
+          rec[3], rec[4], force_text(_("units")),
           settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
@@ -394,7 +394,7 @@ class DistributionOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    var nth = Math.ceil($("#do_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var nth = Math.ceil($("#do_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
     $("#do_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
@@ -409,7 +409,7 @@ class DistributionOrderWidget(Widget):
       if (el[3] > max_value) max_value = el[3];
       if (idx %% nth == 0) myticks.push(name.text());
       });
-      
+
     // Define axis domains
     var x = d3.scale.ordinal()
       .domain(domain_x)
@@ -516,11 +516,11 @@ class DistributionOrderWidget(Widget):
         and status in ('confirmed', 'proposed')
         and type = 'DO'
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
-        and common_bucketdetail.startdate < %%s        
+        and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 
-        1, null, null, count(*), 
+      select
+        1, null, null, count(*),
         coalesce(round(sum(quantity)),0),
         coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
@@ -528,8 +528,8 @@ class DistributionOrderWidget(Widget):
       on operationplan.item_id = item.name
       where status = 'confirmed' and type = 'DO'
       union all
-      select 
-        2, null, null, count(*), 
+      select
+        2, null, null, count(*),
         coalesce(round(sum(item.cost)),0),
         coalesce(round(sum(item.cost * quantity)),0)
       from operationplan
@@ -559,7 +559,7 @@ class DistributionOrderWidget(Widget):
         result.append('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (rec[1], rec[3], rec[4], rec[5]))
       elif rec[0] == 1:
         result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], rec[4], force_text(_("units")), 
+          rec[3], rec[4], force_text(_("units")),
           settings.CURRENCY[0], rec[5], settings.CURRENCY[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
@@ -576,7 +576,7 @@ class DistributionOrderWidget(Widget):
       elif fence2:
         limit_fence2 = current + timedelta(days=fence2)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
-          rec[3], rec[4], force_text(_("units")), 
+          rec[3], rec[4], force_text(_("units")),
           settings.CURRENCY[0], rec[5], settings.CURRENCY[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
@@ -618,7 +618,7 @@ class PurchaseOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
-    var nth = Math.ceil($("#po_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);       
+    var nth = Math.ceil($("#po_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
     $("#po_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
@@ -732,7 +732,7 @@ class PurchaseOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(*), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(item.cost * quantity)),0)
+         coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -740,35 +740,51 @@ class PurchaseOrderWidget(Widget):
         and status in ('confirmed', 'proposed') %s
       left outer join item
         on operationplan.item_id = item.name
+      left outer join itemsupplier
+        on operationplan.item_id = itemsupplier.item_id
+        and operationplan.supplier_id = itemsupplier.supplier_id
+        and operationplan.location_id = itemsupplier.location_id
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
-      select 
-        1, null, null, count(*), 
+      select
+        1, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
+      left outer join itemsupplier
+        on operationplan.item_id = itemsupplier.item_id
+        and operationplan.supplier_id = itemsupplier.supplier_id
+        and operationplan.location_id = itemsupplier.location_id
       where status = 'confirmed' %s and type = 'PO'
       union all
       select
         2, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
       from operationplan
       inner join item
       on operationplan.item_id = item.name
+      left outer join itemsupplier
+        on operationplan.item_id = itemsupplier.item_id
+        and operationplan.supplier_id = itemsupplier.supplier_id
+        and operationplan.location_id = itemsupplier.location_id
       where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
       union all
-      select 
+      select
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
       from operationplan
       inner join item
-      on operationplan.item_id = item.name
+        on operationplan.item_id = item.name
+      left outer join itemsupplier
+        on operationplan.item_id = itemsupplier.item_id
+        and operationplan.supplier_id = itemsupplier.supplier_id
+        and operationplan.location_id = itemsupplier.location_id
       where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
       order by 1, 3
       ''' % (
@@ -1005,10 +1021,10 @@ class PurchaseAnalysisWidget(Widget):
     alt = False
     for po in PurchaseOrder.objects.using(db).filter(status='confirmed').order_by('criticality','enddate')[:limit]:
       result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', escape(po.item.name if po.item else ''), 
+        alt and ' class="altRow"' or '', escape(po.item.name if po.item else ''),
         escape(po.supplier.name if po.supplier else ''),
-        po.enddate.date() if po.enddate else '', 
-        int(po.quantity) if po.quantity else '', 
+        po.enddate.date() if po.enddate else '',
+        int(po.quantity) if po.quantity else '',
         int(po.criticality) if po.criticality else ''
         ))
       alt = not alt
@@ -1174,7 +1190,7 @@ class ResourceLoadWidget(Widget):
                 group by resource
                 order by 2 desc
                 limit %s
-              ''' 
+              '''
     cursor.execute(query, (request.report_startdate, request.report_enddate, limit))
     for res in cursor.fetchall():
       result.append('<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>' % (

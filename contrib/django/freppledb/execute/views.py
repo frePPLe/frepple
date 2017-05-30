@@ -202,10 +202,6 @@ def wrapTask(request, action):
   if request.method != 'POST':
     raise Exception('Only post requests allowed')
 
-  # Check user permissions
-  if not request.user.has_perm('execute'):
-    raise Exception('Missing execution privileges')
-
   # Parse the posted parameters as arguments for an asynchronous task to add to the queue.    TODO MAKE MODULAR WITH SEPERATE TASK CLASS
   worker_database = request.database
 

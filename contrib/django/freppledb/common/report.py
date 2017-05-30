@@ -892,10 +892,12 @@ class GridReport(View):
     else:
       bucketnames = None
     fmt = request.GET.get('format', None)
+    reportkey = reportclass.getKey()
+    prefs = request.user.getPreference(reportkey, database=request.database)
+    if prefs:
+      kwargs['preferences'] = prefs
     if not fmt:
       # Return HTML page
-      reportkey = reportclass.getKey()
-      prefs = request.user.getPreference(reportkey, database=request.database)
       if not hasattr(reportclass, 'crosses'):
         cross_idx = None
         cross_list = None

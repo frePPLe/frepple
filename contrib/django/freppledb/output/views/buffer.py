@@ -17,7 +17,6 @@
 
 from django.db import connections
 from django.utils.encoding import force_text
-from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
@@ -155,8 +154,12 @@ class OverviewReport(GridPivot):
       ''' % (
         reportclass.attr_sql, basesql, sortsql
       )
-    cursor.execute(query, baseparams + (request.report_bucket, request.report_startdate, request.report_enddate,
-        request.report_startdate, request.report_enddate))
+    cursor.execute(
+      query, baseparams + (
+        request.report_bucket, request.report_startdate,
+        request.report_enddate, request.report_startdate, request.report_enddate
+        )
+      )
 
     # Build the python result
     prevbuf = None
@@ -165,20 +168,20 @@ class OverviewReport(GridPivot):
       if row[0] != prevbuf:
         prevbuf = row[0]
         startoh = startohdict.get(prevbuf, 0)
-        endoh = startoh + float(row[numfields-2] - row[numfields-1])
+        endoh = startoh + float(row[numfields - 2] - row[numfields - 1])
       else:
         startoh = endoh
-        endoh += float(row[numfields-2] - row[numfields-1])
-      res =  {
+        endoh += float(row[numfields - 2] - row[numfields - 1])
+      res = {
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
-        'bucket': row[numfields-5],
-        'startdate': row[numfields-4].date(),
-        'enddate': row[numfields-3].date(),
+        'bucket': row[numfields - 5],
+        'startdate': row[numfields - 4].date(),
+        'enddate': row[numfields - 3].date(),
         'startoh': round(startoh, 1),
-        'produced': round(row[numfields-2], 1),
-        'consumed': round(row[numfields-1], 1),
+        'produced': round(row[numfields - 2], 1),
+        'consumed': round(row[numfields - 1], 1),
         'endoh': round(endoh, 1),
         }
       # Add attribute fields
@@ -211,7 +214,7 @@ class DetailReport(GridReport):
     if len(args) and args[0]:
       dlmtr = args[0].find(" @ ")
       base = OperationPlanMaterial.objects.filter(
-        item=args[0][:dlmtr], location=args[0][dlmtr+3:]
+        item=args[0][:dlmtr], location=args[0][dlmtr + 3:]
         )
     else:
       base = OperationPlanMaterial.objects
@@ -224,7 +227,7 @@ class DetailReport(GridReport):
     if args and args[0]:
       request.session['lasttab'] = 'plandetail'
       return {
-        'active_tab': 'plandetail', 
+        'active_tab': 'plandetail',
         'model': Buffer,
         'title': force_text(Buffer._meta.verbose_name) + " " + args[0],
         'post_title': _('plan detail')
@@ -259,10 +262,10 @@ class DetailReport(GridReport):
     GridFieldCurrency('operationplan__operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
     GridFieldText('operationplan__operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), initially_hidden=True),
     GridFieldText('operationplan__operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
-    GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),    
+    GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     GridFieldDateTime('flowdate', title=_('date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldNumber('onhand', title=_('onhand'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
+    GridFieldNumber('onhand', title=_('expected onhand'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('operationplan__status', title=_('status'), editable=False, field_name='operationplan__status'),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),

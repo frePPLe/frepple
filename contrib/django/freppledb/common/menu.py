@@ -15,7 +15,6 @@
 #
 
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import Group
 
 import freppledb.common.views
 from freppledb.common.models import User, Bucket, BucketDetail, Parameter, Comment
@@ -49,7 +48,7 @@ menu.addItem(
   )
 menu.addItem(
   "admin", "group admin", url="/data/auth/group/",
-  report=freppledb.common.views.GroupList, index=2200, model=Group
+  report=freppledb.common.views.GroupList, index=2200, permission="auth.change_group"
   )
 
 # Help menu
@@ -57,8 +56,8 @@ menu.addItem("help", "hints", label=_('Show hints'), index=90, identifier="showH
   javascript='tour.displayHints($(this).hasClass("toggle-off"), false)')
 menu.addItem("help", "tour", javascript="tour.start('0,0,0')", label=_('Guided tour'), index=100)
 menu.addItem("help", "wizard", url="/wizard/", window=True, prefix=True, label=_('Wizard to load your data'), index=200)
-versionnumber=VERSION.split('.', 2)
-docurl="https://frepple.com/docs/"+versionnumber[0]+"."+versionnumber[1]+"/"
+versionnumber = VERSION.split('.', 2)
+docurl = "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])
 #. Translators: Translation included with Django
 menu.addItem("help", "documentation", url=docurl, label=_('Documentation'), window=True, prefix=False, index=300)
 menu.addItem("help", "API", url="/api/", label=_('REST API help'), window=True, prefix=True, index=400)

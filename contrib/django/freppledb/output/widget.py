@@ -208,9 +208,9 @@ class ManufacturingOrderWidget(Widget):
       .on("mouseover", function(d) {
         $("#mo_tooltip")
           .css("display", "block")
-          .html(d[0] + "<br>" + d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s");
+          .html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
         })
-      .on("mousemove", function(){
+      .on("mousemove", function(event){
         $("#mo_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){
@@ -432,9 +432,9 @@ class DistributionOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#do_tooltip").css("display", "block").html(d[0] + "<br>"+ d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s");
+        $("#do_tooltip").css("display", "block").html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
         })
-      .on("mousemove", function(){
+      .on("mousemove", function(event){
         $("#do_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){
@@ -656,9 +656,9 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        $("#po_tooltip").css("display", "block").html(d[0] + "<br>" + d[1] + " / " + d[2] + " %s / %s " + d[3] + "%s")
+        $("#po_tooltip").css("display", "block").html(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
         })
-      .on("mousemove", function(){
+      .on("mousemove", function(event){
         $("#po_tooltip").css("top", (event.clientY+5) + "px").css("left", (event.clientX+5) + "px");
         })
       .on("mouseout", function(){

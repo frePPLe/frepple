@@ -788,7 +788,7 @@ class PurchaseOrderWidget(Widget):
       elif rec[0] == 1:
         result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          settings.CURRENCY[0], rec[4],
+          settings.CURRENCY[0], rec[5],
           settings.CURRENCY[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))

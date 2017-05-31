@@ -91,11 +91,6 @@
 onCellSelect: function(rowid,iCol,cellcontent,e) { //console.log("onCellSelect");
   var colModel = $(this).jqGrid ('getGridParam', 'colModel');
 
-  // if NOT clicking on checkbox the selection is reset
-  if (cellcontent.indexOf('class="cbox"') === -1) { //console.log("clicking on selection checkbox");
-    $(this).jqGrid('resetSelection');
-  }
-
   var selection = $(this).jqGrid('getGridParam','selarrrow'); //console.log(selection);
 
   var rowiddata = jQuery("#grid").getRowData(rowid);

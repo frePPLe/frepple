@@ -776,7 +776,7 @@ class GridReport(View):
         column = request.GET['sidx']
         comma = column.find(",")
         if comma > 0:
-          column = column[comma+2:]
+          column = column[comma + 2:]
         sort = 1
         ok = False
         for r in reportclass.rows:
@@ -1123,7 +1123,7 @@ class GridReport(View):
     for f in m._meta.get_fields():
       if f.is_relation and f.auto_created and f.related_model != m and f.related_model not in found:
         for sub in f.related_model.__subclasses__():
-#        if sub not in found:
+          # if sub not in found:
           found.update([sub])
         found.update([f.related_model])
         GridReport.dependent_models(f.related_model, found)
@@ -1139,12 +1139,12 @@ class GridReport(View):
         j = i + 1
         while j < cnt and ok:
           if models[i][1] != models[j][1] and models[i][1] in models[j][3]:
-            i_base=models[i][1].__base__
+            i_base = models[i][1].__base__
             if i_base == Model or i_base._meta.abstract:
-              i_base=None
-            j_base=models[j][1].__base__
+              i_base = None
+            j_base = models[j][1].__base__
             if j_base == Model or j_base._meta.abstract:
-              j_base=None
+              j_base = None
             if i_base == j_base and i_base and j_base:
               j += 1
               continue
@@ -1243,14 +1243,14 @@ class GridReport(View):
                  '<table class="table table-condensed" style="white-space: nowrap;">'
                  '<thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></thead>'
                  '</tr><tbody>') % (
-                   capfirst(_("worksheet")), capfirst(_("row")), 
-                   capfirst(_("field")), capfirst(_("value")), 
+                   capfirst(_("worksheet")), capfirst(_("row")),
+                   capfirst(_("field")), capfirst(_("value")),
                    capfirst(_("error"))
                    )
           for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
             rownumber += 1
 
-            ### Case 1: The first line is read as a header line
+            # Case 1: The first line is read as a header line
             if rownumber == 1:
 
               # Collect required fields
@@ -1268,17 +1268,9 @@ class GridReport(View):
                 ok = False
                 for i in reportclass.model._meta.fields:
                   # Try with translated field names
-                  if col == i.name.lower() or col == i.verbose_name.lower():
-                    if i.editable is True:
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    required_fields.discard(i.name)
-                    ok = True
-                    break
-                  # Try with English field names
-                  with translation.override('en'):
-                    if col == i.name.lower() or col == i.verbose_name.lower():
+                  if col == i.name.lower() \
+                    or col == i.verbose_name.lower() \
+                    or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
                       if i.editable is True:
                         headers.append(i)
                       else:
@@ -1286,6 +1278,18 @@ class GridReport(View):
                       required_fields.discard(i.name)
                       ok = True
                       break
+                  # Try with English field names
+                  with translation.override('en'):
+                    if col == i.name.lower() \
+                      or col == i.verbose_name.lower() \
+                      or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
+                        if i.editable is True:
+                          headers.append(i)
+                        else:
+                          headers.append(False)
+                        required_fields.discard(i.name)
+                        ok = True
+                        break
                 if not ok:
                   headers.append(False)
                   yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': col})
@@ -1454,11 +1458,11 @@ class GridReport(View):
                '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
                '</thead><tbody>') % (
-                 capfirst(_("worksheet")), capfirst(_("row")), 
+                 capfirst(_("worksheet")), capfirst(_("row")),
                  capfirst(_("field")), capfirst(_("value")),
                  capfirst(_("error"))
                  )
-        
+
         # Loop through the data records
         wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
         numsheets = len(wb.get_sheet_names())
@@ -1468,9 +1472,9 @@ class GridReport(View):
           ws = wb.get_sheet_by_name(name=ws_name)
           has_pk_field = False
           for row in ws.iter_rows():
-            rownumber += 1            
-  
-            ### Case 1: The first line is read as a header line
+            rownumber += 1
+
+            # Case 1: The first line is read as a header line
             if rownumber == 1:
               # Collect required fields
               required_fields = set()
@@ -1486,17 +1490,9 @@ class GridReport(View):
                 ok = False
                 for i in reportclass.model._meta.fields:
                   # Try with translated field names
-                  if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
-                    if i.editable is True:
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    required_fields.discard(i.name)
-                    ok = True
-                    break
-                  # Try with English field names
-                  with translation.override('en'):
-                    if col.replace(' ', '') == i.name.lower() or col == i.verbose_name.lower():
+                  if col.replace(' ', '') == i.name.lower() \
+                    or col == i.verbose_name.lower() \
+                    or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
                       if i.editable is True:
                         headers.append(i)
                       else:
@@ -1504,10 +1500,22 @@ class GridReport(View):
                       required_fields.discard(i.name)
                       ok = True
                       break
+                  # Try with English field names
+                  with translation.override('en'):
+                    if col.replace(' ', '') == i.name.lower() \
+                      or col == i.verbose_name.lower() \
+                      or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
+                        if i.editable is True:
+                          headers.append(i)
+                        else:
+                          headers.append(False)
+                        required_fields.discard(i.name)
+                        ok = True
+                        break
                 if not ok:
                   headers.append(False)
                   yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
-                    reportclass.model._meta.verbose_name, 
+                    reportclass.model._meta.verbose_name,
                     _('Skipping unknown field %(column)s') % {'column': col}
                     )
                   numerrors += 1
@@ -1527,14 +1535,14 @@ class GridReport(View):
               # Abort when there are errors
               if errors > 0:
                 break
-  
+
               # Create a form class that will be used to validate the data
               UploadForm = modelform_factory(
                 reportclass.model,
                 fields=tuple([i.name for i in headers if isinstance(i, Field)]),
                 formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
                 )
-  
+
               # Get natural keys for the class
               natural_key = None
               if hasattr(reportclass.model.objects, 'get_by_natural_key'):
@@ -1542,12 +1550,12 @@ class GridReport(View):
                   natural_key = reportclass.model._meta.unique_together[0]
                 elif hasattr(reportclass.model, 'natural_key'):
                   natural_key = reportclass.model.natural_key
-  
-            ### Case 2: Skip empty rows and comments rows
+
+            # Case 2: Skip empty rows and comments rows
             elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
               continue
-  
-            ### Case 3: Process a data row
+
+            # Case 3: Process a data row
             else:
               datarows += 1
               try:
@@ -1580,7 +1588,7 @@ class GridReport(View):
                         data = data.strip()
                     d[headers[colnum].name] = data
                   colnum += 1
-  
+
                 # Step 2: Fill the form with data, either updating an existing
                 # instance or creating a new one.
                 if has_pk_field:
@@ -2459,17 +2467,9 @@ def importWorkbook(request):
                   value = value.lower()
                 for i in model._meta.fields:
                   # Try with translated field names
-                  if value == i.name.lower() or value == i.verbose_name.lower():
-                    if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                      headers.append(i)
-                    else:
-                      headers.append(False)
-                    required_fields.discard(i.name)
-                    ok = True
-                    break
-                  # Try with English field names
-                  with translation.override('en'):
-                    if value == i.name.lower() or value == i.verbose_name.lower():
+                  if value == i.name.lower() \
+                    or value == i.verbose_name.lower() \
+                    or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
                       if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
                         headers.append(i)
                       else:
@@ -2477,6 +2477,18 @@ def importWorkbook(request):
                       required_fields.discard(i.name)
                       ok = True
                       break
+                  # Try with English field names
+                  with translation.override('en'):
+                    if value == i.name.lower() \
+                      or value == i.verbose_name.lower() \
+                      or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
+                        if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
+                          headers.append(i)
+                        else:
+                          headers.append(False)
+                        required_fields.discard(i.name)
+                        ok = True
+                        break
                 if not ok:
                   headers.append(False)
                   yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Skipping unknown field %(column)s') % {'column': value})

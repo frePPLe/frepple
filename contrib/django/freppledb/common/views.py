@@ -20,6 +20,7 @@ import json
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password, get_password_validators
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
@@ -59,7 +60,7 @@ def AboutView(request):
 
 @staff_member_required
 def cockpit(request):
-  return render(request, 'index.html', 
+  return render(request, 'index.html',
     context= {
       'title': _('cockpit'),
       'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
@@ -142,7 +143,7 @@ def wizard(request):
     else:
       return HttpResponse(content="OK")
 
-  return render(request, 'common/wizard.html', 
+  return render(request, 'common/wizard.html',
     context = {
       'title': _('Wizard to load your data'),
       'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
@@ -204,6 +205,8 @@ class PreferencesForm(forms.Form):
       if not self.user.check_password(newdata['cur_password']):
         #. Translators: Translation included with Django
         raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
+      # Validate_password raises a ValidationError
+      validate_password(newdata['new_password1'], self.user, get_password_validators(settings. AUTH_PASSWORD_VALIDATORS))
       if newdata['new_password1'] != newdata['new_password2']:
         #. Translators: Translation included with Django
         raise forms.ValidationError("The two password fields didn't match.")
@@ -254,7 +257,7 @@ def preferences(request):
   for l in User.languageList:
     if l[0] == request.user.language:
       LANGUAGE = l[1]
-  return render(request, 'common/preferences.html', 
+  return render(request, 'common/preferences.html',
     context = {
       'title': _('My preferences'),
       'form': form,

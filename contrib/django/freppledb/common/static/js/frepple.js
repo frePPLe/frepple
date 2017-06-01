@@ -405,11 +405,11 @@ jQuery.extend($.fn.fmatter, {
     if (rowdata.inventory_item || rowdata.leadtime)
     {
 	    if (!isNaN(thenumber)) {
-	      if (thenumber >= 100) {
+	      if (thenumber >= 100 && thenumber < 999999) {
 	        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+Math.round(cellvalue)+'%</div>';
 	      } else if (thenumber === 0) {
 	        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+Math.round(cellvalue)+'%</div>';
-	      } else if (thenumber < 0) {
+	      } else if (thenumber === 999999) {
 	        return '';
 	      } else {
 	        thenumber = Math.round(thenumber/100*255);

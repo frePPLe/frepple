@@ -453,9 +453,10 @@ Object* OperationPlan::createOperationPlan(
       if (!orival)
         throw DataException("Origin location is needed on this distribution order");
       Buffer* originbuffer = nullptr;
-      for (Buffer::iterator bufiter = Buffer::begin(); bufiter != Buffer::end(); ++bufiter)
+      Item::bufferIterator bufiter = static_cast<Item*>(itemval)->getBufferIterator();
+      while (Buffer* tmpbuf = bufiter.next())
       {
-        if (bufiter->getLocation() == static_cast<Location*>(orival) && bufiter->getItem() == static_cast<Item*>(itemval))
+        if (tmpbuf->getLocation() == static_cast<Location*>(orival))
         {
           if (originbuffer)
           {
@@ -463,7 +464,7 @@ Object* OperationPlan::createOperationPlan(
             o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(orival) << "'";
             throw DataException(o.str());
           }
-          originbuffer = &*bufiter;
+          originbuffer = tmpbuf;
         }
       }
       if (!originbuffer)

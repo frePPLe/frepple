@@ -276,7 +276,7 @@ class ManufacturingOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(quantity)),0),
+         count(operationplan.name), coalesce(round(sum(quantity)),0),
          coalesce(round(sum(quantity * cost)),0)
       from common_bucketdetail
       left outer join operationplan
@@ -497,7 +497,7 @@ class DistributionOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(quantity)),0),
+         count(operationplan.name), coalesce(round(sum(quantity)),0),
          coalesce(round(sum(item.cost * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
@@ -720,7 +720,7 @@ class PurchaseOrderWidget(Widget):
     query = '''
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(*), coalesce(round(sum(quantity)),0),
+         count(operationplan.name), coalesce(round(sum(quantity)),0),
          coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
       from common_bucketdetail
       left outer join operationplan
@@ -779,6 +779,7 @@ class PurchaseOrderWidget(Widget):
       ''' % (
         supplierfilter, supplierfilter, fence1, supplierfilter, fence2, supplierfilter
         )
+    print(query)
     if supplier:
       cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, supplier, supplier, current, supplier, current, supplier))
     else:

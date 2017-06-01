@@ -779,7 +779,6 @@ class PurchaseOrderWidget(Widget):
       ''' % (
         supplierfilter, supplierfilter, fence1, supplierfilter, fence2, supplierfilter
         )
-    print(query)
     if supplier:
       cursor.execute(query, (request.report_bucket, request.report_startdate, request.report_enddate, supplier, supplier, current, supplier, current, supplier))
     else:

@@ -77,7 +77,6 @@ function delayfmt(cellvalue, options, rowdata) {
 
 function plannedquantitycellattr(rowId, value, rawobject) {
   var thestyle = '';
-  console.log(rawobject);
   if (parseFloat(rawobject.quantity) - parseFloat(value) > 0) {
     thestyle = 'style="background-color: #f00"';
   } else if (parseFloat(rawobject.quantity) - parseFloat(rawobject.plannedquantity) <= 0) {

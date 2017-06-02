@@ -75,21 +75,19 @@ function delayfmt(cellvalue, options, rowdata) {
   return thecolor0 + (sign*seconds).toFixed(3) + thecolor1;
 }
 
-function plannedquantityfmt(cellvalue, options, rowdata) {
-  var thecolor0 = '';
-  var thecolor1 = '';
-  if (parseFloat(rowdata.quantity) - parseFloat(rowdata.plannedquantity) > 0) {
-    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #f00">';
-    thecolor1 = '</div>'
-  } else if (parseFloat(rowdata.quantity) - parseFloat(rowdata.plannedquantity) <= 0) {
-    //thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
-    //thecolor1 = '</div>'
+function plannedquantitycellattr(rowId, value, rawobject) {
+  var thestyle = '';
+  console.log(rawobject);
+  if (parseFloat(rawobject.quantity) - parseFloat(value) > 0) {
+    thestyle = 'style="background-color: #f00"';
+  } else if (parseFloat(rawobject.quantity) - parseFloat(rawobject.plannedquantity) <= 0) {
+    //thestyle = 'style="text-align: center; background-color: #008000"'
   }
 
-  if ( isNaN(parseFloat(cellvalue)) ) {
+  if ( isNaN(parseFloat(value)) ) {
     return '';
   } else {
-    return thecolor0 + parseFloat(cellvalue).toFixed(2) + thecolor1;
+    return thestyle;
   }
 }
 

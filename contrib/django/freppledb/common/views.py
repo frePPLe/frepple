@@ -20,7 +20,7 @@ import json
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.password_validation import validate_password, get_password_validators
+from django.contrib.auth.password_validation import validate_password, get_password_validators, password_validators_help_text_html
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
@@ -179,7 +179,7 @@ class PreferencesForm(forms.Form):
     label = "",
     required=False,
     #. Translators: Translation included with Django
-    help_text=_('New password'),
+    help_text=password_validators_help_text_html(get_password_validators(settings.AUTH_PASSWORD_VALIDATORS)),
     widget = forms.PasswordInput()
     )
   new_password2 = forms.CharField(

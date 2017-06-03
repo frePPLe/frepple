@@ -1,0 +1,512 @@
+# Copyright (C) 2007-2012 by frePPLe bvba
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+msgid ""
+msgstr ""
+"Project-Id-Version: 4.2.beta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-17 10:38+0100\n"
+"PO-Revision-Date: 2017-03-17 14:23+0100\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0beta4\n"
+
+#: common/static/js/frepple.js:170 common/static/js/frepple.min.js:11
+msgid "There are unsaved changes on this page."
+msgstr "Er zijn onbewaarde wijzigingen op deze pagina."
+
+#: common/static/js/frepple.js:222 common/static/js/frepple.min.js:11
+msgid "Error saving data"
+msgstr "Foutmelding tijdens wegschrijven gegevens"
+
+#: common/static/js/frepple.js:228 common/static/js/frepple.js:588
+#: common/static/js/frepple.js:1417 common/static/js/frepple.js:1571
+#: common/static/js/frepple.js:2176 common/static/js/frepple.js:2197
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+msgid "Close"
+msgstr "Sluit"
+
+#: common/static/js/frepple.js:250 common/static/js/frepple.min.js:11
+msgid "Save or cancel your changes first"
+msgstr "Bewaar of annuleer eerst de wijzigingen"
+
+#: common/static/js/frepple.js:256 common/static/js/frepple.js:1827
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+msgid "Save"
+msgstr "Bewaar"
+
+#: common/static/js/frepple.js:257 common/static/js/frepple.js:600
+#: common/static/js/frepple.js:903 common/static/js/frepple.js:926
+#: common/static/js/frepple.js:1036 common/static/js/frepple.js:1084
+#: common/static/js/frepple.js:1164 common/static/js/frepple.js:1403
+#: common/static/js/frepple.js:1475 common/static/js/frepple.js:1829
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+msgid "Cancel"
+msgstr "Annuleer"
+
+#: common/static/js/frepple.js:446 common/static/js/frepple.min.js:11
+msgid "Click to select record"
+msgstr "Klik om een record te selecteren"
+
+#: common/static/js/frepple.js:492 common/static/js/frepple.min.js:11
+msgid "Selected options"
+msgstr "Geselecteerde opties"
+
+#: common/static/js/frepple.js:499 common/static/js/frepple.min.js:11
+msgid "Available options"
+msgstr "Beschikbare opties"
+
+#: common/static/js/frepple.js:540 common/static/js/frepple.min.js:11
+msgid "Selected Cross"
+msgstr "Geselecteerde kruis"
+
+#: common/static/js/frepple.js:550 common/static/js/frepple.min.js:11
+msgid "Available Cross"
+msgstr "Beschikbare kruis"
+
+#: common/static/js/frepple.js:572 common/static/js/frepple.min.js:11
+msgid "Frozen columns"
+msgstr "Vastgepinde kolommen"
+
+#: common/static/js/frepple.js:591 common/static/js/frepple.js:1925
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+msgid "Customize"
+msgstr "Personaliseer"
+
+#: common/static/js/frepple.js:599 common/static/js/frepple.min.js:11
+msgid "OK"
+msgstr "OK"
+
+#: common/static/js/frepple.js:601 common/static/js/frepple.min.js:11
+msgid "Reset"
+msgstr "Herstel"
+
+#: common/static/js/frepple.js:891 common/static/js/frepple.js:912
+#: common/static/js/frepple.min.js:11
+msgid "Export CSV or Excel file"
+msgstr "Exporteer CSV of Excel bestand"
+
+#: common/static/js/frepple.js:894 common/static/js/frepple.js:915
+#: common/static/js/frepple.min.js:11
+msgid "Export format"
+msgstr "Export  formaat"
+
+#: common/static/js/frepple.js:896 common/static/js/frepple.js:918
+#: common/static/js/frepple.min.js:11
+msgid "Spreadsheet list"
+msgstr "Spreadsheet lijst"
+
+#: common/static/js/frepple.js:897 common/static/js/frepple.js:920
+#: common/static/js/frepple.min.js:11
+msgid "CSV list"
+msgstr "CSV Lijst"
+
+#: common/static/js/frepple.js:902 common/static/js/frepple.js:925
+#: common/static/js/frepple.js:1163 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.min.js:12
+msgid "Export"
+msgstr "Exporteer"
+
+#: common/static/js/frepple.js:917 common/static/js/frepple.min.js:11
+msgid "Spreadsheet table"
+msgstr "Spreadsheet tabel"
+
+#: common/static/js/frepple.js:919 common/static/js/frepple.min.js:11
+msgid "CSV table"
+msgstr "CSV tabel"
+
+#: common/static/js/frepple.js:1029 common/static/js/frepple.min.js:12
+msgid "Delete data"
+msgstr "Verwijder gegevens"
+
+#: common/static/js/frepple.js:1032 common/static/js/frepple.min.js:12
+#, javascript-format
+msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
+msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+
+#: common/static/js/frepple.js:1035 common/static/js/frepple.js:1083
+#: common/static/js/frepple.js:1402 common/static/js/frepple.js:1474
+#: common/static/js/frepple.min.js:12
+msgid "Confirm"
+msgstr "Bevestig"
+
+#: common/static/js/frepple.js:1057 common/static/js/frepple.min.js:12
+msgid "Error deleting data"
+msgstr "Foutmelding tijdens verwijderen gegevens"
+
+#: common/static/js/frepple.js:1077 common/static/js/frepple.min.js:12
+msgid "Copy data"
+msgstr "Kopieer gegevens"
+
+#: common/static/js/frepple.js:1080 common/static/js/frepple.min.js:12
+#, javascript-format
+msgid "You are about to duplicate %s objects"
+msgstr "U staat op het punt %s objecten te kopieren"
+
+#: common/static/js/frepple.js:1105 common/static/js/frepple.min.js:12
+msgid "Error copying data"
+msgstr "Foutmelding tijdens kopieren gegevens"
+
+#: common/static/js/frepple.js:1141 common/static/js/frepple.min.js:12
+msgid "Export Plan"
+msgstr "Exporteer plan"
+
+#: common/static/js/frepple.js:1210 common/static/js/frepple.js:1223
+#: common/static/js/frepple.min.js:12
+msgid "Filtered where"
+msgstr "Gefilterd waar"
+
+#: common/static/js/frepple.js:1396 common/static/js/frepple.js:1468
+#: common/static/js/frepple.min.js:12
+msgid "export"
+msgstr "exporteer"
+
+#: common/static/js/frepple.js:1399 common/static/js/frepple.min.js:12
+msgid "export selected records to "
+msgstr "exporter geselecteerde records naar "
+
+#: common/static/js/frepple.js:1409 common/static/js/frepple.js:1563
+#: common/static/js/frepple.min.js:12
+msgid "connecting to "
+msgstr "connecting to "
+
+#: common/static/js/frepple.js:1416 common/static/js/frepple.js:1570
+#: common/static/js/frepple.min.js:12
+msgid "Export successful"
+msgstr "Export geslaagd"
+
+#: common/static/js/frepple.js:1428 common/static/js/frepple.js:1429
+#: common/static/js/frepple.js:1582 common/static/js/frepple.min.js:12
+msgid "Error during export"
+msgstr "Fout tijdens exporteren"
+
+#: common/static/js/frepple.js:1430 common/static/js/frepple.min.js:12
+msgid "retry"
+msgstr "probeer opnieuw"
+
+#: common/static/js/frepple.js:1584 common/static/js/frepple.js:1616
+#: common/static/js/frepple.min.js:12
+msgid "Retry"
+msgstr "Probeer opnieuw"
+
+#: common/static/js/frepple.js:1613 common/static/js/frepple.min.js:12
+msgid "Error getting data"
+msgstr "Fout tijdens ophalen van gegevens"
+
+#: common/static/js/frepple.js:1772 common/static/js/frepple.min.js:12
+msgid "Customize a dashboard row"
+msgstr "Personaliseer een dashboardrij"
+
+#: common/static/js/frepple.js:1778 common/static/js/frepple.min.js:12
+msgid "Name"
+msgstr "Naam"
+
+#: common/static/js/frepple.js:1784 common/static/js/frepple.min.js:12
+msgid "Layout"
+msgstr "Layout"
+
+#: common/static/js/frepple.js:1790 common/static/js/frepple.min.js:12
+msgid "Single column"
+msgstr "Enkele kolom"
+
+#: common/static/js/frepple.js:1793 common/static/js/frepple.min.js:12
+msgid "Two columns"
+msgstr "Twee kolommen"
+
+#: common/static/js/frepple.js:1800 common/static/js/frepple.min.js:12
+msgid "Three columns"
+msgstr "Drie kolommen"
+
+#: common/static/js/frepple.js:1804 common/static/js/frepple.min.js:12
+msgid "Four columns"
+msgstr "Vier kolommen"
+
+#: common/static/js/frepple.js:1810 common/static/js/frepple.min.js:12
+msgid "Add widget"
+msgstr "Voeg widget toe"
+
+#: common/static/js/frepple.js:1828 common/static/js/frepple.min.js:12
+msgid "Delete"
+msgstr "Verwijder"
+
+#: common/static/js/frepple.js:1830 common/static/js/frepple.min.js:12
+msgid "Add new below"
+msgstr "Voeg onderaan toe"
+
+#: common/static/js/frepple.js:1831 common/static/js/frepple.min.js:12
+msgid "Add new above"
+msgstr "Voeg bovenaan toe"
+
+#: common/static/js/frepple.js:2121 common/static/js/frepple.min.js:11
+msgid "Installed apps"
+msgstr "Geïnstalleerde apps"
+
+#: common/static/js/frepple.js:2141 common/static/js/frepple.min.js:11
+msgid "Error reading version information"
+msgstr "Fout tijdens lezen versie informatie"
+
+#: common/static/js/frepple.js:2162 common/static/js/frepple.min.js:11
+msgid "Import CSV or Excel file"
+msgstr "Importeer CSV of Excel bestand"
+
+#: common/static/js/frepple.js:2166 common/static/js/frepple.min.js:11
+msgid "Load an Excel file or a CSV-formatted text file."
+msgstr "Laad een Excel bestand of een tekst bestand in CSV-formaat."
+
+#: common/static/js/frepple.js:2167 common/static/js/frepple.min.js:11
+msgid "The first row should contain the field names."
+msgstr "De eerste rij moet de veldnamen bevatten."
+
+#: common/static/js/frepple.js:2169 common/static/js/frepple.min.js:11
+msgid "First delete all existing records AND ALL RELATED TABLES"
+msgstr "Verwijder eerst alle huidige records EN ALLE GERELATEERDE TABELLEN"
+
+#: common/static/js/frepple.js:2170 common/static/js/frepple.min.js:11
+msgid "Data file"
+msgstr "Gegevensbestand"
+
+#: common/static/js/frepple.js:2175 common/static/js/frepple.min.js:11
+msgid "Import"
+msgstr "Importeer gegevens"
+
+#: common/static/js/frepple.js:2185 common/static/js/frepple.min.js:11
+msgid "Importing... pressing Close button will not stop the process."
+msgstr "Importeren... Het indrukken van de Sluit-knop zal de import niet onderbreken."
+
+#: common/static/js/frepple.js:2639 common/static/js/frepple.min.js:13
+msgid "Show hints"
+msgstr "Toon hints"
+
+#: common/static/js/frepple.js:2729 common/static/js/frepple.min.js:13
+msgid "Guided tour"
+msgstr "Rondleiding"
+
+#: common/static/js/frepple.js:2736 common/static/js/frepple.min.js:13
+msgid "Previous"
+msgstr "Vorige"
+
+#: common/static/js/frepple.js:2737 common/static/js/frepple.js:2878
+#: common/static/js/frepple.min.js:13
+msgid "Play"
+msgstr "Play"
+
+#: common/static/js/frepple.js:2738 common/static/js/frepple.min.js:13
+msgid "Next"
+msgstr "Volgende"
+
+#: common/static/js/frepple.js:2885 common/static/js/frepple.min.js:13
+msgid "Pause"
+msgstr "Pauze"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/problemspanelDrv.js:37
+msgid "problems"
+msgstr "problemen"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/problemspanelDrv.js:39
+msgid "start"
+msgstr "start"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/problemspanelDrv.js:41
+msgid "end"
+msgstr "eind"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/problemspanelDrv.js:48
+msgid "no problems"
+msgstr "geen problemen"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/resourcespanelDrv.js:36
+msgid "resource"
+msgstr "resource"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/bufferspanelDrv.js:38
+#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: input/static/operationplandetail/src/resourcespanelDrv.js:38
+msgid "quantity"
+msgstr "hoeveelheid"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/resourcespanelDrv.js:45
+msgid "no resources"
+msgstr "geen resource"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/bufferspanelDrv.js:36
+msgid "buffer"
+msgstr "buffer"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/bufferspanelDrv.js:40
+#: input/static/operationplandetail/src/supplypositionpanelDrv.js:78
+msgid "onhand"
+msgstr "voorraad"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/bufferspanelDrv.js:42
+msgid "date"
+msgstr "datum"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/bufferspanelDrv.js:49
+msgid "no movements"
+msgstr "geen verplaatsingen"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
+msgid "demand"
+msgstr "verkooporder"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+msgid "no demands"
+msgstr "geen verkooporders"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplanpanelDrv.js:37
+msgid "Manufacturing Order"
+msgstr "Productieorder"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplanpanelDrv.js:38
+msgid "Purchase Order"
+msgstr "Aankooporder"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplanpanelDrv.js:39
+msgid "Distribution Order"
+msgstr "Distributieorder"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplanpanelDrv.js:40
+msgid "Stock"
+msgstr "Stock"
+
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplanpanelDrv.js:41
+msgid "Delivery"
+msgstr "Levering"
+
+#: input/static/operationplandetail/src/supplypositionpanelDrv.js:30
+msgid "inventory status"
+msgstr "voorraad status"
+
+#: planningboard/static/js/frepple-planningboard.min.js:11
+#: planningboard/static/planningboard/src/ganttchart.js:409
+#, javascript-format
+msgid "%s allocated out of %s"
+msgstr "%s allocated out of %s"
+
+#: planningboard/static/js/frepple-planningboard.min.js:12
+#: planningboard/static/planningboard/src/planningboard.js:233
+msgid "remove this demand from planning"
+msgstr "verwijder deze order uit het plan"
+
+#: planningboard/static/js/frepple-planningboard.min.js:12
+#: planningboard/static/planningboard/src/planningboard.js:234
+msgid "Plan selected demands backward from their due date"
+msgstr "Plan de geselecteerder orders terugwaarts vanaf de leverdatum"
+
+#: planningboard/static/js/frepple-planningboard.min.js:12
+#: planningboard/static/planningboard/src/planningboard.js:235
+msgid "Plan selected demands forward from the current date"
+msgstr "Plan de geselecteerde orders voorwaarts vanaf de huidige datum"
+
+#~ msgid "The database returned"
+#~ msgstr "The database returned"
+
+#~ msgid "customize"
+#~ msgstr "personaliseer"
+
+#~ msgid "out of"
+#~ msgstr "van de"
+
+#~ msgid "Error saving report settings"
+#~ msgstr "Foutmelding tijdens wegschrijven rapportconfiguratie"
+
+#~ msgid "Time buckets"
+#~ msgstr "Tijdseenheiden"
+
+#~ msgid "Bucket size"
+#~ msgstr "Tijdseenheid"
+
+#~ msgid "days"
+#~ msgstr "dagen"
+
+#~ msgid "weeks"
+#~ msgstr "weken"
+
+#~ msgid "months"
+#~ msgstr "maanden"
+
+#~ msgid "After plan current date"
+#~ msgstr "Na de startdatum van het plan"
+
+#~| msgid "Delete data"
+#~ msgid "Delete row"
+#~ msgstr "Verwijder"
+
+#~ msgid "Add"
+#~ msgstr "Toevoegen"
+
+#~| msgid "Reset"
+#~ msgid "reset"
+#~ msgstr "herstel"
+
+#~| msgid "Cancel"
+#~ msgid "cancel"
+#~ msgstr "annuleer"
+
+#, fuzzy
+#~| msgid "Export"
+#~ msgid "export: OK"
+#~ msgstr "Exporteer"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "error exporting data"
+#~ msgstr "Foutmelding tijdens verwijderen gegevens"
+
+#, fuzzy
+#~| msgid "Cancel"
+#~ msgid "Cancel task"
+#~ msgstr "Annuleer"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "Error retrieving data"
+#~ msgstr "Foutmelding tijdens verwijderen gegevens"
+
+#, fuzzy
+#~| msgid "Error deleting data"
+#~ msgid "Error getting quote info"
+#~ msgstr "Foutmelding tijdens verwijderen gegevens"
+
+#~ msgid "Table"
+#~ msgstr "Tabel"
+
+#~ msgid "List"
+#~ msgstr "Lijst"
+
+#~ msgid "Import data"
+#~ msgstr "Importeer gegevens"
+
+#~ msgid "Application tour"
+#~ msgstr "Demonstratie"

@@ -28,21 +28,20 @@ Proceed with the following steps to compile a custom theme:
 
    ::
 
-      cd contrib/django
       npm install
 
 #. | **Design the LESS files**:
    | The styles are defined in the following files. Check out http://lesscss.org/
      to learn more about the Less syntax used in these files.
 
-       - | *contrib/django/freppledb/common/static/css/frepple.less*:
+       - | *freppledb/common/static/css/frepple.less*:
          | Defines the frePPLe specific CSS styles.
 
-       - | *contrib/django/freppledb/common/static/css/THEME/variables.less*:
+       - | *freppledb/common/static/css/THEME/variables.less*:
          | Defines the configuration of bootstrap for each of the themes.
            The value of the variables is what a theme unique.
 
-       - | *contrib/django/freppledb/common/static/css/THEME/frepple.less*:
+       - | *freppledb/common/static/css/THEME/frepple.less*:
          | Optionally, you can create files with theme-specific styles that can't
            be expressed as variable values.
 
@@ -52,7 +51,6 @@ Proceed with the following steps to compile a custom theme:
 
    ::
 
-       cd contrib/django
        grunt less
 
    In each of the theme folders the file bootstrap.min.css and bootstrap.min.css.map

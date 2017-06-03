@@ -15,6 +15,10 @@
 /config.status
 /config.sub
 /stamp-h1
+/static
+/build
+/logs
+/node_modules
 Makefile
 Makefile.in
 *.Po

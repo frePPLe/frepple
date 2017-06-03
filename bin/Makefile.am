@@ -6,7 +6,7 @@ nobasedir = $(datadir)/frepple
 nobase_DATA = frepple.xsd
 
 pkgsysconfdir = $(sysconfdir)/frepple
-pkgsysconf_DATA = license.xml init.xml
+pkgsysconf_DATA = license.xml
 
 EXTRA_DIST = $(nobase_DATA) $(pkgsysconf_DATA)
 

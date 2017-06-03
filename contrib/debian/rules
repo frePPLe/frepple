@@ -4,7 +4,7 @@
 #export DH_VERBOSE=1
 
 DEB_PYTHON3_MODULE_PACKAGES=freppledb
-DEB_PYTHON_SETUP_CMD=contrib/django/setup.py
+DEB_PYTHON_SETUP_CMD=setup.py
 DEB_BUILD_OPTIONS = nocheck parallel=2
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc PYFLAGS='--install-layout=deb'
 

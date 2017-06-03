@@ -12,13 +12,13 @@ This section provides step by step instructions on how to translate the user int
 
   You may skip this step if you just want to improve already existing translations.
 
-  Copy the directory *contrib/django/freppledb/locale/en* to a new subdirectory with the name of your language code.
+  Copy the directory *freppledb/locale/en* to a new subdirectory with the name of your language code.
 
   The possible language codes can be found on the `World Wide Web Consortium <http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes>`_.
 
   If you want to create instalation packages including the new language then the installer also needs updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward editing.
 
-  To get it working you must also add the new language to *contrib/django/djangosettings.py* (or *bin\\djangosettings.py* in the binary Windows installation). Add the new language code and description to the variable LANGUAGES:
+  To get it working you must also add the new language to *djangosettings.py* (or *bin\\djangosettings.py* in the binary Windows installation). Add the new language code and description to the variable LANGUAGES:
 
    ::
 
@@ -43,7 +43,7 @@ This section provides step by step instructions on how to translate the user int
 
 **3. Start translating**
 
-   Navigate to *contrib/django/freppledb/locale/* go to the folder with the language you intend to translate, and use your editor to open the *django.po* and *djangojs.po* files.
+   Navigate to *freppledb/locale/* go to the folder with the language you intend to translate, and use your editor to open the *django.po* and *djangojs.po* files.
 
    In these files you will find all the strings that may be translated.
 

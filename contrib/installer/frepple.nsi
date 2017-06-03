@@ -208,7 +208,6 @@ Section "Application" SecAppl
 
    ; Copy configuration files
   File "bin\*.xsd"
-  File "bin\init.xml"
 
   ; Copy the license file the user specified
   File "bin\license.xml"
@@ -218,7 +217,7 @@ Section "Application" SecAppl
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"
-  File "contrib\django\djangosettings.py"
+  File "djangosettings.py"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"

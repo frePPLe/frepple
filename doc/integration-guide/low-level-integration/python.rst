@@ -49,12 +49,12 @@ executable and load the planning engine as an extension module.
 There are plenty of sample Python scripts available:
 
 - | A very nice example is the code where the planning engine reads 
-    from the PostgreSQL database: https://github.com/frePPLe/frePPLe/blob/master/contrib/django/freppledb/execute/load.py
+    from the PostgreSQL database: https://github.com/frePPLe/frePPLe/blob/master/freppledb/input/commands.py
   | An SQL statement is executed, and in the loop over the resulting records
     we create the objects in the planning engine's memory. 
   
 - | Another example is the code to write the plan results from the planning
-    engine's memory back to the database: https://github.com/frePPLe/frePPLe/blob/master/contrib/django/freppledb/execute/export_database_plan.py
+    engine's memory back to the database: https://github.com/frePPLe/frePPLe/blob/master/freppledb/execute/export_database_plan.py
   | We loop over the relevant objects in memory, and send it to a PostgreSQL
     copy/insert/update command. 
    

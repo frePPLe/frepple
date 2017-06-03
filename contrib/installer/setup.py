@@ -21,7 +21,7 @@ import os
 import os.path
 import sys
 
-sys.path.append(os.path.join(os.path.split(__file__)[0],'..','django'))
+sys.path.append(os.path.join(os.path.split(__file__)[0],'..','..'))
 
 # Define what is to be included and excluded
 packages = [# Required for django standalone deployment

@@ -1,0 +1,914 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:409
+msgid "%s allocated out of %s"
+msgstr "%s のうち %s が割り当て済み"
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:45
+msgid "action"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1013
+#: freppledb/planningboard/static/planningboard/planningboard.html:1036
+#: freppledb/planningboard/static/planningboard/planningboard.html:1054
+#: freppledb/planningboard/static/planningboard/planningboard.html:1072
+msgid "Add to the graph"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:380
+msgid "aggregate"
+msgstr "集約"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1268
+msgid ""
+"An operation gets the color of its category.<br>\n"
+"                        The operation categories should be filled in the "
+"operation table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1304
+msgid ""
+"An operation gets the color of its subcategory.<br>\n"
+"                        The operation subcategories should be filled in the "
+"operation table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1198
+msgid ""
+"An operation gets the color the category of the item it produces.<br>\n"
+"                        The item categories should be filled in the item "
+"table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1233
+msgid ""
+"An operation gets the color the subcategory of the item it produces.<br>\n"
+"                        The item subcategories should be filled in the item "
+"table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:105
+#: freppledb/planningboard/static/planningboard/planningboard.html:311
+#: freppledb/planningboard/static/planningboard/planningboard.html:422
+#: freppledb/planningboard/static/planningboard/planningboard.html:534
+msgid "approved"
+msgstr "承認済み"
+
+#: freppledb/forecast/static/forecast/forecast.html:128
+#: freppledb/planningboard/static/planningboard/planningboard.html:139
+msgid "attributes"
+msgstr "属性"
+
+#: freppledb/forecast/static/forecast/forecast.html:388
+msgid "Automatic"
+msgstr "自動"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:148
+#: freppledb/planningboard/static/planningboard/planningboard.html:174
+#: freppledb/planningboard/static/planningboard/planningboard.html:756
+#: freppledb/planningboard/static/planningboard/planningboard.html:878
+msgid "buffer"
+msgstr "バッファ"
+
+#: freppledb/quoting/static/quoting/quoting.html:121
+msgid "cancel"
+msgstr "キャンセル"
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:250
+#: freppledb/planningboard/static/planningboard/src/grid.js:303
+#: freppledb/planningboard/static/planningboard/src/grid.js:365
+msgid "category"
+msgstr "カテゴリ"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1016
+msgid "Clear the plan of selected demands"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:107
+#: freppledb/planningboard/static/planningboard/planningboard.html:321
+#: freppledb/planningboard/static/planningboard/planningboard.html:430
+#: freppledb/planningboard/static/planningboard/planningboard.html:543
+msgid "closed"
+msgstr "クローズ"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:11
+msgid "color by"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:157
+msgid "colors"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:134
+msgid "comments"
+msgstr "コメント"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:69
+msgid "configure time buckets"
+msgstr "タイムバケットを継続"
+
+#: freppledb/forecast/static/forecast/forecast.html:46
+msgid "Configure time buckets"
+msgstr "タイムバケットを継続"
+
+#: freppledb/quoting/static/quoting/quoting.html:123
+msgid "confirm"
+msgstr "確認"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:106
+#: freppledb/planningboard/static/planningboard/planningboard.html:316
+#: freppledb/planningboard/static/planningboard/planningboard.html:426
+#: freppledb/planningboard/static/planningboard/planningboard.html:539
+msgid "confirmed"
+msgstr "確認済み"
+
+#: freppledb/forecast/static/forecast/forecast.html:393
+msgid "Constant"
+msgstr "一定"
+
+#: freppledb/forecast/static/forecast/forecast.html:462
+#: freppledb/input/static/operationplandetail/operationplandetail.html:53
+#: freppledb/planningboard/static/planningboard/planningboard.html:123
+#: freppledb/quoting/static/quoting/quoting.html:241
+msgid "Continue"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:82
+#: freppledb/planningboard/static/planningboard/planningboard.html:18
+#: freppledb/planningboard/static/planningboard/planningboard.html:290
+#: freppledb/planningboard/static/planningboard/planningboard.html:401
+#: freppledb/planningboard/static/planningboard/planningboard.html:509
+#: freppledb/planningboard/static/planningboard/planningboard.html:587
+#: freppledb/planningboard/static/planningboard/planningboard.html:639
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:31
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:43
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:55
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:62
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:71
+msgid "criticality"
+msgstr "緊急度"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1103
+msgid "Criticality color setup"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:75
+msgid "current onhand"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:166
+#: freppledb/planningboard/static/planningboard/planningboard.html:679
+#: freppledb/planningboard/static/planningboard/src/grid.js:83
+#: freppledb/quoting/static/quoting/quoting.html:41
+msgid "customer"
+msgstr "顧客"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:597
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:65
+#| msgid "customer"
+msgid "customer delivery"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:87
+msgid "customers"
+msgstr "顧客"
+
+#: freppledb/forecast/static/forecast/forecast.html:454
+#: freppledb/input/static/operationplandetail/operationplandetail.html:41
+#: freppledb/planningboard/static/planningboard/planningboard.html:111
+msgid "database transaction failed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:42
+#: freppledb/planningboard/static/planningboard/planningboard.html:193
+#: freppledb/planningboard/static/planningboard/planningboard.html:887
+#: freppledb/planningboard/static/planningboard/planningboard.html:924
+#: freppledb/planningboard/static/planningboard/planningboard.html:925
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:977
+msgid "date"
+msgstr "日時"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:88
+#: freppledb/planningboard/static/planningboard/planningboard.html:21
+#: freppledb/planningboard/static/planningboard/planningboard.html:296
+#: freppledb/planningboard/static/planningboard/planningboard.html:407
+#: freppledb/planningboard/static/planningboard/planningboard.html:517
+#: freppledb/planningboard/static/planningboard/planningboard.html:645
+#: freppledb/planningboard/static/planningboard/src/grid.js:152
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:32
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:44
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:56
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:72
+msgid "delay"
+msgstr "遅れ"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1133
+msgid "Delay color setup"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:41
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:41
+msgid "Delivery"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:138
+msgid "delivery date"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:129
+#| msgid "quantity"
+msgid "delivery quantity"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:142
+#: freppledb/planningboard/static/planningboard/planningboard.html:606
+#: freppledb/planningboard/static/planningboard/planningboard.html:655
+#: freppledb/planningboard/static/planningboard/planningboard.html:971
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:66
+msgid "demand"
+msgstr "需要"
+
+#: freppledb/forecast/static/forecast/forecast.html:308
+#: freppledb/forecast/static/forecast/forecast.html:320
+#: freppledb/forecast/static/forecast/forecast.html:332
+msgid "Demand outlier"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:252
+#: freppledb/planningboard/static/planningboard/planningboard.html:361
+#: freppledb/planningboard/static/planningboard/planningboard.html:475
+#: freppledb/planningboard/static/planningboard/planningboard.html:794
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:23
+#: freppledb/quoting/static/quoting/quoting.html:21
+msgid "description"
+msgstr "記述"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:54
+msgid "destination"
+msgstr "宛先"
+
+#: freppledb/forecast/static/forecast/forecast.html:40
+#| msgid "quantity"
+msgid "Display quantity"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:35
+msgid "Display value"
+msgstr "表示値"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:443
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:48
+msgid "distribution order"
+msgstr "配信順序"
+
+#: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:39
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:39
+msgid "Distribution Order"
+msgstr "配信順序"
+
+#: freppledb/forecast/static/forecast/forecast.html:457
+#: freppledb/input/static/operationplandetail/operationplandetail.html:44
+#: freppledb/planningboard/static/planningboard/planningboard.html:114
+msgid "Do you want to save your changes first?"
+msgstr "最初に変更を保存しますか？"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:685
+#: freppledb/planningboard/static/planningboard/planningboard.html:977
+#: freppledb/planningboard/static/planningboard/src/grid.js:116
+msgid "due"
+msgstr "納期"
+
+#: freppledb/quoting/static/quoting/quoting.html:93
+msgid "due date"
+msgstr "期日"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:178
+#: freppledb/planningboard/static/planningboard/planningboard.html:231
+#: freppledb/planningboard/static/planningboard/planningboard.html:340
+#: freppledb/planningboard/static/planningboard/planningboard.html:448
+#: freppledb/planningboard/static/planningboard/planningboard.html:562
+msgid "Duplicate"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
+#: freppledb/planningboard/static/planningboard/planningboard.html:269
+#: freppledb/planningboard/static/planningboard/planningboard.html:382
+#: freppledb/planningboard/static/planningboard/planningboard.html:490
+#: freppledb/planningboard/static/planningboard/planningboard.html:621
+#: freppledb/planningboard/static/planningboard/planningboard.html:823
+#: freppledb/planningboard/static/planningboard/planningboard.html:926
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:974
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:29
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:41
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:53
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:69
+msgid "end"
+msgstr "終了"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:66
+#: freppledb/quoting/static/quoting/quoting.html:156
+msgid "end date"
+msgstr "終了日"
+
+#: freppledb/forecast/static/forecast/forecast.html:431
+msgid "Estimated forecast error"
+msgstr "予測の誤差を見積もり"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:15
+msgid "feasibility"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:106
+#: freppledb/forecast/static/forecast/forecast.html:131
+msgid "forecast"
+msgstr "予測"
+
+#: freppledb/forecast/static/forecast/forecast.html:283
+msgid "forecast baseline"
+msgstr "ベースライン予測"
+
+#: freppledb/forecast/static/forecast/forecast.html:377
+msgid "Forecast method"
+msgstr "予測方式"
+
+#: freppledb/forecast/static/forecast/forecast.html:286
+msgid "forecast override"
+msgstr "予測を上書き"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:40
+#: freppledb/planningboard/static/planningboard/planningboard.html:110
+msgid "gantt chart rows limit"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:49
+#: freppledb/planningboard/static/planningboard/planningboard.html:72
+msgid "Help"
+msgstr "ヘルプ"
+
+#: freppledb/forecast/static/forecast/forecast.html:137
+msgid "history"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:910
+msgid "id"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:30
+#: freppledb/planningboard/static/planningboard/planningboard.html:246
+#: freppledb/planningboard/static/planningboard/planningboard.html:355
+#: freppledb/planningboard/static/planningboard/planningboard.html:469
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:972
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:26
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:37
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:50
+msgid "identifier"
+msgstr "識別子"
+
+#: freppledb/quoting/static/quoting/quoting.html:117
+msgid "inquiry"
+msgstr "照会"
+
+#: freppledb/forecast/static/forecast/forecast.html:405
+msgid "Intermittent"
+msgstr "断続する"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:557
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:60
+msgid "inventory"
+msgstr "在庫"
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:31
+#: freppledb/planningboard/static/planningboard/planningboard.html:27
+msgid "inventory status"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:150
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:38
+#: freppledb/planningboard/static/planningboard/planningboard.html:694
+#: freppledb/planningboard/static/planningboard/planningboard.html:764
+#: freppledb/planningboard/static/planningboard/planningboard.html:974
+#: freppledb/planningboard/static/planningboard/src/grid.js:294
+#: freppledb/planningboard/static/planningboard/src/grid.js:74
+#: freppledb/quoting/static/quoting/quoting.html:28
+msgid "item"
+msgstr "商品"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:30
+msgid "item category"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1190
+msgid "Item category color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:33
+msgid "item subcategory"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1225
+msgid "Item subcategory color setup"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:74
+msgid "items"
+msgstr "商品"
+
+#: freppledb/forecast/static/forecast/forecast.html:182
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:46
+#: freppledb/planningboard/static/planningboard/planningboard.html:700
+#: freppledb/planningboard/static/planningboard/planningboard.html:746
+#: freppledb/planningboard/static/planningboard/planningboard.html:770
+#: freppledb/planningboard/static/planningboard/planningboard.html:800
+#: freppledb/planningboard/static/planningboard/src/grid.js:241
+#: freppledb/planningboard/static/planningboard/src/grid.js:321
+#: freppledb/planningboard/static/planningboard/src/grid.js:356
+#: freppledb/planningboard/static/planningboard/src/grid.js:65
+#: freppledb/quoting/static/quoting/quoting.html:55
+msgid "location"
+msgstr "地域"
+
+#: freppledb/forecast/static/forecast/forecast.html:61
+msgid "locations"
+msgstr "地域"
+
+#: freppledb/forecast/static/forecast/forecast.html:413
+msgid "Manual"
+msgstr "主導"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:227
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:25
+msgid "manufacturing order"
+msgstr "製造オーダー"
+
+#: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:37
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:37
+msgid "Manufacturing Order"
+msgstr "製造オーダー"
+
+#: freppledb/quoting/static/quoting/quoting.html:103
+msgid "maximum lateness (in days)"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:154
+msgid "messages"
+msgstr ""
+
+#: freppledb/quoting/static/quoting/quoting.html:83
+msgid "minimum shipment"
+msgstr "最小出荷量"
+
+#: freppledb/forecast/static/forecast/forecast.html:409
+msgid "Moving average"
+msgstr "移動平均"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:706
+#: freppledb/planningboard/static/planningboard/src/grid.js:231
+#: freppledb/planningboard/static/planningboard/src/grid.js:284
+#: freppledb/planningboard/static/planningboard/src/grid.js:346
+#: freppledb/planningboard/static/planningboard/src/grid.js:55
+#: freppledb/quoting/static/quoting/quoting.html:13
+msgid "name"
+msgstr "名前"
+
+#: freppledb/forecast/static/forecast/forecast.html:209
+msgid "new customer comment"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:206
+msgid "new item comment"
+msgstr "新規項目コメント"
+
+#: freppledb/forecast/static/forecast/forecast.html:207
+msgid "new item-location comment"
+msgstr "新規商品ロケーションコメント"
+
+#: freppledb/forecast/static/forecast/forecast.html:208
+msgid "new location comment"
+msgstr "新規ロケーションコメント"
+
+#: freppledb/forecast/static/forecast/forecast.html:211
+msgid "No comments yet"
+msgstr "まだコメントがありません"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+msgid "no demands"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
+msgid "no movements"
+msgstr ""
+
+#: freppledb/quoting/static/quoting/quoting.html:162
+msgid "No plan yet"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:48
+#: freppledb/planningboard/static/planningboard/planningboard.html:829
+#: freppledb/quoting/static/quoting/quoting.html:197
+msgid "no problems"
+msgstr "没问题"
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
+msgid "no resources"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:40
+#: freppledb/planningboard/static/planningboard/planningboard.html:209
+#: freppledb/planningboard/static/planningboard/planningboard.html:776
+#: freppledb/planningboard/static/planningboard/planningboard.html:884
+#: freppledb/planningboard/static/planningboard/planningboard.html:919
+#: freppledb/planningboard/static/planningboard/planningboard.html:920
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:976
+msgid "onhand"
+msgstr "利用可能"
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:41
+msgid "onhand at lead time"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:280
+msgid "open orders"
+msgstr "注文を開く"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:151
+#: freppledb/planningboard/static/planningboard/planningboard.html:786
+#: freppledb/planningboard/static/planningboard/planningboard.html:913
+msgid "operation"
+msgstr "作業"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:36
+msgid "operation category"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1260
+msgid "Operation category color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:39
+msgid "operation subcategory"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1296
+msgid "Operation subcategory color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:216
+msgid "Operationplan"
+msgstr "作業計画"
+
+#: freppledb/quoting/static/quoting/quoting.html:143
+msgid "operations"
+msgstr "子作業"
+
+#: freppledb/forecast/static/forecast/forecast.html:274
+msgid "orders adjustment 1 years ago"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:268
+msgid "orders adjustment 2 years ago"
+msgstr "2年前のオーダー調整"
+
+#: freppledb/forecast/static/forecast/forecast.html:262
+msgid "orders adjustment 3 years ago"
+msgstr "3年前のオーダー調整"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:50
+#: freppledb/planningboard/static/planningboard/planningboard.html:463
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:49
+msgid "origin"
+msgstr "起源"
+
+#: freppledb/forecast/static/forecast/forecast.html:372
+msgid "parameters"
+msgstr "パラメーター"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1007
+#: freppledb/planningboard/static/planningboard/planningboard.html:662
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:234
+msgid "Plan selected demands backward from their due date"
+msgstr "選択された需要を納期日付からバックワード方式で計画する"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1010
+#: freppledb/planningboard/static/planningboard/planningboard.html:665
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:235
+msgid "Plan selected demands forward from the current date"
+msgstr "選択された需要を現在日付からフォワード方式で計画する"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:48
+#: freppledb/planningboard/static/planningboard/planningboard.html:118
+msgid "Please be patient, the chart may take some time to complete."
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:24
+#: freppledb/planningboard/static/planningboard/planningboard.html:712
+#: freppledb/planningboard/static/planningboard/src/grid.js:92
+msgid "priority"
+msgstr "優先順位"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1161
+msgid "Priority color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1168
+msgid ""
+"Priority is a Demand property, available in the demands table. The priority "
+"value will have effect in the plan results.<br>\n"
+"                        The highest priority value is 0, and the greater the "
+"value the lower the priority.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:37
+#: freppledb/planningboard/static/planningboard/planningboard.html:817
+#: freppledb/quoting/static/quoting/quoting.html:191
+msgid "problems"
+msgstr "問題"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:104
+#: freppledb/planningboard/static/planningboard/planningboard.html:306
+#: freppledb/planningboard/static/planningboard/planningboard.html:417
+#: freppledb/planningboard/static/planningboard/planningboard.html:529
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:33
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:45
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:57
+msgid "proposed"
+msgstr "提案済み"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:335
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:36
+msgid "purchase order"
+msgstr "購入注文"
+
+#: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:38
+msgid "Purchase Order"
+msgstr "購入注文"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:74
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:38
+#: freppledb/planningboard/static/planningboard/planningboard.html:201
+#: freppledb/planningboard/static/planningboard/planningboard.html:280
+#: freppledb/planningboard/static/planningboard/planningboard.html:391
+#: freppledb/planningboard/static/planningboard/planningboard.html:499
+#: freppledb/planningboard/static/planningboard/planningboard.html:577
+#: freppledb/planningboard/static/planningboard/planningboard.html:630
+#: freppledb/planningboard/static/planningboard/planningboard.html:722
+#: freppledb/planningboard/static/planningboard/planningboard.html:853
+#: freppledb/planningboard/static/planningboard/planningboard.html:881
+#: freppledb/planningboard/static/planningboard/planningboard.html:916
+#: freppledb/planningboard/static/planningboard/planningboard.html:980
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:975
+#: freppledb/planningboard/static/planningboard/src/grid.js:104
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:30
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:42
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:54
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:61
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:70
+#: freppledb/quoting/static/quoting/quoting.html:150
+#: freppledb/quoting/static/quoting/quoting.html:73
+msgid "quantity"
+msgstr "数量"
+
+#: freppledb/quoting/static/quoting/quoting.html:119
+msgid "quote"
+msgstr "引用"
+
+#: freppledb/quoting/static/quoting/quoting.html:237
+msgid "Quoting error"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:121
+msgid "Recalculate"
+msgstr "再計算"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:34
+msgid "reference"
+msgstr "参照"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:181
+#: freppledb/planningboard/static/planningboard/planningboard.html:234
+#: freppledb/planningboard/static/planningboard/planningboard.html:343
+#: freppledb/planningboard/static/planningboard/planningboard.html:451
+#: freppledb/planningboard/static/planningboard/planningboard.html:565
+msgid "Remove"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:63
+msgid "remove row"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:233
+msgid "remove this demand from planning"
+msgstr "この需要を計画から削除"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:659
+msgid "Remove this demand from planning"
+msgstr "この需要を計画から削除"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:66
+msgid "reset"
+msgstr "リセット"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:48
+msgid "Resolve constraints during plan changes by moving to earlier dates"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:53
+msgid "Resolve constraints during plan changes by moving to later dates"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+#: freppledb/planningboard/static/planningboard/planningboard.html:736
+#: freppledb/planningboard/static/planningboard/planningboard.html:850
+msgid "resource"
+msgstr "リソース"
+
+#: freppledb/forecast/static/forecast/forecast.html:119
+#: freppledb/forecast/static/forecast/forecast.html:461
+#: freppledb/input/static/operationplandetail/operationplandetail.html:52
+#: freppledb/planningboard/static/planningboard/planningboard.html:122
+#: freppledb/planningboard/static/planningboard/planningboard.html:134
+msgid "Save"
+msgstr "保存"
+
+#: freppledb/forecast/static/forecast/forecast.html:119
+msgid "Save changes to the database"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:134
+msgid "Save plan from memory to the database"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:401
+msgid "Seasonal"
+msgstr "季節の"
+
+#: freppledb/forecast/static/forecast/forecast.html:381
+msgid ""
+"Select forecast method, only possible at single item/location/customer level"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:6
+msgid "Select panel sequence"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:422
+msgid "Selected forecast method"
+msgstr "選択された予測方式"
+
+#: freppledb/forecast/static/forecast/forecast.html:121
+msgid "Simulate changes without saving"
+msgstr "保存せずに変更をシミュレート"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:184
+#: freppledb/planningboard/static/planningboard/planningboard.html:237
+#: freppledb/planningboard/static/planningboard/planningboard.html:346
+#: freppledb/planningboard/static/planningboard/planningboard.html:454
+#: freppledb/planningboard/static/planningboard/planningboard.html:568
+msgid "Split in half"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
+#: freppledb/planningboard/static/planningboard/planningboard.html:258
+#: freppledb/planningboard/static/planningboard/planningboard.html:373
+#: freppledb/planningboard/static/planningboard/planningboard.html:481
+#: freppledb/planningboard/static/planningboard/planningboard.html:612
+#: freppledb/planningboard/static/planningboard/planningboard.html:820
+#: freppledb/planningboard/static/planningboard/planningboard.html:921
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:973
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:28
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:40
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:52
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:68
+msgid "start"
+msgstr "開始"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+#: freppledb/quoting/static/quoting/quoting.html:153
+msgid "start date"
+msgstr "開始日"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:101
+#: freppledb/planningboard/static/planningboard/planningboard.html:302
+#: freppledb/planningboard/static/planningboard/planningboard.html:413
+#: freppledb/planningboard/static/planningboard/planningboard.html:525
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:33
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:45
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:57
+#: freppledb/quoting/static/quoting/quoting.html:112
+msgid "status"
+msgstr "ステータス"
+
+#: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:40
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:40
+msgid "Stock"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:259
+#: freppledb/planningboard/static/planningboard/src/grid.js:312
+#: freppledb/planningboard/static/planningboard/src/grid.js:374
+msgid "subcategory"
+msgstr "サブカテゴリ"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:42
+#: freppledb/planningboard/static/planningboard/planningboard.html:367
+#: freppledb/planningboard/static/planningboard/src/operationplan.js:39
+msgid "supplier"
+msgstr "供給者"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1110
+msgid ""
+"The criticality of an operationplan measures the slack time available till "
+"the delivery of the customer demand.<br>\n"
+"                        A criticality of 0 indicates that the order is on "
+"the critical path of one or more demands.<br>\n"
+"                        Higher criticality values indicate that a delay will "
+"not immediately impact the delivery of any demand.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1139
+msgid ""
+"The delay of an operationplan compares its end date with the delivery due "
+"date of the customer demand(s) it feeds.<br>\n"
+"                        This also consider the duration of the follow-up "
+"operations still required to produce the finished end item.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:47
+#: freppledb/planningboard/static/planningboard/planningboard.html:117
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:289
+msgid "total forecast"
+msgstr "総予測"
+
+#: freppledb/forecast/static/forecast/forecast.html:277
+msgid "total orders"
+msgstr "注文の合計"
+
+#: freppledb/forecast/static/forecast/forecast.html:271
+#| msgid "total orders"
+msgid "total orders 1 years ago"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:265
+msgid "total orders 2 years ago"
+msgstr "2年前のオーダー合計"
+
+#: freppledb/forecast/static/forecast/forecast.html:259
+msgid "total orders 3 years ago"
+msgstr "3年前のオーダー合計"
+
+#: freppledb/forecast/static/forecast/forecast.html:397
+msgid "Trend"
+msgstr "傾向"
+
+#: freppledb/forecast/static/forecast/forecast.html:120
+msgid "Undo"
+msgstr "元に戻す"
+
+#: freppledb/forecast/static/forecast/forecast.html:120
+msgid "Undo changes"
+msgstr "変更を元に戻す"
+
+#: freppledb/forecast/static/forecast/forecast.html:453
+#: freppledb/input/static/operationplandetail/operationplandetail.html:39
+#: freppledb/planningboard/static/planningboard/planningboard.html:109
+msgid "unsaved changes"
+msgstr "ページに未保存の変更があります"
+
+#: freppledb/quoting/static/quoting/quoting.html:211
+msgid "why short or late?"
+msgstr "不足または遅延の理由"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:57
+msgid "zoom in"
+msgstr "ズームイン"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:60
+msgid "zoom out"
+msgstr "ズームアウト"

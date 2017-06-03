@@ -71,7 +71,10 @@ module.exports = function (grunt) {
           msgmerge: true
         },
         files: {
-          'freppledb/common/static/common/po/template.pot': ['freppledb/input/static/operationplandetail/*.html', 'freppledb/input/static/operationplandetail/src/*.js']
+          'freppledb/common/static/common/po/template.pot': [
+            'freppledb/input/static/operationplandetail/*.html',
+            'freppledb/input/static/operationplandetail/src/*.js'
+            ]
         }
       },
     },
@@ -107,7 +110,7 @@ module.exports = function (grunt) {
               'freppledb/input/static/input/src/item.js',
               'freppledb/input/static/input/src/location.js',
               'freppledb/input/static/input/src/operation.js',
-          'freppledb/input/static/input/src/operationplan.js',
+              'freppledb/input/static/input/src/operationplan.js',
               'freppledb/input/static/input/src/resource.js',
               'freppledb/input/static/input/src/model.js',
               ],
@@ -165,10 +168,10 @@ module.exports = function (grunt) {
 
     // Clean intermediate files
     clean: [
-          'freppledb/common/static/js/frepple-common.js',
-          'freppledb/input/static/js/frepple-input.js',
-          'freppledb/input/static/js/frepple-operationplandetail.js'
-          ]
+      'freppledb/common/static/js/frepple-common.js',
+      'freppledb/input/static/js/frepple-input.js',
+      'freppledb/input/static/js/frepple-operationplandetail.js'
+      ]
   });
 
   // Load tasks

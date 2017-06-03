@@ -98,7 +98,7 @@
       <priority>2</priority>
       <item name="end item" />
       <location name="factory" />
-      <operation name="delivery end item" />      
+      <operation name="delivery end item" />
     </demand>
   </demands>
 

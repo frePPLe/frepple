@@ -71,14 +71,14 @@ class OdooReadData(PlanTask):
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
-    
+
     # Uncomment the following lines to bypass the connection to odoo and use
     # a XML flat file alternative. This can be useful for debugging.
     #with open("my_path/my_data_file.xml", 'rb') as f:
     #  frepple.readXMLdata(f.read().decode('utf-8'), False, False)
     #  frepple.printsize()
     #  return
-    
+
     odoo_user = Parameter.getValue("odoo.user", database)
 
     if settings.ODOO_PASSWORDS.get(database) == '':

@@ -236,7 +236,7 @@
       <item name="item 4" />
       <operation name="delivery 4" xsi:type="operation_fixed_time">
         <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
   </demands>
   <operationplans>

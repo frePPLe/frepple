@@ -25,14 +25,14 @@ from django.views.i18n import JavaScriptCatalog
 from freppledb.admin import data_site
 
 urlpatterns = [
-  
+
   # Redirect admin index page /data/ to /
   url(r'^data/$', RedirectView.as_view(url='/')),
 
   # Handle browser icon and robots.txt
   url(r'favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico')),
   url(r'robots\.txt$', RedirectView.as_view(url='/static/robots.txt')),
-  
+
   ]
 
 # Custom handlers for error pages.

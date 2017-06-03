@@ -296,7 +296,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
       }
       else
       {
-        // There are ineffective periods during the week        
+        // There are ineffective periods during the week
         if (date_weekday < 0)
         {
           // Lazily get the details on the date, if not done already
@@ -586,7 +586,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
     // or it is after the end time of an effective date
     // or it is on an ineffective day.
 
-    // The next event is the start date, either today or on the next 
+    // The next event is the start date, either today or on the next
     // effective day.
     tmp += b->starttime - ref_time;
     if (ref_time >= b->endtime && (b->days & (1 << ref_weekday)))
@@ -706,7 +706,7 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
     // or it is after the end time of an effective date
     // or it is on an ineffective day.
 
-    // The previous event is the end time, either today or on the previous 
+    // The previous event is the end time, either today or on the previous
     // effective day.
     tmp += b->endtime - ref_time;
     if (ref_time <= b->starttime && (b->days & (1 << ref_weekday)))

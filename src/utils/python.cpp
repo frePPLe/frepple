@@ -144,7 +144,7 @@ size_t Object::getSize() const
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     tmp += _PySys_GetSizeOf(dict);
-    while (PyDict_Next(dict, &pos, &key, &value)) 
+    while (PyDict_Next(dict, &pos, &key, &value))
     {
       tmp += _PySys_GetSizeOf(key);
       tmp += _PySys_GetSizeOf(value);

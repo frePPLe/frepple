@@ -806,7 +806,7 @@ void Buffer::buildProducingOperation()
     {
       if (supitem->getPriority() == 0)
         continue;
-      
+
       // Verify whether the ItemSupplier is applicable to the buffer location
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is not the ItemSupplier location
@@ -919,7 +919,7 @@ void Buffer::buildProducingOperation()
 
       if (itemdist->getPriority() == 0)
         continue;
-      
+
       // Verify whether the ItemDistribution is applicable to the buffer location
       // We need to reject the following 2 mismatches:
       //   - buffer location is not null, and is the ItemDistribution destination location
@@ -959,7 +959,7 @@ void Buffer::buildProducingOperation()
         }
       }
 
-      // New operation needs to be created 
+      // New operation needs to be created
 
         // Find or create the source buffer
         Buffer* originbuf = findOrCreate(getItem(), &*itemdist->getOrigin());
@@ -1032,7 +1032,7 @@ void Buffer::buildProducingOperation()
             subop->setOwner(superop);
           }
         }
-      
+
 
     } // End loop over itemdistributions
 
@@ -1042,7 +1042,7 @@ void Buffer::buildProducingOperation()
     {
       if (itemoper->getPriority() == 0)
         continue;
-      
+
       // Verify whether the operation is applicable to the buffer
       if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
         continue;
@@ -1097,7 +1097,7 @@ void Buffer::buildProducingOperation()
           if (producing_operation->getSubOperations().size() > 100)
           {
             new ProblemInvalidData(
-              this,             
+              this,
               string("Excessive replenishments defined for '") + getName() + "'",
               "material", Date::infinitePast, Date::infiniteFuture, 1
               );
@@ -1145,7 +1145,7 @@ void Buffer::buildProducingOperation()
     const Flow* found = nullptr;
     for (auto tmp = getFlows().begin(); tmp != getFlows().end(); ++tmp)
     {
-      if (tmp->getQuantity() > 0 
+      if (tmp->getQuantity() > 0
         && tmp->getOperation()->getType() != *OperationInventory::metadata
         && tmp->getOperation()->getPriority() )
       {

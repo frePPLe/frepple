@@ -30,9 +30,9 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  
+
   help = "Loads an XML file into the frePPLe database"
-  
+
   requires_system_checks = False
 
   def add_arguments(self, parser):
@@ -48,7 +48,7 @@ class Command(BaseCommand):
       help='Task identifier (generated automatically if not provided)'
       )
     parser.add_argument(
-      'file', nargs='+', 
+      'file', nargs='+',
       help='XML data files to load'
       )
 

@@ -113,21 +113,21 @@
       <item name="end item 1" />
       <operation name="delivery end item 1" xsi:type="operation_fixed_time">
         <duration>P3D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="order 2 - item 1">
       <quantity>10</quantity>
       <due>2009-02-15T00:00:00</due>
       <priority>2</priority>
       <item name="end item 1" />
-      <operation name="delivery end item 1"/>      
+      <operation name="delivery end item 1"/>
     </demand>
     <demand name="order 3 - item 1">
       <quantity>10</quantity>
       <due>2009-03-15T00:00:00</due>
       <priority>3</priority>
       <item name="end item 1" />
-      <operation name="delivery end item 1"/>            
+      <operation name="delivery end item 1"/>
     </demand>
     <demand name="order 1 - item 2">
       <quantity>10</quantity>
@@ -136,7 +136,7 @@
       <item name="end item 2" />
       <operation name="delivery end item 2" xsi:type="operation_fixed_time">
         <duration>P3D</duration>
-      </operation>            
+      </operation>
     </demand>
     <demand name="order 2 - item 2">
       <quantity>10</quantity>

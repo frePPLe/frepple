@@ -142,7 +142,7 @@ string ProblemLate::getDescription() const
     }
   }
   ostringstream ch;
-  ch << (int)(plannedlate + 0.5) << " units of demand '" << getDemand()->getName() 
+  ch << (int)(plannedlate + 0.5) << " units of demand '" << getDemand()->getName()
     << "' planned up to " << fixed << setprecision(1) << (delay / 86400.0) << " days after its due date";
   return ch.str();
 }

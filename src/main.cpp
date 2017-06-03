@@ -55,7 +55,7 @@ void usage()
 }
 
 
-void handler(int sig) 
+void handler(int sig)
 {
   cout << "Planning engine terminated with signal " << sig << endl;
   exit(1);

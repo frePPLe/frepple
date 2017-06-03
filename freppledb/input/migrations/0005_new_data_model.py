@@ -309,7 +309,7 @@ class Migration(migrations.Migration):
       model_name='item',
       name='operation',
       field=models.ForeignKey(related_name='operation', verbose_name='delivery operation', to='input.Operation', blank=True, null=True, help_text='Default operation used to ship a demand for this item'),
-    ),    
+    ),
 
     # Renaming model output.flowplan to operationplanmaterial
     migrations.CreateModel(
@@ -437,7 +437,7 @@ class Migration(migrations.Migration):
     # Remove the operation field from item
     migrations.RunSQL(
      '''
-     update demand 
+     update demand
      set operation_id = item.operation_id
      from item
      where demand.operation_id is null
@@ -445,7 +445,7 @@ class Migration(migrations.Migration):
        and item.name = demand.item_id
      ''',
      migrations.RunSQL.noop
-    ), 
+    ),
     migrations.RemoveField(
       model_name='item',
       name='operation',

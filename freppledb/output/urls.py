@@ -30,7 +30,7 @@ import freppledb.output.views.kpi
 autodiscover = True
 
 urlpatterns = [
-  
+
   url(r'^buffer/(.+)/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plandetail"),
   url(r'^buffer/$', freppledb.output.views.buffer.OverviewReport.as_view(), name="output_buffer_plan"),
   url(r'^demand/operationplans/$', freppledb.output.views.demand.OperationPlans, name="output_demand_operationplans"),
@@ -54,5 +54,5 @@ urlpatterns = [
   url(r'^demandplan/(.+)/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_demandplan_plandetail"),
   url(r'^demandplan/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_buffer_plan"),
   url(r'^kpi/$', freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
-  
+
   ]

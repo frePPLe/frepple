@@ -3180,7 +3180,7 @@ class PythonData : public DataValue
     }
 
     /** Copy constructor. */
-    PythonData(const PythonData& o) : obj(o) 
+    PythonData(const PythonData& o) : obj(o)
     {
       if (obj)
         Py_INCREF(obj);
@@ -5591,7 +5591,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
   */
 class PooledString
 {
-  private:    
+  private:
     /** Pool of strings. */
     typedef unordered_map<string, unsigned int> pool_type;
     static pool_type pool;
@@ -5602,11 +5602,11 @@ class PooledString
     void clear()
     {
       if (!ptr) return;
-      if (--(ptr->second) == 0) 
+      if (--(ptr->second) == 0)
       {
         // Remove from the pool
         pool.erase(ptr->first);
-      }      
+      }
     }
 
     void insert(const string& v)
@@ -5616,7 +5616,7 @@ class PooledString
       else
       {
         auto tmp = pool.insert(pool_type::value_type(v,1));
-        if (!tmp.second)          
+        if (!tmp.second)
           ++(tmp.first->second);
         ptr = &*(tmp.first);
       }
@@ -5690,19 +5690,19 @@ class PooledString
       clear();
     }
 
-    inline explicit operator bool() const 
+    inline explicit operator bool() const
     {
       return ptr != nullptr;
     }
 
     /** Equality operator. */
-    inline bool operator==(const PooledString &other) const 
+    inline bool operator==(const PooledString &other) const
     {
       return ptr == other.ptr;
     }
-    
+
     /** Inequality operator. */
-    inline bool operator!=(const PooledString &other) const 
+    inline bool operator!=(const PooledString &other) const
     {
       return ptr != other.ptr;
     }
@@ -5976,13 +5976,13 @@ template <class T> class HasHierarchy : public HasName<T>
       {
         if (members.empty())
           throw LogicException("Incrementing beyond end");
-        if (members.back()->first_child) 
+        if (members.back()->first_child)
           // Go one more level down
           members.push_back(members.back()->first_child);
         else
         {
           do
-          {             
+          {
             if (members.size() == 1)
             {
               // Don't stay at same level on the root

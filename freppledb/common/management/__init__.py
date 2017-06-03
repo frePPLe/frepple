@@ -29,7 +29,7 @@ def removeModelPermissions(app, model, db=DEFAULT_DB_ALIAS):
   Permission.objects.all().using(db).filter(content_type__app_label=app, content_type__model=model).delete()
 
 
-def createViewPermissions(sender, apps, signal, using=DEFAULT_DB_ALIAS, **kwargs):  
+def createViewPermissions(sender, apps, signal, using=DEFAULT_DB_ALIAS, **kwargs):
   if using != DEFAULT_DB_ALIAS:
     return
   # Create model read permissions
@@ -62,7 +62,7 @@ def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
   Permission.objects.all().using(using).filter(codename="change_permission").delete()
   Permission.objects.all().using(using).filter(codename="delete_permission").delete()
 
-  
+
 signals.post_migrate.connect(removePermissions)
 signals.post_migrate.connect(createExtraPermissions)
 signals.post_migrate.connect(createViewPermissions, common_models)

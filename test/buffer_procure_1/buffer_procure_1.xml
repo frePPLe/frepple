@@ -17,7 +17,7 @@
         - 9: Procurement in fixed quantity with fixed interval
         - 10: Constrained procurement test
     - 11: Procurement with a supplier calendar
-  
+
   IMPORTANT:
   The buffer type buffer_procure are deprecated. It is easier to model the same
   using itemsupplier records and a buffer.minimum.
@@ -34,7 +34,7 @@
         <maxinventory>70</maxinventory>
       </buffer>
       <buffer name="buffer 2" xsi:type="buffer_procure">
-        <description>2: Procure in multiples</description>      
+        <description>2: Procure in multiples</description>
         <item name="item 2" />
       <location name="warehouse" />
         <onhand>25</onhand>

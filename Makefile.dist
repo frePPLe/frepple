@@ -112,7 +112,6 @@ gdb:
 # A simple way to get some code metrics
 stats:
 	wc -l `find src -name '*.cpp'` \
-		`find modules -name '*.cpp'` \
 		`find contrib -name '*.cpp'` \
 		`find src -name '*.h'` \
 		`find include -name '*.h'` \

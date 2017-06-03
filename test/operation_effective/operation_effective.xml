@@ -141,7 +141,7 @@
   <!--
     Case 2
   -->
-  <operations>    
+  <operations>
     <operation name="2. make end item in A" xsi:type="operation_time_per"
       duration_per="P1D" >
       <item name="2. end item"/>
@@ -165,11 +165,11 @@
           </resource>
         </load>
       </loads>
-    </operation>      
+    </operation>
     <operation name="2. make end item in B" xsi:type="operation_time_per"
       duration_per="P1D">
       <item name="2. end item"/>
-      <location name="location B"/>      
+      <location name="location B"/>
       <size_multiple>1</size_multiple>
       <flows>
         <flow xsi:type="flow_end">
@@ -240,7 +240,7 @@
   <!--
     Case 3
   -->
-  <operations>    
+  <operations>
     <operation name="3. make end item in A" xsi:type="operation_time_per"
       duration_per="P1D" >
       <item name="3. end item"/>

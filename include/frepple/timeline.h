@@ -69,7 +69,7 @@ template <class type> class TimeLine
       public:
         virtual ~Event() {};
 
-        /** Return the even type. 
+        /** Return the even type.
           *  - 1: change on hand
           *  - 2: set on hand
           *  - 3: set min on hand
@@ -127,7 +127,7 @@ template <class type> class TimeLine
           }
           return tmp->oh;
         }
-        
+
         /** Return the onhand after this date. */
         inline double getOnhandAfterDate() const
         {

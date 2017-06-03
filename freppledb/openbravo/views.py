@@ -180,7 +180,7 @@ def Upload(request):
       #'<?xml version="1.0" encoding="UTF-8"?>',
       '<ob:Openbravo xmlns:ob="http://www.openbravo.com">',
       ]
-    if exportPurchasingPlan.lower() == 'true':      
+    if exportPurchasingPlan.lower() == 'true':
       identifier = uuid4().hex
       url = "/ws/dal/MRPPurchasingRun"
       body.append('''<MRPPurchasingRun id="%s">
@@ -241,7 +241,7 @@ def Upload(request):
         </ob:Openbravo>
         ''')
     else:
-      
+
       # Look up the id of the Openbravo user
       query = urllib.parse.quote("name='%s'" % openbravo_user)
       data = get_data(
@@ -257,10 +257,10 @@ def Upload(request):
         openbravo_user_id = elem.get('id')
       if not openbravo_user_id:
         raise CommandError("Can't find user id in Openbravo")
-      
+
       identifier = uuid4().hex
       url = "/ws/dal/ProcurementRequisition"
-      
+
       body.append('''<ProcurementRequisition id="%s">
         <organization id="%s" entity-name="Organization"/>
         <active>true</active>
@@ -274,7 +274,7 @@ def Upload(request):
           identifier, openbravo_organization_ids[request.database],
           now, now, openbravo_user_id, openbravo_user
         ))
-        
+
       count = 0
       for obj in cleaned_records:
         count = count + 1
@@ -298,14 +298,14 @@ def Upload(request):
               identifier, obj.item.source, obj.quantity,
               datetime.strftime(obj.enddate, "%Y-%m-%d %H:%M:%S"),
               count
-              ))        
+              ))
         else:
           raise
       body.append('''</procurementRequisitionLineList>
         </ProcurementRequisition>
         </ob:Openbravo>
         ''')
-       
+
 
     try:
       # Send the data to openbravo

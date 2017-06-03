@@ -29,13 +29,13 @@ def get_data(url, host, user, password, method='GET', headers=None, xmldoc=''):
   '''
   # Connect to Openbravo
   if not url or not host or not user or not password:
-    raise Exception("Invalid configuration")  
+    raise Exception("Invalid configuration")
 
-  # Prepare HTTP(S) request  
+  # Prepare HTTP(S) request
   if xmldoc:
     data = xmldoc.encode(encoding='utf_8')
   else:
-    data = None 
+    data = None
   req = Request("%s%s" % (host, url), method=method, data=data)
   req.add_header("User-Agent", "frePPLe-Openbravo connector")
   req.add_header("Content-type", 'text/xml; charset=\"UTF-8\"')
@@ -46,7 +46,7 @@ def get_data(url, host, user, password, method='GET', headers=None, xmldoc=''):
   if headers:
     for key, value in headers.items():
       req.add_header(key, "%s" % value)
-      
+
   # Send the request and read the response
   result = None
   try:

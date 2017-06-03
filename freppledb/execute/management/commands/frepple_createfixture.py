@@ -21,7 +21,7 @@ class Command(BaseCommand):
   help = '''
   This command dumps the content of the database in a fixture format file.
   '''
-    
+
   requires_system_checks = False
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
 
   def add_arguments(self, parser):
-    parser.add_argument(    
+    parser.add_argument(
       '--database', default=DEFAULT_DB_ALIAS,
       help='Nominates a specific database to load data from and export results into'
       )
@@ -45,8 +45,8 @@ class Command(BaseCommand):
 
     # First retrieve the column names from that table
     sql = '''
-    select column_name, data_type 
-    from information_schema.columns 
+    select column_name, data_type
+    from information_schema.columns
     where table_name = %s and column_name <> 'lastmodified'
     '''
     cursor.execute(sql, (table,))

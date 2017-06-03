@@ -48,7 +48,7 @@ class Command(BaseCommand):
       help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'
       ),
     parser.add_argument(
-      '--user', 
+      '--user',
       help='User running the command'
       )
     parser.add_argument(
@@ -142,7 +142,7 @@ class Command(BaseCommand):
           year_start = datetime(year, 1, 1)
           year_end = datetime(year + 1, 1, 1)
           week_start = curdate - timedelta((dayofweek + 6) % 7 + 1 - weekstart)
-          week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)          
+          week_end = curdate - timedelta((dayofweek + 6) % 7 - 6 - weekstart)
 
           # Create buckets
           if year != prev_year:

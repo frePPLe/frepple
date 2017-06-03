@@ -44,7 +44,7 @@
           </buffer>
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows>
       <duration>P7D</duration>
     </operation>
   </operations>
@@ -59,7 +59,7 @@
         </load>
       </loads>
     </resource>
-  </resources>  
+  </resources>
   <demands>
     <demand name="1. order">
       <quantity>120</quantity>
@@ -80,7 +80,7 @@
       <size_multiple>1</size_multiple>
       <item name="2. end item" />
       <location name="2. factory" />
-      <duration>P7D</duration>      
+      <duration>P7D</duration>
       <flows>
         <flow xsi:type="flow_end">
           <buffer name="2. end item">
@@ -471,7 +471,7 @@
           </buffer>
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows>
       <!-- We use only 3 days here, rather than 7 in previous tests. -->
       <duration>P3D</duration>
     </operation>

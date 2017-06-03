@@ -137,7 +137,7 @@ class Location(AuditModel, HierarchyModel):
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
     null=True, blank=True, on_delete=models.CASCADE,
-    help_text=_('Calendar defining the working hours and holidays of this location')    
+    help_text=_('Calendar defining the working hours and holidays of this location')
     )
 
   def __str__(self):
@@ -355,11 +355,11 @@ class Buffer(AuditModel, HierarchyModel):
     default='default'
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), db_index=True, blank=False, 
+    Location, verbose_name=_('location'), db_index=True, blank=False,
     null=False, on_delete=models.CASCADE
     )
   item = models.ForeignKey(
-    Item, verbose_name=_('item'), db_index=True, blank=False, 
+    Item, verbose_name=_('item'), db_index=True, blank=False,
     null=False, on_delete=models.CASCADE
     )
   onhand = models.DecimalField(
@@ -964,14 +964,14 @@ class Demand(AuditModel, HierarchyModel):
     _('subcategory'), max_length=300, null=True, blank=True, db_index=True
     )
   customer = models.ForeignKey(
-    Customer, verbose_name=_('customer'), 
+    Customer, verbose_name=_('customer'),
     db_index=True, on_delete=models.CASCADE
     )
   item = models.ForeignKey(
     Item, verbose_name=_('item'), db_index=True, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), 
+    Location, verbose_name=_('location'),
     db_index=True, on_delete=models.CASCADE
     )
   due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))

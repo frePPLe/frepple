@@ -103,7 +103,7 @@ void OperationPlan::updateProblems()
 }
 
 
-OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan) 
+OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan)
   : Problem::iterator(opplan->firstProblem)
 {
   // Adding related material problems

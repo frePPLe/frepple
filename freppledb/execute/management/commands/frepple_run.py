@@ -30,16 +30,16 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  
+
   help = "Runs frePPLe to generate a plan"
 
   requires_system_checks = False
-  
-  
+
+
   def get_version(self):
     return VERSION
-  
-  
+
+
   def add_arguments(self, parser):
     parser.add_argument(
       '--user', dest='user',
@@ -70,8 +70,8 @@ class Command(BaseCommand):
       '--background', dest='background', action='store_true', default=False,
       help='Run the planning engine in the background (default = False)'
       )
-    
-  
+
+
   def handle(self, **options):
     # Pick up the options
     if 'database' in options:

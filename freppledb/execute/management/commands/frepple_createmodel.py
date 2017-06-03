@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
 
   def add_arguments(self, parser):
-    parser.add_argument(    
+    parser.add_argument(
       '--user',
       help='User running the command'
       )

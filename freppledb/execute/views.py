@@ -162,7 +162,7 @@ def APITask(request, action):
           'started': str(t.started), 'finished': str(t.finished),
           'arguments': t.arguments, 'status': t.status,
           'message': t.message, 'user': t.user.username if t.user else None
-          }          
+          }
     else:
       task = wrapTask(request, action)
       if task:

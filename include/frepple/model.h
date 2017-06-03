@@ -297,14 +297,14 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     }
 
     /** Returns true if the bucket is continuously effective between
-      * its start and end date, in other words it is effective 24 hours 
+      * its start and end date, in other words it is effective 24 hours
       * a day and 7 days per week.
       */
     bool isContinuouslyEffective() const
     {
       return days == 127 && !starttime && endtime == Duration(86400L);
     }
-    
+
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaCategory* metacategory;
     static const MetaClass* metadata;
@@ -1739,14 +1739,14 @@ class OperationPlan
       *
       * The concepts of "criticality" and "delay" are related but distinct.
       * A delayed operationplan will have a low criticality (because
-      * the solver will squeeze all slack to reduce the lateness). 
+      * the solver will squeeze all slack to reduce the lateness).
       * However, an operationplan can be critical and still satisfy demands
       * on time or even early.
       * Example:
       *    Imagine a series of operationplans that are planned start-to-end to
       *    meet a customer demand.
-      *    The criticality of the operationplans will be computed as 0 
-      *    (because there is no slack between the operationplans), regardless 
+      *    The criticality of the operationplans will be computed as 0
+      *    (because there is no slack between the operationplans), regardless
       *    whether the demand is shipped on time, early or late.
       *    The delay of the operationplans on the other hand will reflect the
       *    relation to the due date of the customer order.
@@ -2285,12 +2285,12 @@ class OperationPlan
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
-      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);     
+      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, BASE + PLAN + WRITE_REPEAT + WRITE_REFERENCE + WRITE_HIDDEN);
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand, BASE + WRITE_HIDDEN);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
-      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);      
+      m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
 
       // Default of -999 to enforce serializing the value if it is 0
@@ -2468,33 +2468,33 @@ class OperationPlan
     /** Hidden, static field to store the item during import. */
     static Item *itm;
 
-    void setLocation(Location* l) 
+    void setLocation(Location* l)
     {
       loc = l;
     }
 
     inline Location* getLocation() const;
 
-    void setOrigin(Location* l) 
+    void setOrigin(Location* l)
     {
       ori = l;
     }
 
     inline Location* getOrigin() const;
 
-    void setSupplier(Supplier* l) 
+    void setSupplier(Supplier* l)
     {
       sup = l;
     }
 
     inline Supplier* getSupplier() const;
 
-    void setOrderType(const string& o) 
+    void setOrderType(const string& o)
     {
       ordertype = o;
     }
 
-    void setItem(Item* i) 
+    void setItem(Item* i)
     {
       itm = i;
     }
@@ -2738,7 +2738,7 @@ class Operation : public HasName<Operation>,
     }
 
     /** Return the effectivity daterange.<br>
-      * The default covers the complete time horizon. 
+      * The default covers the complete time horizon.
       */
     DateRange getEffective() const
     {
@@ -3035,7 +3035,7 @@ class Operation : public HasName<Operation>,
 
     /** Minimum size for operationplans. */
     double size_minimum = 1.0;
-    
+
     /** Minimum size for operationplans when this size varies over time.
       * If this field is specified, the size_minimum field is ignored.
       */
@@ -4600,7 +4600,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     typedef Association<Operation,Buffer,Flow>::ListB flowlist;
 
     /** Default constructor. */
-    explicit Buffer() {}      
+    explicit Buffer() {}
 
     static Buffer* findOrCreate(Item*, Location*);
 
@@ -5387,7 +5387,7 @@ class BufferProcure : public Buffer
 
     /** Minimum purchasing quantity. */
     double size_minimum = 0.0;
-    
+
     /** Maximum purchasing quantity.<br>
       * The default value is 0, meaning no maximum limit.
       */
@@ -5484,7 +5484,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     {
       Buffer* b = getPtrB();
       if (b) return b;
-      
+
       // Dynamically set the buffer
       if (item && getOperation() && getOperation()->getLocation())
       {
@@ -5493,7 +5493,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
           const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
       }
       if (!b)
-        throw DataException("Flow doesn't have a buffer");      
+        throw DataException("Flow doesn't have a buffer");
       return b;
     }
 
@@ -5732,7 +5732,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Finds the flowplan on the operationplan when we read data. */
     static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
-    /** Is this operationplanmaterial locked? 
+    /** Is this operationplanmaterial locked?
         LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
     */
     short flags = 0;
@@ -5819,7 +5819,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       b->flowplans.erase(this);
     }
 
-    void setQuantityAPI(double quantity) 
+    void setQuantityAPI(double quantity)
     {
       setQuantity(quantity, false, true, true);
     }
@@ -5850,7 +5850,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
          }
         return qty;
       }
-      
+
       if (!getFlow()->getEffective().within(getDate())) return 0.0;
       if (getFlow()->getType() == *FlowFixedEnd::metadata
         || getFlow()->getType() == *FlowFixedStart::metadata)
@@ -7302,7 +7302,7 @@ class Demand
       * such that we have at most "DefaultMaxShipments" partial deliveries.
       */
     double getMinShipment() const
-    {      
+    {
       if (minShipment >= 0.0)
         // Explicitly set value of the field
         return minShipment;
@@ -8274,7 +8274,7 @@ class ProblemBeforeCurrent : public Problem
 
     const DateRange getDates() const
     {
-      if (oper) 
+      if (oper)
         return DateRange(state.start, state.end);
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
       if (o->getDates().getEnd() > Plan::instance().getCurrent())
@@ -9349,7 +9349,7 @@ class PeggingIterator : public Object
     /** Return the operationplan. */
     OperationPlan* getOperationPlan() const
     {
-      return second_pass ? 
+      return second_pass ?
         const_cast<OperationPlan*>(states_sorted.front().opplan) :
         const_cast<OperationPlan*>(states.back().opplan);
     }
@@ -9374,8 +9374,8 @@ class PeggingIterator : public Object
     /** Returns the recursion depth of the iterator.*/
     short getLevel() const
     {
-      return second_pass ? 
-        states_sorted.front().level : 
+      return second_pass ?
+        states_sorted.front().level :
         states.back().level;
     }
 
@@ -9439,7 +9439,7 @@ class PeggingIterator : public Object
           return other.opplan->getDates().getStart() < opplan->getDates().getStart();
       }
     };
-    typedef vector<state> statestack;    
+    typedef vector<state> statestack;
 
     /* Auxilary function to make recursive code possible. */
     void followPegging(const OperationPlan*, double, double, short);

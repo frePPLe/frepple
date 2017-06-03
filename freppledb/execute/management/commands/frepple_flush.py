@@ -30,10 +30,10 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  
+
   help = '''
     This command empties the contents of all data tables in the frePPLe database.
-  
+
     The results are similar to the 'flush input output' command, with the
     difference that some tables are not emptied and some performance related
     tweaks.
@@ -45,8 +45,8 @@ class Command(BaseCommand):
 
   def get_version(self):
     return VERSION
-  
-    
+
+
   def add_arguments(self, parser):
     parser.add_argument(
       '--user',

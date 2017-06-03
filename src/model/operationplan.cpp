@@ -81,7 +81,7 @@ Object* OperationPlan::createOperationPlan(
   const DataValue* ordtypeval = in.get(Tags::ordertype);
   if (ordtypeval)
     ordtype = ordtypeval->getString();
-  
+
   // Decode the attributes
   Object *oper = nullptr;
   Object *itemval = nullptr;
@@ -168,7 +168,7 @@ Object* OperationPlan::createOperationPlan(
       throw DataException("Missing demand field");
     if (val)
     {
-      dmdval = val->getObject();      
+      dmdval = val->getObject();
       if (!dmdval)
         throw DataException("Empty demand field");
       else if (dmdval->getType().category != Demand::metadata)
@@ -199,7 +199,7 @@ Object* OperationPlan::createOperationPlan(
   }
   else
     // Unknown order type for operationplan. We won't read it.
-    return nullptr; 
+    return nullptr;
 
   // Decode the operationplan identifier
   unsigned long id = 0;
@@ -376,7 +376,7 @@ Object* OperationPlan::createOperationPlan(
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
       new ProblemInvalidData(
-        opplan, 
+        opplan,
         "Purchase orders on unauthorized supplier", "operationplan",
         start, end, quantity
         );
@@ -523,7 +523,7 @@ Object* OperationPlan::createOperationPlan(
     if (!destbuffer)
       // Create the destination buffer
       destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
-    
+
     // Create new operation if not found
     oper = Operation::find("Ship " + string(destbuffer->getName()));
     if (!oper)
@@ -561,7 +561,7 @@ Object* OperationPlan::createOperationPlan(
 
     // Special case: if the operation plan is locked, we need to
     // process the start and end date before locking it.
-    // Subsequent calls won't affect the operationplan any longer.    
+    // Subsequent calls won't affect the operationplan any longer.
     if (statusfld && statusfld->getString() != "proposed")
     {
       string status = statusfld->getString();
@@ -603,11 +603,11 @@ OperationPlan* OperationPlan::findId(unsigned long l)
 bool OperationPlan::assignIdentifier()
 {
   // Need to assure that ids are unique!
-  static mutex onlyOne;  
+  static mutex onlyOne;
   if (id && id != ULONG_MAX)
   {
     // An identifier was read in from input
-    lock_guard<mutex> l(onlyOne);  
+    lock_guard<mutex> l(onlyOne);
     if (id < counterMin)
     {
       // The assigned id potentially clashes with an existing operationplan.
@@ -868,7 +868,7 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   // Sort based on quantity
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
     return quantity >= a.quantity;
-  
+
   // Sort based on raw identifier
   if (getRawIdentifier() != a.getRawIdentifier())
     return getRawIdentifier() > a.getRawIdentifier();
@@ -1528,7 +1528,7 @@ double OperationPlan::getCriticality() const
 
 Duration OperationPlan::getDelay() const
 {
-  // Operationplan hasn't been set up yet. On time by default. 
+  // Operationplan hasn't been set up yet. On time by default.
   if (!oper)
     return 0L;
 

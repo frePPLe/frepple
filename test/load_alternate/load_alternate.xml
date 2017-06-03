@@ -89,7 +89,7 @@
             <quantity>-1</quantity>
           </flow>
         </flows>
-      </operation>      
+      </operation>
     </demand>
     <!--
     <demand name="1. order 2">

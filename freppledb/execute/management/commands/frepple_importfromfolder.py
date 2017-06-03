@@ -43,13 +43,13 @@ from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 
 
 class Command(BaseCommand):
-  
+
   help = '''
-    Loads CSV files from the configured FILEUPLOADFOLDER folder into the frePPLe database.    
+    Loads CSV files from the configured FILEUPLOADFOLDER folder into the frePPLe database.
     The data files should have the extension .csv or .csv.gz, and the file name should
     start with the name of the data model.
     '''
-  
+
   requires_system_checks = False
 
 
@@ -222,19 +222,19 @@ class Command(BaseCommand):
 
         ### Case 1: The first line is read as a header line
         if rownumber == 1:
-          
+
           # Collect required fields
-          required_fields = set()         
+          required_fields = set()
           for i in model._meta.fields:
             if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
               required_fields.add(i.name)
-              
+
           # Validate all columns
           for col in row:
             col = col.strip().strip('#').lower()
             if col == "":
               headers.append(False)
-              continue            
+              continue
             ok = False
             for i in model._meta.fields:
               if col == i.name.lower() or col == i.verbose_name.lower():
@@ -255,7 +255,7 @@ class Command(BaseCommand):
             # We are missing some required fields
             errors = True
             print('%s Error: Some keys were missing: %s' % (datetime.now(), ', '.join(required_fields)), file=self.logfile, flush=True)
-            errorcount += 1            
+            errorcount += 1
           # Abort when there are errors
           if errors:
             break
@@ -270,7 +270,7 @@ class Command(BaseCommand):
           # Get natural keys for the class
           natural_key = None
           if hasattr(model.objects, 'get_by_natural_key'):
-            if model._meta.unique_together: 
+            if model._meta.unique_together:
               natural_key = model._meta.unique_together[0]
             elif hasattr(model, 'natural_key'):
               natural_key = model.natural_key
@@ -313,11 +313,11 @@ class Command(BaseCommand):
                 for x in natural_key:
                   key.append(d.get(x, None))
                 # Try to find an existing record using the natural key
-                it = model.objects.get_by_natural_key(*key)            
+                it = model.objects.get_by_natural_key(*key)
                 form = UploadForm(d, instance=it)
               except model.DoesNotExist:
                 form = UploadForm(d)
-                it = None  
+                it = None
               except model.MultipleObjectsReturned:
                 print('%s Error: Row %s: Key fields not unique' % (datetime.now(), rownumber), file=self.logfile, flush=True)
                 errorcount += 1
@@ -380,7 +380,7 @@ class Command(BaseCommand):
 
       # Detect the encoding of the data by scanning the BOM.
       # Skip the BOM header if it is found.
-    
+
       if datafile.lower().endswith(".gz"):
         file_open = gzip.open
       else:

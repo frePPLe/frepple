@@ -21,13 +21,13 @@ from freppledb import VERSION
 from freppledb.execute.models import Task
 
 class Command(BaseCommand):
-  
+
   help = '''
     Exports tables from the frePPLe database to CSV files in a folder
     '''
 
   requires_system_checks = False
-  
+
   statements = [
       ("purchaseorder.csv.gz",
        "export",
@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument(
-      '--user', 
+      '--user',
       help='User running the command'
       )
     parser.add_argument(
@@ -120,7 +120,7 @@ class Command(BaseCommand):
       task.save(using=self.database)
 
       # Execute
-      if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):        
+      if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
         # The log file remains in the upload folder as different folders can be specified
@@ -138,13 +138,13 @@ class Command(BaseCommand):
 
         for filename, export, sqlquery in self.statements:
           print("%s Started export of %s" % (datetime.now(),filename), file=self.logfile)
-          
+
           #make sure export folder exists
           exportFolder = os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], export)
           if not os.path.isdir(exportFolder):
             os.makedirs(exportFolder)
 
-          try:            
+          try:
             if filename.lower().endswith(".gz"):
               csv_datafile = gzip.open(os.path.join(exportFolder, filename), "w")
             else:

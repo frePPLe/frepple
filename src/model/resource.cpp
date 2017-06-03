@@ -104,9 +104,9 @@ void Resource::inspect(const string msg) const
     {
     case 1:
       opplan = oo->getOperationPlan();
-      logger << ", id: " << opplan->getIdentifier() 
+      logger << ", id: " << opplan->getIdentifier()
         << ", oper:" << opplan->getOperation()
-        << ", quantity: " << opplan->getQuantity()        
+        << ", quantity: " << opplan->getQuantity()
         << ", dates: " << opplan->getDates()
         << endl;
       break;

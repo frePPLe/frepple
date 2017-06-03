@@ -45,7 +45,7 @@ class Task(models.Model):
   message = models.TextField(_('message'), max_length=200, null=True, editable=False)
   #. Translators: Translation included with Django
   user = models.ForeignKey(
-    User, verbose_name=_('user'), blank=True, null=True, 
+    User, verbose_name=_('user'), blank=True, null=True,
     editable=False, on_delete=models.CASCADE
     )
 

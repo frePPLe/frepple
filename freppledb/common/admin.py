@@ -66,14 +66,14 @@ data_site.register(User, MyUserAdmin)
 
 
 class MyGroupAdmin(MultiDBModelAdmin):
-  # This class re-implements the GroupAdmin class from 
+  # This class re-implements the GroupAdmin class from
   # django.contrib.auth.admin, but without the performance optimization
   # trick it uses. Our version of the Admin is slower (as it generates much
-  # more database queries), but it works on frepple's multi-database setups. 
+  # more database queries), but it works on frepple's multi-database setups.
   search_fields = ('name',)
   ordering = ('name',)
   filter_horizontal = ('permissions',)
-  save_on_top = True  
+  save_on_top = True
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:auth_group_change", "permission": 'auth.change_group'},
     {"name": 'comments', "label": _("comments"), "view": "admin:auth_group_comment"},

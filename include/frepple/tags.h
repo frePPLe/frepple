@@ -88,7 +88,7 @@ class Tags
     static const Keyword flowplans;
     static const Keyword flows;
     static const Keyword fromsetup;
-    static const Keyword hasSuperOperations; 
+    static const Keyword hasSuperOperations;
     static const Keyword headeratts;
     static const Keyword headerstart;
     static const Keyword hidden;
@@ -135,12 +135,12 @@ class Tags
     static const Keyword pegging;
     static const Keyword pegging_demand;
     static const Keyword pegging_downstream;
-    static const Keyword pegging_upstream;    
+    static const Keyword pegging_upstream;
     static const Keyword percent;
     static const Keyword plan;
     static const Keyword planned_quantity;
     static const Keyword plantype;
-    static const Keyword posttime;    
+    static const Keyword posttime;
     static const Keyword pretime;
     static const Keyword priority;
     static const Keyword problem;

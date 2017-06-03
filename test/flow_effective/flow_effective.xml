@@ -93,7 +93,7 @@
     The situation is solved correctly because the reply date is adjusted to
     the end of the effective time.
   -->
-  <buffers>    
+  <buffers>
     <buffer name="2. component A @ factory" onhand="10">
       <item name="2. component A"/>
       <location name="factory"/>
@@ -134,7 +134,7 @@
           <effective_start>2009-02-01T00:00:00</effective_start>
         </flow>
       </flows>
-    </operation> 
+    </operation>
   </operations>
   <operationplans>
     <!-- This supply of component A is later than the effective end date. -->

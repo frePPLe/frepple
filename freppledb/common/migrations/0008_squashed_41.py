@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
       ('auth', '0006_require_contenttypes_0002'),
     ]
 
-    operations = [        
+    operations = [
         migrations.RunPython(
             code=createAdminUser,
         ),
@@ -83,5 +83,5 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='userpreference',
             unique_together=set([('user', 'property')]),
-        ),           
+        ),
     ]

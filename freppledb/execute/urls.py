@@ -23,7 +23,7 @@ import freppledb.execute.views
 autodiscover = True
 
 urlpatterns = [
-  
+
   url(r'^execute/$', freppledb.execute.views.TaskReport.as_view(), name="execute"),
   url(r'^execute/logfrepple/$', freppledb.execute.views.logfile, name="execute_view_log"),
   url(r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask, name="execute_launch"),

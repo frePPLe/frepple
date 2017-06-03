@@ -83,7 +83,7 @@ class JSONField(models.TextField):
 
 class JSONBField(JSONField):
   def db_type(self, connection):
-    # A jsonb field is 1) much more efficient in querying the field, 
+    # A jsonb field is 1) much more efficient in querying the field,
     # 2) allows indexes to be defined on the content, but 3) takes a bit
     # more time to update.
     return 'jsonb'

@@ -1633,7 +1633,7 @@ double Operation::setOperationPlanQuantity
       curmin = getSizeMinimumCalendar()->getValue(end ? end : oplan->getDates().getEnd());
     if (curmin < getSizeMinimum())
       // Minimum is constant
-      curmin = getSizeMinimum();    
+      curmin = getSizeMinimum();
     if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR)
     {
       if (roundDown)

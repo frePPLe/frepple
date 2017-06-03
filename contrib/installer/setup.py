@@ -80,8 +80,8 @@ for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_frame
 
 # Add some special data files into the zip archive
 zip_files = []
-for srcdir, targetdir in [ 
-  (os.path.join(pytz.__path__[0], "zoneinfo"), os.path.join("pytz", "zoneinfo")) 
+for srcdir, targetdir in [
+  (os.path.join(pytz.__path__[0], "zoneinfo"), os.path.join("pytz", "zoneinfo"))
   ]:
     root_path_length = len(srcdir) + 1
     for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
@@ -90,7 +90,7 @@ for srcdir, targetdir in [
              os.path.join(dirpath, f),
              os.path.join(targetdir, dirpath[root_path_length:], f),
              ))
-  
+
 # Run the cx_Freeze program
 cx_Freeze.setup(
   version = freppledb.VERSION.replace(".beta", ".0"),

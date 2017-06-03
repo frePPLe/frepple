@@ -40,10 +40,10 @@ class Command(BaseCommand):
 
   def get_version(self):
     return VERSION
-  
-  
+
+
   def add_arguments(self, parser):
-    parser.add_argument(      
+    parser.add_argument(
       '--user', help='User running the command'
       )
     parser.add_argument(
@@ -51,7 +51,7 @@ class Command(BaseCommand):
       help='Number of days for which we extract changed openbravo data'
       )
     parser.add_argument(
-      '--database', default=DEFAULT_DB_ALIAS, 
+      '--database', default=DEFAULT_DB_ALIAS,
       help='Nominates the frePPLe database to load'
       )
     parser.add_argument(
@@ -368,24 +368,24 @@ class Command(BaseCommand):
           )
         cursor.executemany('''
           delete from operationplanmaterial where operationplan_id in (
-           select id from operationplan 
+           select id from operationplan
            inner join demand on operationplan.demand_id = demand.name
            where customer_id=%s
           )''',
           delete
-          )          
+          )
         cursor.executemany('''
           delete from operationplanresource where operationplan_id in (
-           select id from operationplan 
+           select id from operationplan
            inner join demand on operationplan.demand_id = demand.name
            where customer_id=%s
           )''',
           delete
-          )          
+          )
         cursor.executemany(
           'delete from operationplan where demand_id in (select name from demand where customer_id=%s)',
           delete
-          )          
+          )
         cursor.executemany(
           'delete from demand where customer_id=%s',
           delete
@@ -499,18 +499,18 @@ class Command(BaseCommand):
           )
         cursor.executemany('''
           delete from operationplanmaterial where operationplan_id in (
-           select id from operationplan 
+           select id from operationplan
            where supplier_id=%s
           )''',
           delete
-          )          
+          )
         cursor.executemany('''
           delete from operationplanresource where operationplan_id in (
-           select id from operationplan 
+           select id from operationplan
            where supplier_id=%s
           )''',
           delete
-          )            
+          )
         cursor.executemany(
           'delete from operationplan where supplier_id=%s',
           delete
@@ -528,7 +528,7 @@ class Command(BaseCommand):
         for name, objectid in unused_keys.items():
           if objectid:
             self.suppliers[objectid] = name
-        
+
       if self.verbosity > 0:
         print("Inserted %d new suppliers" % len(insert))
         print("Updated %d existing suppliers" % len(update))
@@ -1322,7 +1322,7 @@ class Command(BaseCommand):
           where source=%%s" % self.date,
         update)
       cursor.executemany('''
-        delete from operationplanmaterial 
+        delete from operationplanmaterial
         where operationplan_id in (
           select id from operationplan where source=%s
         )''', delete
@@ -1332,7 +1332,7 @@ class Command(BaseCommand):
         where operationplan_id in (
           select id from operationplan where source=%s
         )''', delete
-        )      
+        )
       cursor.executemany(
         "delete from operationplan where source=%s",
         delete)
@@ -1369,17 +1369,17 @@ class Command(BaseCommand):
           # Product, location or organization are not known in frePPLe.
           # Or there is no scheduled delivery date.
           # We assume that in that case you don't need to the purchase order either.
-          root.clear()      
+          root.clear()
           continue
         # Note: purchasing plan data have no concept of the warehouses by default.
         # These are customizations.
         objectid = elem.get('id')
-        requiredQuantity = float(elem.find("requiredQuantity").text or 0)        
+        requiredQuantity = float(elem.find("requiredQuantity").text or 0)
         if transactionType == 'PP' and businessPartner:
           # Purchase order
           toWarehouse = self.locations.get(elem.find("scToWarehouse").get('id'), None)
           if not toWarehouse:
-            # warehouse not found in Frepple. 
+            # warehouse not found in Frepple.
             root.clear()
             continue
           self.idcounter += 1
@@ -1394,14 +1394,14 @@ class Command(BaseCommand):
           if not toWarehouse or not fromWarehouse:
             # warehouse not found in Frepple.
             root.clear()
-            continue     
+            continue
           self.idcounter += 1
           insert_do.append((
-            self.idcounter, name, product, toWarehouse, fromWarehouse, 
+            self.idcounter, name, product, toWarehouse, fromWarehouse,
             requiredQuantity, plannedDate, objectid
             ))
         # Clean the XML hierarchy
-        root.clear()      
+        root.clear()
       return records
 
     with transaction.atomic(using=self.database, savepoint=False):
@@ -1411,7 +1411,7 @@ class Command(BaseCommand):
 
       # Remove existing approved records from frePPLe
       cursor.execute('''
-        delete from operationplanmaterial 
+        delete from operationplanmaterial
         where operationplan_id in (
           select id from operationplan where type in ('PO','DO') and status = 'approved'
         )''')
@@ -1419,17 +1419,17 @@ class Command(BaseCommand):
         delete from operationplanresource
         where operationplan_id in (
           select id from operationplan where type in ('PO','DO') and status = 'approved'
-        )''') 
-      cursor.execute("delete from operationplan where type in ('PO','DO') and status = 'approved'")      
-        
+        )''')
+      cursor.execute("delete from operationplan where type in ('PO','DO') and status = 'approved'")
+
       # Get all input records.
-      # There is no incremental mode for the purchasing plan. 
+      # There is no incremental mode for the purchasing plan.
       # We recognize open, unprocessed records with a blank salesOrderLine.
       insert_po = []
       insert_do = []
       query = urllib.parse.quote("transactionType in ('PP','SC_ST') and salesOrderLine is null")
       self.get_data("/ws/dal/MRPPurchasingRunLine?where=%s" % query, parse)
-      
+
       # Recreate approved purchase orders
       cursor.executemany(
         "insert into operationplan \
@@ -1523,7 +1523,7 @@ class Command(BaseCommand):
       # Delete closed/canceled/deleted work requirements
       deleted = [ (i,) for i in unused_keys ]
       cursor.executemany('''
-        delete from operationplanmaterial 
+        delete from operationplanmaterial
         where operationplan_id in (
           select id from operationplan where source=%s
         )''', deleted
@@ -1603,7 +1603,7 @@ class Command(BaseCommand):
 
       # Reset the current operations
       cursor.execute('''
-        DELETE FROM operationplanmaterial 
+        DELETE FROM operationplanmaterial
         where operationplan_id in (
           select id from operationplan where operation_id like 'Product BOM %'
         )'''
@@ -1780,7 +1780,7 @@ class Command(BaseCommand):
 
       # Reset the current operations
       cursor.execute('''
-        DELETE FROM operationplanmaterial 
+        DELETE FROM operationplanmaterial
         where operationplan_id in (
           select id from operationplan where operation_id like 'Processplan %'
         )'''
@@ -1800,7 +1800,7 @@ class Command(BaseCommand):
       # Load all locations
       cursor.execute("SELECT name FROM location")
       frepple_locations = set([ i[0] for i in cursor.fetchall() ])
-      
+
       # Pick up existing operations in frePPLe
       cursor.execute("SELECT name FROM operation")
       frepple_operations = set([i[0] for i in cursor.fetchall()])

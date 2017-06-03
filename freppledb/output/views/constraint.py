@@ -67,7 +67,7 @@ class BaseReport(GridReport):
   A list report to show constraints.
   '''
   template = 'output/constraint.html'
-  title = _("Constraint report")  
+  title = _("Constraint report")
   basequeryset = Constraint.objects.all()
   model = Constraint
   permissions = (("view_constraint_report", "Can view constraint report"),)
@@ -107,11 +107,11 @@ class BaseReport(GridReport):
 class ReportByDemand(BaseReport):
 
   template = 'output/constraint_demand.html'
-  
+
   detailmodel = Demand
-  
+
   detail_post_title = _('why short or late?')
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -126,7 +126,7 @@ class ReportByBuffer(BaseReport):
   template = 'output/constraint_buffer.html'
 
   detailmodel = Buffer
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -141,7 +141,7 @@ class ReportByOperation(BaseReport):
   template = 'output/constraint_operation.html'
 
   detailmodel = Operation
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
@@ -156,7 +156,7 @@ class ReportByResource(BaseReport):
   template = 'output/constraint_resource.html'
 
   detailmodel = Resource
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:

@@ -15,7 +15,7 @@
     Case 1: unconstrained situation where operationplans intersect in
     various ways with the effective period
   -->
-  <operations>    
+  <operations>
     <operation name="1. make end item" xsi:type="operation_time_per"
       duration="P1D" duration_per="P1D">
       <item name="1. end item"/>

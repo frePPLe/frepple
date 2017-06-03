@@ -60,7 +60,7 @@ def Upload(request):
         },
         settings.DATABASES[request.database].get('SECRET_WEBTOKEN_KEY', settings.SECRET_KEY),
         algorithm='HS256').decode('ascii'),
-      '--%s\r' % boundary,      
+      '--%s\r' % boundary,
       'Content-Disposition: form-data; name="database"',
       '',
       odoo_db,

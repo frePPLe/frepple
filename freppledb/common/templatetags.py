@@ -203,7 +203,7 @@ class ModelTabs(Node):
     from freppledb.admin import data_site
     from django.core.urlresolvers import reverse
     try:
-      # Look up the admin class to use    
+      # Look up the admin class to use
       model = Variable(self.model).resolve(context)
       if not model:
         return mark_safe('')

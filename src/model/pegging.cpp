@@ -315,7 +315,7 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan)
   for (PeggingIterator p(opplan); p; ++p)
   {
     const OperationPlan* m = p.getOperationPlan();
-    if (!m) 
+    if (!m)
       continue;
     Demand* dmd = m->getTopOwner()->getDemand();
     if (!dmd || p.getQuantity() < ROUNDING_ERROR)
@@ -325,7 +325,7 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan)
       // Pegging to the same demand multiple times
       i->second += p.getQuantity();
     else
-      // Adding demand 
+      // Adding demand
       dmds.insert(i, make_pair(dmd, p.getQuantity()));
   }
 }

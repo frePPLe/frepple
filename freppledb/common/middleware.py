@@ -134,7 +134,7 @@ class MultiDBMiddleware(object):
     - is_superuser
   """
   def process_request(self, request):
-    request.user = auth.get_user(request)    
+    request.user = auth.get_user(request)
     if not hasattr(request.user, 'scenarios'):
       # A scenario list is not available on the request
       for i in settings.DATABASES:
@@ -143,7 +143,7 @@ class MultiDBMiddleware(object):
             scenario = Scenario.objects.get(name=i)
             if scenario.status != 'In use':
               print ('boom')
-              return HttpResponseNotFound('Scenario not in use') 
+              return HttpResponseNotFound('Scenario not in use')
             request.prefix = '/%s' % i
             request.path_info = request.path_info[len(request.prefix):]
             request.path = request.path[len(request.prefix):]
@@ -178,5 +178,5 @@ class MultiDBMiddleware(object):
       request.database = DEFAULT_DB_ALIAS
       if default_scenario:
         request.scenario = default_scenario
-      else:      
+      else:
         request.scenario = Scenario(name=DEFAULT_DB_ALIAS)

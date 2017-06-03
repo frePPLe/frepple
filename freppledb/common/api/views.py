@@ -28,13 +28,13 @@ from rest_framework import filters
 @staff_member_required
 @csrf_protect
 def APIIndexView(request):
-  return render(request, 'rest_framework/index.html', 
+  return render(request, 'rest_framework/index.html',
     context = {
      'title': _('REST API Help'),
       }
     )
 
-                               
+
 class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
   '''
   Customized API view for the REST framework.:

@@ -129,12 +129,12 @@
       <customer name="Customer 1" />
       <operation name="delivery 1" xsi:type="operation_fixed_time">
         <flows>
-          <flow xsi:type="flow_start">      
+          <flow xsi:type="flow_start">
             <buffer name="buffer 1" />
             <quantity>-1</quantity>
           </flow>
          </flows>
-        <duration>P1D</duration>        
+        <duration>P1D</duration>
       </operation>
     </demand>
     <demand name="order 2">

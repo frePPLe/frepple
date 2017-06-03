@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
     migrations.RunSQL(
       '''
       update auth_permission
-      set content_type_id = 
+      set content_type_id =
          (select id from django_content_type where app_label = 'auth' and model = 'permission')
       where content_type_id in (select id from django_content_type where model = 'reports')
       '''

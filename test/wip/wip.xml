@@ -281,13 +281,13 @@
           <item name="In1"/>
           <status>confirmed</status>
           <quantity>-5</quantity>
-          <date>2013-12-31T00:00:00</date>          
+          <date>2013-12-31T00:00:00</date>
         </flowplan>
         <flowplan>
           <item name="In2"/>
           <status>confirmed</status>
           <quantity>-8</quantity>
-          <date>2013-12-31T00:00:00</date>          
+          <date>2013-12-31T00:00:00</date>
         </flowplan>
       </flowplans>
     </operationplan>
@@ -299,13 +299,13 @@
           <item name="In1"/>
           <status>confirmed</status>
           <quantity>-5</quantity>
-          <date>2014-02-02T00:00:00</date>          
+          <date>2014-02-02T00:00:00</date>
         </flowplan>
         <flowplan>
           <item name="In2"/>
           <status>confirmed</status>
           <quantity>-2</quantity>
-          <date>2014-02-05T00:00:00</date>          
+          <date>2014-02-05T00:00:00</date>
         </flowplan>
       </flowplans>
     </operationplan>
@@ -317,13 +317,13 @@
           <item name="In1"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-02-28T00:00:00</date>          
+          <date>2014-02-28T00:00:00</date>
         </flowplan>
         <flowplan>
           <item name="In2"/>
           <status>confirmed</status>
           <quantity>-20</quantity>
-          <date>2014-02-28T00:00:00</date>          
+          <date>2014-02-28T00:00:00</date>
         </flowplan>
       </flowplans>
     </operationplan>
@@ -338,8 +338,8 @@
           <item name="In3"/>
           <status>confirmed</status>
           <quantity>-5</quantity>
-          <date>2014-01-01T00:00:00</date>          
-        </flowplan>        
+          <date>2014-01-01T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="3005" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
@@ -349,8 +349,8 @@
           <item name="In3"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-02-01T00:00:00</date>          
-        </flowplan>        
+          <date>2014-02-01T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
@@ -361,8 +361,8 @@
           <item name="In3B"/>
           <status>confirmed</status>
           <quantity>-2</quantity>
-          <date>2014-02-02T00:00:00</date>          
-        </flowplan>        
+          <date>2014-02-02T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="3007" quantity="7" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
@@ -373,8 +373,8 @@
           <item name="In3A"/>
           <status>confirmed</status>
           <quantity>-7</quantity>
-          <date>2014-02-02T00:00:00</date>          
-        </flowplan>        
+          <date>2014-02-02T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <!-- WIP on alternate operation -->
@@ -385,8 +385,8 @@
           <item name="In4"/>
           <status>confirmed</status>
           <quantity>-8</quantity>
-          <date>2014-01-01T00:00:00</date>          
-        </flowplan>        
+          <date>2014-01-01T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
@@ -396,8 +396,8 @@
           <item name="In4"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-02-01T00:00:00</date>          
-        </flowplan>        
+          <date>2014-02-01T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" locked="true">
@@ -408,8 +408,8 @@
           <item name="In4B"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-01-31T00:00:00</date>          
-        </flowplan>        
+          <date>2014-01-31T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
@@ -419,8 +419,8 @@
           <item name="In4"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-03-02T00:00:00</date>          
-        </flowplan>        
+          <date>2014-03-02T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="false">
@@ -431,8 +431,8 @@
           <item name="In4B"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-03-01T00:00:00</date>          
-        </flowplan>        
+          <date>2014-03-01T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
     <operationplan id="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" locked="true">
@@ -443,8 +443,8 @@
           <item name="In4"/>
           <status>confirmed</status>
           <quantity>-10</quantity>
-          <date>2014-03-02T00:00:00</date>          
-        </flowplan>        
+          <date>2014-03-02T00:00:00</date>
+        </flowplan>
       </flowplans>
     </operationplan>
   </operationplans>

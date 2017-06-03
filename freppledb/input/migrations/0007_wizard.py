@@ -28,14 +28,14 @@ class Migration(migrations.Migration):
   operations = [
     migrations.RunSQL(
       '''
-      insert into common_wizard 
+      insert into common_wizard
       (name, sequenceorder, url_doc, url_internaldoc, status, owner_id)
       values
       ('Introduction', 100, '/user-guide/modeling-wizard/concepts.html', null, false, 'Introduction'),
       ('Master data', 200, '/user-guide/modeling-wizard/master-data/index.html', null, false, null),
       ('Locations', 210, '/user-guide/modeling-wizard/master-data/locations.html', '/data/input/location/', false, 'Master data'),
       ('Items', 220, '/user-guide/modeling-wizard/master-data/items.html', '/data/input/item/', false, 'Master data'),
-      ('Customers', 230, '/user-guide/modeling-wizard/master-data/customers.html', '/data/input/customer/', false, 'Master data'), 
+      ('Customers', 230, '/user-guide/modeling-wizard/master-data/customers.html', '/data/input/customer/', false, 'Master data'),
       ('Sales orders', 240, '/user-guide/modeling-wizard/master-data/sales-orders.html', '/data/input/demand/', false, 'Master data'),
       ('Buffers', 250, '/user-guide/modeling-wizard/master-data/buffers.html', '/data/input/buffer/', false, 'Master data'),
       ('Purchasing', 300, '/user-guide/modeling-wizard/purchasing/index.html', null, false, null),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
       ('Manufacturing orders', 730, '/user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html', '/data/input/manufacturingorder/', false, 'Manufacturing BOM'),
       ('Manufacturing Capacity', 800, '/user-guide/modeling-wizard/manufacturing-capacity/index.html', null, false, null),
       ('Resources', 810, '/user-guide/modeling-wizard/manufacturing-capacity/resources.html', '/data/input/resource/', false, 'Manufacturing Capacity'),
-      ('Operation Resources', 820, '/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html', '/data/input/operationresource/', false, 'Manufacturing Capacity'),  
+      ('Operation Resources', 820, '/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html', '/data/input/operationresource/', false, 'Manufacturing Capacity'),
       ('Plan generation', 900, '/user-guide/modeling-wizard/generate-plan.html', '/execute/', false, 'Plan generation')
       ''',
       '''

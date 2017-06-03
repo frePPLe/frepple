@@ -68,7 +68,7 @@ class export:
 
 
   def getPegging(self, opplan):
-    pln = { 
+    pln = {
       "pegging": { j.demand.name: round(j.quantity, 6) for j in opplan.pegging_demand },
       }
     # We need to double any backslash to assure that the string remains
@@ -88,8 +88,8 @@ class export:
         delete from operationplanmaterial
         using operationplan
         where operationplanmaterial.operationplan_id = operationplan.id
-        and ((operationplan.status='proposed' or operationplan.status is null) 
-             or operationplan.type = 'STCK' 
+        and ((operationplan.status='proposed' or operationplan.status is null)
+             or operationplan.type = 'STCK'
              or operationplanmaterial.status = 'proposed'
              or operationplanmaterial.status is null)
         ''')
@@ -98,7 +98,7 @@ class export:
         using operationplan
         where operationplanresource.operationplan_id = operationplan.id
         and ((operationplan.status='proposed' or operationplan.status is null)
-             or operationplan.type = 'STCK' 
+             or operationplan.type = 'STCK'
              or operationplanresource.status = 'proposed'
              or operationplanresource.status is null)
         ''')
@@ -274,7 +274,7 @@ class export:
               str(j.start), str(j.end), round(j.criticality, 6), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
-              i.item.name if i.item else '\\N', '\\N', '\\N', 
+              i.item.name if i.item else '\\N', '\\N', '\\N',
               i.location.name if i.location else '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
@@ -368,12 +368,12 @@ class export:
         where operationplan.id = tmp_operationplan.id
         );
       ''')
-    
+
     #update demand table specific fields
     cursor.execute('''
         with cte as (
           select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
-          from operationplan 
+          from operationplan
           where type = 'DLVR'
           group by demand_id, due
         )

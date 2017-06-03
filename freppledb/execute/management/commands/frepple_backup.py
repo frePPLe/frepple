@@ -47,7 +47,7 @@ class Command(BaseCommand):
   def get_version(self):
     return VERSION
 
-  
+
   def add_arguments(self, parser):
     parser.add_argument(
       '--user',

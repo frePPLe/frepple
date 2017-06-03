@@ -107,7 +107,7 @@ void OperatorDelete::solve(OperationPlan* o, void* v)
   if (!o) return; // Null argument passed
 
   // Mark all buffers.
-  // The batching solver doesn't like that we push both consumers and 
+  // The batching solver doesn't like that we push both consumers and
   // producers, but ideally we would pass true for both arguments.
   pushBuffers(o, true, false);
 
@@ -254,7 +254,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
     // Recurse backward to find consumers we can resize
     double cur_shortage = fiter->getOnhand() + unresolvable;
     Buffer::flowplanlist::const_iterator fiter2 = fiter;
-    ++fiter; // increment to an event after the shortage start, because the iterator 
+    ++fiter; // increment to an event after the shortage start, because the iterator
              // can get invalidated in the next loop
     while (cur_shortage <= -ROUNDING_ERROR && fiter2 != fend)
     {
@@ -291,7 +291,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         // Log message
         if (getLogLevel() > 0)
           logger << "Removing shortage operationplan: "
-            << fp->getOperationPlan()->getIdentifier() 
+            << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()
             << ", " << fp->getOperationPlan()->getDates()
@@ -314,7 +314,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         // Reduce the shortage
         cur_shortage -= fp->getQuantity() - newsize;
         if (getLogLevel() > 0)
-          logger << "Resizing shortage operationplan to " << newsize << ": "          
+          logger << "Resizing shortage operationplan to " << newsize << ": "
             << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()

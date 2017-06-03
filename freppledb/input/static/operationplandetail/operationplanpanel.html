@@ -90,7 +90,7 @@
       </td>
       <td id="delayrow">{{(operationplan.delay / 86400)|number:0}}</td>
     </tr>
-    <tr data-ng-repeat="(key, value) in operationplan.colmodel" 
+    <tr data-ng-repeat="(key, value) in operationplan.colmodel"
       data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color'].indexOf(key) == -1">
       <td><b style="text-transform: capitalize;">{{value.label|translate}}</b>&nbsp;
         <small>({{ value.type|translate }})</small>

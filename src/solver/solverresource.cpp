@@ -380,7 +380,7 @@ void SolverMRP::solve(const Resource* res, void* v)
           // operationplan end date.
           break;
         else if (
-          !newDate && loadpl->getDate()!=data->state->q_loadplan->getDate() 
+          !newDate && loadpl->getDate()!=data->state->q_loadplan->getDate()
           && curMax >= fabs(loadpl->getQuantity())
           && (loadpl->getDate() != data->state->q_operationplan->getDates().getEnd()
             || !loadpl->isOnlyEventOnDate())
@@ -416,7 +416,7 @@ void SolverMRP::solve(const Resource* res, void* v)
     }
     while (HasOverload && newDate && iterations < MAX_LOOP);
     if (iterations >= MAX_LOOP)
-      logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res 
+      logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
         << " after " << MAX_LOOP << " iterations" << endl;
     data->state->q_loadplan = old_q_loadplan;
 

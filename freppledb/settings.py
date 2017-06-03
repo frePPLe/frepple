@@ -148,7 +148,7 @@ USE_I18N = True        # Use translated strings
 STATICFILES_DIRS = ()
 if os.path.isdir(os.path.normpath(os.path.join(FREPPLE_HOME,'static'))):
   STATICFILES_DIRS += (os.path.normpath(os.path.join(FREPPLE_HOME,'static')),)
-  
+
 # Sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_NAME = 'sessionid'         # Cookie name. This can be whatever you want.

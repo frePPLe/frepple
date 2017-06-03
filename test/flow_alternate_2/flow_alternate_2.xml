@@ -113,7 +113,7 @@
 	    <maxinventory>70</maxinventory>
     </buffer>
   </buffers>
-  <operations>      
+  <operations>
     <operation name="assembly" xsi:type="operation_fixed_time" duration="P1D">
       <item name="product"/>
       <location name="factory"/>

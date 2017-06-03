@@ -1615,8 +1615,8 @@ class GridReport(View):
                     it = None
                   except reportclass.model.MultipleObjectsReturned:
                     yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
-                      reportclass.model._meta.verbose_name, 
-                      rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber), 
+                      reportclass.model._meta.verbose_name,
+                      rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
                       _('Key fields not unique')
                       )
                     numerrors += 1
@@ -1657,7 +1657,7 @@ class GridReport(View):
                       for error in field.errors:
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                           reportclass.model._meta.verbose_name,
-                          rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber), 
+                          rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
                           _(field.name), d[field.name], error
                           )
                         numerrors += 1
@@ -1672,7 +1672,7 @@ class GridReport(View):
       if numerrors > 0:
         theClass = "danger"
       yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (
-        theClass, reportclass.model._meta.verbose_name, 
+        theClass, reportclass.model._meta.verbose_name,
         _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {
           'rows': datarows, 'changed': changed, 'added': added, 'errors': numerrors
           })

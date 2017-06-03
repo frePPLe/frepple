@@ -35,7 +35,7 @@ class Command(BaseCommand):
   The pg_dump and psql commands need to be in the path, otherwise
   this command will fail.
   '''
-  
+
   requires_system_checks = False
 
 

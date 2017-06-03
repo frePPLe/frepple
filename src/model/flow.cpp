@@ -129,7 +129,7 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 
     // Find or create a buffer for the item at the operation location
     Buffer* buf = Buffer::findOrCreate(
-      static_cast<Item*>(item), 
+      static_cast<Item*>(item),
       static_cast<Operation*>(oper)->getLocation()
       );
 

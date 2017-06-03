@@ -76,7 +76,7 @@
               <quantity>-1</quantity>
             </flow>
           </flows>
-      </operation>      
+      </operation>
     </demand>
     <demand name="1. order 2">
       <quantity>10</quantity>
@@ -102,7 +102,7 @@
     <buffer name="2. fixed production co-product">
       <item name="2. fixed production co-product"/>
       <onhand>4</onhand>
-      <producing name="2. make product" xsi:type="operation_fixed_time" duration="P1D">      
+      <producing name="2. make product" xsi:type="operation_fixed_time" duration="P1D">
         <flows>
           <flow xsi:type="flow_end">
             <buffer name="2. main product"/>
@@ -137,7 +137,7 @@
             </flow>
           </flows>
           <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="2. order 2">
       <quantity>5</quantity>
@@ -197,7 +197,7 @@
             </flow>
           </flows>
           <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="3. order 2">
       <quantity>5</quantity>
@@ -278,7 +278,7 @@
             </flow>
           </flows>
           <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="4. order 2">
       <quantity>5</quantity>
@@ -341,7 +341,7 @@
             </flow>
           </flows>
           <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="5. order 2">
       <quantity>5</quantity>
@@ -425,7 +425,7 @@
             </flow>
           </flows>
           <duration>P1D</duration>
-      </operation>      
+      </operation>
     </demand>
     <demand name="6. order 2">
       <quantity>5</quantity>

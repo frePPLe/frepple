@@ -36,7 +36,7 @@
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item A" />
           <quantity>1</quantity>
         </flow>
@@ -46,62 +46,62 @@
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item B" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
     <operation name="supply item C" xsi:type="operation_fixed_time">
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item C" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
     <operation name="supply item D" xsi:type="operation_fixed_time">
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item D" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
     <operation name="supply item E" xsi:type="operation_fixed_time">
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item E" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
     <operation name="supply item F" xsi:type="operation_fixed_time">
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item F" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
     <operation name="supply item G" xsi:type="operation_fixed_time">
       <location name="factory"/>
       <priority>0</priority><!-- disallow automatic supply generation -->
       <flows>
-        <flow xsi:type="flow_end">        
+        <flow xsi:type="flow_end">
           <item name="item G" />
           <quantity>1</quantity>
         </flow>
       </flows>
-    </operation>    
+    </operation>
   </operations>
   <buffers>
     <buffer name="buffer A">

@@ -174,7 +174,7 @@ int Environment::getProcessorCores()
   if (processorcores < 0)
     // Autodetect the number of cores on your machine
     processorcores = thread::hardware_concurrency();
-  if (processorcores < 1) 
+  if (processorcores < 1)
     processorcores = 1;
   return processorcores;
 }

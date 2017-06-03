@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
   help = '''
     This command creates a database dump of the frePPLe database.
-  
+
     The psql command needs to be in the path, otherwise this command
     will fail.
     '''
@@ -42,8 +42,8 @@ class Command(BaseCommand):
 
   def get_version(self):
     return VERSION
-  
-  
+
+
   def add_arguments(self, parser):
     parser.add_argument(
       '--user', help='User running the command'

@@ -440,7 +440,7 @@ class User(AbstractUser):
     verbose_name = _('user')
     # Translators: Translation included with Django
     verbose_name_plural = _('users')
-    
+
 
   def getPreference(self, prop, default=None, database=DEFAULT_DB_ALIAS):
     try:
@@ -456,7 +456,7 @@ class User(AbstractUser):
       return default
     except:
       return default
-    
+
 
   def setPreference(self, prop, val, database=DEFAULT_DB_ALIAS):
     if val is None:
@@ -469,14 +469,14 @@ class User(AbstractUser):
       except UserPreference.DoesNotExist:
         # No such preferences exists now
         pass
-    else:      
-      if prop in settings.GLOBAL_PREFERENCES:        
+    else:
+      if prop in settings.GLOBAL_PREFERENCES:
         val_global = { k: v for k, v in val.items() if k in settings.GLOBAL_PREFERENCES[prop] }
         val_user = { k: v for k, v in val.items() if not k in settings.GLOBAL_PREFERENCES[prop] }
         if val_global and self.is_superuser:
           # A superuser can save global preferences for this property
           pref = UserPreference.objects.all().using(database).get_or_create(user__isnull=True, property=prop)[0]
-          pref.value = val_global          
+          pref.value = val_global
           pref.save(update_fields=['value'], using=database)
         if val_user:
           # Everyone can save his personal preferences for this property
@@ -484,20 +484,20 @@ class User(AbstractUser):
           pref.value = val_user
           pref.save(update_fields=['value'], using=database)
       else:
-        # No global preferences configured for this property        
+        # No global preferences configured for this property
         pref = UserPreference.objects.all().using(database).get_or_create(user=self, property=prop)[0]
         pref.value = val
         pref.save(update_fields=['value'], using=database)
-      
-      
+
+
 class UserPreference(models.Model):
 
   class UserPreferenceManager(models.Manager):
-    def get_by_natural_key(self, usr, prop):  
+    def get_by_natural_key(self, usr, prop):
       return self.get(user=usr, property=prop)
 
   objects = UserPreferenceManager()
-  
+
   id = models.AutoField(_('identifier'), primary_key=True)
   # Translators: Translation included with Django
   user = models.ForeignKey(User, verbose_name=_('user'), blank=False,
@@ -601,10 +601,10 @@ class BucketDetail(AuditModel):
   class Manager(MultiDBManager):
     def get_by_natural_key(self, bucket, startdate):
       return self.get(bucket=bucket, startdate=startdate)
-  
+
   def natural_key(self):
     return (self.bucket, self.startdate)
-  
+
   objects = Manager()
 
   def __str__(self):

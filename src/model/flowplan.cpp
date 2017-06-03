@@ -47,7 +47,7 @@ int FlowPlan::initialize()
 }
 
 
-FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f) 
+FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   : fl(const_cast<Flow*>(f)), oper(opplan)
 {
   assert(opplan && f);

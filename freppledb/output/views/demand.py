@@ -64,7 +64,7 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
-        'title': force_text(Item._meta.verbose_name) + " " + args[0],        
+        'title': force_text(Item._meta.verbose_name) + " " + args[0],
         }
     else:
       return {}
@@ -95,7 +95,7 @@ class OverviewReport(GridPivot):
       left outer join (
         select parent.name, sum(operationplan.quantity) qty
         from operationplan
-        inner join demand on operationplan.demand_id = demand.name        
+        inner join demand on operationplan.demand_id = demand.name
           and operationplan.owner_id is null
           and operationplan.enddate < %%s
         inner join item on demand.item_id = item.name
@@ -218,7 +218,7 @@ class DetailReport(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), editable=False),
     GridFieldDateTime('due', field_name='due', title=_('due date'), editable=False),
     )
-  
+
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:

@@ -48,7 +48,7 @@ def load_class(full_class_string):
 
 
 class Command(BaseCommand):
-  
+
   help = '''
   Runs a simulation to measure the plan performance.
 
@@ -118,8 +118,8 @@ class Command(BaseCommand):
       '--pause', action="store_true", default=False,
       help='Allows to stop the simulation at the end of each step'
       )
-  
-  
+
+
   def handle(self, **options):
     # Pick up the options
     database = options['database']

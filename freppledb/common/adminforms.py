@@ -414,7 +414,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             **msg_dict
         )
         self.message_user(request, msg, messages.SUCCESS)
-        return self.response_post_save_change(request, obj)    
+        return self.response_post_save_change(request, obj)
 
 
   def response_post_save_change(self, request, obj):
@@ -433,8 +433,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     else:
         post_url = request.prefix
     return HttpResponseRedirect(post_url)
-  
-      
+
+
   @csrf_protect_m
   @transaction.atomic
   def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -477,7 +477,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         request.prefix, request.path
         ))
     else:
-      return render(request, 'common/comments.html', 
+      return render(request, 'common/comments.html',
         context = {
           'title': force_text(modelinstance._meta.verbose_name) + " " + object_id,
           'post_title': _('comments'),
@@ -518,7 +518,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             'obj': force_text(obj_display),
         },
         messages.SUCCESS,
-    )  
+    )
 
     # Delete this entity page from the crumbs
     del request.session['crumbs'][request.prefix][-1]

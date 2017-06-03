@@ -158,7 +158,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
           if u and u.is_authenticated():
             ok = True
         if not ok:
-          auth_header = request.META.get('HTTP_AUTHORIZATION', None)          
+          auth_header = request.META.get('HTTP_AUTHORIZATION', None)
           if auth_header:
             # Missing the header
             auth = auth_header.split()
@@ -173,7 +173,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
                 ok = True
       except:
         # Everything going wrong in the above will get the 401-unauthorized
-        # reply. Any exception is silently ignored.        
+        # reply. Any exception is silently ignored.
         pass
       if ok:
         # All clear

@@ -17,7 +17,7 @@
   <!--
     Case 1: Leadtime constraints on a fixed-time operation.
   -->
-  <operations>    
+  <operations>
     <operation name="1. make item" xsi:type="operation_fixed_time"
       duration="P7D" posttime="P7D">
       <item name="1. item"/>
@@ -180,7 +180,7 @@
     Case 4: Fixed time operations on multiple levels. Each level has post-operation time
     specified. Leadtime constraints delay the demand.
   -->
-  <operations>    
+  <operations>
     <operation name="4. make item level 1" xsi:type="operation_fixed_time"
       duration="P7D" posttime="P7D">
       <item name="4. item"/>

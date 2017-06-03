@@ -40,7 +40,7 @@ class AttributeMigration(migrations.Migration):
     state = super().mutate_state(project_state, preserve)
     self.app_label = self.real_app_label
     return state
-    
+
   def apply(self, project_state, schema_editor, collect_sql=False):
     self.app_label = self.extends_app_label
     state = super().apply(project_state, schema_editor, collect_sql)

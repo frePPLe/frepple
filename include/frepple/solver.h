@@ -985,11 +985,11 @@ class SolverMRP : public Solver
         unsigned long iteration_count;
 
         /** Collect all purchase operations. */
-        struct order_operationitemsuppliers 
+        struct order_operationitemsuppliers
         {
           bool operator() (const OperationItemSupplier* const& lhs, const OperationItemSupplier* const& rhs) const
           {
-            return lhs->getName() < rhs->getName();           
+            return lhs->getName() < rhs->getName();
           }
         };
         set<const OperationItemSupplier*, order_operationitemsuppliers> purchase_operations;

@@ -72,7 +72,7 @@
           <item name="2. end item" />
           <quantity>1</quantity>
         </flow>
-      </flows>      
+      </flows>
       <duration_per>P1D</duration_per>
     </operation>
   </operations>
@@ -87,7 +87,7 @@
       </loads>
     </resource>
   </resources>
-  
+
   <demands>
     <!-- Demand model 1: search for capacity backwards in time -->
     <demand name="1. order">

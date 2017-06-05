@@ -32,7 +32,7 @@ uninstall-local:
 clean-local:
 	-rm -rf install-test *.exe
 	-rm -rf `find . -name '__pycache__'`
-	-rm -rf build dist doc static *.log node_modules
+	-rm -rf build dist static node_modules
 
 # Avoid packaging any git folders and python bytecode files
 dist-hook:

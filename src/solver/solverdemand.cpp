@@ -298,7 +298,8 @@ void SolverMRP::solve(const Demand* l, void* v)
 				  if (next_date <= copy_plan_date
 					  || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
 					  || (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
-						  && plan_qty - data->state->a_qty > ROUNDING_ERROR))
+						  && plan_qty - data->state->a_qty > ROUNDING_ERROR)
+            || (next_date == Date::infiniteFuture && data->state->a_qty > ROUNDING_ERROR))
 				  {
 					  // Oops, we didn't get a proper answer we can use for the next loop.
 					  // Print a warning and simply try one day later.

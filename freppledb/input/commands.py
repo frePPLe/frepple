@@ -1054,7 +1054,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
             cnt_po += 1
             opplan = frepple.operationplan(
               location=frepple.location(name=i[12]), ordertype=i[7],
-              id=i[1], reference=i[12],
+              id=i[1], reference=i[13],
               item=frepple.item(name=i[11]) if i[11] else None,
               supplier=frepple.supplier(name=i[10]) if i[10] else None,
               quantity=i[2], start=i[3], end=i[4],
@@ -1064,7 +1064,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
             cnt_do += 1
             opplan = frepple.operationplan(
               location=frepple.location(name=i[9]) if i[9] else None,
-              id=i[1], reference=i[12], ordertype=i[7],
+              id=i[1], reference=i[13], ordertype=i[7],
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               quantity=i[2], start=i[3], end=i[4],
@@ -1074,7 +1074,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
             cnt_dlvr += 1
             opplan = frepple.operationplan(
               location=frepple.location(name=i[12]) if i[12] else None,
-              id=i[1], reference=i[12], ordertype=i[7],
+              id=i[1], reference=i[13], ordertype=i[7],
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               demand=frepple.demand(name=i[14]) if i[14] else None,

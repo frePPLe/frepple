@@ -25,6 +25,16 @@ from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.models import Resource, Item
 
 
+class CheckTask(PlanTask):
+  # to be used for data validation tasks
+  @staticmethod
+  def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
+    # Task not active!
+    return 0.1
+
+  filter = None
+
+
 class LoadTask(PlanTask):
 
   @staticmethod
@@ -33,6 +43,57 @@ class LoadTask(PlanTask):
     return 0.1
 
   filter = None
+
+
+@PlanTaskRegistry.register
+class checkBuckets(CheckTask):
+  # check for no buckets available
+  # check for gaps between buckets (enddate bucket <> startdate next bucket)
+  # check for overlaps (more than 1 bucket have the same startdate or the same enddate)
+  description = "Checking Buckets"
+  sequence = 80
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+
+    with connections[database].chunked_cursor() as cursor:
+      cursor.execute('''
+        SELECT DISTINCT
+            b1.name,
+            b1.bucket_id,
+            b1.startdate,
+            b1.enddate,
+            CASE WHEN b1.enddate = (SELECT max(enddate) FROM common_bucketdetail WHERE bucket_id = b1.bucket_id)
+            THEN 1 ELSE 0
+            END AS lastbucket
+        FROM common_bucketdetail b1
+        RIGHT OUTER JOIN common_bucketdetail b2
+        ON b2.bucket_id = b1.bucket_id AND b2.id <> b1.id
+        AND (
+            (b2.startdate = b1.startdate AND b2.enddate <> b1.enddate)
+            OR
+            (b2.startdate <> b1.startdate AND b2.enddate = b1.enddate)
+            OR
+            (NOT EXISTS (
+              SELECT 1 FROM common_bucketdetail b2
+              WHERE b2.bucket_id = b1.bucket_id
+              AND (b2.startdate = b1.enddate)
+            ))
+        )
+        WHERE b1.bucket_id IS NOT NULL
+      ''')
+      bbb = cursor.fetchall()
+      errors = 0
+      if cursor.rowcount == 0:
+        raise ValueError("No Calendar Buckets available")
+      else:
+        for rec in bbb:
+          if rec[4] == 0:  # if not last bucket
+            errors += 1
+            print(rec[0], rec[1], rec[2], rec[3], rec[4])
+      if errors > 0:
+        raise ValueError("Invalid Calendar Bucket (date/time gap after buckets or different buckets with same start and/or end)")
 
 
 @PlanTaskRegistry.register
@@ -164,10 +225,10 @@ class loadCalendarBuckets(LoadTask):
       cnt = 0
       starttime = time()
       cursor.execute('''
-         SELECT
-           calendar_id, startdate, enddate, priority, value,
-           sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-           starttime, endtime, source
+        SELECT
+          calendar_id, startdate, enddate, priority, value,
+          sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+          starttime, endtime, source
         FROM calendarbucket %s
         ORDER BY calendar_id, startdate desc
         ''' % filter_where)

@@ -57,7 +57,7 @@ class checkBuckets(CheckTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
-    with connections[database].chunked_cursor() as cursor:
+    with connections[database].cursor() as cursor:
       cursor.execute('''
         SELECT DISTINCT
             b1.name,
@@ -83,15 +83,15 @@ class checkBuckets(CheckTask):
         )
         WHERE b1.bucket_id IS NOT NULL
       ''')
-      bbb = cursor.fetchall()
       errors = 0
-      if cursor.rowcount == 0:
+      empty = True
+      for rec in cursor:
+        empty = False
+        if rec[4] == 0:  # if not last bucket
+          errors += 1
+          print(rec[0], rec[1], rec[2], rec[3], rec[4])
+      if empty:
         raise ValueError("No Calendar Buckets available")
-      else:
-        for rec in bbb:
-          if rec[4] == 0:  # if not last bucket
-            errors += 1
-            print(rec[0], rec[1], rec[2], rec[3], rec[4])
       if errors > 0:
         raise ValueError("Invalid Calendar Bucket (date/time gap after buckets or different buckets with same start and/or end)")
 

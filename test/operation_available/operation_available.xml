@@ -366,7 +366,6 @@
     </demand>
   </demands>
 
-
   <!--
     Case 5: Same as case 3, but at a deeper level in the supply chain.
   -->
@@ -489,6 +488,102 @@
       <item name="5. item" />
       <operation name="5. Deliver item"/>
     </demand>
+  </demands>
+
+  <!--
+    Case 6: Calendar specified simultaneously on several objects:
+      - operation: monday and tuesday
+      - operation location: weekdays
+      - resources: between 8am and 10am
+      - resource location: between 9am and 11am
+    The intersection of these is monday and tuesday between 9am and 10am.
+  -->
+  <operations>
+    <operation name="6. Make item" xsi:type="operation_time_per">
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="6. buffer">
+            <item name="6. item" />
+            <producing name="6. Make item" xsi:type="operation_time_per"/>
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="6. resource">
+          <maximum>10</maximum>
+          <available name="Availability resource 6">
+            <!-- Resource is available on between 8am and 10am. -->
+            <default>0</default>
+            <buckets>
+              <bucket start="2016-01-01T00:00:00" starttime="PT8H" endtime="PT11H" value="1"/>
+            </buckets>
+          </available>
+          <location name="resource location 6">
+            <available name="calendar of resource location 6">
+              <!-- Resource location is available between 9am and 11am. -->
+              <default>0</default>
+              <buckets>
+                <bucket start="2016-01-01T00:00:00" starttime="PT9H" endtime="PT12H" value="1"/>
+              </buckets>
+            </available>
+          </location>
+          </resource>
+        </load>
+      </loads>
+      <available name="calendar for operation &quot;6. Make item&quot;">
+        <!-- Operation is available on Monday and Tuesday. -->
+        <default>0</default>
+        <buckets>
+          <bucket days="6" value="1" />
+        </buckets>
+      </available>
+      <location name="site 6">
+        <available name="calendar of site 6">
+          <!-- Operation location is available on Monday through Friday. -->
+          <default>0</default>
+          <buckets>
+            <bucket days="62" value="1" />
+          </buckets>
+        </available>
+      </location>
+      <duration>PT7H</duration>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="6. order 1">
+      <quantity>1</quantity>
+      <due>2017-01-30T00:00:00</due>
+      <priority>61</priority>
+      <item name="6. item" />
+      <operation name="6. Deliver item" xsi:type="operation_fixed_time">
+        <flows>
+          <flow xsi:type="flow_start">
+            <buffer name="6. buffer">
+              <item name="6. item" />
+              <producing name="6. Make item" />
+            </buffer>
+            <quantity>-1</quantity>
+          </flow>
+        </flows>
+        <duration>P1D</duration>
+      </operation>
+    </demand>
+    <demand name="6. order 2">
+      <quantity>1</quantity>
+      <due>2017-01-25T11:00:00</due>
+      <priority>62</priority>
+      <item name="6. item" />
+      <operation name="6. Deliver item"/>
+    </demand>
+    <demand name="6. order 3">
+      <quantity>1</quantity>
+      <due>2017-01-25T00:00:00</due>
+      <priority>63</priority>
+      <item name="6. item" />
+      <operation name="6. Deliver item"/>
+    </demand>    
   </demands>
 
 <?python

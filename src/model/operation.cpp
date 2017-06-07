@@ -250,156 +250,184 @@ OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
 
 
 DateRange Operation::calculateOperationTime
-(Date thedate, Duration duration, bool forward,
- Duration *actualduration) const
+(Date thedate, Duration duration, bool forward, Duration *actualduration) const
 {
-  int calcount = 0;
-  // Initial size of 10 should do for 99.99% of all cases
-  vector<Calendar::EventIterator*> cals(10);
-
   // Default actual duration
-  if (actualduration) *actualduration = duration;
+  if (actualduration)
+    *actualduration = duration;
 
-  try
+  // Step 1: Create an iterator over all involved calendars
+  vector<Calendar::EventIterator> cals;
+  // a) operation
+  if (available)
+    cals.push_back(Calendar::EventIterator(available, thedate, forward));
+  // b) operation location
+  if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
+    cals.push_back(Calendar::EventIterator(loc->getAvailable(), thedate, forward));
+  for (Operation::loadlist::const_iterator g = loaddata.begin();
+    g != loaddata.end(); ++g)
   {
-    // Step 1: Create an iterator on each of the calendars
-    // a) operation's location
-    if (loc && loc->getAvailable())
-      cals[calcount++] = new Calendar::EventIterator(loc->getAvailable(), thedate, forward);
-    /* @todo multiple availability calendars are not implemented yet
-      for (Operation::loadlist::const_iterator g=loaddata.begin();
-        g!=loaddata.end(); ++g)
+    Resource* res = g->getResource();
+    if (res->getAvailable())
     {
-      Resource* res = g->getResource();
-      if (res->getMaximum())
-        // b) resource size calendar
-        cals[calcount++] = new Calendar::EventIterator(
-          res->getMaximum(),
-          thedate
-          );
-      if (res->getLocation() && res->getLocation()->getAvailable())
-        // c) resource location
-        cals[calcount++] = new Calendar::EventIterator(
-          res->getLocation()->getAvailable(),
-          thedate
-          );
+      // c) resource
+      bool exists = false;
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+      {
+        if (t->getCalendar() == res->getAvailable())
+        {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists)
+        cals.push_back(Calendar::EventIterator(
+          res->getAvailable(),
+          thedate, forward
+        ));
     }
-    */
-
-    // Special case: no calendars at all
-    if (calcount == 0)
-      return forward ?
-          DateRange(thedate, thedate+duration) :
-          DateRange(thedate-duration, thedate);
-
-    // Step 2: Iterate over the calendar dates to find periods where all
-    // calendars are simultaneously effective.
-    DateRange result;
-    Date curdate = thedate;
-    bool status = false;
-    Duration curduration = duration;
-    while (true)
+    if (res->getLocation() && res->getLocation()->getAvailable())
     {
-      // Check whether all calendars are available
-      bool available = true;
-      for (int c = 0; c < calcount && available; c++)
+      bool exists = false;
+      for (auto t = cals.begin(); t != cals.end(); ++t)
       {
-        const CalendarBucket *tmp = cals[c]->getBucket();
-        if (tmp)
-          available = tmp->getBool();
-        else
-          available = cals[c]->getCalendar()->getBool();
+        // d) resource location
+        if (t->getCalendar() == res->getLocation()->getAvailable())
+        {
+          exists = true;
+          break;
+        }
       }
-      curdate = cals[0]->getDate();
+      if (!exists)
+        cals.push_back(Calendar::EventIterator(
+          res->getLocation()->getAvailable(),
+          thedate, forward
+        ));
+    }
+  }
 
-      if (available && !status)
+  // Special case: no calendars at all
+  if (!cals.size())
+    return forward ?
+      DateRange(thedate, thedate+duration) :
+      DateRange(thedate-duration, thedate);
+
+  // Step 2: Iterate over the calendar dates to find periods where all
+  // calendars are simultaneously effective.
+  DateRange result;
+  Date curdate = thedate;
+  bool status = false;
+  Duration curduration = duration;
+  while (true)
+  {
+    // Check whether all calendars are available
+    bool available = true;
+    Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
+    if (forward)
+    {
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+        if (t->getDate() < selected)
+          selected = t->getDate();
+    }
+    else
+    {
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+        if (t->getDate() > selected)
+          selected = t->getDate();
+    }
+    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
+      available = (t->getCalendar()->getValue(selected, forward) != 0);
+    curdate = selected;
+
+    if (available && !status)
+    {
+      // Becoming available after unavailable period
+      thedate = curdate;
+      status = true;
+      if (forward && result.getStart() == Date::infinitePast)
+        // First available time - make operation start at this time
+        result.setStart(curdate);
+      else if (!forward && result.getEnd() == Date::infiniteFuture)
+        // First available time - make operation end at this time
+        result.setEnd(curdate);
+    }
+    else if (!available && status)
+    {
+      // Becoming unavailable after available period
+      status = false;
+      if (forward)
       {
-        // Becoming available after unavailable period
-        thedate = curdate;
-        status = true;
-        if (forward && result.getStart() == Date::infinitePast)
-          // First available time - make operation start at this time
-          result.setStart(curdate);
-        else if (!forward && result.getEnd() == Date::infiniteFuture)
-          // First available time - make operation end at this time
-          result.setEnd(curdate);
-      }
-      else if (!available && status)
-      {
-        // Becoming unavailable after available period
-        status = false;
-        if (forward)
+        // Forward
+        Duration delta = curdate - thedate;
+        if (delta >= curduration)
         {
-          // Forward
-          Duration delta = curdate - thedate;
-          if (delta >= curduration)
-          {
-            result.setEnd(thedate + curduration);
-            break;
-          }
-          else
-            curduration -= delta;
+          result.setEnd(thedate + curduration);
+          break;
         }
         else
-        {
-          // Backward
-          Duration delta = thedate - curdate;
-          if (delta >= curduration)
-          {
-            result.setStart(thedate - curduration);
-            break;
-          }
-          else
-            curduration -= delta;
-        }
+          curduration -= delta;
       }
-      else if (forward && curdate == Date::infiniteFuture)
+      else
       {
-        // End of forward iteration
-        if (available)
+        // Backward
+        Duration delta = thedate - curdate;
+        if (delta >= curduration)
         {
-          Duration delta = curdate - thedate;
-          if (delta >= curduration)
-            result.setEnd(thedate + curduration);
-          else if (actualduration)
-            *actualduration = duration - curduration;
+          result.setStart(thedate - curduration);
+          break;
         }
-        else  if (actualduration)
-          *actualduration = duration - curduration;
-        break;
+        else
+          curduration -= delta;
       }
-      else if (!forward && curdate == Date::infinitePast)
+    }
+    else if (forward && curdate == Date::infiniteFuture)
+    {
+      // End of forward iteration
+      if (available)
       {
-        // End of backward iteration
-        if (available)
-        {
-          Duration delta = thedate - curdate;
-          if (delta >= curduration)
-            result.setStart(thedate - curduration);
-          else if (actualduration)
-            *actualduration = duration - curduration;
-        }
+        Duration delta = curdate - thedate;
+        if (delta >= curduration)
+          result.setEnd(thedate + curduration);
         else if (actualduration)
           *actualduration = duration - curduration;
-        break;
       }
-
-      // Advance to the next event
-      if (forward) ++(*cals[0]);
-      else --(*cals[0]);
+      else  if (actualduration)
+        *actualduration = duration - curduration;
+      break;
+    }
+    else if (!forward && curdate == Date::infinitePast)
+    {
+      // End of backward iteration
+      if (available)
+      {
+        Duration delta = thedate - curdate;
+        if (delta >= curduration)
+          result.setStart(thedate - curduration);
+        else if (actualduration)
+          *actualduration = duration - curduration;
+      }
+      else if (actualduration)
+        *actualduration = duration - curduration;
+      break;
     }
 
-    // Step 3: Clean up
-    while (calcount) delete cals[--calcount];
-    return result;
+    // Advance to the next event
+    if (forward)
+    {
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+        if (t->getDate() == selected)
+          ++(*t);
+    }
+    else
+    {
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+        if (t->getDate() == selected)
+          --(*t);
+    }
   }
-  catch (...)
-  {
-    // Clean up
-    while (calcount) delete cals[calcount--];
-    // Rethrow the exception
-    throw;
-  }
+
+  return result;
 }
 
 
@@ -414,122 +442,139 @@ DateRange Operation::calculateOperationTime
     end = tmp;
   }
 
-  int calcount = 0;
-  // Initial size of 10 should do for 99.99% of all cases
-  vector<Calendar::EventIterator*> cals(10);
-
   // Default actual duration
   if (actualduration) *actualduration = 0L;
 
-  try
+  // Step 1: Create an iterator over all involved calendars
+  vector<Calendar::EventIterator> cals;
+  // a) operation
+  if (available)
+    cals.push_back(Calendar::EventIterator(available, start));
+  // b) operation location
+  if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
+      cals.push_back(Calendar::EventIterator(loc->getAvailable(), start));
+  for (Operation::loadlist::const_iterator g=loaddata.begin();
+      g!=loaddata.end(); ++g)
   {
-    // Step 1: Create an iterator on each of the calendars
-    // a) operation's location
-    if (loc && loc->getAvailable())
-      cals[calcount++] = new Calendar::EventIterator(loc->getAvailable(), start);
-    /* @todo multiple availability calendars are not implmented yet
-      for (Operation::loadlist::const_iterator g=loaddata.begin();
-        g!=loaddata.end(); ++g)
+    Resource* res = g->getResource();
+    if (res->getAvailable())
     {
-      Resource* res = g->getResource();
-      if (res->getMaximum())
-        // b) resource size calendar
-        cals[calcount++] = new Calendar::EventIterator(
-          res->getMaximum(),
+      // c) resource
+      bool exists = false;
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+      {
+        if (t->getCalendar() == res->getAvailable())
+        {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists)
+        cals.push_back(Calendar::EventIterator(
+          res->getAvailable(),
           start
-          );
-      if (res->getLocation() && res->getLocation()->getAvailable())
-        // c) resource location
-        cals[calcount++] = new Calendar::EventIterator(
+        ));
+    }
+    if (res->getLocation() && res->getLocation()->getAvailable())
+    {
+      bool exists = false;
+      for (auto t = cals.begin(); t != cals.end(); ++t)
+      {
+        // d) resource location
+        if (t->getCalendar() == res->getLocation()->getAvailable())
+        {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists)
+        cals.push_back(Calendar::EventIterator(
           res->getLocation()->getAvailable(),
           start
-          );
+        ));
     }
-    */
+  }
 
-    // Special case: no calendars at all
-    if (calcount == 0)
+  // Special case: no calendars at all
+  if (!cals.size())
+  {
+    if (actualduration)
+      *actualduration = end - start;
+    return DateRange(start, end);
+  }
+
+  // Step 2: Iterate over the calendar dates to find periods where all
+  // calendars are simultaneously effective.
+  DateRange result;
+  Date curdate = start;
+  bool status = false;
+  while (true)
+  {
+    // Check whether all calendars are available
+    bool available = true;
+    Date selected = Date::infiniteFuture;
+    for (auto t = cals.begin(); t != cals.end(); ++t)
     {
-      if (actualduration) *actualduration = end - start;
-      return DateRange(start, end);
+      if (t->getDate() < selected)
+        selected = t->getDate();
     }
-
-    // Step 2: Iterate over the calendar dates to find periods where all
-    // calendars are simultaneously effective.
-    DateRange result;
-    Date curdate = start;
-    bool status = false;
-    while (true)
+    curdate = selected;
+    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
+      available = (t->getCalendar()->getValue(selected) != 0);
+    
+    if (available && !status)
     {
-      // Check whether all calendar are available
-      bool available = true;
-      for (int c = 0; c < calcount && available; c++)
-      {
-        if (cals[c]->getBucket())
-          available = cals[c]->getBucket()->getBool();
-        else
-          available = cals[c]->getCalendar()->getBool();
-      }
-      curdate = cals[0]->getDate();
-
-      if (available && !status)
-      {
-        // Becoming available after unavailable period
-        if (curdate >= end)
-        {
-          // Leaving the desired date range
-          result.setEnd(start);
-          break;
-        }
-        start = curdate;
-        status = true;
-        if (result.getStart() == Date::infinitePast)
-          // First available time - make operation start at this time
-          result.setStart(curdate);
-      }
-      else if (!available && status)
-      {
-        // Becoming unavailable after available period
-        if (curdate >= end)
-        {
-          // Leaving the desired date range
-          if (actualduration) *actualduration += end - start;
-          result.setEnd(end);
-          break;
-        }
-        status = false;
-        if (actualduration) *actualduration += curdate - start;
-        start = curdate;
-      }
-      else if (curdate >= end)
+      // Becoming available after unavailable period
+      if (curdate >= end)
       {
         // Leaving the desired date range
-        if (available)
-        {
-          if (actualduration) *actualduration += end - start;
-          result.setEnd(end);
-          break;
-        }
-        else
-          result.setEnd(start);
+        result.setEnd(start);
         break;
       }
-
-      // Advance to the next event
-      ++(*cals[0]);
+      start = curdate;
+      status = true;
+      if (result.getStart() == Date::infinitePast)
+        // First available time - make operation start at this time
+        result.setStart(curdate);
+    }
+    else if (!available && status)
+    {
+      // Becoming unavailable after available period
+      if (curdate >= end)
+      {
+        // Leaving the desired date range
+        if (actualduration)
+          *actualduration += end - start;
+        result.setEnd(end);
+        break;
+      }
+      status = false;
+      if (actualduration)
+        *actualduration += curdate - start;
+      start = curdate;
+    }
+    else if (curdate >= end)
+    {
+      // Leaving the desired date range
+      if (available)
+      {
+        if (actualduration)
+          *actualduration += end - start;
+        result.setEnd(end);
+        break;
+      }
+      else
+        result.setEnd(start);
+      break;
     }
 
-    // Step 3: Clean up
-    while (calcount) delete cals[--calcount];
-    return result;
+    // Advance to the next event
+    for (auto t = cals.begin(); t != cals.end(); ++t)
+      if (t->getDate() == selected)
+        ++(*t);
   }
-  catch (...)
-  {
-    // Clean up
-    while (calcount) delete cals[calcount--];
-    // Rethrow the exception
-    throw;
-  }
+  return result;
 }
 
 

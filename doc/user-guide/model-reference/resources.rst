@@ -59,35 +59,64 @@ maximum_calendar calendar          | Refers to a calendar storing the available 
                                    | On resources of type buckets this calendar defines the
                                      time buckets as well as the maximum quantity per time bucket.
                                    | This field is ignored on resources of type infinite.
-cost             double            | The cost of using 1 unit of this resource for 1 hour.
-                                   | The default value is 0.
-detectproblems   boolean           | Set this field to false to suppress problem detection on
-                                     this resource.
-                                   | Default is true.
-maxearly         duration          | Time window before the ask date where we look for available
-                                     capacity.
-                                   | The default value is 100 days.
+available        calendar          A calendar specifying the working hours for the resource.
+                                   
+                                   The working hours and holidays for the operation are
+                                   calculated as the intersection of:
+                                   
+                                     - the availability calendar of the operation.
+                                     - the availability calendar of the operation's location.
+                                     - the availability calendar of all resources loaded by the 
+                                       operation.
+                                     - the availability calendar of the location of all resources
+                                       loaded by the operation.
+                                   
+                                   Default is null.
+                                                                            
+cost             double            The cost of using 1 unit of this resource for 1 hour.
+                                   
+                                   The default value is 0.
+detectproblems   boolean           Set this field to false to suppress problem detection on
+                                   this resource.
+                                   
+                                   Default is true.
+maxearly         duration          Time window before the ask date where we look for available
+                                   capacity.
+                                   
+                                   The default value is 100 days.
+                                   
 loads            list of load      Defines the capacity of the operations.
-loadplans        list of loadplan  | This field is populated during an export with the plan
-                                     results for this resource. It shows the resource load
-                                     profile.
-                                   | The field is export-only.
-                                   | The description of the loadplan model is included in the
-                                     section on operationplan.
-level            integer           | Indication of how upstream/downstream this entity is
-                                     situated in the supply chain.
-                                   | Lower numbers indicate the entity is close to the end
-                                     item, while a high number will be shown for components
-                                     nested deep in a bill of material.
-                                   | The field is export-only.
-cluster          integer           | The network of entities can be partitioned in completely
-                                     independent parts. This field gives the index for the
-                                     partition this entity belongs to.
-                                   | The field is export-only.
+
+loadplans        list of loadplan  This field is populated during an export with the plan
+                                   results for this resource. It shows the resource load
+                                   profile.
+                                   
+                                   The field is export-only.
+                                   
+                                   The description of the loadplan model is included in the
+                                   section on operationplan.
+                                   
+level            integer           Indication of how upstream/downstream this entity is
+                                   situated in the supply chain.
+                                   
+                                   Lower numbers indicate the entity is close to the end
+                                   item, while a high number will be shown for components
+                                   nested deep in a bill of material.
+                                   
+                                   The field is export-only.
+                                   
+cluster          integer           The network of entities can be partitioned in completely
+                                   independent parts. This field gives the index for the
+                                   partition this entity belongs to.
+
+                                   The field is export-only.
+
 setup            non-empty string  The name of the current setup of the resource, ie the
                                    setup of the resource at the start of the planning horizon.
+                                   
 setupmatrix      setupmatrix       The name of the setup matrix which specifies the changeover
                                    times between setups.
+
 hidden           boolean           Marks entities that are considered hidden and are normally
                                    not shown to the end user.
 ================ ================= ===========================================================

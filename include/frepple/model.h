@@ -420,9 +420,9 @@ class Calendar : public HasName<Calendar>, public HasSource
     ~Calendar();
 
     /** Returns the value on the specified date. */
-    double getValue(const Date d) const
+    double getValue(const Date d, bool fwd = true) const
     {
-      CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(d));
+      CalendarBucket* x = findBucket(d, fwd);
       return x ? x->getValue() : defaultValue;
     }
 
@@ -520,9 +520,12 @@ class Calendar : public HasName<Calendar>, public HasSource
         /** Return the current value of the iterator at this date. */
         double getValue()
         {
-          return curBucket ?
-              static_cast<const CalendarBucket*>(curBucket)->getValue() :
-              static_cast<const Calendar*>(theCalendar)->getDefault();
+          return curBucket ? curBucket->getValue() : theCalendar->getDefault();
+        }
+
+        double getPrevValue() const
+        {
+          return lastBucket ? lastBucket->getValue() : theCalendar->getDefault();
         }
 
       private:
@@ -2609,10 +2612,9 @@ class Operation : public HasName<Operation>,
       * operation.
       *
       * This calculation considers the availability calendars of:
-      * - the availability calendar of the operation's location
-      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
-      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
-      *   by the operation
+      * - the availability calendar of the operation and its location
+      * - the availability calendar of all resources loaded by the operation,
+      *   plus the availability calendar of their location
       *
       * @param[in] thedate  The date from which to start searching.
       * @param[in] duration The amount of available time we are looking for.
@@ -2627,10 +2629,9 @@ class Operation : public HasName<Operation>,
     /** Calculates the effective, available time between two dates.
       *
       * This calculation considers the availability calendars of:
-      * - the availability calendar of the operation's location
-      * - the availability calendar of all resources loaded by the operation @todo not implemented yet
-      * - the availability calendar of the locations of all resources loaded @todo not implemented yet
-      *   by the operation
+      * - the availability calendar of the operation and its location
+      * - the availability calendar of all resources loaded by the operation,
+      *   plus the availability calendar of their location
       *
       * @param[in] start  The date from which to start searching.
       * @param[in] end    The date where to stop searching.
@@ -2761,6 +2762,18 @@ class Operation : public HasName<Operation>,
     void setEffective(DateRange dr)
     {
       effectivity = dr;
+    }
+
+    /** Returns the availability calendar of the operation. */
+    Calendar *getAvailable() const
+    {
+      return available;
+    }
+
+    /** Updates the availability calendar of the operation. */
+    void setAvailable(Calendar* b)
+    {
+      available = b;
     }
 
     /** Returns an reference to the list of flows.
@@ -2978,6 +2991,7 @@ class Operation : public HasName<Operation>,
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
+      m->addPointerField<Cls, Calendar>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, PLAN + DETAIL);
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, BASE + WRITE_OBJECT);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, BASE + WRITE_OBJECT);
@@ -3073,6 +3087,9 @@ class Operation : public HasName<Operation>,
 
     /** A pointer to the next operation producing the item. */
     Operation* next = nullptr;
+
+    /** Availability calendar of the operation. */
+    Calendar* available = nullptr;
 };
 
 
@@ -6356,6 +6373,18 @@ class Resource : public HasHierarchy<Resource>,
       return size_max;
     }
 
+    /** Returns the availability calendar of the resource. */
+    Calendar *getAvailable() const
+    {
+      return available;
+    }
+
+    /** Updates the availability calendar of the resource. */
+    void setAvailable(Calendar* b)
+    {
+      available = b;
+    }
+
     /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
       * The default value is 0.0.
       */
@@ -6525,6 +6554,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
+      m->addPointerField<Cls, Calendar>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
       Plannable::registerFields<Cls>(m);
       m->addIteratorField<Cls, loadlist::const_iterator, Load>(Tags::loads, Tags::load, &Cls::getLoadIterator, DETAIL);
       m->addIteratorField<Cls, skilllist::const_iterator, ResourceSkill>(Tags::resourceskills, Tags::resourceskill, &Cls::getSkills, DETAIL + WRITE_OBJECT);
@@ -6570,6 +6600,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Current setup. */
     PooledString setup;
+
+    /** Availability calendar of the buffer. */
+    Calendar* available = nullptr;
 
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);

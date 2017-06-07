@@ -207,13 +207,16 @@ class ResourceSkill_inline(MultiDBTabularInline):
 
 class Operation_admin(MultiDBModelAdmin):
   model = Operation
-  raw_id_fields = ('location', 'item')
+  raw_id_fields = ('location', 'item', 'available')
   save_on_top = True
   inlines = [ SubOperation_inline, OperationMaterial_inline, OperationResource_inline, ]
   fieldsets = (
     (None, {'fields': ('name', 'type', 'item', 'location', 'description', 'category', 'subcategory')}),
     (_('planning parameters'), {
-      'fields': ('fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 'duration', 'duration_per', 'search'),
+      'fields': (
+        'fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 
+        'duration', 'duration_per', 'available', 'search'
+        ),
        }),
     )
   tabs = [
@@ -232,7 +235,7 @@ data_site.register(Operation, Operation_admin)
 
 class SubOperation_admin(MultiDBModelAdmin):
   model = SubOperation
-  raw_id_fields = ('operation', 'suboperation',)
+  raw_id_fields = ('operation', 'suboperation')
   save_on_top = True
   exclude = ('source',)
 data_site.register(SubOperation, SubOperation_admin)
@@ -314,7 +317,7 @@ data_site.register(ResourceSkill, ResourceSkill_admin)
 
 class Resource_admin(MultiDBModelAdmin):
   model = Resource
-  raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner')
+  raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner', 'available')
   save_on_top = True
   inlines = [ OperationResource_inline, ResourceSkill_inline, ]
   exclude = ('source',)

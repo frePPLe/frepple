@@ -137,7 +137,7 @@ class Location(AuditModel, HierarchyModel):
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
     null=True, blank=True, on_delete=models.CASCADE,
-    help_text=_('Calendar defining the working hours and holidays of this location')
+    help_text=_('Calendar defining the working hours and holidays')
     )
 
   def __str__(self):
@@ -272,7 +272,12 @@ class Operation(AuditModel):
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select preferred alternate')
     )
-
+  available = models.ForeignKey(
+    Calendar, verbose_name=_('available'),
+    null=True, blank=True, on_delete=models.CASCADE,
+    help_text=_('Calendar defining the working hours and holidays')
+    )
+  
   def __str__(self):
     return self.name
 
@@ -502,6 +507,11 @@ class Resource(AuditModel, HierarchyModel):
     Calendar, verbose_name=_('maximum calendar'),
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the resource size varying over time')
+    )
+  available = models.ForeignKey(
+    Calendar, verbose_name=_('available'),  related_name='+',
+    null=True, blank=True, on_delete=models.CASCADE,
+    help_text=_('Calendar defining the working hours and holidays')
     )
   location = models.ForeignKey(
     Location, verbose_name=_('location'), on_delete=models.CASCADE,

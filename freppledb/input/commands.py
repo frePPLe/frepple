@@ -369,7 +369,7 @@ class loadOperations(LoadTask):
           name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
           type, duration, duration_per, location_id, cost, search, description,
           category, subcategory, source, item_id, priority, effective_start,
-          effective_end
+          effective_end, available_id
         FROM operation %s
         ''' % filter_where)
       for i in cursor:
@@ -427,6 +427,8 @@ class loadOperations(LoadTask):
             x.effective_start = i[18]
           if i[19]:
             x.effective_end = i[19]
+          if i[20]:
+            x.available = frepple.calendar(name=i[20])
         except Exception as e:
           print("Error:", e)
       print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
@@ -781,8 +783,9 @@ class loadResources(LoadTask):
       Resource.rebuildHierarchy(database=database)
       cursor.execute('''
         SELECT
-          name, description, maximum, maximum_calendar_id, location_id, type, cost,
-          maxearly, setup, setupmatrix_id, category, subcategory, owner_id, source
+          name, description, maximum, maximum_calendar_id, location_id, type,
+          cost, maxearly, setup, setupmatrix_id, category, subcategory,
+          owner_id, source, available_id 
         FROM %s %s
         ORDER BY lvl ASC, name
         ''' % (connections[cursor.db.alias].ops.quote_name('resource'), filter_where) )
@@ -823,6 +826,8 @@ class loadResources(LoadTask):
             x.setupmatrix = frepple.setupmatrix(name=i[9])
           if i[12]:
             x.owner = frepple.resource(name=i[12])
+          if i[14]:
+            x.available = frepple.calendar(name=i[14])            
         except Exception as e:
           print("Error:", e)
       print('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))

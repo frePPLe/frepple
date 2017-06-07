@@ -28,7 +28,7 @@ Different operation types exist:
     sub-operations, using some pre-defined percentages.
 
 * | `Operation_routing`_:
-  | Models a sequence a number of ‘step’ sub-operations, to be executed
+  | Models a sequence a number of step sub-operations, to be executed
     sequentially.
 
 **Fields**
@@ -44,38 +44,77 @@ item                   item              | Reference to the item being produced.
                                            records: if an operation has only a single operation-material
                                            with a positive quantity then we use its item as the 
                                            item of the operation.
-location               location          | Location of the operation.
-                                         | Default is null.
-                                         | The working hours and holidays for the operation are
-                                           taken from the 'available' calendar of the location.
+location               location          Location of the operation.
+                                         
+                                         The working hours and holidays for the operation are
+                                         calculated as the intersection of:
+                                   
+                                         - the availability calendar of the operation.
+                                         - the availability calendar of the operation's location.
+                                         - the availability calendar of all resources loaded by the 
+                                           operation.
+                                         - the availability calendar of the location of all resources
+                                           loaded by the operation.
+                                   
+                                         Default is null.
+                                                           
+available              calendar          A calendar specifying the working hours for the operation.
+                                         
+                                         The working hours and holidays for the operation are
+                                         calculated as the intersection of:
+                                   
+                                         - the availability calendar of the operation.
+                                         - the availability calendar of the operation's location.
+                                         - the availability calendar of all resources loaded by the 
+                                           operation.
+                                         - the availability calendar of the location of all resources
+                                           loaded by the operation.
+                                   
+                                         Default is null.
+                                                                                                                              
 effective_start        dateTime          Date when the operation becomes valid.
+
 effective_end          dateTime          Date when the operation becomes valid.
-priority               integer           | Priority of this operation to produce the specified item.
-                                         | This is useful when there are multiple operations 
-                                           producing the same item-location, or the same item-location
-                                           can also be replenished with :doc:`purchase orders<item-suppliers>`
-                                           and/or :doc:`distribution orders<item-distributions>`.
-                                         | When the priority is 0, the operation is not actively used
-                                           during planning. 
+
+priority               integer           Priority of this operation to produce the specified item.
+                                         
+                                         This is useful when there are multiple operations 
+                                         producing the same item-location, or the same item-location
+                                         can also be replenished with :doc:`purchase orders<item-suppliers>`
+                                         and/or :doc:`distribution orders<item-distributions>`.
+                                         
+                                         When the priority is 0, the operation is not actively used
+                                         during planning.
+                                          
 description            string            Free format description.
+
 category               string            Free format category.
+
 subcategory            string            Free format subcategory.
-fence                  duration          | Time window from the current date of the plan during
-                                           which all operationplans are expected to be
-                                           frozen/released.
-                                         | When the 'FENCE' constraint is enabled in the solver, it
-                                           won’t create any new operation plans in this time fence.
-                                           Only the externally supplied and locked operationplans will
-                                           then exist in this time window.
-size_minimum           positive double   | A minimum quantity for operationplans.
-                                         | The default value is 1.
-                                         | A request for a lower, non-zero quantity will be rounded up.
-size_minimum_calendar  calendar          | A calendar to define the minimum size of operationplans
-                                           when this value varies over time. The end date of the
-                                           operationplan determines which date we use as lookup in the
-                                           calendar.
-                                         | If both the size_minimum and size_minimum_calendar are 
-                                           specified, we use the highest value.
+
+fence                  duration          Time window from the current date of the plan during
+                                         which all operationplans are expected to be
+                                         frozen/released.
+                                         
+                                         When the 'FENCE' constraint is enabled in the solver, it
+                                         won't create any new operation plans in this time fence.
+                                         Only the externally supplied and locked operationplans will
+                                         then exist in this time window.
+                                         
+size_minimum           positive double   A minimum quantity for operationplans.
+                                         
+                                         A request for a lower, non-zero quantity will be rounded up.
+
+                                         The default value is 1.
+                                         
+size_minimum_calendar  calendar          A calendar to define the minimum size of operationplans
+                                         when this value varies over time. The end date of the
+                                         operationplan determines which date we use as lookup in the
+                                         calendar.
+                                         
+                                         If both the size_minimum and size_minimum_calendar are 
+                                         specified, we use the highest value.
+                                         
 size_multiple          positive double   A lotsize quantity for operationplans.
 size_maximum           positive double   | The maximum quantity for operationplans.
                                          | Note that this value limits the size of individual

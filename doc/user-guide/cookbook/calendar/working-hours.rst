@@ -7,9 +7,14 @@ Each location is associated with a working hour calendar through the field *loca
 A value 0 of the calendar buckets indicates unavailable time.
 Other values (typically 1) indicate available time.
 
-To apply the right working hour calendar, it is important to assign a location to each operation and resource.
+The easiest way to assign a working hour calendar, is to assign calendar to all operations
+and resources in that location.
 Use the field *operation.location* to stretch the duration of an operation to consider the non-working hours.
 Use the field *resource.location* to represent the off-shift hours on the resources.
+
+When resources or operations with different working hours exist within the same location, you can
+use the *operation.avaialble* or *resource.location* fields to define the working hours on a more
+detailed level.
 
 It is fine to leave theses fields empty, which indicates 24 by 7 availability.
 If the fields are populated, you should populate them consistently. You'll run into strange situations when planning

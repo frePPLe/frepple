@@ -463,7 +463,7 @@ Calendar::EventIterator::EventIterator
   (const Calendar* c, Date d, bool forward)
   : theCalendar(c), curDate(d)
 {
-  curBucket = lastBucket = c ? c->findBucket(d,forward) : nullptr;
+  curBucket = lastBucket = c ? c->findBucket(d, forward) : nullptr;
   curPriority = lastPriority = curBucket ? curBucket->priority : INT_MAX;
 }
 

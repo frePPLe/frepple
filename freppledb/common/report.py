@@ -1871,12 +1871,15 @@ class GridPivot(GridReport):
       result.append('{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false,"fixed":true}')
     count = -1
     for (index, hidden, width) in rows:
-      count += 1
-      result.append('{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"searchoptions":{"searchhidden": true},"fixed":true}' % (
-        cls.rows[index], width, index,
-        is_popup and ',"popup":true' or '',
-        hidden and 'true' or 'false'
-        ))
+      try:
+        result.append('{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"searchoptions":{"searchhidden": true},"fixed":true}' % (
+          cls.rows[index], width, index,
+          is_popup and ',"popup":true' or '',
+          hidden and 'true' or 'false'
+          ))
+        count += 1
+      except IndexError:
+        pass
     if mode == "graph":
       result.append(
         '{"name":"graph","index":"graph","editable":false,"label":" ","title":false,'

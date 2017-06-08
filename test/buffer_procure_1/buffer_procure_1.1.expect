@@ -905,6 +905,7 @@ PROBLEM	late	14 units of demand 'order 32 for item 6' planned up to 2.5 days aft
 PROBLEM	late	15 units of demand 'order 32 for item 9' planned up to 7.5 days after its due date	2009-02-01T00:00:00 / 2009-02-08T12:00:00
 DEMAND CONSTRAINT	order 01 for item 10	Buffer 'buffer 10' has material shortage of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 01 for item 11	Buffer 'buffer 11' has material shortage of 70	1971-01-01T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order 01 for item 4	Exception during planning: Invalid sizing parameters for operation Purchase buffer 4	2009-01-01T00:00:00 / 2009-01-01T00:00:00	
 DEMAND CONSTRAINT	order 02 for item 10	Buffer 'buffer 10' has material shortage of 40	2009-06-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 03 for item 1	Buffer 'buffer 1' has material shortage of 5	2009-01-03T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 03 for item 2	Buffer 'buffer 2' has material shortage of 5	2009-01-03T00:00:00 / 2030-12-31T00:00:00	

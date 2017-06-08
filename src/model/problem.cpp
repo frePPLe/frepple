@@ -616,4 +616,22 @@ Problem* Problem::List::top() const
 }
 
 
+void Problem::List::push(Problem* p)
+{
+  // Find the end of the list
+  Problem* cur = first;
+  while (cur && cur->nextProblem && cur != p)
+    cur = cur->nextProblem;
+
+  if (!cur)
+    // Link at the start of the list
+    first = p;
+  else if (cur == p)
+    // Duplicate problem: stop here.
+    return;
+  else
+    // Link at the end of the list
+    cur->nextProblem = p;    
+}
+
 } // End namespace

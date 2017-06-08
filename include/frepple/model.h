@@ -869,8 +869,10 @@ class Problem::List
     void clear(Problem * = nullptr);
 
     /** Add a problem to the list. */
-    Problem* push
-    (const MetaClass*, const Object*, Date, Date, double);
+    Problem* push(const MetaClass*, const Object*, Date, Date, double);
+
+    /* Add a problem to the list. */
+    void push(Problem* p);
 
     /** Remove all problems from the list that appear AFTER the one
       * passed as argument. */

@@ -171,13 +171,36 @@ void SolverMRP::SolverMRPdata::commit()
       }
       catch (...)
       {
+        // Log the exception as the only reason for the demand not being planned
+        (*i)->getConstraints().clear();
         // Error message
         logger << "Error: Caught an exception while solving demand '"
             << (*i)->getName() << "':" << endl;
         try {throw;}
-        catch (const bad_exception&) {logger << "  bad exception" << endl;}
-        catch (const exception& e) {logger << "  " << e.what() << endl;}
-        catch (...) {logger << "  Unknown type" << endl;}
+        catch (const bad_exception&) 
+        {
+          (*i)->getConstraints().push(new ProblemInvalidData(
+            (*i), "Exception during planning: bad_exception", "demand",           
+            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+          ));
+          logger << "  bad exception" << endl;
+        }
+        catch (const exception& e) 
+        {
+          (*i)->getConstraints().push(new ProblemInvalidData(
+            (*i), "Exception during planning: " + string(e.what()), "demand",
+            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+          ));
+          logger << "  " << e.what() << endl;
+        }
+        catch (...)
+        {
+          (*i)->getConstraints().push(new ProblemInvalidData(
+            (*i), "Exception during planning", "demand",
+            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+          ));
+          logger << "  Unknown type" << endl;
+        }
       }
     }
 

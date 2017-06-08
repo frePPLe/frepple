@@ -119,6 +119,11 @@ bool SolverMRP::checkOperation
     opplan->setQuantity(0.0001,false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent());
+    // No availability found anywhere in the horizon - data error
+    if (opplan->getDates().getEnd() == Date::infiniteFuture)
+      throw DataException(
+        "No available time found on operation '" + opplan->getOperation()->getName() + "'"
+        );
     // Pick up the earliest date we can reply back
     data.state->a_date = opplan->getDates().getEnd();
     data.state->a_qty = 0.0;

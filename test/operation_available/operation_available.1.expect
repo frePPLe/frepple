@@ -214,6 +214,7 @@ PROBLEM	late	1 units of demand '5. order 5' planned up to 7.0 days after its due
 PROBLEM	late	10 units of demand '5. order 6' planned up to 11.0 days after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00
 PROBLEM	late	20 units of demand '5. order 8' planned up to 22.0 days after its due date	2009-01-14T00:00:00 / 2009-02-05T00:00:00
 DEMAND CONSTRAINT	1. order 8	Operation '1. Deliver item 20 days' planned in the past	2008-12-23T00:00:00 / 2009-01-14T00:00:00	
+DEMAND CONSTRAINT	2. order 6	Error: No available time found on operation '2. Deliver item 10 days'	2009-01-14T00:00:00 / 2009-01-14T00:00:00	
 DEMAND CONSTRAINT	5. order 5	Resource '5. resource' has capacity shortage of 1	2009-01-05T00:00:00 / 2009-01-07T00:00:00	
 DEMAND CONSTRAINT	5. order 6	Resource '5. resource' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-13T00:00:00	
 DEMAND CONSTRAINT	5. order 8	Resource '5. resource' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-13T00:00:00	

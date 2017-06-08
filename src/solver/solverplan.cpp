@@ -180,7 +180,7 @@ void SolverMRP::SolverMRPdata::commit()
         catch (const bad_exception&) 
         {
           (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Exception during planning: bad_exception", "demand",           
+            (*i), "Error: bad exception", "demand",           
             (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
           ));
           logger << "  bad exception" << endl;
@@ -188,7 +188,7 @@ void SolverMRP::SolverMRPdata::commit()
         catch (const exception& e) 
         {
           (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Exception during planning: " + string(e.what()), "demand",
+            (*i), "Error: " + string(e.what()), "demand",
             (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
           ));
           logger << "  " << e.what() << endl;
@@ -196,7 +196,7 @@ void SolverMRP::SolverMRPdata::commit()
         catch (...)
         {
           (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Exception during planning", "demand",
+            (*i), "Error: unknown type", "demand",
             (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
           ));
           logger << "  Unknown type" << endl;

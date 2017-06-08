@@ -821,4 +821,4 @@ PROBLEM	before current	Operation 'Purchase buffer 7' planned in the past	2008-12
 PROBLEM	before current	Operation 'Purchase buffer 8' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 9' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	unplanned	Demand 'order 01 for item 4' is not planned	2009-01-01T00:00:00 / 2009-01-01T00:00:00
-DEMAND CONSTRAINT	order 01 for item 4	Exception during planning: Invalid sizing parameters for operation Purchase buffer 4	2009-01-01T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 01 for item 4	Error: Invalid sizing parameters for operation Purchase buffer 4	2009-01-01T00:00:00 / 2009-01-01T00:00:00	

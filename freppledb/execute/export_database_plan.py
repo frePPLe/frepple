@@ -1,11 +1,18 @@
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2011-2013 by frePPLe bvba
 #
-# All information contained herein is, and remains the property of frePPLe.
-# You are allowed to use and modify the source code, as long as the software is used
-# within your company.
-# You are not allowed to distribute the software, either in the form of source code
-# or in the form of compiled binaries.
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
 r'''
@@ -104,60 +111,65 @@ class export:
         ''')
       cursor.execute('''
         delete from operationplan
-        where (status='proposed' or status is null) or type = 'STCK';\n
+        where (status='proposed' or status is null) or type = 'STCK'
         ''')
     else:
       # Partial export for a single cluster
-      cursor.execute('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name));\n')
+      cursor.execute('create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name))')
       for i in frepple.items():
         if i.cluster == self.cluster:
           cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      cursor("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
+      cursor.execute("delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id)")
       cursor.execute('''
         delete from operationplanmaterial
         using cluster_keys
-        where operationplanmaterial.item_id = cluster_keys.name;\n
+        where operationplan_id in (
+          select id from operationplan
+          inner join cluster_keys on cluster_keys.name = operationplan.item_id
+          )
         ''')
       cursor.execute('''
         delete from out_problem
         where entity = 'demand' and owner in (
           select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
-          );\n
+          )
         ''')
       cursor.execute('''
         delete from out_problem
         where entity = 'material'
-        and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id);\n
+        and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id)
         ''')
       cursor.execute('''
         delete from operationplanresource
         where operationplan_id in (
           select id from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
-          where (status='proposed' or status is null or type='STCK')
-        );\n
+        )
         ''')
       cursor.execute('''
         delete from operationplan
         using cluster_keys
         where (status='proposed' or status is null or type='STCK')
-        and item_id = cluster_keys.name;\n
+        and item_id = cluster_keys.name
         ''')
-      cursor.execute("truncate table cluster_keys;\n")
+      # TODO next subqueries are not efficient - the exists condition triggers a sequential scan
+      cursor.execute("delete from out_constraint where exists (select 1 from forecast inner join cluster_keys on cluster_keys.name = forecast.item_id and out_constraint.demand like forecast.name || ' - %')")
+      cursor.execute("delete from out_problem where entity = 'demand' and exists (select 1 from forecast inner join cluster_keys on cluster_keys.name = forecast.item_id and out_problem.owner like forecast.name || ' - %')")
+      cursor.execute("truncate table cluster_keys")
       for i in frepple.resources():
         if i.cluster == self.cluster:
-          cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      cursor.execute("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id);\n")
-      cursor.execute('delete from operationplanresource using cluster_keys where resource = cluster_keys.name;\n')
-      cursor.execute('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name;\n')
-      cursor.execute("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name;\n")
-      cursor.execute('truncate table cluster_keys;\n')
+          cursor.execute(("insert into cluster_keys (name) values (%s)" % adapt(i.name).getquoted().decode(self.encoding)))
+      cursor.execute("delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id)")
+      cursor.execute('delete from operationplanresource using cluster_keys where resource = cluster_keys.name')
+      cursor.execute('delete from out_resourceplan using cluster_keys where resource = cluster_keys.name')
+      cursor.execute("delete from out_problem using cluster_keys where entity = 'capacity' and owner = cluster_keys.name")
+      cursor.execute('truncate table cluster_keys')
       for i in frepple.operations():
         if i.cluster == self.cluster:
-          cursor.execute(("insert into cluster_keys (name) values (%s);\n" % adapt(i.name).getquoted().decode(self.encoding)))
-      cursor.execute("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name;\n")
-      cursor.execute("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.operation_id = cluster_keys.name;\n") # TODO not correct in new data model
-      cursor.execute("drop table cluster_keys;\n")
+          cursor.execute(("insert into cluster_keys (name) values (%s)" % adapt(i.name).getquoted().decode(self.encoding)))
+      cursor.execute("delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name")
+      cursor.execute("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.name = cluster_keys.name")
+      cursor.execute("drop table cluster_keys")
     if self.verbosity:
       print("Emptied plan tables in %.2f seconds" % (time() - starttime))
 

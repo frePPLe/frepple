@@ -6651,8 +6651,8 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
     Date cur_date;
     Date prev_date;
     bool prev_value;
-    Calendar::EventIterator unavailableIterator;
-    bool hasUnavailability;
+    Calendar::EventIterator unavailIter;
+    Calendar::EventIterator unavailLocIter;
     double bucket_available;
     double bucket_load;
     double bucket_setup;

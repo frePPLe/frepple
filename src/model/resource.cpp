@@ -363,18 +363,23 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
   {
     // Start date of the first bucket
     end_date = PyIter_Next(bucketiterator);
-    if (!end_date) throw LogicException("Expecting at least two dates as argument");
+    if (!end_date)
+      throw LogicException("Expecting at least two dates as argument");
     cur_date = PythonData(end_date).getDate();
     prev_date = cur_date;
 
-    // A flag to remember whether this resource has an unavailability calendar.
-    hasUnavailability = r->getLocation() && r->getLocation()->getAvailable();
-    if (hasUnavailability)
+    // Initialize unavailability iterators
+    prev_value = true;
+    if (r->getLocation() && r->getLocation()->getAvailable())
     {
-      unavailableIterator = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
-      prev_value = unavailableIterator.getBucket() ?
-        unavailableIterator.getBucket()->getBool() :
-        res->getLocation()->getAvailable()->getDefault()!=0;
+      unavailLocIter = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
+      prev_value = (unavailLocIter.getCalendar()->getValue(cur_date) != 0);
+    }
+    if (r->getAvailable())
+    {
+      unavailIter = Calendar::EventIterator(res->getAvailable(), cur_date);
+      if (prev_value)
+        prev_value = (unavailIter.getCalendar()->getValue(cur_date) != 0);
     }
 
     // Advance loadplan iterator just beyond the starting date
@@ -402,21 +407,37 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
 
 Resource::PlanIterator::~PlanIterator()
 {
-  if (bucketiterator && !bucketized) Py_DECREF(bucketiterator);
-  if (start_date) Py_DECREF(start_date);
-  if (end_date) Py_DECREF(end_date);
+  if (bucketiterator && !bucketized)
+    Py_DECREF(bucketiterator);
+  if (start_date)
+    Py_DECREF(start_date);
+  if (end_date)
+    Py_DECREF(end_date);
 }
 
 
 void Resource::PlanIterator::update(Date till)
 {
   long timedelta;
-  if (hasUnavailability)
+  if (unavailIter.getCalendar() || unavailLocIter.getCalendar())
   {
     // Advance till the iterator exceeds the target date
-    while (unavailableIterator.getDate() <= till)
+    while (
+      (unavailLocIter.getCalendar() && unavailLocIter.getDate() <= till)
+      || (unavailIter.getCalendar() && unavailIter.getDate() <= till)
+      )
     {
-      timedelta = unavailableIterator.getDate() - prev_date;
+      if (unavailIter.getCalendar() &&
+        (!unavailLocIter.getCalendar() || unavailIter.getDate() < unavailLocIter.getDate()))
+      {
+        timedelta = unavailIter.getDate() - prev_date;
+        prev_date = unavailIter.getDate();
+      }
+      else
+      {
+        timedelta = unavailLocIter.getDate() - prev_date;
+        prev_date = unavailLocIter.getDate();
+      }
       if (prev_value)
       {
         bucket_available += cur_size * timedelta;
@@ -425,11 +446,24 @@ void Resource::PlanIterator::update(Date till)
       }
       else
         bucket_unavailable += cur_size * timedelta;
-      prev_value = unavailableIterator.getBucket() ?
-        unavailableIterator.getBucket()->getBool() :
-        res->getLocation()->getAvailable()->getDefault()!=0;
-      prev_date = unavailableIterator.getDate();
-      ++unavailableIterator;
+      if (unavailIter.getCalendar() && unavailIter.getDate() == prev_date)
+      {
+        // Increment only resource unavailability iterator        
+        ++unavailIter;
+        if (unavailLocIter.getCalendar() && unavailLocIter.getDate() == prev_date)
+          // Increment both resource and location unavailability iterators
+          ++unavailLocIter;
+      }
+      else if (unavailLocIter.getCalendar() && unavailLocIter.getDate() == prev_date)
+        // Increment only location unavailability iterator
+        ++unavailLocIter;
+      else
+        throw LogicException("Unreachable code");
+      prev_value = true;
+      if (unavailIter.getCalendar())
+        prev_value = (unavailIter.getCalendar()->getValue(prev_date) != 0);
+      if (unavailLocIter.getCalendar() && prev_value)
+        prev_value = (unavailLocIter.getCalendar()->getValue(prev_date) != 0);
     }
     // Account for time period finishing at the "till" date
     timedelta = till - prev_date;
@@ -471,7 +505,8 @@ PyObject* Resource::PlanIterator::iternext()
     else
     {
       // At this point ldplaniter points to a bucket start event.
-      if (start_date) Py_DECREF(start_date);
+      if (start_date) 
+        Py_DECREF(start_date);
       if (end_date)
         start_date = end_date;
       else
@@ -494,10 +529,12 @@ PyObject* Resource::PlanIterator::iternext()
   else
   {
     // Get the start and end date of the current bucket
-    if (start_date) Py_DECREF(start_date);
+    if (start_date)
+      Py_DECREF(start_date);
     start_date = end_date;
     end_date = PyIter_Next(bucketiterator);
-    if (!end_date) return nullptr;
+    if (!end_date)
+      return nullptr;
     cur_date = PythonData(end_date).getDate();
 
     // Measure from beginning of the bucket till the first event in this bucket

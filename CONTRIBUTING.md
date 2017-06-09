@@ -1,39 +1,26 @@
-This directory contains the frePPLe web application.
-It is built using the incredible Django web application framework.
+## How to contribute to frePPLe
 
+#### **Do you have some suggestions for enhancements?**
 
-The basic steps to set up a development environment:
+* Post your suggestion to the [user group](https://groups.google.com/forum/#!forum/frepple-users)
 
-- Install python 3.5 or higher from https://www.python.org/downloads/
+#### **Did you find a bug?**
 
-- Install and configure the PostgreSQL database.
+* Do not open up a GitHub issue if the bug is a **security vulnerability**, 
+  and [report it](mailto:info@frepple.com) to us directly.
 
-- Install the psycopg2 package to access PostgreSQL databases from Python.
+* If you're unsure whether the behavior is due to a misconfiguration or a software bug, first **post your issue
+  to the [user group](https://groups.google.com/forum/#!forum/frepple-users)**.
 
-- Install the Python packages using the pip package manager.
-    pip install -r requirements.txt
+* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/frePPLe/frepple/issues).
 
-- Install nodes.js from https://nodejs.org/en/download/
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/frePPLe/frepple/issues/issues/new).
+  Be sure to include a **title**, clear **description** and, if appropriate, a **screenshot** or a **dataset** demonstrating the problem.
 
-- Install the javascript dependencies.
-    npm install
+#### **Do you want to update translations or add a new language?**
 
-- Create a database for frePPle.
-  For the Django tests, the user should have sufficient privileges to create a
-  new database schema.
+* This process is documented [here](https://frepple.com/docs/4.2/developer-guide/user-interface/translating-the-user-interface.html)
 
-- Edit the file djangosettings.py to point to your database schema.
+#### **Any other questions?**
 
-- Initialize the database schema:
-      frepplectl.py migrate
-  When the command prompts you to create a django superuser you can choose
-  'no', since the inital dataset that is installed will include the users
-  "admin" with password "admin".
-  Of course, you can always choose 'yes' and create your own superuser account.
-  When the command finishes, verify the database tables are created correctly.
-
-- Test your installation by starting the development web server:
-      frepplectl.py runserver
-  and then pointing your browser to http://127.0.0.1:8000/
-  A login page should come up.
-  Use admin/admin as the user name and password.
+* Feel free to [contact us](mailto:info@frepple.com). We are easy going and all ears to your input, feedback and questions.

@@ -31,7 +31,7 @@ It provides the following functionality:
 import codecs
 import collections
 import csv
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, time
 from decimal import Decimal
 import functools
 import math
@@ -54,7 +54,7 @@ from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import Field, CharField, IntegerField, AutoField, DurationField
-from django.db.models.fields import DateField, DateTimeField, NOT_PROVIDED
+from django.db.models.fields import DateField, DateTimeField, TimeField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
@@ -1576,16 +1576,16 @@ class GridReport(View):
                         data = "%.6f" % data
                       else:
                         data = str(data) if data is not None else None
-                    elif isinstance(headers[colnum], (DateField, DateTimeField)):
-                      if isinstance(data, datetime):
-                        # Rounding to second
-                        if data.microsecond < 500000:
-                          data = data.replace(microsecond=0)
-                        else:
-                          data = data.replace(microsecond=0) + timedelta(seconds=1)
-                    else:
-                      if isinstance(data, str):
-                        data = data.strip()
+                    elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
+                      # Rounding to second
+                      if data.microsecond < 500000:
+                        data = data.replace(microsecond=0)
+                      else:
+                        data = data.replace(microsecond=0) + timedelta(seconds=1)
+                    elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
+                      data = "%s:%s:%s" % (data.hour, data.minute, data.second)
+                    elif isinstance(data, str):
+                      data = data.strip()
                     d[headers[colnum].name] = data
                   colnum += 1
 
@@ -2296,6 +2296,8 @@ def _getCellValue(data):
     return data
   elif isinstance(data, timedelta):
     return data.total_seconds()
+  elif isinstance(data, time):
+    return data.isoformat()
   else:
     return str(data)
 
@@ -2541,16 +2543,16 @@ def importWorkbook(request):
                       data = "%.6f" % data
                     else:
                       data = str(data) if data is not None else None
-                  elif isinstance(headers[colnum], (DateField, DateTimeField)):
-                    if isinstance(data, datetime):
-                      # Rounding to second
-                      if data.microsecond < 500000:
-                        data = data.replace(microsecond=0)
-                      else:
-                        data = data.replace(microsecond=0) + timedelta(seconds=1)
-                  else:
-                    if isinstance(data, str):
-                      data = data.strip()
+                  elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
+                    # Rounding to second
+                    if data.microsecond < 500000:
+                      data = data.replace(microsecond=0)
+                    else:
+                      data = data.replace(microsecond=0) + timedelta(seconds=1)
+                  elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
+                    data = "%s:%s:%s" % (data.hour, data.minute, data.second)
+                  elif isinstance(data, str):
+                    data = data.strip()
                   d[headers[colnum].name] = data
                 colnum += 1
               # Step 2: Fill the form with data, either updating an existing

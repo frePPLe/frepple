@@ -6,8 +6,8 @@
 
 #### **Did you find a bug?**
 
-* **Do not open up a GitHub issue if the bug is a security vulnerability**, 
-  and report it to us directly at info@frepple.com.
+* Do not open up a GitHub issue if the bug is a **security vulnerability**, 
+  and [report it](mailto:info@frepple.com) to us directly.
 
 * If you're unsure whether the behavior is due to a misconfiguration or a software bug, first **post your issue
   to the [user group](https://groups.google.com/forum/#!forum/frepple-users)**.
@@ -23,4 +23,4 @@
 
 #### **Any other questions?**
 
-* Feel free to [contact us](info@frepple.com). We are easy going and all ears to your input, feedback and questions.
+* Feel free to [contact us](mailto:info@frepple.com). We are easy going and all ears to your input, feedback and questions.

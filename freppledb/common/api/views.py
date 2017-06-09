@@ -23,16 +23,24 @@ from django.views.decorators.csrf import csrf_protect
 from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 from rest_framework import filters
+from rest_framework import permissions
 
 
 @staff_member_required
 @csrf_protect
 def APIIndexView(request):
+  permission_classes = (permissions.DjangoModelPermissions,)
   return render(request, 'rest_framework/index.html',
-    context = {
-     'title': _('REST API Help'),
-      }
-    )
+                context={
+                 'title': _('REST API Help'),
+                  }
+                )
+
+
+class frepplePermissionClass(permissions.DjangoModelPermissions):
+  def has_permission(self, request, view):
+    self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+    return super(frepplePermissionClass, self).has_permission(request, view)
 
 
 class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
@@ -41,10 +49,14 @@ class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
      - support for request-specific scenario database
      - add 'title' to the context of the html view
   '''
+
   filter_backends = (filters.DjangoFilterBackend,)
+  permission_classes = (frepplePermissionClass,)
+
 
   def get_queryset(self):
-    return super().get_queryset().using(self.request.database)
+    queryset = super().get_queryset().using(self.request.database)
+    return queryset
 
   def get_serializer(self, *args, **kwargs):
     kwargs['partial'] = True
@@ -66,6 +78,8 @@ class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
      - support for request-specific scenario database
      - add 'title' to the context of the html view
   '''
+  permission_classes = (frepplePermissionClass,)
+
   def get_queryset(self):
     if self.request.database == 'default':
       return super().get_queryset()

@@ -59,41 +59,36 @@ class checkBuckets(CheckTask):
 
     with connections[database].cursor() as cursor:
       cursor.execute('''
-        SELECT DISTINCT
-            b1.name,
-            b1.bucket_id,
-            b1.startdate,
-            b1.enddate,
-            CASE WHEN b1.enddate = (SELECT max(enddate) FROM common_bucketdetail WHERE bucket_id = b1.bucket_id)
-            THEN 1 ELSE 0
-            END AS lastbucket
-        FROM common_bucketdetail b1
-        RIGHT OUTER JOIN common_bucketdetail b2
-        ON b2.bucket_id = b1.bucket_id AND b2.id <> b1.id
-        AND (
-            (b2.startdate = b1.startdate AND b2.enddate <> b1.enddate)
-            OR
-            (b2.startdate <> b1.startdate AND b2.enddate = b1.enddate)
-            OR
-            (NOT EXISTS (
-              SELECT 1 FROM common_bucketdetail b2
-              WHERE b2.bucket_id = b1.bucket_id
-              AND (b2.startdate = b1.enddate)
-            ))
+        WITH problems AS (
+          (
+            SELECT bucket_id, enddate AS date, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
+            EXCEPT
+            SELECT bucket_id, startdate, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
+          )
+          UNION ALL
+            SELECT bucket_id, startdate AS date, 'startdate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, startdate HAVING COUNT(*)>1
+          UNION ALL
+            SELECT bucket_id, enddate AS date, 'enddate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, enddate HAVING COUNT(*)>1
+        ),
+        maxenddate AS (
+              SELECT bucket_id, MAX(enddate) AS theend FROM common_bucketdetail GROUP BY bucket_id
         )
-        WHERE b1.bucket_id IS NOT NULL
+        SELECT problems.bucket_id, common_bucketdetail.name, problems.date, problems.date = maxenddate.theend, problems.message
+        FROM common_bucketdetail
+        RIGHT OUTER JOIN problems ON problems.bucket_id = common_bucketdetail.bucket_id AND (common_bucketdetail.startdate = problems.date OR common_bucketdetail.enddate = problems.date)
+        INNER JOIN maxenddate ON maxenddate.bucket_id = common_bucketdetail.bucket_id
       ''')
       errors = 0
       empty = True
       for rec in cursor:
         empty = False
-        if rec[4] == 0:  # if not last bucket
+        if rec[3] == False:  # if not last bucket
           errors += 1
-          print(rec[0], rec[1], rec[2], rec[3], rec[4])
+          print(rec[0], rec[1], rec[2], rec[4])
       if empty:
         raise ValueError("No Calendar Buckets available")
       if errors > 0:
-        raise ValueError("Invalid Calendar Bucket (date/time gap after buckets or different buckets with same start and/or end)")
+        raise ValueError("Invalid Bucket dates")
 
 
 @PlanTaskRegistry.register
@@ -456,7 +451,7 @@ class loadSuboperations(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT operation_id, suboperation_id, priority, effective_start, effective_end,
-          (select type
+          (SELECT type
            from operation
            where suboperation.operation_id = operation.name) as type
         FROM suboperation
@@ -785,7 +780,7 @@ class loadResources(LoadTask):
         SELECT
           name, description, maximum, maximum_calendar_id, location_id, type,
           cost, maxearly, setup, setupmatrix_id, category, subcategory,
-          owner_id, source, available_id 
+          owner_id, source, available_id
         FROM %s %s
         ORDER BY lvl ASC, name
         ''' % (connections[cursor.db.alias].ops.quote_name('resource'), filter_where) )
@@ -827,7 +822,7 @@ class loadResources(LoadTask):
           if i[12]:
             x.owner = frepple.resource(name=i[12])
           if i[14]:
-            x.available = frepple.calendar(name=i[14])            
+            x.available = frepple.calendar(name=i[14])
         except Exception as e:
           print("Error:", e)
       print('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))

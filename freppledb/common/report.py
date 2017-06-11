@@ -40,6 +40,8 @@ import json
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.writer.write_only import WriteOnlyCell
 
 from django.db.models import Model
 from django.apps import apps
@@ -483,7 +485,7 @@ class GridReport(View):
       minlvl = reportclass.minBucketLevel
     try:
       bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets, level__lte=maxlvl, level__gte=minlvl).name
-    except Exception as e:
+    except Exception:
       try:
         bucket = Bucket.objects.using(request.database).filter(level__lte=maxlvl, level__gte=minlvl).order_by('-level')[0].name
       except:
@@ -600,8 +602,16 @@ class GridReport(View):
       fields = [ i for i in reportclass.rows if i.field_name and not i.hidden ]
     field_names = [ f.field_name for f in fields]
 
-    # Write a header row
-    ws.append([ force_text(f.title).title() for f in fields ])
+    # Write a formatted header row
+    header = []
+    for f in fields:
+      cell = WriteOnlyCell(ws, value=force_text(f.title).title())
+      cell.style = 'Accent1'
+      header.append(cell)
+    ws.append(header)
+
+    # Add an auto-filter to the table
+    ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
     # Loop over all records
     fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden]
@@ -611,7 +621,6 @@ class GridReport(View):
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*field_names):
-
       if hasattr(row, "__getitem__"):
         ws.append([ _getCellValue(row[f]) for f in field_names ])
       else:
@@ -1996,7 +2005,7 @@ class GridPivot(GridReport):
       r.append(', "%s":[' % i['bucket'])
       first2 = True
       for f in reportclass.crosses:
-        if i[f[0]] == None:
+        if i[f[0]] is None:
           if first2:
             r.append('null')
             first2 = False
@@ -2125,7 +2134,7 @@ class GridPivot(GridReport):
             sf.truncate(0)
             fields = [
               force_text(row_of_buckets[0][s.name], encoding=encoding, errors='ignore')
-              for s in myrows  if s.name
+              for s in myrows if s.name
               ]
             fields.extend([
               force_text('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])), encoding=encoding, errors='ignore')
@@ -2201,14 +2210,32 @@ class GridPivot(GridReport):
       mycrosses = [ f for f in reportclass.crosses if f[1].get('visible', True) ]
 
     # Write a header row
-    fields = [ force_text(f.title).title() for f in myrows if f.name ]
+    fields = []
+    for f in myrows:
+      if f.name:
+        cell = WriteOnlyCell(ws, value=force_text(f.title).title())
+        cell.style = 'Accent1'
+        fields.append(cell)
     if listformat:
-      fields.extend([ capfirst(force_text(_('bucket'))) ])
-      fields.extend([ capfirst(_(f[1].get('title', _(f[0])))) for f in mycrosses ])
+      cell = WriteOnlyCell(ws, value=capfirst(force_text(_('bucket'))))
+      cell.style = 'Accent1'
+      fields.append(cell)
+      for f in mycrosses:
+        cell = WriteOnlyCell(ws, value=capfirst(_(f[1].get('title', _(f[0])))))
+        cell.style = 'Accent1'
+        fields.append(cell)
     else:
-      fields.extend( [capfirst(_('data field'))])
-      fields.extend([ str(b['name']) for b in request.report_bucketlist])
+      cell = WriteOnlyCell(ws, value=capfirst(_('data field')))
+      cell.style = 'Accent1'
+      fields.append(cell)
+      for b in request.report_bucketlist:
+        cell = WriteOnlyCell(ws, value=str(b['name']))
+        cell.style = 'Accent1'
+        fields.append(cell)
     ws.append(fields)
+
+    # Add an auto-filter to the table
+    ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(fields))
 
     # Write the report content
     if listformat:
@@ -2308,7 +2335,6 @@ def exportWorkbook(request):
 
   # Loop over all selected entity types
   ok = False
-  cursor = connections[request.database].cursor()
   for entity_name in request.POST.getlist('entities'):
     try:
       # Initialize
@@ -2318,9 +2344,15 @@ def exportWorkbook(request):
       permname = get_permission_codename('change', model._meta)
       if not request.user.has_perm("%s.%s" % (app_label, permname)):
         continue
+
       # Never export some special administrative models
       if model in EXCLUDE_FROM_BULK_OPERATIONS:
         continue
+
+      # Create sheet
+      ok = True
+      ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
+
       # Build a list of fields
       fields = []
       header = []
@@ -2340,18 +2372,26 @@ def exportWorkbook(request):
           lastmodified = True  # Put the last-modified field at the very end
         elif not (exclude and i.name in exclude and not i.name == model._meta.pk.name.lower()):
           fields.append(i.column)
-          header.append(force_text(i.verbose_name))
+          cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
+          cell.style = 'Accent1'
+          header.append(cell)
       if source:
         fields.append("source")
-        header.append(force_text(_("source")))
+        cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+        cell.style = 'Accent1'
+        header.append(cell)
       if lastmodified:
         fields.append("lastmodified")
-        header.append(force_text(_("last modified")))
-      # Create sheet
-      ok = True
-      ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
-      # Write a header row
+        cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+        cell.style = 'Accent1'
+        header.append(cell)
+
+      # Write a formatted header row
       ws.append(header)
+
+      # Add an auto-filter to the table
+      ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
+
       # Loop over all records
       if issubclass(model, HierarchyModel):
         model.rebuildHierarchy(database=request.database)
@@ -2360,7 +2400,7 @@ def exportWorkbook(request):
         query = model.objects.all().using(request.database).order_by('pk')
       for rec in query.values_list(*fields):
         ws.append([ _getCellValue(f) for f in rec ])
-    except Exception as e:
+    except Exception:
       pass  # Silently ignore the error and move on to the next entity.
 
   # Not a single entity to export

@@ -90,7 +90,18 @@ class export:
     starttime = time()
     if self.cluster == -1:
       # Complete export for the complete model
-      cursor.execute("truncate table out_problem, out_resourceplan, out_constraint;\n")
+      cursor.execute("truncate table out_problem, out_resourceplan, out_constraint")
+      cursor.execute('''
+        update operationplan
+          set owner_id = null
+          where owner_id is not null
+          and exists (
+            select 1
+            from operationplan op2
+            where op2.id = operationplan.owner_id
+            and (op2.status is null or op2.status = 'proposed')
+            )
+        ''')
       cursor.execute('''
         delete from operationplanmaterial
         using operationplan

@@ -1142,7 +1142,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus),
+    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),

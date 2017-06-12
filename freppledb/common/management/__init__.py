@@ -16,8 +16,8 @@
 #
 
 from django.core.signals import request_finished
-from django.db.models import signals
 from django.db import DEFAULT_DB_ALIAS
+from django.db.models import signals
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
@@ -29,15 +29,15 @@ def removeModelPermissions(app, model, db=DEFAULT_DB_ALIAS):
   Permission.objects.all().using(db).filter(content_type__app_label=app, content_type__model=model).delete()
 
 
-def createViewPermissions(sender, apps, signal, using=DEFAULT_DB_ALIAS, **kwargs):
-  if using != DEFAULT_DB_ALIAS:
+def createViewPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
+  if using != DEFAULT_DB_ALIAS or 'apps' not in kwargs:
     return
   # Create model read permissions
-  for m in apps.get_models():
+  for m in kwargs['apps'].get_models():
     p = Permission.objects.get_or_create(
-          codename='view_%s' % m._meta.model_name,
-          content_type=ContentType.objects.db_manager(using).get_for_model(m)
-          )[0]
+           codename='view_%s' % m._meta.model_name,
+           content_type=ContentType.objects.db_manager(using).get_for_model(m)
+           )[0]
     p.name = 'Can view %s' % m._meta.verbose_name_raw
     p.save()
 

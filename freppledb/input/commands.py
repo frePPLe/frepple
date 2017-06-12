@@ -1174,10 +1174,14 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
         opplan = frepple.operationplan(
           operation=frepple.operation(name=i[0]),
           id=i[1], quantity=i[2], source=i[7],
-          owner=frepple.operationplan(id=i[6]),
           start=i[3], end=i[4], status=i[5]
           )
-        if i[8]:
+        if i[6] and opplan:
+          try:
+            opplan.owner = frepple.operationplan(id=i[6])
+          except:
+            pass        
+        if i[8] and opplan:
           opplan.demand = frepple.demand(name=i[8])
       print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 

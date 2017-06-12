@@ -21,7 +21,14 @@ import django.core.validators
 from django.db import models, migrations
 import django.utils.timezone
 
+from django.contrib.contenttypes.models import ContentType
 
+
+def worakaround(apps, schema_editor):
+  # Workaround for django issue #10827
+  ContentType.objects.clear_cache()
+  
+  
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -30,6 +37,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(worakaround),
         migrations.CreateModel(
             name='User',
             fields=[

@@ -40,6 +40,12 @@ def APIIndexView(request):
 class frepplePermissionClass(permissions.DjangoModelPermissions):
   def has_permission(self, request, view):
     self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
+    self.perms_map['OPTIONS'] = ['%(app_label)s.view_%(model_name)s']
+    self.perms_map['HEAD'] = ['%(app_label)s.view_%(model_name)s']
+
+    # match the permissions on the correct database
+    request.user._state.db = request.database
+
     return super(frepplePermissionClass, self).has_permission(request, view)
 
 

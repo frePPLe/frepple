@@ -64,7 +64,7 @@ def Upload(request):
         obj.quantity = abs(float(rec['quantity']))
         obj.status = 'approved'
         cleaned_records.append(obj)
-      elif rec['type'] == 'OP':
+      elif rec['type'] == 'MO':
         # Manufacturing orders
         obj = OperationPlan.objects.using(request.database).get(id=rec['id'])
         if obj.operation.name != rec['operation']:

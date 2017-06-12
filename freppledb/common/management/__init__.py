@@ -65,5 +65,5 @@ def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
 
 signals.post_migrate.connect(removePermissions)
 signals.post_migrate.connect(createExtraPermissions)
-signals.post_migrate.connect(createViewPermissions, common_models)
+signals.post_migrate.connect(createViewPermissions)
 request_finished.connect(resetRequest)

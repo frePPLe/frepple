@@ -390,7 +390,7 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.ManufacturingOrder
       fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
-                'criticality', 'delay', 'owner', 'source', 'lastmodified')
+                'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -400,7 +400,7 @@ class ManufacturingOrderAPI(frePPleListCreateAPIView):
     serializer_class = ManufacturingOrderSerializer
 
     filter_fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
-                'criticality', 'delay', 'owner', 'source', 'lastmodified')
+                'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
 
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ManufacturingOrder.objects.all()
@@ -411,7 +411,7 @@ class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.DistributionOrder
       fields = ('id', 'reference', 'status', 'item', 'origin', 'destination', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -421,7 +421,7 @@ class DistributionOrderAPI(frePPleListCreateAPIView):
     serializer_class = DistributionOrderSerializer
 
     filter_fields = ('id', 'reference', 'status', 'item', 'origin', 'destination', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
 
 class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DistributionOrder.objects.all()
@@ -432,7 +432,7 @@ class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.PurchaseOrder
       fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -442,7 +442,7 @@ class PurchaseOrderAPI(frePPleListCreateAPIView):
     serializer_class = PurchaseOrderSerializer
 
     filter_fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
 
 class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.PurchaseOrder.objects.all()
@@ -453,7 +453,7 @@ class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.DeliveryOrder
       fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
-                'startdate', 'enddate', 'due', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
@@ -463,7 +463,7 @@ class DeliveryOrderAPI(frePPleListCreateAPIView):
     serializer_class = DeliveryOrderSerializer
 
     filter_fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
-                'startdate', 'enddate', 'due', 'delay', 'source', 'lastmodified')
+                'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
 
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DeliveryOrder.objects.all()

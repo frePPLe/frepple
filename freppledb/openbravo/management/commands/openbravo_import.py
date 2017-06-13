@@ -985,7 +985,7 @@ class Command(BaseCommand):
         )
       delete = [ (i,) for i in unused_keys ]
       cursor.executemany('delete from resourceskill where resource_id=%s', delete)
-      cursor.executemany('delete from resourceload where resource_id=%s', delete)
+      cursor.executemany('delete from operationresource where resource_id=%s', delete)
       cursor.executemany('update resource set owner_id = null where owner_id=%s', delete)
       cursor.executemany('delete from resource where name=%s', delete)
       if self.verbosity > 0:

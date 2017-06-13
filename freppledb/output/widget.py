@@ -195,26 +195,10 @@ class ManufacturingOrderWidget(Widget):
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
 
-    // Draw invisible rectangles for the hoverings
-    svg.selectAll("g")
-     .data(data)
-     .enter()
-     .append("g")
-     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
-     .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
-      .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
-
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
+      .attr("id","xAxisMO")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
       .call(xAxis)
@@ -233,6 +217,29 @@ class ManufacturingOrderWidget(Widget):
       .attr("transform", "translate(" + margin_y + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
+
+    // get position of the first tick in the graph
+    var tickposition = 0;
+    if (typeof $("#xAxisMO").children()[0].attributes !== 'undefined') {
+      tickposition = parseInt($("#xAxisMO").children()[0].attributes.transform.value.slice(10));
+    }
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g>rect")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) {
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
+        })
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw the lines
     var line_value = d3.svg.line()
@@ -416,26 +423,10 @@ class DistributionOrderWidget(Widget):
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
 
-    // Draw invisible rectangles for the hoverings
-    svg.selectAll("g")
-     .data(data)
-     .enter()
-     .append("g")
-     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
-     .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
-      .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
-
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
+      .attr("id","xAxisDO")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
       .call(xAxis)
@@ -454,6 +445,29 @@ class DistributionOrderWidget(Widget):
       .attr("transform", "translate(" + margin_y + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
+
+    // get position of the first tick in the graph
+    var tickposition = 0;
+    if (typeof $("#xAxisDO").children()[0].attributes !== 'undefined') {
+      tickposition = parseInt($("#xAxisDO").children()[0].attributes.transform.value.slice(10));
+    }
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g>rect")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) {
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
+        })
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw the lines
     var line_value = d3.svg.line()
@@ -637,26 +651,10 @@ class PurchaseOrderWidget(Widget):
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
 
-    // Draw invisible rectangles for the hoverings
-    svg.selectAll("g")
-     .data(data)
-     .enter()
-     .append("g")
-     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; })
-     .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
-      .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
-
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x).tickValues(myticks).orient("bottom");
     svg.append("g")
+      .attr("id","xAxisPO")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
       .call(xAxis)
@@ -675,6 +673,29 @@ class PurchaseOrderWidget(Widget):
       .attr("transform", "translate(" + margin_y + ", 10 )")
       .attr("class", "y axis")
       .call(yAxis);
+
+    // get position of the first tick in the graph
+    var tickposition = 0;
+    if (typeof $("#xAxisPO").children()[0].attributes !== 'undefined') {
+      tickposition = parseInt($("#xAxisPO").children()[0].attributes.transform.value.slice(10));
+    }
+
+    // Draw invisible rectangles for the hoverings
+    svg.selectAll("g>rect")
+     .data(data)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
+     .append("rect")
+      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("width", x.rangeBand())
+      .attr("fill-opacity", 0)
+      .on("mouseover", function(d) {
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        $("#tooltip").css('background-color','black').css('color','white');
+        })
+      .on("mousemove", graph.moveTooltip)
+      .on("mouseout", graph.hideTooltip);
 
     // Draw the lines
     var line_value = d3.svg.line()

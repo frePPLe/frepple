@@ -1036,6 +1036,16 @@ class SolverMRP : public Solver
       */
     void scanExcess(CommandList*);
 
+    /** Return true if there is at least one non-delivery operationplan in
+      * the command list.
+      */
+    bool hasOperationPlans(CommandManager*);
+
+    /** Return true if there is at least one non-delivery operationplan in
+      * the command list.
+      */
+    bool hasOperationPlans(CommandList*);
+
     /** Get a reference to the command list. */
     SolverMRPdata& getCommands()
     {

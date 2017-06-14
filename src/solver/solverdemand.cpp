@@ -291,14 +291,26 @@ void SolverMRP::solve(const Demand* l, void* v)
 					  best_q_date = plan_date;
 				  }
 
-				  // Delete operationplans - Undo all changes
-				  data->rollback(topcommand);
-
 				  // Set the ask date for the next pass through the loop
-				  if (next_date <= copy_plan_date
+          if (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
+            && plan_qty - data->state->a_qty > ROUNDING_ERROR)
+          {
+            // Check whether the reply is based purely on onhand or not
+            if (data->getSolver()->hasOperationPlans(data))
+            {
+              // Oops, we didn't get a proper answer we can use for the next loop.
+              // Print a warning and simply try one day later.
+              if (loglevel > 0)
+                logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
+              plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+            }
+            else
+              // The shipment quantity was purely based on onhand in some buffers.
+              // In this case we can still trust the next date returned by the search.
+              plan_date = next_date;
+          }
+          else if (next_date <= copy_plan_date
 					  || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
-					  || (data->state->a_qty > ROUNDING_ERROR && plan_qty - data->state->a_qty < l->getMinShipment()
-						  && plan_qty - data->state->a_qty > ROUNDING_ERROR)
             || (next_date == Date::infiniteFuture && data->state->a_qty > ROUNDING_ERROR))
 				  {
 					  // Oops, we didn't get a proper answer we can use for the next loop.
@@ -310,6 +322,9 @@ void SolverMRP::solve(const Demand* l, void* v)
 				  else
 					  // Use the next-date answer from the solver
 					  plan_date = next_date;
+
+          // Delete operationplans - Undo all changes
+          data->rollback(topcommand);
 			  }
 			  else
 			  {
@@ -490,6 +505,44 @@ void SolverMRP::scanExcess(CommandList* l)
       }
     }
   }
+}
+
+
+bool SolverMRP::hasOperationPlans(CommandManager* mgr)
+{
+  for (CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
+  {
+    if (i->isActive())
+    {
+      if (hasOperationPlans(&*i))
+        return true;
+    }
+  }
+  return false;
+}
+
+
+bool SolverMRP::hasOperationPlans(CommandList* l)
+{
+  // Loop over all newly created operationplans found in the command stack
+  for (CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)
+  {
+    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(&*cmd);
+    if (!createcmd)
+    {
+      // If the command is a list: recursively call this function
+      CommandList* cmdlist = dynamic_cast<CommandList*>(&*cmd);
+      if (cmdlist && hasOperationPlans(cmdlist))
+        return true;
+      //else: Not a command creating an operationplan: move on
+    }
+    else if (createcmd->getOperationPlan()
+      && createcmd->getOperationPlan()->getQuantity() > 0
+      && !createcmd->getOperationPlan()->getDemand()
+      )
+      return true;
+  }
+  return false;
 }
 
 }

@@ -474,7 +474,7 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Demand
       fields = ('name', 'description', 'category', 'subcategory', 'item', 'customer', 'location', 'due',
-                'status', 'operation', 'quantity', 'priority', 'minshipment', 'maxlateness')
+                'status', 'operation', 'quantity', 'priority', 'plan', 'minshipment', 'maxlateness')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial=True
@@ -485,7 +485,7 @@ class DemandAPI(frePPleListCreateAPIView):
 
 
     filter_fields = ('name', 'description', 'category', 'subcategory', 'item', 'customer', 'location', 'due',
-                'status', 'operation', 'quantity', 'priority', 'minshipment', 'maxlateness')
+                'status', 'operation', 'quantity', 'priority', 'plan', 'minshipment', 'maxlateness')
 
 class DemanddetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Demand.objects.all()

@@ -22,10 +22,12 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.contrib.contenttypes.models import ContentType
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
+import freppledb.input.models as inputmodels
 from freppledb import VERSION
 
 
@@ -105,7 +107,7 @@ class Command(BaseCommand):
 
       # Get a list of all django tables in the database
       tables = set(connections[database].introspection.django_table_names(only_existing=True))
-
+      ContentTypekeys = set()
       # Validate the user list of tables
       if models:
         models2tables = set()
@@ -115,6 +117,9 @@ class Command(BaseCommand):
             x = apps.get_model(x[0], x[1])
             if x in EXCLUDE_FROM_BULK_OPERATIONS:
               continue
+
+            ContentTypekeys.add(ContentType.objects.get_for_model(x).pk)
+
             x = x._meta.db_table
             if x not in tables:
               raise
@@ -123,16 +128,16 @@ class Command(BaseCommand):
             raise CommandError("Invalid model to erase: %s" % m)
         tables = models2tables
       else:
+        tables.discard('django_admin_log')
         for i in EXCLUDE_FROM_BULK_OPERATIONS:
           tables.discard(i._meta.db_table)
-
       # Some tables need to be handled a bit special
       if "setupmatrix" in tables:
         tables.add("setuprule")
       if 'operationplan' in tables:
         tables.add('operationplanmaterial')
         tables.add('operationplanresource')
-      if 'resource' in tables and not 'out_resourceplan' in tables:
+      if 'resource' in tables and 'out_resourceplan' not in tables:
         tables.add('out_resourceplan')
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
@@ -142,13 +147,15 @@ class Command(BaseCommand):
       tables.discard('common_user_groups')
       tables.discard('common_user_user_permissions')
       tables.discard('common_preference')
-      tables.discard('django_admin_log')
       tables.discard('django_content_type')
       tables.discard('execute_log')
       tables.discard('common_scenario')
 
       # Delete all records from the tables.
       with transaction.atomic(using=database, savepoint=False):
+        if len(ContentTypekeys) > 0:
+          query = '''delete from django_admin_log where content_type_id = any('%s') ''' % ContentTypekeys
+          cursor.execute(query)
         if "common_bucket" in tables:
           cursor.execute('update common_user set horizonbuckets = null')
         for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
@@ -170,6 +177,8 @@ class Command(BaseCommand):
                 )
               ''')
             cursor.execute("delete from operationplan where type = 'PO'")
+            key = ContentType.objects.get_for_model(inputmodels.PurchaseOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %d" % key)
           if 'input.distributionorder' in models:
             cursor.execute('''
               delete from operationplanresource
@@ -186,6 +195,8 @@ class Command(BaseCommand):
                 )
               ''')
             cursor.execute("delete from operationplan where type = 'DO'")
+            key = ContentType.objects.get_for_model(inputmodels.DistributionOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %d" % key)
           if 'input.manufacturingorder' in models:
             cursor.execute('''
               delete from operationplanmaterial
@@ -202,6 +213,26 @@ class Command(BaseCommand):
                 )
               ''')
             cursor.execute("delete from operationplan where type = 'MO'")
+            key = ContentType.objects.get_for_model(inputmodels.ManufacturingOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %d" % key)
+          if 'input.deliveryorder' in models:
+            cursor.execute('''
+              delete from operationplanmaterial
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'DLVR'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanresource
+              where operationplan_id in (
+                select operationplan.id from operationplan
+                where type = 'DLVR'
+                )
+              ''')
+            cursor.execute("delete from operationplan where type = 'DLVR'")
+            key = ContentType.objects.get_for_model(inputmodels.DeliveryOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %d" % key)
 
       # Task update
       task.status = 'Done'

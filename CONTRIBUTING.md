@@ -7,7 +7,7 @@
 #### **Did you find a bug?**
 
 * Do not open up a GitHub issue if the bug is a **security vulnerability**, 
-  and [report it](mailto:info@frepple.com) to us directly.
+  and [report it](mailto:security@frepple.com) to us directly.
 
 * If you're unsure whether the behavior is due to a misconfiguration or a software bug, first **post your issue
   to the [user group](https://groups.google.com/forum/#!forum/frepple-users)**.

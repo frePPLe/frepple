@@ -24,6 +24,7 @@ from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 from rest_framework import filters
 from rest_framework import permissions
+from freppledb.common.models import User
 
 
 @staff_member_required
@@ -45,6 +46,14 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
 
     # match the permissions on the correct database
     request.user._state.db = request.database
+
+
+    # Django is not checking if user is active on the scenario
+    try:
+      useract = User.objects.all().using(request.database).get(username=request.user).is_active
+      request.user.is_active = useract
+    except:
+      request.user.is_active = False
 
     return super(frepplePermissionClass, self).has_permission(request, view)
 

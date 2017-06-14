@@ -48,12 +48,15 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
     request.user._state.db = request.database
 
 
-    # Django is not checking if user is active on the scenario
+    # Django is not checking if user is active or superuser on the scenario
     try:
       useract = User.objects.all().using(request.database).get(username=request.user).is_active
       request.user.is_active = useract
+      usersuper = User.objects.all().using(request.database).get(username=request.user).is_superuser
+      request.user.is_superuser = usersuper
     except:
       request.user.is_active = False
+      request.user.is_superuser = False
 
     return super(frepplePermissionClass, self).has_permission(request, view)
 

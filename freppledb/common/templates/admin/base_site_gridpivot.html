@@ -59,11 +59,12 @@ $(function() {
     hidegrid: false,
     resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
+    sortorder: "{{sord}}",
+    sortname: "{{sidx}}",
+    //multiSort: true,    
     onSortCol: function (index, columnIndex, sortOrder) {
-      $('#grid').setGridParam('sortname',columnIndex);
-      $('#grid').setGridParam('sortorder',sortOrder);
       grid.saveColumnConfiguration();
-    },
+    },    
     onPaging: grid.saveColumnConfiguration,
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},

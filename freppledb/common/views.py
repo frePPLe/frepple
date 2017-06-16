@@ -440,6 +440,7 @@ class BucketDetailList(GridReport):
   model = BucketDetail
   frozenColumns = 2
   help_url = 'user-guide/model-reference/buckets.html'
+  default_sort = (2, 'asc', 1, 'asc')
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, hidden=True),
     GridFieldText('bucket', title=_('bucket'), field_name='bucket__name', formatter='detail', extra='"role":"common/bucket"'),

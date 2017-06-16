@@ -43,13 +43,12 @@ $(function() {
     viewrecords: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
+    //multiSort: true,
     page: {{page}},
     hidegrid: false,
     resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
     onSortCol: function (index, columnIndex, sortOrder) {
-      $('#grid').setGridParam('sortname',columnIndex);
-      $('#grid').setGridParam('sortorder',sortOrder);
       grid.saveColumnConfiguration();
     },
     onPaging: grid.saveColumnConfiguration,

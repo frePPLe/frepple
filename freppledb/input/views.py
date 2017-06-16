@@ -1096,6 +1096,7 @@ class ManufacturingOrderList(GridReport):
   template = 'input/operationplanreport.html'
   title = _("manufacturing orders")
   basequeryset = ManufacturingOrder.objects.all()
+  default_sort = (2, 'desc')
   model = ManufacturingOrder
   frozenColumns = 2
   multiselect = True
@@ -1205,6 +1206,7 @@ class DistributionOrderList(GridReport):
   '''
   template = 'input/operationplanreport.html'
   title = _("distribution orders")
+  default_sort = (2, 'desc')
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
   frozenColumns = 2
@@ -1365,6 +1367,7 @@ class PurchaseOrderList(GridReport):
   title = _("purchase orders")
   basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
+  default_sort = (2, 'desc')
   frozenColumns = 2
   multiselect = True
   editable = True

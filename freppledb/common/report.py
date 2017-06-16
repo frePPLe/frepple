@@ -711,56 +711,188 @@ class GridReport(View):
 
 
   @classmethod
+  def getSortName(reportclass, request, prefs=None):
+    '''
+    Build a jqgrid sort configuration pair sidx and sord: 
+    For instance:
+       ("fieldname1 asc, fieldname2", "desc")
+    '''
+    if request.GET.get('sidx', ''):
+      # 1) Sorting order specified on the request
+      return (request.GET['sidx'], request.GET.get('sord', 'asc'))
+    elif prefs:
+      # 2) Sorting order from the preferences
+      sortname = (prefs.get('sidx', None), prefs.get('sord', 'asc'))
+      if sortname[0] and sortname[1]:
+        return sortname
+    # 3) Default sort order
+    if not reportclass.default_sort:
+      return ('', '')
+    elif len(reportclass.default_sort) >= 6:
+      return ("%s %s, %s %s, %s" % (
+        reportclass.rows[reportclass.default_sort[0]].name,
+        reportclass.default_sort[1],
+        reportclass.rows[reportclass.default_sort[2]].name,
+        reportclass.default_sort[3],
+        reportclass.rows[reportclass.default_sort[4]].name
+        ), 
+        reportclass.default_sort[5]
+        )
+    elif len(reportclass.default_sort) >= 4:
+      return ("%s %s, %s" % (
+        reportclass.rows[reportclass.default_sort[0]].name,
+        reportclass.default_sort[1],
+        reportclass.rows[reportclass.default_sort[2]].name
+        ),
+        reportclass.default_sort[3]
+        )
+    elif len(reportclass.default_sort) >= 2:
+      return (
+        reportclass.rows[reportclass.default_sort[0]].name,
+        reportclass.default_sort[1]       
+        )
+
+
+  @classmethod
   def _apply_sort(reportclass, request, query, prefs=None):
     '''
     Applies a sort to the query.
     '''
-    asc = True
-    sort = None
-    if 'sidx' in request.GET:
-      sort = request.GET['sidx']
-      if 'sord' in request.GET and request.GET['sord'] == 'desc':
-        asc = False
-    if not sort:
-      if prefs and 'sidx' in prefs:
-        sort = prefs['sidx']
-        if 'sord' in prefs and prefs['sord'] == 'desc':
-          asc = False
-      if not sort and reportclass.default_sort:
-        sort = reportclass.rows[reportclass.default_sort[0]].name
-        if reportclass.default_sort[1] == 'desc':
-          asc = False
-      else:
-        # No sorting
+    sortname = None 
+    if request.GET.get('sidx', ''):
+      # 1) Sorting order specified on the request  
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))        
+    elif prefs:
+      # 2) Sorting order from the preferences
+      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc')) 
+    if not sortname or sortname == " asc":
+      # 3) Default sort order
+      if not reportclass.default_sort:
         return query
-    if sort and reportclass.model:
+      elif len(reportclass.default_sort) > 6:          
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name),
+          reportclass.rows[reportclass.default_sort[2]].name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].name),
+          reportclass.rows[reportclass.default_sort[4]].name
+          if reportclass.default_sort[5] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].name)
+          )
+      elif len(reportclass.default_sort) >= 4:          
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name),
+          reportclass.rows[reportclass.default_sort[2]].name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].name)
+          )
+      elif len(reportclass.default_sort) >= 2:          
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name)
+          )
+      else:
+        return query
+    else:
       # Validate the field does exist.
       # We only validate the first level field, and not the fields
       # on related models.
-      sortfield = sort.split('__')[0]
-      for field in reportclass.model._meta.get_fields():
-        if field.name == sortfield:
-          return query.order_by(asc and sort or ('-%s' % sort))
-      if reportclass.model.__base__ and reportclass.model.__base__ != models.Model:
-        for field in reportclass.model.__base__._meta.get_fields():
-          if field.name == sortfield:
-            return query.order_by(asc and sort or ('-%s' % sort))
-      if sort in query.query.extra_select:
-        return query.order_by(asc and sort or ('-%s' % sort))
-    # Sorting by a non-existent field name: ignore the filter
-    return query
+      sortargs = []
+      for s in sortname.split(","):
+        sortfield, dir = s.strip().split(" ", 1)
+        sortBasefield = sortfield.split('__')[0].strip()
+        added = False
+        for field in reportclass.model._meta.get_fields():
+          if field.name == sortBasefield:
+            sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
+            added = True
+            break
+        if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:            
+          for field in reportclass.model.__base__._meta.get_fields():
+            if field.name == sortBasefield:
+              sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
+              added = True
+              break
+        if sortfield.strip() in query.query.extra_select and not added:
+          sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
+      print("--------", sortargs, " for ", sortname)
+      if sortargs:
+        return query.order_by(*sortargs)
+      else:
+        return query
 
 
   @classmethod
   def _apply_sort_index(reportclass, request, prefs=None):
     '''
-    Returns the index of the column to sort on.
+    Build an SQL fragment to sort on: Eg "1 asc, 2 desc"
     '''
-    if 'sidx' in request.GET:
+    sortname = None 
+    if request.GET.get('sidx', ''):
+      # 1) Sorting order specified on the request  
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))        
+    elif prefs:
+      # 2) Sorting order from the preferences
+      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
+    if not sortname or sortname == " asc":
+      # 3) Default sort order
+      if not reportclass.default_sort:
+        return "1 asc"
+      elif len(reportclass.default_sort) > 6:          
+        return "%s %s, %s %s, %s %s" % (
+          reportclass.default_sort[0] + 1, reportclass.default_sort[1],
+          reportclass.default_sort[2] + 1, reportclass.default_sort[3],
+          reportclass.default_sort[4] + 1, reportclass.default_sort[5]
+          )
+      elif len(reportclass.default_sort) >= 4:          
+        return "%s %s, %s %s" % (
+          reportclass.default_sort[0] + 1, reportclass.default_sort[1],
+          reportclass.default_sort[2] + 1, reportclass.default_sort[3]          
+          )
+      elif len(reportclass.default_sort) >= 2:          
+        return "%s %s" % (
+          reportclass.default_sort[0] + 1, reportclass.default_sort[1]
+          )
+      else:
+        return "1 asc"
+    else:
+      # Validate the field does exist.
+      # We only validate the first level field, and not the fields
+      # on related models.
+      sortargs = []
+      for s in sortname.split(","):
+        sortfield, dir = s.strip().split(" ", 1)
+        idx = 1
+        has_one = False
+        for i in reportclass.rows:
+          if i.name == sortfield:
+            sortargs.append('%s %s' % (idx, 'desc' if dir == 'desc' else 'asc'))
+            if idx == 1:
+              has_one = True 
+          idx += 1      
+      if sortargs:
+        if not has_one:
+          sortargs.append("1 asc")
+        return ', '.join(sortargs)
+      else:
+        return "1 asc"
+
+    
+    
+    sortname = None
+    if request.GET.get('sidx', None):
+      # 1
       sort = request.GET['sidx']
     elif prefs and 'sidx' in prefs:
+      # 2
       sort = prefs['sidx']
     else:
+      # 3 
       sort = reportclass.rows[0].name
     idx = 1
     for i in reportclass.rows:
@@ -774,6 +906,11 @@ class GridReport(View):
       else:
         idx += 1
     return "1 asc"
+
+
+
+
+
 
 
   @classmethod
@@ -927,24 +1064,8 @@ class GridReport(View):
           # Pick up the mode from the session
           mode = request.session.get('mode', 'graph')
       is_popup = '_popup' in request.GET
-      if 'sord' in request.GET:
-        sord = request.GET.get('sord')
-      elif prefs:
-        sord = prefs.get(
-          'sord',
-          reportclass.default_sort[1] if reportclass.default_sort else None
-          )
-      else:
-        sord = reportclass.default_sort[1] if reportclass.default_sort else None
-      if 'sidx' in request.GET:
-        sidx = request.GET.get('sidx')
-      elif prefs:
-        sidx = prefs.get(
-          'sidx',
-          reportclass.rows[reportclass.default_sort[0]].name if reportclass.default_sort else None
-          )
-      else:
-        sidx = reportclass.rows[reportclass.default_sort[0]].name if reportclass.default_sort else None
+      sidx, sord = reportclass.getSortName(request, prefs)
+      
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_text(reportclass.title), 'entity': force_text(args[0])}) or reportclass.title,

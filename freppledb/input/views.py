@@ -34,7 +34,7 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
 from freppledb.boot import getAttributeFields
-from freppledb.input.models import Resource, Operation, Location, SetupMatrix
+from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Skill, Buffer, Customer, Demand
 from freppledb.input.models import Item, OperationResource, OperationMaterial
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
@@ -637,6 +637,28 @@ class SetupMatrixList(GridReport):
     #. Translators: Translation included with Django
     GridFieldText('name', title=_('name'), key=True, formatter='detail', extra='"role":"input/setupmatrix"'),
     GridFieldText('source', title=_('source')),
+    GridFieldLastModified('lastmodified'),
+    )
+
+
+class SetupRuleList(GridReport):
+  '''
+  A list report to show setup matrix rules.
+  '''
+  title = _("setup rules")
+  basequeryset = SetupRule.objects.all()
+  model = SetupRule
+  frozenColumns = 1
+  help_url = 'user-guide/model-reference/setup-matrices.html'
+
+  rows = (
+    GridFieldInteger('id', title=_('identifier'), formatter='detail', extra='"role":"input/setuprule"'),
+    GridFieldText('setupmatrix', title=_('setup matrix'), key=True, formatter='detail', extra='"role":"input/setupmatrix"'),
+    GridFieldInteger('priority', title=_('priority')),
+    GridFieldText('fromsetup', title=_('from setup')),
+    GridFieldText('tosetup', title=_('to setup')),
+    GridFieldDuration('duration', title=_('duration')),
+    GridFieldCurrency('cost', title=_('cost')),
     GridFieldLastModified('lastmodified'),
     )
 

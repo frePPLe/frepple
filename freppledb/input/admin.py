@@ -214,7 +214,7 @@ class Operation_admin(MultiDBModelAdmin):
     (None, {'fields': ('name', 'type', 'item', 'location', 'description', 'category', 'subcategory')}),
     (_('planning parameters'), {
       'fields': (
-        'fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost', 
+        'fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost',
         'duration', 'duration_per', 'available', 'search'
         ),
        }),
@@ -272,6 +272,20 @@ class SetupRule_inline(MultiDBTabularInline):
   model = SetupRule
   extra = 3
   exclude = ('source',)
+
+
+class SetupRule_admin(MultiDBModelAdmin):
+  model = SetupRule
+  raw_id_fields = ('setupmatrix',)
+  save_on_top = True
+  exclude = ('source',)
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_setuprule_change", "permissions": "input.change_setuprule"},
+    {"name": 'comments', "label": _("comments"), "view": "admin:input_setuprule_comment"},
+    #. Translators: Translation included with Django
+    {"name": 'history', "label": _("History"), "view": "admin:input_setuprule_history"},
+    ]
+data_site.register(SetupRule, SetupRule_admin)
 
 
 class SetupMatrix_admin(MultiDBModelAdmin):

@@ -38,6 +38,7 @@ urlpatterns = [
   url(r'^data/input/calendarbucket/$', freppledb.input.views.CalendarBucketList.as_view(), name="input_calendarbucket_changelist"),
   url(r'^data/input/operation/$', freppledb.input.views.OperationList.as_view(), name="input_operation_changelist"),
   url(r'^data/input/setupmatrix/$', freppledb.input.views.SetupMatrixList.as_view(), name="input_setupmatrix_changelist"),
+  url(r'^data/input/setuprule/$', freppledb.input.views.SetupRuleList.as_view(), name="input_setuprule_changelist"),
   url(r'^data/input/suboperation/$', freppledb.input.views.SubOperationList.as_view(), name="input_suboperation_changelist"),
   url(r'^data/input/manufacturingorder/$', freppledb.input.views.ManufacturingOrderList.as_view(), name="input_manufacturingorder_changelist"),
   url(r'^data/input/manufacturingorder/location/(.+)/$', freppledb.input.views.ManufacturingOrderList.as_view(), name="input_manufacturingorder_by_location"),

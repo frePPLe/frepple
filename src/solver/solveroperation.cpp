@@ -127,6 +127,7 @@ bool SolverMRP::checkOperation
     // Pick up the earliest date we can reply back
     data.state->a_date = opplan->getDates().getEnd();
     data.state->a_qty = 0.0;
+    opplan->setQuantity(0.0);
     return false;
   }
 

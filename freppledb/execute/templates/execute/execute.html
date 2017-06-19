@@ -411,12 +411,6 @@
 			                  <input class="chck_entity check" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked="" id="chbx_{{ item.1.model | model_name }}">
 			                    {{ group.0 }} - {{ item.0 }}
 			                </label><br>
-                      {% if item.0 == 'Setup matrices' %}
-                      <label for="chbx_input.setuprule">
-			                  <input class="chck_entity check" type="checkbox" name="entities" value="input.setuprule" checked="" id="chbx_input.setuprule">
-			                    {{ group.0 }} - Setup rules
-			                </label><br>
-                      {% endif %}
 			              {% endif %}
 			            {% endfor %}
 			          {% endfor %}

@@ -896,7 +896,7 @@ class OperationResourceList(GridReport):
   help_url = 'user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html'
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/operationresource"'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/operationresource"', initially_hidden=True),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra='"role":"input/resource"'),
     GridFieldText('skill', title=_('skill'), field_name='skill__name', formatter='detail', extra='"role":"input/skill"'),
@@ -924,7 +924,7 @@ class OperationMaterialList(GridReport):
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/operation-materials.html'
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/operationmaterial"'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/operationmaterial"', initially_hidden=True),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldChoice('type', title=_('type'), choices=OperationMaterial.types),

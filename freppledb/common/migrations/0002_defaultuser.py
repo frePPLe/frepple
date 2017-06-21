@@ -29,7 +29,7 @@ def createAdminUser(apps, schema_editor):
   usr.last_name = 'admin'
   usr.date_joined = datetime(2000, 1, 1)
   usr.horizontype = True
-  usr.horizonlength = 6
+  usr.horizonlength = 12
   usr.horizonunit = "month"
   usr.language = "auto"
   usr.save()

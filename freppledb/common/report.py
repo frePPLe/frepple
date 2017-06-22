@@ -2571,10 +2571,10 @@ def importWorkbook(request):
               contenttype_id = ct
               break
         if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-          yield force_text(_("Ignoring data in worksheet: %s") % ws_name) + '\n'
+          yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
         elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
           # Check permissions
-          yield force_text(_("You don't permissions to add: %s") % ws_name) + '\n'
+          yield '<div class="alert alert-danger">' + force_text(_("You don't permissions to add: %s") % ws_name) + '</div>'
         else:
           deps = set([model])
           GridReport.dependent_models(model, deps)

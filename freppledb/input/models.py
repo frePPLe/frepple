@@ -432,6 +432,7 @@ class SetupRule(AuditModel):
   A rule that is part of a setup matrix.
   '''
   # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   setupmatrix = models.ForeignKey(
     SetupMatrix, verbose_name=_('setup matrix'), related_name='rules',
     on_delete=models.CASCADE

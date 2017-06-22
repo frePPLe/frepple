@@ -273,7 +273,7 @@ class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.SetupRule
-      fields = ('setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
+      fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'setupmatrix'
       partial=True
@@ -281,7 +281,7 @@ class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
 class SetupRuleAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.SetupRule.objects.all()
     serializer_class = SetupRuleSerializer
-    filter_fields = ('setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
+    filter_fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
 
 class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SetupRule.objects.all()

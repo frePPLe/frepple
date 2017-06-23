@@ -215,7 +215,7 @@ class Operation_admin(MultiDBModelAdmin):
     (_('planning parameters'), {
       'fields': (
         'fence', 'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'cost',
-        'duration', 'duration_per', 'available', 'search'
+        'duration', 'duration_per', 'available', 'effective_start', 'effective_end', 'search'
         ),
        }),
     )

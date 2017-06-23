@@ -599,7 +599,7 @@ class GridReport(View):
         ]
     else:
       # Default settings
-      fields = [ i for i in reportclass.rows if i.field_name and not i.hidden ]
+      fields = [ i for i in reportclass.rows if i.field_name and not i.hidden and not i.initially_hidden ]
     field_names = [ f.field_name for f in fields]
 
     # Write a formatted header row
@@ -675,12 +675,12 @@ class GridReport(View):
       writer.writerow([
         force_text(f.title, encoding=encoding, errors="ignore").title()
         for f in reportclass.rows
-        if f.title and not f.hidden
+        if f.title and not f.hidden and not i.initially_hidden
         ])
       fields = [
         i.field_name
         for i in reportclass.rows
-        if i.field_name and not i.hidden
+        if i.field_name and not i.hidden and not i.initially_hidden
         ]
 
     # Write a header row

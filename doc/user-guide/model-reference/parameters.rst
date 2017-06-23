@@ -92,6 +92,8 @@ forecast.Net_NetEarly                                Defines how much time (expr
 forecast.Net_NetLate                                 Defines how much time (expressed in seconds) after the due date of an order 
                                                      we are allowed to search for a forecast bucket to net from.
 forecast.Outlier_maxDeviation                        Multiple of the standard deviation used to detect outliers
+forecast.populateForecastTable                       Populates automatically the forecast table based on the item/location combinations 
+                                                     found in the demand table using parent customer when available. Default : true
 forecast.Seasonal_dampenTrend                        Dampening factor applied to the trend in future periods.
 forecast.Seasonal_gamma                              Value of the seasonal parameter
 forecast.Seasonal_initialAlfa                        Initial value for the constant parameter
@@ -113,6 +115,8 @@ forecast.Skip                                        Specifies the number of tim
                                                      the forecasting method. The forecast error in these bucket isn't counted.
 forecast.SmapeAlfa                                   Specifies how the sMAPE forecast error is weighted for different 
                                                      time buckets.
+inventoryplanning.average_window_duration            The number of days used to average the demand to limit ROQ and safety stock variability 
+                                                     over periods. Default value : 180
 inventoryplanning.calendar                           Name of a calendar model to define the granularity of the time buckets 
                                                      for inventory planning.
 inventoryplanning.fixed_order_cost                   Holding cost percentage to compute economic reorder quantity. 
@@ -125,6 +129,13 @@ inventoryplanning.horizon_start                      Specifies the number of day
                                                      stock and reorder quantity values. Default: 0
 inventoryplanning.loglevel                           Controls the verbosity of the inventory planning solver. 
                                                      Accepted values are 0(silent - default), 1 and 2 (verbose)
+inventoryplanning.rebalancing_burnout_threshold      The minimum time to burn up excess inventory (compared to forecast) that can be rebalanced (in periods).
+                                                     If the burn out period (Excess Quantity/Forecast) is less than the threshold, the rebalancing will not occur.
+                                                     Default value: 0
+inventoryplanning.rebalancing_part_cost_threshold    The minimum part cost threshold used to trigger a rebalancing. Parts with cost below the threshold will not be rebalanced. 
+                                                     Default value: 0
+inventoryplanning.rebalancing_total_cost_threshold   The minimum total cost threshold to trigger a rebalancing (equals to rebalanced qty multiplied by item cost). 
+                                                     Rebalancing requests with total cost below the threshold will not be created. Default value: 0                                                     
 inventoryplanning.service_level_on_average_inventory Flag whether the service level is computed based on the expected average 
                                                      inventory. When set to false the service level estimation is based only 
                                                      on the safety stock. Default value: false

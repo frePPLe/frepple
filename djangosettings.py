@@ -140,14 +140,6 @@ ODOO_PASSWORDS = {
   'scenario3': ''
   }
 
-# If passwords are set in this file they will be used instead of the ones set in the database parameters table
-OPENBRAVO_PASSWORDS = {
-  'default': '',
-  'scenario1': '',
-  'scenario2': '',
-  'scenario3': ''
-  }
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -206,7 +198,6 @@ INSTALLED_APPS = (
     'freppledb.boot',
     # Add any project specific apps here
     #'freppledb.odoo',
-    #'freppledb.openbravo',
     'freppledb.input',
     'freppledb.output',
     'freppledb.execute',

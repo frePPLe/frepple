@@ -975,11 +975,7 @@ class DemandList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','openbravo')"},
-      ]
-  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+  if 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','odoo')"},
       ]
@@ -1157,7 +1153,7 @@ class ManufacturingOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'"),
-    GridFieldText('reference', title=_('reference'), editable='freppledb.openbravo' not in settings.INSTALLED_APPS),
+    GridFieldText('reference', title=_('reference'), editable=True),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operation__item__name', title=_('item'), formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operation__location__name', title=_('location'), formatter='detail', extra='"role":"input/location"'),
@@ -1165,7 +1161,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS),
+    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=True),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
@@ -1192,11 +1188,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     )
 
-  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','openbravo')"},
-      ]
-  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+  if 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','odoo')"},
       ]
@@ -1279,7 +1271,7 @@ class DistributionOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/distributionorder"'),
-    GridFieldText('reference', title=_('reference'), editable='freppledb.openbravo' not in settings.INSTALLED_APPS),
+    GridFieldText('reference', title=_('reference'), editable=True),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra='"role":"input/location"'),
@@ -1287,9 +1279,7 @@ class DistributionOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus,
-      editable='freppledb.openbravo' not in settings.INSTALLED_APPS
-      ),
+    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus, editable=True),
     GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
@@ -1347,11 +1337,7 @@ class DistributionOrderList(GridReport):
       initially_hidden=True, editable=False),
     )
 
-  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','openbravo')"},
-    ]
-  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+  if 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
     ]
@@ -1436,7 +1422,7 @@ class PurchaseOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/purchaseorder"'),
-    GridFieldText('reference', title=_('reference'), editable='freppledb.openbravo' not in settings.INSTALLED_APPS),
+    GridFieldText('reference', title=_('reference'), editable=True),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
@@ -1444,9 +1430,7 @@ class PurchaseOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'),
-      choices=PurchaseOrder.orderstatus, editable='freppledb.openbravo' not in settings.INSTALLED_APPS
-      ),
+    GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus, editable=True),
     GridFieldCurrency('unit_cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
@@ -1500,11 +1484,7 @@ class PurchaseOrderList(GridReport):
       initially_hidden=True, editable=False),
     )
 
-  if 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'openbravo_incr_export', "label": _("export to %(erp)s") % {'erp': 'openbravo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','openbravo')"},
-      ]
-  elif 'freppledb.odoo' in settings.INSTALLED_APPS:
+  if 'freppledb.odoo' in settings.INSTALLED_APPS:
     actions = [
       {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','odoo')"},
       ]

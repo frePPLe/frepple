@@ -657,63 +657,6 @@
 		</div>
 	  {% endif %}
 
-	  {% if openbravo and perms.auth.run_db %}
-	  <div class="panel panel-default">
-		  <div class="panel-heading" data-parent="#tasks" role="tab" id="achtsteHeading" data-toggle="collapse" data-target="#achtsteAccord">
-		    <h4 class="panel-title">
-		      <a role="button">{% blocktrans with erp="Openbravo" %}Import data from {{ erp }}{% endblocktrans %}</a>
-		    </h4>
-		  </div>
-		  <div id="achtsteAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="achtsteHeading">
-			  <div class="panel-body">
-			    <form role="form" method="post" action="{{request.prefix}}/execute/launch/openbravo_import/">{% csrf_token %}
-			    <table>
-			      <tr>
-				      <td style="vertical-align:top; padding: 15px">
-				         <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-				      </td>
-				      <td  style="padding: 0px 15px;">{% blocktrans with delta="<input class='form-control' name='delta' type='text' maxlength='4' size='5' value='7' />" %}Import data changes in the last {{ delta }} days from the ERP into frePPLe.{% endblocktrans %}
-			        </td>
-			      </tr>
-			    </table>
-			    </form>
-			  </div>
-		  </div>
-		</div>
-
-		<div class="panel panel-default">
-			<div class="panel-heading" data-parent="#tasks" role="tab" id="negendeHeading" data-toggle="collapse" data-target="#negendeAccord">
-				<h4 class="panel-title">
-					<a role="button">{% blocktrans with erp="Openbravo" %}Export data to {{ erp }}{% endblocktrans %}</a>
-				</h4>
-			</div>
-			<div id="negendeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="negendeHeading">
-				<div class="panel-body">
-					<form role="form" method="post" action="{{request.prefix}}/execute/launch/openbravo_export/">
-						{% csrf_token %}
-						<table>
-							<tr>
-								<td style="vertical-align: top; padding: 15px">
-									<button class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">
-									{% trans "launch"|capfirst %}
-									</button>
-								</td>
-								<td style="padding: 0px 15px;">{% trans "Export frePPLe plan to the ERP." %} </br>
-								</br>
-								{% blocktrans %}<label data-toggle="tooltip" data-placement="bottom" data-original-title="Filter parameters define which transactions are getting exported">{% endblocktrans %}
-								  <input type="checkbox" name="filter" style="margin-left: 8px;">
-								  <span> {% trans "Apply filter parameters." %} </span>
-								  <span class="fa fa-question-circle" style="display: inline-block;"></span>
-								</label>
-								</td>
-							</tr>
-						</table>
-					</form>
-				</div>
-			</div>
-		</div>
-		{% endif %}
-
     {% if odoo %}
     <div class="panel panel-default">
       <div class="panel-heading" data-parent="#tasks" role="tab" id="elfdeHeading" data-toggle="collapse" data-target="#elfdeAccord">

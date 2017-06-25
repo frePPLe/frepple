@@ -168,20 +168,6 @@ class Command(BaseCommand):
               key, val = i.split('=')
               args[key[2:]] = val
           management.call_command('frepple_createbuckets', database=database, task=task.id, **args)
-        # J
-        elif task.name == 'Openbravo import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-          kwargs = {}
-          if task.arguments:
-            for i in task.arguments.split():
-              key, val = i.split('=')
-              kwargs[key[2:]] = val
-          management.call_command('openbravo_import', database=database, task=task.id, verbosity=0, **kwargs)
-        # K
-        elif task.name == 'Openbravo export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-          if task.arguments and '--filter' in task.arguments:
-            management.call_command('openbravo_export', database=database, task=task.id, verbosity=0, filter=True)
-          else:
-            management.call_command('openbravo_export', database=database, task=task.id, verbosity=0)
         # L
         elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
           management.call_command('odoo_import', database=database, task=task.id, verbosity=0)

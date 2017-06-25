@@ -137,7 +137,6 @@ class TaskReport(GridReport):
       'scenarios': Scenario.objects.all(),
       'fixtures': fixtures,
       'odoo': 'freppledb.odoo' in settings.INSTALLED_APPS,
-      'openbravo': 'freppledb.openbravo' in settings.INSTALLED_APPS,
       'planning_options': planning_options,
       'current_options': request.session.get('env', [ i[0] for i in planning_options ]),
       'filestoupload': filestoupload,
@@ -305,23 +304,6 @@ def wrapTask(request, action):
       arguments.append("--weekstart=%s" % weekstart)
     if arguments:
       task.arguments = " ".join(arguments)
-    task.save(using=request.database)
-  # H
-  elif action == 'openbravo_import' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    if not request.user.has_perm('auth.run_db'):
-      raise Exception('Missing execution privileges')
-    task = Task(name='Openbravo import', submitted=now, status='Waiting', user=request.user)
-    delta = request.POST.get('delta', None)
-    if delta:
-      task.arguments = "--delta=%s" % delta
-    task.save(using=request.database)
-  # I
-  elif action == 'openbravo_export' and 'freppledb.openbravo' in settings.INSTALLED_APPS:
-    if not request.user.has_perm('auth.run_db'):
-      raise Exception('Missing execution privileges')
-    task = Task(name='Openbravo export', submitted=now, status='Waiting', user=request.user)
-    if request.POST.get('filter', False):
-      task.arguments = "--filter"
     task.save(using=request.database)
   # J
   elif action == 'odoo_import' and 'freppledb.odoo' in settings.INSTALLED_APPS:

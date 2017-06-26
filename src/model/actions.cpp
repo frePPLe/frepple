@@ -336,7 +336,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
   // Update the settings
   assert(opplan->getOperation());
   opplan->getOperation()->setOperationPlanParameters(
-    opplan, newQty, newstart, newend
+    opplan, newQty, newstart, newend, true, true, false
   );
 
   // Construct a subcommand for all suboperationplans

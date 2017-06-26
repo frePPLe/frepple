@@ -155,7 +155,7 @@ bool SolverMRP::checkOperation
   bool isPlannedEarly;
   DateRange matnext;
 
-  // Loop till everything is okay. During this loop the quanity and date of the
+  // Loop till everything is okay. During this loop the quantity and date of the
   // operationplan can be updated, but it cannot be split or deleted.
   data.state->forceLate = false;
   do
@@ -176,7 +176,7 @@ bool SolverMRP::checkOperation
         {
           // Tough luck
           opplan->getOperation()->setOperationPlanParameters(
-            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast
+            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast, true, true, false
           );
           data.state->forceLate = true;
           checkOperationCapacity(opplan, data);
@@ -540,6 +540,9 @@ void SolverMRP::solve(const Operation* oper, void* v)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
+  if (oper->getName() == "4. Deliver item" && data->state->curDemand->getName() == "4. order 3")
+    logger << "bonanza" << endl;
+    
   // Find the current list of constraints
   Problem* topConstraint = data->planningDemand ?
     data->planningDemand->getConstraints().top() :
@@ -571,7 +574,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
     z = oper->createOperationPlan(
           fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
           Date::infinitePast, data->state->q_date, data->state->curDemand,
-          data->state->curOwnerOpplan, 0
+          data->state->curOwnerOpplan, 0, true, false
           );
   }
   else
@@ -581,7 +584,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
       new CommandCreateOperationPlan(
         oper, fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
         Date::infinitePast, data->state->q_date, data->state->curDemand,
-        data->state->curOwnerOpplan
+        data->state->curOwnerOpplan, true, false
         );
     data->state->curDemand = nullptr;
     z = a->getOperationPlan();
@@ -767,7 +770,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
   // Create the top operationplan
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
     oper, a_qty, Date::infinitePast,
-    data->state->q_date, data->state->curDemand, data->state->curOwnerOpplan, false
+    data->state->q_date, data->state->curDemand, data->state->curOwnerOpplan, false, false
     );
   data->state->curDemand = nullptr;
 
@@ -1059,7 +1062,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // requested buffer
       CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
           oper, a_qty, Date::infinitePast, ask_date,
-          d, prev_owner_opplan, false
+          d, prev_owner_opplan, false, false
           );
       if (!prev_owner_opplan) data->add(a);
 
@@ -1219,7 +1222,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // requested buffer
       CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
           oper, a_qty, Date::infinitePast, bestQDate,
-          d, prev_owner_opplan, false
+          d, prev_owner_opplan, false, false
           );
       if (!prev_owner_opplan) data->add(a);
 
@@ -1297,7 +1300,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
     // requested buffer
     CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
         oper, a_qty, Date::infinitePast, origQDate,
-        d, prev_owner_opplan, false
+        d, prev_owner_opplan, false, false
         );
     if (!prev_owner_opplan) data->add(a);
 
@@ -1419,7 +1422,7 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
     // Create the top operationplan.
     top_cmd = new CommandCreateOperationPlan(
       oper, top_flow_qty_per ? origQqty / top_flow_qty_per : origQqty,
-      Date::infinitePast, origQDate, dmd, prev_owner_opplan, false
+      Date::infinitePast, origQDate, dmd, prev_owner_opplan, false, false
       );
     if (!prev_owner_opplan) data->add(top_cmd);
 

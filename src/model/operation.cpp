@@ -241,10 +241,10 @@ OperationPlan::iterator Operation::getOperationPlans() const
 
 OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
     Demand* l, OperationPlan* ow, unsigned long i,
-    bool makeflowsloads) const
+    bool makeflowsloads, bool roundDown) const
 {
   OperationPlan *opplan = new OperationPlan();
-  initOperationPlan(opplan,q,s,e,l,ow,i,makeflowsloads);
+  initOperationPlan(opplan, q, s, e, l, ow, i, makeflowsloads, roundDown);
   return opplan;
 }
 
@@ -578,23 +578,27 @@ DateRange Operation::calculateOperationTime
 }
 
 
-void Operation::initOperationPlan (OperationPlan* opplan,
-    double q, const Date& s, const Date& e, Demand* l, OperationPlan* ow,
-    unsigned long i, bool makeflowsloads) const
+void Operation::initOperationPlan (
+  OperationPlan* opplan, double q, const Date& s, const Date& e, Demand* l,
+  OperationPlan* ow, unsigned long i, bool makeflowsloads, bool roundDown
+  ) const
 {
   opplan->oper = const_cast<Operation*>(this);
-  if (l) opplan->setDemand(l);
+  if (l)
+    opplan->setDemand(l);
   opplan->id = i;
 
   // Setting the owner first. Note that the order is important here!
   // For alternates & routings the quantity needs to be set through the owner.
-  if (ow) opplan->setOwner(ow);
+  if (ow)
+    opplan->setOwner(ow);
 
   // Setting the dates and quantity
-  setOperationPlanParameters(opplan, q, s, e);
+  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
 
   // Create the loadplans and flowplans, if allowed
-  if (makeflowsloads) opplan->createFlowLoads();
+  if (makeflowsloads)
+    opplan->createFlowLoads();
 
   // Update flow and loadplans, and mark for problem detection
   opplan->update();
@@ -623,8 +627,10 @@ void Operation::deleteOperationPlans(bool deleteLockedOpplans)
 }
 
 
-OperationPlanState OperationFixedTime::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+OperationPlanState OperationFixedTime::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, 
+  bool execute, bool roundDown
+  ) const
 {
   // Invalid call to the function, or locked operationplan.
   if (!opplan || q<0)
@@ -665,7 +671,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters
   if (q > getSizeMaximum())
     q = getSizeMaximum();
   if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
-    q = opplan->setQuantity(q, false, false, execute, x.getEnd());
+    q = opplan->setQuantity(q, roundDown, false, execute, x.getEnd());
 
   if (!execute)
     // Simulation only
@@ -792,8 +798,10 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o)
 
 
 OperationPlanState
-OperationTimePer::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+OperationTimePer::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e, 
+  bool preferEnd, bool execute, bool roundDown
+) const
 {
   // Invalid call to the function.
   if (!opplan || q<0)
@@ -848,17 +856,17 @@ OperationTimePer::setOperationPlanParameters
         if (q * duration_per < static_cast<double>(actual - duration) + 1)
           // Provided quantity is acceptable.
           // Note that we allow a margin of 1 second to accept.
-          q = opplan->setQuantity(q, true, false, execute);
+          q = opplan->setQuantity(q, roundDown, false, execute);
         else
           // Calculate the maximum operationplan that will fit in the window
           q = opplan->setQuantity(
                 static_cast<double>(actual - duration) / duration_per,
-                true, false, execute
+                roundDown, false, execute
                 );
       }
       else
         // No duration_per field given, so any quantity will go
-        q = opplan->setQuantity(q, true, false, execute);
+        q = opplan->setQuantity(q, roundDown, false, execute);
 
       // Updates the dates
       // The cast on the next line truncates the decimal part. We add half a
@@ -881,7 +889,7 @@ OperationTimePer::setOperationPlanParameters
     // compute the start date
     // Case 4: No date was given at all. Respect the quantity and the
     // existing end date of the operationplan.
-    q = opplan->setQuantity(q, true, false, execute);
+    q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
@@ -899,7 +907,7 @@ OperationTimePer::setOperationPlanParameters
       // Not feasible
       if (!execute)
         return OperationPlanState(x, 0);
-      opplan->setQuantity(0,true,false);
+      opplan->setQuantity(0, true, false);
       opplan->setStartAndEnd(e,e);
     }
     else
@@ -922,7 +930,7 @@ OperationTimePer::setOperationPlanParameters
   {
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
-    q = opplan->setQuantity(q, true, false, execute);
+    q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
     // The cast on the next line truncates the decimal part. We add half a
     // second to get a rounded value.
@@ -943,7 +951,7 @@ OperationTimePer::setOperationPlanParameters
       // Not feasible
       if (!execute)
         return OperationPlanState(x, 0);
-      opplan->setQuantity(0,true,false);
+      opplan->setQuantity(0, true, false);
       opplan->setStartAndEnd(s,s);
     }
     else
@@ -952,7 +960,7 @@ OperationTimePer::setOperationPlanParameters
       double max_q = duration_per ?
           static_cast<double>(actual-duration) / duration_per :
           q;
-      q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
+      q = opplan->setQuantity(q < max_q ? q : max_q, roundDown, false, execute);
       // The cast on the next line truncates the decimal part. We add half a
       // second to get a rounded value.
       wanted = duration + static_cast<long>(duration_per * q + 0.5);
@@ -968,8 +976,10 @@ OperationTimePer::setOperationPlanParameters
 }
 
 
-OperationPlanState OperationRouting::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+OperationPlanState OperationRouting::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e, 
+  bool preferEnd, bool execute, bool roundDown
+) const
 {
   // Invalid call to the function
   if (!opplan || q<0)
@@ -981,7 +991,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
-    q = opplan->setQuantity(q,false,false,execute);
+    q = opplan->setQuantity(q, roundDown, false, execute);
     if (!s && e)
       s = e;
     if (s && !e)
@@ -1005,7 +1015,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
       x = i->getOperation()->setOperationPlanParameters(
-        i, q, Date::infinitePast, e, preferEnd, execute
+        i, q, Date::infinitePast, e, preferEnd, execute, roundDown
         );
       e = x.start;
       if (realfirst)
@@ -1023,7 +1033,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters
     {
       if (i->getOperation() == OperationSetup::setupoperation) continue;
       x = i->getOperation()->setOperationPlanParameters(
-        i, q, s, Date::infinitePast, preferEnd, execute
+        i, q, s, Date::infinitePast, preferEnd, execute, roundDown
         );
       s = x.end;
       if (realfirst)
@@ -1096,9 +1106,10 @@ SearchMode decodeSearchMode(const string& c)
 
 
 OperationPlanState
-OperationAlternate::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
- bool execute) const
+OperationAlternate::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e, 
+  bool preferEnd, bool execute, bool roundDown
+) const
 {
   // Invalid calls to this function
   if (!opplan || q<0)
@@ -1114,19 +1125,19 @@ OperationAlternate::setOperationPlanParameters
     // Blindly accept the parameters if there is no suboperationplan
     if (execute)
     {
-      opplan->setQuantity(q, false, false);
+      opplan->setQuantity(q, roundDown, false);
       opplan->setStartAndEnd(s, e);
       return OperationPlanState(opplan);
     }
     else
       return OperationPlanState(
-        s, e, opplan->setQuantity(q, false, false, false)
+        s, e, opplan->setQuantity(q, roundDown, false, false)
         );
   }
   else
     // Pass the call to the sub-operation
     return x->getOperation()->setOperationPlanParameters(
-      x, q, s, e, preferEnd, execute
+      x, q, s, e, preferEnd, execute, roundDown
       );
 }
 
@@ -1156,9 +1167,10 @@ bool OperationAlternate::extraInstantiate(OperationPlan* o)
 
 
 OperationPlanState
-OperationSplit::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
- bool execute) const
+OperationSplit::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e,
+  bool preferEnd, bool execute, bool roundDown
+) const
 {
   // Invalid calls to this function
   if (!opplan || q<0)
@@ -1170,7 +1182,7 @@ OperationSplit::setOperationPlanParameters
   // operations are respected.
   if (execute)
   {
-    opplan->setQuantity(q, false, false);
+    opplan->setQuantity(q, roundDown, false);
     opplan->setStartAndEnd(s, e);
     return OperationPlanState(opplan);
   }
@@ -1230,8 +1242,10 @@ bool OperationSplit::extraInstantiate(OperationPlan* o)
 }
 
 
-OperationPlanState OperationSetup::setOperationPlanParameters
-(OperationPlan* opplan, double q, Date s, Date e, bool preferEnd, bool execute) const
+OperationPlanState OperationSetup::setOperationPlanParameters(
+  OperationPlan* opplan, double q, Date s, Date e, 
+  bool preferEnd, bool execute, bool roundDown
+) const
 {
   // Find or create a loadplan
   OperationPlan::LoadPlanIterator i = opplan->beginLoadPlans();
@@ -1305,11 +1319,16 @@ OperationPlanState OperationSetup::setOperationPlanParameters
   Duration actualduration;
   if (e && s)
   {
-    if (preferEnd) x = calculateOperationTime(e, duration, false, &actualduration);
-    else x = calculateOperationTime(s, duration, true, &actualduration);
+    if (preferEnd)
+      x = calculateOperationTime(e, duration, false, &actualduration);
+    else
+      x = calculateOperationTime(s, duration, true, &actualduration);
   }
-  else if (s) x = calculateOperationTime(s, duration, true, &actualduration);
-  else x = calculateOperationTime(e, duration, false, &actualduration);
+  else if (s)
+    x = calculateOperationTime(s, duration, true, &actualduration);
+  else
+    x = calculateOperationTime(e, duration, false, &actualduration);
+
   if (!execute)
     // Simulation only
     return OperationPlanState(x, actualduration == duration ? q : 0);

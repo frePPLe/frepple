@@ -2601,7 +2601,7 @@ class Operation : public HasName<Operation>,
       * operation. */
     OperationPlan* createOperationPlan(double, Date,
         Date, Demand* = nullptr, OperationPlan* = nullptr, unsigned long = 0,
-        bool makeflowsloads=true) const;
+        bool makeflowsloads=true, bool roundDown=true) const;
 
     /** Returns true for operation types that own suboperations. */
     virtual bool hasSubOperations() const
@@ -2681,8 +2681,10 @@ class Operation : public HasName<Operation>,
       * Subclasses need to override this method to implement the correct
       * logic.
       */
-    virtual OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const = 0;
+    virtual OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const = 0;
 
     /** Updates the quantity of an operationplan.<br>
       * This method considers the lot size constraints and also propagates
@@ -3014,7 +3016,7 @@ class Operation : public HasName<Operation>,
   protected:
     void initOperationPlan(OperationPlan*, double,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
-        bool = true) const;
+        bool = true, bool=true) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -3356,8 +3358,10 @@ class OperationFixedTime : public Operation
       *  - Locked operationplans can't be updated.
       * @see Operation::setOperationPlanParameters
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -3398,8 +3402,10 @@ class OperationSetup : public Operation
       * operationplans:
       *  - The duration is calculated based on the conversion type.
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     /** A pointer to the operation that is instantiated for all conversions. */
     static Operation* setupoperation;
@@ -3476,8 +3482,10 @@ class OperationTimePer : public Operation
       *
       * @see Operation::setOperationPlanParameters
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     static int initialize();
 
@@ -3540,8 +3548,10 @@ class OperationRouting : public Operation
       *    blindly.
       * @see Operation::setOperationPlanParameters
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     double setOperationPlanQuantity(
       OperationPlan* oplan, double f, bool roundDown, bool upd,
@@ -3669,8 +3679,10 @@ class OperationSplit : public Operation
       *    since we use the ones on the sub operationplans.
       * @see Operation::setOperationPlanParameters
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     /** Add a new child operationplan.
       * An alternate operationplan plan can have a maximum of 2
@@ -3765,8 +3777,10 @@ class OperationAlternate : public Operation
       *    suboperationplan.
       * @see Operation::setOperationPlanParameters
       */
-    OperationPlanState setOperationPlanParameters
-    (OperationPlan*, double, Date, Date, bool=true, bool=true) const;
+    OperationPlanState setOperationPlanParameters(
+      OperationPlan* opplan, double qty, Date startdate, Date enddate,
+      bool preferEnd=true, bool execute=true, bool roundDown=true
+      ) const;
 
     /** Add a new child operationplan.
       * An alternate operationplan plan can have a maximum of 2
@@ -9129,10 +9143,10 @@ class CommandCreateOperationPlan : public Command
     /** Constructor. */
     CommandCreateOperationPlan
     (const Operation* o, double q, Date d1, Date d2, Demand* l,
-     OperationPlan* ow=nullptr, bool makeflowsloads=true)
+     OperationPlan* ow=nullptr, bool makeflowsloads=true, bool roundDown=true)
     {
       opplan = o ?
-          o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads)
+          o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads, roundDown)
           : nullptr;
     }
 
@@ -9308,11 +9322,11 @@ class CommandMoveOperationPlan : public Command
     }
 
     /** Set another start date, end date and quantity for the operationplan. */
-    void setParameters(Date s, Date e, double q, bool b)
+    void setParameters(Date s, Date e, double q, bool b, bool roundDown=true)
     {
       assert(opplan->getOperation());
       if (opplan)
-        opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b);
+        opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b, true, roundDown);
     }
 
     /** Set another start date for the operationplan. */

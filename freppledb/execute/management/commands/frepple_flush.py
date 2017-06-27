@@ -244,6 +244,7 @@ class Command(BaseCommand):
             cursor.execute("delete from operationplan where type = 'DLVR'")
             key = ContentType.objects.get_for_model(inputmodels.DeliveryOrder, for_concrete_model=False).pk
             cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
+            cursor.execute("vacuum analyze")
 
       # Task update
       task.status = 'Done'

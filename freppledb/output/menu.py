@@ -16,7 +16,7 @@
 
 from freppledb.menu import menu
 from freppledb.input.models import DeliveryOrder, OperationPlanMaterial, OperationPlanResource
-from freppledb.input.models import Demand, Operation, OperationPlan
+from freppledb.input.models import Demand, Operation, OperationPlan, Resource
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
 import freppledb.output.views.problem
@@ -76,7 +76,10 @@ menu.addItem(
   report=freppledb.output.views.resource.DetailReport, index=200,
   dependencies=[OperationPlanResource])
 menu.addItem(
-  "capacity", "problem report", url="/problem/?entity=capacity", report=freppledb.output.views.problem.Report, index=300)
+  "capacity", "problem report", url="/problem/?entity=capacity",
+  report=freppledb.output.views.problem.Report, index=300,
+  dependencies=[Resource]
+  )
 menu.addItem("manufacturing", "operation report", url="/operation/", 
   report=freppledb.output.views.operation.OverviewReport, index=100,
   dependencies=[OperationPlan]

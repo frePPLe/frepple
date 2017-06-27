@@ -383,7 +383,7 @@ class MenuNode(Node):
   def __init__(self, varname):
       self.varname = varname
 
-  def render(self, context):
+  def render(self, context):    
     from freppledb.menu import menu
     try:
       req = context['request']
@@ -407,22 +407,20 @@ class MenuNode(Node):
       kept_back = None
       for j in i[1]:
         if j[2].has_permission(req.user):
-          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):
-            ok = True
+          ok = True
+          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):            
             for dep in j[2].dependencies:
               if dep._meta.db_table not in present:
                 ok = False
                 break
-            if not ok:
-              continue
           emptytable = not j[2].model or j[2].model._meta.db_table in present
           if j[2].separator:
-            kept_back = (j[1], j[2], j[2].can_add(req.user), emptytable )
+            kept_back = (j[1], j[2], j[2].can_add(req.user), emptytable, ok )
           else:
             if kept_back:
               group[1].append(kept_back)
               kept_back = None
-            group[1].append( (j[1], j[2], j[2].can_add(req.user), emptytable ) )
+            group[1].append( (j[1], j[2], j[2].can_add(req.user), emptytable, ok ) )
             empty = False
       if not empty:
         # At least one item of the group is visible

@@ -403,12 +403,12 @@
 			         </p>
 			          {% getMenu as menu %}
 			          <p>
-			          <input class="chck_all check" type="checkbox" name="all" value="1" checked=""><br>
+			          <input class="chck_all check" type="checkbox" name="all" value="1"><br>
 			          {% for group in menu %}
 			            {% for item in group.1 %}
 			              {% if item.1.model and not item.1.excludeFromBulkOperations %}
 			                <label for="chbx_{{ item.1.model | model_name }}">
-			                  <input class="chck_entity check" type="checkbox" name="entities" value="{{ item.1.model | model_name }}" checked="" id="chbx_{{ item.1.model | model_name }}">
+			                  <input class="chck_entity check" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
 			                    {{ group.0 }} - {{ item.0 }}
 			                </label><br>
 			              {% endif %}

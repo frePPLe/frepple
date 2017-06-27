@@ -33,7 +33,8 @@ class MenuItem:
 
   def __init__(self, name, model=None, report=None, url=None, javascript=None,
                label=None, index=None, prefix=True, window=False,
-               separator=False, identifier=None, permission=None):
+               separator=False, identifier=None, permission=None,
+               dependencies=None):
     self.name = name
     self.url = url
     self.javascript = javascript
@@ -54,6 +55,7 @@ class MenuItem:
     self.identifier = identifier
     self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
     self.permission = permission
+    self.dependencies = dependencies
 
   def __str__(self):
     return self.name
@@ -128,7 +130,7 @@ class Menu:
   def addItem(self, group, name, separator=False, report=None,
               url=None, javascript=None, label=None, index=None,
               prefix=True, window=False, model=None, identifier=None,
-              permission=None):
+              permission=None, dependencies=None):
     for i in range(len(self._groups)):
       if self._groups[i][0] == group:
         # Found the group
@@ -155,7 +157,8 @@ class Menu:
         self._groups[i][3].append( MenuItem(
           name, report=report, url=url, javascript=javascript, label=label,
           index=index, prefix=prefix, window=window, separator=separator,
-          model=model, identifier=identifier, permission=permission
+          model=model, identifier=identifier, permission=permission,
+          dependencies=dependencies
           ) )
         return
     # Couldn't locate the group

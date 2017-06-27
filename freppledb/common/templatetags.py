@@ -22,7 +22,7 @@ from django.apps import apps
 from django.contrib.admin.utils import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.conf import settings
-from django.db import models
+from django.db import models, connections
 from django.utils.translation import ugettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
@@ -390,19 +390,39 @@ class MenuNode(Node):
     except:
       return ''  # No request found in the context
     o = []
+    
+    # Find all tables with data
+    with connections[req.database].cursor() as cursor:
+      cursor.execute('''
+        select relname
+        from pg_stat_user_tables 
+        WHERE schemaname = 'public' 
+        and n_live_tup > 0
+        ''')
+      present = set([ i[0] for i in cursor])
+    
     for i in menu.getMenu(req.LANGUAGE_CODE):
       group = [i[0], [] ]
       empty = True
       kept_back = None
       for j in i[1]:
         if j[2].has_permission(req.user):
+          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):
+            ok = True
+            for dep in j[2].dependencies:
+              if dep._meta.db_table not in present:
+                ok = False
+                break
+            if not ok:
+              continue
+          emptytable = not j[2].model or j[2].model._meta.db_table in present
           if j[2].separator:
-            kept_back = (j[1], j[2], j[2].can_add(req.user) )
+            kept_back = (j[1], j[2], j[2].can_add(req.user), emptytable )
           else:
             if kept_back:
               group[1].append(kept_back)
               kept_back = None
-            group[1].append( (j[1], j[2], j[2].can_add(req.user) ) )
+            group[1].append( (j[1], j[2], j[2].can_add(req.user), emptytable ) )
             empty = False
       if not empty:
         # At least one item of the group is visible

@@ -27,19 +27,23 @@ from freppledb.input.models import Calendar, Operation
 
 menu.addItem(
   "inventory", "distribution orders", url="/data/input/distributionorder/",
-  report=freppledb.input.views.DistributionOrderList, index=50, model=DistributionOrder
+  report=freppledb.input.views.DistributionOrderList, index=50, model=DistributionOrder,
+  dependencies=[ItemDistribution]
   )
 menu.addItem(
   "inventory", "buffer admin", url="/data/input/buffer/",
-  report=freppledb.input.views.BufferList, index=1200, model=Buffer
+  report=freppledb.input.views.BufferList, index=1200, model=Buffer,
+  dependencies=[Item, Location]
   )
 menu.addItem(
   "inventory", "item distributions", url="/data/input/itemdistribution/",
-  report=freppledb.input.views.ItemDistributionList, index=1300, model=ItemDistribution
+  report=freppledb.input.views.ItemDistributionList, index=1300, model=ItemDistribution,
+  dependencies=[Item, Location]
   )
 menu.addItem(
   "sales", "demand", url="/data/input/demand/",
-  report=freppledb.input.views.DemandList, index=100, model=Demand
+  report=freppledb.input.views.DemandList, index=100, model=Demand,
+  dependencies=[Item, Location, Customer]
   )
 menu.addItem(
   "sales", "item", url="/data/input/item/",
@@ -55,7 +59,8 @@ menu.addItem(
   )
 menu.addItem(
   "purchasing", "purchase orders", url="/data/input/purchaseorder/",
-  report=freppledb.input.views.PurchaseOrderList, index=100, model=PurchaseOrder
+  report=freppledb.input.views.PurchaseOrderList, index=100, model=PurchaseOrder,
+  dependencies=[ItemSupplier]
   )
 menu.addItem(
   "purchasing", "suppliers", url="/data/input/supplier/",
@@ -63,7 +68,8 @@ menu.addItem(
   )
 menu.addItem(
   "purchasing", "item suppliers", url="/data/input/itemsupplier/",
-  report=freppledb.input.views.ItemSupplierList, index=1200, model=ItemSupplier
+  report=freppledb.input.views.ItemSupplierList, index=1200, model=ItemSupplier,
+  dependencies=[Item, Location, Supplier]
   )
 menu.addItem(
   "capacity", "resources", url="/data/input/resource/",
@@ -71,23 +77,28 @@ menu.addItem(
   )
 menu.addItem(
   "capacity", "skills", url="/data/input/skill/",
-  report=freppledb.input.views.SkillList, index=1200, model=Skill
+  report=freppledb.input.views.SkillList, index=1200, model=Skill,
+  dependencies=[Resource]
   )
 menu.addItem(
   "capacity", "resource skills", url="/data/input/resourceskill/",
-  report=freppledb.input.views.ResourceSkillList, index=1300, model=ResourceSkill
+  report=freppledb.input.views.ResourceSkillList, index=1300, model=ResourceSkill,
+  dependencies=[Resource, Skill]
   )
 menu.addItem(
   "capacity", "setup matrices", url="/data/input/setupmatrix/",
-  report=freppledb.input.views.SetupMatrixList, index=1400, model=SetupMatrix
+  report=freppledb.input.views.SetupMatrixList, index=1400, model=SetupMatrix,
+  dependencies=[Resource]
   )
 menu.addItem(
   "capacity", "setup rules", url="/data/input/setuprule/",
-  report=freppledb.input.views.SetupRuleList, index=1500, model=SetupRule
+  report=freppledb.input.views.SetupRuleList, index=1500, model=SetupRule,
+  dependencies=[SetupMatrix]
   )
 menu.addItem(
   "manufacturing", "manufacturing orders", url="/data/input/manufacturingorder/",
-  report=freppledb.input.views.ManufacturingOrderList, index=100, model=ManufacturingOrder
+  report=freppledb.input.views.ManufacturingOrderList, index=100, model=ManufacturingOrder,
+  dependencies=[Operation]
   )
 menu.addItem(
   "manufacturing", "calendars", url="/data/input/calendar/",
@@ -95,21 +106,26 @@ menu.addItem(
   )
 menu.addItem(
   "manufacturing", "calendarbucket", url="/data/input/calendarbucket/",
-  report=freppledb.input.views.CalendarBucketList, index=1300, model=CalendarBucket
+  report=freppledb.input.views.CalendarBucketList, index=1300, model=CalendarBucket,
+  dependencies=[Calendar]
   )
 menu.addItem(
   "manufacturing", "operations", url="/data/input/operation/",
-  report=freppledb.input.views.OperationList, index=1400, model=Operation
+  report=freppledb.input.views.OperationList, index=1400, model=Operation,
+  dependencies=[Item, Location]
   )
 menu.addItem(
   "manufacturing", "operationmaterials", url="/data/input/operationmaterial/",
-  report=freppledb.input.views.OperationMaterialList, index=1500, model=OperationMaterial
+  report=freppledb.input.views.OperationMaterialList, index=1500, model=OperationMaterial,
+  dependencies=[Operation]
   )
 menu.addItem(
   "manufacturing", "operationresources", url="/data/input/operationresource/",
-  report=freppledb.input.views.OperationResourceList, index=1600, model=OperationResource
+  report=freppledb.input.views.OperationResourceList, index=1600, model=OperationResource,
+  dependencies=[Operation, Resource]
   )
 menu.addItem(
   "manufacturing", "suboperations", url="/data/input/suboperation/",
-  report=freppledb.input.views.SubOperationList, index=1700, model=SubOperation
+  report=freppledb.input.views.SubOperationList, index=1700, model=SubOperation,
+  dependencies=[Operation]
   )

@@ -135,13 +135,14 @@ class Command(BaseCommand):
           tables.discard(i._meta.db_table)
           ContentTypekeys.add(ContentType.objects.get_for_model(i).pk)
       # Some tables need to be handled a bit special
-      if "setupmatrix" in tables:
-        tables.add("setuprule")
       if 'operationplan' in tables:
         tables.add('operationplanmaterial')
         tables.add('operationplanresource')
+        tables.add('out_problem')
       if 'resource' in tables and 'out_resourceplan' not in tables:
         tables.add('out_resourceplan')
+      if 'demand' in tables and 'out_constraint' not in tables:
+        tables.add('out_constraint')   
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
       tables.discard('auth_group')

@@ -820,7 +820,6 @@ class GridReport(View):
               break
         if sortfield.strip() in query.query.extra_select and not added:
           sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
-      print("--------", sortargs, " for ", sortname)
       if sortargs:
         return query.order_by(*sortargs)
       else:

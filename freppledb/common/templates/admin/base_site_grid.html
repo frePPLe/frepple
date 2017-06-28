@@ -45,46 +45,14 @@ $(function() {
     viewSort: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
-    //multiSort: true,
+    multiSort: true,
     page: {{page}},
     hidegrid: false,
     resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
-    onSortCol: function (sortname, sortindex, sortorder) {
-
-      var p = $(this).jqGrid("getGridParam");
-      var elements = (sortname + " " + sortorder).split(",");
-      if (p.lastsort != sortindex)   // TODO not always correct criterion
-      {
-        // Adding a new column to the list.
-        // Move the last element from the list to the start.
-      	var last = elements.pop();
-      	elements.splice(0, 0, last);
-      	var last = elements.pop();
-      	var x = last.trim().split(" ");
-        elements.push(x[0]);
-      	p.sortname = elements.join();
-      	p.sortorder = x[1];
-      }
-      $('.jqgh_grid_sort sub').text('');
-      for (var i = 0; i < elements.length; i++)
-      {
-      	var x = elements[i].trim().split(" ");
-        var num = $("#jqgh_grid_sort_" + x[0] + ">sub");
-      	if (num.length == 0)
-      	{
-          $("#jqgh_grid_" + x[0] + " .s-ico").before(
-            '<span id="jqgh_grid_sort_' + x[0] + '" class="jqgh_grid_sort" style="width: .63em;"><sub>' + (i+1) + '</sub></span>'
-          );
-          //$("#jqgh_grid_" + x[0] + " .s-ico").css('display','inline-block');
-          num = $("#jqgh_grid_sort_" + x[0] + ">sub");
-          $("#jqgh_grid_sort_" + x[0] + " .s-ico").css("width", "1.5em")
-      	}
-      	else
-      	  num.text(i+1);
-      }
-
-      grid.saveColumnConfiguration();
+    onSortCol: function(sortname, sortindex, sortorder) {
+      grid.onSortCol(sortname, sortindex, sortorder);
+      grid.saveColumnConfiguration();      
     },
     onPaging: grid.saveColumnConfiguration,
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
@@ -159,7 +127,8 @@ $(function() {
 	{
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);
 	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
-	}{% endif %}
+	};{% endif %}
+  grid.onSortCol();
   $("#grid").on('input', function(event) {
     // to prevent firefox from triggering save/undo on checkbox select
     if (!$(event.target).parent().hasClass('td_cbox')) {

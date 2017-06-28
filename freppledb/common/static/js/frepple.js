@@ -868,6 +868,62 @@ var grid = {
     });
   },
 
+  onSortCol: function (sortname, sortindex, sortorder) {
+    // Get missing arguments when they aren't passed
+  	var p = $("#grid")[0].p;
+    if (sortname === undefined)
+    	sortname = p.sortname;
+    if (sortindex === undefined)
+    	sortindex = p.sortindex;
+    if (sortorder === undefined)
+    	sortorder = p.sortorder;
+    
+    // Change the ordering of the columns    
+    if (sortname)
+    {
+	    var elements_original = (sortname + " " + sortorder).split(",");
+	    var elements_new = []; 
+	    var found = false;
+	    for (var i = 0; i < elements_original.length; i++) {
+	    	if (sortindex === undefined || (elements_original[i].trim() != p.colModel[sortindex].name + " asc" 
+	          && elements_original[i].trim() != p.colModel[sortindex].name + " desc")) {
+	    		elements_new.push(elements_original[i]);
+	    	}
+	    	else if (sortindex !== undefined)
+	    		found = elements_original[i];
+	    }
+	    if (found)
+	    	elements_new.splice(0, 0, found);
+	    
+	    // Special processing for the the last element and update grid fields
+	    var last = elements_new.pop();
+	    while (elements_new.length > 3)
+	    	last = elements_new.pop();
+	    var x = last.trim().split(" ");
+	    elements_new.push(x[0]); 
+	  	p.sortname = elements_new.join();
+	  	p.sortorder = x[1];
+    
+	    // Display numeric labels
+	    $('.jqgh_grid_sort small').text('');
+	    for (var i = 0; i < elements_new.length; i++)
+	    {
+	    	var x = elements_new[i].trim().split(" ");
+	      var num = $("#jqgh_grid_sort_" + x[0] + ">small");
+	    	if (num.length == 0)
+	    	{
+	        $("#jqgh_grid_" + x[0] + " .s-ico").before(
+	          '<span id="jqgh_grid_sort_' + x[0] + '" class="jqgh_grid_sort" style="font-size:75%; text-align: center; height: 1.125em;"><small>&nbsp;' + (i+1) + '</small></span>'
+	        );
+	        num = $("#jqgh_grid_sort_" + x[0] + ">small");
+	        $("#jqgh_grid_sort_" + x[0] + " .s-ico").css("width", "1.5em");
+	    	}
+	    	else
+	    	  num.text(" " + (i+1));
+	    };
+    };
+  }, 
+  
   //This function is called when a cell is just being selected in an editable
   //grid. It is used to either a) select the content of the cell (to make
   //editing it easier) or b) display a date picker it the field is of type

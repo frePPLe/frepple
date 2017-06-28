@@ -61,10 +61,11 @@ $(function() {
     scrollRows: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
-    //multiSort: true,    
-    onSortCol: function (index, columnIndex, sortOrder) {
-      grid.saveColumnConfiguration();
-    },    
+    multiSort: true,    
+    onSortCol: function(sortname, sortindex, sortorder) {
+      grid.onSortCol(sortname, sortindex, sortorder);
+      grid.saveColumnConfiguration();      
+    },
     onPaging: grid.saveColumnConfiguration,
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},
@@ -100,6 +101,7 @@ $(function() {
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);
 	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
 	}{% endif %}
+  grid.onSortCol();
   jQuery("#gridmode").click(function() {grid.displayMode("table");});
   jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}

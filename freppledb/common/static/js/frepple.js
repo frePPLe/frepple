@@ -877,8 +877,11 @@ var grid = {
     	sortindex = p.sortindex;
     if (sortorder === undefined)
     	sortorder = p.sortorder;
+
+    // Resetting styles
+    $('.jqgh_grid_sort small').text('');
     
-    // Change the ordering of the columns    
+    // Change the ordering of the columns 
     if (sortname)
     {
 	    var elements_original = (sortname + " " + sortorder).split(",");
@@ -904,8 +907,7 @@ var grid = {
 	  	p.sortname = elements_new.join();
 	  	p.sortorder = x[1];
     
-	    // Display numeric labels
-	    $('.jqgh_grid_sort small').text('');
+	    // Display numeric labels	  	
 	    for (var i = 0; i < elements_new.length; i++)
 	    {
 	    	var x = elements_new[i].trim().split(" ");

@@ -402,7 +402,7 @@ class MenuNode(Node):
       present = set([ i[0] for i in cursor])
     
     for i in menu.getMenu(req.LANGUAGE_CODE):
-      group = [i[0], [] ]
+      group = [i[0], [], False]
       empty = True
       kept_back = None
       for j in i[1]:
@@ -415,12 +415,15 @@ class MenuNode(Node):
                 break
           emptytable = not j[2].model or j[2].model._meta.db_table in present
           if j[2].separator:
-            kept_back = (j[1], j[2], j[2].can_add(req.user), emptytable, ok )
+            if group[2]:
+              kept_back = (j[1], j[2], j[2].can_add(req.user), emptytable, ok )
           else:
             if kept_back:
               group[1].append(kept_back)
               kept_back = None
             group[1].append( (j[1], j[2], j[2].can_add(req.user), emptytable, ok ) )
+            if not group[2] and ok:
+              group[2] = True
             empty = False
       if not empty:
         # At least one item of the group is visible

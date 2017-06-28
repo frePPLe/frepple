@@ -122,10 +122,11 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
-; Language files, sorted alphabetically
+; Language files, sorted alphabetically to avoid a new world war
 !insertmacro MUI_LANGUAGE "English"   ; First option is the default language
 !insertmacro MUI_LANGUAGE "Dutch"
 !insertmacro MUI_LANGUAGE "French"
+!insertmacro MUI_LANGUAGE "German"
 !insertmacro MUI_LANGUAGE "Italian"
 !insertmacro MUI_LANGUAGE "Japanese"
 !insertmacro MUI_LANGUAGE "Portuguese"

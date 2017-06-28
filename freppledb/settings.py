@@ -109,9 +109,11 @@ TIME_ZONE = 'Europe/Brussels'
 ugettext = lambda s: s
 LANGUAGES = (
   # Translators: Translation included with Django
-  ('en', ugettext('English')),
+  ('en', ugettext('English')),  
   # Translators: Translation included with Django
   ('fr', ugettext('French')),
+  # Translators: Translation included with Django
+  ('de', ugettext('German')),
   # Translators: Translation included with Django
   ('it', ugettext('Italian')),
   # Translators: Translation included with Django

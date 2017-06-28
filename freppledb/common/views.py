@@ -111,27 +111,10 @@ def wizard(request):
             wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
             wiz.status = instruction['value']
             wiz.save(update_fields=['status'], using=request.database)
-          elif instruction['command'] == 'execute':
-            if instruction['key'] == 'Buffers':
-              # Create a buffer for every item+location combination
-              cursor = connections[request.database].cursor()
-              with transaction.atomic(using=request.database):
-                cursor.execute('''
-                  update buffer
-                    set name = item_id || ' @ ' || location_id
-                  where item_id || ' @ ' || location_id <> name
-                  ''')
-                cursor.execute('''
-                  insert into buffer
-                    (name, item_id, location_id, onhand, source, lastmodified)
-                  select item.name || ' @ ' || location.name,
-                    item.name, location.name, 0, 'wizard', now()
-                  from item
-                  cross join location
-                  except
-                  select name, item_id, location_id, 0, 'wizard', now()
-                  from buffer
-                  ''')
+          # Code sample when there is an auto-populate action in the wizard.
+          #elif instruction['command'] == 'execute':
+          #  if instruction['key'] == 'xyz':
+          #    pass
         except Exception as e:
           errors.append(str(e))
     except Exception as e:

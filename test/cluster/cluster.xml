@@ -145,7 +145,7 @@
         <duration>PT10S</duration>
       </producing>
     </buffer>
-    <buffer name="buffer item 1&amp;3 : 4 : 1">
+    <buffer name="buffer item 1&amp;3 : 3 : 1">
       <item name="item 1" />
     </buffer>
   </buffers>
@@ -229,12 +229,12 @@
     </flow>
     <flow xsi:type="flow_start">
       <operation name="Make 3 : 1 : 1" />
-      <buffer name="buffer item 1&amp;3 : 4 : 1" />
+      <buffer name="buffer item 1&amp;3 : 3 : 1" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_start">
       <operation name="Make 1 : 3 : 1" />
-      <buffer name="buffer item 1&amp;3 : 4 : 1" />
+      <buffer name="buffer item 1&amp;3 : 3 : 1" />
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">

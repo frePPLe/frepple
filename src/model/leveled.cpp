@@ -328,7 +328,10 @@ void HasLevel::computeLevels()
                 ++buffl)
               {
                 if (!buffl->getOperation()->cluster)
+                {
+                  stack.push(make_pair(buffl->getOperation(), -1));
                   buffl->getOperation()->cluster = cur_cluster;
+                }
               }
             }
         } // End of flow loop

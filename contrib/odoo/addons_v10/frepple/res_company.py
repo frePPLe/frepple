@@ -18,49 +18,45 @@
 import logging
 import time
 
-from odoo import api, models
-from odoo.osv import osv
-from odoo.osv import fields
+from odoo import api, models, fields
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 try:
-   import jwt
+    import jwt
 except:
-   logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
+    _logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
 
 
-class res_company(models.Model):
-  _name = 'res.company'
-  _inherit = 'res.company'
+FREPPLE_CMD = 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
 
-  _columns = {
-    'manufacturing_warehouse': fields.many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null'),
-    'calendar': fields.many2one('resource.calendar', 'Calendar', ondelete='set null'),
-    'cmdline': fields.char('Command line', size=128),
-    'webtoken_key': fields.char('Webtoken key', size=128),
-    'frepple_server': fields.char('frePPLe web server', size=128),
-    }
+class ResCompany(models.Model):
+    ''' Company '''
 
-  _defaults = {
-    'cmdline': lambda *a: 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
-    }
+    _name = 'res.company'
+    _inherit = 'res.company'
 
-  @api.model
-  def getFreppleURL(self):
-    '''
-    Create an authorization header trusted by frePPLe
-    '''
-    webtoken = jwt.encode({
-      'exp': round(time.time()) + 600,
-      'user': self.env.user.login,
-      'navbar': self.env.context.get("navbar", True)
-      },
-      self.env.user.company_id.webtoken_key,
-      algorithm='HS256').decode('ascii')
-    url = self.env.context.get("url", "/")
-    logger.warn("%s%s?webtoken=%s" % (self.env.user.company_id.frepple_server, url, webtoken))
-    return "%s%s?webtoken=%s" % (self.env.user.company_id.frepple_server, url, webtoken)
+    manufacturing_warehouse = fields.Many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null')
+    calendar = fields.Many2one('resource.calendar', 'Calendar', ondelete='set null')
+    cmdline = fields.Char('Command line', size=128, default=lambda *a: FREPPLE_CMD)
+    webtoken_key = fields.Char('Webtoken key', size=128)
+    frepple_server = fields.Char('frePPLe web server', size=128)
 
 
-res_company()
+    @api.model
+    def getFreppleURL(self):
+        '''
+        Create an authorization header trusted by frePPLe
+        '''
+        user_company_webtoken = self.env.user.company_id.webtoken_key
+        encode_params = dict(exp=round(time.time()) + 600,
+                             user=self.env.user.login,
+                             navbar=self.env.context.get("navbar", True)),
+        webtoken = jwt.encode(encode_params,
+                              user_company_webtoken,
+                              algorithm='HS256').decode('ascii')
+        _url = self.env.context.get("url", "/")
+        server = self.env.user.company_id.frepple_server
+        url = "%s%s?webtoken=%s" % (server, _url, webtoken)
+        _logger.warn(url)
+        return url

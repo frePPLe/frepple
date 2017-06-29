@@ -10,12 +10,12 @@
 
     <!-- Extra configuration fields on the company form -->
     <record id="company_form_frepple" model="ir.ui.view">
-      <field name="name">res.company.form.frepple.inherit</field>
-      <field name="model">res.company</field>
-      <field name="inherit_id" ref="base.view_company_form"/>
+      <field name="name">mrp.config.settings.frepple.inherit</field>
+      <field name="model">mrp.config.settings</field>
+      <field name="inherit_id" ref="mrp.view_mrp_config"/>
       <field name="priority">55</field>
       <field name="arch" type="xml">
-        <xpath expr="//group[@name='logistics_grp']" position="after">
+        <xpath expr="//group[@name='logistics']" position="after">
           <group name="base.frepple_grp" string="FrePPLe">
             <field name="calendar"/>
             <field name="manufacturing_warehouse"/>
@@ -75,7 +75,7 @@
     </record>
     <menuitem id="menu_frepple_web"
       name="Advanced planning - frePPLe"
-      parent="mrp.menu_mrp_planning"
+      parent="mrp.menu_mrp_root"
       sequence="100"
       action="action_frepple_web"/>
 
@@ -86,10 +86,10 @@
     </record>
     <menuitem id="menu_frepple_forecast_editor"
       name="Forecast editor - frePPLe"
-      parent="base.menu_sales"
+      parent="sales_team.menu_sales"
       sequence="100"
       action="action_frepple_forecast_editor"
-      groups="base.group_sale_manager,base.group_sale_salesman"
+      groups="sales_team.group_sale_manager,sales_team.group_sale_salesman"
       />
 
     <!-- frePPle forecast editor in sales menu. -->

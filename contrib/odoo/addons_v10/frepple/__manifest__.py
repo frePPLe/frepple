@@ -9,17 +9,17 @@
     'license': 'AGPL-3',
     'description': 'Connector to frePPLe - finite capacity planning and scheduling',
     'depends': [
-      'procurement',
-      'product',
-      'purchase',
-      'sale',
-      'resource',
-      'mrp'
-      ],
+        'procurement',
+        'product',
+        'purchase',
+        'sale',
+        'resource',
+        'mrp'
+    ],
     'external_dependencies': {'python': ['jwt']},
     'data': [
-      'frepple_data.xml',
-      ],
+        'frepple_data.xml',
+    ],
     'demo': [],
     'test': [],
     'installable': True,

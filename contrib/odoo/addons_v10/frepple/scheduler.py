@@ -30,7 +30,7 @@ class frepple_plan(models.TransientModel):
     _name = 'frepple.plan'
     _description = 'Create a material and capacity constrained plan'
 
-    company_id = fields.Many2one('res.company', string='Company', index=True)
+    company = fields.Many2one('res.company', string='Company', index=True)
 
     @api.model
     def run_frepple(self, cmdline):

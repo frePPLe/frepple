@@ -60,3 +60,14 @@ class ResCompany(models.Model):
         url = "%s%s?webtoken=%s" % (server, _url, webtoken)
         _logger.warn(url)
         return url
+
+
+class MrpConfigSettings(models.TransientModel):
+    _name = 'mrp.config.settings'
+    _inherit = 'mrp.config.settings'
+
+    manufacturing_warehouse = fields.Many2one(related='company_id.manufacturing_warehouse', string='Manufacturing warehouse')
+    calendar = fields.Many2one(related='company_id.calendar', string='Calendar')
+    cmdline = fields.Char(related='company_id.cmdline', string='Command line')
+    webtoken_key = fields.Char(related='company_id.webtoken_key', string='Webtoken key')
+    frepple_server = fields.Char(related='company_id.frepple_server', string='frePPLe web server')

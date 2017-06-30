@@ -7274,6 +7274,9 @@ class Demand
     void deleteOperationPlans
     (bool deleteLockedOpplans = false, CommandManager* = nullptr);
 
+    /** Python method for adding a constraint. */
+    static PyObject* addConstraint(PyObject*, PyObject*, PyObject*);
+
     /** Returns the due date of the demand. */
     Date getDue() const
     {

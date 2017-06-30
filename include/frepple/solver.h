@@ -618,7 +618,7 @@ class SolverMRP : public Solver
     /** Python method for running the solver. */
     static PyObject* solve(PyObject*, PyObject*);
 
-    /** Python method for commiting the plan changes. */
+    /** Python method for committing the plan changes. */
     static PyObject* commit(PyObject*, PyObject*);
 
     /** Python method for undoing the plan changes. */

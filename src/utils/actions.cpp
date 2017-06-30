@@ -550,7 +550,6 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
   // Each OS-level thread needs to initialize a Python thread state.
   ThreadGroup *l = static_cast<ThreadGroup*>(arg);
   bool threaded = l->maxParallel > 1 && l->countCallables > 1;
-  if (threaded) PythonInterpreter::addThread();
 
   for (callableWithArgument nextfunc = l->selectNextCallable();
       nextfunc.first;
@@ -572,7 +571,6 @@ unsigned __stdcall ThreadGroup::wrapper(void *arg)
   };
 
   // Finalize the Python thread state
-  if (threaded) PythonInterpreter::deleteThread();
   return 0;
 }
 

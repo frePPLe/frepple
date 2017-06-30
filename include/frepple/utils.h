@@ -582,22 +582,6 @@ class PythonInterpreter
       return module;
     }
 
-    /** Create a new Python thread state.<br>
-      * Each OS-level thread needs to initialize a Python thread state as well.
-      * When a new thread is created in the OS, this method should be called
-      * to create a Python thread state as well.<br>
-      * See the Python PyGILState_Ensure API.
-      */
-    static void addThread();
-
-    /** Delete a Python thread state.<br>
-      * Each OS-level thread has a Python thread state.
-      * When an OS thread is deleted, this method should be called
-      * to delete the Python thread state as well.<br>
-      * See the Python PyGILState_Release API.
-      */
-    static void deleteThread();
-
   private:
     /** Callback function to create the extension module. */
     static PyObject* createModule();

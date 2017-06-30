@@ -29,7 +29,6 @@ class CheckTask(PlanTask):
   # to be used for data validation tasks
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
-    # Task not active!
     return 0.1
 
   filter = None
@@ -39,7 +38,6 @@ class LoadTask(PlanTask):
 
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
-    # Task not active!
     return 0.1
 
   filter = None

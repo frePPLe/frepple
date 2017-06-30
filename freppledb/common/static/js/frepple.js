@@ -880,7 +880,11 @@ var grid = {
 
     // Resetting styles
     $('.jqgh_grid_sort small').text('');
-    
+    $(".ui-icon-asc").prop("disabled", true);
+    $(".ui-icon-asc").prop("disabled", true);
+    $(".ui-icon-desc").prop("disabled", true);
+    $('.s-ico').hide();
+
     // Change the ordering of the columns 
     if (sortname)
     {
@@ -907,21 +911,31 @@ var grid = {
 	  	p.sortname = elements_new.join();
 	  	p.sortorder = x[1];
     
-	    // Display numeric labels	  	
+	    // Display numeric labels and sorting icons
 	    for (var i = 0; i < elements_new.length; i++)
 	    {
-	    	var x = elements_new[i].trim().split(" ");
-	      var num = $("#jqgh_grid_sort_" + x[0] + ">small");
+        var x = elements_new[i].trim().split(" ");
+        var num = $("#jqgh_grid_sort_" + x[0].trim() + " >small");
+        var el = $("div[id=jqgh_grid_" + x[0].trim() + "]");
 	    	if (num.length == 0)
 	    	{
-	        $("#jqgh_grid_" + x[0] + " .s-ico").before(
-	          '<span id="jqgh_grid_sort_' + x[0] + '" class="jqgh_grid_sort" style="font-size:75%; text-align: center; height: 1.125em;"><small>&nbsp;' + (i+1) + '</small></span>'
+	        el.find(".s-ico").before(
+	          '<span id="jqgh_grid_sort_' + x[0].trim() + '" class="jqgh_grid_sort" style="font-size:75%; text-align: center; height: 1.125em;"><small>&nbsp;' + (i+1) + '</small></span>'
 	        );
-	        num = $("#jqgh_grid_sort_" + x[0] + ">small");
-	        $("#jqgh_grid_sort_" + x[0] + " .s-ico").css("width", "1.5em");
+	        num = $("#jqgh_grid_sort_" + x[0].trim() + " >small");
 	    	}
 	    	else
 	    	  num.text(" " + (i+1));
+        el.find(".s-ico").show();
+        var dir = (i == elements_new.length - 1) ? p.sortorder.trim() : x[1].trim();
+        if (dir == "asc") {
+        	el.find(".s-ico .ui-icon-asc").removeClass("disabled");
+        	el.find(".s-ico .ui-icon-desc").addClass("disabled");
+        }
+        else {
+        	el.find(".s-ico .ui-icon-desc").removeClass("disabled");
+        	el.find(".s-ico .ui-icon-asc").addClass("disabled");
+        }
 	    };
     };
   }, 

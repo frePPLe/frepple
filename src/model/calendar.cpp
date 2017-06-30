@@ -559,7 +559,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
     {
       // The next event is the start of the next ineffective day
       tmp -= ref_time;
-      while (b->days & (1 << ref_weekday))
+      while (b->days & (1 << ref_weekday)  && tmp != Date::infiniteFuture)
       {
         if (++ref_weekday > 6)
           ref_weekday = 0;
@@ -595,7 +595,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
         ref_weekday = 0;
       tmp += Duration(86400L);
     }
-    while (!(b->days & (1 << ref_weekday)))
+    while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
     {
       if (++ref_weekday > 6)
         ref_weekday = 0;
@@ -679,7 +679,7 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
     {
       // The previous event is the end of the previous infective day
       tmp += Duration(86400L) - ref_time;
-      while (b->days & (1 << ref_weekday))
+      while (b->days & (1 << ref_weekday) && tmp != Date::infinitePast)
       {
         if (--ref_weekday < 0)
           ref_weekday = 6;
@@ -715,7 +715,7 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
         ref_weekday = 6;
       tmp -= Duration(86400L);
     }
-    while (!(b->days & (1 << ref_weekday)))
+    while (!(b->days & (1 << ref_weekday)) && tmp != Date::infinitePast)
     {
       if (--ref_weekday < 0)
         ref_weekday = 6;

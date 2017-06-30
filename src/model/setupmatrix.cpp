@@ -156,7 +156,7 @@ SetupMatrixRule* SetupMatrix::createRule(const DataValueDict& atts)  TODO Review
 }
 */
 
-PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* kwdict)
+PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* kwdict)  // TODO Use a normal read instead of this special method
 {
   try
   {
@@ -166,13 +166,13 @@ PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* k
 
     // Parse the arguments
     int prio = 0;
-    PyObject *pyfrom = nullptr;
-    PyObject *pyto = nullptr;
+    char *pyfrom = nullptr;
+    char *pyto = nullptr;
     long duration = 0;
     double cost = 0;
     static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", nullptr};
     if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-        "i|ssld:addRule",
+        "iss|ld:addRule",
         const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
       return nullptr;
 
@@ -180,8 +180,8 @@ PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* k
     SetupMatrixRule *r = new SetupMatrixRule();
     r->setPriority(prio);
     r->setSetupMatrix(matrix);
-    if (pyfrom) r->setFromSetup(PythonData(pyfrom).getString());
-    if (pyto) r->setToSetup(PythonData(pyfrom).getString());
+    if (pyfrom) r->setFromSetup(pyfrom);
+    if (pyto) r->setToSetup(pyto);
     r->setDuration(duration);
     r->setCost(cost);
     return PythonData(r);

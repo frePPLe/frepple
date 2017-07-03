@@ -331,8 +331,8 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
       throw LogicException("Can't add a contraint to a null demand");
 
     // Parse the arguments
-    PyObject *pytype = nullptr;
-    PyObject *pyowner = nullptr;
+    char *pytype = nullptr;
+    char *pyowner = nullptr;
     PyObject *pystart = nullptr;
     PyObject *pyend = nullptr;
     double cnstrnt_weight = 0;
@@ -342,8 +342,12 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
       const_cast<char**>(kwlist), &pytype, &pyowner, &pystart, &pyend, &cnstrnt_weight
       ))
         return nullptr;
-    string cnstrnt_type = PythonData(pytype).getString();
-    string cnstrnt_owner = PythonData(pyowner).getString();
+    string cnstrnt_type;
+    if (pytype) 
+      cnstrnt_type = pytype;
+    string cnstrnt_owner;
+    if (pyowner)
+      cnstrnt_owner = pyowner;
     Date cnstrnt_start = Date::infinitePast;
     if (pystart)
       cnstrnt_start = PythonData(pystart).getDate();

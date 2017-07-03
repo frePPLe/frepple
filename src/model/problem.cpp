@@ -540,6 +540,7 @@ void Problem::List::clear(Problem *c)
     Problem *del = cur;
     cur = cur->nextProblem;
     del->owner = nullptr;
+    Py_DECREF(del);
     delete del;
   }
 
@@ -577,6 +578,7 @@ Problem* Problem::List::push(const MetaClass* m,
     cur->nextProblem = p;
   else
     first = p;
+  Py_INCREF(p);
   return p;
 }
 
@@ -603,6 +605,7 @@ void Problem::List::pop(Problem *p)
     Problem *del = q;
     q = q->nextProblem;
     del->owner = nullptr;
+    Py_DECREF(del);
     delete del;
   }
 }
@@ -631,7 +634,8 @@ void Problem::List::push(Problem* p)
     return;
   else
     // Link at the end of the list
-    cur->nextProblem = p;    
+    cur->nextProblem = p;
+  Py_INCREF(p);
 }
 
 } // End namespace

@@ -364,13 +364,6 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
         throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemBeforeCurrent::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
     }
-    else if (cnstrnt_type == ProblemBeforeFence::metadata->type)
-    {
-      Operation* obj = Operation::find(cnstrnt_owner);
-      if (!obj)
-        throw DataException("Can't find constraint owner");
-      cnstrnt = dmd->getConstraints().push(ProblemBeforeFence::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
-    }
     else if (cnstrnt_type == ProblemCapacityOverload::metadata->type)
     {
       Resource* obj = Resource::find(cnstrnt_owner);
@@ -384,6 +377,13 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
       if (!obj)
         throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemMaterialShortage::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
+    }
+    else if (cnstrnt_type == ProblemBeforeFence::metadata->type)
+    {
+      Operation* obj = Operation::find(cnstrnt_owner);
+      if (!obj)
+        throw DataException("Can't find constraint owner");
+      cnstrnt = dmd->getConstraints().push(ProblemBeforeFence::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
     }
     else
       throw DataException("Invalid constraint type");

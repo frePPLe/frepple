@@ -3452,18 +3452,6 @@ class OperationTimePer : public Operation
       duration_per = t;
     }
 
-    /** Sets a calendar to defining the minimum size of operationplans.
-      * It overrides the method defined at the base class by printing an
-      * additional warning.
-      */
-    virtual void setSizeMinimumCalendar(Calendar *c)
-    {
-      logger << "Warning: using a minimum size calendar on an operation of "
-         << "type timeper is tricky. Planning results can be incorrect "
-         << "around changes of the minimum size." << endl;
-      Operation::setSizeMinimumCalendar(c);
-    }
-
     /** A operation of this type enforces the following rules on its
       * operationplans:
       *   - If both the start and end date are specified, the quantity is

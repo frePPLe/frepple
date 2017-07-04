@@ -18,7 +18,7 @@
 import logging
 import time
 
-from odoo import api, models, fields
+from odoo import api, models, fields, exceptions
 
 _logger = logging.getLogger(__name__)
 
@@ -49,14 +49,18 @@ class ResCompany(models.Model):
         Create an authorization header trusted by frePPLe
         '''
         user_company_webtoken = self.env.user.company_id.webtoken_key
+        if not user_company_webtoken:
+          raise exceptions.except_orm("FrePPLe company web token not configured")
         encode_params = dict(exp=round(time.time()) + 600,
                              user=self.env.user.login,
-                             navbar=self.env.context.get("navbar", True)),
+                             navbar=self.env.context.get("navbar", True))
         webtoken = jwt.encode(encode_params,
                               user_company_webtoken,
                               algorithm='HS256').decode('ascii')
         _url = self.env.context.get("url", "/")
         server = self.env.user.company_id.frepple_server
+        if not server:
+          raise exceptions.except_orm("FrePPLe server utl not configured")
         url = "%s%s?webtoken=%s" % (server, _url, webtoken)
         _logger.warn(url)
         return url

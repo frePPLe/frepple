@@ -68,7 +68,7 @@
       parent="stock.menu_stock_sched"
       sequence="100" groups="stock.group_stock_manager"/>
 
-    <!-- Complete frePPLe UI in iframe. -->
+    <!-- Complete frePPLe UI in manufacturing menu. -->
     <record id="action_frepple_web" model="ir.actions.client">
       <field name="name">frePPLe user interface</field>
       <field name="tag">frepple.homepage</field>
@@ -78,6 +78,18 @@
       parent="mrp.menu_mrp_root"
       sequence="100"
       action="action_frepple_web"/>
+
+    <!-- frePPle plan editor in manufacturing menu. -->
+    <record id="action_frepple_planeditor" model="ir.actions.client">
+      <field name="name">Plan editor - frePPLe</field>
+       <field name="tag">frepple.planeditor</field>
+    </record>
+    <menuitem id="menu_frepple_planeditor"
+      name="Plan editor - frePPLe"
+      parent="mrp.menu_mrp_manufacturing"
+      sequence="30"
+      action="action_frepple_planeditor"
+      />
 
     <!-- frePPle forecast editor in sales menu. -->
     <record id="action_frepple_forecast_editor" model="ir.actions.client">
@@ -92,16 +104,16 @@
       groups="sales_team.group_sale_manager,sales_team.group_sale_salesman"
       />
 
-    <!-- frePPle forecast editor in sales menu. -->
-    <record id="action_frepple_distributionplanning" model="ir.actions.client">
-      <field name="name">Distribution planning - frePPLe</field>
-       <field name="tag">frepple.distributionplanning</field>
+    <!-- frePPle inventory planning in inventory menu. -->
+    <record id="action_frepple_inventoryplanning" model="ir.actions.client">
+      <field name="name">Inventory planning - frePPLe</field>
+       <field name="tag">frepple.inventoryplanning</field>
     </record>
-    <menuitem id="menu_frepple_distributionplanning"
-      name="Distribution planning - frePPLe"
+    <menuitem id="menu_frepple_inventoryplanning"
+      name="Inventory planning - frePPLe"
       parent="stock.menu_stock_inventory_control"
       sequence="100"
-      action="action_frepple_distributionplanning"
+      action="action_frepple_inventoryplanning"
       />
 
     <!-- Plan information tab on a sales order. -->

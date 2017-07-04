@@ -19,8 +19,8 @@ openerp.frepple = function(instance, local) {
   });
   instance.web.client_actions.add('frepple.forecasteditor', 'instance.frepple.ForecastEditor');
 
-  /* Distribution planning widget. */
-  local.DistributionPlanning = instance.Widget.extend({
+  /* Inventory planning widget. */
+  local.InventoryPlanning = instance.Widget.extend({
     start: function() {
       var el = this.$el;
       el.height("calc(100% - 34px)");
@@ -33,7 +33,23 @@ openerp.frepple = function(instance, local) {
           });
     }
   });
-  instance.web.client_actions.add('frepple.distributionplanning', 'instance.frepple.DistributionPlanning');
+  instance.web.client_actions.add('frepple.inventoryplanning', 'instance.frepple.InventoryPlanning');
+
+  /* Plan editor widget. */
+  local.PlanEditor = instance.Widget.extend({
+    start: function() {
+      var el = this.$el;
+      el.height("calc(100% - 34px)");
+      var model = new instance.web.Model("res.company");
+      model.call("getFreppleURL", [], {context: new instance.web.CompoundContext({'navbar': false, 'url': '/planningboard/'})})
+        .then(function(result) {
+          el.append('<iframe src="' + result
+            + '" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="no" '
+            + ' scrolling="yes" style="border-width:0px;"/>');
+          });
+    }
+  });
+  instance.web.client_actions.add('frepple.planeditor', 'instance.frepple.PlanEditor');
 
   /* Full user interface widget. */
   local.HomePage = instance.Widget.extend({

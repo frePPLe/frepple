@@ -51,6 +51,7 @@ const Keyword Tags::consuming_date("consuming_date");
 const Keyword Tags::content("content");
 const Keyword Tags::cost("cost");
 const Keyword Tags::criticality("criticality");
+const Keyword Tags::create("create");
 const Keyword Tags::current("current");
 const Keyword Tags::customer("customer");
 const Keyword Tags::customers("customers");

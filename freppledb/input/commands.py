@@ -1089,7 +1089,8 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
           operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
           operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
           operationplan.item_id, operationplan.location_id,
-          reference, coalesce(dmd.name, null)
+          reference, coalesce(dmd.name, null),
+          not exists (select 1 from operationplan o2 where o2.owner_id = operationplan.id)
         FROM operationplan
         LEFT OUTER JOIN (select name from demand
           where demand.status = 'open'
@@ -1107,7 +1108,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
             opplan = frepple.operationplan(
               operation=frepple.operation(name=i[0]), id=i[1],
               quantity=i[2], source=i[6], start=i[3], end=i[4],
-              status=i[5], reference=i[13]
+              status=i[5], reference=i[13], create=i[15]
               )
           elif i[7] == 'PO':
             cnt_po += 1
@@ -1117,7 +1118,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
               item=frepple.item(name=i[11]) if i[11] else None,
               supplier=frepple.supplier(name=i[10]) if i[10] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6]
+              status=i[5], source=i[6], create=i[15]
               )
           elif i[7] == 'DO':
             cnt_do += 1
@@ -1127,7 +1128,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6]
+              status=i[5], source=i[6], create=i[15]
               )
           elif i[7] == 'DLVR':
             cnt_dlvr += 1
@@ -1138,7 +1139,7 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
               origin=frepple.location(name=i[8]) if i[8] else None,
               demand=frepple.demand(name=i[14]) if i[14] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6]
+              status=i[5], source=i[6], create=i[15]
               )
             opplan = None
           else:

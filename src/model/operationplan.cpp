@@ -288,6 +288,12 @@ Object* OperationPlan::createOperationPlan(
     case ADD_CHANGE: ;
   }
 
+  // Flag whether or not to create sub operationplans
+  bool create = true;
+  const DataValue* py_create = in.get(Tags::create);
+  if (py_create)
+    create = py_create->getBool();
+
   // Get start, end, quantity and status fields
   const DataValue* startfld = in.get(Tags::start);
   Date start;
@@ -393,7 +399,7 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate();
+    opplan->activate(create);
   }
   else if (ordtype == "DO")
   {
@@ -496,7 +502,7 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate();
+    opplan->activate(create);
   }
   else if (ordtype == "DLVR")
   {
@@ -541,7 +547,7 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate();
+    opplan->activate(create);
   }
   else
   {
@@ -574,7 +580,7 @@ Object* OperationPlan::createOperationPlan(
       else
         opplan->setStatus(status);
     }
-    opplan->activate();
+    opplan->activate(create);
 
     // Report the operationplan creation to the manager
     if (mgr)
@@ -636,14 +642,14 @@ bool OperationPlan::assignIdentifier()
 }
 
 
-bool OperationPlan::activate()
+bool OperationPlan::activate(bool createsubopplans)
 {
   // At least a valid operation pointer must exist
   if (!oper)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (getQuantity() < 0.0 || !oper->extraInstantiate(this))
+  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans))
   {
     delete this;
     return false;
@@ -1449,7 +1455,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
         if (!attr.isA(Tags::operation) && !attr.isA(Tags::id)
           && !attr.isA(Tags::action) && !attr.isA(Tags::type)
           && !attr.isA(Tags::start) && !attr.isA(Tags::end)
-          && !attr.isA(Tags::quantity))
+          && !attr.isA(Tags::quantity) && !attr.isA(Tags::create))
         {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)

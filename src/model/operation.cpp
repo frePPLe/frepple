@@ -688,7 +688,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
 }
 
 
-bool OperationFixedTime::extraInstantiate(OperationPlan* o)
+bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplans)
 {
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
@@ -1051,10 +1051,10 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
 }
 
 
-bool OperationRouting::extraInstantiate(OperationPlan* o)
+bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans)
 {
   // Create step suboperationplans if they don't exist yet.
-  if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
+  if (createsubopplans && (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation))
   {
     Date d = o->getDates().getEnd();
     OperationPlan *p = nullptr;
@@ -1142,11 +1142,11 @@ OperationAlternate::setOperationPlanParameters(
 }
 
 
-bool OperationAlternate::extraInstantiate(OperationPlan* o)
+bool OperationAlternate::extraInstantiate(OperationPlan* o, bool createsubopplans)
 {
   // Create a suboperationplan if one doesn't exist yet.
   // We use the first effective alternate by default.
-  if (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation)
+  if (createsubopplans && (!o->lastsubopplan || o->lastsubopplan->getOperation() == OperationSetup::setupoperation))
   {
     // Find the right operation
     Operationlist::const_iterator altIter = getSubOperations().begin();
@@ -1191,9 +1191,9 @@ OperationSplit::setOperationPlanParameters(
 }
 
 
-bool OperationSplit::extraInstantiate(OperationPlan* o)
+bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans)
 {
-  if (o->lastsubopplan && o->lastsubopplan->getOperation() != OperationSetup::setupoperation)
+  if (!createsubopplans || (o->lastsubopplan && o->lastsubopplan->getOperation() != OperationSetup::setupoperation))
     // Suboperationplans already exist. Nothing to do here.
     return true;
 

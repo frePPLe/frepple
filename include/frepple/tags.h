@@ -52,6 +52,7 @@ class Tags
     static const Keyword content;
     static const Keyword cost;
     static const Keyword criticality;
+    static const Keyword create;
     static const Keyword current;
     static const Keyword customer;
     static const Keyword customers;

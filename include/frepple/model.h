@@ -2013,6 +2013,18 @@ class OperationPlan
       return owner;
     }
 
+    /** Return a pointer to the next suboperationplan of the owner. */
+    OperationPlan* getNextSubOpplan() const
+    {
+      return nextsubopplan;
+    }
+
+    /** Return a pointer to the previous suboperationplan of the owner. */
+    OperationPlan* getPrevSubOpplan() const
+    {
+      return prevsubopplan;
+    }
+
     /** Returns a pointer to the operationplan owning a set of
       * sub-operationplans. There can be multiple levels of suboperations.<br>
       * If no owner exists the method returns the current operationplan.

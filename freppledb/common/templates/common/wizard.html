@@ -200,43 +200,6 @@
     $('#popup').modal('show');
   };
 
-  //remove lock from graph, set text to black, change the rect fill and stroke
-  function removelock(wizelem) {
-    if (wizelem.lock !== "") {
-      wizelem.lock.style.display='none';
-    }
-		if (wizelem.cup === "" && wizelem.anchor !== "" && wizelem.rctg.getAttribute('id') !== 'generateplan') {
-			wizelem.rctg.style.fill='cyan';
-		}
-		if (wizelem.anchor !== "") {
-			wizelem.anchor.children[0].style.fill='black';
-			wizelem.anchor.children[0].style.stroke='none';
-		}
-    wizelem.rctg.style.stroke='#00d5ff';
-  }
-
-	//turn rectangle green and give cup if it is there
-	function turngreen(wizelem) {
-    wizelem.rctg.style.stroke='rgb(16, 150, 24)';
-		if (wizelem.cup !== "") {
-			wizelem.cup.children[0].style.fill='#ffbf05';
-			wizelem.cup.children[0].style.stroke='#ffa000';
-			wizelem.cup.children[1].style.stroke='#ffa000';
-			wizelem.cup.children[2].style.stroke='#ffa000';
-		} else if (wizelem.anchor !== ""  && wizelem.rctg.getAttribute('id') !== 'generateplan') {
-			console.log(wizelem.anchor);
-			wizelem.rctg.style.fill='#a4d070';
-		}
-  }
-
-	function isPopulated(wizelem) { console.log(wizelem);
-		if (wizelem.anchor == "" || wizelem.anchor == null) {
-			return null;
-		}
-		result = $("#nav-menu a[href='"+ wizelem.anchor.getAttribute('href') +"']").attr('data-populated');
-		return (typeof result === 'undefined')? null : result === 'True';
-	}
-
   $(function() {
 
     var newrow = '';

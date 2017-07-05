@@ -1486,20 +1486,20 @@ var wizard = {
 			wizelem.cup.children[1].style.stroke='#ffa000';
 			wizelem.cup.children[2].style.stroke='#ffa000';
 		} else if (wizelem.anchor !== ""  && wizelem.rctg.getAttribute('id') !== 'generateplan') {
-			console.log(wizelem.anchor);
 			wizelem.rctg.style.fill='#a4d070';
 		}
   },
 
-  isPopulated: function(wizelem) { console.log(wizelem);
-		if (wizelem.anchor == "" || wizelem.anchor == null) {
+  isPopulated: function(wizelem) {
+		if (wizelem.anchor === "" || wizelem.anchor === null) {
 			return null;
 		}
-		result = $("#nav-menu a[href='"+ wizelem.anchor.getAttribute('href') +"']").attr('data-populated');
+    var anchorlink = wizelem.anchor.getAttribute('href');
+		result = $("#nav-menu a[href='"+ anchorlink +"']").attr('data-populated');
 		return (typeof result === 'undefined')? null : result === 'True';
 	},
 
-  updateWizard: function(){ console.log('update wizard');
+  updateWizard: function(){
     wizdict = {
       "Introduction": {"lock": "", "rctg": "", "cup":"", "anchor":"", "docanchor":document.getElementById('introductiondoc')},
       "Master data": {"lock": "", "rctg": document.getElementById('basicdata'), "cup":"", "anchor":"", "docanchor":document.getElementById('basicdatadoc')},
@@ -1507,7 +1507,7 @@ var wizard = {
       "Locations": {"lock": "", "rctg": document.getElementById('locations'), "cup":"", "anchor":document.getElementById('locationsurl'), "docanchor":document.getElementById('locationsdoc')},
       "Customers": {"lock": "", "rctg": document.getElementById('customers'), "cup":"", "anchor":document.getElementById('customersurl'), "docanchor":document.getElementById('customersdoc')},
       "Sales orders": {"lock": document.getElementById("lock0"), "rctg": document.getElementById('salesorders'), "cup":"", "anchor":document.getElementById('salesordersurl'), "docanchor":document.getElementById('salesordersdoc')},
-      "Sales orders history": {"lock": document.getElementById("lock1"), "rctg": document.getElementById('salesordershistory'), "cup":"", "anchor":document.getElementById('salesordershistoryurl'), "docanchor":document.getElementById('salesorderhistorydoc')},
+      "Sales orders history": {"lock": document.getElementById("lock1"), "rctg": document.getElementById('salesordershistory'), "cup":"", "anchor":document.getElementById('salesordershistoryurl'), "docanchor":document.getElementById('salesordershistorydoc')},
       "Statistical Forecast": {"lock": "", "rctg": document.getElementById('statisticalforecast'), "cup": document.getElementById("cup0"), "anchor":document.getElementById('statisticalforecasturl'), "docanchor":document.getElementById('statisticalforecastdoc')},
       "Inventory Planning": {"lock": "", "rctg": document.getElementById('inventoryplanning'), "cup":"", "anchor":"", "docanchor":""},
       "Inventory Plan Parameters": {"lock": document.getElementById("lock2"), "rctg": document.getElementById('inventoryplanparameters'), "cup":"", "anchor":document.getElementById('inventoryplanparametersurl'), "docanchor":document.getElementById('inventoryplanparametersdoc')},
@@ -1530,6 +1530,14 @@ var wizard = {
       "Manufacturing orders": {"lock": "", "rctg": document.getElementById('plan_mo'), "cup": document.getElementById("cup4"), "anchor":document.getElementById('plan_mourl'), "docanchor":document.getElementById('plan_modoc')}
     };
 
+    //add missing entries to list
+    list.push(
+      {"pk":"Inventory Plan Parameters","fields": {"url_doc":"/user-guide/modeling-wizard/inventory-planning/inventory-planning-parameters.html","url_internaldoc":"/data/inventoryplanning/inventoryplanning/"}},
+      {"pk":"Statistical Forecast","fields": {"url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"}},
+      {"pk":"Safety Stock","fields": {"url_doc":"/user-guide/modeling-wizard/generate-plan.html","url_internaldoc":"/flowplan/"}}
+    )
+
+    //hide if there is no forecast app
     if (!hasForecast) {
       wizdict['Sales orders history'].rctg.parentElement.style.display = 'none';
       wizdict['Statistical Forecast'].rctg.parentElement.style.display = 'none';
@@ -1541,6 +1549,7 @@ var wizard = {
       document.getElementById('inventorytostock').style.display = 'none';
     }
 
+    //hide is there is no inventory app
     if (!hasIP) {
       wizdict['Inventory Planning'].rctg.parentElement.style.display = 'none';
       wizdict['Safety Stock'].rctg.parentElement.style.display = 'none';
@@ -1549,8 +1558,12 @@ var wizard = {
     }
 
     // set the links to tables and documentation
+    var undesiredDocs = ["Master data","Distribution","Purchasing","Manufacturing BOM","Manufacturing Capacity"];
     for (var i = 0; i < list.length; i++) {
       if (wizdict[list[i].pk]) {
+        if (undesiredDocs.indexOf(list[i].pk) !== -1) {
+          wizdict[list[i].pk].docanchor.style.display = 'none';
+        }
         if (wizdict[list[i].pk].anchor !== "" && list[i].fields.url_internaldoc !== null) {
           wizdict[list[i].pk].anchor.setAttribute('href', list[i].fields.url_internaldoc);
         }
@@ -1559,86 +1572,86 @@ var wizard = {
         }
         if (list[i].pk === 'Sales orders') { console.log(list[i]);
           wizdict['Sales orders history'].anchor.setAttribute('href', list[i].fields.url_internaldoc);
-          wizdict['Sales orders history'].anchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
+          wizdict['Sales orders history'].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
         }
       }
     }
 
     //check elements in graph for data-populated
     $.each(wizdict, function (index, elem) {
-      if (isPopulated(elem) === false) {
-        removelock(elem);
-      } else if (isPopulated(elem)) {
-        removelock(elem);
-        turngreen(elem);
+      if (wizard.isPopulated(elem) === false) {
+        wizard.removelock(elem);
+      } else if (wizard.isPopulated(elem)) {
+        wizard.removelock(elem);
+        wizard.turngreen(elem);
       }
     });
 
     //extra logic for the big rectangles
-    if (isPopulated(wizdict['Sales orders'])) {
-      turngreen(wizdict['Master data']);
-      removelock(wizdict['Sales orders history']);
-      turngreen(wizdict['Sales orders history']);
-      removelock(wizdict['Statistical Forecast']);
-      removelock(wizdict['Supply Path']);
-      removelock(wizdict['Purchasing']);
-      removelock(wizdict['Distribution']);
-      removelock(wizdict['Manufacturing BOM']);
+    if (wizard.isPopulated(wizdict['Sales orders'])) {
+      wizard.turngreen(wizdict['Master data']);
+      wizard.removelock(wizdict['Sales orders history']);
+      wizard.turngreen(wizdict['Sales orders history']);
+      wizard.removelock(wizdict['Statistical Forecast']);
+      wizard.removelock(wizdict['Supply Path']);
+      wizard.removelock(wizdict['Purchasing']);
+      wizard.removelock(wizdict['Distribution']);
+      wizard.removelock(wizdict['Manufacturing BOM']);
     }
 
-    if (isPopulated(wizdict['Item suppliers'])) {
-      turngreen(wizdict['Purchasing']);
+    if (wizard.isPopulated(wizdict['Item suppliers'])) {
+      wizard.turngreen(wizdict['Purchasing']);
     }
 
-    if (isPopulated(wizdict['Item distributions'])) {
-      turngreen(wizdict['Distribution']);
+    if (wizard.isPopulated(wizdict['Item distributions'])) {
+      wizard.turngreen(wizdict['Distribution']);
     }
 
-    if (isPopulated(wizdict['Operation materials'])) {
-      turngreen(wizdict['Manufacturing BOM']);
+    if (wizard.isPopulated(wizdict['Operation materials'])) {
+      wizard.turngreen(wizdict['Manufacturing BOM']);
     }
 
-    if (isPopulated(wizdict['Item suppliers']) && isPopulated(wizdict['Item distributions']) && isPopulated(wizdict['Operation materials'])) {
-      turngreen(wizdict['Supply Path']);
+    if (wizard.isPopulated(wizdict['Item suppliers']) && wizard.isPopulated(wizdict['Item distributions']) && wizard.isPopulated(wizdict['Operation materials'])) {
+      wizard.turngreen(wizdict['Supply Path']);
     }
 
-    if (isPopulated(wizdict['Operations']) !== null) {
-      removelock(wizdict['Manufacturing Capacity']);
+    if (wizard.isPopulated(wizdict['Operations']) !== null) {
+      wizard.removelock(wizdict['Manufacturing Capacity']);
     }
 
-    if (isPopulated(wizdict['Operation Resources'])) {
-      turngreen(wizdict['Manufacturing Capacity']);
+    if (wizard.isPopulated(wizdict['Operation Resources'])) {
+      wizard.turngreen(wizdict['Manufacturing Capacity']);
     }
 
-    if (isPopulated(wizdict['Item suppliers'])===false ||
-        isPopulated(wizdict['Item distributions'])===false ||
-        isPopulated(wizdict['Operation materials'])===false) {
-      removelock(wizdict['Plan generation']);
+    if (wizard.isPopulated(wizdict['Item suppliers'])===false ||
+        wizard.isPopulated(wizdict['Item distributions'])===false ||
+        wizard.isPopulated(wizdict['Operation materials'])===false) {
+      wizard.removelock(wizdict['Plan generation']);
     }
 
-    if (isPopulated(wizdict['Manufacturing orders']) ||
-        isPopulated(wizdict['Distribution orders']) ||
-        isPopulated(wizdict['Manufacturing orders']) ) {
-      turngreen(wizdict['Plan generation']);
+    if (wizard.isPopulated(wizdict['Manufacturing orders']) ||
+        wizard.isPopulated(wizdict['Distribution orders']) ||
+        wizard.isPopulated(wizdict['Manufacturing orders']) ) {
+      wizard.turngreen(wizdict['Plan generation']);
     }
 
-    if (isPopulated(wizdict['Statistical Forecast'])) {
-      turngreen(wizdict['Statistical Forecast']);
+    if (wizard.isPopulated(wizdict['Statistical Forecast'])) {
+      wizard.turngreen(wizdict['Statistical Forecast']);
     }
 
-    if (isPopulated(wizdict['Inventory Plan Parameters'])===false) {
-      removelock(wizdict['Inventory Planning']);
-      removelock(wizdict['Inventory Plan Parameters']);
+    if (wizard.isPopulated(wizdict['Inventory Plan Parameters'])===false) {
+      wizard.removelock(wizdict['Inventory Planning']);
+      wizard.removelock(wizdict['Inventory Plan Parameters']);
     }
 
-    if (isPopulated(wizdict['Inventory Plan Parameters'])===true) {
-      turngreen(wizdict['Inventory Planning']);
-      turngreen(wizdict['Inventory Plan Parameters']);
-      removelock(wizdict['Safety Stock']);
+    if (wizard.isPopulated(wizdict['Inventory Plan Parameters'])===true) {
+      wizard.turngreen(wizdict['Inventory Planning']);
+      wizard.turngreen(wizdict['Inventory Plan Parameters']);
+      wizard.removelock(wizdict['Safety Stock']);
     }
 
-    if (isPopulated(wizdict['Safety Stock'])) {
-      turngreen(wizdict['Safety Stock']);
+    if (wizard.isPopulated(wizdict['Safety Stock'])) {
+      wizard.turngreen(wizdict['Safety Stock']);
     }
   }
 

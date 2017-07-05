@@ -20,13 +20,14 @@ from xml.sax.saxutils import quoteattr
 from datetime import datetime, timedelta
 from operator import itemgetter
 
+import odoo
 from odoo.modules.registry import RegistryManager
 
 logger = logging.getLogger(__name__)
 
 
 class exporter(object):
-    def __init__(self, req, database=None, company=None, mode=1):
+    def __init__(self, req, uid, database=None, company=None, mode=1):
         self.req = req
         self.database = database
         self.company = company
@@ -48,13 +49,17 @@ class exporter(object):
         # Which data elements belong to each mode can vary between implementations.
         self.mode = mode
 
+        # Initialize an environment
+        self.cr = RegistryManager.get(self.database).cursor()
+        self.env = odoo.api.Environment(self.cr, uid, req.context)
+          
 
     def run(self):
         # Check if we manage by work orders or manufacturing orders.
         self.manage_work_orders = False
-        m = self.req.session.model('ir.model')
-        ids = m.search([('name', '=', 'mrp_operations.operation')], context=self.req.session.context)
-        for i in m.read(ids, ['name'], self.req.session.context):
+        m = self.env['ir.model']
+        recs = m.search([('name', '=', 'mrp_operations.operation')])
+        for rec in recs:
             self.manage_work_orders = True
 
         # Load some auxiliary data in memory
@@ -107,11 +112,11 @@ class exporter(object):
 
 
     def load_company(self):
-        m = self.req.session.model('res.company')
-        ids = m.search([('name', '=', self.company)], context=self.req.session.context)
+        m = self.env['res.company']
+        ids = m.search([('name', '=', self.company)])
         fields = ['security_lead', 'po_lead', 'manufacturing_lead', 'calendar', 'manufacturing_warehouse']
         self.company_id = 0
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             self.company_id = i['id']
             self.security_lead = int(i['security_lead'])   # TODO NOT USED RIGHT NOW - add parameter in frepple for this
             self.po_lead = i['po_lead']
@@ -135,14 +140,14 @@ class exporter(object):
         All quantities are sent to frePPLe as numbers, expressed in the default
         unit of measure of the uom dimension.
         '''
-        m = self.req.session.model('product.uom')
+        m = self.env['product.uom']
         # We also need to load INactive UOMs, because there still might be records
         # using the inactive UOM. Questionable practice, but can happen...
-        ids = m.search(['|', ('active', '=', 1), ('active', '=', 0)], context=self.req.session.context)
+        ids = m.search(['|', ('active', '=', 1), ('active', '=', 0)])
         fields = ['factor', 'uom_type', 'category_id', 'name']
         self.uom = {}
         self.uom_categories = {}
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             if i['uom_type'] == 'reference':
                 f = 1.0
                 self.uom_categories[i['category_id'][0]] = i['id']
@@ -200,13 +205,13 @@ class exporter(object):
         yield '<!-- calendar -->\n'
         yield '<calendars>\n'
         try:
-            m = self.req.session.model('resource.calendar')
-            ids = m.search([('name', '=', self.calendar)], context=self.req.session.context)
-            c = m.read(ids, ['attendance_ids'], self.req.session.context)
-            m = self.req.session.model('resource.calendar.attendance')
+            m = self.env['resource.calendar']
+            ids = m.search([('name', '=', self.calendar)])
+            c = m.read(ids, ['attendance_ids'])
+            m = self.env['resource.calendar.attendance']
             fields = ['dayofweek', 'date_from', 'hour_from', 'hour_to']
             buckets = []
-            for i in m.read(c[0]['attendance_ids'], fields, self.req.session.context):
+            for i in m.read(c[0]['attendance_ids'], fields):
                 strt = datetime.strptime(i['date_from'] or "2000-01-01", '%Y-%m-%d')
                 buckets.append((strt,
                                 '<bucket start="%sT00:00:00" value="1" days="%s" priority="%%s" starttime="%s" endtime="%s"/>\n' % (
@@ -233,10 +238,10 @@ class exporter(object):
             yield '<!-- Working hours are assumed to be 24*7. -->\n'
             yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
         try:
-            m = self.req.session.model('hr.holidays.public.line')
-            ids = m.search([], context=self.req.session.context)
+            m = self.env['hr.holidays.public.line']
+            ids = m.search([])
             fields = ['date']
-            for i in m.read(ids, fields, self.req.session.context):
+            for i in m.read(ids, fields):
                 nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
                 yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
                     i['date'], nd.strftime("%Y-%m-%d"))
@@ -268,13 +273,13 @@ class exporter(object):
         self.map_locations = {}
         self.warehouses = set()
         childlocs = {}
-        m = self.req.session.model('stock.warehouse')
-        ids = m.search([], context=self.req.session.context)
-        if ids:
+        m = self.env['stock.warehouse']
+        recs = m.search([])
+        if recs:
             yield '<!-- warehouses -->\n'
             yield '<locations>\n'
             fields = ['name', 'wh_input_stock_loc_id', 'wh_output_stock_loc_id', 'wh_pack_stock_loc_id', 'wh_qc_stock_loc_id', 'view_location_id']
-            for i in m.read(ids, fields, self.req.session.context):
+            for i in recs.read(fields):
                 yield '<location name=%s subcategory="%s"><available name=%s/></location>\n' % (
                     quoteattr(i['name']), i['id'], quoteattr(self.calendar)
                 )
@@ -289,9 +294,9 @@ class exporter(object):
             # Populate a mapping location-to-warehouse name for later lookups
             fields = ['child_ids']
             parent_loc = {}
-            m = self.req.session.model('stock.location')
-            ids = m.search([], context=self.req.session.context)
-            for i in m.read(ids, fields= ['location_id'], context=self.req.session.context):
+            m = self.env['stock.location']
+            recs = m.search([])
+            for i in recs.read(['location_id']):
                 if i['location_id']:
                     parent_loc[i['id']] = i['location_id'][0]
 
@@ -308,7 +313,7 @@ class exporter(object):
                 marked[loc_id] = True
                 return -1
 
-            for loc_id in ids:
+            for loc_id in recs:
                 parent = fnd_parent(loc_id)
                 if parent > 0:
                     self.map_locations[loc_id] = parent
@@ -323,13 +328,13 @@ class exporter(object):
         res.partner.id res.partner.name -> customer.name
         '''
         self.map_customers = {}
-        m = self.req.session.model('res.partner')
-        ids = m.search([('customer', '=', True)], context=self.req.session.context)
-        if ids:
+        m = self.env['res.partner']
+        recs = m.search([('customer', '=', True)])
+        if recs:
             yield '<!-- customers -->\n'
             yield '<customers>\n'
             fields = ['name']
-            for i in m.read(ids, fields, self.req.session.context):
+            for i in recs.read(fields):
                 name = '%d %s' % (i['id'], i['name'])
                 yield '<customer name=%s/>\n' % quoteattr(name)
                 self.map_customers[i['id']] = name
@@ -344,13 +349,13 @@ class exporter(object):
         Mapping:
         res.partner.id res.partner.name -> supplier.name
         '''
-        m = self.req.session.model('res.partner')
-        s_ids = m.search([('supplier', '=', True)], context=self.req.session.context)
-        if s_ids:
+        m = self.env['res.partner']
+        recs = m.search([('supplier', '=', True)])
+        if recs:
             yield '<!-- suppliers -->\n'
             yield '<suppliers>\n'
             fields = ['name']
-            for i in m.read(s_ids, fields, self.req.session.context):
+            for i in recs.read(fields):
                 yield '<supplier name=%s/>\n' % quoteattr('%d %s' % (i['id'], i['name']))
             yield '</suppliers>\n'
 
@@ -368,18 +373,17 @@ class exporter(object):
         company.mfg_location -> resource.location
         '''
         self.map_workcenters = {}
-        m = self.req.session.model('mrp.workcenter')
-        ids = m.search([], context=self.req.session.context)
-        fields = ['name', 'costs_hour', 'capacity_per_cycle', 'time_cycle']
-        if ids:
+        m = self.env['mrp.workcenter']
+        recs = m.search([])
+        fields = ['name', 'costs_hour'] # 'time_cycle', 'capacity_per_cycle'
+        if recs:
             yield '<!-- workcenters -->\n'
             yield '<resources>\n'
-            for i in m.read(ids, fields, self.req.session.context):
+            for i in recs.read(fields):
                 name = i['name']
                 self.map_workcenters[i['id']] = name
                 yield '<resource name=%s maximum="%s" cost="%f"><location name=%s/></resource>\n' % (
-                    quoteattr(name), i['capacity_per_cycle'] / (i['time_cycle'] or 1),
-                    i['costs_hour'], quoteattr(self.mfg_location)
+                    quoteattr(name), 1, 1, quoteattr(self.mfg_location)
                 )
             yield '</resources>\n'
 
@@ -409,21 +413,21 @@ class exporter(object):
         # Read the product templates
         self.product_product = {}
         self.product_template_product = {}
-        m = self.req.session.model('product.template')
+        m = self.env['product.template']
         fields = ['purchase_ok', 'route_ids', 'bom_ids', 'produce_delay', 'list_price', 'uom_id', 'seller_ids', 'standard_price']
-        ids = m.search([], context=self.req.session.context)
+        ids = m.search([])
         self.product_templates = {}
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             self.product_templates[i['id']] = i
 
         # Read the stock location routes
-        rts = self.req.session.model('stock.location.route')
+        rts = self.env['stock.location.route']
         fields = ['name']
-        ids = rts.search([], context=self.req.session.context)
+        ids = rts.search([])
         stock_location_routes = {}
         buy_route = None
         mfg_route = None
-        for i in rts.read(ids, fields, self.req.session.context):
+        for i in rts.read(ids, fields):
             stock_location_routes[i['id']] = i
             if i['name'] == 'Buy':
               # Recognize items that can be purchased
@@ -432,16 +436,16 @@ class exporter(object):
               mfg_route = i['id']
 
         # Read the products
-        m = self.req.session.model('product.product')
-        ids = m.search([], context=self.req.session.context)
-        s = self.req.session.model('product.supplierinfo')
+        m = self.env['product.product']
+        ids = m.search([])
+        s = self.env['product.supplierinfo']
         s_fields=['name', 'delay', 'min_qty', 'date_end', 'date_start']
         supplier = {}
         if ids:
             yield '<!-- products -->\n'
             yield '<items>\n'
             fields = ['id','name', 'code', 'product_tmpl_id', 'seller_ids']
-            data = [i for i in m.read(ids, fields, self.req.session.context)]
+            data = [i for i in m.read(ids, fields)]
             for i in data:
                 tmpl = self.product_templates[i['product_tmpl_id'][0]]
                 if i['code']:
@@ -459,7 +463,7 @@ class exporter(object):
                 # Export suppliers for the item, if the item is allowed to be purchased
                 if tmpl['purchase_ok'] and buy_route in tmpl['route_ids'] and tmpl['seller_ids']:
                     yield '<itemsuppliers>\n'
-                    for sup in s.read(tmpl['seller_ids'], s_fields, self.req.session.context):
+                    for sup in s.read(tmpl['seller_ids'], s_fields):
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' %(
                           sup['delay'], sup['min_qty'], tmpl['standard_price'],
@@ -484,19 +488,19 @@ class exporter(object):
         self.operations = set()
 
         # Read all active manufacturing routings
-        m = self.req.session.model('mrp.routing')
-        ids = m.search([], context=self.req.session.context)
+        m = self.env['mrp.routing']
+        ids = m.search([])
         fields = ['location_id']
         mrp_routings = {}
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             mrp_routings[i['id']] = i['location_id']
 
         # Read all workcenters of all routings
         mrp_routing_workcenters = {}
-        m = self.req.session.model('mrp.routing.workcenter')
-        ids = m.search([], order='routing_id, sequence asc', context=self.req.session.context)
+        m = self.env['mrp.routing.workcenter']
+        ids = m.search([], order='routing_id, sequence asc')
         fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr']
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             if i['routing_id'][0] in mrp_routing_workcenters:
               # If the same workcenter is used multiple times in a routing,
               # we add the times together.
@@ -513,25 +517,25 @@ class exporter(object):
                 mrp_routing_workcenters[i['routing_id'][0]] = [[i['workcenter_id'][1], i['hour_nbr'], i['sequence']]]
 
         # Models used in the bom-loop below
-        bom_lines_model = self.req.session.model('mrp.bom.line')
+        bom_lines_model = self.env['mrp.bom.line']
         bom_lines_fields = [
             'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
             'routing_id', 'product_rounding'
         ]
-        subproduct_model = self.req.session.model('mrp.subproduct')
-        subproduct_fields = [
-            'product_id', 'product_qty', 'product_uom', 'subproduct_type'
-        ]
+#         subproduct_model = self.env['mrp.subproduct']
+#         subproduct_fields = [
+#             'product_id', 'product_qty', 'product_uom', 'subproduct_type'
+#         ]
 
         # Loop over all bom records
-        bom_model = self.req.session.model('mrp.bom')
-        bom_ids = bom_model.search([], context=self.req.session.context)
+        bom_model = self.env['mrp.bom']
+        bom_ids = bom_model.search([])
         bom_fields = [
             'product_qty', 'product_uom', 'date_start', 'date_stop',
             'product_efficiency', 'product_tmpl_id', 'routing_id', 'type',
             'product_rounding', 'bom_line_ids', 'sub_products'
         ]
-        for i in bom_model.read(bom_ids, bom_fields, self.req.session.context):
+        for i in bom_model.read(bom_ids, bom_fields):
             # Determine the location
             if i['routing_id']:
                 location = mrp_routings.get(i['routing_id'][0], None)
@@ -581,7 +585,7 @@ class exporter(object):
                 # we sum up all quantities in a single flow. We assume all of them
                 # have the same effectivity.
                 fl = {}
-                for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields, self.req.session.context):
+                for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields):
                     product = self.product_product.get(j['product_id'][0], None)
                     if not product:
                         continue
@@ -602,16 +606,16 @@ class exporter(object):
                     )
 
                 # Build byproduct flows
-                if i.get('sub_products', None):
-                  for j in subproduct_model.read(i['sub_products'], subproduct_fields, self.req.session.context):
-                    product = self.product_product.get(j['product_id'][0], None)
-                    if not product:
-                        continue
-                    yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
-                        "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
-                        self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
-                        quoteattr(product['name'])
-                        )
+#                 if i.get('sub_products', None):
+#                   for j in subproduct_model.read(i['sub_products'], subproduct_fields):
+#                     product = self.product_product.get(j['product_id'][0], None)
+#                     if not product:
+#                         continue
+#                     yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
+#                         "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
+#                         self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
+#                         quoteattr(product['name'])
+#                         )
 
                 yield '</flows>\n'
 
@@ -657,7 +661,7 @@ class exporter(object):
                             )
                         # Add byproduct flows
                         if i.get('sub_products', None):
-                          for j in subproduct_model.read(i['sub_products'], subproduct_fields, self.req.session.context):
+                          for j in subproduct_model.read(i['sub_products'], subproduct_fields):
                             product = self.product_product.get(j['product_id'][0], None)
                             if not product:
                                 continue
@@ -673,7 +677,7 @@ class exporter(object):
                         # we sum up all quantities in a single flow. We assume all of them
                         # have the same effectivity.
                         fl = {}
-                        for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields, self.req.session.context):
+                        for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields):
                             product = self.product_product.get(j['product_id'][0], None)
                             if not product:
                                 continue
@@ -728,22 +732,22 @@ class exporter(object):
         (if sale.order.picking_policy = 'one' then same as demand.quantity else 1) -> demand.minshipment
         '''
         # Get all sales order lines
-        m = self.req.session.model('sale.order.line')
-        ids = m.search([('state', 'in', ['draft', 'sale'])], context=self.req.session.context)
+        m = self.env['sale.order.line']
+        ids = m.search([('state', 'in', ['draft', 'sale'])])
         fields = ['qty_delivered', 'state', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
-        so_line = [i for i in m.read(ids, fields, self.req.session.context)]
+        so_line = [i for i in m.read(ids, fields)]
 
         # Get all sales orders
-        m = self.req.session.model('sale.order')
+        m = self.env['sale.order']
         ids = [i['order_id'][0] for i in so_line]
         fields = ['state', 'partner_id', 'requested_date', 'date_order', 'picking_policy', 'warehouse_id', 'picking_ids']
         so = {}
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             so[i['id']] = i
 
-        pick = self.req.session.model('stock.picking')
+        pick = self.env['stock.picking']
         p_fields = ['move_lines', 'sale_id', 'state']
-        move = self.req.session.model('stock.move')
+        move = self.env['stock.move']
         m_fields = ['product_id', 'product_uom_qty']
 
         # Generate the demand records
@@ -790,10 +794,10 @@ class exporter(object):
                 # if DO line is cancel, it will skip the current DO line
                 # else demand status is open
                 pick_number = 0
-                for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
+                for p in pick.read(j['picking_ids'], p_fields):
                     p_ids = p['move_lines']
                     product_id = i['product_id'][0]
-                    mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)], context=self.req.session.context)
+                    mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)])
 
                     status = ''
                     if p['state'] == 'done':
@@ -806,7 +810,7 @@ class exporter(object):
                     else:
                         status = 'open'
 
-                    for mv in move.read(mv_ids, m_fields, self.req.session.context):
+                    for mv in move.read(mv_ids, m_fields):
                         pick_number = pick_number + 1
                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
                         yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
@@ -836,19 +840,19 @@ class exporter(object):
         'PO' -> operationplan.ordertype
         'confirmed' -> operationplan.status
         '''
-        m = self.req.session.model('purchase.order.line')
+        m = self.env['purchase.order.line']
         ids = m.search([
           '|',('order_id.state', 'not in', ('draft','sent','bid','confirmed')), ('order_id.state', '=', False)
-          ], context=self.req.session.context)
+          ])
         fields = ['name', 'date_planned', 'product_id', 'product_qty', 'qty_received', 'product_uom', 'order_id']
-        po_line = [i for i in m.read(ids, fields, self.req.session.context)]
+        po_line = [i for i in m.read(ids, fields)]
 
         # Get all purchase orders
-        m = self.req.session.model('purchase.order')
+        m = self.env['purchase.order']
         ids = [i['order_id'][0] for i in po_line]
         fields = ['name', 'company_id', 'partner_id', 'state', 'date_order']
         po = {}
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             po[i['id']] = i
 
         # Create purchasing operations
@@ -889,12 +893,11 @@ class exporter(object):
         '''
         yield '<!-- manufacturing orders in progress -->\n'
         yield '<operationplans>\n'
-        m = self.req.session.model('mrp.production')
-        ids = m.search(['|', ('state', '=', 'in_production'), ('state', '=', 'confirmed')],
-                       context=self.req.session.context)
+        m = self.env['mrp.production']
+        ids = m.search(['|', ('state', '=', 'in_production'), ('state', '=', 'confirmed')])
         fields = ['bom_id', 'date_start', 'date_planned', 'name', 'state', 'product_qty', 'product_uom',
                   'location_dest_id', 'product_id']
-        for i in m.read(ids, fields, self.req.session.context):
+        for i in m.read(ids, fields):
             if i['state'] in ('in_production', 'confirmed', 'ready') and i['bom_id']:
                 # Open orders
                 location = self.map_locations.get(i['location_dest_id'][0], None)
@@ -925,13 +928,13 @@ class exporter(object):
         convert stock.warehouse.orderpoint.product_max_qty -> buffer.maxinventory
         convert stock.warehouse.orderpoint.qty_multiple -> buffer->size_multiple
         '''
-        m = self.req.session.model('stock.warehouse.orderpoint')
-        ids = m.search([], context=self.req.session.context)
+        m = self.env['stock.warehouse.orderpoint']
+        ids = m.search([])
         fields = ['warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'product_uom', 'qty_multiple']
         if ids:
             yield '<!-- order points -->\n'
             yield '<buffers>\n'
-            for i in m.read(ids, fields, self.req.session.context):
+            for i in m.read(ids, fields):
                 item = self.product_product.get(i['product_id'] and i['product_id'][0] or 0, None)
                 if not item:
                     continue

@@ -938,8 +938,8 @@ var grid = {
         }
 	    };
     };
-  }, 
-  
+  },
+
   //This function is called when a cell is just being selected in an editable
   //grid. It is used to either a) select the content of the cell (to make
   //editing it easier) or b) display a date picker it the field is of type
@@ -1555,11 +1555,11 @@ var wizard = {
           wizdict[list[i].pk].anchor.setAttribute('href', list[i].fields.url_internaldoc);
         }
         if (wizdict[list[i].pk].docanchor !== "" && list[i].fields.url_doc !== null) {
-          wizdict[list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/{% version_short %}' + list[i].fields.url_doc);
+          wizdict[list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
         }
         if (list[i].pk === 'Sales orders') { console.log(list[i]);
           wizdict['Sales orders history'].anchor.setAttribute('href', list[i].fields.url_internaldoc);
-          wizdict['Sales orders history'].anchor.setAttribute('href', 'https://frepple.com/docs/{% version_short %}' + list[i].fields.url_doc);
+          wizdict['Sales orders history'].anchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
         }
       }
     }

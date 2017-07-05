@@ -30,6 +30,7 @@
   var list={{ subjectlist|safe }};
 	var hasForecast = ('{{ hasForecast|safe }}' === 'True')?true:false;
 	var hasIP = ('{{ hasIP|safe }}' === 'True')?true:false;
+	var version = '{% version_short %}';
   var automaticList = {};
   var singleparentslist = []; //for parents with no children
   var parentslist=[];

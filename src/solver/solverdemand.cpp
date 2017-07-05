@@ -299,10 +299,10 @@ void SolverMRP::solve(const Demand* l, void* v)
             if (data->getSolver()->hasOperationPlans(data))
             {
               // Oops, we didn't get a proper answer we can use for the next loop.
-              // Print a warning and simply try one day later.
-              if (loglevel > 0)
-                logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
+              // Print a warning and simply a bit later.
               plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+              if (loglevel > 0)
+                logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;              
             }
             else
               // The shipment quantity was purely based on onhand in some buffers.
@@ -314,10 +314,10 @@ void SolverMRP::solve(const Demand* l, void* v)
             || (next_date == Date::infiniteFuture && data->state->a_qty > ROUNDING_ERROR))
 				  {
 					  // Oops, we didn't get a proper answer we can use for the next loop.
-					  // Print a warning and simply try one day later.
-					  if (loglevel > 0)
-						  logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
-					  plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+					  // Print a warning and simply try a bit later.
+            plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+            if (loglevel > 0)
+              logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
 				  }
 				  else
 					  // Use the next-date answer from the solver

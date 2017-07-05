@@ -50,12 +50,14 @@ class XMLController(odoo.http.Controller):
         self.user, password = auth.split(':', 1)
         if not database or not self.user or not password:
             raise Exception("Missing user, password or database")
-        if not req.session.authenticate(database, self.user, password):
+        uid = req.session.authenticate(database, self.user, password)
+        if not uid:
             raise Exception("Odoo authentication failed")
         if language:
             # If not set we use the default language of the user
             req.session.context['lang'] = language
-
+        return uid
+      
 
     @odoo.http.route('/frepple/xml',  type='http', auth='none', methods=['POST','GET'], csrf=False)
     def xml(self, **kwargs):
@@ -69,7 +71,7 @@ class XMLController(odoo.http.Controller):
             database = kwargs.get('database', None)
             req.session.db = database
             try:
-                self.authenticate(req, database, language)
+                uid = self.authenticate(req, database, language)
             except Exception as e:
                 logger.warning("Failed login attempt: %s" % e)
                 return Response(
@@ -85,6 +87,7 @@ class XMLController(odoo.http.Controller):
             try:
                 xp = exporter(
                   req,
+                  uid = uid,
                   database = database,
                   company = kwargs.get('company', None),
                   mode = int(kwargs.get('mode', 1))

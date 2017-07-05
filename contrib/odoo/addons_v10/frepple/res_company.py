@@ -62,7 +62,6 @@ class ResCompany(models.Model):
         if not server:
           raise exceptions.except_orm("FrePPLe server utl not configured")
         url = "%s%s?webtoken=%s" % (server, _url, webtoken)
-        _logger.warn(url)
         return url
 
 

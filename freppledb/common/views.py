@@ -129,7 +129,9 @@ def wizard(request):
   return render(request, 'common/wizard.html',
     context = {
       'title': _('Wizard to load your data'),
-      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder'))
+      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder')),
+      'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
+      'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
       }
     )
 

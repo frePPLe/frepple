@@ -1570,7 +1570,7 @@ var wizard = {
         if (wizdict[list[i].pk].docanchor !== "" && list[i].fields.url_doc !== null) {
           wizdict[list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
         }
-        if (list[i].pk === 'Sales orders') { console.log(list[i]);
+        if (list[i].pk === 'Sales orders') {
           wizdict['Sales orders history'].anchor.setAttribute('href', list[i].fields.url_internaldoc);
           wizdict['Sales orders history'].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
         }

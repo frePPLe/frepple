@@ -121,9 +121,9 @@ class XMLController(odoo.http.Controller):
             # Validate the company argument
             company_name = req.httprequest.form.get('company', None)
             company = None
-            m = req.session.model('res.company')
-            m_search = m.search([('name', '=', company_name)])
-            for i in m.browse(m_search):
+            m = req.env['res.company']
+            recs = m.search([('name', '=', company_name)], limit=1)
+            for i in recs:
               company = i
             if not company:
               return Response('Invalid company name argument', 401)

@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class importer(object):
 
   def __init__(self, req, database=None, company=None, mode=1):
-    self.req = req
+    self.env = req.env
     self.database = database
     self.company = company
     self.datafile = req.httprequest.files.get('frePPLe plan')
@@ -45,33 +45,28 @@ class importer(object):
   def run(self):
     msg = []
 
-    proc_order = self.req.session.model('procurement.order')
-    mfg_order = self.req.session.model('mrp.production')
+    proc_order = self.env['procurement.order']
+    mfg_order = self.env['mrp.production']
     if self.mode == 1:
       # Cancel previous draft purchase quotations
-      m = self.req.session.model('purchase.order')
-      ids = m.search(
-        [('state', '=', 'draft'), ('origin', '=', 'frePPLe')],
-        context=self.req.session.context
-        )
-      m.unlink(ids, self.req.session.context)
-      msg.append("Removed %s old draft purchase quotations" % len(ids))
+      m = self.env['purchase.order']
+      recs = m.search([('state', '=', 'draft'), ('origin', '=', 'frePPLe')])
+      recs.unlink()
+      msg.append("Removed %s old draft purchase quotations" % len(recs))
 
       # Cancel previous draft procurement orders
-      ids = proc_order.search(
-        ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
-        context=self.req.session.context
+      recs = proc_order.search(
+        ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')]
         )
-      proc_order.unlink(ids, self.req.session.context)
-      msg.append("Removed %s old draft procurement orders" % len(ids))
+      recs.unlink()
+      msg.append("Removed %s old draft procurement orders" % len(recs))
 
       # Cancel previous draft manufacturing orders
-      ids = mfg_order.search(
-        ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
-        context=self.req.session.context
+      recs = mfg_order.search(
+        ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')]
         )
-      mfg_order.unlink(ids, self.req.session.context)
-      msg.append("Removed %s old draft manufacturing orders" % len(ids))
+      recs.unlink()
+      msg.append("Removed %s old draft manufacturing orders" % len(recs))
 
     # Parsing the XML data file
     countproc = 0

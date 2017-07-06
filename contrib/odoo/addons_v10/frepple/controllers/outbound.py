@@ -28,11 +28,10 @@ logger = logging.getLogger(__name__)
 
 class exporter(object):
     def __init__(self, req, uid, database=None, company=None, mode=1):
-        self.req = req
         self.database = database
         self.company = company
 
-        # The mode argument defines differen types of runs:
+        # The mode argument defines different types of runs:
         #  - Mode 1:
         #    This mode returns all data that is loaded with every planning run.
         #    Currently this mode transfers all objects, except closed sales orders.
@@ -50,8 +49,7 @@ class exporter(object):
         self.mode = mode
 
         # Initialize an environment
-        self.cr = RegistryManager.get(self.database).cursor()
-        self.env = odoo.api.Environment(self.cr, uid, req.context)
+        self.env = req.env
           
 
     def run(self):
@@ -113,10 +111,10 @@ class exporter(object):
 
     def load_company(self):
         m = self.env['res.company']
-        ids = m.search([('name', '=', self.company)])
+        recs = m.search([('name', '=', self.company)])
         fields = ['security_lead', 'po_lead', 'manufacturing_lead', 'calendar', 'manufacturing_warehouse']
         self.company_id = 0
-        for i in m.read(ids, fields):
+        for i in recs.read(fields):
             self.company_id = i['id']
             self.security_lead = int(i['security_lead'])   # TODO NOT USED RIGHT NOW - add parameter in frepple for this
             self.po_lead = i['po_lead']
@@ -143,11 +141,11 @@ class exporter(object):
         m = self.env['product.uom']
         # We also need to load INactive UOMs, because there still might be records
         # using the inactive UOM. Questionable practice, but can happen...
-        ids = m.search(['|', ('active', '=', 1), ('active', '=', 0)])
+        recs = m.search(['|', ('active', '=', 1), ('active', '=', 0)])
         fields = ['factor', 'uom_type', 'category_id', 'name']
         self.uom = {}
         self.uom_categories = {}
-        for i in m.read(ids, fields):
+        for i in recs.read(fields):
             if i['uom_type'] == 'reference':
                 f = 1.0
                 self.uom_categories[i['category_id'][0]] = i['id']
@@ -206,12 +204,13 @@ class exporter(object):
         yield '<calendars>\n'
         try:
             m = self.env['resource.calendar']
-            ids = m.search([('name', '=', self.calendar)])
-            c = m.read(ids, ['attendance_ids'])
+            recs = m.search([('name', '=', self.calendar)])
+            rec = m.read(ids, ['attendance_ids'], limit=1)
             m = self.env['resource.calendar.attendance']
             fields = ['dayofweek', 'date_from', 'hour_from', 'hour_to']
             buckets = []
-            for i in m.read(c[0]['attendance_ids'], fields):
+            for i in rec['attendance_ids'].read(fields):
+                print ("koko", i)
                 strt = datetime.strptime(i['date_from'] or "2000-01-01", '%Y-%m-%d')
                 buckets.append((strt,
                                 '<bucket start="%sT00:00:00" value="1" days="%s" priority="%%s" starttime="%s" endtime="%s"/>\n' % (
@@ -239,9 +238,9 @@ class exporter(object):
             yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
         try:
             m = self.env['hr.holidays.public.line']
-            ids = m.search([])
+            recs = m.search([])
             fields = ['date']
-            for i in m.read(ids, fields):
+            for i in recs.read(fields):
                 nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
                 yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
                     i['date'], nd.strftime("%Y-%m-%d"))
@@ -375,15 +374,15 @@ class exporter(object):
         self.map_workcenters = {}
         m = self.env['mrp.workcenter']
         recs = m.search([])
-        fields = ['name', 'costs_hour'] # 'time_cycle', 'capacity_per_cycle'
+        fields = ['name']
         if recs:
             yield '<!-- workcenters -->\n'
             yield '<resources>\n'
             for i in recs.read(fields):
                 name = i['name']
                 self.map_workcenters[i['id']] = name
-                yield '<resource name=%s maximum="%s" cost="%f"><location name=%s/></resource>\n' % (
-                    quoteattr(name), 1, 1, quoteattr(self.mfg_location)
+                yield '<resource name=%s maximum="%s"><location name=%s/></resource>\n' % (
+                    quoteattr(name), 1, quoteattr(self.mfg_location)
                 )
             yield '</resources>\n'
 
@@ -415,19 +414,19 @@ class exporter(object):
         self.product_template_product = {}
         m = self.env['product.template']
         fields = ['purchase_ok', 'route_ids', 'bom_ids', 'produce_delay', 'list_price', 'uom_id', 'seller_ids', 'standard_price']
-        ids = m.search([])
+        recs = m.search([])
         self.product_templates = {}
-        for i in m.read(ids, fields):
+        for i in recs.read(fields):
             self.product_templates[i['id']] = i
 
         # Read the stock location routes
         rts = self.env['stock.location.route']
         fields = ['name']
-        ids = rts.search([])
+        recs = rts.search([])
         stock_location_routes = {}
         buy_route = None
         mfg_route = None
-        for i in rts.read(ids, fields):
+        for i in recs.read(fields):
             stock_location_routes[i['id']] = i
             if i['name'] == 'Buy':
               # Recognize items that can be purchased
@@ -437,16 +436,15 @@ class exporter(object):
 
         # Read the products
         m = self.env['product.product']
-        ids = m.search([])
+        recs = m.search([])
         s = self.env['product.supplierinfo']
         s_fields=['name', 'delay', 'min_qty', 'date_end', 'date_start']
         supplier = {}
-        if ids:
+        if recs:
             yield '<!-- products -->\n'
             yield '<items>\n'
             fields = ['id','name', 'code', 'product_tmpl_id', 'seller_ids']
-            data = [i for i in m.read(ids, fields)]
-            for i in data:
+            for i in recs.read(fields):
                 tmpl = self.product_templates[i['product_tmpl_id'][0]]
                 if i['code']:
                     name = u'[%s] %s' % (i['code'], i['name'])
@@ -463,7 +461,7 @@ class exporter(object):
                 # Export suppliers for the item, if the item is allowed to be purchased
                 if tmpl['purchase_ok'] and buy_route in tmpl['route_ids'] and tmpl['seller_ids']:
                     yield '<itemsuppliers>\n'
-                    for sup in s.read(tmpl['seller_ids'], s_fields):
+                    for sup in s.browse(tmpl['seller_ids']).read(s_fields):
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' %(
                           sup['delay'], sup['min_qty'], tmpl['standard_price'],
@@ -489,18 +487,18 @@ class exporter(object):
 
         # Read all active manufacturing routings
         m = self.env['mrp.routing']
-        ids = m.search([])
+        recs = m.search([])
         fields = ['location_id']
         mrp_routings = {}
-        for i in m.read(ids, fields):
+        for i in recs.read(fields):
             mrp_routings[i['id']] = i['location_id']
 
         # Read all workcenters of all routings
         mrp_routing_workcenters = {}
         m = self.env['mrp.routing.workcenter']
-        ids = m.search([], order='routing_id, sequence asc')
-        fields = ['routing_id', 'workcenter_id', 'sequence', 'cycle_nbr', 'hour_nbr']
-        for i in m.read(ids, fields):
+        recs = m.search([], order='routing_id, sequence asc')
+        fields = ['routing_id', 'workcenter_id', 'sequence', 'time_cycle']
+        for i in recs.read(fields):
             if i['routing_id'][0] in mrp_routing_workcenters:
               # If the same workcenter is used multiple times in a routing,
               # we add the times together.
@@ -508,34 +506,34 @@ class exporter(object):
               if not self.manage_work_orders:
                 for r in mrp_routing_workcenters[i['routing_id'][0]]:
                   if r[0] == i['workcenter_id'][1]:
-                    r[1] += i['hour_nbr']
+                    r[1] += i['time_cycle']
                     exists = True
                     break
               if not exists:
-                mrp_routing_workcenters[i['routing_id'][0]].append([i['workcenter_id'][1], i['hour_nbr'], i['sequence']])
+                mrp_routing_workcenters[i['routing_id'][0]].append([i['workcenter_id'][1], i['time_cycle'], i['sequence']])
             else:
-                mrp_routing_workcenters[i['routing_id'][0]] = [[i['workcenter_id'][1], i['hour_nbr'], i['sequence']]]
+                mrp_routing_workcenters[i['routing_id'][0]] = [[i['workcenter_id'][1], i['time_cycle'], i['sequence']]]
 
         # Models used in the bom-loop below
         bom_lines_model = self.env['mrp.bom.line']
         bom_lines_fields = [
-            'product_qty', 'product_uom', 'date_start', 'date_stop', 'product_id',
-            'routing_id', 'product_rounding'
+            'product_qty', 'product_uom_id', 'product_id', 'routing_id'
         ]
-#         subproduct_model = self.env['mrp.subproduct']
-#         subproduct_fields = [
-#             'product_id', 'product_qty', 'product_uom', 'subproduct_type'
-#         ]
+        try:
+           subproduct_model = self.env['mrp.subproduct']
+           subproduct_fields = [
+             'product_id', 'product_qty', 'product_uom', 'subproduct_type'
+           ]
+        except:
+          subproduct_model = None
 
         # Loop over all bom records
-        bom_model = self.env['mrp.bom']
-        bom_ids = bom_model.search([])
+        bom_recs = self.env['mrp.bom'].search([])
         bom_fields = [
-            'product_qty', 'product_uom', 'date_start', 'date_stop',
-            'product_efficiency', 'product_tmpl_id', 'routing_id', 'type',
-            'product_rounding', 'bom_line_ids', 'sub_products'
+            'product_qty', 'product_uom_id', 'product_tmpl_id', 
+            'routing_id', 'type', 'bom_line_ids', 'sub_products'
         ]
-        for i in bom_model.read(bom_ids, bom_fields):
+        for i in bom_recs.read(bom_fields):
             # Determine the location
             if i['routing_id']:
                 location = mrp_routings.get(i['routing_id'][0], None)
@@ -552,7 +550,7 @@ class exporter(object):
                 logger.warn("skipping %s %s" % (i['product_tmpl_id'][0], i['routing_id']))
                 continue
             buf_name = u'%s @ %s' % (product_buf['name'], location)
-            uom_factor = self.convert_qty_uom(1.0, i['product_uom'][0], i['product_tmpl_id'][0])
+            uom_factor = self.convert_qty_uom(1.0, i['product_uom_id'][0], i['product_tmpl_id'][0])
             operation = u'%d %s @ %s' % (i['id'], product_buf['name'], location)
             self.operations.add(operation)
 
@@ -563,20 +561,14 @@ class exporter(object):
                 # CASE 1: A single operation used for the BOM
                 # All routing steps are collapsed in a single operation.
                 #
-                yield '<operation name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD"%s%s xsi:type="operation_fixed_time">\n' \
+                yield '<operation name=%s size_multiple="1" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time">\n' \
                   '<item name=%s/><location name=%s/>\n' % (
-                    quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
+                    quoteattr(operation),
                     int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
-                    self.manufacturing_lead,
-                    (' effective_start="%s"' % i['date_start']) if i['date_start'] else '',
-                    (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '',
-                    quoteattr(product_buf['name']), quoteattr(location)
+                    self.manufacturing_lead, quoteattr(product_buf['name']), quoteattr(location)
                 )
-
-                yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"%s%s><item name=%s/></flow>\n' % (
-                    i['product_qty'] * i['product_efficiency'] * uom_factor,
-                    i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
-                    i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
+                yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"><item name=%s/></flow>\n' % (
+                    i['product_qty'] * uom_factor,
                     quoteattr(product_buf['name'])
                     )
 
@@ -585,7 +577,7 @@ class exporter(object):
                 # we sum up all quantities in a single flow. We assume all of them
                 # have the same effectivity.
                 fl = {}
-                for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields):
+                for j in bom_lines_model.browse(i['bom_line_ids']).read(bom_lines_fields):
                     product = self.product_product.get(j['product_id'][0], None)
                     if not product:
                         continue
@@ -596,27 +588,24 @@ class exporter(object):
                 for j in fl:
                     product = self.product_product[j]
                     qty = sum(
-                        self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
+                        self.convert_qty_uom(k['product_qty'], k['product_uom_id'][0], k['product_id'][0])
                         for k in fl[j]
                     )
-                    yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
-                        qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
-                        fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
-                        quoteattr(product['name'])
+                    yield '<flow xsi:type="flow_start" quantity="-%f"><item name=%s/></flow>\n' % (
+                        qty, quoteattr(product['name'])
                     )
 
                 # Build byproduct flows
-#                 if i.get('sub_products', None):
-#                   for j in subproduct_model.read(i['sub_products'], subproduct_fields):
-#                     product = self.product_product.get(j['product_id'][0], None)
-#                     if not product:
-#                         continue
-#                     yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
-#                         "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
-#                         self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
-#                         quoteattr(product['name'])
-#                         )
-
+                if i.get('sub_products', None) and subproduct_model:
+                    for j in subproduct_model.browse(i['sub_products']).read(subproduct_fields):
+                        product = self.product_product.get(j['product_id'][0], None)
+                        if not product:
+                            continue
+                        yield '<flow xsi:type="%s" quantity="%f"><item name=%s/></flow>\n' % (
+                           "flow_fixed_end" if j['subproduct_type'] == 'fixed' else "flow_end",
+                           self.convert_qty_uom(j['product_qty'], j['product_uom'][0], j['product_id'][0]),
+                           quoteattr(product['name'])
+                           )
                 yield '</flows>\n'
 
                 # Create loads
@@ -630,10 +619,9 @@ class exporter(object):
                 # CASE 2: A routing operation is created with a suboperation for each
                 # routing step.
                 #
-                yield '<operation name=%s size_multiple="%s" posttime="P%dD"%s%s xsi:type="operation_routing">' \
+                yield '<operation name=%s size_multiple="1" posttime="P%dD"%s%s xsi:type="operation_routing">' \
                   '<item name=%s/><location name=%s/>\n' % (
-                    quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                    self.manufacturing_lead,
+                    quoteattr(operation), self.manufacturing_lead,
                     (' effective_start="%s"' % i['date_start']) if i['date_start'] else '',
                     (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '',
                     quoteattr(product_buf['name']), quoteattr(location)
@@ -661,7 +649,7 @@ class exporter(object):
                             )
                         # Add byproduct flows
                         if i.get('sub_products', None):
-                          for j in subproduct_model.read(i['sub_products'], subproduct_fields):
+                          for j in subproduct_model.browse(i['sub_products']).read(subproduct_fields):
                             product = self.product_product.get(j['product_id'][0], None)
                             if not product:
                                 continue
@@ -677,7 +665,7 @@ class exporter(object):
                         # we sum up all quantities in a single flow. We assume all of them
                         # have the same effectivity.
                         fl = {}
-                        for j in bom_lines_model.read(i['bom_line_ids'], bom_lines_fields):
+                        for j in bom_lines_model.browse(i['bom_line_ids']).read(bom_lines_fields):
                             product = self.product_product.get(j['product_id'][0], None)
                             if not product:
                                 continue
@@ -733,16 +721,16 @@ class exporter(object):
         '''
         # Get all sales order lines
         m = self.env['sale.order.line']
-        ids = m.search([('state', 'in', ['draft', 'sale'])])
+        recs = m.search([('state', 'in', ['draft', 'sale'])])
         fields = ['qty_delivered', 'state', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
-        so_line = [i for i in m.read(ids, fields)]
+        so_line = [i for i in recs.read(fields)]
 
         # Get all sales orders
         m = self.env['sale.order']
         ids = [i['order_id'][0] for i in so_line]
         fields = ['state', 'partner_id', 'requested_date', 'date_order', 'picking_policy', 'warehouse_id', 'picking_ids']
         so = {}
-        for i in m.read(ids, fields):
+        for i in m.browse(ids).read(fields):
             so[i['id']] = i
 
         pick = self.env['stock.picking']
@@ -794,7 +782,7 @@ class exporter(object):
                 # if DO line is cancel, it will skip the current DO line
                 # else demand status is open
                 pick_number = 0
-                for p in pick.read(j['picking_ids'], p_fields):
+                for p in pick.browse(j['picking_ids']).read(p_fields):
                     p_ids = p['move_lines']
                     product_id = i['product_id'][0]
                     mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)])
@@ -810,7 +798,7 @@ class exporter(object):
                     else:
                         status = 'open'
 
-                    for mv in move.read(mv_ids, m_fields):
+                    for mv in move.browse(mv_ids).read(m_fields):
                         pick_number = pick_number + 1
                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
                         yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
@@ -841,18 +829,18 @@ class exporter(object):
         'confirmed' -> operationplan.status
         '''
         m = self.env['purchase.order.line']
-        ids = m.search([
+        recs = m.search([
           '|',('order_id.state', 'not in', ('draft','sent','bid','confirmed')), ('order_id.state', '=', False)
           ])
         fields = ['name', 'date_planned', 'product_id', 'product_qty', 'qty_received', 'product_uom', 'order_id']
-        po_line = [i for i in m.read(ids, fields)]
+        po_line = [i for i in recs.read(fields)]
 
         # Get all purchase orders
         m = self.env['purchase.order']
         ids = [i['order_id'][0] for i in po_line]
         fields = ['name', 'company_id', 'partner_id', 'state', 'date_order']
         po = {}
-        for i in m.read(ids, fields):
+        for i in m.browse(ids).read(fields):
             po[i['id']] = i
 
         # Create purchasing operations
@@ -869,13 +857,14 @@ class exporter(object):
                 start = j['date_order'].replace(' ', 'T')
                 end = i['date_planned'].replace(' ', 'T')
                 qty = self.convert_qty_uom(i['product_qty'] - i['qty_received'], i['product_uom'][0], i['product_id'][0])
-                yield '<operationplan ordertype="PO" start="%s" end="%s" quantity="%f" status="confirmed">' \
+                yield '<operationplan reference=%s ordertype="PO" start="%s" end="%s" quantity="%f" status="confirmed">' \
                   '<item name=%s/><location name=%s/><supplier name=%s/>' % (
-                    start, end, qty, quoteattr(item['name']), quoteattr(location),
+                    quoteattr(j['name']), start, end, qty, quoteattr(item['name']), quoteattr(location),
                     quoteattr('%d %s' % (j['partner_id'][0], j['partner_id'][1]))
                     )
                 yield '</operationplan>\n'
         yield '</operationplans>\n'
+
 
     def export_manufacturingorders(self):
         '''
@@ -894,23 +883,23 @@ class exporter(object):
         yield '<!-- manufacturing orders in progress -->\n'
         yield '<operationplans>\n'
         m = self.env['mrp.production']
-        ids = m.search(['|', ('state', '=', 'in_production'), ('state', '=', 'confirmed')])
-        fields = ['bom_id', 'date_start', 'date_planned', 'name', 'state', 'product_qty', 'product_uom',
+        recs = m.search(['|', ('state', '=', 'in_production'), ('state', '=', 'confirmed')])
+        fields = ['bom_id', 'date_start', 'date_planned_start', 'name', 'state', 'product_qty', 'product_uom_id',
                   'location_dest_id', 'product_id']
-        for i in m.read(ids, fields):
+        for i in recs.read(fields):
             if i['state'] in ('in_production', 'confirmed', 'ready') and i['bom_id']:
                 # Open orders
                 location = self.map_locations.get(i['location_dest_id'][0], None)
                 operation = u'%d %s @ %s' % (i['bom_id'][0], i['bom_id'][1], location)
                 try:
-                    startdate = datetime.strptime(i['date_start'] or i['date_planned'], '%Y-%m-%d %H:%M:%S')
+                    startdate = datetime.strptime(i['date_start'] or i['date_planned_start'], '%Y-%m-%d %H:%M:%S')
                 except:
                     continue
                 if not location or not operation in self.operations:
                     continue
-                qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-                yield '<operationplan operation=%s start="%s" end="%s" quantity="%s" locked="true"/>\n' % (
-                    quoteattr(operation), startdate, startdate, qty
+                qty = self.convert_qty_uom(i['product_qty'], i['product_uom_id'][0], i['product_id'][0])
+                yield '<operationplan reference=%s operation=%s start="%s" end="%s" quantity="%s" locked="true"/>\n' % (
+                    quoteattr(i['name']), quoteattr(operation), startdate, startdate, qty
                 )
         yield '</operationplans>\n'
 
@@ -929,12 +918,12 @@ class exporter(object):
         convert stock.warehouse.orderpoint.qty_multiple -> buffer->size_multiple
         '''
         m = self.env['stock.warehouse.orderpoint']
-        ids = m.search([])
+        recs = m.search([])
         fields = ['warehouse_id', 'product_id', 'product_min_qty', 'product_max_qty', 'product_uom', 'qty_multiple']
-        if ids:
+        if recs:
             yield '<!-- order points -->\n'
             yield '<buffers>\n'
-            for i in m.read(ids, fields):
+            for i in recs.read(fields):
                 item = self.product_product.get(i['product_id'] and i['product_id'][0] or 0, None)
                 if not item:
                     continue
@@ -966,24 +955,20 @@ class exporter(object):
         '''
         yield '<!-- inventory -->\n'
         yield '<buffers>\n'
-        cr = RegistryManager.get(self.database).cursor()
-        try:
-            cr.execute('SELECT product_id, location_id, sum(qty) '
-                       'FROM stock_quant '
-                       'WHERE qty > 0 '
-                       'GROUP BY product_id, location_id '
-                       'ORDER BY location_id ASC')
-            inventory = {}
-            for i in cr.fetchall():
-                item = self.product_product.get(i[0], None)
-                location = self.map_locations.get(i[1], None)
-                if item and location:
-                    inventory[ (item['name'], location) ] = i[2] + inventory.get( (item['name'], location), 0)
-            for key, val in inventory.items():
-                buf = "%s @ %s" % (key[0], key[1])
-                yield '<buffer name=%s onhand="%f"><item name=%s/><location name=%s/></buffer>\n' % (
-                    quoteattr(buf), val, quoteattr(key[0]), quoteattr(key[1])
-                    )
-        finally:
-            cr.close()
+        self.env.cr.execute('SELECT product_id, location_id, sum(qty) '
+                   'FROM stock_quant '
+                   'WHERE qty > 0 '
+                   'GROUP BY product_id, location_id '
+                   'ORDER BY location_id ASC')
+        inventory = {}
+        for i in self.env.cr.fetchall():
+            item = self.product_product.get(i[0], None)
+            location = self.map_locations.get(i[1], None)
+            if item and location:
+                inventory[ (item['name'], location) ] = i[2] + inventory.get( (item['name'], location), 0)
+        for key, val in inventory.items():
+            buf = "%s @ %s" % (key[0], key[1])
+            yield '<buffer name=%s onhand="%f"><item name=%s/><location name=%s/></buffer>\n' % (
+                quoteattr(buf), val, quoteattr(key[0]), quoteattr(key[1])
+                )
         yield '</buffers>\n'

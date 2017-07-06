@@ -2,258 +2,28 @@
 {% load i18n admin_list %}
 {% block extrahead %}{{block.super}}
 
-<style>
-
-.panel table tbody > tr > td, .panel table > thead > tr > th {
-  padding-right: 10px;
-  padding-bottom: 10px;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-.panel table tbody > tr > td  a.btn {
-  color: white;
-}
-.panel table .progress {
-  height: 100%;
-  margin-bottom: 0px;
-}
-.panel table .progress .progress-bar {
-  white-space: nowrap;
-}
-.progressspan {
-  width: 100%;
-  color: black;
-}
-
-</style>
 <script type="text/javascript">
   var list={{ subjectlist|safe }};
 	var hasForecast = ('{{ hasForecast|safe }}' === 'True')?true:false;
 	var hasIP = ('{{ hasIP|safe }}' === 'True')?true:false;
 	var version = '{% version_short %}';
-  var automaticList = {};
-  var singleparentslist = []; //for parents with no children
-  var parentslist=[];
-
-
-  for (var step in list) {
-    if (list[step].pk == list[step].fields.owner)
-      singleparentslist.push(list[step].pk);
-    else if (list[step].fields.owner != null && parentslist.indexOf(list[step].fields.owner) == -1 )
-      parentslist.push(list[step].fields.owner);
-  };
-
-	function getProgress(name) {
-	  var progress = 0;
-	  var step = 0;
-	  var total = 0;
-	  var haschildren = false;
-	  var childrenprogress = 0;
-
-	  for (var step in list) {
-	    if (name == 'overall' && list[step].fields.owner != null ) {
-
-	      total += 1;
-	      if (list[step].fields.status)
-	         progress += 1;
-
-	    } else if (name == list[step].pk || name ==  list[step].fields.owner) {
-
-	      if (singleparentslist.indexOf(list[step].pk) > -1) { //get the single parent
-
-	        if (list[step].fields.status)
-	          progress += 1;
-	        total += 1;
-
-	      } else if ( parentslist.indexOf(name) > -1 ) {
-
-	        if (name ==  list[step].fields.owner) {
-	          if (list[step].fields.status)
-	            progress += 1;
-	          total += 1;
-	        };
-
-	      } else if ( parentslist.indexOf(list[step].pk) == -1 && name == list[step].pk || list[step].fields.owner == null ) { //we only want the child
-
-	          if (name == list[step].pk && list[step].fields.status)
-	            progress += 1;
-
-	          total += 1;
-
-	      };
-
-	    };
-
-	  };
-
-
-	  return [total,progress];
-	};
-
-	function setProgress(name,value) {
-    var jsondata=[];
-
-    value = (value == 'true'); //convert the value string to a boolean
-
-		for (var step in list) {
-
-		  if ( (name ==  list[step].fields.owner || name == list[step].pk) &&  list[step].fields.status != value) {
-		    list[step].fields.status = value;
-
-		    jsondata.push({"command": "set", "key": list[step].pk, "value": list[step].fields.status});
-		  };
-
-		};
-
-		return saveWizard(jsondata);
-	};
-
-	function saveWizard(data) {
-		$.ajax({
-      url: url_prefix + "/wizard/",
-      data: JSON.stringify(data),
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      success: function () {
-        var result = [];
-        var resultpercent = 0;
-        result = getProgress('overall');
-        resultpercent = result[1]/result[0]*100;
-        $("#overall .progress-bar").attr('data-valuenow', resultpercent).css('width',resultpercent+'%');
-        $("#overall .progress-bar span").text(result[1] + ' of ' + result[0]);
-
-        var step = 0;
-        var result=[];
-        var resultpercent = 0;
-
-        //update the wizard progress
-
-        for (step in list) {
-          result = getProgress(list[step].pk);
-          resultpercent = result[1]/result[0]*100;
-          $("#row"+list[step].fields.sequenceorder+" .progress-bar").attr('data-valuenow', resultpercent).css('width',resultpercent+'%');
-          $("#row"+list[step].fields.sequenceorder+" .progressspan").text(result[1] + ' of ' + result[0]);
-          if (list[step].fields.status) {
-            $("#row"+list[step].fields.sequenceorder+" .text-success").removeClass().addClass("text-success fa fa-lg fa-thumbs-up");
-          } else {
-            $("#row"+list[step].fields.sequenceorder+" .text-success").removeClass("fa fa-lg fa-thumbs-up");
-          };
-          $("#row"+list[step].fields.sequenceorder+" .setBtn")
-            .attr('data-value1',list[step].pk)
-            .attr('data-value2',result[1] != result[0]);
-          $("#row"+list[step].fields.sequenceorder+" .setBtn span")
-            .text( (resultpercent == 100) ? gettext("mark as not done") : gettext("mark as done")  );
-        };
-      },
-      error: function (result, stat, errorThrown) {
-	      $('#popup').html(''+
-	          '<div class="modal-dialog" style="max-height: 80%; width: 90%; visibility: hidden">'+
-	          '<div class="modal-content">'+
-	          '<div class="modal-header">'+
-	          '<button type="button" class="close" data-dismiss="modal"><span class="fa fa-times"></span></button>'+
-	          '<h4 class="modal-title text-capitalize">'+gettext("Error")+'</h4>'+
-	          '</div>'+
-	          '<div class="modal-body">'+
-	          '</div>'+
-	          '<div class="modal-footer">'+
-	          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
-	          '</div>'+
-	          '</div>'+
-	      '</div>' );
-        $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Wizard error"));
-        $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">'+result.responseText + '</div>');
-        $('#button_export').val(gettext('Retry'));
-        $('#popup .modal-dialog').css({'visibility':'visible'})
-        $('#popup').modal('show');
-      }
-    });
-
-  };
-
-  function populate(name) {
-    //pop the dialog
-    $('#popup').html(''+
-        '<div class="modal-dialog" style="max-height: 80%; width: 350px; visibility: hidden">'+
-        '<div class="modal-content">'+
-        '<div class="modal-header">'+
-        '<button type="button" class="close" data-dismiss="modal"><span class="fa fa-times"></span></button>'+
-        '<h4 class="modal-title text-capitalize">'+gettext("Auto-populate")+'</h4>'+
-        '</div>'+
-        '<div class="modal-body">'+
-        automaticList[name] +
-        '</div>'+
-        '<div class="modal-footer">'+
-        '<input type="submit" id="autoexecbutton" role="button" class="btn btn-primary pull-left" value="'+gettext('Execute')+'">'+
-        '<input type="submit" id="autocancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-        '</div>'+
-        '</div>'+
-    '</div>' );
-
-    $('#popup .modal-dialog').css({'visibility':'visible'})
-
-    $('#autoexecbutton').one('click',function () {
-    //define button action
-      saveWizard([{"command": "execute", "key": name}]);
-      $('#popup').modal('hide');
-      }
-    );
-    $('#popup').modal('show');
-  };
 
   $(function() {
 
-    var newrow = '';
-    var list={{ subjectlist|safe }};
-    var result = [];
-    result = getProgress('overall');
+		var panelwidth = $("#wizardsvg").width();
+		var svgwidth = $("#wizardsvg svg").width();
 
-    $("#overall .progress-bar").attr('data-valuenow', result[1]/result[0]*100).css('width',result[1]/result[0]*100+'%');
-    $("#overall .progress-bar .progressspan").text(result[1] + ' of ' + result[0]);
+		var newscale = panelwidth/svgwidth;
 
-    var step = 0;
-    var result = [];
-    for (step in list) {
-      result = getProgress(list[step].pk);
+		$("#wizardsvg").height($("#wizardsvg svg").height()*newscale);
+		var panelheight = $("#wizardsvg").height();
+		var svgheight = $("#wizardsvg svg").height();
+		var moveY = (-svgheight+panelheight)/2;
+		var moveX = (-svgwidth+panelwidth)/2;
 
-      newrow += '<tr id="row'+list[step].fields.sequenceorder+'"><td>';
-      if (list[step].fields.owner != null && singleparentslist.indexOf(list[step].pk) == -1) newrow += '&nbsp;&nbsp;&nbsp;&nbsp;';
-      if (list[step].fields.owner == null || singleparentslist.indexOf(list[step].pk) > -1) newrow += '<strong>';
-      if (list[step].fields.url_internaldoc != null) newrow += '<a href="'+list[step].fields.url_internaldoc+'"><span class="text-capitalize">'+list[step].pk+'&nbsp;</span><span class="fa fa-caret-right"></span></a>';
-      if (list[step].fields.url_internaldoc == null) newrow += '<span>'+list[step].pk+'</span>';
-      if (list[step].fields.owner == null || singleparentslist.indexOf(list[step].pk) > -1) newrow += '</strong>';
-      newrow += '</td><td  style="text-align: center">';
-      if (list[step].fields.owner == null && singleparentslist.indexOf(list[step].pk) == -1) {
-	      newrow += '<div class="progress"><div class="progress-bar progress-bar-success" role="progressbar" valuemin="0" valuemax="1"'
-	      newrow += 'valuenow="'+result[1]/result[0]*100+'" style="width:'+result[1]/result[0]*100+'%">';
-	      newrow += '<span  class="progressspan">'+result[1]+' of '+result[0]+'</span>';
-	      newrow += '</div></div>';
-      } else {
-        if (list[step].fields.status) {
-          newrow += '<span class="text-success fa fa-lg fa-thumbs-up"></span>';
-        } else {
-          newrow += '<span class="text-success"></span>';
-        };
-      };
-      newrow += '</td><td>';
-      newrow += '<button data-value1="'+list[step].pk+'" data-value2="'+ (result[0]!=result[1]) +'" class="setBtn btn btn-primary btn-xs" style="width: 100%"><span class="text-capitalize">';
-      newrow += (result[0]==result[1]) ? gettext("mark as not done") : gettext("mark as done");
-      newrow += '</span></button>';
-      newrow += '</td><td>';
-      newrow += '<a class="btn btn-primary btn-xs" href="https://frepple.com/docs/{% version_short %}'+list[step].fields.url_doc+'" target="_frepplecom"><span class="text-capitalize">'+gettext("information")+'</span></a>';
-      newrow += '</td><td>';
-      if (Object.keys(automaticList).indexOf(list[step].pk) > -1) {
-        newrow += '<button class="autoBtn btn btn-primary btn-xs" data-value1="'+list[step].pk+'"><span class="text-capitalize">';
-        newrow += gettext('auto-populate');
-        newrow += '</span></button>';
-      };
-      newrow += '</td></tr>';
-    };
-
-    $("tbody").append(newrow);
-    $("table tr").on('click','.setBtn', function(){setProgress($(this).attr('data-value1') , $(this).attr('data-value2'));});
-    $("table tr").on('click','.autoBtn', function(){ populate($(this).attr('data-value1') ); } );
-
+		$("#wizardsvg svg").attr("transform","translate("+moveX+" "+moveY+") scale("+newscale+")");
 		wizard.updateWizard();
+		$("#wizardsvg").removeClass("invisible");
 
   });
 </script>
@@ -271,34 +41,8 @@
 {% block content %}
 
 <div id="content-main">
-  <!-- change display:none to block for graph to show. -->
-  <div id="wizardsvg" class="panel" style="max-width:700px; min-width: 1220px; display: none;">
+  <div id="wizardsvg" class="panel invisible" style="max-width: 1220px; display: block;">
 		{% include "common/wizard.svg" %}
   </div>
-	<div class="panel" style="max-width:700px; min-width: 600px">
-		<div class="panel-body">
-			<div class="table-reponsive">
-				<table>
-					<thead>
-						<tr id="overall">
-						  <th></th>
-							<th style="text-align: right">
-								<span>{% trans "overall progress"|capfirst %}:&nbsp;</span>
-							</th>
-							<th colspan="3">
-								<div class="progress">
-									<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="1" data-valuenow="0" style="width: 0%; min-width: 0px;">
-									 <span class="progressspan"></span>
-									</div>
-								</div>
-						  </th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
 </div>
 {% endblock %}

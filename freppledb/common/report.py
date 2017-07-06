@@ -713,7 +713,7 @@ class GridReport(View):
   @classmethod
   def getSortName(reportclass, request, prefs=None):
     '''
-    Build a jqgrid sort configuration pair sidx and sord: 
+    Build a jqgrid sort configuration pair sidx and sord:
     For instance:
        ("fieldname1 asc, fieldname2", "desc")
     '''
@@ -735,7 +735,7 @@ class GridReport(View):
         reportclass.rows[reportclass.default_sort[2]].name,
         reportclass.default_sort[3],
         reportclass.rows[reportclass.default_sort[4]].name
-        ), 
+        ),
         reportclass.default_sort[5]
         )
     elif len(reportclass.default_sort) >= 4:
@@ -749,7 +749,7 @@ class GridReport(View):
     elif len(reportclass.default_sort) >= 2:
       return (
         reportclass.rows[reportclass.default_sort[0]].name,
-        reportclass.default_sort[1]       
+        reportclass.default_sort[1]
         )
 
 
@@ -758,18 +758,18 @@ class GridReport(View):
     '''
     Applies a sort to the query.
     '''
-    sortname = None 
+    sortname = None
     if request.GET.get('sidx', ''):
-      # 1) Sorting order specified on the request  
-      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))        
+      # 1) Sorting order specified on the request
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
     elif prefs:
       # 2) Sorting order from the preferences
-      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc')) 
+      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
     if not sortname or sortname == " asc":
       # 3) Default sort order
       if not reportclass.default_sort:
         return query
-      elif len(reportclass.default_sort) > 6:          
+      elif len(reportclass.default_sort) > 6:
         return query.order_by(
           reportclass.rows[reportclass.default_sort[0]].name
           if reportclass.default_sort[1] == "asc"
@@ -781,7 +781,7 @@ class GridReport(View):
           if reportclass.default_sort[5] == "asc"
           else ("-%s" % reportclass.rows[reportclass.default_sort[4]].name)
           )
-      elif len(reportclass.default_sort) >= 4:          
+      elif len(reportclass.default_sort) >= 4:
         return query.order_by(
           reportclass.rows[reportclass.default_sort[0]].name
           if reportclass.default_sort[1] == "asc"
@@ -790,7 +790,7 @@ class GridReport(View):
           if reportclass.default_sort[3] == "asc"
           else ("-%s" % reportclass.rows[reportclass.default_sort[2]].name)
           )
-      elif len(reportclass.default_sort) >= 2:          
+      elif len(reportclass.default_sort) >= 2:
         return query.order_by(
           reportclass.rows[reportclass.default_sort[0]].name
           if reportclass.default_sort[1] == "asc"
@@ -812,7 +812,7 @@ class GridReport(View):
             sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
             added = True
             break
-        if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:            
+        if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:
           for field in reportclass.model.__base__._meta.get_fields():
             if field.name == sortBasefield:
               sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
@@ -831,10 +831,10 @@ class GridReport(View):
     '''
     Build an SQL fragment to sort on: Eg "1 asc, 2 desc"
     '''
-    sortname = None 
+    sortname = None
     if request.GET.get('sidx', ''):
-      # 1) Sorting order specified on the request  
-      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))        
+      # 1) Sorting order specified on the request
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
     elif prefs:
       # 2) Sorting order from the preferences
       sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
@@ -842,18 +842,18 @@ class GridReport(View):
       # 3) Default sort order
       if not reportclass.default_sort:
         return "1 asc"
-      elif len(reportclass.default_sort) > 6:          
+      elif len(reportclass.default_sort) > 6:
         return "%s %s, %s %s, %s %s" % (
           reportclass.default_sort[0] + 1, reportclass.default_sort[1],
           reportclass.default_sort[2] + 1, reportclass.default_sort[3],
           reportclass.default_sort[4] + 1, reportclass.default_sort[5]
           )
-      elif len(reportclass.default_sort) >= 4:          
+      elif len(reportclass.default_sort) >= 4:
         return "%s %s, %s %s" % (
           reportclass.default_sort[0] + 1, reportclass.default_sort[1],
-          reportclass.default_sort[2] + 1, reportclass.default_sort[3]          
+          reportclass.default_sort[2] + 1, reportclass.default_sort[3]
           )
-      elif len(reportclass.default_sort) >= 2:          
+      elif len(reportclass.default_sort) >= 2:
         return "%s %s" % (
           reportclass.default_sort[0] + 1, reportclass.default_sort[1]
           )
@@ -872,8 +872,8 @@ class GridReport(View):
           if i.name == sortfield:
             sortargs.append('%s %s' % (idx, 'desc' if dir == 'desc' else 'asc'))
             if idx == 1:
-              has_one = True 
-          idx += 1      
+              has_one = True
+          idx += 1
       if sortargs:
         if not has_one:
           sortargs.append("1 asc")
@@ -881,8 +881,8 @@ class GridReport(View):
       else:
         return "1 asc"
 
-    
-    
+
+
     sortname = None
     if request.GET.get('sidx', None):
       # 1
@@ -891,7 +891,7 @@ class GridReport(View):
       # 2
       sort = prefs['sidx']
     else:
-      # 3 
+      # 3
       sort = reportclass.rows[0].name
     idx = 1
     for i in reportclass.rows:
@@ -1064,7 +1064,7 @@ class GridReport(View):
           mode = request.session.get('mode', 'graph')
       is_popup = '_popup' in request.GET
       sidx, sord = reportclass.getSortName(request, prefs)
-      
+
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_text(reportclass.title), 'entity': force_text(args[0])}) or reportclass.title,

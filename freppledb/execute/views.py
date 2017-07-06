@@ -296,7 +296,7 @@ def wrapTask(request, action):
     start = request.POST.get('start', None)
     if start:
       arguments.append("--start=%s" % start)
-    end = request.POST.get('start', None)
+    end = request.POST.get('end', None)
     if end:
       arguments.append("--end=%s" % end)
     weekstart = request.POST.get('weekstart', None)

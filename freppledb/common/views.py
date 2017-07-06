@@ -136,6 +136,20 @@ def wizard(request):
     )
 
 
+###############################################
+@login_required
+@csrf_protect
+def wizardwidget(request):
+
+  return render(request, 'common/wizardwidget.html',
+    context = {
+      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder')),
+      'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
+      'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
+      }
+    )
+
+
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
     label=_("language"),

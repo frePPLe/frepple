@@ -51,63 +51,13 @@ Dashboard.register(WelcomeWidget)
 
 class WizardWidget(Widget):
   name = "wizard"
-  title = _("Wizard to load your data")
-  tooltip = _("Get started quick and easy to fill out the data tables")
+  title = _("Path to unlock features")
+  tooltip = _("Fill out the data tables and access new features.")
   asynchronous = False
   url = '/wizard/'
 
   def render(self, request=None):
-    from freppledb.common.middleware import _thread_locals
-    try:
-      db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-    except:
-      db = DEFAULT_DB_ALIAS
-    cursor = connections[db].cursor()
-    cursor.execute('''
-      with summary as (
-      select owner_id as grp,
-        sum(case when status then 1 else 0 end) steps_complete,
-        count(*) steps_total
-      from common_wizard
-      where owner_id is not null
-      group by owner_id
-      )
-      select 'Overall progress',
-        coalesce(sum(steps_complete),0),
-        coalesce(sum(greatest(steps_total,1)),1)
-      from summary
-      union all
-      (
-      select name, steps_complete, steps_total
-      from summary
-      inner join common_wizard
-      on summary.grp = common_wizard.name
-      order by common_wizard.sequenceorder
-      )
-      ''')
-
-    result = ['<div class="table-reponsive"><table style="width: 100%"><thead>']
-    first = True
-    for label, complete, total in cursor.fetchall():
-      progress = int(complete / total * 100)
-      if first:
-        first = False
-        result.append('<tr id="overall"><th style="vertical-align: top; text-align: left; width: 150px; padding-right: 10px;">')
-        result.append('<span>%s</span>' % capfirst(force_text(_('overall progress'))) )
-        result.append('</th><th style="min-width: 50px"><div class="progress">')
-        result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
-        result.append('<span style="color: black">%s%%</span>' % progress )
-        result.append('</div>')
-        result.append('</div></th></tr></thead><tbody>')
-      else:
-        result.append('<tr style="vertical-align: top"><td class="underline"><a href="/wizard/" target="_blank">%s</a></td>' % label)
-        result.append('<td><div class="progress">')
-        result.append('<div class="progress-bar progress-bar-success" role="progressbar" data-valuemin="0" data-valuemax="%s" data-valuenow="%s" style="width: %s%%; min-width: 0px;">' % (complete, total, progress) )
-        result.append('<span style="color: black">%s%%</span>' % progress )
-        result.append('</div></div></td></tr>')
-    result.append('</tbody></table></div>')
-
-    return '\n'.join(result)
+    return '<div id="wiz"></div><script>$("#wiz").load("http://127.0.0.1:8000/wizardwidget/", function(){$("#wizardsvg").removeClass("panel invisible")});</script>'
 Dashboard.register(WizardWidget)
 
 

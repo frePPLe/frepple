@@ -621,9 +621,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.6891667"
-     inkscape:cx="519.59518"
-     inkscape:cy="172.15641"
+     inkscape:zoom="7.606112"
+     inkscape:cx="84.325227"
+     inkscape:cy="67.357863"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -647,7 +647,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -658,7 +658,7 @@
      transform="translate(0,-164.70831)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:Open Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="4.1426773"
        y="316.91156"
        id="text5752"><tspan
@@ -668,7 +668,8 @@
          y="326.56705"
          style="stroke-width:0.26458332" /></text>
     <g
-       id="g9410" style="display:none">
+       id="g9410"
+       style="display:none">
       <rect
          ry="1.2373868"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -684,7 +685,7 @@
            id="text4612-1-7-8-1-0"
            y="276.75836"
            x="175.87469"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
            xml:space="preserve"><tspan
              y="276.75836"
              x="175.87469"
@@ -724,6 +725,7 @@
       </g>
       <a
          href=""
+         target="_blank"
          id="safetystockdoc">
         <text
            id="tspan6318-9-11"
@@ -733,7 +735,8 @@
       </a>
     </g>
     <g
-       id="g9023" style="display:none">
+       id="g9023"
+       style="display:none">
       <rect
          ry="0.90913397"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -749,7 +752,7 @@
            id="text4612-1-7-8"
            y="278.91324"
            x="13.782053"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
            xml:space="preserve"><tspan
              id="tspan4882"
              sodipodi:role="line"
@@ -785,6 +788,7 @@
       </g>
       <a
          href=""
+         target="_blank"
          id="statisticalforecastdoc">
         <text
            id="tspan6318-9-2"
@@ -794,12 +798,13 @@
       </a>
     </g>
     <g
-       id="g9735" style="display:none">
+       id="g9735"
+       style="display:none">
       <text
          id="text5524-4"
          y="269.04181"
          x="81.501747"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            y="269.04181"
            x="81.501747"
@@ -828,7 +833,7 @@
            id="inventoryplanparametersurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
              x="91.023315"
              y="283.23285"
              id="text4612-1-7-8-1"><tspan
@@ -856,6 +861,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="inventoryplanparametersdoc">
           <text
              x="135.94702"
@@ -866,7 +872,8 @@
       </g>
     </g>
     <g
-       id="g8861" style="display:none">
+       id="g8861"
+       style="display:none">
       <rect
          ry="0.91044247"
          style="fill:#d7d7d7;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:0.45685732;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -882,7 +889,7 @@
            id="text4612-1-7-8-1-0-6"
            y="244.73775"
            x="15.719754"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
            xml:space="preserve"><tspan
              y="244.73775"
              x="15.719754"
@@ -912,6 +919,7 @@
       </g>
       <a
          href=""
+         target="_blank"
          id="salesordershistorydoc">
         <text
            id="tspan6318-9-15"
@@ -946,7 +954,7 @@
            id="text4612"
            y="197.40736"
            x="8.8674879"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.59929967px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13497373"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.59929967px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13497373"
            xml:space="preserve"><tspan
              style="stroke-width:0.13497373"
              y="197.40736"
@@ -956,6 +964,7 @@
       </a>
       <a
          id="itemsdoc"
+         target="_blank"
          href="">
         <text
            id="tspan6318"
@@ -966,14 +975,12 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64440024px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
        x="7.3022218"
        y="185.92097"
        id="text5524-2"><tspan
          sodipodi:role="line"
-         id="tspan5564"
-         x="7.3022218"
-         y="185.92097">Basic Data</tspan></text>
+         id="tspan4821">Master Data</tspan></text>
     <g
        id="g8622">
       <rect
@@ -992,7 +999,7 @@
            id="text4612-5"
            y="206.94971"
            x="8.8361349"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.60926962px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13535233"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.60926962px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13535233"
            xml:space="preserve"><tspan
              y="206.94971"
              x="8.8361349"
@@ -1001,6 +1008,7 @@
       </a>
       <a
          id="locationsdoc"
+         target="_blank"
          href="">
         <text
            id="tspan6318-8"
@@ -1026,7 +1034,7 @@
            id="text4612-7"
            y="210.93094"
            x="8.9636259"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13229166"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13229166"
            xml:space="preserve"><tspan
              y="210.93094"
              x="8.9636259"
@@ -1035,6 +1043,7 @@
       </a>
       <a
          id="customersdoc"
+         target="_blank"
          href="">
         <text
            id="tspan6318-86"
@@ -1060,7 +1069,7 @@
            id="text4612-1"
            y="201.81142"
            x="34.492947"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
            xml:space="preserve"><tspan
              y="201.81142"
              x="34.492947"
@@ -1086,6 +1095,7 @@
       </g>
       <a
          id="salesordersdoc"
+         target="_blank"
          href="">
         <text
            id="tspan6318-9-1"
@@ -1096,6 +1106,7 @@
     </g>
     <a
        id="basicdatadoc"
+       target="_blank"
        href="">
       <text
          x="59.001221"
@@ -1120,7 +1131,7 @@
            id="text4612-1-7-8-3"
            y="220.49034"
            x="251.89339"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.26458332;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.26458332;stroke-opacity:1"
            xml:space="preserve"><tspan
              id="tspan9594"
              sodipodi:role="line"
@@ -1142,7 +1153,7 @@
            id="plan_mourl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
              x="254.69991"
              y="271.99658"
              id="text4612-1-7-8-1-0-0-8-4"><tspan
@@ -1182,6 +1193,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="plan_modoc">
           <text
              x="280.65521"
@@ -1205,7 +1217,7 @@
            id="plan_dourl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
              x="257.64062"
              y="252.30469"
              id="text4612-1-7-8-1-0-0-8"><tspan
@@ -1245,6 +1257,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="plan_dodoc">
           <text
              x="280.51608"
@@ -1272,7 +1285,7 @@
                id="text4612-1-7-8-1-0-0"
                y="233.31387"
                x="259.54416"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
                xml:space="preserve"><tspan
                  style="stroke-width:0.13229166"
                  id="tspan9364"
@@ -1311,6 +1324,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="plan_podoc">
           <text
              x="280.23779"
@@ -1321,6 +1335,7 @@
       </g>
       <a
          href=""
+         target="_blank"
          id="generateplandoc"
          transform="translate(241.82964,24.071644)">
         <text
@@ -1337,7 +1352,7 @@
          id="text5524-03"
          y="171"
          x="80.801338"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            y="171"
            x="80.801338"
@@ -1355,7 +1370,7 @@
          id="g11963">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712708"
            y="249.62529"
            id="text5524-4-5"
@@ -1366,7 +1381,7 @@
              y="249.62529">Fill the tables</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.907013"
            y="254.161"
            id="text5524-4-5-9"
@@ -1377,7 +1392,7 @@
              y="254.161">only if you require</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712708"
            y="259.46356"
            id="text5524-4-5-8"
@@ -1391,7 +1406,7 @@
          id="g11947">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712708"
            y="197.11624"
            id="text5524-4-5-64"
@@ -1403,7 +1418,7 @@
              y="197.11624">Fill the tables</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.907005"
            y="201.65195"
            id="text5524-4-5-9-0"
@@ -1415,7 +1430,7 @@
              y="201.65195">only if you require</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712708"
            y="206.95451"
            id="text5524-4-5-8-1"
@@ -1430,7 +1445,7 @@
          id="g11955">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712715"
            y="224.01672"
            id="text5524-4-5-98"
@@ -1442,7 +1457,7 @@
              y="224.01672">Fill the tables</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.907013"
            y="228.55243"
            id="text5524-4-5-9-5"
@@ -1454,7 +1469,7 @@
              y="228.55243">only if you require</tspan></text>
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
            x="81.712715"
            y="233.855"
            id="text5524-4-5-8-9"
@@ -1480,7 +1495,7 @@
            id="distributionordersurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
              x="134.62988"
              y="219.42973"
              id="text5524-9"
@@ -1509,7 +1524,7 @@
                id="text4612-1-3-6"
                y="231.63388"
                x="156.32002"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
                xml:space="preserve"><tspan
                  id="tspan11010"
                  sodipodi:role="line"
@@ -1536,6 +1551,7 @@
           </g>
           <a
              href=""
+             target="_blank"
              id="itemdistributionsdoc">
             <text
                id="tspan6318-9-45"
@@ -1547,6 +1563,7 @@
         <a
            transform="translate(155.42216,26.158781)"
            id="distributionordersdoc"
+           target="_blank"
            href="">
           <text
              x="59.001221"
@@ -1570,7 +1587,7 @@
            id="manufacturingordersurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
              x="134.83484"
              y="245.55464"
              id="text5524"
@@ -1579,7 +1596,7 @@
                id="tspan5522"
                x="134.83484"
                y="245.55464"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.27336687">Manufacturing Order</tspan></text>
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.27336687">Manufacturing Order</tspan></text>
         </a>
         <g
            id="g8968">
@@ -1599,7 +1616,7 @@
                id="text4612-1-3-6-4"
                y="258.04727"
                x="171.96053"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
                xml:space="preserve"><tspan
                  style="stroke-width:0.13668343"
                  y="258.04727"
@@ -1626,6 +1643,7 @@
           </g>
           <a
              href=""
+             target="_blank"
              id="operationmaterialsdoc">
             <text
                id="tspan6318-9-6"
@@ -1652,7 +1670,7 @@
                id="text4612-1-3-6-7-5"
                y="258.19113"
                x="139.13191"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64489174px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13668343;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="258.19113"
                  x="139.13191"
@@ -1679,6 +1697,7 @@
           </g>
           <a
              href=""
+             target="_blank"
              id="operationsdoc">
             <text
                id="tspan6318-9-47"
@@ -1690,6 +1709,7 @@
         <a
            transform="translate(155.28302,51.621857)"
            id="manufacturingordersdoc"
+           target="_blank"
            href="">
           <text
              x="59.001221"
@@ -1713,7 +1733,7 @@
            id="purchaseordersurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.83182669px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.27336687"
              x="134.76794"
              y="190.29189"
              id="text5524-0"
@@ -1742,7 +1762,7 @@
                id="text4612-1-3"
                y="204.0274"
                x="176.67679"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64912081px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13684203;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64912081px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13684203;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="204.0274"
                  x="176.67679"
@@ -1769,6 +1789,7 @@
           </g>
           <a
              href=""
+             target="_blank"
              id="itemsuppliersdoc">
             <text
                id="tspan6318-9-4"
@@ -1795,7 +1816,7 @@
                id="text4612-1-4"
                y="203.93767"
                x="142.18637"
-               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64912081px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13684203;stroke-opacity:1"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.64912081px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13684203;stroke-opacity:1"
                xml:space="preserve"><tspan
                  y="203.93767"
                  x="142.18637"
@@ -1822,6 +1843,7 @@
           </g>
           <a
              href=""
+             target="_blank"
              id="suppliersdoc">
             <text
                id="tspan6318-9-41"
@@ -1833,6 +1855,7 @@
         <a
            transform="translate(155.28302,-1.9480003)"
            id="purchaseordersdoc"
+           target="_blank"
            href="">
           <text
              x="59.001221"
@@ -1843,6 +1866,7 @@
       </g>
       <a
          id="introductiondoc"
+         target="_blank"
          href="">
         <text
            x="220.68478"
@@ -1865,7 +1889,7 @@
          id="text5524-26"
          y="172.29022"
          x="239.31836"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            y="172.29022"
            x="239.31836"
@@ -1886,7 +1910,7 @@
            id="resourcesurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
              x="244.89909"
              y="185.36893"
              id="text4612-1-0-9-5"><tspan
@@ -1915,6 +1939,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="resourcesdoc">
           <text
              x="263.26239"
@@ -1939,7 +1964,7 @@
            id="operationresourcesurl">
           <text
              xml:space="preserve"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Open Sans;-inkscape-font-specification:'Open Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#a1a1a1;fill-opacity:1;stroke:#a1a1a1;stroke-width:0.13229166;stroke-opacity:1"
              x="274.49011"
              y="185.31592"
              id="text4612-1-3-6-4-3"><tspan
@@ -1968,6 +1993,7 @@
         </g>
         <a
            href=""
+           target="_blank"
            id="operationresourcesdoc">
           <text
              x="310.15341"
@@ -1978,6 +2004,7 @@
       </g>
       <a
          href=""
+         target="_blank"
          id="capacityplanningdoc"
          transform="translate(251.56961,-13.0794)">
         <text

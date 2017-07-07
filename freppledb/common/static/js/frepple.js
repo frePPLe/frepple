@@ -1532,7 +1532,7 @@ var wizard = {
   updateWizard: function(){
 
     //hide if there is no forecast app
-    if (!hasForecast) {
+    if (hasForecast) {
       document.getElementById(wizard.wizdict['Sales orders history'].rctg).parentElement.style.display = 'block';
       document.getElementById(wizard.wizdict['Statistical Forecast'].rctg).parentElement.style.display = 'block';
       document.getElementById(wizard.wizdict['Inventory Planning'].rctg).parentElement.style.display = 'block';
@@ -1544,7 +1544,7 @@ var wizard = {
     }
 
     //hide is there is no inventory app
-    if (!hasIP) {
+    if (hasIP) {
       document.getElementById(wizard.wizdict['Inventory Planning'].rctg).parentElement.style.display = 'block';
       document.getElementById(wizard.wizdict['Safety Stock'].rctg).parentElement.style.display = 'block';
       document.getElementById('forecasttoinventory').style.display = 'block';

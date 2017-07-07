@@ -394,10 +394,16 @@ class MenuNode(Node):
     # Find all tables with data
     with connections[req.database].cursor() as cursor:
       cursor.execute('''
-        select relname
-        from pg_stat_user_tables 
-        WHERE schemaname = 'public' 
-        and n_live_tup > 0
+        select table_name from (
+          select table_name,
+            query_to_xml(
+              format('select 1 as cnt from %I.%I limit 1', table_schema, table_name),
+              false, true, ''
+              ) as xml_count
+          from information_schema.tables
+          where table_schema = 'public'
+          ) s
+        where xml_count is not null
         ''')
       present = set([ i[0] for i in cursor])
     

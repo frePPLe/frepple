@@ -60,7 +60,7 @@ class WizardWidget(Widget):
   url = '/wizard/'
 
   def render(self, request=None):
-    return '\n'.join(['<div id="content-main">', 
+    return '\n'.join(['<div id="content-main">',
       '<div id="wizardsvg" style="max-width: 1220px; display: block;">',
       render_to_string("common/wizard.svg", {
         'subjectlist': serializers.serialize("json", Wizard.objects.all().order_by('sequenceorder')),
@@ -151,13 +151,12 @@ class RecentCommentsWidget(Widget):
     result.append('</tbody></table></div>')
     #. Translators: Translation included with Django
     return '\n'.join(result) if result else force_text(_('None available'))
- 
+
   javascript = '''
     var hasForecast = %s;
     var hasIP = %s;
     var version = '%s.%s';
     $(function() {
-       console.log("eeeee");
        wizard.updateWizard();
     });
     ''' % (
@@ -166,6 +165,6 @@ class RecentCommentsWidget(Widget):
       VERSION.split('.', 2)[0],
       VERSION.split('.', 2)[1]
       )
-  
-  
+
+
 Dashboard.register(RecentCommentsWidget)

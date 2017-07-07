@@ -1470,6 +1470,7 @@ var wizard = {
     "Locations": {"lock": "", "rctg": "locations", "cup":"", "anchor":"locationsurl", "docanchor":"locationsdoc", "url_doc": "/user-guide/modeling-wizard/master-data/locations.html", "url_internaldoc": "/data/input/location/"},
     "Customers": {"lock": "", "rctg": "customers", "cup":"", "anchor":"customersurl", "docanchor":"customersdoc", "url_doc": "/user-guide/modeling-wizard/master-data/customers.html", "url_internaldoc": "/data/input/customer/"},
     "Sales orders": {"lock": "lock0", "rctg": "salesorders", "cup":"", "anchor":"salesordersurl", "docanchor":"salesordersdoc", "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/"},
+    "Buffers": {"lock": "lock10", "rctg": "buffers", "cup":"", "anchor":"bufferssurl", "docanchor":"bufferssdoc", "url_doc": "/user-guide/modeling-wizard/master-data/buffers.html", "url_internaldoc": "/data/input/buffer/"},
     "Sales orders history": {"lock": "lock1", "rctg": "salesordershistory", "cup":"", "anchor":"salesordershistoryurl", "docanchor":"salesordershistorydoc", "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/"},
     "Statistical Forecast": {"lock": "", "rctg": "statisticalforecast", "cup": "cup0", "anchor":"statisticalforecasturl", "docanchor":"statisticalforecastdoc", "url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"},
     "Inventory Planning": {"lock": "", "rctg": "inventoryplanning", "cup":"", "anchor":"", "docanchor":""},

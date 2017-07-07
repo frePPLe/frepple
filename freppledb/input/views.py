@@ -1122,11 +1122,6 @@ class ManufacturingOrderList(GridReport):
   height = 250
   help_url = 'user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html'
 
-  # @classmethod
-  # def extra_context(reportclass, request, *args, **kwargs):
-  #   return {
-  #     'jsondata': ManufacturingOrder.objects.all(),
-  #     }
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
@@ -1162,8 +1157,8 @@ class ManufacturingOrderList(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=True),
-    GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
-    GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
@@ -1283,8 +1278,8 @@ class DistributionOrderList(GridReport):
     GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
-    GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
@@ -1433,8 +1428,8 @@ class PurchaseOrderList(GridReport):
     GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus, editable=True),
     GridFieldCurrency('unit_cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldNumber('criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
-    GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

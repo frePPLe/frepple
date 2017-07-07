@@ -234,18 +234,16 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
   { 'rowname': 'Welcome', 'cols': [
-    {'width':8, 'widgets':[
+    {'width':6, 'widgets':[
       ("welcome",{}),
       ("news",{}),
     ]},
-    {'width':4, 'widgets':[
+    {'width':6, 'widgets':[
       #("execute",{}),
-      ("recent_comments",{"limit":10}),
-      ("recent_actions",{"limit":10}),
-      ("wizard",{}),
+      ("wizard",{}),      
     ]},
   ]},
-  { 'rowname': 'Sales', 'cols': [
+  { 'rowname': 'sales', 'cols': [
     {'width':9, 'widgets':[
       ("late_orders",{"limit":20}),
       ("short_orders",{"limit":20}),
@@ -255,7 +253,7 @@ DEFAULT_DASHBOARD = [
       ("delivery_performance",{"green": 90, "yellow": 80}),
     ]},
   ]},
-  { 'rowname': 'Purchasing', 'cols': [
+  { 'rowname': 'purchasing', 'cols': [
     {'width':9, 'widgets':[
       ("purchase_orders",{"fence1": 7, "fence2": 30}),
       #("purchase_queue",{"limit":20}),
@@ -266,13 +264,13 @@ DEFAULT_DASHBOARD = [
       ("inventory_by_item",{"limit":10}),
     ]},
   ]},
-  { 'rowname': 'Distribution', 'cols': [
+  { 'rowname': 'distribution', 'cols': [
     {'width':12, 'widgets':[
       ("distribution_orders",{"fence1":7, "fence2": 30}),
       #("shipping_queue",{"limit":20}),
     ]},
   ]},
-  { 'rowname': 'Manufacturing', 'cols': [
+  { 'rowname': 'manufacturing', 'cols': [
     {'width':9, 'widgets':[
       ("manufacturing_orders",{"fence1":7, "fence2": 30}),
       #("resource_queue",{"limit":20}),
@@ -282,7 +280,16 @@ DEFAULT_DASHBOARD = [
       ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
     ]},
   ]},
+  { 'rowname': 'activity', 'cols': [
+    {'width':6, 'widgets':[
+      ("recent_comments",{"limit":10}),
+    ]},
+    {'width':6, 'widgets':[
+      ("recent_actions",{"limit":10}),
+    ]},      
+  ]},
 ]
+
 GLOBAL_PREFERENCES = {}
 
 # Port number for the CherryPy web server

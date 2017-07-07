@@ -348,15 +348,13 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
   { 'rowname': 'Welcome', 'cols': [
-    {'width':8, 'widgets':[
+    {'width':6, 'widgets':[
       ("welcome",{}),
       ("news",{}),
     ]},
-    {'width':4, 'widgets':[
+    {'width':6, 'widgets':[
       #("execute",{}),
-      ("recent_comments",{"limit":10}),
-      ("recent_actions",{"limit":10}),
-      ("wizard",{}),
+      ("wizard",{}),      
     ]},
   ]},
   { 'rowname': 'sales', 'cols': [
@@ -395,6 +393,14 @@ DEFAULT_DASHBOARD = [
       ('capacity_alerts',{}),
       ('resource_utilization',{"limit":5, "medium": 80, "high": 90}),
     ]},
+  ]},
+  { 'rowname': 'activity', 'cols': [
+    {'width':6, 'widgets':[
+      ("recent_comments",{"limit":10}),
+    ]},
+    {'width':6, 'widgets':[
+      ("recent_actions",{"limit":10}),
+    ]},      
   ]},
 ]
 

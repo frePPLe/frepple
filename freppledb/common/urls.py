@@ -36,7 +36,6 @@ urlpatterns = [
 
   # Wizard screen
   url(r'^wizard/$', freppledb.common.views.wizard, name='wizard'),
-  url(r'^wizardwidget/$', freppledb.common.views.wizardwidget, name='wizardwidget'),
 
   # User preferences
   url(r'^preferences/$', freppledb.common.views.preferences, name="preferences"),

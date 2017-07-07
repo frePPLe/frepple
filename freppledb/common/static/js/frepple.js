@@ -1463,6 +1463,35 @@ var grid = {
 //----------------------------------------------------------------------------
 
 var wizard = {
+		
+    list: [
+    	{"model": "common.wizard", "pk": "Introduction", "fields": {"sequenceorder": 100, "url_doc": "/user-guide/modeling-wizard/concepts.html", "url_internaldoc": null, "owner": "Introduction", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Master data", "fields": {"sequenceorder": 200, "url_doc": "/user-guide/modeling-wizard/master-data/index.html", "url_internaldoc": null, "owner": null, "status": false}},
+    	{"model": "common.wizard", "pk": "Locations", "fields": {"sequenceorder": 210, "url_doc": "/user-guide/modeling-wizard/master-data/locations.html", "url_internaldoc": "/data/input/location/", "owner": "Master data", "status": false}},
+    	{"model": "common.wizard", "pk": "Items", "fields": {"sequenceorder": 220, "url_doc": "/user-guide/modeling-wizard/master-data/items.html", "url_internaldoc": "/data/input/item/", "owner": "Master data", "status": false}},
+    	{"model": "common.wizard", "pk": "Customers", "fields": {"sequenceorder": 230, "url_doc": "/user-guide/modeling-wizard/master-data/customers.html", "url_internaldoc": "/data/input/customer/", "owner": "Master data", "status": false}},
+    	{"model": "common.wizard", "pk": "Sales orders", "fields": {"sequenceorder": 240, "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/", "owner": "Master data", "status": false}},
+    	{"model": "common.wizard", "pk": "Buffers", "fields": {"sequenceorder": 250, "url_doc": "/user-guide/modeling-wizard/master-data/buffers.html", "url_internaldoc": "/data/input/buffer/", "owner": "Master data", "status": false}},
+    	{"model": "common.wizard", "pk": "Purchasing", "fields": {"sequenceorder": 300, "url_doc": "/user-guide/modeling-wizard/purchasing/index.html", "url_internaldoc": null, "owner": null, "status": false}},
+    	{"model": "common.wizard", "pk": "Suppliers", "fields": {"sequenceorder": 310, "url_doc": "/user-guide/modeling-wizard/purchasing/suppliers.html", "url_internaldoc": "/data/input/supplier/", "owner": "Purchasing", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Item suppliers", "fields": {"sequenceorder": 320, "url_doc": "/user-guide/modeling-wizard/purchasing/item-suppliers.html", "url_internaldoc": "/data/input/itemsupplier/", "owner": "Purchasing", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Purchase orders", "fields": {"sequenceorder": 330, "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/purchaseorder/", "owner": "Purchasing", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Distribution", "fields": {"sequenceorder": 400, "url_doc": "/user-guide/modeling-wizard/distribution/index.html", "url_internaldoc": null, "owner": null, "status": false}},
+    	{"model": "common.wizard", "pk": "Item distributions", "fields": {"sequenceorder": 410, "url_doc": "/user-guide/modeling-wizard/distribution/item-distributions.html", "url_internaldoc": "/data/input/itemdistribution/", "owner": "Distribution", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Distribution orders", "fields": {"sequenceorder": 420, "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/distributionorder/", "owner": "Distribution", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Manufacturing BOM", "fields": {"sequenceorder": 700, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/index.html", "url_internaldoc": null, "owner": null, "status": false}}, 
+    	{"model": "common.wizard", "pk": "Operations", "fields": {"sequenceorder": 710, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operations.html", "url_internaldoc": "/data/input/operation/", "owner": "Manufacturing BOM", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Operation materials", "fields": {"sequenceorder": 720, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operation-materials.html", "url_internaldoc": "/data/input/operationmaterial/", "owner": "Manufacturing BOM", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Manufacturing orders", "fields": {"sequenceorder": 730, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html", "url_internaldoc": "/data/input/manufacturingorder/", "owner": "Manufacturing BOM", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Manufacturing Capacity", "fields": {"sequenceorder": 800, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/index.html", "url_internaldoc": null, "owner": null, "status": false}}, 
+    	{"model": "common.wizard", "pk": "Resources", "fields": {"sequenceorder": 810, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/resources.html", "url_internaldoc": "/data/input/resource/", "owner": "Manufacturing Capacity", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Operation Resources", "fields": {"sequenceorder": 820, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html", "url_internaldoc": "/data/input/operationresource/", "owner": "Manufacturing Capacity", "status": false}}, 
+    	{"model": "common.wizard", "pk": "Plan generation", "fields": {"sequenceorder": 900, "url_doc": "/user-guide/modeling-wizard/generate-plan.html", "url_internaldoc": "/execute/", "owner": "Plan generation", "status": false}},
+      {"pk":"Inventory Plan Parameters","fields": {"url_doc":"/user-guide/modeling-wizard/inventory-planning/inventory-planning-parameters.html","url_internaldoc":"/data/inventoryplanning/inventoryplanning/"}},
+      {"pk":"Statistical Forecast","fields": {"url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"}},
+      {"pk":"Safety Stock","fields": {"url_doc":"/user-guide/modeling-wizard/generate-plan.html","url_internaldoc":"/flowplan/"}}
+    ],
+    
   removelock: function(wizelem) {
     //remove lock from graph, set text to black, change the rect fill and stroke
     if (wizelem.lock !== "") {
@@ -1530,12 +1559,6 @@ var wizard = {
       "Manufacturing orders": {"lock": "", "rctg": document.getElementById('plan_mo'), "cup": document.getElementById("cup4"), "anchor":document.getElementById('plan_mourl'), "docanchor":document.getElementById('plan_modoc')}
     };
 
-    //add missing entries to list
-    list.push(
-      {"pk":"Inventory Plan Parameters","fields": {"url_doc":"/user-guide/modeling-wizard/inventory-planning/inventory-planning-parameters.html","url_internaldoc":"/data/inventoryplanning/inventoryplanning/"}},
-      {"pk":"Statistical Forecast","fields": {"url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"}},
-      {"pk":"Safety Stock","fields": {"url_doc":"/user-guide/modeling-wizard/generate-plan.html","url_internaldoc":"/flowplan/"}}
-    )
 
     //hide if there is no forecast app
     if (!hasForecast) {
@@ -1559,20 +1582,20 @@ var wizard = {
 
     // set the links to tables and documentation
     var undesiredDocs = ["Master data","Distribution","Purchasing","Manufacturing BOM","Manufacturing Capacity"];
-    for (var i = 0; i < list.length; i++) {
-      if (wizdict[list[i].pk]) {
-        if (undesiredDocs.indexOf(list[i].pk) !== -1) {
-          wizdict[list[i].pk].docanchor.style.display = 'none';
+    for (var i = 0; i < wizard.list.length; i++) {
+      if (wizdict[wizard.list[i].pk]) {
+        if (undesiredDocs.indexOf(wizard.list[i].pk) !== -1) {
+          wizdict[wizard.list[i].pk].docanchor.style.display = 'none';
         }
-        if (wizdict[list[i].pk].anchor !== "" && list[i].fields.url_internaldoc !== null) {
-          wizdict[list[i].pk].anchor.setAttribute('href', list[i].fields.url_internaldoc);
+        if (wizdict[wizard.list[i].pk].anchor !== "" && wizard.list[i].fields.url_internaldoc !== null) {
+          wizdict[wizard.list[i].pk].anchor.setAttribute('href', wizard.list[i].fields.url_internaldoc);
         }
-        if (wizdict[list[i].pk].docanchor !== "" && list[i].fields.url_doc !== null) {
-          wizdict[list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
+        if (wizdict[wizard.list[i].pk].docanchor !== "" && wizard.list[i].fields.url_doc !== null) {
+          wizdict[wizard.list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.list[i].fields.url_doc);
         }
-        if (list[i].pk === 'Sales orders') {
-          wizdict['Sales orders history'].anchor.setAttribute('href', list[i].fields.url_internaldoc);
-          wizdict['Sales orders history'].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + list[i].fields.url_doc);
+        if (wizard.list[i].pk === 'Sales orders') {
+          wizdict['Sales orders history'].anchor.setAttribute('href', wizard.list[i].fields.url_internaldoc);
+          wizdict['Sales orders history'].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.list[i].fields.url_doc);
         }
       }
     }

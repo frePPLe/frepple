@@ -15,9 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
+from django.core import serializers
 from django.db import DEFAULT_DB_ALIAS, connections
+from django.template.loader import render_to_string
 from django.utils import formats
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
@@ -26,7 +29,7 @@ from django.utils.encoding import force_text
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.models import Comment
+from freppledb.common.models import Comment, Wizard
 
 
 class WelcomeWidget(Widget):
@@ -57,7 +60,14 @@ class WizardWidget(Widget):
   url = '/wizard/'
 
   def render(self, request=None):
-    return '<div id="wiz"></div><script>$("#wiz").load("http://127.0.0.1:8000/wizardwidget/", function(){$("#wizardsvg").removeClass("panel invisible")});</script>'
+    return '\n'.join(['<div id="content-main">', 
+      '<div id="wizardsvg" style="max-width: 1220px; display: block;">',
+      render_to_string("common/wizard.svg", {
+        'subjectlist': serializers.serialize("json", Wizard.objects.all().order_by('sequenceorder')),
+        'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
+        'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
+        }),'</div></div>'])
+
 Dashboard.register(WizardWidget)
 
 
@@ -141,5 +151,21 @@ class RecentCommentsWidget(Widget):
     result.append('</tbody></table></div>')
     #. Translators: Translation included with Django
     return '\n'.join(result) if result else force_text(_('None available'))
-
+ 
+  javascript = '''
+    var hasForecast = %s;
+    var hasIP = %s;
+    var version = '%s.%s';
+    $(function() {
+       console.log("eeeee");
+       wizard.updateWizard();
+    });
+    ''' % (
+      'true' if 'freppledb.forecast' in settings.INSTALLED_APPS else 'false',
+      'true' if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS else 'false',
+      VERSION.split('.', 2)[0],
+      VERSION.split('.', 2)[1]
+      )
+  
+  
 Dashboard.register(RecentCommentsWidget)

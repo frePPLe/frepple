@@ -98,52 +98,9 @@ def handler500(request):
 @login_required
 @csrf_protect
 def wizard(request):
-
-  if request.method == 'POST':
-    if not request.is_ajax():
-      return HttpResponseForbidden('%s' % _('Permission denied'))
-    errors=[]
-    try:
-      data = json.loads(request.body.decode(request.encoding))
-      for instruction in data:
-        try:
-          if instruction['command'] == 'set':
-            wiz = Wizard.objects.all().using(request.database).get(pk=instruction['key'])
-            wiz.status = instruction['value']
-            wiz.save(update_fields=['status'], using=request.database)
-          # Code sample when there is an auto-populate action in the wizard.
-          #elif instruction['command'] == 'execute':
-          #  if instruction['key'] == 'xyz':
-          #    pass
-        except Exception as e:
-          errors.append(str(e))
-    except Exception as e:
-      errors.append(str(e))
-
-    if errors:
-      logger.error("Error saving wizard updates: %s" % "".join(errors))
-      return HttpResponseServerError('Error saving wizard updates: %s' % "<br/>".join(errors))
-    else:
-      return HttpResponse(content="OK")
-
   return render(request, 'common/wizard.html',
     context = {
-      'title': _('Wizard to load your data'),
-      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder')),
-      'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
-      'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
-      }
-    )
-
-
-###############################################
-@login_required
-@csrf_protect
-def wizardwidget(request):
-
-  return render(request, 'common/wizardwidget.html',
-    context = {
-      'subjectlist': serializers.serialize("json",Wizard.objects.all().using(request.database).order_by('sequenceorder')),
+      'title': _('Path to unlock features'),
       'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
       'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
       }

@@ -3,25 +3,11 @@
 {% block extrahead %}{{block.super}}
 
 <script type="text/javascript">
-  var list={{ subjectlist|safe }};
 	var hasForecast = ('{{ hasForecast|safe }}' === 'True')?true:false;
 	var hasIP = ('{{ hasIP|safe }}' === 'True')?true:false;
 	var version = '{% version_short %}';
 
   $(function() {
-
-		var panelwidth = $("#wizardsvg").width();
-		var svgwidth = $("#wizardsvg svg").width();
-
-		var newscale = panelwidth/svgwidth;
-
-		$("#wizardsvg").height($("#wizardsvg svg").height()*newscale);
-		var panelheight = $("#wizardsvg").height();
-		var svgheight = $("#wizardsvg svg").height();
-		var moveY = (-svgheight+panelheight)/2;
-		var moveX = (-svgwidth+panelwidth)/2;
-
-		$("#wizardsvg svg").attr("transform","translate("+moveX+" "+moveY+") scale("+newscale+")");
 		wizard.updateWizard();
 		$("#wizardsvg").removeClass("invisible");
 

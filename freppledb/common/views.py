@@ -39,7 +39,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpRespons
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
-from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail, Wizard
+from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
 

@@ -76,7 +76,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields
-from freppledb.common.models import User, Comment, Wizard, Parameter, BucketDetail, Bucket, HierarchyModel
+from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
 from freppledb.admin import data_site
 
 
@@ -86,7 +86,7 @@ logger = logging.getLogger(__name__)
 
 # A list of models with some special, administrative purpose.
 # They should be excluded from bulk import, export and erasing actions.
-EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment, Wizard)
+EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 def getHorizon(request, future_only=False):

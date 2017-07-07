@@ -18,7 +18,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
-from django.core import serializers
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.template.loader import render_to_string
 from django.utils import formats
@@ -29,7 +28,7 @@ from django.utils.encoding import force_text
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.models import Comment, Wizard
+from freppledb.common.models import Comment
 
 
 class WelcomeWidget(Widget):
@@ -63,7 +62,6 @@ class WizardWidget(Widget):
     return '\n'.join(['<div id="content-main">',
       '<div id="wizardsvg" style="max-width: 1220px; display: block;">',
       render_to_string("common/wizard.svg", {
-        'subjectlist': serializers.serialize("json", Wizard.objects.all().order_by('sequenceorder')),
         'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
         'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
         }),'</div></div>'])

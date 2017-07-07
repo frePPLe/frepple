@@ -885,14 +885,14 @@ var grid = {
     $(".ui-icon-desc").prop("disabled", true);
     $('.s-ico').hide();
 
-    // Change the ordering of the columns 
+    // Change the ordering of the columns
     if (sortname)
     {
 	    var elements_original = (sortname + " " + sortorder).split(",");
-	    var elements_new = []; 
+	    var elements_new = [];
 	    var found = false;
 	    for (var i = 0; i < elements_original.length; i++) {
-	    	if (sortindex === undefined || (elements_original[i].trim() != p.colModel[sortindex].name + " asc" 
+        if (sortindex === undefined || (elements_original[i].trim() != p.colModel[sortindex].name + " asc"
 	          && elements_original[i].trim() != p.colModel[sortindex].name + " desc")) {
 	    		elements_new.push(elements_original[i]);
 	    	}
@@ -901,16 +901,16 @@ var grid = {
 	    }
 	    if (found)
 	    	elements_new.splice(0, 0, found);
-	    
+
 	    // Special processing for the the last element and update grid fields
 	    var last = elements_new.pop();
 	    while (elements_new.length > 3)
 	    	last = elements_new.pop();
 	    var x = last.trim().split(" ");
-	    elements_new.push(x[0]); 
+	    elements_new.push(x[0]);
 	  	p.sortname = elements_new.join();
 	  	p.sortorder = x[1];
-    
+
 	    // Display numeric labels and sorting icons
 	    for (var i = 0; i < elements_new.length; i++)
 	    {
@@ -1463,59 +1463,60 @@ var grid = {
 //----------------------------------------------------------------------------
 
 var wizard = {
-		
-    list: [
-    	{"model": "common.wizard", "pk": "Introduction", "fields": {"sequenceorder": 100, "url_doc": "/user-guide/modeling-wizard/concepts.html", "url_internaldoc": null, "owner": "Introduction", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Master data", "fields": {"sequenceorder": 200, "url_doc": "/user-guide/modeling-wizard/master-data/index.html", "url_internaldoc": null, "owner": null, "status": false}},
-    	{"model": "common.wizard", "pk": "Locations", "fields": {"sequenceorder": 210, "url_doc": "/user-guide/modeling-wizard/master-data/locations.html", "url_internaldoc": "/data/input/location/", "owner": "Master data", "status": false}},
-    	{"model": "common.wizard", "pk": "Items", "fields": {"sequenceorder": 220, "url_doc": "/user-guide/modeling-wizard/master-data/items.html", "url_internaldoc": "/data/input/item/", "owner": "Master data", "status": false}},
-    	{"model": "common.wizard", "pk": "Customers", "fields": {"sequenceorder": 230, "url_doc": "/user-guide/modeling-wizard/master-data/customers.html", "url_internaldoc": "/data/input/customer/", "owner": "Master data", "status": false}},
-    	{"model": "common.wizard", "pk": "Sales orders", "fields": {"sequenceorder": 240, "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/", "owner": "Master data", "status": false}},
-    	{"model": "common.wizard", "pk": "Buffers", "fields": {"sequenceorder": 250, "url_doc": "/user-guide/modeling-wizard/master-data/buffers.html", "url_internaldoc": "/data/input/buffer/", "owner": "Master data", "status": false}},
-    	{"model": "common.wizard", "pk": "Purchasing", "fields": {"sequenceorder": 300, "url_doc": "/user-guide/modeling-wizard/purchasing/index.html", "url_internaldoc": null, "owner": null, "status": false}},
-    	{"model": "common.wizard", "pk": "Suppliers", "fields": {"sequenceorder": 310, "url_doc": "/user-guide/modeling-wizard/purchasing/suppliers.html", "url_internaldoc": "/data/input/supplier/", "owner": "Purchasing", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Item suppliers", "fields": {"sequenceorder": 320, "url_doc": "/user-guide/modeling-wizard/purchasing/item-suppliers.html", "url_internaldoc": "/data/input/itemsupplier/", "owner": "Purchasing", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Purchase orders", "fields": {"sequenceorder": 330, "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/purchaseorder/", "owner": "Purchasing", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Distribution", "fields": {"sequenceorder": 400, "url_doc": "/user-guide/modeling-wizard/distribution/index.html", "url_internaldoc": null, "owner": null, "status": false}},
-    	{"model": "common.wizard", "pk": "Item distributions", "fields": {"sequenceorder": 410, "url_doc": "/user-guide/modeling-wizard/distribution/item-distributions.html", "url_internaldoc": "/data/input/itemdistribution/", "owner": "Distribution", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Distribution orders", "fields": {"sequenceorder": 420, "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/distributionorder/", "owner": "Distribution", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Manufacturing BOM", "fields": {"sequenceorder": 700, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/index.html", "url_internaldoc": null, "owner": null, "status": false}}, 
-    	{"model": "common.wizard", "pk": "Operations", "fields": {"sequenceorder": 710, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operations.html", "url_internaldoc": "/data/input/operation/", "owner": "Manufacturing BOM", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Operation materials", "fields": {"sequenceorder": 720, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operation-materials.html", "url_internaldoc": "/data/input/operationmaterial/", "owner": "Manufacturing BOM", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Manufacturing orders", "fields": {"sequenceorder": 730, "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html", "url_internaldoc": "/data/input/manufacturingorder/", "owner": "Manufacturing BOM", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Manufacturing Capacity", "fields": {"sequenceorder": 800, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/index.html", "url_internaldoc": null, "owner": null, "status": false}}, 
-    	{"model": "common.wizard", "pk": "Resources", "fields": {"sequenceorder": 810, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/resources.html", "url_internaldoc": "/data/input/resource/", "owner": "Manufacturing Capacity", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Operation Resources", "fields": {"sequenceorder": 820, "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html", "url_internaldoc": "/data/input/operationresource/", "owner": "Manufacturing Capacity", "status": false}}, 
-    	{"model": "common.wizard", "pk": "Plan generation", "fields": {"sequenceorder": 900, "url_doc": "/user-guide/modeling-wizard/generate-plan.html", "url_internaldoc": "/execute/", "owner": "Plan generation", "status": false}},
-      {"pk":"Inventory Plan Parameters","fields": {"url_doc":"/user-guide/modeling-wizard/inventory-planning/inventory-planning-parameters.html","url_internaldoc":"/data/inventoryplanning/inventoryplanning/"}},
-      {"pk":"Statistical Forecast","fields": {"url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"}},
-      {"pk":"Safety Stock","fields": {"url_doc":"/user-guide/modeling-wizard/generate-plan.html","url_internaldoc":"/flowplan/"}}
-    ],
-    
+  wizdict : {
+    "Introduction": {"lock": "", "rctg": "", "cup":"", "anchor":"", "docanchor": "introductiondoc", "url_doc": "/user-guide/modeling-wizard/concepts.html", "url_internaldoc": null},
+    "Master data": {"lock": "", "rctg": "basicdata", "cup":"", "anchor":"", "docanchor": "basicdatadoc", "url_doc": "/user-guide/modeling-wizard/master-data/index.html", "url_internaldoc": null},
+    "Items": {"lock": "", "rctg": "items", "cup":"", "anchor":"itemsurl", "docanchor":"itemsdoc", "url_doc": "/user-guide/modeling-wizard/master-data/items.html", "url_internaldoc": "/data/input/item/"},
+    "Locations": {"lock": "", "rctg": "locations", "cup":"", "anchor":"locationsurl", "docanchor":"locationsdoc", "url_doc": "/user-guide/modeling-wizard/master-data/locations.html", "url_internaldoc": "/data/input/location/"},
+    "Customers": {"lock": "", "rctg": "customers", "cup":"", "anchor":"customersurl", "docanchor":"customersdoc", "url_doc": "/user-guide/modeling-wizard/master-data/customers.html", "url_internaldoc": "/data/input/customer/"},
+    "Sales orders": {"lock": "lock0", "rctg": "salesorders", "cup":"", "anchor":"salesordersurl", "docanchor":"salesordersdoc", "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/"},
+    "Sales orders history": {"lock": "lock1", "rctg": "salesordershistory", "cup":"", "anchor":"salesordershistoryurl", "docanchor":"salesordershistorydoc", "url_doc": "/user-guide/modeling-wizard/master-data/sales-orders.html", "url_internaldoc": "/data/input/demand/"},
+    "Statistical Forecast": {"lock": "", "rctg": "statisticalforecast", "cup": "cup0", "anchor":"statisticalforecasturl", "docanchor":"statisticalforecastdoc", "url_doc":"/user-guide/model-reference/forecast.html","url_internaldoc":"/forecast/"},
+    "Inventory Planning": {"lock": "", "rctg": "inventoryplanning", "cup":"", "anchor":"", "docanchor":"", "url_doc":"/user-guide/modeling-wizard/inventory-planning/inventory-planning-parameters.html","url_internaldoc":"/data/inventoryplanning/inventoryplanning/"},
+    "Inventory Plan Parameters": {"lock": "lock2", "rctg": "inventoryplanparameters", "cup":"", "anchor":"inventoryplanparametersurl", "docanchor":"inventoryplanparametersdoc"},
+    "Safety Stock": {"lock": "", "rctg": "safetystock", "cup": "cup1", "anchor":"safetystockurl", "docanchor":"safetystockdoc", "url_doc":"/user-guide/modeling-wizard/generate-plan.html","url_internaldoc":"/flowplan/"},
+    "Supply Path": {"lock": "", "rctg": "supplypath", "cup":"", "anchor":"", "docanchor":""},
+    "Purchasing": {"lock": "", "rctg": "purchasing", "cup":"", "anchor":"", "docanchor":"purchaseordersdoc", "url_doc": "/user-guide/modeling-wizard/purchasing/index.html", "url_internaldoc": null},
+    "Suppliers": {"lock": "lock3", "rctg": "suppliers", "cup":"", "anchor":"suppliersurl", "docanchor":"suppliersdoc", "url_doc": "/user-guide/modeling-wizard/purchasing/suppliers.html", "url_internaldoc": "/data/input/supplier/"},
+    "Item suppliers": {"lock": "lock4", "rctg": "itemsuppliers", "cup":"", "anchor":"itemsuppliersurl", "docanchor":"itemsuppliersdoc", "url_doc": "/user-guide/modeling-wizard/purchasing/item-suppliers.html", "url_internaldoc": "/data/input/itemsupplier/"},
+    "Distribution": {"lock": "", "rctg": "distribution", "cup":"", "anchor":"", "docanchor":"distributionordersdoc", "url_doc": "/user-guide/modeling-wizard/distribution/index.html", "url_internaldoc": null},
+    "Item distributions": {"lock": "lock5", "rctg": "itemdistributions", "cup":"", "anchor":"itemdistributionsurl", "docanchor":"itemdistributionsdoc", "url_doc": "/user-guide/modeling-wizard/distribution/item-distributions.html", "url_internaldoc": "/data/input/itemdistribution/"},
+    "Manufacturing BOM": {"lock": "", "rctg": "manufacturingbom", "cup":"", "anchor":"", "docanchor":"manufacturingordersdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/index.html", "url_internaldoc": null},
+    "Operations": {"lock": "lock6", "rctg": "operations", "cup":"", "anchor":"operationsurl", "docanchor":"operationsdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operations.html", "url_internaldoc": "/data/input/operation/"},
+    "Operation materials": {"lock": "lock7", "rctg": "operationmaterials", "cup":"", "anchor":"operationmaterialsurl", "docanchor":"operationmaterialsdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/operation-materials.html", "url_internaldoc": "/data/input/operationmaterial/"},
+    "Manufacturing Capacity": {"lock": "", "rctg": "capacityplanning", "cup":"", "anchor":"", "docanchor":"capacityplanningdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/index.html", "url_internaldoc": null},
+    "Resources": {"lock": "lock8", "rctg": "resources", "cup":"", "anchor":"resourcesurl", "docanchor":"resourcesdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/resources.html", "url_internaldoc": "/data/input/resource/"},
+    "Operation Resources": {"lock": "lock9", "rctg": "operationresources", "cup":"", "anchor":"operationresourcesurl", "docanchor":"operationresourcesdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html", "url_internaldoc": "/data/input/operationresource/"},
+    "Plan generation": {"lock": "", "rctg": "generateplan", "cup":"", "anchor":"generateplanurl", "docanchor":"generateplandoc", "url_doc": "/user-guide/modeling-wizard/generate-plan.html", "url_internaldoc": ""},
+    "Distribution orders": {"lock": "", "rctg": "plan_do", "cup":"cup2", "anchor":"plan_dourl", "docanchor":"plan_dodoc", "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/distributionorder/"},
+    "Purchase orders": {"lock": "", "rctg": "plan_po", "cup":"cup3", "anchor":"plan_pourl", "docanchor":"plan_podoc", "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/purchaseorder/"},
+    "Manufacturing orders": {"lock": "", "rctg": "plan_mo", "cup": "cup4", "anchor":"plan_mourl", "docanchor":"plan_modoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html", "url_internaldoc": "/data/input/manufacturingorder/"}
+  },
+
   removelock: function(wizelem) {
     //remove lock from graph, set text to black, change the rect fill and stroke
     if (wizelem.lock !== "") {
-      wizelem.lock.style.display='none';
+      document.getElementById(wizelem.lock).style.display='none';
     }
-		if (wizelem.cup === "" && wizelem.anchor !== "" && wizelem.rctg.getAttribute('id') !== 'generateplan') {
-			wizelem.rctg.style.fill='cyan';
+		if (wizelem.cup === "" && wizelem.anchor !== "" && document.getElementById(wizelem.rctg).getAttribute('id') !== 'generateplan') {
+			document.getElementById(wizelem.rctg).style.fill='cyan';
 		}
 		if (wizelem.anchor !== "") {
-			wizelem.anchor.children[0].style.fill='black';
-			wizelem.anchor.children[0].style.stroke='none';
+			document.getElementById(wizelem.anchor).children[0].style.fill='black';
+			document.getElementById(wizelem.anchor).children[0].style.stroke='none';
 		}
-    wizelem.rctg.style.stroke='#00d5ff';
+    document.getElementById(wizelem.rctg).style.stroke='#00d5ff';
   },
 
   turngreen: function(wizelem) {
-    wizelem.rctg.style.stroke='rgb(16, 150, 24)';
+    document.getElementById(wizelem.rctg).style.stroke='rgb(16, 150, 24)';
 		if (wizelem.cup !== "") {
-			wizelem.cup.children[0].style.fill='#ffbf05';
-			wizelem.cup.children[0].style.stroke='#ffa000';
-			wizelem.cup.children[1].style.stroke='#ffa000';
-			wizelem.cup.children[2].style.stroke='#ffa000';
-		} else if (wizelem.anchor !== ""  && wizelem.rctg.getAttribute('id') !== 'generateplan') {
-			wizelem.rctg.style.fill='#a4d070';
+			document.getElementById(wizelem.cup).children[0].style.fill='#ffbf05';
+			document.getElementById(wizelem.cup).children[0].style.stroke='#ffa000';
+			document.getElementById(wizelem.cup).children[1].style.stroke='#ffa000';
+			document.getElementById(wizelem.cup).children[2].style.stroke='#ffa000';
+		} else if (wizelem.anchor !== "" && document.getElementById(wizelem.rctg).getAttribute('id') !== 'generateplan') {
+			document.getElementById(wizelem.rctg).style.fill='#a4d070';
 		}
   },
 
@@ -1523,85 +1524,54 @@ var wizard = {
 		if (wizelem.anchor === "" || wizelem.anchor === null) {
 			return null;
 		}
-    var anchorlink = wizelem.anchor.getAttribute('href');
+    var anchorlink = document.getElementById(wizelem.anchor).getAttribute('href');
 		result = $("#nav-menu a[href='"+ anchorlink +"']").attr('data-populated');
 		return (typeof result === 'undefined')? null : result === 'True';
 	},
 
   updateWizard: function(){
-    wizdict = {
-      "Introduction": {"lock": "", "rctg": "", "cup":"", "anchor":"", "docanchor":document.getElementById('introductiondoc')},
-      "Master data": {"lock": "", "rctg": document.getElementById('basicdata'), "cup":"", "anchor":"", "docanchor":document.getElementById('basicdatadoc')},
-      "Items": {"lock": "", "rctg": document.getElementById('items'), "cup":"", "anchor":document.getElementById('itemsurl'), "docanchor":document.getElementById('itemsdoc')},
-      "Locations": {"lock": "", "rctg": document.getElementById('locations'), "cup":"", "anchor":document.getElementById('locationsurl'), "docanchor":document.getElementById('locationsdoc')},
-      "Customers": {"lock": "", "rctg": document.getElementById('customers'), "cup":"", "anchor":document.getElementById('customersurl'), "docanchor":document.getElementById('customersdoc')},
-      "Sales orders": {"lock": document.getElementById("lock0"), "rctg": document.getElementById('salesorders'), "cup":"", "anchor":document.getElementById('salesordersurl'), "docanchor":document.getElementById('salesordersdoc')},
-      "Sales orders history": {"lock": document.getElementById("lock1"), "rctg": document.getElementById('salesordershistory'), "cup":"", "anchor":document.getElementById('salesordershistoryurl'), "docanchor":document.getElementById('salesordershistorydoc')},
-      "Statistical Forecast": {"lock": "", "rctg": document.getElementById('statisticalforecast'), "cup": document.getElementById("cup0"), "anchor":document.getElementById('statisticalforecasturl'), "docanchor":document.getElementById('statisticalforecastdoc')},
-      "Inventory Planning": {"lock": "", "rctg": document.getElementById('inventoryplanning'), "cup":"", "anchor":"", "docanchor":""},
-      "Inventory Plan Parameters": {"lock": document.getElementById("lock2"), "rctg": document.getElementById('inventoryplanparameters'), "cup":"", "anchor":document.getElementById('inventoryplanparametersurl'), "docanchor":document.getElementById('inventoryplanparametersdoc')},
-      "Safety Stock": {"lock": "", "rctg": document.getElementById('safetystock'), "cup": document.getElementById("cup1"), "anchor":document.getElementById('safetystockurl'), "docanchor":document.getElementById('safetystockdoc')},
-      "Supply Path": {"lock": "", "rctg": document.getElementById('supplypath'), "cup":"", "anchor":"", "docanchor":document.getElementById('supplypathdoc')},
-      "Purchasing": {"lock": "", "rctg": document.getElementById('purchasing'), "cup":"", "anchor":"", "docanchor":document.getElementById('purchaseordersdoc')},
-      "Suppliers": {"lock": document.getElementById("lock3"), "rctg": document.getElementById('suppliers'), "cup":"", "anchor":document.getElementById('suppliersurl'), "docanchor":document.getElementById('suppliersdoc')},
-      "Item suppliers": {"lock": document.getElementById("lock4"), "rctg": document.getElementById('itemsuppliers'), "cup":"", "anchor":document.getElementById('itemsuppliersurl'), "docanchor":document.getElementById('itemsuppliersdoc')},
-      "Distribution": {"lock": "", "rctg": document.getElementById('distribution'), "cup":"", "anchor":"", "docanchor":document.getElementById('distributionordersdoc')},
-      "Item distributions": {"lock": document.getElementById("lock5"), "rctg": document.getElementById('itemdistributions'), "cup":"", "anchor":document.getElementById('itemdistributionsurl'), "docanchor":document.getElementById('itemdistributionsdoc')},
-      "Manufacturing BOM": {"lock": "", "rctg": document.getElementById('manufacturingbom'), "cup":"", "anchor":"", "docanchor":document.getElementById('manufacturingordersdoc')},
-      "Operations": {"lock": document.getElementById("lock6"), "rctg": document.getElementById('operations'), "cup":"", "anchor":document.getElementById('operationsurl'), "docanchor":document.getElementById('operationsdoc')},
-      "Operation materials": {"lock": document.getElementById("lock7"), "rctg": document.getElementById('operationmaterials'), "cup":"", "anchor":document.getElementById('operationmaterialsurl'), "docanchor":document.getElementById('operationmaterialsdoc')},
-      "Manufacturing Capacity": {"lock": "", "rctg": document.getElementById('capacityplanning'), "cup":"", "anchor":"", "docanchor":document.getElementById('capacityplanningdoc')},
-      "Resources": {"lock": document.getElementById("lock8"), "rctg": document.getElementById('resources'), "cup":"", "anchor":document.getElementById('resourcesurl'), "docanchor":document.getElementById('resourcesdoc')},
-      "Operation Resources": {"lock": document.getElementById("lock9"), "rctg": document.getElementById('operationresources'), "cup":"", "anchor":document.getElementById('operationresourcesurl'), "docanchor":document.getElementById('operationresourcesdoc')},
-      "Plan generation": {"lock": "", "rctg": document.getElementById('generateplan'), "cup":"", "anchor":document.getElementById('generateplanurl'), "docanchor":document.getElementById('generateplandoc')},
-      "Distribution orders": {"lock": "", "rctg": document.getElementById('plan_do'), "cup":document.getElementById("cup2"), "anchor":document.getElementById('plan_dourl'), "docanchor":document.getElementById('plan_dodoc')},
-      "Purchase orders": {"lock": "", "rctg": document.getElementById('plan_po'), "cup":document.getElementById("cup3"), "anchor":document.getElementById('plan_pourl'), "docanchor":document.getElementById('plan_podoc')},
-      "Manufacturing orders": {"lock": "", "rctg": document.getElementById('plan_mo'), "cup": document.getElementById("cup4"), "anchor":document.getElementById('plan_mourl'), "docanchor":document.getElementById('plan_modoc')}
-    };
-
 
     //hide if there is no forecast app
     if (!hasForecast) {
-      wizdict['Sales orders history'].rctg.parentElement.style.display = 'none';
-      wizdict['Statistical Forecast'].rctg.parentElement.style.display = 'none';
-      wizdict['Inventory Planning'].rctg.parentElement.style.display = 'none';
-      wizdict['Safety Stock'].rctg.parentElement.style.display = 'none';
-      document.getElementById('basictosales').style.display = 'none';
-      document.getElementById('salestoforecast').style.display = 'none';
-      document.getElementById('forecasttoinventory').style.display = 'none';
-      document.getElementById('inventorytostock').style.display = 'none';
+      document.getElementById(wizard.wizdict['Sales orders history'].rctg).parentElement.style.display = 'block';
+      document.getElementById(wizard.wizdict['Statistical Forecast'].rctg).parentElement.style.display = 'block';
+      document.getElementById(wizard.wizdict['Inventory Planning'].rctg).parentElement.style.display = 'block';
+      document.getElementById(wizard.wizdict['Safety Stock'].rctg).parentElement.style.display = 'block';
+      document.getElementById('basictosales').style.display = 'block';
+      document.getElementById('salestoforecast').style.display = 'block';
+      document.getElementById('forecasttoinventory').style.display = 'block';
+      document.getElementById('inventorytostock').style.display = 'block';
     }
 
     //hide is there is no inventory app
     if (!hasIP) {
-      wizdict['Inventory Planning'].rctg.parentElement.style.display = 'none';
-      wizdict['Safety Stock'].rctg.parentElement.style.display = 'none';
-      document.getElementById('forecasttoinventory').style.display = 'none';
-      document.getElementById('inventorytostock').style.display = 'none';
+      document.getElementById(wizard.wizdict['Inventory Planning'].rctg).parentElement.style.display = 'block';
+      document.getElementById(wizard.wizdict['Safety Stock'].rctg).parentElement.style.display = 'block';
+      document.getElementById('forecasttoinventory').style.display = 'block';
+      document.getElementById('inventorytostock').style.display = 'block';
     }
 
     // set the links to tables and documentation
     var undesiredDocs = ["Master data","Distribution","Purchasing","Manufacturing BOM","Manufacturing Capacity"];
-    for (var i = 0; i < wizard.list.length; i++) {
-      if (wizdict[wizard.list[i].pk]) {
-        if (undesiredDocs.indexOf(wizard.list[i].pk) !== -1) {
-          wizdict[wizard.list[i].pk].docanchor.style.display = 'none';
-        }
-        if (wizdict[wizard.list[i].pk].anchor !== "" && wizard.list[i].fields.url_internaldoc !== null) {
-          wizdict[wizard.list[i].pk].anchor.setAttribute('href', wizard.list[i].fields.url_internaldoc);
-        }
-        if (wizdict[wizard.list[i].pk].docanchor !== "" && wizard.list[i].fields.url_doc !== null) {
-          wizdict[wizard.list[i].pk].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.list[i].fields.url_doc);
-        }
-        if (wizard.list[i].pk === 'Sales orders') {
-          wizdict['Sales orders history'].anchor.setAttribute('href', wizard.list[i].fields.url_internaldoc);
-          wizdict['Sales orders history'].docanchor.setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.list[i].fields.url_doc);
-        }
+
+    for (var key in wizard.wizdict) {
+      if (undesiredDocs.indexOf(key) !== -1) {
+        document.getElementById(wizard.wizdict[key].docanchor).style.display = 'none';
+      }
+      if (wizard.wizdict[key].anchor !== "" && wizard.wizdict[key].url_internaldoc !== null) {
+        document.getElementById(wizard.wizdict[key].anchor).setAttribute('href', wizard.wizdict[key].url_internaldoc);
+      }
+      if (wizard.wizdict[key].docanchor !== "" && wizard.wizdict[key].url_doc !== null) {
+        document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
+      }
+      if (key === 'Sales orders') {
+        document.getElementById(wizard.wizdict['Sales orders history'].anchor).setAttribute('href', wizard.wizdict[key].url_internaldoc);
+        document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
       }
     }
 
     //check elements in graph for data-populated
-    $.each(wizdict, function (index, elem) {
+    $.each(wizard.wizdict, function (index, elem) {
       if (wizard.isPopulated(elem) === false) {
         wizard.removelock(elem);
       } else if (wizard.isPopulated(elem)) {
@@ -1611,70 +1581,76 @@ var wizard = {
     });
 
     //extra logic for the big rectangles
-    if (wizard.isPopulated(wizdict['Sales orders'])) {
-      wizard.turngreen(wizdict['Master data']);
-      wizard.removelock(wizdict['Sales orders history']);
-      wizard.turngreen(wizdict['Sales orders history']);
-      wizard.removelock(wizdict['Statistical Forecast']);
-      wizard.removelock(wizdict['Supply Path']);
-      wizard.removelock(wizdict['Purchasing']);
-      wizard.removelock(wizdict['Distribution']);
-      wizard.removelock(wizdict['Manufacturing BOM']);
+    if (wizard.isPopulated(wizard.wizdict['Sales orders'])) {
+      wizard.turngreen(wizard.wizdict['Master data']);
+      wizard.removelock(wizard.wizdict['Sales orders history']);
+      wizard.turngreen(wizard.wizdict['Sales orders history']);
+      wizard.removelock(wizard.wizdict['Statistical Forecast']);
+      wizard.removelock(wizard.wizdict['Supply Path']);
+      wizard.removelock(wizard.wizdict['Purchasing']);
+      wizard.removelock(wizard.wizdict['Distribution']);
+      wizard.removelock(wizard.wizdict['Manufacturing BOM']);
     }
 
-    if (wizard.isPopulated(wizdict['Item suppliers'])) {
-      wizard.turngreen(wizdict['Purchasing']);
+    if (wizard.isPopulated(wizard.wizdict['Suppliers'])===false) {
+      wizard.removelock(wizard.wizdict['Purchasing']);
+    }
+    if (wizard.isPopulated(wizard.wizdict['Item suppliers'])) {
+      wizard.turngreen(wizard.wizdict['Purchasing']);
     }
 
-    if (wizard.isPopulated(wizdict['Item distributions'])) {
-      wizard.turngreen(wizdict['Distribution']);
+    if (wizard.isPopulated(wizard.wizdict['Item distributions'])) {
+      wizard.turngreen(wizard.wizdict['Distribution']);
     }
 
-    if (wizard.isPopulated(wizdict['Operation materials'])) {
-      wizard.turngreen(wizdict['Manufacturing BOM']);
+    if (wizard.isPopulated(wizard.wizdict['Operation materials'])===false) {
+      wizard.removelock(wizard.wizdict['Manufacturing BOM']);
+    }
+    if (wizard.isPopulated(wizard.wizdict['Operation materials'])) {
+      wizard.turngreen(wizard.wizdict['Manufacturing BOM']);
     }
 
-    if (wizard.isPopulated(wizdict['Item suppliers']) && wizard.isPopulated(wizdict['Item distributions']) && wizard.isPopulated(wizdict['Operation materials'])) {
-      wizard.turngreen(wizdict['Supply Path']);
+    if (wizard.isPopulated(wizard.wizdict['Item suppliers']) && wizard.isPopulated(wizard.wizdict['Item distributions']) && wizard.isPopulated(wizard.wizdict['Operation materials'])) {
+      wizard.turngreen(wizard.wizdict['Supply Path']);
     }
 
-    if (wizard.isPopulated(wizdict['Operations']) !== null) {
-      wizard.removelock(wizdict['Manufacturing Capacity']);
+    if (wizard.isPopulated(wizard.wizdict['Resources']) === false || wizard.isPopulated(wizard.wizdict['Operations']) !== null) {
+      wizard.removelock(wizard.wizdict['Manufacturing Capacity']);
     }
 
-    if (wizard.isPopulated(wizdict['Operation Resources'])) {
-      wizard.turngreen(wizdict['Manufacturing Capacity']);
+    if (wizard.isPopulated(wizard.wizdict['Operation Resources'])) {
+      wizard.turngreen(wizard.wizdict['Manufacturing Capacity']);
     }
 
-    if (wizard.isPopulated(wizdict['Item suppliers'])===false ||
-        wizard.isPopulated(wizdict['Item distributions'])===false ||
-        wizard.isPopulated(wizdict['Operation materials'])===false) {
-      wizard.removelock(wizdict['Plan generation']);
+    if (wizard.isPopulated(wizard.wizdict['Item suppliers'])===false ||
+        wizard.isPopulated(wizard.wizdict['Item distributions'])===false ||
+        wizard.isPopulated(wizard.wizdict['Operation materials'])===false) {
+      wizard.removelock(wizard.wizdict['Plan generation']);
     }
 
-    if (wizard.isPopulated(wizdict['Manufacturing orders']) ||
-        wizard.isPopulated(wizdict['Distribution orders']) ||
-        wizard.isPopulated(wizdict['Manufacturing orders']) ) {
-      wizard.turngreen(wizdict['Plan generation']);
+    if (wizard.isPopulated(wizard.wizdict['Manufacturing orders']) === true ||
+        wizard.isPopulated(wizard.wizdict['Distribution orders']) === true ||
+        wizard.isPopulated(wizard.wizdict['Manufacturing orders']) === true ) {
+      wizard.turngreen(wizard.wizdict['Plan generation']);
     }
 
-    if (wizard.isPopulated(wizdict['Statistical Forecast'])) {
-      wizard.turngreen(wizdict['Statistical Forecast']);
+    if (wizard.isPopulated(wizard.wizdict['Statistical Forecast'])) {
+      wizard.turngreen(wizard.wizdict['Statistical Forecast']);
     }
 
-    if (wizard.isPopulated(wizdict['Inventory Plan Parameters'])===false) {
-      wizard.removelock(wizdict['Inventory Planning']);
-      wizard.removelock(wizdict['Inventory Plan Parameters']);
+    if (wizard.isPopulated(wizard.wizdict['Inventory Plan Parameters'])===false) {
+      wizard.removelock(wizard.wizdict['Inventory Planning']);
+      wizard.removelock(wizard.wizdict['Inventory Plan Parameters']);
     }
 
-    if (wizard.isPopulated(wizdict['Inventory Plan Parameters'])===true) {
-      wizard.turngreen(wizdict['Inventory Planning']);
-      wizard.turngreen(wizdict['Inventory Plan Parameters']);
-      wizard.removelock(wizdict['Safety Stock']);
+    if (wizard.isPopulated(wizard.wizdict['Inventory Plan Parameters'])===true) {
+      wizard.turngreen(wizard.wizdict['Inventory Planning']);
+      wizard.turngreen(wizard.wizdict['Inventory Plan Parameters']);
+      wizard.removelock(wizard.wizdict['Safety Stock']);
     }
 
-    if (wizard.isPopulated(wizdict['Safety Stock'])) {
-      wizard.turngreen(wizdict['Safety Stock']);
+    if (wizard.isPopulated(wizard.wizdict['Safety Stock'])) {
+      wizard.turngreen(wizard.wizdict['Safety Stock']);
     }
   }
 

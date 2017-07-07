@@ -668,7 +668,7 @@
          y="326.56705"
          style="stroke-width:0.26458332" /></text>
     <g
-       id="g9410">
+       id="g9410" style="display:none">
       <rect
          ry="1.2373868"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -733,7 +733,7 @@
       </a>
     </g>
     <g
-       id="g9023">
+       id="g9023" style="display:none">
       <rect
          ry="0.90913397"
          style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -794,7 +794,7 @@
       </a>
     </g>
     <g
-       id="g9735">
+       id="g9735" style="display:none">
       <text
          id="text5524-4"
          y="269.04181"
@@ -866,7 +866,7 @@
       </g>
     </g>
     <g
-       id="g8861">
+       id="g8861" style="display:none">
       <rect
          ry="0.91044247"
          style="fill:#d7d7d7;fill-opacity:1;fill-rule:nonzero;stroke:#a1a1a1;stroke-width:0.45685732;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -1995,14 +1995,14 @@
        inkscape:path-effect="#path-effect4791-9"
        inkscape:original-d="m 64.822917,200.42706 c 3.534545,-0.0298 7.055593,-2.6e-4 10.583333,0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8)"
+       style="display:none;fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8)"
        d="m 56.88542,279.80206 c 7.786759,0 15.543784,0 23.31555,0"
        id="forecasttoinventory"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4791-4"
        inkscape:original-d="m 56.88542,279.80206 c 7.786759,-0.0298 15.543784,-2.6e-4 23.31555,0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.27787885;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3)"
+       style="display:none;fill:none;stroke:#000000;stroke-width:0.27787885;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3)"
        d="m 147.99544,279.95969 c 8.56202,0 17.09133,0 25.63687,0"
        id="inventorytostock"
        inkscape:connector-curvature="0"
@@ -2023,14 +2023,14 @@
        inkscape:path-effect="#path-effect4791-4-0-3-1"
        inkscape:original-d="m 277.64604,191.16945 c 0.0298,5.95012 2.6e-4,11.87752 0,17.81618" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3-4-3-0)"
+       style="display:none;fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3-4-3-0)"
        d="m 41.390221,215.79458 c 0,7.62779 0,15.22645 0,22.83955"
        id="basictosales"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect4791-4-0-3-1-9"
        inkscape:original-d="m 41.390221,215.79458 c 0.0298,7.62779 2.6e-4,15.22645 0,22.83955" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3-4-3-8)"
+       style="display:none;fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend-8-3-4-3-8)"
        d="m 41.251079,251.90205 c 0,6.99299 0,13.95929 0,20.93881"
        id="salestoforecast"
        inkscape:connector-curvature="0"

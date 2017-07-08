@@ -7150,6 +7150,15 @@ class Demand
       setChanged();
     }
 
+    /** Update the location where the demand is shipped from. 
+      * This method does not trigger level or problem recalculation.
+      */
+    void setLocationNoRecalc(Location* l)
+    {
+      loc = l;
+      oper = uninitializedDelivery;
+    }
+
     /** This fields points to an operation that is to be used to plan the
       * demand. By default, the field is left to nullptr and the demand will then
       * be planned using the delivery operation of its item.

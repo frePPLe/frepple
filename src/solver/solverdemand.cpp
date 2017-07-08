@@ -404,7 +404,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 				  << sortedLocation.front().first << endl;
 
         // Prepare for planning on the next location
-			  const_cast<Demand*>(l)->setLocation(sortedLocation.front().first);
+			  const_cast<Demand*>(l)->setLocationNoRecalc(sortedLocation.front().first);
 			  deliveryoper = l->getDeliveryOperation();
         plan_date = l->getDue();
 
@@ -416,7 +416,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 
     if (globalPurchase) {
       // Switch demand back to original location
-      const_cast<Demand*>(l)->setLocation(originalLocation);
+      const_cast<Demand*>(l)->setLocationNoRecalc(originalLocation);
       l->getDeliveryOperation();
     }
 

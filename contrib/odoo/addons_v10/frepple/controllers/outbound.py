@@ -438,7 +438,7 @@ class exporter(object):
         m = self.env['product.product']
         recs = m.search([])
         s = self.env['product.supplierinfo']
-        s_fields=['name', 'delay', 'min_qty', 'date_end', 'date_start']
+        s_fields=['name', 'delay', 'min_qty', 'date_end', 'date_start', 'price']
         supplier = {}
         if recs:
             yield '<!-- products -->\n'
@@ -464,7 +464,7 @@ class exporter(object):
                     for sup in s.browse(tmpl['seller_ids']).read(s_fields):
                         name = '%d %s' % (sup['name'][0], sup['name'][1])
                         yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' %(
-                          sup['delay'], sup['min_qty'], tmpl['standard_price'],
+                          sup['delay'], sup['min_qty'], sup['price'],
                           ' effective_end="%s"' % sup['date_end'] if sup['date_end'] else '',
                           ' effective_start="%s"' % sup['date_start'] if sup['date_start'] else '',
                           quoteattr(name)
@@ -564,7 +564,7 @@ class exporter(object):
                 yield '<operation name=%s size_multiple="1" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time">\n' \
                   '<item name=%s/><location name=%s/>\n' % (
                     quoteattr(operation),
-                    int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
+                    int(self.product_templates[i['product_tmpl_id'][0]]['produce_delay']),
                     self.manufacturing_lead, quoteattr(product_buf['name']), quoteattr(location)
                 )
                 yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"><item name=%s/></flow>\n' % (
@@ -798,7 +798,7 @@ class exporter(object):
                     else:
                         status = 'open'
 
-                    for mv in move.browse(mv_ids).read(m_fields):
+                    for mv in mv_ids.read(m_fields):
                         pick_number = pick_number + 1
                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
                         yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (

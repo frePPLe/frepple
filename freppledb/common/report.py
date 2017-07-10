@@ -804,6 +804,8 @@ class GridReport(View):
       # on related models.
       sortargs = []
       for s in sortname.split(","):
+        if not s.strip():
+          continue
         sortfield, dir = s.strip().split(" ", 1)
         sortBasefield = sortfield.split('__')[0].strip()
         added = False

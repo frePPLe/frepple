@@ -26,16 +26,27 @@ from freppledb.input.models import Resource, Item
 
 
 class CheckTask(PlanTask):
-  # to be used for data validation tasks
+  '''
+  Planning task to be used for data validation tasks.
+  
+  Specific are:
+    - low weight by default, ie fast execution assumed
+  '''
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
     return 0.1
 
-  filter = None
-
 
 class LoadTask(PlanTask):
+  '''
+  Planning task to be used for data loading tasks.
 
+  Specific are:
+    - low weight by default, ie fast execution assumed
+    - filter attribute to load only a subset of the data
+    - subclass is used by the odoo connector to recognize data loading tasks 
+  '''
+  
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
     return 0.1
@@ -1268,7 +1279,7 @@ class loadOperationPlanResources(LoadTask):
 
 
 @PlanTaskRegistry.register
-class PlanSize(LoadTask):
+class PlanSize(CheckTask):
 
   description = "Plan Size"
   sequence = 120

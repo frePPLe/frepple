@@ -72,7 +72,7 @@ function clickedShaped(d)
   if (d.hasOwnProperty('type') && (d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
     return; //don't show links for non existing operations
   } else {
-    var result = escape('/detail/input/'+d.type+'/'+d.name+'/');
+    var result = '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/';
   }
 
   window.open(result, "_self");

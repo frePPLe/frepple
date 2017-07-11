@@ -68,18 +68,17 @@ class importer(object):
       recs.unlink()
       msg.append("Removed %s old draft manufacturing orders" % len(recs))
 
-    # Parsing the XML data file
+    # Parsing the XML data file    
     countproc = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
       if event == 'end' and elem.tag == 'operationplan':
-        uom_id, item_id = elem.get('item').split(',')
-        n = elem.get('operation')
+        uom_id, item_id = elem.get('item_id').split(',')
         try:
-          if n.startswith('Purchase'):  # TODO missing fields warehouse and preferred routes (with implications)
+          if elem.type == 'PO':  # TODO missing fields warehouse and preferred routes (with implications)
             # Create purchase quotation
             x = proc_order.create({
-              'name': n,
+              'name': elem.get('operation'),
               'product_qty': elem.get("quantity"),
               'date_planned': elem.get("end"),
               'product_id': int(item_id),
@@ -103,7 +102,7 @@ class importer(object):
               'product_id': int(item_id),
               'company_id': self.company.id,
               'product_uom': int(uom_id),
-              'location_src_id': int(elem.get('location')),
+              'location_src_id': int(elem.get('location_id')),
               'product_uos_qty': False,
               'product_uos': False,
               'bom_id': False,

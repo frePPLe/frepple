@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.input.commands import LoadTask
 
 
 @PlanTaskRegistry.register
@@ -51,7 +52,7 @@ class OdooReadData(PlanTask):
   '''
 
   description = "Load Odoo data"
-  sequence = 150
+  sequence = 130
   label = ('odoo_read_1', _("Read Odoo data"))
 
   @classmethod
@@ -59,11 +60,10 @@ class OdooReadData(PlanTask):
     for i in range(5):
       if ("odoo_read_%s" % i) in os.environ:
         cls.mode = i
-        for idx in (100, 101, 110):
-          stdLoad = PlanTaskRegistry.getTask(sequence=idx)
-          if stdLoad:
+        for stdLoad in PlanTaskRegistry.reg:
+          if issubclass(stdLoad, LoadTask):
             stdLoad.filter = "(source is null or source<>'odoo_%s')" % cls.mode
-            stdLoad.description = "Load non-Odoo data"
+            stdLoad.description += " - non-odoo source"
         return 1
     else:
       return -1
@@ -133,7 +133,7 @@ class OdooReadData(PlanTask):
 @PlanTaskRegistry.register
 class OdooSaveStatic(PlanTask):
   description = "Save static model"
-  sequence = 151
+  sequence = 131
   label = ('odoo_read_1', _("Read Odoo data"))
 
   @classmethod
@@ -261,19 +261,25 @@ class OdooWritePlan(PlanTask):
       yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
       # Export relevant operationplans
       yield '<operationplans>'
-      for i in frepple.operationplans():
-        b = None
-        for j in i.flowplans:
-          if j.quantity > 0:
-            b = j.flow.buffer
-        if not b or not b.source or not b.source.startswith('odoo') or i.locked:
-          continue
-        yield '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
-          i.id, quoteattr(i.operation.name),
-          i.start, i.end, i.quantity,
-          quoteattr(b.location.subcategory), quoteattr(b.item.subcategory),
-          int(i.criticality)
-          )
+      for i in frepple.operationplans():        
+        if i.ordertype == 'PO':
+          if not i.item or not i.item.source or not i.item.source.startswith('odoo') or i.locked:
+            continue
+          yield '<operationplan id="%s" type="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+            i.id, quoteattr(i.item.name), quoteattr(i.location.name),
+            quoteattr(i.supplier.name), i.start, i.end, i.quantity,
+            quoteattr(i.operation.location.subcategory), quoteattr(i.item.subcategory),
+            int(i.criticality)
+            )
+        elif i.ordertype == "MO":
+          if not i.operation or not i.operation.source or not i.operation.source.startswith('odoo') or i.locked:
+            continue
+          yield '<operationplan id="%s" type="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+            i.id, quoteattr(i.operation.item.name), quoteattr(i.operation.location.name),
+            quoteattr(i.operation.name), i.start, i.end, i.quantity,
+            quoteattr(i.operation.location.subcategory), quoteattr(i.operation.item.subcategory),
+            int(i.criticality)
+            )
       yield '</operationplans>'
       yield '</plan>'
       yield '--%s--\r' % boundary
@@ -302,4 +308,4 @@ class OdooWritePlan(PlanTask):
 
     except HTTPError as e:
       print("Error connecting to odoo", e.read())
-      raise e
+      #raise e

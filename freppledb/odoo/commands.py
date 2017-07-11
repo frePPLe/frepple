@@ -52,7 +52,7 @@ class OdooReadData(PlanTask):
   '''
 
   description = "Load Odoo data"
-  sequence = 150
+  sequence = 130
   label = ('odoo_read_1', _("Read Odoo data"))
 
   @classmethod
@@ -133,7 +133,7 @@ class OdooReadData(PlanTask):
 @PlanTaskRegistry.register
 class OdooSaveStatic(PlanTask):
   description = "Save static model"
-  sequence = 151
+  sequence = 131
   label = ('odoo_read_1', _("Read Odoo data"))
 
   @classmethod

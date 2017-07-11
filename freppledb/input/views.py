@@ -1553,8 +1553,8 @@ class OperationPlanDetail(View):
            "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
            "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S"),
            "quantity": float(opplan.quantity),
-           "criticality": float(opplan.criticality),
-           "delay": opplan.delay.total_seconds(),
+           "criticality": float(opplan.criticality) if opplan.criticality else '',
+           "delay": opplan.delay.total_seconds() if opplan.delay else '',
            "status": opplan.status,
            "reference": opplan.reference,
            "type": opplan.type,
@@ -1564,7 +1564,7 @@ class OperationPlanDetail(View):
            "origin": opplan.origin_id,
            "supplier": opplan.supplier_id,
            "item": opplan.item_id,
-           "color": float(opplan.color)
+           "color": float(opplan.color) if opplan.color else ''
            }
         if opplan.plan and 'pegging' in opplan.plan:
           res["pegging_demand"] = []

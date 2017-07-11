@@ -869,6 +869,7 @@ var grid = {
   },
 
   onSortCol: function (sortname, sortindex, sortorder) {
+    return;
     // Get missing arguments when they aren't passed
   	var p = $("#grid")[0].p;
     if (sortname === undefined)
@@ -1708,15 +1709,28 @@ var ERPconnection = {
           type: "POST",
           contentType: "application/json",
           success: function () {
+            var rowdata = [];
+            // Mark selected rows as "approved" if the original status was "proposed".
             $('#popup .modal-body p').html(gettext("Export successful"));
             $('#cancelbutton').val(gettext('Close'));
             $('#button_export').removeClass("btn-primary").prop('disabled', true);
-            // Mark selected rows as "approved" if the original status was "proposed".
+
+            //update both cell value and grid data
             for (var i in sel) {
               var cur = grid.jqGrid('getCell', sel[i], 'status');
-              if (cur == 'proposed')
+
+              if (cur === 'proposed') {
                 grid.jqGrid('setCell', sel[i], 'status', 'approved');
+                rowdata = grid.jqGrid('getRowData', sel[i]);
+                rowdata.status = 'approved';
+              }
             };
+            grid.jqGrid('setRowData', rowdata);
+
+            if (typeof checkrows === 'function') {
+              checkrows(grid, sel);
+            }
+
           },
           error: function (result, stat, errorThrown) {
             fmts = ngettext("Error during export");

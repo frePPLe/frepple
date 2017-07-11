@@ -247,7 +247,21 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) { //console.log('be
 </div>
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
 <script type="text/javascript">
-//controller will call this function to pass values to the glyphicon-credit-card
+//frepple.js will call this function to alert angular that the grid has changed
+function checkrows(grid, selection) {
+  var selectiondata = [];
+  jQuery.each(selection , function(index,item){
+    selectiondata.push(grid.getRowData(item));
+  });
+  if (selectiondata.length > 1) { //console.log('multiple lines will be shown');
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  } else if (selectiondata.length === 1) { //console.log('only the remainder row will be shown');
+    angular.element('#controller').scope().displayInfo(selectiondata[0]);
+  } else { //console.log('nothing to show');
+    angular.element('#controller').scope().displayInfo(undefined);
+  }
+}
+//controller will call this function to pass values to the grid
 function displayongrid(id, columnid, value) {
   angular.element(document).find("#" + id).removeClass("edited").addClass("edited");
   if (columnid === "startdate") {
@@ -266,9 +280,11 @@ function displayongrid(id, columnid, value) {
     $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
   }
   if (columnid === "status") {
-    jQuery("#grid").jqGrid("setCell", id, "status", value, "dirty-cell");
-    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    if (['proposed','approved','confirmed','closed'].indexOf(value) > -1) {
+      jQuery("#grid").jqGrid("setCell", id, "status", value, "dirty-cell");
+      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+    }
   }
 }
 </script>

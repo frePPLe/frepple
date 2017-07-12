@@ -838,7 +838,7 @@ class ItemList(GridReport):
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category'), initially_hidden=True),
     GridFieldText('subcategory', title=_('subcategory'), initially_hidden=True),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name'),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldCurrency('cost', title=_('cost')),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

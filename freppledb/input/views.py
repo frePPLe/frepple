@@ -614,7 +614,6 @@ class BufferList(GridReport):
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldNumber('onhand', title=_('onhand')),
-    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra='"role":"input/buffer"', initially_hidden=True),
     GridFieldChoice('type', title=_('type'), choices=Buffer.types),
     GridFieldNumber('minimum', title=_('minimum')),
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),

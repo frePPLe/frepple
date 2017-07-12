@@ -242,10 +242,10 @@ data_site.register(SubOperation, SubOperation_admin)
 
 
 class Buffer_admin(MultiDBModelAdmin):
-  raw_id_fields = ('location', 'item', 'minimum_calendar', 'owner', )
+  raw_id_fields = ('location', 'item', 'minimum_calendar', )
   fieldsets = (
     (None, {
-      'fields': ('item', 'location', 'description', 'owner', 'category', 'subcategory')}),
+      'fields': ('item', 'location', 'description', 'category', 'subcategory')}),
     (_('inventory'), {
       'fields': ('onhand',)
       }),

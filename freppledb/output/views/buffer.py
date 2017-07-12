@@ -33,15 +33,48 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/buffer.html'
   title = _('Inventory report')
-  basequeryset = Buffer.objects.only('name', 'item__name', 'location__name', 'lft', 'rght', 'onhand')
-  model = Buffer
+  basequeryset = OperationPlanMaterial.objects.all().order_by('item_id', 'location_id').distinct('item_id', 'location_id')
+  model = OperationPlanMaterial
+  default_sort = (1, 'asc', 2, 'asc')
   permissions = (('view_inventory_report', 'Can view inventory report'),)
   help_url = 'user-guide/user-interface/plan-analysis/inventory-report.html'
+
   rows = (
-    GridFieldText('buffer', title=_('buffer'), key=True, editable=False, field_name='name', formatter='detail', extra='"role":"input/buffer"'),
+    GridFieldText('buffer', title=_('buffer'), editable=False, key=True, initially_hidden=True),
     GridFieldText('item', title=_('item'), editable=False, field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
+    # Optional fields referencing the item
+    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False),
+    GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False),
+    GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False),
+    GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False),
+    GridFieldText('item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False),
+    GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False),
+    # Optional fields referencing the location
+    GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False),
+    GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False),
+    GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False),
+    GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='origin__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False),
+    GridFieldText('location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False),
+    GridFieldText('location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False),
+    GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False),
     )
+
   crosses = (
     ('startoh', {'title': _('start inventory')}),
     ('produced', {'title': _('produced')}),
@@ -55,7 +88,7 @@ class OverviewReport(GridPivot):
       reportclass._attributes_added = 2
       reportclass.attr_sql = ''
       # Adding custom item attributes
-      for f in getAttributeFields(Item, related_name_prefix="item", initially_hidden=True):
+      for f in getAttributeFields(Item, initially_hidden=True):
         reportclass.rows += (f,)
         reportclass.attr_sql += 'item.%s, ' % f.name.split('__')[-1]
       # Adding custom location attributes
@@ -68,7 +101,7 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
-        'title': force_text(Buffer._meta.verbose_name) + " " + args[0],
+        'title': force_text(Item._meta.verbose_name) + " " + args[0],
         'post_title': _('plan')
         }
     else:
@@ -79,16 +112,11 @@ class OverviewReport(GridPivot):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 
-    # Assure the item hierarchy is up to date
-    Buffer.rebuildHierarchy(database=basequery.db)
-
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
     query = '''
-      select buffers.name, sum(oh.onhand)
-      from (%s) buffers
-      inner join buffer
-      on buffer.lft between buffers.lft and buffers.rght
+      select opplanmat.item_id, opplanmat.location_id, sum(oh.onhand)
+      from (%s) opplanmat
       inner join (
         select operationplanmaterial.item_id,
           operationplanmaterial.location_id,
@@ -103,53 +131,53 @@ class OverviewReport(GridPivot):
           and maxid.location_id = operationplanmaterial.location_id
         and maxid.id = operationplanmaterial.id
       ) oh
-      on oh.item_id = buffer.item_id
-      and oh.location_id = buffer.location_id
-      group by buffers.name
+      on oh.item_id = opplanmat.item_id
+      and oh.location_id = opplanmat.location_id
+      group by opplanmat.item_id, opplanmat.location_id
       ''' % (basesql, request.report_startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall():
-      startohdict[row[0]] = float(row[1])
+      startohdict[ "%s @ %s" % (row[0], row[1]) ] = float(row[2])
 
     # Execute the actual query
     query = '''
       select
-        invplan.name, invplan.item_id, invplan.location_id, %s
+        invplan.item_id || ' @ ' || invplan.location_id,
+        invplan.item_id, invplan.location_id, 
+        item.description, item.category, item.subcategory, item.owner_id,
+        item.source, item.lastmodified, location.description, location.category,
+        location.subcategory, location.available_id, location.owner_id, 
+        location.source, location.lastmodified, %s
         invplan.bucket, invplan.startdate, invplan.enddate,
         invplan.consumed, invplan.produced
       from (
         select
-          buf.name, buf.item_id, buf.location_id,
+          opplanmat.item_id, opplanmat.location_id,
           d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
           coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
           coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
-        from (%s) buf
+        from (%s) opplanmat
         -- Multiply with buckets
         cross join (
              select name as bucket, startdate, enddate
              from common_bucketdetail
              where bucket_id = %%s and enddate > %%s and startdate < %%s
              ) d
-        -- Include child buffers
-        inner join buffer
-        on buffer.lft between buf.lft and buf.rght
         -- Consumed and produced quantities
         left join operationplanmaterial
-        on buffer.item_id = operationplanmaterial.item_id
-        and buffer.location_id = operationplanmaterial.location_id
+        on opplanmat.item_id = operationplanmaterial.item_id
+        and opplanmat.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
         and operationplanmaterial.flowdate >= %%s
         and operationplanmaterial.flowdate < %%s
         -- Grouping and sorting
-        group by buf.name, buf.item_id, buf.location_id, buf.onhand, d.bucket, d.startdate, d.enddate
+        group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate
         ) invplan
-      left outer join buffer on
-        invplan.name = buffer.name
       left outer join item on
-        buffer.item_id = item.name
+        invplan.item_id = item.name
       left outer join location on
-        buffer.location_id = location.name
+        invplan.location_id = location.name
       order by %s, invplan.startdate
       ''' % (
         reportclass.attr_sql, basesql, sortsql
@@ -176,6 +204,19 @@ class OverviewReport(GridPivot):
         'buffer': row[0],
         'item': row[1],
         'location': row[2],
+        'item__description': row[3],
+        'item__category': row[4],
+        'item__subcategory': row[5],
+        'item__owner': row[6],
+        'item__source': row[7],
+        'item__lastmodified': row[8],
+        'location__description': row[9],
+        'location__category': row[10],
+        'location__subcategory': row[11],
+        'location__available_id': row[12],
+        'location__owner_id': row[13],
+        'location__source': row[14],
+        'location__lastmodified': row[15],
         'bucket': row[numfields - 5],
         'startdate': row[numfields - 4].date(),
         'enddate': row[numfields - 3].date(),
@@ -185,7 +226,7 @@ class OverviewReport(GridPivot):
         'endoh': round(endoh, 1),
         }
       # Add attribute fields
-      idx = 3
+      idx = 16
       for f in getAttributeFields(Item, related_name_prefix="item"):
         res[f.field_name] = row[idx]
         idx += 1

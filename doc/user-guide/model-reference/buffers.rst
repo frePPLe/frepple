@@ -34,12 +34,6 @@ category         string            Free format category.
 subcategory      string            | Free format subcategory.
                                    | If this field is set to 'tool', the field 'tool' will
                                      automatically be set to true.
-owner            buffer            | Buffers can be organized in a hierarchical tree.
-                                   | This field defines the parent buffer.
-                                   | No specific planning behavior is currently linked to such
-                                     a hierarchy.
-members          list of buffer    | Buffers can be organized in a hierarchical tree.
-                                   | This field defines a list of child buffers.
 onhand           double            | Inventory level at the start of the time horizon.
                                    | Default is 0.
 minimum          double            | Desired minimum inventory, aka safety stock.

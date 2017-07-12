@@ -403,7 +403,7 @@ class MenuNode(Node):
           from information_schema.tables
           where table_schema = 'public'
           ) s
-        where xml_count is not null
+        where xml_count is document
         ''')
       present = set([ i[0] for i in cursor])
     

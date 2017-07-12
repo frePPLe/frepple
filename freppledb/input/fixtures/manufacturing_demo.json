@@ -21,7 +21,7 @@
 {"model": "input.item", "fields": {"name":"All items","category":"","subcategory":""}},
 {"model": "input.item", "fields": {"name":"chair","category":"furniture","subcategory":"chair","owner_id":"All items","cost":150.000000}},
 {"model": "input.item", "fields": {"name":"chair leg","category":"furniture component","subcategory":"chair","owner_id":"All items","cost":10.000000}},
-{"model": "input.item", "fields": {"name":"cushion","category":"assessory","subcategory":"assessory","owner_id":"All items","cost":20.000000}},
+{"model": "input.item", "fields": {"name":"cushion","category":"accessory","subcategory":"assessory","owner_id":"All items","cost":20.000000}},
 {"model": "input.item", "fields": {"name":"grinded wooden panel","category":"raw material","subcategory":"table","owner_id":"All items","cost":40.000000}},
 {"model": "input.item", "fields": {"name":"round table","category":"furniture","subcategory":"table","owner_id":"All items","cost":300.000000}},
 {"model": "input.item", "fields": {"name":"screws","category":"raw material","subcategory":"general","owner_id":"All items","cost":1.000000}},

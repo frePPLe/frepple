@@ -869,7 +869,6 @@ var grid = {
   },
 
   onSortCol: function (sortname, sortindex, sortorder) {
-    return;
     // Get missing arguments when they aren't passed
   	var p = $("#grid")[0].p;
     if (sortname === undefined)

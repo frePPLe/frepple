@@ -70,7 +70,7 @@ def search(request):
            '%(name)s - %(count)d matches', count) % {'name': force_text(cls._meta.verbose_name), 'count': count}).capitalize()
            })
         result.extend([ {
-          'url': "/data/%s/%s/" % (cls._meta.app_label, cls._meta.object_name.lower()),
+          'url': "/detail/%s/%s/" % (cls._meta.app_label, cls._meta.object_name.lower()),
           'value': i[0]
           } for i in query[:10] ])
 

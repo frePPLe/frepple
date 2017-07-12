@@ -338,7 +338,7 @@ class SubOperation(AuditModel):
     unique_together = (('operation', 'priority', 'suboperation'),)
 
 
-class Buffer(AuditModel, HierarchyModel):
+class Buffer(AuditModel):
   # Types of buffers
   types = (
     ('default', _('default')),
@@ -346,6 +346,8 @@ class Buffer(AuditModel, HierarchyModel):
   )
 
   # Fields common to all buffer types
+  name = models.CharField(_('name'), max_length=300, primary_key=True,
+                          help_text=_('Unique identifier'))
   description = models.CharField(
     _('description'), max_length=500, null=True, blank=True
     )

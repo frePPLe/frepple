@@ -61,10 +61,10 @@ $(function() {
     scrollRows: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
-    multiSort: true,    
+    multiSort: true,
     onSortCol: function(sortname, sortindex, sortorder) {
       grid.onSortCol(sortname, sortindex, sortorder);
-      grid.saveColumnConfiguration();      
+      grid.saveColumnConfiguration();
     },
     onPaging: grid.saveColumnConfiguration,
     autowidth: true,
@@ -164,7 +164,7 @@ $(function() {
 	</div>
 	{% endif %}
 	{% if reportclass.filterable and not args.0 %}
-	  <button class="btn btn-xs btn-primary" onclick="grid.showFilter()">
+	  <button id="filter" class="btn btn-xs btn-primary" onclick="grid.showFilter()">
 	    <span data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search"></span>
 	  </button>
 	{% endif %}

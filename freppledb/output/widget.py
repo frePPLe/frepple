@@ -676,8 +676,11 @@ class PurchaseOrderWidget(Widget):
 
     // get position of the first tick in the graph
     var tickposition = 0;
-    if (typeof $("#xAxisPO").children()[0].attributes !== 'undefined') {
-      tickposition = parseInt($("#xAxisPO").children()[0].attributes.transform.value.slice(10));
+    var thistarget = $("#xAxisPO").children()[0].attributes;
+    if (typeof thistarget !== 'undefined') {
+      if (typeof thistarget.transform !== 'undefined'){
+        tickposition = parseInt($("#xAxisPO").children()[0].attributes.transform.value.slice(10));
+      }
     }
 
     // Draw invisible rectangles for the hoverings

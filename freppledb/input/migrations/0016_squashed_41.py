@@ -23,7 +23,10 @@ import freppledb.common.fields
 
 
 def loadParameters(apps, schema_editor):
-  call_command('loaddata', "parameters.json", app_label="input", verbosity=0)
+  call_command(
+    'loaddata', "parameters.json", app_label="input",
+    verbosity=0, database=schema_editor.connection.alias
+    )
 
 
 class Migration(migrations.Migration):

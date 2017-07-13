@@ -679,7 +679,7 @@ class PurchaseOrderWidget(Widget):
     var thistarget = $("#xAxisPO").children()[0].attributes;
     if (typeof thistarget !== 'undefined') {
       if (typeof thistarget.transform !== 'undefined'){
-        tickposition = parseInt($("#xAxisPO").children()[0].attributes.transform.value.slice(10));
+        tickposition = parseInt(thistarget.transform.value.slice(10));
       }
     }
 

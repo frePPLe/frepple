@@ -1098,7 +1098,7 @@ class SubOperationList(GridReport):
     GridFieldInteger('id', title=_('identifier'), key=True, initially_hidden=True),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
     GridFieldText('suboperation', title=_('suboperation'), field_name='suboperation__name', formatter='detail', extra='"role":"input/operation"'),
-    GridFieldInteger('priority', title=_('priority'), initially_hidden=True),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldDateTime('effective_start', title=_('effective start'), initially_hidden=True),
     GridFieldDateTime('effective_end', title=_('effective end'), initially_hidden=True),
     GridFieldText('source', title=_('source')),

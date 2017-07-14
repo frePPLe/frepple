@@ -47,7 +47,16 @@ function operationplanCtrl($scope, OperationPlan) {
           $scope.displayongrid($scope.operationplan.id,"quantity",$scope.operationplan.quantity);
         }
         if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
-          $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
+
+          if (actions.hasOwnProperty($scope.operationplan.status)) {
+            //console.log('actions have status');
+            $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
+          } else if (!actions.hasOwnProperty($scope.operationplan.status) && oldValue[4] === 'proposed') {
+            //console.log('will export to OB');
+            actions[Object.keys(actions)[0]]();
+          } else {
+            //console.log('doing nothing');
+          }
         }
       }
       oldValue[0] = newValue[0];

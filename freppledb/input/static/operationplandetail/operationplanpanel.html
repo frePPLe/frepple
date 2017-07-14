@@ -101,10 +101,15 @@
       <td><b style="text-transform: capitalize;">{{'status'|translate}}</b></td>
       <td id="statusrow">
         <div class="btn-group" role="group">
-          <button id="proposedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled">{{'proposed'|translate}}</button>
-          <button id="approvedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled">{{'approved'|translate}}</button>
-          <button id="confirmedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled">{{'confirmed'|translate}}</button>
-          <button id="closedBtn" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled">{{'closed'|translate}}</button>
+          <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled">{{'proposed'|translate}}</button>
+          <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled">{{'approved'|translate}}</button>
+          <button id="confirmedBtn" data-ng-if="actions.hasOwnProperty('confirmed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled">{{'confirmed'|translate}}</button>
+          <button id="closedBtn" data-ng-if="actions.hasOwnProperty('closed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled">{{'closed'|translate}}</button>
+
+          <button id="proposedBtn" data-ng-if="!actions.hasOwnProperty('proposed')" data-ng-disabled="operationplan.status !== 'proposed'" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled">{{'proposed'|translate}}</button>
+          <button id="approvedBtn" data-ng-if="!actions.hasOwnProperty('approved')" data-ng-disabled="operationplan.status !== 'proposed'" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled">{{'approved'|translate}}</button>
+          <button id="confirmedBtn" data-ng-if="!actions.hasOwnProperty('confirmed')" data-ng-disabled="operationplan.status !== 'proposed'" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize;" disabled="disabled">{{'confirmed'|translate}}</button>
+          <button id="closedBtn" data-ng-if="!actions.hasOwnProperty('closed')" data-ng-disabled="operationplan.status !== 'proposed'" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize;" disabled="disabled">{{'closed'|translate}}</button>
         </div>
       </td>
     </tr>

@@ -45,7 +45,9 @@ function showoperationplanDrv($window, gettextCatalog) {
       if (typeof scope.operationplan.id !== 'undefined' && !isNaN(scope.operationplan.id)) {
 
         angular.element(elem).find('input[disabled]').attr('disabled',false);
-        angular.element(elem).find('button[disabled]').attr('disabled',false);
+        if (actions.hasOwnProperty('proposed')) {
+          angular.element(elem).find('button[disabled]').attr('disabled',false);
+        }
         angular.element(elem).find('#statusrow .btn').removeClass('active');
 
         if (scope.operationplan.hasOwnProperty('start')) {

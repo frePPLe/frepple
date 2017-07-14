@@ -61,8 +61,8 @@ You can run the import interface in 2 ways:
   .. image:: _images/openbravo-import.png
 	 :alt: Import from openbravo
 
-* | **From the command line script.**
-  | The script is especially handy when you want to run the interface
+* | **From the command line.**
+  | The frepplcel command is useful when you want to run the interface
     automatically, e.g. with a cron job.
   | Issue one of the commands below. The second command runs an incremental
     import of the Openbravo objects that have been changed in the last 7 days.
@@ -109,55 +109,67 @@ dollar threshold can be exported automatically to Openbravo. Proposed purchase o
 above the threshold are then reviewed in frePPLe by the planner, and export 
 incrementally upon the planners' approval.
 
-Technical configuration
------------------------
+Installation and configuration
+------------------------------
 
-* | **Edit the configuration file djangosettings.py**
-  | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
-    (Windows).
-  | Assure that the freppledb.openbravo is included in the setting
-    INSTALLED_APPS which defines the enabled extensions. By default
-    it is not enabled.
+Most of the configuration is happening on frePPLe side.
 
-* | **Migrate your frePPLe database**
-  | Run the migrate command to add some extra fields in the database, and load the 
-    connector parameters.
+* **Configuring the connector - Openbravo side**
+
+  * | The connector doesn't require any extra installation on Openbravo side.
+
+  * | The connector uses the `standard XML REST web services <http://wiki.openbravo.com/wiki/XML_REST_Web_Services>`_
+      and a user that has correct access rights to the organization you want to
+      integrate into frePPLe.
+
+* **Configuring the connector - frePPLe side**
+
+  * | **Edit the configuration file djangosettings.py**
+    | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
+      (Windows).
+    | Assure that the freppledb.openbravo is included in the setting
+      INSTALLED_APPS which defines the enabled extensions. By default
+      it is not enabled.
+
+  * | **Migrate your frePPLe database**
+    | Run the migrate command to add some extra fields in the database, and load the 
+      connector parameters.
     
-  ::
+    ::
 
-     frepplectl migrate
+       frepplectl migrate
 
-* | **Configure the following parameters**
-  | In the frePPLe user interface, the menu item 'admin/parameters' opens a
-    data table to edit these.
-
-  * openbravo.host: host where the Openbravo web service is running
-
-  * openbravo.user: Openbravo user used to for the connection
-
-  * | openbravo.password: Password for the connection
-    | For improved security it is recommended to specify this password in the
-      setting OPENBRAVO_PASSWORDS in the djangosettings.py file rather then 
-      using this parameter.
-
-  * | openbravo.date_format: Date format for openbravo webservice filter
-    | Date format defaults to  %Y-%m-%d (i.e. YYYY-MM-DD) but can here be changed
-      to other formats like %m-%d-%Y (i.e. MM-DD-YYYY).
-
-  * | openbravo.exportPurchasingPlan 
-    | By default we export purchase requisitions and manufacturing work orders. 
-    | By switching this flag to true, we will export to the purchaseplan object instead, 
-      which is where the Openbravo MRP run normally stores its results. Switch this 
-      flag to true only if you have specific customizations using the purchaseplan table.
-
-  * | openbravo.filter_export_purchase_order
-    | Filter expression purchase orders for bulk export of purchase orders.
+  * | **Configure the following parameters**
+    | In the frePPLe user interface, the menu item 'admin/parameters' opens a
+      data table to edit these.
   
-  * | openbravo.filter_export_manufacturing_orderfilter:
-    | Filter expression for bulk export of manufacturing orders.
+    * openbravo.host: host where the Openbravo web service is running
   
-  * | openbravo.filter_export_distribution_order
-    | Filter expression for bulk export of distribution orders.
+    * openbravo.user: Openbravo user used to for the connection
+  
+    * | openbravo.password: Password for the connection
+      | For improved security it is recommended to specify this password in the
+        setting OPENBRAVO_PASSWORDS in the djangosettings.py file rather then 
+        using this parameter.
+  
+    * | openbravo.date_format: Date format for openbravo webservice filter
+      | Date format defaults to  %Y-%m-%d (i.e. YYYY-MM-DD) but can here be changed
+        to other formats like %m-%d-%Y (i.e. MM-DD-YYYY).
+  
+    * | openbravo.exportPurchasingPlan 
+      | By default we export purchase requisitions and manufacturing work orders. 
+      | By switching this flag to true, we will export to the purchaseplan object instead, 
+        which is where the Openbravo MRP run normally stores its results. Switch this 
+        flag to true only if you have specific customizations using the purchaseplan table.
+  
+    * | openbravo.filter_export_purchase_order
+      | Filter expression purchase orders for bulk export of purchase orders.
+    
+    * | openbravo.filter_export_manufacturing_orderfilter:
+      | Filter expression for bulk export of manufacturing orders.
+    
+    * | openbravo.filter_export_distribution_order
+      | Filter expression for bulk export of distribution orders.
 
 Data mapping details
 --------------------

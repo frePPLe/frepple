@@ -57,9 +57,9 @@ class XMLController(odoo.http.Controller):
             # If not set we use the default language of the user
             req.session.context['lang'] = language
         return uid
-      
 
-    @odoo.http.route('/frepple/xml',  type='http', auth='none', methods=['POST','GET'], csrf=False)
+
+    @odoo.http.route('/frepple/xml', type='http', auth='none', methods=['POST', 'GET'], csrf=False)
     def xml(self, **kwargs):
         database = kwargs.get('database', None)
         if not database:
@@ -87,10 +87,10 @@ class XMLController(odoo.http.Controller):
             try:
                 xp = exporter(
                   req,
-                  uid = uid,
-                  database = database,
-                  company = kwargs.get('company', None),
-                  mode = int(kwargs.get('mode', 1))
+                  uid=uid,
+                  database=database,
+                  company=kwargs.get('company', None),
+                  mode=int(kwargs.get('mode', 1))
                   )
                 # TODO Returning an iterator to stream the response back to the client and
                 # to save memory on the server side

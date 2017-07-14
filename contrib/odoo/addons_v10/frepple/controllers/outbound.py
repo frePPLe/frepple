@@ -50,7 +50,7 @@ class exporter(object):
 
         # Initialize an environment
         self.env = req.env
-          
+
 
     def run(self):
         # Check if we manage by work orders or manufacturing orders.
@@ -520,17 +520,17 @@ class exporter(object):
             'product_qty', 'product_uom_id', 'product_id', 'routing_id'
         ]
         try:
-           subproduct_model = self.env['mrp.subproduct']
-           subproduct_fields = [
-             'product_id', 'product_qty', 'product_uom', 'subproduct_type'
-           ]
+          subproduct_model = self.env['mrp.subproduct']
+          subproduct_fields = [
+            'product_id', 'product_qty', 'product_uom', 'subproduct_type'
+            ]
         except:
           subproduct_model = None
 
         # Loop over all bom records
         bom_recs = self.env['mrp.bom'].search([])
         bom_fields = [
-            'product_qty', 'product_uom_id', 'product_tmpl_id', 
+            'product_qty', 'product_uom_id', 'product_tmpl_id',
             'routing_id', 'type', 'bom_line_ids', 'sub_products'
         ]
         for i in bom_recs.read(bom_fields):

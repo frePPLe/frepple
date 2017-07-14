@@ -75,7 +75,7 @@ def Upload(request):
       '--%s' % boundary,
       'Content-Disposition: form-data; name="mode"',
       '',
-      '2',
+      '2',   # Marks incremental export
       '--%s' % boundary,
       'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"',
       'Content-Type: application/xml',
@@ -97,9 +97,9 @@ def Upload(request):
           data_ok = True
           obj.append(po)
           data_odoo.append(
-            '<operationplan ordertype="PO" id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
-            po.id, quoteattr("Purchase %s @ %s" % (po.item.name, po.location.name)),
-            po.startdate, po.enddate, po.quantity,
+            '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+            po.id, quoteattr(po.item.name), quoteattr(po.location.name), 
+            quoteattr(po.supplier.name), po.startdate, po.enddate, po.quantity,
             quoteattr(po.location.subcategory), quoteattr(po.item.subcategory),
             int(po.criticality)
             ))
@@ -110,28 +110,25 @@ def Upload(request):
           data_ok = True
           obj.append(do)
           data_odoo.append(
-            '<operationplan ordertype="DO" id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
-            do.id, quoteattr("Ship %s from %s to %s" % (do.item.name, do.origin.name, do.location.name)),
-            do.startdate, do.enddate, do.quantity,
+            '<operationplan ordertype="DO" id="%s" item=%s origin=%s location=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+            do.id, quoteattr(do.item.name), quoteattr(do.origin.name), 
+            quoteattr(do.location.name), do.startdate, do.enddate, do.quantity,
             quoteattr(do.location.subcategory), quoteattr(do.item.subcategory),
             int(do.criticality)
             ))
         else:
           op = OperationPlan.objects.using(request.database).get(id=rec['id'])
-          try:
-            buf = op.operation.operationmaterials.all().using(request.database).filter(quantity__gt=0)[0].buffer
-          except:
-            buf = None
-          if not op.operation.source or op.status != 'proposed' or not buf or not buf.item.source:
+          if not op.operation.source or op.status != 'proposed':
             continue
           data_ok = True
           obj.append(op)
           data_odoo.append(
-            '<operationplan id="%s" operation=%s start="%s" end="%s" quantity="%s" location=%s item=%s criticality="%d"/>' % (
-            op.id, quoteattr(op.operation.name),
-            op.startdate, op.enddate, op.quantity,
-            quoteattr(buf.location.subcategory), quoteattr(buf.subcategory),
-            int(op.criticality)
+            '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+              op.id, quoteattr(op.operation.item.name),
+              quoteattr(op.operation.location.name), quoteattr(op.operation.name),
+              op.startdate, op.enddate, op.quantity,
+              quoteattr(op.operation.location.subcategory), quoteattr(op.operation.item.subcategory),
+              int(op.criticality)
             ))
       except:
         pass
@@ -162,6 +159,7 @@ def Upload(request):
       logger.debug("Odoo response: %s" % msg.decode('utf-8'))
     for i in obj:
       i.status = "approved"
+      i.source = "odoo_1"
       i.save(using=request.database)
     return HttpResponse("OK")
 

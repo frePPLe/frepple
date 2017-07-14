@@ -181,14 +181,14 @@ class OdooWritePlan(PlanTask):
         - odoo.filter_export_purchase_order
         - odoo.filter_export_manufacturing_order
         - odoo.filter_export_distribution_order
-    - This code doesn't interprete any of the results. An odoo addon module
+    - This code doesn't interpret any of the results. An odoo addon module
       will need to read the content, and take appropriate actions in odoo:
       such as creating purchase orders, manufacturing orders, work orders,
       project tasks, etc...
   '''
 
   description = "Write results to Odoo"
-  sequence = 450
+  sequence = 390
   label = ('odoo_write', _("Write results to Odoo"))
 
   @classmethod
@@ -231,7 +231,9 @@ class OdooWritePlan(PlanTask):
     # We generate output in the multipart/form-data format.
     # We send the connection parameters as well as a file with the planning
     # results in XML-format.
-    def publishPlan():
+    # TODO respect the parameters odoo.filter_export_purchase_order, odoo.filter_export_manufacturing_order, odoo.filter_export_distribution_order
+    # these are python expressions - attack-sensitive evaluation!
+    def publishPlan(cls):
       yield '--%s\r' % boundary
       yield 'Content-Disposition: form-data; name="webtoken"\r'
       yield '\r'
@@ -261,11 +263,12 @@ class OdooWritePlan(PlanTask):
       yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
       # Export relevant operationplans
       yield '<operationplans>'
-      for i in frepple.operationplans():        
+      for i in frepple.operationplans():
         if i.ordertype == 'PO':
           if not i.item or not i.item.source or not i.item.source.startswith('odoo') or i.locked:
             continue
-          yield '<operationplan id="%s" type="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+          cls.exported.append(i)
+          yield '<operationplan id="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             i.id, quoteattr(i.item.name), quoteattr(i.location.name),
             quoteattr(i.supplier.name), i.start, i.end, i.quantity,
             quoteattr(i.operation.location.subcategory), quoteattr(i.item.subcategory),
@@ -274,7 +277,8 @@ class OdooWritePlan(PlanTask):
         elif i.ordertype == "MO":
           if not i.operation or not i.operation.source or not i.operation.source.startswith('odoo') or i.locked:
             continue
-          yield '<operationplan id="%s" type="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+          cls.exported.append(i)
+          yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             i.id, quoteattr(i.operation.item.name), quoteattr(i.operation.location.name),
             quoteattr(i.operation.name), i.start, i.end, i.quantity,
             quoteattr(i.operation.location.subcategory), quoteattr(i.operation.item.subcategory),
@@ -287,7 +291,8 @@ class OdooWritePlan(PlanTask):
 
     # Connect to the odoo URL to POST data
     try:
-      body = '\n'.join(publishPlan()).encode('utf-8')
+      cls.exported = []
+      body = '\n'.join(publishPlan(cls)).encode('utf-8')
       size = len(body)
       encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))
       req = Request(
@@ -306,6 +311,10 @@ class OdooWritePlan(PlanTask):
         msg = f.read()
         print("Odoo response: %s" % msg.decode('utf-8'))
 
+      # Mark the exported operations as approved
+      for i in cls.exported:
+        i.status = 'approved'
+      del cls.exported
+
     except HTTPError as e:
       print("Error connecting to odoo", e.read())
-      #raise e

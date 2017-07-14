@@ -17,9 +17,7 @@
 #
 import odoo
 import logging
-from datetime import datetime, timedelta
 from xml.etree.cElementTree import iterparse
-from werkzeug.formparser import parse_form_data
 
 logger = logging.getLogger(__name__)
 
@@ -45,73 +43,73 @@ class importer(object):
   def run(self):
     msg = []
 
-    proc_order = self.env['procurement.order']
+    proc_order = self.env['purchase.order']
+    proc_orderline = self.env['purchase.order.line']
     mfg_order = self.env['mrp.production']
     if self.mode == 1:
       # Cancel previous draft purchase quotations
       m = self.env['purchase.order']
       recs = m.search([('state', '=', 'draft'), ('origin', '=', 'frePPLe')])
+      recs.write({'state': 'cancel'})
       recs.unlink()
-      msg.append("Removed %s old draft purchase quotations" % len(recs))
-
-      # Cancel previous draft procurement orders
-      recs = proc_order.search(
-        ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')]
-        )
-      recs.unlink()
-      msg.append("Removed %s old draft procurement orders" % len(recs))
+      msg.append("Removed %s old draft purchase orders" % len(recs))
 
       # Cancel previous draft manufacturing orders
       recs = mfg_order.search(
         ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')]
         )
+      recs.write({'state': 'cancel'})
       recs.unlink()
       msg.append("Removed %s old draft manufacturing orders" % len(recs))
 
-    # Parsing the XML data file    
+    # Parsing the XML data file
     countproc = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
       if event == 'end' and elem.tag == 'operationplan':
         uom_id, item_id = elem.get('item_id').split(',')
         try:
-          if elem.type == 'PO':  # TODO missing fields warehouse and preferred routes (with implications)
-            # Create purchase quotation
-            x = proc_order.create({
-              'name': elem.get('operation'),
-              'product_qty': elem.get("quantity"),
-              'date_planned': elem.get("end"),
-              'product_id': int(item_id),
+          ordertype = elem.get('ordertype')
+          if ordertype == 'PO':
+            # Create purchase order
+            po = proc_order.create({
               'company_id': self.company.id,
-              'product_uom': int(uom_id),
-              'location_id': int(elem.get('location')),
-              #'procure_method': 'make_to_order', # this field is no longer there
-              # : elem.get('criticality'),
+              'partner_id': int(elem.get('supplier').split(" ", 1)[0]),
+              # TODO Odoo has no place to store the location and criticality
+              #int(elem.get('location_id')),
+              #elem.get('criticality'),
               'origin': 'frePPLe'
               })
-            # proc_order.action_confirm([x], context=self.req.session.context) # it is confirmed by default
-            # proc_order.action_po_assign([x], context=self.req.session.context) # TODO no idea of what this is yet, other than not available :)
+            po_line = proc_orderline.create({
+              'order_id': po.id,
+              'product_id': int(item_id),
+              'product_qty': elem.get("quantity"),
+              'product_uom': int(uom_id),
+              'date_planned': elem.get("end"),
+              'price_unit': 0,
+              'name': elem.get('item')
+              })
             countproc += 1
           # TODO Create a distribution order
           # elif ????:
           else:
             # Create manufacturing order
-            x = mfg_order.create({
+            mfg_order.create({
               'product_qty': elem.get("quantity"),
-              'date_planned': elem.get("end"),
+              'date_planned_start': elem.get("start"),
+              'date_planned_finished': elem.get("end"),
               'product_id': int(item_id),
               'company_id': self.company.id,
-              'product_uom': int(uom_id),
+              'product_uom_id': int(uom_id),
               'location_src_id': int(elem.get('location_id')),
-              'product_uos_qty': False,
-              'product_uos': False,
-              'bom_id': False,
-              # : elem.get('criticality'),
+              'bom_id': int(elem.get("operation").split(" ", 1)[0]),
+              # TODO no place to store the criticality
+              # elem.get('criticality'),
               'origin': 'frePPLe'
               })
-            mfg_order.action_compute([x], context=self.req.session.context)
             countmfg += 1
         except Exception as e:
+          logger.error("Exception %s" % e)
           msg.append(str(e))
         # Remove the element now to keep the DOM tree small
         root.clear()

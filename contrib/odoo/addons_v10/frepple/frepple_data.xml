@@ -117,6 +117,7 @@
       />
 
     <!-- Plan information tab on a sales order. -->
+    <!-- 
     <record id="frepple.sales_order_form_frepple" model="ir.ui.view">
       <field name="name">sale.order.form.frepple.inherit</field>
       <field name="model">sale.order</field>
@@ -131,6 +132,6 @@
         </xpath>
       </field>
     </record>
-
+    -->
   </data>
 </odoo>

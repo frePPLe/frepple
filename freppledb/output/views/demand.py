@@ -22,12 +22,13 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.boot import getAttributeFields
-from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, DeliveryOrder
-from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
+from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder
+from freppledb.input.models import DeliveryOrder, ManufacturingOrder
+from freppledb.common.report import GridReport, GridPivot, GridFieldText
+from freppledb.common.report import GridFieldNumber, GridFieldDateTime, GridFieldInteger
 
 
 class OverviewReport(GridPivot):

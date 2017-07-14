@@ -1406,9 +1406,12 @@ var grid = {
     return s;
   },
 
-  markSelectedRow: function(id)
-  {
-    var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow').length;
+  markSelectedRow: function(sel)
+  { //console.log('markSelectedRow');
+    if (typeof sel==='undefined') { console.log('sel undefined');
+      sel = 0;
+    }
+    //console.log(sel);
 
     if (sel > 0)
     {

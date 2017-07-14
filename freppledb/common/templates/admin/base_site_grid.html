@@ -52,7 +52,7 @@ $(function() {
     scrollRows: true,
     onSortCol: function(sortname, sortindex, sortorder) {
       grid.onSortCol(sortname, sortindex, sortorder);
-      grid.saveColumnConfiguration();      
+      grid.saveColumnConfiguration();
     },
     onPaging: grid.saveColumnConfiguration,
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
@@ -88,14 +88,15 @@ $(function() {
       }
     },
     onSelectRow: function(rowid, status, e) { //console.log('BSG onSelectRow');
-      var selection = $(this).jqGrid('getGridParam','selarrrow');
+      var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
 
       if (typeof e !== 'undefined' && $(e.target).hasClass('cbox') > -1 && $(e.target).parent().parent().hasClass('success') && typeof $('tr[id="' + rowid + '"] .edit-cell').children().first().val() !== 'undefined' ) {
         //console.log('BSG onSelectRow Cbox');
         $(this).jqGrid('resetSelection', rowid);
         $('tr[id="' + rowid + '"]').addClass('edit-cell');
       }
-      grid.markSelectedRow();
+
+      grid.markSelectedRow(selection.length);
     },
     formatCell: function(rowid, cellname, value, iRow, iCol) {
       editrow = iRow;

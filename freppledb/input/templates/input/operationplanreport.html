@@ -184,6 +184,11 @@ onCellSelect: function(rowid,iCol,cellcontent,e) { //console.log("onCellSelect")
     }
 
   }
+  //console.log(selectiondata.length);
+  if (cellcontent.indexOf('class="cbox"') === -1) { //console.log("NOT clicking on selection checkbox");
+    grid.markSelectedRow(selectiondata.length);
+  }
+
 
 },
 onSelectAll: function(aRowids,status){ //console.log('onSelectAll');

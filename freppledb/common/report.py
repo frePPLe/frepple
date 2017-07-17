@@ -1439,9 +1439,10 @@ class GridReport(View):
                 break
 
               # Create a form class that will be used to validate the data
+              fields = [i.name for i in headers if isinstance(i, Field)]
               UploadForm = modelform_factory(
                 reportclass.model,
-                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+                fields=tuple(fields),
                 formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
                 )
 
@@ -1477,7 +1478,7 @@ class GridReport(View):
                   # A primary key is part of the input fields
                   try:
                     # Try to find an existing record with the same primary key
-                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                    it = reportclass.model.objects.using(request.database).only(*fields).get(pk=d[reportclass.model._meta.pk.name])
                     form = UploadForm(d, instance=it)
                   except reportclass.model.DoesNotExist:
                     form = UploadForm(d)
@@ -1668,9 +1669,10 @@ class GridReport(View):
                 break
 
               # Create a form class that will be used to validate the data
+              fields = [i.name for i in headers if isinstance(i, Field)]
               UploadForm = modelform_factory(
                 reportclass.model,
-                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+                fields=tuple(fields),  # tuple([i.name for i in headers if isinstance(i, Field)]),
                 formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
                 )
 
@@ -1726,7 +1728,7 @@ class GridReport(View):
                   # A primary key is part of the input fields
                   try:
                     # Try to find an existing record with the same primary key
-                    it = reportclass.model.objects.using(request.database).get(pk=d[reportclass.model._meta.pk.name])
+                    it = reportclass.model.objects.using(request.database).only(*fields).get(pk=d[reportclass.model._meta.pk.name])
                     form = UploadForm(d, instance=it)
                   except reportclass.model.DoesNotExist:
                     form = UploadForm(d)
@@ -2672,9 +2674,10 @@ def importWorkbook(request):
               if not header_ok:
                 # Can't process this worksheet
                 break
+              fields = [i.name for i in headers if isinstance(i, Field)]
               uploadform = modelform_factory(
                 model,
-                fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+                fields=tuple(fields),
                 formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
                 )
 
@@ -2724,7 +2727,7 @@ def importWorkbook(request):
                 try:
                   with transaction.atomic(using=request.database):
                     # Try to find an existing record with the same primary key
-                    it = model.objects.using(request.database).get(pk=d[model._meta.pk.name])
+                    it = model.objects.using(request.database).only(*fields).get(pk=d[model._meta.pk.name])
                     form = uploadform(d, instance=it)
                 except model.DoesNotExist:
                   form = uploadform(d)

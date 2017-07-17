@@ -261,9 +261,10 @@ class Command(BaseCommand):
             break
 
           # Create a form class that will be used to validate the data
+          fields = [i.name for i in headers if isinstance(i, Field)]
           UploadForm = modelform_factory(
             model,
-            fields=tuple([i.name for i in headers if isinstance(i, Field)]),
+            fields=tuple(fields),
             formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=self.database, localize=True)) or f.formfield(localize=True)
             )
 
@@ -299,7 +300,7 @@ class Command(BaseCommand):
               # A primary key is part of the input fields
               try:
                 # Try to find an existing record with the same primary key
-                it = model.objects.using(self.database).get(pk=d[model._meta.pk.name])
+                it = model.objects.using(self.database).only(*fields).get(pk=d[model._meta.pk.name])
                 form = UploadForm(d, instance=it)
 
               except model.DoesNotExist:

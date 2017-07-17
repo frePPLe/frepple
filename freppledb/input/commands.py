@@ -1056,7 +1056,7 @@ class loadDemand(LoadTask):
             x.customer = frepple.customer(name=i[6])
           if i[7]:
             x.owner = frepple.demand(name=i[7])
-          if i[8]:
+          if i[8] is not None:
             x.minshipment = i[8]
           if i[9] is not None:
             x.maxlateness = i[9].total_seconds()

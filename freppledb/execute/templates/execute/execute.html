@@ -241,10 +241,18 @@
       });
     // Checkboxes for emptying the database
     $(".empty_all").click( function() {
-      $(".empty_entity").prop("checked", $(this).prop("checked"));
+      if ($(this).prop("name") === "alldata") {
+        $(".empty_entity[tables='data']").prop("checked", $(this).prop("checked"));
+      } else if ($(this).prop("name") === "alladmin") {
+        $(".empty_entity[tables='admin']").prop("checked", $(this).prop("checked"));
+      }
       });
-    $(".empty_entity").click( function() {
-      $(".empty_all").prop("checked",$(".empty_entity:not(:checked)").length == 0);
+    $(".empty_entity").click( function() {console.log($(this).attr("tables"));
+      if ($(this).attr("tables") === "data") {
+        $(".empty_all[name='alldata']").prop("checked",$(".empty_entity[tables='data']:not(:checked)").length === 0);
+      } else if ($(this).attr("tables") === "admin") {
+        $(".empty_all[name='alladmin']").prop("checked",$(".empty_entity[tables='admin']:not(:checked)").length === 0);
+      }
       if ($(this).prop("checked")) checkChildren($(this).attr('id'));
       });
 
@@ -595,31 +603,45 @@
 		</div>
 
 	  <div class="panel panel-default">
-		  <div class="panel-heading" data-parent="#tasks" role="tab" id="zesdeHeading" data-toggle="collapse" data-target="#zesdeAccord">
-		    <h4 class="panel-title">
-		      <a role="button">{% trans "Empty the database" %}</a>
-		    </h4>
-		  </div>
-		  <div id="zesdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
-		    <div class="panel-body">
-					<form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
-			    <table>
-					  <tr>
-							<td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-							<td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
-								<input class="empty_all" type="checkbox" name="all" value="1"><br>
-								{% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations %}
-								<label for="empty_{{ item.1.model | model_name }}">
-								 <input class="empty_entity" type="checkbox" name="models" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">{{ group.0 }} - {{ item.0 }}
-								</label><br>
-								{% endif %}{% endfor %}{% endfor %}
-							</td>
-						</tr>
-					</table>
-					</form>
-				</div>
-		  </div>
-		</div>
+      <div class="panel-heading" data-parent="#tasks" role="tab" id="zesdeHeading" data-toggle="collapse" data-target="#zesdeAccord">
+        <h4 class="panel-title">
+          <a role="button">{% trans "Empty the database" %}</a>
+        </h4>
+      </div>
+      <div id="zesdeAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
+        <div class="panel-body">
+          <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
+            <table>
+              <tr>
+                <td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+                <td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
+                  <label>
+                    <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'all data tables'|upper%}</strong>
+                  </label>
+                  <br>
+                  {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and not group.0 == _("admin")%}
+                  <label for="empty_{{ item.1.model | model_name }}">
+                    <input class="empty_entity" type="checkbox" name="models" tables="data" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+                  </label>
+                  <br>
+                  {% endif %}{% endfor %}{% endfor %}
+                  <label>
+                    <input class="empty_all" type="checkbox" name="alladmin" value="1">&nbsp;<strong>{%trans 'all admin tables'|upper%}</strong>
+                  </label>
+                  <br>
+                  {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and group.0 == _("admin")%}
+                  <label for="empty_{{ item.1.model | model_name }}">
+                    <input class="empty_entity" type="checkbox" name="models" tables="admin" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+                  </label>
+                  <br>
+                  {% endif %}{% endfor %}{% endfor %}
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
 
 	  <div class="panel panel-default">
 		  <div class="panel-heading" data-parent="#tasks" role="tab" id="zevendeHeading" data-toggle="collapse" data-target="#zevendeAccord">

@@ -461,7 +461,8 @@ bool SolverMRP::checkOperationLeadTime
   // Check the result of the resize
   if (opplan->getDates().getStart() >= threshold
     && (!extra || opplan->getDates().getEnd() <= data.state->q_date_max)
-    && opplan->getQuantity() > ROUNDING_ERROR)
+    && opplan->getQuantity() > ROUNDING_ERROR
+    && getAllowSplits())
   {
     // Resizing did work! The operation now fits within constrained limits
     data.state->a_qty = opplan->getQuantity();
@@ -539,9 +540,6 @@ void SolverMRP::solve(const Operation* oper, void* v)
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  if (oper->getName() == "4. Deliver item" && data->state->curDemand->getName() == "4. order 3")
-    logger << "bonanza" << endl;
     
   // Find the current list of constraints
   Problem* topConstraint = data->planningDemand ?

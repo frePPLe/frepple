@@ -234,11 +234,20 @@
       }, 5000);{% endif %}
     // Checkboxes for workbook export
     $(".chck_all").click( function() {
-      $(".chck_entity").prop("checked", $(this).prop("checked"));
+      if ($(this).prop("name") === "alldata") {
+        $(".chck_entity[data-tables='data']").prop("checked", $(this).prop("checked"));
+      } else if ($(this).prop("name") === "alladmin") {
+        $(".chck_entity[data-tables='admin']").prop("checked", $(this).prop("checked"));
+      }
       });
     $(".chck_entity").click( function() {
-      $(".chck_all").prop("checked",$(".chck_entity:not(:checked)").length == 0);
+      if ($(this).attr("data-tables") === "data") {
+        $(".chck_all[name='alldata']").prop("checked",$(".chck_entity[data-tables='data']:not(:checked)").length === 0);
+      } else if ($(this).attr("data-tables") === "admin") {
+        $(".chck_all[name='alladmin']").prop("checked",$(".chck_entity[data-tables='admin']:not(:checked)").length === 0);
+      }
       });
+
     // Checkboxes for emptying the database
     $(".empty_all").click( function() {
       if ($(this).prop("name") === "alldata") {
@@ -411,12 +420,27 @@
 			         </p>
 			          {% getMenu as menu %}
 			          <p>
-			          <input class="chck_all check" type="checkbox" name="all" value="1"><br>
+                <label>
+                  <input class="chck_all check" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'all data tables'|upper%}</strong>
+                </label><br>
 			          {% for group in menu %}
 			            {% for item in group.1 %}
-			              {% if item.1.model and not item.1.excludeFromBulkOperations %}
+			              {% if item.1.model and not item.1.excludeFromBulkOperations and not group.0 == _("admin")%}
 			                <label for="chbx_{{ item.1.model | model_name }}">
-			                  <input class="chck_entity check" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
+			                  <input class="chck_entity check" data-tables="data" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
+			                    {{ group.0 }} - {{ item.0 }}
+			                </label><br>
+			              {% endif %}
+			            {% endfor %}
+			          {% endfor %}
+                <label>
+                  <input class="chck_all check" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'all admin tables'|upper%}</strong>
+                </label><br>
+                {% for group in menu %}
+                  {% for item in group.1 %}
+                    {% if item.1.model and not item.1.excludeFromBulkOperations and group.0 == _("admin")%}
+			                <label for="chbx_{{ item.1.model | model_name }}">
+			                  <input class="chck_entity check" data-tables="admin" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
 			                    {{ group.0 }} - {{ item.0 }}
 			                </label><br>
 			              {% endif %}

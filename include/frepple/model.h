@@ -4690,6 +4690,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     void setLocation(Location* i)
     {
       loc = i;
+      // Trigger level recomputation
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Returns the minimum inventory level. */

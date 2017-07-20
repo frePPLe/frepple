@@ -230,6 +230,7 @@ void Buffer::setItem(Item* i)
 
   // Mark changed
   setChanged();
+  HasLevel::triggerLazyRecomputation();
 }
 
 

@@ -421,7 +421,7 @@
 			          {% getMenu as menu %}
 			          <p>
                 <label>
-                  <input class="chck_all check" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'all data tables'|upper%}</strong>
+                  <input class="chck_all check" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
                 </label><br>
 			          {% for group in menu %}
 			            {% for item in group.1 %}
@@ -434,7 +434,7 @@
 			            {% endfor %}
 			          {% endfor %}
                 <label>
-                  <input class="chck_all check" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'all admin tables'|upper%}</strong>
+                  <input class="chck_all check" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
                 </label><br>
                 {% for group in menu %}
                   {% for item in group.1 %}

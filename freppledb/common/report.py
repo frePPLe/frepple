@@ -1355,6 +1355,7 @@ class GridReport(View):
       added = 0
       numerrors = 0
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
+      firsterror = True
 
       # Handle the complete upload as a single database transaction
       try:
@@ -1371,13 +1372,7 @@ class GridReport(View):
           # Loop through the data records
           has_pk_field = False
           yield ('<div class="table-responsive">'
-                 '<table class="table table-condensed" style="white-space: nowrap;">'
-                 '<thead><tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></thead>'
-                 '</tr><tbody>') % (
-                   capfirst(_("worksheet")), capfirst(_("row")),
-                   capfirst(_("field")), capfirst(_("value")),
-                   capfirst(_("error"))
-                   )
+                 '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
           for row in EncodedCSVReader(request.FILES['csv_file'], delimiter=delimiter):
             rownumber += 1
 
@@ -1423,6 +1418,15 @@ class GridReport(View):
                         break
                 if not ok:
                   headers.append(False)
+                  if firsterror:
+                    yield (
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                           ) % (
+                             capfirst(_("worksheet")), capfirst(_("row")),
+                             capfirst(_("field")), capfirst(_("value")),
+                             capfirst(_("error"))
+                             )
+                    firsterror = False
                   yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': col})
                   numerrors += 1
                 if col == reportclass.model._meta.pk.name.lower() or \
@@ -1431,6 +1435,15 @@ class GridReport(View):
               if required_fields:
                 # We are missing some required fields
                 errors = True
+                if firsterror:
+                  yield (
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         ) % (
+                           capfirst(_("worksheet")), capfirst(_("row")),
+                           capfirst(_("field")), capfirst(_("value")),
+                           capfirst(_("error"))
+                           )
+                  firsterror = False
                 #. Translators: Translation included with django
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
                 numerrors += 1
@@ -1523,13 +1536,40 @@ class GridReport(View):
                   except Exception as e:
                     # Validation fails
                     for error in form.non_field_errors():
+                      if firsterror:
+                        yield (
+                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                               ) % (
+                                 capfirst(_("worksheet")), capfirst(_("row")),
+                                 capfirst(_("field")), capfirst(_("value")),
+                                 capfirst(_("error"))
+                                 )
+                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
                       numerrors += 1
                     for field in form:
                       for error in field.errors:
+                        if firsterror:
+                          yield (
+                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                 ) % (
+                                   capfirst(_("worksheet")), capfirst(_("row")),
+                                   capfirst(_("field")), capfirst(_("value")),
+                                   capfirst(_("error"))
+                                   )
+                          firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
                         numerrors += 1
               except Exception as e:
+                if firsterror:
+                  yield (
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         ) % (
+                           capfirst(_("worksheet")), capfirst(_("row")),
+                           capfirst(_("field")), capfirst(_("value")),
+                           capfirst(_("error"))
+                           )
+                  firsterror = False
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
                 numerrors += 1
 
@@ -1571,7 +1611,7 @@ class GridReport(View):
     added = 0
     numerrors = 0
     content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
-
+    firsterror = True
     # Handle the complete upload as a single database transaction
     try:
       with transaction.atomic(using=request.database):
@@ -1587,13 +1627,7 @@ class GridReport(View):
 
         # Header in output
         yield ('<div class="table-responsive">'
-               '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
-               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
-               '</thead><tbody>') % (
-                 capfirst(_("worksheet")), capfirst(_("row")),
-                 capfirst(_("field")), capfirst(_("value")),
-                 capfirst(_("error"))
-                 )
+               '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
 
         # Loop through the data records
         wb = load_workbook(filename=request.FILES['csv_file'], read_only=True, data_only=True)
@@ -1646,6 +1680,15 @@ class GridReport(View):
                         break
                 if not ok:
                   headers.append(False)
+                  if firsterror:
+                    yield (
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                           ) % (
+                             capfirst(_("worksheet")), capfirst(_("row")),
+                             capfirst(_("field")), capfirst(_("value")),
+                             capfirst(_("error"))
+                             )
+                    firsterror = False
                   yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
                     reportclass.model._meta.verbose_name,
                     _('Skipping unknown field %(column)s') % {'column': col}
@@ -1657,6 +1700,15 @@ class GridReport(View):
               if required_fields:
                 # We are missing some required fields
                 errors = True
+                if firsterror:
+                  yield (
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         ) % (
+                           capfirst(_("worksheet")), capfirst(_("row")),
+                           capfirst(_("field")), capfirst(_("value")),
+                           capfirst(_("error"))
+                           )
+                  firsterror = False
                 #. Translators: Translation included with django
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
                   reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {
@@ -1747,6 +1799,15 @@ class GridReport(View):
                     form = UploadForm(d)
                     it = None
                   except reportclass.model.MultipleObjectsReturned:
+                    if firsterror:
+                      yield (
+                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error"))
+                               )
+                      firsterror = False
                     yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
                       reportclass.model._meta.verbose_name,
                       rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
@@ -1780,6 +1841,15 @@ class GridReport(View):
                   except Exception as e:
                     # Validation fails
                     for error in form.non_field_errors():
+                      if firsterror:
+                        yield (
+                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                               ) % (
+                                 capfirst(_("worksheet")), capfirst(_("row")),
+                                 capfirst(_("field")), capfirst(_("value")),
+                                 capfirst(_("error"))
+                                 )
+                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
                         reportclass.model._meta.verbose_name,
                         rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
@@ -1788,6 +1858,15 @@ class GridReport(View):
                       numerrors += 1
                     for field in form:
                       for error in field.errors:
+                        if firsterror:
+                          yield (
+                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                 ) % (
+                                   capfirst(_("worksheet")), capfirst(_("row")),
+                                   capfirst(_("field")), capfirst(_("value")),
+                                   capfirst(_("error"))
+                                   )
+                          firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                           reportclass.model._meta.verbose_name,
                           rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
@@ -1795,6 +1874,15 @@ class GridReport(View):
                           )
                         numerrors += 1
               except Exception as e:
+                if firsterror:
+                  yield (
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         ) % (
+                           capfirst(_("worksheet")), capfirst(_("row")),
+                           capfirst(_("field")), capfirst(_("value")),
+                           capfirst(_("error"))
+                           )
+                  firsterror = False
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
                   reportclass.model._meta.verbose_name, e
                   )
@@ -2590,13 +2678,7 @@ def importWorkbook(request):
       for ws_name, model, contenttype_id, dependencies in models:
         yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
         yield ('<div class="table-responsive">'
-               '<table class="table table-condensed" style="white-space: nowrap;"><thead>'
-               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
-               '</thead><tbody>') % (
-                 capfirst(_("worksheet")), capfirst(_("row")),
-                 capfirst(_("field")), capfirst(_("value")),
-                 capfirst(_("error"))
-                 )
+               '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
         ws = wb.get_sheet_by_name(name=ws_name)
         rownum = 0
         has_pk_field = False
@@ -2605,6 +2687,7 @@ def importWorkbook(request):
         changed = 0
         added = 0
         numerrors = 0
+        firsterror = True
 
         try:
           # The admin model of the class can define some fields to exclude from the import
@@ -2660,6 +2743,15 @@ def importWorkbook(request):
                         break
                 if not ok:
                   headers.append(False)
+                  if firsterror:
+                    yield (
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                           ) % (
+                             capfirst(_("worksheet")), capfirst(_("row")),
+                             capfirst(_("field")), capfirst(_("value")),
+                             capfirst(_("error"))
+                             )
+                    firsterror = False
                   yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Skipping unknown field %(column)s') % {'column': value})
                   numerrors += 1
                 if value == model._meta.pk.name.lower() \
@@ -2668,6 +2760,15 @@ def importWorkbook(request):
               if required_fields:
                 # We are missing some required fields
                 header_ok = True
+                if firsterror:
+                  yield (
+                         '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         ) % (
+                           capfirst(_("worksheet")), capfirst(_("row")),
+                           capfirst(_("field")), capfirst(_("value")),
+                           capfirst(_("error"))
+                           )
+                  firsterror = False
                 #. Translators: Translation included with django
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
                 numerrors += 1
@@ -2746,6 +2847,15 @@ def importWorkbook(request):
                   form = uploadform(d)
                   it = None
                 except model.MultipleObjectsReturned:
+                  if firsterror:
+                    yield (
+                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                           ) % (
+                             capfirst(_("worksheet")), capfirst(_("row")),
+                             capfirst(_("field")), capfirst(_("value")),
+                             capfirst(_("error"))
+                             )
+                    firsterror = False
                   yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, _('Key fields not unique'))
                   continue
               else:
@@ -2778,6 +2888,15 @@ def importWorkbook(request):
                     numerrors += 1
                   for field in form:
                     for error in field.errors:
+                      if firsterror:
+                        yield (
+                               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                               ) % (
+                                 capfirst(_("worksheet")), capfirst(_("row")),
+                                 capfirst(_("field")), capfirst(_("value")),
+                                 capfirst(_("error"))
+                                 )
+                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
                       numerrors += 1
         # Report status of the import

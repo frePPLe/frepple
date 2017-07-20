@@ -32,7 +32,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, HttpResponse, StreamingHttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, HttpResponse
+from django.http import HttpResponseNotFound, StreamingHttpResponse, HttpResponseNotAllowed
 from django.contrib import messages
 from django.utils.encoding import force_text
 
@@ -405,20 +406,6 @@ def CancelTask(request, taskid):
 
 @staff_member_required
 @never_cache
-def ViewFile(request, filename):
-  clean_filename = re.split(r'/|:|\\', filename)[-1]
-  if not clean_filename or not 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
-    raise Http404('File not found')
-  response = static.serve(
-    request, clean_filename,
-    document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
-    )
-  response['Content-Disposition'] = 'inline; filename="%s"' % clean_filename
-  return response
-
-
-@staff_member_required
-@never_cache
 def DownloadLogFile(request):
   if request.database == DEFAULT_DB_ALIAS:
     filename = 'frepple.log'
@@ -466,3 +453,71 @@ def logfile(request):
     'title': _('Log file'),
     'logdata': logdata,
     } )
+
+
+@csrf_exempt
+@basicauthentication(allow_logged_in=True)
+@staff_member_required
+@never_cache
+def uploadFiletoFolder(request):
+  if request.method != 'POST':
+    return HttpResponseNotAllowed(['post'], content='Only POST request method is allowed')
+
+  if len(list(request.FILES.items())) == 0:
+    return HttpResponseNotFound('Missing file selection in request')
+  import time
+  errorcount = 0
+  response = HttpResponse()
+  for filename, content in request.FILES.items():
+    try:
+      clean_filename = re.split(r'/|:|\\', filename)[-1]
+      thetarget = open(os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], clean_filename), 'wb+')
+
+      for chunk in content.chunks():
+        thetarget.write(chunk)
+
+      response.write(force_text('<div style="clear: both;"><div style="margin-right: 15px; display: inline;">%s</div><div style="margin-right: 15px; display: inline;">%s</div></div>' % (clean_filename, _('OK'))))
+
+    except Exception as e:
+      response.write('<div class="alert-danger" style="margin-bottom: 0; clear: both;"><div style="margin-right: 15px; display: inline;">%s</div><div style="margin-right: 15px; display: inline;">%s</div></div>' % (clean_filename, re.split(r':', str(e))[0] ))
+
+  response.write(force_text('<div><strong>%s</strong></div>' % _('Finished')))
+
+  return response
+
+
+@csrf_exempt
+@basicauthentication(allow_logged_in=True)
+@staff_member_required
+@never_cache
+def deleteFilefromFolder(request, filename):
+  if request.method != 'DELETE':
+    return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
+
+  try:
+    clean_filename = re.split(r'/|:|\\', filename)[-1]
+    os.remove(os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], clean_filename))
+    return HttpResponse(content="OK")
+  except Exception as e:
+    return HttpResponseServerError(force_text(_('Error deleting file')))
+
+
+@csrf_exempt
+@basicauthentication(allow_logged_in=True)
+@staff_member_required
+@never_cache
+def downloadFilefromFolder(request, filename):
+  if request.method != 'GET':
+    return HttpResponseNotAllowed(['get'], content='Only GET request method is allowed')
+
+  try:
+    clean_filename = filename.split('/')[0]
+    response = static.serve(
+      request, clean_filename,
+      document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+      )
+    response['Content-Disposition'] = 'inline; filename="%s"' % filename
+    response['Content-Type'] = 'application/octet-stream'
+    return response
+  except Exception as e:
+    return HttpResponseNotFound(force_text(_('Error downloading file')))

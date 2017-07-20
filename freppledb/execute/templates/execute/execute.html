@@ -208,6 +208,123 @@
     }
   }
 
+  function deleteFile(filename) {
+    $.jgrid.hideModal("#searchmodfbox_grid");
+
+    $("#popup").html('<div class="modal-dialog">'+
+      '<div class="modal-content">'+
+        '<div class="modal-header">'+
+          '<h4 class="modal-title">'+gettext('Delete file')+'</h4>'+
+        '</div>'+
+        '<div class="modal-body"><p>'+
+        interpolate(gettext('You are about to delete file %s'), [filename]) +
+        '</p></div>'+
+        '<div class="modal-footer">'+
+          '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+        '</div>'+
+      '</div>'+
+    '</div>' )
+    .modal('show');
+    $('#confirmbutton').on('click', function() {
+      $.ajax({
+        url: "{{request.prefix}}/execute/deletefromfolder/" + filename + "/",
+        type: "DELETE",
+        success: function () {
+          $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
+          $('#confirmbutton').hide();
+          $('#cancelbutton').attr('value',gettext('Close'));
+          $('#cancelbutton').one('click', function() {$("#popup").hide();});
+          $('tr[data-file="'+filename+'"]').remove();
+        },
+        error: function (result, stat, errorThrown) {
+          $("#popup .modal-body>p").addClass('alert alert-danger');
+          $("#popup .modal-body>p").text(interpolate(gettext('File %s was not deleted'), [filename]));
+          $('#confirmbutton').hide();
+          $('#cancelbutton').attr('value', gettext('Close'));
+          $('#cancelbutton').one('click', function() {$("#popup").hide();});
+          }
+      })
+    })
+  }
+
+  function downloadFile(filename) {
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    window.open("{{request.prefix}}/execute/downloadfromfolder/" + filename + '/', '_blank');
+  }
+
+  function CancelUpload() {
+    console.log('cancelling');
+  }
+
+  function uploadFiles() {
+
+    if ($('#inputfiles').get(0).files.length === 0)
+      return;
+
+    $.jgrid.hideModal("#searchmodfbox_grid");
+
+    // Create dialog box
+    $('#popup').modal({keyboard: false, backdrop:'static'});
+    var modalcontent = '<div class="modal-dialog">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+            '<h4 class="modal-title">'+gettext("Uploading files")+'</h4>'+
+          '</div>'+
+          '<div class="modal-body" style="padding-right: 0;">'+
+          '<br/><div style="margin: 5px 0">' +
+            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="modal-footer">'+
+            '<input type="submit" id="closemodalbutton" onclick="CancelUpload()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
+    if (document.queryCommandSupported('copy')) {
+      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
+    }
+    modalcontent += '<input type="submit" id="canceluploadbutton" onclick="CancelUpload()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel upload"|capfirst %}">';
+    modalcontent += '</div>'+'</div>'+'</div>';
+    $("#popup").html(modalcontent).modal('show');
+
+    // Upload the files
+    var data = new FormData();
+    for (var i = 0; i < $('#inputfiles').get(0).files.length; i++) {
+      data.append($('#inputfiles').get(0).files[i].name, $('#inputfiles').get(0).files[i]);
+    }
+
+    $('#uploadResponse').css('display','block');
+    $('#uploadResponse').html(gettext('Uploading...'));
+    xhr = $.ajax({
+      type: 'post',
+      url: '{{request.prefix}}/execute/uploadtofolder/',
+      cache: false,
+      data: data,
+      success: function (data) {
+        var el = $('#uploadResponse');
+        el.html(data);
+        el.scrollTop(el[0].scrollHeight - el.height());
+        if (document.queryCommandSupported('copy')) {
+          $('#copytoclipboard').show();
+        }
+        $('#canceluploadbutton').hide();
+        // Resetting the value of filename. This is only done to avoid a
+        // corner case where Internet Explorer is uploading a cached
+        // (potentially outdated or even deleted) file.
+        // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads
+        $('#inputfiles').val('');
+      },
+      xhrFields: {
+        onprogress: function (e) {
+          var el = $('#uploadResponse');
+          el.html(e.currentTarget.response);
+          el.scrollTop(el[0].scrollHeight - el.height());
+        }
+      },
+      processData: false,
+      contentType: false
+    }); //end AJAX
+  }
+
   $(function() {
     iconslist = {
         time: 'fa fa-clock-o',
@@ -492,11 +609,9 @@
           <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
             <table>
               <tr>
-
-	                <td style="vertical-align:top; padding-left: 15px">
-	                  <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
-	                </td>
-
+                <td style="vertical-align:top; padding-left: 15px">
+                  <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+                </td>
                 <td colspan='1' style="padding-left: 15px;">
                   <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
                 </td>
@@ -506,12 +621,10 @@
           <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
             <table>
               <tr>
-
-                  <td style="vertical-align:top; padding-left: 15px">
-                    <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
-                  </td>
-
-                <td colspan='3' style="padding-left: 15px;">
+                <td style="vertical-align:top; padding-left: 15px">
+                  <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
+                </td>
+                <td colspan='5' style="padding-left: 15px;">
                   <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
                 </td>
               </tr>
@@ -520,13 +633,29 @@
 								<td><strong>{% trans 'file name'|capfirst %}</strong></td>
 								<td><strong>{% trans 'size'|capfirst %}</strong></td>
 								<td><strong>{% trans 'changed'|capfirst %}</strong></td>
-						  </tr>
+                <td colspan="2">
+                  <label class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="Copy files to folder" onchange="uploadFiles()">
+                    <input multiple type="file" id="inputfiles" name="inputfiles" style="display: none;">
+                    <span class="fa fa-arrow-up"></span>
+                  </label>
+                </td>
+						  </tr></form>
               {% for j in filestoupload %}
-              <tr>
+              <tr data-file="{{j.0}}">
                 <td></td>
-                <td>{{j.0}}<a href="{{request.prefix}}/execute/viewfile/{{j.0}}">&nbsp;<span class="fa fa-caret-right"></span></a></td>
+                <td>{{j.0}}</td>
                 <td>{{j.2}}</td>
                 <td>{{j.1}}</td>
+                <td>
+                  <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadFile('{{j.0}}')">
+                    <span class="fa fa-arrow-down"></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteFile('{{j.0}}')">
+                    <span class="fa fa-close"></span>
+                  </div>
+                </td>
               </tr>
               {% endfor %}
             </table>

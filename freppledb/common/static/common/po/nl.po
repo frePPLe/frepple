@@ -124,7 +124,7 @@ msgstr "afgesloten"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
-msgstr "Kleur volgens"
+msgstr "kleur volgens"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:157
 msgid "colors"
@@ -244,12 +244,12 @@ msgstr "Levering"
 #: freppledb/planningboard/static/planningboard/src/grid.js:138
 #| msgid "Delivery"
 msgid "delivery date"
-msgstr ""
+msgstr "leverdatum"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:129
 #| msgid "quantity"
 msgid "delivery quantity"
-msgstr ""
+msgstr "leverhoeveelheid"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:142
@@ -264,7 +264,7 @@ msgstr "order"
 #: freppledb/forecast/static/forecast/forecast.html:320
 #: freppledb/forecast/static/forecast/forecast.html:332
 msgid "Demand outlier"
-msgstr ""
+msgstr "Uitzonderlijke vraag"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:252
 #: freppledb/planningboard/static/planningboard/planningboard.html:361
@@ -319,7 +319,7 @@ msgstr "leverdatum"
 #: freppledb/planningboard/static/planningboard/planningboard.html:448
 #: freppledb/planningboard/static/planningboard/planningboard.html:562
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliceer"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
 #: freppledb/planningboard/static/planningboard/planningboard.html:269
@@ -349,7 +349,7 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
-msgstr "Haalbaarheid"
+msgstr "haalbaarheid"
 
 #: freppledb/forecast/static/forecast/forecast.html:106
 #: freppledb/forecast/static/forecast/forecast.html:131
@@ -371,7 +371,7 @@ msgstr "forecast override"
 #: freppledb/input/static/operationplandetail/operationplandetail.html:40
 #: freppledb/planningboard/static/planningboard/planningboard.html:110
 msgid "gantt chart rows limit"
-msgstr "Gantt chart maximaal aantal rijen"
+msgstr "gantt chart maximaal aantal rijen"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
 #: freppledb/planningboard/static/planningboard/planningboard.html:72
@@ -523,7 +523,7 @@ msgstr "nieuwe locatiecommentaar"
 
 #: freppledb/forecast/static/forecast/forecast.html:211
 msgid "No comments yet"
-msgstr "nog geen commentaar"
+msgstr "Nog geen commentaar"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
 msgid "no demands"
@@ -632,7 +632,7 @@ msgstr "Plan de geselecteerde orders voorwaarts vanaf de huidige datum"
 #: freppledb/input/static/operationplandetail/operationplandetail.html:48
 #: freppledb/planningboard/static/planningboard/planningboard.html:118
 msgid "Please be patient, the chart may take some time to complete."
-msgstr "Even geduld, de grafiek vraagt wat tijd om af te werken"
+msgstr "Even geduld, de grafiek vraagt wat tijd om af te werken."
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:24
 #: freppledb/planningboard/static/planningboard/planningboard.html:712
@@ -753,11 +753,11 @@ msgstr "herstel"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:48
 msgid "Resolve constraints during plan changes by moving to earlier dates"
-msgstr ""
+msgstr "Los conflicten op door te verschuiven naar vroegere data"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:53
 msgid "Resolve constraints during plan changes by moving to later dates"
-msgstr ""
+msgstr "Los conflicten op door te verschuiven naar latere data"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:145
@@ -791,7 +791,7 @@ msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
 "Selecteer prognose methode, enkel mogelijk op niveau van individuele product/"
-"locatie/klant "
+"locatie/klant"
 
 #: freppledb/forecast/static/forecast/forecast.html:6
 msgid "Select panel sequence"
@@ -803,7 +803,7 @@ msgstr "Geselecteerde forecast methode"
 
 #: freppledb/forecast/static/forecast/forecast.html:121
 msgid "Simulate changes without saving"
-msgstr "simuleer aanpassing zonder ze op te slaan"
+msgstr "Simuleer aanpassing zonder ze op te slaan"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:184
 #: freppledb/planningboard/static/planningboard/planningboard.html:237
@@ -811,7 +811,7 @@ msgstr "simuleer aanpassing zonder ze op te slaan"
 #: freppledb/planningboard/static/planningboard/planningboard.html:454
 #: freppledb/planningboard/static/planningboard/planningboard.html:568
 msgid "Split in half"
-msgstr ""
+msgstr "Verdeel in twee"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
 #: freppledb/planningboard/static/planningboard/planningboard.html:258

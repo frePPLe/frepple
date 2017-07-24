@@ -109,7 +109,10 @@
         '<div class="modal-content">'+
           '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+gettext("Uploading spreadsheet")+'</h4>'+
+            '<h4 class="modal-title">'+
+              gettext("Uploading spreadsheet")+ '&nbsp;'+
+              '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: visible;"></span>'+
+            '</h4>'+
           '</div>'+
           '<div class="modal-body" style="padding-right: 0;">'+
           '<br/><div style="margin: 5px 0">' +
@@ -144,6 +147,7 @@
           $('#copytoclipboard').show();
         }
         $('#cancelimportbutton').hide();
+        $("#animatedcog").css('visibility','hidden');
         // Resetting the value of filename. This is only done to avoid a
         // corner case where Internet Explorer is uploading a cached
         // (potentially outdated or even deleted) file.
@@ -278,7 +282,7 @@
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
-            '<input type="submit" id="closemodalbutton" onclick="CancelUpload()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
+          '<input type="submit" id="closemodalbutton" onclick="CancelUpload()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
     if (document.queryCommandSupported('copy')) {
       modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
     }

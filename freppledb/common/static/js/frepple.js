@@ -2469,7 +2469,10 @@ function import_show(url)
       '<div class="modal-content">'+
         '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-          '<h4 class="modal-title">'+ gettext("Import CSV or Excel file") +'</h4>'+
+          '<h4 class="modal-title">'+
+            gettext("Import CSV or Excel file")+ '&nbsp;'+
+            '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: hidden;"></span>'+
+          '</h4>'+
         '</div>'+
         '<div class="modal-body">'+
     '<form id="uploadform">' +
@@ -2493,9 +2496,11 @@ function import_show(url)
 
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() == "") return;
+
     $('#uploadResponse').css('display','block');
     $('#uploadResponse').html(gettext('Importing...'));
     $('#importbutton').hide();
+    $("#animatedcog").css('visibility','visible');
     $('#uploadform').css('display','none');
     $('#copytoclipboard').on('click', function() {
       var sometextcontent = document.createRange();
@@ -2519,6 +2524,7 @@ function import_show(url)
         el.scrollTop(el[0].scrollHeight - el.height());
         $('#cancelbutton').html(gettext('Close'));
         $('#importbutton').hide();
+        $("#animatedcog").css('visibility','hidden');
         $('#cancelimportbutton').hide();
         if (document.queryCommandSupported('copy')) {
           $('#copytoclipboard').show();

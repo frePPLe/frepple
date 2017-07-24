@@ -489,13 +489,11 @@ def uploadFiletoFolder(request):
       for chunk in content.chunks():
         thetarget.write(chunk)
 
-      response.write(force_text('<div style="clear: both;"><div style="margin-right: 15px; display: inline;">%s</div><div style="margin-right: 15px; display: inline;">%s</div></div>' % (clean_filename, _('OK'))))
+      response.write(force_text('%s: %s' % (clean_filename, _('OK'))) + '\n')
 
     except Exception as e:
-      response.write('<div class="alert-danger" style="margin-bottom: 0; clear: both;"><div style="margin-right: 15px; display: inline;">%s</div><div style="margin-right: 15px; display: inline;">%s</div></div>' % (clean_filename, re.split(r':', str(e))[0] ))
-
-  response.write(force_text('<div><strong>%s</strong></div>' % _('Finished')))
-
+      response.write('%s: %s ' % (clean_filename, re.split(r':', str(e))[0] ) + '\n')
+  response.write(force_text('%s' % _('Finished')))
   return response
 
 

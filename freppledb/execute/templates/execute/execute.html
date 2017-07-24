@@ -266,6 +266,14 @@
     if ($('#inputfiles').get(0).files.length === 0)
       return;
 
+    // Upload the files
+    var filelisthtml = '';
+    var data = new FormData();
+    for (var i = 0; i < $('#inputfiles').get(0).files.length; i++) {
+      data.append($('#inputfiles').get(0).files[i].name, $('#inputfiles').get(0).files[i]);
+      filelisthtml += '<div>'+escape($('#inputfiles').get(0).files[i].name)+'</div>';
+    }
+
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     // Create dialog box
@@ -274,11 +282,13 @@
         '<div class="modal-content">'+
           '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+gettext("Uploading files")+'</h4>'+
+            '<h4 class="modal-title">'+gettext("Uploading files")+'&nbsp;'+
+            '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: visible;"></span>'+
+            '</h4>'+
           '</div>'+
           '<div class="modal-body" style="padding-right: 0;">'+
           '<br/><div style="margin: 5px 0">' +
-            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none"></div>'+
+            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none">'+filelisthtml+'</div>'+
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
@@ -290,14 +300,7 @@
     modalcontent += '</div>'+'</div>'+'</div>';
     $("#popup").html(modalcontent).modal('show');
 
-    // Upload the files
-    var data = new FormData();
-    for (var i = 0; i < $('#inputfiles').get(0).files.length; i++) {
-      data.append($('#inputfiles').get(0).files[i].name, $('#inputfiles').get(0).files[i]);
-    }
-
     $('#uploadResponse').css('display','block');
-    $('#uploadResponse').html(gettext('Uploading...'));
     xhr = $.ajax({
       type: 'post',
       url: '{{request.prefix}}/execute/uploadtofolder/',
@@ -305,7 +308,16 @@
       data: data,
       success: function (data) {
         var el = $('#uploadResponse');
-        el.html(data);
+        el.empty();
+        $("#animatedcog").css('visibility','hidden');
+        var lines = data.split('\n');
+        for (var i = 0; i < lines.length; i++) {
+          if (lines[i].endsWith('OK')) {
+            el.append('<div>'+lines[i]+'</div>');
+          } else {
+            el.append('<div class="danger">'+lines[i]+'</div>');
+          }
+        }
         el.scrollTop(el[0].scrollHeight - el.height());
         if (document.queryCommandSupported('copy')) {
           $('#copytoclipboard').show();
@@ -317,13 +329,13 @@
         // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads
         $('#inputfiles').val('');
       },
-      xhrFields: {
-        onprogress: function (e) {
-          var el = $('#uploadResponse');
-          el.html(e.currentTarget.response);
-          el.scrollTop(el[0].scrollHeight - el.height());
-        }
-      },
+      error: function (result, stat, errorThrown) {
+        $("#popup .modal-body>p").addClass('alert alert-danger');
+        $("#popup .modal-body>p").text(gettext('The files were not uploaded'));
+        $('#confirmbutton').hide();
+        $('#cancelbutton').attr('value', gettext('Close'));
+        $('#cancelbutton').one('click', function() {$("#popup").hide();});
+        },
       processData: false,
       contentType: false
     }); //end AJAX

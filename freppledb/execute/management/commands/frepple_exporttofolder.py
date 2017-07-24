@@ -125,7 +125,7 @@ class Command(BaseCommand):
         # Open the logfile
         # The log file remains in the upload folder as different folders can be specified
         # We do not want t create one log file per folder
-        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'exporttofolder.log'), "a")
+        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export', 'exporttofolder.log'), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
 
         cursor = connections[self.database].cursor()
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         task.status = '0%'
         task.save(using=self.database)
 
-        i=0
+        i = 0
         cnt = len(self.statements)
 
         for filename, export, sqlquery in self.statements:

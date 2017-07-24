@@ -117,6 +117,18 @@ class TaskReport(GridReport):
       return "%.1f%sB" % (num, 'Yi')
 
     # List available data files
+    filesexported = []
+    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+      exportfolder = os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
+      if os.path.isdir(exportfolder):
+        for file in os.listdir(exportfolder):
+          if file.endswith(('.csv', '.csv.gz', '.log')):
+            filesexported.append([
+              file,
+              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
+              sizeof_fmt(os.stat(os.path.join(exportfolder, file)).st_size)
+              ])
+
     filestoupload = []
     if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
       uploadfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
@@ -141,6 +153,7 @@ class TaskReport(GridReport):
       'planning_options': planning_options,
       'current_options': request.session.get('env', [ i[0] for i in planning_options ]),
       'filestoupload': filestoupload,
+      'filesexported': filesexported,
       'datafolderconfigured': 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]
       }
 

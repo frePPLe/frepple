@@ -1354,6 +1354,7 @@ class GridReport(View):
       changed = 0
       added = 0
       numerrors = 0
+      numwarnings = 0
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
       firsterror = True
 
@@ -1420,15 +1421,15 @@ class GridReport(View):
                   headers.append(False)
                   if firsterror:
                     yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                            ) % (
                              capfirst(_("worksheet")), capfirst(_("row")),
                              capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error"))
+                             capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
-                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Skipping unknown field %(column)s') % {'column': col})
-                  numerrors += 1
+                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (reportclass.model._meta.verbose_name, capfirst(_('warning')), ' / ', capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}))
+                  numwarnings += 1
                 if col == reportclass.model._meta.pk.name.lower() or \
                    col == reportclass.model._meta.pk.verbose_name.lower():
                   has_pk_field = True
@@ -1437,11 +1438,11 @@ class GridReport(View):
                 errors = True
                 if firsterror:
                   yield (
-                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                          ) % (
                            capfirst(_("worksheet")), capfirst(_("row")),
                            capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error"))
+                           capfirst(_("error")), " / ", capfirst(_("warning"))
                            )
                   firsterror = False
                 #. Translators: Translation included with django
@@ -1538,11 +1539,11 @@ class GridReport(View):
                     for error in form.non_field_errors():
                       if firsterror:
                         yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                                ) % (
                                  capfirst(_("worksheet")), capfirst(_("row")),
                                  capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error"))
+                                 capfirst(_("error")), " / ", capfirst(_("warning"))
                                  )
                         firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
@@ -1551,11 +1552,11 @@ class GridReport(View):
                       for error in field.errors:
                         if firsterror:
                           yield (
-                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                                  ) % (
                                    capfirst(_("worksheet")), capfirst(_("row")),
                                    capfirst(_("field")), capfirst(_("value")),
-                                   capfirst(_("error"))
+                                   capfirst(_("error")), " / ", capfirst(_("warning"))
                                    )
                           firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
@@ -1563,11 +1564,11 @@ class GridReport(View):
               except Exception as e:
                 if firsterror:
                   yield (
-                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                          ) % (
                            capfirst(_("worksheet")), capfirst(_("row")),
                            capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error"))
+                           capfirst(_("error")), " / ", capfirst(_("warning"))
                            )
                   firsterror = False
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
@@ -1577,7 +1578,7 @@ class GridReport(View):
         theClass = "success"
         if numerrors > 0:
           theClass = "danger"
-        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors})
+        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings, 'warnings': numwarnings})
       except GeneratorExit:
         logging.warning('Connection Aborted')
 
@@ -1610,6 +1611,7 @@ class GridReport(View):
     changed = 0
     added = 0
     numerrors = 0
+    numwarnings = 0
     content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
     firsterror = True
     # Handle the complete upload as a single database transaction
@@ -1682,18 +1684,18 @@ class GridReport(View):
                   headers.append(False)
                   if firsterror:
                     yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                            ) % (
                              capfirst(_("worksheet")), capfirst(_("row")),
                              capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error"))
+                             capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
+                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (
                     reportclass.model._meta.verbose_name,
-                    _('Skipping unknown field %(column)s') % {'column': col}
-                    )
-                  numerrors += 1
+                    capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}
+                    ))
+                  numwarnings += 1
                 if col == reportclass.model._meta.pk.name.lower() or \
                    col == reportclass.model._meta.pk.verbose_name.lower():
                   has_pk_field = True
@@ -1702,11 +1704,11 @@ class GridReport(View):
                 errors = True
                 if firsterror:
                   yield (
-                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                          ) % (
                            capfirst(_("worksheet")), capfirst(_("row")),
                            capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error"))
+                           capfirst(_("error")), " / ", capfirst(_("warning"))
                            )
                   firsterror = False
                 #. Translators: Translation included with django
@@ -1801,11 +1803,11 @@ class GridReport(View):
                   except reportclass.model.MultipleObjectsReturned:
                     if firsterror:
                       yield (
-                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                              ) % (
                                capfirst(_("worksheet")), capfirst(_("row")),
                                capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error"))
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
                                )
                       firsterror = False
                     yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
@@ -1843,11 +1845,11 @@ class GridReport(View):
                     for error in form.non_field_errors():
                       if firsterror:
                         yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                                ) % (
                                  capfirst(_("worksheet")), capfirst(_("row")),
                                  capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error"))
+                                 capfirst(_("error")), " / ", capfirst(_("warning"))
                                  )
                         firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
@@ -1860,11 +1862,11 @@ class GridReport(View):
                       for error in field.errors:
                         if firsterror:
                           yield (
-                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                                  ) % (
                                    capfirst(_("worksheet")), capfirst(_("row")),
                                    capfirst(_("field")), capfirst(_("value")),
-                                   capfirst(_("error"))
+                                   capfirst(_("error")), " / ", capfirst(_("warning"))
                                    )
                           firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
@@ -1876,11 +1878,11 @@ class GridReport(View):
               except Exception as e:
                 if firsterror:
                   yield (
-                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                          '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                          ) % (
                            capfirst(_("worksheet")), capfirst(_("row")),
                            capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error"))
+                           capfirst(_("error")), " / ", capfirst(_("warning"))
                            )
                   firsterror = False
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
@@ -1894,8 +1896,8 @@ class GridReport(View):
         theClass = "danger"
       yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (
         theClass, reportclass.model._meta.verbose_name,
-        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {
-          'rows': datarows, 'changed': changed, 'added': added, 'errors': numerrors
+        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {
+          'rows': datarows, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings
           })
     except GeneratorExit:
       logger.warning('Connection Aborted')
@@ -2687,6 +2689,7 @@ def importWorkbook(request):
         changed = 0
         added = 0
         numerrors = 0
+        numwarnings = 0
         firsterror = True
 
         try:
@@ -2745,15 +2748,15 @@ def importWorkbook(request):
                   headers.append(False)
                   if firsterror:
                     yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                            ) % (
                              capfirst(_("worksheet")), capfirst(_("row")),
                              capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error"))
+                             capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Skipping unknown field %(column)s') % {'column': value})
-                  numerrors += 1
+                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (ws_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': value}))
+                  numwarnings += 1
                 if value == model._meta.pk.name.lower() \
                   or value == model._meta.pk.verbose_name.lower():
                     has_pk_field = True
@@ -2762,11 +2765,11 @@ def importWorkbook(request):
                 header_ok = True
                 if firsterror:
                   yield (
-                         '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                         '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                          ) % (
                            capfirst(_("worksheet")), capfirst(_("row")),
                            capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error"))
+                           capfirst(_("error")), " / ", capfirst(_("warning"))
                            )
                   firsterror = False
                 #. Translators: Translation included with django
@@ -2849,11 +2852,11 @@ def importWorkbook(request):
                 except model.MultipleObjectsReturned:
                   if firsterror:
                     yield (
-                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                            ) % (
                              capfirst(_("worksheet")), capfirst(_("row")),
                              capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error"))
+                             capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
                   yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, _('Key fields not unique'))
@@ -2890,11 +2893,11 @@ def importWorkbook(request):
                     for error in field.errors:
                       if firsterror:
                         yield (
-                               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>'
+                               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                                ) % (
                                  capfirst(_("worksheet")), capfirst(_("row")),
                                  capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error"))
+                                 capfirst(_("error")), " / ", capfirst(_("warning"))
                                  )
                         firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
@@ -2903,7 +2906,7 @@ def importWorkbook(request):
         theClass = "success"
         if numerrors > 0:
           theClass = "danger"
-        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors})
+        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings})
       yield '<div><strong>%s</strong></div>' % _("Done")
   except GeneratorExit:
     logger.warning('Connection Aborted')

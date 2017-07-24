@@ -1428,7 +1428,7 @@ class GridReport(View):
                              capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
-                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (reportclass.model._meta.verbose_name, capfirst(_('warning')), ' / ', capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}))
+                  yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (reportclass.model._meta.verbose_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}))
                   numwarnings += 1
                 if col == reportclass.model._meta.pk.name.lower() or \
                    col == reportclass.model._meta.pk.verbose_name.lower():
@@ -1536,29 +1536,20 @@ class GridReport(View):
                         added += 1
                   except Exception as e:
                     # Validation fails
+                    if firsterror:
+                      yield (
+                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
+                               )
+                      firsterror = False
                     for error in form.non_field_errors():
-                      if firsterror:
-                        yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
                       numerrors += 1
                     for field in form:
                       for error in field.errors:
-                        if firsterror:
-                          yield (
-                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                                 ) % (
-                                   capfirst(_("worksheet")), capfirst(_("row")),
-                                   capfirst(_("field")), capfirst(_("value")),
-                                   capfirst(_("error")), " / ", capfirst(_("warning"))
-                                   )
-                          firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
                         numerrors += 1
               except Exception as e:
@@ -1842,16 +1833,16 @@ class GridReport(View):
                         added += 1
                   except Exception as e:
                     # Validation fails
+                    if firsterror:
+                      yield (
+                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
+                               )
+                      firsterror = False
                     for error in form.non_field_errors():
-                      if firsterror:
-                        yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
                         reportclass.model._meta.verbose_name,
                         rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
@@ -1860,15 +1851,6 @@ class GridReport(View):
                       numerrors += 1
                     for field in form:
                       for error in field.errors:
-                        if firsterror:
-                          yield (
-                                  '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                                 ) % (
-                                   capfirst(_("worksheet")), capfirst(_("row")),
-                                   capfirst(_("field")), capfirst(_("value")),
-                                   capfirst(_("error")), " / ", capfirst(_("warning"))
-                                   )
-                          firsterror = False
                         yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                           reportclass.model._meta.verbose_name,
                           rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
@@ -2886,20 +2868,20 @@ def importWorkbook(request):
                       added += 1
                 except Exception:
                   # Validation fails
+                  if firsterror:
+                    yield (
+                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                           ) % (
+                             capfirst(_("worksheet")), capfirst(_("row")),
+                             capfirst(_("field")), capfirst(_("value")),
+                             capfirst(_("error")), " / ", capfirst(_("warning"))
+                             )
+                    firsterror = False
                   for error in form.non_field_errors():
                     yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, error)
                     numerrors += 1
                   for field in form:
                     for error in field.errors:
-                      if firsterror:
-                        yield (
-                               '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
                       numerrors += 1
         # Report status of the import

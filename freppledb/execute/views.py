@@ -468,67 +468,98 @@ def logfile(request):
     } )
 
 
-@csrf_exempt
-@basicauthentication(allow_logged_in=True)
-@staff_member_required
-@never_cache
-def uploadFiletoFolder(request):
-  if request.method != 'POST':
-    return HttpResponseNotAllowed(['post'], content='Only POST request method is allowed')
+class FileManager:
+  '''
+  Class to upload and download files from a folder.
+  The folder code argument indicates which folder to use:
+    - 0: file upload folder
+    - 1: export subdirectory of the file upload folder
+  '''
 
-  if len(list(request.FILES.items())) == 0:
-    return HttpResponseNotFound('Missing file selection in request')
-  import time
-  errorcount = 0
-  response = HttpResponse()
-  for filename, content in request.FILES.items():
+  @staticmethod
+  def getFolder(request, foldercode):
+    if foldercode == '0':
+      return settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+    elif foldercode == '1':
+      return os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
+    else:
+      return HttpResponseNotAllowed(['post'], content='Only POST request method is allowed')
+
+
+  @staticmethod
+  @csrf_exempt
+  @basicauthentication(allow_logged_in=True)
+  @staff_member_required
+  @never_cache
+  def uploadFiletoFolder(request, foldercode):
+    if request.method != 'POST':
+      return HttpResponseNotAllowed(['post'], content='Only POST request method is allowed')
+
+    if len(list(request.FILES.items())) == 0:
+      return HttpResponseNotFound('Missing file selection in request')
+    errorcount = 0
+    response = HttpResponse()
+    folder = FileManager.getFolder(request, foldercode)
+    for filename, content in request.FILES.items():
+      try:
+        # Validate file name
+        clean_filename = re.split(r'/|:|\\', filename)[-1]
+        if not clean_filename.endswith(('.csv', '.csv.gz')):
+          response.write('%s: %s ' % (clean_filename, _("Extension must be .csv or .csv.gz") ) + '\n')
+          errorcount += 1
+          continue
+
+        # Write to a file
+        with open(os.path.join(folder, clean_filename), 'wb') as thetarget:
+          for chunk in content.chunks():
+            thetarget.write(chunk)
+
+        response.write(force_text('%s: %s\n' % (clean_filename, _('OK'))))
+      except Exception:
+        response.write('%s: %s\n' % (clean_filename, _("Upload failed") ))
+        errorcount += 1
+    response.write(force_text('%s' % _('Finished')))
+    if errorcount:
+      response.status_code = 400
+      response.reason_phrase = '%s files failed to upload correctly' % errorcount
+    return response
+
+
+  @staticmethod
+  @csrf_exempt
+  @basicauthentication(allow_logged_in=True)
+  @staff_member_required
+  @never_cache
+  def deleteFilefromFolder(request, foldercode, filename):
+    if request.method != 'DELETE':
+      return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
+    folder = FileManager.getFolder(request, foldercode)
+
     try:
       clean_filename = re.split(r'/|:|\\', filename)[-1]
-      thetarget = open(os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], clean_filename), 'wb+')
-
-      for chunk in content.chunks():
-        thetarget.write(chunk)
-
-      response.write(force_text('%s: %s' % (clean_filename, _('OK'))) + '\n')
-
-    except Exception as e:
-      response.write('%s: %s ' % (clean_filename, re.split(r':', str(e))[0] ) + '\n')
-  response.write(force_text('%s' % _('Finished')))
-  return response
+      os.remove(os.path.join(folder, clean_filename))
+      return HttpResponse(content="OK")
+    except Exception:
+      return HttpResponseServerError(force_text(_('Error deleting file')))
 
 
-@csrf_exempt
-@basicauthentication(allow_logged_in=True)
-@staff_member_required
-@never_cache
-def deleteFilefromFolder(request, filename):
-  if request.method != 'DELETE':
-    return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
+  @staticmethod
+  @csrf_exempt
+  @basicauthentication(allow_logged_in=True)
+  @staff_member_required
+  @never_cache
+  def downloadFilefromFolder(request, foldercode, filename):
+    if request.method != 'GET':
+      return HttpResponseNotAllowed(['get'], content='Only GET request method is allowed')
+    folder = FileManager.getFolder(request, foldercode)
 
-  try:
-    clean_filename = re.split(r'/|:|\\', filename)[-1]
-    os.remove(os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], clean_filename))
-    return HttpResponse(content="OK")
-  except Exception as e:
-    return HttpResponseServerError(force_text(_('Error deleting file')))
-
-
-@csrf_exempt
-@basicauthentication(allow_logged_in=True)
-@staff_member_required
-@never_cache
-def downloadFilefromFolder(request, filename):
-  if request.method != 'GET':
-    return HttpResponseNotAllowed(['get'], content='Only GET request method is allowed')
-
-  try:
-    clean_filename = filename.split('/')[0]
-    response = static.serve(
-      request, clean_filename,
-      document_root=settings.DATABASES[request.database]['FILEUPLOADFOLDER']
-      )
-    response['Content-Disposition'] = 'inline; filename="%s"' % filename
-    response['Content-Type'] = 'application/octet-stream'
-    return response
-  except Exception as e:
-    return HttpResponseNotFound(force_text(_('Error downloading file')))
+    try:
+      clean_filename = filename.split('/')[0]
+      response = static.serve(
+        request, clean_filename, document_root=folder
+        )
+      response['Content-Disposition'] = 'inline; filename="%s"' % filename
+      response['Content-Type'] = 'application/octet-stream'
+      return response
+    except Exception:
+      return HttpResponseNotFound(force_text(_('Error downloading file')))

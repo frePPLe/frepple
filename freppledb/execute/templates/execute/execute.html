@@ -212,7 +212,7 @@
     }
   }
 
-  function deleteFile(filename) {
+  function deleteFile(folder, filename) {
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     $("#popup").html('<div class="modal-dialog">'+
@@ -232,7 +232,7 @@
     .modal('show');
     $('#confirmbutton').on('click', function() {
       $.ajax({
-        url: "{{request.prefix}}/execute/deletefromfolder/" + filename + "/",
+        url: "{{request.prefix}}/execute/deletefromfolder/" + folder + "/" + filename + "/",
         type: "DELETE",
         success: function () {
           $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
@@ -252,17 +252,12 @@
     })
   }
 
-  function downloadFile(filename) {
+  function downloadFile(folder, filename) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-    window.open("{{request.prefix}}/execute/downloadfromfolder/" + filename + '/', '_blank');
+    window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
   }
 
-  function CancelUpload() {
-    console.log('cancelling');
-  }
-
-  function uploadFiles() {
-
+  function uploadFiles(folder) {
     if ($('#inputfiles').get(0).files.length === 0)
       return;
 
@@ -292,18 +287,18 @@
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
-          '<input type="submit" id="closemodalbutton" onclick="CancelUpload()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
+          '<input type="submit" id="closemodalbutton" onclick="CancelImport()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
     if (document.queryCommandSupported('copy')) {
       modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
     }
-    modalcontent += '<input type="submit" id="canceluploadbutton" onclick="CancelUpload()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel upload"|capfirst %}">';
+    modalcontent += '<input type="submit" id="canceluploadbutton" onclick="CancelImport()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel upload"|capfirst %}">';
     modalcontent += '</div>'+'</div>'+'</div>';
     $("#popup").html(modalcontent).modal('show');
 
     $('#uploadResponse').css('display','block');
     xhr = $.ajax({
       type: 'post',
-      url: '{{request.prefix}}/execute/uploadtofolder/',
+      url: '{{request.prefix}}/execute/uploadtofolder/' + folder + "/",
       cache: false,
       data: data,
       success: function (data) {
@@ -311,30 +306,24 @@
         el.empty();
         $("#animatedcog").css('visibility','hidden');
         var lines = data.split('\n');
-        for (var i = 0; i < lines.length; i++) {
-          if (lines[i].endsWith('OK')) {
-            el.append('<div>'+lines[i]+'</div>');
-          } else {
-            el.append('<div class="danger">'+lines[i]+'</div>');
-          }
-        }
+        for (var i = 0; i < lines.length; i++)
+          el.append(lines[i] + '<br>');
         el.scrollTop(el[0].scrollHeight - el.height());
-        if (document.queryCommandSupported('copy')) {
+        if (document.queryCommandSupported('copy'))
           $('#copytoclipboard').show();
-        }
         $('#canceluploadbutton').hide();
-        // Resetting the value of filename. This is only done to avoid a
-        // corner case where Internet Explorer is uploading a cached
-        // (potentially outdated or even deleted) file.
-        // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads
-        $('#inputfiles').val('');
       },
       error: function (result, stat, errorThrown) {
-        $("#popup .modal-body>p").addClass('alert alert-danger');
-        $("#popup .modal-body>p").text(gettext('The files were not uploaded'));
-        $('#confirmbutton').hide();
-        $('#cancelbutton').attr('value', gettext('Close'));
-        $('#cancelbutton').one('click', function() {$("#popup").hide();});
+        var el = $('#uploadResponse');
+        el.empty();
+        $("#animatedcog").css('visibility','hidden');
+        var lines = result.responseText.split('\n');
+        for (var i = 0; i < lines.length; i++)
+          el.append(lines[i] + '<br>');
+        el.scrollTop(el[0].scrollHeight - el.height());
+        if (document.queryCommandSupported('copy'))
+          $('#copytoclipboard').show();
+        $('#canceluploadbutton').hide();
         },
       processData: false,
       contentType: false
@@ -617,7 +606,7 @@
     <div class="panel panel-default">
       <div class="panel-heading" data-parent="#tasks" role="tab" id="achtsteHeading" data-toggle="collapse" data-target="#achtsteAccord">
         <h4 class="panel-title">
-          <a role="button">{% trans "Export data files in folder" %}</a>
+          <a role="button">{% trans "Export data files to folder" %}</a>
         </h4>
       </div>
       <div id="achtsteAccord" class="panel-collapse collapse" role="tabpanel" aria-labelledby="achtsteHeading">
@@ -646,12 +635,12 @@
                 <td>{{j.2}}</td>
                 <td>{{j.1}}</td>
                 <td>
-                  <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadFile('{{j.0}}')">
+                  <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadFile(1, '{{j.0}}')">
                     <span class="fa fa-arrow-down"></span>
                   </div>
                 </td>
                 <td>
-                  <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteFile('{{j.0}}')">
+                  <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteFile(1, '{{j.0}}')">
                     <span class="fa fa-close"></span>
                   </div>
                 </td>
@@ -687,7 +676,7 @@
 								<td><strong>{% trans 'size'|capfirst %}</strong></td>
 								<td><strong>{% trans 'changed'|capfirst %}</strong></td>
                 <td colspan="2">
-                  <label class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="Copy files to folder" onchange="uploadFiles()">
+                  <label class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="Copy files to folder" onchange="uploadFiles(0)">
                     <input multiple type="file" id="inputfiles" name="inputfiles" style="display: none;">
                     <span class="fa fa-arrow-up"></span>
                   </label>
@@ -700,12 +689,12 @@
                 <td>{{j.2}}</td>
                 <td>{{j.1}}</td>
                 <td>
-                  <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadFile('{{j.0}}')">
+                  <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadFile(0, '{{j.0}}')">
                     <span class="fa fa-arrow-down"></span>
                   </div>
                 </td>
                 <td>
-                  <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteFile('{{j.0}}')">
+                  <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteFile(0, '{{j.0}}')">
                     <span class="fa fa-close"></span>
                   </div>
                 </td>

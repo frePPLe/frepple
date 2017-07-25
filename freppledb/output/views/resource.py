@@ -109,7 +109,7 @@ class OverviewReport(GridPivot):
         return (1.0 / 168.0, _('weeks'))
       else:
         return (1.0 / 24.0, _('days'))
-    except:
+    except Exception:
       return (1.0 / 24.0, _('days'))
 
   @classmethod
@@ -307,35 +307,150 @@ class DetailReport(GridReport):
     GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldText('setup', title=_('setup'), editable=False),
+    GridFieldText('setup', title=_('setup'), editable=False, initially_hidden=True),
     # Optional fields referencing the item
-    GridFieldText('operationplan__operation__item__description', title=string_concat(_('item'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__item__category', title=string_concat(_('item'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__item__owner', title=string_concat(_('item'), ' - ', _('owner')),
-      field_name='operationplan__operation__item__owner__name', initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__item__source', title=string_concat(_('item'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('operationplan__operation__item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
-    # Optional fields referencing the location
-    GridFieldText('operationplan__operation__location__description', title=string_concat(_('location'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__location__category', title=string_concat(_('location'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('operationplan__operation__location__available', title=string_concat(_('location'), ' - ', _('available')),
+    GridFieldText(
+      'operationplan__operation__item__description', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'operationplan__operation__item__category', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'operationplan__operation__item__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'operationplan__operation__item__owner', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='operationplan__operation__item__owner__name'
+      ),
+    GridFieldText(
+      'operationplan__operation__item__source', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'operationplan__operation__item__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('last modified')),
+      ),
+    # Optional fields referencing the operation location
+    GridFieldText(
+      'operationplan__operation__location__description',
+      initially_hidden=True, editable=False,
+      title=string_concat(_('location'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'operationplan__operation__location__category',
+      title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operationplan__operation__location__subcategory',
+      title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operationplan__operation__location__available', editable=False,
+      title=string_concat(_('location'), ' - ', _('available')),
       initially_hidden=True, field_name='operationplan__operation__location__available__name', formatter='detail',
-      extra='"role":"input/calendar"', editable=False),
-    GridFieldText('operationplan__operation__location__owner', title=string_concat(_('location'), ' - ', _('owner')),
-      initially_hidden=True, field_name='operationplan__operation__location__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('operationplan__operation__location__source', title=string_concat(_('location'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('operationplan__operation__location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+      extra='"role":"input/calendar"'
+      ),
+    GridFieldText(
+      'operationplan__operation__location__owner', initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('owner')),
+      field_name='operationplan__operation__location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'operationplan__operation__location__source', initially_hidden=True, editable=False,
+      title=string_concat(_('location'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'operationplan__operation__location__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('location'), ' - ', _('last modified'))
+      ),
+    # Optional fields referencing the resource
+    GridFieldText(
+      'resource__description', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'resource__category', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'resource__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'resource__type', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('type'))
+      ),
+    GridFieldNumber(
+      'resource__maximum', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maximum'))
+      ),
+    GridFieldText(
+      'resource__maximum_calendar', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maximum calendar')),
+      field_name='resource__maximum_calendar__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldCurrency(
+      'resource__cost', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('cost'))
+      ),
+    GridFieldDuration(
+      'resource__maxearly', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maxearly'))
+      ),
+    GridFieldText(
+      'resource__setupmatrix', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('setupmatrix')),
+      field_name='resource__setupmatrix__name',
+      formatter='detail', extra='"role":"input/setupmatrix"'
+      ),
+    GridFieldText(
+      'resource__setup', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('setup'))
+      ),
+    GridFieldText(
+      'resource_location', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('location')),
+      field_name='resource__location__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
+    # Optional fields referencing the resource location
+    GridFieldText(
+      'resource__location__description', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'resource__location__category', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'resource__location__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'resource__location__available', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('available')),
+      field_name='resource__location__available__name', formatter='detail',
+      extra='"role":"input/calendar"'
+      ),
+    GridFieldText(
+      'resource__location__owner', extra='"role":"input/location"', editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='resource__location__owner__name', formatter='detail'
+      ),
+    GridFieldText(
+      'resource__location__source', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'resource__location__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('last modified'))
+      ),
     )

@@ -1611,7 +1611,7 @@ class OperationPlanDetail(View):
                 "date": m['startdate'].strftime("%Y-%m-%dT%H:%M:%S"),
                 "quantity": float(m['quantity']),
                 "resource": {
-                  "name": m['resource']
+                  "name": m['resource_id']
                   }
                 })
 

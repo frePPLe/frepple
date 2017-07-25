@@ -1191,7 +1191,10 @@ class OperationPlanResource(AuditModel):
   )
 
   # Database fields
-  resource = models.CharField(_('resource'), max_length=300, db_index=True)
+  resource = models.ForeignKey(
+    Resource, verbose_name=_('resource'), db_index=True,
+    related_name="operationplanresources", on_delete=models.CASCADE
+    )
   operationplan = models.ForeignKey(
     OperationPlan, verbose_name=_('operationplan'), db_index=True,
     related_name="resources", on_delete=models.CASCADE

@@ -1475,6 +1475,8 @@ class GridReport(View):
 
             ### Case 3: Process a data row
             else:
+              # Yield some result so we can detect disconnect clients and interrupt the upload
+              yield ' '
               try:
                 # Step 1: Build a dictionary with all data fields
                 d = {}
@@ -1736,6 +1738,8 @@ class GridReport(View):
 
             # Case 3: Process a data row
             else:
+              # Yield some result so we can detect disconnect clients and interrupt the upload
+              yield ' '              
               datarows += 1
               try:
                 # Step 1: Build a dictionary with all data fields
@@ -2778,6 +2782,8 @@ def importWorkbook(request):
 
             else:
               # Process a data row
+              # Yield some result so we can detect disconnect clients and interrupt the upload
+              yield ' '
               # Step 1: Build a dictionary with all data fields
               d = {}
               colnum = 0

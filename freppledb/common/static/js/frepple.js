@@ -2511,6 +2511,7 @@ function import_show(url)
     });
     $('#cancelimportbutton').show().on('click', function() {
       xhr.abort();
+      $("#animatedcog").css('visibility','hidden');
       $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
     });
     xhr = $.ajax({
@@ -2541,6 +2542,7 @@ function import_show(url)
       error: function() {
         $('#cancelimportbutton').hide();
         $('#copytoclipboard').show();
+        $("#animatedcog").css('visibility','hidden');
         $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
       },
       processData: false,

@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:409
@@ -18,17 +18,16 @@ msgid "%s allocated out of %s"
 msgstr "%s 分配出 %s"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:45
-#, fuzzy
 #| msgid "location"
 msgid "action"
-msgstr "位置"
+msgstr "動作"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1013
 #: freppledb/planningboard/static/planningboard/planningboard.html:1036
 #: freppledb/planningboard/static/planningboard/planningboard.html:1054
 #: freppledb/planningboard/static/planningboard/planningboard.html:1072
 msgid "Add to the graph"
-msgstr ""
+msgstr "添加到图表"
 
 #: freppledb/forecast/static/forecast/forecast.html:380
 msgid "aggregate"
@@ -41,6 +40,9 @@ msgid ""
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
+"一個操作獲得其類別的顏色。<br>\n"
+"                        操作類別應填寫操作表上\n"
+"                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1304
 msgid ""
@@ -49,6 +51,9 @@ msgid ""
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
+"一個操作獲得其子類別的顏色。<br>\n"
+"                        操作子類別應填寫操作表上\n"
+"                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1198
 msgid ""
@@ -57,6 +62,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
+"一個操作獲得顏色它所生成項目的類別。<br>\n"
+"                        項目類別應填寫在項目表中。\n"
+"                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1233
 msgid ""
@@ -65,6 +73,9 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
+"一個操作獲得顏色它所生成項目的字類別。<br>\n"
+"                        項目子類別應填寫在項目表中。\n"
+"                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:105
 #: freppledb/planningboard/static/planningboard/planningboard.html:311
@@ -102,7 +113,7 @@ msgstr "類別"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1016
 msgid "Clear the plan of selected demands"
-msgstr ""
+msgstr "刪除所選需求的計劃"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:107
 #: freppledb/planningboard/static/planningboard/planningboard.html:321
@@ -116,10 +127,9 @@ msgid "color by"
 msgstr "顏色的"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:157
-#, fuzzy
 #| msgid "color by"
 msgid "colors"
-msgstr "顏色的"
+msgstr "顏色"
 
 #: freppledb/forecast/static/forecast/forecast.html:134
 msgid "comments"
@@ -172,13 +182,12 @@ msgstr "危急程度"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1103
 msgid "Criticality color setup"
-msgstr ""
+msgstr "關鍵顏色設置"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:75
-#, fuzzy
 #| msgid "onhand"
 msgid "current onhand"
-msgstr "現有庫存量"
+msgstr "目前的現有量"
 
 #: freppledb/forecast/static/forecast/forecast.html:166
 #: freppledb/planningboard/static/planningboard/planningboard.html:679
@@ -227,7 +236,7 @@ msgstr "延期"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1133
 msgid "Delay color setup"
-msgstr ""
+msgstr "延遲的顏色設置"
 
 #: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:41
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:41
@@ -235,16 +244,14 @@ msgid "Delivery"
 msgstr "交付"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:138
-#, fuzzy
 #| msgid "Delivery"
 msgid "delivery date"
-msgstr "交付"
+msgstr "交貨日期"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:129
-#, fuzzy
 #| msgid "quantity"
 msgid "delivery quantity"
-msgstr "數量"
+msgstr "交貨數量"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:142
@@ -314,7 +321,7 @@ msgstr "交期日"
 #: freppledb/planningboard/static/planningboard/planningboard.html:448
 #: freppledb/planningboard/static/planningboard/planningboard.html:562
 msgid "Duplicate"
-msgstr ""
+msgstr "重复"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:41
 #: freppledb/planningboard/static/planningboard/planningboard.html:269
@@ -342,7 +349,7 @@ msgstr "估計預报錯誤"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
-msgstr ""
+msgstr "可行性"
 
 #: freppledb/forecast/static/forecast/forecast.html:106
 #: freppledb/forecast/static/forecast/forecast.html:131
@@ -400,8 +407,6 @@ msgstr "間歇的"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:557
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:60
-#, fuzzy
-#| msgid "inventory status"
 msgid "inventory"
 msgstr "庫存"
 
@@ -422,24 +427,22 @@ msgid "item"
 msgstr "產品"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:30
-#, fuzzy
 #| msgid "category"
 msgid "item category"
-msgstr "類別"
+msgstr "項目類別"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1190
 msgid "Item category color setup"
-msgstr ""
+msgstr "項目類別顏色設置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
-#, fuzzy
 #| msgid "subcategory"
 msgid "item subcategory"
-msgstr "子類別"
+msgstr "項目子類別"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1225
 msgid "Item subcategory color setup"
-msgstr ""
+msgstr "項目子類別顏色設置"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "items"
@@ -482,7 +485,6 @@ msgid "maximum lateness (in days)"
 msgstr "最大延遲時間(天數)"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:154
-#, fuzzy
 msgid "messages"
 msgstr "消息"
 
@@ -557,7 +559,7 @@ msgstr "現有庫存量"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:41
 msgid "onhand at lead time"
-msgstr ""
+msgstr "在交貨時間的現有量"
 
 #: freppledb/forecast/static/forecast/forecast.html:280
 msgid "open orders"
@@ -570,24 +572,22 @@ msgid "operation"
 msgstr "操作"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
-#, fuzzy
 #| msgid "operation"
 msgid "operation category"
-msgstr "操作"
+msgstr "操作類別"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1260
 msgid "Operation category color setup"
-msgstr ""
+msgstr "操作類別的顏色設置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:39
-#, fuzzy
 #| msgid "subcategory"
 msgid "operation subcategory"
-msgstr "子類別"
+msgstr "操作子類別"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1296
 msgid "Operation subcategory color setup"
-msgstr ""
+msgstr "操作子類別的顏色設置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:216
 msgid "Operationplan"
@@ -644,7 +644,7 @@ msgstr "優先權"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1161
 msgid "Priority color setup"
-msgstr ""
+msgstr "優先的顏色設置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1168
 msgid ""
@@ -654,6 +654,9 @@ msgid ""
 "value the lower the priority.\n"
 "                        <br><br>"
 msgstr ""
+"優先級是一個需求屬性，在需求表中。優先級值將對計劃結果產生影響。<br>\n"
+"                       最高優先級值是0，值越大優先級越低。\n"
+"                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:37
 #: freppledb/planningboard/static/planningboard/planningboard.html:817
@@ -730,11 +733,11 @@ msgstr "參考"
 #: freppledb/planningboard/static/planningboard/planningboard.html:451
 #: freppledb/planningboard/static/planningboard/planningboard.html:565
 msgid "Remove"
-msgstr ""
+msgstr "刪除"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:63
 msgid "remove row"
-msgstr ""
+msgstr "刪除行"
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:233
 msgid "remove this demand from planning"
@@ -750,11 +753,11 @@ msgstr "重置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:48
 msgid "Resolve constraints during plan changes by moving to earlier dates"
-msgstr ""
+msgstr "在計劃更改期間，通過移動到較早的日期來解決約束"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:53
 msgid "Resolve constraints during plan changes by moving to later dates"
-msgstr ""
+msgstr "在計劃更改期間，通過移動到更晚的日期來解決約束"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:145
@@ -806,7 +809,7 @@ msgstr "不保存的模擬改變"
 #: freppledb/planningboard/static/planningboard/planningboard.html:454
 #: freppledb/planningboard/static/planningboard/planningboard.html:568
 msgid "Split in half"
-msgstr ""
+msgstr "分成兩半"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:39
 #: freppledb/planningboard/static/planningboard/planningboard.html:258
@@ -866,6 +869,11 @@ msgid ""
 "not immediately impact the delivery of any demand.\n"
 "                        <br><br>"
 msgstr ""
+"操作計劃的關鍵性測量可用的鬆弛時間直到客戶需求交付期。<br>\n"
+"                        關鍵性為0表示這個訂單是在一個或多個要求的關鍵路徑上。"
+"<br>\n"
+"                        較高的關鍵值表明延遲不會立即影響任何需求的交付。\n"
+"                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
 msgid ""
@@ -875,6 +883,10 @@ msgid ""
 "operations still required to produce the finished end item.\n"
 "                        <br><br>"
 msgstr ""
+"操作計劃的延遲將其結束日期與提供的客戶需求的交貨期進行比較。<br>\n"
+"                        這也考慮到後續操作的持續時間還需要生產完成的最終項"
+"目。\n"
+"                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 #: freppledb/planningboard/static/planningboard/planningboard.html:117

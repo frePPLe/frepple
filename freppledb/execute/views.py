@@ -477,13 +477,21 @@ class FileManager:
   '''
 
   @staticmethod
-  def getFolder(request, foldercode):
+  def getFolderInfo(request, foldercode):
     if foldercode == '0':
-      return settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+      # File upload folder
+      return (
+        settings.DATABASES[request.database]['FILEUPLOADFOLDER'],
+        ('.csv', '.csv.gz')
+        )
     elif foldercode == '1':
-      return os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
+      # Export folder
+      return (
+        os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export'),
+        None  # No upload here
+        )
     else:
-      return HttpResponseNotAllowed(['post'], content='Only POST request method is allowed')
+      raise Http404('Invalid folder code')
 
 
   @staticmethod
@@ -499,13 +507,13 @@ class FileManager:
       return HttpResponseNotFound('Missing file selection in request')
     errorcount = 0
     response = HttpResponse()
-    folder = FileManager.getFolder(request, foldercode)
+    folder, extensions = FileManager.getFolder(request, foldercode)
     for filename, content in request.FILES.items():
       try:
         # Validate file name
         clean_filename = re.split(r'/|:|\\', filename)[-1]
-        if not clean_filename.endswith(('.csv', '.csv.gz')):
-          response.write('%s: %s ' % (clean_filename, _("Extension must be .csv or .csv.gz") ) + '\n')
+        if not extensions or not clean_filename.endswith(extensions):
+          response.write('%s: %s ' % (clean_filename, _("Filename extension must be among %s") ) + '\n')
           errorcount += 1
           continue
 
@@ -533,7 +541,7 @@ class FileManager:
   def deleteFilefromFolder(request, foldercode, filename):
     if request.method != 'DELETE':
       return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
-    folder = FileManager.getFolder(request, foldercode)
+    folder = FileManager.getFolder(request, foldercode)[0]
 
     try:
       clean_filename = re.split(r'/|:|\\', filename)[-1]
@@ -551,7 +559,7 @@ class FileManager:
   def downloadFilefromFolder(request, foldercode, filename):
     if request.method != 'GET':
       return HttpResponseNotAllowed(['get'], content='Only GET request method is allowed')
-    folder = FileManager.getFolder(request, foldercode)
+    folder = FileManager.getFolder(request, foldercode)[0]
 
     try:
       clean_filename = filename.split('/')[0]

@@ -809,17 +809,18 @@ class GridReport(View):
         sortfield, dir = s.strip().split(" ", 1)
         sortBasefield = sortfield.split('__')[0].strip()
         added = False
-        for field in reportclass.model._meta.get_fields():
-          if field.name == sortBasefield:
-            sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
-            added = True
-            break
-        if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:
-          for field in reportclass.model.__base__._meta.get_fields():
+        if reportclass.model is not None:
+          for field in reportclass.model._meta.get_fields():
             if field.name == sortBasefield:
               sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
               added = True
               break
+          if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:
+            for field in reportclass.model.__base__._meta.get_fields():
+              if field.name == sortBasefield:
+                sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
+                added = True
+                break
         if sortfield.strip() in query.query.extra_select and not added:
           sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
       if sortargs:

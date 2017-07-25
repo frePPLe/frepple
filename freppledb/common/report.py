@@ -675,7 +675,7 @@ class GridReport(View):
       writer.writerow([
         force_text(f.title, encoding=encoding, errors="ignore").title()
         for f in reportclass.rows
-        if f.title and not f.hidden and not i.initially_hidden
+        if f.title and not f.hidden and not f.initially_hidden
         ])
       fields = [
         i.field_name

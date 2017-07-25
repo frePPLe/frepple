@@ -507,13 +507,13 @@ class FileManager:
       return HttpResponseNotFound('Missing file selection in request')
     errorcount = 0
     response = HttpResponse()
-    folder, extensions = FileManager.getFolder(request, foldercode)
+    folder, extensions = FileManager.getFolderInfo(request, foldercode)
     for filename, content in request.FILES.items():
       try:
         # Validate file name
         clean_filename = re.split(r'/|:|\\', filename)[-1]
         if not extensions or not clean_filename.endswith(extensions):
-          response.write('%s: %s ' % (clean_filename, _("Filename extension must be among %s") ) + '\n')
+          response.write('%s: %s\n' % (clean_filename, _("Filename extension must be among %(ext)s") % {"ext": ", ".join(extensions)}))
           errorcount += 1
           continue
 
@@ -541,7 +541,7 @@ class FileManager:
   def deleteFilefromFolder(request, foldercode, filename):
     if request.method != 'DELETE':
       return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
-    folder = FileManager.getFolder(request, foldercode)[0]
+    folder = FileManager.getFolderInfo(request, foldercode)[0]
 
     try:
       clean_filename = re.split(r'/|:|\\', filename)[-1]
@@ -559,7 +559,7 @@ class FileManager:
   def downloadFilefromFolder(request, foldercode, filename):
     if request.method != 'GET':
       return HttpResponseNotAllowed(['get'], content='Only GET request method is allowed')
-    folder = FileManager.getFolder(request, foldercode)[0]
+    folder = FileManager.getFolderInfo(request, foldercode)[0]
 
     try:
       clean_filename = filename.split('/')[0]

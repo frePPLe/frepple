@@ -2143,11 +2143,18 @@ class GridPivot(GridReport):
       page = 1
       recs = 1
       total_pages = 1
-      query = reportclass.query(
-        request,
-        reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
-        sortsql="1 asc"
-        )
+      if isinstance(reportclass.basequeryset, collections.Callable):
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset(request, args, kwargs).filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
+      else:
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       if isinstance(reportclass.basequeryset, collections.Callable):

@@ -61,16 +61,27 @@ are required:
    Since frePPle requires some patches to the standard Django package, so the source
    from our cloned and patched version of django will be downloaded and installed.
 
-   In the root of your Python install you will find a "requirements.txt" file containing a list like:
+   In the root of your Python install you will find a "requirements.txt" file containing a list as 
+   shown below. You can always pick up the correct version from 
+   https://raw.githubusercontent.com/frepple/frepple/4.2/requirements.txt
+   (make sure to replace 4.2 with the appropriate version number!)
+   
    ::
 
       CherryPy >= 3.2.2
-      et-xmlfile >= 1.0.0
-      html5lib >= 0.999
-      jdcal >= 1.0
-      openpyxl >= 2.3.0-b2
-      https://github.com/frePPLe/django/tarball/frepple_3.0
-      djangorestframework >= 3.3.1
+      CherryPy == 5.1.0
+      djangorestframework == 3.6.2
+      djangorestframework-bulk == 0.2.1
+      djangorestframework-filters == 0.10.0
+      django-admin-bootstrapped
+      django-bootstrap3 == 8.2.2
+      html5lib == 0.999
+      jdcal == 1.0.1
+      Markdown == 2.6.8
+      openpyxl == 2.4.7
+      lxml == 3.7.3
+      PyJWT == 1.5.0
+      https://github.com/frePPLe/django/tarball/frepple_4.2
 
    To install the requirements just issue a pip3 command:
    ::

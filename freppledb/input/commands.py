@@ -1259,7 +1259,7 @@ class loadOperationPlanResources(LoadTask):
       cnt = 0
       starttime = time()
       cursor.execute('''
-        select resource, quantity, operationplan_id
+        select resource_id, quantity, operationplan_id
         from operationplanresource
         where status <> 'proposed'
       ''')

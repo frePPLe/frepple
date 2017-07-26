@@ -104,7 +104,7 @@ def exportLoadplans():
   starttime = time()
   writer = csv.writer(open("loadplans.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
-    '#operationplan id', 'resource', 'quantity', 'start date', 'end date', 'setup'
+    '#operationplan id', 'resource_id', 'quantity', 'start date', 'end date', 'setup'
     ))
   for i in frepple.resources():
     for j in i.loadplans:

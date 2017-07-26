@@ -485,7 +485,7 @@ class export:
       cursor.copy_from(
         tmp,
         'operationplanresource',
-        columns=('operationplan_id', 'resource', 'quantity', 'startdate', 'enddate', 'setup', 'status', 'lastmodified')
+        columns=('operationplan_id', 'resource_id', 'quantity', 'startdate', 'enddate', 'setup', 'status', 'lastmodified')
         )
       tmp.close()
     if self.verbosity:

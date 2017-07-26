@@ -35,7 +35,7 @@ function drawGraphs(jsondata)
 
   // Define X-axis
   var domain_x = [];
-  var bucketnamelength = 0;
+  var bucketnamelength = 0;  
   for (var i in timebuckets)
   {
     domain_x.push(timebuckets[i]['name']);
@@ -74,7 +74,9 @@ function drawGraphs(jsondata)
         'proposed_start': tmp[0],
         'total_start': tmp[1],
         'proposed_end': tmp[2],
-        'total_end': tmp[3]
+        'total_end': tmp[3],
+        'proposed_production': tmp[4],
+        'total_production': tmp[5]
         });
       if (tmp[1] > max_y && 1 in fields)
         max_y = tmp[1];
@@ -84,10 +86,30 @@ function drawGraphs(jsondata)
         max_y = tmp[3];
       else if (tmp[2] > max_y && 2 in fields)
         max_y = tmp[2];
+      if (tmp[5] > max_y && 5 in fields)
+        max_y = tmp[5];
+      else if (tmp[4] > max_y && 4 in fields)
+        max_y = tmp[4];        
     }
 
     // Update the scale of the Y-axis by looking for the max value
     y.domain([0,max_y]);
+
+    // Number of bars to display
+    var numbars = 0;
+    var barnum = [0, 1, 2];
+    if (0 in fields || 1 in fields)
+      numbars++;
+    else {
+      barnum[1]--;
+      barnum[2]--;
+    }      
+    if (2 in fields || 3 in fields)
+      numbars++;
+    else
+      barnum[2]--;
+    if (4 in fields || 5 in fields)
+      numbars++;
 
     // D3 visualization
     svg.selectAll("g")
@@ -120,6 +142,10 @@ function drawGraphs(jsondata)
           + (Math.round(d['proposed_end']*10)/10)
           + '</td></tr><tr><td>{{_('total ends')|capfirst}}</td><td style="text-align:center">'
           + (Math.round(d['total_end']*10)/10)
+          + '</td></tr><tr><td>{{_('proposed production')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['proposed_production']*10)/10)
+          + '</td></tr><tr><td>{{_('total production')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['total_production']*10)/10)
           + '</td></tr></table>'
           );
         })
@@ -128,12 +154,12 @@ function drawGraphs(jsondata)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
-        if (d['total_start'] > d['proposed_start'] && 0 in fields)
+        if (d['total_start'] > d['proposed_start'] && 1 in fields)
         {
           top = y(d['total_start'] - d['proposed_start']);
           bucket.append("rect")
-            .attr("width", x_width/2)
-            .attr("x", x_width/2)
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[0] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
             .style("fill","#113C5E")
@@ -145,18 +171,18 @@ function drawGraphs(jsondata)
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+			            +"&startdate__gte="+timebuckets[d['bucket']]['startdate'];
 
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
         }
-        if (d['proposed_start'] > 0 && 1 in fields)
+        if (d['proposed_start'] > 0 && (0 in fields || 1 in fields))
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
-            .attr("width", x_width/2)
-            .attr("x", x_width/2)
+            .attr("width", x_width/numbars) 
+            .attr("x", barnum[0] * x_width / numbars)          
             .attr("y", newtop)
             .attr("height", top - newtop)
             .style("fill","#2B95EC")
@@ -168,7 +194,7 @@ function drawGraphs(jsondata)
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
 			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+			            +"&startdate__gte="+timebuckets[d['bucket']]['startdate'];
 
                 var coord = d3.mouse(document.body);
 
@@ -176,11 +202,59 @@ function drawGraphs(jsondata)
               });
         }
         top = y(0);
-        if (d['total_end'] > d['proposed_end'] && 2 in fields)
+        if (d['total_production'] > d['proposed_production'] && 5 in fields)
+        {
+          top = y(d['total_production'] - d['proposed_production']);
+          bucket.append("rect")
+            .attr("width", x_width / numbars)
+            .attr("x", barnum[1] * x_width / numbars)
+            .attr("y", top)
+            .attr("height", y(0) - top)
+            .style("fill","#0C3B00")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_production'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+
+			          window.location = "{{ request.prefix }}"
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lte="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
+
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }
+        if (d['proposed_production'] > 0 && (4 in fields || 5 in fields))
+        {
+          var newtop = y(d['total_production']);
+          bucket.append("rect")
+            .attr("width", x_width / numbars)
+            .attr("x", barnum[1] * x_width / numbars)
+            .attr("y", newtop)
+            .attr("height", top - newtop)
+            .style("fill","#8BBA00")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_production'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+
+			          window.location = "{{ request.prefix }}"
+			            +"/data/input/manufacturingorder/"
+			            +"?operation__name="+admin_escape(d['operation'])
+			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
+
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }
+        top = y(0);
+        if (d['total_end'] > d['proposed_end'] && 3 in fields)
         {
           top = y(d['total_end'] - d['proposed_end']);
           bucket.append("rect")
-            .attr("width", x_width/2)
+            .attr("width", x_width / numbars)
+            .attr("x", barnum[2] * x_width / numbars)
             .attr("y", top)
             .attr("height", y(0) - top)
             .style("fill","#7B5E08")
@@ -191,18 +265,19 @@ function drawGraphs(jsondata)
 			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
-			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+			            +"&enddate__lte="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
 
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
         }
-        if (d['proposed_end'] > 0 && 3 in fields)
+        if (d['proposed_end'] > 0 && (2 in fields || 3 in fields))
         {
           var newtop = y(d['total_end']);
           bucket.append("rect")
-            .attr("width", x_width/2)
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[2] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
             .style("fill","#F6BD0F")
@@ -213,13 +288,13 @@ function drawGraphs(jsondata)
 			          window.location = "{{ request.prefix }}"
 			            +"/data/input/manufacturingorder/"
 			            +"?operation__name="+admin_escape(d['operation'])
-			            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-			            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+			            +"&enddate__lte="+timebuckets[d['bucket']]['enddate']
+			            +"&enddate__gt="+timebuckets[d['bucket']]['startdate'];
 
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
-        }
+        }        
       });
 
     // Display Y-Axis
@@ -256,6 +331,8 @@ function drawGraphs(jsondata)
       ["{{_('proposed starts')|capfirst}}", "#2B95EC"],
       ["{{_('approved and confirmed ends')|capfirst}}", "#7B5E08"],
       ["{{_('proposed ends')|capfirst}}", "#F6BD0F"],
+      ["{{_('approved and confirmed production')|capfirst}}", "#0C3B00"],
+      ["{{_('proposed production')|capfirst}}", "#8BBA00"],
       ];
     for (var i in cross_idx)
     {
@@ -285,46 +362,67 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[0] != 0.0)
-    result += cellvalue[0] + '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+    result += (Math.round(cellvalue[0]*10)/10) + '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                         admin_escape(rowdata['operation']) +
                                                          '&amp;startdate__gte=' + options['colModel']['startdate'] +
                                                                '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                         '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                         '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
 		    else
-		      result += '0.0</br>';
+		      result += '0.0<br>';
         break;
       case 1:
 			  if (cellvalue[1] != 0.0)
-    result += cellvalue[1] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+    result += (Math.round(cellvalue[1]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                                   admin_escape(rowdata['operation']) +
                                                             '&startdate__gte=' + options['colModel']['startdate'] +
                                                                   '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
 			  else
-			    result += '0.0<br/>';
+			    result += '0.0<br>';
 			  break;
 	    case 2:
 			  if (cellvalue[2] != 0.0)
-    result += cellvalue[2] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+    result += (Math.round(cellvalue[2]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                                   admin_escape(rowdata['operation']) +
-                                                            '&enddate__gte=' + options['colModel']['startdate'] +
-                                                                  '&amp;enddate__lt=' + options['colModel']['enddate'] +
-                                                            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                            '&enddate__gt=' + options['colModel']['startdate'] +
+                                                                  '&amp;enddate__lte=' + options['colModel']['enddate'] +
+                                                            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
 			  else
-			    result += '0.0<br/>';
+			    result += '0.0<br>';
 			  break;
       case 3:
 			  if (cellvalue[3] != 0.0)
-    result += cellvalue[3] +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+    result += (Math.round(cellvalue[3]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
                                                                   admin_escape(rowdata['operation']) +
-                                                            '&enddate__gte=' + options['colModel']['startdate'] +
-                                                                  '&amp;enddate__lt=' + options['colModel']['enddate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                                            '&enddate__gt=' + options['colModel']['startdate'] +
+                                                                  '&amp;enddate__lte=' + options['colModel']['enddate'] +
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
 			  else
-			    result += '0.0<br/>';
+			    result += '0.0<br>';
         break;
+      case 4:
+			  if (cellvalue[4] != 0.0)
+    result += (Math.round(cellvalue[4]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+                                                                  admin_escape(rowdata['operation']) +
+                                                            '&startdate__lte=' + options['colModel']['enddate'] +
+                                                                  '&amp;enddate__gt=' + options['colModel']['startdate'] +
+                                                                  '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+			  else
+			    result += '0.0<br>';
+        break;
+      case 5:
+			  if (cellvalue[5] != 0.0)
+    result += (Math.round(cellvalue[5]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+                                                                  admin_escape(rowdata['operation']) +
+                                                            '&startdate__lte=' + options['colModel']['enddate'] +
+                                                                  '&amp;enddate__gt=' + options['colModel']['startdate'] +
+                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+			  else
+			    result += '0.0<br>';
+        break;
+        
       default:
-        result += cellvalue[cross_idx[i]] + '</br>';
+        result += cellvalue[cross_idx[i]] + '<br>';
     }
   return result;
 };

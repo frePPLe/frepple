@@ -17,11 +17,14 @@
 
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
 from freppledb.input.models import Operation
-from freppledb.common.report import GridPivot, GridFieldText
+from freppledb.common.report import getHorizon, GridFieldNumber, GridFieldInteger
+from freppledb.common.report import GridPivot, GridFieldText, GridFieldDuration
+from freppledb.common.report import GridFieldCurrency, GridFieldDateTime, GridFieldLastModified
 
 
 class OverviewReport(GridPivot):
@@ -30,23 +33,154 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/operation.html'
   title = _('Operation report')
-  basequeryset = Operation.objects.all()
   model = Operation
   permissions = (("view_operation_report", "Can view operation report"),)
   help_url = 'user-guide/user-interface/plan-analysis/operation-report.html'
+
   rows = (
-    GridFieldText('operation', title=_('operation'), key=True, editable=False, field_name='name', formatter='detail', extra='"role":"input/operation"'),
-    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
+    GridFieldText(
+      'operation', title=_('operation'), key=True, editable=False, field_name='name', 
+      formatter='detail', extra='"role":"input/operation"'
+      ),
+    GridFieldText(
+      'location', title=_('location'), editable=False, field_name='location__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
+    # Optional fields on the operation
+    GridFieldText(
+      'item', title=_('item'), editable=False, field_name="item__name",
+      formatter='detail', extra='"role":"input/item"', initially_hidden=True
+      ),
+    GridFieldText(
+      'description', title=_('description'), editable=False, initially_hidden=True
+      ),
+    GridFieldText(
+      'category', title=_('category'), editable=False, initially_hidden=True
+      ),
+    GridFieldText(
+      'subcategory', title=_('subcategory'), editable=False, initially_hidden=True
+      ),
+    GridFieldText(
+      'type', title=_('type'), initially_hidden=True, editable=False
+      ),
+    GridFieldDuration(
+      'duration', title=_('duration'), initially_hidden=True, editable=False
+      ),
+    GridFieldDuration(
+      'duration_per', title=_('duration per unit'), initially_hidden=True, editable=False
+      ),
+    GridFieldDuration(
+      'fence', title=_('release fence'), initially_hidden=True, editable=False
+      ),
+    GridFieldDuration(
+      'posttime', title=_('post-op time'), initially_hidden=True, editable=False
+      ),
+    GridFieldNumber(
+      'sizeminimum', title=_('size minimum'), initially_hidden=True, editable=False
+      ),
+    GridFieldNumber(
+      'sizemultiple', title=_('size multiple'), initially_hidden=True, editable=False
+      ),
+    GridFieldNumber(
+      'sizemaximum', title=_('size maximum'), initially_hidden=True, editable=False
+      ),
+    GridFieldInteger(
+      'priority', title=_('priority'), initially_hidden=True, editable=False
+      ),
+    GridFieldDateTime(
+      'effective_start', title=_('effective start'), initially_hidden=True, editable=False
+      ),
+    GridFieldDateTime(
+      'effective_end', title=_('effective end'), initially_hidden=True, editable=False
+      ),
+    GridFieldCurrency(
+      'cost', title=_('cost'), initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'search', title=_('search mode'), initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'source', title=_('source'), initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'lastmodified', initially_hidden=True, editable=False
+      ),
+    # Optional fields on the location
+    GridFieldText(
+      'location__description', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'location__category', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'location__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'location__available', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('available')),
+      field_name='location__available__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('location'), ' - ', _('last modified'))
+      ),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'item__category', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'item__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'item__owner', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name'
+      ),
+    GridFieldText(
+      'item__source', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('last modified'))
+      ),
     )
+
   crosses = (
     ('proposed_start', {'title': _('proposed starts')}),
     ('total_start', {'title': _('total starts')}),
     ('proposed_end', {'title': _('proposed ends')}),
     ('total_end', {'title': _('total ends')}),
+    ('production_proposed', {'title': _('proposed production')}),
+    ('production_total', {'title': _('total production')}),
     )
 
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
+
+  @staticmethod
+  def basequeryset(request, args, kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'plan'
+      return Operation.objects.all()
+    else:
+      current, start, end = getHorizon(request)
+      return Operation.objects.all().extra(
+        where=['exists (select 1 from operationplan where operationplan.operation_id = operation.name and startdate <= %s and enddate >= %s)'],
+        params=[end, start]
+        )
+
+
+  @staticmethod
+  def extra_context(request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
@@ -62,56 +196,118 @@ class OverviewReport(GridPivot):
     # Run the query
     cursor = connections[request.database].cursor()
     query = '''
-        select x.row1, x.row2, x.col1, x.col2, x.col3,
-          min(x.proposed_start), min(x.total_start),
-          coalesce(sum(case when o2.status in ('proposed') then o2.quantity else 0 end),0),
-          coalesce(sum(o2.quantity),0)
-        from (
-          select oper.name as row1,  oper.location_id as row2,
-               d.bucket as col1, d.startdate as col2, d.enddate as col3,
-               coalesce(sum(case when o1.status in ('proposed') then o1.quantity else 0 end),0) as proposed_start,
-               coalesce(sum(o1.quantity),0) as total_start
-          from (%s) oper
-          -- Multiply with buckets
-          cross join (
-             select name as bucket, startdate, enddate
-             from common_bucketdetail
-             where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
-             ) d
-          -- Planned and frozen quantity, based on start date
-          left join operationplan o1
-          on oper.name = o1.operation_id
-          and d.startdate <= o1.startdate
-          and d.enddate > o1.startdate
-          and o1.type = 'MO'
-          and o1.status in ('approved','confirmed','proposed')
-          -- Grouping
-          group by oper.name, oper.location_id, d.bucket, d.startdate, d.enddate
-        ) x
-        -- Planned and frozen quantity, based on end date
-        left join operationplan o2
-        on x.row1 = o2.operation_id
-        and x.col2 <= o2.enddate
-        and x.col3 > o2.enddate
-        and o2.type = 'MO'
-        and o2.status in ('approved','confirmed','proposed')
-        -- Grouping and ordering
-        group by x.row1, x.row2, x.col1, x.col2, x.col3
-        order by %s, x.col2
-      ''' % (basesql, request.report_bucket,
-             request.report_startdate, request.report_enddate, sortsql)
+      select
+        operation.name, location.name, operation.item_id, operation.description,
+        operation.category, operation.subcategory, operation.type, operation.duration,
+        operation.duration_per, operation.fence, operation.posttime, operation.sizeminimum,
+        operation.sizemultiple, operation.sizemaximum, operation.priority, operation.effective_start,
+        operation.effective_end, operation.cost, operation.search, operation.source, operation.lastmodified,
+        location.description, location.category, location.subcategory, location.available_id,
+        location.lastmodified, item.description, item.category, item.subcategory, item.owner_id,
+        item.source, item.lastmodified,
+        res.bucket, res.startdate, res.enddate,
+        res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
+      from operation
+      left outer join item
+      on operation.item_id = item.name
+      left outer join location
+      on operation.location_id = location.name
+      inner join (
+        select oper.name as operation_id, d.bucket, d.startdate, d.enddate,
+         coalesce(sum(
+           case when operationplan.status = 'proposed'
+             and d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+           then operationplan.quantity
+           else 0 end
+           ), 0) proposed_start,
+         coalesce(sum(
+           case when d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+           then operationplan.quantity else 0 end
+           ), 0) total_start,
+         coalesce(sum(
+           case when operationplan.status = 'proposed'
+             and d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+           then operationplan.quantity else 0 end
+           ), 0) proposed_end,
+         coalesce(sum(
+           case when d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+           then operationplan.quantity else 0 end
+           ), 0) total_end,
+         coalesce(sum(
+           case when operationplan.status = 'proposed' then
+             extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
+             / extract(epoch from operationplan.enddate - operationplan.startdate)
+             * operationplan.quantity
+           else 0 end
+           ), 0) proposed_production,
+         coalesce(sum(
+           extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
+           / extract(epoch from operationplan.enddate - operationplan.startdate)
+           * operationplan.quantity
+           ), 0) total_production
+        from (%s) oper
+        -- Multiply with buckets
+        cross join (
+          select name as bucket, startdate, enddate
+          from common_bucketdetail
+          where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
+          ) d
+        -- Match overlapping operationplans
+        left outer join operationplan
+          on operationplan.operation_id = oper.name
+          and (operationplan.startdate, operationplan.enddate) overlaps (d.startdate, d.enddate)
+        group by oper.name, d.bucket, d.startdate, d.enddate
+      ) res
+      on res.operation_id = operation.name
+      order by %s, res.startdate
+      ''' % (
+        basesql, request.report_bucket,
+        request.report_startdate, request.report_enddate, sortsql
+        )
     cursor.execute(query, baseparams)
 
-    # Convert the SQl results to python
+    # Convert the SQl results to Python
     for row in cursor.fetchall():
       yield {
         'operation': row[0],
         'location': row[1],
-        'bucket': row[2],
-        'startdate': row[3].date(),
-        'enddate': row[4].date(),
-        'proposed_start': row[5],
-        'total_start': row[6],
-        'proposed_end': row[7],
-        'total_end': row[8],
+        'item': row[2],
+        'description': row[3],
+        'category': row[4],
+        'subcategory': row[5],
+        'type': row[6],
+        'duration': row[7],
+        'duration_per': row[8],
+        'fence': row[9],
+        'posttime': row[10],
+        'sizeminimum': row[11],
+        'sizemultiple': row[12],
+        'sizemaximum': row[13],
+        'priority': row[14],
+        'effective_start': row[15],
+        'effective_end': row[16],
+        'cost': row[17],
+        'search': row[18],
+        'source': row[19],
+        'lastmodified': row[20],
+        'location__description': row[21],
+        'location__category': row[22],
+        'location__subcategory': row[23],
+        'location__available': row[24],
+        'location__lastmodified': row[25],
+        'item__description': row[26],
+        'item__category': row[27],
+        'item__subcategory': row[28],
+        'item__owner': row[29],
+        'item__source': row[30],
+        'item__lastmodified': row[31],
+        'bucket': row[32],
+        'startdate': row[33].date(),
+        'enddate': row[34].date(),
+        'proposed_start': row[35],
+        'total_start': row[36],
+        'proposed_end': row[37],
+        'total_end': row[38],
+        'production_proposed': row[39],
+        'production_total': row[40]
         }

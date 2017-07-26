@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-07-25 13:16+0200\n"
-"PO-Revision-Date: 2017-07-25 16:46+0300\n"
+"PO-Revision-Date: 2017-07-26 17:15+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -1195,7 +1195,7 @@ msgstr "веб-сервис"
 
 #: execute/templates/execute/execute.html:722 input/models.py:608
 msgid "Start"
-msgstr "Пуск"
+msgstr "Запуск"
 
 #: execute/templates/execute/execute.html:724
 msgid "Start the web service."

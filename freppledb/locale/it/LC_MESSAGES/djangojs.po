@@ -12,7 +12,7 @@
 # Joao Ranita <jranita@frepple.com>, 2015, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.2\n"
+"Project-Id-Version: 4.3.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-17 10:38+0100\n"
 "PO-Revision-Date: 2017-03-17 12:09+0100\n"

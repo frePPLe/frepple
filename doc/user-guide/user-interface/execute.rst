@@ -68,35 +68,59 @@ in each sheet must contain the column names.
 .. image:: _images/execution-import.png
    :alt: Execution screen - Spreadsheet import
 
-Import/Export data files from folder
+Export plan result to folder
 ------------------------------------
 
-This task allows importing or exporting data from a set of CSV-formatted files.
+This task allows exporting data to a set of GZ compressed CSV-formatted files.
 The purpose of this task is to help the exchange of information with other systems.
 
 The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
-in the djangosettings.py configuration file. The log files importfromfolder.log 
-and exporttofolder.log record all data imports and file exports, in addition to 
-any data errors identified during their processing.
+in the djangosettings.py configuration file. The log file exporttofolder.log records
+file exports, in addition to any data errors identified during their processing.
+
+The export button will create files with plan data on UPLOADFILEFOLDER/export/ folder.
+
+In this option you can see a list of files present in the specified folder, and dowload
+each file by clicking on the arrow down button, or delete a file by clicking on the
+red button.
+
+.. image:: _images/execution-exportplantofolder.png
+   :alt: Execution screen - Export plan data to folder
+
+
+Import data files from folder
+------------------------------------
+
+This task allows importing data from a set of CSV-formatted files.
+The purpose of this task is to help the exchange of information with other systems.
+
+The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
+in the djangosettings.py configuration file. The log file importfromfolder.log records
+all data imports, in addition to any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
 
 * The name must match the data object they store: eg demand.csv, item.csv, ...
 
-* The first line of the file should contain the field names
+* The first line of the file should contain the field names.
 
-* The file should be in CSV format. The delimiter depends on the default
-  language (configured with LANGUAGE_CODE in djangosettings.py).
+* The file should be in CSV format, and may be compressed with GZ (eg demand.csv.gz).
+  The delimiter depends on the default language (configured with LANGUAGE_CODE
+  in djangosettings.py).
   For english-speaking countries it's a comma. For European countries
   it's a semicolon.
 
 * The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
-  setting in djangosettings.py)
+  setting in djangosettings.py).
 
-In this option you can see a list of files present in the specified folder.
+  In this option you can see a list of files present in the specified folder, and dowload
+  each file by clicking on the arrow down button, or delete a file by clicking on the
+  red button.
+  The arrow up button will give the user the possibility of selecting multiple files
+  to upload to that folder.
 
-.. image:: _images/execution-importexportfolder.png
-   :alt: Execution screen - Import/Export data from/to folder
+.. image:: _images/execution-importfilesfromfolder.png
+   :alt: Execution screen - Import data files from folder
 
 Web service
 -----------

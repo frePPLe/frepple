@@ -159,7 +159,7 @@ class ReportByDemand(GridReport):
       select
         pegging.due, operationplan.name, pegging.lvl, ops.pegged,
         pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
-        operationplan.status, operationplanresource.resource, operationplan.type,
+        operationplan.status, operationplanresource.resource_id, operationplan.type,
         case when operationplan.operation_id is not null then 1 else 0 end as show
       from pegging
       inner join operationplan

@@ -90,6 +90,12 @@ class OutputTest(TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
 
+  # Pegging
+  def test_output_pegging(self):
+    response = self.client.get('/demandpegging/Demand%2001/?format=json')
+    self.assertContains(response, '"records":1,')
+    self.assertEqual(response.status_code, 200)
+
   # Constraint
   def test_output_constraint(self):
     response = self.client.get('/constraint/?format=json')

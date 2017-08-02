@@ -54,7 +54,7 @@ function delayfmt(cellvalue, options, rowdata) {
   var thecolor0 = '';
   var thecolor1 = '';
   if (options.colModel.name === 'delay') {
-    var thenumber = sign * days + hours/24 + minutes/60*24 + seconds/3600/24;
+    var thenumber = sign * days + hours/24 + minutes/60/24 + seconds/3600/24;
     thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
     thecolor1 = '</div>';
     if (thenumber <= 0) {

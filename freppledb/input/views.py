@@ -1064,7 +1064,7 @@ class OperationList(GridReport):
     GridFieldText('category', title=_('category'), initially_hidden=True),
     GridFieldText('subcategory', title=_('subcategory'), initially_hidden=True),
     GridFieldChoice('type', title=_('type'), choices=Operation.types),
-    GridFieldText('item', title=_('item'), formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldDuration('duration', title=_('duration')),
     GridFieldDuration('duration_per', title=_('duration per unit')),

@@ -45,15 +45,16 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
     self.perms_map['HEAD'] = ['%(app_label)s.view_%(model_name)s']
 
     # match the permissions on the correct database
+    if not hasattr(request.user, '_state'):
+      return False
     request.user._state.db = request.database
-
 
     # Django is not checking if user is active or superuser on the scenario
     try:
       thisuser = User.objects.all().using(request.database).get(username=request.user)
       request.user.is_active = thisuser.is_active
       request.user.is_superuser = thisuser.is_superuser
-    except:
+    except Exception:
       request.user.is_active = False
       request.user.is_superuser = False
 

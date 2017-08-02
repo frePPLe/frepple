@@ -33,7 +33,14 @@ class OverviewReport(GridPivot):
   '''
   template = 'output/buffer.html'
   title = _('Inventory report')
-  basequeryset = OperationPlanMaterial.objects.all().order_by('item_id', 'location_id').distinct('item_id', 'location_id')
+
+  @classmethod
+  def basequeryset(reportclass, request, args, kwargs):
+    if len(args) and args[0]:
+      return Buffer.objects.all()
+    else:
+      return OperationPlanMaterial.objects.all().order_by('item_id', 'location_id').distinct('item_id', 'location_id')
+
   model = OperationPlanMaterial
   default_sort = (1, 'asc', 2, 'asc')
   permissions = (('view_inventory_report', 'Can view inventory report'),)

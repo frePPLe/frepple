@@ -338,6 +338,9 @@ jQuery.extend($.fn.fmatter, {
     hours = Math.floor((seconds - (days * 86400)) / 3600);
     minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
     seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+
+    if (rowdata.criticality > 998)
+      return 'N/A'
     if (days > 0)
       return (sign*days).toString() + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     if (hours > 0)

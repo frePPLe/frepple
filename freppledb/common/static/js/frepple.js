@@ -1408,11 +1408,10 @@ var grid = {
   },
 
   markSelectedRow: function(sel)
-  { //console.log('markSelectedRow');
-    if (typeof sel==='undefined') { console.log('sel undefined');
+  {
+    if (typeof sel==='undefined') {
       sel = 0;
     }
-    //console.log(sel);
 
     if (sel > 0)
     {

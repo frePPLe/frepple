@@ -342,11 +342,9 @@ jQuery.extend($.fn.fmatter, {
     if (rowdata.criticality > 998)
       return 'N/A'
     if (days > 0)
-      return (sign*days).toString() + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
-    if (hours > 0)
-      return (sign*hours).toString() + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
-    if (minutes > 0)
-      return (sign*minutes).toString() + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+      return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+    else
+      return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
     return (sign*seconds).toFixed(3);
   },
 

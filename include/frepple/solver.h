@@ -322,7 +322,7 @@ class SolverMRP : public Solver
     SolverMRP() : constrts(15), allowSplits(true), rotateResources(true),
       propagate(true), cluster(-1), plantype(1), lazydelay(86400L), iteration_threshold(1),
       iteration_accuracy(0.01), iteration_max(0), autocommit(true),
-      planSafetyStockFirst(false), erasePreviousFirst(true)
+      planSafetyStockFirst(false), erasePreviousFirst(true), administrativeleadtime(0L)
     {
       initType(metadata);
       commands.sol = this;
@@ -664,6 +664,17 @@ class SolverMRP : public Solver
       planSafetyStockFirst = b;
     }
 
+    Duration getAdministrativeLeadTime() const
+    {
+      return administrativeleadtime;
+    }
+
+    void setAdministrativeLeadTime(Duration l)
+    {
+      if (l < 0L) throw DataException("Administrative Lead Time must be a positive value");
+      administrativeleadtime = l;
+    }
+
     bool getErasePreviousFirst() const
     {
       return erasePreviousFirst;
@@ -682,6 +693,7 @@ class SolverMRP : public Solver
       m->addDoubleField<Cls>(SolverMRP::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
       m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
       m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
+      m->addDurationField<Cls>(SolverMRP::tag_administrativeleadtime, &Cls::getAdministrativeLeadTime, &Cls::setAdministrativeLeadTime);
       m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
       m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
@@ -700,6 +712,7 @@ class SolverMRP : public Solver
     static const Keyword tag_allowsplits;
     static const Keyword tag_rotateresources;
     static const Keyword tag_planSafetyStockFirst;
+    static const Keyword tag_administrativeleadtime;
     static const Keyword tag_iterationmax;
 
     /** Type of plan to be created. */
@@ -714,6 +727,11 @@ class SolverMRP : public Solver
       * The default value is 1 day.
       */
     Duration lazydelay;
+
+    /** Administrative lead time, demand should therefore be planned ahead 
+      * by the solver at due minus administrative leadtime
+    */
+    Duration administrativeleadtime;
 
     /** Threshold to stop iterating when the delta between iterations is
       * less than this absolute limit.

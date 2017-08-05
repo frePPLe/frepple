@@ -27,6 +27,7 @@ const MetaClass* SolverMRP::metadata;
 const Keyword SolverMRP::tag_iterationthreshold("iterationthreshold");
 const Keyword SolverMRP::tag_iterationaccuracy("iterationaccuracy");
 const Keyword SolverMRP::tag_lazydelay("lazydelay");
+const Keyword SolverMRP::tag_administrativeleadtime("administrativeleadtime");
 const Keyword SolverMRP::tag_allowsplits("allowsplits");
 const Keyword SolverMRP::tag_rotateresources("rotateresources");
 const Keyword SolverMRP::tag_planSafetyStockFirst("plansafetystockfirst");

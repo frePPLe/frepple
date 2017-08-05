@@ -82,7 +82,8 @@ class SupplyPlanning(PlanTask):
       allowsplits=(Parameter.getValue('allowsplits', database, 'true').lower() == "true"),
       rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
       plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
-      iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0'))
+      iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0')),
+      administrativeleadtime=86400*float(Parameter.getValue('plan.administrativeLeadtime', database, '0'))
       )
     if hasattr(cls, 'debugResource'):
       cls.solver.userexit_resource = cls.debugResource

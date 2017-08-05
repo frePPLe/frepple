@@ -79,6 +79,8 @@ void SolverMRP::solve(const Demand* l, void* v)
     // Determine the quantity to be planned and the date for the planning loop
     double plan_qty = l->getQuantity() - l->getPlannedQuantity();
     Date plan_date = l->getDue();
+    if (getAdministrativeLeadTime())
+      plan_date -= getAdministrativeLeadTime();
     if (plan_qty < ROUNDING_ERROR || plan_date == Date::infiniteFuture)
     {
       if (loglevel>0) logger << "  Nothing to be planned." << endl;

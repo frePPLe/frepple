@@ -23,33 +23,37 @@ description      string            Description of the parameter.
 The table below shows the parameters that are recognized by the standard
 application.
 
-========================== =============================================================
-Parameter                  Description
-========================== =============================================================
-currentdate                | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS
-                           | If the parameter is missing or empty the system time is
-                             used as current date.
-loading_time_units         | Time units to be used for the resource report.
-                           | Accepted values are: hours, days, weeks.
-plan.calendar              | Name of a calendar to align new operationplans with.
-                           | When this parameter is used, the plan results are
-                             effectively grouped in the time buckets defined in this
-                             calendar.
-                           | This feature is typically used for medium and long term
-                             plans. Such plans are reviewed in monthly or weekly
-                             buckets rather than at individual dates.
-plan.loglevel              | Controls the verbosity of the planning log file.
-                           | Accepted values are 0 (silent – default), 1 (minimal) and
-                             2 (verbose).
-plan.planSafetyStockFirst  | Controls whether safety stock is planned before or after the demand.
-                           | Accepted values are false (default) and true.
-plan.rotateResources       When set to true, the algorithm will better distribute 
-                           the demand across alternate suboperations instead of using 
-                           the preferred operation.
-plan.webservice            | Specifies whether to use the web service or not.
-                           | Accepted values are false (default) and true.
+=========================== =============================================================
+Parameter                   Description
+=========================== =============================================================
+currentdate                 | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS
+                            | If the parameter is missing or empty the system time is
+                              used as current date.
+loading_time_units          | Time units to be used for the resource report.
+                            | Accepted values are: hours, days, weeks.
+plan.administrativeLeadtime | Specifies an administrative lead time in days. 
+                              FrePPLe will plan the sales orders one administrative 
+                              lead time ahead of the due date.
+                            | Accepted values : Any positive decimal number.
+plan.calendar               | Name of a calendar to align new operationplans with.
+                            | When this parameter is used, the plan results are
+                              effectively grouped in the time buckets defined in this
+                              calendar.
+                            | This feature is typically used for medium and long term
+                              plans. Such plans are reviewed in monthly or weekly
+                              buckets rather than at individual dates.
+plan.loglevel               | Controls the verbosity of the planning log file.
+                            | Accepted values are 0 (silent – default), 1 (minimal) and
+                              2 (verbose).
+plan.planSafetyStockFirst   | Controls whether safety stock is planned before or after the demand.
+                            | Accepted values are false (default) and true.
+plan.rotateResources        | When set to true, the algorithm will better distribute 
+                              the demand across alternate suboperations instead of using 
+                              the preferred operation.
+plan.webservice             | Specifies whether to use the web service or not.
+                            | Accepted values are false (default) and true.
                            
-========================== =============================================================
+=========================== =============================================================
 
 **Extension modules parameters**
 
@@ -92,8 +96,9 @@ forecast.Net_NetEarly                                Defines how much time (expr
 forecast.Net_NetLate                                 Defines how much time (expressed in seconds) after the due date of an order 
                                                      we are allowed to search for a forecast bucket to net from.
 forecast.Outlier_maxDeviation                        Multiple of the standard deviation used to detect outliers
-forecast.populateForecastTable                       Populates automatically the forecast table based on the item/location combinations 
-                                                     found in the demand table using parent customer when available. Default : true
+forecast.populateForecastTable                       Populates automatically the forecast table based on the item/location 
+                                                     combinations found in the demand table using parent customer when available. 
+                                                     Default : true
 forecast.Seasonal_dampenTrend                        Dampening factor applied to the trend in future periods.
 forecast.Seasonal_gamma                              Value of the seasonal parameter
 forecast.Seasonal_initialAlfa                        Initial value for the constant parameter

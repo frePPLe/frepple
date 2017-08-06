@@ -38,7 +38,7 @@ Here are the steps to get a fully working environment.
 
 #. **Install and tune the PostgreSQL database**
 
-   Install postgreSQL 9.3 or higher, the world's most advanced open source database.
+   Install postgreSQL 9.5 or higher, the world's most advanced open source database.
 
    FrePPLe assumes that the database uses UTF-8 encoding.
 
@@ -112,7 +112,8 @@ Here are the steps to get a fully working environment.
    it from https://raw.githubusercontent.com/frepple/frepple/4.2/requirements.txt
    (make sure to replace 4.2 with the appropriate version number!)
 
-   Next, install these modules with a pip3 command:
+   Next, install these modules with a pip3 command. Make sure to run it as root user or use sudo - otherwise
+   the packages will be installed locally for that user instead of system-wide.
    ::
 
       pip3 install -r requirements.txt

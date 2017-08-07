@@ -71,16 +71,15 @@ in each sheet must contain the column names.
 Export plan result to folder
 ------------------------------------
 
-This task allows exporting data to a set of GZ compressed CSV-formatted files.
+This task allows exporting data to a set of GZ-compressed CSV-formatted files.
 The purpose of this task is to help the exchange of information with other systems.
 
-The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
-in the djangosettings.py configuration file. The log file exporttofolder.log records
-file exports, in addition to any data errors identified during their processing.
+The files are all placed in a folder UPLOADFILEFOLDER/export/, which can be configured
+per scenario with the UPLOADFILEFOLDER value in the djangosettings.py file.
+The log file exporttofolder.log records file exports, in addition to any data errors 
+identified during their processing.
 
-The export button will create files with plan data on UPLOADFILEFOLDER/export/ folder.
-
-In this option you can see a list of files present in the specified folder, and dowload
+In this option you can see a list of files present in the specified folder, and download
 each file by clicking on the arrow down button, or delete a file by clicking on the
 red button.
 
@@ -91,11 +90,11 @@ red button.
 Import data files from folder
 ------------------------------------
 
-This task allows importing data from a set of CSV-formatted files.
+This task allows importing data from a set of CSV-formatted files (eventually GZ-compressed).
 The purpose of this task is to help the exchange of information with other systems.
 
-The files are all placed in a folder that is configurable with the UPLOADFILEFOLDER
-in the djangosettings.py configuration file. The log file importfromfolder.log records
+The files are all placed in a folder that is configurable per scenario with the
+UPLOADFILEFOLDER in the djangosettings.py configuration file. The log file importfromfolder.log records
 all data imports, in addition to any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
@@ -113,11 +112,11 @@ The data files to be imported must meet the following criteria:
 * The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
   setting in djangosettings.py).
 
-  In this option you can see a list of files present in the specified folder, and dowload
-  each file by clicking on the arrow down button, or delete a file by clicking on the
-  red button.
-  The arrow up button will give the user the possibility of selecting multiple files
-  to upload to that folder.
+In this option you can see a list of files present in the specified folder, and download
+each file by clicking on the arrow down button, or delete a file by clicking on the
+red button.
+The arrow up button will give the user the possibility of selecting multiple files
+to upload to that folder.
 
 .. image:: _images/execution-importfilesfromfolder.png
    :alt: Execution screen - Import data files from folder

@@ -99,7 +99,7 @@ Here are the steps to get a fully working environment.
    On RPM based distributions:
    ::
 
-     yum install python3 python3-pip
+     dnf install python3 python3-pip
 
    On Debian based distributions:
    ::
@@ -117,13 +117,14 @@ Here are the steps to get a fully working environment.
    ::
 
       pip3 install -r requirements.txt
+      
 
 #. **Install the frepple binary package**
 
    On Fedora:
    ::
 
-     yum install frepple
+     dnf install frepple
 
    On Debian based distributions:
    ::
@@ -134,7 +135,7 @@ Here are the steps to get a fully working environment.
    On RHEL:
    ::
 
-    yum --nogpgcheck localinstall  *.rpm
+    dnf --nogpgcheck localinstall  *.rpm
 
 #. **Configure frePPLe**
 
@@ -353,12 +354,12 @@ inspiration for your own deployments.
 ::
 
   # Update and upgrade
-  sudo -S -n yum -y update
+  sudo -S -n dnf -y update
 
   # Install the PostgreSQL database
   # For a production installation you'll need to tune the database
   # configuration to match the available hardware.
-  sudo yum install postgresql postgresql-server
+  sudo dnf install postgresql postgresql-server
   sudo service postgresql initdb
   sudo service postgresql start
   sudo su - postgres
@@ -374,13 +375,13 @@ inspiration for your own deployments.
   sudo service postgresql restart
 
   # Install python3 and required python modules
-  sudo yum install python3 python3-pip
+  sudo dnf install python3 python3-pip
   sudo pip3 install -r requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.
   # Normally you only need to install the frepple package.
-  yum --nogpgcheck localinstall  frepple*.rpm
+  dnf --nogpgcheck localinstall  frepple*.rpm
 
   # Create frepple database schema
   frepplectl migrate --noinput

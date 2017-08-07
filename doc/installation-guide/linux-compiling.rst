@@ -173,7 +173,7 @@ The steps to work with such packages are standard:
 #. Install the rpmbuild package:
    ::
 
-     yum install rpmbuild
+     dnf install rpmbuild
      or
      zypper in rpmbuild
 

@@ -278,7 +278,7 @@ var upload = {
 
 function opendetail(event) {
   var curlink = $(event.target).parent().attr('href');
-  var objectid = $(event.target).parent().parent().text();
+  var objectid = $(event.target).parent().parent().text().trim();
   objectid = admin_escape(objectid);
 
   event.preventDefault();
@@ -286,67 +286,71 @@ function opendetail(event) {
   window.location.href = url_prefix + curlink.replace('key', objectid);
 }
 
+
+function formatDuration(cellvalue, options, rowdata) {
+  var days = 0;
+  var hours = 0;
+  var minutes =0;
+  var seconds = 0;
+  var sign = 1;
+  var d = [];
+  var t = [];
+
+  if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
+  if (typeof cellvalue === "number") {
+    seconds = cellvalue;
+    sign = Math.sign(seconds);
+  } else {
+    sign = (cellvalue.indexOf('-') > -1)?-1:1;
+    d = cellvalue.replace(/ +/g, " ").split(" ");
+    if (d.length == 1)
+    {
+      t = cellvalue.split(":");
+      days = 0;
+    }
+    else
+    {
+      t = d[1].split(":");
+      days = (d[0]!='' ? parseFloat(d[0]) : 0);
+    }
+    switch (t.length)
+    {
+      case 0: // Days only
+        seconds = Math.abs(days) * 86400;
+        break;
+      case 1: // Days, seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0);
+        break;
+      case 2: // Days, minutes and seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
+        break;
+      default:
+        // Days, hours, minutes, seconds
+        seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
+    }
+  }
+  seconds = Math.abs(seconds); //remove the sign
+  days = Math.floor(seconds / 86400);
+  hours = Math.floor((seconds - (days * 86400)) / 3600);
+  minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
+  seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+
+  if (rowdata.criticality > 998)
+    return 'N/A'
+  if (days > 0)
+    return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+  else
+    return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+  return (sign*seconds).toFixed(3);
+}
+
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
     return cellvalue + "%";
   },
-  duration : function(cellvalue, options, rowdata) {
-    var days = 0;
-    var hours = 0;
-    var minutes =0;
-    var seconds = 0;
-    var sign = 1;
-    var d = [];
-    var t = [];
 
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    if (typeof cellvalue === "number") {
-      seconds = cellvalue;
-      sign = Math.sign(seconds);
-    } else {
-      sign = (cellvalue.indexOf('-') > -1)?-1:1;
-      d = cellvalue.replace(/ +/g, " ").split(" ");
-      if (d.length == 1)
-      {
-        t = cellvalue.split(":");
-        days = 0;
-      }
-      else
-      {
-        t = d[1].split(":");
-        days = (d[0]!='' ? parseFloat(d[0]) : 0);
-      }
-      switch (t.length)
-      {
-        case 0: // Days only
-          seconds = Math.abs(days) * 86400;
-          break;
-        case 1: // Days, seconds
-          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0);
-          break;
-        case 2: // Days, minutes and seconds
-          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 60 + (t[1]!='' ? parseFloat(t[1]) : 0);
-          break;
-        default:
-          // Days, hours, minutes, seconds
-          seconds = Math.abs(days) * 86400 + (t[0]!='' ? Math.abs(parseFloat(t[0])) : 0) * 3600 + (t[1]!='' ? parseFloat(t[1]) : 0) * 60 + (t[2]!='' ? parseFloat(t[2]) : 0);
-      }
-    }
-    seconds = Math.abs(seconds); //remove the sign
-    days = Math.floor(seconds / 86400);
-    hours = Math.floor((seconds - (days * 86400)) / 3600);
-    minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
-    seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
-
-    if (rowdata.criticality > 998)
-      return 'N/A'
-    if (days > 0)
-      return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
-    else
-      return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
-    return (sign*seconds).toFixed(3);
-  },
+  duration : formatDuration,
 
   admin : function(cellvalue, options, rowdata) {
     var result = cellvalue + "<a href='/data/" + options.colModel.role + "/key/change/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";

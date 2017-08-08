@@ -1617,4 +1617,49 @@ PeggingDemandIterator OperationPlan::getPeggingDemand() const
 }
 
 
+OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o) : opplan(o)
+{  
+  if (!o)
+    return;
+  if (o->getOwner() && o->getOwner()->getOperation()->getType() == *OperationAlternate::metadata)
+  {
+    auto subs = o->getOwner()->getOperation()->getSubOperationIterator();
+    while (SubOperation* sub = subs.next())
+    {
+      if (sub->getOperation() != o->getOperation())
+        opers.push_back(sub->getOperation());
+    }
+  }
+  else
+  {
+    for (
+      auto super = o->getOperation()->getSuperOperations().begin();
+      super != o->getOperation()->getSuperOperations().end();
+      ++super
+      )
+    {
+      if ((*super)->getType() != *OperationAlternate::metadata)
+        return;
+      auto subs = (*super)->getSubOperationIterator();
+      while (SubOperation* sub = subs.next())
+      {
+        if (sub->getOperation() != opplan->getOperation()) 
+          opers.push_back(sub->getOperation());
+      }
+        
+    }
+  }
+  operIter = opers.begin();
+}
+
+
+Operation* OperationPlan::AlternateIterator::next()
+{
+  if (operIter == opers.end())
+    return nullptr;
+  auto tmp = *operIter;
+  ++operIter;
+  return tmp;
+}
+
 } // end namespace

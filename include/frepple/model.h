@@ -1692,6 +1692,7 @@ class OperationPlan
     class FlowPlanIterator;
     class LoadPlanIterator;
     class ProblemIterator;
+    class AlternateIterator;
 
     // Type definitions
     typedef TimeLine<FlowPlan> flowplanlist;
@@ -2299,6 +2300,9 @@ class OperationPlan
 
     PeggingDemandIterator getPeggingDemand() const;
 
+    /** Return an iterator over alternate operations for this operationplan. */
+    AlternateIterator getAlternates() const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
@@ -2331,6 +2335,7 @@ class OperationPlan
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingDemandIterator, PeggingDemandIterator>(Tags::pegging_demand, Tags::pegging, &Cls::getPeggingDemand, PLAN + WRITE_OBJECT);
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getSubOperationPlans, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlan::AlternateIterator, Operation>(Tags::alternates, Tags::alternate, "AlternateOperationIterator", "Iterator over operation alternates", &Cls::getAlternates, PLAN + FORCE_BASE);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::ordertype, &Cls::getOrderType, &Cls::setOrderType, "MO");
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
@@ -3025,6 +3030,12 @@ class Operation : public HasName<Operation>,
       return tmp;
     }
 
+    /** Empty list of operations.<br>
+    * For operation types which have no suboperations this list is
+    * used as the list of suboperations.
+    */
+    static Operationlist nosubOperations;
+
   protected:
     void initOperationPlan(OperationPlan*, double,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
@@ -3033,12 +3044,6 @@ class Operation : public HasName<Operation>,
   private:
     /** List of operations using this operation as a sub-operation */
     list<Operation*> superoplist;
-
-    /** Empty list of operations.<br>
-      * For operation types which have no suboperations this list is
-      * used as the list of suboperations.
-      */
-    static Operationlist nosubOperations;
 
     /** Item produced by the operation. */
     Item* item = nullptr;
@@ -3834,6 +3839,35 @@ class OperationAlternate : public Operation
     /** Mode to select the preferred alternates. */
     SearchMode search;
 };
+
+
+/** A class to iterato over alternates of an operationplan. */
+class OperationPlan::AlternateIterator
+{
+  private:
+    const OperationPlan* opplan = nullptr;
+    vector<Operation*> opers;
+    vector<Operation*>::iterator operIter;
+
+  public:
+    AlternateIterator(const OperationPlan* o);
+
+    /** Copy constructor. */
+    AlternateIterator(const AlternateIterator& other) : opplan(other.opplan)
+    {
+      for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
+        opers.push_back(*i);
+      operIter = opers.begin();
+    }
+
+    Operation* next();
+};
+
+
+inline OperationPlan::AlternateIterator OperationPlan::getAlternates() const
+{
+  return OperationPlan::AlternateIterator(this);
+}
 
 
 /** @brief This class holds the definition of distribution replenishments. */
@@ -7444,6 +7478,7 @@ class Demand
       m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans, DETAIL + WRITE_OBJECT + WRITE_HIDDEN);
       m->addIteratorField<Cls, Problem::List::iterator, Problem>(Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0, DONT_SERIALIZE);
+      m->addPointerField<Cls, Operation>(Tags::delivery_operation, &Cls::getDeliveryOperation, nullptr, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN);
       m->addDateField<Cls>(Tags::delivery, &Cls::getDeliveryDate, nullptr, Date::infiniteFuture, PLAN);
       m->addDoubleField<Cls>(Tags::planned_quantity, &Cls::getPlannedQuantity, nullptr, -1.0, PLAN);

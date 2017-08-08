@@ -1844,6 +1844,9 @@ double OperationRouting::setOperationPlanQuantity
 
 void Operation::setItem(Item* i)
 {
+  if (i == item)
+    return;
+
   // Unlink from previous item
   if (item)
   {

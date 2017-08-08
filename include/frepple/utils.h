@@ -1678,8 +1678,10 @@ enum FieldCategory
   WRITE_OBJECT = 128,    // Force writing this field as an object
   WRITE_REFERENCE = 256, // Force writing this field as a reference
   WRITE_HIDDEN = 512,    // Force writing hidden fields
-  WRITE_REPEAT = 1024    // Force writing an object again, even if already
+  WRITE_REPEAT = 1024,   // Force writing an object again, even if already
                          // written as parent
+  FORCE_BASE = 2048      // Force writing this object in base mode, even when
+                         // the output is currently set in a different mode
 };
 
 
@@ -2027,6 +2029,18 @@ class MetaClass : public NonCopyable
     {
       PythonIterator<Iter, Ptr>::initialize();
       fields.push_back( new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(k1, k2, getfunc, c) );
+      if (c & PARENT)
+        parent = true;
+    }
+
+    template <class Cls, class Iter, class Ptr> inline void addIteratorField(
+      const Keyword& k1, const Keyword& k2, string nm, string doc,
+      Iter(Cls::*getfunc)(void) const = nullptr,
+      unsigned int c = BASE
+    )
+    {
+      PythonIterator<Iter, Ptr>::initialize(nm, doc);
+      fields.push_back(new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(k1, k2, getfunc, c));
       if (c & PARENT)
         parent = true;
     }
@@ -2432,7 +2446,7 @@ class Serializer
     /** Returns which type of export is requested. */
     FieldCategory getContentType() const
     {
-      return content;
+      return forceBase ? BASE : content;
     }
 
     /** Specify the type of export. */
@@ -2462,12 +2476,12 @@ class Serializer
     }
 
     /** Returns whether we write only references for nested objects or not. */
-    bool getSaveReferences() const
+    inline bool getSaveReferences() const
     {
       return writeReference;
     }
 
-    bool getWriteHidden() const
+    inline bool getWriteHidden() const
     {
       return writeHidden;
     }
@@ -2480,6 +2494,18 @@ class Serializer
     {
       bool tmp = writeHidden;
       writeHidden = b;
+      return tmp;
+    }
+
+    inline bool getForceBase() const
+    {
+      return forceBase;
+    }
+
+    inline bool setForceBase(bool b = true)
+    {
+      bool tmp = forceBase;
+      forceBase = b;
       return tmp;
     }
 
@@ -2658,6 +2684,9 @@ class Serializer
 
     /** Flag to mark whether to save objects or their reference. */
     bool writeReference = false;
+
+    /** Flag to force the output mode to be base. */
+    bool forceBase = false;
 };
 
 
@@ -3999,6 +4028,16 @@ class PythonIterator : public Object
           );
       x.setName(DATACLASS::metadata->type + "Iterator");
       x.setDoc("frePPLe iterator for " + DATACLASS::metadata->type);
+      x.supportiter();
+      return x.typeReady();
+    }
+
+    static int initialize(string nm, string doc)
+    {
+      // Initialize the type
+      PythonType& x = getPythonType();
+      x.setName(nm);
+      x.setDoc(nm);
       x.supportiter();
       return x.typeReady();
     }
@@ -7523,6 +7562,9 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
       // Update the serialization mode
       bool tmp_refs = false;
       bool tmp_hidden = false;
+      bool tmp_force_base = false;
+      if (getFlag(FORCE_BASE))
+        tmp_force_base = output.setForceBase(true);
       if (getFlag(WRITE_OBJECT))
         tmp_refs = output.setSaveReferences(false);
       else if (getFlag(WRITE_REFERENCE))
@@ -7552,6 +7594,8 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         output.setSaveReferences(tmp_refs);
       if (getFlag(WRITE_HIDDEN))
         output.setWriteHidden(tmp_hidden);
+      if (getFlag(FORCE_BASE))
+        output.setForceBase(tmp_force_base);
     }
 
     virtual bool isGroup() const

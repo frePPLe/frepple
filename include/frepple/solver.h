@@ -321,7 +321,7 @@ class SolverMRP : public Solver
     /** Constructor. */
     SolverMRP() : constrts(15), allowSplits(true), rotateResources(true),
       propagate(true), cluster(-1), plantype(1), lazydelay(86400L), iteration_threshold(1),
-      iteration_accuracy(0.01), iteration_max(0), autocommit(true),
+      iteration_accuracy(0.01), iteration_max(0),
       planSafetyStockFirst(false), erasePreviousFirst(true), administrativeleadtime(0L)
     {
       initType(metadata);

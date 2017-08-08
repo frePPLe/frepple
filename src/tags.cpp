@@ -29,6 +29,7 @@ namespace utils
 
 const Keyword Tags::action("action");
 const Keyword Tags::alternate("alternate");
+const Keyword Tags::alternates("alternates");
 const Keyword Tags::alternate_name("alternate_name");
 const Keyword Tags::approved("approved");
 const Keyword Tags::autocommit("autocommit");
@@ -63,6 +64,7 @@ const Keyword Tags::days("days");
 const Keyword Tags::deflt("default");
 const Keyword Tags::delay("delay");
 const Keyword Tags::delivery("delivery");
+const Keyword Tags::delivery_operation("delivery_operation");
 const Keyword Tags::demand("demand");
 const Keyword Tags::demands("demands");
 const Keyword Tags::description("description");

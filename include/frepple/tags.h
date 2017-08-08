@@ -30,6 +30,7 @@ class Tags
   public:
     static const Keyword action;
     static const Keyword alternate;
+    static const Keyword alternates;
     static const Keyword alternate_name;
     static const Keyword approved;
     static const Keyword autocommit;
@@ -64,6 +65,7 @@ class Tags
     static const Keyword deflt;
     static const Keyword delay;
     static const Keyword delivery;
+    static const Keyword delivery_operation;
     static const Keyword demand;
     static const Keyword demands;
     static const Keyword description;

@@ -1953,18 +1953,8 @@ class OperationPlan
       return oper;
     }
 
-    /** Update the operation of an operationplan.<br>
-      * This method can only be called once for each operationplan.
-      */
-    void setOperation(Operation* o)
-    {
-      if (oper == o)
-        return;
-      if (oper)
-        throw DataException("Can't update operation of initialized operationplan");
-      oper = o;
-      activate();
-    }
+    /** Update the operation of an operationplan. */
+    void setOperation(Operation* o);
 
     /** Fixes the start and end date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic

@@ -233,13 +233,6 @@ Object* OperationPlan::createOperationPlan(
           << " defined multiple times for different order types";
         throw DataException(ch.str());
       }
-      if (!ordtype.empty() && ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
-      {
-        ostringstream ch;
-        ch << "Operationplan identifier " << id
-          << " defined multiple times for different operations";
-        throw DataException(ch.str());
-      }
     }
   }
 
@@ -310,6 +303,9 @@ Object* OperationPlan::createOperationPlan(
   // Return the existing operationplan
   if (opplan)
   {
+    if (!ordtype.empty() && ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
+      // Change the operation
+      opplan->setOperation(static_cast<Operation*>(oper));
     if (quantityfld || startfld || endfld)
       opplan->getOperation()->setOperationPlanParameters(
         opplan, quantityfld ? quantity : opplan->getQuantity(),
@@ -639,6 +635,27 @@ bool OperationPlan::assignIdentifier()
     throw RuntimeException("Exhausted the range of available operationplan identifiers");
 
   return true;
+}
+
+
+void OperationPlan::setOperation(Operation* o)
+{
+  if (oper == o)
+    return;
+  if (oper)
+  {
+    // Switching operations
+    deleteFlowLoads();
+    removeFromOperationplanList();
+    oper = o;
+    oper->setOperationPlanParameters(
+      this, quantity, dates.getStart(), dates.getEnd(), false, true
+    );
+  }
+  else
+    // First initialization of the operationplan
+    oper = o;
+  activate();
 }
 
 

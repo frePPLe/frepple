@@ -1692,31 +1692,27 @@ class OperationPlan
     class FlowPlanIterator;
     class LoadPlanIterator;
     class ProblemIterator;
+    class InterruptionIterator;
     class AlternateIterator;
 
     // Type definitions
     typedef TimeLine<FlowPlan> flowplanlist;
     typedef TimeLine<LoadPlan> loadplanlist;
 
-    /** Returns an iterator pointing to the first flowplan. */
-    inline FlowPlanIterator beginFlowPlans() const;
+    /** Flowplan iteration. */
     inline FlowPlanIterator getFlowPlans() const;
-
-    /** Returns an iterator pointing beyond the last flowplan. */
+    inline FlowPlanIterator beginFlowPlans() const;
     inline FlowPlanIterator endFlowPlans() const;
-    inline LoadPlanIterator getLoadPlans() const;
-
-    /** Returns how many flowplans are created on an operationplan. */
     int sizeFlowPlans() const;
 
-    /** Returns an iterator pointing to the first loadplan. */
+    /** Loadplan iteration. */
+    inline LoadPlanIterator getLoadPlans() const;
     LoadPlanIterator beginLoadPlans() const;
-
-    /** Returns an iterator pointing beyond the last loadplan. */
     LoadPlanIterator endLoadPlans() const;
-
-    /** Returns how many loadplans are created on an operationplan. */
     int sizeLoadPlans() const;
+
+    /** Interruption iteration. */
+    inline InterruptionIterator getInterruptions() const;
 
     /** Returns whether this operationplan is a PO, MO or DO. */
     inline string getOrderType() const;
@@ -2318,6 +2314,7 @@ class OperationPlan
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::unavailable, &Cls::getUnavailable, nullptr, 0L, DONT_SERIALIZE);
+      m->addIteratorField<Cls, OperationPlan::InterruptionIterator, OperationPlan::InterruptionIterator>(Tags::interruptions, Tags::interruption, &Cls::getInterruptions, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::delay, &Cls::getDelay, nullptr, -999L, PLAN);
       m->addIteratorField<Cls, OperationPlan::FlowPlanIterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlans, PLAN + WRITE_HIDDEN);
       m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, PLAN);
@@ -2909,6 +2906,11 @@ class Operation : public HasName<Operation>,
       );
 
     static int initialize();
+
+    /** Auxilary method to initialize an vector of availability calendar
+      * iterators related to an operation.
+      */
+    void collectCalendars(vector<Calendar::EventIterator>&, Date) const;
 
     virtual void solve(Solver &s, void* v = nullptr) const
     {
@@ -9790,6 +9792,59 @@ inline int OperationPlan::sizeLoadPlans() const
   int c = 0;
   for (LoadPlanIterator i = beginLoadPlans(); i != endLoadPlans(); ++i) ++c;
   return c;
+}
+
+
+class OperationPlan::InterruptionIterator : public Object
+{
+  private:
+    vector<Calendar::EventIterator> cals;
+    Date curdate;
+    bool status = false;
+    const OperationPlan* opplan;
+    Date start;
+    Date end;
+
+  public:
+    InterruptionIterator(const OperationPlan* o) : opplan(o) 
+    {
+      if (!opplan || !opplan->getOperation())
+        throw LogicException("Can't initialize an iterator over an uninitialized operationplan");
+      opplan->getOperation()->collectCalendars(cals, opplan->getStart());
+      curdate = opplan->getStart();
+      initType(metadata);
+    }
+
+    InterruptionIterator* next();
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDateField<Cls>(Tags::start, &Cls::getStart);
+      m->addDateField<Cls>(Tags::end, &Cls::getEnd);
+    }
+
+    Date getStart() const
+    {
+      return start;
+    }
+
+    Date getEnd() const
+    {
+      return end;
+    }
+
+    /** Return a reference to the metadata structure. */
+    virtual const MetaClass& getType() const { return *metadata; }
+
+    static int intitialize();
+    static const MetaCategory* metacategory;
+    static const MetaClass* metadata;
+};
+
+
+inline OperationPlan::InterruptionIterator OperationPlan::getInterruptions() const
+{
+  return OperationPlan::InterruptionIterator(this);
 }
 
 

@@ -431,30 +431,16 @@ DateRange Operation::calculateOperationTime
 }
 
 
-DateRange Operation::calculateOperationTime
-(Date start, Date end, Duration *actualduration) const
+void Operation::collectCalendars(vector<Calendar::EventIterator>& cals, Date start) const
 {
-  // Switch start and end if required
-  if (end < start)
-  {
-    Date tmp = start;
-    start = end;
-    end = tmp;
-  }
-
-  // Default actual duration
-  if (actualduration) *actualduration = 0L;
-
-  // Step 1: Create an iterator over all involved calendars
-  vector<Calendar::EventIterator> cals;
   // a) operation
   if (available)
     cals.push_back(Calendar::EventIterator(available, start));
   // b) operation location
   if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
-      cals.push_back(Calendar::EventIterator(loc->getAvailable(), start));
-  for (Operation::loadlist::const_iterator g=loaddata.begin();
-      g!=loaddata.end(); ++g)
+    cals.push_back(Calendar::EventIterator(loc->getAvailable(), start));
+  for (Operation::loadlist::const_iterator g = loaddata.begin();
+    g != loaddata.end(); ++g)
   {
     Resource* res = g->getResource();
     if (res->getAvailable())
@@ -494,6 +480,26 @@ DateRange Operation::calculateOperationTime
         ));
     }
   }
+}
+
+
+DateRange Operation::calculateOperationTime
+(Date start, Date end, Duration *actualduration) const
+{
+  // Switch start and end if required
+  if (end < start)
+  {
+    Date tmp = start;
+    start = end;
+    end = tmp;
+  }
+
+  // Default actual duration
+  if (actualduration) *actualduration = 0L;
+
+  // Step 1: Create an iterator over all involved calendars
+  vector<Calendar::EventIterator> cals;
+  collectCalendars(cals, start);
 
   // Special case: no calendars at all
   if (!cals.size())

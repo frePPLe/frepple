@@ -95,6 +95,8 @@ const Keyword Tags::headeratts("headeratts");
 const Keyword Tags::headerstart("headerstart");
 const Keyword Tags::hidden("hidden");
 const Keyword Tags::id("id");
+const Keyword Tags::interruption("interruption");
+const Keyword Tags::interruptions("interruptions");
 const Keyword Tags::item("item");
 const Keyword Tags::itemdistribution("itemdistribution");
 const Keyword Tags::itemdistributions("itemdistributions");

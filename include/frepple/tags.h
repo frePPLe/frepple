@@ -96,6 +96,8 @@ class Tags
     static const Keyword headerstart;
     static const Keyword hidden;
     static const Keyword id;
+    static const Keyword interruption;
+    static const Keyword interruptions;
     static const Keyword item;
     static const Keyword itemdistribution;
     static const Keyword itemdistributions;

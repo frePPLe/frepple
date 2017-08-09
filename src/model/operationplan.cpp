@@ -26,6 +26,8 @@ namespace frepple
 
 const MetaClass* OperationPlan::metadata;
 const MetaCategory* OperationPlan::metacategory;
+const MetaClass* OperationPlan::InterruptionIterator::metadata;
+const MetaCategory* OperationPlan::InterruptionIterator::metacategory;
 unsigned long OperationPlan::counterMin = 2;
 
 Location* OperationPlan::loc = NULL;
@@ -1634,6 +1636,25 @@ PeggingDemandIterator OperationPlan::getPeggingDemand() const
 }
 
 
+int OperationPlan::InterruptionIterator::intitialize()
+{
+  // Initialize the metadata.
+  metacategory = MetaCategory::registerCategory<OperationPlan::InterruptionIterator>("interruption", "interruptions");
+  metadata = MetaClass::registerClass<OperationPlan::InterruptionIterator>("interruption", "operationplan interruption", true);
+  registerFields<OperationPlan::InterruptionIterator>(const_cast<MetaCategory*>(metacategory));
+
+  // Initialize the Python type
+  PythonType& x = PythonExtension<OperationPlan::InterruptionIterator>::getPythonType();
+  x.setName("interruption");
+  x.setDoc("frePPLe operationplan interruption");
+  x.supportgetattro();
+  x.supportstr();
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
 OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o) : opplan(o)
 {  
   if (!o)
@@ -1677,6 +1698,53 @@ Operation* OperationPlan::AlternateIterator::next()
   auto tmp = *operIter;
   ++operIter;
   return tmp;
+}
+
+
+OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
+{
+  while (true)
+  {
+    // Check whether all calendars are available
+    bool available = true;
+    Date selected = Date::infiniteFuture;
+    for (auto t = cals.begin(); t != cals.end(); ++t)
+    {
+      if (t->getDate() < selected)
+        selected = t->getDate();
+    }
+    curdate = selected;
+    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
+      available = (t->getCalendar()->getValue(selected) != 0);
+
+    if (available && !status)
+    {
+      // Becoming available after unavailable period
+      status = true;
+      end = (curdate > opplan->getEnd()) ? opplan->getEnd() : curdate;
+      if (start)
+        return this;
+    }
+    else if (!available && status)
+    {
+      // Becoming unavailable after available period
+      status = false;
+      if (curdate >= opplan->getEnd())
+      {
+        // Leaving the desired date range
+        return nullptr;
+      }
+      start = curdate;
+    }
+    else if (curdate >= opplan->getEnd())
+      return nullptr;
+
+    // Advance to the next event
+    for (auto t = cals.begin(); t != cals.end(); ++t)
+      if (t->getDate() == selected)
+        ++(*t);
+  }
 }
 
 } // end namespace

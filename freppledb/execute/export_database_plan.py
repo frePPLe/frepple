@@ -75,8 +75,14 @@ class export:
 
 
   def getPegging(self, opplan):
+    unavail = opplan.unavailable
     pln = {
       "pegging": { j.demand.name: round(j.quantity, 6) for j in opplan.pegging_demand },
+      "unavailable": unavail,
+      "interruptions": [
+        (i.start.strftime("%Y-%m-%d %H:%M:%S"), i.end.strftime("%Y-%m-%d %H:%M:%S")) 
+        for i in opplan.interruptions 
+        ] if unavail else []
       }
     # We need to double any backslash to assure that the string remains
     # valid when passing it through postgresql (which eats them away)

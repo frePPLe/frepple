@@ -39,7 +39,7 @@ class OverviewReport(GridPivot):
 
   rows = (
     GridFieldText(
-      'operation', title=_('operation'), key=True, editable=False, field_name='name', 
+      'operation', title=_('operation'), key=True, editable=False, field_name='name',
       formatter='detail', extra='"role":"input/operation"'
       ),
     GridFieldText(
@@ -235,14 +235,36 @@ class OverviewReport(GridPivot):
            ), 0) total_end,
          coalesce(sum(
            case when operationplan.status = 'proposed' then
+             (
+             -- Total overlap
              extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
-             / extract(epoch from operationplan.enddate - operationplan.startdate)
+             -- Minus the interruptions
+             - coalesce((
+                select sum(greatest(0, extract (epoch from
+                  least(to_timestamp(value->>1, 'YYYY-MM-DD HH24:MI:SS'), d.enddate)
+                  - greatest(to_timestamp(value->>0, 'YYYY-MM-DD HH24:MI:SS'), d.startdate)
+                  )))
+                from ( select * from jsonb_array_elements(plan->'interruptions')) breaks
+                ), 0)
+             )
+             / greatest(1, extract(epoch from operationplan.enddate - operationplan.startdate) - coalesce((plan#>>'{unavailable}')::numeric, 0))
              * operationplan.quantity
            else 0 end
            ), 0) proposed_production,
          coalesce(sum(
-           extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
-           / extract(epoch from operationplan.enddate - operationplan.startdate)
+             (
+             -- Total overlap
+             extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
+             -- Minus the interruptions
+             - coalesce((
+                select sum(greatest(0, extract (epoch from
+                  least(to_timestamp(value->>1, 'YYYY-MM-DD HH24:MI:SS'), d.enddate)
+                  - greatest(to_timestamp(value->>0, 'YYYY-MM-DD HH24:MI:SS'), d.startdate)
+                  )))
+                from ( select * from jsonb_array_elements(plan->'interruptions')) breaks
+                ), 0)
+             )
+           / greatest(1, extract(epoch from operationplan.enddate - operationplan.startdate) - coalesce((plan#>>'{unavailable}')::numeric, 0))
            * operationplan.quantity
            ), 0) total_production
         from (%s) oper

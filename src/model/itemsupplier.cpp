@@ -255,7 +255,8 @@ OperationItemSupplier::OperationItemSupplier(
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());
-  setLocation(b->getLocation());
+  // TODO set this to a location representing the supplier availability calendar
+  // setLocation(b->getLocation());
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());

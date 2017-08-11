@@ -188,11 +188,6 @@ Here are the steps to get a fully working environment.
       | If you are using the Enterprise Edition, replace this file with the
       | license file you received from us.
 
-   #. | **/etc/frepple/init.xml**
-      | For a standard deployment this file doesn't need modification.
-      | Comment out the lines loading modules you are not using for a small
-      | performance improvement.
-
    #. | **/etc/httpd/conf.d/z_frepple.conf**
       | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of

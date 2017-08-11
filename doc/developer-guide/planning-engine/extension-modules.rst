@@ -65,10 +65,6 @@ Linux makefile and Visual Studio project.
   To keep things simple and transparent please use the .so extension for your
   modules and place them in the $FREPPLE_HOME directory.
 
-* Update the init.xml or init.py file to load your module with the
-  'frepple.loadmodule' Python function. Keyword arguments to this function are
-  passed to the initialize() function when the module is loaded.
-
 * Update the file frepple.xsd by defining the XML constructs enabled by
   your module.
 

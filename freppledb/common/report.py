@@ -1358,6 +1358,7 @@ class GridReport(View):
       numwarnings = 0
       content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
       firsterror = True
+      admin_log = []
 
       # Handle the complete upload as a single database transaction
       try:
@@ -1524,15 +1525,16 @@ class GridReport(View):
                     with transaction.atomic(using=request.database):
                       obj = form.save(commit=False)
                       obj.save(using=request.database)
-                      LogEntry(
-                        user_id=request.user.pk,
-                        content_type_id=content_type_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        #. Translators: Translation included with Django
-                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                      ).save(using=request.database)
+                      admin_log.append(
+                        LogEntry(
+                          user_id=request.user.pk,
+                          content_type_id=content_type_id,
+                          object_id=obj.pk,
+                          object_repr=force_text(obj),
+                          action_flag=it and CHANGE or ADDITION,
+                          #. Translators: Translation included with Django
+                          change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                        ))
                       if it:
                         changed += 1
                       else:
@@ -1567,6 +1569,9 @@ class GridReport(View):
                   firsterror = False
                 yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
                 numerrors += 1
+
+          # Save all admin log entries
+          LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
 
         # Report all failed records
         theClass = "success"
@@ -1631,6 +1636,7 @@ class GridReport(View):
         for ws_name in wb.get_sheet_names():
           headers = []
           rownumber = 0
+          admin_log = []
           ws = wb.get_sheet_by_name(name=ws_name)
           has_pk_field = False
           for row in ws.iter_rows():
@@ -1739,7 +1745,7 @@ class GridReport(View):
             # Case 3: Process a data row
             else:
               # Yield some result so we can detect disconnect clients and interrupt the upload
-              yield ' '              
+              yield ' '
               datarows += 1
               try:
                 # Step 1: Build a dictionary with all data fields
@@ -1823,15 +1829,16 @@ class GridReport(View):
                     with transaction.atomic(using=request.database):
                       obj = form.save(commit=False)
                       obj.save(using=request.database)
-                      LogEntry(
-                        user_id=request.user.pk,
-                        content_type_id=content_type_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        #. Translators: Translation included with Django
-                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                      ).save(using=request.database)
+                      admin_log.append(
+                        LogEntry(
+                          user_id=request.user.pk,
+                          content_type_id=content_type_id,
+                          object_id=obj.pk,
+                          object_repr=force_text(obj),
+                          action_flag=it and CHANGE or ADDITION,
+                          #. Translators: Translation included with Django
+                          change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                        ))
                       if it:
                         changed += 1
                       else:
@@ -1876,6 +1883,8 @@ class GridReport(View):
                   reportclass.model._meta.verbose_name, e
                   )
                 numerrors += 1
+          # Save all admin log entries
+          LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
 
       # Report all failed records
       theClass = "success"
@@ -2685,6 +2694,7 @@ def importWorkbook(request):
         numerrors = 0
         numwarnings = 0
         firsterror = True
+        admin_log = []
 
         try:
           # The admin model of the class can define some fields to exclude from the import
@@ -2867,15 +2877,16 @@ def importWorkbook(request):
                   with transaction.atomic(using=request.database):
                     obj = form.save(commit=False)
                     obj.save(using=request.database)
-                    LogEntry(
-                      user_id=request.user.pk,
-                      content_type_id=contenttype_id,
-                      object_id=obj.pk,
-                      object_repr=force_text(obj),
-                      action_flag=it and CHANGE or ADDITION,
-                      #. Translators: Translation included with Django
-                      change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                    ).save(using=request.database)
+                    admin_log.append(
+                      LogEntry(
+                        user_id=request.user.pk,
+                        content_type_id=contenttype_id,
+                        object_id=obj.pk,
+                        object_repr=force_text(obj),
+                        action_flag=it and CHANGE or ADDITION,
+                        #. Translators: Translation included with Django
+                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                      ))
                     if it:
                       changed += 1
                     else:
@@ -2898,6 +2909,10 @@ def importWorkbook(request):
                     for error in field.errors:
                       yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
                       numerrors += 1
+
+        # Create all admin log entries
+        LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
+
         # Report status of the import
         theClass = "success"
         if numerrors > 0:

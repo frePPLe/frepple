@@ -212,6 +212,7 @@ class Command(BaseCommand):
     added = 0
     content_type_id = ContentType.objects.get_for_model(model).pk
     errorcount = 0
+    admin_log = []
 
     # Handle the complete upload as a single database transaction
     with transaction.atomic(using=self.database):
@@ -335,15 +336,16 @@ class Command(BaseCommand):
                   obj = form.save(commit=False)
                   obj.save(using=self.database)
                   if self.user:
-                    LogEntry(
-                      user_id=self.user.id,
-                      content_type_id=content_type_id,
-                      object_id=obj.pk,
-                      object_repr=force_text(obj),
-                      action_flag=it and CHANGE or ADDITION,
-                      #. Translators: Translation included with Django
-                      change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
-                    ).save(using=self.database)
+                    admin_log.append(
+                      LogEntry(
+                        user_id=self.user.id,
+                        content_type_id=content_type_id,
+                        object_id=obj.pk,
+                        object_repr=force_text(obj),
+                        action_flag=it and CHANGE or ADDITION,
+                        #. Translators: Translation included with Django
+                        change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
+                      ))
                   if it:
                     changed += 1
                   else:
@@ -361,6 +363,9 @@ class Command(BaseCommand):
           except Exception as e:
             print("%s Error: Exception during upload: %s" % (datetime.now(),e) , file=self.logfile, flush=True)
             errorcount += 1
+
+      # Save all admin log entries
+      LogEntry.objects.all().using(self.database).bulk_create(admin_log, batch_size=1000)
 
       # Report all failed records
       if not errors:

@@ -131,14 +131,14 @@ class Command(BaseCommand):
             if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
-              print("%s Matched a model to file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
+              print("%s Matched a model to file: %s" % (datetime.now(), ifile), file=self.logfile, flush=True)
               break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-            print("%s Ignoring data in file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
+            print("%s Ignoring data in file: %s" % (datetime.now(), ifile), file=self.logfile, flush=True)
           elif self.user and not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
             # Check permissions
-            print("%s You don't have permissions to add: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
+            print("%s You don't have permissions to add: %s" % (datetime.now(), ifile), file=self.logfile, flush=True)
           else:
             deps = set([model])
             GridReport.dependent_models(model, deps)
@@ -148,16 +148,17 @@ class Command(BaseCommand):
         # Sort the list of models, based on dependencies between models
         models = GridReport.sort_models(models)
 
-        i=0
+        i = 0
         cnt = len(models)
         for ifile, model, contenttype_id, dependencies in models:
-          i += 1
-          print("%s Started processing data in file: %s" % (datetime.now(),ifile), file=self.logfile, flush=True)
-          filetoparse=os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
-          errors += self.parseCSVloadfromfolder(model, filetoparse)
-          print("%s Finished processing data in file: %s\n" % (datetime.now(),ifile), file=self.logfile, flush=True)
-          task.status = str(int(10+i/cnt*80))+'%'
+          task.status = str(int(10 + i / cnt * 80)) + '%'
+          task.message = 'Processing data file %s' % ifile
           task.save(using=self.database)
+          i += 1
+          filetoparse = os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
+          print("%s Started processing data in file: %s" % (datetime.now(), ifile), file=self.logfile, flush=True)
+          errors += self.parseCSVloadfromfolder(model, filetoparse)
+
 
       else:
         errors += 1

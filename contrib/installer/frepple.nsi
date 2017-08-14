@@ -491,7 +491,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_$1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': FREPPLE_LOGDIR,$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   ${If} $R0 == ${SF_SELECTED}
   FileWrite $R4 "  'scenario1': {$\r$\n"
@@ -505,7 +505,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario1',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': FREPPLE_LOGDIR,$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   FileWrite $R4 "  'scenario2': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql',$\r$\n"
@@ -518,7 +518,7 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario2',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': FREPPLE_LOGDIR,$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   FileWrite $R4 "  'scenario3': {$\r$\n"
   FileWrite $R4 "    'ENGINE': 'django.db.backends.postgresql',$\r$\n"
@@ -592,8 +592,6 @@ Section -Post
     ${If} $R0 == ${SF_SELECTED}
       DetailPrint "Loading demo data"
       nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" loaddata demo'
-      DetailPrint "Generating initial plan"
-      nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\bin\frepplectl.exe" frepple_run'
     ${EndIf}
   ${else}
     DetailPrint "x $0 x"

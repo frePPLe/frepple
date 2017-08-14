@@ -36,7 +36,7 @@ packages = [# Required for django standalone deployment
             'rest_framework_bulk', 'rest_framework_filters', 'markdown',
             # Added to package a more complete python library with frePPLe
             'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
-            'poplib', 'imaplib', 'telnetlib', 'pytz',
+            'poplib', 'imaplib', 'telnetlib',
             # Added for unicode and internationalization
             'encodings',
             # Added for cx_freeze binaries
@@ -59,9 +59,11 @@ from distutils.sysconfig import get_python_lib
 data_files = [
   ('freppleservice.py', 'freppleservice.py'),
   (os.path.join(get_python_lib(), 'win32', 'lib', 'pywintypes.py'), 'pywintypes.py'),
+  (os.path.join(get_python_lib(), 'win32', 'lib', 'win32timezone.py'), 'win32timezone.py'),
+  (os.path.join(get_python_lib(), 'win32', 'lib', 'win32serviceutil.py'), 'win32serviceutil.py'),
   (os.path.join(get_python_lib(), 'pythoncom.py'), 'pythoncom.py')
   ]
-for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework]:
+for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework, pytz]:
    srcdir = mod.__path__[0]
    targetdir = os.path.join('custom', mod.__name__)
    root_path_length = len(srcdir) + 1
@@ -77,19 +79,6 @@ for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_frame
            os.path.join(dirpath, f),
            os.path.join(targetdir, dirpath[root_path_length:], f),
            ))
-
-# Add some special data files into the zip archive
-zip_files = []
-for srcdir, targetdir in [
-  (os.path.join(pytz.__path__[0], "zoneinfo"), os.path.join("pytz", "zoneinfo"))
-  ]:
-    root_path_length = len(srcdir) + 1
-    for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
-      for f in filenames:
-        zip_files.append((
-             os.path.join(dirpath, f),
-             os.path.join(targetdir, dirpath[root_path_length:], f),
-             ))
 
 # Run the cx_Freeze program
 cx_Freeze.setup(
@@ -108,8 +97,7 @@ cx_Freeze.setup(
       "packages": packages,
       "excludes": excludes,
       "include_files": data_files,
-      "include_msvcr": True,
-      "zip_includes": zip_files,
+      "include_msvcr": True
       },
     },
   executables = [

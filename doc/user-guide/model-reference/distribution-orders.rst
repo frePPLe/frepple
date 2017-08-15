@@ -36,6 +36,10 @@ quantity         number            The quantity delivered.
 start date       DateTime          The date when the distribution order is leaving the origin location.
 end date         DateTime          The date of the distribution order delivery.
 Demands          demand            | The demand(s) (and quantity) pegged to the distribution order. This is a generated field.
+Inventory Status Number            | The Inventory Status is a calculated field that highlights the urgency of the purchase order.
+                                   | The cells have a background color that can be green, orange or red. Sorting 
+                                   | the distribution orders using the Inventory Status column (red ones first) allows the planner to 
+                                   | immediately focus on the distribution orders that should be treated first. 
 criticality      number            | The criticality is a read-only field, calculated by the planning engine. 
                                    | It represents an indication of the slack time in the usage of the distribution order.
                                    | A criticality of 0 indicates that the distribution order is on the critical path of one or more demands.

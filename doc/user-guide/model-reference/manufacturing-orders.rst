@@ -20,6 +20,10 @@ status           non-empty string  | This field should have one of the following
                                    | closed : The manufacturing order has been completed.
 Demands          demand            The demand(s) (and quantity) pegged to the manufacturing order. This is a generated field.
 Owner            number            In the case of a suboperation, the identifier of the operation calling this suboperation.
+Inventory Status Number            | The Inventory Status is a calculated field that highlights the urgency of the manufacturing order.
+                                   | The cells have a background color that can be green, orange or red. Sorting 
+                                   | the manufacturing orders using the Inventory Status column (red ones first) allows the planner to 
+                                   | immediately focus on the manufacturing orders that should be treated first. 
 criticality      number            | The criticality is a read-only field, calculated by the planning engine. 
                                    | It represents an indication of the slack time in the usage of the manufacturing order.
                                    | A criticality of 0 indicates that the manufacturing order is on the critical path of one or more demands.

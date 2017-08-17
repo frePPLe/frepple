@@ -36,8 +36,10 @@ The implementation requires the following steps:
       in frePPLe and his/her role and permissions within frePPLe
       need to be defined: See below. 
       
-    - The expiration time until which the token is valid.
-      A duration of 10 minutes suffices normally.
+    - | The expiration time until which the token is valid, expressed as
+        seconds since Jan 1st 1970 GMT. The site https://www.epochconverter.com/
+        provides a convenient check on these values.
+      | A token should normally be valid 1 to 2 hours after its generation.
       
     - The navbar argument specifies whether frePPLe should render
       its navigation header or not. In most case you'll want to hide it.

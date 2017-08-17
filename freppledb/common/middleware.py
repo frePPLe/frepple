@@ -27,8 +27,12 @@ from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponseNotFound
+from django.http.response import HttpResponseForbidden
 
 from freppledb.common.models import Scenario, User
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 # A local thread variable to make the current request visible everywhere
@@ -61,8 +65,10 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
         login(request, user)
         request.session['navbar'] = decoded.get('navbar', True)
         request.session['xframe_options_exempt'] = True
-      except:
-        raise Exception('Invalid web token or user')
+      except jwt.exceptions.InvalidTokenError as e:
+        logger.error('Missing or incorrect webtoken: %s' % e)
+        return HttpResponseForbidden("Missing or incorrect webtoken")
+
       language = request.user.language
       request.theme = request.user.theme or settings.DEFAULT_THEME
       request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
@@ -142,7 +148,6 @@ class MultiDBMiddleware(object):
           if settings.DATABASES[i]['regexp'].match(request.path):
             scenario = Scenario.objects.get(name=i)
             if scenario.status != 'In use':
-              print ('boom')
               return HttpResponseNotFound('Scenario not in use')
             request.prefix = '/%s' % i
             request.path_info = request.path_info[len(request.prefix):]
@@ -150,7 +155,6 @@ class MultiDBMiddleware(object):
             request.database = i
             return
         except Exception as e:
-          print(e)
           pass
       request.prefix = ''
       request.database = DEFAULT_DB_ALIAS

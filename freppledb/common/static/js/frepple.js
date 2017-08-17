@@ -411,28 +411,28 @@ jQuery.extend($.fn.fmatter, {
     {
 	    if (!isNaN(thenumber)) {
 	      if (thenumber >= 100 && thenumber < 999999) {
-	        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+Math.round(cellvalue)+'%</div>';
+	        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+Math.round(cellvalue)+'%</div>';
 	      } else if (thenumber === 0) {
-	        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+Math.round(cellvalue)+'%</div>';
+	        return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+Math.round(cellvalue)+'%</div>';
 	      } else if (thenumber === 999999) {
 	        return '';
 	      } else {
 	        thenumber = Math.round(thenumber/100*255);
-	        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+')">'+Math.round(cellvalue)+'%</div>';
+	        return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+thenumber+','+0+'); color: #151515;">'+Math.round(cellvalue)+'%</div>';
 	      }
       }
     } else {
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
-        return '<div class="invStatus" style="text-align: center; background-color: #f00">'+gettext("unused")+'</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+gettext("unused")+'</div>';
       } else if (thenumber < 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+ (-thenumber)+' '+gettext("days early")+'</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+ (-thenumber)+' '+gettext("days early")+'</div>';
       } else if (thenumber === 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000">'+gettext("on time")+'</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+gettext("on time")+'</div>';
       } else if (thenumber >= 0) {
         if (thenumber > 7) {
-          return '<div class="invStatus" style="text-align: center; background-color: #f00">'+thenumber+' '+gettext("days late")+'</div>';
+          return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+thenumber+' '+gettext("days late")+'</div>';
         } else {
-          return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">'+thenumber+' '+gettext("days late")+'</div>';
+          return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+'); color: #151515;">'+thenumber+' '+gettext("days late")+'</div>';
         }
       }
     }

@@ -3214,7 +3214,16 @@ class PythonData : public DataValue
       obj = nullptr;
     }
 
-    /** This conversion operator casts the object back to a PyObject pointer. */
+    /** Return true if a valid Python object is available. */
+    inline bool isValid() const
+    {
+      return obj != nullptr;
+    }
+
+    /** This conversion operator casts the object back to a PyObject pointer.
+      * The reference count of the Python object is increased, so you want to be careful
+      * to apply this conversion.
+      */
     operator PyObject*() const
     {
       if (obj)
@@ -3660,10 +3669,10 @@ class Object : public PyObject
     virtual ~Object()
     {
       if (PyObject::ob_refcnt > 1)
-        logger << "Warning: Deleting "
+        logger << "Warning: Deleting " << (PyObject *)(this)
           << (PyObject::ob_type->tp_name && PyObject::ob_type ? PyObject::ob_type->tp_name : "nullptr")
-            << " object that is still referenced "
-            << (PyObject::ob_refcnt-1) << " times" << endl;
+          << " object that is still referenced "
+          << (PyObject::ob_refcnt-1) << " times" << endl;
       if (dict) Py_DECREF(dict);
     }
 

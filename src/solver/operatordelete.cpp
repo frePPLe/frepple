@@ -78,7 +78,7 @@ PyObject* OperatorDelete::create(PyTypeObject* pytype, PyObject* args, PyObject*
     }
 
     // Return the object
-    //Py_INCREF(s);  // XXX TODO SHOULD the ref count be set to one? Or do we prevent the opbject from being garbage collected
+    Py_INCREF(s);
     return static_cast<PyObject*>(s);
   }
   catch (...)

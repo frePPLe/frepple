@@ -282,15 +282,16 @@ void PythonInterpreter::execute(const char* cmd)
   // Execute the Python code. Note that during the call the Python lock can be
   // temporarily released.
   PyObject *v = PyRun_String(cmd, Py_file_input, d, d);
-  if (!v)
+  if (v)
+    Py_DECREF(v);
+  else
   {
     // Print the error message
     PyErr_Print();
     // Release the global Python lock
     PyGILState_Release(state);
-    throw RuntimeException("Error executing Python command");
+    throw RuntimeException("Error executing Python command");    
   }
-  Py_DECREF(v);
   PyErr_Clear();
   // Release the global Python lock
   PyGILState_Release(state);
@@ -1202,12 +1203,11 @@ extern "C" PyObject* getattro_handler(PyObject *self, PyObject *name)
       // Retrieve the attribute
       fmeta->getField(cpp_self, result);
 
-      // Exit 1: Normal
-      if (static_cast<PyObject*>(result))
+      if (result.isValid())
+        // Return result to Python
         return result;
-
-      // Exit 2: Exception occurred
-      if (PyErr_Occurred())
+      else if (PyErr_Occurred())
+        // Error occured
         return nullptr;
     }
 

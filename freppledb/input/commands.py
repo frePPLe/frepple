@@ -699,13 +699,13 @@ class loadBuffers(LoadTask):
         if i[7] == "infinite":
           b = frepple.buffer_infinite(
             name=i[0], description=i[1], location=frepple.location(name=i[2]),
-            item=frepple.item(name=i[3]), onhand=max(i[4], 0),
+            item=frepple.item(name=i[3]), onhand=max(i[4] or 0, 0),
             category=i[9], subcategory=i[10], source=i[11]
             )
         elif not i[7] or i[7] == "default":
           b = frepple.buffer(
             name=i[0], description=i[1], location=frepple.location(name=i[2]),
-            item=frepple.item(name=i[3]), onhand=max(i[4], 0),
+            item=frepple.item(name=i[3]), onhand=max(i[4] or 0, 0),
             category=i[9], subcategory=i[10], source=i[11]
             )
           if i[8]:

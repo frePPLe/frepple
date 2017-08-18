@@ -28,6 +28,11 @@
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
 
+#ifdef __CYGWIN__
+// This define blocks some functions such as strptime() that are required
+#undef __STRICT_ANSI__
+#endif
+
 /* Python.h has to be included first.
    For a debugging build on windows we avoid using the debug version of Python
    since that also requires Python and all its modules to be compiled in debug
@@ -1660,28 +1665,30 @@ class PythonType : public NonCopyable
 
 enum FieldCategory
 {
-  MANDATORY = 1,         // Marks a key field of the object. This is
-                         // used when we need to serialize only a reference
-                         // to the object.
-  BASE = 2,              // The default value. The field will be serialized
-                         // and deserialized normally.
-  PLAN = 4,              // Marks fields containing planning output. It is
-                         // only serialized when we request such info.
-  DETAIL = 8,            // Marks fields containing more detail than is
-                         // required to restore all state.
-  DONT_SERIALIZE = 16,   // These fields are not intended to be ever
-                         // serialized.
-  COMPUTED = 32,         // A computed field doesn't consume any storage
-  PARENT = 64,           // If set, the constructor of the child object
-                         // will get a pointer to the parent as extra
-                         // argument.
-  WRITE_OBJECT = 128,    // Force writing this field as an object
-  WRITE_REFERENCE = 256, // Force writing this field as a reference
-  WRITE_HIDDEN = 512,    // Force writing hidden fields
-  WRITE_REPEAT = 1024,   // Force writing an object again, even if already
-                         // written as parent
-  FORCE_BASE = 2048      // Force writing this object in base mode, even when
-                         // the output is currently set in a different mode
+  MANDATORY = 1,                // Marks a key field of the object. This is
+                                // used when we need to serialize only a reference
+                                // to the object.
+  BASE = 2,                     // The default value. The field will be serialized
+                                // and deserialized normally.
+  PLAN = 4,                     // Marks fields containing planning output. It is
+                                // only serialized when we request such info.
+  DETAIL = 8,                   // Marks fields containing more detail than is
+                                // required to restore all state.
+  DONT_SERIALIZE = 16,          // These fields are not intended to be ever
+                                // serialized.
+  COMPUTED = 32,                // A computed field doesn't consume any storage
+  PARENT = 64,                  // If set, the constructor of the child object
+                                // will get a pointer to the parent as extra
+                                // argument.
+  WRITE_OBJECT_DFT = 128,       // Force writing this field as an object when not in service mode
+  WRITE_REFERENCE_DFT = 256,    // Force writing this field as a reference when not in service mode
+  WRITE_HIDDEN = 512,           // Force writing hidden fields
+  FORCE_BASE = 1024,            // Force writing this object in base mode, even when
+                                // the output is currently set in a different mode
+  WRITE_OBJECT_SVC = 2048,      // Force writing an object when we are in service mode
+  WRITE_REFERENCE_SVC = 4096,   // Force writing a reference when we are in service mode
+  WRITE_OBJECT = 2048 + 128,    // Force writing an object
+  WRITE_REFERENCE = 4096 + 256  // Force writing a reference
 };
 
 
@@ -2600,7 +2607,7 @@ class Serializer
     /** @see writeElement(const Keyword&, const Object*, mode) */
     void writeElement(const Keyword& t, const Object& o)
     {
-      writeElement(t, &o, content);
+      writeElement(t, &o, forceBase ? BASE : content);
     }
 
     void writeElement(const Keyword& t, const Object& o, FieldCategory m)
@@ -2643,6 +2650,11 @@ class Serializer
       skipFooter = b;
     }
 
+    inline void setServiceMode(bool b = true)
+    {
+      service_mode = b;
+    }
+
     inline bool getSkipHead() const
     {
       return skipHeader;
@@ -2651,6 +2663,11 @@ class Serializer
     inline bool getSkipTail() const
     {
       return skipFooter;
+    }
+
+    inline bool getServiceMode() const
+    {
+      return service_mode;
     }
 
   protected:
@@ -2687,6 +2704,11 @@ class Serializer
 
     /** Flag to force the output mode to be base. */
     bool forceBase = false;
+
+    /** Flag whether or not we are in service mode. 
+      * In service mode, objects are serialized slightly different.
+      */
+    bool service_mode = false;
 };
 
 
@@ -5837,7 +5859,7 @@ class HasDescription : public HasSource
     {
       m->addStringField<Cls>(Tags::category, &Cls::getCategory, &Cls::setCategory, "", BASE + PLAN);
       m->addStringField<Cls>(Tags::subcategory, &Cls::getSubCategory, &Cls::setSubCategory, "", BASE + PLAN);
-      m->addStringField<Cls>(Tags::description, &Cls::getDescription, &Cls::setDescription);
+      m->addStringField<Cls>(Tags::description, &Cls::getDescription, &Cls::setDescription, "", BASE + PLAN);
       HasSource::registerFields<Cls>(m);
     }
 
@@ -7448,23 +7470,37 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         o << "Can't set field " << getName().getName() << " on class " << me->getType().type;
         throw DataException(o.str());
       }
-      Ptr *obj = static_cast<Ptr*>(el.getObject());
+      Object* obj = el.getObject();
       if (!obj || (obj && (
         (obj->getType().category && *(obj->getType().category) == *(Ptr::metadata))
         || obj->getType() == *(Ptr::metadata)))
         )
       {
+        // Matching type
         if (cmd)
           cmd->addCommandSetField(me, this, el);
-        (static_cast<Cls*>(me)->*setf)(obj);
+        (static_cast<Cls*>(me)->*setf)(static_cast<Ptr*>(obj));
       }
       else
       {
-        ostringstream o;
-        o << "Expecting value of type " << Ptr::metadata->type
-          << " for field " << getName().getName()
-          << " on class " << me->getType().type;
-        throw DataException(o.str());
+        Ptr* obj2 = dynamic_cast<Ptr*>(obj);
+        if (obj2)
+        {
+          // Dynamic cast: category is different, but they still have the same
+          // base class.
+          if (cmd)
+            cmd->addCommandSetField(me, this, el);
+          (static_cast<Cls*>(me)->*setf)(obj2);
+        }
+        else
+        {
+          // Wrong type
+          ostringstream o;
+          o << "Expecting value of type " << Ptr::metadata->type
+            << " for field " << getName().getName()
+            << " on class " << me->getType().type;
+          throw DataException(o.str());
+        }
       }
     }
 
@@ -7481,11 +7517,18 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
       Ptr* c = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-      if (c && (output.getPreviousObject() != c || getFlag(WRITE_REPEAT)))
+      if (c && (output.getPreviousObject() != c))
       {
         // Update the serialization mode
         // Unless specified otherwise we save a reference.
-        bool tmp_refs = output.setSaveReferences(!getFlag(WRITE_OBJECT));
+        bool tmp_force_base = false;
+        if (getFlag(FORCE_BASE))
+          tmp_force_base = output.setForceBase(true);
+        bool tmp_refs;
+        if (output.getServiceMode())
+          tmp_refs = output.setSaveReferences(!getFlag(WRITE_OBJECT_SVC + FORCE_BASE));
+        else
+          tmp_refs = output.setSaveReferences(!getFlag(WRITE_OBJECT_DFT + FORCE_BASE));
         bool tmp_hidden = false;
         if (getFlag(WRITE_HIDDEN))
           tmp_hidden = output.setWriteHidden(true);
@@ -7494,9 +7537,20 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
         output.writeElement(getName(), c);
 
         // Restore the original serialization mode
-        output.setSaveReferences(tmp_refs);
+        if (output.getServiceMode())
+        {
+          if (!getFlag(WRITE_OBJECT_SVC + FORCE_BASE))
+            output.setSaveReferences(tmp_refs);
+        }
+        else
+        {
+          if (!getFlag(WRITE_OBJECT_DFT + FORCE_BASE))
+            output.setSaveReferences(tmp_refs);
+        }
         if (getFlag(WRITE_HIDDEN))
           output.setWriteHidden(tmp_hidden);
+        if (getFlag(FORCE_BASE))
+          output.setForceBase(tmp_force_base);
       }
     }
 
@@ -7574,10 +7628,20 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
       bool tmp_force_base = false;
       if (getFlag(FORCE_BASE))
         tmp_force_base = output.setForceBase(true);
-      if (getFlag(WRITE_OBJECT))
-        tmp_refs = output.setSaveReferences(false);
-      else if (getFlag(WRITE_REFERENCE))
-        tmp_refs = output.setSaveReferences(true);
+      if (output.getServiceMode())
+      {
+        if (getFlag(WRITE_OBJECT_SVC))
+          tmp_refs = output.setSaveReferences(false);
+        else if (getFlag(WRITE_REFERENCE_SVC))
+          tmp_refs = output.setSaveReferences(true);
+      }
+      else
+      {
+        if (getFlag(WRITE_OBJECT_DFT))
+          tmp_refs = output.setSaveReferences(false);
+        else if (getFlag(WRITE_REFERENCE_DFT))
+          tmp_refs = output.setSaveReferences(true);
+      }
       if (getFlag(WRITE_HIDDEN))
         tmp_hidden = output.setWriteHidden(true);
 
@@ -7599,8 +7663,20 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         output.EndList(getName());
 
       // Restore the original serialization mode
-      if (getFlag(WRITE_OBJECT + WRITE_REFERENCE))
-        output.setSaveReferences(tmp_refs);
+      if (output.getServiceMode())
+      {
+        if (getFlag(WRITE_OBJECT_SVC))
+          output.setSaveReferences(tmp_refs);
+        else if (getFlag(WRITE_REFERENCE_SVC))
+          output.setSaveReferences(tmp_refs);
+      }
+      else
+      {
+        if (getFlag(WRITE_OBJECT_DFT))
+          output.setSaveReferences(tmp_refs);
+        else if (getFlag(WRITE_REFERENCE_DFT))
+          output.setSaveReferences(tmp_refs);
+      }
       if (getFlag(WRITE_HIDDEN))
         output.setWriteHidden(tmp_hidden);
       if (getFlag(FORCE_BASE))

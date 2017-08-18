@@ -80,6 +80,7 @@ class SupplyPlanning(PlanTask):
       loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
       lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
       allowsplits=(Parameter.getValue('allowsplits', database, 'true').lower() == "true"),
+      minimumdelay=int(Parameter.getValue('plan.minimumdelay', database, '0')),
       rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
       plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
       iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0')),

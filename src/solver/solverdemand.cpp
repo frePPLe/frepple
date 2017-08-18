@@ -321,9 +321,24 @@ void SolverMRP::solve(const Demand* l, void* v)
             if (loglevel > 0)
               logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
 				  }
-				  else
-					  // Use the next-date answer from the solver
-					  plan_date = next_date;
+          else if (getMinimumDelay())
+          { 
+            Date tmp = copy_plan_date + getMinimumDelay();
+            if (tmp > next_date)
+            {
+              // Assures that the next planning round advances for at least the
+              // minimum acceptable delay.
+              if (loglevel > 0)
+                logger << "Demand '" << l << "': Minimum retry on " << tmp << " rather than " << next_date << endl;
+              plan_date = tmp;
+            }
+            else
+              // Use the next-date answer from the solver            
+              plan_date = next_date;
+          }
+          else
+            // Use the next-date answer from the solver            
+            plan_date = next_date;
 
           // Delete operationplans - Undo all changes
           data->rollback(topcommand);

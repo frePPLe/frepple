@@ -172,7 +172,7 @@ bool SolverMRP::checkOperation
           opplan, orig_opplan_qty, Date::infinitePast, data.state->a_date
           );
         checkOperationCapacity(opplan,data);
-        if (data.state->a_date == prev && data.state->a_qty == 0.0)
+        if (data.state->a_date <= prev && data.state->a_qty == 0.0)
         {
           // Tough luck
           opplan->getOperation()->setOperationPlanParameters(

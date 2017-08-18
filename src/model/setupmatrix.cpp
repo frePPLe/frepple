@@ -172,7 +172,7 @@ PyObject* SetupMatrix::addPythonRule(PyObject* self, PyObject* args, PyObject* k
     double cost = 0;
     static const char *kwlist[] = {"priority", "fromsetup", "tosetup", "duration", "cost", nullptr};
     if (!PyArg_ParseTupleAndKeywords(args, kwdict,
-        "i|ssld:addRule",
+        "iss|ld:addRule",
         const_cast<char**>(kwlist), &prio, &pyfrom, &pyto, &duration, &cost))
       return nullptr;
 

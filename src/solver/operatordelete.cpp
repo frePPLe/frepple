@@ -114,10 +114,10 @@ void OperatorDelete::solve(OperationPlan* o, void* v)
   // Delete the operationplan
   if (!o->getLocked())
   {
-  if (cmds)
-    cmds->add(new CommandDeleteOperationPlan(o));
-  else
-    delete o;
+    if (cmds)
+      cmds->add(new CommandDeleteOperationPlan(o));
+    else
+      delete o;
   }
 
   // Propagate to all upstream buffers
@@ -349,81 +349,81 @@ void OperatorDelete::solve(const Buffer* b, void* v)
   double excess = fiter->getOnhand() - fiter->getMin();
   if (excess > ROUNDING_ERROR)
   {
-  fiter = b->getFlowPlans().begin();
-  while (excess > ROUNDING_ERROR && fiter != fend)
-  {
-    if (fiter->getQuantity() <= 0)
+    fiter = b->getFlowPlans().begin();
+    while (excess > ROUNDING_ERROR && fiter != fend)
     {
-      // Not a producer
-      ++fiter;
-      continue;
-    }
-    FlowPlan* fp = nullptr;
-    if (fiter->getEventType() == 1)
-      fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
-    double cur_excess = b->getFlowPlans().getExcess(&*fiter);
-    if (!fp || fp->getOperationPlan()->getLocked() || cur_excess < ROUNDING_ERROR)
-    {
-      // No excess producer, or it's locked
-      ++fiter;
-      continue;
-    }
-
-    // Increment the iterator here, because it can get invalidated later on
-    while (
-      fiter != fend
-      && fiter->getEventType() == 1
-      && fiter->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
-      )
+      if (fiter->getQuantity() <= 0)
+      {
+        // Not a producer
         ++fiter;
-    if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR)
-    {
-      // The complete operationplan is excess.
-      // Reduce the excess
-      excess -= fp->getQuantity();
-      // Add upstream buffers to the stack
+        continue;
+      }
+      FlowPlan* fp = nullptr;
+      if (fiter->getEventType() == 1)
+        fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
+      double cur_excess = b->getFlowPlans().getExcess(&*fiter);
+      if (!fp || fp->getOperationPlan()->getLocked() || cur_excess < ROUNDING_ERROR)
+      {
+        // No excess producer, or it's locked
+        ++fiter;
+        continue;
+      }
+
+      // Increment the iterator here, because it can get invalidated later on
+      while (
+        fiter != fend
+        && fiter->getEventType() == 1
+        && fiter->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
+        )
+          ++fiter;
+      if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR)
+      {
+        // The complete operationplan is excess.
+        // Reduce the excess
+        excess -= fp->getQuantity();
+        // Add upstream buffers to the stack
         pushBuffers(fp->getOperationPlan(), true, false);
-      // Log message
-      if (getLogLevel()>0)
+        // Log message
+        if (getLogLevel()>0)
           logger << "Removing excess operationplan: "
             << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()
             << ", " << fp->getOperationPlan()->getDates()
             << ")" << endl;
-      // Delete operationplan
-      if (cmds)
-        cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+        // Delete operationplan
+        if (cmds)
+          cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+        else
+          delete fp->getOperationPlan();
+      }
       else
-        delete fp->getOperationPlan();
-    }
-    else
-    {
-      // Reduce the operationplan
-      double newsize = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
-      if (newsize == fp->getQuantity())
-        // No resizing is feasible
-        continue;
-      // Add upstream buffers to the stack
+      {
+        // Reduce the operationplan
+        double newsize = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
+        if (newsize == fp->getQuantity())
+          // No resizing is feasible
+          continue;
+        // Add upstream buffers to the stack
         pushBuffers(fp->getOperationPlan(), true, false);
-      // Reduce the excess
-      excess -= fp->getQuantity() - newsize;
-      if (getLogLevel()>0)
+        // Reduce the excess
+        excess -= fp->getQuantity() - newsize;
+        if (getLogLevel()>0)
           logger << "Resizing excess operationplan to " << newsize << ": "
             << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()
             << ", " << fp->getOperationPlan()->getDates()
             << ")" << endl;
-      // Resize operationplan
-      if (cmds)
+        // Resize operationplan
+        if (cmds)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
-        cmds->add(new CommandMoveOperationPlan(
-          fp->getOperationPlan(), Date::infinitePast,
+          cmds->add(new CommandMoveOperationPlan(
+            fp->getOperationPlan(), Date::infinitePast,
             fp->getOperationPlan()->getDates().getEnd(), newsize
             ));
-      else
-        fp->getOperationPlan()->setQuantity(newsize);
+        else
+          fp->getOperationPlan()->setQuantity(newsize);
       }
     }
   }

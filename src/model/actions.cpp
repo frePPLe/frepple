@@ -196,7 +196,7 @@ PyObject* savePlan(PyObject* self, PyObject* args)
             textoutput << "BUFFER\t" << *gbuf << '\t'
                 << oo->getDate() << '\t'
                 << oo->getQuantity() << '\t'
-                << oo->getOnhand() << endl;
+                << (round(oo->getOnhand() * 1000) / 1000) << endl;
           }
     }
 
@@ -229,7 +229,7 @@ PyObject* savePlan(PyObject* self, PyObject* args)
             textoutput << "RESOURCE\t" << *gres << '\t'
                 << qq->getDate() << '\t'
                 << qq->getQuantity() << '\t'
-                << qq->getOnhand() << endl;
+                << (round(qq->getOnhand() * 1000) / 1000) << endl;
           }
     }
 

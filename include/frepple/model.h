@@ -932,6 +932,11 @@ class Solver : public Object
 
     virtual void solve(void* = nullptr) = 0;
 
+    virtual void solve(const Plan*, void* = nullptr)
+    {
+      throw LogicException("Called undefined solve(Plan*) method");
+    }
+
     virtual void solve(const Demand*,void* = nullptr)
     {
       throw LogicException("Called undefined solve(Demand*) method");
@@ -1065,17 +1070,33 @@ class Solver : public Object
       loglevel = v;
     }
 
+    /** Return whether or not we automatically commit the changes. */
+    bool getAutocommit() const
+    {
+      return autocommit;
+    }
+
+    /** Update whether or not we automatically commit the changes. */
+    void setAutocommit(const bool b)
+    {
+      autocommit = b;
+    }
+
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaCategory* metadata;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addShortField<Cls>(Tags::loglevel, &Cls::getLogLevel, &Cls::setLogLevel);
+      m->addBoolField<Cls>(Tags::autocommit, &Cls::getAutocommit, &Cls::setAutocommit);
     }
 
   private:
     /** Controls the amount of tracing and debugging messages. */
     short loglevel;
+
+    /** Automatically commit any plan changes or not. */
+    bool autocommit = true;
 };
 
 
@@ -2293,7 +2314,10 @@ class OperationPlan
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
       m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);
-      m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, BASE + PLAN + WRITE_REPEAT + WRITE_REFERENCE + WRITE_HIDDEN);
+      m->addPointerField<Cls, Operation>(
+        Tags::operation, &Cls::getOperation, &Cls::setOperation, 
+        BASE + PLAN + WRITE_REFERENCE_DFT + WRITE_OBJECT_SVC + WRITE_HIDDEN
+        );
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand, BASE + WRITE_HIDDEN);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
@@ -2999,7 +3023,7 @@ class Operation : public HasName<Operation>,
       m->addPointerField<Cls>(Tags::size_minimum_calendar, &Cls::getSizeMinimumCalendar, &Cls::setSizeMinimumCalendar);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
       m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
-      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, BASE + PLAN);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, BASE + PLAN + WRITE_OBJECT_SVC);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -4913,7 +4937,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
       m->addPointerField<Cls, Operation>(Tags::producing, &Cls::getProducingOperation, &Cls::setProducingOperation);
-      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, BASE + WRITE_OBJECT_SVC);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       Plannable::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnHand, &Cls::setOnHand);
@@ -7456,7 +7480,7 @@ class Demand
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
       HasDescription::registerFields<Cls>(m);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
-      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem);
+      m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, BASE + WRITE_OBJECT_SVC);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addPointerField<Cls, Customer>(Tags::customer, &Cls::getCustomer, &Cls::setCustomer);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation);

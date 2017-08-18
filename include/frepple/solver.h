@@ -485,6 +485,20 @@ class SolverMRP : public Solver
       lazydelay = l;
     }
 
+    /** Return the minimum time increment between ask cycles. */
+    Duration getMinimumDelay() const
+    {
+      return minimumdelay;
+    }
+
+    /** Update the time increment between requests when the answered reply
+    * date isn't usable. */
+    void setMinimumDelay(Duration l)
+    {
+      if (l < 0L) throw DataException("Invalid minimum delay");
+      minimumdelay = l;
+    }
+
     /** Get the threshold to stop iterating when the delta between iterations
       * is less than this absolute threshold.
       */
@@ -539,20 +553,6 @@ class SolverMRP : public Solver
     void setIterationMax(unsigned long d)
     {
       iteration_max = d;
-    }
-
-    /** Return whether or not we automatically commit the changes after
-      * planning a demand. */
-    bool getAutocommit() const
-    {
-      return autocommit;
-    }
-
-    /** Update whether or not we automatically commit the changes after
-      * planning a demand. */
-    void setAutocommit(const bool b)
-    {
-      autocommit = b;
     }
 
     /** Specify a Python function that is called before solving a flow. */
@@ -688,12 +688,12 @@ class SolverMRP : public Solver
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addShortField<Cls>(Tags::constraints, &Cls::getConstraints, &Cls::setConstraints);
-      m->addBoolField<Cls>(Tags::autocommit, &Cls::getAutocommit, &Cls::setAutocommit);
       m->addShortField<Cls>(Tags::plantype, &Cls::getPlanType, &Cls::setPlanType);
       m->addDoubleField<Cls>(SolverMRP::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
       m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
       m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
       m->addDurationField<Cls>(SolverMRP::tag_administrativeleadtime, &Cls::getAdministrativeLeadTime, &Cls::setAdministrativeLeadTime);
+      m->addDurationField<Cls>(SolverMRP::tag_minimumdelay, &Cls::getMinimumDelay, &Cls::setMinimumDelay);
       m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
       m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
@@ -709,6 +709,7 @@ class SolverMRP : public Solver
     static const Keyword tag_iterationthreshold;
     static const Keyword tag_iterationaccuracy;
     static const Keyword tag_lazydelay;
+    static const Keyword tag_minimumdelay;
     static const Keyword tag_allowsplits;
     static const Keyword tag_rotateresources;
     static const Keyword tag_planSafetyStockFirst;
@@ -733,6 +734,14 @@ class SolverMRP : public Solver
     */
     Duration administrativeleadtime;
 
+    /** Minimum acceptable time increment between ask cycles. 
+      * By default a delay of 1 seconds is sufficient to trigger a new ask cycle.
+      * This can indicate an inefficient search of the planning algorithm.      
+      * Increasing this value avoids this inefficiency, but can reduce the quality
+      * of the plan - we can leave "holes" in the schedule.
+      */
+    Duration minimumdelay;
+
     /** Threshold to stop iterating when the delta between iterations is
       * less than this absolute limit.
       */
@@ -748,13 +757,6 @@ class SolverMRP : public Solver
       * unplannable.
       */
     unsigned long iteration_max;
-
-    /** Enable or disable automatically committing the changes in the plan
-      * after planning each demand.<br>
-      * The flag is only respected when planning incremental changes, and
-      * is ignored when doing a complete replan.
-      */
-    bool autocommit;
 
     /** A Python callback function that is called for each alternate
       * flow. If the callback function returns false, that alternate

@@ -9,6 +9,7 @@
 #
 
 import os
+import errno
 import gzip
 
 from _datetime import datetime
@@ -125,6 +126,13 @@ class Command(BaseCommand):
         # Open the logfile
         # The log file remains in the upload folder as different folders can be specified
         # We do not want t create one log file per folder
+        if not os.path.isdir(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export')):
+          try:
+            os.makedirs(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export'))
+          except OSError as exception:
+            if exception.errno != errno.EEXIST:
+              raise
+
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export', 'exporttofolder.log'), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
 

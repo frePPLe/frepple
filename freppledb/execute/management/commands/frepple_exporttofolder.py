@@ -11,6 +11,7 @@
 import os
 import errno
 import gzip
+import logging
 
 from _datetime import datetime
 from django.conf import settings
@@ -20,6 +21,9 @@ from django.core.management.base import BaseCommand, CommandError
 from freppledb.common.models import User
 from freppledb import VERSION
 from freppledb.execute.models import Task
+
+logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
 
@@ -165,9 +169,9 @@ class Command(BaseCommand):
 
           except Exception as e:
             errors += 1
-            print("%s Failed to export to %s" % (datetime.now(),filename), file=self.logfile)
+            print("%s Failed to export to %s" % (datetime.now(), filename), file=self.logfile)
             if task:
-              task.message = '%s' % e
+              task.message = 'Failed to export %s' % filename
 
           task.status = str(int(i/cnt*100))+'%'
           task.save(using=self.database)
@@ -181,10 +185,12 @@ class Command(BaseCommand):
         task.save(using=self.database)
 
     except Exception as e:
-      print("%s Failed" % datetime.now(), file=self.logfile)
+      if self.logfile:
+        print("%s Failed" % datetime.now(), file=self.logfile)
       errors += 1
       if task:
-        task.message = '%s' % e
+        task.message = 'Failed to export'
+      logger.error("Failed to export: %s" % e)
 
     finally:
       if task:

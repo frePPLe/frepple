@@ -254,8 +254,8 @@ class export:
         if self.cluster != -1 and self.cluster != i.cluster:
           continue
         for j in i.operationplans:
-          color = int(j.delay / 86400)
           delay = j.delay
+          color = int(100 - delay / 86400)
 
           if isinstance(i, frepple.operation_inventory):
             # Export inventory

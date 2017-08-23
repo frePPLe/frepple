@@ -406,9 +406,10 @@ jQuery.extend($.fn.fmatter, {
   },
 
   color : function (cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue === '') return '';
   	var thenumber = parseInt(cellvalue);
-    if (rowdata.inventory_item || rowdata.leadtime)
-    {
+
+    if (rowdata.inventory_item || rowdata.leadtime) {
 	    if (!isNaN(thenumber)) {
 	      if (thenumber >= 100 && thenumber < 999999) {
 	        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+Math.round(cellvalue)+'%</div>';
@@ -422,17 +423,20 @@ jQuery.extend($.fn.fmatter, {
 	      }
       }
     } else {
+      var thedelay = Math.round(parseInt(rowdata.delay)/8640)/10;
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
         return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+gettext("unused")+'</div>';
-      } else if (thenumber < 0) {
-        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+ (-thenumber)+' '+gettext("days early")+'</div>';
-      } else if (thenumber === 0) {
+      } else if (thedelay < 0) {
+        return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+ (-thedelay)+' '+gettext("days early")+'</div>';
+      } else if (thedelay === 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+gettext("on time")+'</div>';
-      } else if (thenumber >= 0) {
-        if (thenumber > 7) {
-          return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+thenumber+' '+gettext("days late")+'</div>';
+      } else if (thedelay > 0) {
+        if (thenumber > 100) {
+          return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
+        } else if (thenumber < 0) {
+          return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
         } else {
-          return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+'); color: #151515;">'+thenumber+' '+gettext("days late")+'</div>';
+          return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round(thenumber/100*255)+','+0+'); color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
         }
       }
     }

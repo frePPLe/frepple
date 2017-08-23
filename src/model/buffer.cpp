@@ -52,6 +52,8 @@ int Buffer::initialize()
   uninitializedProducing = new OperationFixedTime();
 
   // Initialize the Python class
+  PythonType& x = FreppleCategory<Buffer>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS, "return the total lead time");
   return FreppleCategory<Buffer>::initialize();
 }
 
@@ -1189,5 +1191,41 @@ void Buffer::buildProducingOperation()
   }
 }
 
+
+Duration Buffer::getDecoupledLeadTime(double qty, bool recurse_ip_buffers) const
+{
+  if (!recurse_ip_buffers)
+    // Abort the recursion
+    return Duration(0L);
+
+  Operation *oper = getProducingOperation();
+  if (!oper)
+    // Infinite lead time if no producing operation is found.
+    // Setting an extremely long lead time, which results in a huge
+    // safety stock that covers the entire horizon.
+    return Duration(999L * 86400L);
+  else
+    return oper->getDecoupledLeadTime(qty);
+}
+
+
+PyObject* Buffer::getDecoupledLeadTimePython(PyObject *self, PyObject *args)
+{
+  // Pick up the quantity argument
+  double qty = 1.0;
+  int ok = PyArg_ParseTuple(args, "|d:decoupledLeadTime", &qty);
+  if (!ok) return nullptr;
+
+  try
+  {
+    Duration lt = static_cast<Buffer*>(self)->getDecoupledLeadTime(qty, true);
+    return PythonData(lt);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
 
 } // end namespace

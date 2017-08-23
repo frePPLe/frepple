@@ -2916,6 +2916,11 @@ class Operation : public HasName<Operation>,
       return size_maximum;
     }
 
+    /** Return the decoupled lead time of this operation. */
+    virtual Duration getDecoupledLeadTime(double qty) const = 0;
+
+    static PyObject* getDecoupledLeadTimePython(PyObject *self, PyObject *args);
+
     /** Add a new child operationplan.
       * By default an operationplan can have only a single suboperation,
       * representing a changeover.
@@ -3371,6 +3376,9 @@ class OperationFixedTime : public Operation
       duration = t;
     }
 
+    /** Return the decoupled lead time of this operation. */
+    virtual Duration getDecoupledLeadTime(double qty) const;
+
     static int initialize();
 
     virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
@@ -3440,6 +3448,12 @@ class OperationSetup : public Operation
       bool preferEnd=true, bool execute=true, bool roundDown=true
       ) const;
 
+    /** Return the decoupled lead time of this operation. */
+    virtual Duration getDecoupledLeadTime(double qty) const
+    {
+      return Duration(0L);
+    }
+
     /** A pointer to the operation that is instantiated for all conversions. */
     static Operation* setupoperation;
 };
@@ -3507,6 +3521,9 @@ class OperationTimePer : public Operation
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd=true, bool execute=true, bool roundDown=true
       ) const;
+
+    /** Return the decoupled lead time of this operation. */
+    virtual Duration getDecoupledLeadTime(double qty) const;
 
     static int initialize();
 
@@ -3594,6 +3611,9 @@ class OperationRouting : public Operation
     virtual void addSubOperationPlan(
       OperationPlan*, OperationPlan*, bool = true
       );
+
+    /** Return the decoupled lead time of this operation. */
+    virtual Duration getDecoupledLeadTime(double qty) const;
 
     static int initialize();
 
@@ -3716,6 +3736,11 @@ class OperationSplit : public Operation
       OperationPlan*, OperationPlan*, bool=true
       );
 
+    /** Return the decoupled lead time of this operation. 
+      * Take the lead time of the longest operation.
+      */
+    virtual Duration getDecoupledLeadTime(double qty) const;
+
     virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
@@ -3813,6 +3838,11 @@ class OperationAlternate : public Operation
     virtual void addSubOperationPlan(
       OperationPlan*, OperationPlan*, bool=true
       );
+
+    /** Return the decoupled lead time of this operation: 
+      * Take the lead time of the preferred operation
+      */
+    virtual Duration getDecoupledLeadTime(double qty) const;
 
     virtual void solve(Solver &s, void* v = nullptr) const
     {
@@ -4702,6 +4732,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       */
     void buildProducingOperation();
 
+    /** Return the decoupled lead time of this buffer. */
+    virtual Duration getDecoupledLeadTime(double qty, bool recurse_ip_buffers = true) const;
+
+    static PyObject* getDecoupledLeadTimePython(PyObject *self, PyObject *args);
+    
     /** Returns the operation that is used to supply extra supply into this
       * buffer. */
     Operation* getProducingOperation() const

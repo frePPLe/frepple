@@ -209,6 +209,7 @@ int OperationItemSupplier::initialize()
   x.setDoc("frePPLe operation_itemsupplier");
   x.supportgetattro();
   x.supportsetattro();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS, "return the total lead time");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }

@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+
+from datetime import datetime, timedelta
 import os
 
 from django.db import DEFAULT_DB_ALIAS
@@ -22,6 +24,99 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
+
+
+@PlanTaskRegistry.register
+class AutoFenceOperation(PlanTask):
+  '''
+  A small preprocessing step to assure we await confirmed supply
+  arriving within a certain time fence (controlled with the parameter
+  "plan.autoFenceOperations") before creating any new replenishment.
+ 
+  Eg:
+  Operation X has a purchasing lead time of 7 days.
+  If a confirmed supply comes in on day 8, we can still create a new purchase
+  order with arrival date on day 7.
+  For most businesses this doesn't make sense and you want to await the
+  existing purchase order - even if some orders will get delayed a bit more.
+  If the existing purchase order would arrive on day 30, it is likely
+  okay to create another purchase order.
+  The parameter plan.autoFenceOperations defines the boundary between "wait"
+  and "replenish".
+  '''
+ 
+  description = "Update operation fence"
+  sequence = 191
+ 
+  @classmethod
+  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    try:
+      cls.fence = float(Parameter.getValue('plan.autoFenceOperations', database, '0'))
+      cls.loglevel = int(Parameter.getValue('plan.loglevel', database, '0'))
+    except ValueError:
+      print("Warning: Invalid format for parameter 'plan.autoFenceOperations'.")
+      cls.fence = 0
+    except Exception:
+      cls.fence = 0
+    if 'supply' in os.environ and cls.fence > 0:
+      return 1
+    else:
+      return -1
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+
+    import frepple
+
+    current_date = frepple.settings.current
+    cls.fence = timedelta(cls.fence)
+
+    for buf in frepple.buffers():
+      # Get the first confirmed order, initialize at infinite past
+      last_confirmed = datetime(1971, 1, 1)
+      # no proposed request can be generated before current date + buffer lead time.
+      # therefore we have to capture all confirmed orders
+      # within current date + buffer lead time and current date + buffer lead time + plan.autoFenceOperations
+      # but there might be more than one, we need to capture the furthest in time.
+      lead_time = timedelta(seconds=buf.decoupledLeadTime(100))
+      for j in buf.flowplans:
+        if j.date > current_date + lead_time + cls.fence:
+          break
+        if (j.operationplan.status == 'confirmed' or j.operationplan.status == 'approved') \
+          and j.quantity > 0 \
+          and j.date > last_confirmed:
+            last_confirmed = j.date
+      if last_confirmed >= current_date:
+        if isinstance(buf.producing, frepple.operation_alternate):
+          for suboper in buf.producing.suboperations:
+            myleadtime = suboper.operation.decoupledLeadTime(100)
+            new_fence = (
+              last_confirmed - current_date - timedelta(seconds=myleadtime)
+              ).total_seconds()
+            if new_fence <= 0:
+              continue
+            if suboper.operation.fence is not None and suboper.operation.fence > 0:
+              suboper.operation.fence = max(suboper.operation.fence, new_fence)
+            else:
+              suboper.operation.fence = new_fence
+            if cls.loglevel > 0:
+              print("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+                    % (suboper.operation.fence / 86400.0, suboper.operation.name, myleadtime / 86400.0))
+        else:
+          # Found a confirmed operationplan within the defined window indeed
+          myleadtime = buf.producing.decoupledLeadTime(100)
+          new_fence = (
+            last_confirmed - current_date - timedelta(seconds=myleadtime)
+            ).total_seconds()
+          if new_fence <= 0:
+            continue
+          if buf.producing.fence is not None and buf.producing.fence > 0:
+            buf.producing.fence = max(buf.producing.fence, new_fence)
+          else:
+            buf.producing.fence = new_fence
+          if cls.loglevel > 0:
+            print("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+                  % (buf.producing.fence / 86400.0, buf.producing.name, myleadtime / 86400.0))
 
 
 @PlanTaskRegistry.register

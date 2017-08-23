@@ -11,3 +11,4 @@ Using the template different instances, called operationplans, can be created at
 
    operation-type
    operation-posttime
+   operation-autofence

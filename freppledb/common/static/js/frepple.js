@@ -1,6 +1,11 @@
 // Django sets this variable in the admin/base.html template.
 window.__admin_media_prefix__ = "/static/admin/";
 
+//check for browser features
+function isDragnDropUploadCapable() {
+  var adiv = document.createElement('div');
+  return (('draggable' in adiv) || ('ondragstart' in adiv && 'ondrop' in adiv)) && 'FormData' in window && 'FileReader' in window;
+}
 
 // Adjust the breadcrumbs such that it fits on a single line.
 // This function is called when the window is resized.
@@ -2483,14 +2488,39 @@ function import_show(url)
           '</h4>'+
         '</div>'+
         '<div class="modal-body">'+
-    '<form id="uploadform">' +
+          '<form id="uploadform">' +
             '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
-    gettext('The first row should contain the field names.') + '<br/><br/>' +
+              gettext('The first row should contain the field names.') + '<br/><br/>' +
             '</p>'+
-            '<input type="checkbox"  autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;' + gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
-            gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>'+
-          '</form>' +
-          '<br/><div style="margin: 5px 0"><div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div></div>'  +
+            '<input type="checkbox" autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;'+
+            gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>';
+    if (isDragnDropUploadCapable()) {
+      modalcontent += ''+
+            '<div class="box" style="outline: 2px dashed black; outline-offset: -10px">'+
+              '<div class="box__input" style="text-align: center; padding: 20px;">'+
+                '<i class="fa fa-sign-in fa-5x fa-rotate-90"></i>'+
+                '<input class="box__file invisible" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} files selected"/>'+
+                '<label id="uploadlabel" for="csv_file">'+
+                  '<strong>'+
+                    gettext('Choose a file')+
+                  '</strong>&nbsp;'+
+                  '<span class="box__dragndrop" style="display: inline;">'+
+                    gettext('or drag it here')+
+                  '</span>.'+
+                '</label>'+
+              '</div>'+
+              '<div class="box__uploading" style="display: none;">Uploading&hellip;</div>'+
+              '<div class="box__success" style="display: none;">Done!</div>'+
+              '<div class="box__error" style="display: none;">Error!<span></span>.</div>'+
+            '</div>';
+    } else {
+      modalcontent += gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>';
+    }
+    modalcontent += ''+
+          '</form><br/>' +
+          '<div style="margin: 5px 0">'+
+            '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>'+
+          '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
             '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
@@ -2502,8 +2532,30 @@ function import_show(url)
     '</div>';
   $('#popup').html(modalcontent).modal('show');
 
+
+  var filesdropped = false;
+  if (isDragnDropUploadCapable()) {
+    $('.box').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    })
+    .on('dragover dragenter', function() {
+      $('.box').removeClass('bg-warning').addClass('bg-warning');
+    })
+    .on('dragleave dragend drop', function() {
+      $('.box').removeClass('bg-warning');
+    })
+    .on('drop', function(e) {
+      filesdropped = e.originalEvent.dataTransfer.files[0];
+      $("#uploadlabel").text(filesdropped.name);
+    });
+  }
+
   $('#importbutton').on('click', function() {
-    if ($("#csv_file").val() == "") return;
+    if ($("#csv_file").val() === "" && !filesdropped) {
+      return;
+    }
+    var filesdata = '';
 
     $('#uploadResponse').css('display','block');
     $('#uploadResponse').html(gettext('Importing...'));
@@ -2522,11 +2574,20 @@ function import_show(url)
       $("#animatedcog").css('visibility','hidden');
       $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
     });
+
+    if (isDragnDropUploadCapable()) {
+      filesdata = new FormData($("#uploadform")[0]);
+      if (filesdropped) {
+        filesdata.append( $('#csv_file').attr('name'), filesdropped );
+      }
+    } else {
+      filesdata = new FormData($("#uploadform")[0]);
+    }
     xhr = $.ajax({
       type: 'post',
       url: typeof(url) != 'undefined' ? url : '',
       cache: false,
-      data: new FormData($("#uploadform")[0]),
+      data: filesdata,
       success: function (data) {
         var el = $('#uploadResponse');
         el.html(data);

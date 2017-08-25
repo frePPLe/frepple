@@ -2499,11 +2499,11 @@ function import_show(url)
             '<div class="box" style="outline: 2px dashed black; outline-offset: -10px">'+
               '<div class="box__input" style="text-align: center; padding: 20px;">'+
                 '<i class="fa fa-sign-in fa-5x fa-rotate-90"></i>'+
-                '<input class="box__file invisible" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} files selected"/>'+
+                '<input class="box__file invisible" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} '+gettext("files selected")+'" multiple/>'+
                 '<label id="uploadlabel" for="csv_file">'+
-                  '<strong>'+
+                  '<kbd>'+
                     gettext('Choose a file')+
-                  '</strong>&nbsp;'+
+                  '</kbd>&nbsp;'+
                   '<span class="box__dragndrop" style="display: inline;">'+
                     gettext('or drag it here')+
                   '</span>.'+
@@ -2546,10 +2546,13 @@ function import_show(url)
       $('.box').removeClass('bg-warning');
     })
     .on('drop', function(e) {
-      filesdropped = e.originalEvent.dataTransfer.files[0];
-      $("#uploadlabel").text(filesdropped.name);
+      filesdropped = e.originalEvent.dataTransfer.files;
+      $("#uploadlabel").text(filesdropped.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesdropped.length ) : filesdropped[ 0 ].name);
     });
   }
+  $("#csv_file").on('change', function(e) {
+    $("#uploadlabel").text(e.target.files.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', e.target.files.length ) : e.target.files[ 0 ].name);
+  });
 
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() === "" && !filesdropped) {
@@ -2578,7 +2581,9 @@ function import_show(url)
     if (isDragnDropUploadCapable()) {
       filesdata = new FormData($("#uploadform")[0]);
       if (filesdropped) {
-        filesdata.append( $('#csv_file').attr('name'), filesdropped );
+        $.each( filesdropped, function(i, fdropped) {
+          filesdata.append( fdropped.name, fdropped );
+        });
       }
     } else {
       filesdata = new FormData($("#uploadform")[0]);

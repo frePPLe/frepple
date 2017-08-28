@@ -916,30 +916,11 @@ var grid = {
 	    if (found)
 	    	elements_new.splice(0, 0, found);
 
-	    // Special processing for the the last element and update grid fields
-	    var last = elements_new.pop();
-	    while (elements_new.length > 3)
-	    	last = elements_new.pop();
-	    var x = last.trim().split(" ");
-	    elements_new.push(x[0]);
-	  	p.sortname = elements_new.join();
-	  	p.sortorder = x[1];
-
 	    // Display numeric labels and sorting icons
 	    for (var i = 0; i < elements_new.length; i++)
 	    {
         var x = elements_new[i].trim().split(" ");
-        var num = $("#jqgh_grid_sort_" + x[0].trim() + " >small");
         var el = $("div[id=jqgh_grid_" + x[0].trim() + "]");
-	    	if (num.length == 0)
-	    	{
-	        el.find(".s-ico").before(
-	          '<span id="jqgh_grid_sort_' + x[0].trim() + '" class="jqgh_grid_sort" style="font-size:75%; text-align: center; height: 1.125em;"><small>&nbsp;' + (i+1) + '</small></span>'
-	        );
-	        num = $("#jqgh_grid_sort_" + x[0].trim() + " >small");
-	    	}
-	    	else
-	    	  num.text(" " + (i+1));
         el.find(".s-ico").show();
         var dir = (i == elements_new.length - 1) ? p.sortorder.trim() : x[1].trim();
         if (dir == "asc") {

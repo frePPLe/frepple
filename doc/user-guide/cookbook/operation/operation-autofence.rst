@@ -3,7 +3,7 @@ Operation auto-update of the release fence
 ==========================================
 
 A release fence can be set to specify a frozen zone in the planning horizon
-in which the planning algorithm can propose any new manufacturing orders, 
+in which the planning algorithm cannot propose any new manufacturing orders, 
 purchase order or distribution order. The fence represent a period during 
 which the plan is already being executed and can no longer be changed.
 

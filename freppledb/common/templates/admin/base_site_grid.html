@@ -42,16 +42,16 @@ $(function() {
     guiStyle: "bootstrapPrimary",
     viewrecords: true,
     multiSort: true,
+    maxSortColumns: 3,
     viewSort: true,
     sortorder: "{{sord}}",
     sortname: "{{sidx}}",
-    multiSort: true,
     page: {{page}},
     hidegrid: false,
     resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
     onSortCol: function(sortname, sortindex, sortorder) {
-      grid.onSortCol(sortname, sortindex, sortorder);
+      grid.onSortCol(sortname, sortindex, sortorder); //workaround for jqgrid bug
       grid.saveColumnConfiguration();
     },
     onPaging: grid.saveColumnConfiguration,
@@ -82,20 +82,10 @@ $(function() {
         $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
-    beforeEditCell: function(rowid,iCol,cellcontent,e) { //console.log('BSG beforeEditCell');
-      if ($(e.target).hasClass('cbox') === false) {
-        $(this).jqGrid('setSelection', rowid, false);
-      }
-    },
-    onSelectRow: function(rowid, status, e) { //console.log('BSG onSelectRow');
+    multiboxonly: true,
+    noCellSelection: true,
+    onSelectRow: function(rowid, status, e) {
       var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
-
-      if (typeof e !== 'undefined' && $(e.target).hasClass('cbox') > -1 && $(e.target).parent().parent().hasClass('success') && typeof $('tr[id="' + rowid + '"] .edit-cell').children().first().val() !== 'undefined' ) {
-        //console.log('BSG onSelectRow Cbox');
-        $(this).jqGrid('resetSelection', rowid);
-        $('tr[id="' + rowid + '"]').addClass('edit-cell');
-      }
-
       grid.markSelectedRow(selection.length);
     },
     formatCell: function(rowid, cellname, value, iRow, iCol) {
@@ -129,7 +119,6 @@ $(function() {
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);
 	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
 	};{% endif %}
-  grid.onSortCol();
   $("#grid").on('input', function(event) {
     // to prevent firefox from triggering save/undo on checkbox select
     if (!$(event.target).parent().hasClass('td_cbox')) {

@@ -48,11 +48,7 @@
   }
 
   var language="{{LANGUAGE_CODE}}";
-  //var preferences="{{preferences|safe}}".replace(/'/g, '"');
   var version='{% version_short %}';
-  // var itemlist={{itemlist|safe}};
-  // var customerlist={{customerlist|safe}};
-  // var locationlist={{locationlist|safe}};
   var lastid = '';
 
   $(function() {
@@ -88,110 +84,8 @@
 {% block tools %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block extra_grid %}
-onCellSelect: function(rowid,iCol,cellcontent,e) { //console.log("onCellSelect");
-  var colModel = $(this).jqGrid ('getGridParam', 'colModel');
 
-  var selection = $(this).jqGrid('getGridParam','selarrrow'); //console.log(selection);
-
-  var rowiddata = jQuery("#grid").getRowData(rowid);
-
-  if (typeof $("#" + rowid + " input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-    colname=$("#" + rowid + " input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
-    if (typeof colname !== 'undefined') {
-      rowiddata[colname] = $("#" + rowid + " input").attr('cm','[Object Object]').not('.cbox').val();
-    }
-  }
-  //console.log(rowiddata);
-
-  var selectiondata = [];
-  var rowdata={};
-  var colname = "";
-  var editedval = "";
-  jQuery.each(selection , function(index,item){
-    rowdata = jQuery("#grid").getRowData(item);
-    editedval = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
-    //console.log(editedval);
-    if ( typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) { //console.log(item);
-      if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-        colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1]; //console.log(colname);
-        if (typeof colname !== 'undefined') {
-          rowdata[colname] = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
-        }
-      }
-    }
-    selectiondata.push(rowdata);
-  });
-
-  if (selection.indexOf(rowid) === -1) { //console.log('not in selection');
-    selectiondata.push(rowiddata);
-
-    if ($(this).jqGrid ('getGridParam', 'multiselect')) {
-      if (cellcontent.indexOf('class="cbox"') > -1) { //console.log("clicking on selection checkbox");
-        //do nothing
-      } else { //console.log("clicking on random cell");
-        selection.push(rowid);
-        //$(this).jqGrid('setSelection', rowid, true);
-        $("#gview_grid tr#"+rowid+" .cbox").prop('checked',true);
-        $("#gview_grid tr#"+rowid).removeClass('success').addClass('success');
-      }
-    } //console.log(rowid); console.log(rowiddata); console.log(selectiondata);
-
-    if (selectiondata.length > 1) { //console.log('multiple lines are selected');
-      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-    } else { //console.log('only the rowid line is selected');
-      angular.element('#controller').scope().displayInfo(rowiddata);
-    }
-  } else {  //console.log('rowid is in selection');
-
-    if (cellcontent.indexOf('class="cbox"') > -1) { //console.log("clicking on selection checkbox");
-
-  } else { //console.log("clicking on random cell");
-      $("#gview_grid tr#"+rowid+" .cbox").prop('checked',false);
-      $("#gview_grid tr#"+rowid).removeClass('success').removeClass('success');
-      selection.splice(selection.indexOf(rowid),1);
-    }
-
-    selectiondata=[];
-    jQuery.each(selection , function(index,item){
-      rowdata = jQuery("#grid").getRowData(item);
-      editedval = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
-
-      if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
-        if ($("#" + item).hasClass('success')) {
-          //console.log(item);
-          if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-            colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
-            if (typeof colname !== 'undefined') {
-              rowdata[colname] = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
-            }
-          }
-        }
-      }
-      if (item !== rowid) {selectiondata.push(rowdata);}
-    });
-    //console.log(rowid);
-    //keep this rowdata if being edited
-
-    //console.log(selection);
-    //console.log(selectiondata);
-
-    if (selectiondata.length > 1) { //console.log('multiple lines will be shown');
-      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-    } else if (selectiondata.length === 1) { //console.log('only the remainder row will be shown');
-      angular.element('#controller').scope().displayInfo(selectiondata[0]);
-    } else { //console.log('nothing to show');
-      angular.element('#controller').scope().displayInfo(undefined);
-    }
-
-  }
-  //console.log(selectiondata.length);
-  if (cellcontent.indexOf('class="cbox"') === -1) { //console.log("NOT clicking on selection checkbox");
-    grid.markSelectedRow(selectiondata.length);
-  }
-
-
-},
-onSelectAll: function(aRowids,status){ //console.log('onSelectAll');
+onSelectAll: function(aRowids,status){
   var selection = $(this).jqGrid('getGridParam','selarrrow');
   var selectiondata = [];
   jQuery.each(selection , function(index,item){
@@ -199,19 +93,18 @@ onSelectAll: function(aRowids,status){ //console.log('onSelectAll');
   });
   if (status === true) {
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else { //console.log('else');
+  } else {
     angular.element('#controller').scope().displayInfo(undefined);
   }
 },
-beforeSaveCell: function(rowid, cellname, value, iRow, iCol) { //console.log('beforesavecell');
-  $("#grid").jqGrid('setSelection', rowid, true);
+beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');
   var selectiondata = [];
   var rowdata = {};
   var temprow = jQuery("#grid").getRowData(rowid);
 
   jQuery.each(selection , function(index,item){
-    if (item === rowid) { //console.log('update cell data');
+    if (item === rowid) {
       //update temprow
       temprow[cellname] = value;
 
@@ -222,7 +115,6 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) { //console.log('be
       //if is being edited
       if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
         if ($("#" + item).hasClass('success')) {
-          //console.log(item);
           if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
             colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
             if (typeof colname !== 'undefined') {
@@ -235,10 +127,41 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) { //console.log('be
     }
   });
 
-  if (selection.length > 1) { //console.log(selectiondata);
+  if (selection.length > 1) {
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
   } else {
     angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
+  }
+},
+onSelectRow: function(rowid, status, e) {
+  var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
+
+  grid.markSelectedRow(selection.length);
+
+  var selectiondata = [];
+  var rowdata={};
+  var colname = "";
+  var editedval = "";
+  jQuery.each(selection , function(index,item){
+    rowdata = jQuery("#grid").getRowData(item);
+    editedval = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
+    if ( typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
+      if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
+        colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
+        if (typeof colname !== 'undefined') {
+          rowdata[colname] = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
+        }
+      }
+    }
+    selectiondata.push(rowdata);
+  });
+
+  if (selectiondata.length > 1) {
+    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+  } else if (selectiondata.length === 1) {
+    angular.element('#controller').scope().displayInfo(selectiondata[0]);
+  } else {
+    angular.element('#controller').scope().displayInfo(undefined);
   }
 },
 {% endblock %}
@@ -258,11 +181,11 @@ function checkrows(grid, selection) {
   jQuery.each(selection , function(index,item){
     selectiondata.push(grid.getRowData(item));
   });
-  if (selectiondata.length > 1) { //console.log('multiple lines will be shown');
+  if (selectiondata.length > 1) {
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else if (selectiondata.length === 1) { //console.log('only the remainder row will be shown');
+  } else if (selectiondata.length === 1) {
     angular.element('#controller').scope().displayInfo(selectiondata[0]);
-  } else { //console.log('nothing to show');
+  } else {
     angular.element('#controller').scope().displayInfo(undefined);
   }
 }

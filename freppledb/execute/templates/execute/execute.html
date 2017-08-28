@@ -6,6 +6,65 @@
   var refresh = null;
   var xhr = {abort: function () {}};
 
+  var uploadfilesajax = {
+    url: '{{request.prefix}}/execute/uploadtofolder/0/',
+    success: function (data) {
+      var el = $('#uploadResponse');
+      el.empty();
+      $("#animatedcog").css('visibility','hidden');
+      var lines = data.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        el.append(lines[i] + '<br>');
+      }
+      el.scrollTop(el[0].scrollHeight - el.height());
+      if (document.queryCommandSupported('copy'))
+        $('#copytoclipboard').show();
+      $('#canceluploadbutton').hide();
+    },
+    error: function (result, stat, errorThrown) {
+      var el = $('#uploadResponse');
+      el.empty();
+      $("#animatedcog").css('visibility','hidden');
+      var lines = result.responseText.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        el.append(lines[i] + '<br>');
+      }
+      el.scrollTop(el[0].scrollHeight - el.height());
+      if (document.queryCommandSupported('copy'))
+        $('#copytoclipboard').show();
+      $('#canceluploadbutton').hide();
+      }
+  };
+
+  var uploadspreadsheetajax = {
+    url: '{{request.prefix}}/execute/launch/importworkbook/',
+    success: function (data) {
+      var el = $('#uploadResponse');
+      el.html(data);
+      el.scrollTop(el[0].scrollHeight - el.height());
+      $('#cancelbutton').html(gettext('Close'));
+      $('#importbutton').hide();
+      $("#animatedcog").css('visibility','hidden');
+      $('#cancelimportbutton').hide();
+      if (document.queryCommandSupported('copy')) {
+        $('#copytoclipboard').show();
+      }
+      $("#grid").trigger("reloadGrid");
+    },
+    xhrFields: {
+      onprogress: function (e) {
+        var el = $('#uploadResponse');
+        el.html(e.currentTarget.response);
+      }
+    },
+    error: function() {
+      $('#cancelimportbutton').hide();
+      $('#copytoclipboard').show();
+      $("#animatedcog").css('visibility','hidden');
+      $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
+    }
+  };
+
   function extraPreference() {
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
@@ -96,104 +155,6 @@
       checkChildren("empty_" + models[m][child]);
   }
 
-  function importWorkbook()
-  {
-    if ($('#spreadsheet').val() == "")
-      return;
-
-    $.jgrid.hideModal("#searchmodfbox_grid");
-
-    // Create dialog box
-    $('#popup').modal({keyboard: false, backdrop:'static'});
-    var modalcontent = '<div class="modal-dialog">'+
-        '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+
-              gettext("Uploading spreadsheet")+ '&nbsp;'+
-              '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: visible;"></span>'+
-            '</h4>'+
-          '</div>'+
-          '<div class="modal-body" style="padding-right: 0;">'+
-          '<br/><div style="margin: 5px 0">' +
-            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none"></div>'+
-          '</div>'+
-        '</div>'+
-        '<div class="modal-footer">'+
-            '<input type="submit" id="closemodalbutton" onclick="CancelImport()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
-    if (document.queryCommandSupported('copy')) {
-      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
-    }
-    modalcontent += '<input type="submit" id="cancelimportbutton" onclick="CancelImport()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel import"|capfirst %}">';
-    modalcontent += '</div>'+'</div>'+'</div>';
-    $("#popup").html(modalcontent)
-    .modal('show');
-
-    // Upload the file
-    var data = new FormData();
-    data.append("spreadsheet", $('#spreadsheet').get(0).files[0]);
-    $('#uploadResponse').css('display','block');
-    $('#uploadResponse').html(gettext('Importing...'));
-    xhr = $.ajax({
-      type: 'post',
-      url: '{{request.prefix}}/execute/launch/importworkbook/',
-      cache: false,
-      data: data,
-      success: function (data) {
-        var el = $('#uploadResponse');
-        el.html(data);
-        el.scrollTop(el[0].scrollHeight - el.height());
-        if (document.queryCommandSupported('copy')) {
-          $('#copytoclipboard').show();
-        }
-        $('#cancelimportbutton').hide();
-        $("#animatedcog").css('visibility','hidden');
-        // Resetting the value of filename. This is only done to avoid a
-        // corner case where Internet Explorer is uploading a cached
-        // (potentially outdated or even deleted) file.
-        // See http://stackoverflow.com/questions/29396572/internet-explorer-caching-file-uploads
-        $('#spreadsheet').val('');
-      },
-      xhrFields: {
-        onprogress: function (e) {
-          var el = $('#uploadResponse');
-          el.html(e.currentTarget.response);
-          el.scrollTop(el[0].scrollHeight - el.height());
-        }
-      },
-      processData: false,
-      contentType: false
-    }); //end AJAX
-  }
-  {
-    // Nothing to import
-    $('#importbutton').on('click', function() {
-      if ($("#csv_file").val() == "") return;
-      $('#uploadResponse').css('display','block');
-      $.ajax({
-        type: 'post',
-        url: '{{request.prefix}}/execute/launch/importworkbook/',
-        cache: false,
-        data: new FormData($("#uploadform")[0]),
-        success: function (data) {
-          var el = $('#uploadResponse');
-          el.html(data);
-          el.scrollTop(el[0].scrollHeight - el.height());
-        },
-        xhrFields: {
-          onprogress: function (e) {
-            var el = $('#uploadResponse');
-            el.html(e.currentTarget.response);
-            el.scrollTop(el[0].scrollHeight - el.height());
-          }
-        },
-        processData: false,
-        contentType: false
-      }); //end AJAX
-     }
-    )
-  }
-
   function CancelImport(){
     xhr.abort();
     $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
@@ -255,79 +216,6 @@
   function downloadFile(folder, filename) {
     $.jgrid.hideModal("#searchmodfbox_grid");
     window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
-  }
-
-  function uploadFiles(folder) {
-    if ($('#inputfiles').get(0).files.length === 0)
-      return;
-
-    // Upload the files
-    var filelisthtml = '';
-    var data = new FormData();
-    for (var i = 0; i < $('#inputfiles').get(0).files.length; i++) {
-      data.append($('#inputfiles').get(0).files[i].name, $('#inputfiles').get(0).files[i]);
-      filelisthtml += '<div>'+escape($('#inputfiles').get(0).files[i].name)+'</div>';
-    }
-
-    $.jgrid.hideModal("#searchmodfbox_grid");
-
-    // Create dialog box
-    $('#popup').modal({keyboard: false, backdrop:'static'});
-    var modalcontent = '<div class="modal-dialog">'+
-        '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+gettext("Uploading files")+'&nbsp;'+
-            '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: visible;"></span>'+
-            '</h4>'+
-          '</div>'+
-          '<div class="modal-body" style="padding-right: 0;">'+
-          '<br/><div style="margin: 5px 0">' +
-            '<div id="uploadResponse" style="height: 50vh; resize: vertical; overflow: auto; background-color: inherit; border: none">'+filelisthtml+'</div>'+
-          '</div>'+
-        '</div>'+
-        '<div class="modal-footer">'+
-          '<input type="submit" id="closemodalbutton" onclick="CancelImport()" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans "close window"|capfirst %}">';
-    if (document.queryCommandSupported('copy')) {
-      modalcontent += '<input type="submit" id="copytoclipboard" onclick="CopyToClipboard()" role="button" class="btn btn-primary pull-left" value="{% trans "copy to clipboard"|capfirst %}" style="display: none;">';
-    }
-    modalcontent += '<input type="submit" id="canceluploadbutton" onclick="CancelImport()" role="button" class="btn btn-danger pull-left" value="{% trans "cancel upload"|capfirst %}">';
-    modalcontent += '</div>'+'</div>'+'</div>';
-    $("#popup").html(modalcontent).modal('show');
-
-    $('#uploadResponse').css('display','block');
-    xhr = $.ajax({
-      type: 'post',
-      url: '{{request.prefix}}/execute/uploadtofolder/' + folder + "/",
-      cache: false,
-      data: data,
-      success: function (data) {
-        var el = $('#uploadResponse');
-        el.empty();
-        $("#animatedcog").css('visibility','hidden');
-        var lines = data.split('\n');
-        for (var i = 0; i < lines.length; i++)
-          el.append(lines[i] + '<br>');
-        el.scrollTop(el[0].scrollHeight - el.height());
-        if (document.queryCommandSupported('copy'))
-          $('#copytoclipboard').show();
-        $('#canceluploadbutton').hide();
-      },
-      error: function (result, stat, errorThrown) {
-        var el = $('#uploadResponse');
-        el.empty();
-        $("#animatedcog").css('visibility','hidden');
-        var lines = result.responseText.split('\n');
-        for (var i = 0; i < lines.length; i++)
-          el.append(lines[i] + '<br>');
-        el.scrollTop(el[0].scrollHeight - el.height());
-        if (document.queryCommandSupported('copy'))
-          $('#copytoclipboard').show();
-        $('#canceluploadbutton').hide();
-        },
-      processData: false,
-      contentType: false
-    }); //end AJAX
   }
 
   $(function() {
@@ -588,13 +476,10 @@
 				    <table>
 				      <tr>
 				        <td style="vertical-align:top; padding: 15px">
-				          <button type="submit" class="btn btn-primary" id="import" onclick="importWorkbook()" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+				          <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,false,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
 				        </td>
 				        <td style="padding: 15px;">
 				          <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
-		              <label>{% trans "Data file" %}:
-                    <input class="btn btn-info form-control" type="file" id="spreadsheet" name="spreadsheet" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-                  </label>
 				        </td>
 				      </tr>
 				    </table>
@@ -676,10 +561,10 @@
 								<td><strong>{% trans 'size'|capfirst %}</strong></td>
 								<td><strong>{% trans 'changed'|capfirst %}</strong></td>
                 <td colspan="2">
-                  <label class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="Copy files to folder" onchange="uploadFiles(0)">
-                    <input multiple type="file" id="inputfiles" name="inputfiles" style="display: none;">
+                  <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy files to folder' %}"
+                    onclick="import_show('{% trans "Copy files to folder" %}',null,true,uploadfilesajax)">
                     <span class="fa fa-arrow-up"></span>
-                  </label>
+                  </span>
                 </td>
 						  </tr></form>
               {% for j in filestoupload %}

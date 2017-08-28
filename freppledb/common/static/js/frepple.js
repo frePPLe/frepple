@@ -2472,7 +2472,7 @@ function about_show()
 // Display import dialog for CSV-files
 //----------------------------------------------------------------------------
 
-function import_show(url)
+function import_show(title,paragraph,multiple,fxhr)
 {
   var xhr = {abort: function () {}};
   $('#timebuckets').modal('hide');
@@ -2483,17 +2483,17 @@ function import_show(url)
         '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
           '<h4 class="modal-title">'+
-            gettext("Import CSV or Excel file")+ '&nbsp;'+
+            '<span id="modal_title">'+gettext("Import CSV or Excel file")+ '</span>' +'&nbsp;'+
             '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: hidden;"></span>'+
           '</h4>'+
         '</div>'+
         '<div class="modal-body">'+
           '<form id="uploadform">' +
-            '<p>'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
+            '<p id="extra_text">'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
               gettext('The first row should contain the field names.') + '<br/><br/>' +
-            '</p>'+
-            '<input type="checkbox" autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;'+
-            gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>';
+              '<input type="checkbox" autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;'+
+              gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
+            '</p>';
     if (isDragnDropUploadCapable()) {
       modalcontent += ''+
             '<div class="box" style="outline: 2px dashed black; outline-offset: -10px">'+
@@ -2502,10 +2502,10 @@ function import_show(url)
                 '<input class="box__file invisible" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} '+gettext("files selected")+'" multiple/>'+
                 '<label id="uploadlabel" for="csv_file">'+
                   '<kbd>'+
-                    gettext('Choose a file')+
+                    gettext('Select files')+
                   '</kbd>&nbsp;'+
                   '<span class="box__dragndrop" style="display: inline;">'+
-                    gettext('or drag it here')+
+                    gettext('or drop them here')+
                   '</span>.'+
                 '</label>'+
               '</div>'+
@@ -2532,6 +2532,17 @@ function import_show(url)
     '</div>';
   $('#popup').html(modalcontent).modal('show');
 
+  if (!multiple) {
+    $("#selected_files").removeAttr(multiple);
+  }
+  if (title !== '') {
+    $("#modal_title").text(title);
+  }
+  if (paragraph === null) {
+    $("#extra_text").remove();
+  } else if (paragraph !== '') {
+    $("#extra_text").text(paragraph);
+  }
 
   var filesdropped = false;
   if (isDragnDropUploadCapable()) {
@@ -2576,6 +2587,8 @@ function import_show(url)
       xhr.abort();
       $("#animatedcog").css('visibility','hidden');
       $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
+      $('#cancelimportbutton').hide();
+      $('#copytoclipboard').show();
     });
 
     if (isDragnDropUploadCapable()) {
@@ -2588,40 +2601,41 @@ function import_show(url)
     } else {
       filesdata = new FormData($("#uploadform")[0]);
     }
-    xhr = $.ajax({
-      type: 'post',
-      url: typeof(url) != 'undefined' ? url : '',
-      cache: false,
-      data: filesdata,
-      success: function (data) {
-        var el = $('#uploadResponse');
-        el.html(data);
-        el.scrollTop(el[0].scrollHeight - el.height());
-        $('#cancelbutton').html(gettext('Close'));
-        $('#importbutton').hide();
-        $("#animatedcog").css('visibility','hidden');
-        $('#cancelimportbutton').hide();
-        if (document.queryCommandSupported('copy')) {
-          $('#copytoclipboard').show();
-        }
-        $("#grid").trigger("reloadGrid");
-      },
-      xhrFields: {
-        onprogress: function (e) {
+    xhr = $.ajax(
+      Object.assign({
+        type: 'post',
+        url: typeof(url) != 'undefined' ? url : '',
+        cache: false,
+        data: filesdata,
+        success: function (data) {
           var el = $('#uploadResponse');
-          el.html(e.currentTarget.response);
+          el.html(data);
           el.scrollTop(el[0].scrollHeight - el.height());
-        }
-      },
-      error: function() {
-        $('#cancelimportbutton').hide();
-        $('#copytoclipboard').show();
-        $("#animatedcog").css('visibility','hidden');
-        $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
-      },
-      processData: false,
-      contentType: false
-    });
+          $('#cancelbutton').html(gettext('Close'));
+          $('#importbutton').hide();
+          $("#animatedcog").css('visibility','hidden');
+          $('#cancelimportbutton').hide();
+          if (document.queryCommandSupported('copy')) {
+            $('#copytoclipboard').show();
+          }
+          $("#grid").trigger("reloadGrid");
+        },
+        xhrFields: {
+          onprogress: function (e) {
+            var el = $('#uploadResponse');
+            el.html(e.currentTarget.response);
+          }
+        },
+        error: function() {
+          $('#cancelimportbutton').hide();
+          $('#copytoclipboard').show();
+          $("#animatedcog").css('visibility','hidden');
+          $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
+        },
+        processData: false,
+        contentType: false
+      },fxhr)
+    );
    }
   )
 }

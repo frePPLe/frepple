@@ -27,7 +27,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, transaction, models
-from django.db.models.fields import Field, NOT_PROVIDED, AutoField
+from django.db.models.fields import NOT_PROVIDED, AutoField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
@@ -38,6 +38,7 @@ from django.utils.text import get_text_list
 from freppledb.execute.models import Task
 from freppledb.common.report import GridReport
 from freppledb import VERSION
+from freppledb.common.dataload import BulkForeignKeyFormField
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
 
@@ -177,6 +178,13 @@ class Command(BaseCommand):
         task.message = "Uploaded %s data files" % cnt
       task.finished = datetime.now()
 
+    except KeyboardInterrupt:
+      if task:
+        task.status = 'Cancelled'
+        task.message = 'Cancelled'
+      if self.logfile:
+        print('%s Cancelled\n' % datetime.now(), file=self.logfile, flush=True)
+    
     except Exception as e:
       print("%s Failed" % datetime.now(), file=self.logfile, flush=True)
       if task:
@@ -235,7 +243,7 @@ class Command(BaseCommand):
           for col in row:
             col = col.strip().strip('#').lower()
             if col == "":
-              headers.append(False)
+              headers.append(None)
               continue
             ok = False
             for i in model._meta.fields:
@@ -243,12 +251,12 @@ class Command(BaseCommand):
                 if i.editable is True:
                   headers.append(i)
                 else:
-                  headers.append(False)
+                  headers.append(None)
                 required_fields.discard(i.name)
                 ok = True
                 break
             if not ok:
-              headers.append(False)
+              headers.append(None)
               print('%s Warning: Skipping field %s' % (datetime.now(), col), file=self.logfile, flush=True)
             if col == model._meta.pk.name.lower() or \
                col == model._meta.pk.verbose_name.lower():
@@ -261,13 +269,14 @@ class Command(BaseCommand):
           # Abort when there are errors
           if errors:
             break
+          header_count = len(headers)
 
           # Create a form class that will be used to validate the data
-          fields = [i.name for i in headers if isinstance(i, Field)]
+          fields = [i.name for i in headers if i]
           UploadForm = modelform_factory(
             model,
             fields=tuple(fields),
-            formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=self.database, localize=True)) or f.formfield(localize=True)
+            formfield_callback=lambda f: (isinstance(f, RelatedField) and BulkForeignKeyFormField(field=f, using=self.database)) or f.formfield(localize=True)
             )
 
           # Get natural keys for the class
@@ -290,9 +299,9 @@ class Command(BaseCommand):
             colnum = 0
             for col in row:
               # More fields in data row than headers. Move on to the next row.
-              if colnum >= len(headers):
+              if colnum >= header_count:
                 break
-              if isinstance(headers[colnum], Field):
+              if headers[colnum]:
                 d[headers[colnum].name] = col.strip()
               colnum += 1
 
@@ -329,29 +338,29 @@ class Command(BaseCommand):
               # No primary key required for this model
               form = UploadForm(d)
               it = None
-
-            # Step 3: Validate the data and save to the database
+            # Step 3: Validate the form and model, and save to the database
             if form.has_changed():
-              try:
-                with transaction.atomic(using=self.database):
-                  obj = form.save(commit=False)
-                  obj.save(using=self.database)
-                  if self.user:
-                    admin_log.append(
-                      LogEntry(
-                        user_id=self.user.id,
-                        content_type_id=content_type_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        #. Translators: Translation included with Django
-                        change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
-                      ))
-                  if it:
-                    changed += 1
-                  else:
-                    added += 1
-              except Exception as e:
+              if form.is_valid():
+                # Save the form
+                obj = form.save(commit=False)
+                if it:
+                  changed += 1
+                  obj.save(using=self.database, force_update=True)
+                else:
+                  added += 1
+                  obj.save(using=self.database, force_insert=True)
+                if self.user:
+                  admin_log.append(
+                    LogEntry(
+                      user_id=self.user.id,
+                      content_type_id=content_type_id,
+                      object_id=obj.pk,
+                      object_repr=force_text(obj),
+                      action_flag=it and CHANGE or ADDITION,
+                      #. Translators: Translation included with Django
+                      change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
+                    ))
+              else:
                 # Validation fails
                 for error in form.non_field_errors():
                   print('%s Error: Row %s: %s' % (datetime.now(), rownumber, error), file=self.logfile, flush=True)
@@ -362,7 +371,7 @@ class Command(BaseCommand):
                     errorcount += 1
 
           except Exception as e:
-            print("%s Error: Exception during upload: %s" % (datetime.now(),e) , file=self.logfile, flush=True)
+            print("%s Error: Exception during upload: %s" % (datetime.now(), e), file=self.logfile, flush=True)
             errorcount += 1
 
       # Save all admin log entries

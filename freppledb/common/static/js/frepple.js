@@ -430,7 +430,7 @@ jQuery.extend($.fn.fmatter, {
     } else {
       var thedelay = Math.round(parseInt(rowdata.delay)/8640)/10;
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
-        return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+gettext("unused")+'</div>';
+        return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;"></div>';
       } else if (thedelay < 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+ (-thedelay)+' '+gettext("days early")+'</div>';
       } else if (thedelay === 0) {

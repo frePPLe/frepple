@@ -38,8 +38,8 @@ class Command(BaseCommand):
   #  - csv files are thoroughly validated and load slower
   #  - cpy files load much faster and rely on database level validation
   #    Loading cpy files is only available in the Enterprise Edition
-  #ext = 'csv'
-  ext = 'cpy'
+  ext = 'csv'
+  #ext = 'cpy'
 
   requires_system_checks = False
 
@@ -72,7 +72,13 @@ class Command(BaseCommand):
       self.extractSuboperation()
       self.extractOperationResource()
       self.extractOperationMaterial()
+      self.extractItemSupplier()
+      self.extractCalendar()
+      self.extractCalendarBucket()
       self.extractBuffer()
+      self.extractItemSupplier()
+      self.extractCalendar()
+      self.extractCalendarBucket()
     finally:
       self.cursor.close()
       self.conn.close()
@@ -357,3 +363,31 @@ class Command(BaseCommand):
         'name', 'item%s' % self.fk, 'location%s' % self.fk, 'onhand', 'lastmodified'
         ])
       outcsv.writerows(self.cursor.fetchall())
+
+
+  def extractItemSupplier(self):
+    '''
+    Extract the purchasing parameters for each item from its suppliers.
+    '''
+    pass
+
+
+  def extractCalendar(self):
+    '''
+    Extract working hours calendars from the ERP system.
+    '''
+    outfilename = os.path.join(self.destination, 'calendar.%s' % self.ext)
+    print("Start extracting calendar to %s" % outfilename)
+    self.cursor.execute('''
+      select 'Working hours', current_timestamp
+      ''')
+    with open(outfilename, 'w', newline='') as outfile:
+      outcsv = csv.writer(outfile, quoting=csv.QUOTE_MINIMAL)
+      outcsv.writerow([
+        'name', 'lastmodified'
+        ])
+      outcsv.writerows(self.cursor.fetchall())
+
+
+  def extractCalendarBucket(self):
+    pass

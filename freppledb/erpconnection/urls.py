@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 by frePPLe bvba
+# Copyright (C) 2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,7 @@
 
 from django.conf.urls import url
 
-from freppledb.odoo.views import Upload
+from .views import Upload
 
 # Automatically add these URLs when the application is installed
 autodiscover = True

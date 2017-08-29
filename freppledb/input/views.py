@@ -29,7 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 from django.utils.translation import string_concat
 from django.utils.encoding import force_text
-from django.utils.text import capfirst
+from django.utils.text import capfirst, format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
@@ -974,17 +974,38 @@ class DemandList(GridReport):
     GridFieldLastModified('lastmodified'),
     )
 
-  if 'freppledb.odoo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO','odoo')"},
-      ]
+  if settings.ERP_CONNECTOR:
+    actions = [{
+      "name": 'erp_incr_export',
+      "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+      "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO')"
+      }]
   else:
     actions = [
-    {"name": 'inquiry', "label": _("change status to %(status)s") % {'status': _("inquiry")}, "function": "grid.setStatus('inquiry')"},
-    {"name": 'quote', "label": _("change status to %(status)s") % {'status': _("quote")}, "function": "grid.setStatus('quote')"},
-    {"name": 'open', "label": _("change status to %(status)s") % {'status': _("open")}, "function": "grid.setStatus('open')"},
-    {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
-    {"name": 'canceled', "label": _("change status to %(status)s") % {'status': _("canceled")}, "function": "grid.setStatus('canceled')"},
+      {
+        "name": 'inquiry',
+        "label": format_lazy(_("change status to {status}"), status=_("inquiry")),
+        "function": "grid.setStatus('inquiry')"
+      },
+      {
+        "name": 'quote',
+        "label": format_lazy(_("change status to {status}"), status=_("quote")),
+        "function": "grid.setStatus('quote')"
+      },
+      {
+        "name": 'open',
+        "label": format_lazy(_("change status to {status}"), status=_("open")),
+        "function": "grid.setStatus('open')"
+      },
+      {
+        "name": 'closed',
+        "label": format_lazy(_("change status to {status}"), status=_("closed")),
+        "function": "grid.setStatus('closed')"},
+      {
+        "name": 'canceled',
+        "label": format_lazy(_("change status to {status}"), status=_("canceled")),
+        "function": "grid.setStatus('canceled')"
+      },
     ]
 
 
@@ -1182,16 +1203,34 @@ class ManufacturingOrderList(GridReport):
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     )
 
-  if 'freppledb.odoo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'OP','odoo')"},
-      ]
+  if settings.ERP_CONNECTOR:
+    actions = [{
+      "name": 'erp_incr_export',
+      "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+      "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'MO')"
+      }]
   else:
     actions = [
-      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
-      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
-      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
-      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
+      {
+        "name": 'proposed',
+        "label": format_lazy(_("change status to {status}"), status=_("proposed")),
+        "function": "grid.setStatus('proposed')"
+      },
+      {
+        "name": 'approved',
+        "label": format_lazy(_("change status to {status}"), status=_("approved")),
+        "function": "grid.setStatus('approved')"
+      },
+      {
+        "name": 'confirmed',
+        "label": format_lazy(_("change status to {status}"), status=_("confirmed")),
+        "function": "grid.setStatus('confirmed')"
+      },
+      {
+        "name": 'closed',
+        "label": format_lazy(_("change status to {status}"), status=_("closed")),
+        "function": "grid.setStatus('closed')"
+      },
       ]
 
   @classmethod
@@ -1331,17 +1370,36 @@ class DistributionOrderList(GridReport):
       initially_hidden=True, editable=False),
     )
 
-  if 'freppledb.odoo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO','odoo')"},
-    ]
+  if settings.ERP_CONNECTOR:
+    actions = [{
+      "name": 'erp_incr_export',
+      "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+      "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'DO')"
+      }]
+
   else:
     actions = [
-      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
-      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
-      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
-      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
-    ]
+      {
+        "name": 'proposed',
+        "label": format_lazy(_("change status to {status}"), status=_("proposed")),
+        "function": "grid.setStatus('proposed')"
+      },
+      {
+        "name": 'approved',
+        "label": format_lazy(_("change status to {status}"), status=_("approved")),
+        "function": "grid.setStatus('approved')"
+      },
+      {
+        "name": 'confirmed',
+        "label": format_lazy(_("change status to {status}"), status=_("confirmed")),
+        "function": "grid.setStatus('confirmed')"
+      },
+      {
+        "name": 'closed',
+        "label": format_lazy(_("change status to {status}"), status=_("closed")),
+        "function": "grid.setStatus('closed')"
+      },
+      ]
 
   @classmethod
   def initialize(reportclass, request):
@@ -1478,16 +1536,34 @@ class PurchaseOrderList(GridReport):
       initially_hidden=True, editable=False),
     )
 
-  if 'freppledb.odoo' in settings.INSTALLED_APPS:
-    actions = [
-      {"name": 'odoo_incr_export', "label": _("export to %(erp)s") % {'erp': 'odoo'}, "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO','odoo')"},
-      ]
+  if settings.ERP_CONNECTOR:
+    actions = [{
+      "name": 'erp_incr_export',
+      "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+      "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'PO')"
+      }]
   else:
     actions = [
-      {"name": 'proposed', "label": _("change status to %(status)s") % {'status': _("proposed")}, "function": "grid.setStatus('proposed')"},
-      {"name": 'approved', "label": _("change status to %(status)s") % {'status': _("approved")}, "function": "grid.setStatus('approved')"},
-      {"name": 'confirmed', "label": _("change status to %(status)s") % {'status': _("confirmed")}, "function": "grid.setStatus('confirmed')"},
-      {"name": 'closed', "label": _("change status to %(status)s") % {'status': _("closed")}, "function": "grid.setStatus('closed')"},
+      {
+        "name": 'proposed',
+        "label": format_lazy(_("change status to {status}"), status=_("proposed")),
+        "function": "grid.setStatus('proposed')"
+      },
+      {
+        "name": 'approved',
+        "label": format_lazy(_("change status to {status}"), status=_("approved")),
+        "function": "grid.setStatus('approved')"
+      },
+      {
+        "name": 'confirmed',
+        "label": format_lazy(_("change status to {status}"), status=_("confirmed")),
+        "function": "grid.setStatus('confirmed')"
+      },
+      {
+        "name": 'closed',
+        "label": format_lazy(_("change status to {status}"), status=_("closed")),
+        "function": "grid.setStatus('closed')"
+      },
       ]
 
   @classmethod

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 by frePPLe bvba
+# Copyright (C) 2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -15,14 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
-
-from freppledb.odoo.views import Upload
-
-# Automatically add these URLs when the application is installed
-autodiscover = True
-
-urlpatterns = [
-  # Model list reports, which override standard admin screens
-  url(r'^erp/upload/$', Upload, name="erp_upload"),
-  ]
+# Mark this app as an ERP integration module.
+# Only one such app can be active on a frePPle instance.
+ERP_module = True

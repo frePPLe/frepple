@@ -1659,7 +1659,7 @@ var wizard = {
 //----------------------------------------------------------------------------
 
 var ERPconnection = {
-    IncrementalExport: function(grid, transactiontype, ERPsystem) {
+    IncrementalExport: function(grid, transactiontype) {
       // Collect all selected rows in the status 'proposed'
       var sel = grid.jqGrid('getGridParam','selarrrow');
       if (sel === null || sel.length == 0)
@@ -1688,7 +1688,7 @@ var ERPconnection = {
           '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
-          '<p class="text-capitalize">'+gettext("export selected records to ")+ ERPsystem + '</p>'+
+          '<p class="text-capitalize">' + gettext("export selected records") + '</p>'+
           '</div>'+
           '<div class="modal-footer">'+
           '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
@@ -1698,9 +1698,9 @@ var ERPconnection = {
       '</div>' ).modal('show');
 
       $('#button_export').on('click', function() {
-        $('#popup .modal-body p').html(gettext('connecting to ')+ERPsystem+'...');
+        $('#popup .modal-body p').html(gettext('connecting') + '...');
         $.ajax({
-          url: url_prefix + "/" + ERPsystem + "/upload/",
+          url: url_prefix + "/erp/upload/",
           data: JSON.stringify(data),
           type: "POST",
           contentType: "application/json",
@@ -1745,7 +1745,7 @@ var ERPconnection = {
 //  ----------------------------------------------------------------------------
 
 
-    SODepExport: function(grid, transactiontype, ERPsystem) {
+    SODepExport: function(grid, transactiontype) {
       // Collect all selected rows in the status 'proposed'
       var sel = grid.jqGrid('getGridParam','selarrrow');
       if (sel === null || sel.length == 0)
@@ -1864,9 +1864,9 @@ var ERPconnection = {
               data.push(row1data);
             });
 
-            $('#popup .modal-body').html(gettext('connecting to ')+ERPsystem+'...');
+            $('#popup .modal-body').html(gettext('connecting') + '...');
             $.ajax({
-              url: url_prefix + "/" + ERPsystem + "/upload/",
+              url: url_prefix + "/erp/upload/",
               data: JSON.stringify(data),
               type: "POST",
               contentType: "application/json",

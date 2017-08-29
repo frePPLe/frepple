@@ -27,7 +27,7 @@ class BulkForeignKeyFormField(forms.fields.Field):
                label=None, help_text='', *args, **kwargs):
     forms.fields.Field.__init__(
       self, *args,
-      required=required if required is not None else field.null,
+      required=required if required is not None else not field.null,
       label=label, help_text=help_text, **kwargs
       )
 

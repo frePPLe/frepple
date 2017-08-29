@@ -1030,7 +1030,7 @@ class PurchaseAnalysisWidget(Widget):
   tooltip = _("Analyse the urgency of existing purchase orders")
   permissions = (("view_purchaseorder", "Can view purchase orders"),)
   asynchronous = True
-  url = '/data/input/purchaseorder/?status=confirmed&sidx=criticality&sord=asc'
+  url = '/data/input/purchaseorder/?status=confirmed&sidx=color&sord=asc'
   limit = 20
 
   @classmethod
@@ -1045,17 +1045,17 @@ class PurchaseAnalysisWidget(Widget):
       '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
         capfirst(force_text(_("item"))), capfirst(force_text(_("supplier"))),
         capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
-        capfirst(force_text(_("criticality")))
+        capfirst(force_text(_("inventory status")))
         )
       ]
     alt = False
-    for po in PurchaseOrder.objects.using(db).filter(status='confirmed').order_by('criticality','enddate')[:limit]:
-      result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+    for po in PurchaseOrder.objects.using(db).filter(status='confirmed').exclude(criticality=999).order_by('color','enddate')[:limit]:
+      result.append('<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s%%</td></tr>' % (
         alt and ' class="altRow"' or '', escape(po.item.name if po.item else ''),
         escape(po.supplier.name if po.supplier else ''),
         po.enddate.date() if po.enddate else '',
         int(po.quantity) if po.quantity else '',
-        int(po.criticality) if po.criticality else ''
+        int(po.color) if po.color is not None else ''
         ))
       alt = not alt
     result.append('</table></div>')

@@ -2456,6 +2456,7 @@ function about_show()
 function import_show(title,paragraph,multiple,fxhr)
 {
   var xhr = {abort: function () {}};
+
   $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').modal({keyboard: false, backdrop:'static'});
@@ -2526,6 +2527,7 @@ function import_show(title,paragraph,multiple,fxhr)
   }
 
   var filesdropped = false;
+  var filesselected = false;
   if (isDragnDropUploadCapable()) {
     $('.box').on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
       e.preventDefault();
@@ -2543,6 +2545,7 @@ function import_show(title,paragraph,multiple,fxhr)
     });
   }
   $("#csv_file").on('change', function(e) {
+    filesselected = e.target.files;
     $("#uploadlabel").text(e.target.files.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', e.target.files.length ) : e.target.files[ 0 ].name);
   });
 
@@ -2578,16 +2581,20 @@ function import_show(title,paragraph,multiple,fxhr)
       $('#copytoclipboard').show();
     });
 
-    if (isDragnDropUploadCapable()) {
-      filesdata = new FormData($("#uploadform")[0]);
-      if (filesdropped) {
-        $.each( filesdropped, function(i, fdropped) {
-          filesdata.append( fdropped.name, fdropped );
-        });
-      }
-    } else {
-      filesdata = new FormData($("#uploadform")[0]);
+
+    filesdata = new FormData($("#uploadform")[0]);
+    if (filesdropped) {
+      $.each( filesdropped, function(i, fdropped) {
+        filesdata.append( fdropped.name, fdropped );
+      });
     }
+    if (filesselected) {
+      filesdata.delete('csv_file');
+      $.each( filesselected, function(i, fdropped) {
+        filesdata.append( fdropped.name, fdropped );
+      });
+    }
+
     xhr = $.ajax(
       Object.assign({
         type: 'post',

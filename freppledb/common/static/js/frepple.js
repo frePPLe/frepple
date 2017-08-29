@@ -2574,9 +2574,12 @@ function import_show(title,paragraph,multiple,fxhr)
       document.execCommand('copy');
     });
     $('#cancelimportbutton').show().on('click', function() {
+      var theclone = $("#uploadResponse").clone();
+      theclone.append('<div><strong>'+gettext('Canceled')+'</strong></div>');
       xhr.abort();
       $("#animatedcog").css('visibility','hidden');
-      $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
+      $("#uploadResponse").append(theclone.contents());
+      $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
       $('#cancelimportbutton').hide();
       $('#copytoclipboard').show();
     });

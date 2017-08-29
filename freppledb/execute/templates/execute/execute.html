@@ -169,24 +169,6 @@
       checkChildren("empty_" + models[m][child]);
   }
 
-  function CancelImport(){
-    xhr.abort();
-    $("#uploadResponse").append('<div><strong>'+gettext('Canceled')+'</strong></div>');
-    $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
-    $('#cancelimportbutton').hide();
-    $('#copytoclipboard').show();
-  }
-
-  function CopyToClipboard() {
-    if (document.queryCommandSupported('copy') === true) {
-      var sometextcontent = document.createRange();
-      sometextcontent.selectNode(document.getElementById("uploadResponse"));
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(sometextcontent);
-      document.execCommand('copy');
-    }
-  }
-
   function deleteFile(folder, filename) {
     $.jgrid.hideModal("#searchmodfbox_grid");
 

@@ -46,13 +46,12 @@ class LateOrdersWidget(Widget):
 
   query = '''
     select
-      out_problem.owner, out_problem.weight,
-      out_problem.startdate, out_problem.enddate
+      demand.name, demand.item_id, demand.location_id, demand.customer_id,
+      out_problem.startdate, out_problem.enddate, out_problem.weight
     from out_problem
-    left outer join demand
+    inner join demand
       on out_problem.owner = demand.name
     where out_problem.name = 'late' and out_problem.entity = 'demand'
-      and demand.name is not null
     order by out_problem.startdate, out_problem.weight desc
     limit %s
     '''
@@ -70,16 +69,27 @@ class LateOrdersWidget(Widget):
     cursor = connections[db].cursor()
     result = [
       '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
-        capfirst(force_text(_("name"))), capfirst(force_text(_("due"))),
-        capfirst(force_text(_("planned date"))), capfirst(force_text(_("delay")))
+      '<tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
+      '<th class="alignleft">%s</th><th class="alignleft">%s</th>'
+      '<th class="aligncenter">%s</th><th class="aligncenter">%s</th>'
+      '<th class="aligncenter">%s</th></tr>' % (
+        capfirst(force_text(_("name"))), capfirst(force_text(_("item"))),
+        capfirst(force_text(_("location"))), capfirst(force_text(_("customer"))),
+        capfirst(force_text(_("due"))), capfirst(force_text(_("planned date"))),
+        capfirst(force_text(_("delay")))
         )
       ]
     alt = False
     cursor.execute(cls.query, (limit,))
     for rec in cursor.fetchall():
-      result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), rec[3].date(), int(rec[1])
+      result.append(
+        '<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td>'
+        '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
+        '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
+        '<td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
+          alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]),
+          escape(rec[0]), escape(rec[1]), escape(rec[2]), escape(rec[3]),
+          rec[4].date(), rec[5].date(), int(rec[6])
         ))
       alt = not alt
     result.append('</table></div>')
@@ -102,7 +112,8 @@ class ShortOrdersWidget(Widget):
 
   query = '''
     select
-      out_problem.owner, out_problem.weight, out_problem.startdate
+      out_problem.owner, demand.item_id, demand.customer_id, demand.location_id,
+      out_problem.startdate, out_problem.weight
     from out_problem
     left outer join demand
       on out_problem.owner = demand.name
@@ -125,15 +136,21 @@ class ShortOrdersWidget(Widget):
     cursor = connections[db].cursor()
     result = [
       '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
-        capfirst(force_text(_("name"))), capfirst(force_text(_("due"))), capfirst(force_text(_("short")))
+      '<tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
+      '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+        capfirst(force_text(_("name"))), capfirst(force_text(_("item"))), capfirst(force_text(_("location"))),
+        capfirst(force_text(_("customer"))), capfirst(force_text(_("due"))), capfirst(force_text(_("short")))
         )
       ]
     alt = False
     cursor.execute(cls.query, (limit,))
     for rec in cursor.fetchall():
-      result.append('<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]), rec[2].date(), int(rec[1])
+      result.append(
+        '<tr%s><td class="underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
+        '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="aligncenter">%s</td>'
+        '<td class="aligncenter">%s</td></tr>' % (
+          alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]),
+          escape(rec[1]), escape(rec[2]), escape(rec[3]), rec[4].date(), int(rec[5])
         ))
       alt = not alt
     result.append('</table></div>')

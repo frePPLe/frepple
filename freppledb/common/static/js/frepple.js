@@ -2554,6 +2554,12 @@ function import_show(title,paragraph,multiple,fxhr)
 
     $('#uploadResponse').css('display','block');
     $('#uploadResponse').html(gettext('Importing...'));
+    $('#uploadResponse').on('scroll', function() {
+      if( parseInt($('#uploadResponse').attr('data-scrolled')) !== $('#uploadResponse').scrollTop() ) {
+        $('#uploadResponse').attr('data-scrolled',true);
+        $('#uploadResponse').off('scroll');
+      }
+    });
     $('#importbutton').hide();
     $("#animatedcog").css('visibility','visible');
     $('#uploadform').css('display','none');
@@ -2591,7 +2597,9 @@ function import_show(title,paragraph,multiple,fxhr)
         success: function (data) {
           var el = $('#uploadResponse');
           el.html(data);
-          el.scrollTop(el[0].scrollHeight - el.height());
+          if (el.attr('data-scrolled') !== "true") {
+            el.scrollTop(el[0].scrollHeight - el.height());
+          }
           $('#cancelbutton').html(gettext('Close'));
           $('#importbutton').hide();
           $("#animatedcog").css('visibility','hidden');
@@ -2605,6 +2613,10 @@ function import_show(title,paragraph,multiple,fxhr)
           onprogress: function (e) {
             var el = $('#uploadResponse');
             el.html(e.currentTarget.response);
+            if (el.attr('data-scrolled')!== "true") {
+              el.attr('data-scrolled', el[0].scrollHeight - el.height());
+              el.scrollTop(el[0].scrollHeight - el.height());
+            }
           }
         },
         error: function() {

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 by frePPLe bvba
+# Copyright (C) 2017 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -15,14 +15,22 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
+from django.db import DEFAULT_DB_ALIAS
+from django.db.models import signals
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
-from freppledb.odoo.views import Upload
+from freppledb.common.management import removeModelPermissions
 
-# Automatically add these URLs when the application is installed
-autodiscover = True
 
-urlpatterns = [
-  # Model list reports, which override standard admin screens
-  url(r'^erp/upload/$', Upload, name="erp_upload"),
-  ]
+def updatePermissions(using=DEFAULT_DB_ALIAS, **kwargs):
+  removeModelPermissions("execute", "task", using)
+  p = Permission.objects.get_or_create(
+    codename='run_db',
+    content_type=ContentType.objects.get(model="permission", app_label="auth")
+    )[0]
+  p.name = 'Run database operations'
+  p.save()
+
+
+signals.post_migrate.connect(updatePermissions)

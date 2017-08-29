@@ -26,6 +26,7 @@ import locale
 import os
 import sys
 import types
+import importlib
 import freppledb
 from django.contrib import messages
 
@@ -334,3 +335,14 @@ if DEBUG:
 
 # Some Django settings we don't like to be overriden
 MANAGERS = ADMINS
+
+# Find the ERP connector module
+ERP_CONNECTOR = None
+for app in INSTALLED_APPS:
+  app_module = importlib.import_module(app)
+  if getattr(app_module, 'ERP_module', False):
+    if not ERP_CONNECTOR:
+      ERP_CONNECTOR = app.replace('freppledb.', '')
+    else:
+      from django.core.exceptions import ImproperlyConfigured
+      raise ImproperlyConfigured("Only a single ERP connection app can be installed at a time")

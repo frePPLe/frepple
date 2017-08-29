@@ -20,6 +20,7 @@
       if (document.queryCommandSupported('copy'))
         $('#copytoclipboard').show();
       $('#canceluploadbutton').hide();
+      $('#cancelimportbutton').hide();
     },
     error: function (result, stat, errorThrown) {
       var el = $('#uploadResponse');
@@ -33,6 +34,7 @@
       if (document.queryCommandSupported('copy'))
         $('#copytoclipboard').show();
       $('#canceluploadbutton').hide();
+      $('#cancelimportbutton').hide();
       }
   };
 

@@ -2539,13 +2539,22 @@ function import_show(title,paragraph,multiple,fxhr)
     .on('dragleave dragend drop', function() {
       $('.box').removeClass('bg-warning');
     })
-    .on('drop', function(e) {
-      filesdropped = e.originalEvent.dataTransfer.files;
+    .on('drop', function(e) { console.log(multiple);console.log(e.originalEvent.dataTransfer.files);
+      if (multiple) {
+        filesdropped = e.originalEvent.dataTransfer.files;
+      } else {
+        filesdropped = [e.originalEvent.dataTransfer.files[0]];
+      }
       $("#uploadlabel").text(filesdropped.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesdropped.length ) : filesdropped[ 0 ].name);
     });
   }
   $("#csv_file").on('change', function(e) {
-    filesselected = e.target.files;
+    if (multiple) {
+      filesselected = e.target.files;
+    } else {
+      filesselected = [e.target.files[0]];
+    }
+
     $("#uploadlabel").text(e.target.files.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', e.target.files.length ) : e.target.files[ 0 ].name);
   });
 

@@ -321,7 +321,11 @@ class User(AbstractUser):
     # We want to automatically give access to the django admin to all users
     self.is_staff = True
 
-    scenarios = [ i['name'] for i in Scenario.objects.filter(status='In use').values('name') ]
+    scenarios = [
+      i['name']
+      for i in Scenario.objects.filter(status='In use').values('name')
+      if i['name'] in settings.DATABASES
+      ]
 
     # The same id of a new user MUST be identical in all databases.
     # We manipulate the sequences, and correct if required.

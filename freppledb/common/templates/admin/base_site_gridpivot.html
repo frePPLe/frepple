@@ -64,10 +64,7 @@ $(function() {
     multiSort: true,
     maxSortColumns: 3,
     viewSort: true,
-    onSortCol: function(sortname, sortindex, sortorder) {
-      grid.onSortCol(sortname, sortindex, sortorder); //workaround for jqgrid bug
-      grid.saveColumnConfiguration();
-    },
+    onSortCol: grid.saveColumnConfiguration,
     onPaging: grid.saveColumnConfiguration,
     autowidth: true,
 	  shrinkToFit: {% if mode == "table" %}false{% else %}true{% endif %},

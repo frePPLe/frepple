@@ -882,59 +882,6 @@ var grid = {
     });
   },
 
-  onSortCol: function (sortname, sortindex, sortorder) {
-    // Get missing arguments when they aren't passed
-  	var p = $("#grid")[0].p;
-    if (sortname === undefined)
-    	sortname = p.sortname;
-    if (sortindex === undefined)
-    	sortindex = p.sortindex;
-    if (sortorder === undefined)
-    	sortorder = p.sortorder;
-
-    // Resetting styles
-    $('.jqgh_grid_sort small').text('');
-    $(".ui-icon-asc").prop("disabled", true);
-    $(".ui-icon-asc").prop("disabled", true);
-    $(".ui-icon-desc").prop("disabled", true);
-    $('.s-ico').hide();
-
-    // Change the ordering of the columns
-    if (sortname)
-    {
-	    var elements_original = (sortname + " " + sortorder).split(",");
-	    var elements_new = [];
-	    var found = false;
-	    for (var i = 0; i < elements_original.length; i++) {
-        if (sortindex === undefined || (elements_original[i].trim() != p.colModel[sortindex].name + " asc"
-	          && elements_original[i].trim() != p.colModel[sortindex].name + " desc")) {
-	    		elements_new.push(elements_original[i]);
-	    	}
-	    	else if (sortindex !== undefined)
-	    		found = elements_original[i];
-	    }
-	    if (found)
-	    	elements_new.splice(0, 0, found);
-
-	    // Display numeric labels and sorting icons
-	    for (var i = 0; i < elements_new.length; i++)
-	    {
-        var x = elements_new[i].trim().split(" ");
-        var el = $("div[id=jqgh_grid_" + x[0].trim() + "]");
-        el.find(".s-ico").show();
-        var dir = (i == elements_new.length - 1) ? p.sortorder.trim() : x[1].trim();
-        if (dir == "asc") {
-        	el.find(".s-ico .ui-icon-asc").removeClass("disabled");
-        	el.find(".s-ico .ui-icon-desc").addClass("disabled");
-        }
-        else {
-        	el.find(".s-ico .ui-icon-desc").removeClass("disabled");
-        	el.find(".s-ico .ui-icon-asc").addClass("disabled");
-        }
-	    };
-    };
-  },
-
   //This function is called when a cell is just being selected in an editable
   //grid. It is used to either a) select the content of the cell (to make
   //editing it easier) or b) display a date picker it the field is of type

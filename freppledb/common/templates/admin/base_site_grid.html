@@ -50,10 +50,7 @@ $(function() {
     hidegrid: false,
     resizeStop: grid.saveColumnConfiguration,
     scrollRows: true,
-    onSortCol: function(sortname, sortindex, sortorder) {
-      grid.onSortCol(sortname, sortindex, sortorder); //workaround for jqgrid bug
-      grid.saveColumnConfiguration();
-    },
+    onSortCol: grid.saveColumnConfiguration,
     onPaging: grid.saveColumnConfiguration,
     //scroll: 1,      // Enables scrolling over all records, instead of paging. But not compatible with frozen columns.
     //sortable: true, // Allows columns to be dragged and dropped between positions. But not compatible with frozen columns

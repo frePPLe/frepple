@@ -2486,7 +2486,7 @@ function import_show(title,paragraph,multiple,fxhr)
     .on('dragleave dragend drop', function() {
       $('.box').removeClass('bg-warning');
     })
-    .on('drop', function(e) { console.log(multiple);console.log(e.originalEvent.dataTransfer.files);
+    .on('drop', function(e) {
       if (multiple) {
         filesdropped = e.originalEvent.dataTransfer.files;
       } else {
@@ -2502,7 +2502,7 @@ function import_show(title,paragraph,multiple,fxhr)
       filesselected = [e.target.files[0]];
     }
 
-    $("#uploadlabel").text(e.target.files.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', e.target.files.length ) : e.target.files[ 0 ].name);
+    $("#uploadlabel").text(filesselected.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesselected.length ) : filesselected[ 0 ].name);
   });
 
   $('#importbutton').on('click', function() {

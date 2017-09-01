@@ -73,6 +73,9 @@ class Calendar;
 class CalendarBucket;
 class Load;
 class LoadDefault;
+class LoadBucketizedFromEnd;
+class LoadBucketizedFromStart;
+class LoadBucketizedPercentage;
 class Location;
 class Customer;
 class HasProblems;
@@ -1021,6 +1024,22 @@ class Solver : public Object
     {
       solve(reinterpret_cast<const Load*>(b),v);
     }
+
+    virtual void solve(const LoadBucketizedFromStart* b, void* v = nullptr)
+    {
+      solve(reinterpret_cast<const Load*>(b), v);
+    }
+
+    virtual void solve(const LoadBucketizedFromEnd* b, void* v = nullptr)
+    {
+      solve(reinterpret_cast<const Load*>(b), v);
+    }
+
+    virtual void solve(const LoadBucketizedPercentage* b, void* v = nullptr)
+    {
+      solve(reinterpret_cast<const Load*>(b), v);
+    }
+
     virtual void solve(const Flow* b, void* v = nullptr)
     {
       throw LogicException("Called undefined solve(Flow*) method");
@@ -6964,7 +6983,7 @@ class Load
 
     /** Updates the capacity being consumed. This method can only be called
       * once on a resource. */
-    void setResource(Resource* r)
+    virtual void setResource(Resource* r)
     {
       if (r) setPtrB(r,r->getLoads());
     }
@@ -7100,6 +7119,7 @@ class Load
     /** Required skill. */
     Skill* skill = nullptr;
 
+  protected:
     /** Factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
@@ -7122,6 +7142,166 @@ class LoadDefault : public Load
 
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaClass* metadata;
+};
+
+
+/** @brief This class a load that loads a bucketized resource at a percentage of the
+  * operationplan duration.
+  * An offset of 0 means loading the resource at the start of the operationplan.
+  * An offset of 100 means loading the resource at the end of the operationplan.
+  */
+class LoadBucketizedPercentage : public Load
+{
+  public:
+    /** Constructor. */
+    explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q) : Load(o, r, q) {}
+
+    /** Constructor. */
+    explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q, DateRange e) : Load(o, r, q, e) {}
+
+    /** This constructor is called from the plan begin_element function. */
+    explicit LoadBucketizedPercentage() {}
+
+    void setResource(Resource* r)
+    {
+      if (r && r->getType() != *ResourceBuckets::metadata)
+        throw DataException("LoadBucketizedPercentage can only be associated with ResourceBuckets");
+      Load::setResource(r);
+    }
+
+    double getOffset() const
+    {
+      return offset;
+    }
+
+    void setOffset(double d)
+    {
+      if (d < 0 || d > 100)
+        throw DataException("load offset must be between 0 and 100");
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+    }
+
+    virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static const MetaClass* metadata;
+
+  private:
+    double offset = 0;
+};
+
+
+/** @brief This class a load that loads a bucketized resource at a specified
+  * offset from the start of the operationplan.
+  * An offset of 0 means loading the resource at the start of the operationplan.
+  * An offset of 1 day means loading the resource 1 day after the operationplan
+  * start date. If the operationplan takes less than 1 day we load the resource
+  * at the end date.
+  */
+class LoadBucketizedFromStart : public Load
+{
+  public:
+    /** Constructor. */
+    explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q) : Load(o, r, q) {}
+
+    /** Constructor. */
+    explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q, DateRange e) : Load(o, r, q, e) {}
+
+    /** This constructor is called from the plan begin_element function. */
+    explicit LoadBucketizedFromStart() {}
+
+    void setResource(Resource* r)
+    {
+      if (r && r->getType() != *ResourceBuckets::metadata)
+        throw DataException("LoadBucketizedFromStart can only be associated with ResourceBuckets");
+      Load::setResource(r);
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+    }
+
+    virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static const MetaClass* metadata;
+
+    Duration getOffset() const
+    {
+      return offset;
+    }
+
+    void setOffset(Duration d)
+    {
+      if (d < Duration(0L))
+        throw DataException("load offset must be positive");
+    }
+
+  private:
+    Duration offset;
+};
+
+
+/** @brief This class a load that loads a bucketized resource at a specified
+  * offset from the end of the operationplan.
+  * An offset of 0 means loading the resource at the end of the operationplan.
+  * An offset of 1 day means loading the resource 1 day before the operationplan
+  * end date. If the operationplan takes less than 1 day we load the resource
+  * at the start date.
+  */
+class LoadBucketizedFromEnd : public Load
+{
+  public:
+    /** Constructor. */
+    explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q) : Load(o, r, q) {}
+
+    /** Constructor. */
+    explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q, DateRange e) : Load(o, r, q, e) {}
+
+    /** This constructor is called from the plan begin_element function. */
+    explicit LoadBucketizedFromEnd() {}
+
+    void setResource(Resource* r)
+    {
+      if (r && r->getType() != *ResourceBuckets::metadata)
+        throw DataException("LoadBucketizedFromEnd can only be associated with ResourceBuckets");
+      Load::setResource(r);
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+    }
+
+    virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static const MetaClass* metadata;
+
+    Duration getOffset() const
+    {
+      return offset;
+    }
+
+    void setOffset(Duration d)
+    {
+      if (d < Duration(0L))
+        throw DataException("load offset must be positive");
+    }
+
+  private:
+    Duration offset;
 };
 
 

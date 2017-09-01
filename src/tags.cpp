@@ -127,6 +127,7 @@ const Keyword Tags::mininterval("mininterval");
 const Keyword Tags::mininventory("mininventory");
 const Keyword Tags::minshipment("minshipment");
 const Keyword Tags::name("name");
+const Keyword Tags::offset("offset");
 const Keyword Tags::onhand("onhand");
 const Keyword Tags::operation("operation");
 const Keyword Tags::operationplan("operationplan");

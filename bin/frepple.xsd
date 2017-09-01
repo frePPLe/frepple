@@ -786,6 +786,39 @@
     <xsd:attribute name="source" type="xsd:normalizedString" />
   </xsd:complexType>
 
+  <xsd:complexType name="load_bucketized_percentage">
+    <xsd:complexContent>
+      <xsd:extension base="load">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="offset" type="xsd:double" />
+        </xsd:choice>
+        <xsd:attribute name="offset" type="xsd:double" />      
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="load_bucketized_from_start">
+    <xsd:complexContent>
+      <xsd:extension base="load">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="offset" type="xsd:duration" />
+        </xsd:choice>
+        <xsd:attribute name="offset" type="xsd:duration" />      
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="load_bucketized_from_end">
+    <xsd:complexContent>
+      <xsd:extension base="load">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="offset" type="xsd:duration" />
+        </xsd:choice>
+        <xsd:attribute name="offset" type="xsd:duration" />      
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:complexType name="loadlist">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="load" type="load" />

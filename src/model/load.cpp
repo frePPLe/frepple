@@ -25,6 +25,9 @@ namespace frepple
 
 const MetaCategory* Load::metadata;
 const MetaClass* LoadDefault::metadata;
+const MetaClass* LoadBucketizedPercentage::metadata;
+const MetaClass* LoadBucketizedFromStart::metadata;
+const MetaClass* LoadBucketizedFromEnd::metadata;
 
 
 int Load::initialize()
@@ -49,6 +52,42 @@ int Load::initialize()
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(Load::metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+int LoadBucketizedPercentage::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<LoadBucketizedPercentage>(
+    "load", "load_bucketized_percentage",
+    Object::create<LoadBucketizedPercentage>
+    );
+  registerFields<LoadBucketizedPercentage>(const_cast<MetaClass*>(metadata));
+  return metadata ? 0 : 1;
+}
+
+
+int LoadBucketizedFromStart::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<LoadBucketizedFromStart>(
+    "load", "load_bucketized_from_start",
+    Object::create<LoadBucketizedPercentage>
+    );
+  registerFields<LoadBucketizedFromStart>(const_cast<MetaClass*>(metadata));
+  return metadata ? 0 : 1;
+}
+
+
+int LoadBucketizedFromEnd::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<LoadBucketizedFromEnd>(
+    "load", "load_bucketized_from_end",
+    Object::create<LoadBucketizedFromEnd>
+    );
+  registerFields<LoadBucketizedFromEnd>(const_cast<MetaClass*>(metadata));
+  return metadata ? 0 : 1;
 }
 
 

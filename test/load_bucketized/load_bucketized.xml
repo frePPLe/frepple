@@ -7,8 +7,8 @@
     - case 2: a load loading the resource at 0% of the duration.
     - case 3: a load loading the resource at 50% of the duration.
     - case 4: a load loading the resource at 100% of the duration.
-    - case 5: a load loading the resource at 2 days before the end.
-    - case 6: a load loading the resource at 2 days after the start.
+    - case 5: a load loading the resource at 9 days before the end.
+    - case 6: a load loading the resource at 6 days after the start.
   </description>
   <current>2018-01-01T00:00:00</current>
 
@@ -18,11 +18,19 @@
       <buckets>
         <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
         <bucket start="2017-01-01T00:00:00" end="2020-01-01T00:00:00"
-          days="62" value="20" />
+          days="62" value="30" />
       </buckets>
     </calendar>
   </calendars>
-  
+  <locations>
+    <location name="factory">
+      <available name="working hours" default="1">
+        <buckets>
+          <bucket start="2017-12-25T00:00:00" end="2017-12-26T00:00:00" value="0" />
+        </buckets>
+      </available>
+    </location>
+  </locations>
   <resources>
     <resource name="1. Resource" xsi:type="resource_buckets">
       <location name="factory" />
@@ -49,7 +57,7 @@
       <maximum_calendar name="Capacity"/>
     </resource>
   </resources>
-  
+
   <!-- Case 1:  default load -->
   <operations>
     <operation name="1. make end item" xsi:type="operation_time_per"
@@ -75,12 +83,11 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
       <item name="1. end item"/>
       <location name="factory"/>
     </demand>
   </demands>
-  
+
   <!-- Case 2:  load at 0% -->
   <operations>
     <operation name="2. make end item" xsi:type="operation_time_per"
@@ -107,12 +114,11 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
       <item name="2. end item"/>
       <location name="factory"/>
     </demand>
   </demands>
-  
+
   <!-- Case 3:  load at 50% -->
   <operations>
     <operation name="3. make end item" xsi:type="operation_time_per"
@@ -129,7 +135,7 @@
         <load xsi:type="load_bucketized_percentage">
           <resource name="3. Resource"/>
           <quantity>2</quantity>
-          <offset>0</offset>
+          <offset>50</offset>
         </load>
       </loads>
     </operation>
@@ -139,7 +145,6 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
       <item name="3. end item"/>
       <location name="factory"/>
     </demand>
@@ -161,7 +166,7 @@
         <load xsi:type="load_bucketized_percentage">
           <resource name="4. Resource"/>
           <quantity>2</quantity>
-          <offset>0</offset>
+          <offset>100</offset>
         </load>
       </loads>
     </operation>
@@ -171,13 +176,12 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
       <item name="4. end item"/>
       <location name="factory"/>
     </demand>
   </demands>
 
-  <!-- Case 5:  load at 2 days before the operationplan end -->
+  <!-- Case 5:  load at 9 days before the operationplan end -->
   <operations>
     <operation name="5. make end item" xsi:type="operation_time_per"
       duration="P1D" duration_per="P1D">
@@ -193,7 +197,7 @@
         <load xsi:type="load_bucketized_from_end">
           <resource name="5. Resource"/>
           <quantity>2</quantity>
-          <offset>P2D</offset>
+          <offset>P9D</offset>
         </load>
       </loads>
     </operation>
@@ -203,13 +207,19 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
+      <item name="5. end item"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="5. order 2">
+      <quantity>1</quantity>
+      <minshipment>1</minshipment>
+      <due>2018-05-01T00:00:00</due>
       <item name="5. end item"/>
       <location name="factory"/>
     </demand>
   </demands>
 
-  <!-- Case 6:  load at 2 days after the operationplan start -->
+  <!-- Case 6:  load at 6 days after the operationplan start -->
   <operations>
     <operation name="6. make end item" xsi:type="operation_time_per"
       duration="P1D" duration_per="P1D">
@@ -225,7 +235,7 @@
         <load xsi:type="load_bucketized_from_start">
           <resource name="6. Resource"/>
           <quantity>2</quantity>
-          <offset>P2D</offset>
+          <offset>P6D</offset>
         </load>
       </loads>
     </operation>
@@ -235,18 +245,24 @@
       <quantity>10</quantity>
       <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
-      <priority>11</priority>
+      <item name="6. end item"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="6. order 2">
+      <quantity>1</quantity>
+      <minshipment>1</minshipment>
+      <due>2018-05-01T00:00:00</due>
       <item name="6. end item"/>
       <location name="factory"/>
     </demand>
   </demands>
-  
+
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, allowsplits=False).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, allowsplits=False).solve()
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, allowsplits=False).solve()
 frepple.saveplan("output.2.xml")
 ?>
 

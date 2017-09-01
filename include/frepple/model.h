@@ -7149,6 +7149,8 @@ class LoadDefault : public Load
   * operationplan duration.
   * An offset of 0 means loading the resource at the start of the operationplan.
   * An offset of 100 means loading the resource at the end of the operationplan.
+  * The calculations consider the available periods of the operationplan, and
+  * skip unavailable periods.
   */
 class LoadBucketizedPercentage : public Load
 {
@@ -7178,11 +7180,14 @@ class LoadBucketizedPercentage : public Load
     {
       if (d < 0 || d > 100)
         throw DataException("load offset must be between 0 and 100");
+      offset = d;
     }
+
+    Date getLoadplanDate(const LoadPlan*) const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+      m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
     }
 
     virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
@@ -7203,6 +7208,8 @@ class LoadBucketizedPercentage : public Load
   * An offset of 1 day means loading the resource 1 day after the operationplan
   * start date. If the operationplan takes less than 1 day we load the resource
   * at the end date.
+  * The offset is computed using the available periods of the operationplan,
+  * and skip unavailable periods.
   */
 class LoadBucketizedFromStart : public Load
 {
@@ -7223,9 +7230,11 @@ class LoadBucketizedFromStart : public Load
       Load::setResource(r);
     }
 
+    Date getLoadplanDate(const LoadPlan*) const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
     }
 
     virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
@@ -7244,6 +7253,7 @@ class LoadBucketizedFromStart : public Load
     {
       if (d < Duration(0L))
         throw DataException("load offset must be positive");
+      offset = d;
     }
 
   private:
@@ -7257,6 +7267,8 @@ class LoadBucketizedFromStart : public Load
   * An offset of 1 day means loading the resource 1 day before the operationplan
   * end date. If the operationplan takes less than 1 day we load the resource
   * at the start date.
+  * The offset is computed using the available periods of the operationplan,
+  * and skip unavailable periods.
   */
 class LoadBucketizedFromEnd : public Load
 {
@@ -7277,9 +7289,11 @@ class LoadBucketizedFromEnd : public Load
       Load::setResource(r);
     }
 
+    Date getLoadplanDate(const LoadPlan*) const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset, BASE + WRITE_OBJECT);
+      m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
     }
 
     virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
@@ -7298,6 +7312,7 @@ class LoadBucketizedFromEnd : public Load
     {
       if (d < Duration(0L))
         throw DataException("load offset must be positive");
+      offset = d;
     }
 
   private:

@@ -72,7 +72,7 @@ int LoadBucketizedFromStart::initialize()
   // Initialize the metadata
   metadata = MetaClass::registerClass<LoadBucketizedFromStart>(
     "load", "load_bucketized_from_start",
-    Object::create<LoadBucketizedPercentage>
+    Object::create<LoadBucketizedFromStart>
     );
   registerFields<LoadBucketizedFromStart>(const_cast<MetaClass*>(metadata));
   return metadata ? 0 : 1;
@@ -285,5 +285,55 @@ Object* Load::finder(const DataValueDict& d)
   }
   return nullptr;
 }
+
+
+Date LoadBucketizedFromEnd::getLoadplanDate(const LoadPlan* lp) const
+{
+  const DateRange& tmp = lp->getOperationPlan()->getDates();
+  if (!offset)
+    return tmp.getEnd();
+  else
+  {
+    DateRange d = lp->getOperation()->calculateOperationTime(
+      tmp.getEnd(), offset, false
+    );
+    return d.getStart() > tmp.getStart() ? d.getStart() : tmp.getStart();
+  }
+}
+
+
+Date LoadBucketizedFromStart::getLoadplanDate(const LoadPlan* lp) const
+{
+  const DateRange& tmp = lp->getOperationPlan()->getDates();
+  if (!offset)
+    return tmp.getStart();
+  else
+  {
+    DateRange d = lp->getOperation()->calculateOperationTime(
+      tmp.getStart(), offset, true
+      );
+    return d.getEnd() > tmp.getEnd() ? tmp.getEnd() : d.getEnd();
+  }
+}
+
+
+Date LoadBucketizedPercentage::getLoadplanDate(const LoadPlan* lp) const
+{
+  const DateRange& tmp = lp->getOperationPlan()->getDates();
+  if (offset == 0.0)
+    return tmp.getStart();
+  else if (offset == 100.0)
+    return tmp.getEnd();
+  else
+  {
+    DateRange d = lp->getOperation()->calculateOperationTime(
+      tmp.getStart(),
+      Duration(static_cast<long>(static_cast<long>(tmp.getDuration()) * offset / 100.0)),
+      true
+      );
+    return d.getEnd();
+  }
+}
+
 
 } // end namespace

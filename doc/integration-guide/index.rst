@@ -21,8 +21,9 @@ interaction with the frePPLe planning engine.
    csv-files
    database-access
    rest-api/index
-   odoo-connector
-   openbravo-connector   
    batch-commands
    remote-commands
    low-level-integration/index
+   odoo-connector
+   openbravo-connector   
+   generic-erp-connector

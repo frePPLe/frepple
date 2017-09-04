@@ -15,8 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import adodbapi
 import csv
+from datetime import datetime
 import os
 
 from django.core.management.base import BaseCommand, CommandError
@@ -24,15 +24,16 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import VERSION
+from freppledb.common.models import User
+from freppledb.execute.models import Task
+
+from ...utils import getERPconnection
 
 
 class Command(BaseCommand):
   help = '''
-  Extract a set of flat files from JobBoss.
+  Extract a set of flat files from an ERP system.
   '''
-
-  # Parameter defining the database connection
-  connectionstring = 'Provider=SQLNCLI11;Server=localhost;Database=acutec;User Id=acutec;Password=acutec;'
 
   # Generate .csv or .cpy files:
   #  - csv files are thoroughly validated and load slower
@@ -47,41 +48,139 @@ class Command(BaseCommand):
     return VERSION
 
 
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates the frePPLe database to load'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+
+
   def handle(self, **options):
 
+    # Select the correct frePPLe scenario database
+    self.database = options['database']
+    if self.database not in settings.DATABASES.keys():
+      raise CommandError("No database settings known for '%s'" % self.database)
+
+    # FrePPle user running this task
+    if options['user']:
+      try:
+        self.user = User.objects.all().using(self.database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      self.user = None
+
+    # FrePPLe task identifier
+    if options['task']:
+      try:
+        self.task = Task.objects.all().using(self.database).get(pk=options['task'])
+      except:
+        raise CommandError("Task identifier not found")
+      if self.task.started or self.task.finished or self.task.status != "Waiting" or self.task.name != 'extract from erp':
+        raise CommandError("Invalid task identifier")
+    else:
+      now = datetime.now()
+      self.task = Task(name='extract from erp', submitted=now, started=now, status='0%', user=self.user)
+    self.task.save(using=self.database)
+
     # Set the destination folder
-    self.destination = settings.DATABASES[DEFAULT_DB_ALIAS]['FILEUPLOADFOLDER']
+    self.destination = settings.DATABASES[self.database]['FILEUPLOADFOLDER']
     if not os.access(self.destination, os.W_OK):
       raise CommandError("Can't write to folder %s " % self.destination)
 
     # Open database connection
     print("Connecting to the database")
-    self.conn = adodbapi.connect(self.connectionstring, timeout=600)
-    self.cursor = self.conn.cursor()
-    self.fk = '_id' if self.ext == 'cpy' else ''
+    with getERPconnection(self.database) as erp_connection:
+      self.cursor = erp_connection.cursor()
+      self.fk = '_id' if self.ext == 'cpy' else ''
 
-    # Extract all files
-    try:
-      self.extractLocation()
-      self.extractCustomer()
-      self.extractItem()
-      self.extractSupplier()
-      self.extractResource()
-      self.extractSalesOrder()
-      self.extractOperation()
-      self.extractSuboperation()
-      self.extractOperationResource()
-      self.extractOperationMaterial()
-      self.extractItemSupplier()
-      self.extractCalendar()
-      self.extractCalendarBucket()
-      self.extractBuffer()
-      self.extractItemSupplier()
-      self.extractCalendar()
-      self.extractCalendarBucket()
-    finally:
-      self.cursor.close()
-      self.conn.close()
+      # Extract all files
+      try:
+        self.extractLocation()
+        self.task.status = '6%'
+        self.task.save(using=self.database)
+
+        self.extractCustomer()
+        self.task.status = '12%'
+        self.task.save(using=self.database)
+
+        self.extractItem()
+        self.task.status = '18%'
+        self.task.save(using=self.database)
+
+        self.extractSupplier()
+        self.task.status = '24%'
+        self.task.save(using=self.database)
+
+        self.extractResource()
+        self.task.status = '30%'
+        self.task.save(using=self.database)
+
+        self.extractSalesOrder()
+        self.task.status = '36%'
+        self.task.save(using=self.database)
+
+        self.extractOperation()
+        self.task.status = '42%'
+        self.task.save(using=self.database)
+
+        self.extractSuboperation()
+        self.task.status = '48%'
+        self.task.save(using=self.database)
+
+        self.extractOperationResource()
+        self.task.status = '54%'
+        self.task.save(using=self.database)
+
+        self.extractOperationMaterial()
+        self.task.status = '60%'
+        self.task.save(using=self.database)
+
+        self.extractItemSupplier()
+        self.task.status = '66%'
+        self.task.save(using=self.database)
+
+        self.extractCalendar()
+        self.task.status = '72%'
+        self.task.save(using=self.database)
+
+        self.extractCalendarBucket()
+        self.task.status = '78%'
+        self.task.save(using=self.database)
+
+        self.extractBuffer()
+        self.task.status = '84%'
+        self.task.save(using=self.database)
+
+        self.extractItemSupplier()
+        self.task.status = '90%'
+        self.task.save(using=self.database)
+
+        self.extractCalendar()
+        self.task.status = '96%'
+        self.task.save(using=self.database)
+
+        self.extractCalendarBucket()
+        self.task.status = '100%'
+        self.task.save(using=self.database)
+
+        self.task.status = 'Done'
+
+      except Exception as e:
+        self.task.status = 'Failed'
+        self.task.message = 'Failed: %s' % e
+
+      finally:
+        self.task.finished = datetime.now()
+        self.task.save(using=self.database)
 
 
   def extractLocation(self):
@@ -92,7 +191,7 @@ class Command(BaseCommand):
     outfilename = os.path.join(self.destination, 'location.%s' % self.ext)
     print("Start extracting locations to %s" % outfilename)
     self.cursor.execute('''
-      select 
+      select
         location_id, description, current_timestamp
       from location
       ''')

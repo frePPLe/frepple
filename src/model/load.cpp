@@ -287,6 +287,20 @@ Object* Load::finder(const DataValueDict& d)
 }
 
 
+Date Load::getLoadplanDate(const LoadPlan* lp) const
+{
+  const DateRange & dr = lp->getOperationPlan()->getDates();
+  if (lp->isStart())
+    return dr.getStart() > getEffective().getStart() ?
+    dr.getStart() :
+    getEffective().getStart();
+  else
+    return dr.getEnd() < getEffective().getEnd() ?
+    dr.getEnd() :
+    getEffective().getEnd();
+}
+
+
 Date LoadBucketizedFromEnd::getLoadplanDate(const LoadPlan* lp) const
 {
   const DateRange& tmp = lp->getOperationPlan()->getDates();
@@ -335,5 +349,122 @@ Date LoadBucketizedPercentage::getLoadplanDate(const LoadPlan* lp) const
   }
 }
 
+
+Date Load::getOperationPlanDate(const LoadPlan* lp, Date ldplandate, bool start) const
+{
+  // TODO Ignores effective range of the load
+  if (start)
+  {
+    if (lp->isStart())
+      return ldplandate;
+    else
+    {
+      OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+        lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+        Date::infinitePast, ldplandate, true, false
+        );
+      return tmp.start;
+    }
+  }
+  else
+  {
+    if (lp->isStart())
+    {
+      OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+        lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+        ldplandate, Date::infinitePast, false, false
+      );
+      return tmp.end;
+    }
+    else
+      return ldplandate;
+  }
+}
+
+
+Date LoadBucketizedFromEnd::getOperationPlanDate(const LoadPlan* lp, Date ldplandate, bool start) const
+{
+  // TODO Ignores effective range of the load
+
+  DateRange d = lp->getOperation()->calculateOperationTime(
+    ldplandate, offset, true
+    );
+  OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+    lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+    Date::infinitePast, d.getEnd(), true, false
+    );
+  if (tmp.start <= ldplandate)
+    // Total duration exceeds the offset
+    return start ? tmp.start : tmp.end;
+  else if (start)
+    // Offset is smaller than the effective duration.
+    // The loadplan will coincide with the operationplan start date.
+    return ldplandate;
+  else
+  {
+    // Offset is smaller than the effective duration.
+    OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+      lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+      ldplandate, Date::infinitePast, false, false
+      );
+    return tmp.end;
+  }
+}
+
+
+Date LoadBucketizedFromStart::getOperationPlanDate(const LoadPlan* lp, Date ldplandate, bool start) const
+{
+  // TODO Ignores effective range of the load
+
+  DateRange d = lp->getOperation()->calculateOperationTime(
+    ldplandate, offset, false
+    );
+  OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+    lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+    d.getStart(), Date::infinitePast, true, false
+    );
+  if (tmp.end >= ldplandate)
+    // Total duration exceeds the offset
+    return start ? tmp.start : tmp.end;
+  else if (start)
+  {
+    // Offset is smaller than the effective duration.
+    OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
+      lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+      Date::infinitePast, ldplandate, true, false
+    );
+    return tmp.start;
+  }
+  else
+    // Offset is smaller than the effective duration.
+    // The loadplan will coincide with the operationplan end date.
+    return ldplandate;
+}
+
+
+Date LoadBucketizedPercentage::getOperationPlanDate(const LoadPlan* lp, Date ldplandate, bool start) const
+{
+  // TODO Ignores effective range of the load
+  // Measure how long the operation really takes in effective time
+  Duration actualduration;
+  const DateRange& tmp = lp->getOperationPlan()->getDates();
+  lp->getOperation()->calculateOperationTime(tmp.getStart(), tmp.getEnd(), &actualduration);
+  
+  // Compute offset
+  if (start)
+  {
+    DateRange d = lp->getOperation()->calculateOperationTime(
+      ldplandate, Duration(static_cast<long>(static_cast<long>(actualduration) * offset / 100.0)), false
+      );
+    return d.getStart();
+  }
+  else
+  {
+    DateRange d = lp->getOperation()->calculateOperationTime(
+      ldplandate, Duration(static_cast<long>(static_cast<long>(actualduration) * (100.0 - offset) / 100.0)), true
+      );
+    return d.getEnd();
+  }
+}
 
 } // end namespace

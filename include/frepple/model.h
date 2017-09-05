@@ -7058,6 +7058,11 @@ class Load
     /** This method holds the logic the compute the quantity of a loadplan. */
     virtual double getLoadplanQuantity(const LoadPlan*) const;
 
+    /** This method allows computing the operationplan start or end date 
+      * when given the date of the loadplan.
+      */
+    virtual Date getOperationPlanDate(const LoadPlan*, Date, bool=true) const;
+
     static int initialize();
 
     bool getHidden() const
@@ -7185,6 +7190,8 @@ class LoadBucketizedPercentage : public Load
 
     Date getLoadplanDate(const LoadPlan*) const;
 
+    Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
@@ -7208,8 +7215,8 @@ class LoadBucketizedPercentage : public Load
   * An offset of 1 day means loading the resource 1 day after the operationplan
   * start date. If the operationplan takes less than 1 day we load the resource
   * at the end date.
-  * The offset is computed using the available periods of the operationplan,
-  * and skip unavailable periods.
+  * The offset is computed based on the available periods of the operationplan,
+  * and skips unavailable periods.
   */
 class LoadBucketizedFromStart : public Load
 {
@@ -7231,6 +7238,8 @@ class LoadBucketizedFromStart : public Load
     }
 
     Date getLoadplanDate(const LoadPlan*) const;
+
+    Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -7267,8 +7276,8 @@ class LoadBucketizedFromStart : public Load
   * An offset of 1 day means loading the resource 1 day before the operationplan
   * end date. If the operationplan takes less than 1 day we load the resource
   * at the start date.
-  * The offset is computed using the available periods of the operationplan,
-  * and skip unavailable periods.
+  * The offset is computed based on the available periods of the operationplan,
+  * and skips unavailable periods.
   */
 class LoadBucketizedFromEnd : public Load
 {
@@ -7290,6 +7299,8 @@ class LoadBucketizedFromEnd : public Load
     }
 
     Date getLoadplanDate(const LoadPlan*) const;
+
+    Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -7995,12 +8006,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     }
 
     /** Override the setQuantity of the TimeLine class, this is needed for the
-      * registerFields function
-    */
+      * registerFields function.
+      */
     void setQuantity(double quantity)
     {
       qty = quantity;
     }
+
     /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the
       * capacity consumption ends.<br>
@@ -8065,20 +8077,6 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
 };
-
-
-inline Date Load::getLoadplanDate(const LoadPlan* lp) const
-{
-  const DateRange & dr = lp->getOperationPlan()->getDates();
-  if (lp->isStart())
-    return dr.getStart() > getEffective().getStart() ?
-        dr.getStart() :
-        getEffective().getStart();
-  else
-    return dr.getEnd() < getEffective().getEnd() ?
-        dr.getEnd() :
-        getEffective().getEnd();
-}
 
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const

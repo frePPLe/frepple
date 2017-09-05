@@ -144,6 +144,11 @@ resource type. E.g. A resource that can produce 1000 units per week
 No fields are defined in addition to the ones listed above, but the
 maximum_calendar field must is be specified.
 
+A number of specialized operationresource subclasses exist to select 
+in which bucket the capacity needs to be consumed: at the start of the
+operationplan, at the end of the operationplan or somewhere between
+the start and end.
+
 Resource_infinite
 -----------------
 

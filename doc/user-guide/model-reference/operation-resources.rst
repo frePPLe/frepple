@@ -51,3 +51,42 @@ search          string            | Defines the order of preference among the al
                                       the cost and penalty.
                                     | The sum is computed for the complete upstream path.
 =============== ================= ===========================================================
+
+**Types**
+
+On *default resources* the resource is used during the complete duration
+of the operationplan.
+
+On *bucketized resources* the capacity is consumed from the capacity bucket
+at a single moment of time. Different loading policies can be specified:
+
+* | default:
+  | By default capacity is consumed at the start of the operationplan.
+
+* | load_bucketized_end:
+  | A load of this type that loads a bucketized resource at a specified
+    offset from the end date of the operationplan.
+  | An offset of 0 means loading the resource at the end of the operationplan.
+  | An offset of 1 day means loading the resource 1 day before the operationplan
+    end date. If the operationplan takes less than 1 day we load the resource
+    at the start date.
+  | The offset is computed based on the available periods of the operationplan,
+    and skips unavailable periods.
+
+* | load_bucketized_start:
+  | A load of this type loads a bucketized resource at a specified
+    offset from the start date of the operationplan.
+  | An offset of 0 means loading the resource at the start of the operationplan.
+  | An offset of 1 day means loading the resource 1 day after the operationplan
+    start date. If the operationplan takes less than 1 day we load the resource
+    at the end date.
+  | The offset is computed using the available periods of the operationplan,
+    and skips unavailable periods.
+
+* | load_bucketized_percentage:
+  | A load of this type loads a bucketized resource at a percentage of the
+    operationplan duration.
+  | An offset of 0 means loading the resource at the start of the operationplan.
+  | An offset of 100 means loading the resource at the end of the operationplan.
+  | The calculations consider the available periods of the operationplan, and
+    skip unavailable periods.

@@ -524,14 +524,13 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
   double orig_q_qty = -data->state->q_qty;
   OperationPlanState currentOpplan(data->state->q_operationplan);
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();
-  Date curdate;
+  Date curdate, prevdate, loaddate;
   bool noRestore = data->state->forceLate;
   double overloadQty = 0.0;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
   data->state->a_qty = orig_q_qty;
-  Date prevdate;
 
   // Compute the minimum free capacity we need in a bucket
   double min_free_quantity =
@@ -599,9 +598,16 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
             // With operations of type time_per, it is also possible that the
             // operation now consumes capacity in a different bucket.
             // If that's the case, we move it to start right at the end of the bucket.
-            if (cur!=res->getLoadPlans().end() &&
-              data->state->q_operationplan->getDates().getStart() > cur->getDate())
-                data->state->q_operationplan->setStart(cur->getDate() - Duration(1L));
+            if (
+              cur != res->getLoadPlans().end() 
+              && data->state->q_loadplan->getDate() > cur->getDate()
+              )
+            {
+              Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
+                data->state->q_loadplan, cur->getDate() - Duration(1L), true
+                );
+              data->state->q_operationplan->setStart(tmp);
+            }
           }
           else
           {
@@ -638,7 +644,7 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           --cur;  // Move to last loadplan in the previous bucket
           if (cur != res->getLoadPlans().end() && cur->getOnhand() > min_free_quantity)
           {
-            // Find a suitable start date in this bucket
+            // Find a suitable loadplan date in this bucket
             Duration tmp;
             newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
               bucketEnd, Duration(1L), false, &tmp
@@ -657,11 +663,14 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
         // capacity is still available.
         if (bucketEnd && newStart.getStart() >= currentOpplan.end - res->getMaxEarly())
         {
-          // Move the operationplan to start 1 second in the bucket with available capacity
-          data->state->q_operationplan->setStart(newStart.getStart());
+          // Move the operationplan to load 1 second in the bucket with available capacity
+          Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
+            data->state->q_loadplan, newStart.getStart(), true
+            );
+          data->state->q_operationplan->setStart(tmp);
 
           // Verify the move is successfull
-          if (data->state->q_operationplan->getDates().getStart() != newStart.getStart())
+          if (data->state->q_loadplan->getDate() != newStart.getStart())
             // Not sure if there are cases where this will fail, but just
             // in case...
             data->state->a_qty = 0.0;
@@ -730,12 +739,17 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
     {
       // Move the operationplan to the new bucket and resize to the minimum.
       // Set the date where a next trial date can happen.
+      data->state->q_operationplan->setQuantity(data->state->q_operationplan->getOperation()->getSizeMinimum());
+      Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
+        data->state->q_loadplan, newDate, true
+        );
       data->state->q_operationplan->getOperation()->setOperationPlanParameters(
         data->state->q_operationplan,
         data->state->q_operationplan->getOperation()->getSizeMinimum(),
-        newDate,
+        tmp,
         Date::infinitePast
         );
+
       data->state->a_date = data->state->q_operationplan->getDates().getEnd();
     }
     else

@@ -2666,96 +2666,85 @@ def importWorkbook(request):
   try:
     with transaction.atomic(using=request.database):
       # Find all models in the workbook
-      wb = load_workbook(filename=request.FILES['spreadsheet'], read_only=True, data_only=True)
-      models = []
-      for ws_name in wb.get_sheet_names():
-        # Find the model
-        model = None
-        contenttype_id = None
-        for m, ct in all_models:
-          # Try with translated model names
-          if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
-            model = m
-            contenttype_id = ct
-            break
-          # Try with English model names
-          with translation.override('en'):
+      for filename, file in request.FILES.items():
+        wb = load_workbook(filename=file, read_only=True, data_only=True)
+        models = []
+        for ws_name in wb.get_sheet_names():
+          # Find the model
+          model = None
+          contenttype_id = None
+          for m, ct in all_models:
+            # Try with translated model names
             if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
               break
-        if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-          yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
-        elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
-          # Check permissions
-          yield '<div class="alert alert-danger">' + force_text(_("You don't permissions to add: %s") % ws_name) + '</div>'
-        else:
-          deps = set([model])
-          GridReport.dependent_models(model, deps)
-          models.append( (ws_name, model, contenttype_id, deps) )
+            # Try with English model names
+            with translation.override('en'):
+              if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                model = m
+                contenttype_id = ct
+                break
+          if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+            yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
+          elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
+            # Check permissions
+            yield '<div class="alert alert-danger">' + force_text(_("You don't permissions to add: %s") % ws_name) + '</div>'
+          else:
+            deps = set([model])
+            GridReport.dependent_models(model, deps)
+            models.append( (ws_name, model, contenttype_id, deps) )
 
-      # Sort the list of models, based on dependencies between models
-      models = GridReport.sort_models(models)
+        # Sort the list of models, based on dependencies between models
+        models = GridReport.sort_models(models)
 
-      # Process all rows in each worksheet
-      for ws_name, model, contenttype_id, dependencies in models:
-        yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
-        yield ('<div class="table-responsive">'
-               '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
-        ws = wb.get_sheet_by_name(name=ws_name)
-        rownum = 0
-        has_pk_field = False
-        headers = []
-        uploadform = None
-        changed = 0
-        added = 0
-        numerrors = 0
-        numwarnings = 0
-        firsterror = True
-        admin_log = []
+        # Process all rows in each worksheet
+        for ws_name, model, contenttype_id, dependencies in models:
+          yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+          yield ('<div class="table-responsive">'
+                 '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
+          ws = wb.get_sheet_by_name(name=ws_name)
+          rownum = 0
+          has_pk_field = False
+          headers = []
+          uploadform = None
+          changed = 0
+          added = 0
+          numerrors = 0
+          numwarnings = 0
+          firsterror = True
+          admin_log = []
 
-        try:
-          # The admin model of the class can define some fields to exclude from the import
-          exclude = data_site._registry[model].exclude
-        except:
-          exclude = None
+          try:
+            # The admin model of the class can define some fields to exclude from the import
+            exclude = data_site._registry[model].exclude
+          except:
+            exclude = None
 
-        for row in ws.iter_rows():
-          with transaction.atomic(using=request.database):
-            rownum += 1
-            if rownum == 1:
-              # Process the header row with the field names
+          for row in ws.iter_rows():
+            with transaction.atomic(using=request.database):
+              rownum += 1
+              if rownum == 1:
+                # Process the header row with the field names
 
-              # Collect required fields
-              required_fields = set()
-              for i in model._meta.fields:
-                if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                  required_fields.add(i.name)
-
-              # Validate all columns
-              header_ok = True
-              for cell in row:
-                ok = False
-                value = cell.value
-                if not value:
-                  headers.append(False)
-                  continue
-                else:
-                  value = value.lower()
+                # Collect required fields
+                required_fields = set()
                 for i in model._meta.fields:
-                  # Try with translated field names
-                  if value == i.name.lower() \
-                    or value == i.verbose_name.lower() \
-                    or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
-                      if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                        headers.append(i)
-                      else:
-                        headers.append(False)
-                      required_fields.discard(i.name)
-                      ok = True
-                      break
-                  # Try with English field names
-                  with translation.override('en'):
+                  if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
+                    required_fields.add(i.name)
+
+                # Validate all columns
+                header_ok = True
+                for cell in row:
+                  ok = False
+                  value = cell.value
+                  if not value:
+                    headers.append(False)
+                    continue
+                  else:
+                    value = value.lower()
+                  for i in model._meta.fields:
+                    # Try with translated field names
                     if value == i.name.lower() \
                       or value == i.verbose_name.lower() \
                       or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
@@ -2766,176 +2755,188 @@ def importWorkbook(request):
                         required_fields.discard(i.name)
                         ok = True
                         break
-                if not ok:
-                  headers.append(False)
+                    # Try with English field names
+                    with translation.override('en'):
+                      if value == i.name.lower() \
+                        or value == i.verbose_name.lower() \
+                        or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
+                          if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
+                            headers.append(i)
+                          else:
+                            headers.append(False)
+                          required_fields.discard(i.name)
+                          ok = True
+                          break
+                  if not ok:
+                    headers.append(False)
+                    if firsterror:
+                      yield (
+                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
+                               )
+                      firsterror = False
+                    yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (ws_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': value}))
+                    numwarnings += 1
+                  if value == model._meta.pk.name.lower() \
+                    or value == model._meta.pk.verbose_name.lower():
+                      has_pk_field = True
+                if required_fields:
+                  # We are missing some required fields
+                  header_ok = True
                   if firsterror:
                     yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
                            ) % (
                              capfirst(_("worksheet")), capfirst(_("row")),
                              capfirst(_("field")), capfirst(_("value")),
                              capfirst(_("error")), " / ", capfirst(_("warning"))
                              )
                     firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (ws_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': value}))
-                  numwarnings += 1
-                if value == model._meta.pk.name.lower() \
-                  or value == model._meta.pk.verbose_name.lower():
-                    has_pk_field = True
-              if required_fields:
-                # We are missing some required fields
-                header_ok = True
-                if firsterror:
-                  yield (
-                         '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                         ) % (
-                           capfirst(_("worksheet")), capfirst(_("row")),
-                           capfirst(_("field")), capfirst(_("value")),
-                           capfirst(_("error")), " / ", capfirst(_("warning"))
-                           )
-                  firsterror = False
-                #. Translators: Translation included with django
-                yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
-                numerrors += 1
-              if not header_ok:
-                # Can't process this worksheet
-                break
-              fields = [i.name for i in headers if isinstance(i, Field)]
-              uploadform = modelform_factory(
-                model,
-                fields=tuple(fields),
-                formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                )
-
-              # Get natural keys for the class
-              natural_key = None
-              if hasattr(model.objects, 'get_by_natural_key'):
-                if model._meta.unique_together:
-                  natural_key = model._meta.unique_together[0]
-                elif hasattr(model, 'natural_key'):
-                  natural_key = model.natural_key
-
-            else:
-              # Process a data row
-              # Yield some result so we can detect disconnect clients and interrupt the upload
-              yield ' '
-              # Step 1: Build a dictionary with all data fields
-              d = {}
-              colnum = 0
-              for cell in row:
-                # More fields in data row than headers. Move on to the next row.
-                if colnum >= len(headers):
+                  #. Translators: Translation included with django
+                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
+                  numerrors += 1
+                if not header_ok:
+                  # Can't process this worksheet
                   break
-                if isinstance(headers[colnum], Field):
-                  data = cell.value
-                  if isinstance(headers[colnum], (IntegerField, AutoField)):
-                    if isinstance(data, numericTypes):
-                      data = int(data)
-                  elif isinstance(headers[colnum], DurationField):
-                    if isinstance(data, float):
-                      data = "%.6f" % data
-                    else:
-                      data = str(data) if data is not None else None
-                  elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
-                    # Rounding to second
-                    if data.microsecond < 500000:
-                      data = data.replace(microsecond=0)
-                    else:
-                      data = data.replace(microsecond=0) + timedelta(seconds=1)
-                  elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
-                    data = "%s:%s:%s" % (data.hour, data.minute, data.second)
-                  elif isinstance(data, str):
-                    data = data.strip()
-                  d[headers[colnum].name] = data
-                colnum += 1
-              # Step 2: Fill the form with data, either updating an existing
-              # instance or creating a new one.
-              if has_pk_field:
-                # A primary key is part of the input fields
-                try:
-                  with transaction.atomic(using=request.database):
-                    # Try to find an existing record with the same primary key
-                    it = model.objects.using(request.database).only(*fields).get(pk=d[model._meta.pk.name])
-                    form = uploadform(d, instance=it)
-                except model.DoesNotExist:
-                  form = uploadform(d)
-                  it = None
-              elif natural_key:
-                # A natural key exists for this model
-                try:
-                  # Build the natural key
-                  key = []
-                  for x in natural_key:
-                    key.append(d.get(x, None))
-                  # Try to find an existing record using the natural key
-                  it = model.objects.get_by_natural_key(*key)
-                  form = uploadform(d, instance=it)
-                except model.DoesNotExist:
-                  form = uploadform(d)
-                  it = None
-                except model.MultipleObjectsReturned:
-                  if firsterror:
-                    yield (
-                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, _('Key fields not unique'))
-                  continue
+                fields = [i.name for i in headers if isinstance(i, Field)]
+                uploadform = modelform_factory(
+                  model,
+                  fields=tuple(fields),
+                  formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
+                  )
+
+                # Get natural keys for the class
+                natural_key = None
+                if hasattr(model.objects, 'get_by_natural_key'):
+                  if model._meta.unique_together:
+                    natural_key = model._meta.unique_together[0]
+                  elif hasattr(model, 'natural_key'):
+                    natural_key = model.natural_key
+
               else:
-                # No primary key required for this model
-                form = uploadform(d)
-                it = None
-              # Step 3: Validate the data and save to the database
-              if form.has_changed():
-                try:
-                  with transaction.atomic(using=request.database):
-                    obj = form.save(commit=False)
-                    obj.save(using=request.database)
-                    admin_log.append(
-                      LogEntry(
-                        user_id=request.user.pk,
-                        content_type_id=contenttype_id,
-                        object_id=obj.pk,
-                        object_repr=force_text(obj),
-                        action_flag=it and CHANGE or ADDITION,
-                        #. Translators: Translation included with Django
-                        change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                      ))
-                    if it:
-                      changed += 1
-                    else:
-                      added += 1
-                except Exception:
-                  # Validation fails
-                  if firsterror:
-                    yield (
-                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  for error in form.non_field_errors():
-                    yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, error)
-                    numerrors += 1
-                  for field in form:
-                    for error in field.errors:
-                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
+                # Process a data row
+                # Yield some result so we can detect disconnect clients and interrupt the upload
+                yield ' '
+                # Step 1: Build a dictionary with all data fields
+                d = {}
+                colnum = 0
+                for cell in row:
+                  # More fields in data row than headers. Move on to the next row.
+                  if colnum >= len(headers):
+                    break
+                  if isinstance(headers[colnum], Field):
+                    data = cell.value
+                    if isinstance(headers[colnum], (IntegerField, AutoField)):
+                      if isinstance(data, numericTypes):
+                        data = int(data)
+                    elif isinstance(headers[colnum], DurationField):
+                      if isinstance(data, float):
+                        data = "%.6f" % data
+                      else:
+                        data = str(data) if data is not None else None
+                    elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
+                      # Rounding to second
+                      if data.microsecond < 500000:
+                        data = data.replace(microsecond=0)
+                      else:
+                        data = data.replace(microsecond=0) + timedelta(seconds=1)
+                    elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
+                      data = "%s:%s:%s" % (data.hour, data.minute, data.second)
+                    elif isinstance(data, str):
+                      data = data.strip()
+                    d[headers[colnum].name] = data
+                  colnum += 1
+                # Step 2: Fill the form with data, either updating an existing
+                # instance or creating a new one.
+                if has_pk_field:
+                  # A primary key is part of the input fields
+                  try:
+                    with transaction.atomic(using=request.database):
+                      # Try to find an existing record with the same primary key
+                      it = model.objects.using(request.database).only(*fields).get(pk=d[model._meta.pk.name])
+                      form = uploadform(d, instance=it)
+                  except model.DoesNotExist:
+                    form = uploadform(d)
+                    it = None
+                elif natural_key:
+                  # A natural key exists for this model
+                  try:
+                    # Build the natural key
+                    key = []
+                    for x in natural_key:
+                      key.append(d.get(x, None))
+                    # Try to find an existing record using the natural key
+                    it = model.objects.get_by_natural_key(*key)
+                    form = uploadform(d, instance=it)
+                  except model.DoesNotExist:
+                    form = uploadform(d)
+                    it = None
+                  except model.MultipleObjectsReturned:
+                    if firsterror:
+                      yield (
+                             '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
+                               )
+                      firsterror = False
+                    yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, _('Key fields not unique'))
+                    continue
+                else:
+                  # No primary key required for this model
+                  form = uploadform(d)
+                  it = None
+                # Step 3: Validate the data and save to the database
+                if form.has_changed():
+                  try:
+                    with transaction.atomic(using=request.database):
+                      obj = form.save(commit=False)
+                      obj.save(using=request.database)
+                      admin_log.append(
+                        LogEntry(
+                          user_id=request.user.pk,
+                          content_type_id=contenttype_id,
+                          object_id=obj.pk,
+                          object_repr=force_text(obj),
+                          action_flag=it and CHANGE or ADDITION,
+                          #. Translators: Translation included with Django
+                          change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
+                        ))
+                      if it:
+                        changed += 1
+                      else:
+                        added += 1
+                  except Exception:
+                    # Validation fails
+                    if firsterror:
+                      yield (
+                             '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
+                             ) % (
+                               capfirst(_("worksheet")), capfirst(_("row")),
+                               capfirst(_("field")), capfirst(_("value")),
+                               capfirst(_("error")), " / ", capfirst(_("warning"))
+                               )
+                      firsterror = False
+                    for error in form.non_field_errors():
+                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, error)
                       numerrors += 1
+                    for field in form:
+                      for error in field.errors:
+                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
+                        numerrors += 1
 
-        # Create all admin log entries
-        LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
+          # Create all admin log entries
+          LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
 
-        # Report status of the import
-        theClass = "success"
-        if numerrors > 0:
-          theClass = "danger"
-        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings})
-      yield '<div><strong>%s</strong></div>' % _("Done")
+          # Report status of the import
+          theClass = "success"
+          if numerrors > 0:
+            theClass = "danger"
+          yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings})
+        yield '<div><strong>%s</strong></div>' % _("Done")
   except GeneratorExit:
     logger.warning('Connection Aborted')

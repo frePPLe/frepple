@@ -1,0 +1,47 @@
+BUFFER	1. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	1. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	2. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	2. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	3. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	3. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	4. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	4. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	5. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	5. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	5. end item @ factory	2018-05-01T00:00:00	1	1
+BUFFER	5. end item @ factory	2018-05-01T00:00:00	-1	0
+BUFFER	6. end item @ factory	2018-01-01T00:00:00	10	10
+BUFFER	6. end item @ factory	2018-01-01T00:00:00	-10	0
+BUFFER	6. end item @ factory	2018-05-01T00:00:00	1	1
+BUFFER	6. end item @ factory	2018-05-01T00:00:00	-1	0
+DEMAND	1. order 1	2018-01-01T00:00:00	10
+DEMAND	2. order 1	2018-01-01T00:00:00	10
+DEMAND	3. order 1	2018-01-01T00:00:00	10
+DEMAND	4. order 1	2018-01-01T00:00:00	10
+DEMAND	5. order 1	2018-01-01T00:00:00	10
+DEMAND	5. order 2	2018-05-01T00:00:00	1
+DEMAND	6. order 1	2018-01-01T00:00:00	10
+DEMAND	6. order 2	2018-05-01T00:00:00	1
+RESOURCE	1. Resource	2017-12-20T00:00:00	-20	10
+RESOURCE	2. Resource	2017-12-20T00:00:00	-20	10
+RESOURCE	3. Resource	2017-12-27T00:00:00	-20	10
+RESOURCE	4. Resource	2018-01-01T00:00:00	-20	10
+RESOURCE	5. Resource	2017-12-22T00:00:00	-20	10
+RESOURCE	5. Resource	2018-04-29T00:00:00	-2	-2
+RESOURCE	6. Resource	2017-12-27T00:00:00	-20	10
+RESOURCE	6. Resource	2018-05-01T00:00:00	-2	28
+OPERATION	1. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	2. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	3. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	4. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	5. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	5. make end item	2018-04-29T00:00:00	2018-05-01T00:00:00	1
+OPERATION	6. make end item	2017-12-20T00:00:00	2018-01-01T00:00:00	10
+OPERATION	6. make end item	2018-04-29T00:00:00	2018-05-01T00:00:00	1
+PROBLEM	overload	Resource '5. Resource' has capacity shortage of 2	2018-04-28T00:00:00 / 2018-04-30T00:00:00
+PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00
+PROBLEM	before current	Operation '2. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00
+PROBLEM	before current	Operation '3. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00
+PROBLEM	before current	Operation '4. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00
+PROBLEM	before current	Operation '5. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00
+PROBLEM	before current	Operation '6. make end item' planned in the past	2017-12-20T00:00:00 / 2018-01-01T00:00:00

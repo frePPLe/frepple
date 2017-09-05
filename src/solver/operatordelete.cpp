@@ -238,7 +238,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
     return; // There isn't a single flowplan in the buffer
 
   // STEP 1: Remove shortages from the buffer
-  // Delete the earliest unlocked producer(s) before the start of a material shortage.
+  // Delete the earliest unlocked consumer(s) after the start of a material shortage.
   double unresolvable = 0.0;
   while (fiter != fend)
   {
@@ -267,7 +267,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       FlowPlan* fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
       if (fp->getOperationPlan()->getLocked())
       {
-        // No excess producer, or it's locked
+        // This consumer is locked
         --fiter2;
         continue;
       }
@@ -281,10 +281,26 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         --fiter2;
 
       // Resize or delete the candidate operationplan
+      double newsize_opplan;
+      double newsize_flowplan;
       if (cur_shortage < fp->getQuantity() + ROUNDING_ERROR)
       {
+        // Completely delete the consumer
+        newsize_opplan = newsize_flowplan = 0.0;
+      }
+      else
+      {
+        // Resize the consumer
+        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false);
+        if (fp->getFlow()->getType() == *FlowFixedEnd::metadata
+          || fp->getFlow()->getType() == *FlowFixedStart::metadata)
+          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantity() : 0.0;
+        else
+          newsize_opplan = newsize_flowplan / fp->getFlow()->getQuantity();
+      }
+      if (newsize_flowplan > -ROUNDING_ERROR)
+      {
         // The complete operationplan is shortage.
-        // Reduce the excess
         cur_shortage -= fp->getQuantity();
         // Add downstream buffers to the stack
         pushBuffers(fp->getOperationPlan(), false, true);
@@ -305,16 +321,12 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Reduce the operationplan
-        double newsize = fp->setQuantity(fp->getQuantity() - cur_shortage, false, false);
-        if (newsize == fp->getQuantity())
-          // No resizing is feasible
-          continue;
         // Add downstream buffers to the stack
         pushBuffers(fp->getOperationPlan(), false, true);
         // Reduce the shortage
-        cur_shortage -= fp->getQuantity() - newsize;
+        cur_shortage -= fp->getQuantity() - newsize_flowplan;
         if (getLogLevel() > 0)
-          logger << "Resizing shortage operationplan to " << newsize << ": "
+          logger << "Resizing shortage operationplan to " << newsize_opplan << ": "
             << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()
@@ -325,10 +337,10 @@ void OperatorDelete::solve(const Buffer* b, void* v)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
           cmds->add(new CommandMoveOperationPlan(
             fp->getOperationPlan(), fp->getOperationPlan()->getDates().getStart(),
-            Date::infinitePast, newsize
+            Date::infinitePast, newsize_opplan
           ));
         else
-          fp->getOperationPlan()->setQuantity(newsize);
+          fp->getOperationPlan()->setQuantity(newsize_opplan);
       }
     }
 
@@ -376,7 +388,25 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         && fiter->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
         )
           ++fiter;
+
+      double newsize_opplan;
+      double newsize_flowplan;
       if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR)
+      {
+        // Completely delete the consumer
+        newsize_opplan = newsize_flowplan = 0.0;
+      }
+      else
+      {
+        // Resize the consumer
+        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
+        if (fp->getFlow()->getType() == *FlowFixedEnd::metadata
+          || fp->getFlow()->getType() == *FlowFixedStart::metadata)
+          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantity() : 0.0;
+        else
+          newsize_opplan = newsize_flowplan / fp->getFlow()->getQuantity();
+      }
+      if (newsize_flowplan < ROUNDING_ERROR)
       {
         // The complete operationplan is excess.
         // Reduce the excess
@@ -400,16 +430,13 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Reduce the operationplan
-        double newsize = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
-        if (newsize == fp->getQuantity())
-          // No resizing is feasible
-          continue;
+        
         // Add upstream buffers to the stack
         pushBuffers(fp->getOperationPlan(), true, false);
         // Reduce the excess
-        excess -= fp->getQuantity() - newsize;
+        excess -= fp->getQuantity() - newsize_flowplan;
         if (getLogLevel()>0)
-          logger << "Resizing excess operationplan to " << newsize << ": "
+          logger << "Resizing excess operationplan to " << newsize_opplan << ": "
             << fp->getOperationPlan()->getIdentifier()
             << " (" << fp->getOperationPlan()->getOperation()
             << ", " << fp->getOperationPlan()->getQuantity()
@@ -420,10 +447,10 @@ void OperatorDelete::solve(const Buffer* b, void* v)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
           cmds->add(new CommandMoveOperationPlan(
             fp->getOperationPlan(), Date::infinitePast,
-            fp->getOperationPlan()->getDates().getEnd(), newsize
+            fp->getOperationPlan()->getDates().getEnd(), newsize_opplan
             ));
         else
-          fp->getOperationPlan()->setQuantity(newsize);
+          fp->getOperationPlan()->setQuantity(newsize_opplan);
       }
     }
   }

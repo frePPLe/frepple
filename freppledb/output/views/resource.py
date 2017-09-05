@@ -272,7 +272,7 @@ class DetailReport(GridReport):
 
   rows = (
     GridFieldInteger('id', title='internal id', key=True, editable=False, hidden=True),
-    GridFieldText('resource', title=_('resource'), editable=False, formatter='detail', extra='"role":"input/resource"'),
+    GridFieldText('resource', title=_('resource'), field_name='resource__name', editable=False, formatter='detail', extra='"role":"input/resource"'),
     GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),

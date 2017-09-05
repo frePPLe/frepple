@@ -129,6 +129,7 @@ class Tags
     static const Keyword minshipment;
     static const Keyword motive;
     static const Keyword name;
+    static const Keyword offset;
     static const Keyword onhand;
     static const Keyword operation;
     static const Keyword operationplan;

@@ -24,5 +24,5 @@ autodiscover = True
 
 urlpatterns = [
   # Model list reports, which override standard admin screens
-  url(r'^odoo/upload/$', Upload, name="odoo_upload"),
+  url(r'^erp/upload/$', Upload, name="erp_upload"),
   ]

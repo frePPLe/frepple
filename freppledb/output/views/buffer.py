@@ -16,6 +16,8 @@
 #
 
 from django.db import connections
+from django.db.models import Value
+from django.db.models.functions import Concat
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -39,7 +41,10 @@ class OverviewReport(GridPivot):
     if len(args) and args[0]:
       return Buffer.objects.all()
     else:
-      return OperationPlanMaterial.objects.all().order_by('item_id', 'location_id').distinct('item_id', 'location_id')
+      return OperationPlanMaterial.objects.all() \
+        .order_by('item_id', 'location_id') \
+        .distinct('item_id', 'location_id') \
+        .annotate(buffer=Concat('item', Value(' @ '), 'location'))
 
   model = OperationPlanMaterial
   default_sort = (1, 'asc', 2, 'asc')

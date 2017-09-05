@@ -52,7 +52,7 @@ in your model.
      is translated by the framework in SQL queries on the database.
    | The last line in the function passes the data in a dictionary to the
      Django template engine. The template engine will generate the HTML
-     code returned to the user’s browser.
+     code returned to the user's browser.
 
 #. | **Create a template to visualize the data**.
    | The template file statistics.html will define all aspects of the

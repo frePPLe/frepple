@@ -62,6 +62,9 @@ void LibraryModel::initialize()
   nok += OperationPlan::InterruptionIterator::intitialize();
   nok += OperationPlan::initialize();  
   nok += Load::initialize();
+  nok += LoadBucketizedFromStart::initialize();
+  nok += LoadBucketizedFromEnd::initialize();
+  nok += LoadBucketizedPercentage::initialize();
   nok += LoadPlanIterator::initialize();
   nok += Flow::initialize();
   nok += FlowPlanIterator::initialize();

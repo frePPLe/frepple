@@ -365,12 +365,13 @@ class loadOperations(LoadTask):
       filter_and = ""
       filter_where = ""
     
-    with connections[database].chunked_cursor() as cursor:
+    with connections[database].cursor() as cursor:
       cnt = 0
       starttime = time()
       
       # Preprocessing step 
-      # Make sure any routing has the produced item of its last step populated in the operation table    
+      # Make sure any routing has the produced item of its last step populated in the operation table 
+         
       cursor.execute('''
         update operation
         set item_id = t.item_id
@@ -395,21 +396,23 @@ class loadOperations(LoadTask):
       # That should cover 90% of the cases
       
       cursor.execute('''
-      update operation
-      set item_id = t.item_id
-      from (
-            select operation.name operation_id, min(operationmaterial.item_id) item_id 
-            from operation
-            inner join operationmaterial on operationmaterial.operation_id = operation.name and quantity > 0
-            where not exists 
-                  (select 1 from suboperation 
-                  where suboperation.operation_id = operation.name 
-                        or suboperation.suboperation_id = operation.name)
-            group by operation.name
-           ) t
-      where operation.item_id is null 
-            and t.operation_id = operation.name
-      ''')
+        update operation
+        set item_id = t.item_id
+        from (
+              select operation.name operation_id, min(operationmaterial.item_id) item_id 
+              from operation
+              inner join operationmaterial on operationmaterial.operation_id = operation.name and quantity > 0
+              where not exists 
+                    (select 1 from suboperation 
+                    where suboperation.operation_id = operation.name 
+                          or suboperation.suboperation_id = operation.name)
+              group by operation.name
+             ) t
+        where operation.item_id is null 
+              and t.operation_id = operation.name
+        ''')
+
+    with connections[database].chunked_cursor() as cursor:
       
       cursor.execute('''
         SELECT
@@ -479,7 +482,6 @@ class loadOperations(LoadTask):
         except Exception as e:
           print("Error:", e)
       print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
-
 
 @PlanTaskRegistry.register
 class loadSuboperations(LoadTask):

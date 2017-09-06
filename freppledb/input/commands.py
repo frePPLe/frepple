@@ -384,6 +384,7 @@ class loadOperations(LoadTask):
                and not exists 
                   (select 1 from suboperation s2 where s1.operation_id = s2.operation_id and s1.priority < s2.priority)
                group by operation.name
+               having count(operationmaterial.item_id) = 1
              ) t
         where operation.item_id is null 
              and operation.type = 'routing' 
@@ -406,6 +407,7 @@ class loadOperations(LoadTask):
                     (select 1 from suboperation
                     where suboperation.operation_id = operation.name
                           or suboperation.suboperation_id = operation.name)
+                and operation.type not in ('routing', 'alternate', 'split')
               group by operation.name
               having count(operationmaterial.item_id) = 1
              ) t

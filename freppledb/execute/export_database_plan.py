@@ -255,7 +255,7 @@ class export:
           continue
         for j in i.operationplans:
           delay = j.delay
-          color = int(100 - delay / 86400)
+          color = 100 - delay / 86400
 
           if isinstance(i, frepple.operation_inventory):
             # Export inventory

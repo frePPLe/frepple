@@ -337,13 +337,20 @@ $(function(){
       var width = $("#graph").width();
       var height = $("#graph").height();
       d3.select('#svggraph').attr('width', width).attr('viewBox','0 0 ' + width +' '+ height );
+      
+      // Resize the bottom grid to fill the remaining space of the window
+      var gridheight = $(window).height() - $("#content-main").offset().top - 40;
+      if (gridheight < 200)
+      	gridheight = 200;
+      $("#grid").css({height: gridheight + "px"});
+      $("#grid").setGridHeight(gridheight - $(".ui-jqgrid-pager").height());
     }
   });
 
 });
 
 $(window).resize(function() {
-  var parentheight = $("#content-main").height
+  var parentheight = $("#content-main").height;
   setTimeout(function(){$(".ui-jqgrid").setGridHeight(parentheight)},300);
 
 	if ($("#content-main").height() < 150) $(".ui-jqgrid").css({height:150});

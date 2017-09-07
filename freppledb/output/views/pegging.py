@@ -200,7 +200,7 @@ class ReportByDemand(GridReport):
           'quantity': str(rec[3]),
           'due': round((rec[0] - request.report_startdate).total_seconds() / horizon, 3),
           'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
-          'parent': parents[rec[2] - 1] if rec[2] and rec[2] >= 1 and rec[2] < len(parents)-1 else None,
+          'parent': parents.get(rec[2] - 1, None) if rec[2] and rec[2] >= 1 else None,
           'leaf': 'true',
           'expanded': 'true',
           'resource': rec[9] and [rec[9], ] or [],

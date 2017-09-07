@@ -538,18 +538,37 @@ class FileManager:
   @basicauthentication(allow_logged_in=True)
   @staff_member_required
   @never_cache
-  def deleteFilefromFolder(request, foldercode, filename):
+  def deleteFilefromFolder(request, foldercode, files):
     if request.method != 'DELETE':
       return HttpResponseNotAllowed(['delete'], content='Only DELETE request method is allowed')
-    folder = FileManager.getFolderInfo(request, foldercode)[0]
+    folder, extensions = FileManager.getFolderInfo(request, foldercode)
 
-    try:
-      clean_filename = re.split(r'/|:|\\', filename)[-1]
-      os.remove(os.path.join(folder, clean_filename))
+    if extensions is None:
+      extensions = ('.csv', '.csv.gz', '.log')
+
+    fileerrors = force_text(_('Error deleting file'))
+    errorcount = 0
+    filelist = list()
+    if files == 'AllFiles':
+      for filename in os.listdir(folder):
+        clean_filename = re.split(r'/|:|\\', filename)[-1]
+        if clean_filename.lower().endswith(extensions) and not clean_filename.lower().endswith('.log'):
+          filelist.append(clean_filename)
+    else:
+      clean_filename = re.split(r'/|:|\\', files)[-1]
+      filelist.append(cleanfilename)
+
+    for clean_filename in filelist:
+      try:
+        os.remove(os.path.join(folder, clean_filename))
+      except Exception:
+        errorcount += 1
+        fileerrors = fileerrors + ' / ' + clean_filename
+
+    if errorcount > 0:
+      return HttpResponseServerError(fileerrors)
+    else:
       return HttpResponse(content="OK")
-    except Exception:
-      return HttpResponseServerError(force_text(_('Error deleting file')))
-
 
   @staticmethod
   @csrf_exempt

@@ -383,14 +383,14 @@ class MenuNode(Node):
   def __init__(self, varname):
       self.varname = varname
 
-  def render(self, context):    
+  def render(self, context):
     from freppledb.menu import menu
     try:
       req = context['request']
     except:
       return ''  # No request found in the context
     o = []
-    
+
     # Find all tables with data
     with connections[req.database].cursor() as cursor:
       cursor.execute('''
@@ -406,7 +406,7 @@ class MenuNode(Node):
         where xml_count is document
         ''')
       present = set([ i[0] for i in cursor])
-    
+
     for i in menu.getMenu(req.LANGUAGE_CODE):
       group = [i[0], [], False]
       empty = True
@@ -414,7 +414,7 @@ class MenuNode(Node):
       for j in i[1]:
         if j[2].has_permission(req.user):
           ok = True
-          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):            
+          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):
             for dep in j[2].dependencies:
               if dep._meta.db_table not in present:
                 ok = False
@@ -478,6 +478,8 @@ class ModelDependenciesNode(Node):
                 deps.append('input.distributionorder')
               if i_name in ('input.operation', 'input.location'):
                 deps.append('input.manufacturingorder')
+              if i_name in ('input.demand'):
+                deps.append('input.deliveryorder')
             elif not j_name in ('input.purchaseorder', 'input.manufacturingorder', 'input.distributionorder'):
               deps.append(j_name)
         res[i_name] = deps

@@ -24,6 +24,8 @@
 namespace frepple
 {
 
+Tree<unsigned long> OperationPlan::st;
+
 const MetaClass* OperationPlan::metadata;
 const MetaCategory* OperationPlan::metacategory;
 const MetaClass* OperationPlan::InterruptionIterator::metadata;
@@ -590,17 +592,17 @@ Object* OperationPlan::createOperationPlan(
 
 OperationPlan* OperationPlan::findId(unsigned long l)
 {
-  // We are garantueed that there are no operationplans that have an id equal
-  // or higher than the current counter. This is garantueed by the
-  // instantiate() method.
-  if (l >= counterMin) return nullptr;
-
-  // Loop through all operationplans.
-  for (OperationPlan::iterator i = begin(); i != end(); ++i)
-    if (i->id == l) return &*i;
-
-  // This ID was not found
-  return nullptr;
+  if (l >= counterMin)
+    // We are garantueed that there are no operationplans that have an id equal
+    // or higher than the current counter. This is garantueed by the
+    // instantiate() method.
+    return nullptr;
+  else
+  {
+    auto tmp = st.find(l);
+    // Look up in the tree structure
+    return tmp == st.end() ? nullptr : static_cast<OperationPlan*>(tmp);
+  }
 }
 
 
@@ -608,33 +610,37 @@ bool OperationPlan::assignIdentifier()
 {
   // Need to assure that ids are unique!
   static mutex onlyOne;
-  if (id && id != ULONG_MAX)
+  if (getName() && getName() != ULONG_MAX)
   {
     // An identifier was read in from input
     lock_guard<mutex> l(onlyOne);
-    if (id < counterMin)
+    if (getName() < counterMin)
     {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
-      OperationPlan* opplan = findId(id);
-      if (opplan && opplan->getOperation()!=oper)
+      OperationPlan* opplan = static_cast<OperationPlan*>(st.find(getName()));
+      if (opplan != st.end() && opplan->getOperation() != oper)
         return false;
     }
     // The new operationplan definitely doesn't clash with existing id's.
     // The counter need updating to garantuee that counter is always
     // a safe starting point for tagging new operationplans.
     else
-      counterMin = id+1;
+      counterMin = getName() + 1;
   }
-  else {
+  else 
+  {
     // Fresh operationplan with blank id
     lock_guard<mutex> l(onlyOne);  // Need to assure that ids are unique!
-    id = counterMin++;
+    setName(counterMin++);
   }
 
   // Check whether the counter is still okay
   if (counterMin >= ULONG_MAX)
     throw RuntimeException("Exhausted the range of available operationplan identifiers");
+
+  // Insert in the tree of operatioplans
+  st.insert(this);
 
   return true;
 }
@@ -691,13 +697,13 @@ bool OperationPlan::activate(bool createsubopplans)
   }
 
   // Mark as activated by assigning a unique identifier.
-  if (id && id != ULONG_MAX)
+  if (getName() && getName() != ULONG_MAX)
   {
     // Validate the user provided id.
     if (!assignIdentifier())
     {
       ostringstream ch;
-      ch << "Operationplan id " << id << " assigned multiple times";
+      ch << "Operationplan id " << getName() << " assigned multiple times";
       delete this;
       throw DataException(ch.str());
     }
@@ -707,7 +713,7 @@ bool OperationPlan::activate(bool createsubopplans)
     // created lazily when the getIdentifier method is called.
     // In this way, 1) we avoid clashes between auto-generated and
     // user-provided in the input and 2) we keep performance high.
-    id = ULONG_MAX;
+    setName(ULONG_MAX);
 
   // Insert into the doubly linked list of operationplans.
   insertInOperationplanList();
@@ -732,10 +738,12 @@ bool OperationPlan::activate(bool createsubopplans)
 void OperationPlan::deactivate()
 {
   // Mark as not activated
-  id = 0;
+  st.erase(this);
+  setName(0);
 
   // Delete from the list of deliveries
-  if (dmd) dmd->removeDelivery(this);
+  if (dmd)
+    dmd->removeDelivery(this);
 
   // Delete from the operationplan list
   removeFromOperationplanList();
@@ -973,6 +981,9 @@ double OperationPlan::getTotalFlowAux(const Buffer* b) const
 
 OperationPlan::~OperationPlan()
 {
+  // Delete from the operationplan tree
+  st.erase(this);
+
   // Delete the flowplans and loadplan
   deleteFlowLoads();
 
@@ -1109,17 +1120,14 @@ void OperationPlan::resizeFlowLoadPlans()
 }
 
 
-OperationPlan::OperationPlan(const OperationPlan& src, bool init)
+OperationPlan::OperationPlan(const OperationPlan& src, bool init) : Tree<unsigned long>::TreeNode(0)
 {
   if (src.owner)
     throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
 
-  // Identifier and reference aren't inherited.
+  // Copy all fields, except identifier and reference.
   // A new identifier will be generated when we activate the operationplan.
   // The reference remains blank.
-  id = 0;
-
-  // Copy the fields
   quantity = src.quantity;
   flags = src.flags;
   dmd = src.dmd;
@@ -1146,15 +1154,13 @@ OperationPlan::OperationPlan(const OperationPlan& src, bool init)
 
 
 OperationPlan::OperationPlan(const OperationPlan& src,
-    OperationPlan* newOwner)
+    OperationPlan* newOwner) : Tree<unsigned long>::TreeNode(0)
 {
   if (!newOwner)
     throw LogicException("No new owner passed in private copy constructor.");
 
-  // Identifier can't be inherited, but a new one will be generated when we activate the operationplan
-  id = 0;
-
-  // Copy the fields
+  // Copy all fields, except the identifier can't be inherited.
+  // A new identifier will be generated when we activate the operationplan
   quantity = src.quantity;
   flags = src.flags;
   dmd = src.dmd;

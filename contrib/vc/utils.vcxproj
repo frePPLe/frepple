@@ -220,7 +220,6 @@
     <ClCompile Include="..\..\src\utils\actions.cpp" />
     <ClCompile Include="..\..\src\utils\date.cpp" />
     <ClCompile Include="..\..\src\utils\library.cpp" />
-    <ClCompile Include="..\..\src\utils\name.cpp" />
     <ClCompile Include="..\..\src\utils\python.cpp" />
     <ClCompile Include="..\..\src\utils\xml.cpp" />
   </ItemGroup>

@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Location> Tree utils::HasName<Location>::st;
+template<class Location> Tree<string> utils::HasName<Location>::st;
 const MetaCategory* Location::metadata;
 const MetaClass* LocationDefault::metadata;
 

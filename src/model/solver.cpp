@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Solver> Tree utils::HasName<Solver>::st;
+template<class Solver> Tree<string> utils::HasName<Solver>::st;
 const MetaCategory* Solver::metadata;
 
 

@@ -4225,7 +4225,7 @@ class ThreadGroup : public NonCopyable
   * with intrusive tree nodes.
   * @see HasName
   */
-class Tree : public NonCopyable
+template <class T> class Tree : public NonCopyable
 {
   public:
     /** The algorithm assigns a color to each node in the tree. The color is
@@ -4250,9 +4250,14 @@ class Tree : public NonCopyable
 
         /** Returns the name of this node. This name is used to sort the
           * nodes. */
-        string getName() const
+        inline T getName() const
         {
           return nm;
+        }
+
+        inline void setName(const T& i)
+        {
+          nm = i;
         }
 
         /** Return the color of this node: "red" or "black" for actual nodes,
@@ -4271,6 +4276,9 @@ class Tree : public NonCopyable
 
         /** Default constructor. */
         TreeNode() {}
+
+        /** Default constructor. */
+        TreeNode(T d) : nm(d) {}
 
         /** Return a pointer to the node following this one. */
         TreeNode* increment() const
@@ -4321,7 +4329,7 @@ class Tree : public NonCopyable
 
       private:
         /** Name. */
-        string nm;
+        T nm;
 
         /** Color of the node. This is used to keep the tree balanced. */
         NodeColor color = none;
@@ -4380,18 +4388,31 @@ class Tree : public NonCopyable
       return header.parent == nullptr;
     }
 
+    static inline int compare(const T& a, const T& b)
+    {
+      throw LogicException("Use a template specialization to implement this method");
+    }
+
+    static inline bool isnull(const T& a)
+    {
+      throw LogicException("Use a template specialization to implement this method");
+    }
+
     /** Renames an existing node, and adjusts its position in the tree. */
-    void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr)
+    void rename(TreeNode* obj, const T& newname, TreeNode* hint = nullptr)
     {
       if (obj->nm == newname)
         return;
-      if (!obj->nm.empty())
+      if (isnull(obj->nm))
       {
         bool found;
         findLowerBound(newname, &found);
         if (found)
-          throw DataException("Can't rename '" + obj->nm + "' to '"
-              + newname + "': name already in use");
+        {
+          ostringstream o;
+          o << "Can't rename '" << obj->nm << newname << "': key already in use";
+          throw DataException(o.str());
+        }
         erase(obj);
       }
       obj->nm = newname;
@@ -4411,26 +4432,240 @@ class Tree : public NonCopyable
       * is correct.<br>
       * The tree should be locked before calling this function.
       */
-    void verify() const;
+    void verify() const
+    {
+      // Checks for an empty tree
+      if (empty() || begin() == end())
+      {
+        bool ok = (empty() &&
+          begin() == end() &&
+          header.left == &header &&
+          header.right == &header);
+        if (!ok) throw LogicException("Invalid empty tree");
+        return;
+      }
+
+      unsigned int len = countBlackNodes(header.left);
+      size_t counter = 0;
+      for (TreeNode* x = begin(); x != end(); x = x->increment())
+      {
+        TreeNode* L = x->left;
+        TreeNode* R = x->right;
+        ++counter;
+
+        if (x->color == none)
+          // Nodes must have a color
+          throw LogicException("Colorless node included in a tree");
+
+        if (x->color == red)
+          if ((L && L->color == red) || (R && R->color == red))
+            // A red node can have only nullptr and black children
+            throw LogicException("Wrong color on node");
+
+        if (L && x->nm<L->nm)
+          // Left child isn't smaller
+          throw LogicException("Wrong sorting on left node");
+
+        if (R && R->nm<x->nm)
+          // Right child isn't bigger
+          throw LogicException("Wrong sorting on right node");
+
+        if (!L && !R && countBlackNodes(x) != len)
+          // All leaf nodes have the same number of black nodes on their path
+          // to the root
+          throw LogicException("Unbalanced count of black nodes");
+      }
+
+      // Check whether the header has a good pointer to the leftmost element
+      if (header.left != minimum(header.parent))
+        throw LogicException("Incorrect tree minimum");
+
+      // Check whether the header has a good pointer to the rightmost element
+      if (header.right != maximum(header.parent))
+        throw LogicException("Incorrect tree maximum");
+
+      // Check whether the measured node count match the expectation?
+      if (counter != size())
+        throw LogicException("Incorrect tree size");
+
+      // If we reach this point, then this tree is healthy
+    }
 
     /** Remove all elements from the tree. */
-    void clear();
+    void clear()
+    {
+      // Tree is already empty
+      if (empty())
+        return;
+
+      // Erase all elements
+      for (TreeNode* x = begin(); x != end(); x = begin())
+      {
+        Object *o = dynamic_cast<Object*>(x);
+        if (o && o->getType().raiseEvent(o, SIG_REMOVE))
+          delete(x);  // The destructor calls the erase method
+        else
+          throw DataException("Can't delete object");
+      }
+    }
 
     /** Remove a node from the tree. */
-    void erase(TreeNode* x);
+    void erase(TreeNode* z)
+    {
+      // A colorless node was never inserted in the tree, and shouldn't be
+      // removed from it either...
+      if (!z || z->color == none) return;
+
+      TreeNode* y = z;
+      TreeNode* x = nullptr;
+      TreeNode* x_parent = nullptr;
+      --count;
+      if (y->left == nullptr)     // z has at most one non-null child. y == z.
+        x = y->right;     // x might be null.
+      else if (y->right == nullptr) // z has exactly one non-null child. y == z.
+        x = y->left;    // x is not null.
+      else
+      {
+        // z has two non-null children.  Set y to
+        y = y->right;   //   z's successor.  x might be null.
+        while (y->left != nullptr) y = y->left;
+        x = y->right;
+      }
+      if (y != z)
+      {
+        // relink y in place of z.  y is z's successor
+        z->left->parent = y;
+        y->left = z->left;
+        if (y != z->right)
+        {
+          x_parent = y->parent;
+          if (x) x->parent = y->parent;
+          y->parent->left = x;   // y must be a child of left
+          y->right = z->right;
+          z->right->parent = y;
+        }
+        else
+          x_parent = y;
+        if (header.parent == z) header.parent = y;
+        else if (z->parent->left == z) z->parent->left = y;
+        else z->parent->right = y;
+        y->parent = z->parent;
+        std::swap(y->color, z->color);
+        y = z;
+        // y now points to node to be actually deleted
+      }
+      else
+      {
+        // y == z
+        x_parent = y->parent;
+        if (x) x->parent = y->parent;
+        if (header.parent == z) header.parent = x;
+        else if (z->parent->left == z) z->parent->left = x;
+        else z->parent->right = x;
+        if (header.left == z)
+        {
+          if (z->right == nullptr)    // z->left must be null also
+            header.left = z->parent;
+          // makes leftmost == header if z == root
+          else
+            header.left = minimum(x);
+        }
+        if (header.right == z)
+        {
+          if (z->left == nullptr)     // z->right must be null also
+            header.right = z->parent;
+          // makes rightmost == header if z == root
+          else                      // x == z->left
+            header.right = maximum(x);
+        }
+      }
+      if (y->color != red)
+      {
+        while (x != header.parent && (x == nullptr || x->color == black))
+          if (x == x_parent->left)
+          {
+            TreeNode* w = x_parent->right;
+            if (w->color == red)
+            {
+              w->color = black;
+              x_parent->color = red;
+              rotateLeft(x_parent);
+              w = x_parent->right;
+            }
+            if ((w->left == nullptr || w->left->color == black) &&
+              (w->right == nullptr || w->right->color == black))
+            {
+              w->color = red;
+              x = x_parent;
+              x_parent = x_parent->parent;
+            }
+            else
+            {
+              if (w->right == nullptr || w->right->color == black)
+              {
+                w->left->color = black;
+                w->color = red;
+                rotateRight(w);
+                w = x_parent->right;
+              }
+              w->color = x_parent->color;
+              x_parent->color = black;
+              if (w->right) w->right->color = black;
+              rotateLeft(x_parent);
+              break;
+            }
+          }
+          else
+          {
+            // same as above, with right <-> left.
+            TreeNode* w = x_parent->left;
+            if (w->color == red)
+            {
+              w->color = black;
+              x_parent->color = red;
+              rotateRight(x_parent);
+              w = x_parent->left;
+            }
+            if ((w->right == nullptr || w->right->color == black) &&
+              (w->left == nullptr || w->left->color == black))
+            {
+              w->color = red;
+              x = x_parent;
+              x_parent = x_parent->parent;
+            }
+            else
+            {
+              if (w->left == nullptr || w->left->color == black)
+              {
+                w->right->color = black;
+                w->color = red;
+                rotateLeft(w);
+                w = x_parent->left;
+              }
+              w->color = x_parent->color;
+              x_parent->color = black;
+              if (w->left) w->left->color = black;
+              rotateRight(x_parent);
+              break;
+            }
+          }
+        if (x) x->color = black;
+      }
+    }
 
     /** Search for an element in the tree.<br>
       * Profiling shows this function has a significant impact on the CPU
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
-    TreeNode* find(const string& k) const
+    TreeNode* find(const T& k) const
     {
       int comp;
       for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
       {
-        comp = k.compare(x->nm);
-        if (!comp) return x;
+        comp = compare(k, x->nm);
+        if (!comp)
+          return x;
       }
       TreeNode* result = end();
       return result;
@@ -4441,12 +4676,12 @@ class Tree : public NonCopyable
       * The second argument is a boolean that is set to true when the
       * element is found in the list.
       */
-    TreeNode* findLowerBound(const string& k, bool* f) const
+    TreeNode* findLowerBound(const T& k, bool* f) const
     {
       TreeNode* lower = end();
       for (TreeNode* x = header.parent; x;)
       {
-        int comp = k.compare(x->nm);
+        int comp = compare(k, x->nm);
         if (!comp)
         {
           // Found
@@ -4472,18 +4707,181 @@ class Tree : public NonCopyable
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
-    TreeNode* insert(TreeNode* v, TreeNode* hint);
+    TreeNode* insert(TreeNode* z, TreeNode* hint)
+    {
+      assert(z);
+
+      // Use the hint to create the proper starting point in the tree
+      int comp;
+      TreeNode* y;
+      if (!hint)
+      {
+        // Effectively no hint given
+        hint = header.parent;
+        y = &header;
+      }
+      else
+      {
+        // Check if the hint is a good starting point to descend
+        while (hint->parent)
+        {
+          comp = compare(z->nm, hint->parent->nm);
+          if ((comp>0 && hint == hint->parent->left)
+            || (comp<0 && hint == hint->parent->right))
+            // Move the hint up to the parent node
+            // If I'm left child of my parent && new node needs right insert
+            // or I'm right child of my parent && new node needs left insert
+            hint = hint->parent;
+          else
+            break;
+        }
+        y = hint->parent;
+      }
+
+      // Step down the tree till we found a proper empty leaf node in the tree
+      for (; hint; hint = comp<0 ? hint->left : hint->right)
+      {
+        y = hint;
+        // Exit the function if the key is already found
+        comp = compare(z->nm, hint->nm);
+        if (!comp)
+          return hint;
+      }
+
+      if (y == &header || z->nm < y->nm)
+      {
+        // Inserting as a new left child
+        y->left = z;  // also makes leftmost() = z when y == header
+        if (y == &header)
+        {
+          // Inserting a first element in the list
+          header.parent = z;
+          header.right = z;
+        }
+        // maintain leftmost() pointing to min node
+        else if (y == header.left)
+          header.left = z;
+      }
+      else
+      {
+        // Inserting as a new right child
+        y->right = z;
+        // Maintain rightmost() pointing to max node.
+        if (y == header.right)
+          header.right = z;
+      }
+
+      // Set parent and child pointers of the new node
+      z->parent = y;
+      z->left = nullptr;
+      z->right = nullptr;
+
+      // Increase the node count
+      ++count;
+
+      // Rebalance the tree
+      rebalance(z);
+      return z;
+    }
 
   private:
     /** Restructure the tree such that the depth of the branches remains
       * properly balanced. This method is called during insertion. */
-    inline void rebalance(TreeNode* x);
+    inline void rebalance(TreeNode* x)
+    {
+      x->color = red;
+
+      while (x != header.parent && x->parent->color == red)
+      {
+        if (x->parent == x->parent->parent->left)
+        {
+          TreeNode* y = x->parent->parent->right;
+          if (y && y->color == red)
+          {
+            x->parent->color = black;
+            y->color = black;
+            x->parent->parent->color = red;
+            x = x->parent->parent;
+          }
+          else
+          {
+            if (x == x->parent->right)
+            {
+              x = x->parent;
+              rotateLeft(x);
+            }
+            x->parent->color = black;
+            x->parent->parent->color = red;
+            rotateRight(x->parent->parent);
+          }
+        }
+        else
+        {
+          TreeNode* y = x->parent->parent->left;
+          if (y && y->color == red)
+          {
+            x->parent->color = black;
+            y->color = black;
+            x->parent->parent->color = red;
+            x = x->parent->parent;
+          }
+          else
+          {
+            if (x == x->parent->left)
+            {
+              x = x->parent;
+              rotateRight(x);
+            }
+            x->parent->color = black;
+            x->parent->parent->color = red;
+            rotateLeft(x->parent->parent);
+          }
+        }
+      }
+      header.parent->color = black;
+    }
 
     /** Rebalancing operation used during the rebalancing. */
-    inline void rotateLeft(TreeNode* x);
+    inline void rotateLeft(TreeNode* x)
+    {
+      TreeNode* y = x->right;
+      x->right = y->left;
+      if (y->left != nullptr) y->left->parent = x;
+      y->parent = x->parent;
+
+      if (x == header.parent)
+        // x was the root
+        header.parent = y;
+      else if (x == x->parent->left)
+        // x was on the left of its parent
+        x->parent->left = y;
+      else
+        // x was on the right of its parent
+        x->parent->right = y;
+      y->left = x;
+      x->parent = y;
+    }
 
     /** Rebalancing operation used during the rebalancing. */
-    inline void rotateRight(TreeNode* x);
+    inline void rotateRight(TreeNode* x)
+    {
+      TreeNode* y = x->left;
+      x->left = y->right;
+      if (y->right != nullptr) y->right->parent = x;
+      y->parent = x->parent;
+
+      if (x == header.parent)
+        // x was the root
+        header.parent = y;
+      else if (x == x->parent->right)
+        // x was on the right of its parent
+        x->parent->right = y;
+      else
+        // x was on the left of its parent
+        x->parent->left = y;
+      y->right = x;
+      x->parent = y;
+    }
 
     /** Method used internally by the verify() method. */
     unsigned int countBlackNodes(TreeNode* node) const
@@ -4526,6 +4924,30 @@ class Tree : public NonCopyable
       */
     bool clearOnDestruct;
 };
+
+
+template<> static inline int Tree<string>::compare(const string& a, const string& b)
+{
+  return a.compare(b);
+}
+
+
+template<> static inline bool Tree<string>::isnull(const string& a)
+{
+  return a.empty();
+}
+
+
+template<> static inline int Tree<unsigned long>::compare(const unsigned long& a, const unsigned long& b)
+{
+  return a - b;
+}
+
+
+template<> static inline bool Tree<unsigned long>::isnull(const unsigned long& a)
+{
+  return a == 0;
+}
 
 
 //
@@ -5308,12 +5730,12 @@ class DataInput
   *   - A hashtable (keyed on the name) is maintained as a container with
   *     all active instances.
   */
-template <class T> class HasName : public NonCopyable, public Tree::TreeNode, public Object
+template <class T> class HasName : public NonCopyable, public Tree<string>::TreeNode, public Object
 {
   private:
     /** Maintains a global list of all created entities. The list is keyed
       * by the name. */
-    static Tree st;
+    static Tree<string> st;
     typedef T* type;
 
   public:
@@ -5326,7 +5748,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
     {
       public:
         /** Constructor. */
-        iterator(Tree::TreeNode* x) : node(x) {}
+        iterator(Tree<string>::TreeNode* x) : node(x) {}
 
         /** Copy constructor. */
         iterator(const iterator& it)
@@ -5349,7 +5771,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         /** Return current value and advance the iterator. */
         T* next()
         {
-          if (node->getColor() == Tree::head)
+          if (node->getColor() == Tree<string>::head)
             return nullptr;
           T* tmp = static_cast<T*>(node);
           node = node->increment();
@@ -5368,7 +5790,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
           * element. */
         iterator operator++(int)
         {
-          Tree::TreeNode* tmp = node;
+          Tree<string>::TreeNode* tmp = node;
           node = node->increment();
           return tmp;
         }
@@ -5385,7 +5807,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
           * element. */
         iterator operator--(int)
         {
-          Tree::TreeNode* tmp = node;
+          Tree<string>::TreeNode* tmp = node;
           node = node->decrement();
           return tmp;
         }
@@ -5403,7 +5825,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
         }
 
       private:
-        Tree::TreeNode* node;
+        Tree<string>::TreeNode* node;
     };
 
     /** Returns a STL-like iterator to the end of the entity list. */
@@ -5489,7 +5911,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       * pointer is returned. */
     static T* find(const string& k)
     {
-      Tree::TreeNode *i = st.find(k);
+      Tree<string>::TreeNode *i = st.find(k);
       return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
@@ -5500,7 +5922,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       */
     static T* findLowerBound(const string& k, bool *f = nullptr)
     {
-      Tree::TreeNode *i = st.findLowerBound(k, f);
+      Tree<string>::TreeNode *i = st.findLowerBound(k, f);
       return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
@@ -5634,7 +6056,7 @@ template <class T> class HasName : public NonCopyable, public Tree::TreeNode, pu
       const DataValue* val = k.get(Tags::name);
       if (!val)
         return nullptr;
-      Tree::TreeNode *i = st.find(val->getString());
+      Tree<string>::TreeNode *i = st.find(val->getString());
       return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : nullptr);
     }
 };

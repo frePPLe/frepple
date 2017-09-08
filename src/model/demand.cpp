@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Demand> Tree utils::HasName<Demand>::st;
+template<class Demand> Tree<string> utils::HasName<Demand>::st;
 const MetaCategory* Demand::metadata;
 const MetaClass* DemandDefault::metadata;
 

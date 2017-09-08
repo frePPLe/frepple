@@ -32,7 +32,7 @@
 namespace frepple
 {
 
-template<class Buffer> Tree utils::HasName<Buffer>::st;
+template<class Buffer> Tree<string> utils::HasName<Buffer>::st;
 const MetaCategory* Buffer::metadata;
 const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,

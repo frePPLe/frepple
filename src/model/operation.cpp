@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Operation> Tree utils::HasName<Operation>::st;
+template<class Operation> Tree<string> utils::HasName<Operation>::st;
 const MetaCategory* Operation::metadata;
 const MetaClass* OperationFixedTime::metadata,
                *OperationTimePer::metadata,
@@ -594,7 +594,7 @@ void Operation::initOperationPlan (
   opplan->oper = const_cast<Operation*>(this);
   if (l)
     opplan->setDemand(l);
-  opplan->id = i;
+  opplan->setName(i);
 
   // Setting the owner first. Note that the order is important here!
   // For alternates & routings the quantity needs to be set through the owner.

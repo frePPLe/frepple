@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class SetupMatrix> Tree utils::HasName<SetupMatrix>::st;
+template<class SetupMatrix> Tree<string> utils::HasName<SetupMatrix>::st;
 const MetaCategory* SetupMatrix::metadata;
 const MetaClass* SetupMatrixDefault::metadata;
 const MetaClass* SetupMatrixRule::metadata;

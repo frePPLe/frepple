@@ -38,6 +38,9 @@ namespace frepple
 namespace utils
 {
 
+// Static stringpool table
+PooledString::pool_type PooledString::pool;
+
 // Repository of all categories and commands
 const MetaCategory* MetaCategory::firstCategory = nullptr;
 MetaCategory::CategoryMap MetaCategory::categoriesByTag;

@@ -1715,7 +1715,7 @@ class SubOperation : public Object, public HasSource
   *    the operation hierarchies they belong to.
   */
 class OperationPlan
-  : public Object, public HasProblems, public NonCopyable, public HasSource
+  : public Object, public HasProblems, public HasSource, private Tree<unsigned long>::TreeNode
 {
     friend class FlowPlan;
     friend class LoadPlan;
@@ -2108,26 +2108,26 @@ class OperationPlan
       */
     unsigned long getIdentifier() const
     {
-      if (id==ULONG_MAX)
+      if (getName() == ULONG_MAX)
         const_cast<OperationPlan*>(this)->assignIdentifier(); // Lazy generation
-      return id;
+      return getName();
     }
 
     void setIdentifier(unsigned long i)
     {
-      id = i;
+      setName(i);
       assignIdentifier();
     }
 
     void setRawIdentifier(unsigned long i)
     {
-      id = i;
+      setName(i);
     }
 
     /** Return the identifier. This method can return the lazy identifier 1. */
     unsigned long getRawIdentifier() const
     {
-      return id;
+      return getName();
     }
 
     /** Update the next-id number.
@@ -2192,7 +2192,7 @@ class OperationPlan
     PyObject* str() const
     {
       ostringstream ch;
-      ch << id;
+      ch << getName();
       return PythonData(ch.str());
     }
 
@@ -2377,6 +2377,9 @@ class OperationPlan
     static PyObject* createIterator(PyObject* self, PyObject* args);
 
   private:
+    /** A tree structure with all operationplans to allow a fast lookup by id. */
+    static Tree<unsigned long> st;
+
     /** Private copy constructor.<br>
       * It is used in the public copy constructor to make a deep clone of suboperationplans.
       * @see OperationPlan(const OperationPlan&, bool = true)
@@ -2390,7 +2393,13 @@ class OperationPlan
       */
     virtual void update();
 
-    /** Generates a unique identifier for the operationplan. */
+    /** Generates a unique identifier for the operationplan.
+      * The field is 0 while the operationplan is not fully registered yet.
+      * The field is 1 when the operationplan is fully registered but only a
+      * temporary id is generated.
+      * A unique value for each operationplan is created lazily when the
+      * method getIdentifier() is called.
+      */
     bool assignIdentifier();
 
     /** Recursive auxilary function for getTotalFlow.
@@ -2413,7 +2422,7 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan()
+    OperationPlan() : Tree<unsigned long>::TreeNode(0)
     {
       initType(metadata);
     }
@@ -2456,15 +2465,6 @@ class OperationPlan
       * for all other operationplans.
       */
     Demand *dmd = nullptr;
-
-    /** Unique identifier.<br>
-      * The field is 0 while the operationplan is not fully registered yet.
-      * The field is 1 when the operationplan is fully registered but only a
-      * temporary id is generated.
-      * A unique value for each operationplan is created lazily when the
-      * method getIdentifier() is called.
-      */
-    unsigned long id = 0;
 
     /** External identifier for this operationplan. */
     string ref;

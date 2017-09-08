@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Calendar> Tree utils::HasName<Calendar>::st;
+template<class Calendar> Tree<string> utils::HasName<Calendar>::st;
 const MetaCategory* Calendar::metadata;
 const MetaClass *CalendarDefault::metadata;
 const MetaCategory* CalendarBucket::metacategory;

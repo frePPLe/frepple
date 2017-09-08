@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Supplier> Tree utils::HasName<Supplier>::st;
+template<class Supplier> Tree<string> utils::HasName<Supplier>::st;
 const MetaCategory* Supplier::metadata;
 const MetaClass* SupplierDefault::metadata;
 

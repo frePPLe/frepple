@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Item> Tree utils::HasName<Item>::st;
+template<class Item> Tree<string> utils::HasName<Item>::st;
 const MetaCategory* Item::metadata;
 const MetaClass* ItemDefault::metadata;
 

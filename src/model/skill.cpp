@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Skill> Tree utils::HasName<Skill>::st;
+template<class Skill> Tree<string> utils::HasName<Skill>::st;
 const MetaCategory* Skill::metadata;
 const MetaClass* SkillDefault::metadata;
 

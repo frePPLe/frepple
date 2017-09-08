@@ -24,9 +24,6 @@
     <ClCompile Include="..\..\src\utils\library.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\utils\name.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\utils\xml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

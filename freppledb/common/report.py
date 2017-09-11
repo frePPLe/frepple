@@ -34,6 +34,7 @@ import csv
 from datetime import date, datetime, timedelta, time
 from decimal import Decimal
 import functools
+from logging import ERROR, WARNING, DEBUG
 import math
 import operator
 import json
@@ -55,8 +56,7 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import Field, CharField, IntegerField, AutoField, DurationField
-from django.db.models.fields import DateField, DateTimeField, TimeField, NOT_PROVIDED
+from django.db.models.fields import CharField, AutoField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
@@ -77,6 +77,7 @@ from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields
 from freppledb.common.models import User, Comment, Parameter, BucketDetail, Bucket, HierarchyModel
+from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 from freppledb.admin import data_site
 
 
@@ -1302,6 +1303,7 @@ class GridReport(View):
           j += 1
     return models
 
+
   @classmethod
   def erase(reportclass, request):
     # Build a list of dependencies
@@ -1353,247 +1355,78 @@ class GridReport(View):
       if not reportclass.editable or not request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, permname)):
         yield '<div>%s</div>' % _('Permission denied')
         return
+
       # Choose the right delimiter and language
       delimiter = get_format('DECIMAL_SEPARATOR', request.LANGUAGE_CODE, True) == ',' and ';' or ','
       if translation.get_language() != request.LANGUAGE_CODE:
         translation.activate(request.LANGUAGE_CODE)
-
-      # Init
-      headers = []
-      rownumber = 0
-      changed = 0
-      added = 0
-      numerrors = 0
-      numwarnings = 0
-      content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
-      firsterror = True
-      admin_log = []
 
       # Handle the complete upload as a single database transaction
       try:
         with transaction.atomic(using=request.database):
 
           # Erase all records and related tables
-          errors = False
           if 'erase' in request.POST:
             returnvalue = reportclass.erase(request)
             if returnvalue:
               yield string_concat('<div>', returnvalue, '</div>')
-              errors = True
+              return
 
-          # Loop through the data records
-          has_pk_field = False
           yield ('<div class="table-responsive">'
                  '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
 
           for filename, file in request.FILES.items():
+            from datetime import datetime
+            sss = datetime.now()
+            numerrors = 0
+            numwarnings = 0
             firsterror = True
             yield '<tr style="text-align: center"><th colspan="5">%s</td></th>' % filename
-
-            for row in EncodedCSVReader(file, delimiter=delimiter):
-              rownumber += 1
-
-              # Case 1: The first line is read as a header line
-              if rownumber == 1:
-
-                # Collect required fields
-                required_fields = set()
-                for i in reportclass.model._meta.fields:
-                  if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                    required_fields.add(i.name)
-
-                # Validate all columns
-                for col in row:
-                  col = col.strip().strip('#').lower()
-                  if col == "":
-                    headers.append(False)
-                    continue
-                  ok = False
-                  for i in reportclass.model._meta.fields:
-                    # Try with translated field names
-                    if col == i.name.lower() \
-                      or col == i.verbose_name.lower() \
-                      or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
-                        if i.editable is True:
-                          headers.append(i)
-                        else:
-                          headers.append(False)
-                        required_fields.discard(i.name)
-                        ok = True
-                        break
-                    # Try with English field names
-                    with translation.override('en'):
-                      if col == i.name.lower() \
-                        or col == i.verbose_name.lower() \
-                        or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
-                          if i.editable is True:
-                            headers.append(i)
-                          else:
-                            headers.append(False)
-                          required_fields.discard(i.name)
-                          ok = True
-                          break
-                  if not ok:
-                    headers.append(False)
-                    if firsterror:
-                      yield (
-                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                             ) % (
-                               capfirst(_("worksheet")), capfirst(_("row")),
-                               capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error")), " / ", capfirst(_("warning"))
-                               )
-                      firsterror = False
-                    yield '<tr><td class="sr-only"%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (reportclass.model._meta.verbose_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}))
-                    numwarnings += 1
-                  if col == reportclass.model._meta.pk.name.lower() or \
-                     col == reportclass.model._meta.pk.verbose_name.lower():
-                    has_pk_field = True
-                if required_fields:
-                  # We are missing some required fields
-                  errors = True
-                  if firsterror:
-                    yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  #. Translators: Translation included with django
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
-                  numerrors += 1
-                # Abort when there are errors
-                if errors:
-                  break
-
-                # Create a form class that will be used to validate the data
-                fields = [i.name for i in headers if isinstance(i, Field)]
-                UploadForm = modelform_factory(
-                  reportclass.model,
-                  fields=tuple(fields),
-                  formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                  )
-
-                # Get natural keys for the class
-                natural_key = None
-                if hasattr(reportclass.model.objects, 'get_by_natural_key'):
-                  if reportclass.model._meta.unique_together:
-                    natural_key = reportclass.model._meta.unique_together[0]
-                  elif hasattr(reportclass.model, 'natural_key'):
-                    natural_key = reportclass.model.natural_key
-
-              ### Case 2: Skip empty rows and comments rows
-              elif len(row) == 0 or row[0].startswith('#'):
-                continue
-
-              ### Case 3: Process a data row
-              else:
+            data = EncodedCSVReader(file, delimiter=delimiter)
+            for error in parseCSVdata(reportclass.model, data, user=request.user, database=request.database, ping=True):
+              if error[0] == DEBUG:
                 # Yield some result so we can detect disconnect clients and interrupt the upload
                 yield ' '
-                try:
-                  # Step 1: Build a dictionary with all data fields
-                  d = {}
-                  colnum = 0
-                  for col in row:
-                    # More fields in data row than headers. Move on to the next row.
-                    if colnum >= len(headers):
-                      break
-                    if isinstance(headers[colnum], Field):
-                      d[headers[colnum].name] = col.strip()
-                    colnum += 1
-
-                  # Step 2: Fill the form with data, either updating an existing
-                  # instance or creating a new one.
-                  if has_pk_field:
-                    # A primary key is part of the input fields
-                    try:
-                      # Try to find an existing record with the same primary key
-                      it = reportclass.model.objects.using(request.database).only(*fields).get(pk=d[reportclass.model._meta.pk.name])
-                      form = UploadForm(d, instance=it)
-                    except reportclass.model.DoesNotExist:
-                      form = UploadForm(d)
-                      it = None
-                  elif natural_key:
-                    # A natural key exists for this model
-                    try:
-                      # Build the natural key
-                      key = []
-                      for x in natural_key:
-                        key.append(d.get(x, None))
-                      # Try to find an existing record using the natural key
-                      it = reportclass.model.objects.get_by_natural_key(*key)
-                      form = UploadForm(d, instance=it)
-                    except reportclass.model.DoesNotExist:
-                      form = UploadForm(d)
-                      it = None
-                  else:
-                    # No primary key required for this model
-                    form = UploadForm(d)
-                    it = None
-
-                  # Step 3: Validate the data and save to the database
-                  if form.has_changed():
-                    try:
-                      with transaction.atomic(using=request.database):
-                        obj = form.save(commit=False)
-                        obj.save(using=request.database)
-                        admin_log.append(
-                          LogEntry(
-                            user_id=request.user.pk,
-                            content_type_id=content_type_id,
-                            object_id=obj.pk,
-                            object_repr=force_text(obj),
-                            action_flag=it and CHANGE or ADDITION,
-                            #. Translators: Translation included with Django
-                            change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                          ))
-                        if it:
-                          changed += 1
-                        else:
-                          added += 1
-                    except Exception as e:
-                      # Validation fails
-                      if firsterror:
-                        yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
-                      for error in form.non_field_errors():
-                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, error)
-                        numerrors += 1
-                      for field in form:
-                        for error in field.errors:
-                          yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, rownumber, _(field.name), d[field.name], error)
-                          numerrors += 1
-                except Exception as e:
-                  if firsterror:
-                    yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (reportclass.model._meta.verbose_name, e)
-                  numerrors += 1
-
-          # Save all admin log entries
-          LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
-
-        # Report all failed records
-        theClass = "success"
-        if numerrors > 0:
-          theClass = "danger"
-        yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, reportclass.model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownumber - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings, 'warnings': numwarnings})
+                continue
+              if firsterror and error[0] in (ERROR, WARNING):
+                yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
+                  capfirst(_("worksheet")), capfirst(_("row")),
+                  capfirst(_("field")), capfirst(_("value")),
+                  capfirst(_("error")), " / ", capfirst(_("warning"))
+                  )
+                firsterror = False
+              if error[0] == ERROR:
+                yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  error[2] if error[2] else '',
+                  error[3] if error[3] else '',
+                  capfirst(_('error')), error[4]
+                  )
+                numerrors += 1
+              elif error[1] == WARNING:
+                yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  error[2] if error[2] else '',
+                  error[3] if error[3] else '',
+                  capfirst(_('warning')), error[4]
+                  )
+                numwarnings += 1
+              else:
+                yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                  "danger" if numerrors > 0 else 'success',
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  error[2] if error[2] else '',
+                  error[3] if error[3] else '',
+                  error[4]
+                  )
+            yield '</tbody></table></div>'
+            print("duration", datetime.now() - sss)
       except GeneratorExit:
         logging.warning('Connection Aborted')
+
 
   @classmethod
   def parseSpreadsheetUpload(reportclass, request):
@@ -1619,300 +1452,74 @@ class GridReport(View):
     if translation.get_language() != request.LANGUAGE_CODE:
       translation.activate(request.LANGUAGE_CODE)
 
-    # Init
-    datarows = 0
-    changed = 0
-    added = 0
-    numerrors = 0
-    numwarnings = 0
-    content_type_id = ContentType.objects.get_for_model(reportclass.model).pk
-    firsterror = True
     # Handle the complete upload as a single database transaction
     try:
       with transaction.atomic(using=request.database):
 
         # Erase all records and related tables
-        errors = False
         if 'erase' in request.POST:
           returnvalue = reportclass.erase(request)
           if returnvalue:
-            errors = True
-            numerrors += 1
             yield '</br><samp style="padding-left: 15px;">%s</samp></br>' % returnvalue
+            raise StopIteration
 
         # Header in output
         yield ('<div class="table-responsive">'
                '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
 
         for filename, file in request.FILES.items():
+          numerrors = 0
+          numwarnings = 0
           firsterror = True
           yield '<tr style="text-align: center"><th colspan="5">%s</td></th>' % filename
 
           # Loop through the data records
           wb = load_workbook(filename=file, read_only=True, data_only=True)
           numsheets = len(wb.get_sheet_names())
+
           for ws_name in wb.get_sheet_names():
-            headers = []
-            rownumber = 0
-            admin_log = []
+            rowprefix = '' if numsheets == 1 else "%s " % ws_name
             ws = wb.get_sheet_by_name(name=ws_name)
-            has_pk_field = False
-            for row in ws.iter_rows():
-              rownumber += 1
-
-              # Case 1: The first line is read as a header line
-              if rownumber == 1:
-                # Collect required fields
-                required_fields = set()
-                for i in reportclass.model._meta.fields:
-                  if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                    required_fields.add(i.name)
-                # Validate all columns
-                for col in row:
-                  col = str(col.value).strip().strip('#').lower()
-                  if col == "":
-                    headers.append(False)
-                    continue
-                  ok = False
-                  for i in reportclass.model._meta.fields:
-                    # Try with translated field names
-                    if col.replace(' ', '') == i.name.lower() \
-                      or col == i.verbose_name.lower() \
-                      or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
-                        if i.editable is True:
-                          headers.append(i)
-                        else:
-                          headers.append(False)
-                        required_fields.discard(i.name)
-                        ok = True
-                        break
-                    # Try with English field names
-                    with translation.override('en'):
-                      if col.replace(' ', '') == i.name.lower() \
-                        or col == i.verbose_name.lower() \
-                        or col == ("%s - %s" % (reportclass.model.__name__, i.verbose_name)).lower():
-                          if i.editable is True:
-                            headers.append(i)
-                          else:
-                            headers.append(False)
-                          required_fields.discard(i.name)
-                          ok = True
-                          break
-                  if not ok:
-                    headers.append(False)
-                    if firsterror:
-                      yield (
-                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                             ) % (
-                               capfirst(_("worksheet")), capfirst(_("row")),
-                               capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error")), " / ", capfirst(_("warning"))
-                               )
-                      firsterror = False
-                    yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (
-                      reportclass.model._meta.verbose_name,
-                      capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': col}
-                      ))
-                    numwarnings += 1
-                  if col == reportclass.model._meta.pk.name.lower() or \
-                     col == reportclass.model._meta.pk.verbose_name.lower():
-                    has_pk_field = True
-                if required_fields:
-                  # We are missing some required fields
-                  errors = True
-                  if firsterror:
-                    yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  #. Translators: Translation included with django
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
-                    reportclass.model._meta.verbose_name, _('Some keys were missing: %(keys)s') % {
-                      'keys': ', '.join(required_fields)
-                      }
-                    )
-                  numerrors += 1
-                # Abort when there are errors
-                if errors > 0:
-                  break
-
-                # Create a form class that will be used to validate the data
-                fields = [i.name for i in headers if isinstance(i, Field)]
-                UploadForm = modelform_factory(
-                  reportclass.model,
-                  fields=tuple(fields),  # tuple([i.name for i in headers if isinstance(i, Field)]),
-                  formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                  )
-
-                # Get natural keys for the class
-                natural_key = None
-                if hasattr(reportclass.model.objects, 'get_by_natural_key'):
-                  if reportclass.model._meta.unique_together:
-                    natural_key = reportclass.model._meta.unique_together[0]
-                  elif hasattr(reportclass.model, 'natural_key'):
-                    natural_key = reportclass.model.natural_key
-
-              # Case 2: Skip empty rows and comments rows
-              elif len(row) == 0 or (isinstance(row[0].value, six.string_types) and row[0].value.startswith('#')):
-                continue
-
-              # Case 3: Process a data row
-              else:
+            for error in parseExcelWorksheet(reportclass.model, ws, user=request.user, database=request.database, ping=True):
+              if error[0] == DEBUG:
                 # Yield some result so we can detect disconnect clients and interrupt the upload
                 yield ' '
-                datarows += 1
-                try:
-                  # Step 1: Build a dictionary with all data fields
-                  d = {}
-                  colnum = 0
-                  for col in row:
-                    # More fields in data row than headers. Move on to the next row.
-                    if colnum >= len(headers):
-                      break
-                    if isinstance(headers[colnum], Field):
-                      data = col.value
-                      if isinstance(headers[colnum], (IntegerField, AutoField)):
-                        if isinstance(data, numericTypes):
-                          data = int(data)
-                      elif isinstance(headers[colnum], DurationField):
-                        if isinstance(data, float):
-                          data = "%.6f" % data
-                        else:
-                          data = str(data) if data is not None else None
-                      elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
-                        # Rounding to second
-                        if data.microsecond < 500000:
-                          data = data.replace(microsecond=0)
-                        else:
-                          data = data.replace(microsecond=0) + timedelta(seconds=1)
-                      elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
-                        data = "%s:%s:%s" % (data.hour, data.minute, data.second)
-                      elif isinstance(data, str):
-                        data = data.strip()
-                      d[headers[colnum].name] = data
-                    colnum += 1
-
-                  # Step 2: Fill the form with data, either updating an existing
-                  # instance or creating a new one.
-                  if has_pk_field:
-                    # A primary key is part of the input fields
-                    try:
-                      # Try to find an existing record with the same primary key
-                      it = reportclass.model.objects.using(request.database).only(*fields).get(pk=d[reportclass.model._meta.pk.name])
-                      form = UploadForm(d, instance=it)
-                    except reportclass.model.DoesNotExist:
-                      form = UploadForm(d)
-                      it = None
-                  elif natural_key:
-                    # A natural key exists for this model
-                    try:
-                      # Build the natural key
-                      key = []
-                      for x in natural_key:
-                        key.append(d.get(x, None))
-                      # Try to find an existing record using the natural key
-                      it = reportclass.model.objects.get_by_natural_key(*key)
-                      form = UploadForm(d, instance=it)
-                    except reportclass.model.DoesNotExist:
-                      form = UploadForm(d)
-                      it = None
-                    except reportclass.model.MultipleObjectsReturned:
-                      if firsterror:
-                        yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
-                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
-                        reportclass.model._meta.verbose_name,
-                        rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
-                        _('Key fields not unique')
-                        )
-                      numerrors += 1
-                  else:
-                    # No primary key required for this model
-                    form = UploadForm(d)
-                    it = None
-
-                  # Step 3: Validate the data and save to the database
-                  if form.has_changed():
-                    try:
-                      with transaction.atomic(using=request.database):
-                        obj = form.save(commit=False)
-                        obj.save(using=request.database)
-                        admin_log.append(
-                          LogEntry(
-                            user_id=request.user.pk,
-                            content_type_id=content_type_id,
-                            object_id=obj.pk,
-                            object_repr=force_text(obj),
-                            action_flag=it and CHANGE or ADDITION,
-                            #. Translators: Translation included with Django
-                            change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                          ))
-                        if it:
-                          changed += 1
-                        else:
-                          added += 1
-                    except Exception as e:
-                      # Validation fails
-                      if firsterror:
-                        yield (
-                                '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                               ) % (
-                                 capfirst(_("worksheet")), capfirst(_("row")),
-                                 capfirst(_("field")), capfirst(_("value")),
-                                 capfirst(_("error")), " / ", capfirst(_("warning"))
-                                 )
-                        firsterror = False
-                      for error in form.non_field_errors():
-                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (
-                          reportclass.model._meta.verbose_name,
-                          rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
-                          error
-                          )
-                        numerrors += 1
-                      for field in form:
-                        for error in field.errors:
-                          yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                            reportclass.model._meta.verbose_name,
-                            rownumber if numsheets == 1 else '%s %s' % (ws_name, rownumber),
-                            _(field.name), d[field.name], error
-                            )
-                          numerrors += 1
-                except Exception as e:
-                  if firsterror:
-                    yield (
-                            '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (
-                    reportclass.model._meta.verbose_name, e
-                    )
-                  numerrors += 1
-            # Save all admin log entries
-            LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
-
-      # Report all failed records
-      theClass = "success"
-      if numerrors > 0:
-        theClass = "danger"
-      yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (
-        theClass, reportclass.model._meta.verbose_name,
-        _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {
-          'rows': datarows, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings
-          })
+                continue
+              if firsterror and error[0] in (ERROR, WARNING):
+                yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
+                  capfirst(_("worksheet")), capfirst(_("row")),
+                  capfirst(_("field")), capfirst(_("value")),
+                  capfirst(_("error")), " / ", capfirst(_("warning"))
+                  )
+                firsterror = False
+              if error[0] == ERROR:
+                yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  "%s%s" % (rowprefix, error[2]) if error[2] else '',
+                  error[3] if error[3] else '',
+                  capfirst(_('error')), error[4]
+                  )
+                numerrors += 1
+              elif error[1] == WARNING:
+                yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  "%s%s" % (rowprefix, error[2]) if error[2] else '',
+                  error[3] if error[3] else '',
+                  capfirst(_('warning')), error[4]
+                  )
+                numwarnings += 1
+              else:
+                yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                  "danger" if numerrors > 0 else 'success',
+                  reportclass.model._meta.verbose_name,
+                  error[1] if error[1] else '',
+                  "%s%s" % (rowprefix, error[2]) if error[2] else '',
+                  error[3] if error[3] else '',
+                  error[4]
+                  )
+            yield '</tbody></table></div>'
     except GeneratorExit:
       logger.warning('Connection Aborted')
 
@@ -2703,240 +2310,52 @@ def importWorkbook(request):
           yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
           yield ('<div class="table-responsive">'
                  '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
-          ws = wb.get_sheet_by_name(name=ws_name)
-          rownum = 0
-          has_pk_field = False
-          headers = []
-          uploadform = None
-          changed = 0
-          added = 0
           numerrors = 0
           numwarnings = 0
           firsterror = True
-          admin_log = []
-
-          try:
-            # The admin model of the class can define some fields to exclude from the import
-            exclude = data_site._registry[model].exclude
-          except:
-            exclude = None
-
-          for row in ws.iter_rows():
-            with transaction.atomic(using=request.database):
-              rownum += 1
-              if rownum == 1:
-                # Process the header row with the field names
-
-                # Collect required fields
-                required_fields = set()
-                for i in model._meta.fields:
-                  if not i.blank and i.default == NOT_PROVIDED and not isinstance(i, AutoField):
-                    required_fields.add(i.name)
-
-                # Validate all columns
-                header_ok = True
-                for cell in row:
-                  ok = False
-                  value = cell.value
-                  if not value:
-                    headers.append(False)
-                    continue
-                  else:
-                    value = value.lower()
-                  for i in model._meta.fields:
-                    # Try with translated field names
-                    if value == i.name.lower() \
-                      or value == i.verbose_name.lower() \
-                      or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
-                        if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                          headers.append(i)
-                        else:
-                          headers.append(False)
-                        required_fields.discard(i.name)
-                        ok = True
-                        break
-                    # Try with English field names
-                    with translation.override('en'):
-                      if value == i.name.lower() \
-                        or value == i.verbose_name.lower() \
-                        or value == ("%s - %s" % (model.__name__, i.verbose_name)).lower():
-                          if i.editable and not (value != 'source' and exclude and value in exclude and not value == model._meta.pk.name.lower()):
-                            headers.append(i)
-                          else:
-                            headers.append(False)
-                          required_fields.discard(i.name)
-                          ok = True
-                          break
-                  if not ok:
-                    headers.append(False)
-                    if firsterror:
-                      yield (
-                              '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                             ) % (
-                               capfirst(_("worksheet")), capfirst(_("row")),
-                               capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error")), " / ", capfirst(_("warning"))
-                               )
-                      firsterror = False
-                    yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s%s%s</td></tr>' % (ws_name, capfirst(_('warning')), ': ', _('Skipping unknown field %(column)s' % {'column': value}))
-                    numwarnings += 1
-                  if value == model._meta.pk.name.lower() \
-                    or value == model._meta.pk.verbose_name.lower():
-                      has_pk_field = True
-                if required_fields:
-                  # We are missing some required fields
-                  header_ok = True
-                  if firsterror:
-                    yield (
-                           '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                           ) % (
-                             capfirst(_("worksheet")), capfirst(_("row")),
-                             capfirst(_("field")), capfirst(_("value")),
-                             capfirst(_("error")), " / ", capfirst(_("warning"))
-                             )
-                    firsterror = False
-                  #. Translators: Translation included with django
-                  yield '<tr><td class="sr-only">%s</td><td></td><td></td><td></td><td>%s</td></tr>' % (ws_name, _('Some keys were missing: %(keys)s') % {'keys': ', '.join(required_fields)})
-                  numerrors += 1
-                if not header_ok:
-                  # Can't process this worksheet
-                  break
-                fields = [i.name for i in headers if isinstance(i, Field)]
-                uploadform = modelform_factory(
-                  model,
-                  fields=tuple(fields),
-                  formfield_callback=lambda f: (isinstance(f, RelatedField) and f.formfield(using=request.database, localize=True)) or f.formfield(localize=True)
-                  )
-
-                # Get natural keys for the class
-                natural_key = None
-                if hasattr(model.objects, 'get_by_natural_key'):
-                  if model._meta.unique_together:
-                    natural_key = model._meta.unique_together[0]
-                  elif hasattr(model, 'natural_key'):
-                    natural_key = model.natural_key
-
-              else:
-                # Process a data row
-                # Yield some result so we can detect disconnect clients and interrupt the upload
-                yield ' '
-                # Step 1: Build a dictionary with all data fields
-                d = {}
-                colnum = 0
-                for cell in row:
-                  # More fields in data row than headers. Move on to the next row.
-                  if colnum >= len(headers):
-                    break
-                  if isinstance(headers[colnum], Field):
-                    data = cell.value
-                    if isinstance(headers[colnum], (IntegerField, AutoField)):
-                      if isinstance(data, numericTypes):
-                        data = int(data)
-                    elif isinstance(headers[colnum], DurationField):
-                      if isinstance(data, float):
-                        data = "%.6f" % data
-                      else:
-                        data = str(data) if data is not None else None
-                    elif isinstance(headers[colnum], (DateField, DateTimeField)) and isinstance(data, datetime):
-                      # Rounding to second
-                      if data.microsecond < 500000:
-                        data = data.replace(microsecond=0)
-                      else:
-                        data = data.replace(microsecond=0) + timedelta(seconds=1)
-                    elif isinstance(headers[colnum], TimeField) and isinstance(data, datetime):
-                      data = "%s:%s:%s" % (data.hour, data.minute, data.second)
-                    elif isinstance(data, str):
-                      data = data.strip()
-                    d[headers[colnum].name] = data
-                  colnum += 1
-                # Step 2: Fill the form with data, either updating an existing
-                # instance or creating a new one.
-                if has_pk_field:
-                  # A primary key is part of the input fields
-                  try:
-                    with transaction.atomic(using=request.database):
-                      # Try to find an existing record with the same primary key
-                      it = model.objects.using(request.database).only(*fields).get(pk=d[model._meta.pk.name])
-                      form = uploadform(d, instance=it)
-                  except model.DoesNotExist:
-                    form = uploadform(d)
-                    it = None
-                elif natural_key:
-                  # A natural key exists for this model
-                  try:
-                    # Build the natural key
-                    key = []
-                    for x in natural_key:
-                      key.append(d.get(x, None))
-                    # Try to find an existing record using the natural key
-                    it = model.objects.get_by_natural_key(*key)
-                    form = uploadform(d, instance=it)
-                  except model.DoesNotExist:
-                    form = uploadform(d)
-                    it = None
-                  except model.MultipleObjectsReturned:
-                    if firsterror:
-                      yield (
-                             '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                             ) % (
-                               capfirst(_("worksheet")), capfirst(_("row")),
-                               capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error")), " / ", capfirst(_("warning"))
-                               )
-                      firsterror = False
-                    yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, _('Key fields not unique'))
-                    continue
-                else:
-                  # No primary key required for this model
-                  form = uploadform(d)
-                  it = None
-                # Step 3: Validate the data and save to the database
-                if form.has_changed():
-                  try:
-                    with transaction.atomic(using=request.database):
-                      obj = form.save(commit=False)
-                      obj.save(using=request.database)
-                      admin_log.append(
-                        LogEntry(
-                          user_id=request.user.pk,
-                          content_type_id=contenttype_id,
-                          object_id=obj.pk,
-                          object_repr=force_text(obj),
-                          action_flag=it and CHANGE or ADDITION,
-                          #. Translators: Translation included with Django
-                          change_message=_('Changed %s.') % get_text_list(form.changed_data, _('and'))
-                        ))
-                      if it:
-                        changed += 1
-                      else:
-                        added += 1
-                  except Exception:
-                    # Validation fails
-                    if firsterror:
-                      yield (
-                             '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>'
-                             ) % (
-                               capfirst(_("worksheet")), capfirst(_("row")),
-                               capfirst(_("field")), capfirst(_("value")),
-                               capfirst(_("error")), " / ", capfirst(_("warning"))
-                               )
-                      firsterror = False
-                    for error in form.non_field_errors():
-                      yield '<tr><td class="sr-only">%s</td><td>%s</td><td></td><td></td><td>%s</td></tr>' % (ws_name, rownum, error)
-                      numerrors += 1
-                    for field in form:
-                      for error in field.errors:
-                        yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ws_name, rownum, _(field.name), d[field.name], error)
-                        numerrors += 1
-
-          # Create all admin log entries
-          LogEntry.objects.all().using(request.database).bulk_create(admin_log, batch_size=1000)
-
-          # Report status of the import
-          theClass = "success"
-          if numerrors > 0:
-            theClass = "danger"
-          yield '<tr class="%s"><th class="sr-only">%s</th><th colspan="4">%s</td></tr></tbody></table></div>' % (theClass, model._meta.verbose_name, _('%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings') % {'rows': rownum - 1, 'changed': changed, 'added': added, 'errors': numerrors, 'warnings': numwarnings})
+          ws = wb.get_sheet_by_name(name=ws_name)
+          for error in parseExcelWorksheet(model, ws, user=request.user, database=request.database, ping=True):
+            if error[0] == DEBUG:
+              # Yield some result so we can detect disconnect clients and interrupt the upload
+              yield ' '
+              continue
+            if firsterror and error[0] in (ERROR, WARNING):
+              yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
+                capfirst(_("worksheet")), capfirst(_("row")),
+                capfirst(_("field")), capfirst(_("value")),
+                capfirst(_("error")), " / ", capfirst(_("warning"))
+                )
+              firsterror = False
+            if error[0] == ERROR:
+              yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                ws_name,
+                error[1] if error[1] else '',
+                error[2] if error[2] else '',
+                error[3] if error[3] else '',
+                capfirst(_('error')),
+                error[4]
+                )
+              numerrors += 1
+            elif error[1] == WARNING:
+              yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                ws_name,
+                error[1] if error[1] else '',
+                error[2] if error[2] else '',
+                error[3] if error[3] else '',
+                capfirst(_('warning')),
+                error[4]
+                )
+              numwarnings += 1
+            else:
+              yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                "danger" if numerrors > 0 else 'success',
+                ws_name,
+                error[1] if error[1] else '',
+                error[2] if error[2] else '',
+                error[3] if error[3] else '',
+                error[4]
+                )
+          yield '</tbody></table></div>'
         yield '<div><strong>%s</strong></div>' % _("Done")
   except GeneratorExit:
     logger.warning('Connection Aborted')

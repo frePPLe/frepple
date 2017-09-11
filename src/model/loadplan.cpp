@@ -448,4 +448,30 @@ PyObject* LoadPlanIterator::iternext()
   return const_cast<LoadPlan*>(ld);
 }
 
+
+LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
+{
+  if (!ldplan->getLoad() || !ldplan->getLoad()->getResource()->isGroup())
+    return;
+  for (auto i = ldplan->getLoad()->getResource()->getMembers(); i != Resource::end(); ++i)
+  {
+    if (ldplan->getResource() == &*i)
+      continue;
+   Skill* sk = ldplan->getLoad()->getSkill();
+   if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
+     resources.push_back(&*i);
+  }
+}
+
+
+Resource* LoadPlan::AlternateIterator::next()
+{
+  if (resIter == resources.end())
+    return nullptr;
+  auto tmp = *resIter;
+  ++resIter;
+  return tmp;
+}
+
+
 } // end namespace

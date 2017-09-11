@@ -85,17 +85,11 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     // Check if the resource has the right skill
     if (l->getSkill())
     {
-      bool isqualified = false;
-      Resource::skilllist::const_iterator i = res->getSkills();
-      while (ResourceSkill *rs = i.next())
-      {
-        if (rs->getSkill() == l->getSkill()
-            && originalOpplan.start >= rs->getEffective().getStart()
-            && originalOpplan.end <= rs->getEffective().getEnd())
-          isqualified = true;
-      }
-      // Next resource in the loop if not qualified
-      if (!isqualified) continue;   // TODO if there is a date effective skill, we need to consider it in the reply
+      if (!res->hasSkill(
+        l->getSkill(), originalOpplan.start, originalOpplan.end
+        ))
+        continue;
+      // TODO if there is a date effective skill, we need to consider it in the reply
     }
     qualified_resource_exists = true;
 

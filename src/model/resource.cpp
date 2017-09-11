@@ -589,4 +589,21 @@ PyObject* Resource::PlanIterator::iternext()
     "free", bucket_available - bucket_load - bucket_setup);
 }
 
+
+bool Resource::hasSkill(Skill* s, Date st, Date nd) const
+{
+  if (!s)
+    return true;
+
+  Resource::skilllist::const_iterator i = getSkills();
+  while (ResourceSkill *rs = i.next())
+  {
+    if (rs->getSkill() == s
+      && st >= rs->getEffective().getStart()
+      && nd <= rs->getEffective().getEnd())
+        return true;
+  }
+  return false;
+}
+
 }

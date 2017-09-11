@@ -6574,6 +6574,9 @@ class Resource : public HasHierarchy<Resource>,
       return skills.begin();
     }
 
+    /** Returns true when an resource has a certain skill between the specified dates. */
+    bool hasSkill(Skill*, Date = Date::infinitePast, Date = Date::infinitePast) const;
+
     /** Return the load that is associates a given operation with this
       * resource. Returns nullptr is no such load exists. */
     Load* findLoad(const Operation* o, Date d) const
@@ -7888,6 +7891,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 {
     friend class OperationPlan::LoadPlanIterator;
   public:
+    // Forward declarations
+    class AlternateIterator;
+
     /** Public constructor.<br>
       * This constructor constructs the starting loadplan and will
       * also call a private constructor to creates the ending loadplan.
@@ -8022,12 +8028,19 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     LoadPlan* getOtherLoadPlan() const;
 
+    inline AlternateIterator getAlternates() const;
+
     static int initialize();
     static const MetaCategory* metadata;
     virtual const MetaClass& getType() const { return *metadata; }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
+      m->addIteratorField<Cls, AlternateIterator, Resource>(
+        Tags::alternates, Tags::alternate,
+        "AlternateResourceIterator", "Iterator over loadplan alternates",
+        &Cls::getAlternates, PLAN + FORCE_BASE
+        );
       m->addDateField<Cls>(Tags::date, &Cls::getDate);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand);
@@ -8077,6 +8090,35 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
 };
+
+
+/** This class allows iteration over alternate resources for a loadplan. */
+class LoadPlan::AlternateIterator
+{
+  private:
+    const LoadPlan* ldplan;
+    vector<Resource*> resources;
+    vector<Resource*>::iterator resIter;
+
+  public:
+    AlternateIterator(const LoadPlan*);
+
+    /** Copy constructor. */
+    AlternateIterator(const AlternateIterator& other) : ldplan(other.ldplan)
+    {
+      for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
+        resources.push_back(*i);
+      resIter = resources.begin();
+    }
+
+    Resource* next();
+};
+
+
+inline LoadPlan::AlternateIterator LoadPlan::getAlternates() const
+{
+  return LoadPlan::AlternateIterator(this);
+}
 
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const

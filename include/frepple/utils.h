@@ -4926,25 +4926,25 @@ template <class T> class Tree : public NonCopyable
 };
 
 
-template<> static inline int Tree<string>::compare(const string& a, const string& b)
+template<> inline int Tree<string>::compare(const string& a, const string& b)
 {
   return a.compare(b);
 }
 
 
-template<> static inline bool Tree<string>::isnull(const string& a)
+template<> inline bool Tree<string>::isnull(const string& a)
 {
   return a.empty();
 }
 
 
-template<> static inline int Tree<unsigned long>::compare(const unsigned long& a, const unsigned long& b)
+template<> inline int Tree<unsigned long>::compare(const unsigned long& a, const unsigned long& b)
 {
   return a - b;
 }
 
 
-template<> static inline bool Tree<unsigned long>::isnull(const unsigned long& a)
+template<> inline bool Tree<unsigned long>::isnull(const unsigned long& a)
 {
   return a == 0;
 }

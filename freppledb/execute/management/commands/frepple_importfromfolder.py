@@ -153,10 +153,14 @@ class Command(BaseCommand):
           task.save(using=self.database)
           i += 1
           filetoparse = os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
-          print("%s Started processing data in file: %s" % (datetime.now(), ifile), file=self.logfile, flush=True)
-          errors += self.parseCSVloadfromfolder(model, filetoparse)
-
-
+          if ifile.endswith('.xlsx'):
+            print("%s Started processing data in Excel file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            errors += self.loadExcelfile(model, filetoparse)
+            print("%s Finished processing data in file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+          else:
+            print("%s Started processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            errors += self.loadCSVfile(model, filetoparse)
+            print("%s Finished processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
       else:
         errors += 1
         cnt = 0

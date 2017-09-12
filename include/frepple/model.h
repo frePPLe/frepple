@@ -6575,7 +6575,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     /** Returns true when an resource has a certain skill between the specified dates. */
-    bool hasSkill(Skill*, Date = Date::infinitePast, Date = Date::infinitePast) const;
+    bool hasSkill(Skill*, Date = Date::infinitePast, Date = Date::infinitePast, ResourceSkill** = nullptr) const;
 
     /** Return the load that is associates a given operation with this
       * resource. Returns nullptr is no such load exists. */

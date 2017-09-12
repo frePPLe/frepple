@@ -590,10 +590,14 @@ PyObject* Resource::PlanIterator::iternext()
 }
 
 
-bool Resource::hasSkill(Skill* s, Date st, Date nd) const
+bool Resource::hasSkill(Skill* s, Date st, Date nd, ResourceSkill** resSkill) const
 {
   if (!s)
-    return true;
+  {
+    if (resSkill)
+      *resSkill = nullptr;
+    return false;
+  }
 
   Resource::skilllist::const_iterator i = getSkills();
   while (ResourceSkill *rs = i.next())
@@ -601,8 +605,14 @@ bool Resource::hasSkill(Skill* s, Date st, Date nd) const
     if (rs->getSkill() == s
       && st >= rs->getEffective().getStart()
       && nd <= rs->getEffective().getEnd())
-        return true;
+    {
+      if (resSkill)
+        *resSkill = rs;
+      return true;
+    }
   }
+  if (resSkill)
+    *resSkill = nullptr;
   return false;
 }
 

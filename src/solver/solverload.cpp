@@ -83,10 +83,11 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     }
 
     // Check if the resource has the right skill
+    ResourceSkill* rscSkill = nullptr;
     if (l->getSkill())
     {
       if (!res->hasSkill(
-        l->getSkill(), originalOpplan.start, originalOpplan.end
+        l->getSkill(), originalOpplan.start, originalOpplan.end, &rscSkill
         ))
         continue;
       // TODO if there is a date effective skill, we need to consider it in the reply
@@ -130,8 +131,8 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
       double val = 0.0;
       switch (l->getSearch())
       {
-      case PRIORITY:
-          val = 1; // @todo skill-resource model doesn't have a priority field yet
+        case PRIORITY:
+          val = rscSkill->getPriority();
           break;
         case MINCOST:
           val = deltaCost / lplan->getOperationPlan()->getQuantity();

@@ -377,6 +377,9 @@ def _parseData(model, data, rowmapper, user, database, ping):
                   #. Translators: Translation included with Django
                   change_message='Changed %s.' % get_text_list(form.changed_data, 'and')
                 ))
+              if len(admin_log) > 100:
+                LogEntry.objects.all().using(database).bulk_create(admin_log)
+                admin_log = []
           else:
             # Validation fails
             for error in form.non_field_errors():
@@ -392,7 +395,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
         yield (ERROR, None, None, None, "Exception during upload: %s" % e)
 
   # Save all admin log entries
-  LogEntry.objects.all().using(database).bulk_create(admin_log, batch_size=1000)
+  LogEntry.objects.all().using(database).bulk_create(admin_log)
 
   yield (
     INFO, None, None, None,

@@ -61,33 +61,41 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
       self.data = data
 
     def __getitem__(self, key):
-      try:
-        idx, field = self.headers.get(key)
-        data = self.data[idx].value if idx is not None else None
-        if isinstance(field, (IntegerField, AutoField)):
-          if isinstance(data, (Decimal, float, int)):
-            data = int(data)
-        elif isinstance(field, DurationField):
-          if isinstance(data, float):
-            data = "%.6f" % data
-          else:
-            data = str(data) if data is not None else None
-        elif isinstance(field, (DateField, DateTimeField)) and isinstance(data, datetime):
-          # Rounding to second
-          if data.microsecond < 500000:
-            data = data.replace(microsecond=0)
-          else:
-            data = data.replace(microsecond=0) + timedelta(seconds=1)
-        elif isinstance(field, TimeField) and isinstance(data, datetime):
-          data = "%s:%s:%s" % (data.hour, data.minute, data.second)
-        elif isinstance(data, str):
-          data = data.strip()
-        return data
-      except KeyError as e:
-        raise e
+      tmp = self.headers.get(key)
+      if tmp:
+        idx = tmp[0]
+        field = tmp[1]
+      else:
+        idx = None
+        field = None
+      data = self.data[idx].value if idx is not None else None
+      if isinstance(field, (IntegerField, AutoField)):
+        if isinstance(data, (Decimal, float, int)):
+          data = int(data)
+      elif isinstance(field, DurationField):
+        if isinstance(data, float):
+          data = "%.6f" % data
+        else:
+          data = str(data) if data is not None else None
+      elif isinstance(field, (DateField, DateTimeField)) and isinstance(data, datetime):
+        # Rounding to second
+        if data.microsecond < 500000:
+          data = data.replace(microsecond=0)
+        else:
+          data = data.replace(microsecond=0) + timedelta(seconds=1)
+      elif isinstance(field, TimeField) and isinstance(data, datetime):
+        data = "%s:%s:%s" % (data.hour, data.minute, data.second)
+      elif isinstance(data, str):
+        data = data.strip()
+      return data
 
-    def get(self, key):
-      return self.__getitem__(key)
+    def get(self, key, default=NOT_PROVIDED):
+      try:
+        return self.__getitem__(key)
+      except KeyError as e:
+        if default != NOT_PROVIDED:
+          return default
+        raise e
 
     def __len__(self):
       return self.numHeaders
@@ -157,11 +165,13 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
       except KeyError as e:
         raise e
 
-    def get(self, key, default=-666):
+    def get(self, key, default=NOT_PROVIDED):
       try:
         idx = self.headers.get(key)
         return self.data[idx] if idx is not None else default
       except KeyError as e:
+        if default != NOT_PROVIDED:
+          return default
         raise e
 
     def __len__(self):
@@ -364,7 +374,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
               obj.save(using=database, force_insert=True)
               # Add the new object in the cache of available keys
               for x in selfReferencing:
-                if x.cache is not None:
+                if x.cache is not None and obj.pk not in x.cache:
                   x.cache[obj.pk] = obj
             if user:
               admin_log.append(
@@ -394,7 +404,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
         errors += 1
         yield (ERROR, None, None, None, "Exception during upload: %s" % e)
 
-  # Save all admin log entries
+  # Save remaining admin log entries
   LogEntry.objects.all().using(database).bulk_create(admin_log)
 
   yield (

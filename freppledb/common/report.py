@@ -1376,8 +1376,6 @@ class GridReport(View):
                  '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
 
           for filename, file in request.FILES.items():
-            from datetime import datetime
-            sss = datetime.now()
             numerrors = 0
             numwarnings = 0
             firsterror = True
@@ -1423,7 +1421,6 @@ class GridReport(View):
                   error[4]
                   )
             yield '</tbody></table></div>'
-            print("duration", datetime.now() - sss)
       except GeneratorExit:
         logging.warning('Connection Aborted')
 

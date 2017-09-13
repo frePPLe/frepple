@@ -30,7 +30,7 @@ const MetaCategory* LoadPlan::metadata;
 int LoadPlan::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans");
+  metadata = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
   registerFields<LoadPlan>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
@@ -288,6 +288,7 @@ LoadPlan* LoadPlan::getOtherLoadPlan() const
   throw LogicException("No matching loadplan found");
 }
 
+
 string LoadPlan::getStatus() const
 {
   if (flags & STATUS_CONFIRMED)
@@ -295,6 +296,7 @@ string LoadPlan::getStatus() const
   else
     return "proposed";
 }
+
 
 void LoadPlan::setStatus(const string& s)
 {
@@ -410,6 +412,42 @@ void LoadPlan::setLoad(Load* newld)
   if (o) o->ld = newld;
   ld = newld;
   setResource(newld->getResource());
+}
+
+
+Object* LoadPlan::reader(
+  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
+)
+{
+  // Pick up the operationplan attribute. An error is reported if it's missing.
+  const DataValue* opplanElement = in.get(Tags::operationplan);
+  if (!opplanElement)
+    throw DataException("Missing operationplan field");
+  Object* opplanobject = opplanElement->getObject();
+  if (!opplanobject || opplanobject->getType() != *OperationPlan::metadata)
+    throw DataException("Invalid operationplan field");
+  OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+
+  // Pick up the resource.
+  const DataValue* resourceElement = in.get(Tags::resource);
+  if (!resourceElement)
+    throw DataException("Resource must be provided");
+  Object* resourceobject = resourceElement->getObject();
+  if (!resourceobject || resourceobject->getType().category != Resource::metadata)
+    throw DataException("Invalid item field");
+  Resource* res = static_cast<Resource*>(resourceobject);
+
+  // Find the load for this resource on the operationplan.
+  // If multiple exist, we pick up the first one.
+  // If none is found, we throw a data error.
+  auto flplniter = opplan->getLoadPlans();
+  LoadPlan* flpln;
+  while ((flpln = flplniter.next()))
+  {
+    if (flpln->getResource() == res)
+      return flpln;
+  }
+  return nullptr;
 }
 
 

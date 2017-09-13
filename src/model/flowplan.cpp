@@ -210,7 +210,7 @@ Object* FlowPlan::reader(
   const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
 )
 {
-  // Pick up the forecast attribute. An error is reported if it's missing.
+  // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
   if (!opplanElement)
     throw DataException("Missing operationplan field");

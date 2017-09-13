@@ -7940,7 +7940,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     void setResource(Resource* res)
     {
-      setResource(res, false);
+      setResource(res, true);
     }
 
     /** Update the resource.<br>
@@ -8019,6 +8019,14 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       qty = quantity;
     }
 
+    void setOperationPlan(OperationPlan* o)
+    {
+      if (oper && oper != o)
+        throw DataException("Can't change the operationplan of a loadplan");
+      else
+        oper = o;
+    }
+
     /** Each operationplan has 2 loadplans per load: one at the start,
       * when the capacity consumption starts, and one at the end, when the
       * capacity consumption ends.<br>
@@ -8047,15 +8055,19 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
-      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan);
+      m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, &Cls::setOperationPlan, BASE + PARENT);
       m->addPointerField<Cls, Load>(Tags::load, &Cls::getLoad, &Cls::setLoad, DONT_SERIALIZE);
-      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource);
+      m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, BASE);
+      m->addPointerField<Cls, Resource>(Tags::alternate, &Cls::getResource, &Cls::setResource, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetup, nullptr, "", DONT_SERIALIZE);
     }
+
+    /** Finds the loadplan on the operationplan when we read data. */
+    static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
 
   private:
     /** Private constructor. It is called from the public constructor.<br>

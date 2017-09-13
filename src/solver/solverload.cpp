@@ -96,7 +96,7 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
 
     // Switch to this resource
     data->state->q_loadplan = lplan; // because q_loadplan can change!
-    lplan->setResource(res);
+    lplan->setResource(res, false);
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
@@ -186,7 +186,7 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     data->state->a_cost = beforeCost;
     data->state->a_penalty = beforePenalty;
     if (lplan->getResource() != bestAlternateSelection)
-      lplan->setResource(bestAlternateSelection);
+      lplan->setResource(bestAlternateSelection, false);
     lplan->getOperationPlan()->restore(originalOpplan);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();

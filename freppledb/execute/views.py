@@ -556,7 +556,7 @@ class FileManager:
           filelist.append(clean_filename)
     else:
       clean_filename = re.split(r'/|:|\\', files)[-1]
-      filelist.append(cleanfilename)
+      filelist.append(clean_filename)
 
     for clean_filename in filelist:
       try:

@@ -28,9 +28,7 @@
      </tr></thead>
 
      <tbody>
-     {% for inline_admin_form in inline_admin_formset %}{% if forloop.counter == 21 %}
-     <tr><td colspan="{{ inline_admin_form|cell_count }}"><div class="alert alert-warning" role="alert">{% blocktrans with limit=20 %}More records exists. Only {{limit}} are shown.{% endblocktrans %}</div></td></tr>
-     {% elif forloop.counter <= 20 %}
+     {% for inline_admin_form in inline_admin_formset %}
         {% if inline_admin_form.form.non_field_errors %}
         <tr><td colspan="{{ inline_admin_form|cell_count }}">
         <div class="alert alert-danger">{{ inline_admin_form.form.non_field_errors }}</div>
@@ -83,7 +81,11 @@
           <td class="delete">{% if inline_admin_form.original %}{{ inline_admin_form.deletion_field.field }}{% endif %}</td>
         {% endif %}
         </tr>
-     {% endif %}{% endfor %}
+       {% if inline_admin_formset.formset.there_are_more_records and forloop.last %}
+        <tr><td colspan="{{ inline_admin_form|cell_count }}"><div class="alert alert-warning" role="alert">
+        {% blocktrans with count=inline_admin_formset.formset.there_are_more_records.0 limit=inline_admin_formset.formset.there_are_more_records.1 %}Only {{limit}} out of {{count}} records are shown.{% endblocktrans %}</div></td></tr>
+       {% endif %}     
+     {% endfor %}
      </tbody>
    </table>
 </fieldset>

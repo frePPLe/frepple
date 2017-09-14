@@ -699,7 +699,7 @@ var grid = {
              '<div class="modal-content">'+
              '<div class="modal-header">'+
                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-               '<h4 class="modal-title">{% trans "Error retrieving data" %}</h4>'+
+               '<h4 class="modal-title">' + gettext("Error retrieving data") + '</h4>'+
              '</div>'+
              '<div class="modal-body">'+
                '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
@@ -869,7 +869,7 @@ var grid = {
             '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+              '<h4 class="modal-title">' + gettext("Error saving report settings") + '</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
@@ -1971,7 +1971,7 @@ var dashboard = {
             '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">{% trans "Error saving report settings" %}</h4>'+
+              '<h4 class="modal-title">' + gettext("Error saving report settings") + '</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+

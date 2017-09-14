@@ -446,12 +446,6 @@ jQuery.extend($.fn.fmatter, {
       }
     }
     return '';
-  },
-
-  currencyX : function (cellvalue, options, rowdata) {
-    var currPrefix = currency.split("'")[1];
-    var currSufix = currency.split("'")[3];
-    return isNaN(Math.round(cellvalue))?"": currPrefix+' '+(Math.round(cellvalue*100)/100).toFixed(2)+' '+currSufix;
   }
 });
 jQuery.extend($.fn.fmatter.percentage, {

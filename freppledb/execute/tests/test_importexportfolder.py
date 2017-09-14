@@ -16,62 +16,69 @@
 #
 
 import os
-import os.path
-import unittest
-from shutil import copy
+from shutil import rmtree
+import tempfile
 
 from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
 
-import freppledb.input as input
+from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
 
 
 class execute_with_commands(TransactionTestCase):
 
   fixtures = ["demo"]
 
+
   def setUp(self):
     # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
+    # Export and import from a temporary folder to avoid interfering with
+    # existing data files
+    self.datafolder = tempfile.mkdtemp()
+    settings.DATABASES[DEFAULT_DB_ALIAS]['FILEUPLOADFOLDER'] = self.datafolder
 
-  @unittest.skipUnless(
-    os.path.isdir(settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER', '')),
-    "Requires FILEUPLOADFOLDER to be configured"
-    )
+
+  def tearDown(self):
+    rmtree(self.datafolder)
+
 
   def test_exportimportfromfolder(self):
 
     # Run frePPLe on the test database. No longer needed because records are already in the fixture, in Enterprise conficts with webservice
     #management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
 
-    self.assertTrue(input.models.ManufacturingOrder.objects.count() > 30)
-    self.assertTrue(input.models.PurchaseOrder.objects.count() > 20)
-    self.assertTrue(input.models.DistributionOrder.objects.count() > 0)
+    self.assertTrue(ManufacturingOrder.objects.count() > 30)
+    self.assertTrue(PurchaseOrder.objects.count() > 20)
+    self.assertTrue(DistributionOrder.objects.count() > 0)
 
-    #the exporttofolder filters by status so the count must also filter
-    countMO = input.models.ManufacturingOrder.objects.filter(status = 'proposed').count()
-    countPO = input.models.PurchaseOrder.objects.filter(status = 'proposed').count()
-    countDO = input.models.DistributionOrder.objects.filter(status = 'proposed').count()
+    # The exporttofolder filters by status so the count must also filter
+    countMO = ManufacturingOrder.objects.filter(status='proposed').count()
+    countPO = PurchaseOrder.objects.filter(status='proposed').count()
+    countDO = DistributionOrder.objects.filter(status='proposed').count()
 
-    management.call_command('frepple_exporttofolder', )
+    management.call_command('frepple_exporttofolder')
 
-    input.models.ManufacturingOrder.objects.all().delete()
-    input.models.DistributionOrder.objects.all().delete()
-    input.models.PurchaseOrder.objects.all().delete()
+    ManufacturingOrder.objects.all().delete()
+    DistributionOrder.objects.all().delete()
+    PurchaseOrder.objects.all().delete()
 
-    self.assertEqual(input.models.DistributionOrder.objects.count(), 0)
-    self.assertEqual(input.models.PurchaseOrder.objects.count(),0)
-    self.assertEqual(input.models.ManufacturingOrder.objects.count(), 0)
+    self.assertEqual(DistributionOrder.objects.count(), 0)
+    self.assertEqual(PurchaseOrder.objects.count(), 0)
+    self.assertEqual(ManufacturingOrder.objects.count(), 0)
 
-    importFolder = settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER')
-    exportFolder = os.path.join(settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER'), 'export')
-    for file in os.listdir(exportFolder):
+    # Move export files to the import folder
+    for file in os.listdir(os.path.join(self.datafolder, 'export')):
       if file.endswith(".csv.gz"):
-        copy(os.path.join(exportFolder, file), importFolder)
+        os.rename(
+          os.path.join(self.datafolder, 'export', file),
+          os.path.join(self.datafolder, file)
+          )
 
-    management.call_command('frepple_importfromfolder', )
-    self.assertEqual(input.models.DistributionOrder.objects.count(), countDO)
-    self.assertEqual(input.models.PurchaseOrder.objects.count(), countPO)
-    self.assertEqual(input.models.ManufacturingOrder.objects.count(), countMO)
+    management.call_command('frepple_importfromfolder')
+
+    self.assertEqual(DistributionOrder.objects.count(), countDO)
+    self.assertEqual(PurchaseOrder.objects.count(), countPO)
+    self.assertEqual(ManufacturingOrder.objects.count(), countMO)

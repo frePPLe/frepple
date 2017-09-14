@@ -183,10 +183,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
 )
 
-# Prefix and suffix for currency strings
-CURRENCY=("", "$")           # Dollar symbol
-#CURRENCY=("", u"\u20AC")    # Euro symbol
-
 # Installed applications.
 # The order is important: urls, templates and menus of the earlier entries
 # take precedence over and override later entries.

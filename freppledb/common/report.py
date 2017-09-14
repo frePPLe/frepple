@@ -298,7 +298,7 @@ def getCurrency():
     if len(cur) < 2:
       return ("", " %s" % cur[0])
     else:
-      return (" %s" % cur[0], " %s" % cur[1])
+      return ("%s " % cur[0], " %s" % cur[1])
   except:
     return ("", " $")
 
@@ -476,12 +476,6 @@ class GridReport(View):
   def extra_context(reportclass, request, *args, **kwargs):
     return {}
 
-  @classmethod
-  def getCurrency(reportclass, request, *args, **kwargs):
-    try:
-      request.report_currency = Parameter.objects.using(request.database).get(name='CURRENCY').value
-    except:
-      request.report_currency = settings.CURRENCY
 
   @classmethod
   def getBuckets(reportclass, request, *args, **kwargs):
@@ -1060,8 +1054,6 @@ class GridReport(View):
 
   @classmethod
   def get(reportclass, request, *args, **kwargs):
-    # Pick the currency
-    reportclass.getCurrency(request, args, kwargs)
 
     # Pick up the list of time buckets
     if reportclass.hasTimeBuckets:

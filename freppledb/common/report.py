@@ -425,6 +425,9 @@ class GridReport(View):
   # Define a list of actions
   actions = None
 
+  # Currency
+  currency = None
+
   _attributes_added = False
 
   @classmethod
@@ -453,6 +456,12 @@ class GridReport(View):
   def extra_context(reportclass, request, *args, **kwargs):
     return {}
 
+  @classmethod
+  def getCurrency(reportclass, request, *args, **kwargs):
+    try:
+      request.report_currency = Parameter.objects.using(request.database).get(name='CURRENCY').value
+    except:
+      request.report_currency = settings.CURRENCY
 
   @classmethod
   def getBuckets(reportclass, request, *args, **kwargs):
@@ -1031,6 +1040,9 @@ class GridReport(View):
 
   @classmethod
   def get(reportclass, request, *args, **kwargs):
+    # Pick the currency
+    reportclass.getCurrency(request, args, kwargs)
+
     # Pick up the list of time buckets
     if reportclass.hasTimeBuckets:
       reportclass.getBuckets(request, args, kwargs)
@@ -1089,7 +1101,6 @@ class GridReport(View):
         'cross_idx': cross_idx,
         'cross_list': cross_list,
         'object_id': args and quote(args[0]) or None,
-        'preferences': prefs,
         'page': prefs and prefs.get('page', 1) or 1,
         'sord': sord,
         'sidx': sidx,

@@ -132,7 +132,7 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
       switch (l->getSearch())
       {
         case PRIORITY:
-          val = rscSkill->getPriority();
+          val = rscSkill ? rscSkill->getPriority() : 0;
           break;
         case MINCOST:
           val = deltaCost / lplan->getOperationPlan()->getQuantity();

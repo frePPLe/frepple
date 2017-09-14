@@ -521,7 +521,7 @@
 {"pk": "Order 09", "model": "input.demand", "fields": {"item": "product 09-01", "customer": "Client", "location": "factory", "due": "2014-01-01 00:00:00", "priority": 8, "minshipment": "500", "quantity": "5000"}},
 {"pk": "Order 10", "model": "input.demand", "fields": {"item": "product 10-01", "customer": "Client", "location": "factory", "due": "2014-01-01 00:00:00", "priority": 10, "minshipment": "1", "quantity": "5000"}},
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00"}},
-{"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}}
+{"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
 {"model": "common.bucket", "fields": {"name":"year","description":"Yearly time buckets","level":1}},
 {"model": "common.bucket", "fields": {"name":"quarter","description":"Quarterly time buckets","level":2}},
 {"model": "common.bucket", "fields": {"name":"month","description":"Monthly time buckets","level":3}},

@@ -186,7 +186,10 @@ class GridField(object):
     if self.hidden:
       o.append(',"hidden":true')
     if self.extra:
-      o.append(",%s" % force_text(self.extra))
+      if isinstance(self.extra, collections.Callable):
+        o.append(",%s" % force_text(self.extra()))
+      else:
+        o.append(",%s" % force_text(self.extra))
     return ''.join(o)
 
   name = None
@@ -289,9 +292,26 @@ class GridFieldBoolNullable(GridFieldChoice):
     super().__init__(name, **kwargs)
 
 
+def getCurrency():
+  try:
+    cur = Parameter.getValue('currency').split(",")
+    if len(cur) < 2:
+      return ("", " %s" % cur[0])
+    else:
+      return (" %s" % cur[0], " %s" % cur[1])
+  except:
+    return ("", " $")
+
+
 class GridFieldCurrency(GridField):
   formatter = 'currency'
-  extra = '"formatoptions":{"prefix":"%s", "suffix":"%s", "defaultValue":""}' % settings.CURRENCY
+  def extra(self):
+    cur = getCurrency()
+    return '"formatoptions":%s' % json.dumps({
+      "prefix": cur[0],
+      "suffix": cur[1],
+      "defaultvalue": ""
+      })
   width = 80
 
 

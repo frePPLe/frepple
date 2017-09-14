@@ -9,7 +9,7 @@ var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var resizing;
 var editrow;
 var editcol;
-var currency = "{{request.report_currency|safe}}";
+var currency = "";
 
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}

@@ -118,6 +118,7 @@
 {"model": "common.parameter", "fields": {"name":"plan.planSafetyStockFirst","value":"false","description":"Controls whether safety stock is planned before or after the demand. Accepted values are false (default) and true"}},
 {"model": "common.parameter", "fields": {"name":"plan.rotateResources","value":"true","description":"When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
 {"model": "common.parameter", "fields": {"name":"Worker alive","value":"2017-04-06 15:13:46"}},
+{"model": "common.parameter", "fields": {"name":"currency","value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
 {"model": "common.bucket", "fields": {"name":"year","description":"Yearly time buckets","level":1}},
 {"model": "common.bucket", "fields": {"name":"quarter","description":"Quarterly time buckets","level":2}},
 {"model": "common.bucket", "fields": {"name":"month","description":"Monthly time buckets","level":3}},

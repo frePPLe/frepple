@@ -89,6 +89,7 @@
 {"model": "common.parameter", "fields": {"name":"plan.calendar","value":"","description":"Specifies a calendar with dates to which the plan is aligned"}},
 {"model": "common.parameter", "fields": {"name":"plan.webservice","value":"false","description":"Specifies whether to use the web service or not"}},
 {"model": "common.parameter", "fields": {"name":"Worker alive","value":"2017-04-06 15:19:33"}},
+{"model": "common.parameter", "fields": {"name":"currency","value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
 {"model": "common.bucket", "fields": {"name":"year","description":"Yearly time buckets","level":1}},
 {"model": "common.bucket", "fields": {"name":"quarter","description":"Quarterly time buckets","level":2}},
 {"model": "common.bucket", "fields": {"name":"month","description":"Monthly time buckets","level":3}},

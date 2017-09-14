@@ -18,6 +18,7 @@
 import os
 import os.path
 import unittest
+from shutil import copy
 
 from django.conf import settings
 from django.core import management
@@ -63,6 +64,12 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(input.models.DistributionOrder.objects.count(), 0)
     self.assertEqual(input.models.PurchaseOrder.objects.count(),0)
     self.assertEqual(input.models.ManufacturingOrder.objects.count(), 0)
+
+    importFolder = settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER')
+    exportFolder = os.path.join(settings.DATABASES[DEFAULT_DB_ALIAS].get('FILEUPLOADFOLDER'), 'export')
+    for file in os.listdir(exportFolder):
+      if file.endswith(".csv.gz"):
+        copy(os.path.join(exportFolder, file), importFolder)
 
     management.call_command('frepple_importfromfolder', )
     self.assertEqual(input.models.DistributionOrder.objects.count(), countDO)

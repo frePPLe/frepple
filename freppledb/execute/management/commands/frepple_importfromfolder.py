@@ -125,11 +125,19 @@ class Command(BaseCommand):
           model = None
           contenttype_id = None
           for m, ct in all_models:
+            # Try with translated model names
             if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
               print("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
               break
+            # Try with English model names
+            with translation.override('en'):
+              if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                model = m
+                contenttype_id = ct
+                print("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+                break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
             print("%s Ignoring data in file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)

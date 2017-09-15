@@ -169,6 +169,7 @@ class ManufacturingOrderWidget(Widget):
   exporturl = True
   fence1 = 7
   fence2 = 30
+  currency = ("", "E")
 
   def args(self):
     return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
@@ -276,12 +277,13 @@ class ManufacturingOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), getCurrency()[0], getCurrency()[1])
+    ''' % (force_text(_("units")), currency[0], currency[1])
 
   @classmethod
   def render(cls, request=None):
     fence1 = int(request.GET.get('fence1', cls.fence1))
     fence2 = int(request.GET.get('fence2', cls.fence2))
+    currency = getCurrency()
     try:
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
@@ -358,7 +360,7 @@ class ManufacturingOrderWidget(Widget):
       elif rec[0] == 1:
         result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
@@ -367,7 +369,7 @@ class ManufacturingOrderWidget(Widget):
         limit_fence1 = current + timedelta(days=fence1)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
@@ -376,7 +378,7 @@ class ManufacturingOrderWidget(Widget):
         limit_fence2 = current + timedelta(days=fence2)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
@@ -397,6 +399,7 @@ class DistributionOrderWidget(Widget):
   exporturl = True
   fence1 = 7
   fence2 = 30
+  currency = ('', ' $')
 
   def args(self):
     return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
@@ -504,12 +507,13 @@ class DistributionOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), getCurrency()[0], getCurrency()[1])
+    ''' % (force_text(_("units")), currency[0], currency[1])
 
   @classmethod
   def render(cls, request=None):
     fence1 = int(request.GET.get('fence1', cls.fence1))
     fence2 = int(request.GET.get('fence2', cls.fence2))
+    currency = getCurrency()
     try:
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
@@ -583,7 +587,7 @@ class DistributionOrderWidget(Widget):
       elif rec[0] == 1:
         result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1], request.prefix,
+          currency[0], rec[5], currency[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
           ))
@@ -591,7 +595,7 @@ class DistributionOrderWidget(Widget):
         limit_fence1 = current + timedelta(days=fence1)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
@@ -600,7 +604,7 @@ class DistributionOrderWidget(Widget):
         limit_fence2 = current + timedelta(days=fence2)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})
@@ -622,6 +626,7 @@ class PurchaseOrderWidget(Widget):
   fence1 = 7
   fence2 = 30
   supplier = None
+  currency = ('', ' $')
 
   def args(self):
     if self.supplier:
@@ -735,13 +740,14 @@ class PurchaseOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), getCurrency()[0], getCurrency()[1])
+    ''' % (force_text(_("units")), currency[0], currency[1])
 
   @classmethod
   def render(cls, request=None):
     fence1 = int(request.GET.get('fence1', cls.fence1))
     fence2 = int(request.GET.get('fence2', cls.fence2))
     supplier = request.GET.get('supplier', cls.supplier)
+    currency = getCurrency()
     try:
       db = _thread_locals.request.database or DEFAULT_DB_ALIAS
     except:
@@ -834,8 +840,8 @@ class PurchaseOrderWidget(Widget):
       elif rec[0] == 1:
         result.append('</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5],
-          getCurrency()[1], request.prefix,
+          currency[0], rec[5],
+          currency[1], request.prefix,
           force_text(_("Review")),
           force_text(_("confirmed orders"))
           ))
@@ -843,7 +849,7 @@ class PurchaseOrderWidget(Widget):
         limit_fence1 = current + timedelta(days=fence1)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence1.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence1})
@@ -852,7 +858,7 @@ class PurchaseOrderWidget(Widget):
         limit_fence2 = current + timedelta(days=fence2)
         result.append('<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>' % (
           rec[3], rec[4], force_text(_("units")),
-          getCurrency()[0], rec[5], getCurrency()[1],
+          currency[0], rec[5], currency[1],
           request.prefix, limit_fence2.strftime("%Y-%m-%d"),
           force_text(_("Review")),
           force_text(_("proposed orders within %(fence)s days") % {'fence': fence2})

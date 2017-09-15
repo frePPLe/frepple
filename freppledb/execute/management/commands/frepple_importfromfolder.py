@@ -109,7 +109,8 @@ class Command(BaseCommand):
       translation.activate(settings.LANGUAGE_CODE)
 
       # Execute
-      if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
+      if 'FILEUPLOADFOLDER' in settings.DATABASES[self.database] \
+        and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
         self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'importfromfolder.log'), "a")

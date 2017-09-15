@@ -29,7 +29,7 @@ Parameter                   Description
 =========================== =======================================================================
 currentdate                 | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS.
                               If the parameter is missing or empty the system time is used as current date.
-currency                    | Currency symbol or standard code.
+currency                    | Currency symbol.
                             | This parameter may be only set on the default database and will be
                              globally applied, including in all the scenarios.
                             | If the parameter is missing or empty the currency symbol will be the $.

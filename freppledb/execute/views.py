@@ -512,7 +512,7 @@ class FileManager:
       try:
         # Validate file name
         clean_filename = re.split(r'/|:|\\', filename)[-1]
-        if not extensions or not clean_filename.endswith(extensions):
+        if not extensions or not clean_filename.lower().endswith(extensions):
           response.write('%s: %s\n' % (clean_filename, _("Filename extension must be among %(ext)s") % {"ext": ", ".join(extensions)}))
           errorcount += 1
           continue

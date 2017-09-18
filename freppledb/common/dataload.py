@@ -118,7 +118,12 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
     __setitem__ = None
     __delitem__ = None
 
-  return _parseData(model, data, MappedRow, user, database, ping)
+
+  if hasattr(model, 'parseData'):
+    # Some models have their own special uploading logic
+    return model.parseData(data, MappedRow, user, database, ping)
+  else:
+    return _parseData(model, data, MappedRow, user, database, ping)
 
 
 def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):

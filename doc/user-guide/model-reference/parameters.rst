@@ -41,6 +41,9 @@ loading_time_units          | Time units to be used for the resource report.
 plan.administrativeLeadtime | Specifies an administrative lead time in days.
                             | FrePPLe will plan the sales orders one administrative lead time ahead of the due date.
                             | Accepted values : Any positive decimal number.
+plan.autoFenceOperations    | The number of days the solver should wait for a confirmed 
+                              replenishment before generating a proposed order. 
+                            | Default:0 (deactivated).
 plan.calendar               | Name of a calendar to align new operationplans with.
                             | When this parameter is used, the plan results are effectively grouped
                              in the time buckets defined in this calendar.

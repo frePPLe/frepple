@@ -169,7 +169,6 @@ class ManufacturingOrderWidget(Widget):
   exporturl = True
   fence1 = 7
   fence2 = 30
-  currency = ("", "E")
 
   def args(self):
     return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
@@ -253,7 +252,7 @@ class ManufacturingOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
@@ -277,7 +276,7 @@ class ManufacturingOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), currency[0], currency[1])
+    ''' % force_text(_("units"))
 
   @classmethod
   def render(cls, request=None):
@@ -399,7 +398,6 @@ class DistributionOrderWidget(Widget):
   exporturl = True
   fence1 = 7
   fence2 = 30
-  currency = ('', ' $')
 
   def args(self):
     return "?%s" % urlencode({'fence1': self.fence1, 'fence2': self.fence2})
@@ -483,7 +481,7 @@ class DistributionOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / '+currency[0]+' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
@@ -507,7 +505,7 @@ class DistributionOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), currency[0], currency[1])
+    ''' % force_text(_("units"))
 
   @classmethod
   def render(cls, request=None):
@@ -626,7 +624,6 @@ class PurchaseOrderWidget(Widget):
   fence1 = 7
   fence2 = 30
   supplier = None
-  currency = ('', ' $')
 
   def args(self):
     if self.supplier:
@@ -716,7 +713,7 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr("fill-opacity", 0)
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / %s <span style="color: #8BBA00;">' + d[3] + "%s</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
@@ -740,7 +737,7 @@ class PurchaseOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    ''' % (force_text(_("units")), currency[0], currency[1])
+    ''' % force_text(_("units"))
 
   @classmethod
   def render(cls, request=None):

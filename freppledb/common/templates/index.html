@@ -20,6 +20,7 @@
 {% block extrahead %}{{block.super}}
 <script type="text/javascript" src="/static/js/d3.min.js"></script>
 <script>
+	var currency = JSON.parse('{{currency|safe}}');
   $(function() {
 	  dashboard.dragAndDrop();
 
@@ -34,6 +35,8 @@
     });
 
   });
+
+
 
 </script>
 {% endblock %}

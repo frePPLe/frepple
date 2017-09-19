@@ -42,6 +42,7 @@ from django.views.decorators.debug import sensitive_variables
 from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
 from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
+from freppledb.common.report import getCurrency
 
 from freppledb.admin import data_site
 from freppledb import VERSION
@@ -64,6 +65,7 @@ def cockpit(request):
     context= {
       'title': _('cockpit'),
       'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
+      'currency': json.dumps(getCurrency())
       }
     )
 

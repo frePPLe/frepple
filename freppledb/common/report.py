@@ -2232,7 +2232,7 @@ def exportWorkbook(request):
           source = True  # Put the source field at the end
         elif i.name == 'lastmodified':
           lastmodified = True  # Put the last-modified field at the very end
-        elif not (exclude and i.name in exclude and not i.name == model._meta.pk.name.lower()):
+        elif not (exclude and i.name in exclude):
           fields.append(i.column)
           cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
           cell.style = 'Accent1'

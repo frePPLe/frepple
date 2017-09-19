@@ -165,7 +165,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
   model = ItemSupplier
   save_on_top = True
   raw_id_fields = ('item', 'supplier', 'resource')
-  exclude = ('source',)
+  exclude = ('source', 'id')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_itemsupplier_change", "permissions": "input.change_itemsupplier"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_itemsupplier_comment"},
@@ -179,7 +179,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
   model = ItemDistribution
   save_on_top = True
   raw_id_fields = ('item', 'resource')
-  exclude = ('source',)
+  exclude = ('source', 'id')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_itemdistribution_change", "permissions": "input.change_itemdistribution"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_itemdistribution_comment"},
@@ -237,7 +237,7 @@ class SubOperation_admin(MultiDBModelAdmin):
   model = SubOperation
   raw_id_fields = ('operation', 'suboperation')
   save_on_top = True
-  exclude = ('source',)
+  exclude = ('source', 'id')
 data_site.register(SubOperation, SubOperation_admin)
 
 
@@ -353,6 +353,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
   model = OperationMaterial
   raw_id_fields = ('operation', 'item',)
   save_on_top = True
+  exclude = ('id',)
   fieldsets = (
     (None, {'fields': ('item', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
     (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
@@ -370,6 +371,7 @@ class OperationResource_admin(MultiDBModelAdmin):
   model = OperationResource
   raw_id_fields = ('operation', 'resource', 'skill')
   save_on_top = True
+  exclude = ('id',)
   fieldsets = (
     (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
     (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
@@ -387,7 +389,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
   model = ManufacturingOrder
   raw_id_fields = ('operation', 'owner',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'delay', 'origin', 'destination', 'item', 'supplier', 'location', 'demand', 'name', 'due')
+  exclude = ('type', 'source', 'criticality', 'delay', 'origin', 'destination', 'item', 'supplier', 'location', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_manufacturingorder_change", "permissions": "input.change_manufacturingorder"},
     ]
@@ -398,7 +400,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
   raw_id_fields = ('item',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'delay', 'operation', 'owner', 'supplier', 'location', 'demand', 'name', 'due')
+  exclude = ('type', 'source', 'criticality', 'delay', 'operation', 'owner', 'supplier', 'location', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_distributionorder_change", "permissions": "input.change_distributionorder"},
     ]
@@ -409,7 +411,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
   model = PurchaseOrder
   raw_id_fields = ('item', 'supplier',)
   save_on_top = True
-  exclude = ('type', 'id', 'source', 'criticality', 'delay', 'operation', 'owner', 'origin', 'destination', 'demand', 'name', 'due')
+  exclude = ('type', 'source', 'criticality', 'delay', 'operation', 'owner', 'origin', 'destination', 'demand', 'name', 'due')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_purchaseorder_change", "permissions": "input.change_purchaseorder"},
     ]

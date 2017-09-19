@@ -132,7 +132,7 @@ class BucketDetail_inline(MultiDBTabularInline):
 class BucketDetail_admin(MultiDBModelAdmin):
   model = BucketDetail
   save_on_top = True
-  exclude = ('source',)
+  exclude = ('source', 'id')
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:common_bucketdetail_change", "permission": 'common.change_bucketdetail'},
     {"name": 'comments', "label": _("comments"), "view": "admin:common_bucketdetail_comment"},

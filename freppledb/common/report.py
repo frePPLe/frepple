@@ -445,9 +445,6 @@ class GridReport(View):
   # Define a list of actions
   actions = None
 
-  # Currency
-  currency = None
-
   _attributes_added = False
 
   @classmethod

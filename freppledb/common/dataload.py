@@ -463,3 +463,7 @@ class BulkForeignKeyFormField(forms.fields.Field):
           'Select a valid choice. That choice is not one of'
           ' the available choices.'
           ))
+
+
+  def has_changed(self, initial, data):
+    return initial != data

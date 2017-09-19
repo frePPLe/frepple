@@ -296,9 +296,9 @@ def getCurrency():
   try:
     cur = Parameter.getValue('currency').split(",")
     if len(cur) < 2:
-      return ("", " %s" % cur[0])
+      return ("", " %s" % escape(cur[0]))
     else:
-      return ("%s " % cur[0], " %s" % cur[1])
+      return ("%s " % escape(cur[0]), " %s" % escape(cur[1]))
   except:
     return ("", " $")
 

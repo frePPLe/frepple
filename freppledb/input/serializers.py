@@ -19,9 +19,18 @@ from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieve
 import freppledb.input.models
 
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
-
+from django_filters import rest_framework as filters
 from freppledb.common.api.serializers import ModelSerializer
 
+
+class CalendarFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Calendar
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'defaultvalue': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'source': ['exact', 'in', ],
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'defaultvalue', 'source', 'lastmodified')
 
 class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -34,33 +43,57 @@ class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
 class CalendarAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Calendar.objects.all()
     serializer_class = CalendarSerializer
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'defaultvalue', 'source', 'lastmodified')
+    filter_class = CalendarFilter
 
 class CalendardetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Calendar.objects.all()
     serializer_class = CalendarSerializer
+    filter_class = CalendarFilter
 
+
+class CalendarBucketFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.CalendarBucket
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'calendar': ['exact', 'in', ],
+              'value': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'monday': ['exact', ], 'tuesday': ['exact', ], 'wednesday': ['exact', ], 'thursday': ['exact', ],
+              'friday': ['exact', ], 'saturday': ['exact', ], 'sunday': ['exact', ], 'starttime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'endtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'source': ['exact', 'in', ],
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ]}
+
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'defaultvalue', 'source', 'lastmodified')
 
 class CalendarBucketSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.CalendarBucket
-      list_serializer_class = BulkListSerializer
       fields = ('id', 'calendar', 'startdate', 'enddate', 'value', 'priority', 'monday', 'tuesday', 'wednesday',
-                  'thursday', 'friday', 'saturday', 'sunday', 'starttime', 'endtime', 'source', 'lastmodified')
-
+                'thursday', 'friday', 'saturday', 'sunday', 'starttime', 'endtime', 'source', 'lastmodified')
+      list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial=True
 
 class CalendarBucketAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()
-    serializer_class = CalendarBucketSerializer
     fields = ('id', 'calendar', 'startdate', 'enddate', 'value', 'priority', 'monday', 'tuesday', 'wednesday',
-                'thursday', 'friday', 'saturday', 'sunday', 'starttime', 'endtime', 'source', 'lastmodified')
+              'thursday', 'friday', 'saturday', 'sunday', 'starttime', 'endtime', 'source', 'lastmodified')
+    serializer_class = CalendarBucketSerializer
+    filter_class = CalendarBucketFilter
 
 class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()
     serializer_class = CalendarBucketSerializer
+    filter_class = CalendarBucketFilter
 
+
+class LocationFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Location
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'available': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'source': ['exact', 'in', ],
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 class LocationSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -73,12 +106,21 @@ class LocationSerializer(BulkSerializerMixin, ModelSerializer):
 class LocationAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Location.objects.all()
     serializer_class = LocationSerializer
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
+    filter_class = LocationFilter
 
 class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Location.objects.all()
     serializer_class = LocationSerializer
+    filter_class = LocationFilter
 
+
+class CustomerFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Customer
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -91,12 +133,21 @@ class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
 class CustomerAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Customer.objects.all()
     serializer_class = CustomerSerializer
-    filter_fields = ( 'name', 'description', 'category', 'subcategory', 'source', 'lastmodified')
+    filter_class = CustomerFilter
 
 class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Customer.objects.all()
     serializer_class = CustomerSerializer
+    filter_class = CustomerFilter
 
+
+class ItemFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Item
+    fields = {'name': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
 
 class ItemSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -108,13 +159,22 @@ class ItemSerializer(BulkSerializerMixin, ModelSerializer):
 
 class ItemAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Item.objects.all()
-    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
     serializer_class = ItemSerializer
+    filter_class = ItemFilter
 
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Item.objects.all()
     serializer_class = ItemSerializer
+    filter_class = ItemFilter
 
+
+class SupplierFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Supplier
+    fields = {'name': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -128,33 +188,61 @@ class SupplierAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Supplier.objects.all()
     serializer_class = SupplierSerializer
     filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'source', 'lastmodified')
+    filter_class = SupplierFilter
 
 class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Supplier.objects.all()
     serializer_class = SupplierSerializer
+    filter_class = SupplierFilter
 
+
+class ItemSupplierFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.ItemSupplier
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'item': ['exact', 'in', ],
+              'location': ['exact', 'in', ], 'supplier': ['exact', 'in', ],
+              'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum', 'sizemultiple',
+                     'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
 
 class ItemSupplierSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.ItemSupplier
       fields = ('id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum', 'sizemultiple',
-                 'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+                'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class ItemSupplierAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.ItemSupplier.objects.all()
     serializer_class = ItemSupplierSerializer
-
-
-    filter_fields = ('id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum', 'sizemultiple',
-                 'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+    filter_class = ItemSupplierFilter
 
 class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ItemSupplier.objects.all()
     serializer_class = ItemSupplierSerializer
+    filter_class = ItemSupplierFilter
 
+
+class ItemDistributionFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.ItemDistribution
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'item': ['exact', 'in', ],
+              'location': ['exact', 'in', ], 'origin': ['exact', 'in', ],
+              'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum', 'sizemultiple',
+                     'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
 
 class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -163,66 +251,111 @@ class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
                  'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class ItemDistributionAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.ItemDistribution.objects.all()
     serializer_class = ItemDistributionSerializer
-
-
-    filter_fields = ('id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum', 'sizemultiple',
-                 'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+    filter_class = ItemDistributionFilter
 
 class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ItemDistribution.objects.all()
     serializer_class = ItemDistributionSerializer
+    filter_class = ItemDistributionFilter
 
 
-class OperationSerializer(BulkSerializerMixin, ModelSerializer):
-    class Meta:
-      model = freppledb.input.models.Operation
-      fields = (
-        'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
-        'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end',
-        'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified'
-        )
-      list_serializer_class = BulkListSerializer
-      update_lookup_field = 'name'
-      partial=True
+class OperationFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Operation
+    fields = {'name': ['exact', 'contains', ], 'type': ['exact', 'in', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'location': ['exact', 'in', ], 'item': ['exact', 'in', ],
+              'posttime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'fence': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'sizemaximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'duration_per': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'search': ['exact', 'in', ],
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
 
-class OperationAPI(frePPleListCreateAPIView):
-    queryset = freppledb.input.models.Operation.objects.all()
-    serializer_class = OperationSerializer
     filter_fields = (
       'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
       'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end',
       'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified'
       )
 
-class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = freppledb.input.models.Operation.objects.all()
-    serializer_class = OperationSerializer
+class OperationSerializer(BulkSerializerMixin, ModelSerializer):
+  class Meta:
+    model = freppledb.input.models.Operation
+    fields = (
+      'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
+      'posttime', 'sizeminimum', 'sizemultiple', 'sizemaximum', 'effective_start', 'effective_end',
+      'cost', 'duration', 'duration_per', 'search', 'source', 'lastmodified'
+      )
+    list_serializer_class = BulkListSerializer
+    update_lookup_field = 'name'
+    partial = True
 
+class OperationAPI(frePPleListCreateAPIView):
+  queryset = freppledb.input.models.Operation.objects.all()
+  serializer_class = OperationSerializer
+  filter_class = OperationFilter
+
+class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
+  queryset = freppledb.input.models.Operation.objects.all()
+  serializer_class = OperationSerializer
+  filter_class = OperationFilter
+
+
+class SubOperationFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.SubOperation
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'operation': ['exact', 'in', ],
+              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'suboperation': ['exact', 'in', ],
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'operation', 'priority', 'suboperation', 'effective_start', 'effective_end', 'source', 'lastmodified')
 
 class SubOperationSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.SubOperation
-      fields = ('id','operation', 'priority', 'suboperation', 'effective_start', 'effective_end', 'source', 'lastmodified')
+      fields = ('id', 'operation', 'priority', 'suboperation', 'effective_start', 'effective_end', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class SubOperationAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.SubOperation.objects.all()
     serializer_class = SubOperationSerializer
-
-
-    filter_fields = ('id','operation', 'priority', 'suboperation', 'effective_start', 'effective_end', 'source', 'lastmodified')
+    filter_class = SubOperationFilter
 
 class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SubOperation.objects.all()
     serializer_class = SubOperationSerializer
+    filter_class = SubOperationFilter
 
+
+class BufferFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Buffer
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'type': ['exact', 'in', ], 'location': ['exact', 'in', ], 'item': ['exact', 'in', ],
+              'onhand': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'minimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'minimum_calendar': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'min_interval': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = (
+      'name', 'description', 'category', 'subcategory', 'type', 'location',
+      'item', 'onhand', 'minimum', 'minimum_calendar', 'min_interval',
+      'source', 'lastmodified'
+      )
 
 class BufferSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -234,7 +367,7 @@ class BufferSerializer(BulkSerializerMixin, ModelSerializer):
         )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class BufferAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Buffer.objects.all()
@@ -244,11 +377,23 @@ class BufferAPI(frePPleListCreateAPIView):
       'item', 'onhand', 'minimum', 'minimum_calendar', 'min_interval',
       'source', 'lastmodified'
       )
+    filter_class = BufferFilter
 
 class BufferdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = freppledb.input.models.Buffer.objects.all()
-    serializer_class = BufferSerializer
+  queryset = freppledb.input.models.Buffer.objects.all()
+  serializer_class = BufferSerializer
+  filter_class = BufferFilter
 
+
+class SetupMatrixFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.SetupMatrix
+    fields = {'name': ['exact', 'in', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = (
+      'name', 'source', 'lastmodified'
+      )
 
 class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -261,14 +406,22 @@ class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
 class SetupMatrixAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.SetupMatrix.objects.all()
     serializer_class = SetupMatrixSerializer
-
-
-    filter_fields = ('name', 'source', 'lastmodified')
+    filter_class = SetupMatrixFilter
 
 class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SetupMatrix.objects.all()
     serializer_class = SetupMatrixSerializer
+    filter_class = SetupMatrixFilter
 
+
+class SetupRuleFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.SetupRule
+    fields = {'id': ['exact', 'in', 'contains', ],
+              'setupmatrix': ['exact', 'in', ], 'fromsetup': ['exact', 'in', ], 'tosetup': ['exact', 'in', ],
+              'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
 
 class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -276,17 +429,32 @@ class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'setupmatrix'
-      partial=True
+      partial = True
 
 class SetupRuleAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.SetupRule.objects.all()
     serializer_class = SetupRuleSerializer
-    filter_fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
+    filter_class = SetupRuleFilter
 
 class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SetupRule.objects.all()
     serializer_class = SetupRuleSerializer
+    filter_class = SetupRuleFilter
 
+
+class ResourceFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Resource
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
+              'type': ['exact', 'in', ], 'maximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'maximum_calendar': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'location': ['exact', 'in', ],
+              'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'maxearly': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'setupmatrix': ['exact', 'in', ], 'setupmatrix': ['exact', 'in', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'type', 'maximum', 'maximum_calendar',
+                     'location', 'cost', 'maxearly', 'setupmatrix', 'setup', 'source', 'lastmodified')
 
 class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -295,20 +463,26 @@ class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
                 'location',  'cost', 'maxearly', 'setupmatrix', 'setup', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class ResourceAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Resource.objects.all()
     serializer_class = ResourceSerializer
-
-
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'type', 'maximum', 'maximum_calendar',
-                'location',  'cost', 'maxearly', 'setupmatrix', 'setup', 'source', 'lastmodified')
+    filter_class = ResourceFilter
 
 class ResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Resource.objects.all()
     serializer_class = ResourceSerializer
+    filter_class = ResourceFilter
 
+
+class SkillFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Skill
+    fields = {'name': ['exact', 'in', 'contains', ], 'source': ['exact', 'in', ],
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('name', 'source', 'lastmodified')
 
 class SkillSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -316,17 +490,28 @@ class SkillSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class SkillAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Skill.objects.all()
     serializer_class = SkillSerializer
-    filter_fields = ('name', 'source', 'lastmodified')
+    filter_class = SkillFilter
 
 class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Skill.objects.all()
     serializer_class = SkillSerializer
+    filter_class = SkillFilter
 
+
+class ResourceSkillFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.ResourceSkill
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'skill': ['exact', 'in', ],
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
 
 class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -334,17 +519,31 @@ class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('id', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class ResourceSkillAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.ResourceSkill.objects.all()
     serializer_class = ResourceSkillSerializer
-    filter_fields = ('id', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
+    filter_class = ResourceSkillFilter
 
 class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ResourceSkill.objects.all()
     serializer_class = ResourceSkillSerializer
+    filter_class = ResourceSkillFilter
 
+
+class OperationMaterialFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.OperationMaterial
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'operation': ['exact', 'in', ],
+              'item': ['exact', 'in', ],
+              'type': ['exact', 'in', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'name': ['exact', 'in', 'contains', ],
+              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'search': ['exact', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
+                     'name', 'priority', 'search', 'source', 'lastmodified')
 
 class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -353,18 +552,31 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
                 'name', 'priority', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class OperationMaterialAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
-    filter_fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
-                'name', 'priority', 'search', 'source', 'lastmodified')
+    filter_class = OperationMaterialFilter
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
+    filter_class = OperationMaterialFilter
 
+
+class OperationResourceFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.OperationResource
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'operation': ['exact', 'in', ],
+              'resource': ['exact', 'in', ], 'skill': ['exact', 'in', ], 'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'name': ['exact', 'in', 'contains', ], 'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'search': ['exact', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'operation', 'resource', 'skill', 'quantity', 'effective_start', 'effective_end',
+                     'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
 
 class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -373,18 +585,32 @@ class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
                 'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class OperationResourceAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()
     serializer_class = OperationResourceSerializer
-    filter_fields = ('id', 'operation', 'resource', 'skill', 'quantity', 'effective_start', 'effective_end',
-                'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
+    filter_class = OperationResourceFilter
 
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()
     serializer_class = OperationResourceSerializer
+    filter_class = OperationResourceFilter
 
+
+class ManufacturingOrderFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.ManufacturingOrder
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
+              'reference': ['exact', 'in', 'contains', ], 'operation': ['exact', 'in', ],
+              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plan': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in',],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
+                     'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
 
 class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -393,19 +619,33 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
                 'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class ManufacturingOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.ManufacturingOrder.objects.all()
     serializer_class = ManufacturingOrderSerializer
-
-    filter_fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
-                'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
+    filter_class = ManufacturingOrderFilter
 
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ManufacturingOrder.objects.all()
     serializer_class = ManufacturingOrderSerializer
+    filter_class = ManufacturingOrderFilter
 
+
+class DistributionOrderFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.DistributionOrder
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
+              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
+              'origin': ['exact', 'in', ], 'destination': ['exact', 'in', ],
+              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plan': ['exact', 'in', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'status', 'reference', 'item', 'origin', 'destination', 'quantity',
+                     'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
 
 class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -414,19 +654,33 @@ class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
                 'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class DistributionOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.DistributionOrder.objects.all()
     serializer_class = DistributionOrderSerializer
-
-    filter_fields = ('id', 'reference', 'status', 'item', 'origin', 'destination', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+    filter_class = DistributionOrderFilter
 
 class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DistributionOrder.objects.all()
     serializer_class = DistributionOrderSerializer
+    filter_class = DistributionOrderFilter
 
+
+class PurchaseOrderFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.PurchaseOrder
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
+              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
+              'supplier': ['exact', 'in', ], 'location': ['exact', 'in', ],
+              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plan': ['exact', 'in', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
+                     'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
 
 class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -435,19 +689,33 @@ class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
                 'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class PurchaseOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.PurchaseOrder.objects.all()
     serializer_class = PurchaseOrderSerializer
-
-    filter_fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+    filter_class = PurchaseOrderFilter
 
 class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.PurchaseOrder.objects.all()
     serializer_class = PurchaseOrderSerializer
+    filter_class = PurchaseOrderFilter
 
+
+class DeliveryOrderFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.DeliveryOrder
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
+              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
+              'demand': ['exact', 'in', ], 'location': ['exact', 'in', ],
+              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plan': ['exact', 'in', 'contains', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
+                     'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
 
 class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -456,19 +724,35 @@ class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
                 'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class DeliveryOrderAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.DeliveryOrder.objects.all()
     serializer_class = DeliveryOrderSerializer
-
-    filter_fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
-                'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
+    filter_class = DeliveryOrderFilter
 
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DeliveryOrder.objects.all()
     serializer_class = DeliveryOrderSerializer
+    filter_class = DeliveryOrderFilter
 
+
+class DemandFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.Demand
+    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'in', 'contains', ],
+              'category': ['exact', 'in', 'contains', ], 'subcategory': ['exact', 'in', 'contains', ],
+              'item': ['exact', 'in', ], 'customer': ['exact', 'in', ], 'location': ['exact', 'in', ],
+              'due': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
+              'operation': ['exact', 'in', ], 'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plannedquantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'deliverydate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'plan': ['exact', 'in', 'contains', ], 'minshipment': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'maxlateness': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+
+    filter_fields = ('name', 'description', 'category', 'subcategory', 'item', 'customer', 'location', 'due',
+                     'status', 'operation', 'quantity', 'priority', 'delay', 'plannedquantity', 'deliverydate',
+                     'plan', 'minshipment', 'maxlateness')
 
 class DemandSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
@@ -477,16 +761,14 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
                 'status', 'operation', 'quantity', 'priority', 'delay', 'plannedquantity', 'deliverydate', 'plan', 'minshipment', 'maxlateness')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class DemandAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Demand.objects.all()
     serializer_class = DemandSerializer
-
-
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'item', 'customer', 'location', 'due',
-                'status', 'operation', 'quantity', 'priority', 'delay', 'plannedquantity', 'deliverydate', 'plan', 'minshipment', 'maxlateness')
+    filter_class = DemandFilter
 
 class DemanddetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Demand.objects.all()
     serializer_class = DemandSerializer
+    filter_class = DemandFilter

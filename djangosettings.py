@@ -200,6 +200,7 @@ INSTALLED_APPS = (
     'freppledb.output',
     'freppledb.execute',
     'freppledb.common',
+    'django_filters',
     'rest_framework',
     'django_admin_bootstrapped',
     'django.contrib.admin',

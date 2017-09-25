@@ -49,9 +49,10 @@ class BucketAPI(frePPleListCreateAPIView):
 class BucketDetailFilter(filters.FilterSet):
   class Meta:
     model = freppledb.common.models.BucketDetail
-    fields = {'name': ['exact', 'in', 'contains'], 'description': ['exact', 'contains', ], 'level': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+    fields = {'bucket': ['exact', 'in', ], 'name': ['exact', 'in', 'contains', ],
+              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
-    filter_fields = ('name', 'description', 'level', 'source', 'lastmodified')
+    filter_fields = ('bucket', 'name', 'startdate', 'enddate', 'source', 'lastmodified')
 
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
   queryset = freppledb.common.models.Bucket.objects.all()
@@ -81,7 +82,7 @@ class CommentSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('id', 'object_pk', 'comment', 'lastmodified', 'content_type','user')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class CommentAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.Comment.objects.all()

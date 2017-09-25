@@ -45,6 +45,14 @@ class BucketAPI(frePPleListCreateAPIView):
   serializer_class = BucketSerializer
   filter_class = BucketFilter
 
+
+class BucketDetailFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.common.models.BucketDetail
+    fields = {'name': ['exact', 'in', 'contains'], 'description': ['exact', 'contains', ], 'level': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    filter_fields = ('name', 'description', 'level', 'source', 'lastmodified')
+
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
   queryset = freppledb.common.models.Bucket.objects.all()
   serializer_class = BucketSerializer
@@ -59,12 +67,12 @@ class BucketDetailSerializer(BulkSerializerMixin, ModelSerializer):
 class BucketDetailAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.BucketDetail.objects.all()
     serializer_class = BucketDetailSerializer
-    filter_class = BucketFilter
+    filter_class = BucketDetailFilter
 
 class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.common.models.BucketDetail.objects.all()
     serializer_class = BucketDetailSerializer
-    filter_class = BucketFilter
+    filter_class = BucketDetailFilter
 
 
 class CommentSerializer(BulkSerializerMixin, ModelSerializer):

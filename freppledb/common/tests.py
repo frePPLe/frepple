@@ -541,13 +541,20 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Customer.objects.count(), recordsnumber + 4)
     self.assertEqual(input.models.Customer.objects.filter(source='Put json').count(), 1)
 
+    # Customer bulk filtered GET test
+    response = self.client.get('/api/input/customer/?name__contains=Area', data, format='json')
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(input.models.Customer.objects.filter(name__contains='Area').count(), 4)
+
     # Customer DELETE tests
-    response = self.client.delete('/api/input/customer/Customer near Area 52/', format='form')
+    # Bulk "contains" filtered DELETE
+    response = self.client.delete('/api/input/customer/?name__contains=Area 5', format='form')
     self.assertEqual(response.status_code, 204)
-    response = self.client.delete('/api/input/customer/Customer near Area 51/', format='json')
-    self.assertEqual(response.status_code, 204)
+    self.assertEqual(input.models.Customer.objects.filter(name__contains='Area').count(), 2)
+    # Single DELETE
     response = self.client.delete('/api/input/customer/Customer near factory 1/', format='api')
     self.assertEqual(response.status_code, 204)
+    # Bulk filtered DELETE
     response = self.client.delete('/api/input/customer/?source=TEST DELETE', format='json')
     self.assertEqual(response.status_code, 204)
     self.assertEqual(input.models.Customer.objects.filter(source='TEST DELETE').count(), 0)

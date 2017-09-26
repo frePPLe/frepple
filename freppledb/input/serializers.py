@@ -38,7 +38,7 @@ class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'description', 'category', 'subcategory', 'defaultvalue', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class CalendarAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Calendar.objects.all()
@@ -48,7 +48,6 @@ class CalendarAPI(frePPleListCreateAPIView):
 class CalendardetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Calendar.objects.all()
     serializer_class = CalendarSerializer
-    filter_class = CalendarFilter
 
 
 class CalendarBucketFilter(filters.FilterSet):
@@ -71,7 +70,7 @@ class CalendarBucketSerializer(BulkSerializerMixin, ModelSerializer):
                 'thursday', 'friday', 'saturday', 'sunday', 'starttime', 'endtime', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
-      partial=True
+      partial = True
 
 class CalendarBucketAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()
@@ -83,7 +82,6 @@ class CalendarBucketAPI(frePPleListCreateAPIView):
 class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.CalendarBucket.objects.all()
     serializer_class = CalendarBucketSerializer
-    filter_class = CalendarBucketFilter
 
 
 class LocationFilter(filters.FilterSet):
@@ -101,7 +99,7 @@ class LocationSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class LocationAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Location.objects.all()
@@ -111,7 +109,6 @@ class LocationAPI(frePPleListCreateAPIView):
 class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Location.objects.all()
     serializer_class = LocationSerializer
-    filter_class = LocationFilter
 
 
 class CustomerFilter(filters.FilterSet):
@@ -128,7 +125,7 @@ class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ( 'name', 'description', 'category', 'subcategory', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class CustomerAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Customer.objects.all()
@@ -138,7 +135,6 @@ class CustomerAPI(frePPleListCreateAPIView):
 class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Customer.objects.all()
     serializer_class = CustomerSerializer
-    filter_class = CustomerFilter
 
 
 class ItemFilter(filters.FilterSet):
@@ -155,7 +151,7 @@ class ItemSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class ItemAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Item.objects.all()
@@ -165,7 +161,6 @@ class ItemAPI(frePPleListCreateAPIView):
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Item.objects.all()
     serializer_class = ItemSerializer
-    filter_class = ItemFilter
 
 
 class SupplierFilter(filters.FilterSet):
@@ -182,7 +177,7 @@ class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'owner', 'description', 'category', 'subcategory', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class SupplierAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Supplier.objects.all()
@@ -193,7 +188,6 @@ class SupplierAPI(frePPleListCreateAPIView):
 class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Supplier.objects.all()
     serializer_class = SupplierSerializer
-    filter_class = SupplierFilter
 
 
 class ItemSupplierFilter(filters.FilterSet):
@@ -227,7 +221,6 @@ class ItemSupplierAPI(frePPleListCreateAPIView):
 class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ItemSupplier.objects.all()
     serializer_class = ItemSupplierSerializer
-    filter_class = ItemSupplierFilter
 
 
 class ItemDistributionFilter(filters.FilterSet):
@@ -261,7 +254,6 @@ class ItemDistributionAPI(frePPleListCreateAPIView):
 class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ItemDistribution.objects.all()
     serializer_class = ItemDistributionSerializer
-    filter_class = ItemDistributionFilter
 
 
 class OperationFilter(filters.FilterSet):
@@ -307,7 +299,6 @@ class OperationAPI(frePPleListCreateAPIView):
 class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
   queryset = freppledb.input.models.Operation.objects.all()
   serializer_class = OperationSerializer
-  filter_class = OperationFilter
 
 
 class SubOperationFilter(filters.FilterSet):
@@ -338,7 +329,6 @@ class SubOperationAPI(frePPleListCreateAPIView):
 class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SubOperation.objects.all()
     serializer_class = SubOperationSerializer
-    filter_class = SubOperationFilter
 
 
 class BufferFilter(filters.FilterSet):
@@ -382,7 +372,6 @@ class BufferAPI(frePPleListCreateAPIView):
 class BufferdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
   queryset = freppledb.input.models.Buffer.objects.all()
   serializer_class = BufferSerializer
-  filter_class = BufferFilter
 
 
 class SetupMatrixFilter(filters.FilterSet):
@@ -401,7 +390,7 @@ class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
       fields = ('name', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
-      partial=True
+      partial = True
 
 class SetupMatrixAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.SetupMatrix.objects.all()
@@ -411,7 +400,6 @@ class SetupMatrixAPI(frePPleListCreateAPIView):
 class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SetupMatrix.objects.all()
     serializer_class = SetupMatrixSerializer
-    filter_class = SetupMatrixFilter
 
 
 class SetupRuleFilter(filters.FilterSet):
@@ -439,7 +427,6 @@ class SetupRuleAPI(frePPleListCreateAPIView):
 class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.SetupRule.objects.all()
     serializer_class = SetupRuleSerializer
-    filter_class = SetupRuleFilter
 
 
 class ResourceFilter(filters.FilterSet):
@@ -473,7 +460,6 @@ class ResourceAPI(frePPleListCreateAPIView):
 class ResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Resource.objects.all()
     serializer_class = ResourceSerializer
-    filter_class = ResourceFilter
 
 
 class SkillFilter(filters.FilterSet):
@@ -500,7 +486,6 @@ class SkillAPI(frePPleListCreateAPIView):
 class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Skill.objects.all()
     serializer_class = SkillSerializer
-    filter_class = SkillFilter
 
 
 class ResourceSkillFilter(filters.FilterSet):
@@ -529,7 +514,6 @@ class ResourceSkillAPI(frePPleListCreateAPIView):
 class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ResourceSkill.objects.all()
     serializer_class = ResourceSkillSerializer
-    filter_class = ResourceSkillFilter
 
 
 class OperationMaterialFilter(filters.FilterSet):
@@ -562,7 +546,6 @@ class OperationMaterialAPI(frePPleListCreateAPIView):
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
-    filter_class = OperationMaterialFilter
 
 
 class OperationResourceFilter(filters.FilterSet):
@@ -595,7 +578,6 @@ class OperationResourceAPI(frePPleListCreateAPIView):
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()
     serializer_class = OperationResourceSerializer
-    filter_class = OperationResourceFilter
 
 
 class ManufacturingOrderFilter(filters.FilterSet):
@@ -629,7 +611,6 @@ class ManufacturingOrderAPI(frePPleListCreateAPIView):
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.ManufacturingOrder.objects.all()
     serializer_class = ManufacturingOrderSerializer
-    filter_class = ManufacturingOrderFilter
 
 
 class DistributionOrderFilter(filters.FilterSet):
@@ -664,7 +645,6 @@ class DistributionOrderAPI(frePPleListCreateAPIView):
 class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DistributionOrder.objects.all()
     serializer_class = DistributionOrderSerializer
-    filter_class = DistributionOrderFilter
 
 
 class PurchaseOrderFilter(filters.FilterSet):
@@ -699,7 +679,6 @@ class PurchaseOrderAPI(frePPleListCreateAPIView):
 class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.PurchaseOrder.objects.all()
     serializer_class = PurchaseOrderSerializer
-    filter_class = PurchaseOrderFilter
 
 
 class DeliveryOrderFilter(filters.FilterSet):
@@ -734,7 +713,6 @@ class DeliveryOrderAPI(frePPleListCreateAPIView):
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.DeliveryOrder.objects.all()
     serializer_class = DeliveryOrderSerializer
-    filter_class = DeliveryOrderFilter
 
 
 class DemandFilter(filters.FilterSet):

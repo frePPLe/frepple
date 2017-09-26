@@ -58,7 +58,7 @@ BUFFER	buffer 10	2009-06-21T00:00:00	-20	0
 BUFFER	buffer 11	2009-01-31T00:00:00	70	70
 BUFFER	buffer 11	2009-01-31T00:00:00	-70	0
 BUFFER	buffer 11	2009-07-01T00:00:00	70	70
-BUFFER	buffer 11	2009-07-06T00:00:00	-70	0
+BUFFER	buffer 11	2009-07-01T00:00:00	-70	0
 BUFFER	buffer 11	2009-07-12T00:00:00	70	70
 BUFFER	buffer 11	2009-07-12T00:00:00	-70	0
 BUFFER	buffer 2	1971-01-01T00:00:00	25	25
@@ -419,7 +419,7 @@ DEMAND	order 02 for item 1	2009-01-02T00:00:00	10
 DEMAND	order 02 for item 10	2009-06-21T00:00:00	20
 DEMAND	order 02 for item 10	2009-06-11T00:00:00	20
 DEMAND	order 02 for item 10	2009-06-01T00:00:00	30
-DEMAND	order 02 for item 11	2009-07-06T00:00:00	70
+DEMAND	order 02 for item 11	2009-07-01T00:00:00	70
 DEMAND	order 02 for item 2	2009-01-02T00:00:00	10
 DEMAND	order 02 for item 3	2009-01-02T00:00:00	10
 DEMAND	order 02 for item 5	2009-01-02T00:00:00	10
@@ -802,7 +802,6 @@ PROBLEM	invalid data	No replenishment defined for 'buffer 1'	1971-01-01T00:00:00
 PROBLEM	material shortage	Buffer 'buffer 1' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-04T12:00:00
 PROBLEM	material excess	Buffer 'buffer 10' has material excess of 10	2009-02-10T00:00:00 / 2009-06-01T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer 10'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'buffer 11' has material excess of 70	2009-07-01T00:00:00 / 2009-07-06T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer 11'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 2' has material excess of 2	2009-01-04T12:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer 'buffer 2' has material excess of 2	2009-01-10T00:00:00 / 2009-01-11T00:00:00
@@ -847,6 +846,7 @@ PROBLEM	late	70 units of demand 'order 01 for item 10' planned up to 40.0 days a
 PROBLEM	late	70 units of demand 'order 01 for item 11' planned up to 30.0 days after its due date	2009-01-01T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	unplanned	Demand 'order 01 for item 4' is not planned	2009-01-01T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	late	40 units of demand 'order 02 for item 10' planned up to 20.0 days after its due date	2009-06-01T00:00:00 / 2009-06-21T00:00:00
+PROBLEM	early	Demand 'order 02 for item 11' planned P5D before its due date	2009-07-01T00:00:00 / 2009-07-06T00:00:00
 PROBLEM	late	5 units of demand 'order 03 for item 1' planned up to 1.5 days after its due date	2009-01-03T00:00:00 / 2009-01-04T12:00:00
 PROBLEM	late	5 units of demand 'order 03 for item 2' planned up to 1.5 days after its due date	2009-01-03T00:00:00 / 2009-01-04T12:00:00
 PROBLEM	late	5 units of demand 'order 03 for item 3' planned up to 1.5 days after its due date	2009-01-03T00:00:00 / 2009-01-04T12:00:00

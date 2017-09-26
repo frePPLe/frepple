@@ -139,6 +139,7 @@ int OperationDelivery::initialize()
 OperationDelivery::OperationDelivery(Buffer *buf)
 {
   setName("Ship " + string(buf->getName()));
+  setLocation(buf->getLocation());
   setHidden(true);
   setDetectProblems(false);
   // When we set the size minimum to 0 for the automatically created

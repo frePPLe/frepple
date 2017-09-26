@@ -261,7 +261,7 @@ class loadCalendarBuckets(LoadTask):
           b = frepple.bucket(
             calendar=cal,
             start=i[1],
-            end=i[2],
+            date=i[2] if i[2] else datetime(2030, 31, 12),
             priority=i[3],
             source=i[14],
             value=i[4],

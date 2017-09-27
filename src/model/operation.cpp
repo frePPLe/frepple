@@ -670,11 +670,11 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       // Minimum size varies over time
       double curmin = getSizeMinimumCalendar()->getValue(x.getEnd());
       if (q < curmin)
-        q = curmin;
+        q = roundDown ? 0.0 : curmin;
     }
     if (q < getSizeMinimum())
       // Minimum size is constant over time
-      q = getSizeMinimum();
+      q = roundDown ? 0.0 : getSizeMinimum();
   }
   if (q > getSizeMaximum())
     q = getSizeMaximum();

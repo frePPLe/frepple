@@ -269,7 +269,9 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
         // No existing procurement can be reused. Create a new one.
         CommandCreateOperationPlan *a =
           new CommandCreateOperationPlan(oper, order_qty,
-              Date::infinitePast, current_date, data->state->curDemand);
+            Date::infinitePast, current_date, data->state->curDemand,
+            nullptr, true, false
+            );
         a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();

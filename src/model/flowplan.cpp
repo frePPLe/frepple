@@ -171,6 +171,76 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
+double FlowPlan::setQuantity(double quantity, bool b, bool u, bool e)
+{
+  if (isConfirmed())
+  {
+    if (e)
+    {
+      // Update the timeline data structure
+      getFlow()->getBuffer()->flowplans.update(
+        this,
+        quantity,
+        getDate()
+      );
+
+      // Mark the operation and buffer as having changed. This will trigger the
+      // recomputation of their problems
+      fl->getBuffer()->setChanged();
+      fl->getOperation()->setChanged();
+    }
+    return qty;
+  }
+
+  if (!getFlow()->getEffective().within(getDate()))
+  {
+    if (e)
+      oper->getOperation()->setOperationPlanParameters(
+        oper, 0.0,
+        Date::infinitePast, oper->getDates().getEnd(),
+        true, e, b
+        );
+    return 0.0;
+  }
+  if (getFlow()->getType() == *FlowFixedEnd::metadata
+    || getFlow()->getType() == *FlowFixedStart::metadata)
+  {
+    // Fixed quantity flows only allow resizing to 0
+    if (quantity == 0.0 && oper->getQuantity() != 0.0)
+    {
+      OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
+        oper, 0.0,
+        Date::infinitePast, oper->getDates().getEnd(),
+        true, e, b
+        );
+      return x.quantity ? getFlow()->getQuantity() : 0.0;
+    }
+    else if (quantity != 0.0 && oper->getQuantity() == 0.0)
+    {
+      OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
+        oper,
+        (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
+          : oper->getOperation()->getSizeMinimum(),
+        Date::infinitePast, oper->getDates().getEnd(),
+        true, e, b
+      );
+      return x.quantity ? getFlow()->getQuantity() : 0.0;
+    }
+  }
+  else
+  {
+    // Normal, proportional flows
+    OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
+      oper, quantity / getFlow()->getQuantity(),
+      Date::infinitePast, oper->getDates().getEnd(),
+      true, e, b
+    );   
+    return x.quantity * getFlow()->getQuantity();
+  }
+  throw LogicException("Unreachable code reached");
+}
+
+
 int FlowPlanIterator::initialize()
 {
   // Initialize the type

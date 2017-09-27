@@ -1,5 +1,5 @@
 BUFFER	component A @ factory	1971-01-01T00:00:00	1	1
-BUFFER	component A @ factory	2009-01-01T00:00:00	-1	0
+BUFFER	component A @ factory	2009-01-02T00:00:00	-1	0
 BUFFER	component A @ factory	2009-01-08T00:00:00	75	75
 BUFFER	component A @ factory	2009-01-08T00:00:00	-1	74
 BUFFER	component A @ factory	2009-01-08T00:00:00	-1	73
@@ -12,8 +12,8 @@ BUFFER	component B @ factory	2009-01-06T00:00:00	74	74
 BUFFER	component B @ factory	2009-01-06T00:00:00	-2	72
 BUFFER	component B @ factory	2009-01-06T00:00:00	-2	70
 BUFFER	component C @ factory	1971-01-01T00:00:00	5	5
-BUFFER	component C @ factory	2009-01-01T00:00:00	-1	4
-BUFFER	component C @ factory	2009-01-01T00:00:00	-2	2
+BUFFER	component C @ factory	2009-01-01T00:00:00	-2	3
+BUFFER	component C @ factory	2009-01-02T00:00:00	-1	2
 BUFFER	component C @ factory	2009-01-06T00:00:00	-1	1
 BUFFER	component C @ factory	2009-01-06T00:00:00	-1	0
 BUFFER	component C @ factory	2009-01-08T00:00:00	75	75
@@ -25,8 +25,8 @@ BUFFER	component C @ factory	2009-01-08T00:00:00	-1	70
 BUFFER	component D @ factory	2009-01-08T00:00:00	70	70
 BUFFER	component E @ factory	2009-01-08T00:00:00	70	70
 BUFFER	component F @ factory	1971-01-01T00:00:00	5	5
-BUFFER	component F @ factory	2009-01-01T00:00:00	-1	4
-BUFFER	component F @ factory	2009-01-01T00:00:00	-2	2
+BUFFER	component F @ factory	2009-01-01T00:00:00	-2	3
+BUFFER	component F @ factory	2009-01-02T00:00:00	-1	2
 BUFFER	component F @ factory	2009-01-06T00:00:00	-1	1
 BUFFER	component F @ factory	2009-01-06T00:00:00	-1	0
 BUFFER	component F @ factory	2009-01-08T00:00:00	75	75
@@ -60,7 +60,7 @@ OPERATION	Purchase component E @ factory	2009-01-01T00:00:00	2009-01-08T00:00:00
 OPERATION	Purchase component F @ factory	2009-01-01T00:00:00	2009-01-08T00:00:00	75
 OPERATION	Purchase component G @ factory	2009-01-01T00:00:00	2009-01-06T00:00:00	65
 OPERATION	assembly	2009-01-01T00:00:00	2009-01-04T00:00:00	2
-OPERATION	assembly	2009-01-01T00:00:00	2009-01-04T00:00:00	1
+OPERATION	assembly	2009-01-02T00:00:00	2009-01-04T00:00:00	1
 OPERATION	assembly	2009-01-06T00:00:00	2009-01-08T00:00:00	1
 OPERATION	assembly	2009-01-06T00:00:00	2009-01-08T00:00:00	1
 OPERATION	assembly	2009-01-08T00:00:00	2009-01-10T00:00:00	1

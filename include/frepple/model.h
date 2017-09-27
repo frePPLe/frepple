@@ -5969,45 +5969,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * The second parameter is to flag whether we want to actually perform
       * the resizing, or only to simulate it.
       */
-    double setQuantity(double quantity, bool b=false, bool u=true, bool e=true)
-    {
-      if (isConfirmed())
-      {
-         if (e)
-         {
-           // Update the timeline data structure
-           getFlow()->getBuffer()->flowplans.update(
-             this,
-             quantity,
-             getDate()
-           );
-
-           // Mark the operation and buffer as having changed. This will trigger the
-           // recomputation of their problems
-           fl->getBuffer()->setChanged();
-           fl->getOperation()->setChanged();
-         }
-        return qty;
-      }
-
-      if (!getFlow()->getEffective().within(getDate())) return 0.0;
-      if (getFlow()->getType() == *FlowFixedEnd::metadata
-        || getFlow()->getType() == *FlowFixedStart::metadata)
-      {
-        // Fixed quantity flows only allow resizing to 0
-        if (quantity == 0.0 && oper->getQuantity()!= 0.0)
-          return oper->setQuantity(0.0, b, u) ? getFlow()->getQuantity() : 0.0;
-        else if (quantity != 0.0 && oper->getQuantity()== 0.0)
-          return oper->setQuantity(
-            (oper->getOperation()->getSizeMinimum()<=0) ? 0.001
-              : oper->getOperation()->getSizeMinimum(),
-            b, u, e) ? getFlow()->getQuantity() : 0.0;
-      }
-      else
-        // Normal, proportional flows
-        return oper->setQuantity(quantity / getFlow()->getQuantity(), b, u, e) * getFlow()->getQuantity();
-      throw LogicException("Unreachable code reached");
-    }
+    double setQuantity(
+      double quantity, bool rounddown=false, bool update=true, bool execute=true
+      );
 
     /** This function needs to be called whenever the flowplan date or
       * quantity are changed.

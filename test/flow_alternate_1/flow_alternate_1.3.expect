@@ -439,16 +439,16 @@
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
-			<start>2008-12-24T00:00:00</start>
+			<start>2008-12-29T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
-			<quantity>1</quantity>
+			<quantity>5</quantity>
 		</operationplan>
 		<operationplan>
 			<id>11</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
-			<start>2008-12-25T00:00:00</start>
+			<start>2009-01-01T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
 		</operationplan>
@@ -457,7 +457,7 @@
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
-			<start>2008-12-27T00:00:00</start>
+			<start>2009-01-01T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>2</quantity>
 		</operationplan>
@@ -466,9 +466,9 @@
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
-			<start>2008-12-29T00:00:00</start>
+			<start>2009-01-02T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
-			<quantity>5</quantity>
+			<quantity>1</quantity>
 		</operationplan>
 	</operationplans>
 </plan>

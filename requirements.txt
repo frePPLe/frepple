@@ -2,7 +2,6 @@ CherryPy == 5.1.0
 djangorestframework == 3.6.2
 djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.10.0
-django-filter == 1.0.4
 django-admin-bootstrapped
 django-bootstrap3 == 8.2.2
 html5lib == 0.999

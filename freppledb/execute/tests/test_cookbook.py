@@ -119,4 +119,9 @@ class cookbooktest(TransactionTestCase):
     self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-autofence.xlsx")
     management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
     self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-autofence.expect")
+    
+  def test_operation_routing(self):
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-routing.xlsx")
+    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "operation", "operation-routing.expect")
 

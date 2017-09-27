@@ -749,4 +749,3 @@ class DemandAPI(frePPleListCreateAPIView):
 class DemanddetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.Demand.objects.all()
     serializer_class = DemandSerializer
-    filter_class = DemandFilter

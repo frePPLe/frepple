@@ -553,6 +553,33 @@ class export:
         columns=('resource','startdate','available','unavailable','setup','load','free')
         )
       tmp.close()
+    
+    #update owner records with sum of children quantities
+    cursor.execute('''
+      with cte as (
+      select parent.name resource, 
+      out_resourceplan.startdate, 
+      sum(out_resourceplan.available) available, 
+      sum(out_resourceplan.unavailable) unavailable,
+      sum(out_resourceplan.setup) setup, 
+      sum(out_resourceplan.load) "load",
+      sum(out_resourceplan.free) free
+      from resource parent
+      inner join resource child on child.lft > parent.lft and child.rght < parent.rght
+      and not exists (select 1 from resource where owner_id = child.name)
+      inner join out_resourceplan on out_resourceplan.resource = child.name
+      group by parent.name, startdate)
+      update out_resourceplan
+      set available = cte.available,
+      unavailable = cte.unavailable,
+      setup = cte.setup,
+      load = cte.load,
+      free = cte.free
+      from cte
+      where out_resourceplan.resource = cte.resource
+      and out_resourceplan.startdate = cte.startdate
+    ''')
+    
     if self.verbosity:
       print('Exported resourceplans in %.2f seconds' % (time() - starttime))
 

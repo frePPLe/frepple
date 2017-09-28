@@ -79,10 +79,7 @@ class Command(BaseCommand):
       except:
         raise CommandError("User '%s' not found" % options['user'] )
     else:
-      try:
-        self.user = User.objects.all().using(self.database).filter(is_superuser=True)[0]
-      except:
-        self.user = None
+      self.user = None
 
     now = datetime.now()
 

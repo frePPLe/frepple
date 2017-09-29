@@ -42,9 +42,9 @@ class WelcomeWidget(Widget):
     return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br/><br/>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
-<li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank">documentation</a></span></li>
-<li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank">user community</a></span></li>
-<li><span class="underline"><a href="https://frepple.com/contact/" target="_blank">Contact us</a></span></li>
+<li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
+<li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
+<li><span class="underline"><a href="https://frepple.com/contact/" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
 ''') % {'docurl': "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])}
 

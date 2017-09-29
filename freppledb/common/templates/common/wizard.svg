@@ -735,7 +735,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="safetystockdoc">
         <text
            id="tspan6318-9-11"
@@ -798,7 +798,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="statisticalforecastdoc">
         <text
            id="tspan6318-9-2"
@@ -871,7 +871,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="inventoryplanparametersdoc">
           <text
              x="135.94702"
@@ -929,7 +929,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="salesordershistorydoc">
         <text
            id="tspan6318-9-15"
@@ -1018,7 +1018,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="plan_modoc">
           <text
              x="280.65521"
@@ -1082,7 +1082,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="plan_dodoc">
           <text
              x="280.51608"
@@ -1149,7 +1149,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="plan_podoc">
           <text
              x="280.23779"
@@ -1160,7 +1160,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="generateplandoc"
          transform="translate(241.82964,24.071644)">
         <text
@@ -1376,7 +1376,7 @@
           </g>
           <a
              href=""
-             target="_blank"
+             target="_blank" rel="noopener"
              id="itemdistributionsdoc">
             <text
                id="tspan6318-9-45"
@@ -1388,7 +1388,7 @@
         <a
            transform="translate(155.42216,26.158781)"
            id="distributionordersdoc"
-           target="_blank"
+           target="_blank" rel="noopener"
            href="">
           <text
              x="59.001221"
@@ -1468,7 +1468,7 @@
           </g>
           <a
              href=""
-             target="_blank"
+             target="_blank" rel="noopener"
              id="operationmaterialsdoc">
             <text
                id="tspan6318-9-6"
@@ -1522,7 +1522,7 @@
           </g>
           <a
              href=""
-             target="_blank"
+             target="_blank" rel="noopener"
              id="operationsdoc">
             <text
                id="tspan6318-9-47"
@@ -1534,7 +1534,7 @@
         <a
            transform="translate(155.28302,51.621857)"
            id="manufacturingordersdoc"
-           target="_blank"
+           target="_blank" rel="noopener"
            href="">
           <text
              x="59.001221"
@@ -1614,7 +1614,7 @@
           </g>
           <a
              href=""
-             target="_blank"
+             target="_blank" rel="noopener"
              id="itemsuppliersdoc">
             <text
                id="tspan6318-9-4"
@@ -1668,7 +1668,7 @@
           </g>
           <a
              href=""
-             target="_blank"
+             target="_blank" rel="noopener"
              id="suppliersdoc">
             <text
                id="tspan6318-9-41"
@@ -1680,7 +1680,7 @@
         <a
            transform="translate(155.28302,-1.9480003)"
            id="purchaseordersdoc"
-           target="_blank"
+           target="_blank" rel="noopener"
            href="">
           <text
              x="59.001221"
@@ -1691,7 +1691,7 @@
       </g>
       <a
          id="introductiondoc"
-         target="_blank"
+         target="_blank" rel="noopener"
          href="">
         <text
            x="220.68478"
@@ -1765,7 +1765,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="resourcesdoc">
           <text
              x="263.26239"
@@ -1819,7 +1819,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="operationresourcesdoc">
           <text
              x="310.15341"
@@ -1830,7 +1830,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="capacityplanningdoc"
          transform="translate(251.56961,-13.0794)">
         <text
@@ -1939,7 +1939,7 @@
         </a>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="itemsdoc">
           <text
              x="28.695713"
@@ -1976,7 +1976,7 @@
         </a>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="locationsdoc">
           <text
              x="29.085588"
@@ -2012,7 +2012,7 @@
         </a>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="customersdoc">
           <text
              x="28.946447"
@@ -2065,7 +2065,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="salesordersdoc">
           <text
              x="59.140366"
@@ -2076,7 +2076,7 @@
       </g>
       <a
          href=""
-         target="_blank"
+         target="_blank" rel="noopener"
          id="basicdatadoc">
         <text
            id="tspan6318-9-0"
@@ -2128,7 +2128,7 @@
         </g>
         <a
            href=""
-           target="_blank"
+           target="_blank" rel="noopener"
            id="bufferssdoc"
            transform="translate(-1.5504189,-2.810379)">
           <text

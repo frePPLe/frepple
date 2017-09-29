@@ -43,7 +43,7 @@ $(function() {
 			      {% for item in group.1 %}
 			        {% if item.4 %}
 			        {% if item.1.separator %}<li role="separator" class="divider"></li>
-			        {% else %}<li><a {% if item.1.identifier %}id="{{item.1.identifier}}" {% endif %}{% if item.1.window %}target="_blank" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %} data-populated="{{ item.3 }}">{{ item.0 }}</a></li>
+			        {% else %}<li><a {% if item.1.identifier %}id="{{item.1.identifier}}" {% endif %}{% if item.1.window %}target="_blank" rel="noopener" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %} data-populated="{{ item.3 }}">{{ item.0 }}</a></li>
 			        {% endif %}
 			        {% endif %}
 			      {% endfor %}

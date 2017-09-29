@@ -1674,21 +1674,28 @@ enum FieldCategory
                                 // only serialized when we request such info.
   DETAIL = 8,                   // Marks fields containing more detail than is
                                 // required to restore all state.
-  DONT_SERIALIZE = 16,          // These fields are not intended to be ever
-                                // serialized.
-  COMPUTED = 32,                // A computed field doesn't consume any storage
-  PARENT = 64,                  // If set, the constructor of the child object
+  COMPUTED = 16,                // A computed field doesn't consume any storage
+  PARENT = 32,                  // If set, the constructor of the child object
                                 // will get a pointer to the parent as extra
                                 // argument.
-  WRITE_OBJECT_DFT = 128,       // Force writing this field as an object when not in service mode
-  WRITE_REFERENCE_DFT = 256,    // Force writing this field as a reference when not in service mode
-  WRITE_HIDDEN = 512,           // Force writing hidden fields
-  FORCE_BASE = 1024,            // Force writing this object in base mode, even when
+  FORCE_BASE = 64,              // Force writing this object in base mode, even when
                                 // the output is currently set in a different mode
+  WRITE_HIDDEN = 128,           // Force writing hidden fields
+
+  // Flags for default output mode
+  WRITE_OBJECT_DFT = 256,       // Force writing this field as an object when not in service mode
+  WRITE_REFERENCE_DFT = 512,    // Force writing this field as a reference when not in service mode
+  DONT_SERIALIZE_DFT = 1024,    // Don't write this field when not in service mode
+
+  // Flags for service output mode
   WRITE_OBJECT_SVC = 2048,      // Force writing an object when we are in service mode
   WRITE_REFERENCE_SVC = 4096,   // Force writing a reference when we are in service mode
-  WRITE_OBJECT = 2048 + 128,    // Force writing an object
-  WRITE_REFERENCE = 4096 + 256  // Force writing a reference
+  DONT_SERIALIZE_SVC = 8192,    // Don't write this field when in service mode
+
+  // Combining flags
+  WRITE_OBJECT = 2048 + 256,     // Force writing an object
+  WRITE_REFERENCE = 4096 + 512,  // Force writing a reference
+  DONT_SERIALIZE = 8192 + 1024   // Never write this field
 };
 
 
@@ -7312,8 +7319,16 @@ template <class Cls> class MetaFieldString : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       string tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7374,8 +7389,16 @@ template <class Cls> class MetaFieldBool : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       bool tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (def == BOOL_UNSET || (def == BOOL_TRUE && !tmp) || (def == BOOL_FALSE && tmp))
         output.writeElement(getName(), tmp);
@@ -7434,8 +7457,16 @@ template <class Cls> class MetaFieldDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       if (isDfltFunc)
       {
         if (!(static_cast<Cls*>(output.getCurrentObject())->*isDfltFunc)())
@@ -7502,8 +7533,16 @@ template <class Cls> class MetaFieldInt : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7559,8 +7598,16 @@ template <class Cls, class Enum> class MetaFieldEnum : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       Enum tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7616,8 +7663,16 @@ template <class Cls> class MetaFieldShort : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       int tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7673,8 +7728,16 @@ template <class Cls> class MetaFieldUnsignedLong : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       unsigned long tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7730,8 +7793,16 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       Duration tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7787,8 +7858,16 @@ template <class Cls> class MetaFieldDurationDouble : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       double tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
       {
@@ -7848,8 +7927,16 @@ template <class Cls> class MetaFieldDate : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       Date tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
       if (tmp != def)
         output.writeElement(getName(), tmp);
@@ -7933,8 +8020,16 @@ template <class Cls, class Ptr> class MetaFieldPointer : public MetaFieldBase
 
     virtual void writeField(Serializer& output) const
     {
-      if (getFlag(DONT_SERIALIZE))
-        return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
       // Imagine object A refers to object B. Both objects have fields
       // referring the other. When serializing object A, we also serialize
       // object B but we skip saving the reference back to A.
@@ -8041,8 +8136,18 @@ template <class Cls, class Iter, class PyIter, class Ptr> class MetaFieldIterato
         default:
           break;
       }
-      if (getFlag(DONT_SERIALIZE) || !getf)
+      if (!getf)
         return;
+      if (output.getServiceMode())
+      {
+        if (getFlag(DONT_SERIALIZE_SVC))
+          return;
+      }
+      else
+      {
+        if (getFlag(DONT_SERIALIZE_DFT))
+          return;
+      }
 
       // Update the serialization mode
       bool tmp_refs = false;

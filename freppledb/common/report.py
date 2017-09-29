@@ -2251,12 +2251,19 @@ def exportWorkbook(request):
       # Add an auto-filter to the table
       ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
-      # Loop over all records
-      if issubclass(model, HierarchyModel):
-        model.rebuildHierarchy(database=request.database)
-        query = model.objects.all().using(request.database).order_by('lvl', 'pk')
+      # Build the export query
+      if hasattr(model, "export_objects"):
+        # Use the export manager is one exists
+        query = model.export_objects.all().using(request.database)
       else:
-        query = model.objects.all().using(request.database).order_by('pk')
+        # Use the default manager
+        if issubclass(model, HierarchyModel):
+          model.rebuildHierarchy(database=request.database)
+          query = model.objects.all().using(request.database).order_by('lvl', 'pk')
+        else:
+          query = model.objects.all().using(request.database).order_by('pk')
+
+      # Loop over all records
       for rec in query.values_list(*fields):
         ws.append([ _getCellValue(f) for f in rec ])
     except Exception:

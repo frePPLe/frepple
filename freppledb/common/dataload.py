@@ -24,7 +24,7 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
-from django.db.models.fields import IntegerField, AutoField, DurationField
+from django.db.models.fields import IntegerField, AutoField, DurationField, BooleanField
 from django.db.models.fields import DateField, DateTimeField, TimeField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -156,7 +156,7 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
       self.numHeaders = 0
       for col in headers:
         if col:
-          self.headers[col.name] = colnum
+          self.headers[col.name] = (colnum, col)
           self.numHeaders += 1
         colnum += 1
 
@@ -166,14 +166,20 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
     def __getitem__(self, key):
       try:
         idx = self.headers.get(key)
-        return self.data[idx] if idx is not None else None
+        if idx is None:
+          return None
+        val = self.data[idx[0]]
+        if isinstance(idx[1], BooleanField) and val == '0':
+          # Argh... bool('0') returns True.
+          return False
+        else:
+          return val
       except KeyError as e:
         raise e
 
     def get(self, key, default=NOT_PROVIDED):
       try:
-        idx = self.headers.get(key)
-        return self.data[idx] if idx is not None else default
+        return self.__getitem__(key)
       except KeyError as e:
         if default != NOT_PROVIDED:
           return default
@@ -195,7 +201,7 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
       return self.data
 
     def items(self):
-      return { col: self.data[idx] for col, idx in self.headers.items() }
+      return { col: self.data[idx[0]] for col, idx in self.headers.items() }
 
     __setitem__ = None
     __delitem__ = None

@@ -677,7 +677,8 @@ bool OperationPlan::activate(bool createsubopplans)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans))
+  if ((getQuantity() <= 0.0 && getOperation()->getType() != *OperationSetup::metadata)
+    || !oper->extraInstantiate(this, createsubopplans))
   {
     delete this;
     return false;

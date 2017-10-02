@@ -299,7 +299,10 @@ Operation* Demand::getDeliveryOperation() const
       // Find an existing operation consuming from this buffer
       const_cast<Demand*>(this)->oper = Operation::find("Ship " + string(buf->getName()));
       if (!oper)
-        const_cast<Demand*>(this)->oper = new OperationDelivery(buf);
+      {
+        const_cast<Demand*>(this)->oper = new OperationDelivery();
+        static_cast<OperationDelivery*>(const_cast<Demand*>(this)->oper)->setBuffer(buf);
+      }
 
       // Success!
       return oper;

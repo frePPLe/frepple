@@ -121,25 +121,18 @@ int OperationDelivery::initialize()
 {
   // Initialize the metadata
   metadata = MetaClass::registerClass<OperationDelivery>(
-    "operation",
-    "operation_delivery");
+    "operation", "operation_delivery",
+    Object::create<OperationDelivery>
+    );
   registerFields<OperationDelivery>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<OperationDelivery>::getPythonType();
-  x.setName("operation_delivery");
-  x.setDoc("frePPLe operation_delivery");
-  x.supportgetattro();
-  x.supportsetattro();
-  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady();
+  return FreppleClass<OperationDelivery, Operation>::initialize();
 }
 
 
-OperationDelivery::OperationDelivery(Buffer *buf)
+OperationDelivery::OperationDelivery()
 {
-  setName("Ship " + string(buf->getName()));
-  setLocation(buf->getLocation());
   setHidden(true);
   setDetectProblems(false);
   // When we set the size minimum to 0 for the automatically created
@@ -147,6 +140,22 @@ OperationDelivery::OperationDelivery(Buffer *buf)
   // size specified on the demand.
   setSizeMinimum(0.0);
   initType(metadata);
+}
+
+
+void OperationDelivery::setBuffer(Buffer *buf)
+{
+  // Validate the input
+  if (getBuffer() == buf)
+    return;
+  else if (!buf)
+    throw DataException("A delivery operation can't point to a null buffer");
+  else if (getBuffer())
+    throw DataException("Buffer can be set only once on a delivery operation");
+
+  // Update the operation
+  setName("Ship " + string(buf->getName()));
+  setLocation(buf->getLocation());
 
   // Add a flow consuming from the buffer
   new FlowStart(this, buf, -1);
@@ -155,7 +164,8 @@ OperationDelivery::OperationDelivery(Buffer *buf)
 
 Buffer* OperationDelivery::getBuffer() const
 {
-  return getFlows().begin()->getBuffer();
+  auto tmp = getFlows().begin();
+  return tmp == getFlows().end() ? nullptr : tmp->getBuffer();
 }
 
 

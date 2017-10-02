@@ -533,7 +533,10 @@ Object* OperationPlan::createOperationPlan(
     // Create new operation if not found
     oper = Operation::find("Ship " + string(destbuffer->getName()));
     if (!oper)
-      oper = new OperationDelivery(destbuffer);
+    {
+      oper = new OperationDelivery();
+      static_cast<OperationDelivery*>(oper)->setBuffer(destbuffer);
+    }
 
     // Create operation plan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);

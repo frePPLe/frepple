@@ -5116,13 +5116,17 @@ class OperationDelivery : public OperationFixedTime
 {
   friend class Demand;
   public:
-    /** Constructor. */
-    explicit OperationDelivery(Buffer*);
+    /** Default constructor. */
+    explicit OperationDelivery();
 
     /** Destructor. */
     virtual ~OperationDelivery() {}
 
+    /** Return the delivery buffer. */
     Buffer *getBuffer() const;
+
+    /** Update the delivery buffer. */
+    void setBuffer(Buffer*);
 
     static int initialize();
 
@@ -5136,7 +5140,7 @@ class OperationDelivery : public OperationFixedTime
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr, MANDATORY);
+      m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, MANDATORY);
     }
 };
 

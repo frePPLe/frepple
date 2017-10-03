@@ -17,6 +17,7 @@
 
 import codecs
 from datetime import datetime
+from time import localtime, strftime
 import csv
 import gzip
 from openpyxl import load_workbook
@@ -30,6 +31,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.utils import translation
 from django.utils.formats import get_format
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
 from freppledb.common.report import GridReport
@@ -289,6 +292,203 @@ class Command(BaseCommand):
         file=self.logfile, flush=True
         )
     return errorcount
+
+  # accordion template
+  title = _('Import data files from folder')
+  index = 1300
+
+  @ staticmethod
+  def getHTML(request):
+
+    # Function to convert from bytes to human readabl format
+    def sizeof_fmt(num):
+      for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+          return "%3.1f%sB" % (num, unit)
+        num /= 1024.0
+      return "%.1f%sB" % (num, 'Yi')
+
+    filestoupload = []
+    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+      uploadfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
+      if os.path.isdir(uploadfolder):
+        for file in os.listdir(uploadfolder):
+          if file.endswith(('.csv', '.csv.gz', '.log')):
+            filestoupload.append([
+              file,
+              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(uploadfolder, file)).st_mtime)),
+              sizeof_fmt(os.stat(os.path.join(uploadfolder, file)).st_size)
+              ])
+
+    javascript = '''
+      var xhr = {abort: function () {}};
+
+      var uploadfilesajax = {
+        url: '{{request.prefix}}/execute/uploadtofolder/0/',
+        success: function (data) {
+          var el = $('#uploadResponse');
+          el.empty();
+          $("#animatedcog").css('visibility','hidden');
+          var lines = data.split('\n');
+          for (var i = 0; i < lines.length; i++) {
+            el.append(lines[i] + '<br>');
+          }
+          if (el.attr('data-scrolled')!== "true") {
+            el.attr('data-scrolled', el[0].scrollHeight - el.height());
+            el.scrollTop(el[0].scrollHeight - el.height());
+          }
+          if (document.queryCommandSupported('copy'))
+            $('#copytoclipboard').show();
+          $('#canceluploadbutton').hide();
+          $('#cancelimportbutton').hide();
+        },
+        error: function (result, stat, errorThrown) {
+          var el = $('#uploadResponse');
+          el.empty();
+          $("#animatedcog").css('visibility','hidden');
+          var lines = result.responseText.split('\n');
+          for (var i = 0; i < lines.length; i++) {
+            el.append(lines[i] + '<br>');
+          }
+          if (el.attr('data-scrolled')!== "true") {
+            el.attr('data-scrolled', el[0].scrollHeight - el.height());
+            el.scrollTop(el[0].scrollHeight - el.height());
+          }
+          if (document.queryCommandSupported('copy'))
+            $('#copytoclipboard').show();
+          $('#canceluploadbutton').hide();
+          $('#cancelimportbutton').hide();
+          }
+      };
+
+      function deleteImportFile(folder, filename) {
+        $.jgrid.hideModal("#searchmodfbox_grid");
+        var dialogcontent;
+        if (typeof filename === 'object') {
+          if (folder === 1) {
+            dialogcontent = gettext('You are about to delete all exported files');
+          } else {
+            dialogcontent = gettext('You are about to delete all uploaded files');
+          }
+          var oldfilename = filename;
+          filename = 'AllFiles';
+        } else {
+          dialogcontent = interpolate(gettext('You are about to delete file %s'), [filename]);
+        }
+
+        $("#popup").html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+            '<div class="modal-header">'+
+              '<h4 class="modal-title">'+gettext('Delete file')+'</h4>'+
+            '</div>'+
+            '<div class="modal-body"><p>'+
+            dialogcontent +
+            '</p></div>'+
+            '<div class="modal-footer">'+
+              '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '</div>'+
+          '</div>'+
+        '</div>' )
+        .modal('show');
+
+        $('#confirmbutton').on('click', function() {
+          $.ajax({
+            url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
+            type: "DELETE",
+            success: function () {
+              if (filename === 'AllFiles') {
+                $("#popup .modal-body>p").text(gettext('All data files were deleted'));
+              } else {
+                $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
+              }
+              $('#confirmbutton').hide();
+              $('#cancelbutton').attr('value',gettext('Close'));
+              $('#cancelbutton').one('click', function() {$("#popup").hide();});
+              $('tr[data-file="'+filename+'"]').remove();
+            },
+            error: function (result, stat, errorThrown) {
+              var filelist = result.responseText.split(' / ');
+              var elem = $("#popup .modal-body>p");
+              if (filelist.length === 1) {
+                elem.text(interpolate(gettext('File %s was not deleted'), [filename]));
+              } else {
+                for (var i = 1; i < filelist.length; i++) {
+                  if (i === 1) {
+                    elem.text(interpolate(gettext('File %s was not deleted'), [filelist[i]]));
+                  } else {
+                    elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
+                  }
+                }
+              }
+              $("#popup .modal-body>p").addClass('alert alert-danger');
+              $('#confirmbutton').hide();
+              $('#cancelbutton').attr('value', gettext('Close'));
+              $('#cancelbutton').one('click', function() {$("#popup").hide();});
+              }
+          })
+        })
+      }
+      function downloadImportFile(folder, filename) {
+        $.jgrid.hideModal("#searchmodfbox_grid");
+        window.open("/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
+      }
+      '''
+
+    context = RequestContext(request, {'filestoupload': filestoupload, 'javascript': javascript})
+
+    template = Template('''
+      {% load i18n %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
+        <table>
+          <tr>
+            <td style="vertical-align:top; padding-left: 15px">
+              <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+            </td>
+            <td colspan='5' style="padding-left: 15px;">
+              <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><strong>{% trans 'file name'|capfirst %}</strong></td>
+            <td><strong>{% trans 'size'|capfirst %}</strong></td>
+            <td><strong>{% trans 'changed'|capfirst %}</strong></td>
+            <td>
+              <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy files to folder' %}"
+                onclick="import_show('{% trans "Copy files to folder" %}',null,true,uploadfilesajax)">
+                <span class="fa fa-arrow-up"></span>
+              </span>
+            </td>
+            <td>
+              <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allimportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteImportFile(0, {{filestoupload}})">
+                <span class="fa fa-close"></span>
+              </div>
+            </td>
+          </tr></form>
+          {% for j in filestoupload %}
+          <tr data-file="{{j.0}}">
+            <td></td>
+            <td>{{j.0}}</td>
+            <td>{{j.2}}</td>
+            <td>{{j.1}}</td>
+            <td>
+              <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadImportFile(0, '{{j.0}}')">
+                <span class="fa fa-arrow-down"></span>
+              </div>
+            </td>
+            <td>
+              <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteImportFile(0, '{{j.0}}')">
+                <span class="fa fa-close"></span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </form>
+      <script>{{ javascript|safe }}</script>
+      ''')
+    return template.render(context)
 
 
 class EncodedCSVReader:

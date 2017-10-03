@@ -20,6 +20,8 @@ from datetime import timedelta, datetime, date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
@@ -212,3 +214,72 @@ class Command(BaseCommand):
       if task:
         task.save(using=database)
       settings.DEBUG = tmp_debug
+
+
+  # accordion template
+  title = _('Generate buckets')
+  index = 2000
+
+  @ staticmethod
+  def getHTML(request):
+
+    javascript = '''
+      iconslist = {
+          time: 'fa fa-clock-o',
+          date: 'fa fa-calendar',
+          up: 'fa fa-chevron-up',
+          down: 'fa fa-chevron-down',
+          previous: 'fa fa-chevron-left',
+          next: 'fa fa-chevron-right',
+          today: 'fa fa-bullseye',
+          clear: 'fa fa-trash',
+          close: 'fa fa-close'
+        };
+      // Date picker
+      $(".vDateField").on('focusin', function() {
+        $(this).parent().css('position', 'relative');
+        $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
+      });
+
+      $("#weekstartul li a").click(function(){
+        $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
+        $("#weekstart").val($(this).parent().index());
+      });
+    '''
+    context = RequestContext(request, {'javascript': javascript})
+
+    template = Template('''
+      {% load i18n %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}
+      <input type="hidden" name="weekstart" id="weekstart" value="1">
+      <table>
+        <tr>
+          <td style="vertical-align:top; padding: 15px">
+            <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+          </td>
+          <td  style="padding: 0px 15px;">
+          <p>{% blocktrans %}Create time buckets for reporting.</p>
+            <label class="control-label">Start date: <input class="vDateField form-control" id="start" name="start" type="text" size="12"/></label>
+            <label class="control-label">End date: <input class="vDateField form-control" id="end" name="end" type="text" size="12"/></label><br>
+           <label class="control-label" for="weekstart1">Week starts on:</label>
+           <div class="dropdown dropdown-submit-input">
+                   <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span>
+                   </button>
+                   <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
+                      <li><a>Sunday</a></li>
+                      <li><a>Monday</a></li>
+                      <li><a>Tuesday</a></li>
+                      <li><a>Wednesday</a></li>
+                      <li><a>Thursday</a></li>
+                      <li><a>Friday</a></li>
+                      <li><a>Saturday</a></li>
+                   </ul>
+           </div>
+
+          {% endblocktrans %}</td>
+        </tr>
+      </table>
+      </form>
+      <script>{{ javascript|safe }}</script>
+    ''')
+    return template.render(context)

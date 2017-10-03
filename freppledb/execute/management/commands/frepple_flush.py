@@ -23,6 +23,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -142,7 +144,7 @@ class Command(BaseCommand):
       if 'resource' in tables and 'out_resourceplan' not in tables:
         tables.add('out_resourceplan')
       if 'demand' in tables and 'out_constraint' not in tables:
-        tables.add('out_constraint')   
+        tables.add('out_constraint')
       tables.discard('auth_group_permissions')
       tables.discard('auth_permission')
       tables.discard('auth_group')
@@ -261,3 +263,71 @@ class Command(BaseCommand):
         task.finished = datetime.now()
         task.save(using=database)
       raise CommandError('%s' % e)
+
+  # accordion template
+  title = _('Empty the database')
+  index = 800
+
+  @ staticmethod
+  def getHTML(request):
+
+    javascript = '''
+      function checkChildren(id) {
+        var m = id.substring(6,100);
+        $("#" + id.replace(".","\\.")).prop("checked",true);  // Jquery has issues with dots in identifiers
+        for (var child in models[m])
+          checkChildren("empty_" + models[m][child]);
+      }
+      $(".empty_all").click( function() {
+        if ($(this).prop("name") === "alldata") {
+          $(".empty_entity[data-tables='data']").prop("checked", $(this).prop("checked"));
+        } else if ($(this).prop("name") === "alladmin") {
+          $(".empty_entity[data-tables='admin']").prop("checked", $(this).prop("checked"));
+        }
+        });
+      $(".empty_entity").click( function() {
+        if ($(this).attr("data-tables") === "data") {
+          $(".empty_all[name='alldata']").prop("checked",$(".empty_entity[data-tables='data']:not(:checked)").length === 0);
+        } else if ($(this).attr("data-tables") === "admin") {
+          $(".empty_all[name='alladmin']").prop("checked",$(".empty_entity[data-tables='admin']:not(:checked)").length === 0);
+        }
+        if ($(this).prop("checked")) checkChildren($(this).attr('id'));
+        });
+      '''
+    context = RequestContext(request, {'javascript': javascript})
+
+    template = Template('''
+      {% load i18n %}
+      {% getMenu as menu %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_flush/">{% csrf_token %}
+        <table>
+          <tr>
+            <td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+            <td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
+              <label>
+                <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
+              </label>
+              <br>
+              {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and not group.0 == _("admin")%}
+              <label for="empty_{{ item.1.model | model_name }}">
+                <input class="empty_entity" type="checkbox" name="models" data-tables="data" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+              </label>
+              <br>
+              {% endif %}{% endfor %}{% endfor %}
+              <label>
+                <input class="empty_all" type="checkbox" name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
+              </label>
+              <br>
+              {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and group.0 == _("admin")%}
+              <label for="empty_{{ item.1.model | model_name }}">
+                <input class="empty_entity" type="checkbox" name="models" data-tables="admin" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+              </label>
+              <br>
+              {% endif %}{% endfor %}{% endfor %}
+            </td>
+          </tr>
+        </table>
+      </form>
+      <script>{{ javascript|safe }}</script>
+    ''')
+    return template.render(context)

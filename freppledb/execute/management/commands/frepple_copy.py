@@ -21,6 +21,8 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User, Scenario
@@ -191,3 +193,81 @@ class Command(BaseCommand):
       if task:
         task.save()
       settings.DEBUG = tmp_debug
+
+  # accordion template
+  title = _('scenario management')
+  index = 600
+
+  @ staticmethod
+  def getHTML(request):
+
+    javascript = '''
+      $("#sourceul li a").click(function(){
+        $("#source").html($(this).text() + ' <span class="caret"></span>');
+        $("#sourcescenario").val($(this).text());
+      });
+      '''
+    scenarios = Scenario.objects.all()
+    context = RequestContext(request, {'javascript': javascript, 'scenarios': scenarios})
+
+    template = Template('''
+      {% load i18n %}
+      {% if scenarios.count > 1 %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_copy/">{% csrf_token %}
+        <table id="scenarios">
+          <tr>
+            {% comment %}Translators: Translation included with Django {% endcomment %}
+            <th style="padding: 0px 15px;">{% trans 'scenario'|capfirst %}</th>
+            <th style="padding: 0px 15px;">{% trans 'status'|capfirst %}</th>
+            <th>{% trans 'label'|capfirst %}</th>
+            <th>{% trans 'last refresh'|capfirst %}</th>
+          </tr>
+          {% for j in scenarios %}{% ifnotequal j.name 'default' %}
+          <tr>
+            <td style="padding: 0px 15px;"><input type=checkbox name="{{j.name}}" id="sc{{j.name}}"/>
+              <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
+              </label>
+            </td>
+            <td  style="padding: 0px 15px;">{{j.status}}</td>
+            <td>{{j.description}}</td>
+            <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
+          </tr>
+          {% endifnotequal %}{% endfor %}
+          {% if perms.auth.copy_scenario %}
+          <tr>
+            <td><button  class="btn btn-primary" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
+            </td>
+            <td  style="padding: 0px 15px;" colspan="3">
+              {% trans "copy"|capfirst %}
+                <div class="dropdown dropdown-submit-input" style="display: inline-block;">
+                  <button class="btn btn-default dropdown-toggle" id="source" value="" type="button" data-toggle="dropdown" style="min-width: 160px">-&nbsp;&nbsp;<span class="caret"></span></button>
+                  <ul class="dropdown-menu" aria-labelledby="source" id="sourceul" style="top: auto">
+                  {% for j in scenarios %}
+                    {% ifequal j.status 'In use' %}
+                      <li><a name="{{j.name}}">{{j.name}}</a></li>
+                    {% endifequal %}
+                  {% endfor %}
+                  </ul>
+                </div>
+              {% trans "into selected scenarios" %}
+
+            </td>
+          </tr>
+          {% endif %}
+          {% if perms.auth.release_scenario %}
+          <tr>
+            <td><button class="btn btn-primary" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
+            <td  style="padding: 0px 15px;" colspan="3">{% trans "release selected scenarios"|capfirst %}</td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
+            <td  style="padding: 0px 15px;" colspan="3"><input class="form-control" name="description" type="text" size="40" placeholder="{% trans "Update description of selected scenarios" %}"/></td>
+          </tr>
+          {% endif %}
+        </table>
+        <input type="hidden" name="source" id="sourcescenario" value="">
+      </form>
+      <script>{{ javascript|safe }}</script>
+      {% endif %}
+    ''')
+    return template.render(context)

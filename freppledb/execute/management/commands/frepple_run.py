@@ -22,6 +22,9 @@ import subprocess
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_text
+from django.template import Template, RequestContext
 
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.common.models import User
@@ -190,3 +193,75 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=database)
+
+
+  # accordion template
+  title = _('Create a plan')
+  index = 0
+
+  @ staticmethod
+  def getHTML(request):
+
+    # Collect optional tasks
+    PlanTaskRegistry.autodiscover()
+    planning_options = PlanTaskRegistry.getLabels()
+    current_options = request.session.get('env', [ i[0] for i in planning_options ])
+
+    try:
+      constraint = int(request.session['constraint'])
+    except:
+      constraint = 15
+
+    context = RequestContext(request, {
+                       'planning_options': planning_options,
+                        'current_options': current_options,
+                        'capacityconstrained': constraint & 4,
+                        'materialconstrained': constraint & 2,
+                        'leadtimeconstrained': constraint & 1,
+                        'fenceconstrained': constraint & 8})
+
+    template = Template('''
+      {% load i18n %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_run/">{% csrf_token %}
+        <table>
+        <tr>
+          <td style="vertical-align:top; padding: 15px">
+              <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
+          </td>
+          <td  style="padding: 15px;">
+				        {% blocktrans %}
+										Load frePPLe from the database and live data sources...<br>
+										and create a plan in frePPLe...<br>
+										and export results.{% endblocktrans %}<br><br>
+            {% if planning_options %}
+            <p {% if planning_options|length <= 1 %}style="display: none"{% endif %}><b>{% trans "optional planning steps"|capfirst %}</b><br>
+            {% for b in planning_options %}
+            <label for="option_{{b.0}}"><input type="checkbox" name="env" {% if b.0 in current_options %}checked {% endif %}value="{{b.0}}" id="option_{{b.0}}"/>&nbsp;&nbsp;{{b.1}}</label><br>
+            {% endfor %}
+            </p>
+            {% endif %}
+            <p><b>Plan type</b><br>
+
+            <input type="radio" id="plantype1" name="plantype" {% ifnotequal request.session.plantype '2' %}checked {% endifnotequal %}value="1"/>
+            <label for="plantype1">{% blocktrans %}<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>{% endblocktrans %}
+            <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
+            <input type="radio" id="plantype2" name="plantype" {% ifequal  request.session.plantype '2' %}checked {% endifequal %}value="2"/>
+            <label for="plantype2">{% blocktrans %}<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>{% endblocktrans %}
+            <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
+            </p>
+            <p>
+            <b>{% trans "constraints"|capfirst %}</b><br>
+            <label for="cb4"><input type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/>&nbsp;&nbsp;{% trans "Capacity: respect capacity limits" %}</label><br>
+            <label for="cb2"><input type="checkbox" name="constraint" {% if materialconstrained %}checked {% endif %}value="2" id="cb2"/>&nbsp;&nbsp;{% trans "Material: respect procurement limits" %}</label><br>
+            <label for="cb1"><input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/>&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br>
+            <label for="cb8"><input type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/>&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br>
+            </p>
+            <p>
+            <a id="logfile" class="btn btn-info" role="button" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a>
+            </p>
+          </td>
+        </tr>
+        </table>
+      </form>
+    ''')
+    return template.render(context)

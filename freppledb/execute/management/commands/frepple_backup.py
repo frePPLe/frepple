@@ -23,6 +23,8 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -146,3 +148,27 @@ class Command(BaseCommand):
     finally:
       if task:
         task.save(using=database)
+
+  # accordion template
+  title = _('Back up the database')
+  index = 700
+
+  @ staticmethod
+  def getHTML(request):
+
+    context = RequestContext(request)
+
+    template = Template('''
+      {% if perms.auth.run_db %}
+      {% load i18n %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}
+        <table>
+        <tr>
+          <td  style="padding: 0px 15px;"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+          <td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
+        </tr>
+        </table>
+      </form>
+      {% endif %}
+    ''')
+    return template.render(context)

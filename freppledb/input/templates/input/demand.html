@@ -76,18 +76,14 @@ function delayfmt(cellvalue, options, rowdata) {
 }
 
 function plannedquantitycellattr(rowId, value, rawobject) {
-  var thestyle = '';
-  if (parseFloat(rawobject.quantity) - parseFloat(value) > 0) {
-    thestyle = 'style="background-color: #f00"';
-  } else if (parseFloat(rawobject.quantity) - parseFloat(rawobject.plannedquantity) <= 0) {
-    //thestyle = 'style="text-align: center; background-color: #008000"'
-  }
-
-  if ( isNaN(parseFloat(value)) ) {
+  if (isNaN(parseFloat(value)) || parseFloat(rawobject.quantity) - parseFloat(value) > 0) {
+    return 'style="background-color: #f00"';
+  } 
+  //else if (parseFloat(rawobject.quantity) - parseFloat(rawobject.plannedquantity) <= 0) {
+  //  thestyle = 'style="text-align: center; background-color: #008000"'
+  //}
+  else
     return '';
-  } else {
-    return thestyle;
-  }
 }
 
 </script>

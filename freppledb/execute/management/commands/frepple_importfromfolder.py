@@ -322,14 +322,13 @@ class Command(BaseCommand):
 
     javascript = '''
       var xhr = {abort: function () {}};
-
       var uploadfilesajax = {
         url: '{{request.prefix}}/execute/uploadtofolder/0/',
         success: function (data) {
           var el = $('#uploadResponse');
           el.empty();
           $("#animatedcog").css('visibility','hidden');
-          var lines = data.split('\n');
+          var lines = data.split('\\n');
           for (var i = 0; i < lines.length; i++) {
             el.append(lines[i] + '<br>');
           }
@@ -346,7 +345,7 @@ class Command(BaseCommand):
           var el = $('#uploadResponse');
           el.empty();
           $("#animatedcog").css('visibility','hidden');
-          var lines = result.responseText.split('\n');
+          var lines = result.responseText.split('\\n');
           for (var i = 0; i < lines.length; i++) {
             el.append(lines[i] + '<br>');
           }
@@ -395,7 +394,7 @@ class Command(BaseCommand):
         $('#confirmbutton').on('click', function() {
           $.ajax({
             url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
-            type: "DELETE",
+            type:  ("delete").toUpperCase(),
             success: function () {
               if (filename === 'AllFiles') {
                 $("#popup .modal-body>p").text(gettext('All data files were deleted'));
@@ -439,6 +438,7 @@ class Command(BaseCommand):
 
     template = Template('''
       {% load i18n %}
+      {% if datafolderconfigured and user.is_superuser %}
       <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
         <table>
           <tr>
@@ -487,6 +487,10 @@ class Command(BaseCommand):
         </table>
       </form>
       <script>{{ javascript|safe }}</script>
+      {% else %}
+        {% trans "Sorry, You don't have any execute permissions..." %}
+        {% trans "... or the folder is not accessible" %}
+      {% endif %}
       ''')
     return template.render(context)
 

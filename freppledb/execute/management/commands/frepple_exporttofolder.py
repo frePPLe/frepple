@@ -280,7 +280,7 @@ class Command(BaseCommand):
         $('#confirmbutton').on('click', function() {
           $.ajax({
             url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
-            type: "DELETE",
+            type: ("delete").toUpperCase(),
             success: function () {
               if (filename === 'AllFiles') {
                 $("#popup .modal-body>p").text(gettext('All data files were deleted'));
@@ -323,6 +323,7 @@ class Command(BaseCommand):
 
     template = Template('''
       {% load i18n %}
+      {% if datafolderconfigured and user.is_superuser %}
       <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
         <table>
           <tr>
@@ -366,5 +367,9 @@ class Command(BaseCommand):
         </table>
       </form>
       <script>{{ javascript|safe }}</script>
+      {% else %}
+      {% trans "Sorry, You don't have any execute permissions..." %}
+      {% trans "... or the folder is not accessible" %}
+      {% endif %}
       ''')
     return template.render(context)

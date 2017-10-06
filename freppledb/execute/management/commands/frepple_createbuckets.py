@@ -249,6 +249,7 @@ class Command(BaseCommand):
     context = RequestContext(request, {'javascript': javascript})
 
     template = Template('''
+      {% if perms.auth.run_db %}
       {% load i18n %}
       <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}
       <input type="hidden" name="weekstart" id="weekstart" value="1">
@@ -281,5 +282,8 @@ class Command(BaseCommand):
       </table>
       </form>
       <script>{{ javascript|safe }}</script>
+      {% else %}
+        {% trans "Sorry, You don't have any execute permissions..." %}
+      {% endif %}
     ''')
     return template.render(context)

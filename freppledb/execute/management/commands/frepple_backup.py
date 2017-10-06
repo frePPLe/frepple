@@ -169,6 +169,10 @@ class Command(BaseCommand):
         </tr>
         </table>
       </form>
+      {% else %}
+        {% trans "Sorry, You don't have any execute permissions..." %}
       {% endif %}
+      ''')
+
     ''')
     return template.render(context)

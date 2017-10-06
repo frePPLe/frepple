@@ -83,6 +83,8 @@ def getHTML(request):
     <input type="hidden" name="fixture" id="loaddatafile" value="">
     </form>
     <script>{{ javascript|safe }}</script>
+    {% else %}
+      {% trans "Sorry, You don't have any execute permissions..." %}
     {% endif %}
   ''')
   return template.render(context)

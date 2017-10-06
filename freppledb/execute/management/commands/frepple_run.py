@@ -221,6 +221,7 @@ class Command(BaseCommand):
                         'fenceconstrained': constraint & 8})
 
     template = Template('''
+      {% if perms.auth.generate_plan %}
       {% load i18n %}
       <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_run/">{% csrf_token %}
         <table>
@@ -263,5 +264,8 @@ class Command(BaseCommand):
         </tr>
         </table>
       </form>
+      {% else %}
+        {% trans "Sorry, You don't have any execute permissions..." %}
+      {% endif %}
     ''')
     return template.render(context)

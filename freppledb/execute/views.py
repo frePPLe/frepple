@@ -21,7 +21,8 @@ import sys
 import re
 from datetime import datetime
 from subprocess import Popen
-from time import localtime, strftime
+from importlib import import_module
+import operator
 
 from django.apps import apps
 from django.conf import settings
@@ -36,6 +37,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, 
 from django.http import HttpResponseNotFound, StreamingHttpResponse, HttpResponseNotAllowed
 from django.contrib import messages
 from django.utils.encoding import force_text
+from django.core.management import get_commands
 
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.execute.models import Task
@@ -92,69 +94,23 @@ class TaskReport(GridReport):
     PlanTaskRegistry.autodiscover()
     planning_options = PlanTaskRegistry.getLabels()
 
-    # Loop over all fixtures of all apps and directories
-    fixtures = set()
-    folders = list(settings.FIXTURE_DIRS)
-    for app in apps.get_app_configs():
-      if not app.name.startswith('django'):
-        folders.append(os.path.join(os.path.dirname(app.path), app.label, 'fixtures'))
-    for f in folders:
+    # Loop over all accordion of all apps and directories
+    accordions = set()
+    accord = ''
+    folder = ''
+    for commandname, appname in get_commands().items():
       try:
-        for root, dirs, files in os.walk(f):
-          for i in files:
-            if i.endswith('.json'):
-              fixtures.add(i.split('.')[0])
-      except:
+        accord = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')
+        if accord.index >= 0:
+          accordions.add(accord)
+      except Exception as e:
         pass  # Silently ignore failures
-    fixtures = sorted(fixtures)
 
-    # Function to convert from bytes to human readabl format
-    def sizeof_fmt(num):
-      for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
-        if abs(num) < 1024.0:
-          return "%3.1f%sB" % (num, unit)
-        num /= 1024.0
-      return "%.1f%sB" % (num, 'Yi')
-
-    # List available data files
-    filesexported = []
-    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
-      exportfolder = os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
-      if os.path.isdir(exportfolder):
-        for file in os.listdir(exportfolder):
-          if file.endswith(('.csv', '.csv.gz', '.log')):
-            filesexported.append([
-              file,
-              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
-              sizeof_fmt(os.stat(os.path.join(exportfolder, file)).st_size)
-              ])
-
-    filestoupload = []
-    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
-      uploadfolder = settings.DATABASES[request.database]['FILEUPLOADFOLDER']
-      if os.path.isdir(uploadfolder):
-        for file in os.listdir(uploadfolder):
-          if file.endswith(('.csv', '.csv.gz', '.log')):
-            filestoupload.append([
-              file,
-              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(uploadfolder, file)).st_mtime)),
-              sizeof_fmt(os.stat(os.path.join(uploadfolder, file)).st_size)
-              ])
+    accordions = sorted(accordions, key=operator.attrgetter('index'))
 
     # Send to template
     return {
-      'capacityconstrained': constraint & 4,
-      'materialconstrained': constraint & 2,
-      'leadtimeconstrained': constraint & 1,
-      'fenceconstrained': constraint & 8,
-      'scenarios': Scenario.objects.all(),
-      'fixtures': fixtures,
-      'odoo': 'freppledb.odoo' in settings.INSTALLED_APPS,
-      'planning_options': planning_options,
-      'current_options': request.session.get('env', [ i[0] for i in planning_options ]),
-      'filestoupload': filestoupload,
-      'filesexported': filesexported,
-      'datafolderconfigured': 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]
+      'commandlist': accordions
       }
 
 

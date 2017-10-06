@@ -18,6 +18,8 @@ from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
+from django.utils.translation import ugettext_lazy as _
+from django.template import Template, RequestContext
 
 from freppledb import VERSION
 
@@ -67,3 +69,32 @@ class Command(BaseCommand):
         env="odoo_read_2",
         database=database
         )
+
+  # accordion template
+  title = _('Import data from Odoo')
+  index = 1500
+
+  @ staticmethod
+  def getHTML(request):
+
+    context = RequestContext(request)
+
+    template = Template('''
+      {% if odoo %}
+      {% load i18n %}
+      <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}
+      <table>
+        <tr>
+          <td style="vertical-align:top; padding: 15px">
+             <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+          </td>
+          <td  style="padding: 0px 15px;">{% trans "Import Odoo data into frePPLe." %}
+          </td>
+        </tr>
+      </table>
+      </form>
+      {% else %}
+        {% trans "Sorry, You don't have any execute permissions..." %}
+      {% endif %}
+    ''')
+    return template.render(context)

@@ -76,25 +76,23 @@ class Command(BaseCommand):
 
   @ staticmethod
   def getHTML(request):
+    if 'freppledb.odoo' in settings.INSTALLED_APPS:
+      context = RequestContext(request)
 
-    context = RequestContext(request)
-
-    template = Template('''
-      {% if odoo %}
-      {% load i18n %}
-      <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}
-      <table>
-        <tr>
-          <td style="vertical-align:top; padding: 15px">
-             <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-          </td>
-          <td  style="padding: 0px 15px;">{% trans "Import Odoo data into frePPLe." %}
-          </td>
-        </tr>
-      </table>
-      </form>
-      {% else %}
-        {% trans "Sorry, You don't have any execute permissions..." %}
-      {% endif %}
-    ''')
-    return template.render(context)
+      template = Template('''
+        {% load i18n %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}
+        <table>
+          <tr>
+            <td style="vertical-align:top; padding: 15px">
+               <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+            </td>
+            <td  style="padding: 0px 15px;">{% trans "Import Odoo data into frePPLe." %}
+            </td>
+          </tr>
+        </table>
+        </form>
+      ''')
+      return template.render(context)
+    else:
+      return None

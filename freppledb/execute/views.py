@@ -97,7 +97,6 @@ class TaskReport(GridReport):
     # Loop over all accordion of all apps and directories
     accordions = set()
     accord = ''
-    folder = ''
     for commandname, appname in get_commands().items():
       try:
         accord = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')

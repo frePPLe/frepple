@@ -156,23 +156,21 @@ class Command(BaseCommand):
   @ staticmethod
   def getHTML(request):
 
-    context = RequestContext(request)
+    if request.user.has_perm('auth.run_db'):
+      context = RequestContext(request)
 
-    template = Template('''
-      {% if perms.auth.run_db %}
-      {% load i18n %}
-      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}
-        <table>
-        <tr>
-          <td  style="padding: 0px 15px;"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-          <td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
-        </tr>
-        </table>
-      </form>
-      {% else %}
-        {% trans "Sorry, You don't have any execute permissions..." %}
-      {% endif %}
-      ''')
+      template = Template('''
+        {% load i18n %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_backup/">{% csrf_token %}
+          <table>
+          <tr>
+            <td  style="padding: 0px 15px;"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+            <td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
+          </tr>
+          </table>
+        </form>
+        ''')
 
-    ''')
-    return template.render(context)
+      return template.render(context)
+    else:
+      return None

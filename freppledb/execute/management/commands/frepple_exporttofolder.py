@@ -224,152 +224,150 @@ class Command(BaseCommand):
   @ staticmethod
   def getHTML(request):
 
-    # Function to convert from bytes to human readabl format
-    def sizeof_fmt(num):
-      for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
-        if abs(num) < 1024.0:
-          return "%3.1f%sB" % (num, unit)
-        num /= 1024.0
-      return "%.1f%sB" % (num, 'Yi')
+    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database] and request.user.is_superuser:
+      # Function to convert from bytes to human readabl format
+      def sizeof_fmt(num):
+        for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+          if abs(num) < 1024.0:
+            return "%3.1f%sB" % (num, unit)
+          num /= 1024.0
+        return "%.1f%sB" % (num, 'Yi')
 
-    # List available data files
-    filesexported = []
-    if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
-      exportfolder = os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
-      if os.path.isdir(exportfolder):
-        for file in os.listdir(exportfolder):
-          if file.endswith(('.csv', '.csv.gz', '.log')):
-            filesexported.append([
-              file,
-              strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
-              sizeof_fmt(os.stat(os.path.join(exportfolder, file)).st_size)
-              ])
+      # List available data files
+      filesexported = []
+      if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database]:
+        exportfolder = os.path.join(settings.DATABASES[request.database]['FILEUPLOADFOLDER'], 'export')
+        if os.path.isdir(exportfolder):
+          for file in os.listdir(exportfolder):
+            if file.endswith(('.csv', '.csv.gz', '.log')):
+              filesexported.append([
+                file,
+                strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
+                sizeof_fmt(os.stat(os.path.join(exportfolder, file)).st_size)
+                ])
 
-    javascript = '''
-      function deleteExportFile(folder, filename) {
-        $.jgrid.hideModal("#searchmodfbox_grid");
-        var dialogcontent;
-        if (typeof filename === 'object') {
-          if (folder === 1) {
-            dialogcontent = gettext('You are about to delete all exported files');
+      javascript = '''
+        function deleteExportFile(folder, filename) {
+          $.jgrid.hideModal("#searchmodfbox_grid");
+          var dialogcontent;
+          if (typeof filename === 'object') {
+            if (folder === 1) {
+              dialogcontent = gettext('You are about to delete all exported files');
+            } else {
+              dialogcontent = gettext('You are about to delete all uploaded files');
+            }
+            var oldfilename = filename;
+            filename = 'AllFiles';
           } else {
-            dialogcontent = gettext('You are about to delete all uploaded files');
+            dialogcontent = interpolate(gettext('You are about to delete file %s'), [filename]);
           }
-          var oldfilename = filename;
-          filename = 'AllFiles';
-        } else {
-          dialogcontent = interpolate(gettext('You are about to delete file %s'), [filename]);
-        }
 
-        $("#popup").html('<div class="modal-dialog">'+
-          '<div class="modal-content">'+
-            '<div class="modal-header">'+
-              '<h4 class="modal-title">'+gettext('Delete file')+'</h4>'+
+          $("#popup").html('<div class="modal-dialog">'+
+            '<div class="modal-content">'+
+              '<div class="modal-header">'+
+                '<h4 class="modal-title">'+gettext('Delete file')+'</h4>'+
+              '</div>'+
+              '<div class="modal-body"><p>'+
+              dialogcontent +
+              '</p></div>'+
+              '<div class="modal-footer">'+
+                '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
+                '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+              '</div>'+
             '</div>'+
-            '<div class="modal-body"><p>'+
-            dialogcontent +
-            '</p></div>'+
-            '<div class="modal-footer">'+
-              '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-            '</div>'+
-          '</div>'+
-        '</div>' )
-        .modal('show');
+          '</div>' )
+          .modal('show');
 
-        $('#confirmbutton').on('click', function() {
-          $.ajax({
-            url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
-            type: ("delete").toUpperCase(),
-            success: function () {
-              if (filename === 'AllFiles') {
-                $("#popup .modal-body>p").text(gettext('All data files were deleted'));
-              } else {
-                $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
-              }
-              $('#confirmbutton').hide();
-              $('#cancelbutton').attr('value',gettext('Close'));
-              $('#cancelbutton').one('click', function() {$("#popup").hide();});
-              $('tr[data-file="'+filename+'"]').remove();
-            },
-            error: function (result, stat, errorThrown) {
-              var filelist = result.responseText.split(' / ');
-              var elem = $("#popup .modal-body>p");
-              if (filelist.length === 1) {
-                elem.text(interpolate(gettext('File %s was not deleted'), [filename]));
-              } else {
-                for (var i = 1; i < filelist.length; i++) {
-                  if (i === 1) {
-                    elem.text(interpolate(gettext('File %s was not deleted'), [filelist[i]]));
-                  } else {
-                    elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
+          $('#confirmbutton').on('click', function() {
+            $.ajax({
+              url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
+              type: ("delete").toUpperCase(),
+              success: function () {
+                if (filename === 'AllFiles') {
+                  $("#popup .modal-body>p").text(gettext('All data files were deleted'));
+                } else {
+                  $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
+                }
+                $('#confirmbutton').hide();
+                $('#cancelbutton').attr('value',gettext('Close'));
+                $('#cancelbutton').one('click', function() {$("#popup").hide();});
+                $('tr[data-file="'+filename+'"]').remove();
+              },
+              error: function (result, stat, errorThrown) {
+                var filelist = result.responseText.split(' / ');
+                var elem = $("#popup .modal-body>p");
+                if (filelist.length === 1) {
+                  elem.text(interpolate(gettext('File %s was not deleted'), [filename]));
+                } else {
+                  for (var i = 1; i < filelist.length; i++) {
+                    if (i === 1) {
+                      elem.text(interpolate(gettext('File %s was not deleted'), [filelist[i]]));
+                    } else {
+                      elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
+                    }
                   }
                 }
-              }
-              $("#popup .modal-body>p").addClass('alert alert-danger');
-              $('#confirmbutton').hide();
-              $('#cancelbutton').attr('value', gettext('Close'));
-              $('#cancelbutton').one('click', function() {$("#popup").hide();});
-              }
+                $("#popup .modal-body>p").addClass('alert alert-danger');
+                $('#confirmbutton').hide();
+                $('#cancelbutton').attr('value', gettext('Close'));
+                $('#cancelbutton').one('click', function() {$("#popup").hide();});
+                }
+            })
           })
-        })
-      }
-      function downloadExportFile(folder, filename) {
-        $.jgrid.hideModal("#searchmodfbox_grid");
-        window.open("/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
-      }
-      '''
-    context = RequestContext(request, {'filesexported': filesexported, 'javascript': javascript})
+        }
+        function downloadExportFile(folder, filename) {
+          $.jgrid.hideModal("#searchmodfbox_grid");
+          window.open("/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
+        }
+        '''
+      context = RequestContext(request, {'filesexported': filesexported, 'javascript': javascript})
 
-    template = Template('''
-      {% load i18n %}
-      {% if datafolderconfigured and user.is_superuser %}
-      <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
-        <table>
-          <tr>
-            <td style="vertical-align:top; padding-left: 15px">
-              <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
-            </td>
-            <td colspan='5' style="padding-left: 15px;">
-              <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
-            </td>
-          </tr>
-          <tr>
-            <td></td>
-            <td><strong>{% trans 'file name'|capfirst %}</strong></td>
-            <td><strong>{% trans 'size'|capfirst %}</strong></td>
-            <td><strong>{% trans 'changed'|capfirst %}</strong></td>
-            <td></td>
-            <td>
-              <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allexportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteExportFile(1, {{filesexported}})">
-                <span class="fa fa-close"></span>
-              </div>
-            </td>
-          </tr></form>
-          {% for j in filesexported %}
-          <tr data-file="{{j.0}}">
-            <td></td>
-            <td>{{j.0}}</td>
-            <td>{{j.2}}</td>
-            <td>{{j.1}}</td>
-            <td>
-              <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadExportFile(1, '{{j.0}}')">
-                <span class="fa fa-arrow-down"></span>
-              </div>
-            </td>
-            <td>
-              <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteExportFile(1, '{{j.0}}')">
-                <span class="fa fa-close"></span>
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
-      </form>
-      <script>{{ javascript|safe }}</script>
-      {% else %}
-      {% trans "Sorry, You don't have any execute permissions..." %}
-      {% trans "... or the folder is not accessible" %}
-      {% endif %}
-      ''')
-    return template.render(context)
+      template = Template('''
+        {% load i18n %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_exporttofolder/">{% csrf_token %}
+          <table>
+            <tr>
+              <td style="vertical-align:top; padding-left: 15px">
+                <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
+              </td>
+              <td colspan='5' style="padding-left: 15px;">
+                <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><strong>{% trans 'file name'|capfirst %}</strong></td>
+              <td><strong>{% trans 'size'|capfirst %}</strong></td>
+              <td><strong>{% trans 'changed'|capfirst %}</strong></td>
+              <td></td>
+              <td>
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allexportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteExportFile(1, {{filesexported}})">
+                  <span class="fa fa-close"></span>
+                </div>
+              </td>
+            </tr></form>
+            {% for j in filesexported %}
+            <tr data-file="{{j.0}}">
+              <td></td>
+              <td>{{j.0}}</td>
+              <td>{{j.2}}</td>
+              <td>{{j.1}}</td>
+              <td>
+                <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadExportFile(1, '{{j.0}}')">
+                  <span class="fa fa-arrow-down"></span>
+                </div>
+              </td>
+              <td>
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteExportFile(1, '{{j.0}}')">
+                  <span class="fa fa-close"></span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </form>
+        <script>{{ javascript|safe }}</script>
+        ''')
+      return template.render(context)
+    else:
+      return None

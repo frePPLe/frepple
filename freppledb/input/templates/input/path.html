@@ -72,7 +72,7 @@ function clickedShaped(d)
   if (d.hasOwnProperty('type') && (d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
     return; //don't show links for non existing operations
   } else {
-    var result = '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/';
+    var result = url_prefix + '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/';
   }
 
   window.open(result, "_self");
@@ -337,7 +337,7 @@ $(function(){
       var width = $("#graph").width();
       var height = $("#graph").height();
       d3.select('#svggraph').attr('width', width).attr('viewBox','0 0 ' + width +' '+ height );
-      
+
       // Resize the bottom grid to fill the remaining space of the window
       var gridheight = $(window).height() - $("#content-main").offset().top - 40;
       if (gridheight < 200)

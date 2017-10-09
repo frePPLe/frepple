@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
   # accordion template
   title = _('Import data from Odoo')
-  index = 1500
+  index = 1400
 
   @ staticmethod
   def getHTML(request):

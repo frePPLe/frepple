@@ -196,7 +196,7 @@ class Command(BaseCommand):
 
   # accordion template
   title = _('scenario management')
-  index = 600
+  index = 1500
 
   @ staticmethod
   def getHTML(request):

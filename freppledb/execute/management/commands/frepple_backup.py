@@ -151,7 +151,7 @@ class Command(BaseCommand):
 
   # accordion template
   title = _('Back up the database')
-  index = 700
+  index = 1600
 
   @ staticmethod
   def getHTML(request):

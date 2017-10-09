@@ -266,7 +266,7 @@ class Command(BaseCommand):
 
   # accordion template
   title = _('Empty the database')
-  index = 800
+  index = 1700
 
   @ staticmethod
   def getHTML(request):

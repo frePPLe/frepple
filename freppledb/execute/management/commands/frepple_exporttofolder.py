@@ -97,10 +97,15 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
+    parser.add_argument(
+      '--logfile', dest='logfile', action='store_true', default=False,
+      help='Define a name for the log file (default = False)'
+      )
 
 
   def handle(self, *args, **options):
     # Pick up the options
+    now = datetime.now()
     self.database = options['database']
     if self.database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % self.database )
@@ -113,7 +118,14 @@ class Command(BaseCommand):
     else:
       self.user = None
 
-    now = datetime.now()
+    if 'logfile' in options and options['logfile']:
+      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+    else:
+      timestamp = now.strftime("%Y%m%d%H%M%S")
+      if self.database == DEFAULT_DB_ALIAS:
+        logfile = 'exporttofolder-%s.log' % timestamp
+      else:
+        logfile = 'exporttofolder_%s-%s.log' % (self.database, timestamp)
 
     task = None
     self.logfile = None
@@ -129,8 +141,9 @@ class Command(BaseCommand):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
+        logfile = task.logfile
       else:
-        task = Task(name='export to folder', submitted=now, started=now, status='0%', user=self.user)
+        task = Task(name='export to folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
 
@@ -147,7 +160,7 @@ class Command(BaseCommand):
             if exception.errno != errno.EEXIST:
               raise
 
-        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export', 'exporttofolder.log'), "a")
+        self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
         print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
 
         cursor = connections[self.database].cursor()
@@ -172,7 +185,7 @@ class Command(BaseCommand):
             else:
               csv_datafile = open(os.path.join(exportFolder, filename), "w")
 
-            cursor.copy_expert(sqlquery,csv_datafile)
+            cursor.copy_expert(sqlquery, csv_datafile)
 
             csv_datafile.close()
             i += 1
@@ -183,10 +196,10 @@ class Command(BaseCommand):
             if task:
               task.message = 'Failed to export %s' % filename
 
-          task.status = str(int(i/cnt*100))+'%'
+          task.status = str(int(i / cnt*100)) + '%'
           task.save(using=self.database)
 
-        print("%s Exported %s file(s)\n" % (datetime.now(),cnt-errors), file=self.logfile)
+        print("%s Exported %s file(s)\n" % (datetime.now(), cnt - errors), file=self.logfile)
 
       else:
         errors += 1
@@ -209,7 +222,7 @@ class Command(BaseCommand):
           task.message = "Exported %s data files" % (cnt)
         else:
           task.status = 'Failed'
-          #task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
+          #  task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
         task.finished = datetime.now()
         task.save(using=self.database)
 

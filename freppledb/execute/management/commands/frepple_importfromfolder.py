@@ -65,6 +65,10 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
+    parser.add_argument(
+      '--logfile', dest='logfile', action='store_true', default=False,
+      help='Define a name for the log file (default = False)'
+      )
 
 
   def get_version(self):
@@ -73,6 +77,7 @@ class Command(BaseCommand):
 
   def handle(self, **options):
     # Pick up the options
+    now = datetime.now()
     self.database = options['database']
     if self.database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % self.database )
@@ -83,8 +88,14 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       self.user = None
-
-    now = datetime.now()
+    if 'logfile' in options and options['logfile']:
+      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+    else:
+      timestamp = now.strftime("%Y%m%d%H%M%S")
+      if self.database == DEFAULT_DB_ALIAS:
+        logfile = 'importfromfolder-%s.log' % timestamp
+      else:
+        logfile = 'importfromfolder_%s-%s.log' % (self.database, timestamp)
 
     task = None
     self.logfile = None
@@ -100,8 +111,9 @@ class Command(BaseCommand):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
+        logfile = task.logfile
       else:
-        task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user)
+        task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.save(using=self.database)
 
       # Choose the right self.delimiter and language
@@ -113,7 +125,7 @@ class Command(BaseCommand):
         and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
-        self.logfile = open(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'importfromfolder.log'), "a")
+        self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
         print("%s Started import from folder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]

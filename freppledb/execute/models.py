@@ -43,6 +43,7 @@ class Task(models.Model):
   arguments = models.TextField(_('arguments'), max_length=200, null=True, editable=False)
   status = models.CharField(_('status'), max_length=20, editable=False)
   message = models.TextField(_('message'), max_length=200, null=True, editable=False)
+  logfile = models.TextField(_('logfile'), max_length=200, null=True, editable=False)
   #. Translators: Translation included with Django
   user = models.ForeignKey(
     User, verbose_name=_('user'), blank=True, null=True,

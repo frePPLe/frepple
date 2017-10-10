@@ -74,6 +74,7 @@ class TaskReport(GridReport):
     GridFieldDateTime('started', title=_('started'), editable=False, align='center'),
     GridFieldDateTime('finished', title=_('finished'), editable=False, align='center'),
     GridFieldText('status', title=_('status'), editable=False, align='center', extra="formatter:status"),
+    GridFieldText('logfile', title=_('log file'), width=80, editable=False, align='center', extra="formatter:logbutton"),
     GridFieldText('message', title=_('message'), editable=False, width=500, formatter='longstring'),
     GridFieldText('arguments', title=_('arguments'), editable=False),
     #. Translators: Translation included with Django
@@ -129,7 +130,8 @@ def APITask(request, action):
           'name': t.name, 'submitted': str(t.submitted),
           'started': str(t.started), 'finished': str(t.finished),
           'arguments': t.arguments, 'status': t.status,
-          'message': t.message, 'user': t.user.username if t.user else None
+          'message': t.message, 'user': t.user.username if t.user else None,
+          'logfile': t.logfile
           }
     else:
       task = wrapTask(request, action)
@@ -169,11 +171,15 @@ def wrapTask(request, action):
   # Allow only post
   if request.method != 'POST':
     raise Exception('Only post requests allowed')
-
   # Parse the posted parameters as arguments for an asynchronous task to add to the queue.    TODO MAKE MODULAR WITH SEPERATE TASK CLASS
   worker_database = request.database
 
   now = datetime.now()
+  timestamp = now.strftime("%Y%m%d%H%M%S")
+  if worker_database == DEFAULT_DB_ALIAS:
+    logfile = 'frepple-%s.log' % timestamp
+  else:
+    logfile = 'frepple_%s-%s.log' % (worker_database, timestamp)
   task = None
   # A
   if action == 'frepple_run':
@@ -185,8 +191,8 @@ def wrapTask(request, action):
         constraint += int(value)
       except:
         pass
-    task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype', 1))
+    task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user, logfile=logfile)
+    task.arguments = "--constraint=%s --plantype=%s --logfile=%s" % (constraint, request.POST.get('plantype', 1), logfile)
     env = []
     for value in request.POST.getlist('env'):
       env.append(value)
@@ -204,13 +210,14 @@ def wrapTask(request, action):
     task = Task(name='empty database', submitted=now, status='Waiting', user=request.user)
     models = ','.join(request.POST.getlist('models'))
     if models:
-      task.arguments = "--models=%s" % models
+      task.arguments = "--models=%s" % (models)
     task.save(using=request.database)
   # D
   elif action == 'loaddata':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
+    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'], logfile=logfile)
+    task.arguments = "--logfile=%s" % logfile
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
@@ -282,13 +289,14 @@ def wrapTask(request, action):
   elif action == 'frepple_importfromfolder':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user)
+    logfile = logfile.replace('frepple', 'importfromfolder', 1)
+    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user, logfile=logfile)
     task.save(using=request.database)
   # N
   elif action == 'frepple_exporttofolder':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user, logfile=logfile)
     task.save(using=request.database)
   else:
     # Task not recognized
@@ -342,10 +350,11 @@ def CancelTask(request, taskid):
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)
     if task.name == 'generate plan' and task.status.endswith("%"):
-      if request.database == DEFAULT_DB_ALIAS:
-        fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log')
-      else:
-        fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database)
+      # if request.database == DEFAULT_DB_ALIAS:
+      #   fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log')
+      # else:
+      #   fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database)
+      fname = os.path.join(settings.FREPPLE_LOGDIR, task.logfile)
       try:
         # The second line in the log file has the id of the frePPLe process
         with open(fname, 'r') as f:
@@ -374,11 +383,14 @@ def CancelTask(request, taskid):
 
 @staff_member_required
 @never_cache
-def DownloadLogFile(request):
-  if request.database == DEFAULT_DB_ALIAS:
-    filename = 'frepple.log'
-  else:
-    filename = 'frepple_%s.log' % request.database
+def DownloadLogFile(request, filename):
+  # if request.database == DEFAULT_DB_ALIAS:
+  #   filename = 'frepple.log'
+  # else:
+  #   filename = 'frepple_%s.log' % request.database
+  if not filename.lower().endswith('.log'):
+    return HttpResponseNotFound(force_text(_('Error downloading file')))
+
   response = static.serve(
     request, filename,
     document_root=settings.FREPPLE_LOGDIR
@@ -390,15 +402,15 @@ def DownloadLogFile(request):
 
 @staff_member_required
 @never_cache
-def logfile(request):
+def logfile(request, filename):
   '''
   This view shows the frePPLe log file of the last planning run in this database.
   '''
+  if not filename.lower().endswith('.log'):
+    return HttpResponseNotFound(force_text(_('Error downloading file')))
+
   try:
-    if request.database == DEFAULT_DB_ALIAS:
-      f = open(os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log'), 'rb')
-    else:
-      f = open(os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database), 'rb')
+    f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), 'rb')
   except:
     logdata = "File not found"
   else:
@@ -408,8 +420,8 @@ def logfile(request):
         # Too big to display completely
         f.seek(-50000, os.SEEK_END)
         d = f.read(50000)
-        d = d[d.index(b'\n'):] # Strip the first, incomplete line
-        logdata = force_text(_("Displaying only the last 50K from the log file")) + '...\n\n...' + d.decode("utf8","ignore")
+        d = d[d.index(b'\n'):]  # Strip the first, incomplete line
+        logdata = force_text(_("Displaying only the last 50K from the log file")) + '...\n\n...' + d.decode("utf8", "ignore")
       else:
         # Displayed completely
         f.seek(0, os.SEEK_SET)
@@ -420,6 +432,7 @@ def logfile(request):
   return render(request, 'execute/logfrepple.html', {
     'title': _('Log file'),
     'logdata': logdata,
+    'logfile': filename
     } )
 
 

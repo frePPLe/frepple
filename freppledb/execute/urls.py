@@ -24,10 +24,10 @@ autodiscover = True
 
 urlpatterns = [
   url(r'^execute/$', freppledb.execute.views.TaskReport.as_view(), name="execute"),
-  url(r'^execute/logfrepple/$', freppledb.execute.views.logfile, name="execute_view_log"),
+  url(r'^execute/logfrepple/(.+)/$', freppledb.execute.views.logfile, name="execute_view_log"),
   url(r'^execute/launch/(.+)/$', freppledb.execute.views.LaunchTask, name="execute_launch"),
   url(r'^execute/cancel/(.+)/$', freppledb.execute.views.CancelTask, name="execute_cancel"),
-  url(r'^execute/logdownload/$', freppledb.execute.views.DownloadLogFile, name="execute_download_log"),
+  url(r'^execute/logdownload/(.+)/$', freppledb.execute.views.DownloadLogFile, name="execute_download_log"),
   url(r'^execute/api/(.+)/$', freppledb.execute.views.APITask, name="execute_api"),
   url(r'^execute/uploadtofolder/(.+)/$', freppledb.execute.views.FileManager.uploadFiletoFolder, name="copy_file_to_folder"),
   url(r'^execute/downloadfromfolder/(.+)/(.+)/$', freppledb.execute.views.FileManager.downloadFilefromFolder, name="download_file_from_folder"),

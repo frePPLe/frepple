@@ -110,7 +110,8 @@ class TaskReport(GridReport):
 
     # Send to template
     return {
-      'commandlist': accordions
+      'commandlist': accordions,
+      'logfileslist': json.dumps(list(x for x in os.listdir(settings.FREPPLE_LOGDIR) if x.endswith('.log')))
       }
 
 

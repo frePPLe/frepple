@@ -18,6 +18,7 @@
 import os
 from datetime import datetime
 import subprocess
+import re
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
@@ -73,10 +74,16 @@ class Command(BaseCommand):
       '--background', dest='background', action='store_true', default=False,
       help='Run the planning engine in the background (default = False)'
       )
+    parser.add_argument(
+      '--logfile', dest='logfile', action='store_true', default=False,
+      help='Define a name for the log file (default = False)'
+      )
 
 
   def handle(self, **options):
     # Pick up the options
+    now = datetime.now()
+
     if 'database' in options:
       database = options['database'] or DEFAULT_DB_ALIAS
     else:
@@ -90,8 +97,15 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
+    if 'logfile' in options and options['logfile']:
+      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+    else:
+      timestamp = now.strftime("%Y%m%d%H%M%S")
+      if database == DEFAULT_DB_ALIAS:
+        logfile = 'frepple-%s.log' % timestamp
+      else:
+        logfile = 'frepple_%s-%s.log' % (database, timestamp)
 
-    now = datetime.now()
     task = None
     try:
       # Initialize the task
@@ -105,7 +119,7 @@ class Command(BaseCommand):
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='generate plan', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='generate plan', submitted=now, started=now, status='0%', user=user, logfile=logfile)
 
       # Validate options
       if 'constraint' in options:
@@ -157,6 +171,7 @@ class Command(BaseCommand):
       os.environ['FREPPLE_CONSTRAINT'] = str(constraint)
       os.environ['FREPPLE_TASKID'] = str(task.id)
       os.environ['FREPPLE_DATABASE'] = database
+      os.environ['FREPPLE_LOGFILE'] = logfile
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       if os.path.isfile(os.path.join(settings.FREPPLE_HOME, 'libfrepple.so')):
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME

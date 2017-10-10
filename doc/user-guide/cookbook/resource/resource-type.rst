@@ -41,5 +41,5 @@ size is varying over time. Until April 1st we have 1 resource available, and
 after that date we have 2 available.
 
 The third resource represent a work center that is capable of producing
-10000 units per week. The plan of the resource doesn’t bother at all during
+10000 units per week. The plan of the resource doesn't bother at all during
 which days of the week we plan the production.

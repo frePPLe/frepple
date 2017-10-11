@@ -53,7 +53,7 @@
       return cellvalue;
   }
 
-  function logbutton (cellvalue, options, rowdata) { console.log(cellvalue);
+  function logbutton (cellvalue, options, rowdata) {
     if (typeof(cellvalue) !== 'undefined' && logfileslist.indexOf(cellvalue) > -1) {
       return '<a class="btn btn-info" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logfrepple/'+cellvalue+'/">{% filter force_escape %}{% trans "view" %}{% endfilter %}</a>';
     } else {

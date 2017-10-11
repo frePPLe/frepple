@@ -198,13 +198,13 @@ void Buffer::inspect(const string msg) const
           << endl;
         break;
       case 2:
-        logger << ", event set-onhand" << endl;
+        logger << ", set onhand to " << oo->getOnhand() << endl;
         break;
       case 3:
-        logger << ", event update-minimum" << endl;
+        logger << ", update minimum to " << oo->getMin() << endl;
         break;
       case 4:
-        logger << ", event update-maximum" << endl;
+        logger << ", update maximum to " << oo->getMax() << endl;
         break;
     }
   }

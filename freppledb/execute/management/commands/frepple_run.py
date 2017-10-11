@@ -76,7 +76,7 @@ class Command(BaseCommand):
       )
     parser.add_argument(
       '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file (default = False)'
+      help='Define a name for the log file, must have ".log" extension (default = False)'
       )
 
 
@@ -99,6 +99,8 @@ class Command(BaseCommand):
       user = None
     if 'logfile' in options and options['logfile']:
       logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+      if not logfile.lower().endswith('.log'):
+        logfile = logfile + ".log"
     else:
       timestamp = now.strftime("%Y%m%d%H%M%S")
       if database == DEFAULT_DB_ALIAS:

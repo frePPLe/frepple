@@ -18,7 +18,6 @@
 import os
 import errno
 import gzip
-import logging
 
 from _datetime import datetime
 from time import localtime, strftime
@@ -31,8 +30,6 @@ from django.template import Template, RequestContext
 from freppledb.common.models import User
 from freppledb import VERSION
 from freppledb.execute.models import Task
-
-logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -99,7 +96,7 @@ class Command(BaseCommand):
       )
     parser.add_argument(
       '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file (default = False)'
+      help='Define a name for the log file, must have ".log" extension (default = False)'
       )
 
 
@@ -120,6 +117,8 @@ class Command(BaseCommand):
 
     if 'logfile' in options and options['logfile']:
       logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+      if not logfile.lower().endswith('.log'):
+        logfile = logfile + ".log"
     else:
       timestamp = now.strftime("%Y%m%d%H%M%S")
       if self.database == DEFAULT_DB_ALIAS:

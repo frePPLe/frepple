@@ -150,6 +150,7 @@ def APITask(request, action):
 @csrf_protect
 def LaunchTask(request, action):
   try:
+    print('views 153----', action, request)
     if action == 'exportworkbook':
       return exportWorkbook(request)
     elif action == 'importworkbook':
@@ -187,7 +188,7 @@ def wrapTask(request, action):
         constraint += int(value)
       except:
         pass
-    task = Task(name='generate plan', submitted=now, status='Waiting', user=request.user, logfile=logfile)
+    task = Task(name='frepple_run', submitted=now, status='Waiting', user=request.user, logfile=logfile)
     task.arguments = "--constraint=%s --plantype=%s --logfile=%s" % (constraint, request.POST.get('plantype', 1), logfile)
     env = []
     for value in request.POST.getlist('env'):
@@ -203,7 +204,7 @@ def wrapTask(request, action):
   elif action == 'frepple_flush':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='empty database', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='frepple_flush', submitted=now, status='Waiting', user=request.user)
     models = ','.join(request.POST.getlist('models'))
     if models:
       task.arguments = "--models=%s" % (models)
@@ -212,7 +213,7 @@ def wrapTask(request, action):
   elif action == 'loaddata':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
+    task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
@@ -228,7 +229,7 @@ def wrapTask(request, action):
         if force:
           arguments += ' --force'
         if request.POST.get(sc.name, 'off') == 'on' or sc.name in destination:
-          task = Task(name='copy scenario', submitted=now, status='Waiting', user=request.user, arguments=arguments)
+          task = Task(name='frepple_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
           task.save()
     elif 'release' in request.POST:
       # Note: release is immediate and synchronous.
@@ -256,7 +257,7 @@ def wrapTask(request, action):
   elif action == 'frepple_createbuckets':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='generate buckets', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='frepple_createbuckets', submitted=now, status='Waiting', user=request.user)
     arguments = []
     start = request.POST.get('start', None)
     if start:
@@ -286,7 +287,6 @@ def wrapTask(request, action):
           pass  # Silently ignore failures
     if not command:
       raise Exception("Invalid task name '%s'" % action)
-
     # Create a task
     arguments = []
     for arg, val in request.GET.lists():
@@ -297,7 +297,6 @@ def wrapTask(request, action):
     if arguments:
       task.arguments = " ".join(arguments)
     task.save(using=request.database)
-
   # Launch a worker process, making sure it inherits the right
   # environment variables from this parent
   os.environ['FREPPLE_CONFIGDIR'] = settings.FREPPLE_CONFIGDIR

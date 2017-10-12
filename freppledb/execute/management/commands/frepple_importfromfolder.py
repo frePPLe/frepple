@@ -100,13 +100,13 @@ class Command(BaseCommand):
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'import from folder':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_importfromfolder':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
         task.logfile = logfile
       else:
-        task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
+        task = Task(name='frepple_importfromfolder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.save(using=self.database)
 
       # Choose the right self.delimiter and language
@@ -118,9 +118,8 @@ class Command(BaseCommand):
         and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
-        print (logfile, "     -----------")
         self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
-        print("%s Started import from folder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
+        print("%s Started frepple_importfromfolder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
@@ -216,7 +215,7 @@ class Command(BaseCommand):
       task.finished = datetime.now()
       task.save(using=self.database)
       if self.logfile:
-        print('%s End of import from folder\n' % datetime.now(), file=self.logfile, flush=True)
+        print('%s End of frepple_importfromfolder\n' % datetime.now(), file=self.logfile, flush=True)
         self.logfile.close()
 
 

@@ -87,12 +87,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'backup database':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_backup':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='backup database', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='frepple_backup', submitted=now, started=now, status='0%', user=user)
 
       # Choose the backup file name
       backupfile = now.strftime("database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database)

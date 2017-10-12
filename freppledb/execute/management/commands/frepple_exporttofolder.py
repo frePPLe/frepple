@@ -127,19 +127,18 @@ class Command(BaseCommand):
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'export to folder':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_exporttofolder':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
         task.logfile = logfile
       else:
-        task = Task(name='export to folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
+        task = Task(name='frepple_exporttofolder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.arguments = ' '.join(['"%s"' % i for i in args])
       task.save(using=self.database)
 
       # Execute
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-
         # Open the logfile
         # The log file remains in the upload folder as different folders can be specified
         # We do not want t create one log file per folder
@@ -203,7 +202,7 @@ class Command(BaseCommand):
       errors += 1
       if task:
         task.message = 'Failed to export'
-      logger.error("Failed to export: %s" % e)
+      print("Failed to export: %s" % e)
 
     finally:
       if task:

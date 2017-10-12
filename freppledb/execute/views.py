@@ -252,12 +252,6 @@ def wrapTask(request, action):
           sc.save()
     else:
       raise Exception('Invalid scenario task')
-  # F
-  elif action == 'frepple_backup':
-    if not request.user.has_perm('auth.run_db'):
-      raise Exception('Missing execution privileges')
-    task = Task(name='backup database', submitted=now, status='Waiting', user=request.user)
-    task.save(using=request.database)
   # G
   elif action == 'frepple_createbuckets':
     if not request.user.has_perm('auth.run_db'):
@@ -275,22 +269,6 @@ def wrapTask(request, action):
       arguments.append("--weekstart=%s" % weekstart)
     if arguments:
       task.arguments = " ".join(arguments)
-    task.save(using=request.database)
-  # J
-  elif action == 'odoo_import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-    task = Task(name='Odoo import', submitted=now, status='Waiting', user=request.user)
-    task.save(using=request.database)
-  # M
-  elif action == 'frepple_importfromfolder':
-    if not request.user.has_perm('auth.run_db'):
-      raise Exception('Missing execution privileges')
-    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user)
-    task.save(using=request.database)
-  # N
-  elif action == 'frepple_exporttofolder':
-    if not request.user.has_perm('auth.run_db'):
-      raise Exception('Missing execution privileges')
-    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   else:
     # Generic task wrapper

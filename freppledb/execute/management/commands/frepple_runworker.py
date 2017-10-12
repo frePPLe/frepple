@@ -158,10 +158,6 @@ class Command(BaseCommand):
         elif task.name == 'copy scenario':
           args = task.arguments.split()
           management.call_command('frepple_copy', *args, task=task.id)
-        # F
-        elif task.name == 'backup database':
-          management.call_command('frepple_backup', database=database, task=task.id)
-        # G
         elif task.name == 'generate buckets':
           args = {}
           if task.arguments:
@@ -169,15 +165,6 @@ class Command(BaseCommand):
               key, val = i.split('=')
               args[key[2:]] = val
           management.call_command('frepple_createbuckets', database=database, task=task.id, **args)
-        # L
-        elif task.name == 'Odoo import' and 'freppledb.odoo' in settings.INSTALLED_APPS:
-          management.call_command('odoo_import', database=database, task=task.id, verbosity=0)
-        # M
-        elif task.name == 'import from folder':
-          management.call_command('frepple_importfromfolder', database=database, task=task.id)
-        # N
-        elif task.name == 'export to folder':
-          management.call_command('frepple_exporttofolder', database=database, task=task.id)
         else:
           # Verify the command exists
           exists = False

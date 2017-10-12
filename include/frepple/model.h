@@ -5972,9 +5972,15 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * or down (true) in case the operation quantity must be a multiple.<br>
       * The second parameter is to flag whether we want to actually perform
       * the resizing, or only to simulate it.
+      *
+      * Possible resizing modes:
+      *  - 0: keep the flowplan at its current date during the resize
+      *  - 1: keep the start date constant when resizing the flowplan
+      *  - 2: keep the end date constant when resizing the flowplan
       */
     double setQuantity(
-      double quantity, bool rounddown=false, bool update=true, bool execute=true
+      double quantity, bool rounddown=false, bool update=true,
+      bool execute=true, short mode = 2
       );
 
     /** This function needs to be called whenever the flowplan date or

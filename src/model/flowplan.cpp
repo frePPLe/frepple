@@ -171,11 +171,16 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
-double FlowPlan::setQuantity(double quantity, bool b, bool u, bool e)
+double FlowPlan::setQuantity(
+  double quantity, bool rounddown, bool update, bool execute, short mode
+  )
 {
+  // TODO argument "update" isn't used
   if (isConfirmed())
   {
-    if (e)
+    // Confirmed flowplans take any quantity, regardless of the
+    // quantity of the owning operationplan.
+    if (execute)
     {
       // Update the timeline data structure
       getFlow()->getBuffer()->flowplans.update(
@@ -194,12 +199,33 @@ double FlowPlan::setQuantity(double quantity, bool b, bool u, bool e)
 
   if (!getFlow()->getEffective().within(getDate()))
   {
-    if (e)
-      oper->getOperation()->setOperationPlanParameters(
-        oper, 0.0,
-        Date::infinitePast, oper->getDates().getEnd(),
-        true, e, b
+    if (execute)
+    {
+      if (
+        mode == 2 
+        || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata)
+        || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata)
+        )
+      {
+        oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0,
+          Date::infinitePast, oper->getDates().getEnd(),
+          true, execute, rounddown
         );
+      }
+      else if (
+        mode == 1 
+        || (mode == 0 && getFlow()->getType() == *FlowStart::metadata)
+        || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata)
+        )
+      {
+        oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0,
+          oper->getDates().getStart(), Date::infinitePast,
+          false, execute, rounddown
+        );
+      }
+    }
     return 0.0;
   }
   if (getFlow()->getType() == *FlowFixedEnd::metadata
@@ -208,33 +234,59 @@ double FlowPlan::setQuantity(double quantity, bool b, bool u, bool e)
     // Fixed quantity flows only allow resizing to 0
     if (quantity == 0.0 && oper->getQuantity() != 0.0)
     {
-      OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
-        oper, 0.0,
-        Date::infinitePast, oper->getDates().getEnd(),
-        true, e, b
-        );
+      OperationPlanState x;
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
+        x = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0,
+          Date::infinitePast, oper->getDates().getEnd(),
+          true, execute, rounddown
+          );
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
+        x = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0,
+          oper->getDates().getStart(), Date::infinitePast,
+          false, execute, rounddown
+          );
       return x.quantity ? getFlow()->getQuantity() : 0.0;
     }
     else if (quantity != 0.0 && oper->getQuantity() == 0.0)
     {
-      OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
-        oper,
-        (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
+      OperationPlanState x;
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
+        x = oper->getOperation()->setOperationPlanParameters(
+          oper,
+          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
+            : oper->getOperation()->getSizeMinimum(),
+          Date::infinitePast, oper->getDates().getEnd(),
+          true, execute, rounddown
+          );
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
+        x = oper->getOperation()->setOperationPlanParameters(
+          oper,
+          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
           : oper->getOperation()->getSizeMinimum(),
-        Date::infinitePast, oper->getDates().getEnd(),
-        true, e, b
-      );
+          oper->getDates().getStart(), Date::infinitePast,
+          false, execute, rounddown
+          );
       return x.quantity ? getFlow()->getQuantity() : 0.0;
     }
   }
   else
   {
     // Normal, proportional flows
-    OperationPlanState x = oper->getOperation()->setOperationPlanParameters(
-      oper, quantity / getFlow()->getQuantity(),
-      Date::infinitePast, oper->getDates().getEnd(),
-      true, e, b
-    );   
+    OperationPlanState x;
+    if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+      x = oper->getOperation()->setOperationPlanParameters(
+        oper, quantity / getFlow()->getQuantity(),
+        Date::infinitePast, oper->getDates().getEnd(),
+        true, execute, rounddown
+        );
+    else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+      x = oper->getOperation()->setOperationPlanParameters(
+        oper, quantity / getFlow()->getQuantity(),
+        oper->getDates().getStart(), Date::infinitePast,
+        false, execute, rounddown
+        );
     return x.quantity * getFlow()->getQuantity();
   }
   throw LogicException("Unreachable code reached");

@@ -291,7 +291,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Resize the consumer
-        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false);
+        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false, true, 0);
         if (fp->getFlow()->getType() == *FlowFixedEnd::metadata
           || fp->getFlow()->getType() == *FlowFixedStart::metadata)
           newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantity() : 0.0;

@@ -583,7 +583,8 @@ Object* OperationPlan::createOperationPlan(
       else
         opplan->setStatus(status);
     }
-    opplan->activate(create);
+    if (!opplan->activate(create))
+      throw DataException("Can't create operationplan");
 
     // Report the operationplan creation to the manager
     if (mgr)

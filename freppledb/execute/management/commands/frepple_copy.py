@@ -97,12 +97,12 @@ class Command(BaseCommand):
         task = Task.objects.all().get(pk=options['task'])
       except:
         raise CommandError("Task identifier not found")
-      if task.started or task.finished or task.status != "Waiting" or task.name != 'copy scenario':
+      if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_copy':
         raise CommandError("Invalid task identifier")
       task.status = '0%'
       task.started = now
     else:
-      task = Task(name='copy scenario', submitted=now, started=now, status='0%', user=user)
+      task = Task(name='frepple_copy', submitted=now, started=now, status='0%', user=user)
     task.save()
 
     # Synchronize the scenario table with the settings

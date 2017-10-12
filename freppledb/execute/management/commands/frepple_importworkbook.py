@@ -19,16 +19,39 @@ import os
 import sys
 from datetime import datetime
 import subprocess
+import re
+from logging import ERROR, WARNING, DEBUG
+
+from openpyxl import load_workbook, Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.writer.write_only import WriteOnlyCell
 
 from django.core.management.base import BaseCommand, CommandError
+from django.core.files import File
+from django.contrib.auth import get_permission_codename
+from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
+from django.db import connections, transaction, models
 from django.conf import settings
+from django.utils import translation, six
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import smart_str, force_text, force_str
 from django.template import Template, RequestContext
+from django.http import HttpRequest
 
 from freppledb.execute.models import Task
-from freppledb.common.models import User
+from freppledb.common.models import User, Comment
+from freppledb.common.report import importWorkbook, GridReport
+from freppledb.common.dataload import parseExcelWorksheet
 from freppledb import VERSION
+
+import logging
+logger = logging.getLogger(__name__)
+
+# A list of models with some special, administrative purpose.
+# They should be excluded from bulk import, export and erasing actions.
+EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 class Command(BaseCommand):
@@ -36,100 +59,247 @@ class Command(BaseCommand):
   # help = "Loads XLS workbook file into the frePPLe database"
   help = "command not implemented yet"
 
-  # requires_system_checks = False
-  #
-  # def add_arguments(self, parser):
-  #   parser.add_argument(
-  #     '--user', help='User running the command'
-  #     )
-  #   parser.add_argument(
-  #     '--database', default=DEFAULT_DB_ALIAS,
-  #     help='Nominates a specific database to load data from and export results into'
-  #     )
-  #   parser.add_argument(
-  #     '--task', type=int,
-  #     help='Task identifier (generated automatically if not provided)'
-  #     )
-  #   parser.add_argument(
-  #     'file', nargs='+',
-  #     help='workbook file name'
-  #     )
-  #
-  #
-  # def get_version(self):
-  #   return VERSION
-  #
-  #
-  # def handle(self, **options):
-  #   # Pick up the options
-  #   database = options['database']
-  #   if database not in settings.DATABASES:
-  #     raise CommandError("No database settings known for '%s'" % database )
-  #   if options['user']:
-  #     try:
-  #       user = User.objects.all().using(database).get(username=options['user'])
-  #     except:
-  #       raise CommandError("User '%s' not found" % options['user'] )
-  #   else:
-  #     user = None
-  #
-  #   now = datetime.now()
-  #   task = None
-  #   try:
-  #     # Initialize the task
-  #     if options['task']:
-  #       try:
-  #         task = Task.objects.all().using(database).get(pk=options['task'])
-  #       except:
-  #         raise CommandError("Task identifier not found")
-  #       if task.started or task.finished or task.status != "Waiting" or task.name != 'import spreadsheet':
-  #         raise CommandError("Invalid task identifier")
-  #       task.status = '0%'
-  #       task.started = now
-  #     else:
-  #       task = Task(name='import spreadsheet', submitted=now, started=now, status='0%', user=user)
-  #     task.arguments = ' '.join(options['file'])
-  #     task.save(using=database)
-  #
-  #     # Execute
-  #     # TODO: if frePPLe is available as a module, we don't really need to spawn another process.
-  #     os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\', '\\\\')
-  #     os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
-  #     os.environ['FREPPLE_DATABASE'] = database
-  #     os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
-  #     os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-  #     if 'DJANGO_SETTINGS_MODULE' not in os.environ:
-  #       os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-  #     if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'], 'python35.zip')):
-  #       # For the py2exe executable
-  #       os.environ['PYTHONPATH'] = os.path.join(
-  #         os.environ['FREPPLE_HOME'],
-  #         'python%d%d.zip' % (sys.version_info[0], sys.version_info[1])
-  #         ) + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
-  #     else:
-  #       # Other executables
-  #       os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
-  #     cmdline = [ '"%s"' % i for i in options['file'] ]
-  #     cmdline.insert(0, 'frepple')
-  #     cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP, 'freppledb', 'execute', 'loadxml.py') )
-  #     (out, ret) = subprocess.run(' '.join(cmdline))
-  #     if ret:
-  #       raise Exception('Exit code of the batch run is %d' % ret)
-  #
-  #     # Task update
-  #     task.status = 'Done'
-  #     task.finished = datetime.now()
-  #
-  #   except Exception as e:
-  #     if task:
-  #       task.status = 'Failed'
-  #       task.message = '%s' % e
-  #       task.finished = datetime.now()
-  #     raise e
-  #
-  #   finally:
-  #     if task:
-  #       task.save(using=database)
+  requires_system_checks = False
+
+  def add_arguments(self, parser):
+    parser.add_argument(
+      '--user', help='User running the command'
+      )
+    parser.add_argument(
+      '--database', default=DEFAULT_DB_ALIAS,
+      help='Nominates a specific database to load data from and export results into'
+      )
+    parser.add_argument(
+      '--task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      'file', nargs='+',
+      help='workbook file name'
+      )
+    parser.add_argument(
+      '--logfile', dest='logfile', action='store_true', default=False,
+      help='Define a name for the log file, must have ".log" extension (default = False)'
+      )
+
+
+  def get_version(self):
+    return VERSION
+
+
+  def handle(self, **options):
+    # Pick up the options
+    now = datetime.now()
+    self.database = options['database']
+    if self.database not in settings.DATABASES:
+      raise CommandError("No database settings known for '%s'" % self.database )
+    if options['user']:
+      try:
+        self.user = User.objects.all().using(self.database).get(username=options['user'])
+      except:
+        raise CommandError("User '%s' not found" % options['user'] )
+    else:
+      self.user = None
+    if 'logfile' in options and options['logfile']:
+      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
+      if not logfile.lower().endswith('.log'):
+        logfile = logfile + ".log"
+    if 'file' in options and options['file']:
+      print('89----', options['file'][0])
+      # filename = re.split(r'/|:|\\', options['file'][0])[-1]
+      filename = options['file']
+      print(filename[0].lower())
+      # if not filename[0].lower().endswith('.xlsx'):
+      #   raise CommandError("File format not accepted")
+    else:
+      timestamp = now.strftime("%Y%m%d%H%M%S")
+      if self.database == DEFAULT_DB_ALIAS:
+        logfile = 'importworkbook-%s.log' % timestamp
+      else:
+        logfile = 'importworkbook_%s-%s.log' % (self.database, timestamp)
+
+    task = None
+    try:
+      # Initialize the task
+      if options['task']:
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_importworkbook':
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+      else:
+        task = Task(name='frepple_importworkbook', submitted=now, started=now, status='0%', user=self.user)
+      task.arguments = ' '.join(options['file'])
+      task.save(using=self.database)
+
+      # Execute
+      # TODO: if frePPLe is available as a module, we don't really need to spawn another process.
+      # os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\', '\\\\')
+      # os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
+      # os.environ['FREPPLE_DATABASE'] = database
+      # os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
+      # os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
+      # if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+      #   os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+      # if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'], 'python35.zip')):
+      #   # For the py2exe executable
+      #   os.environ['PYTHONPATH'] = os.path.join(
+      #     os.environ['FREPPLE_HOME'],
+      #     'python%d%d.zip' % (sys.version_info[0], sys.version_info[1])
+      #     ) + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
+      # else:
+      #   # Other executables
+      #   os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
+      # cmdline = [ '"%s"' % i for i in options['file'] ]
+      # cmdline.insert(0, 'frepple')
+      # cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP, 'freppledb', 'execute', 'loadxml.py') )
+      # (out, ret) = subprocess.run(' '.join(cmdline))
+      # if ret:
+      #   raise Exception('Exit code of the batch run is %d' % ret)
+      #
+      # # Task update
+      # task.status = 'Done'
+      # task.finished = datetime.now()
+      #
+      all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
+      print('148----', all_models)
+      try:
+        with transaction.atomic(using=self.database):
+          # Find all models in the workbook
+          for file in filename:
+            wb = load_workbook(filename=file, read_only=True, data_only=True)
+            models = []
+            for ws_name in wb.get_sheet_names():
+              # Find the model
+              model = None
+              contenttype_id = None
+              for m, ct in all_models:
+                # Try with translated model names
+                if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                  model = m
+                  contenttype_id = ct
+                  break
+                # Try with English model names
+                with translation.override('en'):
+                  if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                    model = m
+                    contenttype_id = ct
+                    break
+              if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+                print(force_text(_("Ignoring data in worksheet: %s") % ws_name))
+                # yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
+              elif not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
+                # Check permissions
+                print(force_text(_("You don't permissions to add: %s") % ws_name))
+                # yield '<div class="alert alert-danger">' + force_text(_("You don't permissions to add: %s") % ws_name) + '</div>'
+              else:
+                deps = set([model])
+                GridReport.dependent_models(model, deps)
+                models.append( (ws_name, model, contenttype_id, deps) )
+
+            # Sort the list of models, based on dependencies between models
+            models = GridReport.sort_models(models)
+            print('197----', models)
+            # Process all rows in each worksheet
+            for ws_name, model, contenttype_id, dependencies in models:
+              print(force_text(_("Processing data in worksheet: %s") % ws_name))
+              # yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+              # yield ('<div class="table-responsive">'
+                     # '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
+              numerrors = 0
+              numwarnings = 0
+              firsterror = True
+              ws = wb.get_sheet_by_name(name=ws_name)
+              for error in parseExcelWorksheet(model, ws, user=self.user, database=self.database, ping=True):
+                if error[0] == DEBUG:
+                  # Yield some result so we can detect disconnect clients and interrupt the upload
+                  # yield ' '
+                  continue
+                if firsterror and error[0] in (ERROR, WARNING):
+                  print('%s %s %s %s %s%s%s' % (
+                    capfirst(_("worksheet")), capfirst(_("row")),
+                    capfirst(_("field")), capfirst(_("value")),
+                    capfirst(_("error")), " / ", capfirst(_("warning"))
+                    ))
+                  # yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
+                  #   capfirst(_("worksheet")), capfirst(_("row")),
+                  #   capfirst(_("field")), capfirst(_("value")),
+                  #   capfirst(_("error")), " / ", capfirst(_("warning"))
+                  #   )
+                  firsterror = False
+                if error[0] == ERROR:
+                  print('%s %s %s %s %s: %s' % (
+                    ws_name,
+                    error[1] if error[1] else '',
+                    error[2] if error[2] else '',
+                    error[3] if error[3] else '',
+                    capfirst(_('error')),
+                    error[4]
+                    ))
+                  # yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  #   ws_name,
+                  #   error[1] if error[1] else '',
+                  #   error[2] if error[2] else '',
+                  #   error[3] if error[3] else '',
+                  #   capfirst(_('error')),
+                  #   error[4]
+                  #   )
+                  numerrors += 1
+                elif error[1] == WARNING:
+                  print('%s %s %s %s %s: %s' % (
+                    ws_name,
+                    error[1] if error[1] else '',
+                    error[2] if error[2] else '',
+                    error[3] if error[3] else '',
+                    capfirst(_('warning')),
+                    error[4]
+                    ))
+                  # yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                  #   ws_name,
+                  #   error[1] if error[1] else '',
+                  #   error[2] if error[2] else '',
+                  #   error[3] if error[3] else '',
+                  #   capfirst(_('warning')),
+                  #   error[4]
+                  #   )
+                  numwarnings += 1
+                else:
+                  print('%s %s %s %s %s %s' % (
+                    "danger" if numerrors > 0 else 'success',
+                    ws_name,
+                    error[1] if error[1] else '',
+                    error[2] if error[2] else '',
+                    error[3] if error[3] else '',
+                    error[4]
+                    ))
+              #     yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+              #       "danger" if numerrors > 0 else 'success',
+              #       ws_name,
+              #       error[1] if error[1] else '',
+              #       error[2] if error[2] else '',
+              #       error[3] if error[3] else '',
+              #       error[4]
+              #       )
+              # yield '</tbody></table></div>'
+            print('%s' % _("Done"))
+            # yield '<div><strong>%s</strong></div>' % _("Done")
+      except GeneratorExit:
+        logger.warning('Connection Aborted')
+    except Exception as e:
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+      raise e
+
+    finally:
+      if task:
+        task.save(using=self.database)
+
+    return _("Done")
 
   # accordion template
   title = _('Import a spreadsheet')

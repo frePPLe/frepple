@@ -79,12 +79,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'load XML file':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_loadxml':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='load XML file', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='frepple_loadxml', submitted=now, started=now, status='0%', user=user)
       task.arguments = ' '.join(options['file'])
       task.save(using=database)
 

@@ -172,12 +172,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate model':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_createmodel':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='generate model', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='frepple_createmodel', submitted=now, started=now, status='0%', user=user)
       task.arguments = "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s " \
         "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s" % (
           cluster, demand, forecast_per_item, level, resource,

@@ -108,13 +108,13 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate plan':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_run':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
         task.logfile = logfile
       else:
-        task = Task(name='generate plan', submitted=now, started=now, status='0%', user=user, logfile=logfile)
+        task = Task(name='frepple_run', submitted=now, started=now, status='0%', user=user, logfile=logfile)
 
       # Validate options
       if 'constraint' in options:

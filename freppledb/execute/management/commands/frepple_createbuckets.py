@@ -102,12 +102,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'generate buckets':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_createbuckets':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='generate buckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
+        task = Task(name='frepple_createbuckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
       task.save(using=database)
 
       # Validate the date arguments

@@ -84,12 +84,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'restore database':
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_restore':
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='restore database', submitted=now, started=now, status='0%', user=user)
+        task = Task(name='frepple_restore', submitted=now, started=now, status='0%', user=user)
       task.arguments = options['dump']
       task.save(using=database)
 
@@ -117,7 +117,7 @@ class Command(BaseCommand):
       # Task update
       # We need to recreate a new task record, since the previous one is lost during the restoration.
       task = Task(
-        name='restore database', submitted=task.submitted, started=task.started,
+        name='frepple_restore', submitted=task.submitted, started=task.started,
         arguments=task.arguments, status='Done', finished=datetime.now(),
         user=task.user
         )

@@ -293,8 +293,32 @@ def wrapTask(request, action):
     task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   else:
-    # Task not recognized
-    raise Exception("Invalid task name '%s'" % action)
+    # Generic task wrapper
+
+    # Find the command and verify we have permissions to run it
+    command = None
+    for commandname, appname in get_commands().items():
+      if commandname == action:
+        try:
+          c = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')
+          if c.index >= 0 and c.getHTML(request):
+            command = c
+            break
+        except Exception:
+          pass  # Silently ignore failures
+    if not command:
+      raise Exception("Invalid task name '%s'" % action)
+
+    # Create a task
+    arguments = []
+    for arg, val in request.GET.lists():
+      arguments.append('--%s=%s' % (arg, ','.join(val)))
+    for arg, val in request.GET.lists():
+      arguments.append('--%s=%s' % (arg, ','.join(val)))
+    task = Task(name=action, submitted=now, status='Waiting', user=request.user)
+    if arguments:
+      task.arguments = " ".join(arguments)
+    task.save(using=request.database)
 
   # Launch a worker process, making sure it inherits the right
   # environment variables from this parent

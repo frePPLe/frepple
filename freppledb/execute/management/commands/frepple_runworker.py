@@ -23,6 +23,7 @@ from threading import Thread
 
 from django.conf import settings
 from django.core import management
+from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, connections
 
@@ -178,7 +179,24 @@ class Command(BaseCommand):
         elif task.name == 'export to folder':
           management.call_command('frepple_exporttofolder', database=database, task=task.id)
         else:
-          logger.error('Task %s not recognized' % task.name)
+          # Verify the command exists
+          exists = False
+          for commandname in get_commands():
+            if commandname == task.name:
+              exists = True
+              break
+
+          # Execute the command
+          if not exists:
+            logger.error('Task %s not recognized' % task.name)
+          else:
+            kwargs = {}
+            if task.arguments:
+              for i in task.arguments.split():
+                key, val = i.split('=')
+                kwargs[key[2:]] = val
+            management.call_command(task.name, database=database, task=task.id, **kwargs)
+
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)
         if task.status not in ('Done', 'Failed') or not task.finished or not task.started:

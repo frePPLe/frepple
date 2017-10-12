@@ -129,7 +129,7 @@ class Command(BaseCommand):
         background = False
         task.started = datetime.now()
         # A
-        if task.name == 'generate plan':
+        if task.name == 'frepple_run':
           kwargs = {}
           if task.arguments:
             for i in task.arguments.split():
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             background = True
           management.call_command('frepple_run', database=database, task=task.id, **kwargs)
         # C
-        elif task.name == 'empty database':
+        elif task.name == 'frepple_flush':
           # Erase the database contents
           kwargs = {}
           if task.arguments:
@@ -151,14 +151,14 @@ class Command(BaseCommand):
               kwargs[key[2:]] = val
           management.call_command('frepple_flush', database=database, task=task.id, **kwargs)
         # D
-        elif task.name == 'load dataset':
+        elif task.name == 'loaddata':
           args = task.arguments.split()
           management.call_command('loaddata', *args, verbosity=0, database=database, task=task.id)
         # E
-        elif task.name == 'copy scenario':
+        elif task.name == 'frepple_copy':
           args = task.arguments.split()
           management.call_command('frepple_copy', *args, task=task.id)
-        elif task.name == 'generate buckets':
+        elif task.name == 'frepple_createbuckets':
           args = {}
           if task.arguments:
             for i in task.arguments.split():

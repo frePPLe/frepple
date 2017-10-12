@@ -118,7 +118,6 @@ class Command(BaseCommand):
         and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
-        print (logfile, "     -----------")
         self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
         print("%s Started import from folder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
 

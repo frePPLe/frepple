@@ -268,9 +268,6 @@ class Command(BaseCommand):
               <label for="cb1"><input type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/>&nbsp;&nbsp;{% trans "Lead time: do not plan in the past" %}</label><br>
               <label for="cb8"><input type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/>&nbsp;&nbsp;{% trans "Release fence: do not plan within the release time window" %}</label><br>
               </p>
-              <p>
-              <a id="logfile" class="btn btn-info" role="button" href="{{request.prefix}}/execute/logfrepple/">{% trans "View log file" %}</a>
-              </p>
             </td>
           </tr>
           </table>

@@ -65,7 +65,7 @@ class PlanTaskRegistry:
     for t in cls.reg:
       if t.label:
         lbl = (t.label[0], force_text(t.label[1]))
-        if not lbl in res:
+        if lbl not in res:
           res.append(lbl)
     return res
 
@@ -105,13 +105,13 @@ class PlanTaskRegistry:
     if 'FREPPLE_TASKID' in os.environ:
       try:
         cls.task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
+        cls.task.save(using=database)
       except:
         raise Exception("Task identifier not found")
     if cls.task and cls.task.status == 'Canceling':
       cls.task.status = 'Cancelled'
       cls.task.save(using=database)
       sys.exit(2)
-
     # Collect the list of tasks
     task_weights = 0
     task_list = []
@@ -141,7 +141,7 @@ class PlanTaskRegistry:
           ))
         step.run(database=database, **kwargs)
         if step.sequence > 0:
-          print("Finished '%s' at %s" % (step.description,  datetime.now().strftime("%H:%M:%S")))
+          print("Finished '%s' at %s" % (step.description, datetime.now().strftime("%H:%M:%S")))
         progress += step.weight
 
       # Final task status
@@ -195,10 +195,7 @@ if __name__ == "__main__":
   settings.DEBUG = False
 
   # Send the output to a logfile
-  if database == DEFAULT_DB_ALIAS:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log')
-  else:
-    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % database)
+  frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ['FREPPLE_LOGFILE'])
 
   # Welcome message
   print("FrePPLe with processid %s on %s using database '%s'" % (

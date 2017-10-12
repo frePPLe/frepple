@@ -176,11 +176,6 @@ def wrapTask(request, action):
   worker_database = request.database
 
   now = datetime.now()
-  timestamp = now.strftime("%Y%m%d%H%M%S")
-  if worker_database == DEFAULT_DB_ALIAS:
-    logfile = 'frepple-%s.log' % timestamp
-  else:
-    logfile = 'frepple_%s-%s.log' % (worker_database, timestamp)
   task = None
   # A
   if action == 'frepple_run':
@@ -217,8 +212,7 @@ def wrapTask(request, action):
   elif action == 'loaddata':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'], logfile=logfile)
-    task.arguments = "--logfile=%s" % logfile
+    task = Task(name='load dataset', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
@@ -290,14 +284,13 @@ def wrapTask(request, action):
   elif action == 'frepple_importfromfolder':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    logfile = logfile.replace('frepple', 'importfromfolder', 1)
-    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user, logfile=logfile)
+    task = Task(name='import from folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   # N
   elif action == 'frepple_exporttofolder':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user, logfile=logfile)
+    task = Task(name='export to folder', submitted=now, status='Waiting', user=request.user)
     task.save(using=request.database)
   else:
     # Task not recognized

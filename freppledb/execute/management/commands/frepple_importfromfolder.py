@@ -65,10 +65,6 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
-    parser.add_argument(
-      '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file, must have ".log" extension (default = False)'
-      )
 
 
   def get_version(self):
@@ -88,16 +84,11 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       self.user = None
-    if 'logfile' in options and options['logfile']:
-      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
-      if not logfile.lower().endswith('.log'):
-        logfile = logfile + ".log"
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+    if self.database == DEFAULT_DB_ALIAS:
+      logfile = 'importfromfolder-%s.log' % timestamp
     else:
-      timestamp = now.strftime("%Y%m%d%H%M%S")
-      if self.database == DEFAULT_DB_ALIAS:
-        logfile = 'importfromfolder-%s.log' % timestamp
-      else:
-        logfile = 'importfromfolder_%s-%s.log' % (self.database, timestamp)
+      logfile = 'importfromfolder_%s-%s.log' % (self.database, timestamp)
 
     task = None
     self.logfile = None
@@ -113,7 +104,7 @@ class Command(BaseCommand):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
-        logfile = task.logfile
+        task.logfile = logfile
       else:
         task = Task(name='import from folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.save(using=self.database)
@@ -127,6 +118,7 @@ class Command(BaseCommand):
         and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
+        print (logfile, "     -----------")
         self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
         print("%s Started import from folder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
 

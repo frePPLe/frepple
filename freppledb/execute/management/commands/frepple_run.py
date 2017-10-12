@@ -74,10 +74,6 @@ class Command(BaseCommand):
       '--background', dest='background', action='store_true', default=False,
       help='Run the planning engine in the background (default = False)'
       )
-    parser.add_argument(
-      '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file, must have ".log" extension (default = False)'
-      )
 
 
   def handle(self, **options):
@@ -97,16 +93,12 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       user = None
-    if 'logfile' in options and options['logfile']:
-      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
-      if not logfile.lower().endswith('.log'):
-        logfile = logfile + ".log"
+
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+    if database == DEFAULT_DB_ALIAS:
+      logfile = 'frepple-%s.log' % timestamp
     else:
-      timestamp = now.strftime("%Y%m%d%H%M%S")
-      if database == DEFAULT_DB_ALIAS:
-        logfile = 'frepple-%s.log' % timestamp
-      else:
-        logfile = 'frepple_%s-%s.log' % (database, timestamp)
+      logfile = 'frepple_%s-%s.log' % (database, timestamp)
 
     task = None
     try:
@@ -120,6 +112,7 @@ class Command(BaseCommand):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
+        task.logfile = logfile
       else:
         task = Task(name='generate plan', submitted=now, started=now, status='0%', user=user, logfile=logfile)
 

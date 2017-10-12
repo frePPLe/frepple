@@ -94,10 +94,6 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
-    parser.add_argument(
-      '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file, must have ".log" extension (default = False)'
-      )
 
 
   def handle(self, *args, **options):
@@ -115,16 +111,11 @@ class Command(BaseCommand):
     else:
       self.user = None
 
-    if 'logfile' in options and options['logfile']:
-      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
-      if not logfile.lower().endswith('.log'):
-        logfile = logfile + ".log"
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+    if self.database == DEFAULT_DB_ALIAS:
+      logfile = 'exporttofolder-%s.log' % timestamp
     else:
-      timestamp = now.strftime("%Y%m%d%H%M%S")
-      if self.database == DEFAULT_DB_ALIAS:
-        logfile = 'exporttofolder-%s.log' % timestamp
-      else:
-        logfile = 'exporttofolder_%s-%s.log' % (self.database, timestamp)
+      logfile = 'exporttofolder_%s-%s.log' % (self.database, timestamp)
 
     task = None
     self.logfile = None
@@ -140,7 +131,7 @@ class Command(BaseCommand):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
-        logfile = task.logfile
+        task.logfile = logfile
       else:
         task = Task(name='export to folder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.arguments = ' '.join(['"%s"' % i for i in args])

@@ -36,7 +36,7 @@ class Task(models.Model):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True, editable=False)
   #. Translators: Translation included with Django
-  name = models.CharField(_('name'), max_length=20, db_index=True, editable=False)
+  name = models.CharField(_('name'), max_length=50, db_index=True, editable=False)
   submitted = models.DateTimeField(_('submitted'), editable=False)
   started = models.DateTimeField(_('started'), blank=True, null=True, editable=False)
   finished = models.DateTimeField(_('submitted'), blank=True, null=True, editable=False)

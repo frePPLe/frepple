@@ -31,7 +31,13 @@ $(function() {
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" style="padding-top:5px; padding-bottom: 5px">{% block branding %}{{ block.super }}{% endblock %}</a>
+	      
+	      {% if not request.session.navbar %}
+	      <a class="navbar-brand" style="padding-top:5px; padding-bottom: 5px">
+	      {% block branding %}{{ block.super }}{% endblock %}
+	      </a>
+	      {% endif %}
+	      
 	  </div>
 
 		<div id="nav-menu" class="collapse navbar-collapse">
@@ -59,7 +65,7 @@ $(function() {
 				</div>
 			</form>
 
-		  {% if user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
+          {% if not request.session.navbar and user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
 		    <li class="dropdown">
 		    {% comment %}Translators: Translation included with Django{% endcomment %}
 		    <a href="#" class="dropdown-toggle" style="
@@ -70,7 +76,7 @@ $(function() {
 				  <li><a href="/data/logout/?next=/">{% trans 'log out'|capfirst %}</a></li>
 				</ul>
 			  </li></ul>
-			{% endif %}
+          {% endif %}
 		</div>
 
 	  <div class="row breadcrumbrow">

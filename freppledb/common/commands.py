@@ -105,13 +105,13 @@ class PlanTaskRegistry:
     if 'FREPPLE_TASKID' in os.environ:
       try:
         cls.task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
-        cls.task.save(using=database)
       except:
         raise Exception("Task identifier not found")
     if cls.task and cls.task.status == 'Canceling':
       cls.task.status = 'Cancelled'
       cls.task.save(using=database)
       sys.exit(2)
+
     # Collect the list of tasks
     task_weights = 0
     task_list = []

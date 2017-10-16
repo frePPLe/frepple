@@ -81,20 +81,9 @@ class TaskReport(GridReport):
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
     )
 
+
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
-    try:
-      constraint = int(request.session['constraint'])
-    except:
-      constraint = 15
-
-    # Synchronize the scenario table with the settings
-    Scenario.syncWithSettings()
-
-    # Collect optional tasks
-    PlanTaskRegistry.autodiscover()
-    planning_options = PlanTaskRegistry.getLabels()
-
     # Loop over all accordion of all apps and directories
     accordions = set()
     accord = ''
@@ -103,16 +92,31 @@ class TaskReport(GridReport):
         accord = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')
         if accord.index >= 0:
           accordions.add(accord)
-      except Exception as e:
+      except Exception:
         pass  # Silently ignore failures
 
     accordions = sorted(accordions, key=operator.attrgetter('index'))
 
     # Send to template
-    return {
-      'commandlist': accordions,
-      'logfileslist': json.dumps(list(x for x in os.listdir(settings.FREPPLE_LOGDIR) if x.endswith('.log')))
-      }
+    return {'commandlist': accordions}
+
+
+  @classmethod
+  def query(reportclass, request, basequery, sortsql='1 asc'):
+    logfileslist = set([x for x in os.listdir(settings.FREPPLE_LOGDIR) if x.endswith('.log')])
+    for rec in basequery:
+      yield {
+        'id': rec.id,
+        'name': rec.name,
+        'submitted': rec.submitted,
+        'started': rec.started,
+        'finished': rec.finished,
+        'status': rec.status,
+        'logfile': rec.logfile if rec.logfile in logfileslist else None,
+        'message': rec.message,
+        'arguments': rec.arguments,
+        'user__username': rec.user.username if rec.user else None
+        }
 
 
 @csrf_exempt
@@ -344,11 +348,7 @@ def CancelTask(request, taskid):
     raise Http404('Only ajax post requests allowed')
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)
-    if task.name == 'generate plan' and task.status.endswith("%"):
-      # if request.database == DEFAULT_DB_ALIAS:
-      #   fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple.log')
-      # else:
-      #   fname = os.path.join(settings.FREPPLE_LOGDIR, 'frepple_%s.log' % request.database)
+    if task.name == 'frepple_run' and task.status.endswith("%"):
       fname = os.path.join(settings.FREPPLE_LOGDIR, task.logfile)
       try:
         # The second line in the log file has the id of the frePPLe process

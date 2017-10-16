@@ -201,6 +201,9 @@ class Command(BaseCommand):
   @ staticmethod
   def getHTML(request):
 
+    # Synchronize the scenario table with the settings
+    Scenario.syncWithSettings()
+
     scenarios = Scenario.objects.all()
     if scenarios.count() > 1:
       javascript = '''

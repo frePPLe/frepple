@@ -324,6 +324,8 @@ LOGGING = {
         }
     }
 }
+# Max total log files size in MB, if the limit is reached deletes the oldest.
+MAXTOTALLOGFILESIZE = 2
 
 # A list of available user interface themes.
 # If multiple themes are configured in this list, the user's can change their

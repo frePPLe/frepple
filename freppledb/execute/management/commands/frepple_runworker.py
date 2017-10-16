@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import logging
 import os
 import time
+import operator
 from threading import Thread
 
 from django.conf import settings
@@ -211,5 +212,31 @@ class Command(BaseCommand):
       Parameter.objects.all().using(database).get(pk='Worker alive').delete()
     except:
       pass
+
+    totallogs = 0
+    filelist = []
+    for x in os.listdir(settings.FREPPLE_LOGDIR):
+      if x.endswith('.log'):
+        size = 0
+        creation = 0
+        filename = os.path.join(settings.FREPPLE_LOGDIR, x)
+        # needs try/catch because log files may still be open or being used and Windows does not like it
+        try:
+          size = os.path.getsize(filename)
+          creation = os.path.getctime(filename)
+          filelist.append( {'name': filename, 'size': size, 'creation': creation} )
+        except:
+          pass
+        totallogs += size
+    todelete = totallogs - settings.MAXTOTALLOGFILESIZE * 1024 * 1024
+    filelist.sort(key=operator.itemgetter('creation'))
+
+    i = 0
+    while todelete > 0:
+      fordeletion = filelist[i]
+      todelete -= fordeletion['size']
+      os.remove(fordeletion['name'])
+      i += 1
+
     # Exit
     logger.info("Worker finished all jobs in the queue and exits")

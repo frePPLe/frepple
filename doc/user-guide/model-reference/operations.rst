@@ -22,6 +22,11 @@ Different operation types exist:
 
 * | `Operation_alternate`_:
   | Models a choice between different operations.
+  | FrePPLe automatically builds an alternate operation if the same item-location
+    can be replenished in multiple ways: eg multiple operations to produce an item,
+    multiple vendors for an item, multiple source locations for a distribution order,
+    a choice between making the item or purchasing it, etc... Explicitly adding
+    alternate operations in your model should no longer be required in many cases.
 
 * | `Operation_split`_:
   | This operation type plans the demand proportionally over a number of
@@ -38,12 +43,16 @@ Field                  Type              Description
 ====================== ================= ===========================================================
 name                   non-empty string  | Unique name of the operation.
                                          | This is the key field and a required attribute.
+
 item                   item              | Reference to the item being produced.
-                                         | If left unspecified we will try to determine the item
-                                           as the producing records from the operation-material 
-                                           records: if an operation has only a single operation-material
-                                           with a positive quantity then we use its item as the 
-                                           item of the operation.
+                                         | We will try to determine the item as the producing records
+                                           from the operation-material records: if an operation has
+                                           only a single operation-material with a positive quantity
+                                           then we use its item as the item of the operation.
+                                         | Only in exceptional modeling situations should you worry
+                                           about setting this field yourself. Eg when an operation
+                                           produces multiple items. 
+                                           
 location               location          Location of the operation.
                                          
                                          The working hours and holidays for the operation are

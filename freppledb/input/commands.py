@@ -385,9 +385,8 @@ class loadOperations(LoadTask):
                group by operation.name
                having count(operationmaterial.item_id) = 1
              ) t
-        where operation.item_id is null
-             and operation.type = 'routing'
-             and operation.name = t.operation_id
+        where operation.type = 'routing'
+          and operation.name = t.operation_id
         ''')
 
       # Preprocessing step
@@ -409,9 +408,8 @@ class loadOperations(LoadTask):
               group by operation.name
               having count(operationmaterial.item_id) = 1
              ) t
-        where operation.item_id is null
-              and operation.type not in ('routing', 'alternate', 'split')
-              and t.operation_id = operation.name
+        where operation.type not in ('routing', 'alternate', 'split')
+          and t.operation_id = operation.name
         ''')
 
       # Preprocessing step

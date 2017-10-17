@@ -235,9 +235,8 @@ class Command(BaseCommand):
     while todelete > 0:
       fordeletion = filelist[i]
       try:
-        todelete -= fordeletion['size']
         os.remove(fordeletion['name'])
-        fordeletion = filelist[i]
+        todelete -= fordeletion['size']
       except:
         pass
       i += 1

@@ -830,11 +830,11 @@ OperationTimePer::setOperationPlanParameters(
       DateRange tmp2 = calculateOperationTime(s, e, &tmp1);
       double curmin = getSizeMinimumCalendar()->getValue(tmp2.getEnd());
       if (q < curmin)
-        q = curmin;
+        q = roundDown ? 0.0 : curmin;
     }
     if (q < getSizeMinimum())
       // Respect constant minimum value
-      q = getSizeMinimum();
+      q = roundDown ? 0.0 : getSizeMinimum();
   }
   if (q > getSizeMaximum())
     q = getSizeMaximum();
@@ -1699,6 +1699,7 @@ double Operation::setOperationPlanQuantity
   else
   {
     // All others respect constraints
+    bool applied_minimum = false;
     double curmin = 0.0;
     if (getSizeMinimumCalendar())
       // Minimum varies over time
@@ -1707,7 +1708,7 @@ double Operation::setOperationPlanQuantity
       // Minimum is constant
       curmin = getSizeMinimum();
     if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR)
-    {
+    {      
       if (roundDown)
       {
         // Smaller than the minimum quantity, rounding down means... nothing
@@ -1727,9 +1728,13 @@ double Operation::setOperationPlanQuantity
         return 0.0;
       }
       f = curmin;
+      applied_minimum = true;
     }
     if (f != 0.0 && f >= getSizeMaximum())
     {
+      if (applied_minimum && f > getSizeMaximum() + ROUNDING_ERROR)
+        throw DataException("Invalid sizing parameters for operation " + getName());
+      // If min and max are conflicting, we respect the maximum
       roundDown = true; // force rounddown to stay below the limit
       f = getSizeMaximum();
     }

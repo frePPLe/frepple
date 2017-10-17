@@ -403,7 +403,10 @@ void SolverMRP::solve(const Resource* res, void* v)
             data->state->q_operationplan,
             (currentOpplan.quantity ? currentOpplan.quantity : 0.001) / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
             newDate,
-            Date::infinitePast
+            Date::infinitePast,
+            false,
+            true,
+            false
             );
         HasOverload = true;
         if (data->state->q_operationplan->getDates().getStart() < newDate)

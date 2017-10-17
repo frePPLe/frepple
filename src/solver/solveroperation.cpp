@@ -35,6 +35,9 @@ void SolverMRP::checkOperationCapacity
     {
       if (++constrainedLoads > 1) break;
     }
+  if (!constrainedLoads)
+    return; // Stop here if no resource is loaded
+
   DateRange orig;
   Date minimumEndDate = opplan->getDates().getEnd();
   bool backuplogconstraints = data.logConstraints;
@@ -52,8 +55,11 @@ void SolverMRP::checkOperationCapacity
       h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
     {
       if (h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0)
+      {
         // Empty load or loadplan (eg when load is not effective)
+        first = false;
         continue;
+      }
       // Call the load solver - which will call the resource solver.
       data.state->q_operationplan = opplan;
       data.state->q_loadplan = &*h;
@@ -169,14 +175,14 @@ bool SolverMRP::checkOperation
         // Try a new date, until we are above the acceptable date
         Date prev = data.state->a_date;
         opplan->getOperation()->setOperationPlanParameters(
-          opplan, orig_opplan_qty, Date::infinitePast, data.state->a_date
+          opplan, orig_opplan_qty, Date::infinitePast, data.state->a_date, true, true, false
           );
         checkOperationCapacity(opplan,data);
         if (data.state->a_date <= prev && data.state->a_qty == 0.0)
         {
           // Tough luck
           opplan->getOperation()->setOperationPlanParameters(
-            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast, true, true, false
+            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast, false, true, false
           );
           data.state->forceLate = true;
           checkOperationCapacity(opplan, data);

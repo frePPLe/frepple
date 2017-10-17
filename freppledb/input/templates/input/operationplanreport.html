@@ -42,8 +42,8 @@
 <script type="text/javascript">
   function extraPreference() {
     return {
-      "height": $("#gbox_grid").height() - 48,
-      "width": $("#fields").width()
+      "height": Math.floor($("#gbox_grid").height() - 48),
+      "width": Math.floor($("#fields").width())
     };
   }
 

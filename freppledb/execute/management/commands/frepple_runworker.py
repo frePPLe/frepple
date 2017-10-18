@@ -232,11 +232,12 @@ class Command(BaseCommand):
     filelist.sort(key=operator.itemgetter('creation'))
 
     for fordeletion in filelist:
-      try:
-        os.remove(fordeletion['name'])
-        todelete -= fordeletion['size']
-      except:
-        pass
+      if todelete > 0:
+        try:
+          os.remove(fordeletion['name'])
+          todelete -= fordeletion['size']
+        except:
+          pass
 
     # Exit
     logger.info("Worker finished all jobs in the queue and exits")

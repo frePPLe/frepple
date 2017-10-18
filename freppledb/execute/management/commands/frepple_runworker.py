@@ -237,7 +237,6 @@ class Command(BaseCommand):
         todelete -= fordeletion['size']
       except:
         pass
-      i += 1
 
     # Exit
     logger.info("Worker finished all jobs in the queue and exits")

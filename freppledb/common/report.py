@@ -43,6 +43,7 @@ import urllib
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.writer.write_only import WriteOnlyCell
+from openpyxl.styles import NamedStyle, PatternFill
 
 from django.db.models import Model
 from django.apps import apps
@@ -607,6 +608,11 @@ class GridReport(View):
     title = force_text(reportclass.model and reportclass.model._meta.verbose_name or reportclass.title)
     ws = wb.create_sheet(title=title)
 
+    # Create a named style for the header row
+    headerstyle = NamedStyle(name="headerstyle")
+    headerstyle.fill = PatternFill(fill_type="solid", fgColor='70c4f4')
+    wb.add_named_style(headerstyle)
+
     # Choose fields to export and write the title row
     request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if prefs:
@@ -627,7 +633,7 @@ class GridReport(View):
     header = []
     for f in fields:
       cell = WriteOnlyCell(ws, value=force_text(f.title).title())
-      cell.style = 'Accent1'
+      cell.style = 'headerstyle'
       header.append(cell)
     ws.append(header)
 
@@ -2032,6 +2038,11 @@ class GridPivot(GridReport):
     wb = Workbook(write_only=True)
     ws = wb.create_sheet(title=force_text(reportclass.model._meta.verbose_name))
 
+    # Create a named style for the header row
+    headerstyle = NamedStyle(name="headerstyle")
+    headerstyle.fill = PatternFill(fill_type="solid", fgColor='70c4f4')
+    wb.add_named_style(headerstyle)
+
     # Prepare the query
     request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     listformat = (request.GET.get('format', 'spreadsheetlist') == 'spreadsheetlist')
@@ -2073,23 +2084,23 @@ class GridPivot(GridReport):
     for f in myrows:
       if f.name:
         cell = WriteOnlyCell(ws, value=force_text(f.title).title())
-        cell.style = 'Accent1'
+        cell.style = 'headerstyle'
         fields.append(cell)
     if listformat:
       cell = WriteOnlyCell(ws, value=capfirst(force_text(_('bucket'))))
-      cell.style = 'Accent1'
+      cell.style = 'headerstyle'
       fields.append(cell)
       for f in mycrosses:
         cell = WriteOnlyCell(ws, value=capfirst(_(f[1].get('title', _(f[0])))))
-        cell.style = 'Accent1'
+        cell.style = 'headerstyle'
         fields.append(cell)
     else:
       cell = WriteOnlyCell(ws, value=capfirst(_('data field')))
-      cell.style = 'Accent1'
+      cell.style = 'headerstyle'
       fields.append(cell)
       for b in request.report_bucketlist:
         cell = WriteOnlyCell(ws, value=str(b['name']))
-        cell.style = 'Accent1'
+        cell.style = 'headerstyle'
         fields.append(cell)
     ws.append(fields)
 
@@ -2192,6 +2203,11 @@ def exportWorkbook(request):
   # Create a workbook
   wb = Workbook(write_only=True)
 
+  # Create a named style for the header row
+  headerstyle = NamedStyle(name="headerstyle")
+  headerstyle.fill = PatternFill(fill_type="solid", fgColor='70c4f4')
+  wb.add_named_style(headerstyle)
+
   # Loop over all selected entity types
   ok = False
   for entity_name in request.POST.getlist('entities'):
@@ -2232,17 +2248,17 @@ def exportWorkbook(request):
         elif not (exclude and i.name in exclude):
           fields.append(i.column)
           cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
-          cell.style = 'Accent1'
+          cell.style = 'headerstyle'
           header.append(cell)
       if source:
         fields.append("source")
         cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
-        cell.style = 'Accent1'
+        cell.style = 'headerstyle'
         header.append(cell)
       if lastmodified:
         fields.append("lastmodified")
         cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-        cell.style = 'Accent1'
+        cell.style = 'headerstyle'
         header.append(cell)
 
       # Write a formatted header row

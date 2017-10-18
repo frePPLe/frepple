@@ -231,15 +231,12 @@ class Command(BaseCommand):
     todelete = totallogs - settings.MAXTOTALLOGFILESIZE * 1024 * 1024
     filelist.sort(key=operator.itemgetter('creation'))
 
-    i = 0
-    while todelete > 0:
-      fordeletion = filelist[i]
+    for fordeletion in filelist:
       try:
         os.remove(fordeletion['name'])
         todelete -= fordeletion['size']
       except:
         pass
-      i += 1
 
     # Exit
     logger.info("Worker finished all jobs in the queue and exits")

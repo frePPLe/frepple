@@ -20,6 +20,7 @@ from importlib import import_module
 from operator import attrgetter
 import os
 import sys
+import logging
 
 if __name__ == "__main__":
   # Initialize django
@@ -32,6 +33,8 @@ from django.utils.encoding import force_text
 
 from freppledb.execute.models import Task
 
+logger = logging.getLogger(__name__)
+
 
 class PlanTaskRegistry:
   reg = []
@@ -39,9 +42,9 @@ class PlanTaskRegistry:
   @classmethod
   def register(cls, task):
     if not issubclass(task, PlanTask):
-      print("Warning: PlanTaskRegistry only registers PlanTask objects")
+      logger.warning("Warning: PlanTaskRegistry only registers PlanTask objects")
     elif task.sequence is None:
-      print("Warning: PlanTask doesn't have a sequence")
+      logger.warning("Warning: PlanTask doesn't have a sequence")
     else:
       # Remove a previous task at the same sequence
       for t in cls.reg:
@@ -72,9 +75,9 @@ class PlanTaskRegistry:
   @classmethod
   def unregister(cls, task):
     if not issubclass(task, PlanTask):
-      print("Warning: PlanTaskRegistry only unregisters PlanTask objects")
+      logger.warning("Warning: PlanTaskRegistry only unregisters PlanTask objects")
     elif task.sequence is None:
-      print("Warning: PlanTask doesn't have a sequence")
+      logger.warning("Warning: PlanTask doesn't have a sequence")
     else:
       # Removing a task from the registry
       cls.reg.remove(task)
@@ -93,11 +96,11 @@ class PlanTaskRegistry:
 
   @classmethod
   def display(cls, **kwargs):
-    print("Planning task registry:")
+    logger.info("Planning task registry:")
     for i in cls.reg:
       i.weight = i.getWeight(**kwargs)
       if i.weight is not None and i.weight >= 0:
-        print("  %s: %s (weight %s)" % (i.sequence, i.description, i.weight))
+        logger.info("  %s: %s (weight %s)" % (i.sequence, i.description, i.weight))
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -134,14 +137,14 @@ class PlanTaskRegistry:
           cls.task.save(using=database)
 
         # Run the step
-        print("\nStart step %s '%s' at %s" % (
+        logger.info("Start step %s '%s' at %s" % (
           step.sequence,
           step.description,
           datetime.now().strftime("%H:%M:%S")
           ))
         step.run(database=database, **kwargs)
         if step.sequence > 0:
-          print("Finished '%s' at %s" % (step.description, datetime.now().strftime("%H:%M:%S")))
+          logger.info("Finished '%s' at %s \n" % (step.description, datetime.now().strftime("%H:%M:%S")))
         progress += step.weight
 
       # Final task status
@@ -150,7 +153,7 @@ class PlanTaskRegistry:
         cls.task.status = '100%'
         cls.task.message = ''
         cls.task.save(using=database)
-      print("\nFinished planning at %s" % datetime.now().strftime("%H:%M:%S"))
+      logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
     except Exception as e:
       if cls.task:
         cls.task.finished = datetime.now()
@@ -174,7 +177,7 @@ class PlanTask:
 
   @staticmethod
   def run(**kwargs):
-    print("Warning: PlanTask doesn't implement the run method")
+    logger.warning("Warning: PlanTask doesn't implement the run method")
 
 
 if __name__ == "__main__":
@@ -198,7 +201,7 @@ if __name__ == "__main__":
   frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ['FREPPLE_LOGFILE'])
 
   # Welcome message
-  print("FrePPLe with processid %s on %s using database '%s'" % (
+  logger.info("FrePPLe with processid %s on %s using database '%s'" % (
     os.getpid(),
     sys.platform,
     database
@@ -210,5 +213,5 @@ if __name__ == "__main__":
   try:
     register.run(database=database)
   except Exception as e:
-    print("Error during planning: ", e)
+    logger.error("Error during planning: %s" % e)
     raise

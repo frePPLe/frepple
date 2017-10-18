@@ -22,6 +22,7 @@ import csv
 import gzip
 from openpyxl import load_workbook
 import os
+import logging
 
 from django.conf import settings
 from django.contrib.auth import get_permission_codename
@@ -40,6 +41,8 @@ from freppledb import VERSION
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -90,8 +93,15 @@ class Command(BaseCommand):
     else:
       logfile = 'importfromfolder_%s-%s.log' % (self.database, timestamp)
 
+    try:
+      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile))
+      # handler.setFormatter(logging.Formatter(settings.LOGGING['formatters']['simple']['format']))
+      logger.addHandler(handler)
+      logger.propagate = False
+    except Exception as e:
+      print("%s Failed to open logfile %s: %s" % (datetime.now(), logfile, e))
+
     task = None
-    self.logfile = None
     errors = 0
     try:
       # Initialize the task
@@ -118,8 +128,7 @@ class Command(BaseCommand):
         and os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
 
         # Open the logfile
-        self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
-        print("%s Started frepple_importfromfolder\n" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
+        logger.info("%s Started frepple_importfromfolder\n" % datetime.now().replace(microsecond=0))
 
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
@@ -135,21 +144,21 @@ class Command(BaseCommand):
             if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
               model = m
               contenttype_id = ct
-              print("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+              logger.info("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile))
               break
             # Try with English model names
             with translation.override('en'):
               if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
                 model = m
                 contenttype_id = ct
-                print("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+                logger.info("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile))
                 break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-            print("%s Ignoring data in file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s Ignoring data in file: %s" % (datetime.now().replace(microsecond=0), ifile))
           elif self.user and not self.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):
             # Check permissions
-            print("%s You don't have permissions to add: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s You don't have permissions to add: %s" % (datetime.now().replace(microsecond=0), ifile))
           else:
             deps = set([model])
             GridReport.dependent_models(model, deps)
@@ -168,17 +177,17 @@ class Command(BaseCommand):
           i += 1
           filetoparse = os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
           if ifile.endswith('.xlsx'):
-            print("%s Started processing data in Excel file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s Started processing data in Excel file: %s" % (datetime.now().replace(microsecond=0), ifile))
             errors += self.loadExcelfile(model, filetoparse)
-            print("%s Finished processing data in file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s Finished processing data in file: %s" % (datetime.now().replace(microsecond=0), ifile))
           else:
-            print("%s Started processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s Started processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile))
             errors += self.loadCSVfile(model, filetoparse)
-            print("%s Finished processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile), file=self.logfile, flush=True)
+            logger.info("%s Finished processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile))
       else:
         errors += 1
         cnt = 0
-        print("%s Failed, folder does not exist" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
+        logger.error("%s Failed, folder does not exist" % datetime.now().replace(microsecond=0))
 
       # Task update
       if errors:
@@ -196,11 +205,10 @@ class Command(BaseCommand):
       if task:
         task.status = 'Cancelled'
         task.message = 'Cancelled'
-      if self.logfile:
-        print('%s Cancelled\n' % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
+      logger.info('%s Cancelled\n' % datetime.now().replace(microsecond=0))
 
     except Exception as e:
-      print("%s Failed" % datetime.now().replace(microsecond=0), file=self.logfile, flush=True)
+      logger.error("%s Failed" % datetime.now().replace(microsecond=0))
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
@@ -214,9 +222,8 @@ class Command(BaseCommand):
           task.status = 'Failed'
       task.finished = datetime.now()
       task.save(using=self.database)
-      if self.logfile:
-        print('%s End of frepple_importfromfolder\n' % datetime.now(), file=self.logfile, flush=True)
-        self.logfile.close()
+      logger.info('%s End of frepple_importfromfolder\n' % datetime.now())
+
 
 
   def loadCSVfile(self, model, file):
@@ -226,35 +233,32 @@ class Command(BaseCommand):
       with transaction.atomic(using=self.database):
         for error in parseCSVdata(model, datafile, user=self.user, database=self.database):
           if error[0] == ERROR:
-            print('%s Error: %s%s%s%s' % (
+            logger.error('%s Error: %s%s%s%s' % (
               datetime.now().replace(microsecond=0),
               "Row %s: " % error[1] if error[1] else '',
               "field %s: " % error[2] if error[2] else '',
               "%s: " % error[3] if error[3] else '',
               error[4]
-              ), file=self.logfile, flush=True)
+              ))
             errorcount += 1
           elif error[0] == WARNING:
-            print('%s Warning: %s%s%s%s' % (
+            logger.warning('%s Warning: %s%s%s%s' % (
               datetime.now().replace(microsecond=0),
               "Row %s: " % error[1] if error[1] else '',
               "field %s: " % error[2] if error[2] else '',
               "%s: " % error[3] if error[3] else '',
               error[4]
-              ), file=self.logfile, flush=True)
+              ))
           else:
-            print('%s %s%s%s%s' % (
+            logger.info('%s %s%s%s%s' % (
               datetime.now().replace(microsecond=0),
               "Row %s: " % error[1] if error[1] else '',
               "field %s: " % error[2] if error[2] else '',
               "%s: " % error[3] if error[3] else '',
               error[4]
-              ), file=self.logfile, flush=True)
+              ))
     except:
-      print(
-        '%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0),
-        file=self.logfile, flush=True
-        )
+      logger.error('%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0))
     return errorcount
 
 
@@ -267,35 +271,32 @@ class Command(BaseCommand):
           ws = wb.get_sheet_by_name(name=ws_name)
           for error in parseExcelWorksheet(model, ws, user=self.user, database=self.database):
             if error[0] == ERROR:
-              print('%s Error: %s%s%s%s' % (
+              logger.error('%s Error: %s%s%s%s' % (
                 datetime.now().replace(microsecond=0),
                 "Row %s: " % error[1] if error[1] else '',
                 "field %s: " % error[2] if error[2] else '',
                 "%s: " % error[3] if error[3] else '',
                 error[4]
-                ), file=self.logfile, flush=True)
+                ))
               errorcount += 1
             elif error[0] == WARNING:
-              print('%s Warning: %s%s%s%s' % (
+              logger.warning('%s Warning: %s%s%s%s' % (
                 datetime.now().replace(microsecond=0),
                 "Row %s: " % error[1] if error[1] else '',
                 "field %s: " % error[2] if error[2] else '',
                 "%s: " % error[3] if error[3] else '',
                 error[4]
-                ), file=self.logfile, flush=True)
+                ))
             else:
-              print('%s %s%s%s%s' % (
+              logger.info('%s %s%s%s%s' % (
                 datetime.now().replace(microsecond=0),
                 "Row %s: " % error[1] if error[1] else '',
                 "field %s: " % error[2] if error[2] else '',
                 "%s: " % error[3] if error[3] else '',
                 error[4]
-                ), file=self.logfile, flush=True)
+                ))
     except:
-      print(
-        '%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0),
-        file=self.logfile, flush=True
-        )
+      logger.error('%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0))
     return errorcount
 
   # accordion template

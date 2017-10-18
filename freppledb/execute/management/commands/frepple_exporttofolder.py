@@ -18,6 +18,7 @@
 import os
 import errno
 import gzip
+import logging
 
 from _datetime import datetime
 from time import localtime, strftime
@@ -31,6 +32,7 @@ from freppledb.common.models import User
 from freppledb import VERSION
 from freppledb.execute.models import Task
 
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
 
@@ -117,8 +119,15 @@ class Command(BaseCommand):
     else:
       logfile = 'exporttofolder_%s-%s.log' % (self.database, timestamp)
 
+    try:
+      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile))
+      # handler.setFormatter(logging.Formatter(settings.LOGGING['formatters']['simple']['format']))
+      logger.addHandler(handler)
+      logger.propagate = False
+    except Exception as e:
+      print("%s Failed to open logfile %s: %s" % (datetime.now(), logfile, e))
+
     task = None
-    self.logfile = None
     errors = 0
     try:
       # Initialize the task
@@ -139,9 +148,6 @@ class Command(BaseCommand):
 
       # Execute
       if os.path.isdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-        # Open the logfile
-        # The log file remains in the upload folder as different folders can be specified
-        # We do not want t create one log file per folder
         if not os.path.isdir(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export')):
           try:
             os.makedirs(os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], 'export'))
@@ -149,8 +155,7 @@ class Command(BaseCommand):
             if exception.errno != errno.EEXIST:
               raise
 
-        self.logfile = open(os.path.join(settings.FREPPLE_LOGDIR, logfile), "a")
-        print("%s Started export to folder\n" % datetime.now(), file=self.logfile)
+        logger.info("%s Started export to folder\n" % datetime.now())
 
         cursor = connections[self.database].cursor()
 
@@ -161,7 +166,7 @@ class Command(BaseCommand):
         cnt = len(self.statements)
 
         for filename, export, sqlquery in self.statements:
-          print("%s Started export of %s" % (datetime.now(),filename), file=self.logfile)
+          logger.info("%s Started export of %s" % (datetime.now(), filename))
 
           #make sure export folder exists
           exportFolder = os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], export)
@@ -181,30 +186,29 @@ class Command(BaseCommand):
 
           except Exception as e:
             errors += 1
-            print("%s Failed to export to %s" % (datetime.now(), filename), file=self.logfile)
+            logger.error("%s Failed to export to %s" % (datetime.now(), filename))
             if task:
               task.message = 'Failed to export %s' % filename
 
           task.status = str(int(i / cnt*100)) + '%'
           task.save(using=self.database)
 
-        print("%s Exported %s file(s)\n" % (datetime.now(), cnt - errors), file=self.logfile)
+        logger.info("%s Exported %s file(s)\n" % (datetime.now(), cnt - errors))
 
       else:
         errors += 1
-        print("%s Failed, folder does not exist" % datetime.now(), file=self.logfile)
+        logger.error("%s Failed, folder does not exist" % datetime.now())
         task.message = "Destination folder does not exist"
         task.save(using=self.database)
 
     except Exception as e:
-      if self.logfile:
-        print("%s Failed" % datetime.now(), file=self.logfile)
+      logger.error("%s Failed to export: %s" % (datetime.now(), e))
       errors += 1
       if task:
         task.message = 'Failed to export'
-      print("Failed to export: %s" % e)
 
     finally:
+      logger.info('%s End of export to folder\n' % datetime.now())
       if task:
         if not errors:
           task.status = '100%'
@@ -214,10 +218,6 @@ class Command(BaseCommand):
           #  task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
         task.finished = datetime.now()
         task.save(using=self.database)
-
-      if self.logfile:
-        print('%s End of export to folder\n' % datetime.now(), file=self.logfile)
-        self.logfile.close()
 
   # accordion template
   title = _('Export plan result to folder')

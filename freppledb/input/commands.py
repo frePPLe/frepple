@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import os
+import logging
 from time import time
 from datetime import datetime
 
@@ -24,11 +25,13 @@ from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.models import Resource, Item
 
+logger = logging.getLogger(__name__)
+
 
 class CheckTask(PlanTask):
   '''
   Planning task to be used for data validation tasks.
-  
+
   Specific are:
     - low weight by default, ie fast execution assumed
   '''
@@ -44,9 +47,9 @@ class LoadTask(PlanTask):
   Specific are:
     - low weight by default, ie fast execution assumed
     - filter attribute to load only a subset of the data
-    - subclass is used by the odoo connector to recognize data loading tasks 
+    - subclass is used by the odoo connector to recognize data loading tasks
   '''
-  
+
   @staticmethod
   def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
     return 0.1
@@ -93,7 +96,7 @@ class checkBuckets(CheckTask):
         empty = False
         if rec[3] == False:  # if not last bucket
           errors += 1
-          print(rec[0], rec[1], rec[2], rec[4])
+          logger.error('%s %s %s %s' % (rec[0], rec[1], rec[2], rec[4]))
       if empty:
         raise ValueError("No Calendar Buckets available")
       if errors > 0:
@@ -126,10 +129,10 @@ class loadParameter(LoadTask):
             pass
         elif rec[0] == 'plan.calendar' and rec[1]:
           frepple.settings.calendar = frepple.calendar(name=rec[1])
-          print('Bucketized planning using calendar %s' % rec[1])
+          logger.info('Bucketized planning using calendar %s' % rec[1])
       if default_current_date:
         frepple.settings.current = datetime.now().replace(microsecond=0)
-      print('Current date: %s' % frepple.settings.current)
+      logger.info('Current date: %s' % frepple.settings.current)
 
 
 @PlanTaskRegistry.register
@@ -166,8 +169,8 @@ class loadLocations(LoadTask):
           if i[3]:
             x.available = frepple.calendar(name=i[3])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d locations in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d locations in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -204,8 +207,8 @@ class loadCalendars(LoadTask):
         try:
           frepple.calendar(name=i[0], default=i[1], source=i[2], hidden=i[3])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d calendars in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -272,8 +275,8 @@ class loadCalendarBuckets(LoadTask):
           if i[13]:
             b.endtime = i[13].hour * 3600 + i[13].minute * 60 + i[13].second + 1
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d calendar buckets in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -308,8 +311,8 @@ class loadCustomers(LoadTask):
           if i[2]:
             x.owner = frepple.customer(name=i[2])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d customers in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d customers in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -344,8 +347,8 @@ class loadSuppliers(LoadTask):
           if i[2]:
             x.owner = frepple.supplier(name=i[2])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d suppliers in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d suppliers in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -491,8 +494,8 @@ class loadOperations(LoadTask):
           if i[20]:
             x.available = frepple.calendar(name=i[20])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
 
 @PlanTaskRegistry.register
 class loadSuboperations(LoadTask):
@@ -540,8 +543,8 @@ class loadSuboperations(LoadTask):
           if i[4]:
             sub.effective_end = i[4]
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d suboperations in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -588,8 +591,8 @@ class loadItems(LoadTask):
             setattr(x, a, i[idx])
             idx += 1
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d items in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -654,8 +657,8 @@ class loadItemSuppliers(LoadTask):
           if i[11]:
             curitemsupplier.resource = frepple.resource(name=i[11])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -720,8 +723,8 @@ class loadItemDistributions(LoadTask):
           if i[11]:
             curitemdistribution.resource = frepple.resource(name=i[11])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d item distributions in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d item distributions in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -774,7 +777,7 @@ class loadBuffers(LoadTask):
           b.minimum = i[5]
         if i[6]:
           b.minimum_calendar = frepple.calendar(name=i[6])
-      print('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
+      logger.info('Loaded %d buffers in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -816,8 +819,8 @@ class loadSetupMatrices(LoadTask):
           if i[5]:
             r.cost = i[5]
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -889,8 +892,8 @@ class loadResources(LoadTask):
           if i[14]:
             x.available = frepple.calendar(name=i[14])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -931,8 +934,8 @@ class loadResourceSkills(LoadTask):
           if i[3]:
             cur.effective_end = i[3]
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d resource skills in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -985,8 +988,8 @@ class loadOperationMaterials(LoadTask):
           if i[8]:
             curflow.search = i[8]
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d operation materials in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d operation materials in %.2f seconds' % (cnt, time() - starttime))
 
       # Check for operations where:
       #  - operation.item is still blank
@@ -994,7 +997,7 @@ class loadOperationMaterials(LoadTask):
       # If found we update
       starttime = time()
       cnt = 0
-      print('Auto-update operation items...')
+      logger.info('Auto-update operation items...')
       for oper in frepple.operations():
         if oper.hidden or oper.item or oper.hasSuperOperations:
           continue
@@ -1010,7 +1013,7 @@ class loadOperationMaterials(LoadTask):
         if item:
           cnt += 1
           oper.item = item
-      print('Auto-update of %s operation items in %.2f seconds' % (cnt, time() - starttime))
+      logger.info('Auto-update of %s operation items in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -1066,8 +1069,8 @@ class loadOperationResources(LoadTask):
           if i[9]:
             curload.skill = frepple.skill(name=i[9])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d resource loads in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d resource loads in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -1119,8 +1122,8 @@ class loadDemand(LoadTask):
           if i[13]:
             x.location = frepple.location(name=i[13])
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d demands in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -1210,12 +1213,12 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
               )
             opplan = None
           else:
-            print("Warning: unhandled operationplan type '%s'" % i[7])
+            logger.warning("Warning: unhandled operationplan type '%s'" % i[7])
             continue
           if i[14] and opplan:
             opplan.demand = frepple.demand(name=i[14])
         except Exception as e:
-          print("Error:", e)
+          logger.error("**** %s ****" % e)
     with connections[database].chunked_cursor() as cursor:
       cursor.execute('''
         SELECT
@@ -1246,10 +1249,10 @@ class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, w
           try:
             opplan.owner = frepple.operationplan(id=i[6])
           except:
-            pass        
+            pass
         if i[8] and opplan:
           opplan.demand = frepple.demand(name=i[8])
-      print('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
+      logger.info('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
     with connections[database].cursor() as cursor:
       # Assure the operationplan ids will be unique.
@@ -1297,8 +1300,8 @@ class loadOperationPlanMaterials(LoadTask):
                 fl.quantity = i[0]
                 break
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d operationplanmaterials in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d operationplanmaterials in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register
@@ -1330,8 +1333,8 @@ class loadOperationPlanResources(LoadTask):
               lo.status = "confirmed"
               lo.quantity = i[1]
         except Exception as e:
-          print("Error:", e)
-      print('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))
 
 
 @PlanTaskRegistry.register

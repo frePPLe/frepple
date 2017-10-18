@@ -18,12 +18,15 @@
 
 from datetime import datetime, timedelta
 import os
+import logging
 
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
+
+logger = logging.getLogger(__name__)
 
 
 @PlanTaskRegistry.register
@@ -32,7 +35,7 @@ class AutoFenceOperation(PlanTask):
   A small preprocessing step to assure we await confirmed supply
   arriving within a certain time fence (controlled with the parameter
   "plan.autoFenceOperations") before creating any new replenishment.
- 
+
   Eg:
   Operation X has a purchasing lead time of 7 days.
   If a confirmed supply comes in on day 8, we can still create a new purchase
@@ -44,17 +47,17 @@ class AutoFenceOperation(PlanTask):
   The parameter plan.autoFenceOperations defines the boundary between "wait"
   and "replenish".
   '''
- 
+
   description = "Update operation fence"
   sequence = 191
- 
+
   @classmethod
   def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     try:
       cls.fence = float(Parameter.getValue('plan.autoFenceOperations', database, '0'))
       cls.loglevel = int(Parameter.getValue('plan.loglevel', database, '0'))
     except ValueError:
-      print("Warning: Invalid format for parameter 'plan.autoFenceOperations'.")
+      logger.warning("Warning: Invalid format for parameter 'plan.autoFenceOperations'.")
       cls.fence = 0
     except Exception:
       cls.fence = 0
@@ -100,7 +103,7 @@ class AutoFenceOperation(PlanTask):
             else:
               suboper.operation.fence = new_fence
             if cls.loglevel > 0:
-              print("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+              logger.info("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
                     % (suboper.operation.fence / 86400.0, suboper.operation.name, myleadtime / 86400.0))
         else:
           # Found a confirmed operationplan within the defined window indeed
@@ -115,7 +118,7 @@ class AutoFenceOperation(PlanTask):
           else:
             buf.producing.fence = new_fence
           if cls.loglevel > 0:
-            print("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+            logger.info("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
                   % (buf.producing.fence / 86400.0, buf.producing.name, myleadtime / 86400.0))
 
 
@@ -138,16 +141,16 @@ class SupplyPlanning(PlanTask):
   @classmethod
   def DISABLED_debugResource(cls, res, mode):
     # if res.name != 'my favorite resource': return
-    print("=> Situation on resource", res.name)
+    logger.debug("=> Situation on resource %s" % res.name)
     for j in res.loadplans:
-      print("=>  ", j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup)
+      logger.debug("=>  %s %s %s %s %s %s %s" % (j.quantity, j.onhand, j.startdate, j.enddate, j.operation.name, j.operationplan.quantity, j.setup))
 
   # Auxiliary functions for debugging
   # Rename to activate
   @classmethod
   def DISABLED_debugDemand(cls, dem, mode):
     if dem.name == 'my favorite demand':
-      print("=> Starting to plan demand ", dem.name)
+      logger.debug("=> Starting to plan demand %s" % dem.name)
       cls.solver.loglevel = 2
     else:
       cls.solver.loglevel = 0
@@ -187,8 +190,8 @@ class SupplyPlanning(PlanTask):
       cls.solver.userexit_demand = cls.debugDemand
     if hasattr(cls, 'debugOperation'):
       cls.solver.userexit_operation = cls.debugOperation
-    print("Plan type: ", plantype)
-    print("Constraints: ", constraint)
+    logger.info("Plan type: %s" % plantype)
+    logger.info("Constraints: %s" % constraint)
     cls.solver.solve()
     frepple.printsize()
 

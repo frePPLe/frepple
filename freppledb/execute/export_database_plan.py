@@ -26,6 +26,7 @@ from datetime import timedelta, datetime, date
 import io
 import json
 import os
+import logging
 from psycopg2.extensions import adapt
 from subprocess import Popen, PIPE
 import sys
@@ -37,6 +38,8 @@ from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 
 import frepple
+
+logger = logging.getLogger(__name__)
 
 
 class DatabasePipe(Thread):
@@ -80,8 +83,8 @@ class export:
       "pegging": { j.demand.name: round(j.quantity, 6) for j in opplan.pegging_demand },
       "unavailable": unavail,
       "interruptions": [
-        (i.start.strftime("%Y-%m-%d %H:%M:%S"), i.end.strftime("%Y-%m-%d %H:%M:%S")) 
-        for i in opplan.interruptions 
+        (i.start.strftime("%Y-%m-%d %H:%M:%S"), i.end.strftime("%Y-%m-%d %H:%M:%S"))
+        for i in opplan.interruptions
         ] if unavail else []
       }
     # We need to double any backslash to assure that the string remains
@@ -92,7 +95,7 @@ class export:
   def truncate(self):
     cursor = connections[self.database].cursor()
     if self.verbosity:
-      print("Emptying database plan tables...")
+      logger.info("Emptying database plan tables...")
     starttime = time()
     if self.cluster == -1:
       # Complete export for the complete model
@@ -188,12 +191,12 @@ class export:
       cursor.execute("delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.name = cluster_keys.name")
       cursor.execute("drop table cluster_keys")
     if self.verbosity:
-      print("Emptied plan tables in %.2f seconds" % (time() - starttime))
+      logger.info("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
 
   def exportProblems(self):
     if self.verbosity:
-      print("Exporting problems...")
+      logger.info("Exporting problems...")
     starttime = time()
     cursor = connections[self.database].cursor()
     with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
@@ -217,12 +220,12 @@ class export:
       )
       tmp.close()
     if self.verbosity:
-      print('Exported problems in %.2f seconds' % (time() - starttime))
+      logger.info('Exported problems in %.2f seconds' % (time() - starttime))
 
 
   def exportConstraints(self):
     if self.verbosity:
-      print("Exporting constraints...")
+      logger.info("Exporting constraints...")
     starttime = time()
     cursor = connections[self.database].cursor()
     with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
@@ -244,7 +247,7 @@ class export:
         )
       tmp.close()
     if self.verbosity:
-      print('Exported constraints in %.2f seconds' % (time() - starttime))
+      logger.info('Exported constraints in %.2f seconds' % (time() - starttime))
 
 
   def exportOperationplans(self):
@@ -323,7 +326,7 @@ class export:
               )
 
     if self.verbosity:
-      print("Exporting operationplans...")
+      logger.info("Exporting operationplans...")
     starttime = time()
     cursor = connections[self.database].cursor()
 
@@ -425,12 +428,12 @@ class export:
       ''')
 
     if self.verbosity:
-      print('Exported operationplans in %.2f seconds' % (time() - starttime))
+      logger.info('Exported operationplans in %.2f seconds' % (time() - starttime))
 
 
   def exportOperationPlanMaterials(self):
     if self.verbosity:
-      print("Exporting operationplan materials...")
+      logger.info("Exporting operationplan materials...")
     starttime = time()
     cursor = connections[self.database].cursor()
     currentTime = self.timestamp
@@ -466,12 +469,12 @@ class export:
     if len(updates) > 0:
       cursor.execute('\n'.join(updates))
     if self.verbosity:
-      print('Exported operationplan materials in %.2f seconds' % (time() - starttime))
+      logger.info('Exported operationplan materials in %.2f seconds' % (time() - starttime))
 
 
   def exportOperationPlanResources(self):
     if self.verbosity:
-      print("Exporting operationplan resources...")
+      logger.info("Exporting operationplan resources...")
     starttime = time()
     cursor = connections[self.database].cursor()
     currentTime = self.timestamp
@@ -495,12 +498,12 @@ class export:
         )
       tmp.close()
     if self.verbosity:
-      print('Exported operationplan resources in %.2f seconds' % (time() - starttime))
+      logger.info('Exported operationplan resources in %.2f seconds' % (time() - starttime))
 
 
   def exportResourceplans(self):
     if self.verbosity:
-      print("Exporting resourceplans...")
+      logger.info("Exporting resourceplans...")
     starttime = time()
     cursor = connections[self.database].cursor()
     # Determine start and end date of the reporting horizon
@@ -553,15 +556,15 @@ class export:
         columns=('resource','startdate','available','unavailable','setup','load','free')
         )
       tmp.close()
-    
+
     #update owner records with sum of children quantities
     cursor.execute('''
       with cte as (
-      select parent.name resource, 
-      out_resourceplan.startdate, 
-      sum(out_resourceplan.available) available, 
+      select parent.name resource,
+      out_resourceplan.startdate,
+      sum(out_resourceplan.available) available,
       sum(out_resourceplan.unavailable) unavailable,
-      sum(out_resourceplan.setup) setup, 
+      sum(out_resourceplan.setup) setup,
       sum(out_resourceplan.load) "load",
       sum(out_resourceplan.free) free
       from resource parent
@@ -579,9 +582,9 @@ class export:
       where out_resourceplan.resource = cte.resource
       and out_resourceplan.startdate = cte.startdate
     ''')
-    
+
     if self.verbosity:
-      print('Exported resourceplans in %.2f seconds' % (time() - starttime))
+      logger.info('Exported resourceplans in %.2f seconds' % (time() - starttime))
 
 
   def exportPegging(self):
@@ -601,7 +604,7 @@ class export:
             })
         yield (json.dumps({'pegging': peg}), i.name)
 
-    print("Exporting demand pegging...")
+    logger.info("Exporting demand pegging...")
     starttime = time()
     with transaction.atomic(using=self.database, savepoint=False):
       cursor = connections[self.database].cursor()
@@ -609,7 +612,7 @@ class export:
         "update demand set plan=%s where name=%s",
         [ i for i in getDemandPlan() ]
         )
-    print('Exported demand pegging in %.2f seconds' % (time() - starttime))
+    logger.info('Exported demand pegging in %.2f seconds' % (time() - starttime))
 
 
 
@@ -660,7 +663,7 @@ class export:
         order by 1
         ''')
       for table, recs in cursor.fetchall():
-        print("Table %s: %d records" % (table, recs))
+        logger.info("Table %s: %d records" % (table, recs))
 
 
   def run_sequential(self):
@@ -697,7 +700,7 @@ class export:
       self.exportResourceplans()
       self.exportPegging()
     except:
-      print('An error occured during the sequential export')
+      logger.error('An error occured during the sequential export')
 
     if self.verbosity:
       cursor = connections[self.database].cursor()
@@ -711,4 +714,4 @@ class export:
         order by 1
         ''')
       for table, recs in cursor.fetchall():
-        print("Table %s: %d records" % (table, recs or 0))
+        logger.info("Table %s: %d records" % (table, recs or 0))

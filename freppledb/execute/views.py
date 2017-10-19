@@ -154,7 +154,6 @@ def APITask(request, action):
 @csrf_protect
 def LaunchTask(request, action):
   try:
-    print('views 153----', action, request)
     if action == 'exportworkbook':
       return exportWorkbook(request)
     elif action == 'importworkbook':

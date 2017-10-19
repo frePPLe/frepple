@@ -327,7 +327,58 @@ class Command(BaseCommand):
                 sizeof_fmt(os.stat(os.path.join(uploadfolder, file)).st_size)
                 ])
 
-      javascript = '''
+      context = RequestContext(request, {'filestoupload': filestoupload})
+
+      template = Template('''
+        {% load i18n %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
+          <table>
+            <tr>
+              <td style="vertical-align:top; padding-left: 15px">
+                <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+              </td>
+              <td colspan='5' style="padding-left: 15px;">
+                <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><strong>{% trans 'file name'|capfirst %}</strong></td>
+              <td><strong>{% trans 'size'|capfirst %}</strong></td>
+              <td><strong>{% trans 'changed'|capfirst %}</strong></td>
+              <td>
+                <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy files to folder' %}"
+                  onclick="import_show('{% trans "Copy files to folder" %}',null,true,uploadfilesajax)">
+                  <span class="fa fa-arrow-up"></span>
+                </span>
+              </td>
+              <td>
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allimportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteImportFile(0, {{filestoupload}})">
+                  <span class="fa fa-close"></span>
+                </div>
+              </td>
+            </tr></form>
+            {% for j in filestoupload %}
+            <tr data-file="{{j.0}}">
+              <td></td>
+              <td>{{j.0}}</td>
+              <td>{{j.2}}</td>
+              <td>{{j.1}}</td>
+              <td>
+                <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadImportFile(0, '{{j.0}}')">
+                  <span class="fa fa-arrow-down"></span>
+                </div>
+              </td>
+              <td>
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteImportFile(0, '{{j.0}}')">
+                  <span class="fa fa-close"></span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </form>
+        <script>
         var xhr = {abort: function () {}};
         var uploadfilesajax = {
           url: '{{request.prefix}}/execute/uploadtofolder/0/',
@@ -400,7 +451,7 @@ class Command(BaseCommand):
 
           $('#confirmbutton').on('click', function() {
             $.ajax({
-              url: "/execute/deletefromfolder/" + folder + "/" + filename + "/",
+              url: "{{request.prefix}}/execute/deletefromfolder/" + folder + "/" + filename + "/",
               type:  ("delete").toUpperCase(),
               success: function () {
                 if (filename === 'AllFiles') {
@@ -437,62 +488,9 @@ class Command(BaseCommand):
         }
         function downloadImportFile(folder, filename) {
           $.jgrid.hideModal("#searchmodfbox_grid");
-          window.open("/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
-        }
-        '''
-
-      context = RequestContext(request, {'filestoupload': filestoupload, 'javascript': javascript})
-
-      template = Template('''
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_importfromfolder/">{% csrf_token %}
-          <table>
-            <tr>
-              <td style="vertical-align:top; padding-left: 15px">
-                <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
-              </td>
-              <td colspan='5' style="padding-left: 15px;">
-                <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><strong>{% trans 'file name'|capfirst %}</strong></td>
-              <td><strong>{% trans 'size'|capfirst %}</strong></td>
-              <td><strong>{% trans 'changed'|capfirst %}</strong></td>
-              <td>
-                <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy files to folder' %}"
-                  onclick="import_show('{% trans "Copy files to folder" %}',null,true,uploadfilesajax)">
-                  <span class="fa fa-arrow-up"></span>
-                </span>
-              </td>
-              <td>
-                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allimportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteImportFile(0, {{filestoupload}})">
-                  <span class="fa fa-close"></span>
-                </div>
-              </td>
-            </tr></form>
-            {% for j in filestoupload %}
-            <tr data-file="{{j.0}}">
-              <td></td>
-              <td>{{j.0}}</td>
-              <td>{{j.2}}</td>
-              <td>{{j.1}}</td>
-              <td>
-                <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadImportFile(0, '{{j.0}}')">
-                  <span class="fa fa-arrow-down"></span>
-                </div>
-              </td>
-              <td>
-                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteImportFile(0, '{{j.0}}')">
-                  <span class="fa fa-close"></span>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </table>
-        </form>
-        <script>{{ javascript|safe }}</script>
+          window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
+        }        
+        </script>
         ''')
       return template.render(context)
     else:

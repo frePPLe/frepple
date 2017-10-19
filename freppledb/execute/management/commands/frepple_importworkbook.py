@@ -77,10 +77,6 @@ class Command(BaseCommand):
       'file', nargs='+',
       help='workbook file name'
       )
-    parser.add_argument(
-      '--logfile', dest='logfile', action='store_true', default=False,
-      help='Define a name for the log file, must have ".log" extension (default = False)'
-      )
 
 
   def get_version(self):
@@ -100,30 +96,18 @@ class Command(BaseCommand):
         raise CommandError("User '%s' not found" % options['user'] )
     else:
       self.user = None
-    if 'logfile' in options and options['logfile']:
-      logfile = re.split(r'/|:|\\', options['logfile'])[-1]
-      if not logfile.lower().endswith('.log'):
-        logfile = logfile + ".log"
-    if 'file' in options and options['file']:
-      print('89----', options['file'][0])
-      # filename = re.split(r'/|:|\\', options['file'][0])[-1]
-      filename = options['file']
-      print(filename[0].lower())
-      # if not filename[0].lower().endswith('.xlsx'):
-      #   raise CommandError("File format not accepted")
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+    if self.database == DEFAULT_DB_ALIAS:
+      logfile = 'importworkbook-%s.log' % timestamp
     else:
-      timestamp = now.strftime("%Y%m%d%H%M%S")
-      if self.database == DEFAULT_DB_ALIAS:
-        logfile = 'importworkbook-%s.log' % timestamp
-      else:
-        logfile = 'importworkbook_%s-%s.log' % (self.database, timestamp)
+      logfile = 'importworkbook_%s-%s.log' % (self.database, timestamp)
 
     task = None
     try:
       # Initialize the task
       if options['task']:
         try:
-          task = Task.objects.all().using(database).get(pk=options['task'])
+          task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_importworkbook':
@@ -135,37 +119,7 @@ class Command(BaseCommand):
       task.arguments = ' '.join(options['file'])
       task.save(using=self.database)
 
-      # Execute
-      # TODO: if frePPLe is available as a module, we don't really need to spawn another process.
-      # os.environ['FREPPLE_HOME'] = settings.FREPPLE_HOME.replace('\\', '\\\\')
-      # os.environ['FREPPLE_APP'] = settings.FREPPLE_APP
-      # os.environ['FREPPLE_DATABASE'] = database
-      # os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
-      # os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-      # if 'DJANGO_SETTINGS_MODULE' not in os.environ:
-      #   os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      # if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'], 'python35.zip')):
-      #   # For the py2exe executable
-      #   os.environ['PYTHONPATH'] = os.path.join(
-      #     os.environ['FREPPLE_HOME'],
-      #     'python%d%d.zip' % (sys.version_info[0], sys.version_info[1])
-      #     ) + os.pathsep + os.path.normpath(os.environ['FREPPLE_APP'])
-      # else:
-      #   # Other executables
-      #   os.environ['PYTHONPATH'] = os.path.normpath(os.environ['FREPPLE_APP'])
-      # cmdline = [ '"%s"' % i for i in options['file'] ]
-      # cmdline.insert(0, 'frepple')
-      # cmdline.append( '"%s"' % os.path.join(settings.FREPPLE_APP, 'freppledb', 'execute', 'loadxml.py') )
-      # (out, ret) = subprocess.run(' '.join(cmdline))
-      # if ret:
-      #   raise Exception('Exit code of the batch run is %d' % ret)
-      #
-      # # Task update
-      # task.status = 'Done'
-      # task.finished = datetime.now()
-      #
       all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
-      print('148----', all_models)
       try:
         with transaction.atomic(using=self.database):
           # Find all models in the workbook
@@ -308,11 +262,25 @@ class Command(BaseCommand):
   @ staticmethod
   def getHTML(request):
 
-    javascript = '''
+    context = RequestContext(request, {})
+
+    template = Template('''
+      {% load i18n %}
+      <table>
+        <tr>
+          <td style="vertical-align:top; padding: 15px">
+            <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,false,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+          </td>
+          <td style="padding: 15px;">
+            <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
+          </td>
+        </tr>
+      </table>
+      <script>
       var xhr = {abort: function () {}};
 
       var uploadspreadsheetajax = {
-        url: '%s/execute/launch/importworkbook/',
+        url: '{{request.prefix}}/execute/launch/importworkbook/',
         success: function (data) {
           var el = $('#uploadResponse');
           el.html(data);
@@ -345,22 +313,6 @@ class Command(BaseCommand):
           $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
         }
       };
-      ''' % request.prefix
-
-    context = RequestContext(request, {'javascript': javascript})
-
-    template = Template('''
-      {% load i18n %}
-      <table>
-        <tr>
-          <td style="vertical-align:top; padding: 15px">
-            <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,false,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
-          </td>
-          <td style="padding: 15px;">
-            <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
-          </td>
-        </tr>
-      </table>
-      <script>{{ javascript|safe }}</script>
+      </script>
     ''')
     return template.render(context)

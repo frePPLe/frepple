@@ -43,7 +43,7 @@ maxlateness      number            The maximum lateness for this forecast record
                                    forecast record is planned.
 discrete         boolean           Indicates whether the forecast quantity should be discrete (integer 
                                    values only),
-                                   possible values are : "TRUE" or "FALSE".
+                                   Possible values are : "TRUE" (default) or "FALSE".
 planned          boolean           Indicates whether the forecasted quantity should be planned,
-                                   possible values are : "TRUE" or "FALSE".
+                                   Possible values are : "TRUE" (default) or "FALSE".                                   
 ================ ================= =====================================================================

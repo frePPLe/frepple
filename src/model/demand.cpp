@@ -362,7 +362,7 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
     Problem* cnstrnt = nullptr;
     if (cnstrnt_type == ProblemBeforeCurrent::metadata->type)
     {
-      Operation* obj = Operation::find(cnstrnt_owner);
+      Operation* obj = Operation::findFromName(cnstrnt_owner);
       if (!obj)
         throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemBeforeCurrent::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
@@ -376,14 +376,14 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args, PyObject* kwds)
     }
     else if (cnstrnt_type == ProblemMaterialShortage::metadata->type)
     {
-      Buffer* obj = Buffer::find(cnstrnt_owner);
+      Buffer* obj = Buffer::findFromName(cnstrnt_owner);
       if (!obj)
         throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemMaterialShortage::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);
     }
     else if (cnstrnt_type == ProblemBeforeFence::metadata->type)
     {
-      Operation* obj = Operation::find(cnstrnt_owner);
+      Operation* obj = Operation::findFromName(cnstrnt_owner);
       if (!obj)
         throw DataException("Can't find constraint owner");
       cnstrnt = dmd->getConstraints().push(ProblemBeforeFence::metadata, obj, cnstrnt_start, cnstrnt_end, cnstrnt_weight);

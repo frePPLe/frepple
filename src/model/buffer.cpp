@@ -1239,4 +1239,30 @@ PyObject* Buffer::getDecoupledLeadTimePython(PyObject *self, PyObject *args)
   }
 }
 
+
+Buffer* Buffer::findFromName(string nm)
+{
+  // Check if it exists
+  Buffer *buf = Buffer::find(nm);
+  if (buf)
+    return buf;
+
+  // Check if has the structure "item @ location"
+  size_t pos = nm.find(" @ ");
+  if (pos == string::npos)
+    return nullptr;  
+  Item* it = Item::find(nm.substr(0, pos));
+  Location* loc = Location::find(nm.substr(pos + 3, string::npos));
+  if (it && loc)
+  {
+    buf = new BufferDefault();
+    static_cast<BufferDefault*>(buf)->setName(nm);
+    static_cast<BufferDefault*>(buf)->setItem(it);
+    static_cast<BufferDefault*>(buf)->setLocation(loc);
+    return buf;
+  }
+  return nullptr;
+}
+
+
 } // end namespace

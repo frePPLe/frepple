@@ -2193,4 +2193,95 @@ PyObject* Operation::getDecoupledLeadTimePython(PyObject *self, PyObject *args)
   }
 }
 
+
+Operation* Operation::findFromName(string nm)
+{
+  Operation* oper = Operation::find(nm);
+  if (oper)
+    // The operation already exists
+    return oper;
+  else if (nm.substr(0, 5) == "Ship ")
+  {
+    size_t pos1 = nm.rfind(" from ");
+    size_t pos2 = nm.rfind(" to ");
+    if (pos1 != string::npos && pos2 != string::npos)
+    {
+      // Build a transfer operation: "Ship ITEM from LOCATION to LOCATION"
+      string item_name = nm.substr(5, pos1 - 5);
+      string orig_name = nm.substr(pos1 + 6, pos2 - pos1 - 6);
+      string dest_name = nm.substr(pos2 + 4, string::npos);
+      Item* item = Item::find(item_name);
+      Location* origin = Location::find(orig_name);
+      Location* destination = Location::find(dest_name);
+      if (item && origin && destination)
+      {
+        // Find itemdistribution
+        ItemDistribution* item_dist = nullptr;
+        for (Item* it = item; it && !item_dist; it = it->getOwner())
+        {
+          Item::distributionIterator itemdist_iter = it->getDistributionIterator();
+          while (ItemDistribution *i = itemdist_iter.next())
+          {
+            if (origin == i->getOrigin() && (
+              !i->getDestination() || destination == i->getDestination()
+              ))
+              item_dist = i;
+          }
+        }
+        if (item_dist)
+          // Create the operation
+          return new OperationItemDistribution(
+            item_dist,
+            Buffer::findOrCreate(item, origin),
+            Buffer::findOrCreate(item, destination)
+            );
+      }
+    }
+    else
+    {
+      // Build a delivery operation: "Ship ITEM @ LOC" 
+      string buf_name = nm.substr(5, string::npos);
+      Buffer *buf = Buffer::findFromName(buf_name);
+      if (buf)
+      {
+        // Create the operation
+        oper = new OperationDelivery();
+        oper->setName(nm);
+        static_cast<OperationDelivery*>(oper)->setBuffer(buf);
+        return oper;
+      }
+    }
+  }
+  else if (nm.substr(0, 9) == "Purchase ")
+  {
+    // Build a purchasing operation: "Purchase ITEM @ LOCATION from SUPPLIER"
+    size_t pos = nm.rfind(" from ");
+    if (pos != string::npos)
+    {
+      string buf_name = nm.substr(9, pos - 9);
+      string supplier_name = nm.substr(pos + 6, string::npos);
+      Buffer* buf = Buffer::findFromName(buf_name);
+      Supplier* sup = Supplier::find(supplier_name);
+      if (buf && sup && buf->getItem() && buf->getLocation())
+      {
+        // Find itemsupplier
+        ItemSupplier* item_sup = nullptr;
+        for (Item* it = buf->getItem(); it && !item_sup; it = it->getOwner())
+        {
+          Item::supplierlist::const_iterator supitem_iter = it->getSupplierIterator();
+          while (ItemSupplier *i = supitem_iter.next())
+          {
+            if (!i->getLocation() || buf->getLocation() == i->getLocation())
+              item_sup = i;
+          }
+        }
+        if (item_sup)
+          // Create the operation
+          return new OperationItemSupplier(item_sup, buf);
+      }
+    }
+  }
+  return nullptr;
+}
+
 } // end namespace

@@ -3033,6 +3033,8 @@ class Operation : public HasName<Operation>,
       return hidden;
     }
 
+    static Operation* findFromName(string);
+
     static const MetaCategory* metadata;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
@@ -4735,6 +4737,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     explicit Buffer() {}
 
     static Buffer* findOrCreate(Item*, Location*);
+
+    static Buffer* findFromName(string nm);
 
     /** Builds a producing operation for a buffer.
       * The logic used is based on the following:

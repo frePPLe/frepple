@@ -19,6 +19,7 @@ import email
 import jwt
 import os
 import time
+import logging
 from urllib.request import urlopen, HTTPError, Request
 from xml.sax.saxutils import quoteattr
 
@@ -31,6 +32,8 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.commands import LoadTask
+
+logger = logging.getLogger(__name__)
 
 
 @PlanTaskRegistry.register
@@ -91,19 +94,19 @@ class OdooReadData(PlanTask):
     odoo_company = Parameter.getValue("odoo.company", database)
     ok = True
     if not odoo_user:
-      print("Missing or invalid parameter odoo.user")
+      logger.error("Missing or invalid parameter odoo.user")
       ok = False
     if not odoo_password:
-      print("Missing or invalid parameter odoo.password")
+      logger.error("Missing or invalid parameter odoo.password")
       ok = False
     if not odoo_db:
-      print("Missing or invalid parameter odoo.db")
+      logger.error("Missing or invalid parameter odoo.db")
       ok = False
     if not odoo_url:
-      print("Missing or invalid parameter odoo.url")
+      logger.error("Missing or invalid parameter odoo.url")
       ok = False
     if not odoo_company:
-      print("Missing or invalid parameter odoo.company")
+      logger.error("Missing or invalid parameter odoo.company")
       ok = False
     odoo_language = Parameter.getValue("odoo.language", database, 'en_US')
     if not ok:
@@ -121,7 +124,7 @@ class OdooReadData(PlanTask):
       encoded = base64.encodestring(('%s:%s' % (odoo_user, odoo_password)).encode('utf-8'))[:-1]
       request.add_header("Authorization", "Basic %s" % encoded.decode('ascii'))
     except HTTPError as e:
-      print("Error connecting to odoo at %s: %s" % (url, e))
+      logger.error("Error connecting to odoo at %s: %s" % (url, e))
       raise e
 
     # Download and parse XML data
@@ -208,19 +211,19 @@ class OdooWritePlan(PlanTask):
     odoo_company = Parameter.getValue("odoo.company", database)
     ok = True
     if not odoo_user:
-      print("Missing or invalid parameter odoo.user")
+      logger.error("Missing or invalid parameter odoo.user")
       ok = False
     if not odoo_password:
-      print("Missing or invalid parameter odoo.password")
+      logger.error("Missing or invalid parameter odoo.password")
       ok = False
     if not odoo_db:
-      print("Missing or invalid parameter odoo.db")
+      logger.error("Missing or invalid parameter odoo.db")
       ok = False
     if not odoo_url:
-      print("Missing or invalid parameter odoo.url")
+      logger.error("Missing or invalid parameter odoo.url")
       ok = False
     if not odoo_company:
-      print("Missing or invalid parameter odoo.company")
+      logger.error("Missing or invalid parameter odoo.company")
       ok = False
     odoo_language = Parameter.getValue("odoo.language", database, 'en_US')
     if not ok:
@@ -306,10 +309,10 @@ class OdooWritePlan(PlanTask):
         )
 
       # Posting the data and displaying the server response
-      print("Uploading %d bytes of planning results to odoo" % size)
+      logger.info("Uploading %d bytes of planning results to odoo" % size)
       with urlopen(req) as f:
         msg = f.read()
-        print("Odoo response: %s" % msg.decode('utf-8'))
+        logger.info("Odoo response: %s" % msg.decode('utf-8'))
 
       # Mark the exported operations as approved
       for i in cls.exported:
@@ -317,4 +320,4 @@ class OdooWritePlan(PlanTask):
       del cls.exported
 
     except HTTPError as e:
-      print("Error connecting to odoo", e.read())
+      logger.error("Error connecting to odoo %s" % e.read())

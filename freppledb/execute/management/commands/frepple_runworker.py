@@ -199,6 +199,8 @@ class Command(BaseCommand):
           task.save(using=database)
         logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
       except Exception as e:
+        # Read the task again from the database and update.
+        task = Task.objects.all().using(database).get(pk=task.id)
         task.status = 'Failed'
         now = datetime.now()
         if not task.started:

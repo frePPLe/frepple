@@ -191,8 +191,8 @@ def wrapTask(request, action):
         constraint += int(value)
       except:
         pass
-    task = Task(name='frepple_run', submitted=now, status='Waiting', user=request.user, logfile=logfile)
-    task.arguments = "--constraint=%s --plantype=%s --logfile=%s" % (constraint, request.POST.get('plantype', 1), logfile)
+    task = Task(name='frepple_run', submitted=now, status='Waiting', user=request.user)
+    task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype', 1))
     env = []
     for value in request.POST.getlist('env'):
       env.append(value)

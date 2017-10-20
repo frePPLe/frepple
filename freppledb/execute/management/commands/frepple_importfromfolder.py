@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import GridReport
 from freppledb import VERSION
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
@@ -105,6 +106,7 @@ class Command(BaseCommand):
     errors = [0, 0]
     returnederrors = [0, 0]
     try:
+      setattr(_thread_locals, 'database', self.database)
       # Initialize the task
       if options['task']:
         try:
@@ -220,6 +222,7 @@ class Command(BaseCommand):
       raise e
 
     finally:
+      setattr(_thread_locals, 'database', None)
       if task:
         if errors[0] == 0:
           task.status = '100%'

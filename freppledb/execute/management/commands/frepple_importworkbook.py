@@ -40,11 +40,12 @@ from django.utils.encoding import smart_str, force_text, force_str
 from django.template import Template, RequestContext
 from django.http import HttpRequest
 
-from freppledb.execute.models import Task
+from freppledb import VERSION
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment
 from freppledb.common.report import importWorkbook, GridReport
 from freppledb.common.dataload import parseExcelWorksheet
-from freppledb import VERSION
+from freppledb.execute.models import Task
 
 import logging
 logger = logging.getLogger(__name__)
@@ -104,6 +105,7 @@ class Command(BaseCommand):
 
     task = None
     try:
+      setattr(_thread_locals, 'database', self.database)
       # Initialize the task
       if options['task']:
         try:
@@ -250,6 +252,7 @@ class Command(BaseCommand):
       raise e
 
     finally:
+      setattr(_thread_locals, 'database', None)
       if task:
         task.save(using=self.database)
 

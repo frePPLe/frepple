@@ -172,7 +172,8 @@ class MultiDBManager(models.Manager):
     if req:
       return super(MultiDBManager, self).get_queryset().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
     else:
-      return super(MultiDBManager, self).get_queryset().using(DEFAULT_DB_ALIAS)
+      db = getattr(_thread_locals, 'database', None)
+      return super(MultiDBManager, self).get_queryset().using(db or DEFAULT_DB_ALIAS)
 
 
 class MultiDBRouter:

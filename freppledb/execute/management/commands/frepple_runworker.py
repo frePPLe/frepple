@@ -30,6 +30,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 
 from freppledb import VERSION
 from freppledb.common.models import Parameter
+from freppledb.common.middleware import _thread_locals
 from freppledb.execute.models import Task
 
 
@@ -108,6 +109,7 @@ class Command(BaseCommand):
     if 'FREPPLE_TEST' not in os.environ:
       logger.info("Worker starting to process jobs in the queue")
     idle_loop_done = False
+    setattr(_thread_locals, 'database', database)
     while True:
       try:
         task = Task.objects.all().using(database).filter(status='Waiting').order_by('id')[0]
@@ -219,6 +221,7 @@ class Command(BaseCommand):
       Parameter.objects.all().using(database).get(pk='Worker alive').delete()
     except:
       pass
+    setattr(_thread_locals, 'database', None)
 
     # Remove log files exceeding the configured disk space allocation
     totallogs = 0

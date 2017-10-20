@@ -293,6 +293,9 @@ DEFAULT_DASHBOARD = [
 
 GLOBAL_PREFERENCES = {}
 
+# Max total log files size in MB, if the limit is reached deletes the oldest.
+MAXTOTALLOGFILESIZE = 200
+
 # Port number for the CherryPy web server
 PORT = 8000
 

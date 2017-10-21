@@ -399,7 +399,8 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate(create);
+    if (!opplan->activate(create))
+      throw DataException("Can't create operationplan");
   }
   else if (ordtype == "DO")
   {
@@ -502,7 +503,8 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate(create);
+    if (!opplan->activate(create))
+      throw DataException("Can't create operationplan");
   }
   else if (ordtype == "DLVR")
   {
@@ -550,7 +552,8 @@ Object* OperationPlan::createOperationPlan(
     // Reset quantity after the status update to assure that
     // also non-valid quantities are getting accepted.
     opplan->setQuantity(quantity);
-    opplan->activate(create);
+    if (!opplan->activate(create))
+      throw DataException("Can't activate operationplan");
   }
   else
   {

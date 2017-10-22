@@ -987,7 +987,7 @@ class Demand(AuditModel, HierarchyModel):
     Location, verbose_name=_('location'),
     db_index=True, on_delete=models.CASCADE
     )
-  due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'))
+  due = models.DateTimeField(_('due'), help_text=_('Due date of the demand'), db_index=True)
   status = models.CharField(
     _('status'), max_length=10, null=True, blank=True,
     choices=demandstatus, default='open',

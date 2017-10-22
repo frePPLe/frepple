@@ -19,6 +19,10 @@ import logging
 from time import time
 from datetime import datetime
 
+#uncomment below line to use checkCycles 
+#import networkx
+
+
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
@@ -101,6 +105,116 @@ class checkBuckets(CheckTask):
         raise ValueError("No Calendar Buckets available")
       if errors > 0:
         raise ValueError("Invalid Bucket dates")
+
+        
+@PlanTaskRegistry.register
+# Warning: Deactivated by default. Requires the installation of networkx package 
+class checkCycles(CheckTask):
+  description = "Checking for cycles"
+  sequence = 85
+
+  @classmethod
+  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    return -1
+  
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+
+    with connections[database].cursor() as cursor:      
+      
+      # Create Directed Graph
+      G=networkx.DiGraph()
+      
+      # Let's try to be a bit smart here.
+      # There are two kinds of possible cycles, cycles within a single location
+      # and cycles across multiple locations
+      # For cycles across multiple locations, this can only happen if the locations
+      # in itemdistribution (without taking the items into consideration) present a cycle
+      
+      cursor.execute('select distinct origin_id, location_id from itemdistribution')
+      # Adding edges to the directed graph
+      G.add_edges_from(cursor.fetchall())
+      
+      locationCycles = list(networkx.simple_cycles(G))
+      foundLocationCycle = (len(locationCycles)) > 0
+      
+
+      if foundLocationCycle:
+        # No luck, there are cycles found in the itemdistribution locations
+        # Let's shoot for the full query
+        # but limited to the locations that present a cycle
+        # This can be a bit optimized but let's start simple
+        
+        locationList = []
+        for i in locationCycles:
+          locationList.extend(i)  
+          
+        cursor.execute('''
+         select item.name||' @ '||origin_id, item.name||' @ '||location_id from itemdistribution
+         inner join item do_item on do_item.name = itemdistribution.item_id
+         inner join item on item.lft between do_item.lft and do_item.rght and item.lft = item.rght - 1
+         inner join location origin on origin.name = itemdistribution.origin_id and origin.name in (%s)
+         inner join location dst on dst.name = itemdistribution.location_id and dst.name in (%s)
+         union
+         select frm_om.item_id||' @ '||operation.location_id, to_om.item_id||' @ '||operation.location_id
+         from operation
+         inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
+         inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0
+         where operation.location_id in (%s)     
+         union
+         select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
+         inner join suboperation all_subop 
+           on all_subop.operation_id = operation.name 
+         inner join suboperation last_subop 
+           on last_subop.operation_id = operation.name 
+           and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
+         inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
+         inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
+         where operation.type = 'routing' and operation.location_id in (%s)
+         ''' % (', '.join(['%s']*len(locationList)),
+                ', '.join(['%s']*len(locationList)),
+                ', '.join(['%s']*len(locationList)),
+                ', '.join(['%s']*len(locationList)))
+                , locationList + locationList + locationList + locationList)        
+        G.clear()
+        G.add_edges_from(cursor.fetchall())
+        foundCycles = False
+        for i in list(networkx.simple_cycles(G)):
+         print("Found a cycle : %s" % i  )
+         foundCycles = True
+         
+        if (foundCycles):
+          raise ValueError("Stopping execution because of cycles found in the model (see log file)")
+      
+      # Second cycle possibility, within a single location and we need operations for this to happen
+      cursor.execute('''
+        select frm_om.item_id||' @ '||operation.location_id, to_om.item_id||' @ '||operation.location_id
+        from operation
+        inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
+        inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0        
+        union
+        select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
+        inner join suboperation all_subop 
+          on all_subop.operation_id = operation.name 
+        inner join suboperation last_subop 
+          on last_subop.operation_id = operation.name 
+          and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
+        inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
+        inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
+        where operation.type = 'routing' 
+      ''')
+      
+      G.clear()
+      G.add_edges_from(cursor.fetchall())
+      foundCycles = False
+      for i in list(networkx.simple_cycles(G)):
+        print("Found a cycle : %s" % i  )
+        foundCycles = True
+      
+      if (foundCycles):
+        raise ValueError("Stopping execution because of cycles found in the model (see log file)")
+        
 
 
 @PlanTaskRegistry.register

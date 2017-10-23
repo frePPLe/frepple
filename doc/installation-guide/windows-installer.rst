@@ -50,7 +50,7 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
 
    - **Install and configure the PostgreSQL database.**
 
-     PostgreSQL 9.4 or higher is required by frePPLe.
+     PostgreSQL 9.5 or higher is required by frePPLe.
      You can:
 
      * either use the postgreSQL included with frePPLe

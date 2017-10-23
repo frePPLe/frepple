@@ -377,11 +377,12 @@ def CancelTask(request, taskid):
 
 @staff_member_required
 @never_cache
-def DownloadLogFile(request, filename):
+def DownloadLogFile(request, taskid):
   # if request.database == DEFAULT_DB_ALIAS:
   #   filename = 'frepple.log'
   # else:
   #   filename = 'frepple_%s.log' % request.database
+  filename = Task.objects.using(request.database).get(id=taskid).logfile
   if not filename.lower().endswith('.log'):
     return HttpResponseNotFound(force_text(_('Error downloading file')))
 
@@ -396,14 +397,16 @@ def DownloadLogFile(request, filename):
 
 @staff_member_required
 @never_cache
-def logfile(request, filename):
+def logfile(request, taskid):
   '''
   This view shows the frePPLe log file of the last planning run in this database.
   '''
-  if not filename.lower().endswith('.log'):
-    return HttpResponseNotFound(force_text(_('Error downloading file')))
 
   try:
+    filename = Task.objects.using(request.database).get(id=taskid).logfile
+    if not filename.lower().endswith('.log'):
+      return HttpResponseNotFound(force_text(_('Error downloading file')))
+
     f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), 'rb')
   except:
     logdata = "File not found"
@@ -426,7 +429,7 @@ def logfile(request, filename):
   return render(request, 'execute/logfrepple.html', {
     'title': _('Log file'),
     'logdata': logdata,
-    'logfile': filename
+    'taskid': taskid
     } )
 
 

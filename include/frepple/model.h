@@ -7323,7 +7323,7 @@ class Demand
   friend class Item;
   public:
     enum status {
-      QUOTE, OPEN, CLOSED, CANCELED
+      QUOTE, INQUIRY, OPEN, CLOSED, CANCELED
     };
 
     typedef slist<OperationPlan*> OperationPlanList;
@@ -7508,6 +7508,7 @@ class Demand
       switch (state)
       {
         case QUOTE: return "quote";
+        case INQUIRY: return "inquiry";
         case OPEN: return "open";
         case CLOSED: return "closed";
         case CANCELED: return "canceled";
@@ -7524,6 +7525,8 @@ class Demand
         state = CLOSED;
       else if (s == "quote")
         state = QUOTE;
+      else if (s == "inquiry")
+        state = INQUIRY;
       else if (s == "canceled")
         state = CANCELED;
       else

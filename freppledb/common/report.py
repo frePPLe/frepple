@@ -1449,6 +1449,8 @@ class GridReport(View):
             yield '</tbody></table></div>'
       except GeneratorExit:
         logging.warning('Connection Aborted')
+      except NameError:
+        pass
 
 
   @classmethod
@@ -1545,6 +1547,8 @@ class GridReport(View):
             yield '</tbody></table></div>'
     except GeneratorExit:
       logger.warning('Connection Aborted')
+    except NameError:
+      pass
 
 
   @classmethod

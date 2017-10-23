@@ -306,7 +306,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
           )
       # Abort when there are errors
       if errors:
-        return
+        raise NameError("Can't proceed")
 
       # Create a form class that will be used to validate the data
       fields = [i.name for i in headers if i]

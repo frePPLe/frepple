@@ -66,6 +66,12 @@ class WizardWidget(Widget):
         'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
         }),'</div></div>'])
 
+  javascript = '''
+    $(function() {
+       wizard.updateWizard();
+    });
+    '''
+
 Dashboard.register(WizardWidget)
 
 
@@ -154,9 +160,6 @@ class RecentCommentsWidget(Widget):
     var hasForecast = %s;
     var hasIP = %s;
     var version = '%s.%s';
-    $(function() {
-       wizard.updateWizard();
-    });
     ''' % (
       'true' if 'freppledb.forecast' in settings.INSTALLED_APPS else 'false',
       'true' if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS else 'false',

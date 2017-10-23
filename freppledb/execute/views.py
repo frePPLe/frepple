@@ -427,7 +427,7 @@ def logfile(request, taskid):
       f.close()
 
   return render(request, 'execute/logfrepple.html', {
-    'title': _('Log file'),
+    'title': ' '.join([force_text(_('Log file')), taskid]),
     'logdata': logdata,
     'taskid': taskid
     } )

@@ -201,7 +201,7 @@ if __name__ == "__main__":
   frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ.get('FREPPLE_LOGFILE', 'frepple.log'))
 
   # Welcome message
-  logger.info("FrePPLe with processid %s on %s using database '%s'" % (
+  print("FrePPLe with processid %s on %s using database '%s'" % (
     os.getpid(),
     sys.platform,
     database
@@ -213,5 +213,5 @@ if __name__ == "__main__":
   try:
     register.run(database=database)
   except Exception as e:
-    logger.error("Error during planning: %s" % e)
+    print("Error during planning: %s" % e)
     raise

@@ -299,6 +299,7 @@ OperationInventory::OperationInventory(Buffer *buf)
   setName("Inventory " + string(buf->getName()));
   setHidden(true);
   setDetectProblems(false);
+  setSizeMinimum(0);
   initType(metadata);
 }
 

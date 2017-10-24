@@ -25,7 +25,10 @@ function showsupplyinformationDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     var rows='';
-    var template = '<div class="table-responsive"><table class="table table-hover table-condensed"><thead><tr><td>' +
+    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+                      gettextCatalog.getString("supply information")+
+                    '</strong></div>'+
+                    '<div class="table-responsive"><table class="table table-hover table-condensed"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("priority")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("types")+'</b>' +

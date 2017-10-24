@@ -25,7 +25,10 @@ function shownetworkstatusDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     var rows='';
-    var template = '<table class="table table-hover table-condensed"><thead><tr><td>' +
+    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+                      gettextCatalog.getString("network status")+
+                    '</strong></div>'+
+                    '<table class="table table-hover table-condensed"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("location")+'</b>' +

@@ -32,7 +32,10 @@ function showbufferspanelDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template = '<table class="table"><thead><tr><td>' +
+    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+                      gettextCatalog.getString("buffers")+
+                    '</strong></div>'+
+                    '<table class="table"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("buffer")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
@@ -42,7 +45,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("date")+'</b>' +
                     '</td></tr></thead>' +
                     '<tbody></tbody>' +
-                  '</table>';
+                    '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.flowplans.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationflowplans').empty().append(template);

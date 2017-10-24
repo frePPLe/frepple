@@ -32,7 +32,10 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template = '<table class="table"><thead><tr><td>' +
+    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+                      gettextCatalog.getString("demand pegging")+
+                    '</strong></div>'+
+                    '<table class="table"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("demand")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
@@ -42,7 +45,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +
                     '<tbody></tbody>' +
-                  '</table>';
+                    '</table>';
 
     scope.$watchGroup(['operationplan.id','operationplan.pegging_demand.length'], function (newValue,oldValue) {
       angular.element(document).find('#attributes-operationdemandpegging').empty().append(template);

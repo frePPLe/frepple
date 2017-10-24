@@ -33,7 +33,10 @@ function showproblemspanelDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     var rows='';
-    var template = '<table class="table"><thead><tr><td>' +
+    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+                      gettextCatalog.getString("problems")+
+                    '</strong></div>'+
+                    '<table class="table"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("problems")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("start")+'</b>' +

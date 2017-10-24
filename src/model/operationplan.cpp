@@ -584,7 +584,10 @@ Object* OperationPlan::createOperationPlan(
         opplan->freezeStatus(start, end, quantity);
       }
       else
+      {
         opplan->setStatus(status);
+        opplan->setQuantity(quantity);
+      }
     }
     if (!opplan->activate(create))
       throw DataException("Can't create operationplan");

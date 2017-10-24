@@ -20,6 +20,7 @@ import json
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import connections
 from django.db.models import Q
 from django.db.models.fields import CharField
 from django.http import HttpResponse, Http404
@@ -29,7 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 from django.utils.translation import string_concat
 from django.utils.encoding import force_text
-from django.utils.text import capfirst, format_lazy
+from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
@@ -1587,6 +1588,15 @@ class PurchaseOrderList(GridReport):
 class OperationPlanDetail(View):
 
   def getData(self, request):
+    # Current date
+    try:
+      current_date = datetime.strptime(
+        Parameter.objects.using(request.database).get(name="currentdate").value,
+        "%Y-%m-%d %H:%M:%S"
+        )
+    except:
+      current_date = datetime.now()
+    cursor = connections[request.database].cursor()
 
     # Read the results from the database
     ids = request.GET.getlist('id')
@@ -1674,22 +1684,77 @@ class OperationPlanDetail(View):
                 }
               })
 
-          # Information on resources
-          if view_OpplanResource:
-            firstres = True
-            for m in opplanrscs:
-              if m['operationplan_id'] != opplan.id:
-                continue
-              if firstres:
-                firstres = False
-                res['loadplans'] = []
-              res['loadplans'].append({
-                "date": m['startdate'].strftime("%Y-%m-%dT%H:%M:%S"),
-                "quantity": float(m['quantity']),
-                "resource": {
-                  "name": m['resource_id']
-                  }
-                })
+        # Information on resources
+        if view_OpplanResource:
+          firstres = True
+          for m in opplanrscs:
+            if m['operationplan_id'] != opplan.id:
+              continue
+            if firstres:
+              firstres = False
+              res['loadplans'] = []
+            res['loadplans'].append({
+              "date": m['startdate'].strftime("%Y-%m-%dT%H:%M:%S"),
+              "quantity": float(m['quantity']),
+              "resource": {
+                "name": m['resource_id']
+                }
+              })
+
+        # Retrieve network status
+        if opplan.item_id:
+          cursor.execute('''
+            with items as (
+               select name from item where name = %s
+               )
+            select
+              items.name, false,
+              location.name, onhand.qty, orders.MO, orders.PO, orders.DO, sales.BO, sales.SO
+            from items
+            cross join location
+            left outer join (
+              select item_id, location_id, onhand as qty
+              from buffer
+              inner join items on items.name = buffer.item_id
+              ) onhand
+            on onhand.item_id = items.name and onhand.location_id = location.name
+            left outer join (
+              select item_id, location_id,
+              sum(case when type = 'MO' then quantity end) as MO,
+              sum(case when type = 'PO' then quantity end) as PO,
+              sum(case when type = 'DO' then quantity end) as DO
+              from operationplan
+              inner join items on items.name = operationplan.item_id
+              and status in ('approved', 'confirmed')
+              group by item_id, location_id
+              ) orders
+            on orders.item_id = items.name and orders.location_id = location.name
+            left outer join (
+              select item_id, location_id,
+              sum(case when due < %s then quantity end) as BO,
+              sum(case when due >= %s then quantity end) as SO
+              from demand
+              inner join items on items.name = demand.item_id
+              where status in ('open', 'quote')
+              group by item_id, location_id
+              ) sales
+            on sales.item_id = items.name and sales.location_id = location.name
+            where
+              onhand.qty is not null
+              or orders.MO is not null
+              or orders.PO is not null
+              or orders.DO is not null
+              or sales.BO is not null
+              or sales.SO is not null
+            order by items.name, location.name
+            ''', (opplan.item_id, current_date, current_date))
+          res['network'] = []
+          for a in cursor.fetchall():
+            res['network'].append([
+              a[0], a[1], a[2],
+              float(a[3] or 0), float(a[4] or 0), float(a[5] or 0),
+              float(a[6] or 0), float(a[7] or 0), float(a[8] or 0)
+              ])
 
         # Final result
         if first:

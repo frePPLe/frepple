@@ -45,6 +45,8 @@ BUFFER	In4A	2014-03-01T00:00:00	10	10
 BUFFER	In4A	2014-03-01T00:00:00	-10	0
 BUFFER	In4B	2014-01-31T00:00:00	10	10
 BUFFER	In4B	2014-01-31T00:00:00	-10	0
+BUFFER	Little inventory @ Loc	1971-01-01T00:00:00	0.1	0.1
+BUFFER	Negative inventory @ Loc	1971-01-01T00:00:00	-0.1	-0.1
 BUFFER	Out1	2014-01-05T00:00:00	10	10
 BUFFER	Out1	2014-02-05T00:00:00	10	20
 BUFFER	Out1	2014-03-05T00:00:00	10	30
@@ -160,6 +162,9 @@ OPERATION	Purchase In4	2014-03-01T00:00:00	2014-03-01T00:00:00	10
 OPERATION	Purchase In4A	2014-01-04T00:00:00	2014-01-04T00:00:00	10
 OPERATION	Purchase In4A	2014-03-01T00:00:00	2014-03-01T00:00:00	10
 OPERATION	Purchase In4B	2014-01-31T00:00:00	2014-01-31T00:00:00	10
+OPERATION	Strange WIP sizes	2014-02-01T00:00:00	2015-02-05T00:00:00	1	locked
+OPERATION	Strange WIP sizes	2015-02-01T00:00:00	2015-02-02T00:00:00	123	locked
+OPERATION	Strange WIP sizes	2015-02-04T00:00:00	2015-02-05T00:00:00	1234	locked
 PROBLEM	invalid data	No replenishment defined for 'In1'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In2'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
@@ -169,6 +174,10 @@ PROBLEM	invalid data	No replenishment defined for 'In3C'	1971-01-01T00:00:00 / 2
 PROBLEM	invalid data	No replenishment defined for 'In4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In4A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In4B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'Little inventory @ Loc' has material excess of 0.1	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Little inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'Negative inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'Negative inventory @ Loc' has material shortage of 0.1	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out1' has material excess of 40	2014-01-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out2' has material excess of 80	2014-01-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out3' has material excess of 20	2014-01-02T00:00:00 / 2030-12-31T00:00:00

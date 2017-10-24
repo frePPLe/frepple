@@ -3,6 +3,16 @@
   <name>Test model for handling work in progress</name>
   <current>2014-01-01T00:00:00</current>
   <buffers>
+    <buffer name="Little inventory @ Loc">
+      <item name="small item" />
+      <location name="Loc"/>
+      <onhand>0.1</onhand>
+    </buffer>
+    <buffer name="Negative inventory @ Loc">
+      <item name="Negative inventory" />
+      <location name="Loc"/>
+      <onhand>-0.1</onhand>
+    </buffer>      
     <buffer name="In1" xsi:type="buffer_procure">
       <item name="In1" />
       <location name="Loc"/>
@@ -106,6 +116,12 @@
     </resource>
   </resources>
   <operations>
+    <operation name="Strange WIP sizes" xsi:type="operation_fixed_time">
+      <size_minimum>100</size_minimum>
+      <size_minimum>1000</size_minimum>
+      <size_multiple>50</size_multiple>
+      <duration>P1D</duration>
+    </operation>
     <operation name="Oper1" xsi:type="operation_fixed_time">
       <loads>
         <load>
@@ -272,6 +288,16 @@
     </operation>
   </operations>
   <operationplans>
+    <!-- WIP with funky quantities and duration -->
+    <operationplan reference="MO1" quantity="1" status="confirmed" start="2014-02-01T00:00:00" end="2015-02-05T00:00:00">
+       <operation name="Strange WIP sizes"/>
+    </operationplan>
+    <operationplan reference="MO2" quantity="123" status="confirmed" start="2015-02-01T00:00:00">
+       <operation name="Strange WIP sizes"/>
+    </operationplan>
+    <operationplan reference="MO3" quantity="1234" status="confirmed" end="2015-02-05T00:00:00">
+       <operation name="Strange WIP sizes"/>
+    </operationplan>
     <!-- WIP on fixed_time operation -->
     <operationplan id="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00"
       locked="true">

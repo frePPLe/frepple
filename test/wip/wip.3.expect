@@ -92,6 +92,9 @@
 			<name>In4B</name>
 		</item>
 		<item>
+			<name>Negative inventory</name>
+		</item>
+		<item>
 			<name>Out1</name>
 		</item>
 		<item>
@@ -114,6 +117,9 @@
 		</item>
 		<item>
 			<name>Out4B</name>
+		</item>
+		<item>
+			<name>small item</name>
 		</item>
 	</items>
 	<buffers>
@@ -197,6 +203,26 @@
 			<location>
 				<name>Loc</name>
 			</location>
+		</buffer>
+		<buffer>
+			<name>Little inventory @ Loc</name>
+			<item>
+				<name>small item</name>
+			</item>
+			<location>
+				<name>Loc</name>
+			</location>
+			<onhand>0.1</onhand>
+		</buffer>
+		<buffer>
+			<name>Negative inventory @ Loc</name>
+			<item>
+				<name>Negative inventory</name>
+			</item>
+			<location>
+				<name>Loc</name>
+			</location>
+			<onhand>-0.1</onhand>
 		</buffer>
 		<buffer>
 			<name>Out1</name>
@@ -685,6 +711,12 @@
 				</flow>
 			</flows>
 		</operation>
+		<operation>
+			<name>Strange WIP sizes</name>
+			<size_minimum>1000</size_minimum>
+			<size_multiple>50</size_multiple>
+			<duration>P1D</duration>
+		</operation>
 	</operations>
 	<operationplans>
 		<operationplan>
@@ -1129,6 +1161,39 @@
 			<start>2014-01-31T00:00:00</start>
 			<end>2014-01-31T00:00:00</end>
 			<quantity>10</quantity>
+		</operationplan>
+		<operationplan>
+			<id>4041</id>
+			<reference>MO1</reference>
+			<operation>
+				<name>Strange WIP sizes</name>
+			</operation>
+			<start>2014-02-01T00:00:00</start>
+			<end>2015-02-05T00:00:00</end>
+			<quantity>1</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<id>4042</id>
+			<reference>MO2</reference>
+			<operation>
+				<name>Strange WIP sizes</name>
+			</operation>
+			<start>2015-02-01T00:00:00</start>
+			<end>2015-02-02T00:00:00</end>
+			<quantity>123</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<id>4043</id>
+			<reference>MO3</reference>
+			<operation>
+				<name>Strange WIP sizes</name>
+			</operation>
+			<start>2015-02-04T00:00:00</start>
+			<end>2015-02-05T00:00:00</end>
+			<quantity>1234</quantity>
+			<status>confirmed</status>
 		</operationplan>
 	</operationplans>
 </plan>

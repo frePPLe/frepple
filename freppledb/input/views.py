@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 @staff_member_required
 def search(request):
-  term = request.GET.get('term')
+  term = request.GET.get('term').strip()
   result = []
 
   # Loop over all models in the data_site

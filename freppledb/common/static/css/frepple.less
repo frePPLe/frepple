@@ -654,9 +654,12 @@ tr.ui-state-highlight {
 background-color: @table-bg-accent;
 }
 
-.table.table-condensed.table-hover>tr>td,
-.table.table-condensed.table-hover:not(.ui-jqgrid-btable) tbody>tr>td {
-  border: 0px;
+.table.table-condensed.table-hover:not(.ui-jqgrid-btable) tr>td {
+  border-width: 0px;
+}
+
+.table.table-condensed.table-hover:not(.ui-jqgrid-btable) thead>tr>th {
+  border-width: 1px;
 }
 
 .ui-jqgrid-labels .ui-th-column-header {

@@ -68,11 +68,11 @@ class LateOrdersWidget(Widget):
       db = DEFAULT_DB_ALIAS
     cursor = connections[db].cursor()
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
       '<th class="alignleft">%s</th><th class="alignleft">%s</th>'
       '<th class="aligncenter">%s</th><th class="aligncenter">%s</th>'
-      '<th class="aligncenter">%s</th></tr>' % (
+      '<th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("name"))), capfirst(force_text(_("item"))),
         capfirst(force_text(_("location"))), capfirst(force_text(_("customer"))),
         capfirst(force_text(_("due"))), capfirst(force_text(_("planned date"))),
@@ -135,9 +135,9 @@ class ShortOrdersWidget(Widget):
       db = DEFAULT_DB_ALIAS
     cursor = connections[db].cursor()
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
-      '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
+      '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("name"))), capfirst(force_text(_("item"))), capfirst(force_text(_("location"))),
         capfirst(force_text(_("customer"))), capfirst(force_text(_("due"))), capfirst(force_text(_("short")))
         )
@@ -887,8 +887,8 @@ class PurchaseQueueWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("item"))), capfirst(force_text(_("supplier"))),
         capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
         capfirst(force_text(_("criticality")))
@@ -927,8 +927,8 @@ class DistributionQueueWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("item"))), capfirst(force_text(_("origin"))),
         capfirst(force_text(_("destination"))), capfirst(force_text(_("enddate"))),
         capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
@@ -967,8 +967,8 @@ class ShippingQueueWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("item"))), capfirst(force_text(_("origin"))),
         capfirst(force_text(_("destination"))), capfirst(force_text(_("quantity"))),
         capfirst(force_text(_("start date"))), capfirst(force_text(_("criticality")))
@@ -1008,8 +1008,8 @@ class ResourceQueueWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("resource"))), capfirst(force_text(_("operation"))),
         capfirst(force_text(_("startdate"))), capfirst(force_text(_("enddate"))),
         capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
@@ -1044,8 +1044,8 @@ class PurchaseAnalysisWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("item"))), capfirst(force_text(_("supplier"))),
         capfirst(force_text(_("enddate"))), capfirst(force_text(_("quantity"))),
         capfirst(force_text(_("inventory status")))
@@ -1084,8 +1084,8 @@ class AlertsWidget(Widget):
     except:
       db = DEFAULT_DB_ALIAS
     result = [
-      '<div class="table-responsive"><table class="table">',
-      '<tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr>' % (
+      '<div class="table-responsive"><table class="table table-condensed table-hover">',
+      '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("type"))), capfirst(force_text(_("count"))),
         capfirst(force_text(_("weight")))
         )

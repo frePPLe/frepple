@@ -143,7 +143,7 @@ class RecentCommentsWidget(Widget):
       db = DEFAULT_DB_ALIAS
     cmts = Comment.objects.using(db).order_by('-lastmodified').select_related('content_type', 'user')[:self.limit]
     result = []
-    result.append('<div class="table-responsive"><table class="table table-condensed"><tbody>');
+    result.append('<div class="table-responsive"><table class="table table-condensed table-hover"><tbody>');
     for c in cmts:
       result.append('<tr><td><a href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div></br><p style="padding-left: 10px; display: inline-block;">%s</p>' % (
         _thread_locals.request.prefix, c.get_admin_url(), escape(c.object_pk),

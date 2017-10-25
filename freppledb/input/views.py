@@ -35,6 +35,7 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
 from freppledb.boot import getAttributeFields
+from freppledb.common.models import Parameter
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Skill, Buffer, Customer, Demand
 from freppledb.input.models import Item, OperationResource, OperationMaterial

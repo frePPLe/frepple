@@ -59,7 +59,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
             theflow.quantity+'</td><td>'+theflow.onhand+'</td><td>'+
             theflow.date+'</td></tr>';
           });
-          angular.element(document).find('#attributes-operationflowplans thead').css('display','contents');
+          angular.element(document).find('#attributes-operationflowplans thead').css('display','table-header-group');
         }
       }
 

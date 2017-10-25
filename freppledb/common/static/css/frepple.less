@@ -654,6 +654,11 @@ tr.ui-state-highlight {
 background-color: @table-bg-accent;
 }
 
+.table.table-condensed.table-hover>tr>td,
+.table.table-condensed.table-hover:not(.ui-jqgrid-btable) tbody>tr>td {
+  border: 0px;
+}
+
 .ui-jqgrid-labels .ui-th-column-header {
   background-color: lighten(@gray-light, 20%);
   overflow: hidden;

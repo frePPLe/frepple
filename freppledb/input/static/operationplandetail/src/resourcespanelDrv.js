@@ -33,10 +33,10 @@ function showresourcespanelDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
-                      gettextCatalog.getString("resources")+
+                      gettextCatalog.getString("resource")+
                     '</strong></div>'+
-                    '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("resource")+'</b>' +
+                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +

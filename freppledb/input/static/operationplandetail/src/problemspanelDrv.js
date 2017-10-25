@@ -36,8 +36,8 @@ function showproblemspanelDrv($window, gettextCatalog) {
     var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
                       gettextCatalog.getString("problems")+
                     '</strong></div>'+
-                    '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("problems")+'</b>' +
+                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("start")+'</b>' +
                     '</td><td>' +

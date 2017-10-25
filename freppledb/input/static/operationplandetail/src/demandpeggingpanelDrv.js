@@ -33,10 +33,10 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs, transclude) {
     var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
-                      gettextCatalog.getString("demand pegging")+
+                      gettextCatalog.getString("demand")+
                     '</strong></div>'+
-                    '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("demand")+'</b>' +
+                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
                     '</td><td>' +

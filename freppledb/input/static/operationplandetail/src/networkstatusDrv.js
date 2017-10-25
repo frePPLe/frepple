@@ -28,7 +28,7 @@ function shownetworkstatusDrv($window, gettextCatalog) {
     var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
                       gettextCatalog.getString("network status")+
                     '</strong></div>'+
-                    '<table class="table table-hover table-condensed"><thead><tr><td>' +
+                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("location")+'</b>' +

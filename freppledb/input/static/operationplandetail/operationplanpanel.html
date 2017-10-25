@@ -14,14 +14,14 @@
 </style>
 <div class="panel-heading">
   <strong style="text-transform: capitalize;">
-    {{'operationplan attributes'|translate}}
+    &nbsp;{{opptype[operationplan.type]}}
   </strong>
 </div>
-<table class="table" id="opplan-attributes-drvtable">
+<table class="table table-condensed table-hover" id="opplan-attributes-drvtable">
   <thead>
     <tr>
       <td style="min-width: 250px; width:30%">
-        <b id="thead1" style="text-transform: capitalize;">{{opptype[operationplan.type]}}&nbsp;</b>
+        <b id="thead1" style="text-transform: capitalize;">{{ 'name'|translate }}&nbsp;</b>
       </td>
       <td>
         <b id="thead2" style="text-transform: capitalize;" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}</b>

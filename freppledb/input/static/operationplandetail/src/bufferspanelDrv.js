@@ -33,10 +33,10 @@ function showbufferspanelDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs, transclude) {
     var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
-                      gettextCatalog.getString("buffers")+
+                      gettextCatalog.getString("buffer")+
                     '</strong></div>'+
-                    '<table class="table"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("buffer")+'</b>' +
+                    '<table class="table table-condensed table-hover"><thead style="display: none;"><tr><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td><td>' +
@@ -59,6 +59,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
             theflow.quantity+'</td><td>'+theflow.onhand+'</td><td>'+
             theflow.date+'</td></tr>';
           });
+          angular.element(document).find('#attributes-operationflowplans thead').css('display','contents');
         }
       }
 

@@ -1,12 +1,5 @@
 <style>
-#attributes-supplyinformation tbody tr td,
-#attributes-networkstatus tbody tr td,
-#attributes-operationproblems tbody tr td,
-#attributes-operationresources tbody tr td,
-#attributes-operationflowplans tbody tr td,
-#attributes-operationdemandpegging tbody tr td {
-    border: 0px;
-}
+
 #attributes-supplyinformation thead tr td,
 #attributes-networkstatus thead tr td,
 #attributes-operationproblems thead tr td,
@@ -22,13 +15,13 @@
 <div data-ng-controller="operationplandetailCtrl" id="controller">
   <div class="row">
     <div class="col-md-6">
-      <div class="panel panel-default" id="attributes-operationplan" data="operationplan" showoperationplan-drv style="margin-bottom: 50px;"></div>
+      <div class="panel panel-default" id="attributes-operationplan" data="operationplan" showoperationplan-drv style="margin-bottom: 18px;"></div>
     </div>
     <div class="col-md-6">
-      <div class="panel panel-default" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1" data="operationplan" showproblemspanel-drv></div>
-      <div class="panel panel-default" id="attributes-operationresources" data-ng-if="operationplan.id !== -1" data="operationplan" showresourcespanel-drv></div>
+      <div class="panel panel-default" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
+      <div class="panel panel-default" id="attributes-operationresources" data-ng-if="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" showresourcespanel-drv></div>
       <div class="panel panel-default" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1" data="operationplan" showbufferspanel-drv></div>
-      <div class="panel panel-default" id="attributes-operationdemandpegging" data-ng-if="operationplan.id !== -1" data="operationplan" showoperationpeggingpanel-drv></div>
+      <div class="panel panel-default" id="attributes-operationdemandpegging" data-ng-if="operationplan.id !== -1 && operationplan.pegging_demand.length > 0" data="operationplan" showoperationpeggingpanel-drv></div>
     </div>
   </div>
   <!-- row end  -->

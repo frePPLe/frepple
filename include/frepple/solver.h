@@ -108,21 +108,21 @@ class SolverMRP : public Solver
 {
   protected:
     /** This variable stores the constraint which the solver should respect.
-      * By default no constraints are enabled. */
-    short constrts;
+      * By default all constraints are enabled. */
+    short constrts = 15;
 
-    bool allowSplits;
+    bool allowSplits = true;
 
-    bool rotateResources;
+    bool rotateResources = true;
 
     /** When set to false we solve only for the entity being called. This is
       * used when you want to control manual the sequence of the planning
       * loop.
       */
-    bool propagate;
+    bool propagate = true;
 
     /** Index of the cluster to replan selectively. */
-    int cluster;
+    int cluster = -1;
 
     /** Copy the user exit functions from the custom dictionary into the
       * internal fields.
@@ -319,10 +319,7 @@ class SolverMRP : public Solver
     void solve(void *v = nullptr);
 
     /** Constructor. */
-    SolverMRP() : constrts(15), allowSplits(true), rotateResources(true),
-      propagate(true), cluster(-1), plantype(1), lazydelay(86400L), iteration_threshold(1),
-      iteration_accuracy(0.01), iteration_max(0),
-      planSafetyStockFirst(false), erasePreviousFirst(true), administrativeleadtime(0L)
+    SolverMRP()
     {
       initType(metadata);
       commands.sol = this;
@@ -717,7 +714,7 @@ class SolverMRP : public Solver
     static const Keyword tag_iterationmax;
 
     /** Type of plan to be created. */
-    short plantype;
+    short plantype = 1;
 
     /** Time increments for a lazy replan.<br>
       * The solver is expected to return always a next-feasible date when the
@@ -727,12 +724,12 @@ class SolverMRP : public Solver
       * request with a request date incremented by this value.<br>
       * The default value is 1 day.
       */
-    Duration lazydelay;
+    Duration lazydelay = 86400L;
 
     /** Administrative lead time, demand should therefore be planned ahead 
       * by the solver at due minus administrative leadtime
     */
-    Duration administrativeleadtime;
+    Duration administrativeleadtime = 0L;
 
     /** Minimum acceptable time increment between ask cycles. 
       * By default a delay of 1 seconds is sufficient to trigger a new ask cycle.
@@ -745,18 +742,18 @@ class SolverMRP : public Solver
     /** Threshold to stop iterating when the delta between iterations is
       * less than this absolute limit.
       */
-    double iteration_threshold;
+    double iteration_threshold = 1;
 
     /** Threshold to stop iterating when the delta between iterations is
       * less than this percentage limit.
       */
-    double iteration_accuracy;
+    double iteration_accuracy = 0.01;
 
     /** Maximum number of asks allowed to plan a demand.
       * If the can't plan a demand within this limit, we consider it
       * unplannable.
       */
-    unsigned long iteration_max;
+    unsigned long iteration_max = 0;
 
     /** A Python callback function that is called for each alternate
       * flow. If the callback function returns false, that alternate
@@ -802,10 +799,10 @@ class SolverMRP : public Solver
       *  - When planning demands, we try to replenish towards the safety
       *    stock level.
       */
-    bool planSafetyStockFirst;
+    bool planSafetyStockFirst = false;
 
     /** Flag to specify whether we erase the previous plan first or not. */
-    bool erasePreviousFirst;
+    bool erasePreviousFirst = true;
 
   protected:
     /** @brief This class is used to store the solver status during the

@@ -489,16 +489,18 @@ PyObject* LoadPlanIterator::iternext()
 
 LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
 {
-  if (!ldplan->getLoad() || !ldplan->getLoad()->getResource()->isGroup())
-    return;
-  for (auto i = ldplan->getLoad()->getResource()->getMembers(); i != Resource::end(); ++i)
+  if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup())
   {
-    if (ldplan->getResource() == &*i)
-      continue;
-   Skill* sk = ldplan->getLoad()->getSkill();
-   if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
-     resources.push_back(&*i);
+    for (auto i = ldplan->getLoad()->getResource()->getMembers(); i != Resource::end(); ++i)
+    {
+      if (ldplan->getResource() == &*i)
+        continue;
+     Skill* sk = ldplan->getLoad()->getSkill();
+     if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
+       resources.push_back(&*i);
+    }
   }
+  resIter = resources.begin();
 }
 
 

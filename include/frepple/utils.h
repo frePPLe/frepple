@@ -5034,6 +5034,18 @@ class Command
     {
       return next;
     }
+
+    /** Returns an identifier for each subclass:
+      *  - 1: CommandList (and BookMark)
+      *  - 2: CommandSetField
+      *  - 3: CommandSetProperty
+      *  - 4: CommandCreateObject
+      *  - 5: CommandCreateOperationPlan
+      *  - 6: CommandDeleteOperationPlan
+      *  - 7: CommandMoveOperationPlan
+      */
+    virtual short getType() const = 0;
+
   private:
     /** Points to the commandlist which owns this command. The default value
       * is nullptr, meaning there is no owner. */
@@ -5118,6 +5130,11 @@ class CommandSetField : public Command
     {
       return obj;
     }
+
+    virtual short getType() const
+    {
+      return 2;
+    }
 };
 
 
@@ -5180,6 +5197,11 @@ class CommandSetProperty : public Command
     {
       return obj;
     }
+
+    virtual short getType() const
+    {
+      return 3;
+    }
 };
 
 
@@ -5224,24 +5246,26 @@ class CommandCreateObject : public Command
         return;
 
       // Check for setfield commands on this object, and invalidate them.
-      //
-      // TODO: The undo is limited to the current command list. If there
-      // are multiple bookmarks in the command manager we only undo a
-      // part of the commands. For most practical purposes the current
-      // behavior will be sufficient.
       for (Command* cmd = getNext(); cmd; cmd = cmd->getNext())
       {
-        CommandSetField *cmd_setfield = dynamic_cast<CommandSetField*>(cmd);
-        if (cmd_setfield)
+        switch (cmd->getType())
         {
-          if (cmd_setfield->getObject() == obj)
-            cmd_setfield->clearObject();
-        }
-        else
-        {
-          CommandSetProperty *cmd_setproperty = dynamic_cast<CommandSetProperty*>(cmd);
-          if (cmd_setproperty && cmd_setproperty->getObject() == obj)
-            cmd_setproperty->clearObject();
+          case 1:
+            // TODO: The undo is limited to the current command list. If there
+            // are multiple bookmarks in the command manager we only undo a
+            // part of the commands. For most practical purposes the current
+            // behavior will be sufficient.
+            throw LogicException("Not implemented");
+          case 2:
+            // CommandSetField
+            if (static_cast<CommandSetField*>(cmd)->getObject() == obj)
+              static_cast<CommandSetField*>(cmd)->clearObject();
+            break;
+          case 3:
+            // CommandSetProperty
+            if (static_cast<CommandSetProperty*>(cmd)->getObject() == obj)
+              static_cast<CommandSetProperty*>(cmd)->clearObject();
+            break;
         }
       }
 
@@ -5254,6 +5278,11 @@ class CommandCreateObject : public Command
     virtual void redo()
     {
       throw DataException("Can't redo a create command");
+    }
+
+    virtual short getType() const
+    {
+      return 4;
     }
 };
 
@@ -5384,6 +5413,11 @@ class CommandList : public Command
       * will be printed.
       */
     virtual ~CommandList();
+
+    virtual short getType() const 
+    {
+      return 1;
+    }
 };
 
 

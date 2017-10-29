@@ -500,26 +500,25 @@ void SolverMRP::scanExcess(CommandList* l)
   // Loop over all newly created operationplans found in the command stack
   for(CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)
   {
-    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(&*cmd);
-    if (!createcmd)
+    switch (cmd->getType())
     {
-      // If the command is a list: recursively call this function
-      if (dynamic_cast<CommandList*>(&*cmd))
-        scanExcess(dynamic_cast<CommandList*>(&*cmd));
-      //else: Not a command creating an operationplan: move on
-    }
-    else
-    {
-      // Detect excess operationplans and undo them
-      if (createcmd->getOperationPlan() && createcmd->getOperationPlan()->isExcess())
-      {
-        if (getLogLevel()>1)
-          logger << "Denying creation of redundant operationplan "
-              << createcmd->getOperationPlan()->getOperation() << "  "
-              << createcmd->getOperationPlan()->getDates() << "  "
-              << createcmd->getOperationPlan()->getQuantity() << endl;
-        createcmd->rollback();
-      }
+      case 1:
+        // Recurse deeper into command lists
+        scanExcess(static_cast<CommandList*>(&*cmd));
+        break;
+      case 5:
+        // Detect excess operationplans and undo them
+        auto createcmd = static_cast<CommandCreateOperationPlan*>(&*cmd);
+        if (createcmd->getOperationPlan() && createcmd->getOperationPlan()->isExcess())
+        {
+          if (getLogLevel()>1)
+            logger << "Denying creation of redundant operationplan "
+                << createcmd->getOperationPlan()->getOperation() << "  "
+                << createcmd->getOperationPlan()->getDates() << "  "
+                << createcmd->getOperationPlan()->getQuantity() << endl;
+          createcmd->rollback();
+        }
+        break;
     }
   }
 }
@@ -544,20 +543,20 @@ bool SolverMRP::hasOperationPlans(CommandList* l)
   // Loop over all newly created operationplans found in the command stack
   for (CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)
   {
-    CommandCreateOperationPlan* createcmd = dynamic_cast<CommandCreateOperationPlan*>(&*cmd);
-    if (!createcmd)
+    switch (cmd->getType())
     {
-      // If the command is a list: recursively call this function
-      CommandList* cmdlist = dynamic_cast<CommandList*>(&*cmd);
-      if (cmdlist && hasOperationPlans(cmdlist))
-        return true;
-      //else: Not a command creating an operationplan: move on
+      case 1:
+        // Recurse deeper into command lists
+        if (hasOperationPlans(static_cast<CommandList*>(&*cmd)))
+          return true;
+        break;
+      case 5:
+        // Command creating an operationplan
+        auto opplan = static_cast<CommandCreateOperationPlan*>(&*cmd)->getOperationPlan();
+        if (opplan->getQuantity() > 0.0 && !opplan->getDemand())
+          return true;
+        break;
     }
-    else if (createcmd->getOperationPlan()
-      && createcmd->getOperationPlan()->getQuantity() > 0
-      && !createcmd->getOperationPlan()->getDemand()
-      )
-      return true;
   }
   return false;
 }

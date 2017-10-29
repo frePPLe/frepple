@@ -9513,6 +9513,10 @@ class CommandCreateOperationPlan : public Command
       return opplan;
     }
 
+    virtual short getType() const
+    {
+      return 5;
+    }
   private:
     /** Pointer to the newly created operationplan. */
     OperationPlan *opplan;
@@ -9576,6 +9580,10 @@ class CommandDeleteOperationPlan : public Command
       undo();
     }
 
+    virtual short getType() const
+    {
+      return 6;
+    }
   private:
     /** Pointer to the operationplan being deleted.<br>
       * Until the command is committed we don't deallocate the memory for the
@@ -9681,6 +9689,10 @@ class CommandMoveOperationPlan : public Command
       return originaldates;
     }
 
+    virtual short getType() const
+    {
+      return 7;
+    }
   private:
     /** This is a pointer to the operationplan being moved. */
     OperationPlan *opplan = nullptr;

@@ -25,7 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models.fields import IntegerField, AutoField, DurationField, BooleanField
-from django.db.models.fields import DateField, DateTimeField, TimeField, NOT_PROVIDED
+from django.db.models.fields import DateField, DateTimeField, TimeField, CharField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
@@ -85,6 +85,8 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
           data = data.replace(microsecond=0) + timedelta(seconds=1)
       elif isinstance(field, TimeField) and isinstance(data, datetime):
         data = "%s:%s:%s" % (data.hour, data.minute, data.second)
+      elif isinstance(field, RelatedField) and not isinstance(data, str) and isinstance(field.target_field, CharField):
+        data = str(data)
       elif isinstance(data, str):
         data = data.strip()
       return data

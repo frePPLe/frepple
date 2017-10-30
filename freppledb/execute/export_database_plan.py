@@ -438,6 +438,7 @@ class export:
     cursor = connections[self.database].cursor()
     currentTime = self.timestamp
     updates = []
+    material = {}
     with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
       for i in frepple.buffers():
         if self.cluster != -1 and self.cluster != i.cluster:
@@ -458,7 +459,58 @@ class export:
                round(j.quantity, 6),
                str(j.date), round(j.onhand, 6), j.status, currentTime
                )), file=tmp)
-
+          
+          # capture the flowplan for MOs to populate the operationplan.material field
+          if not isinstance(j.operationplan.operation, frepple.operation_inventory) \
+          and not isinstance(j.operationplan.operation, frepple.operation_itemdistribution) \
+          and not isinstance(j.operationplan.operation, frepple.operation_itemsupplier) \
+          and not j.operationplan.operation.hidden:
+            if j.operationplan.id not in material:
+              material[j.operationplan.id] = ['{"%s":%s}' % (j.buffer.item.name, round(j.quantity, 6))]
+            elif j.quantity > 0:
+              material.get(j.operationplan.id).append('{"%s":%s}' % (j.buffer.item.name, round(j.quantity, 6)))
+            else:
+              material.get(j.operationplan.id).insert(0,'{"%s":%s}' % (j.buffer.item.name, round(j.quantity, 6)))
+          
+      # create a temp table for all MOs with the jsonb field to perform one single update on operationplan table
+      cursor.execute('''
+        create temp table opplan_mat_tmp
+        (
+        operationplan_id integer,
+        material jsonb
+        )
+        on commit preserve rows
+      ''')
+      with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as opplanmat_tmp:
+        
+        for k in material.keys():
+          # The backslash need to be escaped
+          print(("%s\t%s" % (k,json.dumps(material.get(k)))).replace('\\"','\\\\"'), file=opplanmat_tmp)
+        
+        opplanmat_tmp.seek(0)
+        cursor.copy_from(
+        opplanmat_tmp,
+        'opplan_mat_tmp'
+        )
+        opplanmat_tmp.close()
+        
+        # create an index to optimize the single update
+        cursor.execute('''
+          create unique index opplanmat_tmp_idx on opplan_mat_tmp (operationplan_id)
+        ''')
+        
+        # populating operationplan.material field
+        cursor.execute('''
+          update operationplan 
+          set material = opplan_mat_tmp.material
+          from opplan_mat_tmp
+          where opplan_mat_tmp.operationplan_id = operationplan.id
+        ''')
+        
+        # droping temp table
+        cursor.execute("drop table opplan_mat_tmp")
+      
+          
       tmp.seek(0)
       cursor.copy_from(
         tmp,
@@ -478,6 +530,7 @@ class export:
     starttime = time()
     cursor = connections[self.database].cursor()
     currentTime = self.timestamp
+    resource = {}
     with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
       for i in frepple.resources():
         if self.cluster != -1 and self.cluster != i.cluster:
@@ -490,6 +543,52 @@ class export:
               str(j.startdate), str(j.enddate),
               j.setup and j.setup or "\\N", j.status, currentTime
               )),file=tmp)
+            
+            if j.operationplan.id not in resource:
+              resource[j.operationplan.id] = ['{"%s":%s}' % (j.resource.name, round(-j.quantity, 6))]
+            else:
+              resource.get(j.operationplan.id).append('{"%s":%s}' % (j.resource.name, round(-j.quantity, 6)))
+            
+      # create a temp table for all MOs with the jsonb field to perform one single update on operationplan table
+      cursor.execute('''
+        create temp table opplan_res_tmp
+        (
+        operationplan_id integer,
+        resource jsonb
+        )
+        on commit preserve rows
+      ''')
+      
+      with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as opplanres_tmp:
+        
+        for k in resource.keys():
+          # The backslash need to be escaped
+          print(("%s\t%s" % (k,json.dumps(resource.get(k)))).replace('\\"','\\\\"'), file=opplanres_tmp)
+        
+        opplanres_tmp.seek(0)
+        cursor.copy_from(
+        opplanres_tmp,
+        'opplan_res_tmp'
+        )
+        opplanres_tmp.close()
+        
+        # create an index to optimize the single update
+        cursor.execute('''
+          create unique index opplanres_tmp_idx on opplan_res_tmp (operationplan_id)
+        ''')
+        
+        # populating operationplan.material field
+        cursor.execute('''
+          update operationplan 
+          set resource = opplan_res_tmp.resource
+          from opplan_res_tmp
+          where opplan_res_tmp.operationplan_id = operationplan.id
+        ''')
+        
+        # droping temp table
+        cursor.execute("drop table opplan_res_tmp")
+      
+            
       tmp.seek(0)
       cursor.copy_from(
         tmp,

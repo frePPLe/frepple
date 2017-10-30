@@ -1182,6 +1182,8 @@ class ManufacturingOrderList(GridReport):
     GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
+    GridFieldText('material', title=_('materials'), editable=False, search=False, sortable=False, initially_hidden=True),
+    GridFieldText('resource', title=_('resources'), editable=False, search=False, sortable=False, initially_hidden=True),
     GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),

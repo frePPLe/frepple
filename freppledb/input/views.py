@@ -1164,7 +1164,9 @@ class ManufacturingOrderList(GridReport):
     if args and args[0]:
       q = q.filter(location=args[0])
     return q.extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)"
+      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
+      'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
+      'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)"
     })
 
 

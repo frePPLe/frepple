@@ -1099,8 +1099,6 @@ class OperationPlan(AuditModel):
     )
   plan = JSONBField(default="{}", null=True, blank=True, editable=False)
   # Used only for manufacturing orders
-  material = JSONBField(default="{}", null=True, blank=True, editable=False)
-  resource = JSONBField(default="{}", null=True, blank=True, editable=False)
   operation = models.ForeignKey(
     Operation, verbose_name=_('operation'),
     db_index=True, null=True, blank=True, on_delete=models.CASCADE

@@ -27,7 +27,7 @@ msgstr ""
 
 #: common/admin.py:37
 msgid "Permissions in this scenario"
-msgstr "这个情形的权限"
+msgstr "针对此场景的权限"
 
 #: common/admin.py:39
 msgid "Important dates"
@@ -57,7 +57,7 @@ msgstr "修改历史"
 
 #: common/api/views.py:28
 msgid "REST API Help"
-msgstr "安置 API 帮助"
+msgstr "REST API 帮助"
 
 #: common/menu.py:49
 msgid "Show hints"
@@ -198,7 +198,7 @@ msgstr "忙着"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1645
 #: output/views/buffer.py:304 output/views/resource.py:297
 msgid "status"
-msgstr "状况"
+msgstr "状态"
 
 #: common/models.py:233
 msgid "last refreshed"
@@ -206,7 +206,7 @@ msgstr "最后刷新"
 
 #: common/models.py:273
 msgid "scenarios"
-msgstr "清影"
+msgstr "场景"
 
 #: common/models.py:279
 msgid "Detect automatically"
@@ -978,7 +978,7 @@ msgstr "创建计划"
 #: execute/templates/execute/execute.html:757
 #: execute/templates/execute/execute.html:783
 msgid "launch"
-msgstr "开办"
+msgstr "执行"
 
 #: execute/templates/execute/execute.html:347
 msgid ""
@@ -989,13 +989,13 @@ msgid ""
 "\t\t\t\t\t\t\t\t\t\tand export results."
 msgstr ""
 "\n"
-"\t\t\t\t\t\t\t\t\t\t从数据库和现场数据源加载frepple…<br>\n"
-"\t\t\t\t\t\t\t\t\t\t和在frepple创建一个计划…<br>\n"
-"\t\t\t\t\t\t\t\t\t\t和导出结果。"
+"\t\t\t\t\t\t\t\t\t\t1.从数据库和实时数据源加载数据到frepple…<br>\n"
+"\t\t\t\t\t\t\t\t\t\t 2. 在frepple中创建一个计划…<br>\n"
+"\t\t\t\t\t\t\t\t\t\t3. 导出结果。"
 
 #: execute/templates/execute/execute.html:352
 msgid "optional planning steps"
-msgstr "可选的规划步骤"
+msgstr "可选的计划步骤"
 
 #: execute/templates/execute/execute.html:361
 msgid ""
@@ -1027,7 +1027,7 @@ msgstr "约束条件"
 
 #: execute/templates/execute/execute.html:369
 msgid "Capacity: respect capacity limits"
-msgstr "生能：遵循生能限制"
+msgstr "产能：遵循产能限制"
 
 #: execute/templates/execute/execute.html:370
 msgid "Material: respect procurement limits"
@@ -1035,11 +1035,11 @@ msgstr "物料：遵循采购限制"
 
 #: execute/templates/execute/execute.html:371
 msgid "Lead time: do not plan in the past"
-msgstr "交付周期：不在已过去安排计划"
+msgstr "交付周期：不生成开始日期在今天之前的计划"
 
 #: execute/templates/execute/execute.html:372
 msgid "Release fence: do not plan within the release time window"
-msgstr "释放围栏：不在释放的时间窗口安排计划"
+msgstr "计划冻结期：不在计划冻结期间（今天+冻结天数）生成计划"
 
 #: execute/templates/execute/execute.html:375
 msgid "View log file"
@@ -1131,7 +1131,7 @@ msgstr "停止网络服务"
 
 #: execute/templates/execute/execute.html:539
 msgid "scenario management"
-msgstr "清影管理"
+msgstr "场景管理"
 
 #: execute/templates/execute/execute.html:550
 msgid "label"
@@ -1148,7 +1148,7 @@ msgstr "复制"
 
 #: execute/templates/execute/execute.html:580
 msgid "into selected scenarios"
-msgstr "到已选择的清影中"
+msgstr "到已选择的场景中"
 
 #: execute/templates/execute/execute.html:587
 msgid "release"
@@ -1156,7 +1156,7 @@ msgstr "发布"
 
 #: execute/templates/execute/execute.html:588
 msgid "release selected scenarios"
-msgstr "发布选择的清影"
+msgstr "发布选择的场景"
 
 #: execute/templates/execute/execute.html:591
 msgid "update"
@@ -1164,7 +1164,7 @@ msgstr "更新"
 
 #: execute/templates/execute/execute.html:592
 msgid "Update description of selected scenarios"
-msgstr "更新已选择清影的描述"
+msgstr "更新已选择场景的描述"
 
 #: execute/templates/execute/execute.html:607
 msgid "Back up the database"
@@ -1347,7 +1347,7 @@ msgstr "计划"
 #: forecast/admin.py:29 forecast/views.py:829 input/admin.py:435
 #: output/views/constraint.py:106
 msgid "why short or late?"
-msgstr "为什么短缺或迟?"
+msgstr "为何短缺或延迟?"
 
 #: forecast/attributes.py:17 forecast/models.py:77 forecast/views.py:57
 #: forecast/views.py:104 forecast/views.py:390 forecast/views.py:594
@@ -1355,7 +1355,7 @@ msgstr "为什么短缺或迟?"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1919
 #: output/views/demand.py:425
 msgid "forecast"
-msgstr "预报"
+msgstr "预测"
 
 #: forecast/attributes.py:21
 #| msgid "demand alerts"
@@ -1373,12 +1373,12 @@ msgstr "cv2"
 
 #: forecast/commands.py:596 forecast/commands.py:617
 msgid "Generate forecast"
-msgstr "生成预报"
+msgstr "生成预测"
 
 #: forecast/menu.py:24 forecast/templates/forecast.html:4
 #: forecast/views.py:1803 input/views.py:75
 msgid "Forecast editor"
-msgstr "预报编辑器"
+msgstr "预测编辑器"
 
 #: forecast/models.py:23
 msgid "Automatic"
@@ -1544,11 +1544,11 @@ msgstr "地点"
 #: forecast/models.py:43
 #: inventoryplanning/templates/inventoryplanning/drp.html:1992
 msgid "Forecast method"
-msgstr "预报方法"
+msgstr "预测方法"
 
 #: forecast/models.py:45
 msgid "Method used to generate a base forecast"
-msgstr "生成一个基础预报的方法"
+msgstr "生成一个基础预测的方法"
 
 #: forecast/models.py:48 forecast/views.py:73 forecast/views.py:813
 #: input/models.py:22 input/models.py:78 input/models.py:216
@@ -1561,7 +1561,7 @@ msgstr "生成一个基础预报的方法"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1540
 #: output/views/buffer.py:294 output/views/resource.py:286 quoting/views.py:54
 msgid "priority"
-msgstr "优先权"
+msgstr "优先级"
 
 #: forecast/models.py:49 input/models.py:1000
 msgid "Priority of the demand (lower numbers indicate more important demands)"
@@ -1596,11 +1596,11 @@ msgstr "将预测数字舍入为整数"
 #: forecast/models.py:64 forecast/views.py:109
 #: inventoryplanning/templates/inventoryplanning/drp.html:2014
 msgid "estimated forecast error"
-msgstr "估计预报错误"
+msgstr "估计预测错误"
 
 #: forecast/models.py:68
 msgid "calculated forecast method"
-msgstr "计算预报方法"
+msgstr "计算预测方法"
 
 #: forecast/models.py:71
 msgid "calculated standard deviation"
@@ -1608,7 +1608,7 @@ msgstr "计算标准偏差"
 
 #: forecast/models.py:78
 msgid "forecasts"
-msgstr "预报"
+msgstr "预测"
 
 #: forecast/models.py:771 forecast/models.py:781
 #: forecast/templates/forecast/forecast.html:174
@@ -1654,11 +1654,11 @@ msgstr "已计划的订单"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1170
 #: inventoryplanning/templates/inventoryplanning/drp.html:1191
 msgid "forecast baseline"
-msgstr "预报基线"
+msgstr "预测基线"
 
 #: forecast/models.py:776 forecast/models.py:786
 msgid "forecast adjustment"
-msgstr "预报调整"
+msgstr "预测调整"
 
 #: forecast/models.py:777 forecast/models.py:787
 #: forecast/templates/forecast/forecast.html:184
@@ -1667,33 +1667,33 @@ msgstr "预报调整"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1195
 #: inventoryplanning/templates/inventoryplanning/drp.html:1278
 msgid "forecast total"
-msgstr "预报总数"
+msgstr "预测总数"
 
 #: forecast/models.py:778 forecast/models.py:788
 #: forecast/templates/forecast/forecast.html:186 forecast/views.py:118
 #: inventoryplanning/templates/inventoryplanning/drp.html:1176
 #: inventoryplanning/templates/inventoryplanning/drp.html:1197
 msgid "forecast net"
-msgstr "预报淨数"
+msgstr "预测淨数"
 
 #: forecast/models.py:779 forecast/models.py:789
 #: forecast/templates/forecast/forecast.html:188 forecast/views.py:119
 #: inventoryplanning/templates/inventoryplanning/drp.html:1178
 #: inventoryplanning/templates/inventoryplanning/drp.html:1199
 msgid "forecast consumed"
-msgstr "预报消耗"
+msgstr "预测消耗"
 
 #: forecast/models.py:780 forecast/models.py:790
 msgid "planned forecast"
-msgstr "已计划的预报"
+msgstr "已计划的预测"
 
 #: forecast/models.py:799
 msgid "forecast plan"
-msgstr "预报计划"
+msgstr "预测计划"
 
 #: forecast/models.py:800
 msgid "forecast plans"
-msgstr "预报计划"
+msgstr "预测计划"
 
 #: forecast/templates/forecast/forecast.html:38
 #: inventoryplanning/templates/inventoryplanning/drp.html:1868
@@ -1713,12 +1713,12 @@ msgstr "显示单位"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1172
 #: inventoryplanning/templates/inventoryplanning/drp.html:1193
 msgid "forecast override"
-msgstr "预报忽视"
+msgstr "预测忽视"
 
 #: forecast/templates/forecast/forecast.html:192
 #: forecast/templates/forecast/forecast.html:287 forecast/views.py:121
 msgid "planned net forecast"
-msgstr "已计划淨预报"
+msgstr "已计划淨预测"
 
 #: forecast/templates/forecast/forecast.html:384
 #: inventoryplanning/templates/inventoryplanning/drp.html:721
@@ -1736,12 +1736,12 @@ msgstr "方法"
 
 #: forecast/views.py:87
 msgid "forecast report"
-msgstr "预报报告"
+msgstr "预测报告"
 
 #: forecast/views.py:108
 #: inventoryplanning/templates/inventoryplanning/drp.html:2010
 msgid "selected forecast method"
-msgstr "已选择预报的方法"
+msgstr "已选择预测的方法"
 
 #: forecast/views.py:422 forecast/views.py:426 forecast/views.py:626
 #: forecast/views.py:630
@@ -1756,12 +1756,12 @@ msgstr "没有调整字段指定"
 msgid ""
 "Recognized fields for list layout: forecast, bucket, start date, end date, "
 "forecast override, orders adjustment"
-msgstr "列表设计的认识字段：预报，段，开启时间，结束日期，预报覆盖，订单调整"
+msgstr "列表设计的认识字段：预测，段，开启时间，结束日期，预测覆盖，订单调整"
 
 #: forecast/views.py:433 forecast/views.py:637
 msgid ""
 "Recognized fields for pivot layout: forecast, data field, [bucket names*]"
-msgstr "对于透视设计的认识字段：预报，数据字段， [段名*]"
+msgstr "对于透视设计的认识字段：预测，数据字段， [段名*]"
 
 #: forecast/views.py:470 forecast/views.py:515 forecast/views.py:673
 #: forecast/views.py:718
@@ -1814,7 +1814,7 @@ msgstr "数量"
 #: forecast/views.py:812 input/models.py:991 input/views.py:1005
 #: quoting/views.py:53
 msgid "delivery operation"
-msgstr "交货的操作"
+msgstr "交货操作"
 
 #: forecast/views.py:1449 input/models.py:174 input/models.py:251
 #: input/models.py:449 input/models.py:517 input/models.py:812
@@ -1830,15 +1830,15 @@ msgstr "成本"
 
 #: forecast/widget.py:32
 msgid "Show the value of all sales order and forecast"
-msgstr "显示所有销售订单和预报的值"
+msgstr "显示所有销售订单和预测的值"
 
 #: forecast/widget.py:216
 msgid "Forecast error"
-msgstr "预报错误"
+msgstr "预测错误"
 
 #: forecast/widget.py:217
 msgid "Show the evolution of the SMAPE forecast error"
-msgstr "显示演变的SMAPE预报错误"
+msgstr "显示演变的SMAPE预测错误"
 
 #: forecast/widget.py:357
 msgid "Demand history outliers"
@@ -1950,7 +1950,7 @@ msgstr "日历段"
 #: output/views/buffer.py:330 output/views/resource.py:54
 #: output/views/resource.py:59 output/views/resource.py:324
 msgid "available"
-msgstr "可用"
+msgstr "可用产能日历"
 
 #: input/models.py:133 input/models.py:271 input/models.py:510
 #| msgid "Calendar defining the working hours and holidays of this location"
@@ -2046,7 +2046,7 @@ msgstr "有效结束日期"
 #: input/models.py:228 input/views.py:1112 input/views.py:1231
 #: output/views/buffer.py:289 output/views/resource.py:281
 msgid "release fence"
-msgstr "释放围栏"
+msgstr "计划释放冻结期"
 
 #: input/models.py:229
 msgid ""
@@ -2301,11 +2301,11 @@ msgstr "资源量"
 
 #: input/models.py:503 input/views.py:722 output/views/resource.py:45
 msgid "maximum calendar"
-msgstr "最大限度的日历"
+msgstr "最大产能日历"
 
 #: input/models.py:505
 msgid "Calendar defining the resource size varying over time"
-msgstr "日历决定资源大小随时间变化"
+msgstr "日历定义资源大小随时间变化"
 
 #: input/models.py:519
 msgid "Cost for using 1 unit of the resource for 1 hour"
@@ -2685,7 +2685,7 @@ msgstr "需求"
 
 #: input/models.py:1133
 msgid "Due date of the demand/forecast"
-msgstr "需求/预报的截止日期"
+msgstr "需求/预测的截止日期"
 
 #: input/models.py:1174 input/models.py:1189 input/models.py:1242
 msgid "operationplan"
@@ -2752,7 +2752,7 @@ msgstr "库存计划"
 
 #: input/views.py:140 output/views/pegging.py:38
 msgid "depth"
-msgstr "深度"
+msgstr "层级"
 
 #: input/views.py:684
 #| msgid "setup matrix rules"
@@ -2790,7 +2790,7 @@ msgstr "改变状态为%(status)s"
 #: inventoryplanning/views.py:186 inventoryplanning/widget.py:24
 #: output/views/buffer.py:280 output/views/resource.py:271
 msgid "inventory status"
-msgstr "库存状况"
+msgstr "库存状态"
 
 #: input/views.py:1218 input/views.py:1364 input/views.py:1538
 #: output/views/buffer.py:309 output/views/resource.py:300
@@ -2800,7 +2800,7 @@ msgstr "需求"
 #: input/views.py:1221 input/views.py:1365 input/views.py:1539
 #| msgid "inventory by item"
 msgid "inventory item"
-msgstr "库存项目"
+msgstr "库存物料"
 
 #: input/views.py:1222 input/views.py:1366 input/views.py:1540
 #| msgid "inventory by location"
@@ -2856,7 +2856,7 @@ msgstr "负二项"
 
 #: inventoryplanning/models.py:33
 msgid "calculated"
-msgstr "算计 "
+msgstr "计算 "
 
 #: inventoryplanning/models.py:35
 #: inventoryplanning/templates/inventoryplanning/drp.html:2122
@@ -3025,7 +3025,7 @@ msgstr "过期的销售订单"
 
 #: inventoryplanning/models.py:334 inventoryplanning/views.py:196
 msgid "open sales orders"
-msgstr "开放的销售订单"
+msgstr "未完成销售订单"
 
 #: inventoryplanning/models.py:335 inventoryplanning/views.py:199
 msgid "proposed purchases"
@@ -3037,11 +3037,11 @@ msgstr "建议的转移"
 
 #: inventoryplanning/models.py:337 inventoryplanning/views.py:197
 msgid "open purchases"
-msgstr "开放的购买"
+msgstr "未完成采购订单"
 
 #: inventoryplanning/models.py:338 inventoryplanning/views.py:198
 msgid "open transfers"
-msgstr "开放的转移"
+msgstr "未完成转移单"
 
 #: inventoryplanning/models.py:339
 msgid "onhand value"
@@ -3053,7 +3053,7 @@ msgstr "过期销售订单值"
 
 #: inventoryplanning/models.py:341
 msgid "open sales orders value"
-msgstr "开放销售订单值"
+msgstr "未完成销售订单值"
 
 #: inventoryplanning/models.py:342
 msgid "proposed purchases value"
@@ -3065,15 +3065,15 @@ msgstr "建议的传输值"
 
 #: inventoryplanning/models.py:344
 msgid "open purchases value"
-msgstr "开放购买值"
+msgstr "未完成采购金额"
 
 #: inventoryplanning/models.py:345
 msgid "open transfers value"
-msgstr "开放的值转移"
+msgstr "未完成转移金额"
 
 #: inventoryplanning/models.py:346 inventoryplanning/views.py:190
 msgid "local forecast"
-msgstr "局部预报"
+msgstr "局部预测"
 
 #: inventoryplanning/models.py:347
 #: inventoryplanning/templates/inventoryplanning/drp.html:639
@@ -3091,7 +3091,7 @@ msgstr "总体需求"
 
 #: inventoryplanning/models.py:349
 msgid "local forecast value"
-msgstr "局部的预报值"
+msgstr "局部的预测值"
 
 #: inventoryplanning/models.py:350
 msgid "dependent demand value"
@@ -3147,7 +3147,7 @@ msgstr "1年前的订单调整"
 #: inventoryplanning/templates/inventoryplanning/drp.html:612
 #: inventoryplanning/templates/inventoryplanning/drp.html:624
 msgid "total forecast"
-msgstr "总体预报"
+msgstr "总体预测"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:634
 #: inventoryplanning/templates/inventoryplanning/drp.html:647
@@ -3168,7 +3168,7 @@ msgstr "安全库存覆盖"
 #: output/templates/output/buffer.html:115
 #: output/templates/output/buffer.html:214 output/views/buffer.py:72
 msgid "start inventory"
-msgstr "初始库存"
+msgstr "期初库存"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:638
 #: inventoryplanning/templates/inventoryplanning/drp.html:651
@@ -3183,7 +3183,7 @@ msgstr "确认供应"
 #: inventoryplanning/templates/inventoryplanning/drp.html:642
 #: inventoryplanning/templates/inventoryplanning/drp.html:655
 msgid "proposed supply"
-msgstr "提出了供应"
+msgstr "建议采购"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:643
 #: inventoryplanning/templates/inventoryplanning/drp.html:656
@@ -3197,19 +3197,19 @@ msgstr "总体供应"
 #: output/templates/output/buffer.html:121
 #: output/templates/output/buffer.html:217 output/views/buffer.py:75
 msgid "end inventory"
-msgstr "最终库存"
+msgstr "期末库存"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1053
 #: output/templates/output/buffer.html:117
 #: output/templates/output/buffer.html:215 output/views/buffer.py:73
 msgid "produced"
-msgstr "已生产"
+msgstr "生产"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1054
 #: output/templates/output/buffer.html:119
 #: output/templates/output/buffer.html:216 output/views/buffer.py:74
 msgid "consumed"
-msgstr "已消耗"
+msgstr "消耗"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1654
 msgid "Last Modified"
@@ -3386,7 +3386,7 @@ msgstr "无效数字"
 
 #: inventoryplanning/views.py:1374
 msgid "No forecast found"
-msgstr "找不到预报"
+msgstr "找不到预测"
 
 #: inventoryplanning/widget.py:25
 msgid "Display the current status of your current inventory"
@@ -3418,7 +3418,7 @@ msgstr "销售"
 
 #: menu.py:25 output/views/constraint.py:24
 msgid "capacity"
-msgstr "容量"
+msgstr "产能"
 
 #: menu.py:26
 msgid "purchasing"
@@ -3502,28 +3502,28 @@ msgstr "积压"
 #: output/templates/output/operation.html:115
 #: output/templates/output/operation.html:256 output/views/operation.py:35
 msgid "proposed starts"
-msgstr "提出的开始"
+msgstr "建议开工数量"
 
 #: output/templates/output/operation.html:117 output/views/operation.py:36
 msgid "total starts"
-msgstr "全部开始"
+msgstr "全部开工数量"
 
 #: output/templates/output/operation.html:119
 #: output/templates/output/operation.html:258 output/views/operation.py:37
 msgid "proposed ends"
-msgstr "提出的结束"
+msgstr "建议完工数量"
 
 #: output/templates/output/operation.html:121 output/views/operation.py:38
 msgid "total ends"
-msgstr "全部结束"
+msgstr "全部完工数量"
 
 #: output/templates/output/operation.html:255
 msgid "approved and confirmed starts"
-msgstr "批准和确认的开始"
+msgstr "已批准和确认的开工数量"
 
 #: output/templates/output/operation.html:257
 msgid "approved and confirmed ends"
-msgstr "批准和确认的结束"
+msgstr "已批准和确认的完工数量"
 
 #: output/templates/output/pegging.html:96
 msgid "zoom in"
@@ -3562,11 +3562,11 @@ msgstr "库存明细报告"
 
 #: output/views/buffer.py:303
 msgid "expected onhand"
-msgstr "预计的现有量"
+msgstr "预计数量"
 
 #: output/views/buffer.py:307
 msgid "operationplan quantity"
-msgstr "操作计划数量"
+msgstr "计划数量"
 
 #: output/views/buffer.py:308
 #| msgid "inventory by item"
@@ -3615,7 +3615,7 @@ msgstr "优先权"
 
 #: output/views/constraint.py:39
 msgid "before fence"
-msgstr "期前的围栏"
+msgstr "冻结期前"
 
 #: output/views/constraint.py:40
 msgid "before current"
@@ -3631,7 +3631,7 @@ msgstr "需求报告"
 
 #: output/views/demand.py:202
 msgid "net forecast"
-msgstr "净预报"
+msgstr "净预测"
 
 #: output/views/demand.py:203
 msgid "orders"
@@ -3923,7 +3923,7 @@ msgstr "报价"
 #~ msgstr "已计划"
 
 #~ msgid "Use this forecast for planning"
-#~ msgstr "使用这个预报来计划"
+#~ msgstr "使用这个预测来计划"
 
 #~ msgid "Distribution planning"
 #~ msgstr "配送计划"
@@ -3950,7 +3950,7 @@ msgstr "报价"
 #~ msgstr "期末库存"
 
 #~ msgid "forecast method"
-#~ msgstr "预报方法"
+#~ msgstr "预测方法"
 
 #~ msgctxt "forecast method"
 #~ msgid "Manual"

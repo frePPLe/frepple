@@ -404,7 +404,7 @@ msgstr "目前的现有量"
 #~ msgstr "没有需求"
 
 #~ msgid "Manufacturing Order"
-#~ msgstr "生产单"
+#~ msgstr "生产订单"
 
 #~ msgid "Purchase Order"
 #~ msgstr "采购订单"

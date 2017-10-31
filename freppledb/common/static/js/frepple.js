@@ -383,7 +383,7 @@ jQuery.extend($.fn.fmatter, {
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
-    // TODO This function is not very generic.
+    // TODO This function is not very generic. Sending a json string from the backend would be more robust
     if (cellvalue === undefined || cellvalue === '') return '';
     if (options['colModel']['popup']) return cellvalue;
     var result = '';
@@ -393,6 +393,21 @@ jQuery.extend($.fn.fmatter, {
       var detail = dmds[i].split(" : ");
       if (result != '') result += ', ';
       result += detail[0] + " : <span>" + detail[1] + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a></span>"
+    }
+    return result;
+  },
+
+  listdetail : function(cellvalue, options, rowdata) {
+    // TODO This function is not very generic. Sending a json string from the backend would be more robust
+    if (cellvalue === undefined || cellvalue === '') return '';
+    if (options['colModel']['popup']) return cellvalue;
+    var result = '';
+    var dmds = cellvalue.split(", ");
+    for (var i in dmds)
+    {
+      var detail = dmds[i].split(" : ");
+      if (result != '') result += ', ';
+      result += "<span>" + detail[0] + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a></span>&nbsp;" + detail[1];
     }
     return result;
   },

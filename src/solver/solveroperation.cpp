@@ -974,7 +974,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Filter out alternates that are not suitable
       if ((*altIter)->getPriority() == 0
         || (effectiveOnly && !(*altIter)->getEffective().within(data->state->q_date))
-        || (!effectiveOnly && (*altIter)->getEffectiveEnd() > data->state->q_date)
+        || (!effectiveOnly && (*altIter)->getEffective().within(data->state->q_date))
         )
       {
         ++altIter;
@@ -988,7 +988,12 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       }
 
       // Establish the ask date
-      ask_date = effectiveOnly ? origQDate : (*altIter)->getEffectiveEnd();
+      if (effectiveOnly)
+        ask_date = origQDate;
+      else if (origQDate > (*altIter)->getEffectiveEnd())
+        ask_date = (*altIter)->getEffectiveEnd();
+      else if (origQDate < (*altIter)->getEffectiveStart())
+        ask_date = origQDate;
 
       // Find the flow into the requesting buffer. It may or may not exist, since
       // the flow could already exist on the top operationplan
@@ -1084,9 +1089,23 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
       double beforePenalty = data->state->a_penalty;
-      if (search == PRIORITY)
+      if (origQDate < (*altIter)->getEffectiveStart())
       {
-        // Message
+        // Force a reply at the start of the effective period
+        if (loglevel > 1)
+          logger << indent(oper->getLevel()) << "   Operation '" << (*altIter)->getOperation()
+          << "' answers: 0 " << (*altIter)->getEffectiveStart() << endl;
+        data->state->a_qty = 0.0;
+        data->state->a_date = (*altIter)->getEffectiveStart();
+        if (data->logConstraints && data->planningDemand)
+          data->planningDemand->getConstraints().push(
+            ProblemBeforeFence::metadata,
+            (*altIter)->getOperation(), origQDate, (*altIter)->getEffectiveStart(),
+            data->state->q_qty
+            );
+      }
+      else if (search == PRIORITY)
+      {
         if (loglevel>1)
           logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
             << "' tries alternate '" << (*altIter)->getOperation() << "' " << endl;
@@ -1115,7 +1134,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->a_penalty = beforePenalty;
 
       // Keep the lowest of all next-date answers on the effective alternates
-      if (effectiveOnly && data->state->a_date < a_date && data->state->a_date > ask_date)
+      if (data->state->a_date < a_date && data->state->a_date > ask_date)
         a_date = data->state->a_date;
 
       // Now solve for loads and flows of the top operationplan.

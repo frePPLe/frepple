@@ -20,6 +20,6 @@ priority         integer           | For alternate operations: Priority of this 
                                    | When the priority is equal to 0, this alternate is
                                      considered unavailable and it can’t be used for planning.
                                    | Default value is 1.
-effective_start  dateTime          Earliest allowed start date for using this suboperation.
+effective_start  dateTime          Earliest allowed end date for using this suboperation.
 effective_end    dateTime          Latest allowed end date for using this suboperation.
 ================ ================= ===========================================================

@@ -20,6 +20,12 @@
     on operations.
     Case 4: The minimum size of the replenishing operation increases over time.
     Case 5: The minimum size of the replenishing operation decreases over time.
+    
+    A third part of the test verifies the behavior when material is requested
+    far outside the effective range of an operation.
+    Case 6: The operation only becomes effective much later.
+    Case 7: The operation has already passed way earlier.
+    
   </description>
   <current>2015-01-01T00:00:00</current>
 
@@ -575,7 +581,6 @@
     </demand>
   </demands>
 
-
   <!--
     Case 5
   -->
@@ -806,6 +811,76 @@
       <due>2015-01-29T00:00:00</due>
       <priority>1</priority>
       <item name="5. end item"/>
+      <location name="factory"/>
+    </demand>
+  </demands>
+
+  <!--
+    Case 6
+  -->
+  <operations>
+    <operation name="Replenish item 6" xsi:type="operation_alternate" >
+      <item name="6. end item"/>
+      <location name="factory"/>
+      <suboperations>
+        <suboperation>
+          <operation name="6. make end item">
+            <location name="factory"/>
+            <size_multiple>1</size_multiple>
+            <flows>
+              <flow xsi:type="flow_end">
+                <item name="6. end item"/>
+                <quantity>1</quantity>
+              </flow>
+            </flows>
+            <duration>P7D</duration>
+          </operation>          
+          <effective_start>2018-01-01T00:00:00</effective_start>
+        </suboperation>
+      </suboperations>
+    </operation>  
+  </operations>
+  <demands>
+    <demand name="6. order 1">
+      <quantity>5</quantity>
+      <due>2017-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="6. end item"/>
+      <location name="factory"/>
+    </demand>
+  </demands>
+
+  <!--
+    Case 7
+  -->
+  <operations>
+    <operation name="Replenish item 7" xsi:type="operation_alternate" >
+      <item name="7. end item"/>
+      <location name="factory"/>
+      <suboperations>
+        <suboperation>
+          <operation name="7. make end item">
+            <location name="factory"/>
+            <size_multiple>1</size_multiple>
+            <flows>
+              <flow xsi:type="flow_end">
+                <item name="7. end item"/>
+                <quantity>1</quantity>
+              </flow>
+            </flows>
+            <duration>P7D</duration>
+          </operation>
+          <effective_end>2016-01-01T00:00:00</effective_end>
+        </suboperation>
+      </suboperations>
+    </operation>  
+  </operations>
+  <demands>
+    <demand name="7. order 1">
+      <quantity>5</quantity>
+      <due>2017-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="7. end item"/>
       <location name="factory"/>
     </demand>
   </demands>

@@ -85,7 +85,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
           data = data.replace(microsecond=0) + timedelta(seconds=1)
       elif isinstance(field, TimeField) and isinstance(data, datetime):
         data = "%s:%s:%s" % (data.hour, data.minute, data.second)
-      elif isinstance(field, RelatedField) and not isinstance(data, str) and isinstance(field.target_field, CharField):
+      elif isinstance(field, RelatedField) and not isinstance(data, str) and isinstance(field.target_field, CharField) and data is not None:
         data = str(data)
       elif isinstance(data, str):
         data = data.strip()

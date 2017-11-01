@@ -131,7 +131,7 @@ msgstr "导出格式"
 #: common/static/js/frepple.js:999 common/static/js/frepple.js:1021
 #: common/static/js/frepple.min.js:12
 msgid "Spreadsheet list"
-msgstr "电子表格列表"
+msgstr "Excel列表"
 
 #: common/static/js/frepple.js:1000 common/static/js/frepple.js:1023
 #: common/static/js/frepple.min.js:12
@@ -145,7 +145,7 @@ msgstr "输出"
 
 #: common/static/js/frepple.js:1020 common/static/js/frepple.min.js:12
 msgid "Spreadsheet table"
-msgstr "电子表格表"
+msgstr "Excel表"
 
 #: common/static/js/frepple.js:1022 common/static/js/frepple.min.js:12
 msgid "CSV table"
@@ -190,7 +190,7 @@ msgstr "导出计划"
 #: common/static/js/frepple.js:1313 common/static/js/frepple.js:1326
 #: common/static/js/frepple.min.js:12
 msgid "Filtered where"
-msgstr "过滤哪里"
+msgstr "过滤条件："
 
 #: common/static/js/frepple.js:1699 common/static/js/frepple.js:1784
 #: common/static/js/frepple.min.js:12
@@ -259,7 +259,7 @@ msgstr "四列"
 
 #: common/static/js/frepple.js:2126 common/static/js/frepple.min.js:13
 msgid "Add widget"
-msgstr "添加小工"
+msgstr "添加小插件"
 
 #: common/static/js/frepple.js:2144 common/static/js/frepple.min.js:13
 msgid "Delete"
@@ -267,11 +267,11 @@ msgstr "删除"
 
 #: common/static/js/frepple.js:2146 common/static/js/frepple.min.js:13
 msgid "Add new below"
-msgstr "添加新在下面"
+msgstr "在下面添加新记录"
 
 #: common/static/js/frepple.js:2147 common/static/js/frepple.min.js:13
 msgid "Add new above"
-msgstr "添加新在上面"
+msgstr "在上面添加新记录"
 
 #: common/static/js/frepple.js:2437 common/static/js/frepple.min.js:11
 msgid "Installed apps"
@@ -351,18 +351,18 @@ msgstr "暂停"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:23
 msgid "inventory status"
-msgstr "库存状况"
+msgstr "库存状态"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:33
 msgid "onhand at lead time"
-msgstr "在交货期的现有量"
+msgstr "交货期末库存"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:67
 #| msgid "onhand"
 msgid "current onhand"
-msgstr "目前的现有量"
+msgstr "当前库存"
 
 #~ msgid "Importing... pressing Close button will not stop the process."
 #~ msgstr "导入中…按关闭按钮不会停止进程。"
@@ -416,7 +416,7 @@ msgstr "目前的现有量"
 #~ msgstr "库存"
 
 #~ msgid "Delivery"
-#~ msgstr "交付"
+#~ msgstr "交货"
 
 #~ msgid "%s allocated out of %s"
 #~ msgstr "%s 分配出 %s"

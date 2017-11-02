@@ -406,7 +406,7 @@ class export:
         with cte as (
           select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
           from operationplan
-          where type = 'DLVR'
+          where demand_id is not null and owner_id is null
           group by demand_id, due
         )
         update demand
@@ -423,7 +423,7 @@ class export:
         deliverydate = null
       where (delay is not null or plannedquantity is not null or deliverydate is not null)
       and not exists(
-        select 1 from operationplan where type = 'DLVR' and operationplan.demand_id = demand.name
+        select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
         )
       ''')
 

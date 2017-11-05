@@ -153,7 +153,8 @@ legend {
   width: 100%;
 }
 
-td a, td a:link, td a:visited {
+/* Do we need this? Doesn't look very clean and is too generic. */
+td a :not[role=button], td a:link :not[role=button], td a:visited :not[role=button] {
   color: @text-color;
 }
 
@@ -258,7 +259,7 @@ span.underline { //fix for odoo theme
   }
 }
 
-a:link, a:visited {
+a:link :not[role=button], a:visited :not[role=button] {
     color: @link-color;
     text-decoration: none;
 }

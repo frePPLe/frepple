@@ -136,8 +136,12 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   }
 },
 onSelectRow: function(rowid, status, e) {
-  var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
-
+  var selection = [];
+  if ($(this).jqGrid('getGridParam').multiselect === true) {
+    selection = $(this).jqGrid('getGridParam','selarrrow').slice();
+  } else {
+    selection = [$(this).jqGrid('getGridParam','selrow').slice()];
+  }
   grid.markSelectedRow(selection.length);
 
   var selectiondata = [];

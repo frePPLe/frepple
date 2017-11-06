@@ -319,6 +319,8 @@ Object* OperationPlan::createOperationPlan(
   }
 
   // Create a new operation plan
+  if (!start && !end)
+    start = Plan::instance().getCurrent();
   if (ordtype == "PO")
   {
     // Find or create the destination buffer.
@@ -577,17 +579,12 @@ Object* OperationPlan::createOperationPlan(
     if (statusfld && statusfld->getString() != "proposed")
     {
       string status = statusfld->getString();
-      if (start && end)
-      {
-        // Any start date, end date and quantity combination will be accepted
-        opplan->setStatus(status);
-        opplan->freezeStatus(start, end, quantity);
-      }
-      else
-      {
-        opplan->setStatus(status);
-        opplan->setQuantity(quantity);
-      }
+      opplan->setStatus(status);
+      opplan->freezeStatus(
+        start ? start : opplan->getStart(), 
+        end ? end : opplan->getEnd(),
+        quantity
+        );
     }
     if (!opplan->activate(create))
       throw DataException("Can't create operationplan");

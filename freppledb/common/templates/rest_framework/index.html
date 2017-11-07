@@ -26,30 +26,35 @@
 </div></div>
 
 <div class="row"><div class="col-md-12" style="max-width:1100px">
-	<table class="table table-striped">
-	<tr><th></th><th>{% trans 'List API' %}</th><th>{% trans 'Detail API' %}</th></tr>
-	{% getMenu as menu %}
-	{% for group in menu %}
-	  {% for item in group.1 %}
-	    {% if item.1.model and not item.1.excludeFromBulkOperations %}
-	        <tr>
-	          <td> {{ group.0 }} - {{ item.0 }} </td>
-	          <td>
-	            <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/ ">
-	              {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
-	              <span class="leftpadding fa fa-caret-right" role="input/item"></span>
-	            </a>
-	          </td>
-	          <td><span style="cursor: pointer">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <b>REST API</b>
+    </div>
+    <table class="table table-condensed table-hover">
+      <tr><th></th><th>{% trans 'List API' %}</th><th>{% trans 'Detail API' %}</th></tr>
+      {% getMenu as menu %}
+      {% for group in menu %}
+        {% for item in group.1 %}
+          {% if item.1.model and not item.1.excludeFromBulkOperations %}
+          <tr>
+            <td> {{ group.0 }} - {{ item.0 }} </td>
+            <td>
+              <a href="{{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/ ">
+                {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
+                <span class="leftpadding fa fa-caret-right" role="input/item"></span>
+              </a>
+            </td>
+            <td><span style="cursor: pointer">
               {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
               <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text">
               </input>/<span class="leftpadding fa fa-caret-right"></span>
-	          </span></td>
-	        </tr>
-	    {% endif %}
-	  {% endfor %}
-	{% endfor %}
-	</table>
+            </span></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </table>
+  </div>
 </div></div>
 
 {% endblock %}

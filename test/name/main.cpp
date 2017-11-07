@@ -100,8 +100,14 @@ void functionality_test()
 
   // Inserting an already existing element
   Customer * k = new CustomerDefault();
-  k->setName("alfa2");
-  logger << k->getName() << endl;
+  try
+  {
+    k->setName("alfa2");
+  }
+  catch (...)
+  {
+    logger << "Couldn't insert a duplicate key." << endl;
+  }
   printlist("duplicate insert alfa2");
   delete k;
 

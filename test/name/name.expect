@@ -22,6 +22,6 @@ insert alfa y:  alfa  alfa x  alfa y  alfa1  alfa2  alfa4  beta  omega
 insert alfa z:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  omega
 insert delta:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  delta  omega
 insert phi:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  delta  omega  phi
-alfa2
+Couldn't insert a duplicate key.
 duplicate insert alfa2:  alfa  alfa x  alfa y  alfa z  alfa1  alfa2  alfa4  beta  delta  omega  phi
 clear:

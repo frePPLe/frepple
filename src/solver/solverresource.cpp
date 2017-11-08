@@ -537,13 +537,9 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
 
   // Compute the minimum free capacity we need in a bucket
   double min_free_quantity =
-    data->state->q_loadplan->getLoad()->getEffective() ?
-      // Conservative threshold when the load is date effective
-      ROUNDING_ERROR :
-      // Minimum operation size multiplied with load size
-      (data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
-        data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
-        ) * data->state->q_loadplan->getLoad()->getQuantity());
+    data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
+      data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
+      ) * data->state->q_loadplan->getLoad()->getQuantity();
 
   // Loop for a valid location by using EARLIER capacity
   if (!data->state->forceLate)
@@ -638,6 +634,14 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
         for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
           cur!=res->getLoadPlans().end() && cur->getDate() > currentOpplan.end - res->getMaxEarly();)
         {
+          if (!data->state->q_loadplan->getLoad()->getEffective().within(cur->getDate()))
+          {
+            // The load isn't effective any longer, and our problem is solved
+            newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
+              data->state->q_loadplan->getLoad()->getEffective().getStart(), Duration(1L), false
+            );
+            break;
+          }
           if (cur->getEventType() != 2)
           {
             --cur;
@@ -648,9 +652,8 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           if (cur != res->getLoadPlans().end() && cur->getOnhand() > min_free_quantity)
           {
             // Find a suitable loadplan date in this bucket
-            Duration tmp;
             newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-              bucketEnd, Duration(1L), false, &tmp
+              bucketEnd, Duration(1L), false
               );
             // Move to the start of the bucket
             while (cur!=res->getLoadPlans().end() && cur->getEventType() != 2) --cur;
@@ -664,7 +667,10 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
         // We found a date where the load goes below the maximum
         // At this point newStart.getStart() is a date in a bucket where
         // capacity is still available.
-        if (bucketEnd && newStart.getStart() >= currentOpplan.end - res->getMaxEarly())
+        if (
+          (bucketEnd || !data->state->q_loadplan->getLoad()->getEffective().within(newStart.getStart()))
+          && newStart.getStart() >= currentOpplan.end - res->getMaxEarly()
+          )
         {
           // Move the operationplan to load 1 second in the bucket with available capacity
           Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
@@ -738,11 +744,28 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
         overloadQty = cur->getOnhand();
       }
     }
+
+    Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
+    if (!newDate || newDate > effective_end)
+    {
+      // The load has effectivity, and when it expires we can return a positive reply
+      if (effective_end > currentOpplan.end)
+        newDate = effective_end;
+    }
+
     if (newDate)
     {
       // Move the operationplan to the new bucket and resize to the minimum.
       // Set the date where a next trial date can happen.
-      data->state->q_operationplan->setQuantity(data->state->q_operationplan->getOperation()->getSizeMinimum());
+      double q = data->state->q_operationplan->getOperation()->getSizeMinimum();
+      if (data->state->q_operationplan->getOperation()->getSizeMinimumCalendar())
+      {
+        // Minimum size varies over time
+        double curmin = data->state->q_operationplan->getOperation()->getSizeMinimumCalendar()->getValue(newDate);
+        if (q < curmin)
+          q = curmin;
+      }
+      data->state->q_operationplan->setQuantity(q);
       Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
         data->state->q_loadplan, newDate, true
         );

@@ -222,7 +222,7 @@ class Command(BaseCommand):
           task.status = 'Failed'
       task.finished = datetime.now()
       task.save(using=self.database)
-      logger.info('%s End of frepple_importfromfolder\n' % datetime.now())
+      logger.info('%s End of frepple_importfromfolder\n' % datetime.now().replace(microsecond=0))
 
 
 

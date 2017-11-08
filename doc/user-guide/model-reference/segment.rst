@@ -2,7 +2,7 @@
 Segment
 =======
 
-This table allows to specify segments.
+A segment is a group of item+locations, all satisfying a specific filter criterion.
 
 **Fields**
 
@@ -10,10 +10,14 @@ This table allows to specify segments.
 Field            Type              Description
 ================ ================= =====================================================================
 name             non-empty string  A unique name for this segment
-description      string            A description for this forecast record.
-query            string            A SQL-like query to identify the SKUs belonging to that segment.
-                                   For example : item.cost between 10 and 100 and location.name 
-                                   like '%shop%'
-sku_count        integer           The number of SKUs in the segment. The value is updated when a 
-                                   segment is created/updated or when an inventory planning task is run.                                   
+description      string            A free text description.
+query            string            | A SQL-like expression to identify the item-locations belonging to 
+                                     the segment. All item attributes and location attributes are 
+                                     available to define the filter expression
+                                   | For example : item.cost between 10 and 100 and location.name 
+                                     like '%shop%'
+sku_count        integer           | The number of item-location combinations in the segment. 
+                                   | The value is read-only and is automatically updated when a 
+                                     segment is created/updated or when an inventory planning task is
+                                     run.                                   
 ================ ================= =====================================================================

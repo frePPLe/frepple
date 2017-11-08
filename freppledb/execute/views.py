@@ -225,6 +225,7 @@ def wrapTask(request, action):
       if not request.user.has_perm('auth.copy_scenario'):
         raise Exception('Missing execution privileges')
       source = request.POST.get('source', DEFAULT_DB_ALIAS)
+      worker_database = source
       destination = request.POST.getlist('destination')
       force = request.POST.get('force', False)
       for sc in Scenario.objects.all():

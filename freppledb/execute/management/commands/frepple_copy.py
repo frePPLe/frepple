@@ -89,12 +89,20 @@ class Command(BaseCommand):
     else:
       user = None
 
+    # Synchronize the scenario table with the settings
+    Scenario.syncWithSettings()
+
     # Initialize the task
+    source = options['source']
+    try:
+      sourcescenario = Scenario.objects.get(pk=source)
+    except:
+      raise CommandError("No source database defined with name '%s'" % source)
     now = datetime.now()
     task = None
     if 'task' in options and options['task']:
       try:
-        task = Task.objects.all().get(pk=options['task'])
+        task = Task.objects.all().using(source).get(pk=options['task'])
       except:
         raise CommandError("Task identifier not found")
       if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_copy':
@@ -103,26 +111,18 @@ class Command(BaseCommand):
       task.started = now
     else:
       task = Task(name='frepple_copy', submitted=now, started=now, status='0%', user=user)
-    task.save()
-
-    # Synchronize the scenario table with the settings
-    Scenario.syncWithSettings()
+    task.save(using=source)
 
     # Validate the arguments
+    destination = options['destination']
     destinationscenario = None
     try:
-      source = options['source']
-      destination = options['destination']
       task.arguments = "%s %s" % (source, destination)
       if options['description']:
         task.arguments += '--description="%s"' % options['description'].replace('"', '\\"')
       if force:
         task.arguments += " --force"
-      task.save()
-      try:
-        sourcescenario = Scenario.objects.get(pk=source)
-      except:
-        raise CommandError("No source database defined with name '%s'" % source)
+      task.save(using=source)
       try:
         destinationscenario = Scenario.objects.get(pk=destination)
       except:
@@ -179,6 +179,16 @@ class Command(BaseCommand):
       task.status = 'Done'
       task.finished = datetime.now()
 
+      # Update the task in the destination database
+      task.message = "Scenario copied from %s" % source
+      task.save(using=destination)
+      task.message = "Scenario copied to %s" % destination
+      
+      # Delete any waiting tasks in the new copy.
+      # This is needed for situations where the same source is copied to
+      # multiple destinations at the same moment.
+      Task.objects.all().using(destination).filter(id__gt=task.id).delete()
+      
     except Exception as e:
       if task:
         task.status = 'Failed'
@@ -191,7 +201,7 @@ class Command(BaseCommand):
 
     finally:
       if task:
-        task.save()
+        task.save(using=source)
       settings.DEBUG = tmp_debug
 
   # accordion template

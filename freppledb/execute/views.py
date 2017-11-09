@@ -234,7 +234,7 @@ def wrapTask(request, action):
           arguments += ' --force'
         if request.POST.get(sc.name, 'off') == 'on' or sc.name in destination:
           task = Task(name='frepple_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
-          task.save()
+          task.save(using=source)
     elif 'release' in request.POST:
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):

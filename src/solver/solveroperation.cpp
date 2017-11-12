@@ -349,10 +349,11 @@ bool SolverMRP::checkOperation
                << "   Recheck capacity" << endl;
 
       // Move the operationplan to the next date where the material is feasible
-      opplan->getOperation()->setOperationPlanParameters
-        (opplan, orig_opplan_qty,
-         matnext.getStart()>orig_dates.getStart() ? matnext.getStart() : orig_dates.getStart(),
-         Date::infinitePast);
+      opplan->getOperation()->setOperationPlanParameters(
+        opplan, orig_opplan_qty,
+        matnext.getStart()>orig_dates.getStart() ? matnext.getStart() : orig_dates.getStart(),
+        Date::infinitePast, true, true, false
+        );
 
       // Move the operationplan to a later date where it is feasible.
       data.state->forceLate = true;

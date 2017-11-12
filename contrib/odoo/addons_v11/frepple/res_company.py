@@ -32,14 +32,12 @@ FREPPLE_CMD = 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
 
 
 class ResCompany(models.Model):
-    ''' Company '''
-
     _name = 'res.company'
     _inherit = 'res.company'
 
     manufacturing_warehouse = fields.Many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null')
     calendar = fields.Many2one('resource.calendar', 'Calendar', ondelete='set null')
-    cmdline = fields.Char('Command line', size=128, default=lambda *a: FREPPLE_CMD)
+    cmdline = fields.Char('Command line', size=128, default=FREPPLE_CMD)
     webtoken_key = fields.Char('Webtoken key', size=128)
     frepple_server = fields.Char('frePPLe web server', size=128)
 
@@ -63,13 +61,3 @@ class ResCompany(models.Model):
           raise exceptions.UserError("FrePPLe server utl not configured")
         url = "%s%s?webtoken=%s" % (server, _url, webtoken)
         return url
-
-
-#class MrpConfigSettings(models.TransientModel):
-#    _inherit = 'res.config.settings'
-#
-#    manufacturing_warehouse = fields.Many2one(related='company_id.manufacturing_warehouse', string='Manufacturing warehouse')
-#    calendar = fields.Many2one(related='company_id.calendar', string='Calendar')
-#    cmdline = fields.Char(related='company_id.cmdline', string='Command line')
-#    webtoken_key = fields.Char(related='company_id.webtoken_key', string='Webtoken key')
-#    frepple_server = fields.Char(related='company_id.frepple_server', string='frePPLe web server')

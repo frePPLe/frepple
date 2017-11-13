@@ -236,10 +236,13 @@ bool SolverMRP::checkOperation
             // for capacity constraints, this is not included.
             if (data.state->a_date < Date::infiniteFuture)
             {
-              OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(
-                opplan, 0.01, data.state->a_date, Date::infinitePast, false, false
+              OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(                  
+                opplan, 
+                getAllowSplits() ? 0.01 : orig_opplan_qty, 
+                data.state->a_date, Date::infinitePast, false, false, false
                 );
-              if (at.end < matnext.getEnd()) matnext = DateRange(at.start, at.end);
+              if (at.end < matnext.getEnd())
+                matnext = DateRange(at.start, at.end);
               //xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" << matnext << "  " << orig_q_date << "  " << at.second << "  " << opplan->getQuantity() << endl;
             }
 
@@ -448,22 +451,28 @@ bool SolverMRP::checkOperationLeadTime
   // In other words, we try to resize the operation quantity to fit the
   // available timeframe: used for e.g. time-per operations
   // Note that we allow the complete post-operation time to be eaten
-  if (extra)
-    // Lead time check during operation resolver
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, opplan->getQuantity(),
-      threshold,
-      original.end + opplan->getOperation()->getPostTime(),
-      false
-    );
-  else
-    // Lead time check during capacity resolver
-    opplan->getOperation()->setOperationPlanParameters(
-      opplan, opplan->getQuantity(),
-      threshold,
-      original.end,
-      true
-    );
+  if (getAllowSplits())
+  {
+    if (extra)
+    {
+      // Lead time check during operation resolver
+      if (getAllowSplits())
+        opplan->getOperation()->setOperationPlanParameters(
+          opplan, opplan->getQuantity(),
+          threshold,
+          original.end + opplan->getOperation()->getPostTime(),
+          false
+        );
+    }
+    else
+      // Lead time check during capacity resolver
+      opplan->getOperation()->setOperationPlanParameters(
+        opplan, opplan->getQuantity(),
+        threshold,
+        original.end,
+        true
+      );
+  }
 
   // Check the result of the resize
   if (opplan->getDates().getStart() >= threshold

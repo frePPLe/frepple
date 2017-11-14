@@ -962,7 +962,7 @@ class DemandList(GridReport):
     GridFieldNumber('quantity', title=_('quantity')),
     GridFieldDateTime('due', title=_('due')),
     GridFieldDuration('delay', title=_('delay'), editable=False, extra='"formatter":delayfmt'),
-    GridFieldNumber('plannedquantity', title=_('planned quantity'), editable=False, extra='"cellattr":plannedquantitycellattr'),
+    GridFieldNumber('plannedquantity', title=_('planned quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "cellattr":plannedquantitycellattr'),
     GridFieldDateTime('deliverydate', title=_('delivery date'), editable=False),
     GridFieldText('description', title=_('description'), initially_hidden=True),
     GridFieldText('category', title=_('category'), initially_hidden=True),

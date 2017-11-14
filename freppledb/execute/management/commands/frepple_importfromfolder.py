@@ -134,7 +134,7 @@ class Command(BaseCommand):
         all_models = [ (ct.model_class(), ct.pk) for ct in ContentType.objects.all() if ct.model_class() ]
         models = []
         for ifile in os.listdir(settings.DATABASES[self.database]['FILEUPLOADFOLDER']):
-          if not ifile.lower().endswith(('.csv', '.csv.gz', '.xslsx')):
+          if not ifile.lower().endswith(('.csv', '.csv.gz', '.xlsx')):
             continue
           filename0 = ifile.split('.')[0]
 
@@ -177,7 +177,7 @@ class Command(BaseCommand):
           task.save(using=self.database)
           i += 1
           filetoparse = os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
-          if ifile.endswith('.xlsx'):
+          if ifile.lower().endswith('.xlsx'):
             logger.info("%s Started processing data in Excel file: %s" % (datetime.now().replace(microsecond=0), ifile))
             returnederrors = self.loadExcelfile(model, filetoparse)
             errors[0] += returnederrors[0]

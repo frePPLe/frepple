@@ -102,7 +102,8 @@ class Command(BaseCommand):
       print("%s Failed to open logfile %s: %s" % (datetime.now(), logfile, e))
 
     task = None
-    errors = 0
+    errors = [0, 0]
+    returnederrors = [0, 0]
     try:
       # Initialize the task
       if options['task']:
@@ -178,27 +179,31 @@ class Command(BaseCommand):
           filetoparse = os.path.join(os.path.abspath(settings.DATABASES[self.database]['FILEUPLOADFOLDER']), ifile)
           if ifile.endswith('.xlsx'):
             logger.info("%s Started processing data in Excel file: %s" % (datetime.now().replace(microsecond=0), ifile))
-            errors += self.loadExcelfile(model, filetoparse)
+            returnederrors = self.loadExcelfile(model, filetoparse)
+            errors[0] += returnederrors[0]
+            errors[1] += returnederrors[1]
             logger.info("%s Finished processing data in file: %s" % (datetime.now().replace(microsecond=0), ifile))
           else:
             logger.info("%s Started processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile))
-            errors += self.loadCSVfile(model, filetoparse)
+            returnederrors = self.loadCSVfile(model, filetoparse)
+            errors[0] += returnederrors[0]
+            errors[1] += returnederrors[1]
             logger.info("%s Finished processing data in CSV file: %s" % (datetime.now().replace(microsecond=0), ifile))
       else:
-        errors += 1
+        errors[0] += 1
         cnt = 0
         logger.error("%s Failed, folder does not exist" % datetime.now().replace(microsecond=0))
 
       # Task update
-      if errors:
+      if errors[0] > 0:
         task.status = 'Failed'
         if not cnt:
           task.message = "Destination folder does not exist"
         else:
-          task.message = "Uploaded %s data files with %s errors" % (cnt, errors)
+          task.message = "Uploaded %s data files with %s errors and %s warnings" % (cnt, errors[0], errors[1])
       else:
         task.status = 'Done'
-        task.message = "Uploaded %s data files" % cnt
+        task.message = "Uploaded %s data files with %s warnings" % (cnt, errors[1])
       task.finished = datetime.now()
 
     except KeyboardInterrupt:
@@ -216,7 +221,7 @@ class Command(BaseCommand):
 
     finally:
       if task:
-        if not errors:
+        if errors[0] == 0:
           task.status = '100%'
         else:
           task.status = 'Failed'
@@ -228,6 +233,7 @@ class Command(BaseCommand):
 
   def loadCSVfile(self, model, file):
     errorcount = 0
+    warningcount = 0
     datafile = EncodedCSVReader(file, delimiter=self.delimiter)
     try:
       with transaction.atomic(using=self.database):
@@ -249,6 +255,7 @@ class Command(BaseCommand):
               "%s: " % error[3] if error[3] else '',
               error[4]
               ))
+            warningcount += 1
           else:
             logger.info('%s %s%s%s%s' % (
               datetime.now().replace(microsecond=0),
@@ -259,11 +266,12 @@ class Command(BaseCommand):
               ))
     except:
       logger.error('%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0))
-    return errorcount
+    return [errorcount, warningcount]
 
 
   def loadExcelfile(self, model, file):
     errorcount = 0
+    warningcount = 0
     try:
       with transaction.atomic(using=self.database):
         wb = load_workbook(filename=file, read_only=True, data_only=True)
@@ -287,6 +295,7 @@ class Command(BaseCommand):
                 "%s: " % error[3] if error[3] else '',
                 error[4]
                 ))
+              warningcount += 1
             else:
               logger.info('%s %s%s%s%s' % (
                 datetime.now().replace(microsecond=0),
@@ -297,7 +306,7 @@ class Command(BaseCommand):
                 ))
     except:
       logger.error('%s Error: Invalid data format - skipping the file \n' % datetime.now().replace(microsecond=0))
-    return errorcount
+    return [errorcount, warningcount]
 
   # accordion template
   title = _('Import data files from folder')

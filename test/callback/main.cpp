@@ -103,8 +103,10 @@ int main (int argc, char *argv[])
     FunctorStatic<Item,SignalSniffer>::connect(SIG_REMOVE);
 
     // d) flows
+    /*
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_ADD);
     FunctorStatic<Flow,SignalSniffer>::connect(SIG_REMOVE);
+    */
 
     // e) demands
     FunctorStatic<Demand,SignalSniffer>::connect(SIG_ADD);
@@ -146,8 +148,10 @@ int main (int argc, char *argv[])
     FunctorStatic<Item,SignalSniffer>::disconnect(SIG_REMOVE);
 
     // d) flows
+    /*
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_ADD);
     FunctorStatic<Flow,SignalSniffer>::disconnect(SIG_REMOVE);
+    */
 
     // e) demands
     FunctorStatic<Demand,SignalSniffer>::disconnect(SIG_ADD);

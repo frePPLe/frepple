@@ -170,6 +170,12 @@ The section below describes the installation and configuration of these.
     | The module adds some configuration fields on the company model.
     | Edit these parameters:
   
+    * | Webtoken key:
+      | A secret random string used to sign web tokens for a single signon between
+        the Odoo and frePPLe web applications. Choose a string that is long enough,
+        random and contains a mix of lower case characters, upper case characters
+        and numbers.
+        
     * | Calendar:
       | References a resource.calendar model that is used to define the working
         hours.
@@ -201,6 +207,8 @@ The section below describes the installation and configuration of these.
     | Assure that the "freppledb.odoo" is included in the setting
       INSTALLED_APPS which defines the enabled extensions. By default
       it is disabled.
+    | Update the DATABASE section such that the SECRET_WEBTOKEN_KEY setting of each
+      scenario is equal to the web token key configured in Odoo.
   
   * **Configure parameters**:
   

@@ -194,8 +194,10 @@ void Buffer::inspect(const string msg) const
         logger << ", id: " << opplan->getIdentifier()
           << ", oper:" << opplan->getOperation()
           << ", quantity: " << opplan->getQuantity()
-          << ", dates: " << opplan->getDates()
-          << endl;
+          << ", dates: " << opplan->getDates();
+        if (!opplan->getProposed())
+          logger << ", " << opplan->getStatus();
+        logger  << endl;
         break;
       case 2:
         logger << ", set onhand to " << oo->getOnhand() << endl;

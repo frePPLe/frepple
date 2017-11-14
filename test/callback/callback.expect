@@ -1,15 +1,11 @@
 Create the model with callbacks:
   Calendar 'test' receives signal ADD
+  Item 'end item' receives signal ADD
   OperationFixedTime 'make end item' receives signal ADD
   Operation 'make end item' receives signal ADD
+  Calendar 'Capacity' receives signal ADD
   OperationFixedTime 'delivery end item' receives signal ADD
   Operation 'delivery end item' receives signal ADD
-  Item 'end item' receives signal ADD
-  BufferDefault 'end item' receives signal ADD
-  Buffer 'end item' receives signal ADD
-  Calendar 'Capacity' receives signal ADD
-  Flow between 'NULL' and 'NULL' receives signal ADD
-  Flow between 'NULL' and 'NULL' receives signal ADD
   Demand 'order 1' receives signal ADD
 Plan the model:
 Erase the model:
@@ -19,8 +15,8 @@ Erase the model:
   Operation 'make end item' receives signal REMOVE
   Operation 'setup operation' receives signal REMOVE
   Demand 'order 1' receives signal REMOVE
-  BufferDefault 'end item' receives signal REMOVE
-  Buffer 'end item' receives signal REMOVE
+  BufferDefault 'end item @ loc' receives signal REMOVE
+  Buffer 'end item @ loc' receives signal REMOVE
   Calendar 'Capacity' receives signal REMOVE
   Calendar 'test' receives signal REMOVE
   Item 'end item' receives signal REMOVE

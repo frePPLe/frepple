@@ -539,7 +539,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
   // Find details on the reference date
   bool effectiveAtStart = false;
   Date tmp = refDate;
-  struct tm datedetail;
+  struct tm datedetail, before, after;
   if (refDate < b->startdate)
     tmp = b->startdate;
   tmp.getInfo(&datedetail);
@@ -566,9 +566,16 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
         tmp += Duration(86400L);
       }
     }
-    else
+    else {
       // The next event is the end date on the current day
+      tmp.getInfo(&before);
       tmp += b->endtime - ref_time;
+      tmp.getInfo(&after);
+      if (!before.tm_isdst && after.tm_isdst)
+        tmp -= Duration(3600L);
+      else if (before.tm_isdst && !after.tm_isdst)
+        tmp += Duration(3600L);
+    }
     if (tmp > b->enddate)
       tmp = b->enddate;
 

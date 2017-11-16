@@ -134,4 +134,14 @@ own code:
 
   ::
   
-     ...	     
+      @login_required
+      @csrf_protect
+      def Upload(request):
+      try:
+        data = json.loads(request.body.decode('utf-8'))
+        # Your logic goes here to send the information to the ERP
+        return HttpResponse("OK")
+      except Exception as e:
+        logger.error("Can't connect to the ERP: %s" % e)
+        return HttpResponseServerError("Can't connect to the ERP")
+	     

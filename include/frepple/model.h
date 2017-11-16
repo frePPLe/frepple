@@ -119,6 +119,18 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
     /** A pointer to the previous bucket. */
     CalendarBucket* prevBucket = nullptr;
 
+    /** A pointer to the owning calendar. */
+    Calendar *cal = nullptr;
+
+    /** Value of this bucket.*/
+    double val = 0.0;
+
+    /** Starting time on the effective days. */
+    Duration starttime;
+
+    /** Ending time on the effective days. */
+    Duration endtime = 86400L;
+
     /** Priority of this bucket, compared to other buckets effective
       * at a certain time.
       */
@@ -134,18 +146,6 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
       * - Bit 6: Saturday
       */
     short days = 127;
-
-    /** Starting time on the effective days. */
-    Duration starttime;
-
-    /** Ending time on the effective days. */
-    Duration endtime = 86400L;
-
-    /** A pointer to the owning calendar. */
-    Calendar *cal = nullptr;
-
-    /** Value of this bucket.*/
-    double val = 0.0;
 
     /** Keep all calendar buckets sorted in ascending order of start date
       * and use the priority as a tie breaker.
@@ -1586,11 +1586,11 @@ class SubOperation : public Object, public HasSource
       */
     Operation* oper = nullptr;
 
-    /** Priority index. */
-    int prio = 1;
-
     /** Validity date range for the child operation. */
     DateRange effective;
+
+    /** Priority index. */
+    int prio = 1;
 
     /** Python constructor. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -2441,16 +2441,6 @@ class OperationPlan
     static const short PRODUCE_MATERIAL = 32;
     static const short CONSUME_CAPACITY = 64;
 
-    /** Pointer to a higher level OperationPlan. */
-    OperationPlan *owner = nullptr;
-
-    /** Quantity. */
-    double quantity = 0.0;
-
-    /** Is this operationplan locked? A locked operationplan doesn't accept
-      * any changes. This field is only relevant for top-operationplans. */
-    short flags = 0;
-
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
       * The value of the counter is the first available identifier value that
@@ -2459,6 +2449,9 @@ class OperationPlan
       * @see assignIdentifier()
       */
     static unsigned long counterMin;
+
+    /** Pointer to a higher level OperationPlan. */
+    OperationPlan *owner = nullptr;
 
     /** Pointer to the demand.<br>
       * Only delivery operationplans have this field set. The field is nullptr
@@ -2504,6 +2497,13 @@ class OperationPlan
 
     /** Pointer to the previous suboperationplan of the parent operationplan. */
     OperationPlan* prevsubopplan = nullptr;
+
+    /** Quantity. */
+    double quantity = 0.0;
+
+    /** Is this operationplan locked? A locked operationplan doesn't accept
+      * any changes. This field is only relevant for top-operationplans. */
+    short flags = 0;
 
     /** Hidden, static field to store the location during import. */
     static Location* loc;
@@ -3127,9 +3127,6 @@ class Operation : public HasName<Operation>,
     /** Cost of the operation. */
     double cost = 0.0;
 
-    /** Does the operation require serialization or not. */
-    bool hidden = false;
-
     /** A pointer to the first operationplan of this operation.<br>
       * All operationplans of this operation are stored in a sorted
       * doubly linked list.
@@ -3142,17 +3139,20 @@ class Operation : public HasName<Operation>,
       */
     OperationPlan* last_opplan = nullptr;
 
-    /** Priority of the operation among alternates. */
-    int priority = 1;
-
-    /** Effectivity of the operation. */
-    DateRange effectivity;
-
     /** A pointer to the next operation producing the item. */
     Operation* next = nullptr;
 
     /** Availability calendar of the operation. */
     Calendar* available = nullptr;
+
+    /** Effectivity of the operation. */
+    DateRange effectivity;
+
+    /** Priority of the operation among alternates. */
+    int priority = 1;
+
+    /** Does the operation require serialization or not. */
+    bool hidden = false;
 };
 
 
@@ -5076,11 +5076,11 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Maximum time interval between purchasing operations. */
     Duration max_interval;
 
-    /** A flag that marks whether this buffer represents a tool or not. */
-    bool tool = false;
-
     /** Maintain a linked list of buffers per item. */
     Buffer *nextItemBuffer = nullptr;
+
+    /** A flag that marks whether this buffer represents a tool or not. */
+    bool tool = false;
 };
 
 
@@ -5757,16 +5757,16 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     }
 
   private:
+    /** Item of the flow. This can be used to automatically generate the buffer
+      * when and if needed.
+      */
+    Item *item = nullptr;
+
     /** Quantity of the flow. */
     double quantity = 0.0;
 
     /** Mode to select the preferred alternates. */
     SearchMode search = PRIORITY;
-
-    /** Item of the flow. This can be used to automatically generate the buffer
-      * when and if needed.
-      */
-    Item *item = nullptr;
 
     static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };
@@ -6186,6 +6186,15 @@ class SetupMatrixRule : public Object
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, DONT_SERIALIZE + PARENT);
     }
   private:
+    /** Pointer to the owning matrix. */
+    SetupMatrix *matrix = nullptr;
+
+    /** Pointer to the next rule in this matrix. */
+    SetupMatrixRule *nextRule = nullptr;
+
+    /** Pointer to the previous rule in this matrix. */
+    SetupMatrixRule *prevRule = nullptr;
+
     /** Original setup. */
     PooledString from;
 
@@ -6203,15 +6212,6 @@ class SetupMatrixRule : public Object
       * need to have different priorities.
       */
     int priority = 0;
-
-    /** Pointer to the owning matrix. */
-    SetupMatrix *matrix = nullptr;
-
-    /** Pointer to the next rule in this matrix. */
-    SetupMatrixRule *nextRule = nullptr;
-
-    /** Pointer to the previous rule in this matrix. */
-    SetupMatrixRule *prevRule = nullptr;
 
   public:
     /** @brief An iterator class to go through all rules of a setup matrix. */
@@ -6692,9 +6692,6 @@ class Resource : public HasHierarchy<Resource>,
     /** The cost of using 1 unit of this resource for 1 hour. */
     double cost = 0.0;
 
-    /** Specifies whether this resource is hidden for serialization. */
-    bool hidden = false;
-
     /** Maximum inventory buildup allowed in case of capacity shortages. */
     Duration maxearly = defaultMaxEarly;
 
@@ -6706,6 +6703,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Availability calendar of the buffer. */
     Calendar* available = nullptr;
+
+    /** Specifies whether this resource is hidden for serialization. */
+    bool hidden = false;
 
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);
@@ -6750,16 +6750,16 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
     double cur_setup;
     double cur_load;
     double cur_size;
-    bool bucketized;
     Date cur_date;
     Date prev_date;
-    bool prev_value;
     Calendar::EventIterator unavailIter;
     Calendar::EventIterator unavailLocIter;
     double bucket_available;
     double bucket_load;
     double bucket_setup;
     double bucket_unavailable;
+    bool bucketized;
+    bool prev_value;
 
     void update(Date till);
 
@@ -7099,11 +7099,11 @@ class Load
     /** Required setup. */
     PooledString setup;
 
-    /** Mode to select the preferred alternates. */
-    SearchMode search = PRIORITY;
-
     /** Required skill. */
     Skill* skill = nullptr;
+
+    /** Mode to select the preferred alternates. */
+    SearchMode search = PRIORITY;
 
   protected:
     /** Factory method. */
@@ -7750,9 +7750,6 @@ class Demand
     /** Requested quantity. Only positive numbers are allowed. */
     double qty = 0.0;
 
-    /** Priority. Lower numbers indicate a higher priority level.*/
-    int prio = 0;
-
     /** Due date. */
     Date dueDate;
 
@@ -7764,9 +7761,6 @@ class Demand
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment = -1.0;
 
-    /** Hide this demand or not. */
-    bool hidden = false;
-
     /** A list of operation plans to deliver this demand. */
     OperationPlanList deli;
 
@@ -7774,11 +7768,17 @@ class Demand
       * full and on time. */
     Problem::List constraints;
 
+    /** A linked list with all demands of an item. */
+    Demand* nextItemDemand = nullptr;
+
     /** Status of the demand. */
     status state = OPEN;
 
-    /** A linked list with all demands of an item. */
-    Demand* nextItemDemand = nullptr;
+    /** Priority. Lower numbers indicate a higher priority level.*/
+    int prio = 0;
+
+    /** Hide this demand or not. */
+    bool hidden = false;
 };
 
 
@@ -8057,17 +8057,6 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
-    static const short STATUS_CONFIRMED = 1;
-
-    /** Is this operationplanmaterial locked? */
-    short flags = 0;
-    /** This type is used to differentiate loadplans aligned with the START date
-      * or the END date of operationplan. */
-    enum type {START, END};
-
-    /** Is this loadplan a starting one or an ending one. */
-    type start_or_end;
-
     /** A pointer to the load model. */
     Load *ld;
 
@@ -8082,6 +8071,16 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
+    static const short STATUS_CONFIRMED = 1;
+
+    /** Is this operationplanmaterial locked? */
+    short flags = 0;
+    /** This type is used to differentiate loadplans aligned with the START date
+      * or the END date of operationplan. */
+    enum type {START, END};
+
+    /** Is this loadplan a starting one or an ending one. */
+    type start_or_end;
 };
 
 
@@ -9836,6 +9835,8 @@ class PeggingIterator : public Object
     /** Store a list of all operations still to peg. */
     statestack states;
 
+    deque<state> states_sorted;
+
     /** Follow the pegging upstream or downstream. */
     bool downstream;
 
@@ -9846,8 +9847,7 @@ class PeggingIterator : public Object
     bool first;
 
     /** Extra data structure to avoid duplicate operationplan ids in the list. */
-    bool second_pass;
-    deque<state> states_sorted;
+    bool second_pass;    
 };
 
 
@@ -10099,10 +10099,10 @@ class OperationPlan::InterruptionIterator : public Object
   private:
     vector<Calendar::EventIterator> cals;
     Date curdate;
-    bool status = false;
     const OperationPlan* opplan;
     Date start;
     Date end;
+    bool status = false;
 
   public:
     InterruptionIterator(const OperationPlan* o) : opplan(o) 

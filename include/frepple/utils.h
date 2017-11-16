@@ -4338,9 +4338,6 @@ template <class T> class Tree : public NonCopyable
         /** Name. */
         T nm;
 
-        /** Color of the node. This is used to keep the tree balanced. */
-        NodeColor color = none;
-
         /** Pointer to the parent node. */
         TreeNode* parent = nullptr;
 
@@ -4349,6 +4346,9 @@ template <class T> class Tree : public NonCopyable
 
         /** Pointer to the right child node. */
         TreeNode* right = nullptr;
+
+        /** Color of the node. This is used to keep the tree balanced. */
+        NodeColor color = none;
     };
 
     /** Default constructor. */
@@ -5145,13 +5145,13 @@ class CommandSetProperty : public Command
   private:
     Object* obj;
     string name;
+    double old_double;
+    string old_string;
+    Date old_date;
     short type;
     bool old_exists;
     bool old_bool;
-    Date old_date;
-    double old_double;
-    string old_string;
-
+ 
   public:
     /** Constructor. */
     CommandSetProperty(Object*, const string&, const DataValue&, short);
@@ -5432,10 +5432,10 @@ class CommandManager
     {
         friend class CommandManager;
       private:
-        bool active = true;
         Bookmark* nextBookmark = nullptr;
         Bookmark* prevBookmark = nullptr;
         Bookmark* parent = nullptr;
+        bool active = true;
         Bookmark(Bookmark* p=nullptr) : parent(p) {}
       public:
         /** Returns true if the bookmark commands are active. */

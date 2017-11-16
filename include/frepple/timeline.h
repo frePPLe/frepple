@@ -57,14 +57,14 @@ template <class type> class TimeLine
         friend class const_iterator;
         friend class iterator;
       protected:
-        Date dt;
-        unsigned short tp;
         double qty;
         double oh = 0;
         double cum_prod = 0;
         Event* next = nullptr;
         Event* prev = nullptr;
-        Event(unsigned short t, double q = 0.0) : tp(t), qty(q) {};
+        Date dt;
+        unsigned short tp;
+        Event(unsigned short t, double q = 0.0) : qty(q), tp(t) {};
 
       public:
         virtual ~Event() {};

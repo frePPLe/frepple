@@ -82,9 +82,9 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     struct fld
     {
       const MetaFieldBase* field;
-      hashtype hash;
       XMLData value;
       string name;
+      hashtype hash;
     };
 
   private:
@@ -121,12 +121,6 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
     /** Controls wether or not we need to process character data. */
     bool reading = false;
 
-    /** This field counts how deep we are in a nested series of ignored input.
-      * It is represented as a counter since the ignored element could contain
-      * itself.
-      */
-    unsigned short ignore = 0;
-
     /** This field controls whether we continue processing after data errors
       * or whether we abort processing the remaining XML data.<br>
       * Selecting the right mode is important:
@@ -140,6 +134,12 @@ class XMLInput : public DataInput, public NonCopyable,  private xercesc::Default
       *    security for the application.
       */
     bool abortOnDataException = true;
+
+    /** This field counts how deep we are in a nested series of ignored input.
+      * It is represented as a counter since the ignored element could contain
+      * itself.
+      */
+    unsigned short ignore = 0;
 
     /** A buffer used for transcoding XML data. */
     char encodingbuffer[4*1024];
@@ -393,17 +393,13 @@ class XMLSerializer : public Serializer
     }
 
     /** Constructor with a given stream. */
-    XMLSerializer(ostream& os) : Serializer(os), m_nIndent(0),
-      headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
-      headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+    XMLSerializer(ostream& os) : Serializer(os)
     {
       indentstring[0] = '\0';
     }
 
     /** Default constructor. */
-    XMLSerializer() : m_nIndent(0),
-      headerStart("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"),
-      headerAtts("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")
+    XMLSerializer()
     {
       indentstring[0] = '\0';
     }
@@ -728,17 +724,6 @@ class XMLSerializer : public Serializer
       */
     void escape(const string&);
 
-    /** This variable keeps track of the indentation level.
-      * @see incIndent, decIndent
-      */
-    short int m_nIndent;
-
-    /** This string is a null terminated string containing as many spaces as
-      * indicated by the m_indent.
-      * @see incIndent, decIndent
-      */
-    char indentstring[41];
-
     /** Increase the indentation level. The indentation level is between
       * 0 and 40. */
     void incIndent();
@@ -750,14 +735,25 @@ class XMLSerializer : public Serializer
       * document. The default value is:
       *   \<?xml version="1.0" encoding="UTF-8"?\>
       */
-    string headerStart;
+    string headerStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     /** This string defines what will be attributes are printed for the root
       * element of each XML document.
       * The default value is:
       *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       */
-    string headerAtts;
+    string headerAtts = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
+
+    /** This string is a null terminated string containing as many spaces as
+      * indicated by the m_indent.
+      * @see incIndent, decIndent
+      */
+    char indentstring[41];
+
+    /** This variable keeps track of the indentation level.
+      * @see incIndent, decIndent
+      */
+    short int m_nIndent = 0;
 };
 
 

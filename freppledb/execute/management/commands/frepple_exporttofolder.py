@@ -120,7 +120,7 @@ class Command(BaseCommand):
       logfile = 'exporttofolder_%s-%s.log' % (self.database, timestamp)
 
     try:
-      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile))
+      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile), encoding='utf-8')
       # handler.setFormatter(logging.Formatter(settings.LOGGING['formatters']['simple']['format']))
       logger.addHandler(handler)
       logger.propagate = False

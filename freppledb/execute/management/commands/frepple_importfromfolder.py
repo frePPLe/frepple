@@ -94,7 +94,7 @@ class Command(BaseCommand):
       logfile = 'importfromfolder_%s-%s.log' % (self.database, timestamp)
 
     try:
-      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile))
+      handler = logging.FileHandler(os.path.join(settings.FREPPLE_LOGDIR, logfile), encoding='utf-8')
       # handler.setFormatter(logging.Formatter(settings.LOGGING['formatters']['simple']['format']))
       logger.addHandler(handler)
       logger.propagate = False
@@ -498,7 +498,7 @@ class Command(BaseCommand):
         function downloadImportFile(folder, filename) {
           $.jgrid.hideModal("#searchmodfbox_grid");
           window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
-        }        
+        }
         </script>
         ''')
       return template.render(context)

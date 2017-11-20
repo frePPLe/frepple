@@ -429,7 +429,7 @@ class export:
     cursor.execute('''
       update demand
         set plannedquantity = 0
-      where status = 'open' and plannedquantity is null
+      where status in ('open','quote') and plannedquantity is null
       ''')
 
     if self.verbosity:

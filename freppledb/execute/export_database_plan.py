@@ -426,6 +426,11 @@ class export:
         select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
         )
       ''')
+    cursor.execute('''
+      update demand
+        set plannedquantity = 0
+      where status = 'open' and plannedquantity is null
+      ''')
 
     if self.verbosity:
       logger.info('Exported operationplans in %.2f seconds' % (time() - starttime))

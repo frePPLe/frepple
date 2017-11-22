@@ -79,11 +79,11 @@ class Command(BaseCommand):
         self.task = Task.objects.all().using(self.database).get(pk=options['task'])
       except:
         raise CommandError("Task identifier not found")
-      if self.task.started or self.task.finished or self.task.status != "Waiting" or self.task.name != 'export to erp':
+      if self.task.started or self.task.finished or self.task.status != "Waiting" or self.task.name != 'frepple2erp':
         raise CommandError("Invalid task identifier")
     else:
       now = datetime.now()
-      self.task = Task(name='export to erp', submitted=now, started=now, status='0%', user=self.user)
+      self.task = Task(name='frepple2erp', submitted=now, started=now, status='0%', user=self.user)
     self.task.save(using=self.database)
 
     try:

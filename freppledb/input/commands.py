@@ -915,6 +915,22 @@ class loadSetupMatrices(LoadTask):
       cnt = 0
       starttime = time()
       cursor.execute('''
+        SELECT name, source
+        FROM setupmatrix %s
+        ORDER BY name
+        ''' % filter_where)
+      for i in cursor:
+        cnt += 1
+        try:
+          frepple.setupmatrix(name=i[0], source=i[1])
+        except Exception as e:
+          logger.error("**** %s ****" % e)
+      logger.info('Loaded %d setup matrices in %.2f seconds' % (cnt, time() - starttime))
+
+    with connections[database].chunked_cursor() as cursor:
+      cnt = 0
+      starttime = time()
+      cursor.execute('''
         SELECT
           setupmatrix_id, priority, fromsetup, tosetup, duration, cost, source
         FROM setuprule %s
@@ -923,15 +939,15 @@ class loadSetupMatrices(LoadTask):
       for i in cursor:
         cnt += 1
         try:
-          r = frepple.setupmatrix(name=i[0], source=i[6]).addRule(priority=i[1])
-          if i[2]:
-            r.fromsetup = i[2]
-          if i[3]:
-            r.tosetup = i[3]
-          if i[4]:
-            r.duration = i[4].total_seconds()
-          if i[5]:
-            r.cost = i[5]
+          frepple.setupmatrixrule(
+            setupmatrix=frepple.setupmatrix(name=i[0]),
+            priority=i[1],
+            fromsetup=i[2],
+            tosetup=i[3],
+            duration=i[4].total_seconds(),
+            cost=i[5],
+            source=i[6]
+            )
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d setup matrix rules in %.2f seconds' % (cnt, time() - starttime))

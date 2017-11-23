@@ -66,7 +66,7 @@ void SolverMRP::checkOperationCapacity
       data.state->q_qty = h->getQuantity();
       data.state->q_date = h->getDate();
       h->getLoad()->solve(*this,&data);
-      if (opplan->getDates()!=orig)
+      if (opplan->getDates() != orig || data.state->a_qty == 0)
       {
         if (data.state->a_qty == 0)
           // One of the resources is late. We want to prevent that other resources

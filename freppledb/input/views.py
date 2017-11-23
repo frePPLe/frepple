@@ -653,9 +653,9 @@ class SetupRuleList(GridReport):
   help_url = 'user-guide/model-reference/setup-matrices.html'
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), formatter='detail', extra='"role":"input/setuprule"', initially_hidden=True),
-    GridFieldText('setupmatrix', title=_('setup matrix'), key=True, formatter='detail', extra='"role":"input/setupmatrix"'),
-    GridFieldInteger('priority', title=_('priority'), initially_hidden=True),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/setuprule"', initially_hidden=True),
+    GridFieldText('setupmatrix', title=_('setup matrix'), formatter='detail', extra='"role":"input/setupmatrix"'),
+    GridFieldInteger('priority', title=_('priority')),
     GridFieldText('fromsetup', title=_('from setup')),
     GridFieldText('tosetup', title=_('to setup')),
     GridFieldDuration('duration', title=_('duration')),
@@ -1135,7 +1135,6 @@ class ManufacturingOrderList(GridReport):
   '''
   template = 'input/operationplanreport.html'
   title = _("manufacturing orders")
-  basequeryset = ManufacturingOrder.objects.all()
   default_sort = (2, 'desc')
   model = ManufacturingOrder
   frozenColumns = 2
@@ -1159,14 +1158,15 @@ class ManufacturingOrderList(GridReport):
 
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
       q = q.filter(location=args[0])
     return q.extra(select={
       'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
       'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
-      'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)"
+      'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
+      'setuptime': "operationplan.plan->'setup'",
     })
 
 
@@ -1207,6 +1207,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True),
     GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
+    GridFieldDuration('setuptime', title=_('setup time'), initially_hidden=True),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1293,7 +1294,7 @@ class DistributionOrderList(GridReport):
       return {'active_tab': 'edit'}
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
       path = request.path.split('/')[-2]
@@ -1431,7 +1432,6 @@ class PurchaseOrderList(GridReport):
   '''
   template = 'input/operationplanreport.html'
   title = _("purchase orders")
-  basequeryset = PurchaseOrder.objects.all()
   model = PurchaseOrder
   default_sort = (2, 'desc')
   frozenColumns = 2
@@ -1463,7 +1463,7 @@ class PurchaseOrderList(GridReport):
       return {'active_tab': 'purchaseorders'}
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
       path = request.path.split('/')[-3]
@@ -1635,13 +1635,12 @@ class OperationPlanDetail(View):
         continue
       if opplan.type == "MO" and not view_MO:
         continue
-
       try:
         # Base information
         res = {
            "id": opplan.id,
-           "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S"),
-           "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S"),
+           "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S") if opplan.startdate else None,
+           "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S") if opplan.enddate else None,
            "quantity": float(opplan.quantity),
            "criticality": float(opplan.criticality) if opplan.criticality else '',
            "delay": opplan.delay.total_seconds() if opplan.delay else '',

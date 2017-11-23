@@ -56,7 +56,7 @@ void Demand::updateProblems()
       for (OperationPlanList::iterator i = deli.begin(); i != deli.end(); ++i)
       {
         // Check for ProblemLate problem
-        long d(getDue() - (*i)->getDates().getEnd());
+        long d(getDue() - (*i)->getEnd());
         if (d < 0L) needsLate = true;
         // Check for ProblemEarly problem
         else if (d > 0L) needsEarly = true;
@@ -133,7 +133,7 @@ string ProblemLate::getDescription() const
     i != dmd->getDelivery().end();
     ++i)
   {
-    Duration tmp = (*i)->getDates().getEnd() - getDemand()->getDue();
+    Duration tmp = (*i)->getEnd() - getDemand()->getDue();
     if (tmp > 0L)
     {
       if (tmp > delay)
@@ -152,7 +152,7 @@ string ProblemEarly::getDescription() const
 {
   assert(getDemand() && !getDemand()->getDelivery().empty());
   Duration t(getDemand()->getDue()
-      - getDemand()->getEarliestDelivery()->getDates().getEnd());
+      - getDemand()->getEarliestDelivery()->getEnd());
   return string("Demand '") + getDemand()->getName() + "' planned "
       + string(t) + " before its due date";
 }

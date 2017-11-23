@@ -184,7 +184,9 @@ void SolverMRP::solve(const Demand* l, void* v)
 			  Date next_date = data->state->a_date;
 
 			  if (data->state->a_qty < ROUNDING_ERROR
-				  && plan_qty > l->getMinShipment() && l->getMinShipment() > 0)
+				  && plan_qty > l->getMinShipment() && l->getMinShipment() > 0
+          && getAllowSplits()
+          )
 			  {
 				  bool originalLogConstraints = data->logConstraints;
 				  data->logConstraints = false;

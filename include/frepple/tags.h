@@ -166,6 +166,7 @@ class Tags
     static const Keyword rules;
     static const Keyword search;
     static const Keyword setup;
+    static const Keyword setupend;
     static const Keyword setupmatrices;
     static const Keyword setupmatrix;
     static const Keyword size_maximum;

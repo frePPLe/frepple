@@ -85,7 +85,6 @@ Echoing operations:
     Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: make item 1 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: buy item 2 1971-01-01 00:00:00 2030-12-31 00:00:00
-  Operation: setup operation None None None
 
 Echoing demands:
   Demand: order 1 2009-03-02 09:00:00 end item 10.0

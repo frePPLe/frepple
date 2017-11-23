@@ -123,13 +123,14 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-void LoadPlan::setResource(Resource* newres, bool check)
+void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup)
 {
   // Nothing to do
   if (res == newres) return;
 
   // Validate the argument
-  if (!newres) throw DataException("Can't switch to nullptr resource");
+  if (!newres)
+    throw DataException("Can't switch to nullptr resource");
   if (check)
   {
     // New resource must be a subresource of the load's resource.
@@ -156,97 +157,10 @@ void LoadPlan::setResource(Resource* newres, bool check)
   }
 
   // Mark entities as changed
+  Resource* oldRes = res;
   if (oper) oper->getOperation()->setChanged();
   if (res && res!=newres) res->setChanged();
   newres->setChanged();
-
-  // Update also the setup operationplans
-  if (oper && oper->getOperation() != OperationSetup::setupoperation)
-  {
-    bool oldHasSetup = ld && !ld->getSetup().empty()  // TODO not fully correct. If the load is changed, it is still possible that the old load had a setup, while ld doesn't have one any more...
-        && res && res->getSetupMatrix();
-    bool newHasSetup = ld && !ld->getSetup().empty()
-        && newres->getSetupMatrix();
-    OperationPlan *setupOpplan = nullptr;
-    if (oldHasSetup)
-    {
-      for (OperationPlan::iterator i(oper); i != oper->end(); ++i)
-        if (i->getOperation() == OperationSetup::setupoperation)
-        {
-          setupOpplan = &*i;
-          break;
-        }
-      if (!setupOpplan) oldHasSetup = false;
-    }
-    if (oldHasSetup)
-    {
-      if (newHasSetup)
-      {
-        // Case 1: Both the old and new load require a setup
-        LoadPlan *setupLdplan = nullptr;
-        for (OperationPlan::LoadPlanIterator j = setupOpplan->beginLoadPlans();
-            j != setupOpplan->endLoadPlans(); ++j)
-          if (j->getLoad() == ld)
-          {
-            setupLdplan = &*j;
-            break;
-          }
-        if (!setupLdplan)
-          throw LogicException("Can't find loadplan on setup operationplan");
-        // Update the loadplan
-        setupOpplan->setEnd(setupOpplan->getDates().getEnd());
-      }
-      else
-      {
-        // Case 2: Delete the old setup which is not required any more
-        oper->eraseSubOperationPlan(setupOpplan);
-      }
-    }
-    else
-    {
-      if (newHasSetup)
-      {
-        // Case 3: Create a new setup operationplan
-        OperationSetup::setupoperation->createOperationPlan(
-          1, Date::infinitePast, oper->getDates().getEnd(), nullptr, oper);
-      }
-      //else:
-      // Case 4: No setup for the old or new load
-    }
-  }
-
-  // Find the loadplan before the setup
-  LoadPlan *prevldplan = nullptr;
-  if (getOperationPlan()->getOperation() == OperationSetup::setupoperation)
-  {
-    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-        i != getResource()->getLoadPlans().end(); --i)
-    {
-      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-      if (l && l->getOperationPlan() != getOperationPlan()
-          && l->getOperationPlan() != getOperationPlan()->getOwner()
-          && !l->isStart())
-      {
-        prevldplan = const_cast<LoadPlan*>(l);
-        break;
-      }
-    }
-    if (!prevldplan)
-    {
-      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-          i != getResource()->getLoadPlans().end(); ++i)
-      {
-        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-        if (l && l->getOperationPlan() != getOperationPlan()
-            && l->getOperationPlan() != getOperationPlan()->getOwner()
-            && !l->isStart())
-        {
-          prevldplan = const_cast<LoadPlan*>(l);
-          break;
-        }
-      }
-    }
-  }
 
   // Change this loadplan and its brother
   for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
@@ -273,8 +187,11 @@ void LoadPlan::setResource(Resource* newres, bool check)
     else break;
   }
 
-  // Update the setups on the old resource
-  if (prevldplan) prevldplan->res->updateSetups(prevldplan);
+  // Update the setup time
+  if (updatesetup)
+    oper->updateSetupTime();
+  if (oldRes)
+    oldRes->updateSetupTime();
 
   // Change the resource
   newres->setChanged();
@@ -324,9 +241,6 @@ void LoadPlan::update()
     ld->getLoadplanDate(this)
   );
 
-  // Review adjacent setups
-  if (!isStart()) getResource()->updateSetups(this);
-
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
   getResource()->setChanged();
@@ -361,39 +275,7 @@ string LoadPlan::getSetup(bool current) const
 LoadPlan::~LoadPlan()
 {
   getResource()->setChanged();
-  LoadPlan *prevldplan = nullptr;
-  if (!isStart() && oper->getOperation() == OperationSetup::setupoperation)
-  {
-    for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-        i != getResource()->getLoadPlans().end(); --i)
-    {
-      const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-      if (l && l->getOperationPlan() != getOperationPlan()
-          && l->getOperationPlan() != getOperationPlan()->getOwner()
-          && !l->isStart())
-      {
-        prevldplan = const_cast<LoadPlan*>(l);
-        break;
-      }
-    }
-    if (!prevldplan)
-    {
-      for (TimeLine<LoadPlan>::const_iterator i = getResource()->getLoadPlans().begin(isStart() ? getOtherLoadPlan() : this);
-          i != getResource()->getLoadPlans().end(); ++i)
-      {
-        const LoadPlan *l = dynamic_cast<const LoadPlan*>(&*i);
-        if (l && l->getOperationPlan() != getOperationPlan()
-            && l->getOperationPlan() != getOperationPlan()->getOwner()
-            && !l->isStart())
-        {
-          prevldplan = const_cast<LoadPlan*>(l);
-          break;
-        }
-      }
-    }
-  }
   getResource()->loadplans.erase(this);
-  if (prevldplan) getResource()->updateSetups(prevldplan);
 }
 
 
@@ -448,6 +330,45 @@ Object* LoadPlan::reader(
       return flpln;
   }
   return nullptr;
+}
+
+
+PooledString LoadPlan::getSetupBefore() const
+{
+  // Find the current setup on the resource
+  string cursetup = getResource()->getSetup();
+  auto resldplniter = getResource()->getLoadPlans().begin(this);
+  // First move beyond the point we are interested in...
+  while (
+    resldplniter != getResource()->getLoadPlans().end()
+    && resldplniter->getDate() <= oper->getSetupEnd()
+    )
+    ++resldplniter;
+  // ... and then walk backward again till we find the current setup
+  if (resldplniter == getResource()->getLoadPlans().end())
+    resldplniter = getResource()->getLoadPlans().begin(this);
+  Date latestSetupEnd = Date::infinitePast;
+  while (resldplniter != getResource()->getLoadPlans().end())
+  {
+    if (
+      resldplniter->getEventType() != 1
+      || resldplniter->getOperationPlan() == oper
+      || resldplniter->getDate() >= oper->getSetupEnd()
+      || resldplniter->getOperationPlan()->getSetupEnd() > oper->getSetupEnd()
+      )
+    {
+      --resldplniter;
+      continue;
+    }
+    const LoadPlan* tmp = static_cast<const LoadPlan*>(&*resldplniter);
+    if (!tmp->getLoad()->getSetup().empty() && tmp->getOperationPlan()->getSetupEnd() >= latestSetupEnd)
+    {
+      latestSetupEnd = tmp->getOperationPlan()->getSetupEnd();
+      cursetup = tmp->getLoad()->getSetup();
+    }
+    --resldplniter;
+  }
+  return cursetup;
 }
 
 

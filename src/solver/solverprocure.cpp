@@ -71,7 +71,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
       continue;
     const OperationPlan *o = reinterpret_cast<const FlowPlan*>(&*c)->getOperationPlan();
     if (o->getLocked())
-      earliest_next = o->getDates().getEnd();
+      earliest_next = o->getEnd();
     else
     {
       procurements.push_back(const_cast<OperationPlan*>(o));
@@ -279,7 +279,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
         procurements.push_back(a->getOperationPlan());
         ++countProcurements;
       }
-      else if (procurements[indexProcurements]->getDates().getEnd() == current_date
+      else if (procurements[indexProcurements]->getEnd() == current_date
         && procurements[indexProcurements]->getQuantity() == order_qty)
       {
         // Reuse existing procurement unchanged.

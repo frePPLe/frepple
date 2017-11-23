@@ -9,7 +9,7 @@
   <resources>
     <resource name="Painting line">
       <location name="factory" />
-      <maximum>2</maximum>
+      <maximum>1</maximum>
       <setupmatrix name="Painting line changeover">
         <rules>
           <rule priority="1" fromsetup="green" tosetup="*" duration="P1D" cost="10" />
@@ -140,6 +140,7 @@
   <demands>
     <demand name="order 1 red">
       <quantity>3</quantity>
+      <minshipment>3</minshipment>
       <due>2009-01-30T00:00:00</due>
       <priority>1</priority>
       <item name="red product" />
@@ -147,6 +148,7 @@
     </demand>
     <demand name="order 2 green">
       <quantity>3</quantity>
+      <minshipment>3</minshipment>
       <due>2009-02-10T00:00:00</due>
       <priority>2</priority>
       <item name="green product" />
@@ -154,6 +156,7 @@
     </demand>
     <demand name="order 1 white">
       <quantity>3</quantity>
+      <minshipment>3</minshipment>
       <due>2009-02-01T00:00:00</due>
       <priority>3</priority>
       <item name="white product" />
@@ -161,6 +164,7 @@
     </demand>
     <demand name="order 1 black">
       <quantity>7</quantity>
+      <minshipment>7</minshipment>
       <due>2009-01-05T00:00:00</due>
       <priority>4</priority>
       <item name="black product" />
@@ -168,9 +172,26 @@
     </demand>
     <demand name="order 1 colorless">
       <quantity>3</quantity>
+      <minshipment>3</minshipment>
       <due>2009-01-12T00:00:00</due>
       <priority>5</priority>
       <item name="colorless product" />
+      <location name="factory" />
+    </demand>
+    <demand name="order 2 colorless">
+      <quantity>4</quantity>
+      <minshipment>4</minshipment>
+      <due>2009-02-20T00:00:00</due>
+      <priority>6</priority>
+      <item name="colorless product" />
+      <location name="factory" />
+    </demand>    
+    <demand name="order 2 red">
+      <quantity>3</quantity>
+      <minshipment>3</minshipment>
+      <due>2009-01-30T00:00:00</due>
+      <priority>7</priority>
+      <item name="red product" />
       <location name="factory" />
     </demand>
   </demands>
@@ -179,37 +200,50 @@
 
 # Testing the Python API of the setup matrix
 print("")
+for r in frepple.resources():
+  print("Resource '%s' uses matrix '%s' and initially has setup '%s'" % (r, r.setupmatrix, r.setup))
+print("")
 for m in frepple.setupmatrices():
   print("Matrix '%s' has the following rules:" % m.name)
   for i in m.rules:
-    print("   ", i.priority, i.fromsetup, i.tosetup, i.duration, i.cost)
-print("")
-for r in frepple.resources():
-  print("Resource '%s' uses matrix '%s'" % (r, r.setupmatrix))
+    print("   %s: from '%s' to '%s' takes %s days and costs %s" % ( 
+      i.priority, i.fromsetup, i.tosetup, i.duration / 86400, i.cost
+      ))
 print("")
 
 # Create an unconstrained plan
 print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(constraints=0, loglevel=2).solve()
+frepple.solver_mrp(constraints=0, loglevel=0).solve()
 frepple.saveplan("output.1.xml")
 
 # Report resource conversions in the unconstrained plan
 for i in frepple.resources():
   print("Loading of resource '%s'" % i.name)
   for j in i.loadplans:
-    print("  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
+    if j.quantity > 0:
+      print("  Operation '%s' from %s till %s, quantity: %s, setup :'%s', setup duration: %s, end of setup: %s" % (
+        j.operationplan.operation.name, j.startdate, j.enddate,
+        j.operationplan.quantity, j.setup,
+        j.operationplan.setup, j.operationplan.setupend
+        ))
 j = None  # Removes the Python reference to the last loadplan
 
-# Create a constrained plan
+## Create a constrained plan
 print("\n\nCREATING CONSTRAINED PLAN")
-frepple.solver_mrp(constraints=15, loglevel=2).solve()
+frepple.solver_mrp(constraints=15, loglevel=0).solve()
 frepple.saveplan("output.2.xml")
 
 # Report resource conversions in the constrained plan
 for i in frepple.resources():
   print("Loading of resource '%s'" % i.name)
   for j in i.loadplans:
-    print("  %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
+    if j.quantity > 0:
+      print("  Operation '%s' from %s till %s, quantity: %s, setup :'%s', setup duration: %s, end of setup: %s" % (
+        j.operationplan.operation.name, j.startdate, j.enddate,
+        j.operationplan.quantity, j.setup,
+        j.operationplan.setup, j.operationplan.setupend
+        ))
+j = None  # Removes the Python reference to the last loadplan
 ?>
 
 </plan>

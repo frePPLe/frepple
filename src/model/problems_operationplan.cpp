@@ -44,7 +44,7 @@ void OperationPlan::updateProblems()
   bool needsBeforeFence(false);
   bool needsPrecedence(false);
 
-  if (!firstsubopplan || getOperation() == OperationSetup::setupoperation)
+  if (!firstsubopplan)
   {
     // Avoid duplicating problems on child and owner operationplans
     // Check if a BeforeCurrent problem is required.
@@ -59,7 +59,7 @@ void OperationPlan::updateProblems()
       needsBeforeFence = true;
   }
   if (nextsubopplan
-    && getDates().getEnd() > nextsubopplan->getDates().getStart()
+    && getEnd() > nextsubopplan->getStart()
     && !nextsubopplan->getLocked()
     && owner && owner->getOperation()->getType() != *OperationSplit::metadata
     )

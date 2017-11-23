@@ -209,7 +209,7 @@ double FlowPlan::setQuantity(
       {
         oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
-          Date::infinitePast, oper->getDates().getEnd(),
+          Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
         );
       }
@@ -221,7 +221,7 @@ double FlowPlan::setQuantity(
       {
         oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
-          oper->getDates().getStart(), Date::infinitePast,
+          oper->getStart(), Date::infinitePast,
           false, execute, rounddown
         );
       }
@@ -238,13 +238,13 @@ double FlowPlan::setQuantity(
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
         x = oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
-          Date::infinitePast, oper->getDates().getEnd(),
+          Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           );
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
         x = oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
-          oper->getDates().getStart(), Date::infinitePast,
+          oper->getStart(), Date::infinitePast,
           false, execute, rounddown
           );
       return x.quantity ? getFlow()->getQuantity() : 0.0;
@@ -257,7 +257,7 @@ double FlowPlan::setQuantity(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
             : oper->getOperation()->getSizeMinimum(),
-          Date::infinitePast, oper->getDates().getEnd(),
+          Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           );
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
@@ -265,7 +265,7 @@ double FlowPlan::setQuantity(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
           : oper->getOperation()->getSizeMinimum(),
-          oper->getDates().getStart(), Date::infinitePast,
+          oper->getStart(), Date::infinitePast,
           false, execute, rounddown
           );
       return x.quantity ? getFlow()->getQuantity() : 0.0;
@@ -278,13 +278,13 @@ double FlowPlan::setQuantity(
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
       x = oper->getOperation()->setOperationPlanParameters(
         oper, quantity / getFlow()->getQuantity(),
-        Date::infinitePast, oper->getDates().getEnd(),
+        Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
         );
     else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
       x = oper->getOperation()->setOperationPlanParameters(
         oper, quantity / getFlow()->getQuantity(),
-        oper->getDates().getStart(), Date::infinitePast,
+        oper->getStart(), Date::infinitePast,
         false, execute, rounddown
         );
     return x.quantity * getFlow()->getQuantity();

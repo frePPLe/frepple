@@ -331,7 +331,6 @@ inline ostream& operator <<(ostream &os, const indent& i)
 }
 
 
-
 //
 // CUSTOM EXCEPTION CLASSES
 //
@@ -6247,6 +6246,13 @@ class PooledString
         logger << "   " << i->first << "   " << i->second << endl;
     }
 };
+
+
+/** Prints a pooled string to the outputstream. */
+inline ostream & operator << (ostream & os, const PooledString & s)
+{
+  return os << string(s);
+}
 
 
 /** @brief This is a decorator class for all objects having a source field. */

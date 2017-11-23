@@ -85,8 +85,11 @@ class export:
       "interruptions": [
         (i.start.strftime("%Y-%m-%d %H:%M:%S"), i.end.strftime("%Y-%m-%d %H:%M:%S"))
         for i in opplan.interruptions
-        ] if unavail else []
+        ] if unavail else [],
       }
+    if opplan.setupend != opplan.start:
+      pln["setup"] = opplan.setup
+      pln["setupend"] = opplan.setupend.strftime("%Y-%m-%d %H:%M:%S")
     # We need to double any backslash to assure that the string remains
     # valid when passing it through postgresql (which eats them away)
     return json.dumps(pln).replace("\\", "\\\\")

@@ -2,7 +2,7 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <description>
     Verifies the resource setup functionality.
-    This model contains a number of painting lines, which take considerable
+    This model contains a number of painting lines, which take some
     time to change between colors.
   </description>
   <current>2009-01-01T00:00:00</current>
@@ -20,45 +20,41 @@
     </setupmatrix>
   </setupmatrices>
   <resources>
+    <resource name="painting lines"/>
     <resource name="Painting line A">
       <location name="factory" />
       <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>green</setup>
+      <maxearly>P14D</maxearly>
+      <owner name="painting lines"/>
     </resource>
     <resource name="Painting line B">
       <location name="factory" />
       <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
-      <setup>red</setup>
+      <setup>yellow</setup>
+      <maxearly>P14D</maxearly>
+      <owner name="painting lines"/>
     </resource>
     <resource name="Painting line C">
       <location name="factory" />
       <maximum>1</maximum>
       <setupmatrix name="Painting line changeover"/>
       <setup>black</setup>
+      <maxearly>P14D</maxearly>
+      <owner name="painting lines"/>
     </resource>
   </resources>
   <operations>
-    <operation name="make red product" xsi:type="operation_routing">
+    <operation name="make red product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="red product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>red</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>red</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>red</setup>
         </load>
       </loads>
       <flows>
@@ -67,37 +63,15 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make green product" xsi:type="operation_routing">
+    <operation name="make green product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="green product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>green</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>green</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>green</setup>
         </load>
       </loads>
       <flows>
@@ -106,37 +80,15 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make white product" xsi:type="operation_routing">
+    <operation name="make white product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="white product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>white</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>white</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>white</setup>
         </load>
       </loads>
       <flows>
@@ -145,37 +97,15 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make blue product" xsi:type="operation_routing">
+    <operation name="make blue product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="blue product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>blue</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>blue</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>blue</setup>
         </load>
       </loads>
       <flows>
@@ -184,37 +114,15 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make black product" xsi:type="operation_routing">
+    <operation name="make black product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="black product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>black</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>black</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>black</setup>
         </load>
       </loads>
       <flows>
@@ -223,37 +131,15 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make yellow product" xsi:type="operation_routing">
+    <operation name="make yellow product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="yellow product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
+          <resource name="painting lines"/>
           <setup>yellow</setup>
-          <name>paint</name>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-          <setup>yellow</setup>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
-          <setup>yellow</setup>
         </load>
       </loads>
       <flows>
@@ -262,34 +148,14 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
-    <operation name="make colorless product" xsi:type="operation_routing">
+    <operation name="make colorless product" xsi:type="operation_time_per" duration_per="P1D">
       <item name="colorless product" />
       <location name="factory" />
       <loads>
         <load>
-          <resource name="Painting line A"/>
-          <name>paint</name>
+          <resource name="painting lines"/>
           <search>MINPENALTY</search>
-        </load>
-        <load>
-          <resource name="Painting line B"/>
-          <name>paint</name>
-        </load>
-        <load>
-          <resource name="Painting line C"/>
-          <name>paint</name>
         </load>
       </loads>
       <flows>
@@ -298,49 +164,40 @@
           <quantity>1</quantity>
         </flow>
       </flows>
-      <suboperations>
-        <suboperation>
-          <operation name="prepare" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="paint" xsi:type="operation_time_per" duration_per="P1D" />
-        </suboperation>
-        <suboperation>
-          <operation name="clean" xsi:type="operation_fixed_time" duration="P1D" />
-        </suboperation>
-      </suboperations>
     </operation>
   </operations>
   <demands>
     <demand name="order 1 red">
       <quantity>3</quantity>
-      <due>2009-01-30T00:00:00</due>
-      <priority>1</priority>
+      <due>2009-02-28T00:00:00</due>
       <item name="red product" />
+      <location name="factory" />
     </demand>
     <demand name="order 2 green">
       <quantity>3</quantity>
       <due>2009-02-10T00:00:00</due>
-      <priority>2</priority>
       <item name="green product" />
+      <location name="factory" />
     </demand>
-    <demand name="order 1 white">
+    <demand name="order 1 yellow">
       <quantity>3</quantity>
       <due>2009-02-01T00:00:00</due>
-      <priority>3</priority>
-      <item name="white product" />
+      <item name="yellow product" />
+      <location name="factory" />
     </demand>
     <demand name="order 1 black">
       <quantity>7</quantity>
       <due>2009-01-05T00:00:00</due>
       <priority>4</priority>
       <item name="black product" />
+      <location name="factory" />
     </demand>
     <demand name="order 1 colorless">
       <quantity>3</quantity>
-      <due>2009-01-12T00:00:00</due>
+      <due>2009-01-05T00:00:00</due>
       <priority>5</priority>
       <item name="colorless product" />
+      <location name="factory" />
     </demand>
   </demands>
 
@@ -349,26 +206,51 @@ from datetime import timedelta
 
 def printStatus(d = None, mode = 1):
   print("\nCurrent status:")
-  for i in frepple.resources():
-    print("  Loading of resource '%s' (initial setup %s)" % (i.name, i.setup))
-    for j in i.loadplans:
-      print("    %s\t%s\t%s\t%s" % (j.startdate, j.enddate, j.setup, j.operationplan.operation.name))
+  for r in frepple.resources():
+    print("  Loading of resource '%s' with matrix '%s' and initial setup '%s':" % (r.name, r.setupmatrix, r.setup))
+    for j in r.loadplans:
+      if j.quantity > 0:
+        print("    Operation '%s' from %s till %s, quantity: %s, setup :'%s', setup duration: %s, end of setup: %s" % (
+          j.operationplan.operation.name, j.startdate, j.enddate,
+          j.operationplan.quantity, j.setup,
+          j.operationplan.setup, j.operationplan.setupend
+          ))
   print("")
 
-solver = frepple.solver_mrp(constraints=15, loglevel=2, userexit_demand=printStatus)
+print("")
+for m in frepple.setupmatrices():
+  print("Matrix '%s' has the following rules:" % m.name)
+  for i in m.rules:
+    print("   %s: from '%s' to '%s' takes %s days and costs %s" % ( 
+      i.priority, i.fromsetup, i.tosetup, i.duration / 86400, i.cost
+      ))
+print("")
 
-print("Creating plan 1")
-for d in frepple.demands():
-  d.due = frepple.settings.current
+solver = frepple.solver_mrp(
+  plantype=2, constraints=15, loglevel=1, 
+  allowsplits=False, userexit_demand=printStatus
+  )
+
+print("\n\nCREATING UNCONSTRAINED PLAN")
 solver.solve()
 frepple.saveplan("output.1.xml")
 printStatus()
 
-print("\n\nCreating plan 2")
-for d in frepple.demands():
-  d.due = frepple.settings.current + timedelta(10)
+solver = frepple.solver_mrp(
+  plantype=1, constraints=15, loglevel=1,
+  allowsplits=False, userexit_demand=printStatus
+  )
+
+print("CREATING CONSTRAINED PLAN 1")
 solver.solve()
 frepple.saveplan("output.2.xml")
+printStatus()
+
+print("CREATING CONSTRAINED PLAN 2")
+for d in frepple.demands():
+  d.due = frepple.settings.current
+solver.solve()
+frepple.saveplan("output.3.xml")
 printStatus()
 ?>
 

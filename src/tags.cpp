@@ -163,6 +163,7 @@ const Keyword Tags::rule("rule");
 const Keyword Tags::rules("rules");
 const Keyword Tags::search("search");
 const Keyword Tags::setup("setup");
+const Keyword Tags::setupend("setupend");
 const Keyword Tags::setupmatrices("setupmatrices");
 const Keyword Tags::setupmatrix("setupmatrix");
 const Keyword Tags::size_maximum("size_maximum");

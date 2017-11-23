@@ -336,7 +336,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         if (cmds)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
           cmds->add(new CommandMoveOperationPlan(
-            fp->getOperationPlan(), fp->getOperationPlan()->getDates().getStart(),
+            fp->getOperationPlan(), fp->getOperationPlan()->getStart(),
             Date::infinitePast, newsize_opplan
           ));
         else
@@ -447,7 +447,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
           cmds->add(new CommandMoveOperationPlan(
             fp->getOperationPlan(), Date::infinitePast,
-            fp->getOperationPlan()->getDates().getEnd(), newsize_opplan
+            fp->getOperationPlan()->getEnd(), newsize_opplan
             ));
         else
           fp->getOperationPlan()->setQuantity(newsize_opplan);

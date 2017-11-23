@@ -1724,7 +1724,6 @@ class OperationPlan
     friend class OperationSplit;
     friend class OperationAlternate;
     friend class OperationRouting;
-    friend class ProblemPrecedence;
 
   public:
     // Forward declarations
@@ -1851,19 +1850,10 @@ class OperationPlan
     /** Updates the demand to which this operationplan is a solution. */
     void setDemand(Demand* l);
 
-    /** Calculate the penalty of an operationplan.<br>
-      * It is the sum of all setup penalties of the resources it loads. */
-    double getPenalty() const;
-
     /** Calculate the unavailable time during the operationplan. The regular
       * duration is extended with this amount.
       */
     Duration getUnavailable() const;
-
-    /** Returns whether or not this operationplan is linked to a demand that
-      * is planned late or not.
-      */
-    bool isConstrained() const;
 
     /** Return the status of the operationplan.
       * The status string is one of the following:
@@ -2001,8 +1991,9 @@ class OperationPlan
       */
     void setStartAndEnd(Date st, Date nd)
     {
-      dates.setStartAndEnd(st,nd);
+      dates.setStartAndEnd(st, nd);
       update();
+      assert(getStart() <= getSetupEnd() && getSetupEnd() <= getEnd());
     }
 
     /** A method to restore a previous state of an operationplan.<br>
@@ -2057,17 +2048,7 @@ class OperationPlan
       * If no owner exists the method returns the current operationplan.
       * @see getOwner
       */
-    inline const OperationPlan* getTopOwner() const
-    {
-      return const_cast<OperationPlan*>(this)->getTopOwner();
-    }
-
-    /** Returns a pointer to the operationplan owning a set of
-      * sub-operationplans. There can be multiple levels of suboperations.<br>
-      * If no owner exists the method returns the current operationplan.
-      * @see getOwner
-      */
-    OperationPlan* getTopOwner()
+    OperationPlan* getTopOwner() const
     {
       if (owner)
       {
@@ -2078,13 +2059,35 @@ class OperationPlan
       }
       else
         // This operationplan is itself the top of a hierarchy
-        return this;
+        return const_cast<OperationPlan*>(this);
     }
 
     /** Returns the start and end date of this operationplan. */
-    const DateRange & getDates() const
+    const DateRange& getDates() const
     {
       return dates;
+    }
+
+    /** Return the start of the actual operation time. */
+    Date getSetupEnd() const
+    {
+      return endOfSetup;
+    }
+
+    double getSetupCost() const
+    {
+      return setup_cost;
+    }
+
+    void setSetupCost(double d)
+    {
+      setup_cost = d;
+    }
+
+    /** Update the end date of the setup. */
+    void setSetupEnd(Date d)
+    {
+      endOfSetup = d;
     }
 
     /** Return true if the operationplan is redundant, ie all material
@@ -2202,20 +2205,16 @@ class OperationPlan
     /** Initialize the operationplan. The initialization function should be
       * called when the operationplan is ready to be 'officially' added. The
       * initialization performs the following actions:
-      * <ol>
-      * <li> assign an identifier</li>
-      * <li> create the flow and loadplans if these hadn't been created
-      * before</li>
-      * <li> add the operationplan to the global list of operationplans</li>
-      * <li> create a link with a demand object if this is a delivery
-      * operationplan</li>
-      * </ol>
-      * Every operationplan subclass that has sub-operations will normally
-      * need to create an override of this function.<br>
+      *  - assign an identifier
+      *  - create the flow and loadplans if these hadn't been created
+      *    before
+      *  - add the operationplan to the global list of operationplans
+      *  - create a link with a demand object if this is a delivery
+      *    operationplan
       *
       * The return value indicates whether the initialization was successfull.
       * If the operationplan is invalid, it will be DELETED and the return value
-      * is 'false'.
+      * is false.
       */
     bool activate(bool createsubopplans=true);
 
@@ -2239,9 +2238,6 @@ class OperationPlan
       * @see deactivate
       */
     void removeFromOperationplanList();
-
-    /** Maintain the operationplan list in sorted order. */
-    void updateOperationplanList();
 
     /** Remove a sub-operation_plan from the list. */
     virtual void eraseSubOperationPlan(OperationPlan*);
@@ -2329,6 +2325,9 @@ class OperationPlan
     /** Return an iterator over alternate operations for this operationplan. */
     AlternateIterator getAlternates() const;
 
+    /** Return the setup time on this operationplan. */
+    Duration getSetup() const;
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
@@ -2340,6 +2339,8 @@ class OperationPlan
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand, BASE + WRITE_HIDDEN);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
+      m->addDurationField<Cls>(Tags::setup, &Cls::getSetup, nullptr, 0L, PLAN);
+      m->addDateField<Cls>(Tags::setupend, &Cls::getSetupEnd, nullptr, Date::infinitePast, PLAN);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
 
@@ -2391,7 +2392,7 @@ class OperationPlan
       * This method will also update parent and child operationplans.
       * @see resizeFlowLoadPlans
       */
-    virtual void update();
+    void update(bool propagatesetups=true);
 
     /** Generates a unique identifier for the operationplan.
       * The field is 0 while the operationplan is not fully registered yet.
@@ -2410,10 +2411,31 @@ class OperationPlan
     /** Update the loadplans and flowplans of the operationplan based on the
       * latest information of quantity, date and locked flag.<br>
       * This method will NOT update parent or child operationplans.
-      * @see update
+      * 
+      * Only intended for internal use by update()
       */
     void resizeFlowLoadPlans();
 
+    /** Maintain the operationplan list in sorted order.
+      *
+      * Only intended for internal use by update()
+      */
+    void updateOperationplanList();
+
+    /** Update the setup time on all neighbouring operationplans.
+      *
+      * Only intended for internal use by update().
+      */
+    void scanSetupTimes();
+
+    /** Update the setup time in situations where it could have changed.
+      *
+      * Only intended for internal use by update().
+      */
+  public: // XXX should be private
+    void updateSetupTime(bool report = false);
+
+  private:
     /** Default constructor.<br>
       * This way of creating operationplan objects is not intended for use by
       * any client applications. Client applications should use the factory
@@ -2427,7 +2449,6 @@ class OperationPlan
       initType(metadata);
     }
 
-  private:
     static const short STATUS_APPROVED = 1;
     static const short STATUS_CONFIRMED = 2;
     static const short IS_SETUP = 4;
@@ -2497,6 +2518,12 @@ class OperationPlan
 
     /** Pointer to the previous suboperationplan of the parent operationplan. */
     OperationPlan* prevsubopplan = nullptr;
+
+    /** Setup time of this operationplan. */
+    Date endOfSetup;
+
+    /** Cost of the setup. */
+    double setup_cost = 0.0;
 
     /** Quantity. */
     double quantity = 0.0;
@@ -3083,6 +3110,10 @@ class Operation : public HasName<Operation>,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
         bool = true, bool=true) const;
 
+    /** Calculate the setup time of an operationplan. 
+      * The field endOfSetup must be set to the*/
+    Duration calculateSetupTime(OperationPlan*, Date) const;
+
   private:
     /** List of operations using this operation as a sub-operation */
     list<Operation*> superoplist;
@@ -3156,6 +3187,28 @@ class Operation : public HasName<Operation>,
 };
 
 
+/** Writes an operationplan to an output stream. */
+inline ostream & operator << (ostream & os, const OperationPlan* o)
+{
+  if (o)
+  {
+    os << o->getIdentifier() << " (";
+    if (o->getOperation())
+      os << o->getOperation()->getName();
+    else
+      os << "nullptr";
+    os << ", " << o->getQuantity()
+      << ", " << o->getStart();
+    if (o->getSetupEnd() != o->getStart())
+      os << " - " << o->getSetupEnd();
+    os << " - " << o->getEnd() << ")";
+  }
+  else
+    os << "nullptr";
+  return os;
+}
+
+
 inline string OperationPlan::getOrderType() const
 {
   return oper ? oper->getOrderType() : "Unknown";
@@ -3212,11 +3265,16 @@ class OperationPlan::iterator
     {
       // The while loop is required since the first operation might not
       // have any operationplans at all
-      while (op!=Operation::end() && !op->getFirstOpPlan()) ++op;
-      if (op!=Operation::end())
-        opplan = op->getFirstOpPlan();
-      else
-        opplan = nullptr;
+      while (op != Operation::end())
+      {
+        if (op->getFirstOpPlan())
+        {
+          opplan = op->getFirstOpPlan();
+          return;
+        }
+        ++op;
+      }
+      opplan = nullptr;
     }
 
     /** Copy constructor. */
@@ -3248,12 +3306,13 @@ class OperationPlan::iterator
       // Move to a new operation
       if (!opplan && mode == 3)
       {
-        do ++op;
-        while (op!=Operation::end() && (!op->getFirstOpPlan()));
-        if (op!=Operation::end())
-          opplan = op->getFirstOpPlan();
-        else
-          opplan = nullptr;
+        while (op != Operation::end())
+        {
+          ++op;
+          if (op->getFirstOpPlan())
+            break;
+        }
+        opplan = (op == Operation::end() ? nullptr : op->getFirstOpPlan());
       }
       return *this;
     }
@@ -3268,18 +3327,20 @@ class OperationPlan::iterator
       else
         opplan = opplan->next;
       // Move to a new operation
-      if (!opplan && mode==3)
+      if (!opplan && mode == 3)
       {
-        do ++op; while (op!=Operation::end() && !op->getFirstOpPlan());
-        if (op!=Operation::end())
-          opplan = op->getFirstOpPlan();
-        else
-          opplan = nullptr;
+        while (op != Operation::end())
+        {
+          ++op;
+          if (op->getFirstOpPlan())
+            break;
+        }
+        opplan = (op == Operation::end() ? nullptr : op->getFirstOpPlan());
       }
       return tmp;
     }
 
-    /** Return current elemetn and advance the iterator. */
+    /** Return current element and advance the iterator. */
     OperationPlan* next()
     {
       OperationPlan* tmp = opplan;
@@ -3340,6 +3401,7 @@ class OperationPlanState  // @todo should also be able to remember and restore s
   public:
     Date start;
     Date end;
+    Date endOfSetup;
     double quantity;
 
     /** Default constructor. */
@@ -3355,19 +3417,28 @@ class OperationPlanState  // @todo should also be able to remember and restore s
       }
       else
       {
-        start = x->getDates().getStart();
-        end = x->getDates().getEnd();
+        start = x->getStart();
+        end = x->getEnd();
+        endOfSetup = x->getSetupEnd();
         quantity = x->getQuantity();
       }
     }
 
     /** Constructor. */
-    OperationPlanState(const Date x, const Date y, double q)
-      : start(x), end(y), quantity(q) {}
+    OperationPlanState(const Date x, const Date y, const Date z, double q)
+      : start(x), end(y), endOfSetup(z), quantity(q) {}
 
     /** Constructor. */
-    OperationPlanState(const DateRange& x, double q)
-      : start(x.getStart()), end(x.getEnd()), quantity(q) {}
+    OperationPlanState(const DateRange& x, Date z, double q)
+      : start(x.getStart()), end(x.getEnd()), endOfSetup(z), quantity(q) {}
+
+    /** Constructor - OLD STYLE */
+    OperationPlanState(const Date x, const Date y, double q)   // XXX Remove old style constructor
+      : start(x), end(y), endOfSetup(x), quantity(q) {}
+
+    /** Constructor - OLD STYLE */
+    OperationPlanState(const DateRange& x, double q)   // XXX Remove old style constructor
+      : start(x.getStart()), end(x.getEnd()), endOfSetup(x.getStart()), quantity(q) {}
 };
 
 
@@ -3435,48 +3506,6 @@ class OperationFixedTime : public Operation
   private:
     /** Stores the lengh of the Operation. */
     Duration duration;
-};
-
-
-/** @brief Models an operation to convert a setup on a resource. */
-class OperationSetup : public Operation
-{
-  public:
-    /** Default constructor. */
-    explicit OperationSetup()
-    {
-      initType(metadata);
-      setHidden(true);
-    }
-
-    // Never write the setup operation
-    static int initialize();
-
-    virtual void solve(Solver &s, void* v = nullptr) const
-    {
-      s.solve(this,v);
-    }
-
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
-
-    /** A operation of this type enforces the following rules on its
-      * operationplans:
-      *  - The duration is calculated based on the conversion type.
-      */
-    OperationPlanState setOperationPlanParameters(
-      OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd=true, bool execute=true, bool roundDown=true
-      ) const;
-
-    /** Return the decoupled lead time of this operation. */
-    virtual Duration getDecoupledLeadTime(double qty) const
-    {
-      return Duration(0L);
-    }
-
-    /** A pointer to the operation that is instantiated for all conversions. */
-    static Operation* setupoperation;
 };
 
 
@@ -6076,13 +6105,13 @@ inline double FlowFixedEnd::getFlowplanQuantity(const FlowPlan* fl) const
 
 inline Date Flow::getFlowplanDate(const FlowPlan* fl) const
 {
-  return fl->getOperationPlan()->getDates().getStart();
+  return fl->getOperationPlan()->getStart();
 }
 
 
 inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
 {
-  return fl->getOperationPlan()->getDates().getEnd();
+  return fl->getOperationPlan()->getEnd();
 }
 
 
@@ -6107,8 +6136,13 @@ class SetupMatrixRule : public Object
     static int initialize();
 
     virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
     static const MetaCategory* metacategory;
+    static const MetaClass* metadata;
+
+    /** Factory method. */
+    static Object* reader(
+      const MetaClass*, const DataValueDict&, CommandManager* = nullptr
+    );
 
     /** Update the priority.<br>
       * The priority value is a key field. If multiple rules have the
@@ -6185,6 +6219,7 @@ class SetupMatrixRule : public Object
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, DONT_SERIALIZE + PARENT);
     }
+
   private:
     /** Pointer to the owning matrix. */
     SetupMatrix *matrix = nullptr;
@@ -6212,6 +6247,8 @@ class SetupMatrixRule : public Object
       * need to have different priorities.
       */
     int priority = 0;
+
+    void updateSort();
 
   public:
     /** @brief An iterator class to go through all rules of a setup matrix. */
@@ -6248,7 +6285,7 @@ class SetupMatrixRule : public Object
           return tmp;
         }
 
-        SetupMatrixRule *next()
+        SetupMatrixRule* next()
         {
           SetupMatrixRule *tmp = curRule;
           if (curRule)
@@ -6287,6 +6324,23 @@ class SetupMatrixRule : public Object
 };
 
 
+/** @brief This class is the default implementation of the abstract
+  * SetupMatrixRule class.
+  */
+class SetupMatrixRuleDefault : public SetupMatrixRule
+{
+public:
+  explicit SetupMatrixRuleDefault()
+  {
+    initType(metadata);
+  }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaClass* metadata;
+  static int initialize();
+};
+
+
 /** @brief This class is used to represent a matrix defining the changeover
   * times between setups.
   */
@@ -6321,9 +6375,6 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       return SetupMatrixRule::iterator(firstRule);
     }
 
-    /** Python interface to add a new rule. */
-    static PyObject* addPythonRule(PyObject*, PyObject*, PyObject*);
-
     /** Computes the changeover time and cost between 2 setup values.
       *
       * To compute the time of a changeover the algorithm will evaluate all
@@ -6341,7 +6392,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * If no matching rule is found, the changeover is not allowed: a nullptr
       * pointer is returned.
       */
-    SetupMatrixRule* calculateSetup(const string, const string) const;
+    SetupMatrixRule* calculateSetup(const string, const string, Resource*) const;
 
   private:
     /** Head of the list of rules. */
@@ -6587,8 +6638,8 @@ class Resource : public HasHierarchy<Resource>,
     /** Recompute the problems of this resource. */
     virtual void updateProblems();
 
-    /** Scan the setups of this resource. */
-    virtual void updateSetups(const LoadPlan* = nullptr);
+    /** Update the setup time of all operationplans on the resource. */
+    void updateSetupTime() const;
 
     void setHidden(bool b)
     {
@@ -6629,10 +6680,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     /** Update the reference to the setup matrix. */
-    void setSetupMatrix(SetupMatrix *s)
-    {
-      setupmatrix = s;
-    }
+    void setSetupMatrix(SetupMatrix *s);
 
     /** Return the current setup. */
     string getSetup() const
@@ -6645,6 +6693,14 @@ class Resource : public HasHierarchy<Resource>,
     {
       setup = s;
     }
+
+    /** Return the setup of the resource on a specific date. 
+      * To avoid any ambiguity about the current setup of a resource
+      * the calculation is based only on the latest *setup end* event
+      * before (or at, when the parameter is true) the argument date.
+      * @see LoadPlan::getSetupBefore
+      */
+    PooledString getSetupAt(Date, bool inclusive = false) const;
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -7690,14 +7746,14 @@ class Demand
     Date getDeliveryDate() const
     {
       OperationPlan* op = getLatestDelivery();
-      return op ? op->getDates().getEnd() : Date::infiniteFuture;
+      return op ? op->getEnd() : Date::infiniteFuture;
     }
 
     /** Return the delay of the latest delivery compared to the due date. */
     Duration getDelay() const
     {
       OperationPlan* op = getLatestDelivery();
-      return (op ? op->getDates().getEnd() : Date::infiniteFuture) - getDue();
+      return (op ? op->getEnd() : Date::infiniteFuture) - getDue();
     }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
@@ -7898,13 +7954,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Return the start date of the operationplan. */
     Date getStartDate() const
     {
-      return oper->getDates().getStart();
+      return oper->getStart();
     }
 
     /** Return the start date of the operationplan. */
     Date getEndDate() const
     {
-      return oper->getDates().getEnd();
+      return oper->getEnd();
     }
 
     /** Return the load of which this is a plan instance. */
@@ -7930,7 +7986,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * subresource of the resource specified on the load, and b) must also
       * have the skill specified on the resource.
       */
-    void setResource(Resource*, bool);
+    void setResource(Resource* res, bool check, bool updatesetup = true);
 
     /** Return the resource. */
     Resource* getResource() const
@@ -7949,15 +8005,24 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return start_or_end == START;
     }
 
-        /** Return the status of the operationplanmaterial.
-    * The status string is one of the following:
-    *   - proposed
-    *   - confirmed
-    */
+    /** Return the status of the operationplanmaterial.
+      * The status string is one of the following:
+      *   - proposed
+      *   - confirmed
+      */
     string getStatus() const;
 
     /** Update the status of the operationplanmaterial. */
     void setStatus(const string&);
+
+    /** Return the setup of the resource on a specific loadplan.
+      * To avoid any ambiguity about the current setup of a resource
+      * the calculation is based only on the latest *setup end* event
+      * before the loadplan argument.
+      * @see Resource::getSetupAt
+      */
+    PooledString getSetupBefore() const;
+
     /** Destructor. */
     virtual ~LoadPlan();
 
@@ -8123,7 +8188,7 @@ inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
     return 0.0;
   if (!lp->getOperationPlan()->getDates().overlap(getEffective())
       && (lp->getOperationPlan()->getDates().getDuration()
-          || !getEffective().within(lp->getOperationPlan()->getDates().getStart())))
+          || !getEffective().within(lp->getOperationPlan()->getStart())))
     // Load is not effective during this time.
     // The extra check is required to make sure that zero duration operationplans
     // operationplans don't get resized to 0
@@ -8622,7 +8687,7 @@ class ProblemBeforeCurrent : public Problem
 
     double getWeight() const
     {
-      return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();
+      return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();
     }
 
     explicit ProblemBeforeCurrent(OperationPlan* o, bool add = true) : Problem(o)
@@ -8631,7 +8696,7 @@ class ProblemBeforeCurrent : public Problem
     }
 
     explicit ProblemBeforeCurrent(Operation* o, Date st, Date nd, double q)
-      : oper(o), state(st, nd, q) {}
+      : oper(o), start(st), end(nd), qty(q) {}
 
     ~ProblemBeforeCurrent()
     {
@@ -8651,14 +8716,12 @@ class ProblemBeforeCurrent : public Problem
     const DateRange getDates() const
     {
       if (oper)
-        return DateRange(state.start, state.end);
+        return DateRange(start, end);
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
-      if (o->getDates().getEnd() > Plan::instance().getCurrent())
-        return DateRange(o->getDates().getStart(),
-            Plan::instance().getCurrent());
+      if (o->getEnd() > Plan::instance().getCurrent())
+        return DateRange(o->getStart(), Plan::instance().getCurrent());
       else
-        return DateRange(o->getDates().getStart(),
-            o->getDates().getEnd());
+        return o->getDates();
     }
 
     /** Return a reference to the metadata structure. */
@@ -8669,7 +8732,9 @@ class ProblemBeforeCurrent : public Problem
 
   private:
     Operation* oper = nullptr;
-    OperationPlanState state;
+    Date start;
+    Date end;
+    double qty;
 };
 
 
@@ -8697,7 +8762,7 @@ class ProblemBeforeFence : public Problem
 
     double getWeight() const
     {
-      return oper ? state.quantity : static_cast<OperationPlan*>(getOwner())->getQuantity();
+      return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();
     }
 
     explicit ProblemBeforeFence(OperationPlan* o, bool add = true)
@@ -8707,7 +8772,7 @@ class ProblemBeforeFence : public Problem
     }
 
     explicit ProblemBeforeFence(Operation* o, Date st, Date nd, double q)
-      : oper(o), state(st, nd, q) {}
+      : oper(o), start(st), end(nd), qty(q) {}
 
     ~ProblemBeforeFence()
     {
@@ -8726,15 +8791,17 @@ class ProblemBeforeFence : public Problem
 
     const DateRange getDates() const
     {
-      if (oper) return DateRange(state.start, state.end);
+      if (oper)
+        return DateRange(start, end);
       OperationPlan *o = static_cast<OperationPlan*>(owner);
-      if (o->getDates().getEnd() > Plan::instance().getCurrent()
+      if (o->getEnd() > Plan::instance().getCurrent()
           + o->getOperation()->getFence())
-        return DateRange(o->getDates().getStart(),
-            Plan::instance().getCurrent() + o->getOperation()->getFence());
+        return DateRange(
+          o->getStart(), 
+          Plan::instance().getCurrent() + o->getOperation()->getFence()
+          );
       else
-        return DateRange(o->getDates().getStart(),
-            o->getDates().getEnd());
+        return o->getDates();
     }
 
     /** Return a reference to the metadata structure. */
@@ -8745,7 +8812,9 @@ class ProblemBeforeFence : public Problem
 
   private:
     Operation* oper = nullptr;
-    OperationPlanState state;
+    Date start;
+    Date end;
+    double qty;
 };
 
 
@@ -8758,13 +8827,13 @@ class ProblemPrecedence : public Problem
     string getDescription() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
-      if (!o->nextsubopplan)
+      if (!o->getNextSubOpplan())
         return string("Bogus precedence problem on '")
             + o->getOperation()->getName() + "'";
       else
         return string("Operation '") + o->getOperation()->getName()
             + "' starts before operation '"
-            + o->nextsubopplan->getOperation()->getName() +"' ends";
+            + o->getNextSubOpplan()->getOperation()->getName() +"' ends";
     }
 
     bool isFeasible() const
@@ -8801,8 +8870,7 @@ class ProblemPrecedence : public Problem
     const DateRange getDates() const
     {
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
-      return DateRange(o->nextsubopplan->getDates().getStart(),
-          o->getDates().getEnd());
+      return DateRange(o->getNextSubOpplan()->getStart(), o->getEnd());
     }
 
     /** Return a reference to the metadata structure. */
@@ -8895,7 +8963,7 @@ class ProblemLate : public Problem
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
           getDemand()->getDue(),
-          getDemand()->getLatestDelivery()->getDates().getEnd()
+          getDemand()->getLatestDelivery()->getEnd()
           ).getDuration()) / 86400;
     }
 
@@ -8915,7 +8983,7 @@ class ProblemLate : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
-          getDemand()->getLatestDelivery()->getDates().getEnd());
+          getDemand()->getLatestDelivery()->getEnd());
     }
 
     Demand* getDemand() const
@@ -8959,7 +9027,7 @@ class ProblemEarly : public Problem
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return static_cast<double>(DateRange(
           getDemand()->getDue(),
-          getDemand()->getEarliestDelivery()->getDates().getEnd()
+          getDemand()->getEarliestDelivery()->getEnd()
           ).getDuration()) / 86400;
     }
 
@@ -8987,7 +9055,7 @@ class ProblemEarly : public Problem
     {
       assert(getDemand() && !getDemand()->getDelivery().empty());
       return DateRange(getDemand()->getDue(),
-          getDemand()->getEarliestDelivery()->getDates().getEnd());
+          getDemand()->getEarliestDelivery()->getEnd());
     }
 
     Demand* getDemand() const
@@ -9821,10 +9889,10 @@ class PeggingIterator : public Object
       // Comparison operator
       bool operator < (const state& other) const
       {
-        if (opplan->getDates().getStart() == other.opplan->getDates().getStart())
-          return other.opplan->getDates().getEnd() < opplan->getDates().getEnd();
+        if (opplan->getStart() == other.opplan->getStart())
+          return other.opplan->getEnd() < opplan->getEnd();
         else
-          return other.opplan->getDates().getStart() < opplan->getDates().getStart();
+          return other.opplan->getStart() < opplan->getStart();
       }
     };
     typedef vector<state> statestack;

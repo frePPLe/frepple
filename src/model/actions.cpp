@@ -210,7 +210,7 @@ PyObject* savePlan(PyObject* self, PyObject* args)
         for (Demand::OperationPlanList::const_iterator pp = deli.begin();
             pp != deli.end(); ++pp)
           textoutput << "DEMAND\t" << (*gdem) << '\t'
-              << (*pp)->getDates().getEnd() << '\t'
+              << (*pp)->getEnd() << '\t'
               << (*pp)->getQuantity() << endl;
       }
     }
@@ -243,8 +243,8 @@ PyObject* savePlan(PyObject* self, PyObject* args)
         && rr->getOperation()->getType() != *OperationItemDistribution::metadata)
           continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
-          << rr->getDates().getStart() << '\t'
-          << rr->getDates().getEnd() << '\t'
+          << rr->getStart() << '\t'
+          << rr->getEnd() << '\t'
           << rr->getQuantity()
           << (rr->getLocked() ? "\tlocked" : "")
           << endl;
@@ -308,17 +308,16 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x)
-    if (x->getOperation() != OperationSetup::setupoperation)
+  {
+    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+    n->owner = this;
+    if (firstCommand)
     {
-      CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
-      n->owner = this;
-      if (firstCommand)
-      {
-        n->next = firstCommand;
-        firstCommand->prev = n;
-      }
-      firstCommand = n;
+      n->next = firstCommand;
+      firstCommand->prev = n;
     }
+    firstCommand = n;
+  }
 }
 
 
@@ -341,17 +340,16 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x)
-    if (x->getOperation() != OperationSetup::setupoperation)
+  {
+    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+    n->owner = this;
+    if (firstCommand)
     {
-      CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
-      n->owner = this;
-      if (firstCommand)
-      {
-        n->next = firstCommand;
-        firstCommand->prev = n;
-      }
-      firstCommand = n;
+      n->next = firstCommand;
+      firstCommand->prev = n;
     }
+    firstCommand = n;
+  }
 }
 
 
@@ -442,9 +440,6 @@ PyObject* eraseModel(PyObject* self, PyObject* args)
       Item::clear();
       Plan::instance().setName("");
       Plan::instance().setDescription("");
-      // The setup operation is a static singleton and should always be around
-      OperationSetup::setupoperation = new OperationSetup();
-      OperationSetup::setupoperation->setName("setup operation");
     }
     else
     {

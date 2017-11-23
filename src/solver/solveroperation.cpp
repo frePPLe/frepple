@@ -39,7 +39,7 @@ void SolverMRP::checkOperationCapacity
     return; // Stop here if no resource is loaded
 
   DateRange orig;
-  Date minimumEndDate = opplan->getDates().getEnd();
+  Date minimumEndDate = opplan->getEnd();
   bool backuplogconstraints = data.logConstraints;
   bool backupForceLate = data.state->forceLate;
   bool recheck, first;
@@ -51,8 +51,8 @@ void SolverMRP::checkOperationCapacity
     orig = opplan->getDates();
     recheck = false;
     first = true;
-    for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
-      h!=opplan->endLoadPlans() && opplan->getDates()==orig; ++h)
+    for (OperationPlan::LoadPlanIterator h = opplan->beginLoadPlans();
+      h != opplan->endLoadPlans() && opplan->getDates() == orig; ++h)
     {
       if (h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0)
       {
@@ -88,8 +88,8 @@ void SolverMRP::checkOperationCapacity
   // need to redo the capacity check for the ones we already checked.
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
-  while (constrainedLoads>1 && opplan->getDates()!=orig
-    && ((data.state->a_qty==0.0 && data.state->a_date > minimumEndDate)
+  while (constrainedLoads > 1 && opplan->getDates() != orig
+    && ((data.state->a_qty == 0.0 && data.state->a_date > minimumEndDate)
         || recheck));
   // TODO doesn't this loop increment a_penalty incorrectly???
 
@@ -126,12 +126,12 @@ bool SolverMRP::checkOperation
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent());
     // No availability found anywhere in the horizon - data error
-    if (opplan->getDates().getEnd() == Date::infiniteFuture)
+    if (opplan->getEnd() == Date::infiniteFuture)
       throw DataException(
         "No available time found on operation '" + opplan->getOperation()->getName() + "'"
         );
     // Pick up the earliest date we can reply back
-    data.state->a_date = opplan->getDates().getEnd();
+    data.state->a_date = opplan->getEnd();
     data.state->a_qty = 0.0;
     opplan->setQuantity(0.0);
     return false;
@@ -195,7 +195,7 @@ bool SolverMRP::checkOperation
 
     // Check material
     data.state->q_qty = opplan->getQuantity();
-    data.state->q_date = opplan->getDates().getEnd();
+    data.state->q_date = opplan->getEnd();
     a_qty = opplan->getQuantity();
     a_date = data.state->q_date;
     incomplete = false;
@@ -266,7 +266,7 @@ bool SolverMRP::checkOperation
       }
     }
 
-    isPlannedEarly = opplan->getDates().getEnd() < orig_dates.getEnd();
+    isPlannedEarly = opplan->getEnd() < orig_dates.getEnd();
 
     if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
       && matnext.getEnd() <= orig_q_date_max && matnext.getEnd() > orig_q_date)
@@ -304,8 +304,8 @@ bool SolverMRP::checkOperation
         opplan, orig_opplan_qty, matnext.getStart(),
         a_date
         );
-      if (opplan->getDates().getStart() >= matnext.getStart()
-        && opplan->getDates().getEnd() <= a_date
+      if (opplan->getStart() >= matnext.getStart()
+        && opplan->getEnd() <= a_date
         && opplan->getQuantity() > ROUNDING_ERROR
         && (!opplan->getDemand() || opplan->getQuantity() > opplan->getDemand()->getMinShipment())
         )
@@ -363,7 +363,7 @@ bool SolverMRP::checkOperation
       checkOperationCapacity(opplan,data);
 
       // Reply isn't late enough
-      if (opplan->getDates().getEnd() <= orig_q_date_max)
+      if (opplan->getEnd() <= orig_q_date_max)
       {
         opplan->getOperation()->setOperationPlanParameters
           (opplan, orig_opplan_qty,
@@ -375,7 +375,7 @@ bool SolverMRP::checkOperation
 
       // Reply of this function
       a_qty = 0.0;
-      matnext.setEnd(opplan->getDates().getEnd());
+      matnext.setEnd(opplan->getEnd());
     }
 
   // Compute the final reply
@@ -409,41 +409,8 @@ bool SolverMRP::checkOperationLeadTime
     && !(isLeadTimeConstrained() && opplan->getOperation()->getFence()<0L))
     threshold += opplan->getOperation()->getFence();
 
-  // Check the setup operationplan
-  OperationPlanState original(opplan);
-  bool ok = true;
-  bool checkSetup = true;
-
-  // If there are alternate loads we take the best case and assume that
-  // at least one of those can give us a zero-time setup.
-  // When evaluating the leadtime when solving for capacity we don't use
-  // this assumption. The resource solver takes care of the constraints.
-  if (extra && isCapacityConstrained())
-    for (Operation::loadlist::const_iterator j = opplan->getOperation()->getLoads().begin();
-      j != opplan->getOperation()->getLoads().end(); ++j)
-      if (j->hasAlternates())
-      {
-        checkSetup = false;
-        break;
-      }
-  if (checkSetup)
-  {
-    OperationPlan::iterator i(opplan);
-    if (i != opplan->end()
-      && i->getOperation() == OperationSetup::setupoperation
-      && i->getDates().getStart() < threshold)
-    {
-      // The setup operationplan is violating the lead time and/or fence
-      // constraint. We move it to start on the earliest allowed date,
-      // which automatically also moves the owner operationplan.
-      i->setStart(threshold);
-      threshold = i->getDates().getEnd();
-      ok = false;
-    }
-  }
-
   // Compare the operation plan start with the threshold date
-  if (ok && opplan->getDates().getStart() >= threshold)
+  if (opplan->getStart() >= threshold)
     // There is no problem
     return true;
 
@@ -451,19 +418,17 @@ bool SolverMRP::checkOperationLeadTime
   // In other words, we try to resize the operation quantity to fit the
   // available timeframe: used for e.g. time-per operations
   // Note that we allow the complete post-operation time to be eaten
+  OperationPlanState original(opplan);
   if (getAllowSplits())
   {
     if (extra)
-    {
       // Lead time check during operation resolver
-      if (getAllowSplits())
-        opplan->getOperation()->setOperationPlanParameters(
-          opplan, opplan->getQuantity(),
-          threshold,
-          original.end + opplan->getOperation()->getPostTime(),
-          false
+      opplan->getOperation()->setOperationPlanParameters(
+        opplan, opplan->getQuantity(),
+        threshold,
+        original.end + opplan->getOperation()->getPostTime(),
+        false
         );
-    }
     else
       // Lead time check during capacity resolver
       opplan->getOperation()->setOperationPlanParameters(
@@ -475,14 +440,14 @@ bool SolverMRP::checkOperationLeadTime
   }
 
   // Check the result of the resize
-  if (opplan->getDates().getStart() >= threshold
-    && (!extra || opplan->getDates().getEnd() <= data.state->q_date_max)
+  if (opplan->getStart() >= threshold
+    && (!extra || opplan->getEnd() <= data.state->q_date_max)
     && opplan->getQuantity() > ROUNDING_ERROR
     && getAllowSplits())
   {
     // Resizing did work! The operation now fits within constrained limits
     data.state->a_qty = opplan->getQuantity();
-    data.state->a_date = opplan->getDates().getEnd();
+    data.state->a_date = opplan->getEnd();
     // Acknowledge creation of operationplan
     return true;
   }
@@ -496,7 +461,7 @@ bool SolverMRP::checkOperationLeadTime
     // Move to the earliest start date
     opplan->setStart(threshold);
     // Pick up the earliest date we can reply back
-    data.state->a_date = opplan->getDates().getEnd();
+    data.state->a_date = opplan->getEnd();
     // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
     opplan->setQuantity(0.0);
 
@@ -810,7 +775,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
   {
     // Plan the next step
     data->state->q_qty = a_qty;
-    data->state->q_date = data->state->curOwnerOpplan->getDates().getStart();
+    data->state->q_date = data->state->curOwnerOpplan->getStart();
     Buffer *tmpBuf = data->state->curBuffer;
     q_date = data->state->q_date;
     (*e)->getOperation()->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
@@ -847,7 +812,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
   if (data->state->curOwnerOpplan->getQuantity() > 0.0)
   {
     data->state->q_qty = a_qty;
-    data->state->q_date = data->state->curOwnerOpplan->getDates().getEnd();
+    data->state->q_date = data->state->curOwnerOpplan->getEnd();
     q_date = data->state->q_date;
     data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
     a_qty = data->state->a_qty;

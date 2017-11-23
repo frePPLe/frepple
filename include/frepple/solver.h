@@ -889,18 +889,10 @@ class SolverMRP : public Solver
         SolverMRP* getSolver() const {return sol;}
 
         /** Constructor. */
-        SolverMRPdata(SolverMRP* s = nullptr, int c = 0, deque<Demand*>* d = nullptr)
-          : sol(s), cluster(c), demands(d), constrainedPlanning(true),
-            logConstraints(true), state(statestack), prevstate(statestack-1)
-        {
-          operator_delete = new OperatorDelete(this);
-        }
+        SolverMRPdata(SolverMRP* s = nullptr, int c = 0, deque<Demand*>* d = nullptr);
 
         /** Destructor. */
-        virtual ~SolverMRPdata()
-        {
-          delete operator_delete;
-        };
+        virtual ~SolverMRPdata();
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const
@@ -978,7 +970,7 @@ class SolverMRP : public Solver
         int cluster;
 
         /** Internal solver to remove material. */
-        OperatorDelete *operator_delete;
+        OperatorDelete *operator_delete = nullptr;
 
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>* demands;

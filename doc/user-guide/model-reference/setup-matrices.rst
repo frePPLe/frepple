@@ -4,7 +4,15 @@ Setup matrices
 
 .. important::
 
-   This feature is currently not ready for production use yet.
+   This planning algorithm in the **Community Edition** respects
+   the setup matrices, but does NOT do any effort to reduce the setup
+   times and does NOT have all logic to handle the complexities of 
+   propagating setup changes. Your mileage will vary.
+   
+   In the **Enterprise Edition** the more advanced solver will reduce the
+   setup times by choosing smartly among different available alternate
+   resources and by planning operationplans adjacent to others requiring
+   the same setup.
    
 A setup matrix defines the time and cost of setup conversions on a resource.
 Within a setup matrix rules are used to define the changeover cost and

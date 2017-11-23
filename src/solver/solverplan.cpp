@@ -120,6 +120,20 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
 }
 
 
+SolverMRP::SolverMRPdata::SolverMRPdata(SolverMRP* s, int c, deque<Demand*>* d)
+  : sol(s), cluster(c), demands(d), constrainedPlanning(true),
+  logConstraints(true), state(statestack), prevstate(statestack - 1)
+{
+  operator_delete = new OperatorDelete(this);
+}
+
+
+SolverMRP::SolverMRPdata::~SolverMRPdata()
+{
+  delete operator_delete;
+};
+
+
 bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
@@ -384,12 +398,6 @@ void SolverMRP::solve(void *v)
 
   // Run the planning command threads and wait for them to exit
   threads.execute();
-
-  // @todo Check the resource setups that were broken - needs to be removed
-  for (Resource::iterator res = Resource::begin(); res != Resource::end(); ++res)
-    if (res->getSetupMatrix()
-      && (cluster == -1 || res->getCluster() == cluster))
-        res->updateSetups();
 }
 
 

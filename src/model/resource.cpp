@@ -107,7 +107,10 @@ void Resource::inspect(const string msg) const
       logger << ", id: " << opplan->getIdentifier()
         << ", oper:" << opplan->getOperation()
         << ", quantity: " << opplan->getQuantity()
-        << ", dates: " << opplan->getDates();
+        << ", dates: " << opplan->getStart();
+      if (opplan->getSetupEnd() != opplan->getStart())
+        logger << " / " << opplan->getSetupEnd();
+      logger << " / " << opplan->getEnd();
       if (!opplan->getProposed())
         logger << ", " << opplan->getStatus();
       logger << endl;
@@ -269,46 +272,6 @@ Resource::~Resource()
 }
 
 
-void Resource::updateSetups(const LoadPlan* ldplan)
-{
-  // No updating required this resource
-  if (!getSetupMatrix() || (ldplan && ldplan->getOperationPlan()->getOperation() != OperationSetup::setupoperation))
-    return;
-
-  // Update later setup opplans
-  OperationPlan *opplan = ldplan ? ldplan->getOperationPlan() : nullptr;
-  loadplanlist::const_iterator i = ldplan ?
-      getLoadPlans().begin(ldplan) :
-      getLoadPlans().begin();
-  string prevsetup = ldplan ? ldplan->getSetup() : getSetup();
-  for (; i != getLoadPlans().end(); ++i)
-  {
-    const LoadPlan* l = dynamic_cast<const LoadPlan*>(&*i);
-    if (l && !l->getLoad()->getSetup().empty()
-        && l->getOperationPlan()->getOperation() == OperationSetup::setupoperation
-        && l->getOperationPlan() != opplan
-        && !l->isStart())
-    {
-      // Next conversion operation
-      OperationPlanState x = l->getOperationPlan()->getOperation()->setOperationPlanParameters(
-          l->getOperationPlan(),
-          l->getOperationPlan()->getQuantity(),
-          Date::infinitePast,
-          l->getOperationPlan()->getDates().getEnd(),
-          true,
-          false);
-      if (x.start != l->getOperationPlan()->getDates().getStart())
-        // We need to change a setup plan
-        l->getOperationPlan()->restore(x);
-      else if (ldplan && x.start == l->getOperationPlan()->getDates().getStart())
-        // We found a setup plan that doesn't need updating. Later setup plans
-        // won't require updating either
-        return;
-    }
-  }
-}
-
-
 extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
 {
   // Get the resource model
@@ -394,10 +357,12 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
       else if (tp == 1)
       {
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
+        /* XXX
         if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
           // Setup starting or ending
           cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
         else
+        */
           // Normal load
           cur_load = ldplan->getOnhand();
       }
@@ -558,10 +523,12 @@ PyObject* Resource::PlanIterator::iternext()
       {
         const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
         assert(ldplan);
+        /*
         if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
           // Setup starting or ending
           cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
         else
+        */
           // Normal load
           cur_load = ldplan->getOnhand();
       }
@@ -616,6 +583,48 @@ bool Resource::hasSkill(Skill* s, Date st, Date nd, ResourceSkill** resSkill) co
   if (resSkill)
     *resSkill = nullptr;
   return false;
+}
+
+
+void Resource::setSetupMatrix(SetupMatrix *s)
+{
+  if (getType() == *ResourceBuckets::metadata)
+    throw DataException("No setup calendar can be defined on bucketized resources");
+  setupmatrix = s;
+}
+
+
+PooledString Resource::getSetupAt(Date d, bool inclusive) const
+{
+  PooledString tmp = setup;
+  Date latestSetupEnd;
+  for (auto i = getLoadPlans().begin(); i != getLoadPlans().end(); ++i)
+  {
+    if (i->getDate() > d || (!inclusive && i->getDate() == d))
+      break;
+    if (i->getEventType() != 1 || i->getQuantity() >= 0)
+      continue;
+    auto ldpln = static_cast<const LoadPlan*>(&*i);
+    if (!ldpln->getLoad()->setup.empty() && ldpln->getResource()->getSetupMatrix())
+    {
+      Date t = ldpln->getOperationPlan()->getSetupEnd();
+      if (t > latestSetupEnd && (t < d || (inclusive && t == d)))
+      {
+        tmp = ldpln->getLoad()->setup;
+        latestSetupEnd = ldpln->getOperationPlan()->getSetupEnd();
+      }
+    }
+  }
+  return tmp;
+}
+
+
+void Resource::updateSetupTime() const
+{
+  if (setupmatrix)
+    for (auto qq = getLoadPlans().begin(); qq != getLoadPlans().end(); ++qq)
+      if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+        qq->getOperationPlan()->updateSetupTime();
 }
 
 }

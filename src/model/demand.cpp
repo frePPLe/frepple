@@ -173,7 +173,7 @@ const Demand::OperationPlanList& Demand::getDelivery() const
         const_cast<Demand*>(this)->deli.begin();
         j!=const_cast<Demand*>(this)->deli.end(); ++j)
     {
-      if ((*i)->getDates().getEnd() < (*j)->getDates().getEnd())
+      if ((*i)->getEnd() < (*j)->getEnd())
       {
         // Oh yes, the ordering was disrupted indeed...
         iter_swap(i,j);
@@ -213,7 +213,7 @@ void Demand::addDelivery (OperationPlan * o)
   // Check if it is already in the list.
   // If it is, simply exit the function. No need to give a warning message
   // since it's harmless.
-  for (OperationPlanList::iterator i = deli.begin(); i!=deli.end(); ++i)
+  for (OperationPlanList::iterator i = deli.begin(); i != deli.end(); ++i)
     if (*i == o) return;
 
   // Add to the list of delivery operationplans. The insertion is such
@@ -224,7 +224,8 @@ void Demand::addDelivery (OperationPlan * o)
   // original order.
   getDelivery();
   OperationPlanList::iterator j = deli.begin();
-  while (j!=deli.end() && (*j)->getDates().getEnd()>o->getDates().getEnd()) ++j;
+  while (j != deli.end() && (*j)->getEnd() > o->getEnd())
+    ++j;
   deli.insert(j, o);
 
   // Mark the demand as being changed, so the problems can be redetected

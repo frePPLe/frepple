@@ -681,8 +681,7 @@ bool OperationPlan::activate(bool createsubopplans)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if ((getQuantity() <= 0.0 && getOperation()->getType() != *OperationSetup::metadata)
-    || !oper->extraInstantiate(this, createsubopplans))
+  if (getQuantity() <= 0.0 || !oper->extraInstantiate(this, createsubopplans))
   {
     delete this;
     return false;
@@ -930,12 +929,7 @@ void OperationPlan::createFlowLoads()
   for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
       g!=oper->getLoads().end(); ++g)
     if (!g->getAlternate())
-    {
       new LoadPlan(this, &*g);
-      if (!g->getSetup().empty() && g->getResource()->getSetupMatrix())
-        OperationSetup::setupoperation->createOperationPlan(
-          1, getDates().getStart(), getDates().getStart(), nullptr, this);
-    }
 
   // Create flowplans for flows
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
@@ -1043,7 +1037,7 @@ void OperationPlan::setStart (Date d)
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!lastsubopplan || lastsubopplan->getOperation() == OperationSetup::setupoperation)
+  if (!lastsubopplan)
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
   else
@@ -1051,12 +1045,10 @@ void OperationPlan::setStart (Date d)
     // Move all sub-operationplans in an orderly fashion
     for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
     {
-      if (i->getOperation() == OperationSetup::setupoperation)
-        continue;
-      if (i->getDates().getStart() < d)
+      if (i->getStart() < d)
       {
         i->setStart(d);
-        d = i->getDates().getEnd();
+        d = i->getEnd();
       }
       else
         // There is sufficient slack between the suboperationplans
@@ -1074,7 +1066,7 @@ void OperationPlan::setEnd(Date d)
   // Locked opplans don't move
   if (getLocked()) return;
 
-  if (!lastsubopplan || lastsubopplan->getOperation() == OperationSetup::setupoperation)
+  if (!lastsubopplan)
     // No sub operationplans
     oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
   else
@@ -1082,11 +1074,10 @@ void OperationPlan::setEnd(Date d)
     // Move all sub-operationplans in an orderly fashion
     for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
     {
-      if (i->getOperation() == OperationSetup::setupoperation) break;
-      if (!i->getDates().getEnd() || i->getDates().getEnd() > d)
+      if (!i->getEnd() || i->getEnd() > d)
       {
         i->setEnd(d);
-        d = i->getDates().getStart();
+        d = i->getStart();
       }
       else
         // There is sufficient slack between the suboperationplans
@@ -1108,14 +1099,6 @@ void OperationPlan::resizeFlowLoadPlans()
   // Update all loadplans
   for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
     e->update();
-
-  // Align the end of the setup operationplan with the start of the operation
-  if (firstsubopplan && firstsubopplan->getOperation() == OperationSetup::setupoperation
-      && firstsubopplan->getDates().getEnd() != getDates().getStart())
-    firstsubopplan->setEnd(getDates().getStart());
-  else if (getOperation() == OperationSetup::setupoperation
-      && getDates().getEnd() != getOwner()->getDates().getStart())
-    getOwner()->setStart(getDates().getEnd());
 
   // Allow the operation length to be changed now that the quantity has changed
   // Note that we assume that the end date remains fixed. This assumption makes
@@ -1194,24 +1177,106 @@ OperationPlan::OperationPlan(const OperationPlan& src,
 }
 
 
-void OperationPlan::update()
+void OperationPlan::scanSetupTimes()
 {
-  if (lastsubopplan && lastsubopplan->getOperation() != OperationSetup::setupoperation)
+  for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
+  {
+    if (ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
+      // Not a starting loadplan or there is no setup on this loadplan
+      ldplan->getResource()->updateSetupTime();
+  }
+
+  // TODO We can do much faster than the above loop: where we reconsider all loadplans on a 
+  // resource. We just need to scans the ones around the old date and the ones around the new date.
+  // It requires deeper changes to the solver to pass on the information on the old date.
+  /*
+  // Loop over all loadplans
+  for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
+  {
+    if (!ldplan->isStart() || ldplan->getLoad()->getSetup().empty() || !ldplan->getResource()->getSetupMatrix())
+      // Not a starting loadplan or there is no setup on this loadplan
+      continue;
+
+    // Scan backward for loadplans at the same date
+    auto resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+    --resldplan;
+    while (resldplan != ldplan->getResource()->getLoadPlans().end())
+    {
+      if (resldplan->getDate() != ldplan->getDate())
+        break;
+      if (resldplan->getEventType() == 1)
+      {
+        auto tmp = static_cast<LoadPlan*>(&*resldplan);
+        if (tmp->isStart() && !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
+        {
+          // The setup time of this operationplan potentially changes
+          resldplan->getOperationPlan()->updateSetupTime();
+        }
+      }
+      --resldplan;
+    }
+    
+    // Scan forward until the first operationplan with a setup.    
+    resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+    ++resldplan;
+    while (resldplan != ldplan->getResource()->getLoadPlans().end())
+    {
+      if (resldplan->getEventType() == 1)
+      {
+        auto tmp = static_cast<LoadPlan*>(&*resldplan);
+        if (tmp->isStart() && !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
+        {
+          // The setup time of this operationplan potentially changes
+          resldplan->getOperationPlan()->updateSetupTime();
+          if (resldplan->getDate() > getEnd())
+            break;
+        }
+      }
+      ++resldplan;
+    }      
+  }
+  */
+}
+
+
+void OperationPlan::updateSetupTime(bool report)
+{
+  Date n = getSetupEnd();
+  Duration setup = oper->calculateSetupTime(this, n);
+  if (setup)
+  {
+    DateRange tmp = oper->calculateOperationTime(n, setup, false);
+    n = tmp.getStart();
+  }
+  if (n != getStart())
+  {
+    // The setup time has changed and we need to update the loadplans
+    if (report || true)
+      logger << "Warning: correcting setup on operationplan " << this << endl;
+    setStartAndEnd(n, getEnd());
+  }
+}
+
+
+void OperationPlan::update(bool propagatesetups)
+{
+  if (lastsubopplan)
   {
     // Set the start and end date of the parent.
     Date st = Date::infiniteFuture;
     Date nd = Date::infinitePast;
     for (OperationPlan *f = firstsubopplan; f; f = f->nextsubopplan)
     {
-      if (f->getOperation() == OperationSetup::setupoperation)
-        continue;
-      if (f->getDates().getStart() < st)
-        st = f->getDates().getStart();
-      if (f->getDates().getEnd() > nd)
-        nd = f->getDates().getEnd();
+      if (f->getStart() < st)
+        st = f->getStart();
+      if (f->getEnd() > nd)
+        nd = f->getEnd();
     }
     if (nd)
+    {
+      endOfSetup = st;
       dates.setStartAndEnd(st, nd);
+    }
   }
 
   // Update the flow and loadplans
@@ -1219,6 +1284,10 @@ void OperationPlan::update()
 
   // Keep the operationplan list sorted
   updateOperationplanList();
+
+  // Update the setup time on all neighbouring operationplans
+  if (propagatesetups && !SetupMatrix::empty())
+    scanSetupTimes();
 
   // Notify the owner operationplan
   if (owner)
@@ -1239,21 +1308,6 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
     // Note that the deletion of the operationplan also updates the opplan list
     if (deleteLockedOpplans || !tmp->getLocked()) delete tmp;
   }
-}
-
-
-double OperationPlan::getPenalty() const
-{
-  double penalty = 0;
-  for (OperationPlan::LoadPlanIterator i = beginLoadPlans();
-      i != endLoadPlans(); ++i)
-    if (i->isStart() && !i->getLoad()->getSetup().empty() && i->getResource()->getSetupMatrix())
-    {
-      SetupMatrixRule *rule = i->getResource()->getSetupMatrix()
-          ->calculateSetup(i->getSetup(false), i->getSetup(true));
-      if (rule) penalty += rule->getCost();
-    }
-  return penalty;
 }
 
 
@@ -1399,19 +1453,6 @@ string OperationPlan::getStatus() const
 }
 
 
-bool OperationPlan::isConstrained() const
-{
-  for (PeggingIterator p(this); p; ++p)
-  {
-    const OperationPlan* m = p.getOperationPlan();
-    Demand* dmd = m ? m->getTopOwner()->getDemand() : nullptr;
-    if (dmd && dmd->getDue() < m->getEnd())
-      return true;
-  }
-  return false;
-}
-
-
 void OperationPlan::setStatus(const string& s)
 {
   if (s == "approved")
@@ -1526,7 +1567,7 @@ double OperationPlan::getCriticality() const
   if (getTopOwner()->getDemand())
   {
 
-    long early = getTopOwner()->getDemand()->getDue() - getDates().getEnd();
+    long early = getTopOwner()->getDemand()->getDue() - getEnd();
     return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
   }
 
@@ -1543,16 +1584,16 @@ double OperationPlan::getCriticality() const
     if (m && m->getTopOwner()->getDemand())
     {
       // Reached a demand. Get the total slack now.
-      Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getDates().getEnd();
+      Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getEnd();
       if (myslack < 0L) myslack = 0L;
       for (unsigned int i=1; i<=lvl; i++)
       {
         if (opplans[i-1]->getOwner() == opplans[i] || opplans[i-1] == opplans[i]->getOwner())
           // Times between parent and child opplans isn't slack
           continue;
-        Date st = opplans[i-1]->getDates().getEnd();
+        Date st = opplans[i-1]->getEnd();
         if (!st) st = Plan::instance().getCurrent();
-        Date nd = opplans[i]->getDates().getStart();
+        Date nd = opplans[i]->getStart();
         if (!nd) nd = Plan::instance().getCurrent();
         if (nd > st)
           myslack += nd - st;
@@ -1578,7 +1619,7 @@ Duration OperationPlan::getDelay() const
 
   // Handle demand delivery operationplans
   if (getTopOwner()->getDemand())
-    return getDates().getEnd() - getTopOwner()->getDemand()->getDue();
+    return getEnd() - getTopOwner()->getDemand()->getDue();
 
   // Handle an upstream operationplan
   Duration maxdelay = Duration::MIN;
@@ -1592,8 +1633,8 @@ Duration OperationPlan::getDelay() const
     const OperationPlan* m = p.getOperationPlan();
     if (m && m->getTopOwner()->getDemand())
     {
-      // Reached a demand. Get the total slack now.
-      Duration mydelay = getDates().getEnd() - m->getTopOwner()->getDemand()->getDue();
+      // Reached a demand. Get the total delay now.
+      Duration mydelay = getEnd() - m->getTopOwner()->getDemand()->getDue();
       for (unsigned int i = 0; i < lvl; i++)
       {
         if (opplans[i]->getOwner())
@@ -1759,6 +1800,20 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
       if (t->getDate() == selected)
         ++(*t);
   }
+}
+
+
+Duration OperationPlan::getSetup() const
+{
+  if (getOperation())
+  {
+    // Convert date difference back to active time 
+    Duration actual;
+    getOperation()->calculateOperationTime(dates.getStart(), endOfSetup, &actual);
+    return actual;
+  }
+  else
+    return endOfSetup - dates.getStart();
 }
 
 } // end namespace

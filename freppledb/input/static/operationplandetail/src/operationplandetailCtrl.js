@@ -208,7 +208,6 @@ function operationplanCtrl($scope, OperationPlan) {
   $scope.displayInfo = displayInfo;
 
   function refreshstatus(value) {
-
     if (value !== 'no_action') {
       $scope.$apply(function(){  $scope.operationplan.status = value;});
     }
@@ -217,7 +216,7 @@ function operationplanCtrl($scope, OperationPlan) {
 
   function displayonpanel(rowid,columnid,value) {
     angular.element(document).find("#" + $scope.operationplan.id).removeClass("edited").addClass("edited");
-    if (rowid === $scope.operationplan.id.toString()) {
+    if (typeof $scope.operationplan.id !== 'undefined' && rowid === $scope.operationplan.id.toString()) {
       if (columnid === "startdate") {
         $scope.$apply(function() {$scope.operationplan.start = value;});
       }

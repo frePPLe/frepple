@@ -55,9 +55,9 @@ function showproblemspanelDrv($window, gettextCatalog) {
           rows='';
           angular.forEach(scope.operationplan.problems, function(theproblem) {
             rows += '<tr><td>'+
-            theproblem.description+'</td>'+
-            theproblem.start+'<td></td>'+
-            theproblem.end+'<td></tr>';
+            theproblem.description+'</td><td>'+
+            theproblem.start+'</td><td>'+
+            theproblem.end+'</td></tr>';
           });
         }
       }

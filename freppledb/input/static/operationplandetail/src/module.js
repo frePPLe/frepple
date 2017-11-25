@@ -38,7 +38,7 @@ operationplandetailapp.run(['gettextCatalog', function (gettextCatalog) {
 operationplandetailapp.filter('formatdate', function(){
   return function(datestr){
     if (typeof(datestr) !== "undefined" ){
-      return moment(datestr).format("YYYY-MM-DD HH:mm:ss");
+      return moment(Date.parse(datestr)).format("YYYY-MM-DD HH:mm:ss");
     }
   };
 });

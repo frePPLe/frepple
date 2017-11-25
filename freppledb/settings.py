@@ -241,7 +241,7 @@ DEFAULT_DASHBOARD = [
     ]},
     {'width':6, 'widgets':[
       #("execute",{}),
-      ("wizard",{}),      
+      ("wizard",{}),
     ]},
   ]},
   { 'rowname': 'sales', 'cols': [
@@ -287,7 +287,7 @@ DEFAULT_DASHBOARD = [
     ]},
     {'width':6, 'widgets':[
       ("recent_actions",{"limit":10}),
-    ]},      
+    ]},
   ]},
 ]
 

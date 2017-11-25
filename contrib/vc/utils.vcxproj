@@ -148,7 +148,7 @@
       </AdditionalDependencies>
     </Link>
     <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Lib>
       <AdditionalDependencies>

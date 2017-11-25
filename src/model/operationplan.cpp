@@ -93,6 +93,7 @@ Object* OperationPlan::createOperationPlan(
   Object *supval = nullptr;
   Object *orival = nullptr;
   Object *dmdval = nullptr;
+  Object *itemdistributionval = nullptr;
   if (ordtype == "MO" || ordtype.empty())
   {
     const DataValue* val = in.get(Tags::operation);
@@ -137,32 +138,42 @@ Object* OperationPlan::createOperationPlan(
   }
   else if (ordtype == "DO")
   {
-    const DataValue* val = in.get(Tags::origin);
-    if (!val && action == ADD)
-      throw DataException("Missing origin field");
+    const DataValue* val = in.get(Tags::itemdistribution);
     if (val)
     {
-      orival = val->getObject();
-      if (orival && orival->getType().category != Location::metadata)
-        throw DataException("Origin field on operationplan must be of type location");
+      itemdistributionval = val->getObject();
+      if (itemdistributionval && itemdistributionval->getType().category != ItemDistribution::metacategory)
+        throw DataException("Itemdistribution field on operationplan must be of type itemdistribution");
     }
-    val = in.get(Tags::item);
-    if (!val && action == ADD)
-      throw DataException("Missing item field");
-    if (val)
+    else
     {
-      itemval = val->getObject();
-      if (itemval && itemval->getType().category != Item::metadata)
-        throw DataException("Item field on operationplan must be of type item");
-    }
-    val = in.get(Tags::location);
-    if (!val && action == ADD)
-      throw DataException("Missing location field");
-    if (val)
-    {
-      locval = val->getObject();
-      if (locval && locval->getType().category != Location::metadata)
-        throw DataException("Location field on operationplan must be of type location");
+      val = in.get(Tags::origin);
+      if (!val && action == ADD)
+        throw DataException("Missing origin field");
+      if (val)
+      {
+        orival = val->getObject();
+        if (orival && orival->getType().category != Location::metadata)
+          throw DataException("Origin field on operationplan must be of type location");
+      }
+      val = in.get(Tags::item);
+      if (!val && action == ADD)
+        throw DataException("Missing item field");
+      if (val)
+      {
+        itemval = val->getObject();
+        if (itemval && itemval->getType().category != Item::metadata)
+          throw DataException("Item field on operationplan must be of type item");
+      }
+      val = in.get(Tags::location);
+      if (!val && action == ADD)
+        throw DataException("Missing location field");
+      if (val)
+      {
+        locval = val->getObject();
+        if (locval && locval->getType().category != Location::metadata)
+          throw DataException("Location field on operationplan must be of type location");
+      }
     }
   }
   else if (ordtype == "DLVR")
@@ -407,6 +418,12 @@ Object* OperationPlan::createOperationPlan(
   else if (ordtype == "DO")
   {
     // Find or create the destination buffer.
+    if (itemdistributionval)
+    {
+      itemval = static_cast<ItemDistribution*>(itemdistributionval)->getItem();
+      locval = static_cast<ItemDistribution*>(itemdistributionval)->getDestination();
+      orival = static_cast<ItemDistribution*>(itemdistributionval)->getOrigin();
+    }
     if (!itemval)
       throw DataException("Missing item field");
     if (!locval)
@@ -480,18 +497,50 @@ Object* OperationPlan::createOperationPlan(
         // Create the origin buffer
         originbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(orival));
 
-      // Note: We know that we need to create a new one. An existing one would
-      // have created an operation on the buffer already.
-      ItemDistribution *itemdist = new ItemDistribution();
-      itemdist->setOrigin(static_cast<Location*>(orival));
-      itemdist->setItem(static_cast<Item*>(itemval));
-      itemdist->setDestination(static_cast<Location*>(locval));
-      itemdist->setPriority(0);
-      oper = new OperationItemDistribution(itemdist, originbuffer, destbuffer);
+      // Create itemdistribution when not provided
+      if (!itemdistributionval)
+      {
+        itemdistributionval = new ItemDistribution();
+        static_cast<ItemDistribution*>(itemdistributionval)->setOrigin(static_cast<Location*>(orival));
+        static_cast<ItemDistribution*>(itemdistributionval)->setItem(static_cast<Item*>(itemval));
+        static_cast<ItemDistribution*>(itemdistributionval)->setDestination(static_cast<Location*>(locval));
+        static_cast<ItemDistribution*>(itemdistributionval)->setPriority(0);
+      }
+
+      // Create operation when it doesn't exist yet
+      oper = nullptr;
+      auto oper_iter = static_cast<ItemDistribution*>(itemdistributionval)->getOperations();
+      while (OperationItemDistribution* oper2 = oper_iter.next())
+      {
+        if (oper2->getOrigin() == originbuffer && oper2->getDestination() == destbuffer)
+        {
+          oper = oper2;
+          break;
+        }
+      }
+      if (!oper)
+        oper = new OperationItemDistribution(
+          static_cast<ItemDistribution*>(itemdistributionval), originbuffer, destbuffer
+          );
+
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
-      new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operationplan",
-        start, end, quantity);
+      // Make sure no problem is reported when item distribution priority is 0 (Rebalancing)
+      // Checking that no item distribution in reverse mode exists
+      bool found = false;
+      Item::distributionIterator itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
+      while (ItemDistribution *i = itemdist_iter.next())
+      {
+        if (i->getOrigin() == static_cast<ItemDistribution*>(itemdistributionval)->getDestination()
+          && i->getDestination() == static_cast<ItemDistribution*>(itemdistributionval)->getOrigin())
+        {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+        new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operationplan",
+          start, end, quantity);
     }
     else
       // Create operation plan

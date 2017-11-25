@@ -7669,7 +7669,10 @@ class Demand
 
     static int initialize();
 
-    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
+    virtual void solve(Solver &s, void* v = nullptr) const 
+    {
+      s.solve(this,v);
+    }
 
     /** Return the maximum delay allowed in satisfying this demand.<br>
       * The default value is infinite.

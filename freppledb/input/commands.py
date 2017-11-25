@@ -611,6 +611,7 @@ class loadOperations(LoadTask):
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d operations in %.2f seconds' % (cnt, time() - starttime))
 
+
 @PlanTaskRegistry.register
 class loadSuboperations(LoadTask):
 
@@ -1257,7 +1258,7 @@ class loadDemand(LoadTask):
 
 
 @PlanTaskRegistry.register
-class loadOperationPlans(LoadTask):   # TODO if we are going to replan anyway, we can skip loading the proposed operationplans
+class loadOperationPlans(LoadTask):
 
   description = "Importing operationplans"
   sequence = 108

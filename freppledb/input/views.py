@@ -1172,7 +1172,7 @@ class ManufacturingOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'", initially_hidden=True),
-    GridFieldText('reference', title=_('reference'), editable=True),
+    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operation__item__name', title=_('item'), formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operation__location__name', title=_('location'), formatter='detail', extra='"role":"input/location"'),
@@ -1180,7 +1180,7 @@ class ManufacturingOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=True),
+    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=not settings.ERP_CONNECTOR),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
@@ -1311,7 +1311,7 @@ class DistributionOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/distributionorder"'),
-    GridFieldText('reference', title=_('reference'), editable=True),
+    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra='"role":"input/location"'),
@@ -1319,7 +1319,7 @@ class DistributionOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus, editable=True),
+    GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus, editable=not settings.ERP_CONNECTOR),
     GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
@@ -1480,7 +1480,7 @@ class PurchaseOrderList(GridReport):
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/purchaseorder"'),
-    GridFieldText('reference', title=_('reference'), editable=True),
+    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
     GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
@@ -1488,7 +1488,7 @@ class PurchaseOrderList(GridReport):
     GridFieldDateTime('startdate', title=_('start date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus, editable=True),
+    GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus, editable=not settings.ERP_CONNECTOR),
     GridFieldCurrency('unit_cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),

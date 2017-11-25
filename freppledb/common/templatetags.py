@@ -416,7 +416,15 @@ class MenuNode(Node):
           ok = True
           if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):
             for dep in j[2].dependencies:
-              if dep._meta.db_table not in present:
+              if isinstance(dep, list) and len(dep) == 2:
+                #evaluate the value
+                try:
+                  ok = dep[0].objects.using(req.database).get(name=dep[1]).value.lower() == 'true'
+                except:
+                  ok = False
+                if ok is False:
+                  break
+              elif dep._meta.db_table not in present:
                 ok = False
                 break
           emptytable = not j[2].model or j[2].model._meta.db_table in present

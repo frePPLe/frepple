@@ -639,8 +639,8 @@
       <xsd:element name="producing" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="flows" type="flowlist" />
-      <xsd:element name="flowplans" type="flowplanlist"/>
-      <xsd:element name="tool" type="xsd:boolean"/>
+      <xsd:element name="flowplans" type="flowplanlist" />
+      <xsd:element name="tool" type="xsd:boolean" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="onhand" type="xsd:double" />
@@ -681,7 +681,6 @@
         <xsd:attribute name="size_multiple" type="positiveDouble" />
         <xsd:attribute name="mininventory" type="positiveDouble" />
         <xsd:attribute name="maxinventory" type="positiveDouble" />
-        <xsd:attribute name="leadtime" type="xsd:duration" />
         <xsd:attribute name="fence" type="xsd:duration" />
       </xsd:extension>
     </xsd:complexContent>
@@ -958,7 +957,7 @@
 
   <!-- FLOWPLAN -->
   <xsd:complexType name="flowplan">
-  	<xsd:choice minOccurs="0" maxOccurs="unbounded">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="operationplan" type="operationplan" />
       <xsd:element name="buffer" type="buffer" />
       <xsd:element name="item" type="item" />

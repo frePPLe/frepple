@@ -148,6 +148,12 @@ class Command(BaseCommand):
       n = Command.extractTable(database,file_object, 'resource', 'input.resource')
       if n>0:
         file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'skill', 'input.skill')
+      if n>0:
+        file_object.write(",\n")
+      n = Command.extractTable(database,file_object, 'resourceskill', 'input.resourceskill')
+      if n>0:
+        file_object.write(",\n")
       n = Command.extractTable(database,file_object, 'operationmaterial', 'input.operationmaterial')
       if n>0:
         file_object.write(",\n")

@@ -1,7 +1,5 @@
 usr/bin/*
 usr/lib/*.so*
-# Uncomment the following line if there are add-on modules to be packaged
-# usr/lib/frepple/*.so*
 usr/lib/python*/dist-packages/frepple*
 etc/apache2/sites-available/frepple.conf
 etc/frepple

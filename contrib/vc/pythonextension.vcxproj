@@ -90,7 +90,7 @@
     <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>pythonextension\$(Configuration)\$(Platform)\output\</OutDir>
     <IntDir>pythonextension\$(Configuration)\$(Platform)\</IntDir>
     <TargetName>frepple_d</TargetName>
@@ -104,7 +104,7 @@
     <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>pythonextension\$(Configuration)\$(Platform)\output\</OutDir>
     <IntDir>pythonextension\$(Configuration)\$(Platform)\</IntDir>
     <TargetName>frepple</TargetName>
@@ -122,7 +122,8 @@
       </PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

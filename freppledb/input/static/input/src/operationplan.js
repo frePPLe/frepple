@@ -57,21 +57,26 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
 
   //REST API GET
   function get(callback) {
-    var operplan = this;//console.log(getURLprefix() + '/operationplan/?encodeURIComponent(operplan.id)');
-    return $http
-      .get(getURLprefix() + '/operationplan/?id=' + encodeURIComponent(operplan.id))
-      .then(
-        function (response) {
-          if (debug) {
-            console.log("Operation get '" + operplan.id + "': ", response.data);
+    var operplan = this;
+    if (operplan.id === undefined) {
+      return operplan;
+    } else {
+      return $http
+        .get(getURLprefix() + '/operationplan/?id=' + encodeURIComponent(operplan.id))
+        .then(
+          function (response) {
+            if (debug) {
+              console.log("Operation get '" + operplan.id + "': ");
+              console.log(response.data);
+            }
+            operplan.extend(response.data[0]);
+            if (typeof callback === 'function') {
+              callback(operplan);
+            }
+            return operplan;
           }
-          operplan.extend(response.data[0]);
-          if (typeof callback === 'function') {
-            callback(operplan);
-          }
-          return operplan;
-        }
-      );
+        );
+    }
   }
 
   // REST API PUT

@@ -77,6 +77,8 @@ forecast.Croston_maxAlfa                             Maximum parameter for the C
 forecast.Croston_minAlfa                             Minimum parameter for the Croston forecast method.
 forecast.Croston_minIntermittence                    Minimum intermittence (defined as the percentage of zero demand buckets)
                                                      before the Croston method is applied.
+forecast.DeadAfterInactivity                         Number of days of inactivity before a forecast is marked dead and it's
+                                                     baseline forecast will be 0. Default is 365.                            
 forecast.DoubleExponential_dampenTrend               Dampening factor applied to the trend in future periods.
 forecast.DoubleExponential_initialAlfa               Initial smoothing constant.
 forecast.DoubleExponential_initialGamma              Initial trend smoothing constant.

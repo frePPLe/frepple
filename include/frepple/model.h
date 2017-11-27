@@ -6791,39 +6791,44 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
     ~PlanIterator();
 
   private:
-    /** Pointer to the resource we're investigating. */
-    Resource* res;
+
+    /** Structure for iterating over a resource. */
+    struct _res 
+    {
+      Resource* res;
+      Resource::loadplanlist::iterator ldplaniter;
+      Calendar::EventIterator unavailIter;
+      Calendar::EventIterator unavailLocIter;
+      const LoadPlan* setup_loadplan;
+      Date cur_date;
+      Date prev_date;
+      double cur_size;
+      double cur_setup;
+      double cur_load;
+      bool prev_value;
+      bool bucketized;
+    };
+
+    vector<_res> res_list;
 
     /** A Python object pointing to a list of start dates of buckets. */
     PyObject* bucketiterator;
 
-    /** An iterator over all events in the resource timeline. */
-    Resource::loadplanlist::iterator ldplaniter;
-
     /** Python function to iterate over the periods. */
     PyObject* iternext();
 
-    double cur_setup;
-    double cur_load;
-    double cur_size;
-    Date cur_date;
-    Date prev_date;
-    Calendar::EventIterator unavailIter;
-    Calendar::EventIterator unavailLocIter;
     double bucket_available;
     double bucket_load;
     double bucket_setup;
     double bucket_unavailable;
-    bool bucketized;
-    bool prev_value;
 
-    void update(Date till);
+    void update(_res*, Date till);
 
     /** Python object pointing to the start date of the plan bucket. */
-    PyObject* start_date;
+    PyObject* start_date = nullptr;
 
     /** Python object pointing to the start date of the plan bucket. */
-    PyObject* end_date;
+    PyObject* end_date = nullptr;
 };
 
 

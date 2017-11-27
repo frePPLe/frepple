@@ -306,67 +306,94 @@ int Resource::PlanIterator::initialize()
 }
 
 
-Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
-  res(r), bucketiterator(o), ldplaniter(r ? r->getLoadPlans().begin() : nullptr),
-  cur_setup(0.0), cur_load(0.0), cur_size(0.0), start_date(nullptr), end_date(nullptr)
+Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : bucketiterator(o)
 {
+  // Start date of the first bucket
+  end_date = PyIter_Next(bucketiterator);
+  if (!end_date)
+    throw LogicException("Expecting at least two dates as argument");
+
+  // Collect all subresources
   if (!r)
   {
     bucketiterator = nullptr;
     throw LogicException("Creating resource plan iterator for nullptr resource");
   }
-
-  // Count differently for bucketized and continuous resources
-  bucketized = (r->getType() == *ResourceBuckets::metadata);
-
-  if (bucketized)
+  else if (r->isGroup())
   {
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getEventType() != 2)
-      ++ldplaniter;
+    for (Resource::memberRecursiveIterator i(r); !i.empty(); ++i)
+      if (!i->isGroup())
+      {
+        _res tmp;
+        tmp.res = &*i;
+        res_list.push_back(tmp);
+      }
   }
   else
   {
-    // Start date of the first bucket
-    end_date = PyIter_Next(bucketiterator);
-    if (!end_date)
-      throw LogicException("Expecting at least two dates as argument");
-    cur_date = PythonData(end_date).getDate();
-    prev_date = cur_date;
+    _res tmp;
+    tmp.res = r;
+    res_list.push_back(tmp);
+  }
 
-    // Initialize unavailability iterators
-    prev_value = true;
-    if (r->getLocation() && r->getLocation()->getAvailable())
-    {
-      unavailLocIter = Calendar::EventIterator(res->getLocation()->getAvailable(), cur_date);
-      prev_value = (unavailLocIter.getCalendar()->getValue(cur_date) != 0);
-    }
-    if (r->getAvailable())
-    {
-      unavailIter = Calendar::EventIterator(res->getAvailable(), cur_date);
-      if (prev_value)
-        prev_value = (unavailIter.getCalendar()->getValue(cur_date) != 0);
-    }
+  // Initialize the iterator for all resources
+  for (auto i = res_list.begin(); i != res_list.end(); ++i)
+  {
+    i->ldplaniter = Resource::loadplanlist::iterator(i->res->getLoadPlans().begin());
+    i->bucketized = (r->getType() == *ResourceBuckets::metadata);
+    i->cur_date = PythonData(end_date).getDate();
+    i->setup_loadplan = nullptr;
+    i->prev_date = i->cur_date;
+    i->cur_size = 0.0;
+    i->cur_setup = 0.0;
+    i->cur_load = 0.0;
 
-    // Advance loadplan iterator just beyond the starting date
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
+    if (i->bucketized)
     {
-      unsigned short tp = ldplaniter->getEventType();
-      if (tp == 4)
-        // New max size
-        cur_size = ldplaniter->getMax();
-      else if (tp == 1)
+      // Scan forward to the first relevant bucket
+      while (
+        i->ldplaniter != i->res->getLoadPlans().end() 
+        && (i->ldplaniter->getEventType() != 2 || i->ldplaniter->getDate() < i->cur_date)
+        )
+          ++(i->ldplaniter);
+    }
+    else
+    {
+      // Initialize unavailability iterators
+      i->prev_value = true;
+      if (i->res->getLocation() && i->res->getLocation()->getAvailable())
       {
-        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
-        /* XXX
-        if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
-          // Setup starting or ending
-          cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
-        else
-        */
-          // Normal load
-          cur_load = ldplan->getOnhand();
+        i->unavailLocIter = Calendar::EventIterator(i->res->getLocation()->getAvailable(), i->cur_date);
+        i->prev_value = (i->unavailLocIter.getCalendar()->getValue(i->cur_date) != 0);
       }
-      ++ldplaniter;
+      if (i->res->getAvailable())
+      {
+        i->unavailIter = Calendar::EventIterator(i->res->getAvailable(), i->cur_date);
+        if (i->prev_value)
+          i->prev_value = (i->unavailIter.getCalendar()->getValue(i->cur_date) != 0);
+      }
+
+      // Advance loadplan iterator just beyond the starting date
+      while (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() <= i->cur_date)
+      {
+        unsigned short tp = i->ldplaniter->getEventType();
+        if (tp == 4)
+          // New max size
+          i->cur_size = i->ldplaniter->getMax();
+        else if (tp == 1)
+        {
+          const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
+          if (
+            ldplan->getOperationPlan()->getSetupEnd() != ldplan->getOperationPlan()->getStart()
+            && ldplan->getQuantity() > 0
+            )
+            i->setup_loadplan = ldplan;
+          else
+            i->setup_loadplan = nullptr;
+          i->cur_load = ldplan->getOnhand();
+        }
+        ++(i->ldplaniter);
+      }
     }
   }
 }
@@ -374,7 +401,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) :
 
 Resource::PlanIterator::~PlanIterator()
 {
-  if (bucketiterator && !bucketized)
+  if (bucketiterator)
     Py_DECREF(bucketiterator);
   if (start_date)
     Py_DECREF(start_date);
@@ -383,76 +410,76 @@ Resource::PlanIterator::~PlanIterator()
 }
 
 
-void Resource::PlanIterator::update(Date till)
+void Resource::PlanIterator::update(Resource::PlanIterator::_res* i, Date till)
 {
   long timedelta;
-  if (unavailIter.getCalendar() || unavailLocIter.getCalendar())
+  if (i->unavailIter.getCalendar() || i->unavailLocIter.getCalendar())
   {
     // Advance till the iterator exceeds the target date
     while (
-      (unavailLocIter.getCalendar() && unavailLocIter.getDate() <= till)
-      || (unavailIter.getCalendar() && unavailIter.getDate() <= till)
+      (i->unavailLocIter.getCalendar() && i->unavailLocIter.getDate() <= till)
+      || (i->unavailIter.getCalendar() && i->unavailIter.getDate() <= till)
       )
     {
-      if (unavailIter.getCalendar() &&
-        (!unavailLocIter.getCalendar() || unavailIter.getDate() < unavailLocIter.getDate()))
+      if (i->unavailIter.getCalendar() &&
+        (!i->unavailLocIter.getCalendar() || i->unavailIter.getDate() < i->unavailLocIter.getDate()))
       {
-        timedelta = unavailIter.getDate() - prev_date;
-        prev_date = unavailIter.getDate();
+        timedelta = i->unavailIter.getDate() - i->prev_date;
+        i->prev_date = i->unavailIter.getDate();
       }
       else
       {
-        timedelta = unavailLocIter.getDate() - prev_date;
-        prev_date = unavailLocIter.getDate();
+        timedelta = i->unavailLocIter.getDate() - i->prev_date;
+        i->prev_date = i->unavailLocIter.getDate();
       }
-      if (prev_value)
+      if (i->prev_value)
       {
-        bucket_available += cur_size * timedelta;
-        bucket_load += cur_load * timedelta;
-        bucket_setup += cur_setup * timedelta;
+        bucket_available += i->cur_size * timedelta / 3600;
+        bucket_load += i->cur_load * timedelta / 3600;
+        bucket_setup += i->cur_setup * timedelta / 3600;
       }
       else
-        bucket_unavailable += cur_size * timedelta;
-      if (unavailIter.getCalendar() && unavailIter.getDate() == prev_date)
+        bucket_unavailable += i->cur_size * timedelta / 3600;
+      if (i->unavailIter.getCalendar() && i->unavailIter.getDate() == i->prev_date)
       {
         // Increment only resource unavailability iterator        
-        ++unavailIter;
-        if (unavailLocIter.getCalendar() && unavailLocIter.getDate() == prev_date)
+        ++(i->unavailIter);
+        if (i->unavailLocIter.getCalendar() && i->unavailLocIter.getDate() == i->prev_date)
           // Increment both resource and location unavailability iterators
-          ++unavailLocIter;
+          ++(i->unavailLocIter);
       }
-      else if (unavailLocIter.getCalendar() && unavailLocIter.getDate() == prev_date)
+      else if (i->unavailLocIter.getCalendar() && i->unavailLocIter.getDate() == i->prev_date)
         // Increment only location unavailability iterator
-        ++unavailLocIter;
+        ++(i->unavailLocIter);
       else
         throw LogicException("Unreachable code");
-      prev_value = true;
-      if (unavailIter.getCalendar())
-        prev_value = (unavailIter.getCalendar()->getValue(prev_date) != 0);
-      if (unavailLocIter.getCalendar() && prev_value)
-        prev_value = (unavailLocIter.getCalendar()->getValue(prev_date) != 0);
+      i->prev_value = true;
+      if (i->unavailIter.getCalendar())
+        i->prev_value = (i->unavailIter.getCalendar()->getValue(i->prev_date) != 0);
+      if (i->unavailLocIter.getCalendar() && i->prev_value)
+        i->prev_value = (i->unavailLocIter.getCalendar()->getValue(i->prev_date) != 0);
     }
     // Account for time period finishing at the "till" date
-    timedelta = till - prev_date;
-    if (prev_value)
+    timedelta = till - i->prev_date;
+    if (i->prev_value)
     {
-      bucket_available += cur_size * timedelta;
-      bucket_load += cur_load * timedelta;
-      bucket_setup += cur_setup * timedelta;
+      bucket_available += i->cur_size * timedelta / 3600;
+      bucket_load += i->cur_load * timedelta / 3600;
+      bucket_setup += i->cur_setup * timedelta / 3600;
     }
     else
-      bucket_unavailable += cur_size * timedelta;
+      bucket_unavailable += i->cur_size * timedelta / 3600;
   }
   else
   {
     // All time is available on this resource
-    timedelta = till - prev_date;
-    bucket_available += cur_size * timedelta;
-    bucket_load += cur_load  * timedelta;
-    bucket_setup += cur_setup * timedelta;
+    timedelta = till - i->prev_date;
+    bucket_available += i->cur_size * timedelta / 3600;
+    bucket_load += i->cur_load  * timedelta / 3600;
+    bucket_setup += i->cur_setup * timedelta / 3600;
   }
   // Remember till which date we already have reported
-  prev_date = till;
+  i->prev_date = till;
 }
 
 
@@ -464,88 +491,89 @@ PyObject* Resource::PlanIterator::iternext()
   bucket_load = 0.0;
   bucket_setup = 0.0;
 
-  if (bucketized)
+  // Get the start and end date of the current bucket
+  if (start_date)
+    Py_DECREF(start_date);
+  start_date = end_date;
+  end_date = PyIter_Next(bucketiterator);
+  if (!end_date)
+    return nullptr;
+  Date cpp_start_date = PythonData(end_date).getDate();
+  Date cpp_end_date = PythonData(end_date).getDate();
+
+  for (auto i = res_list.begin(); i != res_list.end(); ++i)
   {
-    if (ldplaniter == res->getLoadPlans().end())
-      // No more resource buckets
-      return nullptr;
-    else
+    i->cur_date = cpp_end_date;
+    if (i->bucketized)
     {
-      // At this point ldplaniter points to a bucket start event.
-      if (start_date) 
-        Py_DECREF(start_date);
-      if (end_date)
-        start_date = end_date;
-      else
-        start_date = PythonData(ldplaniter->getDate());
-      bucket_available = ldplaniter->getOnhand();
-    }
-    // Advance the loadplan iterator to the start of the next bucket
-    ++ldplaniter;
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getEventType() != 2)
-    {
-      if (ldplaniter->getEventType() == 1)
-        bucket_load -= ldplaniter->getQuantity();
-      ++ldplaniter;
-    }
-    if (ldplaniter == res->getLoadPlans().end())
-      end_date = PythonData(Date::infiniteFuture);
-    else
-      end_date = PythonData(ldplaniter->getDate());
-  }
-  else
-  {
-    // Get the start and end date of the current bucket
-    if (start_date)
-      Py_DECREF(start_date);
-    start_date = end_date;
-    end_date = PyIter_Next(bucketiterator);
-    if (!end_date)
-      return nullptr;
-    cur_date = PythonData(end_date).getDate();
-
-    // Measure from beginning of the bucket till the first event in this bucket
-    if (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() < cur_date)
-      update(ldplaniter->getDate());
-
-    // Advance the loadplan iterator to the next event date
-    while (ldplaniter != res->getLoadPlans().end() && ldplaniter->getDate() <= cur_date)
-    {
-      // Measure from the previous event till the current one
-      update(ldplaniter->getDate());
-
-      // Process the event
-      unsigned short tp = ldplaniter->getEventType();
-      if (tp == 4)
-        // New max size
-        cur_size = ldplaniter->getMax();
-      else if (tp == 1)
+      // Bucketized resource
+      while (
+        i->ldplaniter != i->res->getLoadPlans().end()
+        && i->ldplaniter->getDate() < cpp_end_date
+        )
       {
-        const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*ldplaniter);
-        assert(ldplan);
-        /*
-        if (ldplan->getOperationPlan()->getOperation() == OperationSetup::setupoperation)
-          // Setup starting or ending
-          cur_setup = ldplan->getQuantity() < 0 ? 0.0 : cur_size;
-        else
-        */
-          // Normal load
-          cur_load = ldplan->getOnhand();
+        // At this point ldplaniter points to a bucket start event in the
+        // current reporting bucket
+        bucket_available += i->ldplaniter->getOnhand();
+
+        // Advance the loadplan iterator to the start of the next bucket
+        ++(i->ldplaniter);
+        while (
+          i->ldplaniter != i->res->getLoadPlans().end()
+          && i->ldplaniter->getEventType() != 2
+          )
+        {
+          if (i->ldplaniter->getEventType() == 1)
+            bucket_load -= i->ldplaniter->getQuantity();
+          ++(i->ldplaniter);
+        }
+      }
+    }
+    else
+    {
+      // Default resource
+
+      // Measure from beginning of the bucket till the first event in this bucket
+      if (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() < i->cur_date)
+        update(&*i, i->ldplaniter->getDate());
+
+      // Advance the loadplan iterator to the next event date
+      while (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() <= i->cur_date)
+      {
+        // Measure from the previous event till the current one
+        update(&*i, i->ldplaniter->getDate());
+
+        // Process the event
+        unsigned short tp = i->ldplaniter->getEventType();
+        if (tp == 4)
+          // New max size
+          i->cur_size = i->ldplaniter->getMax();
+        else if (tp == 1)
+        {
+          const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
+          assert(ldplan);
+          if (
+            ldplan->getOperationPlan()->getSetupEnd() != ldplan->getOperationPlan()->getStart()
+            && ldplan->getQuantity() > 0
+            )
+            i->setup_loadplan = ldplan;
+          else
+            i->setup_loadplan = nullptr;
+          i->cur_load = ldplan->getOnhand();
+        }
+
+        // Move to the next event
+        ++(i->ldplaniter);
       }
 
-      // Move to the next event
-      ++ldplaniter;
+      // Measure from the previous event till the end of the bucket
+      update(&*i, i->cur_date);
     }
-
-    // Measure from the previous event till the end of the bucket
-    update(cur_date);
-
-    // Convert from seconds to hours
-    bucket_available /= 3600;
-    bucket_load /= 3600;
-    bucket_unavailable /= 3600;
-    bucket_setup /= 3600;
   }
+
+  // Skip empty buckets
+  if (!bucket_available && !bucket_unavailable && !bucket_load && !bucket_setup)
+    return iternext();
 
   // Return the result
   return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}",

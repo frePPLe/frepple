@@ -16,7 +16,7 @@ This section provides step by step instructions on how to translate the user int
 
   The possible language codes can be found on the `World Wide Web Consortium <http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes>`_.
 
-  If you want to create instalation packages including the new language then the installer also needs updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward editing.
+  If you want to create installation packages including the new language then the installer also needs updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward editing.
 
   To get it working you must also add the new language to *djangosettings.py* (or *bin\\djangosettings.py* in the binary Windows installation). Add the new language code and description to the variable LANGUAGES:
 
@@ -57,7 +57,7 @@ This section provides step by step instructions on how to translate the user int
 
        %(title)s para %(entity)s
 
-**3. Test the translations**
+**4. Test the translations**
 
    You can now test the translations, after a restart of the web server.
 

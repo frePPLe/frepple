@@ -318,13 +318,6 @@ class User(AbstractUser):
     Because of the logic in this method creating users directly in the
     database tables is NOT a good idea!
     '''
-    # We want to prevent the admin password to be changed.
-    # For a password update, the admin user must already be existing.
-    if User.objects.using(using).filter(username='admin').exists() \
-    and self.username == 'admin' \
-    and self.password != User.objects.using(using).filter(username='admin')[0].password:
-      raise PermissionDenied
-    
     # We want to automatically give access to the django admin to all users
     self.is_staff = True
 

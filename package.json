@@ -18,6 +18,7 @@
     "grunt-contrib-less": ">=1.1.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": ">=0.6.1",
+    "grunt-exec": "^3.0.0",
     "less": ">=2.5.3",
     "less-plugin-autoprefix": ">=1.5.1"
   },

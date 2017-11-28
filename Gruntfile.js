@@ -79,6 +79,16 @@ module.exports = function (grunt) {
       },
     },
 
+    exec: {
+      extractDjangoStrings: {
+        command: 'make international'
+        },
+      merge_pot_template: {
+        command: 'find . -type f -name "*.po" -exec msgmerge -U template.pot {} \\;',
+        cwd: 'freppledb/common/static/common/po'
+        }
+    },
+
     // Compile translations
     nggettext_compile: {
       all: {
@@ -183,6 +193,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-exec');
+
+  // Tanslations process
+  // 1) Extract django strings: make international
+  // 2) Extract angular strings: grunt ngettext_extract
+  // 3) Merge .pot file from the previous step into the .po files:  grunt merge_pot_template
+  // 4) Translate all strings in the angular and django .po files. The real work!
+  // 5) Process the angular .po files into a javascript file: grunt nggettext_compile
+  grunt.registerTask('international_1', ['exec:extractDjangoStrings', 'nggettext_extract', 'exec:merge_pot_template']);
+  grunt.registerTask('international_2', ['nggettext_compile']);
 
   // Register our tasks
   grunt.registerTask('minify', ['concat', 'uglify', 'clean']);

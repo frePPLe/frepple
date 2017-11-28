@@ -2624,10 +2624,14 @@ class Operation : public HasName<Operation>,
       return "MO";
     }
 
-    /** Returns a pointer to the operationplan being instantiated. */
     OperationPlan* getFirstOpPlan() const
     {
       return first_opplan;
+    }
+
+    OperationPlan* getLastOpPlan() const
+    {
+      return last_opplan;
     }
 
     /** Returns the delay after this operation. */
@@ -3248,9 +3252,14 @@ class OperationPlan::iterator
   public:
     /** Constructor. The iterator will loop only over the operationplans
       * of the operation passed. */
-    iterator(const Operation* x) : op(Operation::end()), mode(1)
+    iterator(const Operation* x, bool forward = true) : op(Operation::end()), mode(forward ? 1 : 4)
     {
-      opplan = x ? x->getFirstOpPlan() : nullptr;
+      if (!x)
+        opplan = nullptr;
+      else if (forward)
+        opplan = x->getFirstOpPlan();
+      else
+        opplan = x->getLastOpPlan();
     }
 
     /** Constructor. The iterator will loop only over the suboperationplans
@@ -3300,8 +3309,10 @@ class OperationPlan::iterator
       {
         if (mode == 2)
           opplan = opplan->nextsubopplan;
-        else
+        else if (mode == 1)
           opplan = opplan->next;
+        else
+          opplan = opplan->prev;
       }
       // Move to a new operation
       if (!opplan && mode == 3)
@@ -3371,6 +3382,7 @@ class OperationPlan::iterator
       * 1) iterate over operationplan instances of operation
       * 2) iterate over suboperationplans of an operationplan
       * 3) iterate over all operationplans
+      * 4) iterate over operationplan instances of operation, same as 1 but backward in time
       */
     short mode;
 };

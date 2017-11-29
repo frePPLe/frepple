@@ -343,9 +343,9 @@ function formatDuration(cellvalue, options, rowdata) {
   if (rowdata.criticality > 998)
     return 'N/A'
   if (days > 0)
-    return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+    return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed(3);
   else
-    return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds);
+    return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed(3);
   return (sign*seconds).toFixed(3);
 }
 

@@ -3309,10 +3309,10 @@ class OperationPlan::iterator
       {
         if (mode == 2)
           opplan = opplan->nextsubopplan;
-        else if (mode == 1)
-          opplan = opplan->next;
-        else
+        else if (mode == 4)
           opplan = opplan->prev;
+        else
+          opplan = opplan->next;
       }
       // Move to a new operation
       if (!opplan && mode == 3)
@@ -3335,6 +3335,8 @@ class OperationPlan::iterator
       iterator tmp(*this);
       if (mode == 2)
         opplan = opplan->nextsubopplan;
+      else if (mode == 4)
+        opplan = opplan->prev;
       else
         opplan = opplan->next;
       // Move to a new operation

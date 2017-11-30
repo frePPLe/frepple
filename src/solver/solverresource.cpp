@@ -598,35 +598,54 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
   // If the answered quantity is 0, the operationplan is moved into the past.
   // Or, the solver may be forced to produce a late reply.
   // In these cases we need to search for capacity at later dates.
-  if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
-  {
-    // Put the operationplan back at its original end date
-    if (!noRestore)
-      data->state->q_operationplan->restore(currentOpplan);
-
-    // Search for a bucket with available capacity.
-    Date newDate;
-    Date prevStart = data->state->q_loadplan->getDate();
-    overloadQty = 0.0;
-    for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
-      cur!=res->getLoadPlans().end(); ++cur)
+    if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
     {
-      if (cur->getEventType() != 2)
-        // Not a new bucket
-        overloadQty = cur->getOnhand();
-      else if (overloadQty > min_free_quantity)
+      bool firstBucket = true;
+      bool hasOverloadInFirstBucket = true;
+
+      // Put the operationplan back at its original end date
+      if (!noRestore)
+        data->state->q_operationplan->restore(currentOpplan);
+
+      // Search for a bucket with available capacity.
+      Date newDate;
+      Date prevStart = data->state->q_loadplan->getDate();
+      overloadQty = 0.0;
+      for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
+        cur != res->getLoadPlans().end(); ++cur)
       {
-        // Find a suitable start date in this bucket
-        Duration tmp;
-        DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-          prevStart, Duration(1L), true, &tmp
-          );
-        if (newStart.getStart() < cur->getDate())
+        if (cur->getEventType() != 2)
+          // Not a new bucket
+          overloadQty = cur->getOnhand();
+        else if (overloadQty > min_free_quantity)
         {
-          // If the new start date is within this bucket we just left, then
-          // we have found a bucket with available capacity left
-          newDate = newStart.getStart();
-          break;
+          if (firstBucket)
+          {
+            if (data->state->a_qty && noRestore)
+            {
+              // Not a real overload
+              hasOverloadInFirstBucket = false;
+            }
+            firstBucket = false;
+          }
+          // Find a suitable start date in this bucket
+          Duration tmp;
+          DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
+            prevStart, Duration(1L), true, &tmp
+          );
+          if (newStart.getStart() < cur->getDate())
+          {
+            // If the new start date is within this bucket we just left, then
+            // we have found a bucket with available capacity left
+            newDate = newStart.getStart();
+            break;
+          }
+          else
+          {
+            // New bucket starts
+            prevStart = cur->getDate();
+            overloadQty = cur->getOnhand();
+          }
         }
         else
         {
@@ -635,23 +654,22 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           overloadQty = cur->getOnhand();
         }
       }
-      else
+
+      Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
+      if (!newDate || newDate > effective_end)
       {
-        // New bucket starts
-        prevStart = cur->getDate();
-        overloadQty = cur->getOnhand();
+        // The load has effectivity, and when it expires we can return a positive reply
+        if (effective_end > currentOpplan.end)
+          newDate = effective_end;
       }
-    }
 
-    Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
-    if (!newDate || newDate > effective_end)
+    if (!hasOverloadInFirstBucket)
     {
-      // The load has effectivity, and when it expires we can return a positive reply
-      if (effective_end > currentOpplan.end)
-        newDate = effective_end;
+      // Actually, there was no problem
+      data->state->a_date = data->state->q_date;
+      data->state->a_qty = orig_q_qty;
     }
-
-    if (newDate)
+    else if (newDate)
     {
       // Move the operationplan to the new bucket and resize to the minimum.
       // Set the date where a next trial date can happen.
@@ -675,13 +693,14 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
         );
 
       data->state->a_date = data->state->q_operationplan->getEnd();
+      data->state->a_qty = 0.0;
     }
     else
+    {
       // No available capacity found anywhere in the horizon
       data->state->a_date = Date::infiniteFuture;
-
-    // Create a zero quantity reply
-    data->state->a_qty = 0.0;
+      data->state->a_qty = 0.0;
+    }
   }
 
   // Force ok in unconstrained plan

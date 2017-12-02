@@ -539,7 +539,7 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
   // Find details on the reference date
   bool effectiveAtStart = false;
   Date tmp = refDate;
-  struct tm datedetail, before, after;
+  struct tm datedetail;
   if (refDate < b->startdate)
     tmp = b->startdate;
   tmp.getInfo(&datedetail);

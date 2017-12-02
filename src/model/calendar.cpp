@@ -558,23 +558,17 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
     if (!b->starttime && b->endtime == Duration(86400L))
     {
       // The next event is the start of the next ineffective day
-      tmp -= ref_time;
+      tmp.addSeconds(-ref_time);
       while (b->days & (1 << ref_weekday)  && tmp != Date::infiniteFuture)
       {
         if (++ref_weekday > 6)
           ref_weekday = 0;
-        tmp += Duration(86400L);
+        tmp.addSeconds(86400);
       }
     }
     else {
       // The next event is the end date on the current day
-      tmp.getInfo(&before);
-      tmp += b->endtime - ref_time;
-      tmp.getInfo(&after);
-      if (!before.tm_isdst && after.tm_isdst)
-        tmp -= Duration(3600L);
-      else if (before.tm_isdst && !after.tm_isdst)
-        tmp += Duration(3600L);
+      tmp.addSeconds(b->endtime - ref_time);
     }
     if (tmp > b->enddate)
       tmp = b->enddate;
@@ -595,18 +589,18 @@ void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
 
     // The next event is the start date, either today or on the next
     // effective day.
-    tmp += b->starttime - ref_time;
+    tmp.addSeconds(b->starttime - ref_time);
     if (ref_time >= b->endtime && (b->days & (1 << ref_weekday)))
     {
       if (++ref_weekday > 6)
         ref_weekday = 0;
-      tmp += Duration(86400L);
+      tmp.addSeconds(86400);
     }
     while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
     {
       if (++ref_weekday > 6)
         ref_weekday = 0;
-      tmp += Duration(86400L);
+      tmp.addSeconds(86400);
     }
     if (tmp >= b->enddate)
       return;
@@ -685,17 +679,17 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
     if (!b->starttime && b->endtime == Duration(86400L))
     {
       // The previous event is the end of the previous infective day
-      tmp += Duration(86400L) - ref_time;
+      tmp.addSeconds(86400 - ref_time);
       while (b->days & (1 << ref_weekday) && tmp != Date::infinitePast)
       {
         if (--ref_weekday < 0)
           ref_weekday = 6;
-        tmp -= Duration(86400L);
+        tmp.addSeconds(-86400);
       }
     }
     else
       // The previous event is the start date on the current day
-      tmp += b->starttime - ref_time;
+      tmp.addSeconds(b->starttime - ref_time);
     if (tmp < b->startdate)
       tmp = b->startdate;
 
@@ -715,18 +709,18 @@ void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
 
     // The previous event is the end time, either today or on the previous
     // effective day.
-    tmp += b->endtime - ref_time;
+    tmp.addSeconds(b->endtime - ref_time);
     if (ref_time <= b->starttime && (b->days & (1 << ref_weekday)))
     {
       if (--ref_weekday < 0)
         ref_weekday = 6;
-      tmp -= Duration(86400L);
+      tmp.addSeconds(-86400);
     }
     while (!(b->days & (1 << ref_weekday)) && tmp != Date::infinitePast)
     {
       if (--ref_weekday < 0)
         ref_weekday = 6;
-      tmp -= Duration(86400L);
+      tmp.addSeconds(-86400);
     }
     if (tmp < b->startdate)
       return;

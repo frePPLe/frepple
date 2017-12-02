@@ -873,6 +873,23 @@ class Date
       #endif
     }
 
+    /** A function to add a number of seconds to this object regardless of DST,
+    *  meaning that we will increase/decrease by one hour if we pass the DST
+    */
+    void addSeconds(int seconds) {
+      // Convert the date to a tm struct
+      struct tm datedetail;
+      getInfo(&datedetail);
+      int is_dst = datedetail.tm_isdst;
+      datedetail.tm_sec += seconds;
+      lval = mktime(&datedetail);
+      // mkime has updated the tm_isdst
+      if (!is_dst && datedetail.tm_isdst)
+        lval -= 3600;
+      else if (is_dst && !datedetail.tm_isdst)
+        lval += 3600;
+    }
+
     /** Constructor initialized with a long value. */
     Date(const time_t l) : lval(l)
     {

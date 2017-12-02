@@ -275,7 +275,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
         a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();
-        data->add(a);
+        data->getCommandManager()->add(a);
         procurements.push_back(a->getOperationPlan());
         ++countProcurements;
       }
@@ -293,7 +293,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
           new CommandMoveOperationPlan(procurements[indexProcurements], Date::infinitePast, current_date, order_qty);
         produced += procurements[indexProcurements]->getQuantity();
         order_qty -= procurements[indexProcurements]->getQuantity();
-        data->add(a);
+        data->getCommandManager()->add(a);
       }
       if (b->getMinimumInterval())
       {
@@ -318,7 +318,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
   // Get rid of extra procurements that have become redundant
   indexProcurements++;
   while (indexProcurements < countProcurements)
-    data->add(new CommandDeleteOperationPlan(procurements[indexProcurements++]));
+    data->getCommandManager()->add(new CommandDeleteOperationPlan(procurements[indexProcurements++]));
 
   // Create the answer
   if (safetystock)

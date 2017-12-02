@@ -51,6 +51,18 @@ class OperatorDelete : public Solver
     /** Python method for running the solver. */
     static PyObject* solve(PyObject*, PyObject*);
 
+    /** Update the command manager */
+    void setCommandManager(CommandManager* c)
+    {
+      cmds = c;
+    }
+
+    /** Return the command manager. */
+    CommandManager* getCommandManager() const
+    {
+      return cmds;
+    }
+
     /** Remove all entities for excess material that can be removed. */
     void solve(void *v = nullptr);
 
@@ -323,6 +335,7 @@ class SolverMRP : public Solver
     {
       initType(metadata);
       commands.sol = this;
+      commands.setCommandManager(&mgr);
     }
 
     /** Destructor. */
@@ -682,6 +695,16 @@ class SolverMRP : public Solver
       erasePreviousFirst= b;
     }
 
+    void setCommandManager(CommandManager* a = nullptr)
+    {
+      commands.setCommandManager(a);
+    }
+
+    CommandManager* getCommandManager() const
+    {
+      return commands.getCommandManager();
+    }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addShortField<Cls>(Tags::constraints, &Cls::getConstraints, &Cls::setConstraints);
@@ -874,25 +897,30 @@ class SolverMRP : public Solver
       * It stores the solver state maintained by each solver thread.
       * @see SolverMRP
       */
-    class SolverMRPdata : public CommandManager
+    class SolverMRPdata
     {
         friend class SolverMRP;
       public:
         static void runme(void *args)
         {
+          CommandManager mgr;
           SolverMRP::SolverMRPdata* x = static_cast<SolverMRP::SolverMRPdata*>(args);
+          x->setCommandManager(&mgr);
           x->commit();
           delete x;
         }
 
         /** Return the solver. */
-        SolverMRP* getSolver() const {return sol;}
+        SolverMRP* getSolver() const
+        {
+          return sol;
+        }
 
         /** Constructor. */
         SolverMRPdata(SolverMRP* s = nullptr, int c = 0, deque<Demand*>* d = nullptr);
 
         /** Destructor. */
-        virtual ~SolverMRPdata();
+        ~SolverMRPdata();
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const
@@ -914,7 +942,14 @@ class SolverMRP : public Solver
           * @see demand_comparison
           * @see next_cluster
           */
-        virtual void commit();
+        void commit();
+
+        void setCommandManager(CommandManager* a = nullptr);
+
+        CommandManager* getCommandManager() const
+        {
+          return mgr;
+        }
 
         virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
 
@@ -961,6 +996,9 @@ class SolverMRP : public Solver
           */
         void solveSafetyStock(SolverMRP*);
 
+        /** Pointer to the command manager. */
+        CommandManager* mgr = nullptr;
+
         /** Points to the solver. */
         SolverMRP* sol;
 
@@ -972,11 +1010,17 @@ class SolverMRP : public Solver
         /** Internal solver to remove material. */
         OperatorDelete *operator_delete = nullptr;
 
+        /** Points to the demand being planned. */
+        Demand* planningDemand = nullptr;
+
         /** A deque containing all demands to be (re-)planned. */
         deque<Demand*>* demands;
 
         /** Stack of solver status information. */
         State statestack[MAXSTATES];
+
+        /** Count the number of asks. */
+        unsigned long iteration_count;
 
         /** True when planning in constrained mode. */
         bool constrainedPlanning;
@@ -984,14 +1028,8 @@ class SolverMRP : public Solver
         /** Flags whether or not constraints are being tracked. */
         bool logConstraints;
 
-        /** Points to the demand being planned. */
-        Demand* planningDemand = nullptr;
-
         /** Internal flag that is set to true when solving for safety stock. */
         bool safety_stock_planning;
-
-        /** Count the number of asks. */
-        unsigned long iteration_count;
 
         /** Collect all purchase operations. */
         struct order_operationitemsuppliers
@@ -1015,6 +1053,9 @@ class SolverMRP : public Solver
       * all plan changes.
       */
     SolverMRPdata commands;
+
+    /** Command manager used when autocommit is switched off. */
+    CommandManager mgr;
 
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual

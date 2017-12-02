@@ -116,7 +116,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
       // 4c) Ask the buffer
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
-      CommandManager::Bookmark* topcommand = data->setBookmark();
+      CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
       curflow->getBuffer()->solve(*this,data);
 
       // 4d) A positive reply: exit the loop
@@ -138,7 +138,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
       }
 
       // 4e) Undo the plan on the alternate
-      data->rollback(topcommand);
+      data->getCommandManager()->rollback(topcommand);
 
       // 4f) Prepare for the next alternate
       if (data->state->a_date < min_next_date)

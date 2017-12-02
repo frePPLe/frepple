@@ -64,7 +64,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
-  CommandManager::Bookmark* topcommand = data->setBookmark();
+  CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
   OperationPlan *prev_owner_opplan = data->state->curOwnerOpplan;
 
   // Evaluate the buffer profile and solve shortages by asking more material.
@@ -153,7 +153,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
           prevQty = candidate_qty;
 
           // Delete existing producer, and propagate the deletion upstream
-          CommandManager::Bookmark* batchbookmark = data->setBookmark();
+          CommandManager::Bookmark* batchbookmark = data->getCommandManager()->setBookmark();
           data->operator_delete->solve(batchcandidate->getOperationPlan());
 
           // Create new producer
@@ -186,7 +186,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
               logger << indent(b->getLevel())
                 << "  Rejected resized batch '" << candidate_operation
                 << "' " << candidate_dates << " " << candidate_qty << endl;
-            data->rollback(batchbookmark);
+            data->getCommandManager()->rollback(batchbookmark);
             // Assure batchiter remains valid
             batchiter = prevbatchiter;
             if (batchiter != b->getFlowPlans().end())
@@ -260,7 +260,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
           prevQty = candidate_qty;
 
           // Delete existing producer, and propagate the deletion upstream
-          CommandManager::Bookmark* batchbookmark = data->setBookmark();
+          CommandManager::Bookmark* batchbookmark = data->getCommandManager()->setBookmark();
           data->operator_delete->solve(batchcandidate->getOperationPlan());
 
           // Create new producer
@@ -289,7 +289,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
               logger << indent(b->getLevel())
                 << "  Rejected joining batch with '" << candidate_operation
                 << "' " << candidate_dates << " " << candidate_qty << endl;
-            data->rollback(batchbookmark);
+            data->getCommandManager()->rollback(batchbookmark);
             // Assure batchiter remains valid
             batchiter = prevbatchiter;
             if (batchiter != b->getFlowPlans().end())
@@ -457,7 +457,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
     // Note that asking at the requested date doesn't keep the material on
     // stock to a minimum.
     if (requested_qty - shortage < ROUNDING_ERROR)
-      data->rollback(topcommand);
+      data->getCommandManager()->rollback(topcommand);
     b->getProducingOperation()->solve(*this,v);
     // Evaluate the reply
     if (data->state->a_date < extraSupplyDate
@@ -476,7 +476,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
     data->state->a_qty = requested_qty - shortage;
     if (data->state->a_qty < ROUNDING_ERROR)
     {
-      data->rollback(topcommand);
+      data->getCommandManager()->rollback(topcommand);
       data->state->a_qty = 0.0;
     }
     data->state->a_date = (extraInventoryDate < extraSupplyDate) ?
@@ -576,7 +576,7 @@ void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
 
         // Note that the supply created with the next line changes the
         // onhand value at all later dates!
-        CommandManager::Bookmark* topcommand = data->setBookmark();
+        CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
         b->getProducingOperation()->solve(*this,v);
 
         if (data->state->a_qty > ROUNDING_ERROR)
@@ -585,7 +585,7 @@ void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
           theDelta += data->state->a_qty;
         else
         {
-          data->rollback(topcommand);
+          data->getCommandManager()->rollback(topcommand);
           if ( (cur != b->getFlowPlans().end() && data->state->a_date < cur->getDate())
             || (cur == b->getFlowPlans().end() && data->state->a_date < Date::infiniteFuture) )
               nextAskDate = data->state->a_date;

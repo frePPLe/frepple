@@ -144,7 +144,7 @@ bool SolverMRP::checkOperation
     return false;
 
   // Set a bookmark in the command list.
-  CommandManager::Bookmark* topcommand = data.setBookmark();
+  CommandManager::Bookmark* topcommand = data.getCommandManager()->setBookmark();
 
   // Temporary variables
   DateRange orig_dates = opplan->getDates();
@@ -284,7 +284,7 @@ bool SolverMRP::checkOperation
         );
       okay = false;
       // Pop actions from the command "stack" in the command list
-      data.rollback(topcommand);
+      data.getCommandManager()->rollback(topcommand);
       // Echo a message
       if (data.getSolver()->getLogLevel()>1)
         logger << indent(opplan->getOperation()->getLevel())
@@ -318,7 +318,7 @@ bool SolverMRP::checkOperation
         data.state->a_qty = data.state->q_qty;
         okay = false;
         // Pop actions from the command stack in the command list
-        data.rollback(topcommand);
+        data.getCommandManager()->rollback(topcommand);
         // Echo a message
         if (data.getSolver()->getLogLevel()>1)
           logger << indent(opplan->getOperation()->getLevel())
@@ -387,7 +387,7 @@ bool SolverMRP::checkOperation
   else
   {
     // Undo the plan
-    data.rollback(topcommand);
+    data.getCommandManager()->rollback(topcommand);
     return false;
   }
 }
@@ -567,7 +567,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
         );
     data->state->curDemand = nullptr;
     z = a->getOperationPlan();
-    data->add(a);
+    data->getCommandManager()->add(a);
   }
   assert(z);
   double orig_q_qty = z->getQuantity();
@@ -840,7 +840,8 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->a_qty = a_qty * flow_qty;
 
   // Add to the list (even if zero-quantity!)
-  if (!prev_owner_opplan) data->add(a);
+  if (!prev_owner_opplan)
+    data->getCommandManager()->add(a);
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
@@ -943,7 +944,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         altIter != oper->getSubOperations().end(); )
     {
       // Set a bookmark in the command list.
-      CommandManager::Bookmark* topcommand = data->setBookmark();
+      CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
       bool nextalternate = true;
 
       // Filter out alternates that are not suitable
@@ -1048,7 +1049,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, ask_date,
           d, prev_owner_opplan, false, false
           );
-      if (!prev_owner_opplan) data->add(a);
+      if (!prev_owner_opplan)
+        data->getCommandManager()->add(a);
 
       // Create a sub operationplan
       data->state->q_date = ask_date;
@@ -1144,7 +1146,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (search == PRIORITY)
       {
         // Undo the operationplans of this alternate
-        if (data->state->a_qty < ROUNDING_ERROR) data->rollback(topcommand);
+        if (data->state->a_qty < ROUNDING_ERROR)
+          data->getCommandManager()->rollback(topcommand);
 
         // Prepare for the next loop
         a_qty -= data->state->a_qty;
@@ -1191,7 +1194,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           bestQDate = ask_date;
         }
         // This was only an evaluation
-        data->rollback(topcommand);
+        data->getCommandManager()->rollback(topcommand);
       }
 
       // Select the next alternate
@@ -1222,7 +1225,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           oper, a_qty, Date::infinitePast, bestQDate,
           d, prev_owner_opplan, false, false
           );
-      if (!prev_owner_opplan) data->add(a);
+      if (!prev_owner_opplan)
+        data->getCommandManager()->add(a);
 
       // Recreate the ask
       if (fixed_flow)
@@ -1300,7 +1304,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         oper, a_qty, Date::infinitePast, origQDate,
         d, prev_owner_opplan, false, false
         );
-    if (!prev_owner_opplan) data->add(a);
+    if (!prev_owner_opplan)
+      data->getCommandManager()->add(a);
 
     // Recreate the ask
     data->state->q_qty = a_qty / firstFlowPer;
@@ -1415,14 +1420,15 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
   while (recheck)
   {
     // Set a bookmark in the command list.
-    CommandManager::Bookmark* topcommand = data->setBookmark();
+    CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
 
     // Create the top operationplan.
     top_cmd = new CommandCreateOperationPlan(
       oper, top_flow_qty_per ? origQqty / top_flow_qty_per : origQqty,
       Date::infinitePast, origQDate, dmd, prev_owner_opplan, false, false
       );
-    if (!prev_owner_opplan) data->add(top_cmd);
+    if (!prev_owner_opplan)
+      data->getCommandManager()->add(top_cmd);
 
     recheck = false;
     int planned_percentages = 0;
@@ -1484,7 +1490,7 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
         // The a_date is used below as reply from the top operation.
         loop_qty = 0.0;
         // Undo all plans done on any of the previous alternates
-        data->rollback(topcommand);
+        data->getCommandManager()->rollback(topcommand);
         top_cmd = nullptr;
         break;
       }
@@ -1495,7 +1501,7 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
         recheck = true;
         loop_qty *= data->state->a_qty / asked;
         // Undo all plans done on any of the previous alternates
-        data->rollback(topcommand);
+        data->getCommandManager()->rollback(topcommand);
         top_cmd = nullptr;
         break;
       }

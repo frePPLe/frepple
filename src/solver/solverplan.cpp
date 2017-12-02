@@ -124,7 +124,17 @@ SolverMRP::SolverMRPdata::SolverMRPdata(SolverMRP* s, int c, deque<Demand*>* d)
   : sol(s), cluster(c), demands(d), constrainedPlanning(true),
   logConstraints(true), state(statestack), prevstate(statestack - 1)
 {
-  operator_delete = new OperatorDelete(this);
+  operator_delete = new OperatorDelete();
+}
+
+
+void SolverMRP::SolverMRPdata::setCommandManager(CommandManager* a)
+{
+  if (mgr == a)
+    return;
+  mgr = a;
+  if (operator_delete)
+    operator_delete->setCommandManager(a);
 }
 
 
@@ -246,11 +256,11 @@ void SolverMRP::SolverMRPdata::commit()
         state->curOwnerOpplan = nullptr;
         state->a_qty = 0;
         (*o)->getBuffer()->solve(*solver, this);
-        CommandManager::commit();
+        getCommandManager()->commit();
       }
       catch(...)
       {
-        CommandManager::rollback();
+        getCommandManager()->rollback();
       }
     }
     purchase_operations.clear();
@@ -291,7 +301,7 @@ void SolverMRP::SolverMRPdata::commit()
 
 void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 {
-  OperatorDelete cleanup(this);
+  OperatorDelete cleanup(getCommandManager());
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
@@ -321,11 +331,11 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
         // Check for excess
         if ((*b)->getType() != *BufferProcure::metadata)
           (*b)->solve(cleanup, this);
-        CommandManager::commit();
+        getCommandManager()->commit();
       }
       catch(...)
       {
-        CommandManager::rollback();
+        getCommandManager()->rollback();
       }
 
   if (getLogLevel() > 0)
@@ -447,8 +457,9 @@ PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
   try
   {
     SolverMRP * me = static_cast<SolverMRP*>(self);
-    me->scanExcess(&(me->commands));
-    me->commands.CommandManager::commit();
+    assert(me->commands.getCommandManager());
+    me->scanExcess(me->commands.getCommandManager());
+    me->commands.getCommandManager()->commit();
   }
   catch(...)
   {
@@ -466,7 +477,9 @@ PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    static_cast<SolverMRP*>(self)->commands.rollback();
+    SolverMRP * me = static_cast<SolverMRP*>(self);
+    assert(me->commands.getCommandManager());
+    me->commands.getCommandManager()->rollback();
   }
   catch(...)
   {

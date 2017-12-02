@@ -110,17 +110,17 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     data->state->q_date = lplan->getDate();
 
     // Plan the resource
-    CommandManager::Bookmark* topcommand = data->setBookmark();
+    CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
     try { res->solve(*this,data); }
     catch (...)
     {
       data->getSolver()->setLogLevel(loglevel);
       data->constrainedPlanning = originalPlanningMode;
       data->logConstraints = originalLogConstraints;
-      data->rollback(topcommand);
+      data->getCommandManager()->rollback(topcommand);
       throw;
     }
-    data->rollback(topcommand);
+    data->getCommandManager()->rollback(topcommand);
 
     // Evaluate the result
     if (data->state->a_qty > ROUNDING_ERROR
@@ -310,7 +310,7 @@ void SolverMRP::solve(const Load* l, void* v)
     // TODO XXX Need to insert another loop here! It goes over all resources qualified for the required skill.
     // The qualified resources need to be sorted based on their cost. If the cost is the same we should use a decent tie breaker, eg number of skills or number of loads.
     // The first resource with the qualified skill that is available will be used.
-    CommandManager::Bookmark* topcommand = data->setBookmark();
+    CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
     if (search == PRIORITY)
       curload->getResource()->solve(*this,data);
     else
@@ -399,7 +399,7 @@ void SolverMRP::solve(const Load* l, void* v)
           << data->state->a_date << endl;
 
     // 4d) Undo the plan on the alternate
-    data->rollback(topcommand);
+    data->getCommandManager()->rollback(topcommand);
 
     // 4e) Prepare for the next alternate
     if (data->state->a_date < min_next_date)

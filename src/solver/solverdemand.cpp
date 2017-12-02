@@ -37,7 +37,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 	typedef list<pair<Location* , double > > SortedLocation;
 	// Set a bookmark at the current command
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  CommandManager::Bookmark* topcommand = data->setBookmark();
+  CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
 
   // Create a state stack
   State* mystate = data->state;
@@ -67,7 +67,7 @@ void SolverMRP::solve(const Demand* l, void* v)
     {
       // Locked operationplans will NOT be deleted, and a part of the demand can
       // still remain planned.
-      const_cast<Demand*>(l)->deleteOperationPlans(false, data);
+      const_cast<Demand*>(l)->deleteOperationPlans(false, data->getCommandManager());
 
       // Empty constraint list
       const_cast<Demand*>(l)->getConstraints().clear();
@@ -170,7 +170,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 
 			  // Store the last command in the list, in order to undo the following
 			  // commands if required.
-			  CommandManager::Bookmark* topcommand = data->setBookmark();
+			  CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
 
 			  // Plan the demand by asking the delivery operation to plan
 			  double q_qty = plan_qty;
@@ -196,7 +196,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 					  // Try with the minimum shipment quantity.
 					  if (loglevel > 1)
 						  logger << "Demand '" << l << "' tries planning minimum quantity " << l->getMinShipment() << endl;
-					  data->rollback(topcommand);
+					  data->getCommandManager()->rollback(topcommand);
 					  data->state->curBuffer = nullptr;
 					  data->state->q_qty = l->getMinShipment();
 					  data->state->q_date = plan_date;
@@ -224,7 +224,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 							  }
 							  if (loglevel > 0)
 								  logger << "Demand '" << l << "' tries planning a different quantity " << new_qty << endl;
-							  data->rollback(topcommand);
+							  data->getCommandManager()->rollback(topcommand);
 							  data->state->curBuffer = nullptr;
 							  data->state->q_qty = new_qty;
 							  data->state->q_date = plan_date;
@@ -246,7 +246,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 							  if (loglevel > 0)
 								  logger << "Demand '" << l << "' restores plan for quantity " << min_qty << endl;
 							  // Restore the last feasible plan
-							  data->rollback(topcommand);
+							  data->getCommandManager()->rollback(topcommand);
 							  data->state->curBuffer = nullptr;
 							  data->state->q_qty = min_qty;
 							  data->state->q_date = plan_date;
@@ -300,7 +300,7 @@ void SolverMRP::solve(const Demand* l, void* v)
             && plan_qty - data->state->a_qty > ROUNDING_ERROR)
           {
             // Check whether the reply is based purely on onhand or not
-            if (data->getSolver()->hasOperationPlans(data))
+            if (data->getSolver()->hasOperationPlans(data->getCommandManager()))
             {
               // Oops, we didn't get a proper answer we can use for the next loop.
               // Print a warning and simply a bit later.
@@ -343,7 +343,7 @@ void SolverMRP::solve(const Demand* l, void* v)
             plan_date = next_date;
 
           // Delete operationplans - Undo all changes
-          data->rollback(topcommand);
+          data->getCommandManager()->rollback(topcommand);
 			  }
 			  else
 			  {
@@ -354,7 +354,7 @@ void SolverMRP::solve(const Demand* l, void* v)
 					  // 'coordinated' planning run.
 
 					  // Delete operationplans created in the 'testing round'
-					  data->rollback(topcommand);
+					  data->getCommandManager()->rollback(topcommand);
 
 					  // Create the correct operationplans
 					  if (loglevel >= 2)
@@ -393,8 +393,8 @@ void SolverMRP::solve(const Demand* l, void* v)
 				  // correct execute method is called!
 				  if (data->getSolver()->getAutocommit())
 				  {
-					  data->getSolver()->scanExcess(data);
-					  data->CommandManager::commit();
+					  data->getSolver()->scanExcess(data->getCommandManager());
+					  data->getCommandManager()->commit();
 				  }
 
 				  // Update the quantity to plan in the next loop
@@ -464,8 +464,8 @@ void SolverMRP::solve(const Demand* l, void* v)
         }
         if (data->getSolver()->getAutocommit())
         {
-          data->getSolver()->scanExcess(data);
-          data->CommandManager::commit();
+          data->getSolver()->scanExcess(data->getCommandManager());
+          data->getCommandManager()->commit();
         }
       }
       catch (...)
@@ -484,7 +484,7 @@ void SolverMRP::solve(const Demand* l, void* v)
   {
     // Clean up if any exception happened during the planning of the demand
     while (data->state > mystate) data->pop();
-    data->rollback(topcommand);
+    data->getCommandManager()->rollback(topcommand);
     throw;
   }
 }

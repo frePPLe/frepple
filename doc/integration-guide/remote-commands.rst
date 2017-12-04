@@ -202,7 +202,7 @@ from another system.
       #get filename without path
       FILE2=$(basename "$FILE1")
       if [[ ! "$FILE2" =~ \*.* ]]; then
-        curl -X POST -F "component_id=inputfiles" -F "$FILE2=@$FILE1" -u admin:admin http://$server/execute/uploadtofolder/0/
+        curl -X POST -F "$FILE2=@$FILE1" -u admin:admin http://$server/execute/uploadtofolder/0/
       fi
     done
     echo -e "\n---------------end upload files------------------"

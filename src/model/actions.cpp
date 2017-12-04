@@ -295,16 +295,10 @@ PyObject* savePlan(PyObject* self, PyObject* args)
 // MOVE OPERATIONPLAN
 //
 
-CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o) : opplan(o)
+CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o) : opplan(o), state(o)
 {
   if (!o)
-  {
-    originalqty = 0;
     return;
-  }
-  originalqty = opplan->getQuantity();
-  originaldates = opplan->getDates();
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x)
@@ -323,19 +317,16 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 
 CommandMoveOperationPlan::CommandMoveOperationPlan
 (OperationPlan* o, Date newstart, Date newend, double newQty)
-  : opplan(o), firstCommand(nullptr)
+  : opplan(o), state(o), firstCommand(nullptr)
 {
-  if (!opplan) return;
-
-  // Store current settings
-  originalqty = opplan->getQuantity();
-  if (newQty == -1.0) newQty = originalqty;
-  originaldates = opplan->getDates();
+  if (!opplan)
+    return;
 
   // Update the settings
   assert(opplan->getOperation());
   opplan->getOperation()->setOperationPlanParameters(
-    opplan, newQty, newstart, newend, true, true, false
+    opplan, newQty == -1.0 ? opplan->getQuantity() : newQty, 
+    newstart, newend, true, true, false
   );
 
   // Construct a subcommand for all suboperationplans
@@ -353,8 +344,9 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-void CommandMoveOperationPlan::redo()  // @todo not implemented
+void CommandMoveOperationPlan::redo()
 {
+  throw LogicException("Not implemented");
 }
 
 
@@ -366,14 +358,14 @@ void CommandMoveOperationPlan::restore(bool del)
     CommandMoveOperationPlan *tmp = static_cast<CommandMoveOperationPlan*>(c);
     tmp->restore(del);
     c = c->next;
-    if (del) delete tmp;
+    if (del)
+      delete tmp;
   }
 
   // Restore the original dates
-  if (!opplan) return;
-  opplan->getOperation()->setOperationPlanParameters(
-    opplan, originalqty, originaldates.getStart(), originaldates.getEnd()
-  );
+  if (!opplan)
+    return;
+  opplan->restore(state);
 }
 
 

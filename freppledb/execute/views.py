@@ -489,7 +489,8 @@ class FileManager:
             thetarget.write(chunk)
 
         response.write(force_text('%s: %s\n' % (clean_filename, _('OK'))))
-      except Exception:
+      except Exception as e:
+        logger.error("Failed file upload: %s" % e)
         response.write('%s: %s\n' % (clean_filename, _("Upload failed") ))
         errorcount += 1
     response.write(force_text('%s' % _('Finished')))

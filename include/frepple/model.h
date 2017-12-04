@@ -9708,13 +9708,14 @@ class CommandMoveOperationPlan : public Command
     /** Commit the changes. */
     virtual void commit()
     {
-      opplan=nullptr;
+      opplan = nullptr;
     }
 
     /** Undo the changes. */
     virtual void rollback()
     {
-      restore(true); opplan = nullptr;
+      restore(true);
+      opplan = nullptr;
     }
 
     virtual void undo()
@@ -9731,7 +9732,8 @@ class CommandMoveOperationPlan : public Command
     /** Destructor. */
     virtual ~CommandMoveOperationPlan()
     {
-      if (opplan) rollback();
+      if (opplan)
+        rollback();
     }
 
     /** Returns the operationplan being manipulated. */
@@ -9743,7 +9745,8 @@ class CommandMoveOperationPlan : public Command
     /** Set another start date for the operationplan. */
     void setStart(Date d)
     {
-      if (opplan) opplan->setStart(d);
+      if (opplan)
+        opplan->setStart(d);
     }
 
     /** Set another start date, end date and quantity for the operationplan. */
@@ -9757,7 +9760,8 @@ class CommandMoveOperationPlan : public Command
     /** Set another start date for the operationplan. */
     void setEnd(Date d)
     {
-      if (opplan) opplan->setEnd(d);
+      if (opplan)
+        opplan->setEnd(d);
     }
 
     /** Set another quantity for the operationplan. */
@@ -9769,13 +9773,13 @@ class CommandMoveOperationPlan : public Command
     /** Return the quantity of the original operationplan. */
     double getQuantity() const
     {
-      return originalqty;
+      return state.quantity;
     }
 
     /** Return the dates of the original operationplan. */
     DateRange getDates() const
     {
-      return originaldates;
+      return DateRange(state.start, state.end);
     }
 
     virtual short getType() const
@@ -9786,11 +9790,8 @@ class CommandMoveOperationPlan : public Command
     /** This is a pointer to the operationplan being moved. */
     OperationPlan *opplan = nullptr;
 
-    /** These are the original dates of the operationplan before its move. */
-    DateRange originaldates;
-
-    /** This is the quantity of the operationplan before the command. */
-    double originalqty;
+    /** Store the state of the operation plan. */
+    OperationPlanState state;
 
     /** A pointer to a list of suboperationplan commands. */
     Command* firstCommand = nullptr;

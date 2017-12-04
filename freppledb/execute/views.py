@@ -528,7 +528,8 @@ class FileManager:
     for clean_filename in filelist:
       try:
         os.remove(os.path.join(folder, clean_filename))
-      except Exception:
+      except Exception as e:
+        logger.error("Failed file deletion: %s" % e)
         errorcount += 1
         fileerrors = fileerrors + ' / ' + clean_filename
 
@@ -555,5 +556,6 @@ class FileManager:
       response['Content-Disposition'] = 'inline; filename="%s"' % filename
       response['Content-Type'] = 'application/octet-stream'
       return response
-    except Exception:
+    except Exception as e:
+      logger.error("Failed file download: %s" % e)
       return HttpResponseNotFound(force_text(_('Error downloading file')))

@@ -689,8 +689,7 @@ void XMLInput::endElement(const XMLCh* const uri,
       data[objects[objectindex].start-1].value.setObject(objects[objectindex].object);
     if (getUserExit())
       getUserExit().call(objects[objectindex].object);
-    if (getUserExitCpp())
-      getUserExitCpp()(objects[objectindex].object);
+    callUserExitCpp(objects[objectindex].object);
   }
   catch (const DataException& e)
   {

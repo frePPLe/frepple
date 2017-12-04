@@ -5744,16 +5744,18 @@ class DataInput
     }
 
     /** Type definition for callback functions defined in C++. */
-    typedef void (*callback)(Object*);
+    typedef void (*callback)(Object*, void* data);
 
-    void setUserExitCpp(callback f)
+    void setUserExitCpp(callback f, void* data = nullptr)
     {
       user_exit_cpp = f;
+      user_exit_cpp_data = data;
     }
 
-    callback getUserExitCpp() const
+    void callUserExitCpp(Object* o) const
     {
-      return user_exit_cpp;
+      if (user_exit_cpp)
+        user_exit_cpp(o, user_exit_cpp_data);
     }
 
   private:
@@ -5769,6 +5771,7 @@ class DataInput
 
     /** A second type of callback function. This time called from C++. */
     callback user_exit_cpp = nullptr;
+    void* user_exit_cpp_data = nullptr;
 
     /** A command manager used to track changes applied from the input. */
     CommandManager* cmds = nullptr;

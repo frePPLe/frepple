@@ -181,34 +181,36 @@ def wrapTask(request, action):
 
   now = datetime.now()
   task = None
+  args = request.POST or request.GET
+
   # A
   if action == 'frepple_run':
     if not request.user.has_perm('auth.generate_plan'):
       raise Exception('Missing execution privileges')
     constraint = 0
-    for value in request.POST.getlist('constraint'):
+    for value in args.getlist('constraint'):
       try:
         constraint += int(value)
       except:
         pass
     task = Task(name='frepple_run', submitted=now, status='Waiting', user=request.user)
-    task.arguments = "--constraint=%s --plantype=%s" % (constraint, request.POST.get('plantype', 1))
+    task.arguments = "--constraint=%s --plantype=%s" % (constraint, args.get('plantype', 1))
     env = []
-    for value in request.POST.getlist('env'):
+    for value in args.getlist('env'):
       env.append(value)
     if env:
       task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
     request.session['env'] = env
     task.save(using=request.database)
     # Update the session object
-    request.session['plantype'] = request.POST.get('plantype')
+    request.session['plantype'] = args.get('plantype')
     request.session['constraint'] = constraint
   # C
   elif action == 'frepple_flush':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
     task = Task(name='frepple_flush', submitted=now, status='Waiting', user=request.user)
-    models = ','.join(request.POST.getlist('models'))
+    models = ','.join(args.getlist('models'))
     if models:
       task.arguments = "--models=%s" % (models)
     task.save(using=request.database)
@@ -216,44 +218,44 @@ def wrapTask(request, action):
   elif action == 'loaddata':
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=request.POST['fixture'])
+    task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=args['fixture'])
     task.save(using=request.database)
   # E
   elif action == 'frepple_copy':
     worker_database = DEFAULT_DB_ALIAS
-    if 'copy' in request.POST:
+    if 'copy' in args:
       if not request.user.has_perm('auth.copy_scenario'):
         raise Exception('Missing execution privileges')
-      source = request.POST.get('source', DEFAULT_DB_ALIAS)
+      source = args.get('source', DEFAULT_DB_ALIAS)
       worker_database = source
-      destination = request.POST.getlist('destination')
-      force = request.POST.get('force', False)
+      destination = args.getlist('destination')
+      force = args.get('force', False)
       for sc in Scenario.objects.all():
         arguments = "%s %s" % (source, sc.name)
         if force:
           arguments += ' --force'
-        if request.POST.get(sc.name, 'off') == 'on' or sc.name in destination:
+        if args.get(sc.name, 'off') == 'on' or sc.name in destination:
           task = Task(name='frepple_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
           task.save(using=source)
-    elif 'release' in request.POST:
+    elif 'release' in args:
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
-        if request.POST.get(sc.name, 'off') == 'on' and sc.status != 'Free':
+        if args.get(sc.name, 'off') == 'on' and sc.status != 'Free':
           sc.status = 'Free'
           sc.lastrefresh = now
           sc.save()
           if request.database == sc.name:
             # Erasing the database that is currently selected.
             request.prefix = ''
-    elif 'update' in request.POST:
+    elif 'update' in args:
       # Note: update is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
       for sc in Scenario.objects.all():
-        if request.POST.get(sc.name, 'off') == 'on':
-          sc.description = request.POST.get('description', None)
+        if args.get(sc.name, 'off') == 'on':
+          sc.description = args.get('description', None)
           sc.save()
     else:
       raise Exception('Invalid scenario task')
@@ -263,13 +265,13 @@ def wrapTask(request, action):
       raise Exception('Missing execution privileges')
     task = Task(name='frepple_createbuckets', submitted=now, status='Waiting', user=request.user)
     arguments = []
-    start = request.POST.get('start', None)
+    start = args.get('start', None)
     if start:
       arguments.append("--start=%s" % start)
-    end = request.POST.get('end', None)
+    end = args.get('end', None)
     if end:
       arguments.append("--end=%s" % end)
-    weekstart = request.POST.get('weekstart', None)
+    weekstart = args.get('weekstart', None)
     if weekstart:
       arguments.append("--weekstart=%s" % weekstart)
     if arguments:
@@ -293,9 +295,9 @@ def wrapTask(request, action):
       raise Exception("Invalid task name '%s'" % action)
     # Create a task
     arguments = []
-    for arg, val in request.GET.lists():
+    for arg, val in args.lists():
       arguments.append('--%s=%s' % (arg, ','.join(val)))
-    for arg, val in request.GET.lists():
+    for arg, val in args.lists():
       arguments.append('--%s=%s' % (arg, ','.join(val)))
     task = Task(name=action, submitted=now, status='Waiting', user=request.user)
     if arguments:

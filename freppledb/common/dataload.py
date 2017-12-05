@@ -258,7 +258,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
 
       # Validate all columns
       for col in rowWrapper.values():
-        col = col.strip().strip('#').lower() if col else ""
+        col = str(col).strip().strip('#').lower() if col else ""
         if col == "":
           headers.append(None)
           continue

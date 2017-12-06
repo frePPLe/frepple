@@ -5,17 +5,26 @@ Remote commands
 All operations from the execution screen can also be launched and
 monitored remotely through an web service API.
 
-Examples of frePPLe usage with curl::
+* `Reference`_
+* `Example`_
 
-   Run a task on the default database:
+
+Reference
+---------
+
+Using curl the API endpoints are accessed using the following patterns:
+
+* Run a task on the default database:
+
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/<command>/
-      --data "<argument1>=<value1>&<argument2>=<value2>"
+     --data "<argument1>=<value1>&<argument2>=<value2>"
 
-   Run a task on a scenario database:
+* Run a task on a scenario database:
+
    curl -u <user>:<password> http(s)://<server>:<port>/<scenario>/execute/api/<command>/
      --data "<argument1>=<value1>&<argument2>=<value2>"
 
-The following URLS are available.
+The following URLs are available.
 
 * | **GET /execute/api/status/**
   | **GET /execute/api/status/?id=<taskid>**:
@@ -102,28 +111,30 @@ polls the /execute/api/status URL to monitor the status.
 For security reasons we strongly recommend the use of a HTTPS
 configuration of the frePPLe server when using this API.
 
-Example of a common workflow (upload files + import to frePPLe + run plan).
----------------------------------------------------------------------------
 
-This workflow is useful when frePPLe is not directly connected to an ERP and the data needs to be loaded
-from another system.
+Example
+-------
 
-* Delete files from folder.
+To illustrate the above concepts, this section shows a common workflow to upload
+new data in the frePPLe database and generate a new plan.
 
-* Upload data files with curl, note that the files (csv, csv.gz and xlsx are allowed) will be
-  uploaded to the root folder of the user on the server.
+* Delete previous data files.
+
+* | Upload data files with curl.
+  | The files can be in csv or excel format.
 
 * Import the data from the files to frePPLe.
 
-* Finally run the plan to update the results with the data you just imported
-  (some of the constraint are only valid on Cloud/Enterprise)
+* Finally regenerate the plan with the new data.
+
+This example uses linux bash and curl, but it can easily be coded in
+any other modern programming language.
 
   ::
 
    #!/bin/bash
 
     server="localhost:8000"
-    #server="demo.frepple.com"
 
     #declare -a filelist=("buffer.csv" "item.csv")
     id=0
@@ -165,7 +176,7 @@ from another system.
       result=$(curl -X DELETE -u admin:admin http://$server/execute/deletefromfolder/0/AllFiles/);
     }
 
-    function waitabit () {
+    function waitTillComplete () {
       id=$1
       until [[ $WAIT -eq 0 ]]; do
         if [[ "$(checkstatus $id)" =~ "break" ]]; then
@@ -213,7 +224,7 @@ from another system.
     WAIT=6 #times
     result=$(curl -X POST -u admin:admin http://$server/execute/api/frepple_importfromfolder/)
     id=$(echo "${result//[!0-9]/}")
-    waitabit $id
+    waitTillComplete $id
     echo "---------------end import the data------------------"
 
     #run the plan
@@ -222,5 +233,5 @@ from another system.
     WAIT=6 #times
     result=$(curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://$server/execute/api/frepple_run/)
     id=$(echo "${result//[!0-9]/}")
-    waitabit $id
+    waitTillComplete $id
     echo "---------------end planning------------------"

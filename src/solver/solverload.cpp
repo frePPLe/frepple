@@ -33,15 +33,15 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 
 void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
-  if (!l->getSkill() && !l->getResource()->isGroup())
+  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  if ((!l->getSkill() && !l->getResource()->isGroup()) || data->state->q_loadplan->isApproved())
   {
     // CASE 1: No skill involved, and no aggregate resource either
-    l->getResource()->solve(*this, v);
+    data->state->q_loadplan->getResource()->solve(*this, v);
     return;
   }
 
   // CASE 2: Skill involved, or aggregate resource
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   short loglevel = data->getSolver()->getLogLevel();
 
   // Control the planning mode
@@ -240,16 +240,7 @@ void SolverMRP::solve(const Load* l, void* v)
   // load of an alternate group. See SolverMRP::checkOperation
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
-  if (data->state->q_qty >= 0.0)
-  {
-    // The loadplan is an increase in size, and the resource solver only needs
-    // the decreases.
-    data->state->a_qty = data->state->q_qty;
-    data->state->a_date = data->state->q_date;
-    return;
-  }
-
-  if (!l->hasAlternates() && !l->getAlternate())
+  if ((!l->hasAlternates() && !l->getAlternate()) || data->state->q_loadplan->isApproved())
   {
     // CASE I: It is not an alternate load.
     // Delegate the answer immediately to the resource

@@ -210,6 +210,8 @@ string LoadPlan::getStatus() const
 {
   if (flags & STATUS_CONFIRMED)
     return "confirmed";
+  else if (flags & STATUS_APPROVED)
+    return "approved";
   else
     return "proposed";
 }

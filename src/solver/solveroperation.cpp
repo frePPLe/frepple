@@ -60,6 +60,11 @@ void SolverMRP::checkOperationCapacity
         first = false;
         continue;
       }
+      if (h->getQuantity() > 0.0)
+        // The loadplan is an increase in size, and the resource solver only
+        // works on decreases
+        continue;
+
       // Call the load solver - which will call the resource solver.
       data.state->q_operationplan = opplan;
       data.state->q_loadplan = &*h;

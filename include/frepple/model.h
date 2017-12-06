@@ -8137,6 +8137,32 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Finds the loadplan on the operationplan when we read data. */
     static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
 
+    bool isConfirmed() const
+    {
+      return (flags & STATUS_CONFIRMED) != 0;
+    }
+
+    void setConfirmed(bool b)
+    {
+      if (b)
+        flags |= STATUS_CONFIRMED;
+      else
+        flags &= ~STATUS_CONFIRMED;
+    }
+
+    bool isApproved() const
+    {
+      return (flags & STATUS_APPROVED) != 0;
+    }
+
+    void setApproved(bool b)
+    {
+      if (b)
+        flags |= STATUS_APPROVED;
+      else
+        flags &= ~STATUS_APPROVED;
+    }
+
   private:
     /** Private constructor. It is called from the public constructor.<br>
       * The public constructor constructs the starting loadplan, while this
@@ -8159,6 +8185,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
     static const short STATUS_CONFIRMED = 1;
+    static const short STATUS_APPROVED = 2;
 
     /** Is this operationplanmaterial locked? */
     short flags = 0;

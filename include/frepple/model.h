@@ -1084,7 +1084,7 @@ class Solver : public Object
     }
 
     /** Controls whether verbose output will be generated. */
-    void setLogLevel(short v)
+    virtual void setLogLevel(short v)
     {
       loglevel = v;
     }

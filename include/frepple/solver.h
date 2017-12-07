@@ -331,10 +331,9 @@ class SolverMRP : public Solver
     void solve(void *v = nullptr);
 
     /** Constructor. */
-    SolverMRP()
+    SolverMRP() : commands(this)
     {
       initType(metadata);
-      commands.sol = this;
       commands.setCommandManager(&mgr);
     }
 

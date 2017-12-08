@@ -115,7 +115,7 @@ void Duration::double2CharBuffer(double val, char* t)
     t += sprintf(t,"%liD", d);
     tmp %= 86400L;
   }
-  if (tmp > 0L)
+  if (tmp > 0L || fractpart)
   {
     *(t++) = 'T';
     if (tmp >= 3600L)

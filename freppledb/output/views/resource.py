@@ -237,7 +237,7 @@ class DetailReport(GridReport):
       base = OperationPlanResource.objects
     return base.select_related().extra(select={
       'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(plan->'pegging') order by key desc) peg)",
-      'duration': "(operationplan.enddate - operationplan.startdate)"
+      'opplan_duration': "(operationplan.enddate - operationplan.startdate)"
       })
 
   @classmethod
@@ -295,7 +295,7 @@ class DetailReport(GridReport):
     GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
-    GridFieldDuration('duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
+    GridFieldDuration('opplan_duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),

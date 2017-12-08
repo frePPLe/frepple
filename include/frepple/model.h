@@ -6697,7 +6697,13 @@ class Resource : public HasHierarchy<Resource>,
     void setSetupMatrix(SetupMatrix *s);
 
     /** Return the current setup. */
-    string getSetup() const
+    PooledString getSetup() const
+    {
+      return setup;
+    }
+
+    /** Return the current setup. */
+    string getSetupString() const
     {
       return setup;
     }
@@ -6725,7 +6731,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addDurationField<Cls>(Tags::maxearly, &Cls::getMaxEarly, &Cls::setMaxEarly, defaultMaxEarly);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
       m->addPointerField<Cls, Calendar>(Tags::available, &Cls::getAvailable, &Cls::setAvailable);
       Plannable::registerFields<Cls>(m);
@@ -6736,6 +6742,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       HasLevel::registerFields<Cls>(m);
     }
+
   protected:
     /** This calendar is used to updates to the resource size. */
     Calendar* size_max_cal = nullptr;
@@ -7087,11 +7094,17 @@ class Load
       return false;
     }
 
+    /** Return the required resource setup. */
+    PooledString getSetup() const
+    {
+      return setup;
+    }
+
     /** Update the required resource setup. */
-    void setSetup(const string&);
+    void setSetupString(const string&);
 
     /** Return the required resource setup. */
-    string getSetup() const
+    string getSetupString() const
     {
       return setup;
     }
@@ -7160,7 +7173,7 @@ class Load
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
       m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd, &Cls::setEffectiveEnd, Date::infiniteFuture);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, &Cls::setSetup);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetupString);
       m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill);
       HasSource::registerFields<Cls>(m);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
@@ -8065,11 +8078,11 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return getSetup(true);
     }
 
-    /** Returns the current setup of the resource.<br>/
+    /** Returns the current setup of the resource.<br>
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
       */
-    string getSetup(bool) const;
+    PooledString getSetup(bool) const;
 
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.

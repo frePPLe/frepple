@@ -250,15 +250,17 @@ void LoadPlan::update()
 }
 
 
-string LoadPlan::getSetup(bool current) const
+PooledString LoadPlan::getSetup(bool current) const
 {
   // This resource has no setupmatrix
-  static string nosetup;
+  static PooledString nosetup;
   assert(ld);
-  if (!getResource()->getSetupMatrix()) return nosetup;
+  if (!getResource()->getSetupMatrix())
+    return nosetup;
 
   // Current load has a setup
-  if (!ld->getSetup().empty() && current) return ld->getSetup();
+  if (!ld->getSetup().empty() && current)
+    return ld->getSetup();
 
   // Scan earlier setups
   for (Resource::loadplanlist::const_iterator i(this);
@@ -338,7 +340,7 @@ Object* LoadPlan::reader(
 PooledString LoadPlan::getSetupBefore() const
 {
   // Find the current setup on the resource
-  string cursetup = getResource()->getSetup();
+  PooledString cursetup = getResource()->getSetup();
   auto resldplniter = getResource()->getLoadPlans().begin(this);
   // First move beyond the point we are interested in...
   while (

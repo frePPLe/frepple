@@ -134,7 +134,7 @@ void Load::setOperation(Operation* o)
 }
 
 
-void Load::setSetup(const string& n)
+void Load::setSetupString(const string& n)
 {
   // Validate the input
   if (!n.empty() && getOperation())

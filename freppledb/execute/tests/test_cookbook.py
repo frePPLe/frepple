@@ -53,21 +53,26 @@ class cookbooktest(TransactionTestCase):
     self.client.logout()
 
   def assertOperationplans(self, *resultpath):
-    opplans = [
+    opplans = sorted(
+      [
       "%s,%s,%s,%s" % (i.name, i.startdate, i.enddate, round(i.quantity, 1))
       for i in freppledb.input.models.OperationPlan.objects \
         .order_by('name', 'startdate', 'quantity') \
         .only('name', 'startdate', 'enddate', 'quantity')
-      ]
+      ],
+      key=lambda s: s.lower()
+      )
     row = 0
     maxrow = len(opplans)
     with open(os.path.join(*resultpath), 'r') as f:
       for line in f:
+        if not line.strip():
+          continue
         if row >= maxrow or opplans[row].strip() != line.strip():
           print("Got:")
           for i in opplans:
             print("  ", i.strip())
-          if row > len(opplans):
+          if row < maxrow:
             self.fail("Difference in expected results on line %s" % (row + 1))
           else:
             self.fail("Less output rows than expected")

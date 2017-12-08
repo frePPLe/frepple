@@ -245,7 +245,7 @@ class DetailReport(GridReport):
     if reportclass._attributes_added != 2:
       reportclass._attributes_added = 2
       # Adding custom operation attributes
-      for f in getAttributeFields(Operation, related_name_prefix="operation"):
+      for f in getAttributeFields(Operation, related_name_prefix="operationplan__operation"):
         f.editable = False
         reportclass.rows += (f,)
       # Adding custom resource attributes

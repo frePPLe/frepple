@@ -60,7 +60,9 @@ def getHTML(request):
   template = Template('''
     {% load i18n %}
     {% if perms.auth.run_db %}
-    <form class="form" role="form" method="post" action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
+    <form class="form" role="form" method="post"
+      onsubmit="return $('#loaddatafile').val() != ''"
+      action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
     <table>
       <tr>
         <td  style="padding: 0px 15px;">

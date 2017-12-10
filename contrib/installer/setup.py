@@ -36,7 +36,7 @@ packages = [# Required for django standalone deployment
             'rest_framework_bulk', 'rest_framework_filters', 'markdown',
             # Added to package a more complete python library with frePPLe
             'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
-            'poplib', 'imaplib', 'telnetlib', 'requests',
+            'poplib', 'imaplib', 'telnetlib',
             # Added for unicode and internationalization
             'encodings',
             # Added for cx_freeze binaries
@@ -55,6 +55,7 @@ import django_admin_bootstrapped
 import bootstrap3
 import rest_framework
 import pytz
+import requests
 from distutils.sysconfig import get_python_lib
 data_files = [
   ('freppleservice.py', 'freppleservice.py'),
@@ -63,7 +64,7 @@ data_files = [
   (os.path.join(get_python_lib(), 'win32', 'lib', 'win32serviceutil.py'), 'win32serviceutil.py'),
   (os.path.join(get_python_lib(), 'pythoncom.py'), 'pythoncom.py')
   ]
-for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework, pytz]:
+for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework, pytz, requests]:
    srcdir = mod.__path__[0]
    targetdir = os.path.join('custom', mod.__name__)
    root_path_length = len(srcdir) + 1

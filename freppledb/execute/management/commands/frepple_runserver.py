@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import socket
-from cherrypy.wsgiserver import CherryPyWSGIServer
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -53,6 +52,8 @@ class Command(BaseCommand):
 
 
   def handle(self, **options):
+    from cherrypy.wsgiserver import CherryPyWSGIServer
+
     # Determine the port number
     port = options['port']
 

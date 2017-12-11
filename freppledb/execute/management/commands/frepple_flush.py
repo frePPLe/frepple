@@ -275,9 +275,12 @@ class Command(BaseCommand):
       javascript = '''
         function checkChildren(id) {
           var m = id.substring(6,100);
-          $("#" + id.replace(".","\\.")).prop("checked",true);  // Jquery has issues with dots in identifiers
-          for (var child in models[m])
-            checkChildren("empty_" + models[m][child]);
+          var children = models[m];
+          var entities = $(".empty_entity[data-tables='data']");
+          entities = entities.filter(function(e){return children.indexOf(entities[e].defaultValue)>=0;});
+          entities.prop("checked",true);
+          for (var i = 0 ; i < entities.length ; i++)
+            checkChildren(entities[i].id);
         }
         $(".empty_all").click( function() {
           if ($(this).prop("name") === "alldata") {

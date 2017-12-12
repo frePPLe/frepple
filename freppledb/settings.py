@@ -165,6 +165,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.SessionStorage'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
+DATABASE_ROUTERS = ['freppledb.common.models.MultiDBRouter']
+
 # A list of strings representing the host/domain names the application can serve.
 # This is a security measure to prevent an attacker from poisoning caches and
 # password reset emails with links to malicious hosts by submitting requests

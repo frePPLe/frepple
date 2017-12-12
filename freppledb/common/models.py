@@ -175,6 +175,18 @@ class MultiDBManager(models.Manager):
       return super(MultiDBManager, self).get_queryset().using(DEFAULT_DB_ALIAS)
 
 
+class MultiDBRouter:
+  def db_for_read(self, model, **hints):
+    from freppledb.common.middleware import _thread_locals
+    req = getattr(_thread_locals, 'request', None)
+    return getattr(req, 'database', DEFAULT_DB_ALIAS)
+
+  def db_for_write(self, model, **hints):
+    from freppledb.common.middleware import _thread_locals
+    req = getattr(_thread_locals, 'request', None)
+    return getattr(req, 'database', DEFAULT_DB_ALIAS)
+
+
 class AuditModel(models.Model):
   '''
   This is an abstract base model.

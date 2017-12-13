@@ -73,6 +73,17 @@ void OperationPlan::setChanged(bool b)
 }
 
 
+void OperationPlan::restore(const OperationPlanState& x)
+{
+  getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
+  if (quantity != x.quantity) quantity = x.quantity;
+  assert(dates.getStart() == x.start || x.start != x.end);
+  assert(dates.getEnd() == x.end || x.start != x.end);
+  if (!SetupMatrix::empty())
+    scanSetupTimes();
+}
+
+
 Object* OperationPlan::createOperationPlan(
   const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
   )
@@ -1294,7 +1305,7 @@ void OperationPlan::updateSetupTime(bool report)
   Duration setup = oper->calculateSetupTime(this, n);
   if (setup)
   {
-    DateRange tmp = oper->calculateOperationTime(n, setup, false);
+    DateRange tmp = oper->calculateOperationTime(this, n, setup, false);
     n = tmp.getStart();
   }
   if (n != getStart())
@@ -1335,8 +1346,13 @@ void OperationPlan::update(bool propagatesetups)
   updateOperationplanList();
 
   // Update the setup time on all neighbouring operationplans
-  if (propagatesetups && !SetupMatrix::empty())
-    scanSetupTimes();
+  if (SetupMatrix::empty())
+    endOfSetup = dates.getStart();
+  else
+  {
+    if (propagatesetups)
+      scanSetupTimes();
+  }
 
   // Notify the owner operationplan
   if (owner)
@@ -1423,7 +1439,7 @@ bool OperationPlan::isExcess(bool strict) const
 Duration OperationPlan::getUnavailable() const
 {
   Duration x;
-  getOperation()->calculateOperationTime(dates.getStart(), dates.getEnd(), &x);
+  getOperation()->calculateOperationTime(this, dates.getStart(), dates.getEnd(), &x);
   return dates.getDuration() - x;
 }
 
@@ -1858,7 +1874,7 @@ Duration OperationPlan::getSetup() const
   {
     // Convert date difference back to active time 
     Duration actual;
-    getOperation()->calculateOperationTime(dates.getStart(), endOfSetup, &actual);
+    getOperation()->calculateOperationTime(this, dates.getStart(), endOfSetup, &actual);
     return actual;
   }
   else

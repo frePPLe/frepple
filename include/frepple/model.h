@@ -2702,9 +2702,10 @@ class Operation : public HasName<Operation>,
       * @param[out] actualduration This variable is updated with the actual
       *             amount of available time found.
       */
-    DateRange calculateOperationTime
-    (Date thedate, Duration duration, bool forward,
-     Duration* actualduration = nullptr) const;
+    DateRange calculateOperationTime(
+      const OperationPlan* opplan, Date thedate, Duration duration,
+      bool forward, Duration* actualduration = nullptr
+    ) const;
 
     /** Calculates the effective, available time between two dates.
       *
@@ -2718,8 +2719,9 @@ class Operation : public HasName<Operation>,
       * @param[out] actualduration This variable is updated with the actual
       *             amount of available time found.
       */
-    DateRange calculateOperationTime
-    (Date start, Date end, Duration* actualduration = nullptr) const;
+    DateRange calculateOperationTime(
+      const OperationPlan* opplan, Date start, Date end, Duration* actualduration = nullptr
+    ) const;
 
     /** This method stores ALL logic the operation needs to compute the
       * correct relationship between the quantity, startdate and enddate
@@ -2989,8 +2991,10 @@ class Operation : public HasName<Operation>,
     /** Auxilary method to initialize an vector of availability calendar
       * iterators related to an operation.
       */
-    void collectCalendars(vector<Calendar::EventIterator>&, Date) const;
-
+    void collectCalendars(
+      vector<Calendar::EventIterator>&, Date, const OperationPlan*, bool forward = true
+    ) const;
+    
     virtual void solve(Solver &s, void* v = nullptr) const
     {
       s.solve(this,v);
@@ -3714,15 +3718,6 @@ class OperationRouting : public Operation
     /** Stores a double linked list of all step suboperations. */
     Operationlist steps;
 };
-
-
-inline void OperationPlan::restore(const OperationPlanState& x)
-{
-  getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
-  if (quantity != x.quantity) quantity = x.quantity;
-  assert(dates.getStart() == x.start || x.start!=x.end);
-  assert(dates.getEnd() == x.end || x.start!=x.end);
-}
 
 
 /** This type defines what mode used to search the alternates. */
@@ -10240,7 +10235,7 @@ class OperationPlan::InterruptionIterator : public Object
     {
       if (!opplan || !opplan->getOperation())
         throw LogicException("Can't initialize an iterator over an uninitialized operationplan");
-      opplan->getOperation()->collectCalendars(cals, opplan->getStart());
+      opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
       curdate = opplan->getStart();
       initType(metadata);
     }

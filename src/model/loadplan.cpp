@@ -187,6 +187,10 @@ void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup)
     else break;
   }
 
+  // The new resource may have a different availability calendar,
+  // and we need to make sure to respect it.
+  oper->setStart(oper->getStart());
+
   // Update the setup time
   if (updatesetup)
     oper->updateSetupTime();

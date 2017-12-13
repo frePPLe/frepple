@@ -131,7 +131,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
       tp = leadtime;
     if (data->getSolver()->isFenceConstrained())
       st += fence;
-    DateRange dr = oper->calculateOperationTime(st, tp, true);
+    DateRange dr = oper->calculateOperationTime(nullptr, st, tp, true);
     if (earliest_next < dr.getEnd())
       earliest_next = dr.getEnd();
   }

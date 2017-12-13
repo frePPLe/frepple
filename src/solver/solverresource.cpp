@@ -536,6 +536,7 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           {
             // The load isn't effective any longer, and our problem is solved
             newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
+              data->state->q_operationplan, 
               data->state->q_loadplan->getLoad()->getEffective().getStart(), Duration(1L), false
             );
             break;
@@ -551,7 +552,7 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           {
             // Find a suitable loadplan date in this bucket
             newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-              bucketEnd, Duration(1L), false
+              data->state->q_operationplan, bucketEnd, Duration(1L), false
               );
             // Move to the start of the bucket
             while (cur!=res->getLoadPlans().end() && cur->getEventType() != 2) --cur;
@@ -631,7 +632,7 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
           // Find a suitable start date in this bucket
           Duration tmp;
           DateRange newStart = data->state->q_operationplan->getOperation()->calculateOperationTime(
-            prevStart, Duration(1L), true, &tmp
+            data->state->q_operationplan, prevStart, Duration(1L), true, &tmp
           );
           if (newStart.getStart() < cur->getDate())
           {

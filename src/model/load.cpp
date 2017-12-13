@@ -309,7 +309,7 @@ Date LoadBucketizedFromEnd::getLoadplanDate(const LoadPlan* lp) const
   else
   {
     DateRange d = lp->getOperation()->calculateOperationTime(
-      tmp.getEnd(), offset, false
+      lp->getOperationPlan(), tmp.getEnd(), offset, false
     );
     return d.getStart() > tmp.getStart() ? d.getStart() : tmp.getStart();
   }
@@ -324,7 +324,7 @@ Date LoadBucketizedFromStart::getLoadplanDate(const LoadPlan* lp) const
   else
   {
     DateRange d = lp->getOperation()->calculateOperationTime(
-      tmp.getStart(), offset, true
+      lp->getOperationPlan(), tmp.getStart(), offset, true
       );
     return d.getEnd() > tmp.getEnd() ? tmp.getEnd() : d.getEnd();
   }
@@ -341,7 +341,7 @@ Date LoadBucketizedPercentage::getLoadplanDate(const LoadPlan* lp) const
   else
   {
     DateRange d = lp->getOperation()->calculateOperationTime(
-      tmp.getStart(),
+      lp->getOperationPlan(), tmp.getStart(),
       Duration(static_cast<long>(static_cast<long>(tmp.getDuration()) * offset / 100.0)),
       true
       );
@@ -387,7 +387,7 @@ Date LoadBucketizedFromEnd::getOperationPlanDate(const LoadPlan* lp, Date ldplan
   // TODO Ignores effective range of the load
 
   DateRange d = lp->getOperation()->calculateOperationTime(
-    ldplandate, offset, true
+    lp->getOperationPlan(), ldplandate, offset, true
     );
   OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
     lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
@@ -417,7 +417,7 @@ Date LoadBucketizedFromStart::getOperationPlanDate(const LoadPlan* lp, Date ldpl
   // TODO Ignores effective range of the load
 
   DateRange d = lp->getOperation()->calculateOperationTime(
-    ldplandate, offset, false
+    lp->getOperationPlan(), ldplandate, offset, false
     );
   OperationPlanState tmp = lp->getOperation()->setOperationPlanParameters(
     lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
@@ -448,20 +448,24 @@ Date LoadBucketizedPercentage::getOperationPlanDate(const LoadPlan* lp, Date ldp
   // Measure how long the operation really takes in effective time
   Duration actualduration;
   const DateRange& tmp = lp->getOperationPlan()->getDates();
-  lp->getOperation()->calculateOperationTime(tmp.getStart(), tmp.getEnd(), &actualduration);
+  lp->getOperation()->calculateOperationTime(
+    lp->getOperationPlan(), tmp.getStart(), tmp.getEnd(), &actualduration
+    );
   
   // Compute offset
   if (start)
   {
     DateRange d = lp->getOperation()->calculateOperationTime(
-      ldplandate, Duration(static_cast<long>(static_cast<long>(actualduration) * offset / 100.0)), false
+      lp->getOperationPlan(), ldplandate, 
+      Duration(static_cast<long>(static_cast<long>(actualduration) * offset / 100.0)), false
       );
     return d.getStart();
   }
   else
   {
     DateRange d = lp->getOperation()->calculateOperationTime(
-      ldplandate, Duration(static_cast<long>(static_cast<long>(actualduration) * (100.0 - offset) / 100.0)), true
+      lp->getOperationPlan(), ldplandate, 
+      Duration(static_cast<long>(static_cast<long>(actualduration) * (100.0 - offset) / 100.0)), true
       );
     return d.getEnd();
   }

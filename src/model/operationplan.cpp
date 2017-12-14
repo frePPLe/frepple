@@ -1243,7 +1243,7 @@ void OperationPlan::scanSetupTimes()
   {
     if (ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
       // Not a starting loadplan or there is no setup on this loadplan
-      ldplan->getResource()->updateSetupTime();
+      ldplan->getResource()->updateSetupTime(this);
   }
 
   // TODO We can do much faster than the above loop: where we reconsider all loadplans on a 

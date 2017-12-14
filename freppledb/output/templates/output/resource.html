@@ -106,7 +106,7 @@ function drawGraphs(jsondata)
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
       .on("click", function(d) {
-          if (d3.event.defaultPrevented || d['load'] == 0) return;
+          if (d3.event.defaultPrevented || d['load'] + d['setup'] == 0) return;
           d3.select("#tooltip").style('display', 'none');
 
           window.location = url_prefix

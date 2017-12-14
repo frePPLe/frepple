@@ -232,12 +232,18 @@ class DetailReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, args, kwargs):
     if args and args[0]:
-      base = OperationPlanResource.objects.filter(resource__exact=args[0])
+      try:
+        res = Resource.objects.using(request.database).get(name__exact=args[0])
+        base = OperationPlanResource.objects.filter(resource__lft__gte=res.lft, resource__rght__lte=res.rght)
+      except OperationPlanResource.DoesNotExist:
+        base = OperationPlanResource.objects.filter(resource__exact=args[0])
     else:
       base = OperationPlanResource.objects
     return base.select_related().extra(select={
       'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(plan->'pegging') order by key desc) peg)",
-      'opplan_duration': "(operationplan.enddate - operationplan.startdate)"
+      'opplan_duration': "(operationplan.enddate - operationplan.startdate)",
+      'setup_end': "(operationplan.plan->>'setupend')",
+      'setup_duration': "(operationplan.plan->>'setup')"
       })
 
   @classmethod
@@ -304,6 +310,8 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('setup', title=_('setup'), editable=False, initially_hidden=True),
+    GridFieldDateTime('setup_end', title=_('setup end date'), editable=False, initially_hidden=True),
+    GridFieldDuration('setup_duration', title=_('setup duration'), editable=False, initially_hidden=True),
     # Optional fields referencing the item
     GridFieldText(
       'operationplan__operation__item__description', initially_hidden=True, editable=False,

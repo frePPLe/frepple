@@ -345,7 +345,6 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : bucketiterator(
     i->setup_loadplan = nullptr;
     i->prev_date = i->cur_date;
     i->cur_size = 0.0;
-    i->cur_setup = 0.0;
     i->cur_load = 0.0;
 
     if (i->bucketized)
@@ -436,7 +435,6 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i, Date till)
       {
         bucket_available += i->cur_size * timedelta / 3600;
         bucket_load += i->cur_load * timedelta / 3600;
-        bucket_setup += i->cur_setup * timedelta / 3600;
       }
       else
         bucket_unavailable += i->cur_size * timedelta / 3600;
@@ -465,7 +463,6 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i, Date till)
     {
       bucket_available += i->cur_size * timedelta / 3600;
       bucket_load += i->cur_load * timedelta / 3600;
-      bucket_setup += i->cur_setup * timedelta / 3600;
     }
     else
       bucket_unavailable += i->cur_size * timedelta / 3600;
@@ -476,7 +473,6 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i, Date till)
     timedelta = till - i->prev_date;
     bucket_available += i->cur_size * timedelta / 3600;
     bucket_load += i->cur_load  * timedelta / 3600;
-    bucket_setup += i->cur_setup * timedelta / 3600;
   }
   // Remember till which date we already have reported
   i->prev_date = till;
@@ -498,7 +494,7 @@ PyObject* Resource::PlanIterator::iternext()
   end_date = PyIter_Next(bucketiterator);
   if (!end_date)
     return nullptr;
-  Date cpp_start_date = PythonData(end_date).getDate();
+  Date cpp_start_date = PythonData(start_date).getDate();
   Date cpp_end_date = PythonData(end_date).getDate();
 
   for (auto i = res_list.begin(); i != res_list.end(); ++i)
@@ -569,6 +565,21 @@ PyObject* Resource::PlanIterator::iternext()
       // Measure from the previous event till the end of the bucket
       update(&*i, i->cur_date);
     }
+
+    // Measure setup
+    if (i->res->getSetupMatrix())
+    {
+      DateRange bckt(cpp_start_date, cpp_end_date);
+      for (auto j = i->res->getLoadPlans().begin(); j != i->res->getLoadPlans().end(); ++j)
+      {
+        auto tmp = j->getOperationPlan();
+        if (tmp && j->getQuantity() < 0)
+        {          
+          auto stp = DateRange(tmp->getStart(), tmp->getSetupEnd());
+          bucket_setup -= static_cast<long>(bckt.overlap(stp)) * j->getQuantity();
+        }
+      }
+    }
   }
 
   // Skip empty buckets
@@ -576,14 +587,18 @@ PyObject* Resource::PlanIterator::iternext()
     return iternext();
 
   // Return the result
-  return Py_BuildValue("{s:O,s:O,s:d,s:d,s:d,s:d,s:d}",
+  bucket_setup /= 3600.0;
+  bucket_load -= bucket_setup;
+  return Py_BuildValue(
+    "{s:O,s:O,s:d,s:d,s:d,s:d,s:d}",
     "start", start_date,
     "end", end_date,
     "available", bucket_available,
     "load", bucket_load,
     "unavailable", bucket_unavailable,
     "setup", bucket_setup,
-    "free", bucket_available - bucket_load - bucket_setup);
+    "free", bucket_available - bucket_load - bucket_setup
+    );
 }
 
 
@@ -647,11 +662,11 @@ PooledString Resource::getSetupAt(Date d, bool inclusive) const
 }
 
 
-void Resource::updateSetupTime() const
+void Resource::updateSetupTime(OperationPlan* opplan) const
 {
   if (setupmatrix)
     for (auto qq = getLoadPlans().begin(); qq != getLoadPlans().end(); ++qq)
-      if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+      if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && qq->getOperationPlan() != opplan)
         qq->getOperationPlan()->updateSetupTime();
 }
 

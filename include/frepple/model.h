@@ -2424,6 +2424,10 @@ class OperationPlan
 
     /** Update the setup time on all neighbouring operationplans.
       *
+      * This method leaves the setup end date constant, which also
+      * keeps all material production and consumption at their original
+      * dates. The resource loading can be adjusted however.
+      *
       * Only intended for internal use by update().
       */
     void scanSetupTimes();
@@ -6648,7 +6652,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual void updateProblems();
 
     /** Update the setup time of all operationplans on the resource. */
-    void updateSetupTime() const;
+    void updateSetupTime(OperationPlan* = nullptr) const;
 
     void setHidden(bool b)
     {
@@ -6819,7 +6823,6 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator>
       Date cur_date;
       Date prev_date;
       double cur_size;
-      double cur_setup;
       double cur_load;
       bool prev_value;
       bool bucketized;

@@ -1166,7 +1166,8 @@ class ManufacturingOrderList(GridReport):
       'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
       'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
       'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
-      'setuptime': "operationplan.plan->'setup'",
+      'setup_duration': "(operationplan.plan->'setup')",
+      'setup_end': "(operationplan.plan->>'setupend')",
     })
 
 
@@ -1207,7 +1208,8 @@ class ManufacturingOrderList(GridReport):
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True),
     GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
-    GridFieldDuration('setuptime', title=_('setup time'), initially_hidden=True),
+    GridFieldDuration('setup_duration', title=_('setup time'), initially_hidden=True),
+    GridFieldDateTime('setup_end', title=_('setup end date'), initially_hidden=True),
     )
 
   if settings.ERP_CONNECTOR:

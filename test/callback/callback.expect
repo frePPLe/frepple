@@ -13,7 +13,6 @@ Erase the model:
   Operation 'delivery end item' receives signal REMOVE
   OperationFixedTime 'make end item' receives signal REMOVE
   Operation 'make end item' receives signal REMOVE
-  Operation 'setup operation' receives signal REMOVE
   Demand 'order 1' receives signal REMOVE
   BufferDefault 'end item @ loc' receives signal REMOVE
   Buffer 'end item @ loc' receives signal REMOVE

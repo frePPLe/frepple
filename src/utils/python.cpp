@@ -485,7 +485,7 @@ Date PythonData::getDate() const
 {
   PyDateTime_IMPORT;
   if (PyDateTime_Check(obj))
-    return Date(
+    return DateDetail(
         PyDateTime_GET_YEAR(obj),
         PyDateTime_GET_MONTH(obj),
         PyDateTime_GET_DAY(obj),
@@ -494,7 +494,7 @@ Date PythonData::getDate() const
         PyDateTime_DATE_GET_SECOND(obj)
         );
   else if (PyDate_Check(obj))
-    return Date(
+    return DateDetail(
         PyDateTime_GET_YEAR(obj),
         PyDateTime_GET_MONTH(obj),
         PyDateTime_GET_DAY(obj)

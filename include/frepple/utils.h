@@ -226,6 +226,7 @@ template<class T, class U> class PythonIterator;
 class DataValueDict;
 class MetaClass;
 class CommandManager;
+class DateDetail;
 template<class T> class MetaFieldDate;
 template<class T> class MetaFieldDouble;
 template<class T> class MetaFieldBool;
@@ -801,7 +802,8 @@ inline ostream & operator << (ostream & os, const Duration & t)
   * one second. */
 class Date
 {
-    friend ostream& operator << (ostream &, const Date &);
+  friend class DateDetail;
+  friend ostream& operator << (ostream &, const Date &);
   private:
     /** This string is a format string to be used to convert a date to and
       * from a string format. The formats codes that are allowed are the
@@ -852,44 +854,6 @@ class Date
     }
 
   public:
-    /** A utility function that uses the C function localtime to compute the
-      * details of the current time: day of the week, day of the month,
-      * day of the year, hour, minutes, seconds
-      */
-    inline void getInfo(struct tm* tm_struct) const
-    {
-      // The standard library function localtime() is not re-entrant: the same
-      // static structure is used for all calls. In a multi-threaded environment
-      // the function is not to be used.
-      #ifdef HAVE_LOCALTIME_R
-        // The POSIX standard defines a re-entrant version of the function.
-        localtime_r(&lval, tm_struct);
-      #elif defined(WIN32)
-        // Microsoft uses another function name with, of course, a different
-        // name and a different order of arguments.
-        localtime_s(tm_struct, &lval);
-      #else
-        #error A multi-threading safe localtime function is required
-      #endif
-    }
-
-    /** A function to add a number of seconds to this object regardless of DST,
-    *  meaning that we will increase/decrease by one hour if we pass the DST
-    */
-    void addSeconds(int seconds) {
-      // Convert the date to a tm struct
-      struct tm datedetail;
-      getInfo(&datedetail);
-      int is_dst = datedetail.tm_isdst;
-      datedetail.tm_sec += seconds;
-      lval = mktime(&datedetail);
-      // mkime has updated the tm_isdst
-      if (!is_dst && datedetail.tm_isdst)
-        lval -= 3600;
-      else if (is_dst && !datedetail.tm_isdst)
-        lval += 3600;
-    }
-
     /** Constructor initialized with a long value. */
     Date(const time_t l) : lval(l)
     {
@@ -910,13 +874,6 @@ class Date
       parse(s, f);
       checkFinite(lval);
     }
-
-    /** Constructor with year, month and day as arguments. Hours, minutes
-      * and seconds can optionally be passed too.
-      */
-    Date(int year, int month, int day,
-        int hr=0, int min=0, int sec=0
-        );
 
     /** Comparison between dates. */
     bool operator < (const Date& b) const
@@ -1029,12 +986,7 @@ class Date
       * at least 30 characters. 30 characters should be sufficient for even
       * the most funky date format.
       */
-    size_t toCharBuffer(char* str) const
-    {
-      struct tm t;
-      getInfo(&t);
-      return strftime(str, 30, format.c_str(), &t);
-    }
+    size_t toCharBuffer(char* str) const;
 
     /** Return the seconds since the epoch, which is also the internal
       * representation of a date. */
@@ -1070,52 +1022,7 @@ class Date
       */
     static const Date infiniteFuture;
 
-    /** Return the number of seconds since january 1st. */
-    long getSecondsYear() const
-    {
-      struct tm t;
-      getInfo(&t);
-      return t.tm_yday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
-    }
-
-    /** Return the number of seconds since the start of the month. */
-    long getSecondsMonth() const
-    {
-      struct tm t;
-      getInfo(&t);
-      return (t.tm_mday-1) * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
-    }
-
-    /** Return the number of seconds since the start of the week.
-      * The week is starting on Sunday.
-      */
-    long getSecondsWeek() const
-    {
-      struct tm t;
-      getInfo(&t);
-      int result = t.tm_wday * 86400 + t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
-      assert(result >= 0 && result < 604800L);
-      return result;
-    }
-
-    /** Return the number of seconds since the start of the day. */
-    long getSecondsDay() const
-    {
-      struct tm t;
-      getInfo(&t);
-      int result = t.tm_sec + t.tm_min * 60 + t.tm_hour * 3600;
-      assert(result >= 0 && result < 86400L);
-      return result;
-    }
-
-    string toString(const char* fmt)
-    {
-      struct tm t;
-      char str[30];
-      getInfo(&t);
-      strftime(str, 30, fmt, &t);
-      return str;
-    }
+    string toString(const char* fmt);
 
 #ifndef HAVE_STRPTIME
   private:
@@ -1124,8 +1031,236 @@ class Date
 };
 
 
+/** Auxilary class that allows calculations on dates. 
+  *
+  * This class is nothing but a wrapper around a standard "struct tm".
+  * Quoting from the C standard:
+  *    The mktime function converts the broken-down time, expressed as local time, 
+  *    in the structure pointed to by timeptr into a calendar time value with the 
+  *    same encoding as that of the values returned by the time function. The original
+  *    values of the tm_wday and tm_yday components of the structure are ignored, and
+  *    the original values of the other components are not restricted to the ranges
+  *    indicated above. On successful completion, the values of the tm_wday and 
+  *    tm_yday components of the structure are set appropriately, and the other
+  *    components are set to represent the specified calendar time, but with their
+  *    values forced to the ranges indicated above; the final value of tm_mday is
+  *    not set until tm_mon and tm_year are determined.
+  */
+class DateDetail
+{
+  friend ostream& operator << (ostream &, const DateDetail &);
+  private:
+    struct tm time_info;
+    bool dirty = false;
+
+  public:
+    /** Constructor from a date. */
+    inline DateDetail(const Date& d)
+    {
+      // The standard library function localtime() is not re-entrant: the same
+      // static structure is used for all calls. In a multi-threaded environment
+      // the function is not to be used.
+      #ifdef HAVE_LOCALTIME_R
+      // The POSIX standard defines a re-entrant version of the function.
+      localtime_r(&(d.lval), &time_info);
+      #elif defined(WIN32)
+      // Microsoft uses another function name with, of course, a different
+      // name and a different order of arguments.
+      localtime_s(&time_info, &(d.lval));
+      #else
+      #error A multi-threading safe localtime function is required
+      #endif
+    }
+
+    inline DateDetail(const Date* d)
+    {
+      // The standard library function localtime() is not re-entrant: the same
+      // static structure is used for all calls. In a multi-threaded environment
+      // the function is not to be used.
+      #ifdef HAVE_LOCALTIME_R
+      // The POSIX standard defines a re-entrant version of the function.
+      localtime_r(&(d->lval), &time_info);
+      #elif defined(WIN32)
+      // Microsoft uses another function name with, of course, a different
+      // name and a different order of arguments.
+      localtime_s(&time_info, &(d->lval));
+      #else
+      #error A multi-threading safe localtime function is required
+      #endif
+    }
+
+    /** Convert a DateDetail object into a Date object. */
+    inline operator Date()
+    {
+      return Date(mktime(&time_info));
+    }
+
+    /** Constructor with year, month and day as arguments. Hours, minutes
+      * and seconds can optionally be passed too. */
+    inline DateDetail(
+      int year, int month, int day, int hr = 0, int min = 0, int sec = 0
+      ) : dirty(true)
+    {
+      time_info.tm_isdst = -1;
+      time_info.tm_year = year - 1900;
+      time_info.tm_mon = month - 1;
+      time_info.tm_mday = day;
+      time_info.tm_hour = hr;
+      time_info.tm_min = min;
+      time_info.tm_sec = sec;
+    }
+
+    inline size_t toCharBuffer(char* str) const
+    {
+      if (dirty) normalize();
+      return strftime(str, 30, Date::format.c_str(), &time_info);
+    }
+
+    string toString(const char* fmt) const
+    {
+      char str[30];
+      strftime(str, 30, fmt, &time_info);
+      return str;
+    }
+
+    /** Converts the date to a string. The format can be controlled by the
+      * setFormat() function. */
+    operator string() const
+    {
+      char str[30];
+      toCharBuffer(str);
+      return string(str);
+    }
+
+    /** After calculations the values can go out of their
+      * expected ranges. This method will bring them back within
+      * these limits.
+      */
+    void normalize() const
+    {
+      mktime(const_cast<struct tm*>(&time_info));
+      const_cast<DateDetail*>(this)->dirty = false;
+    }
+
+    /** Return the weekday: 0 = sunday, 6 = saturday */
+    int getWeekDay() const
+    {
+      if (dirty) normalize();
+      return time_info.tm_wday;
+    }
+
+    /** Return the number of seconds since january 1st. */
+    long getSecondsYear() const
+    {
+      if (dirty) normalize();
+      return time_info.tm_yday * 86400 
+        + time_info.tm_sec 
+        + time_info.tm_min * 60 
+        + time_info.tm_hour * 3600;
+    }
+
+    /** Return the number of seconds since the start of the week.
+      * The week is starting on Sunday.
+      */
+    long getSecondsWeek() const
+    {
+      if (dirty) normalize();
+      return time_info.tm_wday * 86400 
+        + time_info.tm_sec 
+        + time_info.tm_min * 60 
+        + time_info.tm_hour * 3600;
+    }
+
+    /** Return the number of seconds since the start of the day. 
+      * The return value is constructed in a DST-insensitive way.
+      */
+    long getSecondsDay() const
+    {
+      if (dirty) normalize();
+      return time_info.tm_sec 
+        + time_info.tm_min * 60
+        + time_info.tm_hour * 3600;
+    }
+
+    /** Go back till midnight of the current day. */
+    void roundDownDay()
+    {
+      if (dirty) normalize();
+      time_info.tm_sec = 0;
+      time_info.tm_min = 0;
+      time_info.tm_hour = 0;
+      dirty = true;
+    }
+
+    /** Go back till midnight of the next day. */
+    void roundUpDay()
+    {
+      if (dirty) normalize();
+      time_info.tm_sec = 0;
+      time_info.tm_min = 0;
+      time_info.tm_hour = 0;
+      time_info.tm_mday += 1;
+      dirty = true;
+    }
+
+    /** Change the offset within the day. 
+      * The argument is interpreted in a DST-insenstive way.
+      */
+    void setSecondsDay(int sec)
+    {
+      if (dirty) normalize();
+      time_info.tm_hour = sec / 3600;
+      time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
+      time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
+      dirty = true;
+    }
+
+    /** Add a number of days. */
+    void addDays(int days)
+    {
+      time_info.tm_mday += days;
+      dirty = true;
+    }
+
+    /** Add a number of days, and set the seconds in that day. 
+      * The argument offset within the day is interpreted in a DST-insenstive way.
+      */
+    void addDays(int days, int sec)
+    {
+      if (dirty) normalize();
+      time_info.tm_mday += days;
+      time_info.tm_hour = sec / 3600;
+      time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
+      time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
+      dirty = true;
+    }
+};
+
+
+inline size_t Date::toCharBuffer(char* str) const
+{
+  return DateDetail(*this).toCharBuffer(str);
+}
+
+
+inline string Date::toString(const char* fmt)
+{
+  DateDetail tmp(this);
+  return tmp.toString(fmt);
+}
+
+
 /** Prints a date to the outputstream. */
 inline ostream & operator << (ostream & os, const Date & d)
+{
+  char str[30];
+  d.toCharBuffer(str);
+  return os << str;
+}
+
+
+/** Prints a datedetail to the outputstream. */
+inline ostream & operator << (ostream & os, const DateDetail & d)
 {
   char str[30];
   d.toCharBuffer(str);

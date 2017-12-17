@@ -950,8 +950,6 @@ class SolverMRP : public Solver
           return mgr;
         }
 
-        virtual const MetaClass& getType() const {return *SolverMRP::metadata;}
-
         bool getVerbose() const
         {
           throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");

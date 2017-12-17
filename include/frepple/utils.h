@@ -90,6 +90,9 @@ typedef int Py_ssize_t;
 #include <float.h>
 #include <mutex>
 #include <condition_variable>
+#ifdef __CYGWIN__
+#include <strings.h>
+#endif
 #endif
 
 // We want to use singly linked lists, but these are not part of the C++
@@ -141,6 +144,7 @@ using namespace std;
 
 // Header for multithreading
 #include <thread>
+#include <chrono>
 #if defined(HAVE_PTHREAD_H)
 #include <pthread.h>
 #elif defined(WIN32)
@@ -3332,11 +3336,7 @@ class Environment
     /** Sleep for a number of milliseconds. */
     static void sleep(unsigned int m)
     {
-#ifdef WIN32
-      Sleep(m); // milliseconds
-#else
-      usleep(m * 1000); // microseconds
-#endif
+      this_thread::sleep_for(chrono::milliseconds(m));
     }
 };
 

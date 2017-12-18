@@ -28,26 +28,29 @@ int main (int argc, char *argv[])
 
   Date d1;
   d1.parse("2009-02-01T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  DateDetail d1_detail(d1);
 
   Date d2;
   d2.parse("2009-02-03T01:02:03", "%Y-%m-%dT%H:%M:%S");
+  DateDetail d2_detail(d2);
 
   Date d3;
   // The date d3 is chosen such that daylight saving time
   // is in effect at that date.
   d3.parse("2009-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
+  DateDetail d3_detail(d3);
 
   Duration t1 = 10;
 
-  logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1.getSecondsDay()
-     << " " << d1.getSecondsWeek() << " " << d1.getSecondsMonth()
-     << " " << d1.getSecondsYear() << endl;
-  logger << "d2 \"2009-02-03T01:02:03\" => " << d2 << " " << d2.getSecondsDay()
-     << " " << d2.getSecondsWeek() << " " << d2.getSecondsMonth()
-     << " " << d2.getSecondsYear() << endl;
-  logger << "d3 \"2009-06-01T00:00:00\" => " << d3 << " " << d3.getSecondsDay()
-     << " " << d3.getSecondsWeek() << " " << d3.getSecondsMonth()
-     << " " << d3.getSecondsYear() << endl;
+  logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1_detail.getSecondsDay()
+     << " " << d1_detail.getSecondsWeek() << " " << d1_detail.getSecondsMonth()
+     << " " << d1_detail.getSecondsYear() << endl;
+  logger << "d2 \"2009-02-03T01:02:03\" => " << d2 << " " << d2_detail.getSecondsDay()
+     << " " << d2_detail.getSecondsWeek() << " " << d2_detail.getSecondsMonth()
+     << " " << d2_detail.getSecondsYear() << endl;
+  logger << "d3 \"2009-06-01T00:00:00\" => " << d3 << " " << d3_detail.getSecondsDay()
+     << " " << d3_detail.getSecondsWeek() << " " << d3_detail.getSecondsMonth()
+     << " " << d3_detail.getSecondsYear() << endl;
   logger << "t1: " << t1 << endl;
 
   Duration t2 = d1 - d2;

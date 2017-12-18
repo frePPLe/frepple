@@ -1175,6 +1175,16 @@ class DateDetail
       return time_info.tm_wday;
     }
 
+    /** Return the number of seconds since the start of the month. */
+    long getSecondsMonth() const
+    {
+      if (val < 0) normalize();
+      return (time_info.tm_mday - 1) * 86400
+        + time_info.tm_sec
+        + time_info.tm_min * 60
+        + time_info.tm_hour * 3600;
+    }
+
     /** Return the number of seconds since january 1st. */
     long getSecondsYear() const
     {

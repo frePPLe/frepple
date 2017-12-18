@@ -1055,11 +1055,11 @@ class DateDetail
   friend ostream& operator << (ostream &, const DateDetail &);
   private:
     struct tm time_info;
-    bool dirty = false;
+    time_t val;
 
   public:
     /** Constructor from a date. */
-    inline DateDetail(const Date& d)
+    inline DateDetail(const Date& d) : val(d.lval)
     {
       // The standard library function localtime() is not re-entrant: the same
       // static structure is used for all calls. In a multi-threaded environment
@@ -1070,13 +1070,13 @@ class DateDetail
       #elif defined(WIN32)
       // Microsoft uses another function name with, of course, a different
       // name and a different order of arguments.
-      localtime_s(&time_info, &(d.lval));
+      localtime_s(&time_info, &val);
       #else
       #error A multi-threading safe localtime function is required
       #endif
     }
 
-    inline DateDetail(const Date* d)
+    inline DateDetail(const Date* d) : val(d->lval)
     {
       // The standard library function localtime() is not re-entrant: the same
       // static structure is used for all calls. In a multi-threaded environment
@@ -1087,7 +1087,7 @@ class DateDetail
       #elif defined(WIN32)
       // Microsoft uses another function name with, of course, a different
       // name and a different order of arguments.
-      localtime_s(&time_info, &(d->lval));
+      localtime_s(&time_info, &val);
       #else
       #error A multi-threading safe localtime function is required
       #endif
@@ -1096,14 +1096,15 @@ class DateDetail
     /** Convert a DateDetail object into a Date object. */
     inline operator Date()
     {
-      return Date(mktime(&time_info));
+      if (val < 0) normalize();
+      return Date(val);
     }
 
     /** Constructor with year, month and day as arguments. Hours, minutes
       * and seconds can optionally be passed too. */
     inline DateDetail(
       int year, int month, int day, int hr = 0, int min = 0, int sec = 0
-      ) : dirty(true)
+      ) : val(-1)
     {
       time_info.tm_isdst = -1;
       time_info.tm_year = year - 1900;
@@ -1116,12 +1117,13 @@ class DateDetail
 
     inline size_t toCharBuffer(char* str) const
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       return strftime(str, 30, Date::format.c_str(), &time_info);
     }
 
     string toString(const char* fmt) const
     {
+      if (val < 0) normalize();
       char str[30];
       strftime(str, 30, fmt, &time_info);
       return str;
@@ -1142,21 +1144,20 @@ class DateDetail
       */
     void normalize() const
     {
-      mktime(const_cast<struct tm*>(&time_info));
-      const_cast<DateDetail*>(this)->dirty = false;
+      const_cast<DateDetail*>(this)->val = mktime(const_cast<struct tm*>(&time_info));
     }
 
     /** Return the weekday: 0 = sunday, 6 = saturday */
     int getWeekDay() const
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       return time_info.tm_wday;
     }
 
     /** Return the number of seconds since january 1st. */
     long getSecondsYear() const
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       return time_info.tm_yday * 86400 
         + time_info.tm_sec 
         + time_info.tm_min * 60 
@@ -1168,7 +1169,7 @@ class DateDetail
       */
     long getSecondsWeek() const
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       return time_info.tm_wday * 86400 
         + time_info.tm_sec 
         + time_info.tm_min * 60 
@@ -1180,7 +1181,7 @@ class DateDetail
       */
     long getSecondsDay() const
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       return time_info.tm_sec 
         + time_info.tm_min * 60
         + time_info.tm_hour * 3600;
@@ -1189,22 +1190,22 @@ class DateDetail
     /** Go back till midnight of the current day. */
     void roundDownDay()
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       time_info.tm_sec = 0;
       time_info.tm_min = 0;
       time_info.tm_hour = 0;
-      dirty = true;
+      val = -1;
     }
 
     /** Go back till midnight of the next day. */
     void roundUpDay()
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       time_info.tm_sec = 0;
       time_info.tm_min = 0;
       time_info.tm_hour = 0;
       time_info.tm_mday += 1;
-      dirty = true;
+      val = -1;
     }
 
     /** Change the offset within the day. 
@@ -1212,18 +1213,18 @@ class DateDetail
       */
     void setSecondsDay(int sec)
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       time_info.tm_hour = sec / 3600;
       time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
       time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
-      dirty = true;
+      val = -1;
     }
 
     /** Add a number of days. */
     void addDays(int days)
     {
       time_info.tm_mday += days;
-      dirty = true;
+      val = -1;
     }
 
     /** Add a number of days, and set the seconds in that day. 
@@ -1231,12 +1232,12 @@ class DateDetail
       */
     void addDays(int days, int sec)
     {
-      if (dirty) normalize();
+      if (val < 0) normalize();
       time_info.tm_mday += days;
       time_info.tm_hour = sec / 3600;
       time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
       time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
-      dirty = true;
+      val = -1;
     }
 };
 

@@ -60,7 +60,7 @@ void OperationPlan::updateProblems()
   }
   if (nextsubopplan
     && getEnd() > nextsubopplan->getStart()
-    && !nextsubopplan->getLocked()
+    && nextsubopplan->getProposed()
     && owner && owner->getOperation()->getType() != *OperationSplit::metadata
     )
     needsPrecedence = true;

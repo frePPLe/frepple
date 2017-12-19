@@ -1094,8 +1094,9 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast)
 
 void OperationPlan::setStart (Date d)
 {
-  // Locked opplans don't move
-  if (getLocked()) return;
+  // Confirmed opplans don't move
+  if (getConfirmed())
+    return;
 
   if (!lastsubopplan)
     // No sub operationplans
@@ -1124,7 +1125,8 @@ void OperationPlan::setStart (Date d)
 void OperationPlan::setEnd(Date d)
 {
   // Locked opplans don't move
-  if (getLocked()) return;
+  if (getConfirmed())
+    return;
 
   if (!lastsubopplan)
     // No sub operationplans
@@ -1371,7 +1373,8 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
     OperationPlan *tmp = opplan;
     opplan = opplan->next;
     // Note that the deletion of the operationplan also updates the opplan list
-    if (deleteLockedOpplans || !tmp->getLocked()) delete tmp;
+    if (deleteLockedOpplans || tmp->getProposed())
+      delete tmp;
   }
 }
 
@@ -1545,7 +1548,8 @@ void OperationPlan::setStatus(const string& s)
 
 void OperationPlan::freezeStatus(Date st, Date nd, double q)
 {
-  if (!getLocked()) return;
+  if (getProposed())
+    return;
   dates = DateRange(st, nd);
   quantity = q > 0 ? q : 0.0;
 }

@@ -108,7 +108,7 @@ void Demand::deleteOperationPlans
     // Find a candidate to delete
     OperationPlan *candidate = nullptr;
     for (OperationPlanList::iterator i = deli.begin(); i!=deli.end(); ++i)
-      if (deleteLocked || !(*i)->getLocked())
+      if (deleteLocked || (*i)->getProposed())
       {
         candidate = *i;
         break;

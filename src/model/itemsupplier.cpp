@@ -344,7 +344,7 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
           if (excess_min < 0)
             excess_min = 0;
         }
-        if (flpln->getQuantity() > 0 && !flpln->getOperationPlan()->getLocked() && (!candidate || candidate->getDate() != flpln->getDate()))
+        if (flpln->getQuantity() > 0 && flpln->getOperationPlan()->getProposed() && (!candidate || candidate->getDate() != flpln->getDate()))
         {
           if (candidate
             && excess_min > ROUNDING_ERROR

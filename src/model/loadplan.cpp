@@ -223,16 +223,12 @@ string LoadPlan::getStatus() const
 
 void LoadPlan::setStatus(const string& s)
 {
-  if (!getOperationPlan()->getLocked() && s == "confirmed")
+  if (getOperationPlan()->getProposed() && s == "confirmed")
     throw DataException("OperationPlanResource locked while OperationPlan is not");
   if (s == "confirmed")
-  {
     flags |= STATUS_CONFIRMED;
-  }
   else if (s == "proposed")
-  {
     flags &= ~STATUS_CONFIRMED;
-  }
   else
     throw DataException("invalid operationplanresource status:" + s);
 }

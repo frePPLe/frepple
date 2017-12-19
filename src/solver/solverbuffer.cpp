@@ -130,7 +130,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
           const FlowPlan* batchcandidate = nullptr;
           if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
-          if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
+          if (!batchcandidate || batchcandidate->getOperationPlan()->getConfirmed())
             continue;
 
           // Store date and quantity of the candidate
@@ -238,7 +238,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
           const FlowPlan* batchcandidate = nullptr;
           if (batchiter->getEventType() == 1)
             batchcandidate = static_cast<const FlowPlan*>(&*batchiter);
-          if (!batchcandidate || batchcandidate->getOperationPlan()->getLocked())
+          if (!batchcandidate || batchcandidate->getOperationPlan()->getConfirmed())
             continue;
 
           // Store date and quantity of the candidate

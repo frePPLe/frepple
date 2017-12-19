@@ -1008,7 +1008,6 @@
       <xsd:element name="start" type="xsd:dateTime" />
       <xsd:element name="end" type="xsd:dateTime" />
       <xsd:element name="quantity" type="positiveDouble" />
-      <xsd:element name="locked" type="xsd:boolean" />  <!-- deprecated. Use status instead. -->
       <xsd:element name="status" type="xsd:normalizedString" />
       <xsd:element name="owner" type="operationplan" />
       <xsd:element name="criticality" type="xsd:double" />
@@ -1033,7 +1032,6 @@
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
     <xsd:attribute name="criticality" type="xsd:double" />
-    <xsd:attribute name="locked" type="xsd:boolean" /> <!-- deprecated. Use status instead. -->
     <xsd:attribute name="status" type="xsd:normalizedString" />
     <xsd:attribute name="consume_material" type="xsd:boolean" />
     <xsd:attribute name="consume_capacity" type="xsd:boolean" />

@@ -89,21 +89,19 @@ string FlowPlan::getStatus() const
     return "proposed";
 }
 
+
 void FlowPlan::setStatus(const string& s)
 {
-  if (!getOperationPlan()->getLocked() && s=="confirmed")
+  if (getOperationPlan()->getProposed() && s == "confirmed")
     throw DataException("OperationPlanMaterial locked while OperationPlan is not");
   if (s == "confirmed")
-  {
     flags |= STATUS_CONFIRMED;
-  }
   else if (s == "proposed")
-  {
     flags &= ~STATUS_CONFIRMED;
-  }
   else
     throw DataException("invalid operationplanmaterial status:" + s);
 }
+
 
 void FlowPlan::update()
 {

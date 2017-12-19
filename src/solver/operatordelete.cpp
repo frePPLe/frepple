@@ -112,7 +112,7 @@ void OperatorDelete::solve(OperationPlan* o, void* v)
   pushBuffers(o, true, false);
 
   // Delete the operationplan
-  if (!o->getLocked())
+  if (o->getProposed())
   {
     if (cmds)
       cmds->add(new CommandDeleteOperationPlan(o));
@@ -168,7 +168,7 @@ void OperatorDelete::solve(const Demand* d, void* v)
     OperationPlan *candidate = nullptr;
     const Demand::OperationPlanList& deli = d->getDelivery();
     for (Demand::OperationPlanList::const_iterator i = deli.begin(); i != deli.end(); ++i)
-      if (!(*i)->getLocked())
+      if ((*i)->getProposed())
       {
         candidate = *i;
         break;
@@ -265,7 +265,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         continue;
       }
       FlowPlan* fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
-      if (fp->getOperationPlan()->getLocked())
+      if (!fp->getOperationPlan()->getProposed())
       {
         // This consumer is locked
         --fiter2;
@@ -374,7 +374,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       if (fiter->getEventType() == 1)
         fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
       double cur_excess = b->getFlowPlans().getExcess(&*fiter);
-      if (!fp || fp->getOperationPlan()->getLocked() || cur_excess < ROUNDING_ERROR)
+      if (!fp || !fp->getOperationPlan()->getProposed() || cur_excess < ROUNDING_ERROR)
       {
         // No excess producer, or it's locked
         ++fiter;

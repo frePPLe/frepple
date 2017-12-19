@@ -246,7 +246,7 @@ PyObject* savePlan(PyObject* self, PyObject* args)
           << rr->getStart() << '\t'
           << rr->getEnd() << '\t'
           << rr->getQuantity()
-          << (rr->getLocked() ? "\tlocked" : "")
+          << (rr->getProposed() ? "" : "\tlocked")
           << endl;
     }
 
@@ -380,7 +380,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan
   if (!o) return;
 
   // Avoid deleting locked operationplans
-  if (o->getLocked())
+  if (!o->getProposed())
   {
     opplan = nullptr;
     throw DataException("Can't delete a locked operationplan");

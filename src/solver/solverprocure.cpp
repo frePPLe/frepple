@@ -39,6 +39,8 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
 
   // TODO Procurement solver doesn't consider working days of the supplier.
 
+  // TODO Procurement solver should first try to keep & resize the approved POs, and only then the proposed
+
   // Call the user exit
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
@@ -70,7 +72,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
     if (c->getQuantity() <= 0 || c->getEventType() != 1)
       continue;
     const OperationPlan *o = reinterpret_cast<const FlowPlan*>(&*c)->getOperationPlan();
-    if (o->getLocked())
+    if (o->getConfirmed())
       earliest_next = o->getEnd();
     else
     {
@@ -184,7 +186,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
         current_flowplan = static_cast<const FlowPlan*>(&*(cur++));
         if (current_flowplan->getQuantity() < 0)
           consumed -= current_flowplan->getQuantity();
-        else if (current_flowplan->getOperationPlan()->getLocked())
+        else if (current_flowplan->getOperationPlan()->getConfirmed())
           produced += current_flowplan->getQuantity();
       }
       // Loop to pick up the last consuming flowplan on the given date

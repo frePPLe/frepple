@@ -86,9 +86,9 @@ class AutoFenceOperation(PlanTask):
         if j.date > current_date + lead_time + cls.fence:
           break
         if (j.operationplan.status == 'confirmed' or j.operationplan.status == 'approved') \
-          and j.quantity > 0 \
-          and j.date > last_confirmed:
-            last_confirmed = j.date
+           and j.quantity > 0 \
+           and j.date > last_confirmed:
+          last_confirmed = j.date
       if last_confirmed >= current_date:
         if isinstance(buf.producing, frepple.operation_alternate):
           for suboper in buf.producing.suboperations:
@@ -103,8 +103,10 @@ class AutoFenceOperation(PlanTask):
             else:
               suboper.operation.fence = new_fence
             if cls.loglevel > 0:
-              logger.info("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
-                    % (suboper.operation.fence / 86400.0, suboper.operation.name, myleadtime / 86400.0))
+              logger.info(
+                "Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+                % (suboper.operation.fence / 86400.0, suboper.operation.name, myleadtime / 86400.0)
+                )
         else:
           # Found a confirmed operationplan within the defined window indeed
           myleadtime = buf.producing.decoupledLeadTime(100)
@@ -118,8 +120,10 @@ class AutoFenceOperation(PlanTask):
           else:
             buf.producing.fence = new_fence
           if cls.loglevel > 0:
-            logger.info("Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
-                  % (buf.producing.fence / 86400.0, buf.producing.name, myleadtime / 86400.0))
+            logger.info(
+              "Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
+              % (buf.producing.fence / 86400.0, buf.producing.name, myleadtime / 86400.0)
+              )
 
 
 @PlanTaskRegistry.register

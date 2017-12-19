@@ -1876,14 +1876,6 @@ class OperationPlan
     /** Return the list of problems of this operationplan. */
     inline OperationPlan::ProblemIterator getProblems() const;
 
-    /** Returns whether the operationplan is locked, ie the status is APPROVED
-      * or confirmed. A locked operationplan is never changed.
-      */
-    bool getLocked() const
-    {
-      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) != 0;
-    }
-
     bool getConfirmed() const
     {
       return (flags & STATUS_CONFIRMED) != 0;
@@ -1927,12 +1919,6 @@ class OperationPlan
       * allows to specify whether locked operationplans are to be deleted too.
       */
     static void deleteOperationPlans(Operation* o, bool deleteLocked=false);
-
-    /** Deprecated method. Use the setStatus method instead. */
-    inline void setLocked(bool b)
-    {
-      setConfirmed(b);
-    }
 
     /** Update the status to CONFIRMED, or back to PROPOSED. */
     virtual void setConfirmed(bool b);
@@ -2347,7 +2333,6 @@ class OperationPlan
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
-      m->addBoolField<Cls>(Tags::locked, &Cls::getLocked, &Cls::setLocked, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::proposed, &Cls::getProposed, &Cls::setProposed, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::confirmed, &Cls::getConfirmed, &Cls::setConfirmed, BOOL_FALSE, DONT_SERIALIZE);
@@ -8240,7 +8225,7 @@ inline LoadPlan::AlternateIterator LoadPlan::getAlternates() const
 
 inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
-  if (lp->getOperationPlan()->getLocked() && !lp->getOperationPlan()->getConsumeCapacity())
+  if (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
     // No capacity consumption required
     return 0.0;
   if (!lp->getOperationPlan()->getQuantity())

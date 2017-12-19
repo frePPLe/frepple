@@ -685,13 +685,15 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   bool execute, bool roundDown
   ) const
 {
-  // Invalid call to the function, or locked operationplan.
+  // Invalid call to the function
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for fixedtime operationplan");
-  if (opplan->getLocked())
+
+  // Confirmed operationplans are untouchable
+  if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
-  // Compute the start and end date.
+  // Compute the start and end date
   Duration production_duration;
   Duration setup_duration;
   DateRange production_dates;
@@ -805,7 +807,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!o->getRawIdentifier() && !o->getLocked())
+  if (!o->getRawIdentifier() && o->getProposed())
   {
     // Verify we load no resources of type "default".
     // It's ok to merge operationplans which load "infinite" or "buckets" resources.
@@ -819,7 +821,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
     if (y && y->getDates() == o->getDates()
-        && y->getDemand() == o->getDemand() && !y->getLocked() && y->getRawIdentifier()
+        && y->getDemand() == o->getDemand() && y->getProposed() && y->getRawIdentifier()
         && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       if (o->getOwner())
@@ -860,7 +862,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
       return false;
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates()
-        && x->getDemand() == o->getDemand() && !x->getLocked() && x->getRawIdentifier()
+        && x->getDemand() == o->getDemand() && x->getProposed() && x->getRawIdentifier()
         && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       if (o->getOwner())
@@ -908,7 +910,9 @@ OperationTimePer::setOperationPlanParameters(
   // Invalid call to the function.
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for timeper operationplan");
-  if (opplan->getLocked())
+
+  // Confirmed operationplans are untouchable
+  if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
   // Respect minimum and maximum size
@@ -1216,7 +1220,9 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   // Invalid call to the function
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for routing operationplan");
-  if (opplan->getLocked())
+
+  // Confirmed operationplans are untouchable
+  if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
   if (!opplan->lastsubopplan) // @todo replace with proper iterator
@@ -1345,7 +1351,9 @@ OperationAlternate::setOperationPlanParameters(
   // Invalid calls to this function
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for alternate operationplan");
-  if (opplan->getLocked())
+
+  // Confirmed operationplans are untouchable
+  if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
   OperationPlan *x = opplan->lastsubopplan;
@@ -1405,7 +1413,9 @@ OperationSplit::setOperationPlanParameters(
   // Invalid calls to this function
   if (!opplan || q<0)
     throw LogicException("Incorrect parameters for split operationplan");
-  if (opplan->getLocked())
+
+  // Confirmed operationplans are untouchable
+  if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
   // Blindly accept the parameters: only sizing constraints from the child
@@ -1653,10 +1663,10 @@ void OperationRouting::addSubOperationPlan
     // considers its status locked/unlocked and its order in the routing.
     OperationPlan* matchingUnlocked = nullptr;
     OperationPlan* prevsub = parent->firstsubopplan;
-    if (child->getLocked())
+    if (!child->getProposed())
     {
       // Advance till first already registered locked suboperationplan
-      while (prevsub && !prevsub->getLocked())
+      while (prevsub && prevsub->getProposed())
       {
         if (prevsub->getOperation() == child->getOperation())
           matchingUnlocked = prevsub;
@@ -1681,14 +1691,14 @@ void OperationRouting::addSubOperationPlan
     // the new suboperationplan.
     if (prevsub && prevsub->getOperation() == child->getOperation())
     {
-      if (prevsub->getLocked())
-        throw DataException("Can't replace locked routing suboperationplan");
+      if (!prevsub->getProposed())
+        throw DataException("Can't replace confirmed or approved routing suboperationplan");
       parent->eraseSubOperationPlan(prevsub);
       OperationPlan* tmp = prevsub->nextsubopplan;
       delete prevsub;
       prevsub = tmp;
     }
-    if (child->getLocked() && matchingUnlocked)
+    if (!child->getProposed() && matchingUnlocked)
     {
       // Adjust the unlocked part of the operationplan
       matchingUnlocked->quantity = parent->quantity - child->quantity;
@@ -1739,8 +1749,8 @@ double Operation::setOperationPlanQuantity
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
 
-  // Locked operationplans don't respect sizing constraints
-  if (oplan->getLocked())
+  // Confirmed and approved operationplans don't respect sizing constraints
+  if (!oplan->getProposed())
   {
     if (execute)
     {
@@ -1879,7 +1889,7 @@ double Operation::setOperationPlanQuantity
   // Apply the same size also to its unlocked children
   if (execute && oplan->firstsubopplan)
     for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getLocked())
+      if (!i->getConfirmed())
       {
         i->quantity = oplan->quantity;
         if (upd)
@@ -1905,7 +1915,7 @@ double OperationRouting::setOperationPlanQuantity
   // Update all routing sub operationplans
   for (OperationPlan *i = oplan->firstsubopplan; i; i = i->nextsubopplan)
   {
-    if (i->getLocked())
+    if (!i->getProposed())
     {
       // Find the unlocked operationplan on the same operation
       OperationPlan* match = i->prevsubopplan;

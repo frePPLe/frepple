@@ -383,6 +383,21 @@ class export:
       where operationplan.id = tmp.id;
       ''')
     cursor.execute('''
+      with cte as (select id from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      not exists (select 1 from tmp_operationplan where id = operationplan.id))
+      delete from operationplanmaterial where exists (select 1 from cte where cte.id = operationplan_id)
+    ''')
+    cursor.execute('''
+      with cte as (select id from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      not exists (select 1 from tmp_operationplan where id = operationplan.id))
+      delete from operationplanresource where exists (select 1 from cte where cte.id = operationplan_id)
+    ''')
+    cursor.execute('''
+      delete from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      not exists (select 1 from tmp_operationplan where id = operationplan.id)
+    ''')
+
+    cursor.execute('''
       insert into operationplan
         (name,type,status,reference,quantity,startdate,enddate,
         criticality,delay,plan,source,lastmodified,

@@ -40,8 +40,15 @@ int Resource::initialize()
   registerFields<Resource>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  FreppleCategory<Resource>::getPythonType().addMethod("plan", Resource::plan, METH_VARARGS,
-      "Return an iterator with tuples representing the resource plan in each time bucket");
+  PythonType& x = FreppleCategory<Resource>::getPythonType();
+  x.addMethod(
+    "plan", Resource::plan, METH_VARARGS,
+    "Return an iterator with tuples representing the resource plan in each time bucket"
+    );
+  x.addMethod(
+    "inspect", inspectPython, METH_VARARGS,
+    "debugging function to print the resource profile"
+    );
   return FreppleCategory<Resource>::initialize();
 }
 
@@ -125,6 +132,35 @@ void Resource::inspect(const string msg) const
       logger << ", update maximum to " << oo->getMax() << endl;
       break;
     }
+  }
+}
+
+
+PyObject* Resource::inspectPython(PyObject* self, PyObject* args)
+{
+  try
+  {
+    // Pick up the resource
+    Resource *res = nullptr;
+    PythonData c(self);
+    if (c.check(Resource::metadata))
+      res = static_cast<Resource*>(self);
+    else
+      throw LogicException("Invalid resource type");
+
+    // Parse the argument
+    char *msg = nullptr;
+    if (!PyArg_ParseTuple(args, "|sO:inspect", &msg))
+      return nullptr;
+    
+    res->inspect(msg ? msg : "");
+
+    return Py_BuildValue("");
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
   }
 }
 

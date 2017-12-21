@@ -53,7 +53,14 @@ int Buffer::initialize()
 
   // Initialize the Python class
   PythonType& x = FreppleCategory<Buffer>::getPythonType();
-  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS, "return the total lead time");
+  x.addMethod(
+    "decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS, 
+    "return the decoupled lead time"
+    );
+  x.addMethod(
+    "inspect", inspectPython, METH_VARARGS,
+    "debugging function to print the inventory profile"
+    );
   return FreppleCategory<Buffer>::initialize();
 }
 
@@ -212,6 +219,35 @@ void Buffer::inspect(const string msg) const
         logger << ", update maximum to " << oo->getMax() << endl;
         break;
     }
+  }
+}
+
+
+PyObject* Buffer::inspectPython(PyObject* self, PyObject* args)
+{
+  try
+  {
+    // Pick up the buffer
+    Buffer *buf = nullptr;
+    PythonData c(self);
+    if (c.check(Buffer::metadata))
+      buf = static_cast<Buffer*>(self);
+    else
+      throw LogicException("Invalid buffer type");
+
+    // Parse the argument
+    char *msg = nullptr;
+    if (!PyArg_ParseTuple(args, "|sO:inspect", &msg))
+      return nullptr;
+
+    buf->inspect(msg ? msg : "");
+
+    return Py_BuildValue("");
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
   }
 }
 

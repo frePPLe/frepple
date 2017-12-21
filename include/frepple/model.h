@@ -4850,6 +4850,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Debugging function. */
     void inspect(string msg = "") const;
 
+    static PyObject* inspectPython(PyObject*, PyObject*);
+
     /** Return a pointer to the next buffer for the same item. */
     Buffer* getNextItemBuffer() const
     {
@@ -6586,6 +6588,8 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Debugging function. */
     void inspect(string msg = "") const;
+    
+    static PyObject* inspectPython(PyObject*, PyObject*);
 
     /** Returns a constant reference to the list of loads. It defines
       * which operations are using the resource.

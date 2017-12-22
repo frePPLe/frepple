@@ -24,7 +24,7 @@ from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
-from django.db.models.fields import IntegerField, AutoField, DurationField, BooleanField
+from django.db.models.fields import IntegerField, AutoField, DurationField, BooleanField, DecimalField
 from django.db.models.fields import DateField, DateTimeField, TimeField, CharField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -72,6 +72,9 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
       if isinstance(field, (IntegerField, AutoField)):
         if isinstance(data, (Decimal, float, int)):
           data = int(data)
+      elif isinstance(field, DecimalField):
+        if isinstance(data, (Decimal, float)):
+          data = round(data, 6)
       elif isinstance(field, DurationField):
         if isinstance(data, float):
           data = "%.6f" % data

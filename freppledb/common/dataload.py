@@ -462,20 +462,14 @@ class BulkForeignKeyFormField(forms.fields.Field):
       try:
         return self.cache[value]
       except KeyError:
-        #. Translators: Translation included with django
-        raise forms.ValidationError(_(
-          'Select a valid choice. That choice is not one of'
-          ' the available choices.'
-          ))
+        #. Translators: Translation included with Django
+        raise forms.ValidationError(_('Select a valid choice. That choice is not one of the available choices.'))
     else:
       try:
         return self.queryset.get(pk=value)
       except self.model.DoesNotExist:
-        #. Translators: Translation included with django
-        raise forms.ValidationError(_(
-          'Select a valid choice. That choice is not one of'
-          ' the available choices.'
-          ))
+        #. Translators: Translation included with Django
+        raise forms.ValidationError(_('Select a valid choice. That choice is not one of the available choices.'))
 
 
   def has_changed(self, initial, data):

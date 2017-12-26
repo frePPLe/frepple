@@ -170,7 +170,10 @@ class Command(BaseCommand):
           </table>
         </form>
         ''')
-
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("launch"), _("Dump the database contents to a file.")
+        )
     else:
       return None

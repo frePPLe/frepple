@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 4.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-17 10:38+0100\n"
-"PO-Revision-Date: 2017-05-12 11:53+0200\n"
+"POT-Creation-Date: 2017-12-26 21:44+0100\n"
+"PO-Revision-Date: 2017-12-26 22:04+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: klaus\n"
 "Language: de_DE\n"
@@ -23,411 +23,419 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: common/static/js/frepple.js:170 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
 msgstr "Ungespeicherte Änderungen auf dieser Seite"
 
-#: common/static/js/frepple.js:222 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:227 common/static/js/frepple.min.js:11
 msgid "Error saving data"
 msgstr "Fehler beim Speichern der Daten"
 
-#: common/static/js/frepple.js:228 common/static/js/frepple.js:588
-#: common/static/js/frepple.js:1417 common/static/js/frepple.js:1571
-#: common/static/js/frepple.js:2176 common/static/js/frepple.js:2197
+#: common/static/js/frepple.js:233 common/static/js/frepple.js:647
+#: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
+#: common/static/js/frepple.js:2481 common/static/js/frepple.js:2593
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "Schliessen"
 
-#: common/static/js/frepple.js:250 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:255 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
 msgstr "Bitte speichern oder brechen Ihre aktuellen Änderungen ab."
 
-#: common/static/js/frepple.js:256 common/static/js/frepple.js:1827
-#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:261 common/static/js/frepple.js:2101
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Save"
 msgstr "Speichern"
 
-#: common/static/js/frepple.js:257 common/static/js/frepple.js:600
-#: common/static/js/frepple.js:903 common/static/js/frepple.js:926
-#: common/static/js/frepple.js:1036 common/static/js/frepple.js:1084
-#: common/static/js/frepple.js:1164 common/static/js/frepple.js:1403
-#: common/static/js/frepple.js:1475 common/static/js/frepple.js:1829
+#: common/static/js/frepple.js:262 common/static/js/frepple.js:659
+#: common/static/js/frepple.js:962 common/static/js/frepple.js:985
+#: common/static/js/frepple.js:1095 common/static/js/frepple.js:1143
+#: common/static/js/frepple.js:1223 common/static/js/frepple.js:1664
+#: common/static/js/frepple.js:1749 common/static/js/frepple.js:2103
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.min.js:13
 msgid "Cancel"
 msgstr "Abbruch"
 
-#: common/static/js/frepple.js:446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:453 common/static/js/frepple.min.js:11
+msgid "days early"
+msgstr ""
+
+#: common/static/js/frepple.js:455 common/static/js/frepple.min.js:11
+msgid "on time"
+msgstr ""
+
+#: common/static/js/frepple.js:458 common/static/js/frepple.js:460
+#: common/static/js/frepple.js:462 common/static/js/frepple.min.js:11
+msgid "days late"
+msgstr ""
+
+#: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "Click to select record"
 msgstr "Zum Bearbeiten klicken"
 
-#: common/static/js/frepple.js:492 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:551 common/static/js/frepple.min.js:11
 msgid "Selected options"
 msgstr "Ausgewählte Optionen"
 
-#: common/static/js/frepple.js:499 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:558 common/static/js/frepple.min.js:11
 msgid "Available options"
 msgstr "Verfügbare Optionen"
 
-#: common/static/js/frepple.js:540 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:599 common/static/js/frepple.min.js:11
 msgid "Selected Cross"
 msgstr "Ausgewähltes Kreuz"
 
-#: common/static/js/frepple.js:550 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:609 common/static/js/frepple.min.js:11
 msgid "Available Cross"
 msgstr "Verfügbares Kreuz"
 
-#: common/static/js/frepple.js:572 common/static/js/frepple.min.js:11
-#, fuzzy
+#: common/static/js/frepple.js:631 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
 msgstr "Fixierte Spalten"
 
-#: common/static/js/frepple.js:591 common/static/js/frepple.js:1925
-#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:650 common/static/js/frepple.js:2199
+#: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Customize"
 msgstr "Individuallisieren"
 
-#: common/static/js/frepple.js:599 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:658 common/static/js/frepple.min.js:11
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:601 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:660 common/static/js/frepple.min.js:11
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: common/static/js/frepple.js:891 common/static/js/frepple.js:912
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
+msgid "Error retrieving data"
+msgstr "Fehler beim Laden der Daten"
+
+#: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
+#: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
+msgid "Error saving report settings"
+msgstr ""
+
+#: common/static/js/frepple.js:950 common/static/js/frepple.js:971
+#: common/static/js/frepple.min.js:12
 msgid "Export CSV or Excel file"
 msgstr "CSV- oder Excel-Datei exportieren"
 
-#: common/static/js/frepple.js:894 common/static/js/frepple.js:915
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:953 common/static/js/frepple.js:974
+#: common/static/js/frepple.min.js:12
 msgid "Export format"
 msgstr "Export Format"
 
-#: common/static/js/frepple.js:896 common/static/js/frepple.js:918
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:955 common/static/js/frepple.js:977
+#: common/static/js/frepple.min.js:12
 msgid "Spreadsheet list"
 msgstr "Tabelle Liste"
 
-#: common/static/js/frepple.js:897 common/static/js/frepple.js:920
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:956 common/static/js/frepple.js:979
+#: common/static/js/frepple.min.js:12
 msgid "CSV list"
 msgstr "CSV Liste"
 
-#: common/static/js/frepple.js:902 common/static/js/frepple.js:925
-#: common/static/js/frepple.js:1163 common/static/js/frepple.min.js:11
-#: common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:961 common/static/js/frepple.js:984
+#: common/static/js/frepple.js:1222 common/static/js/frepple.min.js:12
 msgid "Export"
 msgstr "Exportieren"
 
-#: common/static/js/frepple.js:917 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:976 common/static/js/frepple.min.js:12
 msgid "Spreadsheet table"
 msgstr "Kalkulationsblatt"
 
-#: common/static/js/frepple.js:919 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:978 common/static/js/frepple.min.js:12
 msgid "CSV table"
 msgstr "CSV-Tabelle"
 
-#: common/static/js/frepple.js:1029 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1088 common/static/js/frepple.min.js:12
 msgid "Delete data"
 msgstr "Daten löschen"
 
-#: common/static/js/frepple.js:1032 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1091 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "Sie sind im Begriff %s Objekte und alle Datensätze zu löschen"
 
-#: common/static/js/frepple.js:1035 common/static/js/frepple.js:1083
-#: common/static/js/frepple.js:1402 common/static/js/frepple.js:1474
+#: common/static/js/frepple.js:1094 common/static/js/frepple.js:1142
+#: common/static/js/frepple.js:1663 common/static/js/frepple.js:1748
 #: common/static/js/frepple.min.js:12
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: common/static/js/frepple.js:1057 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1116 common/static/js/frepple.min.js:12
 msgid "Error deleting data"
 msgstr "Fehler beim Löschen"
 
-#: common/static/js/frepple.js:1077 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1136 common/static/js/frepple.min.js:12
 msgid "Copy data"
 msgstr "Daten kopieren"
 
-#: common/static/js/frepple.js:1080 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1139 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "Sie sind dabei %s Objekte zu duplizieren."
 
-#: common/static/js/frepple.js:1105 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1164 common/static/js/frepple.min.js:12
 msgid "Error copying data"
 msgstr "Fehler beim Kopieren der Daten"
 
-#: common/static/js/frepple.js:1141 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1200 common/static/js/frepple.min.js:12
 msgid "Export Plan"
 msgstr "Export Plan"
 
-#: common/static/js/frepple.js:1210 common/static/js/frepple.js:1223
+#: common/static/js/frepple.js:1269 common/static/js/frepple.js:1282
 #: common/static/js/frepple.min.js:12
 msgid "Filtered where"
 msgstr "Gefiltert nach"
 
-#: common/static/js/frepple.js:1396 common/static/js/frepple.js:1468
+#: common/static/js/frepple.js:1657 common/static/js/frepple.js:1742
 #: common/static/js/frepple.min.js:12
 msgid "export"
 msgstr "Exportieren"
 
-#: common/static/js/frepple.js:1399 common/static/js/frepple.min.js:12
-msgid "export selected records to "
-msgstr "Ausgewählte Records exportieren nach"
+#: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
+msgid "export selected records"
+msgstr "Ausgewählte Records exportieren"
 
-#: common/static/js/frepple.js:1409 common/static/js/frepple.js:1563
+#: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
 #: common/static/js/frepple.min.js:12
-msgid "connecting to "
-msgstr "Verbinden mit"
+msgid "connecting"
+msgstr "Verbinden..."
 
-#: common/static/js/frepple.js:1416 common/static/js/frepple.js:1570
+#: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
 #: common/static/js/frepple.min.js:12
 msgid "Export successful"
 msgstr "Export erfolgreich"
 
-#: common/static/js/frepple.js:1428 common/static/js/frepple.js:1429
-#: common/static/js/frepple.js:1582 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1702 common/static/js/frepple.js:1703
+#: common/static/js/frepple.js:1856 common/static/js/frepple.min.js:12
 msgid "Error during export"
 msgstr "Fehler beim Exportieren"
 
-#: common/static/js/frepple.js:1430 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1704 common/static/js/frepple.min.js:12
 msgid "retry"
 msgstr "versuchen Sie es erneut"
 
-#: common/static/js/frepple.js:1584 common/static/js/frepple.js:1616
-#: common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1858 common/static/js/frepple.js:1890
+#: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
 msgid "Retry"
 msgstr "Wiederholen"
 
-#: common/static/js/frepple.js:1613 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1887 common/static/js/frepple.min.js:13
 msgid "Error getting data"
 msgstr "Fehler beim Laden der Daten"
 
-#: common/static/js/frepple.js:1772 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2046 common/static/js/frepple.min.js:13
 msgid "Customize a dashboard row"
 msgstr "Dashboard Reihe anpassen"
 
-#: common/static/js/frepple.js:1778 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2052 common/static/js/frepple.min.js:13
 msgid "Name"
 msgstr "Name"
 
-#: common/static/js/frepple.js:1784 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2058 common/static/js/frepple.min.js:13
 msgid "Layout"
 msgstr "Layout"
 
-#: common/static/js/frepple.js:1790 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2064 common/static/js/frepple.min.js:13
 msgid "Single column"
 msgstr "eine Spalte"
 
-#: common/static/js/frepple.js:1793 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2067 common/static/js/frepple.min.js:13
 msgid "Two columns"
 msgstr "Zwei Spalten"
 
-#: common/static/js/frepple.js:1800 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2074 common/static/js/frepple.min.js:13
 msgid "Three columns"
 msgstr "drei Spalten"
 
-#: common/static/js/frepple.js:1804 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2078 common/static/js/frepple.min.js:13
 msgid "Four columns"
 msgstr "Vier Spalten"
 
-#: common/static/js/frepple.js:1810 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2084 common/static/js/frepple.min.js:13
 msgid "Add widget"
 msgstr "Widget hinzufügen"
 
-#: common/static/js/frepple.js:1828 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2102 common/static/js/frepple.min.js:13
 msgid "Delete"
 msgstr "Entfernen"
 
-#: common/static/js/frepple.js:1830 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2104 common/static/js/frepple.min.js:13
 msgid "Add new below"
 msgstr "Füge neue unterhalb hinzu"
 
-#: common/static/js/frepple.js:1831 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:2105 common/static/js/frepple.min.js:13
 msgid "Add new above"
 msgstr "Fügen Sie neue oberhalb hinzu"
 
-#: common/static/js/frepple.js:2121 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2395 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "Installierte Anwendungen"
 
-#: common/static/js/frepple.js:2141 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2415 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "Fehler beim Lesen der Versionsinformationen"
 
-#: common/static/js/frepple.js:2162 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "CSV- oder Excel-Datei importieren"
 
-#: common/static/js/frepple.js:2166 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2445 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Laden Excel-Datei oder CSV-formatierte Textdatei."
 
-#: common/static/js/frepple.js:2167 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "Die erste Zeile sollte Feldnamen enthalten."
 
-#: common/static/js/frepple.js:2169 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2448 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Zuerst alle vorhandenen Datensätze und zugehörigen Tabellen löschen."
 
-#: common/static/js/frepple.js:2170 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
+msgid "files selected"
+msgstr ""
+
+#: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
+msgid "Select files"
+msgstr ""
+
+#: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
+msgid "or drop them here"
+msgstr ""
+
+#: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "Daten File"
 
-#: common/static/js/frepple.js:2175 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2479 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "Importiere"
 
-#: common/static/js/frepple.js:2185 common/static/js/frepple.min.js:11
-msgid "Importing... pressing Close button will not stop the process."
-msgstr "Laden... Drücken von \"Close\" wird den Prozess nicht stoppen"
+#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
+msgid "Cancel Import"
+msgstr "Abbruch Importieren"
 
-#: common/static/js/frepple.js:2639 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2482 common/static/js/frepple.min.js:11
+msgid "Copy to Clipboard"
+msgstr ""
+
+#: common/static/js/frepple.js:2539 common/static/js/frepple.min.js:11
+msgid "Importing..."
+msgstr ""
+
+#: common/static/js/frepple.js:2558 common/static/js/frepple.min.js:11
+msgid "Canceled"
+msgstr "Abgebrochen"
+
+#: common/static/js/frepple.js:3050 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "Hinweise anzeigen"
 
-#: common/static/js/frepple.js:2729 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3140 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "Geführte Tour"
 
-#: common/static/js/frepple.js:2736 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3147 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "Zurück"
 
-#: common/static/js/frepple.js:2737 common/static/js/frepple.js:2878
+#: common/static/js/frepple.js:3148 common/static/js/frepple.js:3289
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "Abspielen"
 
-#: common/static/js/frepple.js:2738 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3149 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "Weiter"
 
-#: common/static/js/frepple.js:2885 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3296 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "Pause"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/problemspanelDrv.js:37
-msgid "problems"
-msgstr "Probleme"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/problemspanelDrv.js:39
-msgid "start"
-msgstr "Start"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/problemspanelDrv.js:41
-msgid "end"
-msgstr "Ende"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/problemspanelDrv.js:48
-msgid "no problems"
-msgstr "Keine Probleme"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/resourcespanelDrv.js:36
-msgid "resource"
-msgstr "Ressource"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/bufferspanelDrv.js:38
-#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
-#: input/static/operationplandetail/src/resourcespanelDrv.js:38
-msgid "quantity"
-msgstr "Menge"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/resourcespanelDrv.js:45
-msgid "no resources"
-msgstr "Keine Ressourcen verfügbar"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/bufferspanelDrv.js:36
-msgid "buffer"
-msgstr "Puffer"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/bufferspanelDrv.js:40
-#: input/static/operationplandetail/src/supplypositionpanelDrv.js:78
-msgid "onhand"
-msgstr "vorhanden"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/bufferspanelDrv.js:42
-msgid "date"
-msgstr "Datum"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/bufferspanelDrv.js:49
-msgid "no movements"
-msgstr "keine Bewegungen"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
-msgid "demand"
-msgstr "Nachfrage"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
-msgid "no demands"
-msgstr "keine Anforderungen"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplanpanelDrv.js:37
-msgid "Manufacturing Order"
-msgstr "Produktionsauftrag"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplanpanelDrv.js:38
-msgid "Purchase Order"
-msgstr "Bestellung"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplanpanelDrv.js:39
-msgid "Distribution Order"
-msgstr "Lieferauftrag"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplanpanelDrv.js:40
-msgid "Stock"
-msgstr "Lager"
-
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplanpanelDrv.js:41
-msgid "Delivery"
-msgstr "Lieferung"
-
-#: input/static/operationplandetail/src/supplypositionpanelDrv.js:30
+#: input/static/operationplandetail/src/supplypositionpanelDrv.js:23
 msgid "inventory status"
 msgstr "Bestandsstatus"
 
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/ganttchart.js:409
-#, javascript-format
-msgid "%s allocated out of %s"
-msgstr "%s bereitgestellt von %s"
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/supplypositionpanelDrv.js:33
+msgid "onhand at lead time"
+msgstr ""
 
-#: planningboard/static/js/frepple-planningboard.min.js:12
-#: planningboard/static/planningboard/src/planningboard.js:233
-msgid "remove this demand from planning"
-msgstr "Diesen Anforderung aus Planung entfernen"
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/supplypositionpanelDrv.js:67
+msgid "current onhand"
+msgstr "vorhanden"
 
-#: planningboard/static/js/frepple-planningboard.min.js:12
-#: planningboard/static/planningboard/src/planningboard.js:234
-msgid "Plan selected demands backward from their due date"
-msgstr "Ausgewählte Forderungen vom Fälligkeitszeitpunkt rückplanen"
+#~ msgid "Importing... pressing Close button will not stop the process."
+#~ msgstr "Laden... Drücken von \"Close\" wird den Prozess nicht stoppen"
 
-#: planningboard/static/js/frepple-planningboard.min.js:12
-#: planningboard/static/planningboard/src/planningboard.js:235
-msgid "Plan selected demands forward from the current date"
-msgstr "Ausgewählte Forderungen vom aktuellen Zeitpunkt vorwärts planen"
+#~ msgid "problems"
+#~ msgstr "Probleme"
+
+#~ msgid "start"
+#~ msgstr "Start"
+
+#~ msgid "end"
+#~ msgstr "Ende"
+
+#~ msgid "no problems"
+#~ msgstr "Keine Probleme"
+
+#~ msgid "resource"
+#~ msgstr "Ressource"
+
+#~ msgid "quantity"
+#~ msgstr "Menge"
+
+#~ msgid "no resources"
+#~ msgstr "Keine Ressourcen verfügbar"
+
+#~ msgid "buffer"
+#~ msgstr "Puffer"
+
+#~ msgid "date"
+#~ msgstr "Datum"
+
+#~ msgid "no movements"
+#~ msgstr "keine Bewegungen"
+
+#~ msgid "demand"
+#~ msgstr "Nachfrage"
+
+#~ msgid "no demands"
+#~ msgstr "keine Anforderungen"
+
+#~ msgid "Manufacturing Order"
+#~ msgstr "Produktionsauftrag"
+
+#~ msgid "Purchase Order"
+#~ msgstr "Bestellung"
+
+#~ msgid "Distribution Order"
+#~ msgstr "Lieferauftrag"
+
+#~ msgid "Stock"
+#~ msgstr "Lager"
+
+#~ msgid "Delivery"
+#~ msgstr "Lieferung"
+
+#~ msgid "%s allocated out of %s"
+#~ msgstr "%s bereitgestellt von %s"
+
+#~ msgid "remove this demand from planning"
+#~ msgstr "Diesen Anforderung aus Planung entfernen"
+
+#~ msgid "Plan selected demands backward from their due date"
+#~ msgstr "Ausgewählte Forderungen vom Fälligkeitszeitpunkt rückplanen"
+
+#~ msgid "Plan selected demands forward from the current date"
+#~ msgstr "Ausgewählte Forderungen vom aktuellen Zeitpunkt vorwärts planen"

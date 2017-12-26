@@ -283,5 +283,10 @@ class Command(BaseCommand):
         <script>{{ javascript|safe }}</script>
       ''')
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("copy"), _("release"), _("release selected scenarios"), _("into selected scenarios"),
+        _("update"), _("Update description of selected scenarios")
+        )
     else:
       return None

@@ -269,7 +269,7 @@ class Command(BaseCommand):
               <td><strong>{% trans 'changed'|capfirst %}</strong></td>
               <td></td>
               <td>
-                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allexportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteExportFile(1, {{filesexported}})">
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allexportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete all files' %}" onClick="deleteExportFile(1, {{filesexported}})">
                   <span class="fa fa-close"></span>
                 </div>
               </td>
@@ -370,5 +370,10 @@ class Command(BaseCommand):
         </script>
         ''')
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("export"), _("file name"), _("size"), _("changed"), _("Delete all files"),
+        _("Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files.")
+        )
     else:
       return None

@@ -20,6 +20,7 @@ from datetime import timedelta, datetime, date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.template import Template, RequestContext
 
@@ -250,16 +251,22 @@ class Command(BaseCommand):
       context = RequestContext(request, {'javascript': javascript})
 
       template = Template('''
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{% csrf_token %}
+        {%% load i18n %%}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/frepple_createbuckets/">{%% csrf_token %%}
         <input type="hidden" name="weekstart" id="weekstart" value="1">
         <table>
           <tr>
             <td style="vertical-align:top; padding: 15px">
-              <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+              <button  class="btn btn-primary" type="submit" value="{%% trans "launch"|capfirst %%}">{%% trans "launch"|capfirst %%}</button>
             </td>
             <td  style="padding: 0px 15px;">
-            <p>{% blocktrans %}Create time buckets for reporting.</p>
+            <p>%s</td>
+          </tr>
+        </table>
+        </form>
+        <script>{{ javascript|safe }}</script>
+      ''' % (
+        force_text(_('''Create time buckets for reporting.</p>
               <label class="control-label">Start date: <input class="vDateField form-control" id="start" name="start" type="text" size="12"/></label>
               <label class="control-label">End date: <input class="vDateField form-control" id="end" name="end" type="text" size="12"/></label><br>
              <label class="control-label" for="weekstart1">Week starts on:</label>
@@ -275,14 +282,13 @@ class Command(BaseCommand):
                         <li><a>Friday</a></li>
                         <li><a>Saturday</a></li>
                      </ul>
-             </div>
-
-            {% endblocktrans %}</td>
-          </tr>
-        </table>
-        </form>
-        <script>{{ javascript|safe }}</script>
-      ''')
+             </div>'''))
+        ))
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("launch"), _("data tables"), _("admin tables"),
+        _("Erase selected tables.")
+        )
     else:
       return None

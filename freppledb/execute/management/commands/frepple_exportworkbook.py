@@ -204,5 +204,9 @@ class Command(BaseCommand):
       </form>
       <script>{{ javascript|safe }}</script>
     ''')
-
     return template.render(context)
+    # A list of translation strings from the above
+    translated = (
+      _("export"), _("Download all input data in a single spreadsheet."),
+      _("data tables"), _("admin tables")
+      )

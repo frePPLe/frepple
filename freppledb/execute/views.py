@@ -37,6 +37,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponseServerError, 
 from django.http import HttpResponseNotFound, StreamingHttpResponse, HttpResponseNotAllowed
 from django.contrib import messages
 from django.utils.encoding import force_text
+from django.utils.text import capfirst
 from django.core.management import get_commands
 
 from freppledb.common.commands import PlanTaskRegistry
@@ -430,7 +431,7 @@ def logfile(request, taskid):
       f.close()
 
   return render(request, 'execute/logfrepple.html', {
-    'title': ' '.join([force_text(_('Log file')), taskid]),
+    'title': ' '.join([force_text(capfirst(_('log file'))), taskid]),
     'logdata': logdata,
     'taskid': taskid
     } )
@@ -495,7 +496,7 @@ class FileManager:
         logger.error("Failed file upload: %s" % e)
         response.write('%s: %s\n' % (clean_filename, _("Upload failed") ))
         errorcount += 1
-    response.write(force_text('%s' % _('Finished')))
+    response.write(force_text('%s' % capfirst(_('finished'))))
     if errorcount:
       response.status_code = 400
       response.reason_phrase = '%s files failed to upload correctly' % errorcount

@@ -347,7 +347,7 @@ class Command(BaseCommand):
                 <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
               </td>
               <td colspan='5' style="padding-left: 15px;">
-                <p>{% trans "Import CSV files from the configured data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
+                <p>{% trans "Import CSV or Excel files from the data folder. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
               </td>
             </tr>
             <tr>
@@ -356,13 +356,13 @@ class Command(BaseCommand):
               <td><strong>{% trans 'size'|capfirst %}</strong></td>
               <td><strong>{% trans 'changed'|capfirst %}</strong></td>
               <td>
-                <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy files to folder' %}"
-                  onclick="import_show('{% trans "Copy files to folder" %}',null,true,uploadfilesajax)">
+                <span class="btn btn-xs btn-primary" id="filescopy" style="margin-bottom: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Upload data files' %}"
+                  onclick="import_show('{% trans 'Copy files to folder' %}',null,true,uploadfilesajax)">
                   <span class="fa fa-arrow-up"></span>
                 </span>
               </td>
               <td>
-                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allimportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete all files from folder" onClick="deleteImportFile(0, {{filestoupload}})">
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="allimportfilesdelete" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
                   <span class="fa fa-close"></span>
                 </div>
               </td>
@@ -374,12 +374,12 @@ class Command(BaseCommand):
               <td>{{j.2}}</td>
               <td>{{j.1}}</td>
               <td>
-                <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="Download file" onClick="downloadImportFile(0, '{{j.0}}')">
+                <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom: 5px;" id="filedownload" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
                   <span class="fa fa-arrow-down"></span>
                 </div>
               </td>
               <td>
-                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="Delete file from folder" onClick="deleteImportFile(0, '{{j.0}}')">
+                <div class="btn btn-xs btn-danger deletefile" style="margin-bottom: 5px;" id="filedelete" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Delete file" %}" onClick="deleteImportFile(0, '{{j.0}}')">
                   <span class="fa fa-close"></span>
                 </div>
               </td>
@@ -502,8 +502,15 @@ class Command(BaseCommand):
         </script>
         ''')
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("export"), _("file name"), _("size"), _("changed"), _("Delete all files"),
+        _("Delete file"), _("Upload data files"), _("Download file"),
+        _("Import CSV or Excel files from the data folder. The file names must match the names of data objects and the first line in the file must contain the field names.")
+        )
     else:
       return None
+
 
 class EncodedCSVReader:
   '''

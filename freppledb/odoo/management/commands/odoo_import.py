@@ -71,7 +71,7 @@ class Command(BaseCommand):
         )
 
   # accordion template
-  title = _('Import data from Odoo')
+  title = _('Import data from %(erp)s') % {'erp': 'odoo'}
   index = 1400
 
   @ staticmethod

@@ -307,7 +307,7 @@ class Command(BaseCommand):
           <table>
             <tr>
               <td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-              <td  style="padding: 15px;">{% trans "Erase selected tables in the database." %}<br><br>
+              <td  style="padding: 15px;">{% trans "Erase selected tables." %}<br><br>
                 <label>
                   <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
                 </label>
@@ -335,5 +335,10 @@ class Command(BaseCommand):
         <script>{{ javascript|safe }}</script>
       ''')
       return template.render(context)
+      # A list of translation strings from the above
+      translated = (
+        _("launch"), _("data tables"), _("admin tables"),
+        _("Erase selected tables.")
+        )
     else:
       return None

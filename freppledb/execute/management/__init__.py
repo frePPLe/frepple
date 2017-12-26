@@ -72,7 +72,7 @@ def getHTML(request):
         </td>
         <td>
           <div class="dropdown dropdown-submit-input">
-            {% trans "Load one of the available datasets to the current database." %}
+            {% trans "Load one of the available datasets." %}
             <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">
@@ -90,6 +90,11 @@ def getHTML(request):
     {% endif %}
   ''')
   return template.render(context)
+  # A list of translation strings from the above
+  translated = (
+    _("launch"), _("Load one of the available datasets."),
+    _("Sorry, You don't have any execute permissions...")
+    )
 
 
 loaddata.Command.getHTML = getHTML

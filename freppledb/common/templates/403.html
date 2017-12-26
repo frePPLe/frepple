@@ -1,10 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block title %}{% trans 'permission denied'|capfirst %}{% endblock %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% block title %}{% trans 'Permission denied'|capfirst %}{% endblock %}
 
 {% block content %}
-<h2>{% trans 'permission denied'|capfirst %}</h2>
+{% comment %}Translators: Translation included with Django {% endcomment %}
+<h2>{% trans 'Permission denied'|capfirst %}</h2>
 {% if exception %}
 <p>{{ exception|capfirst }}</p>
 {% endif %}

@@ -316,3 +316,8 @@ class Command(BaseCommand):
       </script>
     ''')
     return template.render(context)
+    # A list of translation strings from the above
+    translated = (
+      _("import"), _("Import a spreadsheet"),
+      _("Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above.")
+      )

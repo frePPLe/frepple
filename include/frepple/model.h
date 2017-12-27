@@ -10229,6 +10229,7 @@ class OperationPlan::InterruptionIterator : public Object
         throw LogicException("Can't initialize an iterator over an uninitialized operationplan");
       opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
       curdate = opplan->getStart();
+      start = curdate;
       initType(metadata);
     }
 

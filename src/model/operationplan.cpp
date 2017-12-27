@@ -1847,18 +1847,15 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
       // Becoming available after unavailable period
       status = true;
       end = (curdate > opplan->getEnd()) ? opplan->getEnd() : curdate;
-      if (start)
-        return this;
+      return this;
     }
     else if (!available && status)
     {
       // Becoming unavailable after available period
       status = false;
       if (curdate >= opplan->getEnd())
-      {
         // Leaving the desired date range
         return nullptr;
-      }
       start = curdate;
     }
     else if (curdate >= opplan->getEnd())

@@ -97,14 +97,16 @@ class Command(BaseCommand):
 
     # Check if a worker already exists
     if checkActive(database):
-      logger.info("Worker process already active")
+      if 'FREPPLE_TEST' not in os.environ:
+        logger.info("Worker process already active")
       return
 
     # Spawn a worker-alive thread
     WorkerAlive(database).start()
 
     # Process the queue
-    logger.info("Worker starting to process jobs in the queue")
+    if 'FREPPLE_TEST' not in os.environ:
+      logger.info("Worker starting to process jobs in the queue")
     idle_loop_done = False
     while True:
       try:
@@ -126,7 +128,8 @@ class Command(BaseCommand):
             time.sleep(5)
             continue
       try:
-        logger.info("starting task %d at %s" % (task.id, datetime.now()))
+        if 'FREPPLE_TEST' not in os.environ:
+          logger.info("starting task %d at %s" % (task.id, datetime.now()))
         background = False
         task.started = datetime.now()
         # A
@@ -175,7 +178,7 @@ class Command(BaseCommand):
               break
 
           # Execute the command
-          if not exists:
+          if not exists:            
             logger.error('Task %s not recognized' % task.name)
           else:
             kwargs = {}
@@ -197,7 +200,8 @@ class Command(BaseCommand):
             if task.status not in ('Done', 'Failed'):
               task.status = 'Done'
           task.save(using=database)
-        logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
+        if 'FREPPLE_TEST' not in os.environ:
+          logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
       except Exception as e:
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)
@@ -208,13 +212,15 @@ class Command(BaseCommand):
         task.finished = now
         task.message = str(e)
         task.save(using=database)
-        logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
+        if 'FREPPLE_TEST' not in os.environ:
+          logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
     # Remove the parameter again
     try:
       Parameter.objects.all().using(database).get(pk='Worker alive').delete()
     except:
       pass
 
+    # Remove log files exceeding the configured disk space allocation
     totallogs = 0
     filelist = []
     for x in os.listdir(settings.FREPPLE_LOGDIR):
@@ -232,7 +238,6 @@ class Command(BaseCommand):
         totallogs += size
     todelete = totallogs - settings.MAXTOTALLOGFILESIZE * 1024 * 1024
     filelist.sort(key=operator.itemgetter('creation'))
-
     for fordeletion in filelist:
       if todelete > 0:
         try:
@@ -242,4 +247,5 @@ class Command(BaseCommand):
           pass
 
     # Exit
-    logger.info("Worker finished all jobs in the queue and exits")
+    if 'FREPPLE_TEST' not in os.environ:
+      logger.info("Worker finished all jobs in the queue and exits")

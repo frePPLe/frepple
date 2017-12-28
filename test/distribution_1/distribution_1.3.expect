@@ -37,7 +37,7 @@ OPERATION	Purchase product A @ Central WH from Supplier 1	2014-12-12T00:00:00	20
 OPERATION	Purchase product A @ Central WH from Supplier 1	2015-02-07T00:00:00	2015-02-14T00:00:00	100
 OPERATION	Purchase product A @ Central WH from Supplier 1	2015-02-09T00:00:00	2015-02-16T00:00:00	100
 OPERATION	Purchase product A @ Central WH from Supplier 1	2015-05-30T00:00:00	2015-06-06T00:00:00	100
-OPERATION	Ship product A from product A @ Central WH to product A @ Local DC 2b	2015-06-06T00:00:00	2015-06-06T00:00:00	100	locked
+OPERATION	Ship product A from product A @ Central WH to product A @ Local DC 2b	2015-06-06T00:00:00	2015-06-06T00:00:00	100	confirmed
 OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 1	2014-12-19T00:00:00	2014-12-29T00:00:00	100
 OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 1	2015-02-16T00:00:00	2015-02-26T00:00:00	100
 OPERATION	Ship product A from product A @ Central WH to product A @ Regional DC 2	2014-12-17T00:00:00	2014-12-29T00:00:00	100

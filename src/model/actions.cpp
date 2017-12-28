@@ -243,11 +243,17 @@ PyObject* savePlan(PyObject* self, PyObject* args)
         && rr->getOperation()->getType() != *OperationItemDistribution::metadata)
           continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
-          << rr->getStart() << '\t'
-          << rr->getEnd() << '\t'
-          << rr->getQuantity()
-          << (rr->getProposed() ? "" : "\tlocked")
-          << endl;
+        << rr->getStart() << '\t'
+        << rr->getEnd() << '\t'
+        << rr->getQuantity();
+      if (rr->getProposed())
+        textoutput << endl;
+      else if (rr->getConfirmed())
+        textoutput << "\tconfirmed" << endl;
+      else if (rr->getApproved())
+        textoutput << "\tapproved" << endl;
+      else
+        throw LogicException("Unknown operationplan status");
     }
 
     // Write the problem summary.

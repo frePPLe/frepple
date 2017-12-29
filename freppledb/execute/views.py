@@ -297,13 +297,13 @@ def wrapTask(request, action):
     # Create a task
     arguments = []
     for arg, val in args.lists():
-      arguments.append('--%s=%s' % (arg, ','.join(val)))
-    for arg, val in args.lists():
-      arguments.append('--%s=%s' % (arg, ','.join(val)))
+      if arg != 'csrfmiddlewaretoken':
+        arguments.append('--%s=%s' % (arg, ','.join(val)))
     task = Task(name=action, submitted=now, status='Waiting', user=request.user)
     if arguments:
       task.arguments = " ".join(arguments)
     task.save(using=request.database)
+
   # Launch a worker process, making sure it inherits the right
   # environment variables from this parent
   os.environ['FREPPLE_CONFIGDIR'] = settings.FREPPLE_CONFIGDIR

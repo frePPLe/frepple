@@ -131,6 +131,10 @@ function tick(e)
 
 function drawGraph(jsondata)
 {
+  if ($("#svggraph").children().length > 1)
+  	// It has already been drawn!
+  	return;
+  
   var count = -1;
   for (var oper in jsondata['rows'])
   {

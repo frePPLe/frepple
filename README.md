@@ -17,11 +17,11 @@ in the following formats:
 * Ubuntu .deb package
 * Red Hat .rpm package
 * Source tarball
-* Docker container https://github.com/taghubnet/frepple-docker (experimental)
+* Docker container (experimental)
 
 ## Documentation
 
-Visit [https://frepple.com](http://frepple.com) for documentation, screencasts and build instructions.
+Visit [https://frepple.com](https://frepple.com) for documentation, screencasts and build instructions.
 
 ## License
 

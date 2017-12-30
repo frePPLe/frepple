@@ -10,5 +10,6 @@ key pieces:
 - Doesn't run under LCOW due to a bug with the copy command. 
   See https://blog.docker.com/2017/11/docker-for-windows-17-11/
   and https://github.com/moby/moby/issues/33850 for the bug.
+- Log file management
 
 Helping hands and contributions are welcome!

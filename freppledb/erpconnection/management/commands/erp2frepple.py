@@ -22,6 +22,8 @@ import os
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
+from django.template import Template, RequestContext
+from django.utils.translation import ugettext_lazy as _
 
 from freppledb import VERSION
 from freppledb.common.models import User
@@ -42,6 +44,12 @@ class Command(BaseCommand):
   ext = 'csv'
   #ext = 'cpy'
 
+  # For the display in the execution screen
+  title = _('Import data from %(erp)s') % {'erp': 'erp'}
+
+  # For the display in the execution screen
+  index = 1400
+
   requires_system_checks = False
 
   def get_version(self):
@@ -60,6 +68,30 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
+
+
+  @ staticmethod
+  def getHTML(request):
+    if 'freppledb.erpconnection' in settings.INSTALLED_APPS:
+      context = RequestContext(request)
+
+      template = Template('''
+        {% load i18n %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/erp2frepple/">{% csrf_token %}
+        <table>
+          <tr>
+            <td style="vertical-align:top; padding: 15px">
+               <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+            </td>
+            <td  style="padding: 0px 15px;">{% trans "Import erp data into frePPLe." %}
+            </td>
+          </tr>
+        </table>
+        </form>
+      ''')
+      return template.render(context)
+    else:
+      return None
 
 
   def handle(self, **options):

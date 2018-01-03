@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.3.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2017-12-26 22:17+0100\n"
+"PO-Revision-Date: 2018-01-03 19:44+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.4\n"
 
 #: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -60,16 +60,16 @@ msgstr "Annuler"
 
 #: common/static/js/frepple.js:453 common/static/js/frepple.min.js:11
 msgid "days early"
-msgstr ""
+msgstr "jours d'avance"
 
 #: common/static/js/frepple.js:455 common/static/js/frepple.min.js:11
 msgid "on time"
-msgstr ""
+msgstr "à l'heure"
 
 #: common/static/js/frepple.js:458 common/static/js/frepple.js:460
 #: common/static/js/frepple.js:462 common/static/js/frepple.min.js:11
 msgid "days late"
-msgstr ""
+msgstr "jours de retard"
 
 #: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "Click to select record"
@@ -111,7 +111,7 @@ msgstr "Réinitialiser"
 #: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
 #| msgid "Error deleting data"
 msgid "Error retrieving data"
-msgstr ""
+msgstr "Erreur lors du téléchargement des données"
 
 #: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
 #: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
@@ -200,13 +200,13 @@ msgstr "exporter"
 #: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
 #| msgid "export selected records to "
 msgid "export selected records"
-msgstr ""
+msgstr "exporter les lignes séléctionnées"
 
 #: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
 #: common/static/js/frepple.min.js:12
 #| msgid "connecting to "
 msgid "connecting"
-msgstr ""
+msgstr "connexion en cours"
 
 #: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
 #: common/static/js/frepple.min.js:12
@@ -301,16 +301,16 @@ msgstr "Effacer dábord les lignes existantes ET TOUTES LES TABLES ASSOCIEES"
 
 #: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr ""
+msgstr "fichiers séléctionnés"
 
 #: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
 #| msgid "Selected options"
 msgid "Select files"
-msgstr ""
+msgstr "Sélectionner les fichiers"
 
 #: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
 msgid "or drop them here"
-msgstr ""
+msgstr "ou déposez-les ici"
 
 #: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
 msgid "Data file"
@@ -323,21 +323,21 @@ msgstr "Importer"
 #: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
 #| msgid "Cancel"
 msgid "Cancel Import"
-msgstr ""
+msgstr "Annuler l'import"
 
 #: common/static/js/frepple.js:2482 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
-msgstr ""
+msgstr "Copier dans le tampon"
 
 #: common/static/js/frepple.js:2539 common/static/js/frepple.min.js:11
 #| msgid "Import"
 msgid "Importing..."
-msgstr ""
+msgstr "Importation..."
 
 #: common/static/js/frepple.js:2558 common/static/js/frepple.min.js:11
 #| msgid "Cancel"
 msgid "Canceled"
-msgstr ""
+msgstr "Annulé"
 
 #: common/static/js/frepple.js:3050 common/static/js/frepple.min.js:13
 msgid "Show hints"
@@ -372,13 +372,13 @@ msgstr "statut de stock"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:33
 msgid "onhand at lead time"
-msgstr ""
+msgstr "stock au temps d'approvisionnement"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:67
 #| msgid "onhand"
 msgid "current onhand"
-msgstr ""
+msgstr "stock actuel"
 
 #~ msgid "Importing... pressing Close button will not stop the process."
 #~ msgstr "Import en cours... appuyer sur le bouton fermer n'arrêtera pas le processus."

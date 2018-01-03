@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.3.beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2017-12-26 22:31+0100\n"
+"PO-Revision-Date: 2018-01-03 19:37+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -54,7 +54,7 @@ msgstr "Date incorrecte : format AAAA-MM-JJ HH:MM:SS"
 #: common/adminforms.py:211
 #| msgid "change history"
 msgid "Change history"
-msgstr ""
+msgstr "Historique des modifications"
 
 #: common/api/views.py:28
 msgid "REST API Help"
@@ -88,7 +88,7 @@ msgstr "Visite guidée"
 
 #: common/menu.py:52 common/views.py:98 common/widget.py:75
 msgid "Path to unlock features"
-msgstr ""
+msgstr "Chemin pour débloquer les fonctionnalités"
 
 #: common/menu.py:57
 msgid "REST API help"
@@ -386,12 +386,12 @@ msgstr "Requête d'import incorrecte"
 #: common/report.py:1414 common/report.py:1512 common/report.py:2365
 #: execute/management/commands/frepple_importworkbook.py:170
 msgid "worksheet"
-msgstr ""
+msgstr "onglet"
 
 #: common/report.py:1414 common/report.py:1512 common/report.py:2365
 #: execute/management/commands/frepple_importworkbook.py:170
 msgid "row"
-msgstr ""
+msgstr "ligne"
 
 #: common/report.py:1415 common/report.py:1513 common/report.py:2366
 #: execute/management/commands/frepple_importworkbook.py:171
@@ -403,14 +403,14 @@ msgstr "champ de donnée"
 #: execute/management/commands/frepple_importworkbook.py:172
 #: execute/management/commands/frepple_importworkbook.py:186
 msgid "error"
-msgstr ""
+msgstr "erreur"
 
 #: common/report.py:1416 common/report.py:1434 common/report.py:1514
 #: common/report.py:1532 common/report.py:2367 common/report.py:2386
 #: execute/management/commands/frepple_importworkbook.py:172
 #: execute/management/commands/frepple_importworkbook.py:204
 msgid "warning"
-msgstr ""
+msgstr "avertissement"
 
 #: common/report.py:1951 common/report.py:2099 forecast/views.py:411
 #: forecast/views.py:616
@@ -568,11 +568,11 @@ msgstr "poste de pilotage"
 #: common/templates/admin/edit_inline/tabular.html:86
 #, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr ""
+msgstr "Seules %(limit)s sur %(count)s lignes sont affichées."
 
 #: common/templates/admin/login.html:116
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Mot de passe oublié ?"
 
 #: common/templates/admin/login.html:126
 msgid ""
@@ -586,7 +586,7 @@ msgstr ""
 #: inventoryplanning/models.py:331
 #| msgid "Purchasing lead time"
 msgid "onhand at lead time"
-msgstr ""
+msgstr "stock au temps d'approvisionnement"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
@@ -863,10 +863,50 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
+"Bienvenue à FrePPLe,leader mondial des outils de planification open source!"
+"<br/><br/>\n"
+"Comment débuter?\n"
+"<ol><li>Débuter le <span class=\"underline\"><a href=\"javascript:void(0);\" "
+"onclick=\"tour.start('0,0,0'); return false;\">tour guidé</a></span></li>\n"
+"<li>Commencez à construire votre propre modèle grâce à <span class="
+"\"underline\"><a href=\"%(prefix)s/wizard/\" target=\"_blank\" rel=\"noopener"
+"\">l'assistant</a></span></li>\n"
+"<li>Ou apprenez <span class=\"underline\"><a href=\"https://frepple.com/"
+"company/services/#modellingservice\" target=\"_blank\" rel=\"noopener\">ici</"
+"a></span> de quelle façon notre équipe de consulting peut construire votre "
+"modèle</li>\n"
+"</ol>\n"
+"Ou vous pouvez également plonger dans l'outil en visitant les principaux "
+"écrans interactifs:<br><br>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/forecast/editor/\">\n"
+"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
+"\" alt=\"Forecast Editor\"><br>\n"
+"  <b>Editeur de prévisions</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
+"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
+"100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <b>Planification d'inventaire</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/planningboard/\">\n"
+"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
+"alt=\"Plan Editor\"><br>\n"
+"  <b>Editeur de plan</b>\n"
+"</a>\n"
+"</div>\n"
 
 #: common/widget.py:76
 msgid "Fill out the data tables and access new features."
 msgstr ""
+"Remplissez les tables de données et accédez aux nouvelles fonctionnalités."
 
 #: common/widget.py:99
 msgid "News"
@@ -879,7 +919,7 @@ msgstr "Voir les dernières nouvelles du site web frePPLe"
 #: common/widget.py:111
 #| msgid "locations"
 msgid "My Actions"
-msgstr ""
+msgstr "Mes actions"
 
 #: common/widget.py:112
 msgid "Display a list of the entities you recently changed"
@@ -896,17 +936,17 @@ msgstr "Afficher une liste des commentaires récents"
 #: demandhits/attributes.py:17 demandhits/attributes.py:20
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr ""
+msgstr "Demandes client ces %(num)d mois"
 
 #: demandhits/attributes.py:18 demandhits/attributes.py:21
 #, python-format
 msgid "sales units last %(num)d months"
-msgstr ""
+msgstr "Unités vendues ces %(num)d mois"
 
 #: demandhits/attributes.py:19 demandhits/attributes.py:22
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr ""
+msgstr "Valeur des ventes ces %(num)d mois"
 
 #: execute/commands.py:130
 msgid "Generate supply plan"
@@ -1033,14 +1073,14 @@ msgstr ""
 #: execute/management/commands/frepple_exportworkbook.py:204
 #: execute/management/commands/frepple_flush.py:339
 msgid "data tables"
-msgstr ""
+msgstr "Tables de données"
 
 #: execute/management/commands/frepple_createbuckets.py:283
 #: execute/management/commands/frepple_exportworkbook.py:204
 #: execute/management/commands/frepple_flush.py:339
 #| msgid "display table"
 msgid "admin tables"
-msgstr ""
+msgstr "Tables d'administration"
 
 #: execute/management/commands/frepple_createbuckets.py:284
 #: execute/management/commands/frepple_flush.py:340
@@ -1060,7 +1100,7 @@ msgstr "exporter"
 #: execute/management/commands/frepple_exporttofolder.py:391
 #: execute/management/commands/frepple_importfromfolder.py:579
 msgid "file name"
-msgstr ""
+msgstr "nom de fichier"
 
 #: execute/management/commands/frepple_exporttofolder.py:391
 #: execute/management/commands/frepple_importfromfolder.py:579
@@ -1076,7 +1116,7 @@ msgstr "dernière modification"
 #: execute/management/commands/frepple_importfromfolder.py:579
 #| msgid "Data file"
 msgid "Delete all files"
-msgstr ""
+msgstr "Supprimer tous les fichiers"
 
 #: execute/management/commands/frepple_exporttofolder.py:392
 msgid ""
@@ -1105,17 +1145,17 @@ msgstr "Importer des fichiers de données d'un répertoire"
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "Data file"
 msgid "Delete file"
-msgstr ""
+msgstr "Supprimer un fichier"
 
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "failed"
 msgid "Upload data files"
-msgstr ""
+msgstr "Trnsférer des fichiers de données"
 
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "failed"
 msgid "Download file"
-msgstr ""
+msgstr "Télécharger un fichier"
 
 #: execute/management/commands/frepple_importfromfolder.py:581
 msgid ""
@@ -1259,7 +1299,7 @@ msgstr "annulé"
 #: execute/templates/execute/execute.html:58
 #| msgid "Review"
 msgid "view"
-msgstr ""
+msgstr "vue"
 
 #: execute/templates/execute/execute.html:147
 msgid "autorefresh"
@@ -1288,7 +1328,7 @@ msgstr "Echec au lancement de l'action: %(msg)s"
 
 #: execute/views.py:423 execute/views.py:444 execute/views.py:596
 msgid "Error downloading file"
-msgstr ""
+msgstr "Erreur lors du téléchargement du fichier"
 
 #: execute/views.py:457
 msgid "Displaying only the last 50K from the log file"
@@ -1297,17 +1337,17 @@ msgstr "Affiche seulement les derniers 50 Ko du fichier log"
 #: execute/views.py:517
 #, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr ""
+msgstr "L'extension du fichier doit être parmi %(ext)s"
 
 #: execute/views.py:529
 #| msgid "failed"
 msgid "Upload failed"
-msgstr ""
+msgstr "Le transfert a échoué"
 
 #: execute/views.py:551
 #| msgid "Error retrieving data"
 msgid "Error deleting file"
-msgstr ""
+msgstr "Erreur lors de la suppression du fichier"
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
@@ -1347,7 +1387,7 @@ msgstr "prévision"
 #: forecast/attributes.py:21
 #| msgid "demand alerts"
 msgid "demand_pattern"
-msgstr ""
+msgstr "patron de la demande"
 
 #: forecast/attributes.py:22
 msgid "adi"
@@ -1355,7 +1395,7 @@ msgstr "adi"
 
 #: forecast/attributes.py:23
 msgid "cv2"
-msgstr ""
+msgstr "cv2"
 
 #: forecast/commands.py:666 forecast/commands.py:687 forecast/commands.py:743
 msgid "Generate forecast"
@@ -1621,7 +1661,7 @@ msgstr "planifié"
 
 #: forecast/models.py:80
 msgid "Specifies whether this forecast record should be planned"
-msgstr ""
+msgstr "Spécifie si cette ligne de prévision doit être planifiée"
 
 #: forecast/models.py:86
 msgid "forecasts"
@@ -1755,11 +1795,11 @@ msgstr "plans de prévisions"
 
 #: forecast/models.py:1048
 msgid "No editable fields found"
-msgstr ""
+msgstr "Pas de champ éditable trouvé"
 
 #: forecast/models.py:1073
 msgid "Forecast or item+location+customer not found"
-msgstr ""
+msgstr "Prévision ou article+emplacement+client non trouvé"
 
 #: forecast/templates/forecast/forecast.html:40
 #: inventoryplanning/templates/inventoryplanning/drp.html:2031
@@ -1918,12 +1958,12 @@ msgstr "motif répété"
 #: input/admin.py:71 input/views.py:1345
 #| msgid "item distribution"
 msgid "inbound distribution"
-msgstr ""
+msgstr "distribution entrante"
 
 #: input/admin.py:72 input/views.py:1352
 #| msgid "item distribution"
 msgid "outbound distribution"
-msgstr ""
+msgstr "distribution sortante"
 
 #: input/admin.py:73 input/models.py:1351 input/views.py:1175
 #: input/views.py:1196
@@ -2205,13 +2245,15 @@ msgstr "Algorithme de sélection des alternatives préférées"
 
 #: input/models.py:275 input/views.py:1144
 msgid "batching window"
-msgstr ""
+msgstr "fenêtre de lots"
 
 #: input/models.py:276
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
+"L'algorithme va chercher les possibilités de créer des batchs dans cette "
+"fenêtre de temps antérieure et postérieure à la date du besoin"
 
 #: input/models.py:284 input/models.py:293 input/models.py:622
 #: input/models.py:696 input/models.py:1101 input/views.py:143
@@ -2685,17 +2727,17 @@ msgstr "quantité planifiée"
 #: input/models.py:1021
 #| msgid "planned orders"
 msgid "Quantity planned for delivery"
-msgstr ""
+msgstr "Quantité planifiée à livrer"
 
 #: input/models.py:1024 input/views.py:1003
 #| msgid "delivery operation"
 msgid "delivery date"
-msgstr ""
+msgstr "Date de livraison"
 
 #: input/models.py:1024
 #| msgid "Due date of the demand"
 msgid "Delivery date of the demand"
-msgstr ""
+msgstr "Date de livraison de la demande"
 
 #: input/models.py:1034
 msgid "sales order"
@@ -2900,22 +2942,22 @@ msgstr "matières"
 #: input/views.py:1247 input/views.py:1405 input/views.py:1592
 #| msgid "inventory by item"
 msgid "inventory item"
-msgstr ""
+msgstr "article d'inventaire"
 
 #: input/views.py:1248 input/views.py:1406 input/views.py:1593
 #| msgid "inventory by location"
 msgid "inventory location"
-msgstr ""
+msgstr "emplacement d'inventaire"
 
 #: input/views.py:1269
 #| msgid "setup matrices"
 msgid "setup time"
-msgstr ""
+msgstr "temps de configuration"
 
 #: input/views.py:1270 output/views/resource.py:306
 #| msgid "report end date"
 msgid "setup end date"
-msgstr ""
+msgstr "Date de fin de configuration"
 
 #: input/views.py:1401 input/views.py:1588
 msgid "total cost"
@@ -2937,7 +2979,7 @@ msgstr "Quantité de stock de sécurité"
 
 #: inventoryplanning/attributes.py:17
 msgid "Successor part"
-msgstr ""
+msgstr "Article successeur"
 
 #: inventoryplanning/commands.py:453
 msgid "Compute inventory parameters"
@@ -3334,14 +3376,14 @@ msgstr "stock consommé"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1665
 msgid "superseded"
-msgstr ""
+msgstr "remplacé"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1689
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
 #: inventoryplanning/templates/inventoryplanning/drp.html:1691
 #, python-format
 msgid "Last %(x)s months"
-msgstr ""
+msgstr "Derniers %(x)s mois"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1799
 msgid "Last Modified"
@@ -3544,7 +3586,7 @@ msgstr "Pas de prévision trouvée"
 
 #: inventoryplanning/widget.py:25
 msgid "Display the current status of your current inventory"
-msgstr ""
+msgstr "Afficher le statut de votre inventaire courant"
 
 #: inventoryplanning/widget.py:132
 msgid "green"
@@ -3750,7 +3792,7 @@ msgstr "Rapport de stock détaillé"
 
 #: output/views/buffer.py:315
 msgid "expected onhand"
-msgstr ""
+msgstr "Stock attendu"
 
 #: output/views/buffer.py:319
 msgid "operationplan quantity"
@@ -3759,7 +3801,7 @@ msgstr "quantité de l'opération"
 #: output/views/buffer.py:320
 #| msgid "inventory by item"
 msgid "inventory_item"
-msgstr ""
+msgstr "article_inventaire"
 
 #: output/views/constraint.py:23
 msgid "material"
@@ -3880,7 +3922,7 @@ msgstr "Quantité de charge"
 #: output/views/resource.py:307
 #| msgid "duration"
 msgid "setup duration"
-msgstr ""
+msgstr "Durée de la configuration"
 
 #: output/widget.py:32
 msgid "late orders"

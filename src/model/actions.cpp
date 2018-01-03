@@ -309,7 +309,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o) : opplan(o)
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x)
   {
-    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand)
     {
@@ -338,7 +338,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x)
   {
-    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(o);
+    CommandMoveOperationPlan *n = new CommandMoveOperationPlan(&*x);
     n->owner = this;
     if (firstCommand)
     {

@@ -19,7 +19,7 @@ msgstr "%s выделено из %s"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:45
 msgid "action"
-msgstr "действий"
+msgstr "действие"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1013
 #: freppledb/planningboard/static/planningboard/planningboard.html:1036
@@ -149,14 +149,14 @@ msgstr "настроить группы периодов времени"
 
 #: freppledb/quoting/static/quoting/quoting.html:123
 msgid "confirm"
-msgstr "подтверждение"
+msgstr "исполнить"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:106
 #: freppledb/planningboard/static/planningboard/planningboard.html:316
 #: freppledb/planningboard/static/planningboard/planningboard.html:426
 #: freppledb/planningboard/static/planningboard/planningboard.html:539
 msgid "confirmed"
-msgstr "подтвержден"
+msgstr "исполнение"
 
 #: freppledb/forecast/static/forecast/forecast.html:393
 msgid "Constant"
@@ -280,7 +280,7 @@ msgstr "описание"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:54
 msgid "destination"
-msgstr "адресат"
+msgstr "получатель"
 
 #: freppledb/forecast/static/forecast/forecast.html:40
 msgid "Display quantity"
@@ -314,7 +314,7 @@ msgstr "срок"
 
 #: freppledb/quoting/static/quoting/quoting.html:93
 msgid "due date"
-msgstr "срок исполнения"
+msgstr "к сроку"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:178
 #: freppledb/planningboard/static/planningboard/planningboard.html:231
@@ -385,7 +385,7 @@ msgstr "история"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:910
 msgid "id"
-msgstr "id"
+msgstr "ун.№"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:30
 #: freppledb/planningboard/static/planningboard/planningboard.html:246
@@ -396,7 +396,7 @@ msgstr "id"
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:37
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:50
 msgid "identifier"
-msgstr "ид. номер"
+msgstr "иден.№"
 
 #: freppledb/quoting/static/quoting/quoting.html:117
 msgid "inquiry"
@@ -409,12 +409,12 @@ msgstr "циклический"
 #: freppledb/planningboard/static/planningboard/planningboard.html:557
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:60
 msgid "inventory"
-msgstr "запасы"
+msgstr "запас"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:31
 #: freppledb/planningboard/static/planningboard/planningboard.html:27
 msgid "inventory status"
-msgstr "состояние запасов"
+msgstr "состояние запаса"
 
 #: freppledb/forecast/static/forecast/forecast.html:150
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:38
@@ -506,19 +506,19 @@ msgstr "наименование"
 
 #: freppledb/forecast/static/forecast/forecast.html:209
 msgid "new customer comment"
-msgstr "новый комментарий клиента"
+msgstr "по клиенту"
 
 #: freppledb/forecast/static/forecast/forecast.html:206
 msgid "new item comment"
-msgstr "новый комментарий товарной позиции"
+msgstr "по товарной позиции"
 
 #: freppledb/forecast/static/forecast/forecast.html:207
 msgid "new item-location comment"
-msgstr "новый комментарий товарной позиции - подразделения"
+msgstr "по месоположению товарной позиции"
 
 #: freppledb/forecast/static/forecast/forecast.html:208
 msgid "new location comment"
-msgstr "новый комментарий подразделения"
+msgstr "по местоположению"
 
 #: freppledb/forecast/static/forecast/forecast.html:211
 msgid "No comments yet"
@@ -526,15 +526,15 @@ msgstr "комментариев нет"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
 msgid "no demands"
-msgstr "нет спроса"
+msgstr "спроса нет"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
 msgid "no movements"
-msgstr "нет движений"
+msgstr "перемещения запасов нет"
 
 #: freppledb/quoting/static/quoting/quoting.html:162
 msgid "No plan yet"
-msgstr "пока нет планов"
+msgstr "плана нет"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:48
 #: freppledb/planningboard/static/planningboard/planningboard.html:829
@@ -544,7 +544,7 @@ msgstr "проблем не обнаружено"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
 msgid "no resources"
-msgstr "нет ресурсов"
+msgstr "ресурсов нет"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:40
 #: freppledb/planningboard/static/planningboard/planningboard.html:209
@@ -558,7 +558,7 @@ msgstr "наличие"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:41
 msgid "onhand at lead time"
-msgstr "наличие во время"
+msgstr "наличие в срок"
 
 #: freppledb/forecast/static/forecast/forecast.html:280
 msgid "open orders"
@@ -610,7 +610,7 @@ msgstr "корректировка заказов за три прошлых г�
 #: freppledb/planningboard/static/planningboard/planningboard.html:463
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:49
 msgid "origin"
-msgstr "передача из"
+msgstr "передать из"
 
 #: freppledb/forecast/static/forecast/forecast.html:372
 msgid "parameters"
@@ -721,7 +721,7 @@ msgstr "ошибка квоты"
 
 #: freppledb/forecast/static/forecast/forecast.html:121
 msgid "Recalculate"
-msgstr "пересчет"
+msgstr "перерасчет"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:34
 msgid "reference"
@@ -835,7 +835,7 @@ msgstr "старт"
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:58
 #: freppledb/quoting/static/quoting/quoting.html:153
 msgid "start date"
-msgstr "старт"
+msgstr "начало"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:101
 #: freppledb/planningboard/static/planningboard/planningboard.html:302
@@ -942,7 +942,7 @@ msgstr "несохраненные изменения"
 
 #: freppledb/quoting/static/quoting/quoting.html:211
 msgid "why short or late?"
-msgstr "отклонения?"
+msgstr "есть отклонения?"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:57
 msgid "zoom in"

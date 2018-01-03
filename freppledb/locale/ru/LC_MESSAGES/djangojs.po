@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2017-12-26 22:19+0100\n"
+"PO-Revision-Date: 2018-01-01 23:59+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -106,13 +106,13 @@ msgstr "Сброс"
 #: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
 #| msgid "Error getting data"
 msgid "Error retrieving data"
-msgstr ""
+msgstr "Ошибка при получении данных"
 
 #: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
 #: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
 #| msgid "Error during export"
 msgid "Error saving report settings"
-msgstr ""
+msgstr "Ошибка сохранения настроек отчета"
 
 #: common/static/js/frepple.js:950 common/static/js/frepple.js:971
 #: common/static/js/frepple.min.js:12
@@ -160,7 +160,7 @@ msgstr "Вы собираетесь удалить объекты %s и ВСЕ �
 #: common/static/js/frepple.js:1663 common/static/js/frepple.js:1748
 #: common/static/js/frepple.min.js:12
 msgid "Confirm"
-msgstr "Подтвердить"
+msgstr "Исполнить"
 
 #: common/static/js/frepple.js:1116 common/static/js/frepple.min.js:12
 msgid "Error deleting data"
@@ -196,13 +196,13 @@ msgstr "экспорт"
 #: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
 #| msgid "export selected records to "
 msgid "export selected records"
-msgstr ""
+msgstr "экспортировать выбранные записи"
 
 #: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
 #: common/static/js/frepple.min.js:12
 #| msgid "connecting to "
 msgid "connecting"
-msgstr ""
+msgstr "подключение"
 
 #: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
 #: common/static/js/frepple.min.js:12
@@ -245,7 +245,7 @@ msgstr "Отдельный столбец"
 
 #: common/static/js/frepple.js:2067 common/static/js/frepple.min.js:13
 msgid "Two columns"
-msgstr "Две колонки"
+msgstr "Два столбца"
 
 #: common/static/js/frepple.js:2074 common/static/js/frepple.min.js:13
 msgid "Three columns"
@@ -297,16 +297,16 @@ msgstr "Сначала удалите все существующие запис
 
 #: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr ""
+msgstr "выбранные файлы"
 
 #: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
 #| msgid "Selected options"
 msgid "Select files"
-msgstr ""
+msgstr "Выбрать файлы"
 
 #: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
 msgid "or drop them here"
-msgstr ""
+msgstr "или удалить здесь"
 
 #: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
 msgid "Data file"
@@ -360,12 +360,12 @@ msgstr "пауза"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:23
 msgid "inventory status"
-msgstr "состояние запасов"
+msgstr "состояние запаса"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:33
 msgid "onhand at lead time"
-msgstr "наличие вовремя"
+msgstr "наличие к сроку"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:67

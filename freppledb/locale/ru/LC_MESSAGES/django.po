@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2017-12-26 23:01+0100\n"
+"PO-Revision-Date: 2018-01-03 01:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: common/admin.py:37
 msgid "Permissions in this scenario"
@@ -81,7 +81,7 @@ msgstr "Помошник"
 
 #: common/menu.py:52 common/views.py:98 common/widget.py:75
 msgid "Path to unlock features"
-msgstr "путь к разблокировке"
+msgstr "конфигурирование"
 
 #: common/menu.py:57
 msgid "REST API help"
@@ -97,7 +97,7 @@ msgstr "О программе"
 
 #: common/models.py:40 input/models.py:348 input/models.py:555
 msgid "Unique identifier"
-msgstr "ид.номер"
+msgstr "идент."
 
 #: common/models.py:41 input/models.py:1105 input/views.py:721
 #: input/views.py:752 input/views.py:774 input/views.py:796 input/views.py:879
@@ -263,7 +263,7 @@ msgstr "размер страницы"
 #: output/views/buffer.py:290 output/views/resource.py:271
 #: planningboard/models.py:22
 msgid "identifier"
-msgstr "ид. номер"
+msgstr "идентификатор"
 
 #: common/models.py:524 common/models.py:537 common/views.py:361
 msgid "comment"
@@ -560,7 +560,7 @@ msgstr "Окно диспетчера"
 #: common/templates/admin/edit_inline/tabular.html:86
 #, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr ""
+msgstr "Отображаются только %(limit)s из записей %(count)s."
 
 #: common/templates/admin/login.html:116
 msgid "Forgot your password?"
@@ -807,11 +807,11 @@ msgstr "модель"
 
 #: common/widget.py:29
 msgid "Welcome"
-msgstr "Приступаем к работе"
+msgstr "Приступить к работе"
 
 #: common/widget.py:30
 msgid "Some links to get started"
-msgstr "Ознакомиться для начала работы"
+msgstr "Ознакомление - быстрый старт"
 
 #: common/widget.py:43
 #, python-format
@@ -924,17 +924,17 @@ msgstr "Отображение списка последних коммента�
 #: demandhits/attributes.py:17 demandhits/attributes.py:20
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr ""
+msgstr "заказы на продажу за последние %(num)d месяцев"
 
 #: demandhits/attributes.py:18 demandhits/attributes.py:21
 #, python-format
 msgid "sales units last %(num)d months"
-msgstr ""
+msgstr "позиции продаж за последние %(num)d месяцев"
 
 #: demandhits/attributes.py:19 demandhits/attributes.py:22
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr ""
+msgstr "стоимость продаж за последниу %(num)d месяцев"
 
 #: execute/commands.py:130
 msgid "Generate supply plan"
@@ -1087,7 +1087,7 @@ msgstr "экспорт"
 #: execute/management/commands/frepple_exporttofolder.py:391
 #: execute/management/commands/frepple_importfromfolder.py:579
 msgid "file name"
-msgstr ""
+msgstr "имя файла"
 
 #: execute/management/commands/frepple_exporttofolder.py:391
 #: execute/management/commands/frepple_importfromfolder.py:579
@@ -1098,13 +1098,13 @@ msgstr "размер"
 #: execute/management/commands/frepple_importfromfolder.py:579
 #| msgid "save changes"
 msgid "changed"
-msgstr ""
+msgstr "изменен"
 
 #: execute/management/commands/frepple_exporttofolder.py:391
 #: execute/management/commands/frepple_importfromfolder.py:579
 #| msgid "Data file"
 msgid "Delete all files"
-msgstr ""
+msgstr "Удалить все файлы"
 
 #: execute/management/commands/frepple_exporttofolder.py:392
 msgid ""
@@ -1133,17 +1133,17 @@ msgstr "Импорт результатов плана из каталога"
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "Data file"
 msgid "Delete file"
-msgstr ""
+msgstr "Удалить файл"
 
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "Upload failed"
 msgid "Upload data files"
-msgstr ""
+msgstr "Загрузка файлов данных"
 
 #: execute/management/commands/frepple_importfromfolder.py:580
 #| msgid "Upload failed"
 msgid "Download file"
-msgstr ""
+msgstr "Скачать файл"
 
 #: execute/management/commands/frepple_importfromfolder.py:581
 msgid ""
@@ -1191,7 +1191,7 @@ msgstr "дополнительные шаги планирования"
 #: execute/management/commands/frepple_run.py:268
 #| msgid "type"
 msgid "Plan type"
-msgstr ""
+msgstr "Тип плана"
 
 #: execute/management/commands/frepple_run.py:269
 msgid ""
@@ -1287,7 +1287,7 @@ msgstr "отменен"
 #: execute/templates/execute/execute.html:58
 #| msgid "Review"
 msgid "view"
-msgstr ""
+msgstr "просмотр"
 
 #: execute/templates/execute/execute.html:147
 msgid "autorefresh"
@@ -1325,7 +1325,7 @@ msgstr "Отображается только последние 50 Кбайт �
 #: execute/views.py:517
 #, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr ""
+msgstr "Расширение имени файла должно быть в %(ext)s"
 
 #: execute/views.py:529
 msgid "Upload failed"
@@ -1376,11 +1376,11 @@ msgstr "шаблон спроса"
 
 #: forecast/attributes.py:22
 msgid "adi"
-msgstr "adi"
+msgstr "ADI"
 
 #: forecast/attributes.py:23
 msgid "cv2"
-msgstr "cv2"
+msgstr "К.в.2"
 
 #: forecast/commands.py:666 forecast/commands.py:687 forecast/commands.py:743
 msgid "Generate forecast"
@@ -1603,7 +1603,7 @@ msgstr ""
 #: forecast/models.py:56 forecast/views.py:75 input/models.py:1008
 #: input/views.py:1011 quoting/views.py:57
 msgid "minimum shipment"
-msgstr "мин. отгрузка"
+msgstr "отгрузка мин."
 
 #: forecast/models.py:58 input/models.py:1010
 msgid "Minimum shipment quantity when planning this demand"
@@ -1612,7 +1612,7 @@ msgstr "Минимальная отгрузка планируемого спр�
 #: forecast/models.py:60 forecast/views.py:74 input/models.py:1013
 #: input/views.py:1010 quoting/views.py:56
 msgid "maximum lateness"
-msgstr "макс. опоздание"
+msgstr "опоздание макс."
 
 #: forecast/models.py:61 input/models.py:1014
 msgid "Maximum lateness allowed when planning this demand"
@@ -1624,7 +1624,7 @@ msgstr "дискретный"
 
 #: forecast/models.py:65
 msgid "Round forecast numbers to integers"
-msgstr "Округлять номера прогнозов до целых чисел"
+msgstr "Округлять значения прогноза до целых чисел"
 
 #: forecast/models.py:68 forecast/views.py:110
 #: inventoryplanning/templates/inventoryplanning/drp.html:2188
@@ -1637,16 +1637,16 @@ msgstr "расчетный метод прогноза"
 
 #: forecast/models.py:75
 msgid "calculated standard deviation"
-msgstr "вычисленное стандартное отклонение"
+msgstr "расчетное стандартное отклонение"
 
 #: forecast/models.py:79 forecast/views.py:77
 #| msgid "unplanned"
 msgid "planned"
-msgstr ""
+msgstr "планируемый"
 
 #: forecast/models.py:80
 msgid "Specifies whether this forecast record should be planned"
-msgstr ""
+msgstr "Указывает, должна ли планироваться эта запись прогноза"
 
 #: forecast/models.py:86
 msgid "forecasts"
@@ -1660,7 +1660,7 @@ msgstr "прогнозы"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1258
 #: inventoryplanning/templates/inventoryplanning/drp.html:1350
 msgid "total orders"
-msgstr "все заказы"
+msgstr "Заказы всего"
 
 #: forecast/models.py:932 forecast/templates/forecast/forecast.html:180
 #: forecast/views.py:115 forecast/views.py:403 forecast/views.py:474
@@ -1733,52 +1733,52 @@ msgstr "плановый прогноз"
 #: forecast/models.py:941
 #| msgid "total orders"
 msgid "total orders value"
-msgstr ""
+msgstr "общая стоимость заказов"
 
 #: forecast/models.py:942
 #| msgid "orders adjustment"
 msgid "orders adjustment value"
-msgstr ""
+msgstr "стоимость корректировки заказов"
 
 #: forecast/models.py:943
 #| msgid "open sales orders value"
 msgid "open orders value"
-msgstr ""
+msgstr "стоимость открытых заказов"
 
 #: forecast/models.py:944
 #| msgid "planned orders"
 msgid "planned orders value"
-msgstr ""
+msgstr "стоимость плановых заказов"
 
 #: forecast/models.py:945
 #| msgid "forecast baseline"
 msgid "forecast baseline value"
-msgstr ""
+msgstr "базовый прогноз"
 
 #: forecast/models.py:946
 #| msgid "forecast override"
 msgid "forecast override value"
-msgstr ""
+msgstr "переопределение прогноза"
 
 #: forecast/models.py:947
 #| msgid "forecast total"
 msgid "forecast total value"
-msgstr ""
+msgstr "общий прогноз"
 
 #: forecast/models.py:948
 #| msgid "forecast net"
 msgid "forecast net value"
-msgstr ""
+msgstr "чистый прогноз"
 
 #: forecast/models.py:949
 #| msgid "forecast consumed"
 msgid "forecast consumed value"
-msgstr ""
+msgstr "прогнозируемая  стоимость потребления"
 
 #: forecast/models.py:950
 #| msgid "planned forecast"
 msgid "planned forecast value"
-msgstr ""
+msgstr "плановое значение прогноза"
 
 #: forecast/models.py:959
 msgid "forecast plan"
@@ -1790,11 +1790,11 @@ msgstr "планы прогноза"
 
 #: forecast/models.py:1048
 msgid "No editable fields found"
-msgstr ""
+msgstr "Не найдено редактируемых полей"
 
 #: forecast/models.py:1073
 msgid "Forecast or item+location+customer not found"
-msgstr ""
+msgstr "Прогноз или позиция+местоположение+клиент не найдены"
 
 #: forecast/templates/forecast/forecast.html:40
 #: inventoryplanning/templates/inventoryplanning/drp.html:2031
@@ -1804,7 +1804,7 @@ msgstr "показать значение"
 #: forecast/templates/forecast/forecast.html:43
 #: inventoryplanning/templates/inventoryplanning/drp.html:2034
 msgid "display units"
-msgstr "показать единицы"
+msgstr "показать позиции"
 
 #: forecast/templates/forecast/forecast.html:194
 #: forecast/templates/forecast/forecast.html:289 forecast/views.py:122
@@ -1827,7 +1827,7 @@ msgstr "метод"
 
 #: forecast/views.py:88
 msgid "forecast report"
-msgstr "Отчет прогноза"
+msgstr "Сводный прогноз"
 
 #: forecast/views.py:109
 #: inventoryplanning/templates/inventoryplanning/drp.html:2184
@@ -1998,15 +1998,15 @@ msgstr "запасы"
 
 #: input/models.py:24
 msgid "minimum cost"
-msgstr "мин. стоимость"
+msgstr "стоимость мин."
 
 #: input/models.py:25
 msgid "minimum penalty"
-msgstr "мин. штраф"
+msgstr "штраф мин."
 
 #: input/models.py:26
 msgid "minimum cost plus penalty"
-msgstr "мин. стоимость и штраф"
+msgstr "стоимость и штраф мин."
 
 #: input/models.py:47 input/views.py:1067
 msgid "default value"
@@ -2022,7 +2022,7 @@ msgstr "начало"
 
 #: input/models.py:96 input/views.py:1104
 msgid "end time"
-msgstr "окончание"
+msgstr "финиш"
 
 #: input/models.py:115
 msgid "calendar bucket"
@@ -2171,7 +2171,7 @@ msgstr ""
 #: output/views/buffer.py:303 output/views/operation.py:72
 #: output/views/resource.py:285
 msgid "size minimum"
-msgstr "мин. размер"
+msgstr "размер мин."
 
 #: input/models.py:239
 msgid "A minimum quantity for operationplans"
@@ -2194,7 +2194,7 @@ msgstr "количество в партии для план-графика"
 #: output/views/buffer.py:305 output/views/operation.py:78
 #: output/views/resource.py:287
 msgid "size maximum"
-msgstr "макс. размер"
+msgstr "размер макс."
 
 #: input/models.py:249
 msgid "A maximum quantity for operationplans"
@@ -2238,13 +2238,15 @@ msgstr "Выбор алгоритма расчета и критерия опт�
 
 #: input/models.py:275 input/views.py:1144
 msgid "batching window"
-msgstr ""
+msgstr "пакетное окно"
 
 #: input/models.py:276
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
+"Алгоритм решателя будет проверять возможности создания пакетов в течение "
+"этого временного окна до и после даты потребности"
 
 #: input/models.py:284 input/models.py:293 input/models.py:622
 #: input/models.py:696 input/models.py:1101 input/views.py:143
@@ -2312,7 +2314,7 @@ msgstr "подоперации"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2375
 #: inventoryplanning/templates/inventoryplanning/drp.html:2378
 msgid "default"
-msgstr "Стандарт"
+msgstr "по умолчанию"
 
 #: input/models.py:343 input/models.py:486
 msgid "infinite"
@@ -2403,11 +2405,11 @@ msgstr "Стоимость конверсии"
 
 #: input/models.py:477
 msgid "setup matrix rule"
-msgstr "Правило матрицы наладки"
+msgstr "правило матрицы наладки"
 
 #: input/models.py:478
 msgid "setup matrix rules"
-msgstr "Правила матрицы наладки"
+msgstr "правила матрицы наладки"
 
 #: input/models.py:503 input/views.py:723 output/views/resource.py:44
 #: output/views/resource.py:389
@@ -2433,7 +2435,7 @@ msgstr "Стоимость использования одной единицы 
 
 #: input/models.py:526
 msgid "max early"
-msgstr "макс. рано"
+msgstr "макс. раньше"
 
 #: input/models.py:527
 msgid "Time window before the ask date where we look for available capacity"
@@ -2441,7 +2443,7 @@ msgstr "Временное окно до даты запроса, где мы и
 
 #: input/models.py:532
 msgid "Setup matrix defining the conversion time and cost"
-msgstr "матрица наладки, которая определяет стоимость времени переналадок"
+msgstr "матрица наладки, задает стоимость времени переналадок"
 
 #: input/models.py:535 input/models.py:731 input/models.py:1203
 #: input/views.py:729 input/views.py:947 output/models.py:63
@@ -2500,7 +2502,7 @@ msgstr "навыки ресурса"
 
 #: input/models.py:613
 msgid "Start"
-msgstr "Запуск"
+msgstr "Начало"
 
 #: input/models.py:614
 msgid "End"
@@ -2548,7 +2550,7 @@ msgstr "приоритет нагрузки в группе альтернати
 
 #: input/models.py:732
 msgid "Setup required on the resource for this operation"
-msgstr "наладка требуется для этой операции на этом ресурсе"
+msgstr "наладка требуемая для этой операции на этом ресурсе"
 
 #: input/models.py:765
 msgid "operation resource"
@@ -2621,7 +2623,7 @@ msgstr "поставщик товара"
 
 #: input/models.py:868 input/views.py:806
 msgid "item suppliers"
-msgstr "поставщики товара"
+msgstr "поставки"
 
 #: input/models.py:885 input/models.py:1116 input/views.py:846
 #: input/views.py:1393 input/views.py:1424 input/views.py:1426
@@ -2631,7 +2633,7 @@ msgstr "поставщики товара"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1793
 #: output/widget.py:1070 output/widget.py:1110
 msgid "origin"
-msgstr "передача из"
+msgstr "передать из"
 
 #: input/models.py:895
 msgid "A minimum shipping quantity"
@@ -2720,7 +2722,7 @@ msgstr "Количество, запланированное для достав
 
 #: input/models.py:1024 input/views.py:1003
 msgid "delivery date"
-msgstr "Дата сдачи"
+msgstr "Дата доставки"
 
 #: input/models.py:1024
 msgid "Delivery date of the demand"
@@ -2740,7 +2742,7 @@ msgstr "заказ на закупку"
 
 #: input/models.py:1045 input/models.py:1301
 msgid "distribution order"
-msgstr "заказ на распределение"
+msgstr "заказ распределения"
 
 #: input/models.py:1046 input/models.py:1382
 msgid "customer shipment"
@@ -2762,11 +2764,11 @@ msgstr "утвержден"
 #: input/views.py:1293 input/views.py:1480 input/views.py:1663
 #: inventoryplanning/templates/inventoryplanning/drp.html:2069
 msgid "confirmed"
-msgstr "подтвержден"
+msgstr "исполняется"
 
 #: input/models.py:1061
 msgid "Unique identifier of an operationplan"
-msgstr "ид. номер операции план-графика"
+msgstr "Уникальный идентификатор операции по графику"
 
 #: input/models.py:1065
 msgid "Status of the order"
@@ -2805,7 +2807,7 @@ msgstr "критичность"
 #: input/views.py:1450 input/views.py:1453 input/views.py:1455
 #: output/widget.py:1071 output/widget.py:1111
 msgid "destination"
-msgstr "место назначения"
+msgstr "получатель"
 
 #: input/models.py:1134 output/models.py:38
 #: output/templates/output/demand.html:118
@@ -2836,7 +2838,7 @@ msgstr "начало"
 #: input/models.py:1202 output/widget.py:1031 output/widget.py:1071
 #: output/widget.py:1152 output/widget.py:1188
 msgid "enddate"
-msgstr "окончание"
+msgstr "завершение"
 
 #: input/models.py:1206
 msgid "Status of the OperationPlanResource"
@@ -2894,7 +2896,7 @@ msgstr "уровень"
 
 #: input/views.py:686
 msgid "setup rules"
-msgstr "Правила настройки"
+msgstr "правила наладки"
 
 #: input/views.py:727 output/views/resource.py:47 output/views/resource.py:403
 msgid "maxearly"
@@ -2908,7 +2910,7 @@ msgstr "наименьшее"
 #: input/views.py:1663 input/views.py:1668
 #, python-brace-format
 msgid "change status to {status}"
-msgstr "изменение состояния на {status}"
+msgstr "изменить состояние на {status}"
 
 #: input/views.py:1232 input/views.py:1391 input/views.py:1579
 #: inventoryplanning/templates/inventoryplanning/drp.html:1790
@@ -2938,12 +2940,12 @@ msgstr "запасы местоположения"
 #: input/views.py:1269
 #| msgid "setup matrices"
 msgid "setup time"
-msgstr ""
+msgstr "время наладки"
 
 #: input/views.py:1270 output/views/resource.py:306
 #| msgid "end date"
 msgid "setup end date"
-msgstr ""
+msgstr "дата завершения наладки"
 
 #: input/views.py:1401 input/views.py:1588
 msgid "total cost"
@@ -2957,7 +2959,7 @@ msgstr "стоимость"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2316
 #: inventoryplanning/views.py:194
 msgid "reorder quantity"
-msgstr "кол. перезаказа"
+msgstr "перезаказ ROQ"
 
 #: inventoryplanning/admin.py:38
 msgid "Safety stock quantity"
@@ -2965,11 +2967,11 @@ msgstr "страховой запас"
 
 #: inventoryplanning/attributes.py:17
 msgid "Successor part"
-msgstr ""
+msgstr "преемник"
 
 #: inventoryplanning/commands.py:453
 msgid "Compute inventory parameters"
-msgstr "Вычислить параметры запасов"
+msgstr "Оптимальные параметры запасов"
 
 #: inventoryplanning/commands.py:911
 msgid "Generate inventory rebalancing requests"
@@ -3009,26 +3011,26 @@ msgstr "период покрытия"
 #: inventoryplanning/models.py:47 inventoryplanning/models.py:90
 #: inventoryplanning/views.py:131 inventoryplanning/views.py:143
 msgid "ROQ minimum quantity"
-msgstr "мин. р-р партии ФПП"
+msgstr "ROQ мин.количество"
 
 #: inventoryplanning/models.py:51 inventoryplanning/models.py:94
 #: inventoryplanning/views.py:132 inventoryplanning/views.py:144
 msgid "ROQ maximum quantity"
-msgstr "макс. р-р партии ФПП"
+msgstr "ROQ макс.количество"
 
 #: inventoryplanning/models.py:55 inventoryplanning/models.py:98
 #: inventoryplanning/views.py:133 inventoryplanning/views.py:145
 msgid "ROQ minimum period of cover"
-msgstr "мин. период покрытия ФПП"
+msgstr "ROQ мин.период покрытия"
 
 #: inventoryplanning/models.py:58 inventoryplanning/models.py:101
 #: inventoryplanning/views.py:134 inventoryplanning/views.py:146
 msgid "ROQ maximum period of cover"
-msgstr "макс. период покрытия ФПП"
+msgstr "ROQ макс.период покрытия"
 
 #: inventoryplanning/models.py:61 inventoryplanning/views.py:140
 msgid "lead time deviation"
-msgstr "отклонение времени выполнения"
+msgstr "отклонение срока"
 
 #: inventoryplanning/models.py:64 inventoryplanning/views.py:141
 msgid "demand deviation"
@@ -3069,7 +3071,7 @@ msgstr "нет на складе"
 
 #: inventoryplanning/models.py:87 inventoryplanning/models.py:123
 msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
-msgstr "Обеспечивает страховой запас 0 и количество перезаказа 1"
+msgstr "для страхового запаса установить 0, для перезаказа 1"
 
 #: inventoryplanning/models.py:90 inventoryplanning/models.py:94
 #: inventoryplanning/models.py:98 inventoryplanning/models.py:101
@@ -3087,7 +3089,7 @@ msgstr "сегмент"
 
 #: inventoryplanning/models.py:138
 msgid "inventory planning parameter"
-msgstr "параметр планирования запасов"
+msgstr "параметр планирования запаса"
 
 #: inventoryplanning/models.py:139 inventoryplanning/views.py:118
 msgid "inventory planning parameters"
@@ -3099,7 +3101,7 @@ msgstr "запрос"
 
 #: inventoryplanning/models.py:162
 msgid "sku_count"
-msgstr "колич."
+msgstr "колич_SKU"
 
 #: inventoryplanning/models.py:163
 msgid "Number of sku in the segment"
@@ -3107,19 +3109,19 @@ msgstr "количество позиций буфера в сегменте"
 
 #: inventoryplanning/models.py:242
 msgid "ROQ Minimum Quantity"
-msgstr "мин. колич. ФПП"
+msgstr "ROQ мин.количество"
 
 #: inventoryplanning/models.py:243
 msgid "ROQ Maximum Quantity"
-msgstr "макс. колич. ФПП"
+msgstr "ROQ макс.количество"
 
 #: inventoryplanning/models.py:244
 msgid "ROQ Minimum Period of Cover"
-msgstr "мин. период покрытия ФПП"
+msgstr "ROQ мин.период покрытия"
 
 #: inventoryplanning/models.py:245
 msgid "ROQ Maximum Period of Cover"
-msgstr "макс. период покрытия ФПП"
+msgstr "ROQ макс.период покрытия"
 
 #: inventoryplanning/models.py:246
 msgid "Service Level"
@@ -3143,11 +3145,11 @@ msgstr "страх. запас макс. пер. покрытия"
 
 #: inventoryplanning/models.py:257
 msgid "Business Rule"
-msgstr "бизнес-правила"
+msgstr "бизнес-правило"
 
 #: inventoryplanning/models.py:318
 msgid "calculated reorder quantity"
-msgstr "расчетное количество перезаказа"
+msgstr "расчетное ROQ"
 
 #: inventoryplanning/models.py:319
 msgid "calculated safety stock"
@@ -3159,7 +3161,7 @@ msgstr "значение страх. запаса"
 
 #: inventoryplanning/models.py:327
 msgid "reorder quantity value"
-msgstr "количество перезаказа"
+msgstr "количество перезаказа (ROQ)"
 
 #: inventoryplanning/models.py:333
 #: inventoryplanning/templates/inventoryplanning/drp.html:1658
@@ -3173,7 +3175,7 @@ msgstr "открытые заказы на продажу"
 
 #: inventoryplanning/models.py:335 inventoryplanning/views.py:200
 msgid "proposed purchases"
-msgstr "предложение закупки"
+msgstr "предложено закупок"
 
 #: inventoryplanning/models.py:336 inventoryplanning/views.py:201
 msgid "proposed transfers"
@@ -3189,7 +3191,7 @@ msgstr "открытые доставки"
 
 #: inventoryplanning/models.py:339
 msgid "onhand value"
-msgstr "стоимость в наличии"
+msgstr "стоимость наличия"
 
 #: inventoryplanning/models.py:340
 msgid "overdue sales orders value"
@@ -3297,13 +3299,13 @@ msgstr "общий прогноз"
 #: inventoryplanning/templates/inventoryplanning/drp.html:676
 #: inventoryplanning/templates/inventoryplanning/drp.html:1006
 msgid "reorder quantity override"
-msgstr "переопределение колич. перезаказа"
+msgstr "переопределить ROQ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:665
 #: inventoryplanning/templates/inventoryplanning/drp.html:678
 #: inventoryplanning/templates/inventoryplanning/drp.html:1010
 msgid "safety stock override"
-msgstr "переопределение страх. запаса"
+msgstr "переопрелить страх. запас"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:666
 #: inventoryplanning/templates/inventoryplanning/drp.html:679
@@ -3312,7 +3314,7 @@ msgstr "переопределение страх. запаса"
 #: output/templates/output/buffer.html:115
 #: output/templates/output/buffer.html:214 output/views/buffer.py:84
 msgid "start inventory"
-msgstr "начальные запасы"
+msgstr "начальный запас"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:667
 #: inventoryplanning/templates/inventoryplanning/drp.html:680
@@ -3322,7 +3324,7 @@ msgstr "локальный спрос"
 #: inventoryplanning/templates/inventoryplanning/drp.html:670
 #: inventoryplanning/templates/inventoryplanning/drp.html:683
 msgid "confirmed supply"
-msgstr "подтвержденная поставка"
+msgstr "исполняемая поставка"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:671
 #: inventoryplanning/templates/inventoryplanning/drp.html:684
@@ -3347,24 +3349,24 @@ msgstr "конечный запас"
 #: output/templates/output/buffer.html:117
 #: output/templates/output/buffer.html:215 output/views/buffer.py:85
 msgid "produced"
-msgstr "произведен"
+msgstr "пополнение"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1127
 #: output/templates/output/buffer.html:119
 #: output/templates/output/buffer.html:216 output/views/buffer.py:86
 msgid "consumed"
-msgstr "потреблен"
+msgstr "потребление"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1665
 msgid "superseded"
-msgstr ""
+msgstr "заменено"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1689
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
 #: inventoryplanning/templates/inventoryplanning/drp.html:1691
 #, python-format
 msgid "Last %(x)s months"
-msgstr ""
+msgstr "последние %(x)s мес."
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1799
 msgid "Last Modified"
@@ -3391,7 +3393,7 @@ msgstr "подробно"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2056
 msgid "Recalculate"
-msgstr "Пересчет"
+msgstr "Перерасчет"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2056
 msgid "simulate changes without saving"
@@ -3432,7 +3434,7 @@ msgstr "Состояние запасов"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2108
 msgid "Top 5 customers"
-msgstr "Top 5 клиенты"
+msgstr "Top 5 клиентов"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2115
 msgid "Buffer attributes"
@@ -3445,7 +3447,7 @@ msgstr "Атрибуты местоположения"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2131
 #| msgid "inventory status"
 msgid "Network status"
-msgstr ""
+msgstr "Состояние сети"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2138
 msgid "Supply information"
@@ -3461,7 +3463,7 @@ msgstr "по товарной позиции"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2212
 msgid "new item-location comment"
-msgstr "по месоположению товарной позиции"
+msgstr "по месоположению запаса"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2213
 msgid "new location comment"
@@ -3485,7 +3487,7 @@ msgstr "расчетный страховой запас"
 #: output/widget.py:685 output/widget.py:694 output/widget.py:830
 #: output/widget.py:977 output/widget.py:986 output/widget.py:995
 msgid "units"
-msgstr "единицы"
+msgstr "позиции запаса"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2260
 msgid "demand standard deviation"
@@ -3509,11 +3511,11 @@ msgstr "между"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2321
 msgid "computed economic reorder quantity"
-msgstr "обоснованный объем перезаказа"
+msgstr "оптим. ROQ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2371
 msgid "Sets safety stock to 0 and reorder quantity to 1"
-msgstr "Устанавливает страховой запас в 0 и переупорядочивает количество до 1"
+msgstr "страховой запас  0,  количество  перезаказа 1"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2379
 msgid "true"
@@ -3529,7 +3531,7 @@ msgstr "сегменты"
 
 #: inventoryplanning/views.py:82
 msgid "sku count"
-msgstr "колич."
+msgstr "колич. SKU"
 
 #: inventoryplanning/views.py:93
 msgid "business rules"
@@ -3567,7 +3569,7 @@ msgstr "прогноз не найден"
 
 #: inventoryplanning/widget.py:25
 msgid "Display the current status of your current inventory"
-msgstr "Отображает текущее состояние вашей текущей инвентаризации"
+msgstr "Показать текущее состояние запасов"
 
 #: inventoryplanning/widget.py:132
 msgid "green"
@@ -3583,7 +3585,7 @@ msgstr "красный"
 
 #: inventoryplanning/widget.py:149 output/widget.py:1380
 msgid "inventory by location"
-msgstr "запасы мест-я"
+msgstr "запасы в сети"
 
 #: inventoryplanning/widget.py:150 output/widget.py:1381
 msgid "Display the locations with the highest inventory value"
@@ -3626,7 +3628,7 @@ msgstr "Запись результатов в ERP"
 #, python-format
 #| msgid "Export data to %(erp)s"
 msgid "Import data from %(erp)s"
-msgstr ""
+msgstr "Импорт данных из %(erp)s"
 
 #: odoo/views.py:45
 msgid "Invalid configuration parameters"
@@ -3718,25 +3720,25 @@ msgstr "всего заверш."
 #: output/templates/output/operation.html:335 output/views/operation.py:157
 #| msgid "proposed purchases"
 msgid "proposed production"
-msgstr ""
+msgstr "предложено в производство"
 
 #: output/templates/output/operation.html:147 output/views/operation.py:158
 #| msgid "total cost"
 msgid "total production"
-msgstr ""
+msgstr "всего производство"
 
 #: output/templates/output/operation.html:330
 msgid "approved and confirmed starts"
-msgstr "утвержд. и подтвержд. нач."
+msgstr "утвержденные и в исполнении для запуска"
 
 #: output/templates/output/operation.html:332
 msgid "approved and confirmed ends"
-msgstr "утвержд. и подтвержд. заверш."
+msgstr "утвержденные и в исполнении завершение"
 
 #: output/templates/output/operation.html:334
 #| msgid "approved and confirmed starts"
 msgid "approved and confirmed production"
-msgstr ""
+msgstr "утвержденные и в исполнении в производство"
 
 #: output/templates/output/pegging.html:96
 msgid "zoom in"
@@ -3767,11 +3769,11 @@ msgstr "перегрузка"
 
 #: output/views/buffer.py:30
 msgid "Inventory report"
-msgstr "Отчет о запасах"
+msgstr "План запасов"
 
 #: output/views/buffer.py:249
 msgid "Inventory detail report"
-msgstr "Отчет о запасах подробный"
+msgstr "Движение запасов"
 
 #: output/views/buffer.py:315
 msgid "expected onhand"
@@ -3823,7 +3825,7 @@ msgstr "незапланировано"
 
 #: output/views/constraint.py:38
 msgid "precedence"
-msgstr "предшеств."
+msgstr "преимущество"
 
 #: output/views/constraint.py:39
 msgid "before fence"
@@ -3851,7 +3853,7 @@ msgstr "заказы"
 
 #: output/views/demand.py:404 output/views/demand.py:451
 msgid "Demand plan detail"
-msgstr "План спроса подробный"
+msgstr "План продаж"
 
 #: output/views/demand.py:419
 msgid "demand quantity"
@@ -3867,7 +3869,7 @@ msgstr "Показатели KPI"
 
 #: output/views/operation.py:28
 msgid "Operation report"
-msgstr "Отчет по операциям"
+msgstr "План операций"
 
 #: output/views/pegging.py:28
 msgid "Demand plan"
@@ -3879,11 +3881,11 @@ msgstr "Отчет о проблемах"
 
 #: output/views/resource.py:31
 msgid "Resource report"
-msgstr "Отчет о ресурсах"
+msgstr "План загрузки"
 
 #: output/views/resource.py:48 output/views/resource.py:407
 msgid "setupmatrix"
-msgstr "матрица переналадки"
+msgstr "матрица переналадок"
 
 #: output/views/resource.py:55 output/views/resource.py:64
 msgid "utilization %"
@@ -3895,7 +3897,7 @@ msgstr "часы"
 
 #: output/views/resource.py:216
 msgid "Resource detail report"
-msgstr "Отчет о ресурсах подробно"
+msgstr "План ресурсов"
 
 #: output/views/resource.py:304
 msgid "load quantity"
@@ -3904,7 +3906,7 @@ msgstr "колич. нагрузки"
 #: output/views/resource.py:307
 #| msgid "duration"
 msgid "setup duration"
-msgstr ""
+msgstr "длит.наладки"
 
 #: output/widget.py:32
 msgid "late orders"
@@ -3925,7 +3927,7 @@ msgstr "дефицит заказа"
 
 #: output/widget.py:97
 msgid "Shows orders that are not planned completely"
-msgstr "Показывает заказы запланированные неполностью"
+msgstr "Показывать заказы запланированные неполностью"
 
 #: output/widget.py:158
 msgid "Shows manufacturing orders by start date"
@@ -3939,13 +3941,13 @@ msgstr "Обзор"
 
 #: output/widget.py:406 output/widget.py:680 output/widget.py:981
 msgid "confirmed orders"
-msgstr "подтвержденные заказы"
+msgstr "исполняемые заказы"
 
 #: output/widget.py:415 output/widget.py:424 output/widget.py:689
 #: output/widget.py:698 output/widget.py:990 output/widget.py:999
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr "предлагаемые заказы в течениеs %(fence)s дней"
+msgstr "предложенные заказы в течениеs %(fence)s дней"
 
 #: output/widget.py:435
 msgid "Shows distribution orders by start date"

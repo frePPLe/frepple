@@ -271,7 +271,7 @@ class Command(BaseCommand):
           <td style="vertical-align:top; padding: 15px">
             <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,false,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
           </td>
-          <td style="padding: 15px;">
+          <td style="padding: 15px 15px 0 15px">
             <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
           </td>
         </tr>

@@ -3,7 +3,8 @@
 {% block extrahead %}{{block.super}}
 <script type="text/javascript">
   var refresh = null;
-
+  var lastcompleted = -1;
+  
   function extraPreference() {
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
@@ -143,6 +144,16 @@
 </style>
 {% endblock %}
 
+{% block extra_grid %}
+loadComplete : function(data) {
+ if (data.lastcompleted != lastcompleted) {
+   if (lastcompleted != -1)
+     location.reload();
+   lastcompleted = data.lastcompleted;
+ }
+},
+{% endblock %}
+
 {% block actions %}
 	<button class="btn btn-xs btn-primary" id="autorefresh" onclick="updateRefresh()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
 	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-pause{% endif %}"></span>
@@ -159,9 +170,8 @@
 	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
     {% for command in commandlist %}
-      {% call_method command "getHTML" request as HTMLcode%}
+      {% call_method command "getHTML" request as HTMLcode %}
       {% if HTMLcode %}
-      <!-- accordionentry is a list of objects -->
       <div class="panel panel-default">
         <div class="panel-heading" data-parent="#tasks" role="tab" id="{{ forloop.counter }}Heading" data-toggle="collapse" data-target="#{{ forloop.counter }}Accord">
           <h4 class="panel-title">

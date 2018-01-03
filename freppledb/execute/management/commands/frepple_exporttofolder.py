@@ -338,8 +338,7 @@ class Command(BaseCommand):
                 }
                 $('#confirmbutton').hide();
                 $('#cancelbutton').attr('value',gettext('Close'));
-                $('#cancelbutton').one('click', function() {$("#popup").hide();});
-                $('tr[data-file="'+filename+'"]').remove();
+                $('#cancelbutton').one('click', function() {location.reload();});
               },
               error: function (result, stat, errorThrown) {
                 var filelist = result.responseText.split(' / ');

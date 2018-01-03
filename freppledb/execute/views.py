@@ -120,6 +120,15 @@ class TaskReport(GridReport):
         }
 
 
+  @classmethod
+  def extraJSON(reportclass, request):
+    try:
+      lastCompletedTask = Task.objects.all().using(request.database).filter(status='Done').order_by('-id').only('id')[0]
+      return '"lastcompleted":%d,\n' % lastCompletedTask.id
+    except:
+      return '"lastcompleted":0,\n'
+
+
 @csrf_exempt
 @basicauthentication(allow_logged_in=True)
 def APITask(request, action):

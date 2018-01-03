@@ -407,6 +407,7 @@ class Command(BaseCommand):
               $('#copytoclipboard').show();
             $('#canceluploadbutton').hide();
             $('#cancelimportbutton').hide();
+            $('#cancelbutton').one('click', function() {location.reload();});
           },
           error: function (result, stat, errorThrown) {
             var el = $('#uploadResponse');
@@ -471,7 +472,7 @@ class Command(BaseCommand):
                 $('#confirmbutton').hide();
                 $('#cancelbutton').attr('value',gettext('Close'));
                 $('#cancelbutton').one('click', function() {$("#popup").hide();});
-                $('tr[data-file="'+filename+'"]').remove();
+                location.reload();
               },
               error: function (result, stat, errorThrown) {
                 var filelist = result.responseText.split(' / ');

@@ -65,14 +65,14 @@ def getHTML(request):
       action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
     <table>
       <tr>
-        <td  style="padding: 0px 15px;">
+        <td style="padding:15px; vertical-align:top">
           <button  class="btn btn-primary" id="load" type="submit" value="{% trans "launch"|capfirst %}">
             {% trans "launch"|capfirst %}
           </button>
         </td>
-        <td>
+        <td style="padding:15px">
           <div class="dropdown dropdown-submit-input">
-            {% trans "Load one of the available datasets." %}
+            <p>{% trans "Load one of the available datasets." %}</p>
             <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">

@@ -990,6 +990,11 @@ class GridReport(View):
     yield '{"total":%d,\n' % total_pages
     yield '"page":%d,\n' % page
     yield '"records":%d,\n' % recs
+    if hasattr(reportclass, 'extraJSON'):
+      # Hook to insert extra fields to the json
+      tmp = reportclass.extraJSON(request)
+      if tmp:
+        yield tmp
     yield '"rows":[\n'
     cnt = (page - 1) * request.pagesize + 1
     first = True

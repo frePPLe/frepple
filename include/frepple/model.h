@@ -3198,7 +3198,13 @@ inline ostream & operator << (ostream & os, const OperationPlan* o)
       << ", " << o->getStart();
     if (o->getSetupEnd() != o->getStart())
       os << " - " << o->getSetupEnd();
-    os << " - " << o->getEnd() << ")";
+    os << " - " << o->getEnd();
+    if (o->getApproved())
+      os << ", approved)";
+    else if (o->getConfirmed())
+      os << ", confirmed)";
+    else
+      os << ")";
   }
   else
     os << "nullptr";

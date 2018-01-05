@@ -644,7 +644,7 @@ void Operation::initOperationPlan (
   // Setting the owner first. Note that the order is important here!
   // For alternates & routings the quantity needs to be set through the owner.
   if (ow)
-    opplan->setOwner(ow);
+    opplan->setOwner(ow, true);
 
   // Setting the dates and quantity
   setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
@@ -1629,7 +1629,8 @@ void OperationRouting::addSubOperationPlan
     throw LogicException("Adding null suboperationplan");
 
   // Adding a suboperationplan that was already added
-  if (child->owner == parent)  return;
+  if (child->owner == parent)
+    return;
 
   // Link in the suoperationplan list
   if (fast)
@@ -1657,71 +1658,94 @@ void OperationRouting::addSubOperationPlan
   else
   {
     // Method 2: full validation
-    // Child operationplan can be locked or unlocked.
     // We verify that the new operationplan is a valid step in the routing.
-    // The child element is inserted at the right place in the list, which
-    // considers its status locked/unlocked and its order in the routing.
-    OperationPlan* matchingUnlocked = nullptr;
-    OperationPlan* prevsub = parent->firstsubopplan;
-    if (!child->getProposed())
-    {
-      // Advance till first already registered locked suboperationplan
-      while (prevsub && prevsub->getProposed())
-      {
-        if (prevsub->getOperation() == child->getOperation())
-          matchingUnlocked = prevsub;
-        prevsub = prevsub->nextsubopplan;
-      }
-    }
+    // The child element is inserted at the right place in the list.
+    // Search if an existing operationplan matches
     bool ok = false;
-    for (Operationlist::const_iterator i = steps.begin(); i != steps.end(); i++)
-    {
-      if ((*i)->getOperation() == child->getOperation())
+    OperationPlan* subopplan = parent->firstsubopplan;
+    for (; subopplan; subopplan = subopplan->nextsubopplan)
+      if (subopplan->getOperation() == child->getOperation())
       {
         ok = true;
         break;
       }
-      if (prevsub && (*i)->getOperation() == prevsub->getOperation())
-        prevsub = prevsub->nextsubopplan;
+
+    // If not existing yet, find the correct position in the list
+    if (!subopplan)
+    {
+      subopplan = parent->firstsubopplan;
+      for (auto rtgstep = steps.begin(); rtgstep != steps.end(); ++rtgstep)
+      {
+        if (subopplan && (*rtgstep)->getOperation() == subopplan->getOperation())
+          subopplan = subopplan->nextsubopplan;
+        if ((*rtgstep)->getOperation() == child->getOperation())
+        {
+          ok = true;
+          break;
+        }
+      }
     }
+
+    // Stop if this is not a valid step
     if (!ok)
       throw DataException("Invalid routing suboperationplan");
-    // At this point, we know the operation is a valid step. And the variable
-    // prevsub points to the suboperationplan before which we need to insert
-    // the new suboperationplan.
-    if (prevsub && prevsub->getOperation() == child->getOperation())
-    {
-      if (!prevsub->getProposed())
-        throw DataException("Can't replace confirmed or approved routing suboperationplan");
-      parent->eraseSubOperationPlan(prevsub);
-      OperationPlan* tmp = prevsub->nextsubopplan;
-      delete prevsub;
-      prevsub = tmp;
+
+    // Remove existing suboperationplan
+    if (subopplan && subopplan->getOperation() == child->getOperation())
+    {      
+      parent->eraseSubOperationPlan(subopplan);
+      OperationPlan* tmp = subopplan->nextsubopplan;
+      delete subopplan;
+      subopplan = tmp;
     }
-    if (!child->getProposed() && matchingUnlocked)
+
+    // Insert the new suboperationplan.
+    // The variable subopplan points to the suboperationplan before which we 
+    // need to insert the new suboperationplan.
+    if (subopplan)
     {
-      // Adjust the unlocked part of the operationplan
-      matchingUnlocked->quantity = parent->quantity - child->quantity;
-      if (matchingUnlocked->quantity < 0.0) matchingUnlocked->quantity = 0.0;
-      matchingUnlocked->resizeFlowLoadPlans();
-    }
-    if (prevsub)
-    {
-      // Append in middle
-      child->nextsubopplan = prevsub;
-      child->prevsubopplan = prevsub->prevsubopplan;
-      if (prevsub->prevsubopplan)
-        prevsub->prevsubopplan->nextsubopplan = child;
+      // Append in middle of suboperationplan list
+      child->nextsubopplan = subopplan;
+      child->prevsubopplan = subopplan->prevsubopplan;
+      if (subopplan->prevsubopplan)
+        subopplan->prevsubopplan->nextsubopplan = child;
       else
         parent->firstsubopplan = child;
-      prevsub->prevsubopplan = child;
+      subopplan->prevsubopplan = child;
+      // Propagate backward to assure the timing of the preceding routing steps
+      for (auto prevstep = child; prevstep; prevstep = prevstep->prevsubopplan)
+      {
+        if (prevstep->getConfirmed())
+          continue;
+        else if (prevstep->prevsubopplan && prevstep->prevsubopplan->getEnd() > prevstep->getStart())
+          prevstep->prevsubopplan->setEnd(prevstep->getStart());
+      }
+      // Propagate forward to assure the timing of the preceding routing steps
+      for (auto followingsteps = child; followingsteps; followingsteps = followingsteps->nextsubopplan)
+      {
+        if (followingsteps->getConfirmed())
+          continue;
+        else if (followingsteps->prevsubopplan && followingsteps->prevsubopplan->getEnd() > followingsteps->getStart())
+          followingsteps->setStart(followingsteps->prevsubopplan->getEnd());
+      }
     }
     else if (parent->lastsubopplan)
     {
-      // Append at end
+      // Append at end of suboperationplan list
       child->prevsubopplan = parent->lastsubopplan;
       parent->lastsubopplan->nextsubopplan = child;
       parent->lastsubopplan = child;
+      // Propagate backward to assure the timing of the preceding routing steps
+      for (auto prevstep = child; prevstep; prevstep = prevstep->prevsubopplan)
+      {
+        if (prevstep->getConfirmed())
+          continue;
+        else if (prevstep->prevsubopplan && prevstep->prevsubopplan->getEnd() > prevstep->getStart())
+          prevstep->prevsubopplan->setEnd(prevstep->getStart());
+      }
+      // Propagate forward to assure the timing of the subsequent routing steps
+      if (child->prevsubopplan && child->prevsubopplan->getEnd() < child->getStart() && !child->getConfirmed())
+        child->setStart(child->prevsubopplan->getEnd());
     }
     else
     {
@@ -1732,7 +1756,8 @@ void OperationRouting::addSubOperationPlan
   }
 
   // Update the owner
-  if (child->owner) child->owner->eraseSubOperationPlan(child);
+  if (child->owner)
+    child->owner->eraseSubOperationPlan(child);
   child->owner = parent;
 
   // Update the flow and loadplans

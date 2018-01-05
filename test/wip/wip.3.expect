@@ -247,8 +247,8 @@
 		</buffer>
 		<buffer>
 			<name>Out3</name>
-			<producing xsi:type="operation_routing">
-				<name>Oper3</name>
+			<producing>
+				<name>Oper3C</name>
 			</producing>
 			<item>
 				<name>Out3</name>
@@ -375,27 +375,6 @@
 		</operation>
 		<operation xsi:type="operation_routing">
 			<name>Oper3</name>
-			<loads>
-				<load>
-					<resource>
-						<name>Res3</name>
-					</resource>
-				</load>
-			</loads>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>Out3</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-				<flow>
-					<item>
-						<name>In3</name>
-					</item>
-					<quantity>-1</quantity>
-				</flow>
-			</flows>
 			<suboperations>
 				<suboperation>
 					<operation>
@@ -406,11 +385,13 @@
 					<operation>
 						<name>Oper3B</name>
 					</operation>
+					<priority>2</priority>
 				</suboperation>
 				<suboperation>
 					<operation>
 						<name>Oper3C</name>
 					</operation>
+					<priority>3</priority>
 				</suboperation>
 			</suboperations>
 		</operation>
@@ -433,6 +414,12 @@
 				<flow>
 					<item>
 						<name>In3A</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow>
+					<item>
+						<name>In3</name>
 					</item>
 					<quantity>-1</quantity>
 				</flow>
@@ -485,6 +472,12 @@
 						<name>In3C</name>
 					</item>
 					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>Out3</name>
+					</item>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 			<duration>P1D</duration>
@@ -760,16 +753,6 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>3004</id>
-			<operation xsi:type="operation_routing">
-				<name>Oper3</name>
-			</operation>
-			<start>2013-12-30T00:00:00</start>
-			<end>2014-01-02T00:00:00</end>
-			<quantity>10</quantity>
-			<status>confirmed</status>
-		</operationplan>
-		<operationplan>
 			<id>3005</id>
 			<operation xsi:type="operation_routing">
 				<name>Oper3</name>
@@ -780,33 +763,27 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>4011</id>
-			<operation>
-				<name>Oper3A</name>
-			</operation>
-			<start>2013-12-30T00:00:00</start>
-			<end>2013-12-31T00:00:00</end>
-			<quantity>10</quantity>
-			<status>confirmed</status>
-			<owner>
-				<id>3004</id>
-			</owner>
-		</operationplan>
-		<operationplan>
 			<id>3007</id>
-			<operation>
-				<name>Oper3A</name>
+			<operation xsi:type="operation_routing">
+				<name>Oper3</name>
 			</operation>
-			<start>2014-02-01T00:00:00</start>
-			<end>2014-02-05T00:00:00</end>
-			<quantity>7</quantity>
-			<status>confirmed</status>
-			<owner>
-				<id>3005</id>
-			</owner>
+			<start>2014-03-31T00:00:00</start>
+			<end>2014-04-05T00:00:00</end>
+			<quantity>10</quantity>
+			<status>approved</status>
 		</operationplan>
 		<operationplan>
-			<id>4012</id>
+			<id>3009</id>
+			<operation xsi:type="operation_routing">
+				<name>Oper3</name>
+			</operation>
+			<start>2014-06-02T00:00:00</start>
+			<end>2014-06-08T00:00:00</end>
+			<quantity>10</quantity>
+			<status>approved</status>
+		</operationplan>
+		<operationplan>
+			<id>4011</id>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -819,16 +796,29 @@
 			</owner>
 		</operationplan>
 		<operationplan>
+			<id>4012</id>
+			<operation>
+				<name>Oper3A</name>
+			</operation>
+			<start>2014-03-31T00:00:00</start>
+			<end>2014-04-01T00:00:00</end>
+			<quantity>10</quantity>
+			<status>approved</status>
+			<owner>
+				<id>3007</id>
+			</owner>
+		</operationplan>
+		<operationplan>
 			<id>4013</id>
 			<operation>
-				<name>Oper3B</name>
+				<name>Oper3A</name>
 			</operation>
-			<start>2013-12-31T00:00:00</start>
-			<end>2014-01-01T00:00:00</end>
+			<start>2014-06-02T00:00:00</start>
+			<end>2014-06-03T00:00:00</end>
 			<quantity>10</quantity>
-			<status>confirmed</status>
+			<status>approved</status>
 			<owner>
-				<id>3004</id>
+				<id>3009</id>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -845,12 +835,38 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4014</id>
+			<id>3008</id>
 			<operation>
 				<name>Oper3B</name>
 			</operation>
-			<start>2014-02-03T00:00:00</start>
-			<end>2014-02-04T00:00:00</end>
+			<start>2014-04-01T00:00:00</start>
+			<end>2014-04-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>approved</status>
+			<owner>
+				<id>3007</id>
+			</owner>
+		</operationplan>
+		<operationplan>
+			<id>3010</id>
+			<operation>
+				<name>Oper3B</name>
+			</operation>
+			<start>2014-06-06T00:00:00</start>
+			<end>2014-06-07T00:00:00</end>
+			<quantity>10</quantity>
+			<status>approved</status>
+			<owner>
+				<id>3009</id>
+			</owner>
+		</operationplan>
+		<operationplan>
+			<id>4014</id>
+			<operation>
+				<name>Oper3C</name>
+			</operation>
+			<start>2014-02-04T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
 			<owner>
@@ -862,12 +878,12 @@
 			<operation>
 				<name>Oper3C</name>
 			</operation>
-			<start>2014-01-01T00:00:00</start>
-			<end>2014-01-02T00:00:00</end>
+			<start>2014-04-04T00:00:00</start>
+			<end>2014-04-05T00:00:00</end>
 			<quantity>10</quantity>
-			<status>confirmed</status>
+			<status>approved</status>
 			<owner>
-				<id>3004</id>
+				<id>3007</id>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -875,12 +891,12 @@
 			<operation>
 				<name>Oper3C</name>
 			</operation>
-			<start>2014-02-04T00:00:00</start>
-			<end>2014-02-05T00:00:00</end>
+			<start>2014-06-07T00:00:00</start>
+			<end>2014-06-08T00:00:00</end>
 			<quantity>10</quantity>
-			<status>confirmed</status>
+			<status>approved</status>
 			<owner>
-				<id>3005</id>
+				<id>3009</id>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -1032,26 +1048,26 @@
 			<operation>
 				<name>Purchase In3</name>
 			</operation>
-			<start>2014-01-01T00:00:00</start>
-			<end>2014-01-01T00:00:00</end>
-			<quantity>5</quantity>
+			<start>2014-02-02T00:00:00</start>
+			<end>2014-02-02T00:00:00</end>
+			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4027</id>
 			<operation>
 				<name>Purchase In3</name>
 			</operation>
-			<start>2014-02-01T00:00:00</start>
-			<end>2014-02-01T00:00:00</end>
+			<start>2014-03-31T00:00:00</start>
+			<end>2014-03-31T00:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4028</id>
 			<operation>
-				<name>Purchase In3A</name>
+				<name>Purchase In3</name>
 			</operation>
-			<start>2013-12-30T00:00:00</start>
-			<end>2013-12-30T00:00:00</end>
+			<start>2014-06-02T00:00:00</start>
+			<end>2014-06-02T00:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
@@ -1061,46 +1077,55 @@
 			</operation>
 			<start>2014-02-02T00:00:00</start>
 			<end>2014-02-02T00:00:00</end>
-			<quantity>17</quantity>
+			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4030</id>
 			<operation>
-				<name>Purchase In3B</name>
+				<name>Purchase In3A</name>
 			</operation>
-			<start>2013-12-31T00:00:00</start>
-			<end>2013-12-31T00:00:00</end>
+			<start>2014-03-31T00:00:00</start>
+			<end>2014-03-31T00:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4031</id>
 			<operation>
-				<name>Purchase In3B</name>
+				<name>Purchase In3A</name>
 			</operation>
-			<start>2014-02-02T00:00:00</start>
-			<end>2014-02-02T00:00:00</end>
-			<quantity>2</quantity>
+			<start>2014-06-02T00:00:00</start>
+			<end>2014-06-02T00:00:00</end>
+			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4032</id>
 			<operation>
 				<name>Purchase In3B</name>
 			</operation>
-			<start>2014-02-03T00:00:00</start>
-			<end>2014-02-03T00:00:00</end>
-			<quantity>10</quantity>
+			<start>2014-02-05T00:00:00</start>
+			<end>2014-02-05T00:00:00</end>
+			<quantity>2</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4033</id>
 			<operation>
-				<name>Purchase In3C</name>
+				<name>Purchase In3B</name>
 			</operation>
-			<start>2014-01-01T00:00:00</start>
-			<end>2014-01-01T00:00:00</end>
+			<start>2014-04-01T00:00:00</start>
+			<end>2014-04-01T00:00:00</end>
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
 			<id>4034</id>
+			<operation>
+				<name>Purchase In3B</name>
+			</operation>
+			<start>2014-06-06T00:00:00</start>
+			<end>2014-06-06T00:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan>
+			<id>4035</id>
 			<operation>
 				<name>Purchase In3C</name>
 			</operation>
@@ -1109,7 +1134,25 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4035</id>
+			<id>4036</id>
+			<operation>
+				<name>Purchase In3C</name>
+			</operation>
+			<start>2014-04-04T00:00:00</start>
+			<end>2014-04-04T00:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan>
+			<id>4037</id>
+			<operation>
+				<name>Purchase In3C</name>
+			</operation>
+			<start>2014-06-07T00:00:00</start>
+			<end>2014-06-07T00:00:00</end>
+			<quantity>10</quantity>
+		</operationplan>
+		<operationplan>
+			<id>4038</id>
 			<operation>
 				<name>Purchase In4</name>
 			</operation>
@@ -1118,7 +1161,7 @@
 			<quantity>8</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4036</id>
+			<id>4039</id>
 			<operation>
 				<name>Purchase In4</name>
 			</operation>
@@ -1127,7 +1170,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4037</id>
+			<id>4040</id>
 			<operation>
 				<name>Purchase In4</name>
 			</operation>
@@ -1136,7 +1179,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4038</id>
+			<id>4041</id>
 			<operation>
 				<name>Purchase In4A</name>
 			</operation>
@@ -1145,7 +1188,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4039</id>
+			<id>4042</id>
 			<operation>
 				<name>Purchase In4A</name>
 			</operation>
@@ -1154,7 +1197,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4040</id>
+			<id>4043</id>
 			<operation>
 				<name>Purchase In4B</name>
 			</operation>
@@ -1163,7 +1206,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4041</id>
+			<id>4044</id>
 			<reference>MO1</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1174,7 +1217,7 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>4042</id>
+			<id>4045</id>
 			<reference>MO2</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1185,7 +1228,7 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>4043</id>
+			<id>4046</id>
 			<reference>MO3</reference>
 			<operation>
 				<name>Strange WIP sizes</name>

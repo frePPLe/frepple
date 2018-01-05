@@ -2,15 +2,15 @@
 Business rules
 ==============
 
-Business rules are used to apply an inventory policy to a segment or to be more accurate to all SKU belonging to a given segment.
-More than one business rule can be applied to a segment.
+Business rules are used to apply an inventory policy to a segment or to be more accurate to all item-locations belonging to a given segment.
+Multiple business rules can be applied to a segment.
 Note that it is not mandatory to apply a business rule to a segment if that segment has been created for filtering purpose.
 The available possible business rules are divided into two categories, 
 the business rules having an impact on the safety stock and the business rules having an impact on the ROQ.
 
 *  |  Business rules having an impact on the **safety stock**:
 
-   |  **Service Level** : The minimum service level to apply to the collection of SKU belonging to the segment. 
+   |  **Service Level** : The minimum service level to apply to the collection of item-locations belonging to the segment. 
       The value for that business rule should be a number between 0 and 100 (95 means 95% of service level).
 
    |  **Safety Stock Minimum Quantity** : The minimum safety stock quantity.
@@ -41,7 +41,7 @@ the business rules having an impact on the safety stock and the business rules h
       
 In this example, we created three business rules :
 
-*  |  Safety Stock Maximum Period of Cover: This business rule applies to segment *Expensive parts in Brussels* and makes sure that no more than three months of forecast will be used as safety stock for these SKU.
+*  |  Safety Stock Maximum Period of Cover: This business rule applies to segment *Expensive parts in Brussels* and makes sure that no more than three months of forecast will be used as safety stock for these item-locations.
 
 *  |  Service Level : This business rule applies to segment *Cheap parts in Paris* and forces an fill rate of at least 98% for these parts.
 

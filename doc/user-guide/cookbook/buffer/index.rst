@@ -2,7 +2,8 @@
 Buffer
 ======
 
-A buffer, often called SKU -stock keeping unit-, is a (physical or logical) inventory point.
+A buffer is a (physical or logical) inventory point. It is uniquely identified
+based by a item+location combination.
 
 There are different buffer types:
 

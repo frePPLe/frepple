@@ -243,7 +243,6 @@ Section "PostgreSQL" SecPostgres
   File /r "${POSTGRESFOLDER}\pgAdmin III"
   File /r "${POSTGRESFOLDER}\share"
   File /r "${POSTGRESFOLDER}\StackBuilder"
-  File /r "${POSTGRESFOLDER}\symbols"
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}"
   ; SetOutPath is used to set the working directory for the shortcut
   SetOutPath "$INSTDIR\pgsql\bin"

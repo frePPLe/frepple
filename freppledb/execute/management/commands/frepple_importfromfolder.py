@@ -432,28 +432,24 @@ class Command(BaseCommand):
           $.jgrid.hideModal("#searchmodfbox_grid");
           var dialogcontent;
           if (typeof filename === 'object') {
-            if (folder === 1) {
-              dialogcontent = gettext('You are about to delete all exported files');
-            } else {
-              dialogcontent = gettext('You are about to delete all uploaded files');
-            }
+            dialogcontent = "{% trans 'You are about to delete all files' %}";           
             var oldfilename = filename;
             filename = 'AllFiles';
           } else {
-            dialogcontent = interpolate(gettext('You are about to delete file %s'), [filename]);
+            dialogcontent = interpolate("{% trans 'You are about to delete file %s' %}", [filename]);
           }
 
           $("#popup").html('<div class="modal-dialog">'+
             '<div class="modal-content">'+
               '<div class="modal-header">'+
-                '<h4 class="modal-title">'+gettext('Delete file')+'</h4>'+
+                '<h4 class="modal-title">{% trans 'Delete file' %}</h4>'+
               '</div>'+
               '<div class="modal-body"><p>'+
               dialogcontent +
               '</p></div>'+
               '<div class="modal-footer">'+
-                '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-                '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="{% trans 'Confirm' %}">'+
+                '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="{% trans 'Cancel' %}">'+
               '</div>'+
             '</div>'+
           '</div>' )
@@ -465,12 +461,12 @@ class Command(BaseCommand):
               type:  ("delete").toUpperCase(),
               success: function () {
                 if (filename === 'AllFiles') {
-                  $("#popup .modal-body>p").text(gettext('All data files were deleted'));
+                  $("#popup .modal-body>p").text("{% trans 'All data files were deleted' %}");
                 } else {
-                  $("#popup .modal-body>p").text(interpolate(gettext('File %s was deleted'), [filename]));
+                  $("#popup .modal-body>p").text(interpolate("{% trans 'File %s was deleted' %}", [filename]));
                 }
                 $('#confirmbutton').hide();
-                $('#cancelbutton').attr('value',gettext('Close'));
+                $('#cancelbutton').attr('value', "{% trans 'Close' %}");
                 $('#cancelbutton').one('click', function() {$("#popup").hide();});
                 location.reload();
               },
@@ -478,19 +474,19 @@ class Command(BaseCommand):
                 var filelist = result.responseText.split(' / ');
                 var elem = $("#popup .modal-body>p");
                 if (filelist.length === 1) {
-                  elem.text(interpolate(gettext('File %s was not deleted'), [filename]));
+                  elem.text(interpolate("{% trans 'File %s was not deleted' %}", [filename]));
                 } else {
                   for (var i = 1; i < filelist.length; i++) {
                     if (i === 1) {
-                      elem.text(interpolate(gettext('File %s was not deleted'), [filelist[i]]));
+                      elem.text(interpolate("{% trans 'File %s was not deleted' }", [filelist[i]]));
                     } else {
-                      elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
+                      elem.parent().append('<p>'+interpolate("{% trans "File %s was not deleted" %}", [filelist[i]])+'</p>');
                     }
                   }
                 }
                 $("#popup .modal-body>p").addClass('alert alert-danger');
                 $('#confirmbutton').hide();
-                $('#cancelbutton').attr('value', gettext('Close'));
+                $('#cancelbutton').attr('value', "{% trans 'Close' %}");
                 $('#cancelbutton').one('click', function() {$("#popup").hide();});
                 }
             })
@@ -507,7 +503,10 @@ class Command(BaseCommand):
       translated = (
         _("export"), _("file name"), _("size"), _("changed"), _("Delete all files"),
         _("Delete file"), _("Upload data files"), _("Download file"),
-        _("Import CSV or Excel files from the data folder. The file names must match the names of data objects and the first line in the file must contain the field names.")
+        _("Import CSV or Excel files from the data folder. The file names must match the names of data objects and the first line in the file must contain the field names."),
+        _("File %s was not deleted"), _('Close'), _("File %s was deleted"), _("All data files were deleted"),
+        _("You are about to delete all files"), _("You are about to delete file %s"),
+        _("Delete file"), _("Confirm"), _("Cancel")
         )
     else:
       return None

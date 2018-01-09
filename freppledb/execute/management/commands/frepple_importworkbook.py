@@ -287,7 +287,7 @@ class Command(BaseCommand):
           if (el.attr('data-scrolled')!== "true") {
             el.scrollTop(el[0].scrollHeight - el.height());
           }
-          $('#cancelbutton').html(gettext('Close'));
+          $('#cancelbutton').html("{% trans 'Close' %}");
           $('#importbutton').hide();
           $("#animatedcog").css('visibility','hidden');
           $('#cancelimportbutton').hide();

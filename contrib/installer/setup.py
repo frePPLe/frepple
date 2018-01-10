@@ -40,7 +40,7 @@ packages = [# Required for django standalone deployment
             # Added for unicode and internationalization
             'encodings',
             # Added for cx_freeze binaries
-            'cx_Logging', 'jwt'
+            'cx_Logging', 'jwt', 'idna'
            ]
 excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework', 'tkinter']
 

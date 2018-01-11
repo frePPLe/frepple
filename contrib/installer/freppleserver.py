@@ -43,11 +43,12 @@ class RunWSGIServer(Thread):
   def __init__(self, address, port):
     self.address = address
     self.port = port
-    super(RunWSGIServer,self).__init__()
+    super(RunWSGIServer, self).__init__()
 
   def run(self):
     try:
-      self.server = CherryPyWSGIServer((address, port),
+      self.server = CherryPyWSGIServer(
+        (address, port),
         StaticFilesHandler(WSGIHandler())
         )
       self.server.start()
@@ -72,7 +73,7 @@ def ShowConfigDirectory(sysTrayIcon):
 
 def OpenBrowser(sysTrayIcon):
   import webbrowser
-  webbrowser.open_new_tab("http://%s:%s" % (address=='0.0.0.0' and '127.0.0.1' or address, port))
+  webbrowser.open_new_tab("http://%s:%s" % (address == '0.0.0.0' and '127.0.0.1' or address, port))
 
 
 def OpenCommandWindow(sysTrayIcon):
@@ -108,24 +109,26 @@ class SysTrayIcon:
         win32gui.RegisterWindowMessage("TaskbarCreated"): self.restart,
         win32con.WM_DESTROY: self.destroy,
         win32con.WM_COMMAND: self.command,
-        win32con.WM_USER+20 : self.notify,
+        win32con.WM_USER + 20: self.notify,
         }
 
       # Register the Window class.
       window_class = win32gui.WNDCLASS()
       hinst = window_class.hInstance = win32gui.GetModuleHandle(None)
       window_class.lpszClassName = self.window_class_name
-      window_class.style = win32con.CS_VREDRAW | win32con.CS_HREDRAW;
+      window_class.style = win32con.CS_VREDRAW | win32con.CS_HREDRAW
       window_class.hCursor = win32gui.LoadCursor(0, win32con.IDC_ARROW)
       window_class.hbrBackground = win32con.COLOR_WINDOW
-      window_class.lpfnWndProc = message_map # could also specify a wndproc.
+      window_class.lpfnWndProc = message_map   # could also specify a wndproc.
       classAtom = win32gui.RegisterClass(window_class)
 
       # Create the Window.
       style = win32con.WS_OVERLAPPED | win32con.WS_SYSMENU
-      self.hwnd = win32gui.CreateWindow(classAtom, self.window_class_name,
-        style, 0, 0, win32con.CW_USEDEFAULT, win32con.CW_USEDEFAULT, 0, 0,
-        hinst, None)
+      self.hwnd = win32gui.CreateWindow(
+        classAtom, self.window_class_name, style, 0, 0,
+        win32con.CW_USEDEFAULT, win32con.CW_USEDEFAULT, 0, 0,
+        hinst, None
+        )
       win32gui.UpdateWindow(self.hwnd)
       self.notify_id = None
       self.refresh_icon()
@@ -141,8 +144,11 @@ class SysTrayIcon:
           self.menu_actions_by_id.add((self._next_action_id, option_action))
           result.append(menu_option + (self._next_action_id,))
         elif non_string_iterable(option_action):
-          result.append((option_text, option_icon,
-            self._add_ids_to_menu_options(option_action), self._next_action_id))
+          result.append((
+            option_text, option_icon,
+            self._add_ids_to_menu_options(option_action),
+            self._next_action_id
+            ))
         else:
           print('Unknown item', option_text, option_icon, option_action)
         self._next_action_id += 1
@@ -157,27 +163,31 @@ class SysTrayIcon:
       else:
         hicon = win32gui.LoadIcon(hinst, int(self.icon))
 
-      if self.notify_id: message = win32gui.NIM_MODIFY
-      else: message = win32gui.NIM_ADD
-      self.notify_id = (self.hwnd, 0,
+      if self.notify_id:
+        message = win32gui.NIM_MODIFY
+      else:
+        message = win32gui.NIM_ADD
+      self.notify_id = (
+        self.hwnd, 0,
         win32gui.NIF_ICON | win32gui.NIF_MESSAGE | win32gui.NIF_TIP,
-         win32con.WM_USER+20, hicon, self.hover_text)
+        win32con.WM_USER + 20, hicon, self.hover_text
+        )
       win32gui.Shell_NotifyIcon(message, self.notify_id)
 
     def restart(self, hwnd, msg, wparam, lparam):
       self.refresh_icon()
 
     def destroy(self, hwnd, msg, wparam, lparam):
-      if self.on_quit: self.on_quit(self)
+      if self.on_quit:
+        self.on_quit(self)
       nid = (self.hwnd, 0)
       win32gui.Shell_NotifyIcon(win32gui.NIM_DELETE, nid)
-      win32gui.PostQuitMessage(0) # Terminate the app.
+      win32gui.PostQuitMessage(0)     # Terminate the app.
 
       # Using the included postgres database?
       if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
         # Check if the database is running. If so, stop it.
         os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
-        from subprocess import call, DEVNULL
         status = call([
           os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
           "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
@@ -192,7 +202,7 @@ class SysTrayIcon:
             os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
             "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
             "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
-            "-w", # Wait till it's down
+            "-w",   # Wait till it's down
             "stop"
             ],
             stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
@@ -200,11 +210,11 @@ class SysTrayIcon:
             )
 
     def notify(self, hwnd, msg, wparam, lparam):
-      if lparam==win32con.WM_LBUTTONDBLCLK:
+      if lparam == win32con.WM_LBUTTONDBLCLK:
         self.execute_menu_option(self.default_menu_index + self.FIRST_ID)
-      elif lparam==win32con.WM_RBUTTONUP:
+      elif lparam == win32con.WM_RBUTTONUP:
         self.show_menu()
-      elif lparam==win32con.WM_LBUTTONUP:
+      elif lparam == win32con.WM_LBUTTONUP:
         pass
       return True
 
@@ -223,14 +233,16 @@ class SysTrayIcon:
         if option_icon:
           option_icon = self.prep_menu_icon(option_icon)
         if option_id in self.menu_actions_by_id:
-          item, extras = win32gui_struct.PackMENUITEMINFO(text=option_text,
-                                     hbmpItem=option_icon, wID=option_id)
+          item, extras = win32gui_struct.PackMENUITEMINFO(
+            text=option_text, hbmpItem=option_icon, wID=option_id
+            )
           win32gui.InsertMenuItem(menu, 0, 1, item)
         else:
           submenu = win32gui.CreatePopupMenu()
           self.create_menu(submenu, option_action)
-          item, extras = win32gui_struct.PackMENUITEMINFO(text=option_text,
-                                     hbmpItem=option_icon, hSubMenu=submenu)
+          item, extras = win32gui_struct.PackMENUITEMINFO(
+            text=option_text, hbmpItem=option_icon, hSubMenu=submenu
+            )
           win32gui.InsertMenuItem(menu, 0, 1, item)
 
     def prep_menu_icon(self, icon):
@@ -266,6 +278,7 @@ class SysTrayIcon:
       else:
         menu_action(self)
 
+
 def non_string_iterable(obj):
     try:
         iter(obj)
@@ -278,7 +291,7 @@ def non_string_iterable(obj):
 # Environment settings (which are used in the Django settings file and need
 # to be updated BEFORE importing the settings)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-os.environ['FREPPLE_APP'] = os.path.join(sys.path[0],'custom')
+os.environ['FREPPLE_APP'] = os.path.join(sys.path[0], 'custom')
 os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 # Add the custom directory to the Python path.
@@ -292,9 +305,9 @@ from django.conf import settings
 # Initialize logging
 cx_Logging.StartLogging(
   os.path.join(settings.FREPPLE_LOGDIR, "systemtray.log"),
-  level = cx_Logging.INFO,
-  maxFiles = 1,
-  prefix = "%t"
+  level=cx_Logging.INFO,
+  maxFiles=1,
+  prefix="%t"
   )
 
 # Parse command line
@@ -323,7 +336,7 @@ if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_
       os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
       "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
       "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
-      "-w", # Wait till it's up
+      "-w",   # Wait till it's up
       "start"
       ],
       stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
@@ -337,7 +350,6 @@ from freppledb.common.models import Scenario
 Scenario.syncWithSettings()
 
 # Import modules
-from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler
 from django.contrib.staticfiles.handlers import StaticFilesHandler
 from django.db import DEFAULT_DB_ALIAS
@@ -351,7 +363,7 @@ port = options.port or settings.PORT
 address = options.address or '0.0.0.0'
 
 # Redirect all output
-logfile = os.path.join(settings.FREPPLE_LOGDIR,'server.log')
+logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')
 try:
   sys.stdout = open(logfile, 'a', 0)
 except:
@@ -367,7 +379,7 @@ except socket.error as e:
 
 # Print a header message
 hostname = socket.getfqdn()
-msg = ['Starting frePPLe web server on URLs:',]
+msg = ['Starting frePPLe web server on URLs:', ]
 if address == '0.0.0.0':
   msg.append(' http://%s:%s/' % (hostname, port))
   for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
@@ -390,15 +402,15 @@ wsgi.start()
 
 # Run an icon in the system tray
 SysTrayIcon(
-  1, #  Icon. If integer it is loaded from the executable, otherwise loaded from file.
-  'frePPLe server on port %s' % port, # Text displayed when hovering over the icon
+  1,   # Icon. If integer it is loaded from the executable, otherwise loaded from file.
+  'frePPLe server on port %s' % port,   # Text displayed when hovering over the icon
   (    # Menu_options
     ('Open browser', None, OpenBrowser),
     ('Show log directory', None, ShowLogDirectory),
     ('Show configuration directory', None, ShowConfigDirectory),
     ('Open command window', None, OpenCommandWindow),
   ),
-  on_quit = on_quit,      # Method called when quitting the application
-  default_menu_index = 0, # Double clicking on icon opens this menu option
-  window_class_name = "frePPLe server"
+  on_quit=on_quit,       # Method called when quitting the application
+  default_menu_index=0,  # Double clicking on icon opens this menu option
+  window_class_name="frePPLe server"
   )

@@ -346,10 +346,10 @@ class PathReport(GridReport):
               root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
             try:
               downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
-              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, True) )
+              root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
             except Buffer.DoesNotExist:
               downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=x.item, location=curlocation)
-              root.extend( reportclass.findUsage(downstr, request.database, level-1, curqty, realdepth - 1, True) )
+              root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
             root.append( (level - 1, curnode, x.suboperation, curqty, subcount, curoperation, realdepth, False, location) )
@@ -974,6 +974,88 @@ class DemandList(GridReport):
     GridFieldNumber('minshipment', title=_('minimum shipment'), initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the customer
+    GridFieldText(
+      'customer__description', title=string_concat(_('customer'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'customer__category', title=string_concat(_('customer'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'customer__subcategory', title=string_concat(_('customer'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'customer__owner', title=string_concat(_('customer'), ' - ', _('owner')),
+      initially_hidden=True, field_name='customer__owner__name', formatter='detail',
+      extra='"role":"input/customer"', editable=False
+      ),
+    GridFieldText(
+      'customer__source', title=string_concat(_('customer'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'customer__lastmodified', title=string_concat(_('customer'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1031,6 +1113,7 @@ class CalendarList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     )
+
 
 class CalendarBucketList(GridReport):
   '''
@@ -1210,6 +1293,62 @@ class ManufacturingOrderList(GridReport):
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
     GridFieldDuration('setup_duration', title=_('setup time'), initially_hidden=True),
     GridFieldDateTime('setup_end', title=_('setup end date'), initially_hidden=True),
+    # Optional fields referencing the item
+    GridFieldText(
+      'operation__item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='operation__item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'operation__item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'operation__location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'operation__location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='operation__location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'operation__location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='operation__location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'operation__location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'operation__location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1322,8 +1461,10 @@ class DistributionOrderList(GridReport):
     GridFieldDateTime('enddate', title=_('end date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus, editable=not settings.ERP_CONNECTOR),
-    GridFieldCurrency('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
-      editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldCurrency(
+      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'
+      ),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
@@ -1331,52 +1472,92 @@ class DistributionOrderList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
-    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
-      field_name='item__owner__name', initially_hidden=True, editable=False),
-    GridFieldText('item__source', title=string_concat(_('item'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     # Optional fields referencing the origin location
-    GridFieldText('origin__description', title=string_concat(_('origin'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('origin__category', title=string_concat(_('origin'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('origin__available', title=string_concat(_('origin'), ' - ', _('available')),
+    GridFieldText(
+      'origin__description', title=string_concat(_('origin'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__category', title=string_concat(_('origin'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__available', title=string_concat(_('origin'), ' - ', _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
-      extra='"role":"input/calendar"', editable=False),
-    GridFieldText('origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('origin__source', title=string_concat(_('origin'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'origin__source', title=string_concat(_('origin'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     # Optional fields referencing the destination location
-    GridFieldText('destination__description', title=string_concat(_('destination'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('destination__category', title=string_concat(_('destination'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('destination__subcategory', title=string_concat(_('destination'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('destination__available', title=string_concat(_('destination'), ' - ', _('available')),
+    GridFieldText(
+      'destination__description', title=string_concat(_('destination'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'destination__category', title=string_concat(_('destination'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'destination__subcategory', title=string_concat(_('destination'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'destination__available', title=string_concat(_('destination'), ' - ', _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
-      extra='"role":"input/calendar"', editable=False),
-    GridFieldText('destination__owner', title=string_concat(_('destination'), ' - ', _('owner')),
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'destination__owner', title=string_concat(_('destination'), ' - ', _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('destination__source', title=string_concat(_('destination'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('destination__lastmodified', title=string_concat(_('destination'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'destination__source', title=string_concat(_('destination'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'destination__lastmodified', title=string_concat(_('destination'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1499,49 +1680,87 @@ class PurchaseOrderList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
-    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
-      field_name='item__owner__name', initially_hidden=True, editable=False),
-    GridFieldText('item__source', title=string_concat(_('item'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     # Optional fields referencing the location
-    GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')),
-      initially_hidden=True, field_name='origin__available__name', formatter='detail',
-      extra='"role":"input/calendar"', editable=False),
-    GridFieldText('location__owner', title=string_concat(_('location'), ' - ', _('owner')),
-      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('location__source', title=string_concat(_('location'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     # Optional fields referencing the supplier
-    GridFieldText('supplier__description', title=string_concat(_('supplier'), ' - ', _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('supplier__category', title=string_concat(_('supplier'), ' - ', _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('supplier__subcategory', title=string_concat(_('supplier'), ' - ', _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('supplier__owner', title=string_concat(_('supplier'), ' - ', _('owner')),
+    GridFieldText(
+      'supplier__description', title=string_concat(_('supplier'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'supplier__category', title=string_concat(_('supplier'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'supplier__subcategory', title=string_concat(_('supplier'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'supplier__owner', title=string_concat(_('supplier'), ' - ', _('owner')),
       initially_hidden=True, field_name='supplier__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('supplier__source', title=string_concat(_('supplier'), ' - ', _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('supplier__lastmodified', title=string_concat(_('supplier'), ' - ', _('last modified')),
-      initially_hidden=True, editable=False),
+      extra='"role":"input/supplier"', editable=False
+      ),
+    GridFieldText(
+      'supplier__source', title=string_concat(_('supplier'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'supplier__lastmodified', title=string_concat(_('supplier'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
   if settings.ERP_CONNECTOR:

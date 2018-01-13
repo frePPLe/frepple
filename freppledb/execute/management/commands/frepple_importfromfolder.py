@@ -478,7 +478,7 @@ class Command(BaseCommand):
                 } else {
                   for (var i = 1; i < filelist.length; i++) {
                     if (i === 1) {
-                      elem.text(interpolate("{% trans 'File %s was not deleted' }", [filelist[i]]));
+                      elem.text(interpolate("{% trans 'File %s was not deleted' %}", [filelist[i]]));
                     } else {
                       elem.parent().append('<p>'+interpolate("{% trans "File %s was not deleted" %}", [filelist[i]])+'</p>');
                     }

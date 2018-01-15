@@ -6,7 +6,7 @@
 function delayfmt(cellvalue, options, rowdata) {
   var days = 0;
   var hours = 0;
-  var minutes =0;
+  var minutes = 0;
   var seconds = 0;
   var sign = 1;
   var d = [];
@@ -54,7 +54,7 @@ function delayfmt(cellvalue, options, rowdata) {
   var thecolor0 = '';
   var thecolor1 = '';
   if (options.colModel.name === 'delay') {
-    var thenumber = sign * days + hours/24 + minutes/60/24 + seconds/3600/24;
+    var thenumber = sign * (days + hours/24 + minutes/60/24 + seconds/3600/24);    
     thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
     thecolor1 = '</div>';
     if (thenumber <= 0) {
@@ -75,13 +75,10 @@ function delayfmt(cellvalue, options, rowdata) {
   return thecolor0 + (sign*seconds).toFixed(3) + thecolor1;
 }
 
-function plannedquantitycellattr(rowId, value, rawobject) {
-  if (isNaN(parseFloat(value)) || parseFloat(rawobject.quantity) - parseFloat(value) > 0) {
+function plannedquantitycellattr(rowId, value, rowdata) {
+  var tmp = parseFloat(value);
+  if ((isNaN(tmp) || parseFloat(rowdata.quantity) - tmp > 0) && rowdata.status != 'closed' && rowdata.status != 'canceled')
     return 'style="background-color: #f00"';
-  } 
-  //else if (parseFloat(rawobject.quantity) - parseFloat(rawobject.plannedquantity) <= 0) {
-  //  thestyle = 'style="text-align: center; background-color: #008000"'
-  //}
   else
     return '';
 }

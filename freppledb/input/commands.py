@@ -1277,8 +1277,10 @@ class loadOperationPlans(LoadTask):
     with connections[database].chunked_cursor() as cursor:
       if 'supply' in os.environ:
         confirmed_filter = " and operationplan.status in ('confirmed', 'approved')"
+        create_flag = True
       else:
         confirmed_filter = ""
+        create_flag = False
       cnt_mo = 0
       cnt_po = 0
       cnt_do = 0
@@ -1290,8 +1292,7 @@ class loadOperationPlans(LoadTask):
           operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
           operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
           operationplan.item_id, operationplan.location_id,
-          reference, coalesce(dmd.name, null),
-          not exists (select 1 from operationplan o2 where o2.owner_id = operationplan.id)
+          reference, coalesce(dmd.name, null)
         FROM operationplan
         LEFT OUTER JOIN (select name from demand
           where demand.status = 'open'
@@ -1309,7 +1310,7 @@ class loadOperationPlans(LoadTask):
             opplan = frepple.operationplan(
               operation=frepple.operation(name=i[0]), id=i[1],
               quantity=i[2], source=i[6], start=i[3], end=i[4],
-              status=i[5], reference=i[13], create=i[15]
+              status=i[5], reference=i[13], create=create_flag
               )
           elif i[7] == 'PO':
             cnt_po += 1
@@ -1319,7 +1320,7 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               supplier=frepple.supplier(name=i[10]) if i[10] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=i[15]
+              status=i[5], source=i[6], create=create_flag
               )
           elif i[7] == 'DO':
             cnt_do += 1
@@ -1329,7 +1330,7 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=i[15]
+              status=i[5], source=i[6], create=create_flag
               )
           elif i[7] == 'DLVR':
             cnt_dlvr += 1
@@ -1340,7 +1341,7 @@ class loadOperationPlans(LoadTask):
               origin=frepple.location(name=i[8]) if i[8] else None,
               demand=frepple.demand(name=i[14]) if i[14] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=i[15]
+              status=i[5], source=i[6], create=create_flag
               )
             opplan = None
           else:
@@ -1355,7 +1356,8 @@ class loadOperationPlans(LoadTask):
         SELECT
           operationplan.operation_id, operationplan.id, operationplan.quantity,
           operationplan.startdate, operationplan.enddate, operationplan.status,
-          operationplan.owner_id, operationplan.source, coalesce(dmd.name, null)
+          operationplan.owner_id, operationplan.source, operationplan.reference,
+          coalesce(dmd.name, null)
         FROM operationplan
         INNER JOIN (select id
           from operationplan
@@ -1374,15 +1376,15 @@ class loadOperationPlans(LoadTask):
         opplan = frepple.operationplan(
           operation=frepple.operation(name=i[0]),
           id=i[1], quantity=i[2], source=i[7],
-          start=i[3], end=i[4], status=i[5]
+          start=i[3], end=i[4], status=i[5], reference=i[8]
           )
         if i[6] and opplan:
           try:
             opplan.owner = frepple.operationplan(id=i[6])
           except:
             pass
-        if i[8] and opplan:
-          opplan.demand = frepple.demand(name=i[8])
+        if i[9] and opplan:
+          opplan.demand = frepple.demand(name=i[9])
       logger.info('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
     with connections[database].cursor() as cursor:

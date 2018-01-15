@@ -40,19 +40,20 @@ packages = [# Required for django standalone deployment
             # Added for unicode and internationalization
             'encodings',
             # Added for cx_freeze binaries
-            'cx_Logging', 'jwt'
+            'cx_Logging', 'jwt', 'idna'
            ]
-excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework', 'tkinter']
+excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework', 'tkinter', 'certifi']
 
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values():
   scheme['data'] = scheme['purelib']
 
 # Add all modules that need to be added in uncompiled format
-import django
-import freppledb
-import django_admin_bootstrapped
 import bootstrap3
+import certifi
+import django
+import django_admin_bootstrapped
+import freppledb
 import rest_framework
 import pytz
 import requests
@@ -64,22 +65,22 @@ data_files = [
   (os.path.join(get_python_lib(), 'win32', 'lib', 'win32serviceutil.py'), 'win32serviceutil.py'),
   (os.path.join(get_python_lib(), 'pythoncom.py'), 'pythoncom.py')
   ]
-for mod in [django, freppledb, django_admin_bootstrapped, bootstrap3, rest_framework, pytz, requests]:
-   srcdir = mod.__path__[0]
-   targetdir = os.path.join('custom', mod.__name__)
-   root_path_length = len(srcdir) + 1
-   for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
-     # Ignore dirnames that start with '.'
-     for i, dirname in enumerate(dirnames):
-       if dirname.startswith('.') or dirname == '__pycache__':
-         del dirnames[i]
-     # Append data files for this subdirectory
-     for f in filenames:
-       if not f.endswith(".pyc") and not f.endswith(".pyo"):
-         data_files.append((
-           os.path.join(dirpath, f),
-           os.path.join(targetdir, dirpath[root_path_length:], f),
-           ))
+for mod in [bootstrap3, certifi, django, django_admin_bootstrapped, freppledb, rest_framework, pytz, requests]:
+  srcdir = mod.__path__[0]
+  targetdir = os.path.join('custom', mod.__name__)
+  root_path_length = len(srcdir) + 1
+  for dirpath, dirnames, filenames in os.walk(os.path.join(srcdir)):
+    # Ignore dirnames that start with '.'
+    for i, dirname in enumerate(dirnames):
+      if dirname.startswith('.') or dirname == '__pycache__':
+        del dirnames[i]
+    # Append data files for this subdirectory
+    for f in filenames:
+      if not f.endswith(".pyc") and not f.endswith(".pyo"):
+        data_files.append((
+          os.path.join(dirpath, f),
+          os.path.join(targetdir, dirpath[root_path_length:], f),
+          ))
 
 # Run the cx_Freeze program
 cx_Freeze.setup(

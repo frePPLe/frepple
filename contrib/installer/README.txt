@@ -27,18 +27,20 @@ The following steps are required:
 
 6) Install the following Python extensions.
    First, install the normal dependencies:
-     pip3 install -r requirements
-   The installer uses 2 additional packages
+     pip3 install -r requirements.txt
+     
+7)  The installer uses 2 additional packages
       - cx_freeze
       - pywin32
    The installer uses cx_freeze to create a directory containing the Python
    language (with its libraries and extensions) and the frePPLe user
    interface.
-   As the standalone web server we use WSGIServer that is provided by the
-   CherryPy project. It is a bit more scalable and robust than the Django
-   development server.
 
-7) Download the PostgreSQL binaries for 64-bit windows from:
+8) Update the file <python>/Lib/site-packages/openpyxl/__init__.py as
+   described on this page: https://stackoverflow.com/questions/25121356/python-importerror-cannot-import-name-version
+   The json file where the standard package keeps the version info isn't included correctly by cx_freeze.
+
+9) Download the PostgreSQL binaries for 64-bit windows from:
      http://www.enterprisedb.com/products-services-training/pgbindownload
    Unzip the zip-file in the folder pgsql before running the installer.
 

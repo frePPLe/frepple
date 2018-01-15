@@ -107,7 +107,7 @@ class AutoFenceOperation(PlanTask):
                 "Setting fence to %.2f days for operation '%s' that has a lead time of %.2f days"
                 % (suboper.operation.fence / 86400.0, suboper.operation.name, myleadtime / 86400.0)
                 )
-        else:
+        elif buf.producing:
           # Found a confirmed operationplan within the defined window indeed
           myleadtime = buf.producing.decoupledLeadTime(100)
           new_fence = (

@@ -2,11 +2,11 @@
 Segments
 ========
 
-Segments is a collection of SKU used either for filtering purpose or for inventory planning when combined with a business rule.
+A segment is a collection of item + location combinations used either for filtering purpose or for inventory planning when combined with a business rule.
 To define a segment, a unique name for that segment and a query are required, an optional description can also be provided.
 The query is an SQL-like query that can use fields from both item and location objects.
-Note that segment are dynamic in the sense that whether an SKU belongs to a segment or not is automatically recomputed during a plan execution.
-Therefore SKU can get in (and out) of a segment if it matches (or no more matches) the segment query.
+Note that segment are dynamic in the sense that whether an item-location belongs to a segment or not is automatically recomputed during a plan execution.
+Therefore item-locations can get in (and out) of a segment if it matches (or no more matches) the segment query.
 
 Available fields for item table are :
 
@@ -29,7 +29,7 @@ Available fields for location table are :
   
   In this example, we have defined four segments :
 
-* | All parts in RDC : This segment is composed of all SKUs in RDC.
+* | All parts in RDC : This segment is composed of all item-locations in RDC.
   | The query to define the segment is the following : 
   | *location.name = 'RDC'*
 
@@ -47,5 +47,5 @@ Available fields for location table are :
   | *location.name like '%shop%'*
   
 Any of the segments can be used for filtering purpose. For instance, in the *Inventory Planning* screen, 
-a drop-down menu appears with the list of the defined segments to only display the collection of SKU belonging to that segment.
+a drop-down menu appears with the list of the defined segments to only display the collection of item-locations belonging to that segment.
 

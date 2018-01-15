@@ -243,7 +243,6 @@ Section "PostgreSQL" SecPostgres
   File /r "${POSTGRESFOLDER}\pgAdmin III"
   File /r "${POSTGRESFOLDER}\share"
   File /r "${POSTGRESFOLDER}\StackBuilder"
-  File /r "${POSTGRESFOLDER}\symbols"
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}"
   ; SetOutPath is used to set the working directory for the shortcut
   SetOutPath "$INSTDIR\pgsql\bin"
@@ -477,6 +476,8 @@ Section -Post
   FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
   FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
   FileWrite $R4 "$\r$\n"
+  FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
+  FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n$\r$\n"
   FileWrite $R4 "# FrePPLe only supports the 'postgresql' database.$\r$\n"
   FileWrite $R4 "# Create additional entries in this dictionary to define scenario schemas.$\r$\n"
   FileWrite $R4 "DATABASES = {$\r$\n"
@@ -531,12 +532,10 @@ Section -Post
   FileWrite $R4 "    'TEST': {$\r$\n"
   FileWrite $R4 "      'NAME': 'test_scenario3',  # Database used when running the test suite.$\r$\n"
   FileWrite $R4 "      },$\r$\n"
-  FileWrite $R4 "    'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),$\r$\n"
+  FileWrite $R4 "    'FILEUPLOADFOLDER': FREPPLE_LOGDIR,$\r$\n"
   FileWrite $R4 "    },$\r$\n"
   ${Endif}
   FileWrite $R4 "  }$\r$\n$\r$\n"
-  FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
-  FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n"
   ; Read the third section in settings.py and write unmodified to the output file
   read3_loop:
     FileWrite $R4 "$R5"

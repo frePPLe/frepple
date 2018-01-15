@@ -54,13 +54,12 @@ void OperationPlan::updateProblems()
     // Check if a BeforeFence problem is required.
     // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
-    else if
-    (dates.getStart() < Plan::instance().getCurrent() + oper->getFence())
+    else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
       needsBeforeFence = true;
   }
   if (nextsubopplan
     && getEnd() > nextsubopplan->getStart()
-    && nextsubopplan->getProposed()
+    && !nextsubopplan->getConfirmed()
     && owner && owner->getOperation()->getType() != *OperationSplit::metadata
     )
     needsPrecedence = true;

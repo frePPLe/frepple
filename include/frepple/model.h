@@ -2001,7 +2001,7 @@ class OperationPlan
 
     void setOwner(OperationPlan* o)
     {
-      setOwner(o, true);
+      setOwner(o, false);
     }
 
     /** Returns a pointer to the operationplan for which this operationplan
@@ -3198,7 +3198,13 @@ inline ostream & operator << (ostream & os, const OperationPlan* o)
       << ", " << o->getStart();
     if (o->getSetupEnd() != o->getStart())
       os << " - " << o->getSetupEnd();
-    os << " - " << o->getEnd() << ")";
+    os << " - " << o->getEnd();
+    if (o->getApproved())
+      os << ", approved)";
+    else if (o->getConfirmed())
+      os << ", confirmed)";
+    else
+      os << ")";
   }
   else
     os << "nullptr";
@@ -3654,16 +3660,15 @@ class OperationRouting : public Operation
       ) const;
 
     /** Add a new child operationplan.
-      * A routing operationplan has a series of suboperationplans:
-      *   - A setup operationplan if the routing operation loads a resource
-      *     which requires a specific setup.
-      *   - A number of unlocked operationplans (one for each step in the
-      *     routing) representing production not yet started.
-      *   - A number of locked operationplan (one for each step in the routing)
-      *     representing production which is already started or finished.
-      * The sum of the quantity of the locked and unlocked operationplans of
-      * each step should be equal to the quantity of top routing operationplan.<br>
-      * The fast insert does insertion at the front of the unlocked operationplans.
+      * When the third argument is true, we don't validate the insertion and just
+      * insert it at the front of the unlocked operationplans.
+      * When the third argument is false, we do a full validation. This means:
+      * - The operation must be present in the routing
+      * - An existing suboperationplan of the same operation is replaced with the
+      *   the new child.
+      * - The dates of subsequent suboperationplans in the routing are updated
+      *   to start after the newly inserted one (except for confirmed operationplans)
+      *   that can't be touched.
       */
     virtual void addSubOperationPlan(
       OperationPlan*, OperationPlan*, bool = true

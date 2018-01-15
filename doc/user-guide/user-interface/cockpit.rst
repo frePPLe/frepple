@@ -87,7 +87,7 @@ The following widgets are currently available:
 * | **Inventory analysis**
   | Display an analysis of which item-locations have stockout risks.
   | Depending on the stockout risk, a red/yellow/green color code is assigned.
-  | The widget shows the number of SKUs in each color code by location.
+  | The widget shows the number of item-locations in each color code by location.
 
 * | **Forecast error**
   | Display the Symmetric Mean Percentage Error (aka SMAPE). The result is

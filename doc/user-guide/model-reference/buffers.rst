@@ -2,8 +2,7 @@
 Buffers
 =======
 
-A buffer is a storage for a item. It represents a place where inventory of an
-item is kept. It’s often called SKU, i.e. it's a unique item-location combination.
+A buffer is in (logical of physical) inventory point for a item at a certain location.
 
 Different types of buffers exist:
 

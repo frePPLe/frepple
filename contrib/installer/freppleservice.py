@@ -58,16 +58,14 @@ class ServiceHandler(object):
     # Import modules
     import cherrypy
     from cherrypy.wsgiserver import CherryPyWSGIServer
-    from stat import S_ISDIR, ST_MODE
     from subprocess import call, DEVNULL
     from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
 
     # Initialize django
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
-    os.environ.setdefault('FREPPLE_APP', os.path.join(sys.path[0],'custom'))
+    os.environ.setdefault('FREPPLE_APP', os.path.join(sys.path[0], 'custom'))
     import django
     django.setup()
-    from django.core import management
     from django.conf import settings
     from django.core.handlers.wsgi import WSGIHandler
     from django.contrib.staticfiles.handlers import StaticFilesHandler
@@ -81,7 +79,7 @@ class ServiceHandler(object):
     sys.path += [ os.environ['FREPPLE_APP'] ]
 
     # Append all output to a unbuffered log stream
-    with open(os.path.join(settings.FREPPLE_LOGDIR,'service.log'), 'a') as logfile:
+    with open(os.path.join(settings.FREPPLE_LOGDIR, 'service.log'), 'a') as logfile:
       sys.stderr = sys.stdout = logfile
       try:
         # Using the included postgres database
@@ -110,7 +108,7 @@ class ServiceHandler(object):
 
         # Prepare web server
         cherrypy.config.update({
-          'global':{
+          'global': {
             'log.screen': False,
             'tools.log_tracebacks.on': True,
             'engine.autoreload.on': False,
@@ -118,7 +116,8 @@ class ServiceHandler(object):
             'engine.SIGTERM': None
             }
           })
-        self.server = CherryPyWSGIServer(('127.0.0.1', settings.PORT),
+        self.server = CherryPyWSGIServer(
+          ('127.0.0.1', settings.PORT),
           StaticFilesHandler(WSGIHandler())
           )
 
@@ -138,7 +137,6 @@ class ServiceHandler(object):
         if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
           # Check if the database is running. If so, stop it.
           os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
-          from subprocess import call, DEVNULL
           status = call([
             os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
             "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
@@ -154,7 +152,7 @@ class ServiceHandler(object):
               os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
               "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
               "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
-              "-w", # Wait till it's down
+              "-w",   # Wait till it's down
               "stop"
               ],
               stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,

@@ -152,23 +152,9 @@
       <duration>P10D</duration>
     </operation>
     <operation name="Oper3" xsi:type="operation_routing">
-      <flows>
-        <flow xsi:type="flow_end">
-          <buffer name="Out3" />
-          <quantity>1</quantity>
-        </flow>
-        <flow xsi:type="flow_start">
-          <buffer name="In3" />
-          <quantity>-1</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="Res3" />
-        </load>
-      </loads>
       <suboperations>
         <suboperation>
+        <priority>1</priority>
         <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -178,7 +164,11 @@
             <flow xsi:type="flow_start">
               <buffer name="In3A" />
               <quantity>-1</quantity>
-            </flow>
+            </flow>             
+            <flow xsi:type="flow_start">
+              <buffer name="In3" />
+              <quantity>-1</quantity>
+          </flow>
           </flows>
           <loads>
             <load>
@@ -188,6 +178,7 @@
         </operation>
         </suboperation>
         <suboperation>
+        <priority>2</priority>
         <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -207,6 +198,7 @@
         </operation>
         </suboperation>
         <suboperation>
+        <priority>3</priority>
         <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D">
           <flows>
             <flow xsi:type="flow_end">
@@ -216,6 +208,10 @@
             <flow xsi:type="flow_start">
               <buffer name="In3C" />
               <quantity>-1</quantity>
+            </flow>
+            <flow xsi:type="flow_end">
+              <buffer name="Out3" />
+              <quantity>1</quantity>
             </flow>
           </flows>
           <loads>
@@ -354,52 +350,35 @@
       <operation name="Oper1"/>
     </operationplan>
     <!-- WIP on routing operation -->
-    <operationplan id="3004" quantity="10" start="2014-01-01T00:00:00" end="2014-01-02T00:00:00" status="confirmed">
+    <operationplan id="3005" quantity="10" end="2014-02-05T00:00:00" status="confirmed">
       <operation name="Oper3"/>
-      <flowplans>
-        <flowplan>
-          <item name="In3"/>
-          <status>confirmed</status>
-          <quantity>-5</quantity>
-          <date>2014-01-01T00:00:00</date>
-        </flowplan>
-      </flowplans>
-    </operationplan>
-    <operationplan id="3005" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <operation name="Oper3"/>
-      <flowplans>
-        <flowplan>
-          <item name="In3"/>
-          <status>confirmed</status>
-          <quantity>-10</quantity>
-          <date>2014-02-01T00:00:00</date>
-        </flowplan>
-      </flowplans>
     </operationplan>
     <operationplan id="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner id="3005"><operation name="Oper3"/></owner>
+      <owner id="3005"/>
       <operation name="Oper3B"/>
       <flowplans>
         <flowplan>
           <item name="In3B"/>
           <status>confirmed</status>
           <quantity>-2</quantity>
-          <date>2014-02-02T00:00:00</date>
+          <date>2014-02-05T00:00:00</date>
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="3007" quantity="7" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner id="3005"><operation name="Oper3"/></owner>
-      <operation name="Oper3A"/>
-      <flowplans>
-        <flowplan>
-          <item name="In3A"/>
-          <status>confirmed</status>
-          <quantity>-7</quantity>
-          <date>2014-02-02T00:00:00</date>
-        </flowplan>
-      </flowplans>
+    <operationplan id="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
+      <operation name="Oper3"/>
     </operationplan>
+    <operationplan id="3008" quantity="10" start="2014-04-01T00:00:00" status="approved">
+      <owner id="3007"/>
+      <operation name="Oper3B"/>
+    </operationplan>
+    <operationplan id="3009" quantity="10" end="2014-06-05T00:00:00" status="approved">
+      <operation name="Oper3"/>
+    </operationplan>
+    <operationplan id="3010" quantity="10" start="2014-06-06T00:00:00" status="approved">
+      <owner id="3009"/>
+      <operation name="Oper3B"/>
+    </operationplan>    
     <!-- WIP on alternate operation -->
     <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>

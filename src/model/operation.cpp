@@ -275,6 +275,19 @@ DateRange Operation::calculateOperationTime(
     for (auto t = cals.begin(); t != cals.end() && available; ++t)
       // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
       available = (t->getCalendar()->getValue(selected, forward) != 0);
+    if (!duration && !available)
+    {
+      // A special case for 0-time operations.
+      available = true;
+      for (auto t = cals.begin(); t != cals.end() && available; ++t)
+        available = (t->getCalendar()->getValue(selected, !forward) != 0);
+      if (available)
+      {
+        result.setEnd(curdate);
+        result.setStart(curdate);
+        return result;
+      }
+    }
     curdate = selected;
 
     if (available && !status)

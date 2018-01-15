@@ -300,7 +300,7 @@ void SolverMRP::solve(const Demand* l, void* v)
             && plan_qty - data->state->a_qty > ROUNDING_ERROR)
           {
             // Check whether the reply is based purely on onhand or not
-            if (data->getSolver()->hasOperationPlans(data->getCommandManager()))
+            if (data->getSolver()->hasOperationPlans(data->getCommandManager()) || next_date <= copy_plan_date)
             {
               // Oops, we didn't get a proper answer we can use for the next loop.
               // Print a warning and simply a bit later.

@@ -369,6 +369,11 @@ double Buffer::getOnHand() const
 
 double Buffer::getOnHand(Date d) const
 {
+  if (d == Date::infiniteFuture)
+  {
+    auto tmp = flowplans.rbegin();
+    return tmp == flowplans.end() ? 0.0 : tmp->getOnhand();
+  }
   double tmp(0.0);
   for (flowplanlist::const_iterator oo=flowplans.begin();
       oo!=flowplans.end(); ++oo)

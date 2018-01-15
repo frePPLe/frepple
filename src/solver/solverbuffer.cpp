@@ -70,6 +70,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
   // Evaluate the buffer profile and solve shortages by asking more material.
   // The loop goes from the requested date till the very end. Whenever the
   // event date changes, we evaluate if a shortage exists.
+  Duration autofence = data->getSolver()->getAutoFence();
   Date currentDate;
   const TimeLine<FlowPlan>::Event *prev = nullptr;
   double shortage(0.0);
@@ -111,8 +112,36 @@ void SolverMRP::solve(const Buffer* b, void* v)
       //  - Scan forward for producer we can replace in a single batch.
       //  - Create new supply for the shortage at that date.
 
+      // Solution zero: wait for confirmed supply that is already existing
+      bool supply_exists_already = false;
+      if (theDelta < -ROUNDING_ERROR && autofence && b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR)
+      {        
+        for (
+          Buffer::flowplanlist::const_iterator scanner = cur;
+          scanner != b->getFlowPlans().end() && scanner->getDate() < theDate + autofence;
+          ++scanner
+          )
+        {
+          if (scanner->getQuantity() <= 0 || scanner->getDate() < requested_date)
+            continue;
+          auto tmp = scanner->getOperationPlan();
+          if (tmp && tmp->getConfirmed())
+          {
+            if (data->getSolver()->getLogLevel() > 1)
+              logger << indent(b->getLevel())
+                << "  Refuse to create extra supply because confirmed supply is already available at "
+                << scanner->getDate() << endl;
+            supply_exists_already = true;
+            shortage = -prev->getOnhand();
+            tried_requested_date = true; // Disables an extra supply check
+            break;
+          }
+        }
+      }
+
       // Solution one: we scan backward in time for producers we can merge with.
       if (theDelta < -ROUNDING_ERROR
+        && !supply_exists_already
         && b->getMinimumInterval() >= 0L
         && prev
         && prev->getDate() >= theDate - b->getMinimumInterval())
@@ -221,6 +250,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
 
       // Solution two: we scan forward in time for producers we can replace.
       if (theDelta < -ROUNDING_ERROR
+        && !supply_exists_already
         && b->getMinimumInterval() >= 0L
         && cur != b->getFlowPlans().end()
         && cur->getDate() <= theDate + b->getMinimumInterval())
@@ -317,7 +347,8 @@ void SolverMRP::solve(const Buffer* b, void* v)
       }
 
       // Solution three: create supply at the shortage date itself
-      if (theDelta < -ROUNDING_ERROR)
+      if (theDelta < -ROUNDING_ERROR
+        && !supply_exists_already)
       {
         // Can we get extra supply to solve the problem, or part of it?
         // If the shortage already starts before the requested date, it

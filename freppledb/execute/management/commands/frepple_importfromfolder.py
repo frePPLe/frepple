@@ -225,7 +225,7 @@ class Command(BaseCommand):
       setattr(_thread_locals, 'database', None)
       if task:
         if errors[0] == 0:
-          task.status = '100%'
+          task.status = 'Done'
         else:
           task.status = 'Failed'
       task.finished = datetime.now()

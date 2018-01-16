@@ -508,6 +508,27 @@ class SolverMRP : public Solver
       minimumdelay = l;
     }
 
+
+    /** Return the time we wait for existing confirmed supply before 
+      * triggering a new replenishment.
+      * Default: 0
+      */
+    Duration getAutoFence() const
+    {
+      return autofence;
+    }
+
+    /** the time we wait for existing confirmed supply before 
+      * triggering a new replenishment.
+      * Default: 0
+      */
+    void setAutoFence(Duration l)
+    {
+      if (l < 0L)
+        throw DataException("Invalid autofence");
+      autofence = l;
+    }
+
     /** Get the threshold to stop iterating when the delta between iterations
       * is less than this absolute threshold.
       */
@@ -713,6 +734,7 @@ class SolverMRP : public Solver
       m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
       m->addDurationField<Cls>(SolverMRP::tag_administrativeleadtime, &Cls::getAdministrativeLeadTime, &Cls::setAdministrativeLeadTime);
       m->addDurationField<Cls>(SolverMRP::tag_minimumdelay, &Cls::getMinimumDelay, &Cls::setMinimumDelay);
+      m->addDurationField<Cls>(SolverMRP::tag_autofence, &Cls::getAutoFence, &Cls::setAutoFence);
       m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
       m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
@@ -729,6 +751,7 @@ class SolverMRP : public Solver
     static const Keyword tag_iterationaccuracy;
     static const Keyword tag_lazydelay;
     static const Keyword tag_minimumdelay;
+    static const Keyword tag_autofence;
     static const Keyword tag_allowsplits;
     static const Keyword tag_rotateresources;
     static const Keyword tag_planSafetyStockFirst;
@@ -760,6 +783,9 @@ class SolverMRP : public Solver
       * of the plan - we can leave "holes" in the schedule.
       */
     Duration minimumdelay;
+
+    /** Time we wait for existing confirmed supply before triggering a new replenishment. */
+    Duration autofence;
 
     /** Threshold to stop iterating when the delta between iterations is
       * less than this absolute limit.

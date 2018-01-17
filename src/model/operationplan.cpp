@@ -31,6 +31,10 @@ const MetaCategory* OperationPlan::metacategory;
 const MetaClass* OperationPlan::InterruptionIterator::metadata;
 const MetaCategory* OperationPlan::InterruptionIterator::metacategory;
 unsigned long OperationPlan::counterMin = 2;
+bool OperationPlan::setupEndFixed = true;
+
+const MetaCategory* SetupEvent::metadata;
+
 
 Location* OperationPlan::loc = NULL;
 Location* OperationPlan::ori = NULL;
@@ -1046,6 +1050,10 @@ OperationPlan::~OperationPlan()
   // Delete from the operationplan tree
   st.erase(this);
 
+  // Delete the setup event
+  if (setupevent)
+    delete setupevent;
+
   // Delete the flowplans and loadplan
   deleteFlowLoads();
 
@@ -1303,19 +1311,43 @@ void OperationPlan::scanSetupTimes()
 
 void OperationPlan::updateSetupTime(bool report)
 {
-  Date n = getSetupEnd();
-  Duration setup = oper->calculateSetupTime(this, n);
-  if (setup)
+  if (setupEndFixed)
   {
-    DateRange tmp = oper->calculateOperationTime(this, n, setup, false);
-    n = tmp.getStart();
+    // Keep the setup end date constant during the update 
+    // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
+    Date n = getSetupEnd();
+    Operation::SetupInfo setup = oper->calculateSetup(this, n);
+    if (get<1>(setup))
+    {
+      DateRange tmp = oper->calculateOperationTime(this, n, get<1>(setup)->getDuration(), false);
+      n = tmp.getStart();
+    }
+    if (n != getStart())
+    {
+      // The setup time has changed and we need to update the loadplans
+      if (report)
+        logger << "Warning: correcting setup on operationplan " << this << endl;
+      setStartAndEnd(n, getEnd());
+    }
   }
-  if (n != getStart())
+  else
   {
-    // The setup time has changed and we need to update the loadplans
-    if (report || true)
-      logger << "Warning: correcting setup on operationplan " << this << endl;
-    setStartAndEnd(n, getEnd());
+    // Keep the setup start date constant during the update
+    Operation::SetupInfo setup = oper->calculateSetup(this, getStart(), true);
+    if (get<1>(setup))
+    {
+      DateRange setup_dates = oper->calculateOperationTime(this, getStart(), get<1>(setup)->getDuration(), true);
+      if (getSetupEnd() != setup_dates.getEnd())
+      {
+        logger << " updating " << this << " because " << getSetupEnd() << "  != " << setup_dates << "  and " << get<1>(setup)->getDuration() << endl;
+        auto x = getLoadPlans();
+        while (auto xx = x.next())
+          xx->getResource()->inspect();
+        setStart(getStart());
+      }
+    }
+    else if (getSetupEnd() != getStart())
+      setStart(getStart());
   }
 }
 
@@ -1335,10 +1367,7 @@ void OperationPlan::update(bool propagatesetups)
         nd = f->getEnd();
     }
     if (nd)
-    {
-      endOfSetup = st;
       dates.setStartAndEnd(st, nd);
-    }
   }
 
   // Update the flow and loadplans
@@ -1348,9 +1377,7 @@ void OperationPlan::update(bool propagatesetups)
   updateOperationplanList();
 
   // Update the setup time on all neighbouring operationplans
-  if (SetupMatrix::empty())
-    endOfSetup = dates.getStart();
-  else
+  if (!SetupMatrix::empty())
   {
     if (propagatesetups)
       scanSetupTimes();
@@ -1871,15 +1898,79 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
 
 Duration OperationPlan::getSetup() const
 {
-  if (getOperation())
+  if (setupevent)
   {
-    // Convert date difference back to active time 
-    Duration actual;
-    getOperation()->calculateOperationTime(this, dates.getStart(), endOfSetup, &actual);
-    return actual;
+    if (getOperation())
+    {
+      // Convert date difference back to active time
+      Duration actual;
+      getOperation()->calculateOperationTime(this, dates.getStart(), setupevent->getDate(), &actual);
+      return actual;
+    }
+    else 
+      return setupevent->getDate() - dates.getStart();
   }
   else
-    return endOfSetup - dates.getStart();
+    // No setup event
+    return 0L;
+}
+
+
+void OperationPlan::setSetupEvent(Resource* res, Date d, PooledString s, SetupMatrixRule* r)
+{
+  if (setupevent)
+    setupevent->update(res, d, s, r);
+  else
+    setupevent = new SetupEvent(res->getLoadPlans(), d, s, r);
+}
+
+
+double OperationPlan::getSetupCost() const
+{
+  if (setupevent)
+    return setupevent->getRule() ? setupevent->getRule()->getCost() : 0.0;
+  else
+    return 0.0;
+}
+
+
+void SetupEvent::update(Resource* res, Date d, PooledString s, SetupMatrixRule* r)
+{
+  setup = s;
+  rule = r;
+  if (!tmline)
+  {
+    // First insert
+    tmline = &res->getLoadPlans();
+    tmline->insert(this);
+  }
+  else if (&res->getLoadPlans() != tmline)
+  {
+    // Reinsert at another resource
+    tmline->erase(this);
+    tmline = &res->getLoadPlans();
+    tmline->insert(this);
+  }
+  else
+    // Update the position in the list
+    tmline->update(this, d);
+}
+
+
+int SetupEvent::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaCategory::registerCategory<SetupEvent>("setupevent", "setupevents");
+  registerFields<SetupEvent>(const_cast<MetaCategory*>(metadata));
+
+  // Initialize the Python type
+  PythonType& x = FreppleCategory<LoadPlan>::getPythonType();
+  x.setName("setupeven");
+  x.setDoc("frePPLe setup event");
+  x.supportgetattro();
+  x.supportsetattro();
+  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
 }
 
 } // end namespace

@@ -1696,6 +1696,122 @@ class SubOperation : public Object, public HasSource
 };
 
 
+#include "frepple/timeline.h"
+
+
+/** @brief A timeline event representing a setup change. 
+  *
+  * The following rule applies to the event:
+  * - No change in setup 
+  *   => No setup event is created
+  * - Change in setup
+  *   => Event is created with pointer to the new rule
+  * - Change in setup, but no applicable rule is available
+  *   => event may or may not be created
+  *   => If an event is created it points to a dummy not-allowed rule
+  */
+class SetupEvent : public TimeLine<LoadPlan>::Event
+{
+  friend class TimeLine<LoadPlan>::Event;
+
+  private:
+    PooledString setup;
+    TimeLine<LoadPlan>* tmline = nullptr;
+    SetupMatrixRule* rule = nullptr;
+
+  public:
+    virtual TimeLine<LoadPlan>* getTimeLine() const
+    {
+      return tmline;
+    }
+  
+    /** Default constructor. */
+    SetupEvent() 
+    {
+      initType(metadata);    
+    }
+
+    /** Copy constructor. */
+    SetupEvent(const SetupEvent& x): setup(x.setup), tmline(x.tmline), rule(x.rule)
+    {
+      dt = x.getDate();
+      initType(metadata);
+    }
+
+    /** Constructor. */
+    SetupEvent(const SetupEvent* x)
+    {
+      initType(metadata);
+      if (x)
+      {
+        setup = x->setup;
+        tmline = x->tmline;
+        rule = x->rule;
+        dt = x->getDate();
+      }
+    }
+
+    /** Assignment operator. 
+      * We don't relink the event in the timeline yet.
+      */
+    SetupEvent& operator =(const SetupEvent & other)
+    {
+      assert(!tmline);
+      setup = other.setup;
+      tmline = other.tmline;
+      rule = other.rule;
+      return *this;
+    }
+
+    /** Constructor. */
+    SetupEvent(TimeLine<LoadPlan>& t, Date d, PooledString s, SetupMatrixRule* r=nullptr)
+      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t)
+    {
+      dt = d;
+      initType(metadata);
+    }
+
+    virtual OperationPlan* getOperationPlan() const
+    {
+      return nullptr;
+    }
+
+    SetupMatrixRule* getRule() const
+    {
+      return rule;
+    }
+
+    PooledString getSetup() const
+    {
+      return setup;
+    }
+
+    string getSetupString() const
+    {
+      return setup;
+    }
+
+    void setSetup(PooledString s)
+    {
+      setup = s;
+    }
+
+    void update(Resource*, Date, PooledString, SetupMatrixRule*);
+
+    static int initialize();
+
+    virtual const MetaClass& getType() const { return *metadata; }
+    static const MetaCategory* metadata;
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetupString);
+      m->addPointerField<Cls, SetupMatrixRule>(Tags::rule, &Cls::getRule);
+      m->addDateField<Cls>(Tags::date, &Cls::getDate);
+    }
+};
+
+
 /** @brief An operationplan is the key dynamic element of a plan. It
   * represents a certain quantity being planned along a certain operation
   * during a certain date range.
@@ -2017,6 +2133,11 @@ class OperationPlan
       return owner;
     }
 
+    SetupEvent* getSetupEvent() const
+    {
+      return setupevent;
+    }
+
     /** Return a pointer to the next suboperationplan of the owner. */
     OperationPlan* getNextSubOpplan() const
     {
@@ -2057,23 +2178,19 @@ class OperationPlan
     /** Return the start of the actual operation time. */
     Date getSetupEnd() const
     {
-      return endOfSetup;
+      return setupevent ? setupevent->getDate() : dates.getStart();
     }
 
-    double getSetupCost() const
-    {
-      return setup_cost;
-    }
+    /** Return the setup cost. */
+    double getSetupCost() const;
 
-    void setSetupCost(double d)
-    {
-      setup_cost = d;
-    }
+    /** Update the setup information. */
+    void setSetupEvent(Resource*, Date, PooledString, SetupMatrixRule* = nullptr);
 
-    /** Update the end date of the setup. */
-    void setSetupEnd(Date d)
+    /** Remove the setup event. */
+    void clearSetupEvent()
     {
-      endOfSetup = d;
+      delete setupevent;
     }
 
     /** Return true if the operationplan is redundant, ie all material
@@ -2361,6 +2478,18 @@ class OperationPlan
     }
 
     static PyObject* createIterator(PyObject* self, PyObject* args);
+    
+    static bool getSetupEndFixed()
+    {
+      return setupEndFixed;
+    }
+
+    static bool setSetupEndFixed(bool b)
+    {
+      auto tmp = setupEndFixed;
+      setupEndFixed = b;
+      return tmp;
+    }
 
   private:
     /** A tree structure with all operationplans to allow a fast lookup by id. */
@@ -2460,6 +2589,13 @@ class OperationPlan
       */
     static unsigned long counterMin;
 
+    /** Flag to control how we update the setup duration of operationplans.
+      * By default we update by keeping the setup END date constant.
+      * Setting the variable to false will update by keeping the setup START
+      * date constant.
+      */
+    static bool setupEndFixed;
+
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner = nullptr;
 
@@ -2508,11 +2644,8 @@ class OperationPlan
     /** Pointer to the previous suboperationplan of the parent operationplan. */
     OperationPlan* prevsubopplan = nullptr;
 
-    /** Setup time of this operationplan. */
-    Date endOfSetup;
-
-    /** Cost of the setup. */
-    double setup_cost = 0.0;
+    /** Setup event of this operationplan. */
+    SetupEvent* setupevent = nullptr;
 
     /** Quantity. */
     double quantity = 0.0;
@@ -2569,9 +2702,6 @@ class OperationPlan
 
     inline Item* getItem() const;
  };
-
-
-#include "frepple/timeline.h"
 
 
 /** @brief An operation represents an activity: these consume and produce material,
@@ -3107,9 +3237,13 @@ class Operation : public HasName<Operation>,
         const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
         bool = true, bool=true) const;
 
-    /** Calculate the setup time of an operationplan. 
-      * The field endOfSetup must be set to the*/
-    Duration calculateSetupTime(OperationPlan*, Date) const;
+    typedef tuple<Resource*, SetupMatrixRule*, PooledString> SetupInfo;
+
+    /** Calculate the setup time of an operationplan.
+      * The date argument can either be the start or the end date
+      * of a setup, depending on the value of the third argument.
+      */
+    SetupInfo calculateSetup(OperationPlan*, Date, bool use_start=false) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -3407,21 +3541,22 @@ inline OperationPlan::iterator OperationPlan::getSubOperationPlans() const
 }
 
 
-/** @brief A simple class to easily remember the date, quantity and owner of
-  * an operationplan. */
+/** A simple class to easily remember the date, quantity, setup and owner
+  * of an operationplan.
+  */
 class OperationPlanState  // @todo should also be able to remember and restore suboperationplans!!!
 {
   public:
     Date start;
     Date end;
-    Date endOfSetup;
+    SetupEvent setup;
     double quantity;
 
     /** Default constructor. */
     OperationPlanState() : quantity(0.0) {}
 
     /** Constructor. */
-    OperationPlanState(const OperationPlan* x)
+    OperationPlanState(const OperationPlan* x) : setup(x->getSetupEvent())
     {
       if (!x)
       {
@@ -3432,26 +3567,31 @@ class OperationPlanState  // @todo should also be able to remember and restore s
       {
         start = x->getStart();
         end = x->getEnd();
-        endOfSetup = x->getSetupEnd();
         quantity = x->getQuantity();
       }
     }
 
-    /** Constructor. */
-    OperationPlanState(const Date x, const Date y, const Date z, double q)
-      : start(x), end(y), endOfSetup(z), quantity(q) {}
+    /** Copy constructor. */
+    OperationPlanState(const OperationPlanState& x)
+      : start(x.start), end(x.end), setup(x.setup), quantity(x.quantity) {}
 
     /** Constructor. */
-    OperationPlanState(const DateRange& x, Date z, double q)
-      : start(x.getStart()), end(x.getEnd()), endOfSetup(z), quantity(q) {}
+    OperationPlanState(const Date x, const Date y, double q, SetupEvent* z = nullptr)
+      : start(x), end(y), setup(z), quantity(q) {}
 
-    /** Constructor - OLD STYLE */
-    OperationPlanState(const Date x, const Date y, double q)   // XXX Remove old style constructor
-      : start(x), end(y), endOfSetup(x), quantity(q) {}
+    /** Constructor. */
+    OperationPlanState(const DateRange& x, double q, SetupEvent* z = nullptr)
+      : start(x.getStart()), end(x.getEnd()), setup(z), quantity(q) {}
 
-    /** Constructor - OLD STYLE */
-    OperationPlanState(const DateRange& x, double q)   // XXX Remove old style constructor
-      : start(x.getStart()), end(x.getEnd()), endOfSetup(x.getStart()), quantity(q) {}
+    /* Assignment operator. */
+    OperationPlanState& operator =(const OperationPlanState & other)
+    {
+      start = other.start;
+      end = other.end;
+      setup = other.setup;
+      quantity = other.quantity;
+      return *this;
+    }
 };
 
 
@@ -6127,10 +6267,11 @@ class SetupMatrixRule : public Object
   public:
 
     /** Default constructor. */
-    SetupMatrixRule()
-    {
-      initType(metadata);
-    }
+    SetupMatrixRule() {}
+
+    /** Constructor. */
+    SetupMatrixRule(SetupMatrix* m, PooledString f, PooledString t, Duration d, double c, int p)
+      : matrix(m), from(f), to(t), duration(d), cost(c), priority(p) {}
 
     /** Update the matrix pointer. */
     void setSetupMatrix(SetupMatrix*);
@@ -6140,9 +6281,7 @@ class SetupMatrixRule : public Object
 
     static int initialize();
 
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaCategory* metacategory;
-    static const MetaClass* metadata;
+    static const MetaCategory* metadata;
 
     /** Factory method. */
     static Object* reader(
@@ -6335,10 +6474,19 @@ class SetupMatrixRule : public Object
 class SetupMatrixRuleDefault : public SetupMatrixRule
 {
 public:
+  /** Default constructor. */
   explicit SetupMatrixRuleDefault()
   {
     initType(metadata);
   }
+
+  /** Constructor. */
+  SetupMatrixRuleDefault(SetupMatrix* m, PooledString f, PooledString t, Duration d, double c, int p)
+    : SetupMatrixRule(m, f, t, d, c, p)
+  {
+    initType(metadata);
+  }
+
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
@@ -6364,7 +6512,8 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
 
   public:
     /** Default constructor. */
-    explicit SetupMatrix() {}
+    explicit SetupMatrix() 
+      : ChangeOverNotAllowed(this, "NotAllowed", "NotAllowed", 365L * 86400L, DBL_MAX, INT_MAX) {}
 
     /** Destructor. */
     ~SetupMatrix();
@@ -6394,14 +6543,17 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * tosetup fields.<br>
       * As soon as a matching rule is found, it is applied and subsequent
       * rules are not evaluated.<br>
-      * If no matching rule is found, the changeover is not allowed: a nullptr
-      * pointer is returned.
+      * If no matching rule is found, the changeover is not allowed: a pointer 
+      * to a dummy changeover with a very high cost and duration is returned.
       */
     SetupMatrixRule* calculateSetup(const string, const string, Resource*) const;
 
   private:
     /** Head of the list of rules. */
     SetupMatrixRule *firstRule = nullptr;
+
+    /** A dummy rule to mark disallowed changeovers. */
+    const SetupMatrixRuleDefault ChangeOverNotAllowed;
 };
 
 
@@ -6692,19 +6844,23 @@ class Resource : public HasHierarchy<Resource>,
     /** Return the current setup. */
     PooledString getSetup() const
     {
-      return setup;
+      return setup ? setup->getSetup() : PooledString();
     }
 
     /** Return the current setup. */
     string getSetupString() const
     {
-      return setup;
+      return setup ? setup->getSetup() : "";
     }
 
     /** Update the current setup. */
     void setSetup(const string& s)
     {
-      setup = s;
+      if (setup)
+        // Updated existing event
+        setup->setSetup(s);
+      else
+        setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
     }
 
     /** Return the setup of the resource on a specific date. 
@@ -6713,7 +6869,7 @@ class Resource : public HasHierarchy<Resource>,
       * before (or at, when the parameter is true) the argument date.
       * @see LoadPlan::getSetupBefore
       */
-    PooledString getSetupAt(Date, bool inclusive = false) const;
+    SetupEvent* getSetupAt(Date, bool inclusive = false);
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -6769,7 +6925,7 @@ class Resource : public HasHierarchy<Resource>,
     SetupMatrix *setupmatrix = nullptr;
 
     /** Current setup. */
-    PooledString setup;
+    SetupEvent* setup = nullptr;
 
     /** Availability calendar of the buffer. */
     Calendar* available = nullptr;
@@ -8032,23 +8188,15 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return start_or_end == START;
     }
 
-    /** Return the status of the operationplanmaterial.
+    /** Return the status of the operationplanresource.
       * The status string is one of the following:
       *   - proposed
       *   - confirmed
       */
     string getStatus() const;
 
-    /** Update the status of the operationplanmaterial. */
+    /** Update the status of the operationplanresource. */
     void setStatus(const string&);
-
-    /** Return the setup of the resource on a specific loadplan.
-      * To avoid any ambiguity about the current setup of a resource
-      * the calculation is based only on the latest *setup end* event
-      * before the loadplan argument.
-      * @see Resource::getSetupAt
-      */
-    PooledString getSetupBefore() const;
 
     /** Destructor. */
     virtual ~LoadPlan();
@@ -8067,14 +8215,15 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Returns the current setup of the resource. */
     string getSetup() const
     {
-      return getSetup(true);
+      auto tmp = getSetup(true);
+      return tmp ? tmp->getSetup() : "";
     }
 
     /** Returns the current setup of the resource.<br>
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
       */
-    PooledString getSetup(bool) const;
+    SetupEvent* getSetup(bool) const;
 
     /** Returns true when the loadplan is hidden.<br>
       * This is determined by looking at whether the load is hidden or not.

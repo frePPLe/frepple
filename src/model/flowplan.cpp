@@ -232,60 +232,54 @@ double FlowPlan::setQuantity(
     // Fixed quantity flows only allow resizing to 0
     if (quantity == 0.0 && oper->getQuantity() != 0.0)
     {
-      OperationPlanState x;
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
-        x = oper->getOperation()->setOperationPlanParameters(
+        return oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
           Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          );
+          ).quantity ? getFlow()->getQuantity() : 0.0;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
-        x = oper->getOperation()->setOperationPlanParameters(
+        return oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
           oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          );
-      return x.quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity ? getFlow()->getQuantity() : 0.0;
     }
     else if (quantity != 0.0 && oper->getQuantity() == 0.0)
     {
-      OperationPlanState x;
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
-        x = oper->getOperation()->setOperationPlanParameters(
+        return oper->getOperation()->setOperationPlanParameters(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
             : oper->getOperation()->getSizeMinimum(),
           Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          );
+          ).quantity ? getFlow()->getQuantity() : 0.0;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
-        x = oper->getOperation()->setOperationPlanParameters(
+        return oper->getOperation()->setOperationPlanParameters(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
           : oper->getOperation()->getSizeMinimum(),
           oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          );
-      return x.quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity ? getFlow()->getQuantity() : 0.0;
     }
   }
   else
   {
     // Normal, proportional flows
-    OperationPlanState x;
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-      x = oper->getOperation()->setOperationPlanParameters(
+      return oper->getOperation()->setOperationPlanParameters(
         oper, quantity / getFlow()->getQuantity(),
         Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
-        );
+        ).quantity * getFlow()->getQuantity();
     else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-      x = oper->getOperation()->setOperationPlanParameters(
+      return oper->getOperation()->setOperationPlanParameters(
         oper, quantity / getFlow()->getQuantity(),
         oper->getStart(), Date::infinitePast,
         false, execute, rounddown
-        );
-    return x.quantity * getFlow()->getQuantity();
+        ).quantity * getFlow()->getQuantity();
   }
   throw LogicException("Unreachable code reached");
 }

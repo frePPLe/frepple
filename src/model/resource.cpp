@@ -131,6 +131,9 @@ void Resource::inspect(const string msg) const
     case 4:
       logger << ", update maximum to " << oo->getMax() << endl;
       break;
+    case 5:
+      logger << ", change setup to " << static_cast<const SetupEvent*>(&*oo)->getSetup() << endl;
+      break;
     }
   }
 }
@@ -292,6 +295,10 @@ Resource::~Resource()
 
   // The Load and ResourceSkill objects are automatically deleted by the
   // destructor of the Association list class.
+
+  // Delete setup event
+  if (setup)
+    delete setup;
 
   // Clean up references on the itemsupplier and itemdistribution models
   for (Item::iterator itm_iter = Item::begin(); itm_iter != Item::end(); ++itm_iter)
@@ -673,26 +680,15 @@ void Resource::setSetupMatrix(SetupMatrix *s)
 }
 
 
-PooledString Resource::getSetupAt(Date d, bool inclusive) const
+SetupEvent* Resource::getSetupAt(Date d, bool inclusive)
 {
-  PooledString tmp = setup;
-  Date latestSetupEnd;
+  SetupEvent* tmp = nullptr;
   for (auto i = getLoadPlans().begin(); i != getLoadPlans().end(); ++i)
   {
     if (i->getDate() > d || (!inclusive && i->getDate() == d))
       break;
-    if (i->getEventType() != 1 || i->getQuantity() >= 0)
-      continue;
-    auto ldpln = static_cast<const LoadPlan*>(&*i);
-    if (!ldpln->getLoad()->setup.empty() && ldpln->getResource()->getSetupMatrix())
-    {
-      Date t = ldpln->getOperationPlan()->getSetupEnd();
-      if (t > latestSetupEnd && (t < d || (inclusive && t == d)))
-      {
-        tmp = ldpln->getLoad()->setup;
-        latestSetupEnd = ldpln->getOperationPlan()->getSetupEnd();
-      }
-    }
+    if (i->getEventType() == 5)
+      tmp = static_cast<SetupEvent*>(&*i);
   }
   return tmp;
 }

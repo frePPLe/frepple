@@ -250,29 +250,22 @@ void LoadPlan::update()
 }
 
 
-PooledString LoadPlan::getSetup(bool current) const
+SetupEvent* LoadPlan::getSetup(bool include) const
 {
-  // This resource has no setupmatrix
-  static PooledString nosetup;
-  assert(ld);
   if (!getResource()->getSetupMatrix())
-    return nosetup;
-
-  // Current load has a setup
-  if (!ld->getSetup().empty() && current)
-    return ld->getSetup();
-
-  // Scan earlier setups
-  for (Resource::loadplanlist::const_iterator i(this);
-      i != getResource()->getLoadPlans().end(); --i)
+    return nullptr;
+  auto tmp = getOperationPlan() && getOperationPlan()->getSetupEvent() ?
+    Resource::loadplanlist::const_iterator(getOperationPlan()->getSetupEvent()) :
+    Resource::loadplanlist::const_iterator(this);
+  if (!include)
+    --tmp;
+  while (tmp != getResource()->getLoadPlans().end())
   {
-    const LoadPlan* j = dynamic_cast<const LoadPlan*>(&*i);
-    if (j && !j->getLoad()->getSetup().empty() && (current || j != this))
-      return j->getLoad()->getSetup();
+    if (tmp->getEventType() == 5)
+      return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
+    --tmp;
   }
-
-  // No conversions found - return the original setup
-  return getResource()->getSetup();
+  return nullptr;
 }
 
 
@@ -334,45 +327,6 @@ Object* LoadPlan::reader(
       return flpln;
   }
   return nullptr;
-}
-
-
-PooledString LoadPlan::getSetupBefore() const
-{
-  // Find the current setup on the resource
-  PooledString cursetup = getResource()->getSetup();
-  auto resldplniter = getResource()->getLoadPlans().begin(this);
-  // First move beyond the point we are interested in...
-  while (
-    resldplniter != getResource()->getLoadPlans().end()
-    && resldplniter->getDate() <= oper->getSetupEnd()
-    )
-    ++resldplniter;
-  // ... and then walk backward again till we find the current setup
-  if (resldplniter == getResource()->getLoadPlans().end())
-    resldplniter = getResource()->getLoadPlans().begin(this);
-  Date latestSetupEnd = Date::infinitePast;
-  while (resldplniter != getResource()->getLoadPlans().end())
-  {
-    if (
-      resldplniter->getEventType() != 1
-      || resldplniter->getOperationPlan() == oper
-      || resldplniter->getDate() >= oper->getSetupEnd()
-      || resldplniter->getOperationPlan()->getSetupEnd() > oper->getSetupEnd()
-      )
-    {
-      --resldplniter;
-      continue;
-    }
-    const LoadPlan* tmp = static_cast<const LoadPlan*>(&*resldplniter);
-    if (!tmp->getLoad()->getSetup().empty() && tmp->getOperationPlan()->getSetupEnd() >= latestSetupEnd)
-    {
-      latestSetupEnd = tmp->getOperationPlan()->getSetupEnd();
-      cursetup = tmp->getLoad()->getSetup();
-    }
-    --resldplniter;
-  }
-  return cursetup;
 }
 
 

@@ -69,11 +69,16 @@ template <class type> class TimeLine
       public:
         virtual ~Event() {};
 
-        /** Return the even type.
+        /** Default constructor. */
+        Event() : tp(0), qty(0) {}
+
+        /** Return the event type:
+          *  - 0: null event, don't use
           *  - 1: change on hand
           *  - 2: set on hand
           *  - 3: set min on hand
           *  - 4: set max on hand
+          *  - 5: setup change (defined in model.h)
           */
         inline unsigned short getEventType() const
         {
@@ -534,11 +539,13 @@ template <class type> class TimeLine
     /** Remove an event from the timeline. */
     void erase(Event*);
 
-    /** Update the timeline to move an event to a new date and quantity.<br>
-      * Only onhand change events can be updated in this way. Other event
-      * types need to be erased and re-inserted.
-      */
+    /** Update the timeline to move an event to a new date and quantity. */
     void update(EventChangeOnhand*, double, const Date&);
+
+    /** Update the timeline to move an event to a new date and quantity. 
+      * This method can only be used for events with quantity 0.
+      */
+    void update(Event*, const Date&);
 
     /** This functions returns the mimimum valid at a certain date. */
     virtual double getMin(Date d, bool inclusive = true) const
@@ -1024,6 +1031,67 @@ template <class type> void TimeLine<type>::update(EventChangeOnhand* e, double n
     else
       for (iterator i = begin(e); i != end() && i->getEventType() != 2; ++i)
         i->oh -= delta;
+  }
+}
+
+
+template <class type> void TimeLine<type>::update(Event* e, const Date& d)
+{
+  // Only valid for events of quantity 0
+  assert(e && !e->qty);
+
+  // Set the new date and quantity. The algorithm below swaps the element with
+  // its predecessor or successor till the timeline is properly sorted again.
+  e->dt = d;
+
+  // Update the position in the timeline.
+  // Remember that the quantity is also used by the '<' operator! Changing the
+  // quantity thus can affect the order of elements.
+  while (e->next && !(*e<*e->next))
+  {
+    // Move to a later date
+    Event *theNext = e->next;
+    Event *theNextNext = theNext->next;
+    if (e->prev) e->prev->next = theNext;
+    theNext->prev = e->prev;
+    theNext->next = e;
+    e->prev = theNext;
+    e->next = theNextNext;
+    if (theNextNext)
+      theNextNext->prev = e;
+    else
+      last = e;
+    if (first == e)
+      first = theNext;
+  }
+  while (e->prev && !(*(e->prev) < *e))
+  {
+    // Move to an earlier date
+    Event *thePrev = e->prev;
+    Event *thePrevPrev = thePrev->prev;
+    if (e->next)
+      e->next->prev = thePrev;
+    thePrev->next = e->next;
+    thePrev->prev = e;
+    e->next = thePrev;
+    e->prev = thePrevPrev;
+    if (thePrevPrev)
+      thePrevPrev->next = e;
+    else
+      first = e;
+    if (last == e)
+      last = thePrev;
+  }
+
+  if (e->prev)
+  {
+    e->oh = e->prev->oh;
+    e->cum_prod = e->prev->cum_prod;
+  }
+  else
+  {
+    e->oh = 0.0;
+    e->cum_prod = 0.0;
   }
 }
 

@@ -103,7 +103,6 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     data->state->q_loadplan = lplan; // because q_loadplan can change! 
     lplan->getOperationPlan()->restore(originalOpplan);
     lplan->setResource(res, false, false);
-    lplan->getOperationPlan()->setSetupEnd(originalOpplan.endOfSetup);
     lplan->getOperationPlan()->setStartAndEnd(originalOpplan.start, originalOpplan.end);
     lplan->getOperationPlan()->updateSetupTime();
     data->state->q_qty = lplan->getQuantity();
@@ -198,8 +197,8 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     if (lplan->getResource() != bestAlternateSelection)
     {
       lplan->setResource(bestAlternateSelection, false, false);
-      lplan->getOperationPlan()->setSetupEnd(bestAlternateState.endOfSetup);
       lplan->getOperationPlan()->setStartAndEnd(bestAlternateState.start, bestAlternateState.end);
+      lplan->getOperationPlan()->updateSetupTime();
       lplan->getOperationPlan()->setQuantity(bestAlternateState.quantity);
     }
     data->state->q_qty = lplan->getQuantity();

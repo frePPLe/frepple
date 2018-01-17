@@ -91,8 +91,10 @@ void LibraryModel::initialize()
   nok += Item::initialize();
   nok += ItemDefault::initialize();
   nok += SetupMatrixRule::initialize();
+  nok += SetupMatrixRuleDefault::initialize();
   nok += SetupMatrix::initialize();
   nok += SetupMatrixDefault::initialize();
+  nok += SetupEvent::initialize();
   nok += Skill::initialize();
   nok += SkillDefault::initialize();
   nok += Resource::initialize();

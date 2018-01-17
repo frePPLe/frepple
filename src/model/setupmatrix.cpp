@@ -28,8 +28,7 @@ template<class SetupMatrix> Tree<string> utils::HasName<SetupMatrix>::st;
 const MetaCategory* SetupMatrix::metadata;
 const MetaClass* SetupMatrixDefault::metadata;
 const MetaClass* SetupMatrixRuleDefault::metadata;
-const MetaCategory* SetupMatrixRule::metacategory;
-const MetaClass* SetupMatrixRule::metadata;
+const MetaCategory* SetupMatrixRule::metadata;
 
 
 int SetupMatrix::initialize()
@@ -46,27 +45,13 @@ int SetupMatrix::initialize()
 int SetupMatrixRule::initialize()
 {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<SetupMatrixRule>(
+  metadata = MetaCategory::registerCategory<SetupMatrixRule>(
     "setupmatrixrule", "setupmatrixrules", reader
     );
-  registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metacategory));
-  metadata = MetaClass::registerClass<SetupMatrixRule>(
-    "setupmatrixrule", "setupmatrixrule",
-    Object::create<SetupMatrixRule>, true
-    );
+  registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<SetupMatrixRule>::getPythonType();
-  x.setName(metadata->type);
-  x.setDoc("frePPLe " + metadata->type);
-  x.supportgetattro();
-  x.supportsetattro();
-  x.supportstr();
-  x.supportcompare();
-  x.supportcreate(Object::create<SetupMatrixRule>);
-  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady();
+  return FreppleCategory<SetupMatrixRule>::initialize();;
 }
 
 
@@ -146,7 +131,7 @@ Object* SetupMatrixRule::reader(
       o << "Rule already exists in setupmatrix '" << matrix << "'";
       throw DataException(o.str());
     }
-    result = new SetupMatrixRule();
+    result = new SetupMatrixRuleDefault();
     result->setPriority(prio);
     if (matrix)
       result->setSetupMatrix(matrix);
@@ -171,8 +156,8 @@ Object* SetupMatrixRule::reader(
   case ADD_CHANGE:
     if (!result)
     {
-      // Adding a new bucket
-      result = new SetupMatrixRule();
+      // Adding a new rule
+      result = new SetupMatrixRuleDefault();
       result->setPriority(prio);
       if (matrix)
         result->setSetupMatrix(matrix);
@@ -305,7 +290,8 @@ SetupMatrixRule* SetupMatrix::calculateSetup
 (const string oldsetup, const string newsetup, Resource* res) const
 {
   // No need to look
-  if (oldsetup == newsetup) return nullptr;
+  if (oldsetup == newsetup)
+    return nullptr;
 
   // Loop through all rules
   for (SetupMatrixRule *curRule = firstRule; curRule; curRule = curRule->nextRule)
@@ -331,12 +317,12 @@ SetupMatrixRule* SetupMatrix::calculateSetup
   {
     if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == o.str())
       // Problem already exists
-      return nullptr;
+      return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
   }
   new ProblemInvalidData(
     res, o.str(), "resource", Date::infinitePast, Date::infiniteFuture, 1, true
   );
-  return nullptr;
+  return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
 }
 
 } // end namespace

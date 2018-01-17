@@ -180,12 +180,18 @@ class MultiDBRouter:
   def db_for_read(self, model, **hints):
     from freppledb.common.middleware import _thread_locals
     req = getattr(_thread_locals, 'request', None)
-    return getattr(req, 'database', DEFAULT_DB_ALIAS)
+    if req:
+      return getattr(req, 'database', None)
+    else:
+      return getattr(_thread_locals, 'database', None)
 
   def db_for_write(self, model, **hints):
     from freppledb.common.middleware import _thread_locals
     req = getattr(_thread_locals, 'request', None)
-    return getattr(req, 'database', DEFAULT_DB_ALIAS)
+    if req:
+      return getattr(req, 'database', None)
+    else:
+      return getattr(_thread_locals, 'database', None)
 
 
 class AuditModel(models.Model):

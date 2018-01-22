@@ -1569,20 +1569,20 @@ class GridReport(View):
 
   _filter_map_jqgrid_django = {
       # jqgrid op: (django_lookup, use_exclude)
-      'ne': ('%(field)s__exact', True),
-      'bn': ('%(field)s__startswith', True),
-      'en': ('%(field)s__endswith', True),
-      'nc': ('%(field)s__contains', True),
+      'ne': ('%(field)s__iexact', True),
+      'bn': ('%(field)s__istartswith', True),
+      'en': ('%(field)s__iendswith', True),
+      'nc': ('%(field)s__icontains', True),
       'ni': ('%(field)s__in', True),
       'in': ('%(field)s__in', False),
-      'eq': ('%(field)s__exact', False),
-      'bw': ('%(field)s__startswith', False),
+      'eq': ('%(field)s__iexact', False),
+      'bw': ('%(field)s__istartswith', False),
       'gt': ('%(field)s__gt', False),
       'ge': ('%(field)s__gte', False),
       'lt': ('%(field)s__lt', False),
       'le': ('%(field)s__lte', False),
-      'ew': ('%(field)s__endswith', False),
-      'cn': ('%(field)s__contains', False)
+      'ew': ('%(field)s__iendswith', False),
+      'cn': ('%(field)s__icontains', False)
   }
 
 
@@ -1591,12 +1591,16 @@ class GridReport(View):
       'in': 'in',
       'exact': 'eq',
       'startswith': 'bw',
+      'iexact': 'eq',
+      'istartswith': 'bw',
       'gt': 'gt',
       'gte': 'ge',
       'lt': 'lt',
       'lte': 'le',
       'endswith': 'ew',
       'contains': 'cn',
+      'iendswith': 'ew',
+      'icontains': 'cn'
   }
 
 

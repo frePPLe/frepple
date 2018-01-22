@@ -149,7 +149,7 @@ msgstr "настроить группы периодов времени"
 
 #: freppledb/quoting/static/quoting/quoting.html:123
 msgid "confirm"
-msgstr "исполнить"
+msgstr "выполнить"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:106
 #: freppledb/planningboard/static/planningboard/planningboard.html:316
@@ -429,7 +429,7 @@ msgstr "товарная позиция"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
-msgstr "категория товарной позиции"
+msgstr "категория тов. позиции"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1190
 msgid "Item category color setup"
@@ -437,7 +437,7 @@ msgstr "Настройка цвета для категрии товарной �
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
-msgstr "подкатегория товарной позиции"
+msgstr "подкатегория тов. позиции"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1225
 msgid "Item subcategory color setup"
@@ -472,12 +472,12 @@ msgstr "ручной"
 #: freppledb/planningboard/static/planningboard/planningboard.html:227
 #: freppledb/planningboard/static/planningboard/src/operationplan.js:25
 msgid "manufacturing order"
-msgstr "производственный заказ"
+msgstr "заказ в производство"
 
 #: freppledb/forecast/static/forecast/src/operationplanpanelDrv.js:37
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:37
 msgid "Manufacturing Order"
-msgstr "производственный заказ"
+msgstr "заказ в производство"
 
 #: freppledb/quoting/static/quoting/quoting.html:103
 msgid "maximum lateness (in days)"
@@ -514,7 +514,7 @@ msgstr "по товарной позиции"
 
 #: freppledb/forecast/static/forecast/forecast.html:207
 msgid "new item-location comment"
-msgstr "по месоположению товарной позиции"
+msgstr "по местоположению тов. позиции"
 
 #: freppledb/forecast/static/forecast/forecast.html:208
 msgid "new location comment"
@@ -588,7 +588,7 @@ msgstr "Настройка цвета для подкатегрии подопе
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:216
 msgid "Operationplan"
-msgstr "План-график"
+msgstr "План операций"
 
 #: freppledb/quoting/static/quoting/quoting.html:143
 msgid "operations"

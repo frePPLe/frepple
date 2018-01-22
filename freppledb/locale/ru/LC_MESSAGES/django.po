@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2018-01-03 01:16+0300\n"
+"PO-Revision-Date: 2018-01-22 10:30+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -1960,7 +1960,7 @@ msgstr "Исходящее распределение"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1657
 #: output/widget.py:157
 msgid "manufacturing orders"
-msgstr "производственные заказы"
+msgstr "заказы в производство"
 
 #: input/admin.py:74 input/admin.py:111 input/models.py:1325
 #: input/views.py:1513 input/views.py:1536 input/views.py:1543
@@ -2065,23 +2065,23 @@ msgstr "товарные позиции"
 
 #: input/models.py:193
 msgid "fixed_time"
-msgstr "Фикс_Т."
+msgstr "Время пост."
 
 #: input/models.py:194
 msgid "time_per"
-msgstr "Фикс_Пер."
+msgstr "Вр. на ед."
 
 #: input/models.py:195
 msgid "routing"
-msgstr "Маршр_Т."
+msgstr "Время перех."
 
 #: input/models.py:196
 msgid "alternate"
-msgstr "Альт_Т."
+msgstr "Время альт."
 
 #: input/models.py:197
 msgid "split"
-msgstr "Рас_Т."
+msgstr "Время отн. %"
 
 #: input/models.py:203 input/models.py:359 input/models.py:500
 #: input/models.py:637 input/models.py:1068 input/views.py:146
@@ -2154,7 +2154,7 @@ msgstr ""
 #: output/views/buffer.py:302 output/views/operation.py:69
 #: output/views/resource.py:284
 msgid "post-op time"
-msgstr "Т_пос_опер."
+msgstr "Время доп."
 
 #: input/models.py:234
 msgid ""
@@ -2619,7 +2619,7 @@ msgstr "граница замороженного периода  для соз�
 
 #: input/models.py:867
 msgid "item supplier"
-msgstr "поставщик товара"
+msgstr "поставка товара"
 
 #: input/models.py:868 input/views.py:806
 msgid "item suppliers"
@@ -2665,7 +2665,7 @@ msgstr "позиция распределения"
 
 #: input/models.py:954 input/views.py:836
 msgid "item distributions"
-msgstr "позиции распределений"
+msgstr "распределение"
 
 #: input/models.py:960 input/views.py:1026
 msgid "inquiry"
@@ -2734,7 +2734,7 @@ msgstr "заказ на продажу"
 
 #: input/models.py:1043 input/models.py:1350
 msgid "manufacturing order"
-msgstr "производственный заказ"
+msgstr "заказ в производство"
 
 #: input/models.py:1044 input/models.py:1324
 msgid "purchase order"
@@ -2931,7 +2931,7 @@ msgstr "материал"
 
 #: input/views.py:1247 input/views.py:1405 input/views.py:1592
 msgid "inventory item"
-msgstr "позиция запасов"
+msgstr "позиция запаса"
 
 #: input/views.py:1248 input/views.py:1406 input/views.py:1593
 msgid "inventory location"
@@ -3175,7 +3175,7 @@ msgstr "открытые заказы на продажу"
 
 #: inventoryplanning/models.py:335 inventoryplanning/views.py:200
 msgid "proposed purchases"
-msgstr "предложено закупок"
+msgstr "закупка предл."
 
 #: inventoryplanning/models.py:336 inventoryplanning/views.py:201
 msgid "proposed transfers"
@@ -3720,7 +3720,7 @@ msgstr "всего заверш."
 #: output/templates/output/operation.html:335 output/views/operation.py:157
 #| msgid "proposed purchases"
 msgid "proposed production"
-msgstr "предложено в производство"
+msgstr "в производстве"
 
 #: output/templates/output/operation.html:147 output/views/operation.py:158
 #| msgid "total cost"
@@ -3729,16 +3729,16 @@ msgstr "всего производство"
 
 #: output/templates/output/operation.html:330
 msgid "approved and confirmed starts"
-msgstr "утвержденные и в исполнении для запуска"
+msgstr "запуск утв. и исп."
 
 #: output/templates/output/operation.html:332
 msgid "approved and confirmed ends"
-msgstr "утвержденные и в исполнении завершение"
+msgstr "выпуск утв. и исп."
 
 #: output/templates/output/operation.html:334
 #| msgid "approved and confirmed starts"
 msgid "approved and confirmed production"
-msgstr "утвержденные и в исполнении в производство"
+msgstr "запущено утв.и исп."
 
 #: output/templates/output/pegging.html:96
 msgid "zoom in"

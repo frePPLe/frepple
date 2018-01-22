@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 21:44+0100\n"
-"PO-Revision-Date: 2018-01-01 23:59+0300\n"
+"PO-Revision-Date: 2018-01-22 10:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -160,7 +160,7 @@ msgstr "Вы собираетесь удалить объекты %s и ВСЕ �
 #: common/static/js/frepple.js:1663 common/static/js/frepple.js:1748
 #: common/static/js/frepple.min.js:12
 msgid "Confirm"
-msgstr "Исполнить"
+msgstr "Выполнить"
 
 #: common/static/js/frepple.js:1116 common/static/js/frepple.min.js:12
 msgid "Error deleting data"

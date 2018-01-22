@@ -1934,7 +1934,7 @@ class OperationPlanDetail(View):
                )
             select
               items.name, false,
-              location.name, onhand.qty, orders.MO, orders.PO, orders.DO, sales.BO, sales.SO
+              location.name, onhand.qty, orders.PO, orders.DO, orders.MO, sales.BO, sales.SO
             from items
             cross join location
             left outer join (
@@ -1944,14 +1944,14 @@ class OperationPlanDetail(View):
               ) onhand
             on onhand.item_id = items.name and onhand.location_id = location.name
             left outer join (
-              select item_id, location_id,
+              select item_id, coalesce(location_id, destination_id) as location_id,
               sum(case when type = 'MO' then quantity end) as MO,
               sum(case when type = 'PO' then quantity end) as PO,
               sum(case when type = 'DO' then quantity end) as DO
               from operationplan
               inner join items on items.name = operationplan.item_id
               and status in ('approved', 'confirmed')
-              group by item_id, location_id
+              group by item_id, coalesce(location_id, destination_id)
               ) orders
             on orders.item_id = items.name and orders.location_id = location.name
             left outer join (

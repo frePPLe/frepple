@@ -132,7 +132,10 @@ void Resource::inspect(const string msg) const
       logger << ", update maximum to " << oo->getMax() << endl;
       break;
     case 5:
-      logger << ", change setup to " << static_cast<const SetupEvent*>(&*oo)->getSetup() << endl;
+      logger << ", change setup to " << static_cast<const SetupEvent*>(&*oo)->getSetup();
+      if (oo->getOperationPlan())
+        logger << " on " << oo->getOperationPlan();
+      logger << endl;
       break;
     }
   }

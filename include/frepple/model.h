@@ -1718,6 +1718,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     PooledString setup;
     TimeLine<LoadPlan>* tmline = nullptr;
     SetupMatrixRule* rule = nullptr;
+    OperationPlan* opplan = nullptr;
 
   public:
     virtual TimeLine<LoadPlan>* getTimeLine() const
@@ -1751,8 +1752,12 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       }
     }
 
+    /** Destructor. */
+    virtual ~SetupEvent();
+
     /** Assignment operator. 
       * We don't relink the event in the timeline yet.
+      * We don't copy the operationplan field either.
       */
     SetupEvent& operator =(const SetupEvent & other)
     {
@@ -1773,7 +1778,12 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
 
     virtual OperationPlan* getOperationPlan() const
     {
-      return nullptr;
+      return opplan;
+    }
+
+    void setOperationPlan(OperationPlan* o)
+    {
+      opplan = o;
     }
 
     SetupMatrixRule* getRule() const
@@ -2191,6 +2201,12 @@ class OperationPlan
     void clearSetupEvent()
     {
       delete setupevent;
+    }
+
+    /** Remove the setup event. */
+    void nullSetupEvent()
+    {
+      setupevent = nullptr;
     }
 
     /** Return true if the operationplan is redundant, ie all material
@@ -6860,7 +6876,10 @@ class Resource : public HasHierarchy<Resource>,
         // Updated existing event
         setup->setSetup(s);
       else
+      {
         setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
+        getLoadPlans().insert(setup);
+      }
     }
 
     /** Return the setup of the resource on a specific date. 

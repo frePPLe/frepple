@@ -1921,7 +1921,11 @@ void OperationPlan::setSetupEvent(Resource* res, Date d, PooledString s, SetupMa
   if (setupevent)
     setupevent->update(res, d, s, r);
   else
+  {
     setupevent = new SetupEvent(res->getLoadPlans(), d, s, r);
+    setupevent->setOperationPlan(this);
+    res->getLoadPlans().insert(setupevent);
+  }
 }
 
 
@@ -1931,6 +1935,15 @@ double OperationPlan::getSetupCost() const
     return setupevent->getRule() ? setupevent->getRule()->getCost() : 0.0;
   else
     return 0.0;
+}
+
+
+SetupEvent::~SetupEvent()
+{
+  if (opplan)
+    opplan->nullSetupEvent();
+  if (tmline)
+    tmline->erase(this);
 }
 
 

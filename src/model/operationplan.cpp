@@ -1052,7 +1052,10 @@ OperationPlan::~OperationPlan()
 
   // Delete the setup event
   if (setupevent)
+  {
+    setupevent->erase();
     delete setupevent;
+  }
 
   // Delete the flowplans and loadplan
   deleteFlowLoads();
@@ -1942,8 +1945,6 @@ SetupEvent::~SetupEvent()
 {
   if (opplan)
     opplan->nullSetupEvent();
-  if (tmline)
-    tmline->erase(this);
 }
 
 

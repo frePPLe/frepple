@@ -601,13 +601,13 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan, Date setup
 
       // Calculate the setup time
       SetupEvent* cursetup = ld->getResource()->getSetupAt(setupend);
-      if (!cursetup || cursetup->getSetup() == ld->getSetup())
+      if (cursetup && cursetup->getSetup() == ld->getSetup())
         return SetupInfo(nullptr, nullptr, PooledString());
       else
         return SetupInfo(
           ld->getResource(),
           ld->getResource()->getSetupMatrix()
-            ->calculateSetup(cursetup->getSetup(), ld->getSetup(), ld->getResource()),
+            ->calculateSetup(cursetup ? cursetup->getSetup() : "", ld->getSetup(), ld->getResource()),
           ld->getSetup()
           );
     }
@@ -631,13 +631,13 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan, Date setup
 
       // Calculate the setup time
       SetupEvent* cursetup = ldplan->getSetup(false);
-      if (!cursetup || cursetup->getSetup() == ldplan->getLoad()->getSetup() && ldplan->getResource()->getSetupMatrix())
+      if (cursetup && (cursetup->getSetup() == ldplan->getLoad()->getSetup() && ldplan->getResource()->getSetupMatrix()))
         return SetupInfo(nullptr, nullptr, PooledString());
       else
         return SetupInfo(
           ldplan->getResource(),
           ldplan->getResource()->getSetupMatrix()
-            ->calculateSetup(cursetup->getSetup(), ldplan->getLoad()->getSetup(), ldplan->getResource()),
+          ->calculateSetup(cursetup ? cursetup->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
           ldplan->getLoad()->getSetup()
           );
     }

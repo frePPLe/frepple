@@ -205,7 +205,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup)
 LoadPlan* LoadPlan::getOtherLoadPlan() const
 {
   for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->ld == ld && i != this) return i;
+    if (i->ld == ld && i != this && i->getEventType() == 1)
+      return i;
   throw LogicException("No matching loadplan found");
 }
 

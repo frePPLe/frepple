@@ -1727,20 +1727,21 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     }
   
     /** Default constructor. */
-    SetupEvent() 
+    SetupEvent() : TimeLine<LoadPlan>::Event(5)
     {
       initType(metadata);    
     }
 
     /** Copy constructor. */
-    SetupEvent(const SetupEvent& x): setup(x.setup), tmline(x.tmline), rule(x.rule)
+    SetupEvent(const SetupEvent& x) 
+      : TimeLine<LoadPlan>::Event(5), setup(x.setup), tmline(x.tmline), rule(x.rule)
     {
-      dt = x.getDate();
       initType(metadata);
+      dt = x.getDate();
     }
 
     /** Constructor. */
-    SetupEvent(const SetupEvent* x)
+    SetupEvent(const SetupEvent* x) : TimeLine<LoadPlan>::Event(5)
     {
       initType(metadata);
       if (x)
@@ -1754,6 +1755,12 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
 
     /** Destructor. */
     virtual ~SetupEvent();
+
+    void erase()
+    {
+      if (tmline)
+        tmline->erase(this);
+    }
 
     /** Assignment operator. 
       * We don't relink the event in the timeline yet.
@@ -1772,8 +1779,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     SetupEvent(TimeLine<LoadPlan>& t, Date d, PooledString s, SetupMatrixRule* r=nullptr)
       : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t)
     {
-      dt = d;
       initType(metadata);
+      dt = d;
     }
 
     virtual OperationPlan* getOperationPlan() const

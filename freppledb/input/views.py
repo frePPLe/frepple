@@ -1933,8 +1933,9 @@ class OperationPlanDetail(View):
                select name from item where name = %s
                )
             select
-              items.name, false,
-              location.name, onhand.qty, orders.PO, orders.DO, orders.MO, sales.BO, sales.SO
+              items.name, false, location.name, onhand.qty, orders_plus.PO,
+              coalesce(orders_plus.DO, 0) - coalesce(orders_minus.DO, 0),
+              orders_plus.MO, sales.BO, sales.SO
             from items
             cross join location
             left outer join (
@@ -1952,8 +1953,18 @@ class OperationPlanDetail(View):
               inner join items on items.name = operationplan.item_id
               and status in ('approved', 'confirmed')
               group by item_id, coalesce(location_id, destination_id)
-              ) orders
-            on orders.item_id = items.name and orders.location_id = location.name
+              ) orders_plus
+            on orders_plus.item_id = items.name and orders_plus.location_id = location.name
+            left outer join (
+              select item_id, origin_id as location_id,
+              sum(quantity) as DO
+              from operationplan
+              inner join items on items.name = operationplan.item_id
+              and status in ('approved', 'confirmed')
+              and type = 'DO'
+              group by item_id, origin_id
+              ) orders_minus
+            on orders_minus.item_id = items.name and orders_minus.location_id = location.name
             left outer join (
               select item_id, location_id,
               sum(case when due < %s then quantity end) as BO,
@@ -1966,9 +1977,10 @@ class OperationPlanDetail(View):
             on sales.item_id = items.name and sales.location_id = location.name
             where
               onhand.qty is not null
-              or orders.MO is not null
-              or orders.PO is not null
-              or orders.DO is not null
+              or orders_plus.MO is not null
+              or orders_plus.PO is not null
+              or orders_plus.DO is not null
+              or orders_minus.DO is not null
               or sales.BO is not null
               or sales.SO is not null
             order by items.name, location.name
@@ -1991,7 +2003,6 @@ class OperationPlanDetail(View):
       except Exception as e:
         # Ignore exceptions and move on
         logger.error("Error retrieving operationplan: %s" % e)
-
 
 
   @method_decorator(csrf_exempt)

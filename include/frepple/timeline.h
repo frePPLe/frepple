@@ -208,22 +208,7 @@ template <class type> class TimeLine
           * consumers. This feature is required to avoid zero-time
           * material shortages.
           */
-        bool operator < (const Event& fl2) const
-        {
-          if (getDate() != fl2.getDate())
-            return getDate() < fl2.getDate();
-          else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
-            return getQuantity() > fl2.getQuantity();
-          else
-          {
-            OperationPlan* op1 = getOperationPlan();
-            OperationPlan* op2 = fl2.getOperationPlan();
-            if (op1 && op2)
-              return *op1 < *op2;
-            else
-              return op1 == nullptr;
-          }
-        }
+        bool operator < (const Event& fl2) const;
     };
 
     /** @brief A timeline event representing a change of the current value. */

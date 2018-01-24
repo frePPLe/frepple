@@ -1380,11 +1380,8 @@ void OperationPlan::update(bool propagatesetups)
   updateOperationplanList();
 
   // Update the setup time on all neighbouring operationplans
-  if (!SetupMatrix::empty())
-  {
-    if (propagatesetups)
+  if (!SetupMatrix::empty() && propagatesetups)
       scanSetupTimes();
-  }
 
   // Notify the owner operationplan
   if (owner)

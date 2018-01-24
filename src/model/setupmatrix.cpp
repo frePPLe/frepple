@@ -287,22 +287,22 @@ void SetupMatrixRule::setPriority(const int n)
 
 
 SetupMatrixRule* SetupMatrix::calculateSetup
-(const string oldsetup, const string newsetup, Resource* res) const
+(PooledString oldsetup, PooledString newsetup, Resource* res) const
 {
   // No need to look
   if (oldsetup == newsetup)
     return nullptr;
-
+  
   // Loop through all rules
   for (SetupMatrixRule *curRule = firstRule; curRule; curRule = curRule->nextRule)
   {
     // Need a match on the fromsetup
     if (!curRule->getFromSetup().empty()
-        && !matchWildcard(curRule->getFromSetup().c_str(), oldsetup.c_str()))
+        && !matchWildcard(curRule->getFromSetup(), oldsetup))
       continue;
     // Need a match on the tosetup
     if (!curRule->getToSetup().empty()
-        && !matchWildcard(curRule->getToSetup().c_str(), newsetup.c_str()))
+        && !matchWildcard(curRule->getToSetup(), newsetup))
       continue;
     // Found a match
     return curRule;

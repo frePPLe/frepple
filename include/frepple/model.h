@@ -2207,6 +2207,9 @@ class OperationPlan
     /** Remove the setup event. */
     void clearSetupEvent()
     {
+      if (!setupevent)
+        return;
+      setupevent->erase();
       delete setupevent;
     }
 
@@ -6336,19 +6339,29 @@ class SetupMatrixRule : public Object
     }
 
     /** Return the from setup. */
-    string getFromSetup() const
+    string getFromSetupString() const
     {
       return from;
     }
 
-    /** Update the from setup. */
+    PooledString getFromSetup() const
+    {
+      return from;
+    }
+
+    /** Update the to setup. */
     void setToSetup(const string& f)
     {
       to = f;
     }
 
-    /** Return the from setup. */
-    string getToSetup() const
+    /** Return the to setup. */
+    string getToSetupString() const
+    {
+      return to;
+    }
+
+    PooledString getToSetup() const
     {
       return to;
     }
@@ -6379,8 +6392,8 @@ class SetupMatrixRule : public Object
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addStringField<Cls>(Tags::fromsetup, &Cls::getFromSetup, &Cls::setFromSetup);
-      m->addStringField<Cls>(Tags::tosetup, &Cls::getToSetup, &Cls::setToSetup);
+      m->addStringField<Cls>(Tags::fromsetup, &Cls::getFromSetupString, &Cls::setFromSetup);
+      m->addStringField<Cls>(Tags::tosetup, &Cls::getToSetupString, &Cls::setToSetup);
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
@@ -6569,7 +6582,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * If no matching rule is found, the changeover is not allowed: a pointer 
       * to a dummy changeover with a very high cost and duration is returned.
       */
-    SetupMatrixRule* calculateSetup(const string, const string, Resource*) const;
+    SetupMatrixRule* calculateSetup(PooledString, PooledString, Resource*) const;
 
   private:
     /** Head of the list of rules. */

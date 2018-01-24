@@ -6298,6 +6298,7 @@ class PooledString
     /** Pool of strings. */
     typedef unordered_map<string, unsigned int> pool_type;
     static pool_type pool;
+    static string nullstring;
 
     /** Pointer to an element in the pool. */
     pool_type::value_type* ptr = nullptr;
@@ -6386,7 +6387,6 @@ class PooledString
       return *this;
     }
 
-
     /** Destructor. */
     ~PooledString()
     {
@@ -6412,12 +6412,14 @@ class PooledString
 
     /** Conversion to string. */
     operator const string&() const
+    {      
+      return ptr ? ptr->first : nullstring;
+    }
+
+    /** Conversion to a constant str. */
+    operator const char*()
     {
-      static string nullstring;
-      if (ptr)
-        return ptr->first;
-      else
-        return nullstring;
+      return (ptr ? ptr->first : nullstring).c_str();
     }
 
     /* Return true if the string is empty. */

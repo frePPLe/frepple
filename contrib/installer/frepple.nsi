@@ -37,51 +37,6 @@
 ; Select compressor
 SetCompressor /SOLID lzma
 
-; Auxilary function to open a link in the browser
-; Two versions of the function are defined: one for the installer and another for the uninstaller
-!macro x un
-Function ${un}openLinkNewWindow
-  Push $3
-  Exch
-  Push $2
-  Exch
-  Push $1
-  Exch
-  Push $0
-  Exch
-
-  ReadRegStr $0 HKCR "http\shell\open\command" ""
-  # Get browser path
-  StrCpy $2 '"'
-  StrCpy $1 $0 1
-  StrCmp $1 $2 +2 # if path is not enclosed in " look for space as final char
-    StrCpy $2 ' '
-  StrCpy $3 1
-  loop:
-    StrCpy $1 $0 1 $3
-    StrCmp $1 $2 found
-    StrCmp $1 "" found
-    IntOp $3 $3 + 1
-    Goto loop
-
-  found:
-    StrCpy $1 $0 $3
-    StrCmp $2 " " +2
-      StrCpy $1 '$1"'
-
-  Pop $0
-  DetailPrint "Opening URL $0 in browser"
-  Exec '$1 $0'
-  Pop $0
-  Pop $1
-  Pop $2
-  Pop $3
-FunctionEnd
-!macroend
-
-!insertmacro x ""
-!insertmacro x "un."
-
 ;Include for Modern UI and library installation
 !define MULTIUSER_EXECUTIONLEVEL highest
 !define MULTIUSER_MUI
@@ -626,9 +581,6 @@ Section -Post
   IntFmt $0 "0x%08X" $0
   WriteRegDWORD SHCTX "${PRODUCT_UNINST_KEY}" "EstimatedSize" "$0"
 
-  ; Open the post-installation page
-  Push "http://www.frepple.com/post-install/?version=${PRODUCT_VERSION}"
-  Call openLinkNewWindow
 SectionEnd
 
 
@@ -699,8 +651,4 @@ Section Uninstall
 
   ; Do not automatically close the window
   SetAutoClose false
-
-  ; Open the post-uninstallation page
-  Push "http://www.frepple.com/post-uninstall/?version=${PRODUCT_VERSION}"
-  Call un.openLinkNewWindow
 SectionEnd

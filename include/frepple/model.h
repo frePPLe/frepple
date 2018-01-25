@@ -2211,6 +2211,7 @@ class OperationPlan
         return;
       setupevent->erase();
       delete setupevent;
+      setupevent = nullptr;
     }
 
     /** Remove the setup event. */
@@ -2733,9 +2734,11 @@ class OperationPlan
 template <class type> bool TimeLine<type>::Event::operator < (const Event& fl2) const
 {
   if (getDate() != fl2.getDate())
-	return getDate() < fl2.getDate();
+    return getDate() < fl2.getDate();
+  else if (getEventType() != fl2.getEventType())
+    return getEventType() > fl2.getEventType();
   else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
-	return getQuantity() > fl2.getQuantity();
+	  return getQuantity() > fl2.getQuantity();
   else
   {
 	OperationPlan* op1 = getOperationPlan();
@@ -6852,7 +6855,7 @@ class Resource : public HasHierarchy<Resource>,
     virtual void updateProblems();
 
     /** Update the setup time of all operationplans on the resource. */
-    void updateSetupTime(OperationPlan* = nullptr) const;
+    void updateSetupTime() const;
 
     void setHidden(bool b)
     {

@@ -1254,9 +1254,9 @@ void OperationPlan::scanSetupTimes()
 {
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
   {
-    if (ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
+    if (!ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
       // Not a starting loadplan or there is no setup on this loadplan
-      ldplan->getResource()->updateSetupTime(this);
+      ldplan->getResource()->updateSetupTime();
   }
 
   // TODO We can do much faster than the above loop: where we reconsider all loadplans on a 
@@ -1314,23 +1314,27 @@ void OperationPlan::scanSetupTimes()
 
 void OperationPlan::updateSetupTime(bool report)
 {
+  // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
+  Date end_of_setup = getSetupEnd();
   if (setupEndFixed)
   {
     // Keep the setup end date constant during the update 
-    // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
-    Date n = getSetupEnd();
-    Operation::SetupInfo setup = oper->calculateSetup(this, n);
+    Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup);
     if (get<1>(setup))
     {
-      DateRange tmp = oper->calculateOperationTime(this, n, get<1>(setup)->getDuration(), false);
-      n = tmp.getStart();
+      // Setup event required
+      DateRange tmp = oper->calculateOperationTime(this, end_of_setup, get<1>(setup)->getDuration(), false);
+      setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
+      if (tmp.getStart() != getStart())
+        setStartAndEnd(tmp.getStart(), getEnd());
     }
-    if (n != getStart())
+    else
     {
-      // The setup time has changed and we need to update the loadplans
-      if (report)
-        logger << "Warning: correcting setup on operationplan " << this << endl;
-      setStartAndEnd(n, getEnd());
+      // No setup event required
+      if (setupevent)
+        clearSetupEvent();
+      if (end_of_setup != getStart())
+        setStartAndEnd(end_of_setup, getEnd());
     }
   }
   else
@@ -1339,18 +1343,21 @@ void OperationPlan::updateSetupTime(bool report)
     Operation::SetupInfo setup = oper->calculateSetup(this, getStart(), true);
     if (get<1>(setup))
     {
+      // Setup event required
       DateRange setup_dates = oper->calculateOperationTime(this, getStart(), get<1>(setup)->getDuration(), true);
       if (getSetupEnd() != setup_dates.getEnd())
       {
-        logger << " updating " << this << " because " << getSetupEnd() << "  != " << setup_dates << "  and " << get<1>(setup)->getDuration() << endl;
-        auto x = getLoadPlans();
-        while (auto xx = x.next())
-          xx->getResource()->inspect();
         setStart(getStart());
       }
     }
-    else if (getSetupEnd() != getStart())
-      setStart(getStart());
+    else
+    {
+      // No setup event required
+      if (setupevent)
+        clearSetupEvent();
+      if (end_of_setup != getStart())
+        setStart(getStart());
+    }
   }
 }
 

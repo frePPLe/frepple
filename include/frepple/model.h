@@ -2735,8 +2735,6 @@ template <class type> bool TimeLine<type>::Event::operator < (const Event& fl2) 
 {
   if (getDate() != fl2.getDate())
     return getDate() < fl2.getDate();
-  else if (getEventType() != fl2.getEventType())
-    return getEventType() > fl2.getEventType();
   else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
 	  return getQuantity() > fl2.getQuantity();
   else

@@ -123,7 +123,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup)
+void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup, bool use_start)
 {
   // Nothing to do
   if (res == newres) return;
@@ -189,7 +189,10 @@ void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup)
 
   // The new resource may have a different availability calendar,
   // and we need to make sure to respect it.
-  oper->setStart(oper->getStart());
+  if (use_start)
+    oper->setStart(oper->getStart());
+  else
+    oper->setEnd(oper->getEnd());
 
   // Update the setup time
   if (updatesetup)

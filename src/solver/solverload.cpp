@@ -102,9 +102,7 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     // Switch to this resource
     data->state->q_loadplan = lplan; // because q_loadplan can change! 
     lplan->getOperationPlan()->restore(originalOpplan);
-    lplan->setResource(res, false, false);
-    lplan->getOperationPlan()->setStartAndEnd(originalOpplan.start, originalOpplan.end);
-    lplan->getOperationPlan()->updateSetupTime();
+    lplan->setResource(res, false, true, false);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
 

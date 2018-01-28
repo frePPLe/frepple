@@ -8227,7 +8227,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * subresource of the resource specified on the load, and b) must also
       * have the skill specified on the resource.
       */
-    void setResource(Resource* res, bool check, bool updatesetup = true);
+    void setResource(Resource* res, bool check, bool updatesetup = true, bool use_start = true);
 
     /** Return the resource. */
     Resource* getResource() const

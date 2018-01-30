@@ -1975,6 +1975,20 @@ void SetupEvent::update(Resource* res, Date d, PooledString s, SetupMatrixRule* 
 }
 
 
+SetupEvent* SetupEvent::getSetupBefore() const
+{
+  auto i = getTimeLine()->begin(this);
+  --i;
+  while (i != getTimeLine()->end())
+  {
+    if (i->getEventType() == 5)
+      return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*i));
+    --i;
+  }
+  return nullptr;
+}
+
+
 int SetupEvent::initialize()
 {
   // Initialize the metadata

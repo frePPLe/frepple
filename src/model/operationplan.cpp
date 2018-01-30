@@ -966,8 +966,8 @@ bool OperationPlan::operator < (const OperationPlan& a) const
     return *oper < *(a.oper);
 
   // Different start date
-  if (dates.getStart() != a.dates.getStart())
-    return dates.getStart() < a.dates.getStart();
+  if (getSetupEnd() != a.getSetupEnd())
+    return getSetupEnd() < a.getSetupEnd();
 
   // Sort based on quantity
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
@@ -1319,7 +1319,7 @@ void OperationPlan::updateSetupTime(bool report)
   if (setupEndFixed)
   {
     // Keep the setup end date constant during the update 
-    Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup);
+    Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup, setupevent, false);
     if (get<1>(setup))
     {
       // Setup event required
@@ -1340,7 +1340,7 @@ void OperationPlan::updateSetupTime(bool report)
   else
   {
     // Keep the setup start date constant during the update
-    Operation::SetupInfo setup = oper->calculateSetup(this, getStart(), true);
+    Operation::SetupInfo setup = oper->calculateSetup(this, getStart(), setupevent, true);
     if (get<1>(setup))
     {
       // Setup event required

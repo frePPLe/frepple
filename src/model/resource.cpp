@@ -683,14 +683,14 @@ void Resource::setSetupMatrix(SetupMatrix *s)
 }
 
 
-SetupEvent* Resource::getSetupAt(Date d, bool inclusive)
+SetupEvent* Resource::getSetupAt(Date d, bool inclusive, OperationPlan* opplan)
 {
   SetupEvent* tmp = nullptr;
   for (auto i = getLoadPlans().begin(); i != getLoadPlans().end(); ++i)
   {
     if (i->getDate() > d || (!inclusive && i->getDate() == d))
       break;
-    if (i->getEventType() == 5)
+    if (i->getEventType() == 5 && (!opplan || i->getOperationPlan() != opplan))
       tmp = static_cast<SetupEvent*>(&*i);
   }
   return tmp;

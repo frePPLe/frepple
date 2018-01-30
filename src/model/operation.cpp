@@ -574,7 +574,9 @@ DateRange Operation::calculateOperationTime(
 }
 
 
-Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan, Date setupend, bool use_start) const
+Operation::SetupInfo Operation::calculateSetup(
+  OperationPlan* opplan, Date setupend, SetupEvent* setupevent, bool use_start
+  ) const
 {
   // Shortcuts: there are no setup matrices or resources
   if (SetupMatrix::empty() || getLoads().empty())
@@ -600,7 +602,9 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan, Date setup
         throw DataException("Only a single resource with a setup matrix is allowed per operation");
 
       // Calculate the setup time
-      SetupEvent* cursetup = ld->getResource()->getSetupAt(setupend);
+      SetupEvent* cursetup = setupevent ?
+        setupevent->getSetupBefore() :
+        ld->getResource()->getSetupAt(setupend, false, opplan);
       if (cursetup && cursetup->getSetup() == ld->getSetup())
         return SetupInfo(nullptr, nullptr, PooledString());
       else
@@ -630,7 +634,9 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan, Date setup
         throw DataException("Only a single resource with a setup matrix is allowed per operation");
 
       // Calculate the setup time
-      SetupEvent* cursetup = ldplan->getSetup(false);
+      SetupEvent* cursetup = setupevent ?
+        setupevent->getSetupBefore() :
+        ldplan->getSetup(false);
       if (cursetup && (cursetup->getSetup() == ldplan->getLoad()->getSetup() && ldplan->getResource()->getSetupMatrix()))
         return SetupInfo(nullptr, nullptr, PooledString());
       else

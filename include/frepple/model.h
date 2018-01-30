@@ -1768,7 +1768,6 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       */
     SetupEvent& operator =(const SetupEvent & other)
     {
-      assert(!tmline);
       setup = other.setup;
       tmline = other.tmline;
       rule = other.rule;
@@ -1812,6 +1811,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     {
       setup = s;
     }
+
+    SetupEvent* getSetupBefore() const;
 
     void update(Resource*, Date, PooledString, SetupMatrixRule*);
 
@@ -2735,16 +2736,23 @@ template <class type> bool TimeLine<type>::Event::operator < (const Event& fl2) 
 {
   if (getDate() != fl2.getDate())
     return getDate() < fl2.getDate();
+  else if (getEventType() == 5 || fl2.getEventType() == 5)
+  {
+    if (getEventType() == 5 && fl2.getEventType() == 5)
+      return *getOperationPlan() < *fl2.getOperationPlan();
+    else
+      return getEventType() > fl2.getEventType();
+  }
   else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
 	  return getQuantity() > fl2.getQuantity();
   else
   {
-	OperationPlan* op1 = getOperationPlan();
-	OperationPlan* op2 = fl2.getOperationPlan();
-	if (op1 && op2)
-	  return *op1 < *op2;
-	else
-	  return op1 == nullptr;
+	  OperationPlan* op1 = getOperationPlan();
+	  OperationPlan* op2 = fl2.getOperationPlan();
+	  if (op1 && op2)
+	    return *op1 < *op2;
+	  else
+	    return op1 == nullptr;
   }
 }
 
@@ -3288,7 +3296,7 @@ class Operation : public HasName<Operation>,
       * The date argument can either be the start or the end date
       * of a setup, depending on the value of the third argument.
       */
-    SetupInfo calculateSetup(OperationPlan*, Date, bool use_start=false) const;
+    SetupInfo calculateSetup(OperationPlan*, Date, SetupEvent* = nullptr, bool use_start = false) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -6927,7 +6935,7 @@ class Resource : public HasHierarchy<Resource>,
       * before (or at, when the parameter is true) the argument date.
       * @see LoadPlan::getSetupBefore
       */
-    SetupEvent* getSetupAt(Date, bool inclusive = false);
+    SetupEvent* getSetupAt(Date, bool inclusive = false, OperationPlan* = nullptr);
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {

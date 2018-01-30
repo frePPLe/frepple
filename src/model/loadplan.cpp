@@ -265,8 +265,11 @@ SetupEvent* LoadPlan::getSetup(bool include) const
     --tmp;
   while (tmp != getResource()->getLoadPlans().end())
   {
-    if (tmp->getEventType() == 5)
-      return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
+    if (
+      tmp->getEventType() == 5
+      && (tmp->getDate() != getDate() || *tmp->getOperationPlan() < *getOperationPlan())
+      )
+        return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;
   }
   return nullptr;

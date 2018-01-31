@@ -10,14 +10,13 @@ FrePPLe implements planning algoritms based on best practices such as **theory o
 
 ## Download
 
-The software release can be downloaded from [http://sourceforge.net](https://sourceforge.net/projects/frepple/files/frepple/) 
+The software release can be downloaded from https://github.com/frePPLe/frepple/releases
 in the following formats:
 
 * Windows installer
-* Ubuntu .deb package
-* Red Hat .rpm package
-* Source tarball
-* Docker container (experimental)
+* Linux .deb debian package
+* Linux .rpm Red Hat package
+* Source tarball or zip file
 
 ## Documentation
 

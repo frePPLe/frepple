@@ -21,7 +21,7 @@ Release: 1%{?dist}
 License: AGPLv3+
 Group: Applications/Productivity
 URL: http://www.frepple.com
-Source: http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source: https://github.com/frePPLe/frepple/archive/%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 # Note on dependencies: Django is also required, but we need a custom install.
 Requires: xerces-c, openssl, httpd, python3-mod_wsgi, python3

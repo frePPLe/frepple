@@ -699,12 +699,23 @@ SetupEvent* Resource::getSetupAt(Date d, bool inclusive, OperationPlan* opplan)
 
 void Resource::updateSetupTime() const
 {
-  // Note: we work our way from the end of the horizon, and based on the ending
-  // date of the operationplans.
   if (setupmatrix)
-    for (auto qq = getLoadPlans().rbegin(); qq != getLoadPlans().end(); --qq)
-      if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
-        qq->getOperationPlan()->updateSetupTime();
+  {
+    bool changed;
+    do
+    {
+      changed = false;
+      if (OperationPlan::getSetupEndFixed())
+        for (auto qq = getLoadPlans().rbegin(); qq != getLoadPlans().end() && !changed; --qq)
+          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+            changed = qq->getOperationPlan()->updateSetupTime();
+      else
+        for (auto qq = getLoadPlans().begin(); qq != getLoadPlans().end() && !changed; ++qq)
+          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+            changed = qq->getOperationPlan()->updateSetupTime();
+    }
+    while (changed);
+  }
 }
 
 }

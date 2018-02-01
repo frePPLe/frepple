@@ -584,7 +584,6 @@ Operation::SetupInfo Operation::calculateSetup(
 
   // Loop over each load or loadplan and see check what setup time they need
   bool firstResourceWithSetup = true;
-  SetupMatrixRule* result = nullptr;
   auto ldplan = opplan->beginLoadPlans();
   if (ldplan == opplan->endLoadPlans())
   {

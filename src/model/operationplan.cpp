@@ -1312,10 +1312,11 @@ void OperationPlan::scanSetupTimes()
 }
 
 
-void OperationPlan::updateSetupTime(bool report)
+bool OperationPlan::updateSetupTime(bool report)
 {
   // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
   Date end_of_setup = getSetupEnd();
+  bool changed = false;
   if (setupEndFixed)
   {
     // Keep the setup end date constant during the update 
@@ -1326,15 +1327,24 @@ void OperationPlan::updateSetupTime(bool report)
       DateRange tmp = oper->calculateOperationTime(this, end_of_setup, get<1>(setup)->getDuration(), false);
       setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
       if (tmp.getStart() != getStart())
+      {
         setStartAndEnd(tmp.getStart(), getEnd());
+        changed = true;
+      }       
     }
     else
     {
       // No setup event required
       if (setupevent)
+      {
         clearSetupEvent();
+        changed = true;
+      }
       if (end_of_setup != getStart())
+      {
         setStartAndEnd(end_of_setup, getEnd());
+        changed = true;
+      }
     }
   }
   else
@@ -1348,17 +1358,25 @@ void OperationPlan::updateSetupTime(bool report)
       if (getSetupEnd() != setup_dates.getEnd())
       {
         setStart(getStart());
+        changed = true;
       }
     }
     else
     {
       // No setup event required
       if (setupevent)
+      {
         clearSetupEvent();
+        changed = true;
+      }
       if (end_of_setup != getStart())
-        setStart(getStart());
+      {
+        setStart(end_of_setup);
+        changed = true;
+      }
     }
   }
+  return changed;
 }
 
 

@@ -2459,6 +2459,11 @@ class OperationPlan
     /** Return the setup time on this operationplan. */
     Duration getSetup() const;
 
+    /** Update the setup time in situations where it could have changed.
+      * The return value is true when the time has changed.
+      */
+    bool updateSetupTime(bool report = false);
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);

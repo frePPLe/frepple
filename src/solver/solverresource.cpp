@@ -92,6 +92,10 @@ void SolverMRP::solve(const Resource* res, void* v)
         if (cur->getEventType() == 4)
           curMax = cur->getMax(false);
 
+        // Skip setup change events
+        if (cur->getEventType() == 5)
+          continue;
+
         const LoadPlan* ldplan = nullptr;
         if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);

@@ -22,7 +22,6 @@
 Makefile
 Makefile.in
 *.Po
-/INSTALL
 
 # GNU C++ & libtool
 *.o

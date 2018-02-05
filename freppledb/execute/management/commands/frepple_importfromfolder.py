@@ -278,8 +278,8 @@ class Command(BaseCommand):
     try:
       with transaction.atomic(using=self.database):
         wb = load_workbook(filename=file, read_only=True, data_only=True)
-        for ws_name in wb.get_sheet_names():
-          ws = wb.get_sheet_by_name(name=ws_name)
+        for ws_name in wb.sheetnames:
+          ws = wb[ws_name]
           for error in parseExcelWorksheet(model, ws, user=self.user, database=self.database):
             if error[0] == ERROR:
               logger.error('%s Error: %s%s%s%s' % (

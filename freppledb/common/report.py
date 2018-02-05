@@ -1505,11 +1505,11 @@ class GridReport(View):
 
           # Loop through the data records
           wb = load_workbook(filename=file, read_only=True, data_only=True)
-          numsheets = len(wb.get_sheet_names())
+          numsheets = len(wb.sheetnames)
 
-          for ws_name in wb.get_sheet_names():
+          for ws_name in wb.sheetnames:
             rowprefix = '' if numsheets == 1 else "%s " % ws_name
-            ws = wb.get_sheet_by_name(name=ws_name)
+            ws = wb[ws_name]
             for error in parseExcelWorksheet(reportclass.model, ws, user=request.user, database=request.database, ping=True):
               if error[0] == DEBUG:
                 # Yield some result so we can detect disconnect clients and interrupt the upload
@@ -2329,7 +2329,7 @@ def importWorkbook(request):
       for filename, file in request.FILES.items():
         wb = load_workbook(filename=file, read_only=True, data_only=True)
         models = []
-        for ws_name in wb.get_sheet_names():
+        for ws_name in wb.sheetnames:
           # Find the model
           model = None
           contenttype_id = None
@@ -2366,7 +2366,7 @@ def importWorkbook(request):
           numerrors = 0
           numwarnings = 0
           firsterror = True
-          ws = wb.get_sheet_by_name(name=ws_name)
+          ws = wb[ws_name]
           for error in parseExcelWorksheet(model, ws, user=request.user, database=request.database, ping=True):
             if error[0] == DEBUG:
               # Yield some result so we can detect disconnect clients and interrupt the upload

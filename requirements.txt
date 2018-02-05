@@ -7,7 +7,7 @@ django-bootstrap3 == 8.2.2
 html5lib == 0.999
 jdcal == 1.0.1
 Markdown == 2.6.8
-openpyxl == 2.4.7
+openpyxl == 2.4.11
 lxml == 3.7.3
 PyJWT == 1.5.2
 requests == 2.18.4

@@ -128,7 +128,7 @@ class Command(BaseCommand):
           for file in filename:
             wb = load_workbook(filename=file, read_only=True, data_only=True)
             models = []
-            for ws_name in wb.get_sheet_names():
+            for ws_name in wb.sheetnames:
               # Find the model
               model = None
               contenttype_id = None
@@ -168,7 +168,7 @@ class Command(BaseCommand):
               numerrors = 0
               numwarnings = 0
               firsterror = True
-              ws = wb.get_sheet_by_name(name=ws_name)
+              ws = wb[ws_name]
               for error in parseExcelWorksheet(model, ws, user=self.user, database=self.database, ping=True):
                 if error[0] == DEBUG:
                   # Yield some result so we can detect disconnect clients and interrupt the upload

@@ -9,7 +9,7 @@ SUBDIRS = src include test contrib bin doc
 
 EXTRA_DIST = freppledb AUTHORS COPYING CONTRIBUTING.md CHANGELOG.md INSTALL README.md NEWS Makefile.am Makefile.dist freppledb frepplectl.py setup.py djangosettings.py requirements.txt package.json Gruntfile.js
 
-AUTOMAKE_OPTIONS = gnu
+AUTOMAKE_OPTIONS = foreign
 
 .PHONY: $(.PHONY) migrate check runserver international pep8
 

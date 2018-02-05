@@ -1734,7 +1734,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
 
     /** Copy constructor. */
     SetupEvent(const SetupEvent& x) 
-      : TimeLine<LoadPlan>::Event(5), setup(x.setup), tmline(x.tmline), rule(x.rule)
+      : TimeLine<LoadPlan>::Event(5), setup(x.setup), rule(x.rule)
     {
       initType(metadata);
       dt = x.getDate();
@@ -1747,7 +1747,6 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       if (x)
       {
         setup = x->setup;
-        tmline = x->tmline;
         rule = x->rule;
         dt = x->getDate();
       }
@@ -1768,6 +1767,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       */
     SetupEvent& operator =(const SetupEvent & other)
     {
+      assert(!tmline);
       setup = other.setup;
       tmline = other.tmline;
       rule = other.rule;
@@ -1775,11 +1775,12 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     }
 
     /** Constructor. */
-    SetupEvent(TimeLine<LoadPlan>& t, Date d, PooledString s, SetupMatrixRule* r=nullptr)
-      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t)
+    SetupEvent(TimeLine<LoadPlan>& t, Date d, PooledString s, SetupMatrixRule* r=nullptr, OperationPlan* o=nullptr)
+      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t), opplan(o)
     {
       initType(metadata);
       dt = d;
+      tmline->insert(this);
     }
 
     virtual OperationPlan* getOperationPlan() const
@@ -2744,7 +2745,14 @@ template <class type> bool TimeLine<type>::Event::operator < (const Event& fl2) 
   else if (getEventType() == 5 || fl2.getEventType() == 5)
   {
     if (getEventType() == 5 && fl2.getEventType() == 5)
-      return *getOperationPlan() < *fl2.getOperationPlan();
+    {
+      auto o1 = getOperationPlan();
+      auto o2 = fl2.getOperationPlan();
+      if (o1 && o2)
+        return *getOperationPlan() < *fl2.getOperationPlan();
+      else
+        return o2 ? true : false;
+    }
     else
       return getEventType() > fl2.getEventType();
   }
@@ -6928,10 +6936,7 @@ class Resource : public HasHierarchy<Resource>,
         // Updated existing event
         setup->setSetup(s);
       else
-      {
         setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
-        getLoadPlans().insert(setup);
-      }
     }
 
     /** Return the setup of the resource on a specific date. 

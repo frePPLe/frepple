@@ -579,7 +579,7 @@ Operation::SetupInfo Operation::calculateSetup(
   ) const
 {
   // Shortcuts: there are no setup matrices or resources
-  if (SetupMatrix::empty() || getLoads().empty())
+  if (SetupMatrix::empty() || getLoads().empty() || !opplan || !opplan->getQuantity())
     return SetupInfo(nullptr, nullptr, PooledString());
 
   // Loop over each load or loadplan and see check what setup time they need

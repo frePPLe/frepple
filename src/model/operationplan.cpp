@@ -1946,11 +1946,7 @@ void OperationPlan::setSetupEvent(Resource* res, Date d, PooledString s, SetupMa
   if (setupevent)
     setupevent->update(res, d, s, r);
   else
-  {
-    setupevent = new SetupEvent(res->getLoadPlans(), d, s, r);
-    setupevent->setOperationPlan(this);
-    res->getLoadPlans().insert(setupevent);
-  }
+    setupevent = new SetupEvent(res->getLoadPlans(), d, s, r, this);
 }
 
 

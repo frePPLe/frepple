@@ -142,6 +142,7 @@ BUFFER	buffer 3	2009-04-01T00:00:00	-15	40
 BUFFER	buffer 3	2009-05-01T00:00:00	-15	25
 BUFFER	buffer 3	2009-06-01T00:00:00	60	85
 BUFFER	buffer 3	2009-06-01T00:00:00	-15	70
+BUFFER	buffer 4	2009-01-01T00:00:00	-10	-10
 BUFFER	buffer 5	1971-01-01T00:00:00	25	25
 BUFFER	buffer 5	2009-01-01T00:00:00	105	130
 BUFFER	buffer 5	2009-01-01T00:00:00	-10	120
@@ -392,6 +393,7 @@ DEMAND	order 01 for item 10	2009-01-01T00:00:00	70
 DEMAND	order 01 for item 11	2009-01-01T00:00:00	70
 DEMAND	order 01 for item 2	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 3	2009-01-01T00:00:00	10
+DEMAND	order 01 for item 4	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 5	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 6	2009-01-01T00:00:00	10
 DEMAND	order 01 for item 7	2009-01-01T00:00:00	10
@@ -785,7 +787,7 @@ PROBLEM	material excess	Buffer 'buffer 3' has material excess of 5	2009-01-13T00
 PROBLEM	material excess	Buffer 'buffer 3' has material excess of 5	2009-01-21T00:00:00 / 2009-01-22T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer 3'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer 4'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer 4' has material shortage of 30	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'buffer 5' has material excess of 50	2009-01-01T00:00:00 / 2009-01-06T00:00:00
 PROBLEM	material excess	Buffer 'buffer 5' has material excess of 30	2009-01-11T00:00:00 / 2009-01-14T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'buffer 5'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
@@ -817,6 +819,4 @@ PROBLEM	before current	Operation 'Purchase buffer 6' planned in the past	2008-12
 PROBLEM	before current	Operation 'Purchase buffer 7' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 8' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase buffer 9' planned in the past	2008-12-28T12:00:00 / 2009-01-01T00:00:00
-PROBLEM	unplanned	Demand 'order 01 for item 4' is not planned	2009-01-01T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	early	Demand 'order 02 for item 11' planned P5D before its due date	2009-07-01T00:00:00 / 2009-07-06T00:00:00
-DEMAND CONSTRAINT	order 01 for item 4	Error: Invalid sizing parameters for operation Purchase buffer 4	2009-01-01T00:00:00 / 2009-01-01T00:00:00	

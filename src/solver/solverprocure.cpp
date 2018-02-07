@@ -274,6 +274,13 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
             Date::infinitePast, current_date, data->state->curDemand,
             nullptr, true, false
             );
+        if (!a->getOperationPlan()->getQuantity())
+        {
+          // Bailing out when the sizing parameters are invalid
+          --indexProcurements;
+          delete a;
+          break;
+        }
         a->getOperationPlan()->insertInOperationplanList(); // TODO Not very nice: unregistered opplan in the list!
         produced += a->getOperationPlan()->getQuantity();
         order_qty -= a->getOperationPlan()->getQuantity();

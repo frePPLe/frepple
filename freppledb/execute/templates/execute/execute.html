@@ -174,6 +174,7 @@ loadComplete : function(data) {
       {% if HTMLcode %}
       <div class="panel panel-default">
         <div class="panel-heading" data-parent="#tasks" role="tab" id="{{ forloop.counter }}Heading" data-toggle="collapse" data-target="#{{ forloop.counter }}Accord">
+          {% if command.help_url %}<span class='fa fa-question pull-right' onclick="window.open('https://frepple.com/docs/{% version_short %}/{{ command.help_url }}')"></span>{% endif %}
           <h4 class="panel-title">
             <a role="button">
               {{ command.title|capfirst }}

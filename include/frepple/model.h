@@ -2580,13 +2580,6 @@ class OperationPlan
       */
     void scanSetupTimes();
 
-    /** Update the setup time in situations where it could have changed.
-      *
-      * Only intended for internal use by update().
-      */
-  public: // XXX should be private
-    void updateSetupTime(bool report = false);
-
   private:
     /** Default constructor.<br>
       * This way of creating operationplan objects is not intended for use by

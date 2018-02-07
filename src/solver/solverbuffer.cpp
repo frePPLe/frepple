@@ -125,7 +125,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
           if (scanner->getQuantity() <= 0 || scanner->getDate() < requested_date)
             continue;
           auto tmp = scanner->getOperationPlan();
-          if (tmp && tmp->getConfirmed())
+          if (tmp && (tmp->getConfirmed() || tmp->getApproved()))
           {
             if (data->getSolver()->getLogLevel() > 1)
               logger << indent(b->getLevel())

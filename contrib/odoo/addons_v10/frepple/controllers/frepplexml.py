@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import base64
 import logging
 import odoo
 from werkzeug.exceptions import MethodNotAllowed, InternalServerError
@@ -46,7 +47,7 @@ class XMLController(odoo.http.Controller):
         authmeth, auth = req.httprequest.headers['authorization'].split(' ', 1)
         if authmeth.lower() != 'basic':
             raise Exception("Unknown authentication method")
-        auth = auth.strip().decode('base64')
+        auth = base64.b64decode(auth).decode('utf-8')
         self.user, password = auth.split(':', 1)
         if not database or not self.user or not password:
             raise Exception("Missing user, password or database")

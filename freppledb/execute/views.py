@@ -46,7 +46,7 @@ from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
 from freppledb.common.report import exportWorkbook, importWorkbook
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
-from freppledb.execute.management.commands.frepple_runworker import checkActive
+from freppledb.execute.management.commands.runworker import checkActive
 
 import logging
 logger = logging.getLogger(__name__)
@@ -194,7 +194,7 @@ def wrapTask(request, action):
   args = request.POST or request.GET
 
   # A
-  if action == 'frepple_run':
+  if action in ('frepple_run', 'runplan'):
     if not request.user.has_perm('auth.generate_plan'):
       raise Exception('Missing execution privileges')
     constraint = 0
@@ -203,7 +203,7 @@ def wrapTask(request, action):
         constraint += int(value)
       except:
         pass
-    task = Task(name='frepple_run', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='runplan', submitted=now, status='Waiting', user=request.user)
     task.arguments = "--constraint=%s --plantype=%s" % (constraint, args.get('plantype', 1))
     env = []
     for value in args.getlist('env'):
@@ -216,10 +216,10 @@ def wrapTask(request, action):
     request.session['plantype'] = args.get('plantype')
     request.session['constraint'] = constraint
   # C
-  elif action == 'frepple_flush':
+  elif action in ('frepple_flush', 'empty'):
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='frepple_flush', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='empty', submitted=now, status='Waiting', user=request.user)
     models = ','.join(args.getlist('models'))
     if models:
       task.arguments = "--models=%s" % (models)
@@ -231,7 +231,7 @@ def wrapTask(request, action):
     task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=args['fixture'])
     task.save(using=request.database)
   # E
-  elif action == 'frepple_copy':
+  elif action in ('frepple_copy', 'scenario_copy'):
     worker_database = DEFAULT_DB_ALIAS
     if 'copy' in args:
       if not request.user.has_perm('auth.copy_scenario'):
@@ -245,7 +245,7 @@ def wrapTask(request, action):
         if force:
           arguments += ' --force'
         if args.get(sc.name, 'off') == 'on' or sc.name in destination:
-          task = Task(name='frepple_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
+          task = Task(name='scenario_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
           task.save(using=source)
     elif 'release' in args:
       # Note: release is immediate and synchronous.
@@ -270,10 +270,10 @@ def wrapTask(request, action):
     else:
       raise Exception('Invalid scenario task')
   # G
-  elif action == 'frepple_createbuckets':
+  elif action in ('frepple_createbuckets', 'createbuckets'):
     if not request.user.has_perm('auth.run_db'):
       raise Exception('Missing execution privileges')
-    task = Task(name='frepple_createbuckets', submitted=now, status='Waiting', user=request.user)
+    task = Task(name='createbuckets', submitted=now, status='Waiting', user=request.user)
     arguments = []
     start = args.get('start', None)
     if start:
@@ -323,7 +323,7 @@ def wrapTask(request, action):
         Popen([
           sys.executable,  # Python executable
           os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
-          "frepple_runworker",
+          "runworker",
           "--database=%s" % worker_database
           ])
       else:
@@ -331,21 +331,21 @@ def wrapTask(request, action):
         Popen([
           "python",
           os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
-          "frepple_runworker",
+          "runworker",
           "--database=%s" % worker_database
           ], creationflags=0x08000000)
     elif sys.executable.find('freppleserver.exe') >= 0:
       # Py2exe executable
       Popen([
         sys.executable.replace('freppleserver.exe', 'frepplectl.exe'),  # frepplectl executable
-        "frepple_runworker",
+        "runworker",
         "--database=%s" % worker_database
         ], creationflags=0x08000000)  # Do not create a console window
     else:
       # Linux standard installation
       Popen([
         "frepplectl",
-        "frepple_runworker",
+        "runworker",
         "--database=%s" % worker_database
         ])
   return task
@@ -360,7 +360,7 @@ def CancelTask(request, taskid):
     raise Http404('Only ajax post requests allowed')
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)
-    if task.name == 'frepple_run' and task.status.endswith("%"):
+    if task.name in ('frepple_run', 'runplan') and task.status.endswith("%"):
       fname = os.path.join(settings.FREPPLE_LOGDIR, task.logfile)
       try:
         # The second line in the log file has the id of the frePPLe process

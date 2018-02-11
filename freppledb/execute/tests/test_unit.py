@@ -48,7 +48,7 @@ class execute_with_commands(TransactionTestCase):
   def test_run_cmd(self):
     # Empty the database tables
     self.assertNotEqual(input.models.Calendar.objects.count(), 0)
-    management.call_command('frepple_flush')
+    management.call_command('empty')
     self.assertEqual(input.models.Calendar.objects.count(), 0)
     self.assertEqual(input.models.Demand.objects.count(), 0)
     self.assertEqual(output.models.Problem.objects.count(), 0)
@@ -58,7 +58,7 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(common.models.Parameter.objects.count(), 0)
 
     # Create a new model
-    management.call_command('frepple_createmodel', cluster='1', verbosity='0')
+    management.call_command('createmodel', cluster='1', verbosity='0')
     self.assertNotEqual(input.models.Calendar.objects.count(), 0)
     self.assertNotEqual(input.models.Demand.objects.count(), 0)
 
@@ -66,7 +66,7 @@ class execute_with_commands(TransactionTestCase):
     # Since the random model generator is not generating the same model
     # across different version and platforms, we can only do a rough
     # check on the output.
-    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    management.call_command('runplan', plantype=1, constraint=15, env='supply')
     self.assertTrue(output.models.Problem.objects.count() > 100)
     self.assertTrue(input.models.OperationPlanMaterial.objects.count() > 400)
     self.assertTrue(input.models.OperationPlanResource.objects.count() > 20)
@@ -106,7 +106,7 @@ class execute_multidb(TransactionTestCase):
     self.assertEqual(count2, 0)
     # Erase second database
     count1 = input.models.Demand.objects.all().using(db1).count()
-    management.call_command('frepple_flush', database=db2)
+    management.call_command('empty', database=db2)
     count1new = input.models.Demand.objects.all().using(db1).count()
     input.models.Demand.objects.all().using(db2).delete()
     count2 = input.models.Demand.objects.all().using(db2).count()
@@ -116,21 +116,21 @@ class execute_multidb(TransactionTestCase):
     # We need to close the transactions, since they can block the copy
     transaction.commit(using=db1)
     transaction.commit(using=db2)
-    management.call_command('frepple_copy', db1, db2)
+    management.call_command('scenario_copy', db1, db2)
     count1 = input.models.OperationPlan.objects.all().filter(type='PO').using(db1).count()
     count2 = input.models.OperationPlan.objects.all().filter(type='PO').using(db2).count()
     self.assertEqual(count1, count2)
     # Run the plan on db1.
     # The count changes in db1 and not in db2.
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
-    management.call_command('frepple_run', plantype=1, constraint=15, env='supply', database=db1)
+    management.call_command('runplan', plantype=1, constraint=15, env='supply', database=db1)
     count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     self.assertNotEqual(count1, 0)
     # Run a plan on db2.
     # The count changes in db1 and not in db2.
     # The count in both databases is expected to be different since we run a different plan
     count1new = input.models.OperationPlanMaterial.objects.all().using(db1).count()
-    management.call_command('frepple_run', plantype=1, constraint=0, env='supply', database=db2)
+    management.call_command('runplan', plantype=1, constraint=0, env='supply', database=db2)
     count1new = input.models.OperationPlanMaterial.objects.all().using(db1).count()
     count2 = input.models.OperationPlanMaterial.objects.all().using(db2).count()
     self.assertEqual(count1new, count1)
@@ -187,7 +187,7 @@ class execute_simulation(TransactionTestCase):
 
   def test_run_cmd(self):
     # Run the plan and measure the lateness
-    management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    management.call_command('runplan', plantype=1, constraint=15, env='supply')
     initial_planned_late = output.models.Problem.objects.all().filter(name="late").aggregate(
       count=Count('id'),
       lateness=Sum('weight')
@@ -196,7 +196,7 @@ class execute_simulation(TransactionTestCase):
     # Run the simulation.
     # The default implementation assumes the actual execution is exactly
     # matching the specified leadtime.
-    management.call_command('frepple_simulation', step=7, horizon=120, verbosity=0)
+    management.call_command('simulation', step=7, horizon=120, verbosity=0)
 
     # Verify that the simulated execution is matching the original plan
     self.assertEqual(
@@ -229,7 +229,7 @@ class remote_commands(TransactionTestCase):
 
     # Run a plan
     response = self.client.post(
-      '/execute/api/frepple_run/',
+      '/execute/api/runplan/',
       {'constraint': 1, 'plantype': 1},
       **headers
       )
@@ -256,7 +256,7 @@ class remote_commands(TransactionTestCase):
 
     # Copy a plan
     response = self.client.post(
-      '/execute/api/frepple_flush/',
+      '/execute/api/empty/',
       {},
       **headers
       )
@@ -265,7 +265,7 @@ class remote_commands(TransactionTestCase):
     taskid1 = taskinfo['taskid']
     self.assertEqual(taskid1, taskid0 + 1)
 
-    # Wait 10 seconds for the flush the finish
+    # Wait for the flush the finish
     cnt = 0
     while cnt <= 20:
       response = self.client.get(

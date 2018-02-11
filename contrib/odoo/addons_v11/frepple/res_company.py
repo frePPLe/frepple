@@ -28,7 +28,7 @@ except:
     _logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
 
 
-FREPPLE_CMD = 'frepplectl frepple_run --env=odoo_read,supply,odoo_write'
+FREPPLE_CMD = 'frepplectl runplan --env=odoo_read,supply,odoo_write'
 
 
 class ResCompany(models.Model):

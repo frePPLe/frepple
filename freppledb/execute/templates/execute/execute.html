@@ -34,7 +34,7 @@
   }
 
   function status (cellvalue, options, rowdata) {
-    if (rowdata.name == "frepple_run"
+    if ((rowdata.name == "frepple_run" || rowdata.name == "runplan")
         && !('finished' in rowdata)
         && cellvalue.charAt(cellvalue.length-1) == "%"
         )

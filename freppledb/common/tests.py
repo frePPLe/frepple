@@ -117,7 +117,7 @@ class ExcelTest(TransactionTestCase):
       f.write(response.content)
 
     # Erase the database
-    management.call_command('frepple_flush')
+    management.call_command('empty')
     self.assertEqual(input.models.Buffer.objects.count(), 0)
     self.assertEqual(input.models.CalendarBucket.objects.count(), 0)
     self.assertEqual(input.models.Calendar.objects.count(), 0)

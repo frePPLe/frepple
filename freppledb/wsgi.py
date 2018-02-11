@@ -21,7 +21,7 @@ This is used by the different WSGI deployment options:
   - mod_wsgi on apache web server.
     See https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
   - django development server 'frepplectl.py runserver'
-  - cherrypy server 'frepplectl.py frepple_runserver
+  - cherrypy server 'frepplectl.py runswebserver
 """
 
 import os

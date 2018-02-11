@@ -48,7 +48,7 @@ class execute_with_commands(TransactionTestCase):
   def test_exportimportfromfolder(self):
 
     # Run frePPLe on the test database. No longer needed because records are already in the fixture, in Enterprise conficts with webservice
-    #management.call_command('frepple_run', plantype=1, constraint=15, env='supply')
+    #management.call_command('runplan', plantype=1, constraint=15, env='supply')
 
     self.assertTrue(ManufacturingOrder.objects.count() > 30)
     self.assertTrue(PurchaseOrder.objects.count() > 20)
@@ -59,7 +59,7 @@ class execute_with_commands(TransactionTestCase):
     countPO = PurchaseOrder.objects.filter(status='proposed').count()
     countDO = DistributionOrder.objects.filter(status='proposed').count()
 
-    management.call_command('frepple_exporttofolder')
+    management.call_command('exporttofolder')
 
     ManufacturingOrder.objects.all().delete()
     DistributionOrder.objects.all().delete()
@@ -77,7 +77,7 @@ class execute_with_commands(TransactionTestCase):
           os.path.join(self.datafolder, file)
           )
 
-    management.call_command('frepple_importfromfolder')
+    management.call_command('importfromfolder')
 
     self.assertEqual(DistributionOrder.objects.count(), countDO)
     self.assertEqual(PurchaseOrder.objects.count(), countPO)

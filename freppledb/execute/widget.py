@@ -33,7 +33,7 @@ class ExecuteWidget(Widget):
   def render(self, request=None):
     from freppledb.common.middleware import _thread_locals
     return '''<div style="text-align:center">
-      <form method="post" action="%s/execute/launch/frepple_run/">
+      <form method="post" action="%s/execute/launch/runplan/">
       <input type="hidden" name="csrfmiddlewaretoken" value="%s">
       <input type="hidden" name="plantype" value="1"/>
       <input type="hidden" name="constraint" value="15"/>

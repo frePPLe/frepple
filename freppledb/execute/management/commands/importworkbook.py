@@ -112,12 +112,12 @@ class Command(BaseCommand):
           task = Task.objects.all().using(self.database).get(pk=options['task'])
         except:
           raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name != 'frepple_importworkbook':
+        if task.started or task.finished or task.status != "Waiting" or task.name not in ('frepple_importworkbook', 'importworkbook'):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
       else:
-        task = Task(name='frepple_importworkbook', submitted=now, started=now, status='0%', user=self.user)
+        task = Task(name='importworkbook', submitted=now, started=now, status='0%', user=self.user)
       task.arguments = ' '.join(options['file'])
       task.save(using=self.database)
 

@@ -58,14 +58,14 @@ class Command(BaseCommand):
       raise CommandError("No database settings known for '%s'" % self.database)
     if options['user']:
       management.call_command(
-        'frepple_run',
+        'runplan',
         env="odoo_read_2",
         database=database,
         user=options['user']
         )
     else:
       management.call_command(
-        'frepple_run',
+        'runplan',
         env="odoo_read_2",
         database=database
         )

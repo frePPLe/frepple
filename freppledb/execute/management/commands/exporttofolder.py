@@ -223,6 +223,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Export plan result to folder')
   index = 1200
+  help_url = 'user-guide/command-reference.html#exporttofolder'
 
   @ staticmethod
   def getHTML(request):

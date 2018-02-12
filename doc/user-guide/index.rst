@@ -11,4 +11,5 @@ interface.
    user-interface/index
    modeling-wizard/index
    model-reference/index
+   command-reference
    cookbook/index

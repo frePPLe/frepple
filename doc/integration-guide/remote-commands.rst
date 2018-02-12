@@ -39,35 +39,39 @@ The following URLs are available.
 
       curl -u admin:admin http://localhost:8000/execute/api/status/?id=26
 
-* | **POST /execute/api/frepple_run/?constraint=15&plantype=1&env=supply**
+* | **POST /execute/api/runplan/?constraint=15&plantype=1&env=supply**
+  | **POST /execute/api/frepple_run/?constraint=15&plantype=1&env=supply** Deprecated
   | Generates a plan.
 
   Example usage with curl::
 
-     curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://localhost:8000/execute/api/frepple_run/
+     curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://localhost:8000/execute/api/runplan/
 
 * | **POST /execute/api/frepple_flush/?models=input.demand,input.operationplan**
+  | **POST /execute/api/empty/?models=input.demand,input.operationplan** Deprecated
   | Emptying database for models given in input.
 
   Example usage with curl::
 
-     curl -u admin:admin --data "models=input.demand,input.operationplan" http://localhost:8000/execute/api/frepple_flush/
+     curl -u admin:admin --data "models=input.demand,input.operationplan" http://localhost:8000/execute/api/empty/
 
-* | **POST /execute/api/frepple_importfromfolder/**
-  | Load CSV-formatted data files from a configured data folder into the
+* | **POST /execute/api/importfromfolder/**
+  | **POST /execute/api/frepple_importfromfolder/** Deprecated
+  | Load data files in CSV or Excel format from a configured data folder into the
     frePPLe database.
 
   Example usage with curl::
 
-     curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_importfromfolder/
+     curl -u admin:admin -X POST http://localhost:8000/execute/api/importfromfolder/
 
-* | **POST /execute/api/frepple_exporttofolder/**
+* | **POST /execute/api/exporttofolder/**
+  | **POST /execute/api/frepple_exporttofolder/** Deprecated
   | Dump planning results in CSV-formatted data files into a configured
     data folder on the frePPLe server.
 
   Example usage with curl::
 
-     curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_exporttofolder/
+     curl -u admin:admin -X POST http://localhost:8000/execute/api/exporttofolder/
 
 * | **POST /execute/api/loaddata/?fixture=demo**
   | Loads a predefined dataset.
@@ -76,20 +80,22 @@ The following URLs are available.
 
       curl -u admin:admin --data "fixture=manufacturing_demo" http://localhost:8000/execute/api/loaddata/
 
-* | **POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1**
+* | **POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1**
+  | **POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1** Deprecated
   | Creates a copy of a database into a scenario.
 
   Example usage with curl::
 
-      curl -u admin:admin --data "copy=1&source=production&destination=scenario1&force=1" http://localhost:8000/execute/api/frepple_copy/
+      curl -u admin:admin --data "copy=1&source=production&destination=scenario1&force=1" http://localhost:8000/execute/api/scenario_copy/
 
-* | **POST /execute/api/frepple_backup/**
+* | **POST /execute/api/backup/**
+  | **POST /execute/api/frepple_backup/** Deprecated
   | Backs up the content of the database to a file (which stays on the
     frePPLe application server).
 
   Example usage with curl::
 
-      curl -u admin:admin -X POST http://localhost:8000/execute/api/frepple_backup/
+      curl -u admin:admin -X POST http://localhost:8000/execute/api/backup/
 
 * | **POST /execute/api/openbravo_import/?delta=7**
   | Execute the Openbravo import connector, which downloads data from Openbravo.
@@ -100,7 +106,8 @@ The following URLs are available.
 * | **POST /execute/api/odoo_import/**
   | Execute the Odoo import connector, which downloads data from Odoo.
 
-* | **POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1**
+* | **POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1**
+  | **POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1** Deprecated
   | Initializes the date bucketization table in the database.
 
 All these APIs return a JSON object and they are synchronous, i.e. they
@@ -222,7 +229,7 @@ any other modern programming language.
     echo -e "\n---------------start import the data----------------"
     WAIT_TIME=10 #seconds
     WAIT=6 #times
-    result=$(curl -X POST -u admin:admin http://$server/execute/api/frepple_importfromfolder/)
+    result=$(curl -X POST -u admin:admin http://$server/execute/api/importfromfolder/)
     id=$(echo "${result//[!0-9]/}")
     waitTillComplete $id
     echo "---------------end import the data------------------"
@@ -231,7 +238,7 @@ any other modern programming language.
     echo -e "\n---------------start planning----------------"
     WAIT_TIME=10 #seconds
     WAIT=6 #times
-    result=$(curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://$server/execute/api/frepple_run/)
+    result=$(curl -u admin:admin --data "constraint=15&plantype=1&env=fcst,invplan,balancing,supply" http://$server/execute/api/runplan/)
     id=$(echo "${result//[!0-9]/}")
     waitTillComplete $id
     echo "---------------end planning------------------"

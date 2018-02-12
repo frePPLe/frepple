@@ -220,6 +220,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Generate buckets')
   index = 2000
+  help_url = 'user-guide/command-reference.html#createbuckets'
 
   @ staticmethod
   def getHTML(request):

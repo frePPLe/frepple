@@ -100,6 +100,7 @@ def getHTML(request):
 loaddata.Command.getHTML = getHTML
 loaddata.Command.title = _('Load a dataset')
 loaddata.Command.index = 1800
+loaddata.Command.help_url = 'user-guide/command-reference.html#loaddata'
 
 
 def updatePermissions(using=DEFAULT_DB_ALIAS, **kwargs):

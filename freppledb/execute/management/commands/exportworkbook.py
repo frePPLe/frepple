@@ -134,8 +134,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Export a spreadsheet')
   index = 1000
-
-  help_url = 'user-guide/user-interface/execute.html#export-a-spreadsheet'
+  help_url = 'user-guide/command-reference.html#exportworkbook'
 
   @ staticmethod
   def getHTML(request):

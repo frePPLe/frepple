@@ -314,6 +314,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Import data files from folder')
   index = 1300
+  help_url = 'user-guide/command-reference.html#importfromfolder'
 
   @ staticmethod
   def getHTML(request):
@@ -321,7 +322,7 @@ class Command(BaseCommand):
     if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database] and request.user.is_superuser:
       # Function to convert from bytes to human readabl format
       def sizeof_fmt(num):
-        for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
           if abs(num) < 1024.0:
             return "%3.1f%sB" % (num, unit)
           num /= 1024.0

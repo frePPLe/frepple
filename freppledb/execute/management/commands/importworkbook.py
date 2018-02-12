@@ -261,6 +261,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Import a spreadsheet')
   index = 1100
+  help_url = 'user-guide/command-reference.html#importworkbook'
 
   @ staticmethod
   def getHTML(request):

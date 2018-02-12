@@ -258,16 +258,25 @@ SetupEvent* LoadPlan::getSetup(bool include) const
 {
   if (!getResource()->getSetupMatrix())
     return nullptr;
-  auto tmp = getOperationPlan() && getOperationPlan()->getSetupEvent() ?
-    Resource::loadplanlist::const_iterator(getOperationPlan()->getSetupEvent()) :
-    Resource::loadplanlist::const_iterator(this);
+  Resource::loadplanlist::const_iterator tmp;
+  if (!getOperationPlan())
+    tmp = nullptr;
+  else if (getOperationPlan()->getSetupEvent())
+    // Setup event being used
+    tmp = getOperationPlan()->getSetupEvent();
+  else if (isStart())
+    // Start loadplan
+    tmp = this;
+  else
+    // End loadplan
+    tmp = getOtherLoadPlan();
   if (!include)
     --tmp;
   while (tmp != getResource()->getLoadPlans().end())
   {
     if (
-      tmp->getEventType() == 5
-      && (tmp->getDate() != getDate() || *tmp->getOperationPlan() < *getOperationPlan())
+      tmp->getEventType() == 5 &&
+      (include || tmp->getDate() != getOperationPlan()->getSetupEnd() || tmp->getOperationPlan() < getOperationPlan())
       )
         return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;

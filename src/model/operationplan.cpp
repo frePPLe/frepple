@@ -32,6 +32,8 @@ const MetaClass* OperationPlan::InterruptionIterator::metadata;
 const MetaCategory* OperationPlan::InterruptionIterator::metacategory;
 unsigned long OperationPlan::counterMin = 2;
 bool OperationPlan::setupEndFixed = true;
+bool OperationPlan::propagatesetups = true;
+
 
 const MetaCategory* SetupEvent::metadata;
 
@@ -965,7 +967,7 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (oper != a.oper)
     return *oper < *(a.oper);
 
-  // Different start date
+  // Different setup end date
   if (getSetupEnd() != a.getSetupEnd())
     return getSetupEnd() < a.getSetupEnd();
 
@@ -1255,8 +1257,11 @@ void OperationPlan::scanSetupTimes()
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
   {
     if (!ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
+    {
       // Not a starting loadplan or there is no setup on this loadplan
       ldplan->getResource()->updateSetupTime();
+      break;  // Only 1 load can have a setup
+    }
   }
 
   // TODO We can do much faster than the above loop: where we reconsider all loadplans on a 
@@ -1380,7 +1385,7 @@ bool OperationPlan::updateSetupTime(bool report)
 }
 
 
-void OperationPlan::update(bool propagatesetups)
+void OperationPlan::update()
 {
   if (lastsubopplan)
   {
@@ -1405,8 +1410,8 @@ void OperationPlan::update(bool propagatesetups)
   updateOperationplanList();
 
   // Update the setup time on all neighbouring operationplans
-  if (!SetupMatrix::empty() && propagatesetups)
-      scanSetupTimes();
+  if (!SetupMatrix::empty() && getPropagateSetups())
+    scanSetupTimes();
 
   // Notify the owner operationplan
   if (owner)

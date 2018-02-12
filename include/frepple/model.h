@@ -2525,6 +2525,18 @@ class OperationPlan
       return tmp;
     }
 
+    static bool getPropagateSetups()
+    {
+      return propagatesetups;
+    }
+
+    static bool setPropagateSetups(bool b)
+    {
+      auto tmp = propagatesetups;
+      propagatesetups = b;
+      return tmp;
+    }
+
   private:
     /** A tree structure with all operationplans to allow a fast lookup by id. */
     static Tree<unsigned long> st;
@@ -2540,7 +2552,7 @@ class OperationPlan
       * This method will also update parent and child operationplans.
       * @see resizeFlowLoadPlans
       */
-    void update(bool propagatesetups=true);
+    void update();
 
     /** Generates a unique identifier for the operationplan.
       * The field is 0 while the operationplan is not fully registered yet.
@@ -2622,6 +2634,9 @@ class OperationPlan
       * date constant.
       */
     static bool setupEndFixed;
+
+    /** Flag controlling where setup time verification should be performed. */
+    static bool propagatesetups;
 
     /** Pointer to a higher level OperationPlan. */
     OperationPlan *owner = nullptr;

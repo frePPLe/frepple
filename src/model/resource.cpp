@@ -699,23 +699,34 @@ SetupEvent* Resource::getSetupAt(Date d, bool inclusive, OperationPlan* opplan)
 
 void Resource::updateSetupTime() const
 {
+  bool tmp = OperationPlan::setPropagateSetups(false);
   if (setupmatrix)
   {
     bool changed;
-    do
-    {
-      changed = false;
-      if (OperationPlan::getSetupEndFixed())
+    if (OperationPlan::getSetupEndFixed())
+      do
+      {
+        changed = false;
         for (auto qq = getLoadPlans().rbegin(); qq != getLoadPlans().end() && !changed; --qq)
-          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && !qq->getOperationPlan()->getConfirmed())
+          {
             changed = qq->getOperationPlan()->updateSetupTime();
-      else
+          }
+      }
+      while (changed);
+    else
+      do
+      {
+        changed = false;
         for (auto qq = getLoadPlans().begin(); qq != getLoadPlans().end() && !changed; ++qq)
-          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
+          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && !qq->getOperationPlan()->getConfirmed())
+          {
             changed = qq->getOperationPlan()->updateSetupTime();
-    }
-    while (changed);
+          }
+      }
+      while (changed);
   }
+  OperationPlan::setPropagateSetups(tmp);
 }
 
 }

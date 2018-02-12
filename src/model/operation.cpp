@@ -607,12 +607,14 @@ Operation::SetupInfo Operation::calculateSetup(
       if (cursetup && cursetup->getSetup() == ld->getSetup())
         return SetupInfo(nullptr, nullptr, PooledString());
       else
-        return SetupInfo(
-          ld->getResource(),
-          ld->getResource()->getSetupMatrix()
-            ->calculateSetup(cursetup ? cursetup->getSetup() : "", ld->getSetup(), ld->getResource()),
-          ld->getSetup()
+      {        
+          auto setup = SetupInfo(
+            ld->getResource(),
+            ld->getResource()->getSetupMatrix()->calculateSetup(cursetup ? cursetup->getSetup() : "", ld->getSetup(), ld->getResource()),
+            ld->getSetup()
           );
+          return setup;
+      }
     }
   }
   else
@@ -622,8 +624,8 @@ Operation::SetupInfo Operation::calculateSetup(
     // alternate resources.    
     for (; ldplan != opplan->endLoadPlans(); ++ldplan)
     {
-      if (!ldplan->isStart() || ldplan->getLoad()->getSetup().empty() || !ldplan->getResource()->getSetupMatrix())
-        // Not a starting loadplan or there is no setup on this loadplan
+      if (ldplan->getQuantity() < 0 || ldplan->getLoad()->getSetup().empty() || !ldplan->getResource()->getSetupMatrix())
+        // Not a consuming loadplan or there is no setup on this loadplan
         continue;
 
       // An operation can load only a single resource with a setup matrix
@@ -633,18 +635,58 @@ Operation::SetupInfo Operation::calculateSetup(
         throw DataException("Only a single resource with a setup matrix is allowed per operation");
 
       // Calculate the setup time
-      SetupEvent* cursetup = setupevent ?
-        setupevent->getSetupBefore() :
-        ldplan->getSetup(false);
+      SetupEvent* cursetup = ldplan->getSetup(false);
       if (cursetup && (cursetup->getSetup() == ldplan->getLoad()->getSetup() && ldplan->getResource()->getSetupMatrix()))
         return SetupInfo(nullptr, nullptr, PooledString());
       else
-        return SetupInfo(
+      {
+        auto setup = SetupInfo(
           ldplan->getResource(),
           ldplan->getResource()->getSetupMatrix()
           ->calculateSetup(cursetup ? cursetup->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
           ldplan->getLoad()->getSetup()
-          );
+        );
+        if (use_start && get<1>(setup))
+        {
+          // Compute the end of the setup when we apply this rule
+          DateRange setup_dates = opplan->getOperation()->calculateOperationTime(opplan, setupend, get<1>(setup)->getDuration(), true);
+          logger << "    ---    " << opplan << "     " << setup_dates << "     ---      " << setupend << endl;
+          // Get the setup valid at this date
+          SetupEvent* setup_event_2 = ldplan->getResource()->getSetupAt(setup_dates.getEnd(), false);
+          if (setup_event_2 && cursetup && setup_event_2->getSetup() != cursetup->getSetup())
+          {
+            // Oops, It's different
+            ldplan->getResource()->inspect();
+            logger << "      B) different setup at end than at start! "
+              << setup_dates << setup_event_2->getSetup() << "     " << cursetup->getSetup() << "   "
+              << setup_event_2->getDate() << "   " << cursetup->getDate()
+              << endl;
+            auto newsetup = SetupInfo(
+              ldplan->getResource(),
+              ldplan->getResource()->getSetupMatrix()
+              ->calculateSetup(setup_event_2 ? setup_event_2->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
+              ldplan->getLoad()->getSetup()
+            );
+            logger << "  new setup" << get<0>(newsetup) << "    " << get<1>(newsetup) << "   " << get<2>(newsetup) << endl;
+            if (get<1>(newsetup))
+            {
+              DateRange new_setup_dates = opplan->getOperation()->calculateOperationTime(opplan, setupend, get<1>(newsetup)->getDuration(), true);
+              logger << "   " << new_setup_dates << "        " << (new_setup_dates.getEnd() > setup_event_2->getDate()) << endl;
+              if (new_setup_dates.getEnd() > setup_event_2->getDate())
+              {
+                // The new setup takes longer.
+                // If it takes shorter, we stay on the previous setup calculation
+                //setup = newsetup;
+                logger << " avoiding the pitfall again" << endl;
+              }
+            }
+            else
+              logger << " avoiding the pitfall again NULL " << endl;
+              //setup = SetupInfo(nullptr, nullptr, PooledString());
+          }
+        }
+        return setup;
+      }       
     }
   }
   return SetupInfo(nullptr, nullptr, PooledString());

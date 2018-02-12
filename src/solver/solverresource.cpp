@@ -168,15 +168,17 @@ void SolverMRP::solve(const Resource* res, void* v)
         {
           // A change in the maximum capacity
           prevMax = curMax;
-          if (cur->getEventType() == 4) curMax = cur->getMax(false);
+          if (cur->getEventType() == 4)
+            curMax = cur->getMax(false);
 
-          // Ongoing setup
+          // Not interested if date doesn't change or setup end events
+          if (cur->getDate() == curdate || cur->getEventType() == 5)
+            continue;
+
+          // Loadplan event
           const LoadPlan* ldplan = nullptr;
           if (cur->getEventType() == 1)
             ldplan = static_cast<const LoadPlan*>(&*cur);
-
-          // Not interested if date doesn't change
-          if (cur->getDate() == curdate) continue;
 
           // We are below the max limit now.
           if (cur->getOnhand() < prevMax + ROUNDING_ERROR && curdate < prevdate)

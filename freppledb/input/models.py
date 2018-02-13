@@ -277,7 +277,7 @@ class Operation(AuditModel):
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the working hours and holidays')
     )
-  
+
   def __str__(self):
     return self.name
 

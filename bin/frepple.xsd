@@ -705,7 +705,7 @@
       <xsd:element name="operation" type="operation" />
       <xsd:element name="buffer" type="buffer" />
       <xsd:element name="item" type="item" />
-      <xsd:element name="quantity" type="xsd:double" />
+      <xsd:element name="quantity" type="xsd:double" />      
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
@@ -715,7 +715,7 @@
       <xsd:element name="stringproperty" type="stringproperty" />
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
-      <xsd:element name="source" type="xsd:normalizedString" />
+      <xsd:element name="source" type="xsd:normalizedString" />  
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
@@ -754,6 +754,17 @@
   <xsd:complexType name="flow_fixed_start">
     <xsd:complexContent>
       <xsd:extension base="flow" />
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="flow_batch_transfer">
+    <xsd:complexContent>
+      <xsd:extension base="flow">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="transferbatch" type="xsd:double" />
+        </xsd:choice>
+        <xsd:attribute name="transferbatch" type="xsd:double" /> 
+      </xsd:extension>     
     </xsd:complexContent>
   </xsd:complexType>
 

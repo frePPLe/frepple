@@ -189,6 +189,7 @@ const Keyword Tags::suppliers("suppliers");
 const Keyword Tags::supply("supply");
 const Keyword Tags::tool("tool");
 const Keyword Tags::tosetup("tosetup");
+const Keyword Tags::transferbatch("transferbatch");
 // The next line requires the namespace "xsi" to be defined.
 // It must refer to "http://www.w3.org/2001/XMLSchema-instance"
 // This is required to support subclassing in the XML schema.

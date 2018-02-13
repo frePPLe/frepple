@@ -1094,7 +1094,7 @@ class loadOperationMaterials(LoadTask):
       cursor.execute('''
         SELECT
           operation_id, item_id, quantity, type, effective_start,
-          effective_end, name, priority, search, source
+          effective_end, name, priority, search, source, transferbatch
         FROM operationmaterial %s
         ORDER BY operation_id, item_id
         ''' % filter_where)
@@ -1118,6 +1118,8 @@ class loadOperationMaterials(LoadTask):
             curflow.priority = i[7]
           if i[8]:
             curflow.search = i[8]
+          if i[10]:
+            curflow.transferbatch = i[10]
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d operation materials in %.2f seconds' % (cnt, time() - starttime))

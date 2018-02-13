@@ -192,6 +192,7 @@ class Tags
     static const Keyword supply;
     static const Keyword tool;
     static const Keyword tosetup;
+    static const Keyword transferbatch;
     static const Keyword type;
     static const Keyword unavailable;
     static const Keyword userexit_buffer;

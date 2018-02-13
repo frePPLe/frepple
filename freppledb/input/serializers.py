@@ -268,10 +268,13 @@ class OperationFilter(filters.FilterSet):
               'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'sizemaximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'duration_per': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'duration_per': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'search': ['exact', 'in', ],
-              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ],
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
 
     filter_fields = (
       'name', 'type', 'description', 'category', 'subcategory', 'item', 'location', 'fence',
@@ -308,8 +311,10 @@ class SubOperationFilter(filters.FilterSet):
               'operation': ['exact', 'in', ],
               'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'suboperation': ['exact', 'in', ],
-              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+              'source': ['exact', 'in', ], 
+              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
 
     filter_fields = ('id', 'operation', 'priority', 'suboperation', 'effective_start', 'effective_end', 'source', 'lastmodified')
 
@@ -519,29 +524,47 @@ class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class OperationMaterialFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.OperationMaterial
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'operation': ['exact', 'in', ],
-              'item': ['exact', 'in', ],
-              'type': ['exact', 'in', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'name': ['exact', 'in', 'contains', ],
-              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'search': ['exact', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'transferbatch': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'operation': ['exact', 'in', ],
+      'item': ['exact', 'in', ],
+      'type': ['exact', 'in', ],
+      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'name': ['exact', 'in', 'contains', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'search': ['exact', 'contains', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
 
-    filter_fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
-                     'name', 'priority', 'search', 'source', 'lastmodified')
+    filter_fields = (
+      'id', 'operation', 'item', 'quantity', 'transferbatch', 'type',
+      'effective_start', 'effective_end', 'name', 'priority', 'search',
+      'source', 'lastmodified'
+      )
+
 
 class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.OperationMaterial
-      fields = ('id', 'operation', 'item', 'quantity', 'type', 'effective_start', 'effective_end',
-                'name', 'priority', 'search', 'source', 'lastmodified')
+      fields = (
+        'id', 'operation', 'item', 'quantity', 'transferbatch', 'type',
+        'effective_start', 'effective_end', 'name', 'priority', 'search',
+        'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial = True
+
 
 class OperationMaterialAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()
     serializer_class = OperationMaterialSerializer
     filter_class = OperationMaterialFilter
+
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationMaterial.objects.all()

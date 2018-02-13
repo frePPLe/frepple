@@ -28,6 +28,7 @@ const MetaClass* FlowStart::metadata;
 const MetaClass* FlowEnd::metadata;
 const MetaClass* FlowFixedStart::metadata;
 const MetaClass* FlowFixedEnd::metadata;
+const MetaClass* FlowTransferBatch::metadata;
 
 
 int Flow::initialize()
@@ -49,6 +50,12 @@ int Flow::initialize()
     );
   FlowFixedEnd::metadata = MetaClass::registerClass<FlowFixedEnd>(
     "flow", "flow_fixed_end", Object::create<FlowFixedEnd>
+    );
+  FlowTransferBatch::metadata = MetaClass::registerClass<FlowTransferBatch>(
+    "flow", "flow_transfer_batch", Object::create<FlowTransferBatch>
+    );
+  FlowTransferBatch::registerFields<FlowTransferBatch>(
+    const_cast<MetaClass*>(FlowTransferBatch::metadata)
     );
 
   // Initialize the type
@@ -260,6 +267,12 @@ Object* Flow::finder(const DataValueDict& d)
     return const_cast<Flow*>(&*fl);
   }
   return nullptr;
+}
+
+
+double FlowTransferBatch::getFlowplanQuantity(const FlowPlan* fl) const
+{
+  throw DataException("Not implemented yet");
 }
 
 } // end namespace

@@ -39,9 +39,11 @@ namespace frepple
 {
 
 class Flow;
+class FlowStart;
 class FlowEnd;
 class FlowFixedStart;
 class FlowFixedEnd;
+class FlowTransferBatch;
 class FlowPlan;
 class LoadPlan;
 class Resource;
@@ -1045,6 +1047,11 @@ class Solver : public Object
       throw LogicException("Called undefined solve(Flow*) method");
     }
 
+    virtual void solve(const FlowStart* b, void* v = nullptr)
+    {
+      solve(reinterpret_cast<const Flow*>(b), v);
+    }
+
     virtual void solve(const FlowEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
@@ -1058,6 +1065,11 @@ class Solver : public Object
     virtual void solve(const FlowFixedEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
+    }
+
+    virtual void solve(const FlowTransferBatch* b, void* v = nullptr)
+    {
+      solve(reinterpret_cast<const Flow*>(b), v);
     }
 
     virtual void solve(const Solvable*,void* = nullptr)
@@ -6102,6 +6114,48 @@ class FlowFixedStart : public FlowStart
     virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
     virtual const MetaClass& getType() const {return *metadata;}
+    static const MetaClass* metadata;
+};
+
+
+/** @brief This class represents a flow producing/material of a fixed quantity
+  * spread across the total duration of the operationplan
+  */
+class FlowTransferBatch : public Flow
+{
+  private:
+    double transferbatch = 0;
+
+  public:
+    /** Constructor. */
+    explicit FlowTransferBatch(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
+
+    /** This constructor is called from the plan begin_element function. */
+    explicit FlowTransferBatch() {}
+
+    double getTransferBatch() const
+    {
+      return transferbatch;
+    }
+
+    void setTransferBatch(double d)
+    {
+      if (d < 0.0)
+        throw DataException("Transfer batch size must be greater than or equal to 0");
+      transferbatch = d;
+    }
+
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDoubleField<Cls>(Tags::transferbatch, &Cls::getTransferBatch, &Cls::setTransferBatch);
+    }
+
+    /** This method holds the logic the compute the quantity of a flowplan. */
+    virtual double getFlowplanQuantity(const FlowPlan*) const;
+
+    virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
+
+    virtual const MetaClass& getType() const { return *metadata; }
     static const MetaClass* metadata;
 };
 

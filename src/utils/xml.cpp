@@ -193,7 +193,7 @@ void XMLInput::startElement(const XMLCh* const uri,
             Keyword::hash(tp)
           );
           if (!objects[objectindex].cls)
-            throw DataException("No type " + tp + " registered for category " + objects[objectindex].cls->type);
+            throw DataException("No type " + tp + " registered");
           break;
         }
       }

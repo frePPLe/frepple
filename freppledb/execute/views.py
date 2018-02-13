@@ -91,7 +91,7 @@ class TaskReport(GridReport):
     for commandname, appname in get_commands().items():
       try:
         accord = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')
-        if accord.index >= 0:
+        if accord.index >= 0 and getattr(accord, 'getHTML', None):
           accordions.add(accord)
       except Exception:
         pass  # Silently ignore failures

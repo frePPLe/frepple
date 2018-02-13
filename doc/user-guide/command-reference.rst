@@ -13,19 +13,37 @@ The commands can be accessed in three different ways:
 
 This section provides an overview of the available actions:
 
-* :ref:`runplan`
-* :ref:`exportworkbook`
-* :ref:`importworkbook`
-* :ref:`exporttofolder`
-* :ref:`importfromfolder`
-* :ref:`runwebservice`
-* :ref:`scenario_copy`
-* :ref:`backup`
-* :ref:`empty`
-* :ref:`loaddata`
-* :ref:`createbuckets`
+* `Planning workflows`_
+
+	* :ref:`runplan`
+	* :ref:`exportworkbook`
+	* :ref:`importworkbook`
+	* :ref:`exporttofolder`
+	* :ref:`importfromfolder`
+	* :ref:`runwebservice`
+	* :ref:`scenario_copy`
+	* :ref:`backup`
+	* :ref:`empty`
+
+* `Administrator commands`_
+
+	* :ref:`restore`
+	* :ref:`loaddata`
+	* :ref:`createbuckets`
+	* :ref:`migrate`
+
+* `Developer commands`_
+
+	* :ref:`shell`
+	* :ref:`dbshell`
+	* :ref:`simulation`
+	* :ref:`forecast_simulation`
 
 The list can be extended with custom commands from an extension module.
+
+
+Planning workflows
+~~~~~~~~~~~~~~~~~~
 
 .. _runplan:
 
@@ -58,11 +76,17 @@ This command is available in the user interface, the command line and the web AP
 
 * Command line::
 
-    frepplectl runplan --constraints=15 --plantype=1 --env=supply
+    frepplectl runplan --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
+    
+    Deprecated:
+    frepplectl frepple_run --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
 
 * Web API::
 
-    POST /execute/api/runplan/?constraint=15&plantype=1&env=supply
+    POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
+    
+    Deprecated:
+    POST /execute/api/frepple_run/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
 
 .. _exportworkbook:
 
@@ -155,9 +179,27 @@ red button.
 The arrow up button will give the user the possibility of selecting multiple files
 to upload to that folder.
 
-.. image:: /user-guide/user-interface/_images/execution-importfilesfromfolder.png
-   :alt: Execution screen - Import data files from folder
+This command is available in the user interface, the command line and the web API:
 
+* Execution screen:  
+  
+  .. image:: /user-guide/user-interface/_images/execution-importfilesfromfolder.png
+     :alt: Execution screen - Import data files from folder
+
+* Command line::
+
+    frepplectl importfromfolder
+    
+    Deprecated:
+    frepplectl frepple_importfromfolder
+
+* Web API::
+
+    POST /execute/api/importfromfolder/
+  
+    Deprecated:
+    POST /execute/api/frepple_importfromfolder/
+  
 .. _runwebservice:
 
 Web service
@@ -186,8 +228,27 @@ again.
 The label of a scenario, which is displayed in the dropdown list in the 
 upper right hand corner, can also be updated here.
 
-.. image:: /user-guide/user-interface/_images/execution-scenarios.png
-   :alt: Execution screen - what-if scenarios
+This command is available in the user interface, the command line and the web API:
+
+* Execution screen:  
+  
+  .. image:: /user-guide/user-interface/_images/execution-scenarios.png
+     :alt: Execution screen - what-if scenarios
+
+* Command line::
+
+    frepplectl scenario_copy db1 db2
+    
+    Deprecated:
+    frepplectl frepple_copy db1 db2
+
+* Web API::
+
+    POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1
+    
+    Deprecated:
+    POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1
+
 
 .. _backup:
 
@@ -202,9 +263,27 @@ djangosettings.py.
 This option is not active for cloud users. We automatically manage the
 data backups for cloud users.
 
-.. image:: /user-guide/user-interface/_images/execution-backup.png
-   :alt: Execution screen - backup
+This command is available in the user interface, the command line and the web API:
 
+* Execution screen:  
+
+  .. image:: /user-guide/user-interface/_images/execution-backup.png
+     :alt: Execution screen - backup
+
+* Command line::
+
+    frepplectl backup
+    
+    Deprecated:
+    frepplectl frepple_backup
+
+* Web API::
+  
+    POST /execute/api/backup/
+   
+    Deprecated:
+    POST /execute/api/frepple_backup/
+   
 .. _empty:
 
 Empty the database
@@ -213,9 +292,31 @@ Empty the database
 This will delete all data from the current scenario (except for some internal
 tables for users, permissions, task log, etc...).
 
-.. image:: /user-guide/user-interface/_images/execution-erase.png
-   :alt: Execution screen - erase
+This command is available in the user interface, the command line and the web API:
 
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-erase.png
+     :alt: Execution screen - erase
+
+* Command line::
+
+    frepplectl empty --models=input.demand,input.operationplan
+    
+    Deprecated:
+    frepplectl frepple_flush --models=input.demand,input.operationplan
+
+* Web API::
+
+    POST /execute/api/frepple_flush/?models=input.demand,input.operationplan
+  
+    Deprecated:
+    POST /execute/api/empty/?models=input.demand,input.operationplan
+
+
+Administrator commands
+~~~~~~~~~~~~~~~~~~~~~~    
+     
 .. _loaddata:
 
 Load a dataset in the database
@@ -231,9 +332,21 @@ of these datasets.
 You can use the dumpdata command to export a model to the appropriate format
 and create your own predefined datasets.
 
-.. image:: /user-guide/user-interface/_images/execution-fixture.png
-   :alt: Execution screen - load a dataset
+This command is available in the user interface, the command line and the web API:
 
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-fixture.png
+     :alt: Execution screen - load a dataset
+
+* Command line::
+
+    frepplectl loaddata manufacturing_demo
+
+* Web API::
+
+    POST /execute/api/loaddata/?fixture=manufacturing_demo
+    
 .. _createbuckets:
 
 Generate time buckets
@@ -243,5 +356,27 @@ A number of output reports are displaying the plan results aggregated into time
 buckets. These time buckets are defined with the tables dates and bucket dates.
 This tasks allows you to populate these tables in an easy way.
 
-.. image:: /user-guide/user-interface/_images/execution-buckets.png
-   :alt: Execution screen - generate time buckets
+This command is available in the user interface, the command line and the web API:
+
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-buckets.png
+     :alt: Execution screen - generate time buckets
+   
+* Command line::
+
+    frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
+    
+    Deprecated:
+    frepplectl frepple_createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
+
+* Web API::
+   
+    POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
+    
+    Deprecated:
+    POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
+
+
+Developer commands
+~~~~~~~~~~~~~~~~~~    

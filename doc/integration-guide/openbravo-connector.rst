@@ -47,10 +47,12 @@ The connector provides the following functionality:
     a better workflow for the end users.
 
 
+.. _openbravo_import:
+
 Importing data from Openbravo into frePPLe
 ------------------------------------------
 
-You can run the import interface in 2 ways:
+You can run the import interface in 3 ways:
 
 * | **Interactively from the frePPLe user interface.**
   | The execute screen has a specific section where you can launch the import
@@ -62,7 +64,7 @@ You can run the import interface in 2 ways:
 	 :alt: Import from openbravo
 
 * | **From the command line.**
-  | The frepplcel command is useful when you want to run the interface
+  | The frepplectl command is useful when you want to run the interface
     automatically, e.g. with a cron job.
   | Issue one of the commands below. The second command runs an incremental
     import of the Openbravo objects that have been changed in the last 7 days.
@@ -71,11 +73,22 @@ You can run the import interface in 2 ways:
 
     frepplectl openbravo_import
     frepplectl openbravo_import --delta=7
+    
+* | **Through a web API.**
+  | The web API is the proper method to automate the integration on the frePPLe
+    cloud servers.
+  
+  ::
+  
+    POST /execute/api/openbravo_import/?delta=7
+
+    
+.. _openbravo_export:
 
 Exporting data from frePPLe to Openbravo
 ----------------------------------------
 
-You can bring the planning results to Openbravo in three ways:
+You can bring the planning results to Openbravo in 4 ways:
 
 * | **Incremental export from the frePPLe user interface**
   | User can select proposed purchase orders, distribution orders or manufacturing
@@ -102,6 +115,14 @@ You can bring the planning results to Openbravo in three ways:
   ::
 
      frepplectl openbravo_export
+
+* | **Bulk export through a web API.**
+  | The web API is the proper method to automate the integration on the frePPLe
+    cloud servers.
+  
+  ::
+  
+    POST /execute/api/openbravo_export/
 
 It is possible to combine both the incremental and bulk export in the same frePPLe
 instance. For instance, proposed purchase orders for a total value less than a certain 

@@ -47,7 +47,10 @@ class WorkerAlive(Thread):
     while True:
       p = Parameter.objects.all().using(self.database).get_or_create(pk='Worker alive')[0]
       p.value = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-      p.save(update_fields=['value'])
+      try:
+        p.save(update_fields=['value'])
+      except:
+        pass
       time.sleep(5)
 
 

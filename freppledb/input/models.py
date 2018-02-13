@@ -615,7 +615,8 @@ class OperationMaterial(AuditModel):
     ('start', _('Start')),
     ('end', _('End')),
     ('fixed_start', _('Fixed start')),
-    ('fixed_end', _('Fixed end'))
+    ('fixed_end', _('Fixed end')),
+    ('batch_transfer', _('Batch transfer'))
   )
 
   # Database fields
@@ -660,6 +661,11 @@ class OperationMaterial(AuditModel):
     _('search mode'), max_length=20,
     null=True, blank=True, choices=searchmode,
     help_text=_('Method to select preferred alternate')
+    )
+  transferbatch = models.DecimalField(
+    _('transfer batch quantity'),
+    max_digits=15, decimal_places=6, null=True, blank=True,
+    help_text=_('Batch size by in which material is produced or consumed')
     )
 
   class Manager(MultiDBManager):

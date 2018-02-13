@@ -124,7 +124,7 @@ data_site.register(Supplier, Supplier_admin)
 
 class OperationMaterial_inline(MultiDBTabularInline):
   model = OperationMaterial
-  fields = ('item', 'operation', 'quantity', 'type', 'effective_start', 'effective_end')
+  fields = ('item', 'operation', 'quantity', 'type', 'transferbatch', 'effective_start', 'effective_end')
   raw_id_fields = ('operation', 'item',)
   extra = 0
   exclude = ('source',)
@@ -355,7 +355,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
   save_on_top = True
   exclude = ('id',)
   fieldsets = (
-    (None, {'fields': ('item', 'operation', 'type', 'quantity', ('effective_start', 'effective_end'))}),
+    (None, {'fields': ('item', 'operation', 'type', 'quantity', 'transferbatch', ('effective_start', 'effective_end'))}),
     (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
     )
   tabs = [

@@ -2,29 +2,34 @@
 Operation Materials
 ===================
 
-Flows are used to model the consumption and production of material from buffers.
+Operation materials are used to model the consumption and production of 
+material from buffers by operations.
 
-Different types of flows exist:
+Different types are available:
 
-* | **flow_start**:
-  | Flows that consume (or produce) material at the start of an operationplan.
+* | **start**:
+  | Consume (or produce) material at the start of an operationplan.
   | The quantity consumed or produced is proportional to the quantity of the
     operationplan.
 
-* | **flow_end**:
-  | Flows that produce (or consume) material at the end of an operationplan.
+* | **end**:
+  | Produce (or consume) material at the end of an operationplan.
   | The quantity consumed or produced is proportional to the quantity of the
     operationplan.
 
-* | **flow_fixed_start**:
-  | Flows that consume (or produce) material at the start of an operationplan.
+* | **fixed_start**:
+  | Consume (or produce) material at the start of an operationplan.
   | The quantity consumed or produced is constant and independent of the
     quantity of the operationplan.
 
-* | **flow_fixed_end**:
-  | Flows that produce (or consume) material at the end of an operationplan.
+* | **fixed_end**:
+  | Produce (or consume) material at the end of an operationplan.
   | The quantity consumed or produced is constant and independent of the
     quantity of the operationplan.
+    
+* | **batch_transfer**:
+  | Consume (or produce) material in a number of batches of fixed size
+    at various moments during the total duration of the operationplan.
 
 **Fields**
 
@@ -36,8 +41,13 @@ buffer          buffer            | Buffer from which material will be moved or 
                                   | This is a required field.
 operation       operation         | Operation to which the material flow is associated.
                                   | This is a required field.
-quantity        double            Material quantity being consumed or produced per unit of
-                                  the operationplan.
+quantity        double            | Material quantity being consumed or produced per unit of
+                                    the operationplan.
+transferbatch   double            | Batch size by in which material is produced or consumed.
+                                  | Only relevant for flows of type batch_transfer.
+                                  | The default is null, in which case we default to produce
+                                    at the end when the quantity is positive, or consume at
+                                    the start when the quantity is negative.                                  
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

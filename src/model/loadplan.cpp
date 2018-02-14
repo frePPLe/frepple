@@ -256,14 +256,15 @@ void LoadPlan::update()
 
 SetupEvent* LoadPlan::getSetup(bool include) const
 {
+  auto opplan = getOperationPlan();
   if (!getResource()->getSetupMatrix())
     return nullptr;
   Resource::loadplanlist::const_iterator tmp;
-  if (!getOperationPlan())
+  if (!opplan)
     tmp = nullptr;
-  else if (getOperationPlan()->getSetupEvent())
+  else if (opplan->getSetupEvent())
     // Setup event being used
-    tmp = getOperationPlan()->getSetupEvent();
+    tmp = opplan->getSetupEvent();
   else if (isStart())
     // Start loadplan
     tmp = this;
@@ -274,11 +275,12 @@ SetupEvent* LoadPlan::getSetup(bool include) const
     --tmp;
   while (tmp != getResource()->getLoadPlans().end())
   {
-    if (
-      tmp->getEventType() == 5 &&
-      (include || tmp->getDate() != getOperationPlan()->getSetupEnd() || tmp->getOperationPlan() < getOperationPlan())
-      )
-        return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
+     if (
+       tmp->getEventType() == 5 &&
+       (include || tmp->getDate() != opplan->getSetupEnd()
+         || (tmp->getOperationPlan() && *(tmp->getOperationPlan()) < *opplan))
+       )
+       return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;
   }
   return nullptr;

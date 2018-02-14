@@ -747,7 +747,7 @@ bool OperationPlan::assignIdentifier()
   if (counterMin >= ULONG_MAX)
     throw RuntimeException("Exhausted the range of available operationplan identifiers");
 
-  // Insert in the tree of operatioplans
+  // Insert in the tree of operationplans
   st.insert(this);
 
   return true;
@@ -1011,7 +1011,8 @@ bool OperationPlan::operator < (const OperationPlan& a) const
     return quantity >= a.quantity;
 
   // Sort based on raw identifier
-  if (getRawIdentifier() != a.getRawIdentifier())
+  if (getRawIdentifier() != a.getRawIdentifier()
+    && (getRawIdentifier() || a.getRawIdentifier()))
     return getRawIdentifier() > a.getRawIdentifier();
   else
     // Using a pointer comparison as tie breaker. This can give

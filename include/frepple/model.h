@@ -2271,7 +2271,7 @@ class OperationPlan
       setName(i);
     }
 
-    /** Return the identifier. This method can return the lazy identifier 1. */
+    /** Return the identifier. This method can return the lazy identifiers 0 or U_LONGMAX. */
     unsigned long getRawIdentifier() const
     {
       return getName();
@@ -3411,7 +3411,7 @@ inline ostream & operator << (ostream & os, const OperationPlan* o)
 {
   if (o)
   {
-    os << o->getIdentifier() << " (";
+    os << static_cast<const void*>(o) << " (";
     if (o->getOperation())
       os << o->getOperation()->getName();
     else

@@ -111,7 +111,7 @@ void Resource::inspect(const string msg) const
     {
     case 1:
       opplan = oo->getOperationPlan();
-      logger << ", id: " << opplan->getIdentifier()
+      logger << ", id: " << static_cast<void*>(opplan)
         << ", oper:" << opplan->getOperation()
         << ", quantity: " << opplan->getQuantity()
         << ", dates: " << opplan->getStart();
@@ -134,7 +134,7 @@ void Resource::inspect(const string msg) const
     case 5:
       logger << ", change setup to " << static_cast<const SetupEvent*>(&*oo)->getSetup();
       if (oo->getOperationPlan())
-        logger << " on " << oo->getOperationPlan();
+        logger << " on " << static_cast<void*>(oo->getOperationPlan());
       logger << endl;
       break;
     }

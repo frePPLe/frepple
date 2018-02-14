@@ -198,7 +198,7 @@ void Buffer::inspect(const string msg) const
     {
       case 1:
         opplan = oo->getOperationPlan();
-        logger << ", id: " << opplan->getIdentifier()
+        logger << ", id: " << static_cast<void*>(opplan)
           << ", oper:" << opplan->getOperation()
           << ", quantity: " << opplan->getQuantity()
           << ", dates: " << opplan->getStart();

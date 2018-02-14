@@ -62,8 +62,43 @@ int OperationPlan::initialize()
   x.supportstr();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+  x.addMethod(
+    "calculateOperationTime", &calculateOperationTimePython, METH_VARARGS,
+    "add or subtract a duration of operation hours from a date"
+    );
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+PyObject* OperationPlan::calculateOperationTimePython(PyObject *self, PyObject *args)
+{
+  // Pick up the argument
+  PyObject *datepy;
+  PyObject *durationpy;
+  int forward = 1;
+
+  if (!PyArg_ParseTuple(args, "OO|p:calculateOperationTime", &datepy, &durationpy, &forward))
+    return nullptr;
+
+  try
+  {
+    auto opplan = static_cast<OperationPlan*>(self);
+    Date dt = PythonData(datepy).getDate();
+    Duration dur = PythonData(durationpy).getDuration();
+    if (!opplan->getOperation())
+      return PythonData(dt + dur);
+    else
+    {
+      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, forward);
+      return PythonData(forward ? res.getEnd() : res.getStart());
+    }
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
+  }
 }
 
 

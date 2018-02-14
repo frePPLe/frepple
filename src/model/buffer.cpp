@@ -237,7 +237,7 @@ PyObject* Buffer::inspectPython(PyObject* self, PyObject* args)
 
     // Parse the argument
     char *msg = nullptr;
-    if (!PyArg_ParseTuple(args, "|sO:inspect", &msg))
+    if (!PyArg_ParseTuple(args, "|s:inspect", &msg))
       return nullptr;
 
     buf->inspect(msg ? msg : "");

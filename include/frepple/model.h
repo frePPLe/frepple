@@ -2336,6 +2336,8 @@ class OperationPlan
 
     static int initialize();
 
+    static PyObject* OperationPlan::calculateOperationTimePython(PyObject*, PyObject*);
+
     PyObject* str() const
     {
       ostringstream ch;

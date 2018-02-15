@@ -154,7 +154,7 @@ Section "Application" SecAppl
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "COPYING"
-  File "README"
+  File "README.md"
 
   ; Copy application, dll and libraries
   SetOutPath "$INSTDIR\bin"

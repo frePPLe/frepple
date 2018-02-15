@@ -445,7 +445,7 @@ This action is possible in the user interface and the command line:
 
 * User interface:
 
-  See :doc:`/user-guide/user-interface/getting-around/changing-your-password` and 
+  See :doc:`/user-guide/user-interface/getting-around/changing-password` and 
   :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`.
    
 * Command line::

@@ -13,33 +13,42 @@ The commands can be accessed in three different ways:
 
 This section provides an overview of the available actions:
 
-* `Planning workflows`_
+* Planning workflows
 
-	* :ref:`runplan`
-	* :ref:`exportworkbook`
-	* :ref:`importworkbook`
-	* :ref:`exporttofolder`
-	* :ref:`importfromfolder`
-	* :ref:`runwebservice`
-	* :ref:`scenario_copy`
-	* :ref:`backup`
-	* :ref:`empty`
+  * :ref:`runplan`
+  * :ref:`exportworkbook`
+  * :ref:`importworkbook`
+  * :ref:`exporttofolder`
+  * :ref:`importfromfolder`
+  * :ref:`runwebservice`
+  * :ref:`scenario_copy`
+  * :ref:`backup`
+  * :ref:`empty`
 
-* `Administrator commands`_
+* Administrator commands
 
-	* :ref:`restore`
-	* :ref:`loaddata`
-	* :ref:`createbuckets`
-	* :ref:`migrate`
+  * :ref:`loaddata`
+  * :ref:`createbuckets`
+  * :ref:`migrate`
+  * :ref:`restore`
+  * :ref:`createsuperuser`
+  * :ref:`changepassword`
+  * :ref:`flush`
+  * :ref:`loadxml`
+  
+* Developer commands
 
-* `Developer commands`_
+  * :ref:`shell`
+  * :ref:`dbshell`
+  * :ref:`runserver`
+  * :ref:`runwebserver`
+  * :ref:`test`
+  * :ref:`dumpdata`
+  * :ref:`createmodel`
+  * :ref:`forecast_simulation`
+  * :ref:`simulation`
 
-	* :ref:`shell`
-	* :ref:`dbshell`
-	* :ref:`simulation`
-	* :ref:`forecast_simulation`
-
-The list can be extended with custom commands from an extension module.
+The list can be extended with custom commands from extension modules.
 
 
 Planning workflows
@@ -315,7 +324,7 @@ This command is available in the user interface, the command line and the web AP
 
 
 Administrator commands
-~~~~~~~~~~~~~~~~~~~~~~    
+~~~~~~~~~~~~~~~~~~~~~~  
      
 .. _loaddata:
 
@@ -378,5 +387,280 @@ This command is available in the user interface, the command line and the web AP
     POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
 
+.. _migrate:
+
+Create or migrate the database schema
+-------------------------------------
+
+  Update the database structure to the latest release
+
+This command is available on the command line only:
+
+::
+
+    frepplectl migrate
+
+
+.. _restore: 
+
+Restore a database backup
+-------------------------
+
+This command is available on the command line only:
+
+::
+
+    frepplectl restore database_dump_file
+    
+    Deprecated:
+    frepplectl frepple_restore database_dump_file
+
+
+.. _createsuperuser: 
+
+Create a new superuser
+----------------------
+
+This command creates a new user with full access rights.
+
+This action is possible in the user interface and the command line:
+
+* User interface:
+
+  See :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`
+   
+* Command line::
+
+    frepplectl createsuperuser new_user_name
+
+
+.. _changepassword: 
+
+Change a user's password
+------------------------
+
+This command changes the password of a certain user.
+
+This action is possible in the user interface and the command line:
+
+* User interface:
+
+  See :doc:`/user-guide/user-interface/getting-around/changing-your-password` and 
+  :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`.
+   
+* Command line::
+
+    frepplectl createsuperuser new_user_name
+
+
+.. _flush: 
+
+Remove all database objects
+---------------------------
+
+This command completely empties all tables in the database, including all log, users,
+user preferences, permissions, etc... 
+
+A complete reset of the database is not very common. In most situations the command
+described above to empty the database is sufficient. It empties the data tables,
+but leaves the important configuration information intact.
+
+This command is available on the command line only:
+
+::
+
+    frepplectl flush
+
+
+.. _loadxml: 
+
+Load an XML data file
+---------------------
+
+This command loads an XML file into the database. 
+
+This command is available on the command line only:
+
+::
+
+    frepplectl loadxml myfile
+
+
 Developer commands
-~~~~~~~~~~~~~~~~~~    
+~~~~~~~~~~~~~~~~~~
+
+.. _dbshell:
+
+Database shell prompt
+--------------------- 
+
+This command runs an interactive SQL session on the PostgreSQL database.
+
+::
+
+    frepplectl dbshell --database=default
+
+.. _shell:
+
+Python command prompt
+---------------------
+
+This command runs an interactive Python interpreter session.
+
+::
+
+    frepplectl shell
+
+
+.. _dumpdata:  
+
+Dump a frozen dataset
+---------------------
+
+Outputs to standard output all data in the database (or a part of it).
+
+When the output file of this command is placed in a fixtures subfolder
+it can be used by the loaddata command described above. We recommend you
+review and cleanse the output carefully, to avoid that the frozen dataset
+contains unnecessary data.
+
+::
+
+    frepplectl dumpdata --database=scenario1 
+
+
+.. _test:
+
+Run the test suite
+------------------
+
+Run the test suite for the user interface.
+
+::
+
+    frepplectl test freppledb
+
+
+.. _runwebserver:
+
+Run the Python web server
+-------------------------
+
+Runs a production web server for environments with very few users.
+For a more scalable solution, deploying frePPLe on Apache with mod_wsgi is required.
+
+::
+
+    frepplectl runwebserver
+
+    Deprecated:
+    frepplectl frepple_runserver
+
+
+.. _runserver:
+
+Run the development web server
+------------------------------
+
+Run a development web server, which automatically reloads when code is changed.
+
+For production use this web server doesn't scale enough.
+
+::
+
+    frepplectl runserver
+
+
+.. _createmodel:
+
+Generate a sample model
+-----------------------
+
+Populate the database with a configurable dataset. Command line arguments control
+the depth and complexity of the bill of material, the number of resources and their
+average load, the average lead times, the number of demands.
+
+The command thus allows to quickly generate a sample model, and to verify its
+scalability with varying size and complexity.
+
+This command is intended for academic and research purposes. The script can 
+easily be updated to create sample models in the structure you wish.
+
+::
+
+    frepplectl createmodel --level=3 --cluster=100 --demand=10 
+    
+    Deprecated:
+    frepplectl frepple_createmodel --level=3 --cluster=100 --demand=10
+
+
+.. _forecast_simulation:
+
+Estimate historical forecast accuracy
+-------------------------------------
+
+This command estimates the forecast accuracy over the past periods.
+
+This is achieved by turning back the clock a number of buckets ago. We compute
+the forecast with the demand history we would have had available at that time.
+Comparing the actual sales and the forecasted sales in that period allows us
+to measure the forecast accuracy. This calculation is then repeated for each
+bucket to follow. 
+
+This command is intended for academic and research purposes. The script can 
+easily be updated to perform more advanced forecast accuracy studies.
+
+::
+
+    frepplectl forecast_simulation
+    
+    Deprecated:
+    frepplectl frepple_forecastsimulation
+
+
+.. _simulation:
+
+Simulate the execution of the plan
+----------------------------------
+
+This command simulates the execution of the plan. The command allows
+detailed studies of the stability and robustness of the plan in the
+presence of various disturbances.
+
+The command iterates over a number of time periods and performs the following
+steps in each period:
+
+1. Advance the current date
+2.  Call a custom function "start_bucket"
+3. | Open new sales orders from customers
+   | Custom code can be added here to represent the typical ordering pattern
+     of customers, and the occasional rush orders.
+4. Generate a constrained frePPLe plan
+5. Confirm new purchase orders from the frePPLe plan
+6. Confirm new production orders from the frePPLe plan
+7. Confirm new distribution orders from the frePPLe plan
+8. | Receive material from purchase orders
+   | Custom code can be added here to simulate late or early deliveries
+     from your suppliers.
+9. | Finish production from manufacturing orders
+   | Custom code can be added here to simulate production delays, machine breakdowns,
+     rework and other production disturbances. 
+10. | Receive material from distribution orders
+    | Custom code can be added here to simulate late or early deliveries between
+      locations in the warehouse.
+11. Ship open sales orders to customers
+12. | Call a custom function "end_bucket"
+    | This function will typically be used to collect performance statistics
+      of the period just simulated.
+
+This command is intended for academic and research purposes. The script needs to
+be tailored carefully to model a realistic level of disturbances in your model
+and collect the performance metrics that are relevant.
+
+::
+
+    frepplectl simulation
+    
+    Deprecated:
+    frepplectl simulation
+  

@@ -2336,7 +2336,7 @@ class OperationPlan
 
     static int initialize();
 
-    static PyObject* OperationPlan::calculateOperationTimePython(PyObject*, PyObject*);
+    static PyObject* calculateOperationTimePython(PyObject*, PyObject*);
 
     PyObject* str() const
     {

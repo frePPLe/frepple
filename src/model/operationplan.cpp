@@ -1010,9 +1010,10 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
     return quantity >= a.quantity;
 
-  // Sort based on raw identifier
-  if (getRawIdentifier() != a.getRawIdentifier()
-    && (getRawIdentifier() || a.getRawIdentifier()))
+  
+  if ((getRawIdentifier() && !a.getRawIdentifier())
+    || (!getRawIdentifier() && a.getRawIdentifier()))
+    // Keep uninitialized operationplans (whose id = 0) seperate
     return getRawIdentifier() > a.getRawIdentifier();
   else
     // Using a pointer comparison as tie breaker. This can give

@@ -110,17 +110,7 @@ void Resource::inspect(const string msg) const
     switch (oo->getEventType())
     {
     case 1:
-      opplan = oo->getOperationPlan();
-      logger << ", id: " << static_cast<void*>(opplan)
-        << ", oper:" << opplan->getOperation()
-        << ", quantity: " << opplan->getQuantity()
-        << ", dates: " << opplan->getStart();
-      if (opplan->getSetupEnd() != opplan->getStart())
-        logger << " / " << opplan->getSetupEnd();
-      logger << " / " << opplan->getEnd();
-      if (!opplan->getProposed())
-        logger << ", " << opplan->getStatus();
-      logger << endl;
+      logger << ", " << oo->getOperationPlan() << endl;
       break;
     case 2:
       logger << ", set onhand to " << oo->getOnhand() << endl;
@@ -134,7 +124,7 @@ void Resource::inspect(const string msg) const
     case 5:
       logger << ", change setup to " << static_cast<const SetupEvent*>(&*oo)->getSetup();
       if (oo->getOperationPlan())
-        logger << " on " << static_cast<void*>(oo->getOperationPlan());
+        logger << " on " << oo->getOperationPlan();
       logger << endl;
       break;
     }

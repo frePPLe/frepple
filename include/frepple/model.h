@@ -8362,6 +8362,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       return tmp ? tmp->getSetup() : "";
     }
 
+    /** Returns the required setup for the operation. */
+    string getSetupLoad() const
+    {
+      return getLoad() ? getLoad()->getSetup() : "";
+    }
+
     /** Returns the current setup of the resource.<br>
       * When the argument is true (= default) the current setup is returned.<br>
       * When the argument is false the setup just before the loadplan is returned.
@@ -8428,7 +8434,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDateField<Cls>(Tags::enddate, &Cls::getEndDate, nullptr, Date::infiniteFuture, DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, nullptr, DONT_SERIALIZE);
-      m->addStringField<Cls>(Tags::setup, &Cls::getSetup, nullptr, "", DONT_SERIALIZE);
+      m->addStringField<Cls>(Tags::setup, &Cls::getSetupLoad, nullptr, "", PLAN);
     }
 
     /** Finds the loadplan on the operationplan when we read data. */

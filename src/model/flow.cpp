@@ -275,4 +275,10 @@ double FlowTransferBatch::getFlowplanQuantity(const FlowPlan* fl) const
   throw DataException("Not implemented yet");
 }
 
+
+Date FlowTransferBatch::getFlowplanDate(const FlowPlan* fl) const
+{
+  throw DataException("Not implemented yet");
+}
+
 } // end namespace

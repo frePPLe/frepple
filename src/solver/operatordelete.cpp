@@ -306,12 +306,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         pushBuffers(fp->getOperationPlan(), false, true);
         // Log message
         if (getLogLevel() > 0)
-          logger << "Removing shortage operationplan: "
-            << fp->getOperationPlan()->getIdentifier()
-            << " (" << fp->getOperationPlan()->getOperation()
-            << ", " << fp->getOperationPlan()->getQuantity()
-            << ", " << fp->getOperationPlan()->getDates()
-            << ")" << endl;
+          logger << "Removing shortage operationplan: " << fp->getOperationPlan() << endl;
         // Delete operationplan
         if (cmds)
           cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
@@ -327,11 +322,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         cur_shortage -= fp->getQuantity() - newsize_flowplan;
         if (getLogLevel() > 0)
           logger << "Resizing shortage operationplan to " << newsize_opplan << ": "
-            << fp->getOperationPlan()->getIdentifier()
-            << " (" << fp->getOperationPlan()->getOperation()
-            << ", " << fp->getOperationPlan()->getQuantity()
-            << ", " << fp->getOperationPlan()->getDates()
-            << ")" << endl;
+            << fp->getOperationPlan() << endl;
         // Resize operationplan
         if (cmds)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
@@ -415,12 +406,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         pushBuffers(fp->getOperationPlan(), true, false);
         // Log message
         if (getLogLevel()>0)
-          logger << "Removing excess operationplan: "
-            << fp->getOperationPlan()->getIdentifier()
-            << " (" << fp->getOperationPlan()->getOperation()
-            << ", " << fp->getOperationPlan()->getQuantity()
-            << ", " << fp->getOperationPlan()->getDates()
-            << ")" << endl;
+          logger << "Removing excess operationplan: " << fp->getOperationPlan() << endl;
         // Delete operationplan
         if (cmds)
           cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
@@ -437,11 +423,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         excess -= fp->getQuantity() - newsize_flowplan;
         if (getLogLevel()>0)
           logger << "Resizing excess operationplan to " << newsize_opplan << ": "
-            << fp->getOperationPlan()->getIdentifier()
-            << " (" << fp->getOperationPlan()->getOperation()
-            << ", " << fp->getOperationPlan()->getQuantity()
-            << ", " << fp->getOperationPlan()->getDates()
-            << ")" << endl;
+            << fp->getOperationPlan() << endl;
         // Resize operationplan
         if (cmds)
           // TODO Incorrect - need to resize the flowplan intead of the the operationplan!

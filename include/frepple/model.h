@@ -6155,6 +6155,9 @@ class FlowTransferBatch : public Flow
     /** This method holds the logic the compute the quantity of a flowplan. */
     virtual double getFlowplanQuantity(const FlowPlan*) const;
 
+    /** This method holds the logic the compute the quantity of a flowplan. */
+    virtual Date getFlowplanDate(const FlowPlan*) const;
+
     virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
 
     virtual const MetaClass& getType() const { return *metadata; }

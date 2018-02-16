@@ -1,6 +1,6 @@
 # Release notes
 
-## 4.3.1 (upcoming release)
+## 4.3.1 (2018/02/17)
 
 ### Bug fixes
 

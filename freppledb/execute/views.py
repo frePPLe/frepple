@@ -296,8 +296,15 @@ def wrapTask(request, action):
       if commandname == action:
         try:
           c = getattr(import_module('%s.management.commands.%s' % (appname, commandname)), 'Command')
-          if c.index >= 0 and c.getHTML(request):
-            command = c
+          if c.index >= 0:
+            if getattr(c, 'getHTML', None) and c.getHTML(request):
+              # Command class has getHTML method
+              command = c
+            else:
+              for p in c.__bases__:
+                # Parent command class has getHTML method
+                if getattr(p, 'getHTML', None) and p.getHTML(request):
+                  command = c
             break
         except Exception:
           pass  # Silently ignore failures

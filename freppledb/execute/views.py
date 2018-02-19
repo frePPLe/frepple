@@ -300,12 +300,15 @@ def wrapTask(request, action):
             if getattr(c, 'getHTML', None) and c.getHTML(request):
               # Command class has getHTML method
               command = c
+              break
             else:
               for p in c.__bases__:
                 # Parent command class has getHTML method
                 if getattr(p, 'getHTML', None) and p.getHTML(request):
                   command = c
-            break
+                  break
+              if command:
+                break
         except Exception:
           pass  # Silently ignore failures
     if not command:

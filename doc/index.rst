@@ -34,3 +34,4 @@ To get started we suggest the following **introduction trail**:
    developer-guide/index
    faq
    license
+   release-notes

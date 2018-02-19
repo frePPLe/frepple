@@ -1,14 +1,16 @@
-# Release notes
+Release notes
+-------------
 
-## 4.3.1 (2018/02/17)
+4.3.1 (2018/02/17)
+==================
 
-### Bug fixes
+.. rubric:: Bug fixes
 
 - The autofence now also considers approved supply, and not only confirmed supply.
 - Excel files with some non-standard internal structure are now also recognized.
 - Work-in-progress operationplans with quantity 0 are no longer rejected.
 
-### Deprecations
+.. rubric:: Deprecations
 
 - Command frepple_run is renamed to runplan.
 - Command frepple_runserver is renamed to runwebserver.

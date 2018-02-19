@@ -15,6 +15,10 @@
 
 import sys
 import os
+from shutil import copyfile
+
+# Copy the release notes file
+copyfile(os.path.join('..', 'CHANGELOG.rst'), 'release-notes.rst')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

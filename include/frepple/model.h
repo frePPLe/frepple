@@ -8043,7 +8043,7 @@ class Demand
     virtual void setMinShipment(double m)
     {
       if (m < 0.0 && m != -1.0)
-        throw DataException("The minumum demand shipment quantity must be positive");
+        throw DataException("The minimum demand shipment quantity must be positive");
       minShipment = m;
     }
 

@@ -259,7 +259,7 @@ void SolverMRP::solve(const BufferProcure* b, void* v)
       if (order_qty <= 0)
       {
         if (latest_next == current_date && size_minimum)
-          // Forced to buy the minumum quantity
+          // Forced to buy the minimum quantity
           order_qty = size_minimum;
         else
           break;

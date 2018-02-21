@@ -757,7 +757,7 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="flow_batch_transfer">
+  <xsd:complexType name="flow_transfer_batch">
     <xsd:complexContent>
       <xsd:extension base="flow">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">

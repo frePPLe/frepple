@@ -5974,11 +5974,8 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
           || (getOperation() && getOperation()->getHidden());
     }
 
-    /** This method holds the logic the compute the date of a flowplan. */
-    virtual Date getFlowplanDate(const FlowPlan*) const;
-
-    /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual double getFlowplanQuantity(const FlowPlan*) const;
+    /** This method holds the logic the compute the date and quantity of a flowplan. */
+    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
     static int initialize();
 
@@ -6066,8 +6063,8 @@ class FlowEnd : public Flow
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
 
-    /** This method holds the logic the compute the date of a flowplan. */
-    virtual Date getFlowplanDate(const FlowPlan* fl) const;
+    /** This method holds the logic the compute the date and quantity of a flowplan. */
+    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
     virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
@@ -6088,10 +6085,8 @@ class FlowFixedEnd : public FlowEnd
     /** This constructor is called from the plan begin_element function. */
     explicit FlowFixedEnd() {}
 
-    /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual double getFlowplanQuantity(const FlowPlan*) const;
-
-    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
+    /** This method holds the logic the compute the date and quantity of a flowplan. */
+    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaClass* metadata;
@@ -6110,8 +6105,8 @@ class FlowFixedStart : public FlowStart
     /** This constructor is called from the plan begin_element function. */
     explicit FlowFixedStart() {}
 
-    /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual double getFlowplanQuantity(const FlowPlan*) const;
+    /** This method holds the logic the compute the date and quantity of a flowplan. */
+    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
     virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
 
@@ -6122,6 +6117,8 @@ class FlowFixedStart : public FlowStart
 
 /** @brief This class represents a flow producing/material of a fixed quantity
   * spread across the total duration of the operationplan
+  *
+  * TODO The implementation of this class ignores date effectivity.
   */
 class FlowTransferBatch : public Flow
 {
@@ -6152,11 +6149,8 @@ class FlowTransferBatch : public Flow
       m->addDoubleField<Cls>(Tags::transferbatch, &Cls::getTransferBatch, &Cls::setTransferBatch);
     }
 
-    /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual double getFlowplanQuantity(const FlowPlan*) const;
-
-    /** This method holds the logic the compute the quantity of a flowplan. */
-    virtual Date getFlowplanDate(const FlowPlan*) const;
+    /** This method holds the logic the compute the date and quantity of a flowplan. */
+    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
     virtual void solve(Solver &s, void* v = nullptr) const { s.solve(this, v); }
 
@@ -6186,6 +6180,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Finds the flowplan on the operationplan when we read data. */
     static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
+
     /** Is this operationplanmaterial locked?
         LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
     */
@@ -6201,10 +6196,14 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Constructor. */
     explicit FlowPlan(OperationPlan*, const Flow*);
 
-       bool isConfirmed() const
+    /** Constructor. */
+    explicit FlowPlan(OperationPlan*, const Flow*, Date, double);
+
+    bool isConfirmed() const
     {
-      return flags&STATUS_CONFIRMED;
+      return flags & STATUS_CONFIRMED;
     }
+
     /** Returns the flow of which this is an plan instance. */
     Flow* getFlow() const
     {
@@ -6349,48 +6348,6 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE, DONT_SERIALIZE);
     }
 };
-
-
-inline double Flow::getFlowplanQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return fl->getQuantity();
-  return getEffective().within(fl->getDate()) ?
-    fl->getOperationPlan()->getQuantity() * getQuantity() :
-    0.0;
-}
-
-
-inline double FlowFixedStart::getFlowplanQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return fl->getQuantity();
-  return getEffective().within(fl->getDate()) ?
-    getQuantity() :
-    0.0;
-}
-
-
-inline double FlowFixedEnd::getFlowplanQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return fl->getQuantity();
-  return getEffective().within(fl->getDate()) ?
-    getQuantity() :
-    0.0;
-}
-
-
-inline Date Flow::getFlowplanDate(const FlowPlan* fl) const
-{
-  return fl->getOperationPlan()->getStart();
-}
-
-
-inline Date FlowEnd::getFlowplanDate(const FlowPlan* fl) const
-{
-  return fl->getOperationPlan()->getEnd();
-}
 
 
 /** @brief An specific changeover rule in a setup matrix. */

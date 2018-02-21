@@ -27,7 +27,7 @@ Different types are available:
   | The quantity consumed or produced is constant and independent of the
     quantity of the operationplan.
     
-* | **batch_transfer**:
+* | **transfer_batch**:
   | Consume (or produce) material in a number of batches of fixed size
     at various moments during the total duration of the operationplan.
 

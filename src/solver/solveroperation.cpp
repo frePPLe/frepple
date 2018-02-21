@@ -215,8 +215,7 @@ bool SolverMRP::checkOperation
     // Loop through all flowplans, if propagation is required  // @todo need some kind of coordination run here!!! see test alternate_flow_1
     if (data.getSolver()->getPropagate())
     {
-      for (OperationPlan::FlowPlanIterator g=opplan->beginFlowPlans();
-          g!=opplan->endFlowPlans(); ++g)
+      for (auto g=opplan->beginFlowPlans(); g!=opplan->endFlowPlans(); ++g)
       {
         if (g->getFlow()->isConsumer())
         {
@@ -508,6 +507,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
   double flow_qty_per = 1.0;
   double flow_qty_fixed = 0.0;
   bool fixed_flow = false;
+  bool transferbatch_flow = false;
   if (data->state->curBuffer)
   {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
@@ -516,8 +516,10 @@ void SolverMRP::solve(const Operation* oper, void* v)
       if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
       {
         fixed_flow = true;
-        flow_qty_fixed = (oper->getSizeMinimum()<=0 ? 0.001 : oper->getSizeMinimum());
+        flow_qty_fixed = (oper->getSizeMinimum() <= 0 ? 0.001 : oper->getSizeMinimum());
       }
+      else if (&f->getType() == FlowTransferBatch::metadata)
+        transferbatch_flow = true;
       flow_qty_per = f->getQuantity();
     }
     else

@@ -616,7 +616,7 @@ class OperationMaterial(AuditModel):
     ('end', _('End')),
     ('fixed_start', _('Fixed start')),
     ('fixed_end', _('Fixed end')),
-    ('batch_transfer', _('Batch transfer'))
+    ('transfer_batch', _('Batch transfer'))
   )
 
   # Database fields

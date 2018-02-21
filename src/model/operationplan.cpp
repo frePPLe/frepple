@@ -90,7 +90,7 @@ PyObject* OperationPlan::calculateOperationTimePython(PyObject *self, PyObject *
       return PythonData(dt + dur);
     else
     {
-      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, forward);
+      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, forward == 1);
       return PythonData(forward ? res.getEnd() : res.getStart());
     }
   }
@@ -1038,9 +1038,28 @@ void OperationPlan::createFlowLoads()
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
       h!=oper->getFlows().end(); ++h)
   {
-    if (!h->getAlternate())
-      // Only the primary flow is instantiated.
-      // Flow creation can also be explicitly switched off.
+    // Only the primary flow is instantiated.
+    if (h->getAlternate())
+      continue;
+    if (&h->getType() == FlowTransferBatch::metadata)
+    {
+      // Transfer batch
+      // We don't need to worry about the size and date because the getFlowplanDateQuantity
+      // method will be called during the creation.
+      double transferquantity = static_cast<const FlowTransferBatch&>(*h).getTransferBatch();
+      if (!transferquantity || getSetupEnd() == getEnd())
+        // Default to a simple flowplan at the start or end
+        new FlowPlan(this, &*h);
+      else
+      {
+        double batches = ceil(fabs(getQuantity() * h->getQuantity()) / transferquantity);
+        do
+          new FlowPlan(this, &*h);
+        while (--batches > 0);
+      }
+    }
+    else
+      // Start or end flow
       new FlowPlan(this, &*h);
   }
 }

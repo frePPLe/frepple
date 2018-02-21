@@ -270,15 +270,130 @@ Object* Flow::finder(const DataValueDict& d)
 }
 
 
-double FlowTransferBatch::getFlowplanQuantity(const FlowPlan* fl) const
+pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  throw DataException("Not implemented yet");
+  if (fl->isConfirmed())
+    return make_pair(
+      fl->getOperationPlan()->getSetupEnd(),
+      fl->getQuantity()
+    );
+  else
+    return make_pair(
+      fl->getOperationPlan()->getSetupEnd(),
+      getEffective().within(fl->getDate()) ?
+      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+    );
 }
 
 
-Date FlowTransferBatch::getFlowplanDate(const FlowPlan* fl) const
+pair<Date, double> FlowFixedStart::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  throw DataException("Not implemented yet");
+  if (fl->isConfirmed())
+    return make_pair(
+      fl->getOperationPlan()->getSetupEnd(),
+      fl->getQuantity()
+    );
+  else
+    return make_pair(
+      fl->getOperationPlan()->getSetupEnd(),
+      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
+      );
+}
+
+
+pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
+{
+  if (fl->isConfirmed())
+    return make_pair(
+      fl->getOperationPlan()->getEnd(),
+      fl->getQuantity()
+    );
+  else
+    return make_pair(
+      fl->getOperationPlan()->getEnd(),
+      getEffective().within(fl->getDate()) ?
+      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+    );
+}
+
+
+pair<Date, double> FlowFixedEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
+{
+  if (fl->isConfirmed())
+    return make_pair(
+      fl->getOperationPlan()->getEnd(),
+      fl->getQuantity()
+      );
+  else
+    return make_pair(
+      fl->getOperationPlan()->getEnd(),
+      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
+      );
+}
+
+
+pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl) const
+{
+  // TODO must also be able to create extra flowplans and even delete to self-destruct
+
+  if (!getTransferBatch() || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
+    // Default to a simple flowplan at the start or end
+    return make_pair(
+      getQuantity() < 0 ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
+      getQuantity() * fl->getOperationPlan()->getQuantity()
+      );
+  
+  // Count the index of this batch
+  unsigned int count = 0;
+  for (auto tmp = fl->getOperationPlan()->beginFlowPlans(); tmp != fl->getOperationPlan()->endFlowPlans(); ++tmp)
+  {
+    if (&*tmp == fl)
+      break;
+    if (tmp->getFlow() == fl->getFlow())
+      ++count;
+  }
+
+  double total_quantity = fl->getOperationPlan()->getQuantity() * getQuantity();
+  Duration op_delta;
+  Date op_date = fl->getOperation()->calculateOperationTime(
+    fl->getOperationPlan(), fl->getOperationPlan()->getSetupEnd(), 
+    fl->getOperationPlan()->getEnd(), &op_delta
+    ).getStart();
+
+  if (getQuantity() > 0)
+  {
+    // Producing a batch
+    double batches = ceil(total_quantity / getTransferBatch());
+    if (!batches)
+      batches = 1.0;
+    op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * (count + 1);
+    total_quantity -= count * getTransferBatch();
+    if (total_quantity < 0.0)
+      total_quantity = 0.0;
+    return make_pair(
+      fl->getOperation()->calculateOperationTime(
+        fl->getOperationPlan(), op_date, op_delta, true
+        ).getEnd(),
+      total_quantity > getTransferBatch() ? getTransferBatch() : total_quantity
+    );
+  }
+  else
+  {
+    // Consuming a batch
+    double batches = ceil(-total_quantity / getTransferBatch());
+    if (!batches)
+      batches = 1.0;
+    op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * count;
+    total_quantity += count * getTransferBatch();
+    if (total_quantity > 0.0)
+      total_quantity = 0.0;
+    return make_pair(
+      fl->getOperation()->calculateOperationTime(
+        fl->getOperationPlan(), op_date, op_delta, true
+      ).getEnd(),
+      total_quantity < -getTransferBatch() ? -getTransferBatch() : total_quantity
+    );
+  }
 }
 
 } // end namespace

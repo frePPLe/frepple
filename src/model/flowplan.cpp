@@ -68,11 +68,38 @@ FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
     opplan->firstflowplan = this;
 
   // Compute the flowplan quantity
-  fl->getBuffer()->flowplans.insert(
-    this,
-    fl->getFlowplanQuantity(this),
-    fl->getFlowplanDate(this)
-  );
+  auto fl_info = fl->getFlowplanDateQuantity(this);
+  fl->getBuffer()->flowplans.insert(this, fl_info.second, fl_info.first);
+
+  // Mark the operation and buffer as having changed. This will trigger the
+  // recomputation of their problems
+  fl->getBuffer()->setChanged();
+  fl->getOperation()->setChanged();
+}
+
+
+FlowPlan::FlowPlan(OperationPlan *opplan, const Flow *f, Date d, double q)
+  : fl(const_cast<Flow*>(f)), oper(opplan)
+{
+  assert(opplan && f);
+
+  // Initialize the Python type
+  initType(metadata);
+
+  // Link the flowplan to the operationplan
+  if (opplan->firstflowplan)
+  {
+    // Append to the end
+    FlowPlan *c = opplan->firstflowplan;
+    while (c->nextFlowPlan) c = c->nextFlowPlan;
+    c->nextFlowPlan = this;
+  }
+  else
+    // First in the list
+    opplan->firstflowplan = this;
+
+  // Compute the flowplan quantity
+  fl->getBuffer()->flowplans.insert(this, q, d);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
@@ -106,11 +133,8 @@ void FlowPlan::setStatus(const string& s)
 void FlowPlan::update()
 {
   // Update the timeline data structure
-  fl->getBuffer()->flowplans.update(
-    this,
-    fl->getFlowplanQuantity(this),
-    fl->getFlowplanDate(this)
-  );
+  auto fl_info = fl->getFlowplanDateQuantity(this);
+  fl->getBuffer()->flowplans.update(this, fl_info.second, fl_info.first);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
@@ -125,26 +149,52 @@ void FlowPlan::setFlow(Flow* newfl)
   if (newfl == fl) return;
 
   // Verify the data
-  if (!newfl) throw DataException("Can't switch to nullptr flow");
+  if (!newfl)
+    throw DataException("Can't switch to nullptr flow");
+  if (newfl->getType() != fl->getType())
+    throw DataException("Flowplans can only switch to flows of the same type");
 
-  // Remove from the old buffer, if there is one
-  if (fl)
+  if (&newfl->getType() != FlowTransferBatch::metadata || !fl)
   {
-    if (fl->getOperation() != newfl->getOperation())
-      throw DataException("Only switching to a flow on the same operation is allowed");
-    fl->getBuffer()->flowplans.erase(this);
-    fl->getBuffer()->setChanged();
-  }
+    // Remove from the old buffer, if there is one
+    if (fl)
+    {
+      if (fl->getOperation() != newfl->getOperation())
+        throw DataException("Only switching to a flow on the same operation is allowed");
+      fl->getBuffer()->flowplans.erase(this);
+      fl->getBuffer()->setChanged();
+    }
 
-  // Insert in the new buffer
-  fl = newfl;
-  fl->getBuffer()->flowplans.insert(
-    this,
-    fl->getFlowplanQuantity(this),
-    fl->getFlowplanDate(this)
-  );
-  fl->getBuffer()->setChanged();
-  fl->getOperation()->setChanged();
+    // Insert in the new buffer
+    fl = newfl;
+    auto fl_info = fl->getFlowplanDateQuantity(this);
+    fl->getBuffer()->flowplans.insert(this, fl_info.second, fl_info.first);
+    fl->getBuffer()->setChanged();
+    fl->getOperation()->setChanged();
+  }
+  else
+  {
+    // Switch all flowplans of the same transfer batch
+    auto oldFlow = fl;
+    if (oldFlow->getOperation() != newfl->getOperation())
+      throw DataException("Only switching to a flow on the same operation is allowed");
+    for (auto flpln = getOperationPlan()->beginFlowPlans(); flpln != getOperationPlan()->endFlowPlans(); ++flpln)
+    {
+      if (flpln->getFlow() != oldFlow)
+        continue;
+
+      // Remove from the old buffer      
+      flpln->getBuffer()->flowplans.erase(&*flpln);
+      flpln->getBuffer()->setChanged();
+
+      // Insert in the new buffer
+      flpln->fl = newfl;
+      auto fl_info = flpln->fl->getFlowplanDateQuantity(&*flpln);
+      flpln->fl->getBuffer()->flowplans.insert(&*flpln, fl_info.second, fl_info.first);
+      flpln->fl->getBuffer()->setChanged();
+      flpln->fl->getOperation()->setChanged();
+    }
+  }
 }
 
 

@@ -1,6 +1,20 @@
 Release notes
 -------------
 
+4.3.2 (upcoming release)
+========================
+
+.. rubric:: Production planning
+
+- | New operationmaterial policy 'transfer_batch' which allows material production
+    or consumption in a number of batches of fixed size at various moments during
+    the total duration of the operationplan.
+  | A new field operationmaterial.transferbatch is introduced.
+  
+.. rubric:: API
+
+- Bug fix: backward compatibility after command renaming in 4.3.1
+
 4.3.1 (2018/02/17)
 ==================
 

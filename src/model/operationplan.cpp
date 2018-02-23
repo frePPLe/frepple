@@ -1041,26 +1041,10 @@ void OperationPlan::createFlowLoads()
     // Only the primary flow is instantiated.
     if (h->getAlternate())
       continue;
-    if (&h->getType() == FlowTransferBatch::metadata)
-    {
-      // Transfer batch
-      // We don't need to worry about the size and date because the getFlowplanDateQuantity
-      // method will be called during the creation.
-      double transferquantity = static_cast<const FlowTransferBatch&>(*h).getTransferBatch();
-      if (!transferquantity || getSetupEnd() == getEnd())
-        // Default to a simple flowplan at the start or end
-        new FlowPlan(this, &*h);
-      else
-      {
-        double batches = ceil(fabs(getQuantity() * h->getQuantity()) / transferquantity);
-        do
-          new FlowPlan(this, &*h);
-        while (--batches > 0);
-      }
-    }
-    else
-      // Start or end flow
-      new FlowPlan(this, &*h);
+    // Also for transfer batches, we only need to create the first flowplan.
+    // The getFlowplanDateQuantity method will be called during the creation, and
+    // create additional flowplans as required.
+    new FlowPlan(this, &*h);
   }
 }
 
@@ -1224,8 +1208,8 @@ void OperationPlan::setEnd(Date d)
 void OperationPlan::resizeFlowLoadPlans()
 {
   // Update all flowplans
-  for (FlowPlanIterator ee = beginFlowPlans(); ee != endFlowPlans(); ++ee)
-    ee->update();
+  for (auto flpln = firstflowplan; flpln; flpln = flpln->nextFlowPlan)
+    flpln->update();
 
   // Update all loadplans
   for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)

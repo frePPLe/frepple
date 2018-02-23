@@ -83,7 +83,8 @@ Flow::~Flow()
     for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
       // Loop over flowplans
       for(OperationPlan::FlowPlanIterator j = i->beginFlowPlans(); j != i->endFlowPlans(); )
-        if (j->getFlow() == this) j.deleteFlowPlan();
+        if (j->getFlow() == this)
+          j.deleteFlowPlan();
         else ++j;
   }
 
@@ -334,8 +335,6 @@ pair<Date, double> FlowFixedEnd::getFlowplanDateQuantity(const FlowPlan* fl) con
 
 pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  // TODO must also be able to create extra flowplans and even delete to self-destruct
-
   if (!getTransferBatch() || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
     // Default to a simple flowplan at the start or end
     return make_pair(
@@ -344,21 +343,57 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
       );
   
   // Count the index of this batch
+  double total_quantity = fl->getOperationPlan()->getQuantity() * getQuantity();
+  bool found = false;
   unsigned int count = 0;
-  for (auto tmp = fl->getOperationPlan()->beginFlowPlans(); tmp != fl->getOperationPlan()->endFlowPlans(); ++tmp)
+  unsigned int totalcount = 0;
+  double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) / getTransferBatch());
+  if (!batches)
+    batches = 1;
+
+  FlowPlan* cur_flpln = fl->getOperationPlan()->firstflowplan;
+  FlowPlan* prev_flpln = nullptr;
+  while (cur_flpln)
   {
-    if (&*tmp == fl)
-      break;
-    if (tmp->getFlow() == fl->getFlow())
-      ++count;
+    if (cur_flpln == fl)
+      found = true;
+    if (cur_flpln->getFlow() == fl->getFlow())
+    {
+      ++totalcount;
+      if (totalcount > batches && !count)
+      {
+        if (cur_flpln->oper->firstflowplan == cur_flpln)
+          cur_flpln->oper->firstflowplan = cur_flpln->nextFlowPlan;
+        else
+          prev_flpln->nextFlowPlan = cur_flpln->nextFlowPlan;
+        auto almost_dead = cur_flpln;
+        cur_flpln = cur_flpln->nextFlowPlan;
+        delete almost_dead;
+        continue;
+      }
+      if (!found)
+        ++count;
+    }
+    prev_flpln = cur_flpln;
+    cur_flpln = cur_flpln->nextFlowPlan;
   }
 
-  double total_quantity = fl->getOperationPlan()->getQuantity() * getQuantity();
   Duration op_delta;
   Date op_date = fl->getOperation()->calculateOperationTime(
     fl->getOperationPlan(), fl->getOperationPlan()->getSetupEnd(), 
     fl->getOperationPlan()->getEnd(), &op_delta
     ).getStart();
+
+  if (!count)
+  {
+    // The first flowplan in the list will always be there, even when the quantity becomes 0.
+    // It is responsible for creating extra flowplans when required.
+    while (totalcount < batches)
+    {
+      auto t = new FlowPlan(fl->getOperationPlan(), this);
+      ++totalcount;
+    }
+  }
 
   if (getQuantity() > 0)
   {

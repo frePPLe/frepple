@@ -1871,6 +1871,7 @@ class OperationPlan
     friend class OperationSplit;
     friend class OperationAlternate;
     friend class OperationRouting;
+    friend class FlowTransferBatch;
 
   public:
     // Forward declarations
@@ -6167,6 +6168,8 @@ class FlowTransferBatch : public Flow
 class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 {
     friend class OperationPlan::FlowPlanIterator;
+    friend class OperationPlan;
+    friend class FlowTransferBatch;
   private:
     static const short STATUS_CONFIRMED = 1;
     /** Points to the flow instantiated by this flowplan. */
@@ -10328,9 +10331,12 @@ class OperationPlan::FlowPlanIterator
 
     void deleteFlowPlan()
     {
-      if (!curflowplan) return;
-      if (prevflowplan) prevflowplan->nextFlowPlan = curflowplan->nextFlowPlan;
-      else curflowplan->oper->firstflowplan = curflowplan->nextFlowPlan;
+      if (!curflowplan)
+        return;
+      if (prevflowplan)
+        prevflowplan->nextFlowPlan = curflowplan->nextFlowPlan;
+      else
+        curflowplan->oper->firstflowplan = curflowplan->nextFlowPlan;
       FlowPlan* tmp = curflowplan;
       // Move the iterator to the next element
       curflowplan = curflowplan->nextFlowPlan;

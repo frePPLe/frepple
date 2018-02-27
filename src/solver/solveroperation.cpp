@@ -539,7 +539,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
   {
     // Find maximum shortage in the buffer, and the date on which it happens
     Date max_short_date = Date::infiniteFuture;
-    double max_short_qty = DBL_MAX;
+    double max_short_qty = -ROUNDING_ERROR;
     for (
       auto flpln = data->state->curBuffer->getFlowPlans().rbegin();
       flpln != data->state->curBuffer->getFlowPlans().end();
@@ -550,7 +550,6 @@ void SolverMRP::solve(const Operation* oper, void* v)
       {
         max_short_date = flpln->getDate();
         max_short_qty = flpln->getOnhand();
-        break;
       }
       if (flpln->getDate() < data->state->q_date)
         break;

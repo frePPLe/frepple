@@ -6171,7 +6171,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     friend class OperationPlan;
     friend class FlowTransferBatch;
   private:
+    // Static constants
     static const short STATUS_CONFIRMED = 1;
+    static const short FOLLOWING_BATCH = 2;
+
     /** Points to the flow instantiated by this flowplan. */
     Flow *fl = nullptr;
 
@@ -6204,7 +6207,20 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     bool isConfirmed() const
     {
-      return flags & STATUS_CONFIRMED;
+      return (flags & STATUS_CONFIRMED) != 0;
+    }
+
+    bool isFollowingBatch() const
+    {
+      return (flags & FOLLOWING_BATCH) != 0;
+    }
+
+    void setFollowingBatch(bool b)
+    {
+      if (b)
+        flags |= FOLLOWING_BATCH;
+      else
+        flags &= ~FOLLOWING_BATCH;
     }
 
     /** Returns the flow of which this is an plan instance. */

@@ -32,10 +32,13 @@ bool sortFlow(const Flow* lhs, const Flow* rhs)
 
 void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
 {
-  // Note: This method is only called for consuming flows and for the leading
-  // flow of an alternate group. See SolverMRP::checkOperation
-
+  // Note: This method is only called for:
+  // - consuming flows
+  // - for the leading flow of an alternate group
+  // - for the first transfer batch in a series
+  // See SolverMRP::checkOperation
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+
   if (fl->hasAlternates())
   {
     // CASE I: It is an alternate flow.

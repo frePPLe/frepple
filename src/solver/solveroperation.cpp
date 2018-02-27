@@ -217,7 +217,7 @@ bool SolverMRP::checkOperation
     {
       for (auto g=opplan->beginFlowPlans(); g!=opplan->endFlowPlans(); ++g)
       {
-        if (g->getFlow()->isConsumer())
+        if (g->getFlow()->isConsumer() && !g->isFollowingBatch())
         {
           // Switch back to the main alternate if this flowplan was already    // @todo is this really required? If yes, in this place?
           // planned on an alternate
@@ -496,7 +496,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
   assert(oper);
 
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  OperationPlan *z;
+  OperationPlan *z = nullptr;
 
   // Call the user exit
   if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
@@ -534,6 +534,94 @@ void SolverMRP::solve(const Operation* oper, void* v)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
     
+  // If transferbatch, then recompute the operation quantity and date here
+  if (transferbatch_flow)
+  {
+    // Find maximum shortage in the buffer, and the date on which it happens
+    Date max_short_date = Date::infiniteFuture;
+    double max_short_qty = DBL_MAX;
+    for (
+      auto flpln = data->state->curBuffer->getFlowPlans().rbegin();
+      flpln != data->state->curBuffer->getFlowPlans().end();
+      --flpln
+      )
+    {
+      if (flpln->isLastOnDate() && flpln->getOnhand() < max_short_qty)
+      {
+        max_short_date = flpln->getDate();
+        max_short_qty = flpln->getOnhand();
+        break;
+      }
+      if (flpln->getDate() < data->state->q_date)
+        break;
+    }
+    max_short_qty /= - flow_qty_per;
+
+    // Create an operationplan to solve for the maximum shortage at its date
+    if (data->state->curOwnerOpplan)
+    {
+      // There is already an owner and thus also an owner command
+      assert(!data->state->curDemand);
+      z = oper->createOperationPlan(
+        max_short_qty, Date::infinitePast, max_short_date,
+        data->state->curDemand, data->state->curOwnerOpplan, 0, true, false
+      );
+    }
+    else
+    {
+      // There is no owner operationplan yet. We need a new command.
+      CommandCreateOperationPlan *a =
+        new CommandCreateOperationPlan(
+          oper, max_short_qty, Date::infinitePast, max_short_date, 
+          data->state->curDemand, data->state->curOwnerOpplan, true, false
+        );
+      data->state->curDemand = nullptr;
+      z = a->getOperationPlan();
+      data->getCommandManager()->add(a);
+    }
+
+    // Move the newly created operationplan early if shortages are left
+    bool repeat;
+    do
+    {
+      repeat = false;
+      Date shortage_d;
+      double shortage_q = 0.0;
+      double z_produced = 0.0;
+      for (
+        auto flpln = data->state->curBuffer->getFlowPlans().begin();
+        flpln != data->state->curBuffer->getFlowPlans().end();
+        ++flpln
+        )
+      {
+        if (flpln->isLastOnDate() && flpln->getOnhand() < -ROUNDING_ERROR && !shortage_q)
+        {
+          // Loop mode 1: Scan for the start of a shortage period
+          shortage_q = flpln->getOnhand();
+          shortage_d = flpln->getDate();
+        }
+        else if (shortage_q && flpln->getOperationPlan() == z)
+        {
+          // Loop mode 2: See how many transfer batches are required to fill the shortage
+          z_produced += flpln->getQuantity();
+          if (shortage_q + z_produced < -ROUNDING_ERROR)
+            // Not enough yet
+            continue;
+
+          // Now we need to move the operationplan such that the current
+          // transfer batch aligns with the shortage date.
+          Duration delta;
+          oper->calculateOperationTime(z, shortage_d, flpln->getDate(), &delta);
+          DateRange newdate = oper->calculateOperationTime(z, z->getStart(), delta, false);
+          z->setStart(newdate.getStart());
+          repeat = true;
+          break;
+        }
+      }
+    } 
+    while (repeat);
+  }
+
   // Find the current list of constraints
   Problem* topConstraint = data->planningDemand ?
     data->planningDemand->getConstraints().top() :
@@ -558,28 +646,31 @@ void SolverMRP::solve(const Operation* oper, void* v)
   }
 
   // Create the operation plan.
-  if (data->state->curOwnerOpplan)
+  if (!z)
   {
-    // There is already an owner and thus also an owner command
-    assert(!data->state->curDemand);
-    z = oper->createOperationPlan(
-          fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
-          Date::infinitePast, data->state->q_date, data->state->curDemand,
-          data->state->curOwnerOpplan, 0, true, false
-          );
-  }
-  else
-  {
-    // There is no owner operationplan yet. We need a new command.
-    CommandCreateOperationPlan *a =
-      new CommandCreateOperationPlan(
-        oper, fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
+    if (data->state->curOwnerOpplan)
+    {
+      // There is already an owner and thus also an owner command
+      assert(!data->state->curDemand);
+      z = oper->createOperationPlan(
+        fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
         Date::infinitePast, data->state->q_date, data->state->curDemand,
-        data->state->curOwnerOpplan, true, false
+        data->state->curOwnerOpplan, 0, true, false
+      );
+    }
+    else
+    {
+      // There is no owner operationplan yet. We need a new command.
+      CommandCreateOperationPlan *a =
+        new CommandCreateOperationPlan(
+          oper, fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
+          Date::infinitePast, data->state->q_date, data->state->curDemand,
+          data->state->curOwnerOpplan, true, false
         );
-    data->state->curDemand = nullptr;
-    z = a->getOperationPlan();
-    data->getCommandManager()->add(a);
+      data->state->curDemand = nullptr;
+      z = a->getOperationPlan();
+      data->getCommandManager()->add(a);
+    }
   }
   assert(z);
   double orig_q_qty = z->getQuantity();

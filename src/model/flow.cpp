@@ -390,7 +390,8 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
     // It is responsible for creating extra flowplans when required.
     while (totalcount < batches)
     {
-      auto t = new FlowPlan(fl->getOperationPlan(), this);
+      auto newflowplan = new FlowPlan(fl->getOperationPlan(), this);
+      newflowplan->setFollowingBatch(true);
       ++totalcount;
     }
   }

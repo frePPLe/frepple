@@ -299,15 +299,17 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into operationmaterial \
         (operation_id,item_id,quantity,type,effective_start,effective_end,\
-        name,priority,search,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        name,priority,search,source,transferbatch,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i.operation.name, i.buffer.item.name, round(i.quantity, 6),
-            i.type[5:], 
+            i.type[5:],
             i.effective_start if i.effective_start != default_start else None,
-            i.effective_end if i.effective_end != default_end else None,
-            i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source, self.timestamp
+            i.effective_end if i.effective_end != default_end else None, i.name,
+            i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
+            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
+            self.timestamp
           )
           for i in flows(self.source)
           if (i.operation.name, i.item.name, i.effective_start) not in primary_keys
@@ -315,13 +317,14 @@ class exportStaticModel(object):
       cursor.executemany(
         "update operationmaterial \
         set quantity=%s, type=%s, effective_end=%s, name=%s, \
-        priority=%s, search=%s, source=%s, lastmodified=%s \
+        priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s \
         where operation_id=%s and item_id=%s and effective_start=%s",
         [
           (
             round(i.quantity, 6),
             i.type[5:], i.effective_end if i.effective_end != default_end else None,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
+            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
             self.timestamp, i.operation.name, i.item.name, i.effective_start
           )
           for i in flows(self.source)
@@ -331,13 +334,14 @@ class exportStaticModel(object):
       cursor.executemany(
         "update operationmaterial \
         set quantity=%s, type=%s, effective_end=%s, name=%s, \
-        priority=%s, search=%s, source=%s, lastmodified=%s \
+        priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s \
         where operation_id=%s and item_id=%s and effective_start is null",
         [
           (
             round(i.quantity, 6),
             i.type[5:], i.effective_end if i.effective_end != default_end else None,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
+            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
             self.timestamp, i.operation.name, i.buffer.item.name
           )
           for i in flows(self.source)

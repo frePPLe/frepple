@@ -6128,10 +6128,16 @@ class FlowTransferBatch : public Flow
 
   public:
     /** Constructor. */
-    explicit FlowTransferBatch(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
+    explicit FlowTransferBatch(Operation* o, Buffer* b, double q) : Flow(o, b, q) 
+    {
+      initType(metadata);
+    }
 
     /** This constructor is called from the plan begin_element function. */
-    explicit FlowTransferBatch() {}
+    explicit FlowTransferBatch() 
+    {
+      initType(metadata);
+    }
 
     double getTransferBatch() const
     {

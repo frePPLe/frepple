@@ -34,6 +34,7 @@ const MetaClass* FlowTransferBatch::metadata;
 int Flow::initialize()
 {
   // Initialize the metadata
+  int ok = 0;
   metadata = MetaCategory::registerCategory<Flow>(
     "flow", "flows",
     Association<Operation,Buffer,Flow>::reader, finder
@@ -58,7 +59,21 @@ int Flow::initialize()
     const_cast<MetaClass*>(FlowTransferBatch::metadata)
     );
 
-  // Initialize the type
+  // Initialize the FlowTransferBatch type
+  PythonType& t = FreppleClass<FlowTransferBatch, Flow>::getPythonType();
+  t.setName(FlowTransferBatch::metadata->type);
+  t.setDoc("frePPLe " + FlowTransferBatch::metadata->type);
+  t.supportgetattro();
+  t.supportsetattro();
+  t.supportstr();
+  t.supportcompare();
+  t.supportcreate(FlowTransferBatch::create);
+  t.setBase(Flow::metadata->pythonClass);
+  t.addMethod("toXML", FlowTransferBatch::toXML, METH_VARARGS, "return a XML representation");
+  const_cast<MetaClass*>(FlowTransferBatch::metadata)->pythonClass = t.type_object();
+  ok += t.typeReady();
+
+  // Initialize the Flow type
   PythonType& x = FreppleCategory<Flow>::getPythonType();
   x.setName("flow");
   x.setDoc("frePPLe flow");
@@ -67,7 +82,7 @@ int Flow::initialize()
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
-  return x.typeReady();
+  return ok + x.typeReady();
 }
 
 
@@ -161,6 +176,12 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
         );
       else if (d.getString() == "flow_fixed_start")
         l = new FlowFixedStart(
+          static_cast<Operation*>(oper),
+          static_cast<Buffer*>(buf),
+          q2
+        );
+      else if (d.getString() == "flow_transfer_batch")
+        l = new FlowTransferBatch(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2

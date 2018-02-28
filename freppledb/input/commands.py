@@ -1118,7 +1118,7 @@ class loadOperationMaterials(LoadTask):
             curflow.priority = i[7]
           if i[8]:
             curflow.search = i[8]
-          if i[10]:
+          if i[10] and i[3] == 'transfer_batch':
             curflow.transferbatch = i[10]
         except Exception as e:
           logger.error("**** %s ****" % e)

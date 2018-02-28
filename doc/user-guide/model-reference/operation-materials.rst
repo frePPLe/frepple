@@ -45,9 +45,13 @@ quantity        double            | Material quantity being consumed or produced
                                     the operationplan.
 transferbatch   double            | Batch size by in which material is produced or consumed.
                                   | Only relevant for flows of type batch_transfer.
-                                  | The default is null, in which case we default to produce
-                                    at the end when the quantity is positive, or consume at
-                                    the start when the quantity is negative.                                  
+                                  | The default value is null, in which case we default to 
+                                    produce at the end when the quantity is positive, or 
+                                    consume at the start when the quantity is negative.
+                                  | Warning: Setting a low value can have a big impact on
+                                    the memory size and planning time. What you gain in 
+                                    additional accuracy of the plan may not be worth the
+                                    extra complexity.                              
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

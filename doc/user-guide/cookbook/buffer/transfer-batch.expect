@@ -1,0 +1,17 @@
+1. make end item,2018-02-11 19:40:00,2018-02-13 05:40:00,204.0
+1. make end item,2018-02-13 05:40:00,2018-02-15 01:20:00,262.0
+1. make end item,2018-02-15 01:20:00,2018-02-16 21:00:00,262.0
+1. make end item,2018-02-16 21:00:00,2018-02-18 16:40:00,262.0
+1. make subassembly,2018-02-10 00:00:00,2018-02-11 19:40:00,262.0
+1. make subassembly,2018-02-11 19:40:00,2018-02-13 05:40:00,204.0
+1. make subassembly,2018-02-13 05:40:00,2018-02-15 01:20:00,262.0
+1. make subassembly,2018-02-15 01:20:00,2018-02-16 21:00:00,262.0
+2. make end item,2018-03-09 20:50:00,2018-03-28 17:50:00,990.0
+2. make subassembly,2018-02-12 20:20:00,2018-03-09 20:50:00,990.0
+Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-01 00:00:00,2018-02-10 00:00:00,262.0
+Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-02 19:40:00,2018-02-11 19:40:00,204.0
+Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-04 05:40:00,2018-02-13 05:40:00,262.0
+Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-06 01:20:00,2018-02-15 01:20:00,262.0
+Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-03 20:20:00,2018-02-12 20:20:00,990.0
+Ship 1. end item @ plant 1,2018-02-18 16:40:00,2018-02-18 16:40:00,990.0
+Ship 2. end item @ plant 2,2018-03-28 17:50:00,2018-03-28 17:50:00,990.0

@@ -22,8 +22,8 @@ Two fields on the demand configure what deliveries are being accepted by the cus
   Determines the maximum delay the customer will accept before cancelling his or her order.
   When the demand isn’t feasible within this delay frePPLe will plan the order short.
 
-  In some businesses demand that can’t be met on time is lost – the customer will simply buy
-  the product from your competitor. Another usage is for forecasted demand – typically you don’t
+  In some businesses demand that can't be met on time is lost - the customer will simply buy
+  the product from your competitor. Another usage is for forecasted demand - typically you don't
   want to plan them later planned later than the demand bucket.
 
 .. rubric:: Example
@@ -38,5 +38,5 @@ The demands are delivered differently according to their policies.
 Demands 1, 2 and 3 are allowed to be planned late, and we see late deliveries.
 For demand 1 we also see a partial shipment at the requested date.
 
-Demands 4, 5 and 6 aren’t allowed to be planned late.
+Demands 4, 5 and 6 aren't allowed to be planned late.
 Only for demand 4 we can plan a partial shipment. Orders 5 and 6 remain unplanned.

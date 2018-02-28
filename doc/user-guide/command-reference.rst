@@ -662,5 +662,5 @@ and collect the performance metrics that are relevant.
     frepplectl simulation
     
     Deprecated:
-    frepplectl simulation
+    frepplectl frepple_simulation
   

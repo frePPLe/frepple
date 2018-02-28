@@ -12,6 +12,8 @@
     - case 7: Same as 1, but now producing batches is larger than the consuming batches.
     - case 8: Same as 6, but now the subassembly production is faster than the end assembly.
     - case 9: Same as 6, but now the subassembly production is slower than the end assembly.
+    - case 10: The full monty with different batch sizes, different operation times, 
+      different quantity_per, availability calendars.
   </description>
   <current>2018-01-01T00:00:00</current>
 
@@ -687,7 +689,92 @@
       <location name="plant"/>
     </demand>
   </demands>
-      
+    
+  <!--
+    Case 10: The full monty with different batch sizes, different operation times, 
+    different quantity_per, availability calendars.      
+  -->
+  <locations>
+    <location name="10. plant">
+      <available name="calendar of site 10">
+        <default>0</default>
+		<buckets>
+		  <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+		  <bucket start="2017-01-02T00:00:00" end="2025-01-01T00:00:00" days="62" value="1" starttime="PT9H" endtime="PT17H" />
+		</buckets>
+      </available>
+    </location>
+  </locations>  
+  <items>
+    <item name="10. component">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="10. my personal supplier" />
+          <leadtime>P40D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <operations>
+    <operation name="10. make end item" xsi:type="operation_time_per">
+      <item name="10. end item"/>
+      <location name="10. plant"/>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="10. end item"/>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_transfer_batch">
+          <item name="10. subassembly"/>
+          <quantity>-2</quantity>
+          <transferbatch>100</transferbatch>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="10. assembly line"/>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <size_minimum>50</size_minimum>
+      <duration_per>PT10M</duration_per>
+    </operation>
+    <operation name="10. make subassembly" xsi:type="operation_time_per">
+      <item name="10. subassembly"/>
+      <location name="10. plant"/>
+      <flows>
+        <flow xsi:type="flow_transfer_batch">
+          <item name="10. subassembly"/>
+          <quantity>3</quantity>
+          <transferbatch>70</transferbatch>
+        </flow>
+        <flow xsi:type="flow_transfer_batch">
+          <item name="10. component"/>
+          <quantity>-4</quantity>
+          <transferbatch>100</transferbatch>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="10. operator"/>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <size_minimum>50</size_minimum>
+      <duration_per>PT15M</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="10. order 1">
+      <quantity>990</quantity>
+      <minshipment>990</minshipment>
+      <due>2018-01-02T00:00:00</due>
+      <item name="10. end item"/>
+      <location name="10. plant"/>
+    </demand>
+  </demands>      
+
 <?python
 from datetime import timedelta
 print("CREATING CONSTRAINED PLAN")

@@ -40,6 +40,111 @@ BUFFER	1. subassembly @ plant	2018-02-16T07:40:00	100	100
 BUFFER	1. subassembly @ plant	2018-02-16T07:40:00	-100	0
 BUFFER	1. subassembly @ plant	2018-02-17T00:10:00	90	90
 BUFFER	1. subassembly @ plant	2018-02-17T00:10:00	-90	0
+BUFFER	10. component @ 10. plant	2018-02-12T12:19:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-12T12:19:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-13T10:25:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-13T10:25:44	-100	0
+BUFFER	10. component @ 10. plant	2018-02-13T16:32:24	100	100
+BUFFER	10. component @ 10. plant	2018-02-13T16:32:24	-100	0
+BUFFER	10. component @ 10. plant	2018-02-14T14:39:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-14T14:39:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-15T12:45:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-15T12:45:44	-100	0
+BUFFER	10. component @ 10. plant	2018-02-16T10:52:24	100	100
+BUFFER	10. component @ 10. plant	2018-02-16T10:52:24	-100	0
+BUFFER	10. component @ 10. plant	2018-02-16T16:59:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-16T16:59:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-19T15:05:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-19T15:05:44	-100	0
+BUFFER	10. component @ 10. plant	2018-02-20T13:12:24	100	100
+BUFFER	10. component @ 10. plant	2018-02-20T13:12:24	-100	0
+BUFFER	10. component @ 10. plant	2018-02-21T11:19:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-21T11:19:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-22T09:25:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-22T09:25:44	-100	0
+BUFFER	10. component @ 10. plant	2018-02-22T15:32:24	100	100
+BUFFER	10. component @ 10. plant	2018-02-22T15:32:24	-100	0
+BUFFER	10. component @ 10. plant	2018-02-23T13:39:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-23T13:39:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-26T11:45:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-26T11:45:44	-100	0
+BUFFER	10. component @ 10. plant	2018-02-27T09:52:24	100	100
+BUFFER	10. component @ 10. plant	2018-02-27T09:52:24	-100	0
+BUFFER	10. component @ 10. plant	2018-02-27T15:59:04	100	100
+BUFFER	10. component @ 10. plant	2018-02-27T15:59:04	-100	0
+BUFFER	10. component @ 10. plant	2018-02-28T14:05:44	100	100
+BUFFER	10. component @ 10. plant	2018-02-28T14:05:44	-100	0
+BUFFER	10. component @ 10. plant	2018-03-01T12:12:24	100	100
+BUFFER	10. component @ 10. plant	2018-03-01T12:12:24	-100	0
+BUFFER	10. component @ 10. plant	2018-03-02T10:19:04	100	100
+BUFFER	10. component @ 10. plant	2018-03-02T10:19:04	-100	0
+BUFFER	10. component @ 10. plant	2018-03-02T16:25:44	100	100
+BUFFER	10. component @ 10. plant	2018-03-02T16:25:44	-100	0
+BUFFER	10. component @ 10. plant	2018-03-05T14:32:24	100	100
+BUFFER	10. component @ 10. plant	2018-03-05T14:32:24	-100	0
+BUFFER	10. component @ 10. plant	2018-03-06T12:39:04	100	100
+BUFFER	10. component @ 10. plant	2018-03-06T12:39:04	-100	0
+BUFFER	10. component @ 10. plant	2018-03-07T10:45:44	100	100
+BUFFER	10. component @ 10. plant	2018-03-07T10:45:44	-100	0
+BUFFER	10. component @ 10. plant	2018-03-07T16:52:24	100	100
+BUFFER	10. component @ 10. plant	2018-03-07T16:52:24	-100	0
+BUFFER	10. component @ 10. plant	2018-03-08T14:59:04	100	100
+BUFFER	10. component @ 10. plant	2018-03-08T14:59:04	-100	0
+BUFFER	10. component @ 10. plant	2018-03-09T13:05:44	100	100
+BUFFER	10. component @ 10. plant	2018-03-09T13:05:44	-100	0
+BUFFER	10. component @ 10. plant	2018-03-12T11:12:24	40	40
+BUFFER	10. component @ 10. plant	2018-03-12T11:12:24	-40	0
+BUFFER	10. end item @ 10. plant	2018-03-14T13:50:00	990	990
+BUFFER	10. end item @ 10. plant	2018-03-14T13:50:00	-990	0
+BUFFER	10. subassembly @ 10. plant	2018-02-13T10:00:26	70	70
+BUFFER	10. subassembly @ 10. plant	2018-02-13T15:41:48	70	140
+BUFFER	10. subassembly @ 10. plant	2018-02-13T16:50:00	-100	40
+BUFFER	10. subassembly @ 10. plant	2018-02-14T13:23:10	70	110
+BUFFER	10. subassembly @ 10. plant	2018-02-15T09:05:00	-100	10
+BUFFER	10. subassembly @ 10. plant	2018-02-15T11:04:32	70	80
+BUFFER	10. subassembly @ 10. plant	2018-02-15T16:45:54	70	150
+BUFFER	10. subassembly @ 10. plant	2018-02-16T09:20:00	-100	50
+BUFFER	10. subassembly @ 10. plant	2018-02-16T14:27:16	70	120
+BUFFER	10. subassembly @ 10. plant	2018-02-19T09:35:00	-100	20
+BUFFER	10. subassembly @ 10. plant	2018-02-19T12:08:38	70	90
+BUFFER	10. subassembly @ 10. plant	2018-02-20T09:50:00	70	160
+BUFFER	10. subassembly @ 10. plant	2018-02-20T09:50:00	-100	60
+BUFFER	10. subassembly @ 10. plant	2018-02-20T15:31:22	70	130
+BUFFER	10. subassembly @ 10. plant	2018-02-21T10:05:00	-100	30
+BUFFER	10. subassembly @ 10. plant	2018-02-21T13:12:44	70	100
+BUFFER	10. subassembly @ 10. plant	2018-02-22T10:20:00	-100	0
+BUFFER	10. subassembly @ 10. plant	2018-02-22T10:54:06	70	70
+BUFFER	10. subassembly @ 10. plant	2018-02-22T16:35:28	70	140
+BUFFER	10. subassembly @ 10. plant	2018-02-23T10:35:00	-100	40
+BUFFER	10. subassembly @ 10. plant	2018-02-23T14:16:50	70	110
+BUFFER	10. subassembly @ 10. plant	2018-02-26T10:50:00	-100	10
+BUFFER	10. subassembly @ 10. plant	2018-02-26T11:58:12	70	80
+BUFFER	10. subassembly @ 10. plant	2018-02-27T09:39:34	70	150
+BUFFER	10. subassembly @ 10. plant	2018-02-27T11:05:00	-100	50
+BUFFER	10. subassembly @ 10. plant	2018-02-27T15:20:56	70	120
+BUFFER	10. subassembly @ 10. plant	2018-02-28T11:20:00	-100	20
+BUFFER	10. subassembly @ 10. plant	2018-02-28T13:02:18	70	90
+BUFFER	10. subassembly @ 10. plant	2018-03-01T10:43:40	70	160
+BUFFER	10. subassembly @ 10. plant	2018-03-01T11:35:00	-100	60
+BUFFER	10. subassembly @ 10. plant	2018-03-01T16:25:02	70	130
+BUFFER	10. subassembly @ 10. plant	2018-03-02T11:50:00	-100	30
+BUFFER	10. subassembly @ 10. plant	2018-03-02T14:06:24	70	100
+BUFFER	10. subassembly @ 10. plant	2018-03-05T11:47:46	70	170
+BUFFER	10. subassembly @ 10. plant	2018-03-05T12:05:00	-100	70
+BUFFER	10. subassembly @ 10. plant	2018-03-06T09:29:08	70	140
+BUFFER	10. subassembly @ 10. plant	2018-03-06T12:20:00	-100	40
+BUFFER	10. subassembly @ 10. plant	2018-03-06T15:10:30	70	110
+BUFFER	10. subassembly @ 10. plant	2018-03-07T12:35:00	-100	10
+BUFFER	10. subassembly @ 10. plant	2018-03-07T12:51:52	70	80
+BUFFER	10. subassembly @ 10. plant	2018-03-08T10:33:14	70	150
+BUFFER	10. subassembly @ 10. plant	2018-03-08T12:50:00	-100	50
+BUFFER	10. subassembly @ 10. plant	2018-03-08T16:14:36	70	120
+BUFFER	10. subassembly @ 10. plant	2018-03-09T13:05:00	-100	20
+BUFFER	10. subassembly @ 10. plant	2018-03-09T13:55:58	70	90
+BUFFER	10. subassembly @ 10. plant	2018-03-12T11:37:20	70	160
+BUFFER	10. subassembly @ 10. plant	2018-03-12T13:20:00	-100	60
+BUFFER	10. subassembly @ 10. plant	2018-03-13T09:18:42	20	80
+BUFFER	10. subassembly @ 10. plant	2018-03-13T13:35:00	-80	0
 BUFFER	2. component @ plant	2018-02-10T00:00:00	990	990
 BUFFER	2. component @ plant	2018-02-10T00:00:00	-990	0
 BUFFER	2. end item @ plant	2018-02-10T00:00:00	990	990
@@ -324,6 +429,7 @@ BUFFER	9. subassembly @ plant	2018-02-20T11:50:00	-100	80
 BUFFER	9. subassembly @ plant	2018-02-21T04:20:00	10	90
 BUFFER	9. subassembly @ plant	2018-02-21T04:20:00	-90	0
 DEMAND	1. order 1	2018-02-17T16:40:00	990
+DEMAND	10. order 1	2018-03-14T13:50:00	990
 DEMAND	2. order 1	2018-02-10T00:00:00	990
 DEMAND	3. order 1	2018-02-21T16:40:00	990
 DEMAND	4. order 1	2018-02-19T16:40:00	990
@@ -335,6 +441,10 @@ RESOURCE	1. assembly line	2018-02-10T19:40:00	1	1
 RESOURCE	1. assembly line	2018-02-17T16:40:00	-1	0
 RESOURCE	1. operator	2018-02-10T03:10:00	1	1
 RESOURCE	1. operator	2018-02-17T00:10:00	-1	0
+RESOURCE	10. assembly line	2018-02-13T16:50:00	1	1
+RESOURCE	10. assembly line	2018-03-14T13:50:00	-1	0
+RESOURCE	10. operator	2018-02-12T12:19:04	1	1
+RESOURCE	10. operator	2018-03-13T09:19:04	-1	0
 RESOURCE	2. assembly line	2018-02-10T00:00:00	1	1
 RESOURCE	2. assembly line	2018-02-10T00:00:00	-1	0
 RESOURCE	2. operator	2018-02-10T00:00:00	1	1
@@ -399,6 +509,8 @@ RESOURCE	9. operator	2018-02-10T20:50:00	1	1
 RESOURCE	9. operator	2018-02-21T04:20:00	-1	0
 OPERATION	1. make end item	2018-02-10T19:40:00	2018-02-17T16:40:00	990
 OPERATION	1. make subassembly	2018-02-10T03:10:00	2018-02-17T00:10:00	990
+OPERATION	10. make end item	2018-02-13T16:50:00	2018-03-14T13:50:00	990
+OPERATION	10. make subassembly	2018-02-12T12:19:04	2018-03-13T09:19:04	660
 OPERATION	2. make end item	2018-02-10T00:00:00	2018-02-10T00:00:00	990
 OPERATION	2. make subassembly	2018-02-10T00:00:00	2018-02-10T00:00:00	990
 OPERATION	3. make end item	2018-02-12T19:40:00	2018-02-21T16:40:00	990
@@ -440,6 +552,33 @@ OPERATION	Purchase 1. component @ plant from 1. my personal supplier	2018-01-05T
 OPERATION	Purchase 1. component @ plant from 1. my personal supplier	2018-01-05T22:40:00	2018-02-14T22:40:00	100
 OPERATION	Purchase 1. component @ plant from 1. my personal supplier	2018-01-06T15:10:00	2018-02-15T15:10:00	100
 OPERATION	Purchase 1. component @ plant from 1. my personal supplier	2018-01-07T07:40:00	2018-02-16T07:40:00	90
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-03T12:19:04	2018-02-12T12:19:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-04T10:25:44	2018-02-13T10:25:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-04T16:32:24	2018-02-13T16:32:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-05T14:39:04	2018-02-14T14:39:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-06T12:45:44	2018-02-15T12:45:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-07T10:52:24	2018-02-16T10:52:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-07T16:59:04	2018-02-16T16:59:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-10T15:05:44	2018-02-19T15:05:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-11T13:12:24	2018-02-20T13:12:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-12T11:19:04	2018-02-21T11:19:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-13T09:25:44	2018-02-22T09:25:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-13T15:32:24	2018-02-22T15:32:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-14T13:39:04	2018-02-23T13:39:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-17T11:45:44	2018-02-26T11:45:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-18T09:52:24	2018-02-27T09:52:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-18T15:59:04	2018-02-27T15:59:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-19T14:05:44	2018-02-28T14:05:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-20T12:12:24	2018-03-01T12:12:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-21T10:19:04	2018-03-02T10:19:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-21T16:25:44	2018-03-02T16:25:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-24T14:32:24	2018-03-05T14:32:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-25T12:39:04	2018-03-06T12:39:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-26T10:45:44	2018-03-07T10:45:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-26T16:52:24	2018-03-07T16:52:24	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-27T14:59:04	2018-03-08T14:59:04	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-28T13:05:44	2018-03-09T13:05:44	100
+OPERATION	Purchase 10. component @ 10. plant from 10. my personal supplier	2018-01-31T11:12:24	2018-03-12T11:12:24	40
 OPERATION	Purchase 2. component @ plant from 2. my personal supplier	2018-01-01T00:00:00	2018-02-10T00:00:00	990
 OPERATION	Purchase 3. component @ plant 3 from 3. my personal supplier	2018-01-03T03:10:00	2018-02-12T03:10:00	100
 OPERATION	Purchase 3. component @ plant 3 from 3. my personal supplier	2018-01-03T19:40:00	2018-02-12T19:40:00	100
@@ -506,6 +645,8 @@ OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-08T
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-09T02:05:00	2018-02-18T02:05:00	100
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-10T02:50:00	2018-02-19T02:50:00	100
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-11T03:35:00	2018-02-20T03:35:00	90
+PROBLEM	material excess	Buffer '10. subassembly @ 10. plant' has material excess of 150	2018-02-13T10:00:26 / 2018-02-22T10:20:00
+PROBLEM	material excess	Buffer '10. subassembly @ 10. plant' has material excess of 170	2018-02-22T10:54:06 / 2018-03-13T13:35:00
 PROBLEM	material excess	Buffer '4. subassembly @ plant' has material excess of 200	2018-02-11T02:00:00 / 2018-02-18T07:40:00
 PROBLEM	material excess	Buffer '5. component @ plant' has material excess of 0.666667	2018-02-14T20:20:00 / 2018-02-16T04:46:40
 PROBLEM	material excess	Buffer '5. end item @ plant' has material excess of 584	2018-02-14T04:06:40 / 2018-02-19T16:40:00
@@ -514,6 +655,7 @@ PROBLEM	material excess	Buffer '6. subassembly @ plant' has material excess of 1
 PROBLEM	material excess	Buffer '8. subassembly @ plant' has material excess of 510	2018-02-10T10:00:00 / 2018-02-16T20:00:00
 PROBLEM	material excess	Buffer '9. subassembly @ plant' has material excess of 350	2018-02-11T13:20:00 / 2018-02-21T04:20:00
 PROBLEM	late	990 units of demand '1. order 1' planned up to 46.7 days after its due date	2018-01-02T00:00:00 / 2018-02-17T16:40:00
+PROBLEM	late	990 units of demand '10. order 1' planned up to 71.6 days after its due date	2018-01-02T00:00:00 / 2018-03-14T13:50:00
 PROBLEM	late	990 units of demand '2. order 1' planned up to 9.0 days after its due date	2018-02-01T00:00:00 / 2018-02-10T00:00:00
 PROBLEM	late	990 units of demand '3. order 1' planned up to 20.7 days after its due date	2018-02-01T00:00:00 / 2018-02-21T16:40:00
 PROBLEM	late	990 units of demand '4. order 1' planned up to 18.7 days after its due date	2018-02-01T00:00:00 / 2018-02-19T16:40:00
@@ -527,6 +669,11 @@ DEMAND CONSTRAINT	1. order 1	Operation '1. make subassembly' planned in the past
 DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. component @ plant from 1. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
 DEMAND CONSTRAINT	1. order 1	Resource '1. assembly line' has capacity shortage of 1	2018-02-10T08:20:00 / 2018-02-16T21:00:00	
 DEMAND CONSTRAINT	1. order 1	Resource '1. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-10T16:40:00	
+DEMAND CONSTRAINT	10. order 1	Operation '10. make end item' planned in the past	2017-12-04T12:00:00 / 2018-01-01T17:00:00	
+DEMAND CONSTRAINT	10. order 1	Operation '10. make subassembly' planned in the past	2017-12-28T12:30:00 / 2017-12-29T17:00:00	
+DEMAND CONSTRAINT	10. order 1	Operation 'Purchase 10. component @ 10. plant from 10. my personal supplier' planned in the past	2017-11-22T09:00:00 / 2018-01-01T09:00:00	
+DEMAND CONSTRAINT	10. order 1	Resource '10. assembly line' has capacity shortage of 1	2018-02-13T13:30:00 / 2018-03-13T10:10:00	
+DEMAND CONSTRAINT	10. order 1	Resource '10. operator' has capacity shortage of 1	2018-02-12T09:00:00 / 2018-02-15T10:00:00	
 DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. component @ plant from 2. my personal supplier' planned in the past	2017-12-23T00:00:00 / 2018-02-01T00:00:00	
 DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. component @ plant 3 from 3. my personal supplier' planned in the past	2017-12-13T10:30:00 / 2018-01-22T10:30:00	
 DEMAND CONSTRAINT	3. order 1	Resource '3. assembly line' has capacity shortage of 1	2018-02-12T08:20:00 / 2018-02-20T21:00:00	

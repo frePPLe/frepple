@@ -79,6 +79,7 @@ class Tags
     static const Keyword effective_start;
     static const Keyword effective_end;
     static const Keyword end;
+    static const Keyword end_force;
     static const Keyword enddate;
     static const Keyword endtime;
     static const Keyword entity;
@@ -179,6 +180,7 @@ class Tags
     static const Keyword solvers;
     static const Keyword source;
     static const Keyword start;
+    static const Keyword start_force;
     static const Keyword startorend;
     static const Keyword startdate;
     static const Keyword starttime;

@@ -2318,7 +2318,17 @@ class OperationPlan
       * i.e. the sub operationplans are only moved if required to meet the
       * end date.
       */
-    virtual void setEnd(Date);
+    virtual void setEnd(Date, bool force);
+    
+    void setEnd(Date d)
+    {
+      setEnd(d, false);
+    }
+
+    void setEndForce(Date d)
+    {
+      setEnd(d, true);
+    }
 
     /** Return the end date. */
     Date getStart() const
@@ -2333,7 +2343,17 @@ class OperationPlan
       * i.e. the sub operationplans are only moved if required to meet the
       * start date.
       */
-    virtual void setStart(Date);
+    virtual void setStart(Date, bool force);
+
+	void setStart(Date d)
+    {
+      setStart(d, false);
+    }
+
+    void setStartForce(Date d)
+    {
+      setStart(d, true);
+    }
 
     static int initialize();
 
@@ -2491,6 +2511,7 @@ class OperationPlan
       m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, &Cls::setDemand, BASE + WRITE_HIDDEN);
       m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart, Date::infiniteFuture);
       m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd, Date::infiniteFuture);
+      m->addDateField<Cls>(Tags::end_force, &Cls::getEnd, &Cls::setEndForce, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::setup, &Cls::getSetup, nullptr, 0L, PLAN);
       m->addDateField<Cls>(Tags::setupend, &Cls::getSetupEnd, nullptr, Date::infinitePast, PLAN);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);

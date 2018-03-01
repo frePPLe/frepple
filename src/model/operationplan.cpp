@@ -90,7 +90,7 @@ PyObject* OperationPlan::calculateOperationTimePython(PyObject *self, PyObject *
       return PythonData(dt + dur);
     else
     {
-      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, forward == 1);
+      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, (forward==1));
       return PythonData(forward ? res.getEnd() : res.getStart());
     }
   }
@@ -1145,11 +1145,15 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast)
 }
 
 
-void OperationPlan::setStart (Date d)
+void OperationPlan::setStart (Date d, bool force)
 {
   // Confirmed opplans don't move
   if (getConfirmed())
+  {
+    if (force)
+      setStartAndEnd(d, getEnd());
     return;
+  }
 
   if (!lastsubopplan)
     // No sub operationplans
@@ -1174,12 +1178,17 @@ void OperationPlan::setStart (Date d)
   update();
 }
 
-
-void OperationPlan::setEnd(Date d)
+void OperationPlan::setEnd(Date d, bool force)
 {
+
   // Locked opplans don't move
   if (getConfirmed())
+  {
+    if (force)
+      setStartAndEnd(getStart(), d);
     return;
+  }
+    
 
   if (!lastsubopplan)
     // No sub operationplans

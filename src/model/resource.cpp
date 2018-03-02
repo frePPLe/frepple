@@ -522,105 +522,107 @@ PyObject* Resource::PlanIterator::iternext()
   bucket_unavailable = 0.0;
   bucket_load = 0.0;
   bucket_setup = 0.0;
-
-  // Get the start and end date of the current bucket
   if (start_date)
     Py_DECREF(start_date);
-  start_date = end_date;
-  end_date = PyIter_Next(bucketiterator);
-  if (!end_date)
-    return nullptr;
-  Date cpp_start_date = PythonData(start_date).getDate();
-  Date cpp_end_date = PythonData(end_date).getDate();
 
-  for (auto i = res_list.begin(); i != res_list.end(); ++i)
+  // Repeat until a non-empty bucket is found
+  do
   {
-    i->cur_date = cpp_end_date;
-    if (i->bucketized)
+    // Get the start and end date of the current bucket
+    start_date = end_date;
+    end_date = PyIter_Next(bucketiterator);
+    if (!end_date)
+      return nullptr;
+    Date cpp_start_date = PythonData(start_date).getDate();
+    Date cpp_end_date = PythonData(end_date).getDate();
+    logger << "  ---- " << cpp_start_date << "    " << cpp_end_date << endl;
+    // Find the load of all resources in this bucket
+    for (auto i = res_list.begin(); i != res_list.end(); ++i)
     {
-      // Bucketized resource
-      while (
-        i->ldplaniter != i->res->getLoadPlans().end()
-        && i->ldplaniter->getDate() < cpp_end_date
-        )
+      i->cur_date = cpp_end_date;
+      if (i->bucketized)
       {
-        // At this point ldplaniter points to a bucket start event in the
-        // current reporting bucket
-        bucket_available += i->ldplaniter->getOnhand();
-
-        // Advance the loadplan iterator to the start of the next bucket
-        ++(i->ldplaniter);
+        // Bucketized resource
         while (
           i->ldplaniter != i->res->getLoadPlans().end()
-          && i->ldplaniter->getEventType() != 2
+          && i->ldplaniter->getDate() < cpp_end_date
           )
         {
-          if (i->ldplaniter->getEventType() == 1)
-            bucket_load -= i->ldplaniter->getQuantity();
+          // At this point ldplaniter points to a bucket start event in the
+          // current reporting bucket
+          bucket_available += i->ldplaniter->getOnhand();
+
+          // Advance the loadplan iterator to the start of the next bucket
+          ++(i->ldplaniter);
+          while (
+            i->ldplaniter != i->res->getLoadPlans().end()
+            && i->ldplaniter->getEventType() != 2
+            )
+          {
+            if (i->ldplaniter->getEventType() == 1)
+              bucket_load -= i->ldplaniter->getQuantity();
+            ++(i->ldplaniter);
+          }
+        }
+      }
+      else
+      {
+        // Default resource
+
+        // Measure from beginning of the bucket till the first event in this bucket
+        if (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() < i->cur_date)
+          update(&*i, i->ldplaniter->getDate());
+
+        // Advance the loadplan iterator to the next event date
+        while (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() <= i->cur_date)
+        {
+          // Measure from the previous event till the current one
+          update(&*i, i->ldplaniter->getDate());
+
+          // Process the event
+          unsigned short tp = i->ldplaniter->getEventType();
+          if (tp == 4)
+            // New max size
+            i->cur_size = i->ldplaniter->getMax();
+          else if (tp == 1)
+          {
+            const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
+            assert(ldplan);
+            if (
+              ldplan->getOperationPlan()->getSetupEnd() != ldplan->getOperationPlan()->getStart()
+              && ldplan->getQuantity() > 0
+              )
+              i->setup_loadplan = ldplan;
+            else
+              i->setup_loadplan = nullptr;
+            i->cur_load = ldplan->getOnhand();
+          }
+
+          // Move to the next event
           ++(i->ldplaniter);
         }
+
+        // Measure from the previous event till the end of the bucket
+        update(&*i, i->cur_date);
       }
-    }
-    else
-    {
-      // Default resource
 
-      // Measure from beginning of the bucket till the first event in this bucket
-      if (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() < i->cur_date)
-        update(&*i, i->ldplaniter->getDate());
-
-      // Advance the loadplan iterator to the next event date
-      while (i->ldplaniter != i->res->getLoadPlans().end() && i->ldplaniter->getDate() <= i->cur_date)
+      // Measure setup
+      if (i->res->getSetupMatrix())
       {
-        // Measure from the previous event till the current one
-        update(&*i, i->ldplaniter->getDate());
-
-        // Process the event
-        unsigned short tp = i->ldplaniter->getEventType();
-        if (tp == 4)
-          // New max size
-          i->cur_size = i->ldplaniter->getMax();
-        else if (tp == 1)
+        DateRange bckt(cpp_start_date, cpp_end_date);
+        for (auto j = i->res->getLoadPlans().begin(); j != i->res->getLoadPlans().end(); ++j)
         {
-          const LoadPlan* ldplan = dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
-          assert(ldplan);
-          if (
-            ldplan->getOperationPlan()->getSetupEnd() != ldplan->getOperationPlan()->getStart()
-            && ldplan->getQuantity() > 0
-            )
-            i->setup_loadplan = ldplan;
-          else
-            i->setup_loadplan = nullptr;
-          i->cur_load = ldplan->getOnhand();
-        }
-
-        // Move to the next event
-        ++(i->ldplaniter);
-      }
-
-      // Measure from the previous event till the end of the bucket
-      update(&*i, i->cur_date);
-    }
-
-    // Measure setup
-    if (i->res->getSetupMatrix())
-    {
-      DateRange bckt(cpp_start_date, cpp_end_date);
-      for (auto j = i->res->getLoadPlans().begin(); j != i->res->getLoadPlans().end(); ++j)
-      {
-        auto tmp = j->getOperationPlan();
-        if (tmp && j->getQuantity() < 0)
-        {          
-          auto stp = DateRange(tmp->getStart(), tmp->getSetupEnd());
-          bucket_setup -= static_cast<long>(bckt.overlap(stp)) * j->getQuantity();
+          auto tmp = j->getOperationPlan();
+          if (tmp && j->getQuantity() < 0)
+          {
+            auto stp = DateRange(tmp->getStart(), tmp->getSetupEnd());
+            bucket_setup -= static_cast<long>(bckt.overlap(stp)) * j->getQuantity();
+          }
         }
       }
     }
-  }
-
-  // Skip empty buckets
-  if (!bucket_available && !bucket_unavailable && !bucket_load && !bucket_setup)
-    return iternext();
+  } 
+  while (!bucket_available && !bucket_unavailable && !bucket_load && !bucket_setup);
 
   // Return the result
   bucket_setup /= 3600.0;

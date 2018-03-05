@@ -535,7 +535,7 @@ PyObject* Resource::PlanIterator::iternext()
       return nullptr;
     Date cpp_start_date = PythonData(start_date).getDate();
     Date cpp_end_date = PythonData(end_date).getDate();
-    logger << "  ---- " << cpp_start_date << "    " << cpp_end_date << endl;
+
     // Find the load of all resources in this bucket
     for (auto i = res_list.begin(); i != res_list.end(); ++i)
     {

@@ -35,7 +35,7 @@ are required:
 
 #. **Install PostgreSQL database.**
 
-   The recommended version is 9.5 64-bit. It is recommended to tune the database
+   The recommended version is 10.x 64-bit. It is recommended to tune the database
    parameters with the values found on http://pgtune.leopard.in.ua/.
 
 #. **Install Python 3.5 64-bit or higher**

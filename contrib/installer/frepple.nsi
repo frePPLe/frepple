@@ -232,7 +232,7 @@ Function DatabaseOpen
     ; Verify the availability of the Visual Studio redistributable
     ReadRegDword $R1 HKLM "SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0\VC\Runtimes\x64" "Installed"
     ${If} $R1 != "1"
-       StrCpy $1 'The PostgreSQL 9.5 database server requires the Visual C++ 2013 redistributable $\r$\n'
+       StrCpy $1 'The PostgreSQL database server requires the Visual C++ 2013 redistributable $\r$\n'
        StrCpy $1 '$1to be installed on your computer.$\r$\n$\r$\n'
        StrCpy $1 '$1  1) This installation process will now abort.$\r$\n'
        StrCpy $1 '$1  2) Download vcredist_x64.exe from$\r$\n'
@@ -272,7 +272,7 @@ Function Databaseleave
   IfErrors 0 ok
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
      StrCpy $1 '$1Correct the connection parameters or:$\r$\n'
-     StrCpy $1 '$1  1) Install PostgreSQL 9.5$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL 10.x (recommended), 9.5 or 9.6$\r$\n'
      StrCpy $1 '$1  2) Add the PostgreSQL bin folder to the PATH environment variable$\r$\n'
      StrCpy $1 '$1  3) Create the login role "$3"$\r$\n'
      StrCpy $1 '$1  4) Create the database "$2" with owner "$3"$\r$\n'
@@ -586,7 +586,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDemoData} "Installation of a demo dataset."
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDoc} "Installation of the documentation."
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPostgres} "FrePPLe requires a PostgreSQL database.$\r$\n\
-    $\r$\nYou can use the one included in this installer, or you can install and configure PostgreSQL 9.5.2 seperately."
+    $\r$\nYou can use the one included in this installer, or you can install and configure PostgreSQL seperately."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

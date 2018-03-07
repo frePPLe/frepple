@@ -1247,7 +1247,17 @@ class ManufacturingOrderList(GridReport):
     if args and args[0]:
       q = q.filter(location=args[0])
     return q.extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
+      'demand': '''coalesce(
+        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
+        , '')''',
+      'end_items': '''coalesce(
+        (select string_agg(key || ' : ' || val, ', ') from (
+        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
+        inner join demand on key = demand.name
+        group by demand.item_id
+        order by 2 desc
+        limit 10) peg_items)
+        , '')''',
       'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
       'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
       'setup_duration': "(operationplan.plan->'setup')",
@@ -1350,6 +1360,10 @@ class ManufacturingOrderList(GridReport):
       'operation__location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
       initially_hidden=True, editable=False
       ),
+    GridFieldText(
+      'end_items', title=_('end items'), editable=False, search=False, sortable=False,
+      initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'
+      ),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1447,8 +1461,18 @@ class DistributionOrderList(GridReport):
       else:
         q = q.filter(location=args[0])
     return q.extra(select={
-      'demand': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg)",
-      'total_cost': "cost*quantity"
+      'demand': '''coalesce(
+        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
+        , '')''',
+      'end_items': '''coalesce(
+        (select string_agg(key || ' : ' || val, ', ') from (
+        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
+        inner join demand on key = demand.name
+        group by demand.item_id
+        order by 2 desc
+        limit 10) peg_items)
+        , '')''',
+      'total_cost': "cost*quantity",
       })
 
   rows = (
@@ -1559,6 +1583,10 @@ class DistributionOrderList(GridReport):
       'destination__lastmodified', title=string_concat(_('destination'), ' - ', _('last modified')),
       initially_hidden=True, editable=False
       ),
+    GridFieldText(
+      'end_items', title=_('end items'), editable=False, search=False, sortable=False,
+      initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'
+      ),
     )
 
   if settings.ERP_CONNECTOR:
@@ -1646,6 +1674,7 @@ class PurchaseOrderList(GridReport):
     else:
       return {'active_tab': 'purchaseorders'}
 
+
   @ classmethod
   def basequeryset(reportclass, request, *args, **kwargs):
     q = PurchaseOrder.objects.all()
@@ -1657,9 +1686,19 @@ class PurchaseOrderList(GridReport):
         q = q.filter(location=args[0])
     return q.extra(
       select={
-        'demand': "coalesce((select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by key desc limit 10) peg), '')",
+        'demand': '''coalesce(
+          (select string_agg(value || ' : ' || key, ', ')
+          from (select key, value from jsonb_each_text(operationplan.plan->'pegging')
+          order by value desc, key asc limit 10) peg), '')''',
+        'end_items': '''coalesce(
+          (select string_agg(key || ' : ' || val, ', ') from (
+          select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
+          inner join demand on key = demand.name
+          group by demand.item_id
+          order by 2 desc
+          limit 10) peg_items), '')''',
         'total_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id)) * quantity",
-        'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))"
+        'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
       })
 
   rows = (
@@ -1761,6 +1800,10 @@ class PurchaseOrderList(GridReport):
     GridFieldLastModified(
       'supplier__lastmodified', title=string_concat(_('supplier'), ' - ', _('last modified')),
       initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'end_items', title=_('end items'), editable=False, search=False, sortable=False,
+      initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'
       ),
     )
 

@@ -1,8 +1,8 @@
 
-In this folder you find the binary distribution of PostgreSQL 9.5.2 as
+In this folder you find the binary distribution of PostgreSQL 10.3.1 as
 obtained from:
   http://www.enterprisedb.com/products-services-training/pgbindownload
-We redistribute this product unmodified and in its entirity.
+We redistribute this product unmodified.
 
 Initialising a database with the provided binaries is easy.
 The frePPLe installer runs the following steps for you, but you're 
@@ -20,11 +20,11 @@ You can tune these parameters to fit your needs. For performance
 tuning the pgtune site http://pgtune.leopard.in.ua/ provides very
 useful input.
 
-If you install as admin and want frePPLe to be started by a user, some additional steps
-are required:
-- set pgsql to start as a service
-"C:\Program Files\frePPLe 4.0.beta\pgsql\bin>pg_ctl.exe register -N postgres -D C:\ProgramData\frePPLe\4.0.beta\database"
-- in djangosettings.py set the database user to admin
+If you install as admin and want frePPLe to be started by another
+user, some additional steps are required:
+- Configure Postgres to start as a service
+"C:\Program Files\frePPLe 4.3.2\pgsql\bin>pg_ctl.exe register -N postgres -D C:\ProgramData\frePPLe\4.3.2\database"
+- Modify djangosettings.py set the database user to admin
 " 'USER': 'Administrator' "
   
 If you want to install PostgreSQL yourself we recommended to use the

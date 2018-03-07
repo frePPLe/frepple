@@ -31,7 +31,7 @@
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
-!define POSTGRESQL_VERSION "POSTGRESQL 9.5.2"
+!define POSTGRESQL_VERSION "POSTGRESQL 10.3"
 !define POSTGRESFOLDER "c:\develop\pgsql"
 
 ; Select compressor
@@ -195,13 +195,9 @@ Section "PostgreSQL" SecPostgres
   File /r "${POSTGRESFOLDER}\doc"
   File /r "${POSTGRESFOLDER}\include"
   File /r "${POSTGRESFOLDER}\lib"
-  File /r "${POSTGRESFOLDER}\pgAdmin III"
   File /r "${POSTGRESFOLDER}\share"
   File /r "${POSTGRESFOLDER}\StackBuilder"
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}"
-  ; SetOutPath is used to set the working directory for the shortcut
-  SetOutPath "$INSTDIR\pgsql\bin"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}\pgAdmin III.lnk" "$INSTDIR\pgsql\bin\pgAdmin3.exe"
 SectionEnd
 
 
@@ -216,7 +212,7 @@ Section "Documentation" SecDoc
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\index.html"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\html\index.html"
   File /r "doc\_build\html"
 SectionEnd
 

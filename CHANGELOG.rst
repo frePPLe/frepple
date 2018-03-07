@@ -10,10 +10,18 @@ Release notes
     or consumption in a number of batches of fixed size at various moments during
     the total duration of the operationplan.
   | A new field operationmaterial.transferbatch is introduced.
-  
+- A new field 'end items' is added to the manufacturing order, purchase order and
+  distribution orders screens. It is similar to the 'demands' which shows the 
+  demands 
+
 .. rubric:: API
 
 - Bug fix: backward compatibility after command renaming in 4.3.1
+
+.. rubric:: Third party components
+
+- Upgrade to PostgreSQL 10. 
+  PostgreSQL 9.5 and 9.6 remain fully supported.
 
 4.3.1 (2018/02/17)
 ==================

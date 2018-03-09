@@ -2127,7 +2127,23 @@ class OperationPlan
     {
       dates.setStartAndEnd(st, nd);
       update();
-      assert(getStart() <= getSetupEnd() && getSetupEnd() <= getEnd());
+      //assert(getStart() <= getSetupEnd() && getSetupEnd() <= getEnd());
+      if (getStart() > getSetupEnd() || getSetupEnd() > getEnd())
+        logger << "Warning: strange dates on " << this << ": " << getStart() << " - " << getSetupEnd() << " - " << getEnd() << endl;
+    }
+
+    /** Fixes the start date, end date and quantity of an operationplan. Note that this
+      * overrules the standard duration given on the operation, i.e. no logic
+      * kicks in to verify the data makes sense. This is up to the user to
+      * take care of.<br>
+      * The methods setStart(Date) and setEnd(Date) are therefore preferred
+      * since they properly apply all appropriate logic.
+      */
+    void setStartEndAndQuantity(Date st, Date nd, double q)
+    {
+      quantity = q;
+      dates.setStartAndEnd(st, nd);
+      update();
     }
 
     /** A method to restore a previous state of an operationplan.<br>
@@ -2318,7 +2334,7 @@ class OperationPlan
       * i.e. the sub operationplans are only moved if required to meet the
       * end date.
       */
-    virtual void setEnd(Date, bool force);
+    void setEnd(Date, bool force);
     
     void setEnd(Date d)
     {
@@ -2644,16 +2660,14 @@ class OperationPlan
 
     static const short STATUS_APPROVED = 1;
     static const short STATUS_CONFIRMED = 2;
-    static const short IS_SETUP = 4;
-    static const short HAS_SETUP = 8;
     // TODO Conceptually this may not ideal: Rather than a
     // quantity-based distinction (between CONSUME_MATERIAL and
     // PRODUCE_MATERIAL) having a time-based distinction may be more
     // appropriate (between PROCESS_MATERIAL_AT_START and
     // PROCESS_MATERIAL_AT_END).
-    static const short CONSUME_MATERIAL = 16;
-    static const short PRODUCE_MATERIAL = 32;
-    static const short CONSUME_CAPACITY = 64;
+    static const short CONSUME_MATERIAL = 4;
+    static const short PRODUCE_MATERIAL = 8;
+    static const short CONSUME_CAPACITY = 16;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -7015,7 +7029,7 @@ class Resource : public HasHierarchy<Resource>,
       * before (or at, when the parameter is true) the argument date.
       * @see LoadPlan::getSetupBefore
       */
-    SetupEvent* getSetupAt(Date, bool inclusive = false, OperationPlan* = nullptr);
+    SetupEvent* getSetupAt(Date, OperationPlan* = nullptr);
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
@@ -8315,7 +8329,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       * subresource of the resource specified on the load, and b) must also
       * have the skill specified on the resource.
       */
-    void setResource(Resource* res, bool check, bool updatesetup = true, bool use_start = true);
+    void setResource(Resource* res, bool check, bool use_start = true);
 
     /** Return the resource. */
     Resource* getResource() const

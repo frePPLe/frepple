@@ -1066,6 +1066,9 @@ void OperationPlan::deleteFlowLoads()
   // Delete the loadplans (including the setup suboperationplan)
   while (f != endLoadPlans())
     delete &*(f++);
+
+  // Delete setup event
+  clearSetupEvent();
 }
 
 

@@ -472,7 +472,7 @@ class SolverMRP : public Solver
 
     /** This function defines the order in which the demands are being
       * planned.<br>
-      * The following sorting criteria are appplied in order:
+      * The following sorting criteria are applied in order:
       *  - demand priority: smaller priorities first
       *  - demand due date: earlier due dates first
       *  - demand quantity: smaller quantities first
@@ -501,7 +501,7 @@ class SolverMRP : public Solver
     }
 
     /** Update the time increment between requests when the answered reply
-    * date isn't usable. */
+      * date isn't usable. */
     void setMinimumDelay(Duration l)
     {
       if (l < 0L) throw DataException("Invalid minimum delay");
@@ -942,7 +942,7 @@ class SolverMRP : public Solver
         }
 
         /** Constructor. */
-        SolverMRPdata(SolverMRP* s = nullptr, int c = 0, deque<Demand*>* d = nullptr);
+        SolverMRPdata(SolverMRP* s=nullptr, int c=0, deque<Demand*>* d=nullptr);
 
         /** Destructor. */
         ~SolverMRPdata();
@@ -982,31 +982,10 @@ class SolverMRP : public Solver
         }
 
         /** Add a new state to the status stack. */
-        inline void push(double q = 0.0, Date d = Date::infiniteFuture)
-        {
-          if (state >= statestack + MAXSTATES)
-            throw RuntimeException("Maximum recursion depth exceeded");
-          ++state;
-          ++prevstate;
-          state->q_qty = q;
-          state->q_date = d;
-          state->q_date_max = d;
-          state->curOwnerOpplan = nullptr;
-          state->q_loadplan = nullptr;
-          state->q_flowplan = nullptr;
-          state->q_operationplan = nullptr;
-          state->curDemand = nullptr;
-          state->a_cost = 0.0;
-          state->a_penalty = 0.0;
-        }
+        void push(double q = 0.0, Date d = Date::infiniteFuture, bool full = false);
 
         /** Removes a state from the status stack. */
-        inline void pop()
-        {
-          if (--state < statestack)
-            throw LogicException("State stack empty");
-          --prevstate;
-        }
+        void pop(bool copy_answer = false);
 
       private:
         static const int MAXSTATES = 256;
@@ -1023,7 +1002,7 @@ class SolverMRP : public Solver
         CommandManager* mgr = nullptr;
 
         /** Points to the solver. */
-        SolverMRP* sol;
+        SolverMRP* sol = nullptr;
 
         /** An identifier of the cluster being replanned. Note that it isn't
           * always the complete cluster that is being planned.

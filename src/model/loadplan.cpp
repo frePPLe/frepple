@@ -123,7 +123,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 }
 
 
-void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup, bool use_start)
+void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 {
   // Nothing to do
   if (res == newres) return;
@@ -187,6 +187,9 @@ void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup, bool 
     else break;
   }
 
+  // Force recalculation of the setup in the next step
+  oper->clearSetupEvent();
+
   // The new resource may have a different availability calendar,
   // and we need to make sure to respect it.
   if (use_start)
@@ -194,9 +197,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool updatesetup, bool 
   else
     oper->setEnd(oper->getEnd());
 
-  // Update the setup time
-  if (updatesetup)
-    oper->updateSetupTime();
+  // Update the setup time on the old resource
   if (oldRes)
     oldRes->updateSetupTime();
 
@@ -271,14 +272,13 @@ SetupEvent* LoadPlan::getSetup(bool include) const
   else
     // End loadplan
     tmp = getOtherLoadPlan();
-  if (!include)
-    --tmp;
   while (tmp != getResource()->getLoadPlans().end())
   {
      if (
        tmp->getEventType() == 5 &&
-       (include || tmp->getDate() != opplan->getSetupEnd()
-         || (tmp->getOperationPlan() && *(tmp->getOperationPlan()) < *opplan))
+       (!include || tmp->getOperationPlan() != opplan) &&
+       (tmp->getDate() < opplan->getSetupEnd()
+         || (tmp->getOperationPlan() && tmp->getDate() == opplan->getSetupEnd() && *(tmp->getOperationPlan()) < *opplan))
        )
        return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;

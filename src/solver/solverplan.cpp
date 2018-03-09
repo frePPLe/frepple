@@ -156,6 +156,57 @@ bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
 }
 
 
+void SolverMRP::SolverMRPdata::push(double q, Date d, bool full)
+{
+  if (state >= statestack + MAXSTATES)
+    throw RuntimeException("Maximum recursion depth exceeded");
+  ++state;
+  ++prevstate;
+  state->q_qty = q;
+  state->q_date = d;
+  state->q_date_max = d;
+  if (full)
+  {
+    state->q_loadplan = prevstate->q_loadplan;
+    state->q_flowplan = prevstate->q_flowplan;
+    state->q_operationplan = prevstate->q_operationplan;
+    state->curOwnerOpplan = prevstate->curOwnerOpplan;
+    state->curDemand = prevstate->curDemand;
+    state->curBuffer = prevstate->curBuffer;
+  }
+  else
+  {
+    state->q_loadplan = nullptr;
+    state->q_flowplan = nullptr;
+    state->q_operationplan = nullptr;
+    state->curOwnerOpplan = nullptr;
+    state->curDemand = nullptr;
+    state->curBuffer = nullptr;
+  }
+  state->forceLate = false;
+  state->a_cost = 0.0;
+  state->a_penalty = 0.0;
+  state->a_date = Date::infiniteFuture;
+  state->a_qty = 0.0;
+}
+
+
+void SolverMRP::SolverMRPdata::pop(bool copy_answer)
+{
+  if (state < statestack)
+    throw LogicException("State stack empty");
+  if (copy_answer)
+  {
+    prevstate->a_qty = state->a_qty;
+    prevstate->a_date = state->a_date;
+    prevstate->a_penalty = state->a_penalty;
+    prevstate->a_cost = state->a_cost;
+  }
+  --state;
+  --prevstate;
+}
+
+
 void SolverMRP::SolverMRPdata::commit()
 {
   // Check

@@ -511,7 +511,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
   if (data->state->curBuffer)
   {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
-    if (f && f->getQuantity()>0.0)
+    if (f && f->getQuantity() > 0.0)
     {
       if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
       {
@@ -526,7 +526,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
       // The producing operation doesn't have a valid flow into the current
       // buffer. Either it is missing or it is producing a negative quantity.
       throw DataException("Invalid producing operation '" + oper->getName()
-          + "' for buffer '" + data->state->curBuffer->getName() + "'");
+        + "' for buffer '" + data->state->curBuffer->getName() + "'");
   }
 
   // Message

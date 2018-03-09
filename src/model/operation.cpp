@@ -603,7 +603,7 @@ Operation::SetupInfo Operation::calculateSetup(
       // Calculate the setup time
       SetupEvent* cursetup = setupevent ?
         setupevent->getSetupBefore() :
-        ld->getResource()->getSetupAt(setupend, false, opplan);
+        ld->getResource()->getSetupAt(setupend, opplan);
       if (cursetup && cursetup->getSetup() == ld->getSetup())
         return SetupInfo(nullptr, nullptr, PooledString());
       else
@@ -621,7 +621,7 @@ Operation::SetupInfo Operation::calculateSetup(
   {
     // Second case: This operationplan already has loadplans. Using them
     // is more efficient, and some of them may already be switched to 
-    // alternate resources.    
+    // alternate resources.
     for (; ldplan != opplan->endLoadPlans(); ++ldplan)
     {
       if (ldplan->getQuantity() < 0 || ldplan->getLoad()->getSetup().empty() || !ldplan->getResource()->getSetupMatrix())
@@ -652,7 +652,7 @@ Operation::SetupInfo Operation::calculateSetup(
           DateRange setup_dates = opplan->getOperation()->calculateOperationTime(opplan, setupend, get<1>(setup)->getDuration(), true);
           logger << "    ---    " << opplan << "     " << setup_dates << "     ---      " << setupend << endl;
           // Get the setup valid at this date
-          SetupEvent* setup_event_2 = ldplan->getResource()->getSetupAt(setup_dates.getEnd(), false);
+          SetupEvent* setup_event_2 = ldplan->getResource()->getSetupAt(setup_dates.getEnd(), opplan);
           if (setup_event_2 && cursetup && setup_event_2->getSetup() != cursetup->getSetup())
           {
             // Oops, It's different
@@ -777,7 +777,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   if (forward)
   {
     // Compute forward from the start date
-    setuptime_required = calculateSetup(opplan, s);
+    setuptime_required = calculateSetup(opplan, s, opplan->getSetupEvent(), true);
     if (get<1>(setuptime_required))
     {
       setup_dates = calculateOperationTime(opplan, s, get<1>(setuptime_required)->getDuration(), true, &setup_duration);
@@ -825,7 +825,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     else
       opplan->setQuantity(0);
   }
-  else
+  else if (opplan->getProposed())
   {
     // All quantities are valid, as long as they are above the minimum size and
     // below the maximum size
@@ -1003,27 +1003,30 @@ OperationTimePer::setOperationPlanParameters(
   if (opplan->getConfirmed())
     return OperationPlanState(opplan);
 
-  // Respect minimum and maximum size
-  if (q > 0)
+  if (opplan->getProposed())
   {
-    if (getSizeMinimumCalendar())
+    // Proposed operationplans need to respect minimum and maximum size
+    if (q > 0)
     {
-      // Respect time varying minimum.
-      // This configuration is not really supported: when the size changes
-      // a different minimum size could be effective. The planning results
-      // in a constrained plan can be not optimal or incorrect.
-      Duration tmp1;
-      DateRange tmp2 = calculateOperationTime(opplan, s, e, &tmp1);
-      double curmin = getSizeMinimumCalendar()->getValue(tmp2.getEnd());
-      if (q < curmin)
-        q = roundDown ? 0.0 : curmin;
+      if (getSizeMinimumCalendar())
+      {
+        // Respect time varying minimum.
+        // This configuration is not really supported: when the size changes
+        // a different minimum size could be effective. The planning results
+        // in a constrained plan can be not optimal or incorrect.
+        Duration tmp1;
+        DateRange tmp2 = calculateOperationTime(opplan, s, e, &tmp1);
+        double curmin = getSizeMinimumCalendar()->getValue(tmp2.getEnd());
+        if (q < curmin)
+          q = roundDown ? 0.0 : curmin;
+      }
+      if (q < getSizeMinimum())
+        // Respect constant minimum value
+        q = roundDown ? 0.0 : getSizeMinimum();
     }
-    if (q < getSizeMinimum())
-      // Respect constant minimum value
-      q = roundDown ? 0.0 : getSizeMinimum();
+    if (q > getSizeMaximum())
+      q = getSizeMaximum();
   }
-  if (q > getSizeMaximum())
-    q = getSizeMaximum();
 
   // The logic depends on which dates are being passed along
   Duration production_duration;
@@ -1288,7 +1291,7 @@ OperationTimePer::setOperationPlanParameters(
     );
 
     // Compute the setup time
-    setuptime_required = calculateSetup(opplan, s);
+    setuptime_required = calculateSetup(opplan, s, opplan->getSetupEvent(), true);
     if (get<1>(setuptime_required))
     {
       setup_dates = calculateOperationTime(opplan, s, get<1>(setuptime_required)->getDuration(), true, &setup_duration);

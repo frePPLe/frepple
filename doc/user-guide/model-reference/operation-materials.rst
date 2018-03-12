@@ -8,7 +8,8 @@ material from buffers by operations.
 Different types are available:
 
 * | **start**:
-  | Consume (or produce) material at the start of an operationplan.
+  | Consume (or produce) material at the start of an operationplan, right
+    after any setup time on the loaded resource has been completed.
   | The quantity consumed or produced is proportional to the quantity of the
     operationplan.
 
@@ -18,7 +19,8 @@ Different types are available:
     operationplan.
 
 * | **fixed_start**:
-  | Consume (or produce) material at the start of an operationplan.
+  | Consume (or produce) material at the start of an operationplan, right
+    after any setup time on the loaded resource has been completed.
   | The quantity consumed or produced is constant and independent of the
     quantity of the operationplan.
 
@@ -29,7 +31,8 @@ Different types are available:
     
 * | **transfer_batch**:
   | Consume (or produce) material in a number of batches of fixed size
-    at various moments during the total duration of the operationplan.
+    at various moments during the total duration of the operationplan
+    (not including the setup time on the loaded resource).
 
 **Fields**
 

@@ -682,7 +682,7 @@ SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan)
   {
     if (tmp->getEventType() == 5 && (!opplan || opplan != tmp->getOperationPlan()) && (
       tmp->getDate() < d ||
-      (tmp->getDate() == d && opplan && tmp->getOperationPlan() &&  *opplan < *tmp->getOperationPlan())
+      (tmp->getDate() == d && opplan && tmp->getOperationPlan() && *opplan < *tmp->getOperationPlan())
       ))
       return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;
@@ -697,28 +697,14 @@ void Resource::updateSetupTime() const
   if (setupmatrix)
   {
     bool changed;
-    if (OperationPlan::getSetupEndFixed())
-      do
-      {
-        changed = false;
-        for (auto qq = getLoadPlans().rbegin(); qq != getLoadPlans().end() && !changed; --qq)
-          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && !qq->getOperationPlan()->getConfirmed())
-          {
-            changed = qq->getOperationPlan()->updateSetupTime();
-          }
-      }
-      while (changed);
-    else
-      do
-      {
-        changed = false;
-        for (auto qq = getLoadPlans().begin(); qq != getLoadPlans().end() && !changed; ++qq)
-          if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && !qq->getOperationPlan()->getConfirmed())
-          {
-            changed = qq->getOperationPlan()->updateSetupTime();
-          }
-      }
-      while (changed);
+    do
+    {
+      changed = false;
+      for (auto qq = getLoadPlans().rbegin(); qq != getLoadPlans().end() && !changed; --qq)
+        if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 && !qq->getOperationPlan()->getConfirmed())
+          changed = qq->getOperationPlan()->updateSetupTime();
+    }
+    while (changed);
   }
   OperationPlan::setPropagateSetups(tmp);
 }

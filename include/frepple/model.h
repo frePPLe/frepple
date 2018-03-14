@@ -2361,7 +2361,7 @@ class OperationPlan
       */
     virtual void setStart(Date, bool force);
 
-	void setStart(Date d)
+	  void setStart(Date d)
     {
       setStart(d, false);
     }
@@ -2564,18 +2564,6 @@ class OperationPlan
     }
 
     static PyObject* createIterator(PyObject* self, PyObject* args);
-    
-    static bool getSetupEndFixed()
-    {
-      return setupEndFixed;
-    }
-
-    static bool setSetupEndFixed(bool b)
-    {
-      auto tmp = setupEndFixed;
-      setupEndFixed = b;
-      return tmp;
-    }
 
     static bool getPropagateSetups()
     {
@@ -2677,13 +2665,6 @@ class OperationPlan
       * @see assignIdentifier()
       */
     static unsigned long counterMin;
-
-    /** Flag to control how we update the setup duration of operationplans.
-      * By default we update by keeping the setup END date constant.
-      * Setting the variable to false will update by keeping the setup START
-      * date constant.
-      */
-    static bool setupEndFixed;
 
     /** Flag controlling where setup time verification should be performed. */
     static bool propagatesetups;
@@ -3367,7 +3348,7 @@ class Operation : public HasName<Operation>,
       * The date argument can either be the start or the end date
       * of a setup, depending on the value of the third argument.
       */
-    SetupInfo calculateSetup(OperationPlan*, Date, SetupEvent* = nullptr, bool use_start = false) const;
+    SetupInfo calculateSetup(OperationPlan*, Date, SetupEvent* = nullptr, SetupEvent** = nullptr) const;
 
   private:
     /** List of operations using this operation as a sub-operation */
@@ -5850,7 +5831,7 @@ class BufferProcure : public Buffer
 
 /** @brief This class defines a material flow to/from a buffer, linked with an
   * operation. This default implementation plans the material flow at the
-  * start of the operation.
+  * start of the operation, after the setup time has been completed.
   */
 class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
   public Solvable, public HasSource
@@ -6129,8 +6110,8 @@ class FlowFixedEnd : public FlowEnd
 };
 
 
-/** @brief This class represents a flow at start date of the
-  * operation and with a fiwed quantity.
+/** @brief This class represents a flow at start date of the operation
+  * (after the setup time has been completed) and with a fixed quantity.
   */
 class FlowFixedStart : public FlowStart
 {

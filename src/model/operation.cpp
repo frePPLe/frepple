@@ -575,7 +575,7 @@ DateRange Operation::calculateOperationTime(
 
 
 Operation::SetupInfo Operation::calculateSetup(
-  OperationPlan* opplan, Date setupend, SetupEvent* setupevent, bool use_start
+  OperationPlan* opplan, Date setupend, SetupEvent* setupevent, SetupEvent** prevevent
   ) const
 {
   // Shortcuts: there are no setup matrices or resources
@@ -604,17 +604,13 @@ Operation::SetupInfo Operation::calculateSetup(
       SetupEvent* cursetup = setupevent ?
         setupevent->getSetupBefore() :
         ld->getResource()->getSetupAt(setupend, opplan);
-      if (cursetup && cursetup->getSetup() == ld->getSetup())
-        return SetupInfo(nullptr, nullptr, PooledString());
-      else
-      {        
-          auto setup = SetupInfo(
-            ld->getResource(),
-            ld->getResource()->getSetupMatrix()->calculateSetup(cursetup ? cursetup->getSetup() : "", ld->getSetup(), ld->getResource()),
-            ld->getSetup()
-          );
-          return setup;
-      }
+      if (prevevent)
+        *prevevent = cursetup;
+      return SetupInfo(
+        ld->getResource(),
+        ld->getResource()->getSetupMatrix()->calculateSetup(cursetup ? cursetup->getSetup() : "", ld->getSetup(), ld->getResource()),
+        ld->getSetup()
+        );
     }
   }
   else
@@ -635,58 +631,15 @@ Operation::SetupInfo Operation::calculateSetup(
         throw DataException("Only a single resource with a setup matrix is allowed per operation");
 
       // Calculate the setup time
-      SetupEvent* cursetup = ldplan->getSetup(false);
-      if (cursetup && (cursetup->getSetup() == ldplan->getLoad()->getSetup() && ldplan->getResource()->getSetupMatrix()))
-        return SetupInfo(nullptr, nullptr, PooledString());
-      else
-      {
-        auto setup = SetupInfo(
-          ldplan->getResource(),
-          ldplan->getResource()->getSetupMatrix()
-          ->calculateSetup(cursetup ? cursetup->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
-          ldplan->getLoad()->getSetup()
-        );
-        if (use_start && get<1>(setup))
-        {
-          // Compute the end of the setup when we apply this rule
-          DateRange setup_dates = opplan->getOperation()->calculateOperationTime(opplan, setupend, get<1>(setup)->getDuration(), true);
-          logger << "    ---    " << opplan << "     " << setup_dates << "     ---      " << setupend << endl;
-          // Get the setup valid at this date
-          SetupEvent* setup_event_2 = ldplan->getResource()->getSetupAt(setup_dates.getEnd(), opplan);
-          if (setup_event_2 && cursetup && setup_event_2->getSetup() != cursetup->getSetup())
-          {
-            // Oops, It's different
-            ldplan->getResource()->inspect();
-            logger << "      B) different setup at end than at start! "
-              << setup_dates << setup_event_2->getSetup() << "     " << cursetup->getSetup() << "   "
-              << setup_event_2->getDate() << "   " << cursetup->getDate()
-              << endl;
-            auto newsetup = SetupInfo(
-              ldplan->getResource(),
-              ldplan->getResource()->getSetupMatrix()
-              ->calculateSetup(setup_event_2 ? setup_event_2->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
-              ldplan->getLoad()->getSetup()
-            );
-            logger << "  new setup" << get<0>(newsetup) << "    " << get<1>(newsetup) << "   " << get<2>(newsetup) << endl;
-            if (get<1>(newsetup))
-            {
-              DateRange new_setup_dates = opplan->getOperation()->calculateOperationTime(opplan, setupend, get<1>(newsetup)->getDuration(), true);
-              logger << "   " << new_setup_dates << "        " << (new_setup_dates.getEnd() > setup_event_2->getDate()) << endl;
-              if (new_setup_dates.getEnd() > setup_event_2->getDate())
-              {
-                // The new setup takes longer.
-                // If it takes shorter, we stay on the previous setup calculation
-                //setup = newsetup;
-                logger << " avoiding the pitfall again" << endl;
-              }
-            }
-            else
-              logger << " avoiding the pitfall again NULL " << endl;
-              //setup = SetupInfo(nullptr, nullptr, PooledString());
-          }
-        }
-        return setup;
-      }       
+      SetupEvent* cursetup = ldplan->getResource()->getSetupAt(setupend, opplan);
+      if (prevevent)
+        *prevevent = cursetup;
+      return SetupInfo(
+        ldplan->getResource(),
+        ldplan->getResource()->getSetupMatrix()
+        ->calculateSetup(cursetup ? cursetup->getSetup() : "", ldplan->getLoad()->getSetup(), ldplan->getResource()),
+        ldplan->getLoad()->getSetup()
+        );  
     }
   }
   return SetupInfo(nullptr, nullptr, PooledString());
@@ -773,24 +726,37 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     forward = true;
   else
     forward = false;
+  Date d = s;
 
+  do 
+  {
   if (forward)
   {
     // Compute forward from the start date
-    setuptime_required = calculateSetup(opplan, s, opplan->getSetupEvent(), true);
-    if (get<1>(setuptime_required))
+    setuptime_required = calculateSetup(opplan, d, opplan->getSetupEvent());
+    if (get<0>(setuptime_required))
     {
-      setup_dates = calculateOperationTime(opplan, s, get<1>(setuptime_required)->getDuration(), true, &setup_duration);
-      if (setup_duration != get<1>(setuptime_required)->getDuration())
-        // Damned, not enough time to setup the resource
-        production_dates = DateRange(setup_dates.getEnd(), setup_dates.getEnd());
+      if (get<1>(setuptime_required))
+      {
+        // Apply a setup matrix rule
+        setup_dates = calculateOperationTime(opplan, d, get<1>(setuptime_required)->getDuration(), true, &setup_duration);
+        if (setup_duration != get<1>(setuptime_required)->getDuration())
+          // Damned, not enough time to setup the resource
+          production_dates = DateRange(setup_dates.getEnd(), setup_dates.getEnd());
+        else
+          production_dates = calculateOperationTime(opplan, setup_dates.getEnd(), duration, true, &production_duration);
+      }
       else
-        production_dates = calculateOperationTime(opplan, setup_dates.getEnd(), duration, true, &production_duration);
+      {
+        // Dummy changeover
+        setup_dates = DateRange(d, d);
+        production_dates = calculateOperationTime(opplan, d, duration, true, &production_duration);
+      }
     }
     else
     {
       // No setup required
-      production_dates = calculateOperationTime(opplan, s, duration, true, &production_duration);
+      production_dates = calculateOperationTime(opplan, d, duration, true, &production_duration);
       setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
     }    
   }
@@ -805,11 +771,12 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     {
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
       if (get<1>(setuptime_required))
+        // Apply setup matrix rule
         setup_dates = calculateOperationTime(
           opplan, production_dates.getStart(), get<1>(setuptime_required)->getDuration(), false, &setup_duration
           );
       else
-        // No setup required
+        // Dummy or no setup required
         setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
     }
   }
@@ -866,7 +833,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   }
 
   // Update the operationplan
-  if (get<1>(setuptime_required))
+  if (get<0>(setuptime_required))
     opplan->setSetupEvent(
       get<0>(setuptime_required),
       setup_dates.getEnd(),
@@ -876,6 +843,14 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   else
     opplan->clearSetupEvent();
   opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
+
+  if (forward && opplan->getStart() < s)
+  {
+    d += Duration(3600L);
+    logger << "   lazy loop for " << d << "   : " << s << "    " << opplan << endl;
+  }
+  }
+  while (opplan->getStart() < s && forward);
   return OperationPlanState(opplan);
 }
 
@@ -1058,7 +1033,7 @@ OperationTimePer::setOperationPlanParameters(
     }
     else
     {
-      // No setup required
+      // Dummy or no setup required
       production_dates = calculateOperationTime(opplan, s, e, &production_duration);
       setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
     }
@@ -1115,7 +1090,7 @@ OperationTimePer::setOperationPlanParameters(
       }
       if (!execute)
       {
-        if (get<1>(setuptime_required))
+        if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
             get<0>(setuptime_required)->getLoadPlans(),
@@ -1128,7 +1103,7 @@ OperationTimePer::setOperationPlanParameters(
         else
           return OperationPlanState(production_dates, q);
       }
-      if (get<1>(setuptime_required))
+      if (get<0>(setuptime_required))
         opplan->setSetupEvent(
           get<0>(setuptime_required),
           setup_dates.getEnd(),
@@ -1170,11 +1145,11 @@ OperationTimePer::setOperationPlanParameters(
         }
       }
       else
-        // No setup involved
+        // Dummy or no setup involved
         setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
       if (!execute)
       {
-        if (get<1>(setuptime_required))
+        if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
             get<0>(setuptime_required)->getLoadPlans(),
@@ -1187,7 +1162,7 @@ OperationTimePer::setOperationPlanParameters(
         else
           return OperationPlanState(production_dates, q);
       }
-      if (get<1>(setuptime_required))
+      if (get<0>(setuptime_required))
         opplan->setSetupEvent(
           get<0>(setuptime_required),
           setup_dates.getEnd(),
@@ -1230,7 +1205,7 @@ OperationTimePer::setOperationPlanParameters(
       }
       else
       {
-        // No setup involved
+        // Dummy or no setup involved
         setup_duration = Duration(0L);
         setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
       }
@@ -1253,7 +1228,7 @@ OperationTimePer::setOperationPlanParameters(
       }
       if (!execute)
       {
-        if (get<1>(setuptime_required))
+        if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
             get<0>(setuptime_required)->getLoadPlans(),
@@ -1266,7 +1241,7 @@ OperationTimePer::setOperationPlanParameters(
         else
           return OperationPlanState(production_dates, q);
       }
-      if (get<1>(setuptime_required))
+      if (get<0>(setuptime_required))
         opplan->setSetupEvent(
           get<0>(setuptime_required),
           setup_dates.getEnd(),
@@ -1280,6 +1255,8 @@ OperationTimePer::setOperationPlanParameters(
   }
   else
   {
+    Date d = s;
+
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
     q = opplan->setQuantity(q, roundDown, false, execute);
@@ -1290,11 +1267,13 @@ OperationTimePer::setOperationPlanParameters(
       duration + static_cast<long>(duration_per * q + 0.5)
     );
 
-    // Compute the setup time
-    setuptime_required = calculateSetup(opplan, s, opplan->getSetupEvent(), true);
-    if (get<1>(setuptime_required))
+    do
     {
-      setup_dates = calculateOperationTime(opplan, s, get<1>(setuptime_required)->getDuration(), true, &setup_duration);
+    // Compute the setup time
+    setuptime_required = calculateSetup(opplan, d, nullptr);
+    if (get<0>(setuptime_required) && get<1>(setuptime_required))
+    {
+      setup_dates = calculateOperationTime(opplan, d, get<1>(setuptime_required)->getDuration(), true, &setup_duration);
       if (setup_duration != get<1>(setuptime_required)->getDuration())
       {
         // No time to do the setup
@@ -1308,7 +1287,7 @@ OperationTimePer::setOperationPlanParameters(
     }
     else
       // No setup involved
-      setup_dates = DateRange(s, s);
+      setup_dates = DateRange(d, d);
 
     Duration actual;
     production_dates = calculateOperationTime(
@@ -1319,7 +1298,7 @@ OperationTimePer::setOperationPlanParameters(
       // Size is as desired
       if (!execute)
       {
-        if (get<1>(setuptime_required))
+        if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
             get<0>(setuptime_required)->getLoadPlans(),
@@ -1332,13 +1311,13 @@ OperationTimePer::setOperationPlanParameters(
         else
           return OperationPlanState(production_dates, q);
       }
-      if (get<1>(setuptime_required))
+      if (get<0>(setuptime_required))
         opplan->setSetupEvent(
           get<0>(setuptime_required),
           setup_dates.getEnd(),
           get<2>(setuptime_required),
           get<1>(setuptime_required)
-          );
+        );
       else
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
@@ -1350,7 +1329,7 @@ OperationTimePer::setOperationPlanParameters(
         return OperationPlanState(production_dates, 0.0);
       opplan->setQuantity(0, true, false);
       opplan->clearSetupEvent();
-      opplan->setStartAndEnd(s, s);
+      opplan->setStartAndEnd(d, d);
     }
     else
     {
@@ -1367,7 +1346,7 @@ OperationTimePer::setOperationPlanParameters(
         );
       if (!execute)
       {
-        if (get<1>(setuptime_required))
+        if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
             get<0>(setuptime_required)->getLoadPlans(),
@@ -1380,7 +1359,7 @@ OperationTimePer::setOperationPlanParameters(
         else
           return OperationPlanState(production_dates, q);
       }
-      if (get<1>(setuptime_required))
+      if (get<0>(setuptime_required))
         opplan->setSetupEvent(
           get<0>(setuptime_required),
           setup_dates.getEnd(),
@@ -1391,6 +1370,10 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
+    if (opplan->getStart() < s)
+      d += Duration(3600L);
+    }
+    while (opplan->getStart() < s);
   }
   return OperationPlanState(opplan);
 }

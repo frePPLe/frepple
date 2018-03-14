@@ -31,7 +31,6 @@ const MetaCategory* OperationPlan::metacategory;
 const MetaClass* OperationPlan::InterruptionIterator::metadata;
 const MetaCategory* OperationPlan::InterruptionIterator::metacategory;
 unsigned long OperationPlan::counterMin = 2;
-bool OperationPlan::setupEndFixed = true;
 bool OperationPlan::propagatesetups = true;
 
 
@@ -118,8 +117,8 @@ void OperationPlan::restore(const OperationPlanState& x)
 {
   getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
   if (quantity != x.quantity) quantity = x.quantity;
-  assert(dates.getStart() == x.start || x.start != x.end);
-  assert(dates.getEnd() == x.end || x.start != x.end);
+  //assert(dates.getStart() == x.start || x.start != x.end);
+  //assert(dates.getEnd() == x.end || x.start != x.end);
   if (!SetupMatrix::empty())
     scanSetupTimes();
 }
@@ -1179,7 +1178,9 @@ void OperationPlan::setStart (Date d, bool force)
 
   // Update flow and loadplans
   update();
+  assert(getStart() >= d);
 }
+
 
 void OperationPlan::setEnd(Date d, bool force)
 {
@@ -1214,6 +1215,7 @@ void OperationPlan::setEnd(Date d, bool force)
 
   // Update flow and loadplans
   update();
+  //assert(getEnd() <= d);
 }
 
 
@@ -1374,63 +1376,44 @@ bool OperationPlan::updateSetupTime(bool report)
   // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
   Date end_of_setup = getSetupEnd();
   bool changed = false;
-  if (setupEndFixed)
+
+  // Keep the setup end date constant during the update 
+  Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup, setupevent);
+  if (get<0>(setup))
   {
-    // Keep the setup end date constant during the update 
-    Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup, setupevent, false);
+    // Setup event required
     if (get<1>(setup))
     {
-      // Setup event required
+      // Apply setup rule duration
       DateRange tmp = oper->calculateOperationTime(this, end_of_setup, get<1>(setup)->getDuration(), false);
       setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
       if (tmp.getStart() != getStart())
       {
         setStartAndEnd(tmp.getStart(), getEnd());
         changed = true;
-      }       
+      }
     }
-    else
+    else if (getStart() != end_of_setup)
     {
-      // No setup event required
-      if (setupevent)
-      {
-        clearSetupEvent();
-        changed = true;
-      }
-      if (end_of_setup != getStart())
-      {
-        setStartAndEnd(end_of_setup, getEnd());
-        changed = true;
-      }
+      // Zero time event
+      setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
+      setStartAndEnd(end_of_setup, getEnd());
+      changed = true;
     }
+  
   }
   else
   {
-    // Keep the setup start date constant during the update
-    Operation::SetupInfo setup = oper->calculateSetup(this, getStart(), setupevent, true);
-    if (get<1>(setup))
+    // No setup event required
+    if (setupevent)
     {
-      // Setup event required
-      DateRange setup_dates = oper->calculateOperationTime(this, getStart(), get<1>(setup)->getDuration(), true);
-      if (getSetupEnd() != setup_dates.getEnd())
-      {
-        setStart(getStart());
-        changed = true;
-      }
+      clearSetupEvent();
+      changed = true;
     }
-    else
+    if (end_of_setup != getStart())
     {
-      // No setup event required
-      if (setupevent)
-      {
-        clearSetupEvent();
-        changed = true;
-      }
-      if (end_of_setup != getStart())
-      {
-        setStart(end_of_setup);
-        changed = true;
-      }
+      setStartAndEnd(end_of_setup, getEnd());
+      changed = true;
     }
   }
   return changed;

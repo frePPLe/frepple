@@ -51,10 +51,9 @@ transferbatch   double            | Batch size by in which material is produced 
                                   | The default value is null, in which case we default to 
                                     produce at the end when the quantity is positive, or 
                                     consume at the start when the quantity is negative.
-                                  | Warning: Setting a low value can have a big impact on
-                                    the memory size and planning time. What you gain in 
-                                    additional accuracy of the plan may not be worth the
-                                    extra complexity.                              
+                                  | To protect against a big impact on performance and 
+                                    memory footprint we limit the number of material transfer
+                                    batches to 50 per operationplan.                            
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

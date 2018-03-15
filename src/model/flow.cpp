@@ -356,22 +356,30 @@ pair<Date, double> FlowFixedEnd::getFlowplanDateQuantity(const FlowPlan* fl) con
 
 pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  if (!getTransferBatch() || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
+  double batch_quantity = getTransferBatch();
+  if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
     // Default to a simple flowplan at the start or end
     return make_pair(
       getQuantity() < 0 ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
       getQuantity() * fl->getOperationPlan()->getQuantity()
       );
   
-  // Count the index of this batch
+  // Compute the number of batches
   double total_quantity = fl->getOperationPlan()->getQuantity() * getQuantity();
-  bool found = false;
-  unsigned int count = 0;
-  unsigned int totalcount = 0;
   double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) / getTransferBatch());
   if (!batches)
     batches = 1;
+  else if (batches > 50)
+  {
+    // Put a limit to the number of batches
+    batches = 50;
+    batch_quantity = (getQuantity() > 0 ? total_quantity : -total_quantity) / 50;
+  }
 
+  // Count the index of this batch
+  bool found = false;
+  unsigned int count = 0;
+  unsigned int totalcount = 0;
   FlowPlan* cur_flpln = fl->getOperationPlan()->firstflowplan;
   FlowPlan* prev_flpln = nullptr;
   while (cur_flpln)
@@ -420,26 +428,20 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
   if (getQuantity() > 0)
   {
     // Producing a batch
-    double batches = ceil(total_quantity / getTransferBatch());
-    if (!batches)
-      batches = 1.0;
     op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * (count + 1);
-    total_quantity -= count * getTransferBatch();
+    total_quantity -= count * batch_quantity;
     if (total_quantity < 0.0)
       total_quantity = 0.0;
     return make_pair(
       fl->getOperation()->calculateOperationTime(
         fl->getOperationPlan(), op_date, op_delta, true
         ).getEnd(),
-      total_quantity > getTransferBatch() ? getTransferBatch() : total_quantity
+      total_quantity > batch_quantity ? batch_quantity : total_quantity
     );
   }
   else
   {
     // Consuming a batch
-    double batches = ceil(-total_quantity / getTransferBatch());
-    if (!batches)
-      batches = 1.0;
     op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * count;
     total_quantity += count * getTransferBatch();
     if (total_quantity > 0.0)
@@ -448,7 +450,7 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
       fl->getOperation()->calculateOperationTime(
         fl->getOperationPlan(), op_date, op_delta, true
       ).getEnd(),
-      total_quantity < -getTransferBatch() ? -getTransferBatch() : total_quantity
+      total_quantity < -batch_quantity ? -batch_quantity : total_quantity
     );
   }
 }

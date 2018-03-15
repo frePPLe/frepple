@@ -99,7 +99,6 @@ void Resource::inspect(const string msg) const
   if (!msg.empty()) logger  << msg;
   logger << endl;
 
-  OperationPlan *opplan = nullptr;
   for (loadplanlist::const_iterator oo = getLoadPlans().begin();
     oo != getLoadPlans().end();
     ++oo)

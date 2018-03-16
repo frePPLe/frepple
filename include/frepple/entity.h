@@ -117,6 +117,6 @@ template <class T> HasHierarchy<T>::~HasHierarchy()
 template <class T> unsigned short HasHierarchy<T>::getHierarchyLevel() const
 {
   unsigned short i(0);
-  for (const T* p = this; p->parent; p = p->parent) ++i;
+  for (auto p = this; p->parent; p = p->parent) ++i;
   return i;
 }

@@ -274,12 +274,11 @@ SetupEvent* LoadPlan::getSetup(bool include) const
     tmp = getOtherLoadPlan();
   while (tmp != getResource()->getLoadPlans().end())
   {
-     if (
-       tmp->getEventType() == 5 &&
-       (!include || tmp->getOperationPlan() != opplan) &&
-       (tmp->getDate() < opplan->getSetupEnd()
-         || (tmp->getOperationPlan() && tmp->getDate() == opplan->getSetupEnd() && *(tmp->getOperationPlan()) < *opplan))
-       )
+    if (tmp->getEventType() == 5 && (
+      (include && tmp->getOperationPlan() == opplan)
+      || tmp->getDate() < opplan->getSetupEnd()
+      || (tmp->getOperationPlan() && tmp->getDate() == opplan->getSetupEnd() && *(tmp->getOperationPlan()) < *opplan)
+      ))
        return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;
   }

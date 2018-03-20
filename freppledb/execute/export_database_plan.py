@@ -467,7 +467,12 @@ class export:
           continue
         for j in i.flowplans:
           #if the record is confirmed, it is already in the table.
-          if j.status == 'confirmed':
+          if not j.operationplan.id:
+            print(
+              "Warning: skip exporting uninitialized operationplan",
+              j.operationplan.operation.name, j.operationplan.quantity, j.operationplan.start, j.operationplan.end
+              )
+          elif j.status == 'confirmed':
             updates.append('''
             update operationplanmaterial
             set onhand=%s, flowdate='%s'
@@ -506,13 +511,20 @@ class export:
         if self.cluster != -1 and self.cluster != i.cluster:
           continue
         for j in i.loadplans:
-          if j.quantity < 0:
+          if j.quantity >= 0:
+            continue
+          if not j.operationplan.id:
+            print(
+              "Warning: skip exporting uninitialized operationplan: ",
+              j.operationplan.operation.name, j.operationplan.quantity, j.operationplan.start, j.operationplan.end
+              )
+          else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
               j.operationplan.id, j.resource.name,
               round(-j.quantity, 6),
               str(j.startdate), str(j.enddate),
               j.setup and j.setup or "\\N", j.status, currentTime
-              )),file=tmp)
+              )), file=tmp)
       tmp.seek(0)
       cursor.copy_from(
         tmp,

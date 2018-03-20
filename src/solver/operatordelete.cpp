@@ -254,8 +254,11 @@ void OperatorDelete::solve(const Buffer* b, void* v)
     // Recurse backward to find consumers we can resize
     double cur_shortage = fiter->getOnhand() + unresolvable;
     Buffer::flowplanlist::const_iterator fiter2 = fiter;
-    ++fiter; // increment to an event after the shortage start, because the iterator
-             // can get invalidated in the next loop
+    OperationPlan* curopplan = fiter->getOperationPlan();
+    do
+      ++fiter; // increment to an event after the shortage start, because the iterator
+               // can get invalidated in the next loop
+    while (fiter != fend && curopplan && fiter->getOperationPlan() == curopplan);  // A loop is required to handle transfer batches
     while (cur_shortage <= -ROUNDING_ERROR && fiter2 != fend)
     {
       if (fiter2->getQuantity() >= 0 || fiter2->getEventType() != 1)

@@ -844,13 +844,13 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     opplan->clearSetupEvent();
   opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
 
-  if (forward && opplan->getStart() < s)
+  if (forward && opplan->getStart() < s && s != Date::infiniteFuture)
   {
     d += Duration(3600L);
     logger << "   lazy loop for " << d << "   : " << s << "    " << opplan << endl;
   }
   }
-  while (opplan->getStart() < s && forward);
+  while (opplan->getStart() < s && forward && s != Date::infiniteFuture);
   return OperationPlanState(opplan);
 }
 
@@ -1370,10 +1370,10 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
-    if (opplan->getStart() < s)
+    if (opplan->getStart() < s && s != Date::infiniteFuture)
       d += Duration(3600L);
     }
-    while (opplan->getStart() < s);
+    while (opplan->getStart() < s  && s != Date::infiniteFuture);
   }
   return OperationPlanState(opplan);
 }

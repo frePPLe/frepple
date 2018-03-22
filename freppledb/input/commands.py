@@ -1303,6 +1303,8 @@ class loadOperationPlans(LoadTask):
         WHERE operationplan.owner_id IS NULL
           and operationplan.quantity >= 0 and operationplan.status <> 'closed'
           %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+          and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+          and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
         ORDER BY operationplan.id ASC
         ''' % (filter_and, confirmed_filter))
       for i in cursor:
@@ -1371,6 +1373,8 @@ class loadOperationPlans(LoadTask):
         on dmd.name = operationplan.demand_id
         WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
           %s%s and operationplan.type = 'MO'
+          and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+          and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
         ORDER BY operationplan.id ASC
         ''' % (filter_and, confirmed_filter))
       for i in cursor:

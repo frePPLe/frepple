@@ -83,12 +83,9 @@ class OdooReadData(PlanTask):
     #  return
 
     odoo_user = Parameter.getValue("odoo.user", database)
-
-    if settings.ODOO_PASSWORDS.get(database) == '':
+    odoo_password = settings.ODOO_PASSWORDS.get(database, None)
+    if not settings.ODOO_PASSWORDS.get(database):
       odoo_password = Parameter.getValue("odoo.password", database)
-    else:
-      odoo_password = settings.ODOO_PASSWORDS.get(database)
-
     odoo_db = Parameter.getValue("odoo.db", database)
     odoo_url = Parameter.getValue("odoo.url", database)
     odoo_company = Parameter.getValue("odoo.company", database)
@@ -205,7 +202,9 @@ class OdooWritePlan(PlanTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
     odoo_user = Parameter.getValue("odoo.user", database)
-    odoo_password = Parameter.getValue("odoo.password", database)
+    odoo_password = settings.ODOO_PASSWORDS.get(database, None)
+    if not settings.ODOO_PASSWORDS.get(database):
+      odoo_password = Parameter.getValue("odoo.password", database)
     odoo_db = Parameter.getValue("odoo.db", database)
     odoo_url = Parameter.getValue("odoo.url", database)
     odoo_company = Parameter.getValue("odoo.company", database)
@@ -229,7 +228,7 @@ class OdooWritePlan(PlanTask):
     if not ok:
       raise Exception("Odoo connector not configured correctly")
     boundary = email.generator._make_boundary()
-
+    
     # Generator function
     # We generate output in the multipart/form-data format.
     # We send the connection parameters as well as a file with the planning

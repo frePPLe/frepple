@@ -1792,7 +1792,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     {
       initType(metadata);
       dt = d;
-      tmline->insert(this);
+      if (opplan)
+        tmline->insert(this);
     }
 
     virtual OperationPlan* getOperationPlan() const

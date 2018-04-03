@@ -2360,16 +2360,17 @@ class OperationPlan
       * i.e. the sub operationplans are only moved if required to meet the
       * start date.
       */
-    virtual void setStart(Date, bool force);
+    void setStart(Date, bool force, bool preferend);
 
 	  void setStart(Date d)
     {
-      setStart(d, false);
+      setStart(d, false, true);
     }
+
 
     void setStartForce(Date d)
     {
-      setStart(d, true);
+      setStart(d, true, true);
     }
 
     static int initialize();

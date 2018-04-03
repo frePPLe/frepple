@@ -1147,7 +1147,7 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast)
 }
 
 
-void OperationPlan::setStart (Date d, bool force)
+void OperationPlan::setStart (Date d, bool force, bool preferEnd)
 {
   // Confirmed opplans don't move
   if (getConfirmed())
@@ -1159,7 +1159,7 @@ void OperationPlan::setStart (Date d, bool force)
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this,quantity,d,Date::infinitePast);
+    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd);
   else
   {
     // Move all sub-operationplans in an orderly fashion
@@ -1178,7 +1178,10 @@ void OperationPlan::setStart (Date d, bool force)
 
   // Update flow and loadplans
   update();
-  assert(getStart() >= d);
+  assert(
+    (preferEnd && getStart() >= d) ||
+    (!preferEnd && getStart() <= d)
+    );
 }
 
 

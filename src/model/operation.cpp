@@ -728,6 +728,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     forward = false;
   Date d = s;
 
+  bool repeat;
   do 
   {
   if (forward)
@@ -844,13 +845,20 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     opplan->clearSetupEvent();
   opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
 
-  if (forward && opplan->getStart() < s && s != Date::infiniteFuture)
+  if (forward && preferEnd && opplan->getStart() < s && s != Date::infiniteFuture)
   {
     d += Duration(3600L);
-    logger << "   lazy loop for " << d << "   : " << s << "    " << opplan << endl;
+    repeat = true;  
   }
+  else if (!forward && !preferEnd && opplan->getStart() > s && s != Date::infinitePast)
+  {
+    d -= Duration(3600L);
+    repeat = true;
   }
-  while (opplan->getStart() < s && forward && s != Date::infiniteFuture);
+  else
+    repeat = false;
+  }
+  while (repeat);
   return OperationPlanState(opplan);
 }
 
@@ -1267,6 +1275,7 @@ OperationTimePer::setOperationPlanParameters(
       duration + static_cast<long>(duration_per * q + 0.5)
     );
 
+    bool repeat;
     do
     {
     // Compute the setup time
@@ -1370,10 +1379,20 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
-    if (opplan->getStart() < s && s != Date::infiniteFuture)
+    if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture)
+    {
       d += Duration(3600L);
+      repeat = true;
     }
-    while (opplan->getStart() < s  && s != Date::infiniteFuture);
+    else if (!preferEnd && opplan->getStart() > s && s != Date::infinitePast)
+    {
+      d -= Duration(3600L);
+      repeat = true;
+    }
+    else
+      repeat = false;
+    }
+    while (repeat);
   }
   return OperationPlanState(opplan);
 }

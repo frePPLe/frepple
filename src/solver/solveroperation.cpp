@@ -612,7 +612,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
           Duration delta;
           oper->calculateOperationTime(z, shortage_d, flpln->getDate(), &delta);
           DateRange newdate = oper->calculateOperationTime(z, z->getStart(), delta, false);
-          z->setStart(newdate.getStart());
+          z->setStart(newdate.getStart(), false, false);
           repeat = true;
           break;
         }

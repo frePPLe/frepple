@@ -16,6 +16,7 @@
 #
 import os
 import logging
+import uuid 
 from time import time
 from datetime import datetime
 
@@ -66,6 +67,7 @@ class checkBuckets(CheckTask):
   # check for no buckets available
   # check for gaps between buckets (enddate bucket <> startdate next bucket)
   # check for overlaps (more than 1 bucket have the same startdate or the same enddate)
+  # make sure partial indexes are created
   description = "Checking Buckets"
   sequence = 80
 
@@ -105,6 +107,25 @@ class checkBuckets(CheckTask):
         raise ValueError("No Calendar Buckets available")
       if errors > 0:
         raise ValueError("Invalid Bucket dates")
+      
+      #ckeck if partial indexes exist
+      cursor.execute('''
+        select name from common_bucket
+        except
+        select description from pg_description 
+        inner join pg_class on pg_class.oid = pg_description.objoid
+        inner join pg_indexes on pg_indexes.indexname = pg_class.relname and pg_indexes.tablename = 'common_bucketdetail'
+      ''')
+      queries = []
+      for rec in cursor:
+        indexName = 'common_bucketdetail_' + str(uuid.uuid4())[:8]
+        queries.append("create index %s on common_bucketdetail (bucket_id) where bucket_id  = '%s';" % (indexName,rec[0]))
+        queries.append("comment on index %s is '%s';" % (indexName,rec[0]))
+      
+      if len(queries) > 0:
+        cursor.execute('\n'.join(queries))
+
+
 
         
 @PlanTaskRegistry.register

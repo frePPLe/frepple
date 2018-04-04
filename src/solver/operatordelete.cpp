@@ -368,9 +368,13 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       if (fiter->getEventType() == 1)
         fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
       double cur_excess = b->getFlowPlans().getExcess(&*fiter);
-      if (!fp || !fp->getOperationPlan()->getProposed() || cur_excess < ROUNDING_ERROR)
+      if (
+        !fp || !fp->getOperationPlan()->getProposed() || 
+        cur_excess < ROUNDING_ERROR || fp->getFlow()->getType() == *FlowTransferBatch::metadata
+        )
       {
         // No excess producer, or it's locked
+        // TODO we currently also exclude transferbatch producers, which isn't really correct
         ++fiter;
         continue;
       }
@@ -379,7 +383,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       while (
         fiter != fend
         && fiter->getEventType() == 1
-        && fiter->getOperationPlan()->getTopOwner()==fp->getOperationPlan()->getTopOwner()
+        && fiter->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
         )
           ++fiter;
 

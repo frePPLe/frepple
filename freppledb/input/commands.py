@@ -119,12 +119,11 @@ class checkBuckets(CheckTask):
       queries = []
       for rec in cursor:
         indexName = 'common_bucketdetail_' + str(uuid.uuid4())[:8]
-        queries.append("create index %s on common_bucketdetail (bucket_id) where bucket_id  = '%s';" % (indexName,rec[0]))
-        queries.append("comment on index %s is '%s';" % (indexName,rec[0]))
+        queries.append((indexName,rec[0]))
       
-      if len(queries) > 0:
-        cursor.execute('\n'.join(queries))
-
+      for q in queries:
+        cursor.execute('create index %s on common_bucketdetail (bucket_id) where bucket_id  = %%s' % (q[0],), (q[1],))
+        cursor.execute('comment on index %s is %%s' % (q[0],), (q[1],))
 
 
         

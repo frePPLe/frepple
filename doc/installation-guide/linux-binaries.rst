@@ -14,13 +14,13 @@ Supported distributions
 Binary installation packages are available for the following Linux
 distributions:
 
+#. | **Ubuntu LTS**
+   | A 64-bit binary package for Ubuntu 16 is available.
+
 #. | **Fedora 22** and higher
    | FrePPLe is included in the official repositories.
 
    .. image:: _images/fedorainstall.png
-
-#. | **Ubuntu LTS**
-   | A 64-bit binary package for Ubuntu 16 is available.
 
 Other Linux distributions aren't really a problem, but you'll need to build
 the frePPLe package from the source .deb or .rpm files, as described on the
@@ -36,6 +36,17 @@ the Apache web server with the mod_wsgi module.
 
 Here are the steps to get a fully working environment.
 
+#. **Download the installation package**
+
+   For installation on Linux you need a .deb (debian-based distributions) or 
+   .rpm (Red Hat based distributions) package file.
+   
+   For the Community Edition these can be freely downloaded from 
+   https://github.com/frePPLe/frepple/releases.
+   
+   For the Enterprise Edition you need to download these from the customer 
+   portal on the frePPLe website https://frepple.com/customer-portal/downloads/
+   
 #. **Install and tune the PostgreSQL database**
 
    Install postgreSQL 9.5 or higher, the world's most advanced open source database.

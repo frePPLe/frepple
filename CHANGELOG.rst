@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+4.3.3 (Upcoming release)
+==================
+
+.. rubric:: Production planning
+
+- Solver optimization to handle infinite buffers more efficiently.
+
+
 4.3.2 (2018/03/19)
 ==================
 

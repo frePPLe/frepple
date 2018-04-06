@@ -57,7 +57,9 @@ void usage()
 
 void handler(int sig)
 {
-  cout << "Planning engine terminated with signal " << sig << endl;
+  ostringstream o;   
+  o << "Planning engine terminated with signal " << sig << endl;
+  FreppleLog(o.str().c_str());
   exit(1);
 }
 

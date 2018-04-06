@@ -74,6 +74,9 @@ class OperatorDelete : public Solver
     /** Remove excess from a buffer and all its upstream colleagues. */
     void solve(const Buffer*, void* = nullptr);
 
+    /** Empty solve method for infinite buffers. */
+    void solve(const BufferInfinite*, void* = nullptr) {}
+
     /** Remove excess starting from a single demand. */
      void solve(const Demand*, void* = nullptr);
 

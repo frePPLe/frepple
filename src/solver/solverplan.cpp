@@ -360,6 +360,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
+      && buf->getType() != *BufferInfinite::metadata
       && ( buf->getMinimum() || buf->getMinimumCalendar()
         || buf->getType() == *BufferProcure::metadata )
       )

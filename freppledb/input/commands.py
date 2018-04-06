@@ -100,33 +100,32 @@ class checkBuckets(CheckTask):
       empty = True
       for rec in cursor:
         empty = False
-        if rec[3] == False:  # if not last bucket
+        if rec[3] is False:
           errors += 1
           logger.error('%s %s %s %s' % (rec[0], rec[1], rec[2], rec[4]))
       if empty:
         raise ValueError("No Calendar Buckets available")
       if errors > 0:
         raise ValueError("Invalid Bucket dates")
-      
-      #ckeck if partial indexes exist
+
+      # Check if partial indexes exist
       cursor.execute('''
         select name from common_bucket
         except
-        select description from pg_description 
+        select description from pg_description
         inner join pg_class on pg_class.oid = pg_description.objoid
         inner join pg_indexes on pg_indexes.indexname = pg_class.relname and pg_indexes.tablename = 'common_bucketdetail'
       ''')
       queries = []
       for rec in cursor:
         indexName = 'common_bucketdetail_' + str(uuid.uuid4())[:8]
-        queries.append((indexName,rec[0]))
-      
+        queries.append((indexName, rec[0]))
+
       for q in queries:
-        cursor.execute('create index %s on common_bucketdetail (bucket_id) where bucket_id  = %%s' % (q[0],), (q[1],))
-        cursor.execute('comment on index %s is %%s' % (q[0],), (q[1],))
+        cursor.execute('create index %s on common_bucketdetail (startdate, enddate) where bucket_id  = %%s' % q[0], (q[1],))
+        cursor.execute('comment on index %s is %%s' % q[0], (q[1],))
 
 
-        
 @PlanTaskRegistry.register
 # Warning: Deactivated by default. Requires the installation of networkx package 
 class checkCycles(CheckTask):

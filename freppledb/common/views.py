@@ -24,9 +24,7 @@ from django.contrib.auth.password_validation import validate_password, get_passw
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
-from django.core import serializers
 from django.core.urlresolvers import reverse, resolve
-from django.db import connections, transaction
 from django.template import loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_text
@@ -35,7 +33,7 @@ from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound, HttpResponseForbidden
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
@@ -432,7 +430,7 @@ def detail(request, app, model, object_id):
             continue
         else:
           # A list or tuple of permissions is given
-          ok =  True
+          ok = True
           for p in perms:
             if not request.user.has_perm(p):
               ok = False
@@ -452,3 +450,9 @@ def detail(request, app, model, object_id):
 
   # Open the tab
   return newtab['viewfunc'](request, object_id)
+
+
+def csrf_failure(request, reason):
+  # Redirect to login page
+  logger.error("CSRF failure detected")
+  return HttpResponseRedirect(request.prefix + "/")

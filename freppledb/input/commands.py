@@ -1503,5 +1503,10 @@ class PlanSize(CheckTask):
 
   @staticmethod
   def run(database=DEFAULT_DB_ALIAS, **kwargs):
+    '''
+    It is important that all data is loaded at this point. We build out
+    all buffers and their supply paths at this point.
+    If new replenishment methods are added later on, they will not be used.
+    '''
     import frepple
     frepple.printsize()

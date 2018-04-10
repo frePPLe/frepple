@@ -55,7 +55,7 @@ class OdooReadData(PlanTask):
   '''
 
   description = "Load Odoo data"
-  sequence = 130
+  sequence = 119
   label = ('odoo_read_1', _("Read Odoo data"))
 
   @classmethod
@@ -109,6 +109,23 @@ class OdooReadData(PlanTask):
     if not ok:
       raise Exception("Odoo connector not configured correctly")
 
+    # Assign to single roots
+    root_item = None
+    for r in frepple.items():
+      if r.owner is None:
+        root_item = r
+        break
+    root_customer = None
+    for r in frepple.customers():
+      if r.owner is None:
+        root_customer = r
+        break
+    root_location = None
+    for r in frepple.locations():
+      if r.owner is None:
+        root_location = r
+        break
+
     # Connect to the odoo URL to GET data
     url = "%sfrepple/xml?%s" % (odoo_url, urlencode({
         'database': odoo_db,
@@ -127,7 +144,20 @@ class OdooReadData(PlanTask):
     # Download and parse XML data
     with urlopen(request) as f:
       frepple.readXMLdata(f.read().decode('utf-8'), False, False)
-    frepple.printsize()
+
+    # Assure single root hierarchies
+    for r in frepple.items():
+      if r.owner is None and r != root_item:
+        r.owner = root_item
+        print("koko", r)
+    for r in frepple.customers():
+      if r.owner is None and r != root_customer:
+        r.owner = root_customer
+        print("kokoee", r)
+    for r in frepple.locations():
+      if r.owner is None and r != root_location:
+        r.owner = root_location
+        print("kokodd", r)
 
 
 @PlanTaskRegistry.register

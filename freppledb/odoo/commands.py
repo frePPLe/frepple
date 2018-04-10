@@ -149,15 +149,12 @@ class OdooReadData(PlanTask):
     for r in frepple.items():
       if r.owner is None and r != root_item:
         r.owner = root_item
-        print("koko", r)
     for r in frepple.customers():
       if r.owner is None and r != root_customer:
         r.owner = root_customer
-        print("kokoee", r)
     for r in frepple.locations():
       if r.owner is None and r != root_location:
         r.owner = root_location
-        print("kokodd", r)
 
 
 @PlanTaskRegistry.register

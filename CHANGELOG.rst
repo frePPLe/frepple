@@ -8,6 +8,10 @@ Release notes
 
 - Solver optimization to handle infinite buffers more efficiently.
 
+.. rubric:: Odoo connector
+
+- Correction to maintain a single root hierarchy.
+
 
 4.3.2 (2018/03/19)
 ==================

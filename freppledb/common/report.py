@@ -2246,33 +2246,41 @@ def exportWorkbook(request):
       header = []
       source = False
       lastmodified = False
-      try:
-        # The admin model of the class can define some fields to exclude from the export
-        exclude = data_site._registry[model].exclude
-      except:
-        exclude = None
-      for i in model._meta.fields:
-        if i.name in ['lft', 'rght', 'lvl']:
-          continue  # Skip some fields of HierarchyModel
-        elif i.name == 'source':
-          source = True  # Put the source field at the end
-        elif i.name == 'lastmodified':
-          lastmodified = True  # Put the last-modified field at the very end
-        elif not (exclude and i.name in exclude):
-          fields.append(i.column)
-          cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
+
+      if hasattr(model, "export_fields"):
+        for i in model.export_fields():
+          fields.append(i[0])
+          cell = WriteOnlyCell(ws, value=force_text(i[1]).title())
           cell.style = 'headerstyle'
           header.append(cell)
-      if source:
-        fields.append("source")
-        cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
-        cell.style = 'headerstyle'
-        header.append(cell)
-      if lastmodified:
-        fields.append("lastmodified")
-        cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-        cell.style = 'headerstyle'
-        header.append(cell)
+      else:
+        try:
+          # The admin model of the class can define some fields to exclude from the export
+          exclude = data_site._registry[model].exclude
+        except:
+          exclude = None
+        for i in model._meta.fields:
+          if i.name in ['lft', 'rght', 'lvl']:
+            continue  # Skip some fields of HierarchyModel
+          elif i.name == 'source':
+            source = True  # Put the source field at the end
+          elif i.name == 'lastmodified':
+            lastmodified = True  # Put the last-modified field at the very end
+          elif not (exclude and i.name in exclude):
+            fields.append(i.column)
+            cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
+            cell.style = 'headerstyle'
+            header.append(cell)
+        if source:
+          fields.append("source")
+          cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+          cell.style = 'headerstyle'
+          header.append(cell)
+        if lastmodified:
+          fields.append("lastmodified")
+          cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+          cell.style = 'headerstyle'
+          header.append(cell)
 
       # Write a formatted header row
       ws.append(header)

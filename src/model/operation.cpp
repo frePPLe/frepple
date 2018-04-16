@@ -845,12 +845,12 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     opplan->clearSetupEvent();
   opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
 
-  if (forward && preferEnd && opplan->getStart() < s && s != Date::infiniteFuture)
+  if (forward && preferEnd && opplan->getStart() < s && s != Date::infiniteFuture &&  d != Date::infiniteFuture)
   {
     d += Duration(3600L);
     repeat = true;  
   }
-  else if (!forward && !preferEnd && opplan->getStart() > s && s != Date::infinitePast)
+  else if (!forward && !preferEnd && opplan->getStart() > s && s != Date::infinitePast && d != Date::infinitePast)
   {
     d -= Duration(3600L);
     repeat = true;
@@ -1379,12 +1379,12 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
-    if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture)
+    if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture && d != Date::infiniteFuture)
     {
       d += Duration(3600L);
       repeat = true;
     }
-    else if (!preferEnd && opplan->getStart() > s && s != Date::infinitePast)
+    else if (!preferEnd && opplan->getStart() > s && s != Date::infinitePast && d != Date::infinitePast)
     {
       d -= Duration(3600L);
       repeat = true;

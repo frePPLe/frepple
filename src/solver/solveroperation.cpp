@@ -501,6 +501,11 @@ void SolverMRP::solve(const Operation* oper, void* v)
   // Call the user exit
   if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
+  // Message
+  if (data->getSolver()->getLogLevel()>1)
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+    << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
   Date orig_q_date = data->state->q_date;
@@ -523,16 +528,39 @@ void SolverMRP::solve(const Operation* oper, void* v)
       flow_qty_per = f->getQuantity();
     }
     else
+    {
       // The producing operation doesn't have a valid flow into the current
       // buffer. Either it is missing or it is producing a negative quantity.
-      throw DataException("Invalid producing operation '" + oper->getName()
-        + "' for buffer '" + data->state->curBuffer->getName() + "'");
+      data->state->a_qty = 0.0;
+      data->state->a_date = Date::infiniteFuture;
+      string problemtext = string("Invalid producing operation '") + oper->getName()
+        + "' for buffer '" + data->state->curBuffer->getName() + "'";
+      auto j = data->planningDemand->getConstraints().begin();
+      while (j != data->planningDemand->getConstraints().end())
+      {
+        if (&(j->getType()) == ProblemInvalidData::metadata
+          && j->getDescription() == problemtext)
+          break;
+        ++j;
+      }
+      if (j == data->planningDemand->getConstraints().end())
+        data->planningDemand->getConstraints().push(new ProblemInvalidData(
+          data->planningDemand, 
+          problemtext,
+          "demand",
+          data->planningDemand->getDue(), data->planningDemand->getDue(), 
+          data->planningDemand->getQuantity(), false
+          ));
+      if (data->getSolver()->getLogLevel() > 1)
+      {
+        logger << indent(oper->getLevel()) << "   " << problemtext << endl;
+        logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+          << "' answers: " << data->state->a_qty << "  " << data->state->a_date
+          << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+      }
+      return;
+    }
   }
-
-  // Message
-  if (data->getSolver()->getLogLevel()>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
-      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
     
   // If transferbatch, then recompute the operation quantity and date here
   if (transferbatch_flow)

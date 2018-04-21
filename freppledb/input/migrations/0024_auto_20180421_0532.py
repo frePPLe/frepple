@@ -23,11 +23,11 @@ class Migration(migrations.Migration):
             name='type',
             field=models.CharField(blank=True, choices=[('start', 'Start'), ('end', 'End'), ('fixed_start', 'Fixed start'), ('fixed_end', 'Fixed end'), ('transfer_batch', 'Batch transfer')], default='start', help_text='Consume/produce material at the start or the end of the operationplan', max_length=20, null=True, verbose_name='type'),
         ),
-        migrations.AlterField(
-            model_name='operationplanresource',
-            name='resource',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationplanresources', to='input.Resource', verbose_name='resource'),
-        ),
+        # migrations.AlterField(
+        #     model_name='operationplanresource',
+        #     name='resource',
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationplanresources', to='input.Resource', verbose_name='resource'),
+        # ),
         migrations.AlterField(
             model_name='setuprule',
             name='id',

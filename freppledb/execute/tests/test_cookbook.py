@@ -15,6 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# ./frepplectl.py test freppledb.execute.tests -v2
+# ./frepplectl.py test freppledb.execute.tests.test_cookbook.Cookbooktest -v 2
+
 import os.path
 
 from django.conf import settings
@@ -26,8 +29,9 @@ from freppledb.common.models import User
 import freppledb.input
 
 
-class cookbooktest(TransactionTestCase):
+class Cookbooktest(TransactionTestCase):
   reset_sequences = True
+  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used

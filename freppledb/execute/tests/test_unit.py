@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#  ./frepplectl.py test freppledb.execute.tests.test_unit -v 2
+
 import base64
 import json
 import os
@@ -34,6 +36,7 @@ from freppledb.common.models import Parameter, User
 
 class execute_with_commands(TransactionTestCase):
   fixtures = ["demo"]
+  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used

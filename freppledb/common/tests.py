@@ -15,6 +15,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# ./frepplectl.py test freppledb.common.tests -v 2
+# ./frepplectl.py test freppledb.common.tests.ExcelTest.test_workbook_english -v 2
+
 import os
 import os.path
 
@@ -59,6 +62,8 @@ class UserPreferenceTest(TestCase):
 class ExcelTest(TransactionTestCase):
 
   fixtures = ['demo']
+
+  serialized_rollback = True
 
   def setUp(self):
     # Login

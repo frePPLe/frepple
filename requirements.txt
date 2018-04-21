@@ -1,16 +1,28 @@
-CherryPy == 5.1.0
-djangorestframework == 3.6.2
-djangorestframework-bulk == 0.2.1
-djangorestframework-filters == 0.10.0
-django-admin-bootstrapped
-django-bootstrap3 == 8.2.2
-html5lib == 0.999
-jdcal == 1.0.1
-Markdown == 2.6.8
-openpyxl == 2.4.11
-lxml == 3.7.3
-PyJWT == 1.5.2
-requests == 2.18.4
-Django==1.11.12
-django-admin-bootstrapped-ivc==2.5.7.1
+certifi==2018.4.16
+chardet==3.0.4
+cheroot==6.2.4
+CherryPy==14.1.0
+django-bootstrap3==9.1.0
+django-filter==1.1.0
+djangorestframework==3.8.2
+djangorestframework-bulk==0.2.1
+djangorestframework-filters==0.10.2
+et-xmlfile==1.0.1
+html5lib==1.0.1
+idna==2.6
+jdcal==1.4
+lxml==4.2.1
+Markdown==2.6.11
+more-itertools==4.1.0
+openpyxl==2.5.3
+portend==2.2
 psycopg2-binary==2.7.4
+PyJWT==1.6.1
+pytz==2018.4
+requests==2.18.4
+six==1.11.0
+tempora==1.11
+urllib3==1.22
+webencodings==0.5.1
+pip==10.0.1
+django-admin-bootstrapped-ivc==2.5.7.1

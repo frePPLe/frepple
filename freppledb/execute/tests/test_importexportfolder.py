@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# ./frepplectl.py test freppledb.execute.tests.test_importexportfolder.Execute_with_commands -v 2
+
 import os
 from shutil import rmtree
 import tempfile
@@ -27,10 +29,10 @@ from django.test import TransactionTestCase
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
 
 
-class execute_with_commands(TransactionTestCase):
+class Execute_with_commands(TransactionTestCase):
 
   fixtures = ["demo"]
-
+  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used

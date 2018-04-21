@@ -19,8 +19,8 @@
 #  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest -v 2
 #  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_with_commands -v 2
 #  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_multidb -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.Remote_commands -v 2
 #  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_simulation -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.Remote_commands -v 2
 
 import base64
 import json

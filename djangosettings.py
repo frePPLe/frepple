@@ -41,18 +41,18 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'frepple',
-    'USER': 'frepple',     # Role name when using md5 authentication.
+    'NAME': 'postgres',
+    'USER': 'postgres',     # Role name when using md5 authentication.
                            # Leave as an empty string when using peer or
                            # ident authencation.
-    'PASSWORD': 'frepple', # Role password when using md5 authentication.
+    'PASSWORD': 'dfqc2', # Role password when using md5 authentication.
                            # Leave as an empty string when using peer or
                            # ident authencation.
-    'HOST': '',            # When using TCP sockets specify the hostname,
+    'HOST': 'localhost',            # When using TCP sockets specify the hostname,
                            # the ip4 address or the ip6 address here.
                            # Leave as an empty string to use Unix domain
                            # socket ("local" lines in pg_hba.conf).
-    'PORT': '',            # Leave to empty string when using Unix domain sockets.
+    'PORT': '5432',            # Leave to empty string when using Unix domain sockets.
                            # Specify the port number when using a TCP socket.
     'OPTIONS': {},         # Backend specific configuration parameters.
     'TEST': {
@@ -61,72 +61,72 @@ DATABASES = {
     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','default')),
     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
     },
-   'scenario1': {
-     'ENGINE': 'django.db.backends.postgresql',
-     'NAME': 'scenario1',
-     'USER': 'frepple',     # Role name when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'PASSWORD': 'frepple', # Role password when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'HOST': '',            # When using TCP sockets specify the hostname,
-                            # the ip4 address or the ip6 address here.
-                            # Leave as an empty string to use Unix domain
-                            # socket ("local" lines in pg_hba.conf).
-     'PORT': '',            # Leave to empty string when using Unix domain sockets.
-                            # Specify the port number when using a TCP socket.
-     'OPTIONS': {},         # Backend specific configuration parameters.
-     'TEST': {
-       'NAME': 'test_scenario1' # Database name used when running the test suite.
-       },
-     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),
-     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
-     },
-   'scenario2': {
-     'ENGINE': 'django.db.backends.postgresql',
-     'NAME': 'scenario2',
-     'USER': 'frepple',     # Role name when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'PASSWORD': 'frepple', # Role password when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'HOST': '',            # When using TCP sockets specify the hostname,
-                            # the ip4 address or the ip6 address here.
-                            # Leave as an empty string to use Unix domain
-                            # socket ("local" lines in pg_hba.conf).
-     'PORT': '',            # Leave to empty string when using Unix domain sockets.
-                            # Specify the port number when using a TCP socket.
-     'OPTIONS': {},         # Backend specific configuration parameters.
-     'TEST': {
-       'NAME': 'test_scenario2' # Database name used when running the test suite.
-       },
-     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),
-     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
-     },
-   'scenario3': {
-     'ENGINE': 'django.db.backends.postgresql',
-     'NAME': 'scenario3',
-     'USER': 'frepple',     # Role name when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'PASSWORD': 'frepple', # Role password when using md5 authentication.
-                            # Leave as an empty string when using peer or
-                            # ident authencation.
-     'HOST': '',            # When using TCP sockets specify the hostname,
-                            # the ip4 address or the ip6 address here.
-                            # Leave as an empty string to use Unix domain
-                            # socket ("local" lines in pg_hba.conf).
-     'PORT': '',            # Leave to empty string when using Unix domain sockets.
-                            # Specify the port number when using a TCP socket.
-     'OPTIONS': {},         # Backend specific configuration parameters.
-     'TEST': {
-       'NAME': 'test_scenario3' # Database name used when running the test suite.
-       },
-     'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),
-     'SECRET_WEBTOKEN_KEY': SECRET_KEY,
-     },
+   # 'scenario1': {
+   #   'ENGINE': 'django.db.backends.postgresql',
+   #   'NAME': 'scenario1',
+   #   'USER': 'frepple',     # Role name when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'PASSWORD': 'frepple', # Role password when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'HOST': '',            # When using TCP sockets specify the hostname,
+   #                          # the ip4 address or the ip6 address here.
+   #                          # Leave as an empty string to use Unix domain
+   #                          # socket ("local" lines in pg_hba.conf).
+   #   'PORT': '',            # Leave to empty string when using Unix domain sockets.
+   #                          # Specify the port number when using a TCP socket.
+   #   'OPTIONS': {},         # Backend specific configuration parameters.
+   #   'TEST': {
+   #     'NAME': 'test_scenario1' # Database name used when running the test suite.
+   #     },
+   #   'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario1')),
+   #   'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+   #   },
+   # 'scenario2': {
+   #   'ENGINE': 'django.db.backends.postgresql',
+   #   'NAME': 'scenario2',
+   #   'USER': 'frepple',     # Role name when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'PASSWORD': 'frepple', # Role password when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'HOST': '',            # When using TCP sockets specify the hostname,
+   #                          # the ip4 address or the ip6 address here.
+   #                          # Leave as an empty string to use Unix domain
+   #                          # socket ("local" lines in pg_hba.conf).
+   #   'PORT': '',            # Leave to empty string when using Unix domain sockets.
+   #                          # Specify the port number when using a TCP socket.
+   #   'OPTIONS': {},         # Backend specific configuration parameters.
+   #   'TEST': {
+   #     'NAME': 'test_scenario2' # Database name used when running the test suite.
+   #     },
+   #   'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario2')),
+   #   'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+   #   },
+   # 'scenario3': {
+   #   'ENGINE': 'django.db.backends.postgresql',
+   #   'NAME': 'scenario3',
+   #   'USER': 'frepple',     # Role name when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'PASSWORD': 'frepple', # Role password when using md5 authentication.
+   #                          # Leave as an empty string when using peer or
+   #                          # ident authencation.
+   #   'HOST': '',            # When using TCP sockets specify the hostname,
+   #                          # the ip4 address or the ip6 address here.
+   #                          # Leave as an empty string to use Unix domain
+   #                          # socket ("local" lines in pg_hba.conf).
+   #   'PORT': '',            # Leave to empty string when using Unix domain sockets.
+   #                          # Specify the port number when using a TCP socket.
+   #   'OPTIONS': {},         # Backend specific configuration parameters.
+   #   'TEST': {
+   #     'NAME': 'test_scenario3' # Database name used when running the test suite.
+   #     },
+   #   'FILEUPLOADFOLDER': os.path.normpath(os.path.join(FREPPLE_LOGDIR,'data','scenario3')),
+   #   'SECRET_WEBTOKEN_KEY': SECRET_KEY,
+   #   },
   }
 
 LANGUAGE_CODE = 'en'
@@ -135,9 +135,9 @@ LANGUAGE_CODE = 'en'
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {
   'default': '',
-  'scenario1': '',
-  'scenario2': '',
-  'scenario3': ''
+  # 'scenario1': '',
+  # 'scenario2': '',
+  # 'scenario3': ''
   }
 
 # Local time zone for this installation. Choices can be found here:

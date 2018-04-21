@@ -13,3 +13,4 @@ PyJWT == 1.5.2
 requests == 2.18.4
 Django==1.11.12
 django-admin-bootstrapped-ivc==2.5.7.1
+psycopg2-binary==2.7.4

@@ -26,6 +26,7 @@ AC_PREREQ(2.60)
 AC_INIT([frepple], [4.3.3])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
+AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([tar-ustar foreign])
 
 #
@@ -39,6 +40,7 @@ AC_PROG_MAKE_SET
 AC_LANG(C++)
 AC_LANG_COMPILER_REQUIRE
 AC_PROG_LIBTOOL
+LT_PREREQ([2.4.6])
 
 # Note: the library version number and the package version number are
 # INDEPENDENT. The library version is the concatenation of LIBCURRENT,

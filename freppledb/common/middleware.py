@@ -28,6 +28,7 @@ from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponseNotFound
 from django.http.response import HttpResponseForbidden
+from django.utils.deprecation import MiddlewareMixin
 
 from freppledb.common.models import Scenario, User
 
@@ -124,7 +125,7 @@ for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
 
-class MultiDBMiddleware(object):
+class MultiDBMiddleware(MiddlewareMixin):
   """
   This middleware examines the URL of the incoming request, and determines the
   name of database to use.

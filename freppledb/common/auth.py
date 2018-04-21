@@ -155,7 +155,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
       try:
         if allow_logged_in:
           u = getattr(request, 'user', None)
-          if u and u.is_authenticated():
+          if u and u.is_authenticated:
             ok = True
         if not ok:
           auth_header = request.META.get('HTTP_AUTHORIZATION', None)

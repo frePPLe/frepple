@@ -248,7 +248,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
   for row in data:
 
     rownumber += 1
-    rowWrapper.setData(row)
+    rowWrapper.setData(row[0].split(",") if isinstance(row, list) else row)
 
     # Case 1: The first line is read as a header line
     if rownumber == 1:

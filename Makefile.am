@@ -44,10 +44,10 @@ migrate:
 	./frepplectl.py migrate
 
 check:
-	./frepplectl.py test
+	./frepplectl.py test freppledb
 
 runserver:
-	./frepplectl.py runserver
+	./frepplectl.py runserver 0:8000
 
 international:
 	cd freppledb; django-admin.py makemessages -a -d django

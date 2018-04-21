@@ -53,7 +53,7 @@ Makefile.in
 *.pyc
 *.pyo
 *.pyd
-dist 
+dist
 build
 
 # Log files
@@ -78,3 +78,10 @@ build
 *.rpm
 *.tar.gz
 *.tgz
+.idea/
+m4/
+package-lock.json
+input.xml
+*.gcda
+*.gcno
+*.awk

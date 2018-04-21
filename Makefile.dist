@@ -91,6 +91,7 @@ build:
 check:
 	@echo
 	@echo "PHASE: Testing..."
+	make clean
 	make check
 
 dist:

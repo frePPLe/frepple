@@ -85,3 +85,4 @@ input.xml
 *.gcda
 *.gcno
 *.awk
+djangosettings.py

@@ -41,8 +41,8 @@ SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'postgres',
-    'USER': 'postgres',     # Role name when using md5 authentication.
+    'NAME': 'usr_430218-2',
+    'USER': 'usr_430218-2',     # Role name when using md5 authentication.
                            # Leave as an empty string when using peer or
                            # ident authencation.
     'PASSWORD': 'dfqc2', # Role password when using md5 authentication.

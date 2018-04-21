@@ -16,6 +16,7 @@
 #
 
 #  ./frepplectl.py test freppledb.execute.tests.test_unit -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest.test_fixture_dates_test -v 2
 
 import base64
 import json
@@ -79,6 +80,8 @@ class execute_with_commands(TransactionTestCase):
 class execute_multidb(TransactionTestCase):
 
   fixtures = ['demo']
+
+  serialized_rollback = True
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
@@ -178,6 +181,8 @@ class execute_simulation(TransactionTestCase):
 
   fixtures = ["demo"]
 
+  serialized_rollback = True
+
   def setUp(self):
     # Make sure the test database is used
     os.environ['FREPPLE_TEST'] = "YES"
@@ -212,6 +217,8 @@ class execute_simulation(TransactionTestCase):
 class remote_commands(TransactionTestCase):
 
   fixtures = ["demo"]
+
+  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used

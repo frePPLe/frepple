@@ -16,8 +16,11 @@
 #
 
 #  ./frepplectl.py test freppledb.execute.tests.test_unit -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest.test_fixture_dates_test -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest.test_fixture_parameter_test -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_with_commands -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_multidb -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.Remote_commands -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_simulation -v 2
 
 import base64
 import json
@@ -36,7 +39,7 @@ import freppledb.common as common
 from freppledb.common.models import Parameter, User
 
 
-class execute_with_commands(TransactionTestCase):
+class Execute_with_commands(TransactionTestCase):
   fixtures = ["demo"]
   reset_sequences = True
   serialized_rollback = True
@@ -79,7 +82,7 @@ class execute_with_commands(TransactionTestCase):
     self.assertTrue(input.models.OperationPlan.objects.count() > 300)
 
 
-class execute_multidb(TransactionTestCase):
+class Execute_multidb(TransactionTestCase):
 
   fixtures = ['demo']
 
@@ -184,7 +187,7 @@ class FixtureTest(TransactionTestCase):
     self.assertGreater(common.models.Bucket.objects.count(), 0)
 
 
-class execute_simulation(TransactionTestCase):
+class Execute_simulation(TransactionTestCase):
 
   fixtures = ["demo"]
 
@@ -221,7 +224,7 @@ class execute_simulation(TransactionTestCase):
     # TODO add comparison with initial_planned_late
 
 
-class remote_commands(TransactionTestCase):
+class Remote_commands(TransactionTestCase):
 
   fixtures = ["demo"]
 
@@ -295,4 +298,4 @@ class remote_commands(TransactionTestCase):
         break
       sleep(1)
       cnt += 1
-    self.assertLess(cnt, 20, "Running task taking too long")
+    self.assertLess(cnt, 22, "Running task taking too long")

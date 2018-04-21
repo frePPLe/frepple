@@ -17,6 +17,7 @@
 
 #  ./frepplectl.py test freppledb.execute.tests.test_unit -v 2
 #  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest.test_fixture_dates_test -v 2
+#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest.test_fixture_parameter_test -v 2
 
 import base64
 import json
@@ -37,6 +38,7 @@ from freppledb.common.models import Parameter, User
 
 class execute_with_commands(TransactionTestCase):
   fixtures = ["demo"]
+  reset_sequences = True
   serialized_rollback = True
 
   def setUp(self):
@@ -82,6 +84,8 @@ class execute_multidb(TransactionTestCase):
   fixtures = ['demo']
 
   serialized_rollback = True
+
+  reset_sequences = True
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
@@ -145,6 +149,9 @@ class execute_multidb(TransactionTestCase):
 
 
 class FixtureTest(TransactionTestCase):
+  serialized_rollback = True
+
+  reset_sequences = True
 
   def test_fixture_demo(self):
     self.assertEqual(common.models.Bucket.objects.count(), 0)
@@ -162,7 +169,7 @@ class FixtureTest(TransactionTestCase):
     self.assertGreater(common.models.Bucket.objects.count(), 0)
 
   def test_fixture_parameter_test(self):
-    self.assertEqual(common.models.Parameter.objects.count(), 0)
+    self.assertEqual(common.models.Parameter.objects.count(), 8)
     management.call_command('loaddata', "parameters.json", verbosity=0)
     self.assertGreater(common.models.Parameter.objects.count(), 0)
 

@@ -291,7 +291,7 @@ def version_short():
 # A tag to mark whether the password of a user is correct.
 #
 
-@register.assignment_tag
+@register.simple_tag
 def checkPassword(usr, pwd):
   try:
     return User.objects.get(username=usr).check_password(pwd)

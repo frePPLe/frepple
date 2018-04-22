@@ -161,7 +161,7 @@ class MultiDBMiddleware(MiddlewareMixin):
       request.database = DEFAULT_DB_ALIAS
     else:
       # A list of scenarios is already available
-      if not request.user or request.user.is_anonymous():
+      if not request.user or request.user.is_anonymous:
         return
       default_scenario = None
       for i in request.user.scenarios:

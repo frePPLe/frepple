@@ -5,7 +5,7 @@ chardet==3.0.4
 cheroot==6.2.4
 CherryPy==14.1.0
 decorator==4.3.0
-Django==1.11.12
+Django==2.0.4
 django-admin-bootstrapped-ivc==2.5.7.3
 django-bootstrap3==9.1.0
 django-filter==1.1.0

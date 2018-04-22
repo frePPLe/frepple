@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('url_doc', models.URLField(blank=True, null=True, verbose_name='documentation URL', max_length=500)),
                 ('url_internaldoc', models.URLField(blank=True, null=True, verbose_name='wizard URL', max_length=500)),
                 ('status', models.BooleanField(default=True)),
-                ('owner', models.ForeignKey(blank=True, verbose_name='owner', null=True, related_name='xchildren', help_text='Hierarchical parent', to='common.Wizard')),
+                ('owner', models.ForeignKey(blank=True, verbose_name='owner', null=True, related_name='xchildren', help_text='Hierarchical parent', to='common.Wizard', on_delete = None)),
             ],
             options={
                 'db_table': 'common_wizard',

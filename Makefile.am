@@ -44,7 +44,7 @@ migrate:
 	./frepplectl.py migrate
 
 check:
-	./frepplectl.py test freppledb
+	./frepplectl.py test freppledb -v2
 
 runserver:
 	./frepplectl.py runserver 0:8000

@@ -36,11 +36,11 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplanmaterial',
       name='item',
-      field=models.ForeignKey(blank=True, to='input.Item', related_name='operationplanmaterials', null=True, verbose_name='item'),
+      field=models.ForeignKey(blank=True, to='input.Item', related_name='operationplanmaterials', null=True, verbose_name='item', on_delete = None),
     ),
     migrations.AddField(
       model_name='operationplanmaterial',
       name='location',
-      field=models.ForeignKey(blank=True, to='input.Location', related_name='operationplanmaterials', null=True, verbose_name='location'),
+      field=models.ForeignKey(blank=True, to='input.Location', related_name='operationplanmaterials', null=True, verbose_name='location', on_delete = None),
     )
   ]

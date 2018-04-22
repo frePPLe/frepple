@@ -69,27 +69,27 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='buffer',
       name='item',
-      field=models.ForeignKey(verbose_name='item', to='input.Item'),
+      field=models.ForeignKey(verbose_name='item', to='input.Item', on_delete = None),
     ),
     migrations.AlterField(
       model_name='buffer',
       name='location',
-      field=models.ForeignKey(verbose_name='location', to='input.Location'),
+      field=models.ForeignKey(verbose_name='location', to='input.Location', on_delete = None),
     ),
     migrations.AlterField(
       model_name='demand',
       name='customer',
-      field=models.ForeignKey(verbose_name='customer', to='input.Customer'),
+      field=models.ForeignKey(verbose_name='customer', to='input.Customer', on_delete = None),
     ),
     migrations.AlterField(
       model_name='demand',
       name='item',
-      field=models.ForeignKey(verbose_name='item', to='input.Item'),
+      field=models.ForeignKey(verbose_name='item', to='input.Item', on_delete = None),
     ),
     migrations.AlterField(
       model_name='demand',
       name='location',
-      field=models.ForeignKey(verbose_name='location', to='input.Location'),
+      field=models.ForeignKey(verbose_name='location', to='input.Location', on_delete = None),
     ),
     migrations.AlterUniqueTogether(
       name='buffer',

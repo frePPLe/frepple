@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         # migrations.AlterField(
         #     model_name='operationplanresource',
         #     name='resource',
-        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationplanresources', to='input.Resource', verbose_name='resource'),
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationplanresources', to='input.Resource', verbose_name='resource', on_delete = None),
         # ),
         migrations.AlterField(
             model_name='setuprule',

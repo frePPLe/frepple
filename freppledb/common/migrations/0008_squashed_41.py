@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('url_doc', models.URLField(blank=True, max_length=500, verbose_name='documentation URL', null=True)),
                 ('url_internaldoc', models.URLField(blank=True, max_length=500, verbose_name='wizard URL', null=True)),
                 ('status', models.BooleanField(default=True)),
-                ('owner', models.ForeignKey(blank=True, related_name='xchildren', verbose_name='owner', to='common.Wizard', help_text='Hierarchical parent', null=True)),
+                ('owner', models.ForeignKey(blank=True, related_name='xchildren', verbose_name='owner', to='common.Wizard', help_text='Hierarchical parent', null=True, on_delete = None)),
             ],
             options={
                 'db_table': 'common_wizard',
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, verbose_name='identifier', primary_key=True)),
                 ('property', models.CharField(max_length=100)),
                 ('value', freppledb.common.fields.JSONField(max_length=1000)),
-                ('user', models.ForeignKey(related_name='preferences', verbose_name='user', to=settings.AUTH_USER_MODEL, null=True, editable=False)),
+                ('user', models.ForeignKey(related_name='preferences', verbose_name='user', to=settings.AUTH_USER_MODEL, null=True, editable=False, on_delete = None)),
             ],
             options={
                 'verbose_name_plural': 'preferences',

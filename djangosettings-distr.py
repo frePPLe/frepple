@@ -174,7 +174,7 @@ LANGUAGES = (
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'freppledb.common.middleware.MultiDBMiddleware',

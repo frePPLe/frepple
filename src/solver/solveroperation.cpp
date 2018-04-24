@@ -558,7 +558,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
           << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
       }
-      return nullptr;
+      return;
     }
   }
     

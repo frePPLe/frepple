@@ -6,6 +6,9 @@ Release notes
 
 .. rubric:: Production planning
 
+- Solver performance optimization where there are availability calendars.
+  The plan generation time can be reduced with a factor 3 to 4 in some models.
+- Solver enhancements for planning with setup matrices.
 - Solver optimization to handle infinite buffers more efficiently.
 
 .. rubric:: Odoo connector

@@ -412,9 +412,10 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource
   */
 class Calendar : public HasName<Calendar>, public HasSource
 {
-  friend class CalendarBucket;
   public:
     class EventIterator; // Forward declaration
+    friend class EventIterator;
+    friend class CalendarBucket;
 
     /** Default constructor. */
     explicit Calendar() {}
@@ -425,16 +426,12 @@ class Calendar : public HasName<Calendar>, public HasSource
     ~Calendar();
 
     /** Returns the value on the specified date. */
-    double getValue(const Date d, bool fwd = true) const
-    {
-      CalendarBucket* x = findBucket(d, fwd);
-      return x ? x->getValue() : defaultValue;
-    }
+    double getValue(const Date, bool forward = true) const;
 
     /** Updates the value in a certain date range.<br>
       * This will create a new bucket if required.
       */
-    void setValue(Date start, Date end, const double v);
+    void setValue(Date start, Date end, const double);
 
     double getValue(CalendarBucket::iterator& i) const
     {
@@ -473,27 +470,32 @@ class Calendar : public HasName<Calendar>, public HasSource
     /** Add a new bucket to the calendar. */
     CalendarBucket* addBucket(Date, Date, double);
 
+    /** Return the memory size, including the event list. */
+    virtual size_t getSize() const
+    {
+      auto tmp = Object::getSize();
+      tmp += (sizeof(pair<Date, double>) + sizeof(void*) * 3) * eventlist.size();
+      return tmp;
+    }
+
     /** @brief An iterator class to go through all dates where the calendar
       * value changes.*/
     class EventIterator
     {
-        friend class CalendarBucket;
       protected:
-        const Calendar* theCalendar;
-        const CalendarBucket* curBucket;
-        const CalendarBucket* lastBucket;
+        map<Date, double>::const_iterator cacheiter;
+        Calendar* theCalendar = nullptr;
         Date curDate;
-        int curPriority;
-        int lastPriority;
+        double curValue = 0.0;
       public:
         const Date& getDate() const
-        {
+        { 
           return curDate;
         }
 
-        const CalendarBucket* getBucket() const
+        double getValue()
         {
-          return curBucket;
+          return curValue;
         }
 
         const Calendar* getCalendar() const
@@ -501,8 +503,9 @@ class Calendar : public HasName<Calendar>, public HasSource
           return theCalendar;
         }
 
-        EventIterator(const Calendar* c = nullptr,
-          Date d = Date::infinitePast, bool forward = true);
+        EventIterator(
+          Calendar* c = nullptr,Date d = Date::infinitePast, bool forward = true
+          );
 
         EventIterator& operator++();
 
@@ -521,30 +524,6 @@ class Calendar : public HasName<Calendar>, public HasSource
           --*this;
           return tmp;
         }
-
-        /** Return the current value of the iterator at this date. */
-        double getValue()
-        {
-          return curBucket ? curBucket->getValue() : theCalendar->getDefault();
-        }
-
-        double getPrevValue() const
-        {
-          return lastBucket ? lastBucket->getValue() : theCalendar->getDefault();
-        }
-
-      private:
-        /** Increments an iterator to the next change event.<br>
-          * A bucket will evaluate the current state of the iterator, and
-          * update it if a valid next event can be generated.
-          */
-        void nextEvent(const CalendarBucket*, Date);
-
-        /** Increments an iterator to the previous change event.<br>
-          * A bucket will evaluate the current state of the iterator, and
-          * update it if a valid previous event can be generated.
-          */
-        void prevEvent(const CalendarBucket*, Date);
     };
 
     /** Returns an iterator to go through the list of buckets. */
@@ -571,6 +550,22 @@ class Calendar : public HasName<Calendar>, public HasSource
       m->addIteratorField<Cls, CalendarBucket::iterator, CalendarBucket>(Tags::buckets, Tags::bucket, &Cls::getBuckets, BASE + WRITE_OBJECT);
     }
 
+    /** Build a list of dates where the calendar value changes.
+      * By default we build the list for 1 year before and after the
+      * current date.
+      * If a date is passed as argument, we build/update a list to include
+      * that date.
+      */
+    void buildEventList(Date include = Date::infinitePast);
+
+    /** Erase the event list (to save memory).
+      * The list will be rebuild the next time an iterator is created.
+      */
+    void clearEventList()
+    {
+      eventlist.clear();
+    }
+
   protected:
     /** Find the lowest priority of any bucket. */
     int lowestPriority() const
@@ -588,6 +583,9 @@ class Calendar : public HasName<Calendar>, public HasSource
 
     /** Value used when no bucket is effective at all. */
     double defaultValue = 0.0;
+
+    /** A cached list of all events. */
+    map<Date, double> eventlist;
 };
 
 
@@ -10579,7 +10577,7 @@ class CalendarEventIterator
     static int initialize();
 
     CalendarEventIterator(Calendar* c, Date d=Date::infinitePast, bool f=true)
-      : cal(c), eventiter(c,d,f), forward(f) {}
+      : cal(c), eventiter(c, d, f), forward(f) {}
 
   private:
     Calendar* cal;

@@ -488,7 +488,7 @@ void Buffer::setMinimumCalendar(Calendar *cal)
   // when the value changes.
   min_cal = cal;
   double curMin = 0.0;
-  for (Calendar::EventIterator x(min_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (Calendar::EventIterator x(min_cal); x.getDate() < Date::infiniteFuture; ++x)
     if (curMin != x.getValue())
     {
       curMin = x.getValue();
@@ -496,6 +496,7 @@ void Buffer::setMinimumCalendar(Calendar *cal)
         new flowplanlist::EventMinQuantity(x.getDate(), &flowplans, curMin);
       flowplans.insert(newBucket);
     }
+  min_cal->clearEventList();
 }
 
 
@@ -558,7 +559,7 @@ void Buffer::setMaximumCalendar(Calendar *cal)
   // when the value changes.
   max_cal = cal;
   double curMax = 0.0;
-  for (Calendar::EventIterator x(max_cal); x.getDate()<Date::infiniteFuture; ++x)
+  for (Calendar::EventIterator x(max_cal); x.getDate() < Date::infiniteFuture; ++x)
     if (curMax != x.getValue())
     {
       curMax = x.getValue();
@@ -566,6 +567,7 @@ void Buffer::setMaximumCalendar(Calendar *cal)
         new flowplanlist::EventMaxQuantity(x.getDate(), &flowplans, curMax);
       flowplans.insert(newBucket);
     }
+  max_cal->clearEventList();
 }
 
 

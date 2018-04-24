@@ -244,7 +244,7 @@ DateRange Operation::calculateOperationTime(
   collectCalendars(cals, thedate, opplan, forward);
 
   // Special case: no calendars at all
-  if (!cals.size())
+  if (cals.empty())
     return forward ?
       DateRange(thedate, thedate+duration) :
       DateRange(thedate-duration, thedate);
@@ -260,21 +260,24 @@ DateRange Operation::calculateOperationTime(
     // Check whether all calendars are available
     bool available = true;
     Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
-    if (forward)
+    for (auto t = cals.begin(); t != cals.end(); ++t)
+    {
+      if (forward && available && t->getValue() == 0)
+        available = false;      
+      if (
+        (forward && t->getDate() < selected)
+        || (!forward && t->getDate() > selected)
+        )
+        selected = t->getDate();
+    }
+    if (!forward)
     {
       for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() < selected)
-          selected = t->getDate();
+      {
+        if (available && t->getCalendar()->getValue(selected, forward) == 0)
+          available = false;
+      }
     }
-    else
-    {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() > selected)
-          selected = t->getDate();
-    }
-    for (auto t = cals.begin(); t != cals.end() && available; ++t)
-      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
-      available = (t->getCalendar()->getValue(selected, forward) != 0);
     if (!duration && !available)
     {
       // A special case for 0-time operations.

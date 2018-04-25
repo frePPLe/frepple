@@ -19,21 +19,21 @@ from datetime import datetime
 from django.db import migrations, models
 import freppledb.common.fields
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 
 def createAdminUser(apps, schema_editor):
   if not schema_editor.connection.alias == 'default':
     return
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
-  usr.first_name = 'admin'
-  usr.last_name = 'admin'
-  usr.date_joined = datetime(2000, 1, 1)
-  usr.horizontype = True
-  usr.horizonlength = 6
-  usr.horizonunit = "month"
-  usr.language = "auto"
+  User = apps.get_model("common", "User")
+  usr = User(
+    username='admin', email='your@company.com', first_name='admin',
+    last_name='admin', date_joined=datetime(2000, 1, 1),
+    horizontype=True, horizonlength=6, horizonunit="month",
+    language="auto", is_superuser=True, is_staff=True, is_active=True
+    )
+  usr._password = "admin"
+  usr.password = make_password('admin')
   usr.save()
 
 

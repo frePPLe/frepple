@@ -608,11 +608,11 @@ void Calendar::buildEventList(Date includedate)
   // Assure the argument date is included
   if (includedate == Date::infinitePast)
     curDate = Date::infinitePast;
-  else if (includedate < curDate)
+  else if (includedate <= curDate)
     curDate = includedate - Duration(86400 * 365);
   if (includedate == Date::infiniteFuture)
     maxDate = Date::infiniteFuture;
-  else if (includedate > maxDate)
+  else if (includedate >= maxDate)
     maxDate = includedate + Duration(86400 * 365);
   
   // Collect all event dates

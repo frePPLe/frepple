@@ -11,6 +11,11 @@ Release notes
 - Solver enhancements for planning with setup matrices.
 - Solver optimization to handle infinite buffers more efficiently.
 
+.. rubric:: User interface
+
+- Bug fix for spreadsheet import: more robust handling of empty rows and rows with
+  empty fields at the end 
+  
 .. rubric:: Odoo connector
 
 - Correction to maintain a single root hierarchy.

@@ -941,7 +941,10 @@ PyObject* Object::toXML(PyObject* self, PyObject* args)
     // Write the output...
     if (filearg)
     {
-      _Py_IDENTIFIER(write);
+      static _Py_Identifier PyId_write;
+      PyId_write.next = NULL;
+      PyId_write.string = "write";
+      PyId_write.object = NULL;
       PyObject *writer = _PyObject_GetAttrId(filearg, &PyId_write);
       if (writer)
       {

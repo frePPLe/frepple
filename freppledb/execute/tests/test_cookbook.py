@@ -38,7 +38,8 @@ class cookbooktest(TransactionTestCase):
 
   def loadExcel(self, *filepath):
     # Login
-    User.objects.create_superuser('admin', 'your@company.com', 'admin')
+    if not User.objects.filter(username="admin").count():
+      User.objects.create_superuser('admin', 'your@company.com', 'admin')
     self.client.login(username='admin', password='admin')
     try:
       with open(os.path.join(*filepath), "rb") as myfile:

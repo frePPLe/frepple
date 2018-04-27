@@ -216,7 +216,8 @@ class remote_commands(TransactionTestCase):
     param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
     param.value = 'false'
     param.save()
-    User.objects.create_superuser('admin', 'your@company.com', 'admin')
+    if not User.objects.filter(username="admin").count():
+      User.objects.create_superuser('admin', 'your@company.com', 'admin')
 
   def tearDown(self):
     del os.environ['FREPPLE_TEST']

@@ -10,6 +10,7 @@ Release notes
   The plan generation time can be reduced with a factor 3 to 4 in some models.
 - Solver enhancements for planning with setup matrices.
 - Solver optimization to handle infinite buffers more efficiently.
+- Bug fix: Compilation error with Python 3.6
 
 .. rubric:: User interface
 

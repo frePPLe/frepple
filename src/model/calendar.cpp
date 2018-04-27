@@ -631,7 +631,7 @@ void Calendar::buildEventList(Date includedate)
     else       
     {
       eventlist[curDate] = curBucket ? curBucket->getValue() : getDefault();
-      if (curDate > maxDate)
+      if (curDate > maxDate || curDate == Date::infiniteFuture)
         break;
     }
 

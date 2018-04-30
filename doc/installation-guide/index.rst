@@ -9,8 +9,9 @@ This part of the manual covers all topics related to installation and deployment
 
    windows-installer
    windows-apache
-   windows-compiling
    linux-binaries
+   upgrading
+   windows-compiling
    linux-compiling
    other-platforms
    multi-model

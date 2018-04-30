@@ -15,9 +15,9 @@ This option runs the frePPLe planning engine with the input data from the
 database. The planning results are exported back into the database.
 
 Optionally, on the Enterprise edition, the forecast and 
-inventory planning modules can be run independantly prior to the plan generation.
+inventory planning modules can be run independently prior to the plan generation.
 
-The supply plan genaration box has to be ticked to generate purchase orders.
+The supply plan generation box has to be ticked to generate purchase orders.
 
 The forecast solver will calculate the forecast based on the historical demand for all
 (item, location, customer) intersections declared in the Forecast table.

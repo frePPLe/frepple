@@ -70,8 +70,7 @@ Here's a simple annotated example of a data file in frePPLe's format:
       </plan>
 
 The XML format is defined in `XML schema`_ format in
-the file https://raw.githubusercontent.com/frePPLe/frePPLe/master/bin/frepple.xsd, 
-which in turn references https://raw.githubusercontent.com/frePPLe/frePPLe/master/bin/frepple_core.xsd
+the file https://raw.githubusercontent.com/frePPLe/frePPLe/master/bin/frepple.xsd
 (use master to see the development version, or replace it with the version number you're using).
 The engine can optionally validate the incoming documents against this schema and reject
 invalid data files. 

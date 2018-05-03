@@ -1,7 +1,7 @@
 Release notes
 -------------
 
-4.3.3 (Upcoming release)
+4.3.3 (2018/05/03)
 ==================
 
 .. rubric:: Production planning

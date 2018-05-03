@@ -3,9 +3,9 @@ Upgrade an existing installation
 ================================
 
 FrePPLe allows migrating an existing installation (any release >= 3.0)
-to a new release without loss of data for the business users.
-A set of migration scripts is available the migrate the database schema to the
-release. 
+to a new release without any loss of data.
+A set of migration scripts is available to migrate the database schema to the
+new release. 
 
 This page documents the steps for this process.
 
@@ -24,7 +24,7 @@ Generic instructions
    
 #. **Upgrade the PostgreSQL database**
 
-   FrePPLe requires postgresql 9.5 or 9.6. If you're on an older version upgrading
+   FrePPLe requires postgresql 9.5 or higher. If you're on an older version, upgrading
    your PostgreSQL database is the first step.
   
    Note: When running on Windows, the migration process described here
@@ -43,7 +43,8 @@ Generic instructions
    The following commands will bring these to the right level as required for the
    new release. Make sure to run it as root user or use sudo (otherwise the packages
    will be installed locally for that user instead of system-wide), and to replace 4.3
-   with the appropriate version number.
+   with the appropriate major release number
+   (if you are installing 4.3.5 for instance then the URL should only contain 4.3).
    ::
    
       pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/4.3/requirements.txt
@@ -62,7 +63,7 @@ Generic instructions
    you'll need to merge your edits from the old file into the new file.
    
    In our experience an incorrectly updated configuration file is the most
-   common of upgrade issues. So, take this edit serious and don't just use
+   common mistake when upgrading. So, take this edit seriously and don't just use
    the old file without a very careful comparison.   
    
 #. **Migrate the frePPLe databases**

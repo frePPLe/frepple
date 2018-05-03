@@ -248,7 +248,6 @@ void HasLevel::computeLevels()
             // Update the level of the resource
             if (resptr->lvl < cur_level)
               resptr->lvl = cur_level;
-            logger << "   load " << gres->getResource() << "    " << resptr << "    " << resptr->cluster << "     " << cur_cluster << endl;
             // Update the cluster of the resource and operations using it
             if (!resptr->cluster)
             {
@@ -269,10 +268,7 @@ void HasLevel::computeLevels()
 
             // Add all child resources to the stack
             for (auto chld = resptr->getMembers(); chld != Resource::end(); ++chld)
-            {
-              logger << "    pushing " << *chld << endl;
               rsrc.push(&*chld);
-            }
           }
         }
 

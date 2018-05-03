@@ -204,9 +204,13 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
 
+    Upload a data file:
+    POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
+    
+    Import the data files:
     POST /execute/api/importfromfolder/
   
-    Deprecated:
+    Import the data files - deprecated:
     POST /execute/api/frepple_importfromfolder/
   
 .. _runwebservice:

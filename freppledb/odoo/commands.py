@@ -184,9 +184,8 @@ class OdooWritePlan(PlanTask):
   '''
   Uploads operationplans to odoo.
     - Sends all operationplans, meeting the criteria:
-      a) locked = False
-         The operationplans with locked equal to true are input to the plan,
-         and not output.
+      a) status = 'proposed' or 'approved'
+         Other operationplans are input to the plan, and not output.
       b) operationplan produces into a buffer whose source field is 'odoo'.
          Only those results are of interest to odoo.
     - We upload the following info in XML form:
@@ -294,7 +293,7 @@ class OdooWritePlan(PlanTask):
       yield '<operationplans>'
       for i in frepple.operationplans():
         if i.ordertype == 'PO':
-          if not i.item or not i.item.source or not i.item.source.startswith('odoo') or i.locked:
+          if not i.item or not i.item.source or not i.item.source.startswith('odoo') or i.status not in ('proposed', 'approved'):
             continue
           cls.exported.append(i)
           yield '<operationplan id="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
@@ -304,7 +303,7 @@ class OdooWritePlan(PlanTask):
             int(i.criticality)
             )
         elif i.ordertype == "MO":
-          if not i.operation or not i.operation.source or not i.operation.source.startswith('odoo') or i.locked:
+          if not i.operation or not i.operation.source or not i.operation.source.startswith('odoo') or i.status not in ('proposed', 'approved'):
             continue
           cls.exported.append(i)
           yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (

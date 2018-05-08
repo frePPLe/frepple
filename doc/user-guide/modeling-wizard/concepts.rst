@@ -91,8 +91,8 @@ report.
 You can try to look at the supply path of some sales orders
 in any of the demo models:
 
- - Open the sales order list from the menu "sales / sales orders"
- - Select any sales order from the list by clicking on the triangle next
-   to its name.
- - Select "supply path" from the available tabs.
+* Open the sales order list from the menu "sales / sales orders"
+* Select any sales order from the list by clicking on the triangle next
+  to its name.
+* Select "supply path" from the available tabs.
  

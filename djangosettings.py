@@ -178,6 +178,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'freppledb.common.middleware.MultiDBMiddleware',
+    # Uncomment the next line to automatically log on as the admin user,
+    # which can be useful for development or for demo models.
+    # 'freppledb.common.middleware.AutoLoginAsAdminUser',
     'freppledb.common.middleware.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

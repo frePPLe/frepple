@@ -154,7 +154,7 @@ class MultiDBMiddleware(object):
             request.path = request.path[len(request.prefix):]
             request.database = i
             return
-        except Exception as e:
+        except Exception:
           pass
       request.prefix = ''
       request.database = DEFAULT_DB_ALIAS
@@ -184,3 +184,18 @@ class MultiDBMiddleware(object):
         request.scenario = default_scenario
       else:
         request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+
+
+class AutoLoginAsAdminUser(object):
+  """
+  Automatically log on a user as admin user.
+  This can be handy during development or for demo models.
+  """
+  def process_request(self, request):
+    if not request.user.is_authenticated():
+      try:
+        user = User.objects.get(username="admin")
+        user.backend = settings.AUTHENTICATION_BACKENDS[0]
+        login(request, user)
+      except User.DoesNotExist:
+        pass

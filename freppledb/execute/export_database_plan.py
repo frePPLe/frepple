@@ -360,10 +360,10 @@ class export:
         type character varying(5) NOT NULL,
         status character varying(20),
         reference character varying(300),
-        quantity numeric(15,6) NOT NULL,
+        quantity numeric(20,8) NOT NULL,
         startdate timestamp with time zone,
         enddate timestamp with time zone,
-        criticality numeric(15,6),
+        criticality numeric(20,8),
         delay numeric,
         plan json,
         source character varying(300),
@@ -377,7 +377,7 @@ class export:
         supplier_id character varying(300),
         demand_id character varying(300),
         due timestamp with time zone,
-        color numeric(15,6),
+        color numeric(20,8),
         id integer NOT NULL
       );
       ''')

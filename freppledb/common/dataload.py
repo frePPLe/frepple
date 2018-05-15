@@ -80,7 +80,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
           data = int(data)
       elif isinstance(field, DecimalField):
         if isinstance(data, (Decimal, float)):
-          data = round(data, 6)
+          data = round(data, 8)
       elif isinstance(field, DurationField):
         if isinstance(data, float):
           data = "%.6f" % data

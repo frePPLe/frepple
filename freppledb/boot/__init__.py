@@ -43,6 +43,8 @@ def add_extra_model_fields(sender, **kwargs):
     elif fieldtype == 'boolean':
       field = models.NullBooleanField(label, null=True, blank=True, db_index=True, editable=editable)
     elif fieldtype == 'number':
+      # Note: Other numeric fields have precision 20, 8.
+      # Changing the value below would require migrating existing attributes of all projects.
       field = models.DecimalField(label, max_digits=15, decimal_places=6, null=True, blank=True, db_index=True, editable=editable)
     elif fieldtype == 'integer':
       field = models.IntegerField(label, null=True, blank=True, db_index=True, editable=editable)

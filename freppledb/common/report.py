@@ -1094,10 +1094,10 @@ class GridReport(View):
         cross_list = None
       elif prefs and 'crosses' in prefs:
         cross_idx = ','.join([str(i) for i in prefs['crosses']])
-        cross_list = reportclass._render_cross()
+        cross_list = reportclass._render_cross(request)
       else:
         cross_idx = ','.join([str(i) for i in range(len(reportclass.crosses)) if reportclass.crosses[i][1].get('visible', True)])
-        cross_list = reportclass._render_cross()
+        cross_list = reportclass._render_cross(request)
       if args:
         mode = "table"
       else:
@@ -1729,12 +1729,19 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _render_cross(cls):
+  def _render_cross(cls, request):
     result = []
     for i in cls.crosses:
+      if 'title' in i[1]:
+        t = i[1]['title'](request) if callable(i[1]['title']) else i[1]['title']
+      else:
+        t = ''
+      if 'editable' in i[1]:
+        e = i[1]['editable'](request) if callable(i[1]['editable']) else i[1]['editable']
+      else:
+        e = False
       result.append(
-        "{name:'%s',editable:%s}"
-        % (title('title' in i[1] and i[1]['title'] or ''), i[1].get('editable', False) and 'true' or 'false')
+        "{name:'%s',editable:%s}" % (title(t), 'true' if e else 'false')
         )
     return ',\n'.join(result)
 
@@ -1958,7 +1965,14 @@ class GridPivot(GridReport):
       ]
     if listformat:
       fields.extend([ capfirst(force_text(_('bucket'), encoding=encoding, errors='ignore')) ])
-      fields.extend([ capfirst(force_text(_(f[1].get('title', _(f[0]))), encoding=encoding, errors='ignore')) for f in mycrosses ])
+      fields.extend([
+        capfirst(force_text(_(
+          (f[1]['title'](request) if callable(f[1]['title']) else f[1]['title'])
+          if 'title' in f[1]
+          else f[0]
+        ), encoding=encoding, errors='ignore'))
+        for f in mycrosses
+        ])
     else:
       fields.extend([ capfirst(force_text(_('data field'), encoding=encoding, errors='ignore')) ])
       fields.extend([ force_text(b['name'], encoding=encoding, errors='ignore') for b in request.report_bucketlist])
@@ -2014,11 +2028,16 @@ class GridPivot(GridReport):
               force_text(row_of_buckets[0][s.name], encoding=encoding, errors='ignore')
               for s in myrows if s.name
               ]
+            fields.extend([force_text(
+              capfirst(_(
+                (cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title'])
+                if 'title' in cross[1]
+                else cross[0]
+                )),
+              encoding=encoding, errors='ignore'
+              )])
             fields.extend([
-              force_text('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])), encoding=encoding, errors='ignore')
-              ])
-            fields.extend([
-              force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore')
+              force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore') if bucket[cross[0]] is not None else ''
               for bucket in row_of_buckets
               ])
             # Return string
@@ -2035,7 +2054,14 @@ class GridPivot(GridReport):
           force_text(row_of_buckets[0][s.name], encoding=encoding, errors='ignore')
           for s in myrows if s.name
           ]
-        fields.extend([ force_text('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])), encoding=encoding, errors='ignore') ])
+        fields.extend([force_text(
+          capfirst(_(
+            (cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title'])
+            if 'title' in cross[1]
+            else cross[0]
+            )),
+          encoding=encoding, errors='ignore'
+          )])
         fields.extend([
           force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore')
           for bucket in row_of_buckets
@@ -2077,7 +2103,7 @@ class GridPivot(GridReport):
         reportclass.filter_items(request, reportclass.basequeryset).using(request.database),
         sortsql=reportclass._apply_sort_index(request, prefs)
         )
-
+    
     # Pick up the preferences
     if prefs and 'rows' in prefs:
       myrows = [
@@ -2104,7 +2130,11 @@ class GridPivot(GridReport):
       cell.style = 'headerstyle'
       fields.append(cell)
       for f in mycrosses:
-        cell = WriteOnlyCell(ws, value=capfirst(_(f[1].get('title', _(f[0])))))
+        cell = WriteOnlyCell(ws, value=capfirst(force_text(_(
+          (f[1]['title'](request) if callable(f[1]['title']) else f[1]['title'])
+          if 'title' in f[1]
+          else f[0]
+          ))))
         cell.style = 'headerstyle'
         fields.append(cell)
     else:
@@ -2146,10 +2176,14 @@ class GridPivot(GridReport):
         else:
           # Write a row
           for cross in mycrosses:
-            if 'visible' in cross[1] and not cross[1]['visible']:
+            if cross[1].get('visible', False):
               continue
             fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in myrows if s.name ]
-            fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+            fields.extend([ _getCellValue(
+              (capfirst(cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title']))
+              if 'title' in cross[1]
+              else capfirst(cross[0])
+              )])
             fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
             ws.append(fields)
           currentkey = row[reportclass.rows[0].name]
@@ -2157,10 +2191,14 @@ class GridPivot(GridReport):
       # Write the last row
       if row_of_buckets:
         for cross in mycrosses:
-          if 'visible' in cross[1] and not cross[1]['visible']:
+          if cross[1].get('visible', True):
             continue
           fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in myrows if s.name ]
-          fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+          fields.extend([ _getCellValue(
+            (capfirst(cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title']))
+            if 'title' in cross[1]
+            else capfirst(cross[0])
+            )])
           fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
           ws.append(fields)
 
@@ -2241,46 +2279,45 @@ def exportWorkbook(request):
       ok = True
       ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
 
-      # Build a list of fields
+      # Build a list of fields and properties
       fields = []
       header = []
       source = False
       lastmodified = False
-
-      if hasattr(model, "export_fields"):
-        for i in model.export_fields():
-          fields.append(i[0])
-          cell = WriteOnlyCell(ws, value=force_text(i[1]).title())
+      try:
+        # The admin model of the class can define some fields to exclude from the export
+        exclude = data_site._registry[model].exclude
+      except:
+        exclude = None
+      for i in model._meta.fields:
+        if i.name in ['lft', 'rght', 'lvl']:
+          continue  # Skip some fields of HierarchyModel
+        elif i.name == 'source':
+          source = True  # Put the source field at the end
+        elif i.name == 'lastmodified':
+          lastmodified = True  # Put the last-modified field at the very end
+        elif not (exclude and i.name in exclude):
+          fields.append(i.column)
+          cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
           cell.style = 'headerstyle'
           header.append(cell)
-      else:
-        try:
-          # The admin model of the class can define some fields to exclude from the export
-          exclude = data_site._registry[model].exclude
-        except:
-          exclude = None
-        for i in model._meta.fields:
-          if i.name in ['lft', 'rght', 'lvl']:
-            continue  # Skip some fields of HierarchyModel
-          elif i.name == 'source':
-            source = True  # Put the source field at the end
-          elif i.name == 'lastmodified':
-            lastmodified = True  # Put the last-modified field at the very end
-          elif not (exclude and i.name in exclude):
-            fields.append(i.column)
+      if hasattr(model, 'propertyFields'):
+        for i in model.propertyFields:
+          if i.export:
+            fields.append(i.name)
             cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
             cell.style = 'headerstyle'
             header.append(cell)
-        if source:
-          fields.append("source")
-          cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
-          cell.style = 'headerstyle'
-          header.append(cell)
-        if lastmodified:
-          fields.append("lastmodified")
-          cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-          cell.style = 'headerstyle'
-          header.append(cell)
+      if source:
+        fields.append("source")
+        cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+        cell.style = 'headerstyle'
+        header.append(cell)
+      if lastmodified:
+        fields.append("lastmodified")
+        cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+        cell.style = 'headerstyle'
+        header.append(cell)
 
       # Write a formatted header row
       ws.append(header)

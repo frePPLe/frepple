@@ -1,6 +1,16 @@
 Release notes
 -------------
 
+4.3.4 (Upcoming release)
+========================
+
+.. rubric:: Database
+
+- The data type of all numeric fields is changed from 15 digits with 6 decimals
+  to 20 digits with 8 decimals. This allows a larger range of numbers to be
+  accurately represented in the database.
+
+
 4.3.3 (2018/05/03)
 ==================
 

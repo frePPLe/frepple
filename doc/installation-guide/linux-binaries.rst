@@ -202,44 +202,6 @@ Here are the steps to get a fully working environment.
       | It only needs review if you have specific requirements for the setup of
       | the Apache web server.
 
-#. **Optionally, define custom attributes**
-
-   It is pretty common to add customized attributes on items, locations,
-   operations, etc to reflect the specifics of your business. They can be edited
-   in the property ATTRIBUTES in the file /etc/frepple/djangosettings.py.
-   ::
-
-      ATTRIBUTES = [
-        ('freppledb.input.models.Item', [
-          ('attribute1', ugettext('attribute_1'), 'string'),
-          ('attribute2', ugettext('attribute_2'), 'boolean'),
-          ('attribute3', ugettext('attribute_3'), 'date'),
-          ('attribute4', ugettext('attribute_4'), 'datetime'),
-          ('attribute5', ugettext('attribute_5'), 'duration'),
-          ('attribute6', ugettext('attribute_6'), 'number'),
-          ('attribute7', ugettext('attribute_7'), 'integer'),
-          ]),
-        ('freppledb.input.models.Operation', [
-          ('attribute1', ugettext('attribute_1'), 'string'),
-          ])
-        ]
-
-   After editing the file, a script needs to be executed to generate a
-   migration script for the database schema:
-   ::
-
-     frepplectl makemigrations
-
-   Attributes can be added, changed and deleted at any later time as well,
-   but it's most convenient to define them upfront before the database
-   schema is created in the next step. When you later edit attributes you
-   need to run the following commands to apply the changes to the database
-   schema:
-   ::
-
-     frepplectl makemigrations
-     frepplectl migrate
-
 #. **Create the database schema**
 
    Your database is still empty now. The command below will create all
@@ -259,16 +221,16 @@ Here are the steps to get a fully working environment.
 
 #. **Update apache web server (Ubuntu only)**
 
-  On Ubuntu the following statements are required to complete the deployment
-  on the Apache web server.
-  ::
+   On Ubuntu the following statements are required to complete the deployment
+   on the Apache web server.
+   ::
 
-    sudo a2enmod expires
-    sudo a2enmod wsgi
-    sudo a2enmod ssl
-    sudo a2ensite default-ssl
-    sudo a2ensite frepple
-    sudo service apache2 restart
+     sudo a2enmod expires
+     sudo a2enmod wsgi
+     sudo a2enmod ssl
+     sudo a2ensite default-ssl
+     sudo a2ensite frepple
+     sudo service apache2 restart
 
 #. **Verify the installation**
 

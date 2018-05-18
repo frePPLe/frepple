@@ -407,6 +407,7 @@ You can use it as a guideline and inspiration for your own deployments.
 
   #install Apache2 modules:
   sudo a2enmod mod_access_compat mod_deflate
+  sudo a2enmod proxy proxy_wstunnel    # Only Enterprise Edition
   sudo systemctl restart apache2
   #for some reason some modules may not be loading in apache
   #use "sudo httpd -t" to check is the syntax is ok
@@ -414,6 +415,8 @@ You can use it as a guideline and inspiration for your own deployments.
   # LoadModule wsgi_module                               /usr/lib64/apache2/mod_wsgi.so
   # LoadModule access_compat_module                 /usr/lib64/apache2/mod_access_compat.so
   # LoadModule deflate_module                            /usr/lib64/apache2/mod_deflate.so
+  # LoadModule deflate_proxy                            /usr/lib64/apache2/mod_proxy.so
+  # LoadModule proxy_wstunnel                            /usr/lib64/apache2/mod_proxy_wstunnel.so
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.

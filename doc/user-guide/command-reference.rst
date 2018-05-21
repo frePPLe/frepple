@@ -152,8 +152,31 @@ In this option you can see a list of files present in the specified folder, and 
 each file by clicking on the arrow down button, or delete a file by clicking on the
 red button.
 
-.. image:: /user-guide/user-interface/_images/execution-exportplantofolder.png
-   :alt: Execution screen - Export plan data to folder
+This command is available only in the user interface:
+
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-exportplantofolder.png
+     :alt: Execution screen - Export plan data to folder
+
+* Command line::
+
+    frepplectl exporttofolder
+    
+    Deprecated:
+    frepplectl frepple_exporttofolder
+
+* Web API::
+    
+    Export the planning result files:
+    POST /execute/api/exportfromfolder/
+  
+    Export the planning result files - deprecated:
+    POST /execute/api/frepple_exportfromfolder/
+
+    Retrieve one of the exported files:
+    GET /execute/uploadtofolder/1/<filename>/
+
 
 .. _importfromfolder:
 
@@ -169,18 +192,23 @@ all data imports, in addition to any data errors identified during their process
 
 The data files to be imported must meet the following criteria:
 
-* The name must match the data object they store: eg demand.csv, item.csv, ...
+* The name must match the data object they store: eg demand.csv, item.csv, item.xlsx, item.csv.gz
 
 * The first line of the file should contain the field names.
 
-* The file should be in CSV format, and may be compressed with GZ (eg demand.csv.gz).
-  The delimiter depends on the default language (configured with LANGUAGE_CODE
-  in djangosettings.py).
-  For English-speaking countries it's a comma. For European countries
-  it's a semicolon.
+* The file should be in CSV or Excel format, and can optionally be compressed with GZ (eg demand.csv.gz).
+  
+* Some specific notes on the CSV format:
 
-* The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
-  setting in djangosettings.py).
+  * The separator in your CSV-files varies with the chosen language: If in your
+    language a comma is used as a decimal separator for numbers, the CSV file
+    will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
+    See http://en.wikipedia.org/wiki/Decimal_mark
+
+  * The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
+
+  * The data file is expected to be encoded in the character encoding defined by
+    the setting CSV_CHARSET (default UTF-8).
 
 In this option you can see a list of files present in the specified folder, and download
 each file by clicking on the arrow down button, or delete a file by clicking on the

@@ -50,8 +50,21 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     # Make request information available throughout the application
     setattr(_thread_locals, 'request', request)
 
-    # Authentication through a web token, specified as an URL parameter
+    # Authentication through a web token.specified as an URL parameter
+    # The token can be specified as a a URL argument or as a HTTP header
+    # with this structure:
+    #    Authorization: Bearer <token>  (see https://jwt.io/introduction/
+    # The token must have a "user" and "exp" field in the payload.
     webtoken = request.GET.get('webtoken', None)
+    if not webtoken:
+      auth_header = request.META.get('HTTP_AUTHORIZATION', None)
+      if auth_header:
+        try:
+          auth = auth_header.split()
+          if auth[0].lower() == 'bearer':
+            webtoken = auth[1]
+        except:
+          pass
     if webtoken:
       # Decode the web token
       try:

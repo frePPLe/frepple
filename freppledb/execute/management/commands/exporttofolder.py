@@ -27,10 +27,13 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext_lazy as _
 from django.template import Template, RequestContext
+from django.test import RequestFactory
 
 from freppledb.common.models import User
 from freppledb import VERSION
 from freppledb.execute.models import Task
+from freppledb.output.views import resource
+from freppledb.output.views import buffer
 
 logger = logging.getLogger(__name__)
 
@@ -43,42 +46,107 @@ class Command(BaseCommand):
 
   requires_system_checks = False
 
-  statements = [
-      ("purchaseorder.csv.gz",
-       "export",
-        '''COPY
-        (select source, lastmodified, id, status , reference, quantity,
-        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
-        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
-        criticality, EXTRACT(EPOCH FROM delay) as delay,
-        owner_id, item_id, location_id, supplier_id from operationplan
-        where status <> 'confirmed' and type='PO')
-        TO STDOUT WITH CSV HEADER'''
-        ),
-      ("distributionorder.csv.gz",
-       "export",
-        '''COPY
-        (select source, lastmodified, id, status, reference, quantity,
-        to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
-        to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
-        criticality, EXTRACT(EPOCH FROM delay) as delay,
-        plan, destination_id, item_id, origin_id from operationplan
-        where status <> 'confirmed' and type='DO')
-        TO STDOUT WITH CSV HEADER'''
-        ),
-      ("manufacturingorder.csv.gz",
-       "export",
-       '''COPY
-       (select source, lastmodified, id , status ,reference ,quantity,
-       to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
-       to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
-       criticality, EXTRACT(EPOCH FROM delay) as delay,
-       operation_id, owner_id, plan, item_id
-       from operationplan where status <> 'confirmed' and type='MO')
-       TO STDOUT WITH CSV HEADER'''
-       )
-      ]
+  #Any sql statements that should be executed before the export
+  pre_sql_statements = ("update operationplan set reference = id where status <> 'confirmed' and reference is null and type in ('MO','PO','DO')",)
 
+  # Any SQL statements that should be executed before the export
+  post_sql_statements = ()
+
+  statements = [
+      {
+        'filename': "purchaseorder.csv",
+        'folder': "export",
+        'sql': '''COPY
+          (select source, lastmodified, id, status , reference, quantity,
+          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
+          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
+          criticality, EXTRACT(EPOCH FROM delay) as delay,
+          owner_id, item_id, location_id, supplier_id from operationplan
+          where status <> 'confirmed' and type='PO')
+          TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "distributionorder.csv",
+        'folder': "export",
+        'sql': '''COPY
+          (select source, lastmodified, id, status, reference, quantity,
+          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
+          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
+          criticality, EXTRACT(EPOCH FROM delay) as delay,
+          plan, destination_id, item_id, origin_id from operationplan
+          where status <> 'confirmed' and type='DO')
+          TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "manufacturingorder.csv",
+        'folder': "export",
+        'sql': '''COPY
+          (select source, lastmodified, id , status ,reference ,quantity,
+          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
+          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
+          criticality, EXTRACT(EPOCH FROM delay) as delay,
+          operation_id, owner_id, plan, item_id
+          from operationplan where status <> 'confirmed' and type='MO')
+          TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "problems.csv",
+        'folder': "export",
+        'sql': '''COPY (
+          select
+            entity, owner, name, description, startdate, enddate, weight
+          from out_problem
+          where name <> 'material excess'
+          order by entity, name, startdate
+          ) TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "operationplanmaterial.csv",
+        'folder': "export",
+        'sql': '''COPY (
+          select
+            item_id as item, location_id as location, quantity,
+            flowdate as date, onhand, operationplan_id as operationplan, status
+          from operationplanmaterial
+          order by item_id, location_id, flowdate, quantity desc
+          ) TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "operationplanresource.csv",
+        'folder': "export",
+        'sql': '''COPY (
+          select
+            resource_id as resource, startdate, enddate, setup,
+            operationplan_id as operationplan, status
+          from operationplanresource
+          order by resource_id, startdate, quantity
+          ) TO STDOUT WITH CSV HEADER'''
+      },
+      {
+        'filename': "capacityreport.csv",
+        'folder': "export",
+        'report': resource.OverviewReport,
+        'data': {
+          'format': 'csvlist',
+          'buckets': "month",
+          'horizontype': True,
+          'horizonunit': "month",
+          'horizonlength': 6
+          }
+      },
+      {
+        'filename': "inventoryreport.csv",
+        'folder': "export",
+        'report': buffer.OverviewReport,
+        'data': {
+          'format': 'csvlist',
+          'buckets': "month",
+          'horizontype': True,
+          'horizonunit': "month",
+          'horizonlength': 6
+          }
+      },
+      ]
 
   def get_version(self):
     return VERSION
@@ -166,23 +234,79 @@ class Command(BaseCommand):
         i = 0
         cnt = len(self.statements)
 
-        for filename, export, sqlquery in self.statements:
+        # Calling all the pre-sql statements
+        for stmt in self.pre_sql_statements:
+          try:
+            logger.info("Executing pre-statement '%s'" % stmt)
+            cursor.execute(stmt)
+            logger.info("%s record(s) modified" % cursor.rowcount)
+          except:
+            logger.error("An error occurred when executing statement '%s'" % stmt)
+
+        for cfg in self.statements:
+          # Validate filename
+          filename = cfg.get('filename', None)
+          if not filename:
+            raise Exception("Missing filename in export configuration")
+          folder = cfg.get('folder', None)
+          if not folder:
+            raise Exception("Missing folder in export configuration for %s" % filename)
           logger.info("%s Started export of %s" % (datetime.now(), filename))
 
-          #make sure export folder exists
-          exportFolder = os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], export)
+          # Make sure export folder exists
+          exportFolder = os.path.join(settings.DATABASES[self.database]['FILEUPLOADFOLDER'], folder)
           if not os.path.isdir(exportFolder):
             os.makedirs(exportFolder)
 
           try:
-            if filename.lower().endswith(".gz"):
-              csv_datafile = gzip.open(os.path.join(exportFolder, filename), "w")
+            reportclass = cfg.get('report', None)
+            sql = cfg.get('sql', None)
+            if reportclass:
+              # Export from report class
+
+              # Create a dummy request
+              factory = RequestFactory()
+              request = factory.get("/dummy/", cfg.get('data', {}))
+              if self.user:
+                request.user = self.user
+              else:
+                request.user = User.objects.all().get(username="admin")
+              request.database = self.database
+              request.LANGUAGE_CODE = settings.LANGUAGE_CODE
+              request.prefs = cfg.get('prefs', None)
+
+              # Initialize the report
+              if hasattr(reportclass, "initialize"):
+                reportclass.initialize(request)
+              if not reportclass._attributes_added and reportclass.model:
+                reportclass._attributes_added = True
+                for f in reportclass.getAttributeFields(reportclass.model):
+                  reportclass.rows += (f,)
+              if reportclass.hasTimeBuckets:
+                reportclass.getBuckets(request)
+
+              # Write the report file
+              datafile = open(os.path.join(exportFolder, filename), "wb")
+              if filename.endswith(".xlsx"):
+                reportclass._generate_spreadsheet_data(request, datafile, **cfg.get('data', {}))
+              elif filename.endswith(".csv"):
+                for r in reportclass._generate_csv_data(request, **cfg.get('data', {})):
+                  datafile.write(
+                    r.encode(settings.CSV_CHARSET)
+                    if isinstance(r, str) else r
+                    )
+              else:
+                raise Exception("Unknown output format for %s" % filename)
+            elif sql:
+              # Exporting using SQL
+              if filename.lower().endswith(".gz"):
+                datafile = gzip.open(os.path.join(exportFolder, filename), "w")
+              else:
+                datafile = open(os.path.join(exportFolder, filename), "w")
+              cursor.copy_expert(sql, datafile)
             else:
-              csv_datafile = open(os.path.join(exportFolder, filename), "w")
-
-            cursor.copy_expert(sqlquery, csv_datafile)
-
-            csv_datafile.close()
+              raise Exception("Unknown export type for %s" % filename)
+            datafile.close()
             i += 1
 
           except Exception as e:
@@ -191,10 +315,18 @@ class Command(BaseCommand):
             if task:
               task.message = 'Failed to export %s' % filename
 
-          task.status = str(int(i / cnt*100)) + '%'
+          task.status = str(int(i / cnt * 100)) + '%'
           task.save(using=self.database)
 
         logger.info("%s Exported %s file(s)\n" % (datetime.now(), cnt - errors))
+
+        for stmt in self.post_sql_statements:
+          try:
+            logger.info("Executing post-statement '%s'" % stmt)
+            cursor.execute(stmt)
+            logger.info("%s record(s) modified" % cursor.rowcount)
+          except:
+            logger.error("An error occured when executing statement '%s'" % stmt)
 
       else:
         errors += 1
@@ -231,7 +363,7 @@ class Command(BaseCommand):
     if 'FILEUPLOADFOLDER' in settings.DATABASES[request.database] and request.user.is_superuser:
       # Function to convert from bytes to human readabl format
       def sizeof_fmt(num):
-        for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
           if abs(num) < 1024.0:
             return "%3.1f%sB" % (num, unit)
           num /= 1024.0
@@ -246,7 +378,7 @@ class Command(BaseCommand):
             if file.endswith(('.csv', '.csv.gz', '.log')):
               filesexported.append([
                 file,
-                strftime("%Y-%m-%d %H:%M:%S",localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
+                strftime("%Y-%m-%d %H:%M:%S", localtime(os.stat(os.path.join(exportfolder, file)).st_mtime)),
                 sizeof_fmt(os.stat(os.path.join(exportfolder, file)).st_size)
                 ])
 

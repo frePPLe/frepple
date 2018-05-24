@@ -4,7 +4,10 @@ Release notes
 4.3.4 (Upcoming release)
 ========================
 
-.. rubric:: Database
+.. rubric:: Integration
+
+- Extended the `exporttofolder <user-guide/command-reference.html#exporttofolder>`_ 
+  command to export additional plan results into CSV or Excel files.
 
 - The data type of all numeric fields is changed from 15 digits with 6 decimals
   to 20 digits with 8 decimals. This allows a larger range of numbers to be

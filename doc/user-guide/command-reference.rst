@@ -140,19 +140,18 @@ This command is available only in the user interface:
 Export plan result to folder
 ----------------------------
 
-This task allows exporting data to a set of GZ-compressed CSV-formatted files.
+This task allows exporting data to a set of files in CSV or Excel format.
 The purpose of this task is to help the exchange of information with other systems.
+
+The command can easily by customized to export the results you need.
 
 The files are all placed in a folder UPLOADFILEFOLDER/export/, which can be configured
 per scenario with the UPLOADFILEFOLDER value in the djangosettings.py file.
-The log file exporttofolder.log records file exports, in addition to any data errors 
-identified during their processing.
 
-In this option you can see a list of files present in the specified folder, and download
-each file by clicking on the arrow down button, or delete a file by clicking on the
-red button.
+The exported files can be accessed from the user interface, or through over a
+HTTP(S) web interface.
 
-This command is available only in the user interface:
+This command is available in the user interface, the command line and the web API:
 
 * Execution screen:
 

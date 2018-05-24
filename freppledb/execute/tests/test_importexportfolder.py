@@ -46,10 +46,6 @@ class execute_with_commands(TransactionTestCase):
 
 
   def test_exportimportfromfolder(self):
-
-    # Run frePPLe on the test database. No longer needed because records are already in the fixture, in Enterprise conficts with webservice
-    #management.call_command('runplan', plantype=1, constraint=15, env='supply')
-
     self.assertTrue(ManufacturingOrder.objects.count() > 30)
     self.assertTrue(PurchaseOrder.objects.count() > 20)
     self.assertTrue(DistributionOrder.objects.count() > 0)
@@ -70,12 +66,11 @@ class execute_with_commands(TransactionTestCase):
     self.assertEqual(ManufacturingOrder.objects.count(), 0)
 
     # Move export files to the import folder
-    for file in os.listdir(os.path.join(self.datafolder, 'export')):
-      if file.endswith(".csv.gz"):
-        os.rename(
-          os.path.join(self.datafolder, 'export', file),
-          os.path.join(self.datafolder, file)
-          )
+    for file in ["purchaseorder.csv", "distributionorder.csv", "manufacturingorder.csv"]:
+      os.rename(
+        os.path.join(self.datafolder, 'export', file),
+        os.path.join(self.datafolder, file)
+        )
 
     management.call_command('importfromfolder')
 

@@ -1013,8 +1013,10 @@ class GridReport(View):
           s = json.dumps(i[f.field_name])
         elif isinstance(i[f.field_name], timedelta):
           s = i[f.field_name].total_seconds()
-        else:
+        elif i[f.field_name] is not None:
           s = '"%s"' % i[f.field_name]
+        else:
+          s = '""'
         if first2:
           # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
           r.append('"%s":%s' % (f.name, s))

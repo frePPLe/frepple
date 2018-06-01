@@ -29,6 +29,7 @@ This section provides an overview of the available actions:
 
   * :ref:`loaddata`
   * :ref:`createbuckets`
+  * :ref:`create_database`
   * :ref:`migrate`
   * :ref:`restore`
   * :ref:`createsuperuser`
@@ -355,7 +356,7 @@ This command is available in the user interface, the command line and the web AP
 
 
 Administrator commands
-~~~~~~~~~~~~~~~~~~~~~~  
+~~~~~~~~~~~~~~~~~~~~~~
      
 .. _loaddata:
 
@@ -417,21 +418,44 @@ This command is available in the user interface, the command line and the web AP
     Deprecated:
     POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
+.. _create_database:
+
+Create the PostgreSQL database(s)
+---------------------------------
+
+This command will create the PostgreSQl databases for frePPLe.
+
+If the database already exists you will be prompted to confirm whether you 
+really to loose all data in the existing database. When confirmed that database
+will dropped and recreated.
+
+This command is available on the command line only:
+
+::
+
+    # Create all scenario databases
+    frepplectl create_database
+    
+    # Recreate only a single database 
+    frepplectl create_database --database=scenario3
 
 .. _migrate:
 
 Create or migrate the database schema
 -------------------------------------
 
-  Update the database structure to the latest release
+Update the database structure to the latest release
 
 This command is available on the command line only:
 
 ::
 
+    # Migrate the main database
     frepplectl migrate
 
-
+    # Migrate a scenario database
+    frepplectl migrate --database=scenario1
+    
 .. _restore: 
 
 Restore a database backup

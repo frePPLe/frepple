@@ -414,10 +414,10 @@ class MenuNode(Node):
       for j in i[1]:
         if j[2].has_permission(req.user):
           ok = True
-          if j[2].dependencies and not(j[2].model and j[2].model._meta.db_table in present):
+          if j[2].dependencies:
             for dep in j[2].dependencies:
               if isinstance(dep, list) and len(dep) == 2:
-                #evaluate the value
+                # Evaluate the value
                 try:
                   ok = dep[0].objects.using(req.database).get(name=dep[1]).value.lower() == 'true'
                 except:

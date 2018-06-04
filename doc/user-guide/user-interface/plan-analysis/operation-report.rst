@@ -1,6 +1,6 @@
-================
-Operation report
-================
+===========================
+Manufacturing order summary
+===========================
 
 The report shows for each time bucket and each operation the quantity started
 and finished. A drilldown report is also available to show the detailed data
@@ -14,9 +14,11 @@ Field             Description
 ================= ==============================================================================
 Operation         Name of the operation.
 Location          Location of the operation.
-Locked starts     Sum of the quantity of all locked (ie frozen) operationplans starting in this bucket.
+Locked starts     Sum of the quantity of all operationplans starting in this bucket with 
+                  status "approved" or "confirmed").
 Total starts      Sum of the quantity of all operationplans starting in this bucket.
-Locked ends       Sum of the quantity of all locked (ie frozen) operationplans ending in this bucket.
+Locked ends       Sum of the quantity of all operationplans ending in this bucket with 
+                  status "approved" or "confirmed").
 Total ends        Sum of the quantity of all operationplans starting in this bucket.
 ================= ==============================================================================
 

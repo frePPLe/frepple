@@ -16,7 +16,7 @@
 
 from freppledb.menu import menu
 from freppledb.input.models import DeliveryOrder, OperationPlanMaterial, OperationPlanResource
-from freppledb.input.models import Demand, Operation, OperationPlan, Resource
+from freppledb.input.models import Demand, Operation, OperationPlan, Resource, DistributionOrder, PurchaseOrder, ManufacturingOrder
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
 import freppledb.output.views.problem
@@ -43,13 +43,18 @@ menu.addItem(
   dependencies=[Demand]
   )
 menu.addItem(
-  "sales", "constraint report", url="/constraint/", 
+  "sales", "constraint report", url="/constraint/",
   report=freppledb.output.views.constraint.BaseReport, index=500,
   dependencies=[Demand]
   )
 menu.addItem(
-  "admin", "kpi report", url="/kpi/", 
+  "admin", "kpi report", url="/kpi/",
   report=freppledb.output.views.kpi.Report, index=200
+  )
+menu.addItem(
+  "inventory", "distribution order summary", url="/distribution/",
+  report=freppledb.output.views.operation.DistributionReport, index=90,
+  dependencies=[DistributionOrder]
   )
 menu.addItem(
   "inventory", "inventory report", url="/buffer/",
@@ -72,7 +77,7 @@ menu.addItem(
   dependencies=[OperationPlanResource]
   )
 menu.addItem(
-  "capacity", "resource detail report", url="/loadplan/", 
+  "capacity", "resource detail report", url="/loadplan/",
   report=freppledb.output.views.resource.DetailReport, index=200,
   dependencies=[OperationPlanResource])
 menu.addItem(
@@ -80,9 +85,15 @@ menu.addItem(
   report=freppledb.output.views.problem.Report, index=300,
   dependencies=[Resource]
   )
-menu.addItem("manufacturing", "operation report", url="/operation/", 
-  report=freppledb.output.views.operation.OverviewReport, index=100,
-  dependencies=[OperationPlan]
+menu.addItem(
+  "purchasing", "purchase order summary", url="/purchase/",
+  report=freppledb.output.views.operation.PurchaseReport, index=200,
+  dependencies=[PurchaseOrder]
+  )
+menu.addItem(
+  "manufacturing", "manufacturing order summary", url="/operation/",
+  report=freppledb.output.views.operation.OverviewReport, index=110,
+  dependencies=[ManufacturingOrder]
   )
 menu.addItem(
   "manufacturing", "problem report", url="/problem/?entity=operation",

@@ -199,7 +199,7 @@ class GridField(object):
     if self.searchrules:
       o.append(',"searchrules":{%s}' % self.searchrules)
     if self.hidden:
-      o.append(',"hidden":true')
+      o.append(',"alwayshidden":true, "hidden":true')
     if self.extra:
       if isinstance(self.extra, collections.Callable):
         o.append(",%s" % force_text(self.extra()))

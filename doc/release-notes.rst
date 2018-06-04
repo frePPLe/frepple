@@ -12,6 +12,10 @@ Release notes
 - The data type of all numeric fields is changed from 15 digits with 6 decimals
   to 20 digits with 8 decimals. This allows a larger range of numbers to be
   accurately represented in the database.
+  
+- The `remote web commands API <integration-guide/remote-commands.html>`_ now 
+  supports user authentication with `JSON Web Tokens <https://jwt.io/>`_ to launch tasks,
+  download data and upload data. 
 
 
 4.3.3 (2018/05/03)

@@ -4,6 +4,15 @@ Release notes
 4.3.4 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Added new reports `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
+  and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
+  to summarize the purchase orders or distribution orders per time bucket.
+
+- For consistency with the previous change, the operation report is renamed 
+  to `manufacturing order summary <user-guide/user-interface/plan-analysis/manufacturing-order-summary.html>`_.
+
 .. rubric:: Integration
 
 - Extended the `exporttofolder <user-guide/command-reference.html#exporttofolder>`_ 

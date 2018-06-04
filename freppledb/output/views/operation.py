@@ -34,7 +34,7 @@ class OverviewReport(GridPivot):
   title = _('Manufacturing order summary')
   model = Operation
   permissions = (("view_operation_report", "Can view operation report"),)
-  help_url = 'user-guide/user-interface/plan-analysis/operation-report.html'
+  help_url = 'user-guide/user-interface/plan-analysis/manufacturing-order-summary.html'
 
   rows = (
     GridFieldText(

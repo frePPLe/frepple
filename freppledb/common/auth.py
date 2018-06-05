@@ -55,7 +55,7 @@ class MultiDBBackend(ModelBackend):
       # difference between an existing and a non-existing user.
       # See django ticket #20760
       User().set_password(password)
-    except ValidationError:
+    except (ValidationError, User.MultipleObjectsReturned):
       # The user name isn't an email address
       try:
         user = User.objects.get(username=username)

@@ -1178,10 +1178,6 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
 
   // Update flow and loadplans
   update();
-  assert(
-    (preferEnd && getStart() >= d) ||
-    (!preferEnd && getStart() <= d)
-    );
 }
 
 

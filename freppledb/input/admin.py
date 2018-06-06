@@ -133,11 +133,7 @@ class OperationMaterial_inline(MultiDBTabularInline):
 class OperationResource_inline(MultiDBTabularInline):
   model = OperationResource
   raw_id_fields = ('operation', 'resource', 'skill')
-  fields = ('resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup')
-  sfieldsets = (
-    (None, {'fields': ['resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup']}),
-    (_('alternates'), {'fields': ('name', 'priority', 'search')}),
-    )
+  fields = ('resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup', 'search')
   extra = 0
   exclude = ('source',)
 

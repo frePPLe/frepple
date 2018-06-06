@@ -1268,7 +1268,7 @@ class ManufacturingOrderList(GridReport):
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'", initially_hidden=True),
     GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
-    GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operation__item__name', title=_('item'), formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operation__location__name', title=_('location'), formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operation', title=_('operation'), field_name='operation__name', formatter='detail', extra='"role":"input/operation"'),
@@ -1478,7 +1478,7 @@ class DistributionOrderList(GridReport):
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/distributionorder"'),
     GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
-    GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('destination', title=_('destination'), field_name='destination__name', formatter='detail', extra='"role":"input/location"'),
@@ -1704,7 +1704,7 @@ class PurchaseOrderList(GridReport):
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/purchaseorder"'),
     GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
-    GridFieldText('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
+    GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     GridFieldText('supplier', title=_('supplier'), field_name='supplier__name', formatter='detail', extra='"role":"input/supplier"'),

@@ -24,18 +24,30 @@ from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
 from rest_framework import filters
 from rest_framework import permissions
+
 from freppledb.common.models import User
+from freppledb.common.auth import getWebserviceAuthorization
 
 
 @staff_member_required
 @csrf_protect
 def APIIndexView(request):
-  permission_classes = (permissions.DjangoModelPermissions,)
-  return render(request, 'rest_framework/index.html',
-                context={
-                 'title': _('REST API Help'),
-                  }
-                )
+  try:
+    exp = int(request.GET.get("exp", '3'))
+  except:
+    exp = 3
+  if exp > 7:
+    exp = 7
+  return render(
+    request,
+    'rest_framework/index.html',
+    context={
+      'exp': exp,
+      'request': request,
+      'title': _('REST API Help'),
+      'token': getWebserviceAuthorization(user=request.user.username, exp=exp * 86400)
+      }
+    )
 
 
 class frepplePermissionClass(permissions.DjangoModelPermissions):

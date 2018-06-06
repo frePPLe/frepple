@@ -191,8 +191,8 @@ function drawGraphs(jsondata)
                   + "?item__name="+admin_escape(d['item'])
                   + "&supplier__name="+admin_escape(d['supplier'])
                   + "&location__name="+admin_escape(d['location'])
-                  + "&enddate__lte="+timebuckets[d['bucket']]['enddate']
-                  + "&enddate__gt="+timebuckets[d['bucket']]['startdate'];
+                  + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
+                  + "&enddate__gte="+timebuckets[d['bucket']]['startdate'];
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
@@ -214,8 +214,8 @@ function drawGraphs(jsondata)
                   + "?item__name="+admin_escape(d['item'])
                   + "&supplier__name="+admin_escape(d['supplier'])
                   + "&location__name="+admin_escape(d['location'])
-                  + "&enddate__lte="+timebuckets[d['bucket']]['enddate']
-                  + "&enddate__gt="+timebuckets[d['bucket']]['startdate'];
+                  + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
+                  + "&enddate__gte="+timebuckets[d['bucket']]['startdate'];
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
@@ -269,8 +269,8 @@ function crosses (cellvalue, options, rowdata)
             + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
-            + '&enddate__gt=' + options['colModel']['startdate']
-            + '&amp;enddate__lte=' + options['colModel']['enddate'] 
+            + '&enddate__gte=' + options['colModel']['startdate']
+            + '&amp;enddate__lt=' + options['colModel']['enddate'] 
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0.0<br>';
@@ -281,8 +281,8 @@ function crosses (cellvalue, options, rowdata)
             + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
-            + '&enddate__gt=' + options['colModel']['startdate']
-            + '&amp;enddate__lte=' + options['colModel']['enddate']
+            + '&enddate__gte=' + options['colModel']['startdate']
+            + '&amp;enddate__lt=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0.0<br>';

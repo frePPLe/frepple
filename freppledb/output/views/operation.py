@@ -516,11 +516,11 @@ class PurchaseReport(GridPivot):
             ), 0) total_start,
           coalesce(sum(
             case when operationplan.status = 'proposed'
-              and d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+              and d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
              then operationplan.quantity else 0 end
             ), 0) proposed_end,
           coalesce(sum(
-            case when d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+            case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
             then operationplan.quantity else 0 end
             ), 0) total_end
         from operationplan
@@ -731,11 +731,11 @@ class DistributionReport(GridPivot):
             ), 0) total_start,
           coalesce(sum(
             case when operationplan.status = 'proposed'
-              and d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+              and d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
              then operationplan.quantity else 0 end
             ), 0) proposed_end,
           coalesce(sum(
-            case when d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
+            case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
             then operationplan.quantity else 0 end
             ), 0) total_end
         from operationplan

@@ -16,7 +16,8 @@
 
 from freppledb.menu import menu
 from freppledb.input.models import DeliveryOrder, OperationPlanMaterial, OperationPlanResource
-from freppledb.input.models import Demand, Operation, OperationPlan, Resource, DistributionOrder, PurchaseOrder, ManufacturingOrder
+from freppledb.input.models import Demand, Operation, Resource, DistributionOrder, PurchaseOrder
+from freppledb.input.models import ManufacturingOrder, ItemDistribution, ItemSupplier
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
 import freppledb.output.views.problem
@@ -28,7 +29,7 @@ import freppledb.output.views.kpi
 
 # Adding reports. We use an index value to keep the same order of the entries in all languages.
 menu.addItem(
-  "sales", "demand report", url="/demand/", 
+  "sales", "demand report", url="/demand/",
   report=freppledb.output.views.demand.OverviewReport, index=200,
   dependencies=[Demand]
   )
@@ -54,7 +55,7 @@ menu.addItem(
 menu.addItem(
   "inventory", "distribution order summary", url="/distribution/",
   report=freppledb.output.views.operation.DistributionReport, index=90,
-  dependencies=[DistributionOrder]
+  dependencies=[DistributionOrder, ItemDistribution]
   )
 menu.addItem(
   "inventory", "inventory report", url="/buffer/",
@@ -88,12 +89,12 @@ menu.addItem(
 menu.addItem(
   "purchasing", "purchase order summary", url="/purchase/",
   report=freppledb.output.views.operation.PurchaseReport, index=200,
-  dependencies=[PurchaseOrder]
+  dependencies=[PurchaseOrder, ItemSupplier]
   )
 menu.addItem(
   "manufacturing", "manufacturing order summary", url="/operation/",
   report=freppledb.output.views.operation.OverviewReport, index=110,
-  dependencies=[ManufacturingOrder]
+  dependencies=[ManufacturingOrder, Operation]
   )
 menu.addItem(
   "manufacturing", "problem report", url="/problem/?entity=operation",

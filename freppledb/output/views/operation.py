@@ -18,10 +18,9 @@
 from django.db import connections
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.utils.text import capfirst
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Operation
+from freppledb.input.models import Operation, DistributionOrder, PurchaseOrder
 from freppledb.common.report import getHorizon, GridFieldNumber, GridFieldInteger
 from freppledb.common.report import GridPivot, GridFieldText, GridFieldDuration
 from freppledb.common.report import GridFieldCurrency, GridFieldDateTime, GridFieldLastModified
@@ -29,13 +28,13 @@ from freppledb.common.report import GridFieldCurrency, GridFieldDateTime, GridFi
 
 class OverviewReport(GridPivot):
   '''
-  A report showing the planned starts of each operation.
+  A report summarizing all manufacturing orders.
   '''
   template = 'output/operation.html'
-  title = _('Operation report')
+  title = _('Manufacturing order summary')
   model = Operation
   permissions = (("view_operation_report", "Can view operation report"),)
-  help_url = 'user-guide/user-interface/plan-analysis/operation-report.html'
+  help_url = 'user-guide/user-interface/plan-analysis/manufacturing-order-summary.html'
 
   rows = (
     GridFieldText(
@@ -333,3 +332,437 @@ class OverviewReport(GridPivot):
         'production_proposed': row[39],
         'production_total': row[40]
         }
+
+
+class PurchaseReport(GridPivot):
+  '''
+  A report summarizing all purchase orders.
+  '''
+  template = 'output/purchase_order_summary.html'
+  title = _('Purchase order summary')
+  model = PurchaseOrder
+  help_url = 'user-guide/user-interface/plan-analysis/purchase-order-summary.html'
+
+  rows = (
+    GridFieldText('key', key=True, search=False, initially_hidden=True, hidden=True, field_name="item__name", editable=False),
+    GridFieldText(
+      'item', title=_('item'), editable=False, field_name='item__name',
+      formatter='detail', extra='"role":"input/item"'
+      ),
+    GridFieldText(
+      'item__description', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'item__category', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'item__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('subcategory'))
+      ),
+    GridFieldCurrency(
+      'item__cost', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('cost')),
+      field_name='item__cost'
+      ),
+    GridFieldText(
+      'item__owner', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name'
+      ),
+    GridFieldText(
+      'item__source', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('last modified'))
+      ),
+    GridFieldText(
+      'location', title=_('location'), editable=False, field_name='location__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
+    GridFieldText(
+      'location__description', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'location__category', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'location__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'location__available', editable=False, initially_hidden=True,
+      title=string_concat(_('location'), ' - ', _('available')),
+      field_name='location__available__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('location'), ' - ', _('last modified'))
+      ),
+    GridFieldText(
+      'supplier', title=_('supplier'), editable=False, field_name='supplier__name',
+      formatter='detail', extra='"role":"input/supplier"'
+      ),
+    GridFieldText(
+      'supplier__description', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'supplier__category', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'supplier__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'supplier__owner', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('owner')),
+      field_name='supplier__owner__name'
+      ),
+    GridFieldText(
+      'supplier__source', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'supplier__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('supplier'), ' - ', _('last modified'))
+      ),
+    )
+
+  crosses = (
+    ('proposed_start', {'title': _('proposed ordering')}),
+    ('total_start', {'title': _('total ordering')}),
+    ('proposed_end', {'title': _('proposed receiving')}),
+    ('total_end', {'title': _('total receiving')}),
+    )
+
+
+  @staticmethod
+  def basequeryset(request, args, kwargs):
+    current, start, end = getHorizon(request)
+    return PurchaseOrder.objects.all() \
+      .filter(startdate__lte=end, enddate__gte=start) \
+      .distinct('item', 'supplier', 'location') \
+      .order_by()   # Ordering isn't compatible with the distinct
+
+
+  @staticmethod
+  def query(request, basequery, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
+    # Run the query
+    cursor = connections[request.database].cursor()
+    query = '''
+      with combinations as (%s)
+      select row_to_json(data)
+      from (
+      select
+        -- Key field
+        combinations.item_id || combinations.location_id || combinations.supplier_id as key,
+        -- Attribute fields of item, location and supplier
+        combinations.item_id as item,
+        item.description as item__description,
+        item.category as item__category,
+        item.subcategory as item__subcategory,
+        item.cost as item__cost,
+        item.owner_id as item__owner,
+        item.source as item__source,
+        item.lastmodified as item__lastmodified,
+        combinations.location_id as location,
+        location.description as location__description,
+        location.category as location__category,
+        location.subcategory as location__subcategory,
+        location.available_id as location__available,
+        location.lastmodified as location__lastmodified,
+        combinations.supplier_id as supplier,
+        supplier.description as supplier__description,
+        supplier.category as supplier__category,
+        supplier.subcategory as supplier_subcategory,
+        supplier.owner_id as supplier__owner,
+        supplier.source as supplier__source,
+        supplier.lastmodified as supplier_lastmodified,
+        -- Buckets
+        res.bucket as bucket,
+        to_char(res.startdate, 'YYYY-MM-DD') as startdate,
+        to_char(res.enddate, 'YYYY-MM-DD') as enddate,
+        -- Values
+        res.proposed_start as proposed_start,
+        res.total_start as total_start,
+        res.proposed_end as proposed_end,
+        res.total_end as total_end
+      from combinations
+      inner join item on combinations.item_id = item.name
+      left outer join location on combinations.location_id = location.name
+      left outer join supplier on combinations.supplier_id = supplier.name
+      inner join (
+        select
+          operationplan.item_id, operationplan.location_id, operationplan.supplier_id,
+          d.bucket, d.startdate, d.enddate,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+            then operationplan.quantity
+            else 0 end
+            ), 0) proposed_start,
+          coalesce(sum(
+            case when d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+            then operationplan.quantity else 0 end
+            ), 0) total_start,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
+             then operationplan.quantity else 0 end
+            ), 0) proposed_end,
+          coalesce(sum(
+            case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
+            then operationplan.quantity else 0 end
+            ), 0) total_end
+        from operationplan
+        inner join  combinations
+        on operationplan.item_id = combinations.item_id
+          and operationplan.location_id = combinations.location_id
+          and operationplan.supplier_id = combinations.supplier_id
+        cross join (
+          select name as bucket, startdate, enddate
+          from common_bucketdetail
+          where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
+          ) d
+        where operationplan.type = 'PO'
+        group by operationplan.item_id, operationplan.location_id, operationplan.supplier_id,
+          d.bucket, d.startdate, d.enddate
+        ) res
+      on res.item_id = combinations.item_id
+        and res.location_id = combinations.location_id
+        and res.supplier_id = combinations.supplier_id
+      order by %s, res.startdate
+      ) data
+      ''' % (
+        basesql, request.report_bucket,
+        request.report_startdate, request.report_enddate, sortsql
+        )
+    cursor.execute(query, baseparams)
+
+    # Convert the SQL results to Python
+    for row in cursor.fetchall():
+      yield row[0]
+
+
+class DistributionReport(GridPivot):
+  '''
+  A report summarizing all distribution orders.
+  '''
+  template = 'output/distribution_order_summary.html'
+  title = _('Distribution order summary')
+  model = DistributionOrder
+  help_url = 'user-guide/user-interface/plan-analysis/distribution-order-summary.html'
+
+  rows = (
+    GridFieldText('key', key=True, search=False, initially_hidden=True, hidden=True, field_name="item__name", editable=False),
+    GridFieldText(
+      'item', title=_('item'), editable=False, field_name='item__name',
+      formatter='detail', extra='"role":"input/item"'
+      ),
+    GridFieldText(
+      'item__description', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'item__category', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'item__subcategory', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('subcategory'))
+      ),
+    GridFieldCurrency(
+      'item__cost', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('cost')),
+      field_name='item__cost'
+      ),
+    GridFieldText(
+      'item__owner', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name'
+      ),
+    GridFieldText(
+      'item__source', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('source'))
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('item'), ' - ', _('last modified'))
+      ),
+    GridFieldText(
+      'origin', title=_('origin'), editable=False, field_name='origin__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
+    GridFieldText(
+      'origin__description', editable=False, initially_hidden=True,
+      title=string_concat(_('origin'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'origin__category', editable=False, initially_hidden=True,
+      title=string_concat(_('origin'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'origin__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('origin'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'origin__available', editable=False, initially_hidden=True,
+      title=string_concat(_('origin'), ' - ', _('available')),
+      field_name='origin__available__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldLastModified(
+      'origin__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('origin'), ' - ', _('last modified'))
+      ),
+    GridFieldText(
+      'destination', title=_('destination'), editable=False, field_name='destination__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
+    GridFieldText(
+      'destination__description', editable=False, initially_hidden=True,
+      title=string_concat(_('destination'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'destination__category', editable=False, initially_hidden=True,
+      title=string_concat(_('destination'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'destination__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('destination'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'destination__available', editable=False, initially_hidden=True,
+      title=string_concat(_('destination'), ' - ', _('available')),
+      field_name='destination__available__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldLastModified(
+      'destination__lastmodified', initially_hidden=True, editable=False,
+      title=string_concat(_('destination'), ' - ', _('last modified'))
+      ),
+    )
+
+  crosses = (
+    ('proposed_start', {'title': _('proposed shipping')}),
+    ('total_start', {'title': _('total shipping')}),
+    ('proposed_end', {'title': _('proposed receiving')}),
+    ('total_end', {'title': _('total receiving')}),
+    )
+
+
+  @staticmethod
+  def basequeryset(request, args, kwargs):
+    current, start, end = getHorizon(request)
+    return DistributionOrder.objects.all() \
+      .filter(startdate__lte=end, enddate__gte=start) \
+      .distinct('item', 'origin', 'destination') \
+      .order_by()   # Ordering isn't compatible with the distinct
+
+
+  @staticmethod
+  def query(request, basequery, sortsql='1 asc'):
+    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
+    # Run the query
+    cursor = connections[request.database].cursor()
+    query = '''
+      with combinations as (%s)
+      select row_to_json(data)
+      from (
+      select
+        -- Key field
+        combinations.item_id || combinations.origin_id || combinations.destination_id as key,
+        -- Attribute fields of item, location and supplier
+        combinations.item_id as item,
+        item.description as item__description,
+        item.category as item__category,
+        item.subcategory as item__subcategory,
+        item.cost as item__cost,
+        item.owner_id as item__owner,
+        item.source as item__source,
+        item.lastmodified as item__lastmodified,
+        combinations.origin_id as origin,
+        origin.description as origin__description,
+        origin.category as origin__category,
+        origin.subcategory as origin__subcategory,
+        origin.available_id as origin__available,
+        origin.lastmodified as origin__lastmodified,
+        combinations.destination_id as destination,
+        destination.description as destination__description,
+        destination.category as destination__category,
+        destination.subcategory as destination__subcategory,
+        destination.available_id as destination__available,
+        destination.lastmodified as destination__lastmodified,
+        -- Buckets
+        res.bucket as bucket,
+        to_char(res.startdate, 'YYYY-MM-DD') as startdate,
+        to_char(res.enddate, 'YYYY-MM-DD') as enddate,
+        -- Values
+        res.proposed_start as proposed_start,
+        res.total_start as total_start,
+        res.proposed_end as proposed_end,
+        res.total_end as total_end
+      from combinations
+      inner join item on combinations.item_id = item.name
+      left outer join location origin on combinations.origin_id = origin.name
+      left outer join location destination on combinations.destination_id = destination.name
+      inner join (
+        select
+          operationplan.item_id, operationplan.origin_id, operationplan.destination_id,
+          d.bucket, d.startdate, d.enddate,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+            then operationplan.quantity
+            else 0 end
+            ), 0) proposed_start,
+          coalesce(sum(
+            case when d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
+            then operationplan.quantity else 0 end
+            ), 0) total_start,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
+             then operationplan.quantity else 0 end
+            ), 0) proposed_end,
+          coalesce(sum(
+            case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
+            then operationplan.quantity else 0 end
+            ), 0) total_end
+        from operationplan
+        inner join combinations
+        on operationplan.item_id = combinations.item_id
+          and operationplan.origin_id = combinations.origin_id
+          and operationplan.destination_id = combinations.destination_id
+        cross join (
+          select name as bucket, startdate, enddate
+          from common_bucketdetail
+          where bucket_id = '%s' and enddate > '%s' and startdate < '%s'
+          ) d
+        where operationplan.type = 'DO'
+        group by operationplan.item_id, operationplan.origin_id, operationplan.destination_id,
+          d.bucket, d.startdate, d.enddate
+        ) res
+      on res.item_id = combinations.item_id
+        and res.origin_id = combinations.origin_id
+        and res.destination_id = combinations.destination_id
+      order by %s, res.startdate
+      ) data
+      ''' % (
+        basesql, request.report_bucket,
+        request.report_startdate, request.report_enddate, sortsql
+        )
+    cursor.execute(query, baseparams)
+
+    # Convert the SQL results to Python
+    for row in cursor.fetchall():
+      yield row[0]

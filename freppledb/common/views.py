@@ -24,9 +24,9 @@ from django.contrib.auth.password_validation import validate_password, get_passw
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse, resolve
 from django.template import loader, TemplateDoesNotExist
 from django import forms
-from django.urls import reverse, resolve
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst

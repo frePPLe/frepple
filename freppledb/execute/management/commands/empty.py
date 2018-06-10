@@ -126,7 +126,7 @@ class Command(BaseCommand):
 
             x = x._meta.db_table
             if x not in tables:
-                raise Exception("table: %s not in tables" % x)
+              raise
             models2tables.add(x)
           except Exception as e:
             raise CommandError("Invalid model to erase: %s" % m)

@@ -29,6 +29,7 @@ This section provides an overview of the available actions:
 
   * :ref:`loaddata`
   * :ref:`createbuckets`
+  * :ref:`create_database`
   * :ref:`migrate`
   * :ref:`restore`
   * :ref:`createsuperuser`
@@ -140,20 +141,42 @@ This command is available only in the user interface:
 Export plan result to folder
 ----------------------------
 
-This task allows exporting data to a set of GZ-compressed CSV-formatted files.
+This task allows exporting data to a set of files in CSV or Excel format.
 The purpose of this task is to help the exchange of information with other systems.
+
+The command can easily by customized to export the results you need.
 
 The files are all placed in a folder UPLOADFILEFOLDER/export/, which can be configured
 per scenario with the UPLOADFILEFOLDER value in the djangosettings.py file.
-The log file exporttofolder.log records file exports, in addition to any data errors 
-identified during their processing.
 
-In this option you can see a list of files present in the specified folder, and download
-each file by clicking on the arrow down button, or delete a file by clicking on the
-red button.
+The exported files can be accessed from the user interface, or through over a
+HTTP(S) web interface.
 
-.. image:: /user-guide/user-interface/_images/execution-exportplantofolder.png
-   :alt: Execution screen - Export plan data to folder
+This command is available in the user interface, the command line and the web API:
+
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-exportplantofolder.png
+     :alt: Execution screen - Export plan data to folder
+
+* Command line::
+
+    frepplectl exporttofolder
+    
+    Deprecated:
+    frepplectl frepple_exporttofolder
+
+* Web API::
+    
+    Export the planning result files:
+    POST /execute/api/exportfromfolder/
+  
+    Export the planning result files - deprecated:
+    POST /execute/api/frepple_exportfromfolder/
+
+    Retrieve one of the exported files:
+    GET /execute/uploadtofolder/1/<filename>/
+
 
 .. _importfromfolder:
 
@@ -169,18 +192,23 @@ all data imports, in addition to any data errors identified during their process
 
 The data files to be imported must meet the following criteria:
 
-* The name must match the data object they store: eg demand.csv, item.csv, ...
+* The name must match the data object they store: eg demand.csv, item.csv, item.xlsx, item.csv.gz
 
 * The first line of the file should contain the field names.
 
-* The file should be in CSV format, and may be compressed with GZ (eg demand.csv.gz).
-  The delimiter depends on the default language (configured with LANGUAGE_CODE
-  in djangosettings.py).
-  For English-speaking countries it's a comma. For European countries
-  it's a semicolon.
+* The file should be in CSV or Excel format, and can optionally be compressed with GZ (eg demand.csv.gz).
+  
+* Some specific notes on the CSV format:
 
-* The file should be encoded in UTF-8 (configurable with the CSV_CHARSET
-  setting in djangosettings.py).
+  * The separator in your CSV-files varies with the chosen language: If in your
+    language a comma is used as a decimal separator for numbers, the CSV file
+    will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
+    See http://en.wikipedia.org/wiki/Decimal_mark
+
+  * The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
+
+  * The data file is expected to be encoded in the character encoding defined by
+    the setting CSV_CHARSET (default UTF-8).
 
 In this option you can see a list of files present in the specified folder, and download
 each file by clicking on the arrow down button, or delete a file by clicking on the
@@ -204,9 +232,13 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
 
+    Upload a data file:
+    POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
+    
+    Import the data files:
     POST /execute/api/importfromfolder/
   
-    Deprecated:
+    Import the data files - deprecated:
     POST /execute/api/frepple_importfromfolder/
   
 .. _runwebservice:
@@ -324,7 +356,7 @@ This command is available in the user interface, the command line and the web AP
 
 
 Administrator commands
-~~~~~~~~~~~~~~~~~~~~~~  
+~~~~~~~~~~~~~~~~~~~~~~
      
 .. _loaddata:
 
@@ -386,21 +418,44 @@ This command is available in the user interface, the command line and the web AP
     Deprecated:
     POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
+.. _create_database:
+
+Create the PostgreSQL database(s)
+---------------------------------
+
+This command will create the PostgreSQl databases for frePPLe.
+
+If the database already exists you will be prompted to confirm whether you 
+really to loose all data in the existing database. When confirmed that database
+will dropped and recreated.
+
+This command is available on the command line only:
+
+::
+
+    # Create all scenario databases
+    frepplectl create_database
+    
+    # Recreate only a single database 
+    frepplectl create_database --database=scenario3
 
 .. _migrate:
 
 Create or migrate the database schema
 -------------------------------------
 
-  Update the database structure to the latest release
+Update the database structure to the latest release
 
 This command is available on the command line only:
 
 ::
 
+    # Migrate the main database
     frepplectl migrate
 
-
+    # Migrate a scenario database
+    frepplectl migrate --database=scenario1
+    
 .. _restore: 
 
 Restore a database backup

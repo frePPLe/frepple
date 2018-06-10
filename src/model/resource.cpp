@@ -229,6 +229,7 @@ void Resource::setMaximumCalendar(Calendar* c)
         new loadplanlist::EventMaxQuantity(x.getDate(), &loadplans, curMax);
       loadplans.insert(newBucket);
     }
+  size_max_cal->clearEventList();
 }
 
 
@@ -263,6 +264,7 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c)
         new loadplanlist::EventSetOnhand(x.getDate(), v);
       loadplans.insert(newBucket);
     }
+  size_max_cal->clearEventList();
 }
 
 

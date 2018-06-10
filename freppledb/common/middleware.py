@@ -28,7 +28,6 @@ from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
 from django.http import HttpResponseNotFound
 from django.http.response import HttpResponseForbidden
-from django.utils.deprecation import MiddlewareMixin
 
 from freppledb.common.models import Scenario, User
 
@@ -51,8 +50,21 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     # Make request information available throughout the application
     setattr(_thread_locals, 'request', request)
 
-    # Authentication through a web token, specified as an URL parameter
+    # Authentication through a web token.specified as an URL parameter
+    # The token can be specified as a a URL argument or as a HTTP header
+    # with this structure:
+    #    Authorization: Bearer <token>  (see https://jwt.io/introduction/
+    # The token must have a "user" and "exp" field in the payload.
     webtoken = request.GET.get('webtoken', None)
+    if not webtoken:
+      auth_header = request.META.get('HTTP_AUTHORIZATION', None)
+      if auth_header:
+        try:
+          auth = auth_header.split()
+          if auth[0].lower() == 'bearer':
+            webtoken = auth[1]
+        except:
+          pass
     if webtoken:
       # Decode the web token
       try:
@@ -125,7 +137,7 @@ for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
 
-class MultiDBMiddleware(MiddlewareMixin):
+class MultiDBMiddleware(object):
   """
   This middleware examines the URL of the incoming request, and determines the
   name of database to use.
@@ -155,13 +167,13 @@ class MultiDBMiddleware(MiddlewareMixin):
             request.path = request.path[len(request.prefix):]
             request.database = i
             return
-        except Exception as e:
+        except Exception:
           pass
       request.prefix = ''
       request.database = DEFAULT_DB_ALIAS
     else:
       # A list of scenarios is already available
-      if not request.user or request.user.is_anonymous:
+      if not request.user or request.user.is_anonymous():
         return
       default_scenario = None
       for i in request.user.scenarios:
@@ -185,3 +197,18 @@ class MultiDBMiddleware(MiddlewareMixin):
         request.scenario = default_scenario
       else:
         request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+
+
+class AutoLoginAsAdminUser(object):
+  """
+  Automatically log on a user as admin user.
+  This can be handy during development or for demo models.
+  """
+  def process_request(self, request):
+    if not request.user.is_authenticated():
+      try:
+        user = User.objects.get(username="admin")
+        user.backend = settings.AUTHENTICATION_BACKENDS[0]
+        login(request, user)
+      except User.DoesNotExist:
+        pass

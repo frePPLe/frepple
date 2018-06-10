@@ -100,7 +100,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s)",
         [
           (
-            i.name, round(i.default, 6), i.source,
+            i.name, round(i.default, 8), i.source,
             self.timestamp
           )
           for i in frepple.calendars()
@@ -112,7 +112,7 @@ class exportStaticModel(object):
          where name=%s",
         [
           (
-            round(i.default, 6), i.source, self.timestamp,
+            round(i.default, 8), i.source, self.timestamp,
             i.name
           )
           for i in frepple.calendars()
@@ -162,7 +162,7 @@ class exportStaticModel(object):
         [
           (
             i[0].calendar.name, str(i[0].start), str(i[0].end), i[1], i[0].priority,
-            round(i[0].value, 6),
+            round(i[0].value, 8),
             (i[0].days & 1) and True or False, (i[0].days & 2) and True or False,
             (i[0].days & 4) and True or False, (i[0].days & 8) and True or False,
             (i[0].days & 16) and True or False, (i[0].days & 32) and True or False,
@@ -194,13 +194,13 @@ class exportStaticModel(object):
         %s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.name, i.fence, i.posttime, round(i.size_minimum, 6),
-            round(i.size_multiple, 6),
-            i.size_maximum < 9999999999999 and round(i.size_maximum, 6) or None,
+            i.name, i.fence, i.posttime, round(i.size_minimum, 8),
+            round(i.size_multiple, 8),
+            i.size_maximum < 9999999999999 and round(i.size_maximum, 8) or None,
             i.__class__.__name__[10:],
             isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
-            i.location and i.location.name or None, round(i.cost, 6),
+            i.location and i.location.name or None, round(i.cost, 8),
             isinstance(i, frepple.operation_alternate) and i.search or None,
             i.description, i.category, i.subcategory, i.source,
             i.item.name if i.item else None, i.priority if i.priority != 1 else None,
@@ -222,13 +222,13 @@ class exportStaticModel(object):
         where name=%s",
         [
           (
-            i.fence, i.posttime, round(i.size_minimum, 6),
-            round(i.size_multiple, 6),
-            i.size_maximum < 9999999999999 and round(i.size_maximum, 6) or None,
+            i.fence, i.posttime, round(i.size_minimum, 8),
+            round(i.size_multiple, 8),
+            i.size_maximum < 9999999999999 and round(i.size_maximum, 8) or None,
             i.__class__.__name__[10:],
             isinstance(i, (frepple.operation_fixed_time, frepple.operation_time_per)) and i.duration or None,
             isinstance(i, frepple.operation_time_per) and i.duration_per or None,
-            i.location and i.location.name or None, round(i.cost, 6),
+            i.location and i.location.name or None, round(i.cost, 8),
             isinstance(i, frepple.operation_alternate) and i.search or None,
             i.description, i.category, i.subcategory, i.source, self.timestamp,
             i.item.name if i.item else None, i.priority,
@@ -303,12 +303,12 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.operation.name, i.buffer.item.name, round(i.quantity, 6),
+            i.operation.name, i.buffer.item.name, round(i.quantity, 8),
             i.type[5:],
             i.effective_start if i.effective_start != default_start else None,
             i.effective_end if i.effective_end != default_end else None, i.name,
             i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
-            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
+            round(i.transferbatch, 8) if isinstance(i, frepple.flow_transfer_batch) else None,
             self.timestamp
           )
           for i in flows(self.source)
@@ -321,10 +321,10 @@ class exportStaticModel(object):
         where operation_id=%s and item_id=%s and effective_start=%s",
         [
           (
-            round(i.quantity, 6),
+            round(i.quantity, 8),
             i.type[5:], i.effective_end if i.effective_end != default_end else None,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
-            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
+            round(i.transferbatch, 8) if isinstance(i, frepple.flow_transfer_batch) else None,
             self.timestamp, i.operation.name, i.item.name, i.effective_start
           )
           for i in flows(self.source)
@@ -338,10 +338,10 @@ class exportStaticModel(object):
         where operation_id=%s and item_id=%s and effective_start is null",
         [
           (
-            round(i.quantity, 6),
+            round(i.quantity, 8),
             i.type[5:], i.effective_end if i.effective_end != default_end else None,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None, i.source,
-            round(i.transferbatch, 6) if isinstance(i, frepple.flow_transfer_batch) else None,
+            round(i.transferbatch, 8) if isinstance(i, frepple.flow_transfer_batch) else None,
             self.timestamp, i.operation.name, i.buffer.item.name
           )
           for i in flows(self.source)
@@ -375,7 +375,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.operation.name, i.resource.name, round(i.quantity, 6),
+            i.operation.name, i.resource.name, round(i.quantity, 8),
             i.setup, str(i.effective_start), i.effective_end,
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp
@@ -390,7 +390,7 @@ class exportStaticModel(object):
         where operation_id=%s and resource_id=%s",
         [
           (
-            round(i.quantity, 6),
+            round(i.quantity, 8),
             i.setup, str(i.effective_start), str(i.effective_end),
             i.name, i.priority, i.search != 'PRIORITY' and i.search or None,
             i.source, self.timestamp, i.operation.name, i.resource.name,
@@ -416,7 +416,7 @@ class exportStaticModel(object):
           (
             i.name, i.description, i.location and i.location.name or None,
             i.item and i.item.name or None,
-            round(i.onhand, 6), round(i.minimum, 6),
+            round(i.onhand, 8), round(i.minimum, 8),
             i.minimum_calendar and i.minimum_calendar.name or None,
             i.__class__.__name__[7:], i.mininterval,
             i.category, i.subcategory, i.source, self.timestamp
@@ -434,7 +434,7 @@ class exportStaticModel(object):
         [
           (
             i.description, i.location and i.location.name or None, i.item and i.item.name or None,
-            round(i.onhand, 6), round(i.minimum, 6),
+            round(i.onhand, 8), round(i.minimum, 8),
             i.minimum_calendar and i.minimum_calendar.name or None,
             i.__class__.__name__[7:],
             (i.mininterval!=-1) and i.mininterval or None,
@@ -697,10 +697,10 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s)",
         [
           (
-            i.name, str(i.due), round(i.quantity, 6), i.priority, i.item.name,
+            i.name, str(i.due), round(i.quantity, 8), i.priority, i.item.name,
             i.location.name if i.location else None, i.operation.name if i.operation and not i.operation.hidden else None,
             i.customer.name if i.customer else None,
-            round(i.minshipment, 6), i.maxlateness,
+            round(i.minshipment, 8), i.maxlateness,
             i.category, i.subcategory, i.source, self.timestamp, i.status
           )
           for i in frepple.demands()
@@ -714,11 +714,11 @@ class exportStaticModel(object):
          where name=%s",
         [
           (
-            str(i.due), round(i.quantity, 6), i.priority,
+            str(i.due), round(i.quantity, 8), i.priority,
             i.item.name, i.location.name if i.location else None,
             i.operation.name if i.operation and not i.operation.hidden else None,
             i.customer.name if i.customer else None,
-            round(i.minshipment, 6),
+            round(i.minshipment, 8),
             i.maxlateness,
             i.category, i.subcategory, i.source, self.timestamp,
             i.status, i.name
@@ -751,7 +751,7 @@ class exportStaticModel(object):
           (
             i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, 6), i.maxearly,
+            round(i.cost, 8), i.maxearly,
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
             i.category, i.subcategory, i.source, self.timestamp
           )
@@ -769,8 +769,8 @@ class exportStaticModel(object):
             i.description, i.maximum,
             i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, 6),
-            round(i.maxearly, 6),
+            round(i.cost, 8),
+            round(i.maxearly, 8),
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
             i.category, i.subcategory, i.source, self.timestamp, i.name
           )
@@ -887,7 +887,7 @@ class exportStaticModel(object):
         [
          (
            i[0].name, i[1].priority, i[1].fromsetup, i[1].tosetup, i[1].duration,
-           round(i[1].cost, 6),
+           round(i[1].cost, 8),
            i.source, self.timestamp
          )
          for i in matrixrules()
@@ -900,7 +900,7 @@ class exportStaticModel(object):
          where setupmatrix_id=%s and priority=%s",
         [
           (
-            i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost, 6),
+            i[1].fromsetup, i[1].tosetup, i[1].duration, round(i[1].cost, 8),
             i.source, self.timestamp, i[0].name, i[1].priority
           )
           for i[1] in matrixrules()
@@ -921,7 +921,7 @@ class exportStaticModel(object):
         values(%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.name, i.description, round(i.cost, 6), i.category,
+            i.name, i.description, round(i.cost, 8), i.category,
             i.subcategory, i.source, self.timestamp
           )
           for i in frepple.items()
@@ -933,7 +933,7 @@ class exportStaticModel(object):
          where name=%s",
         [
           (
-            i.description, round(i.cost, 6), i.category, i.subcategory,
+            i.description, round(i.cost, 8), i.category, i.subcategory,
             i.source, self.timestamp, i.name
           )
           for i in frepple.items()

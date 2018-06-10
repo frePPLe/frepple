@@ -15,9 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# ./frepplectl.py test freppledb.execute.tests -v2
-# ./frepplectl.py test freppledb.execute.tests.test_cookbook.Cookbooktest -v 2
-
 import os.path
 
 from django.conf import settings
@@ -29,9 +26,8 @@ from freppledb.common.models import User
 import freppledb.input
 
 
-class Cookbooktest(TransactionTestCase):
+class cookbooktest(TransactionTestCase):
   reset_sequences = True
-  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used
@@ -42,7 +38,8 @@ class Cookbooktest(TransactionTestCase):
 
   def loadExcel(self, *filepath):
     # Login
-    User.objects.create_superuser('admin', 'your@company.com', 'admin')
+    if not User.objects.filter(username="admin").count():
+      User.objects.create_superuser('admin', 'your@company.com', 'admin')
     self.client.login(username='admin', password='admin')
     try:
       with open(os.path.join(*filepath), "rb") as myfile:

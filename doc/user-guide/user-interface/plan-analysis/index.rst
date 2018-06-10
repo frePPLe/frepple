@@ -17,7 +17,9 @@ This series of screens is used to review the planning results.
    inventory-detail-report
    resource-report
    resource-detail-report
-   operation-report
+   manufacturing-order-summary
+   purchase-order-summary
+   distribution-order-summary
    operation-detail-report
    demand-report
    demand-detail-report

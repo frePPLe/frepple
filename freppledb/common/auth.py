@@ -16,7 +16,10 @@
 #
 
 import base64
+import jwt
+import time
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Permission
@@ -55,7 +58,7 @@ class MultiDBBackend(ModelBackend):
       # difference between an existing and a non-existing user.
       # See django ticket #20760
       User().set_password(password)
-    except ValidationError:
+    except (ValidationError, User.MultipleObjectsReturned):
       # The user name isn't an email address
       try:
         user = User.objects.get(username=username)
@@ -155,7 +158,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
       try:
         if allow_logged_in:
           u = getattr(request, 'user', None)
-          if u and u.is_authenticated:
+          if u and u.is_authenticated():
             ok = True
         if not ok:
           auth_header = request.META.get('HTTP_AUTHORIZATION', None)
@@ -168,6 +171,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
               user = authenticate(username=auth[0], password=auth[2])
               if user and user.is_active:
                 # Active user
+                request.api = True
                 login(request, user)
                 request.user = user
                 ok = True
@@ -187,3 +191,14 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
         return resp
     return wrapper
   return view_decorator
+
+
+def getWebserviceAuthorization(**kwargs):
+  # Create authorization header for the web service
+  payload = {}
+  for key, value in kwargs.items():
+    if key == "exp":
+      payload["exp"] = round(time.time()) + value
+    else:
+      payload[key] = value
+  return jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('ascii')

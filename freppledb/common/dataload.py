@@ -60,6 +60,12 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
     def setData(self, data):
       self.data = data
 
+    def empty(self):
+      for i in self.data:
+        if i.value:
+          return False
+      return True
+
     def __getitem__(self, key):
       tmp = self.headers.get(key)
       if tmp:
@@ -68,13 +74,13 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
       else:
         idx = None
         field = None
-      data = self.data[idx].value if idx is not None else None
+      data = self.data[idx].value if idx is not None and idx < len(self.data) else None
       if isinstance(field, (IntegerField, AutoField)):
         if isinstance(data, (Decimal, float, int)):
           data = int(data)
       elif isinstance(field, DecimalField):
         if isinstance(data, (Decimal, float)):
-          data = round(data, 6)
+          data = round(data, 8)
       elif isinstance(field, DurationField):
         if isinstance(data, float):
           data = "%.6f" % data
@@ -168,10 +174,16 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
     def setData(self, data):
       self.data = data
 
+    def empty(self):
+      for i in self.data:
+        if i:
+          return False
+      return True
+
     def __getitem__(self, key):
       try:
         idx = self.headers.get(key)
-        if idx is None:
+        if idx is None or idx[0] > len(self.data):
           return None
         val = self.data[idx[0]]
         if isinstance(idx[1], BooleanField) and val == '0':
@@ -249,7 +261,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
 
     rownumber += 1
     rowWrapper.setData(row)
-    # rowWrapper.setData(row if isinstance(row, list) else row[0].split(","))
 
     # Case 1: The first line is read as a header line
     if rownumber == 1:
@@ -332,7 +343,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
           natural_key = model.natural_key
 
     # Case 2: Skip empty rows
-    elif len(rowWrapper) == 0:
+    elif rowWrapper.empty():
       continue
 
     # Case 3: Process a data row

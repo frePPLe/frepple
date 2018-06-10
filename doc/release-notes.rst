@@ -1,13 +1,56 @@
 Release notes
 -------------
 
-4.3.3 (Upcoming release)
+4.4 (Upcoming release)
+========================
+
+.. rubric:: Inventory planning
+
+- The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered
+  as the number of period buckets, the period bucket being the value of the inventoryplanning.calendar parameter.
+
+4.3.4 (2018/06/08)
 ==================
 
 .. rubric:: Production planning
 
-- Solver optimization to handle infinite buffers more efficiently.
+- Added new reports `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
+  and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
+  to summarize the purchase orders or distribution orders per time bucket.
 
+- For consistency with the previous change, the operation report is renamed 
+  to `manufacturing order summary <user-guide/user-interface/plan-analysis/manufacturing-order-summary.html>`_.
+
+.. rubric:: Integration
+
+- Extended the `exporttofolder <user-guide/command-reference.html#exporttofolder>`_ 
+  command to export additional plan results into CSV or Excel files.
+
+- The data type of all numeric fields is changed from 15 digits with 6 decimals
+  to 20 digits with 8 decimals. This allows a larger range of numbers to be
+  accurately represented in the database.
+  
+- The `remote web commands API <integration-guide/remote-commands.html>`_ now 
+  supports user authentication with `JSON Web Tokens <https://jwt.io/>`_ to launch tasks,
+  download data and upload data. 
+
+
+4.3.3 (2018/05/03)
+==================
+
+.. rubric:: Production planning
+
+- Solver performance optimization where there are availability calendars.
+  The plan generation time can be reduced with a factor 3 to 4 in some models.
+- Solver enhancements for planning with setup matrices.
+- Solver optimization to handle infinite buffers more efficiently.
+- Bug fix: Compilation error with Python 3.6
+
+.. rubric:: User interface
+
+- Bug fix for spreadsheet import: more robust handling of empty rows and rows with
+  empty fields at the end 
+  
 .. rubric:: Odoo connector
 
 - Correction to maintain a single root hierarchy.

@@ -17,7 +17,6 @@
 
 from datetime import datetime, timedelta
 
-from django.contrib.admin.utils import unquote
 from django.db import connections
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _

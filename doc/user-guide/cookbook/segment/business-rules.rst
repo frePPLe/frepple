@@ -17,13 +17,11 @@ the business rules having an impact on the safety stock and the business rules h
 
    |  **Safety Stock Maximum Quantity** : The maximum safety stock quantity.
 
-   |  **Safety Stock Minimum Period of Cover** : The minimum period of cover based on the inventory planning calendar.
-      If the inventory planning equals to *month* and the value of this business rule is 3 then
-      the safety stock cannot be less than 3 months of forecast.
+   |  **Safety Stock Minimum Period of Cover (days)** : The minimum period of cover expressed in days.
+      If the value of this business rule is 90 then the safety stock cannot be less than 90 days of forecast.
 
-   |  **Safety Stock Maximum Period of Cover** : The maximum period of cover based on the inventory planning calendar.
-      If the inventory planning equals to *month* and the value of this business rule is 3 then
-      the safety stock cannot be more than 3 months of forecast.
+   |  **Safety Stock Maximum Period of Cover** : The maximum period of cover expressed in days.
+      If the value of this business rule is 90 then the safety stock cannot be more than 90 days of forecast.
 
 *  |  Business rules having an impact on the **ROQ**:
 
@@ -31,20 +29,18 @@ the business rules having an impact on the safety stock and the business rules h
 
    |  **ROQ Maximum Quantity** : The maximum ROQ quantity.
 
-   |  **ROQ Minimum Period of Cover** : The minimum period of cover based on the inventory planning calendar.
-      If the inventory planning equals to *month* and the value of this business rule is 3 then
-      the ROQ cannot be less than 3 months of forecast.
+   |  **ROQ Minimum Period of Cover** : The minimum period of cover expressed in days.
+      If the value of this business rule is 90 then the ROQ cannot be less than 90 days of forecast.
 
-   |  **ROQ Maximum Period of Cover** : The maximum period of cover based on the inventory planning calendar.
-      If the inventory planning equals to *month* and the value of this business rule is 3 then
-      the ROQ cannot be more than 3 months of forecast.
+   |  **ROQ Maximum Period of Cover** : The maximum period of cover expressed in days.
+      If the value of this business rule is 90 then the ROQ cannot be more than 90 days of forecast.
       
 In this example, we created three business rules :
 
-*  |  Safety Stock Maximum Period of Cover: This business rule applies to segment *Expensive parts in Brussels* and makes sure that no more than three months of forecast will be used as safety stock for these item-locations.
+*  |  Safety Stock Maximum Period of Cover: This business rule applies to segment *Expensive parts in Brussels* and makes sure that no more than 90 days of forecast will be used as safety stock for these item-locations.
 
 *  |  Service Level : This business rule applies to segment *Cheap parts in Paris* and forces an fill rate of at least 98% for these parts.
 
-*  |  ROQ Minimum Period of Cover : This business rule applies to segment *All parts in RDC* and makes sure that a minimum of three months of forecast is ordered when replenishing from the supplier.
+*  |  ROQ Minimum Period of Cover : This business rule applies to segment *All parts in RDC* and makes sure that a minimum of 90 days of forecast is ordered when replenishing from the supplier.
       
         

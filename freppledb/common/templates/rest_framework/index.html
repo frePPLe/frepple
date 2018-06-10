@@ -2,12 +2,22 @@
 {% load rest_framework %}
 {% load i18n %}
 
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+$(function() {
+  $("#jwt").on('input', function() {
+  	window.location.href = '{{request.prefix}}/api/?exp=' + $("#jwt").val();
+  });
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <div id="content-summary" class="row"><div class="col-md-12">
 {% blocktrans %}This page helps developers to learn and experiment with the
 <a style="text-decoration:underline" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>
 API of frePPLe.<br>
-This API allows your application to exchange information with frePPLe is efficient and direct way.<br>
+This API allows your application to exchange information with frePPLe.<br>
 <br>
 The "list API" link takes you to the object list page.<br>
 And the "detail API" link takes you to a specific object when you enter the object's primary key.<br>
@@ -16,10 +26,19 @@ The results can be shown in JSON format or as HTML in your browser.<br>
 <br>
 Using tools like 'wget' or 'curl' you can access the API from the command line.<br>
 For instance, to return the list of all sales orders in JSON format:<br><br>
-<div class="well well-sm" style="display: inline-block">
-wget --http-user=admin --http-password=admin http://127.0.0.1:8000/api/input/demand/?format=json<br><br>
-curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
-</div>{% endblocktrans %}
+<div style="margin-left:20px">
+Using <a style="text-decoration:underline" href="https://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">basic authentication</a>:<br>
+<div class="well well-sm" style="margin-top:5px">
+wget --http-user={{request.user}} --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>
+curl -u {{request.user}}:PASSWORD http://127.0.0.1:8000/api/input/demand/
+</div>
+Using <a style="text-decoration:underline" href="https://jwt.io/" target="_blank">JSON Web Token authentication</a> valid for the next <input id="jwt" type="number" value="{{exp}}" min="0" step="1" style="width:4em"/>  days:<br>
+<div class="well well-sm" style="margin-top:5px">
+wget --header 'Authorization: Bearer {{token}}' http://127.0.0.1:8000/api/input/demand/<br><br>
+curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' http://127.0.0.1:8000/api/input/demand/
+</div>
+</div>
+{% endblocktrans %}
 </div></div>
 
 <div class="row"><div class="col-md-12" style="max-width:1100px">

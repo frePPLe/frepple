@@ -29,6 +29,8 @@ from django.contrib.admin.utils import quote, unquote, get_deleted_objects
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models.fields import DecimalField
+from django.forms.widgets import NumberInput
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template.response import TemplateResponse
@@ -65,6 +67,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
   The level of customization is relatively high, and this code is a bit of a
   concern for future upgrades of Django...
   '''
+
+  formfield_overrides = {
+    # Django by default uses the value of decimal_places to compute a step.
+    # We prefer to stick to a default step of 1.
+    DecimalField: {'widget': NumberInput(attrs={'step': '1'})}
+    }
 
   def get_urls(self):
     def wrap(view):

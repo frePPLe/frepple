@@ -15,13 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#  ./frepplectl.py test freppledb.execute.tests.test_unit -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.FixtureTest -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_with_commands -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_multidb -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.Execute_simulation -v 2
-#  ./frepplectl.py test freppledb.execute.tests.test_unit.Remote_commands -v 2
-
 import base64
 import json
 import os
@@ -39,10 +32,8 @@ import freppledb.common as common
 from freppledb.common.models import Parameter, User
 
 
-class Execute_with_commands(TransactionTestCase):
+class execute_with_commands(TransactionTestCase):
   fixtures = ["demo"]
-  reset_sequences = True
-  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used
@@ -82,13 +73,9 @@ class Execute_with_commands(TransactionTestCase):
     self.assertTrue(input.models.OperationPlan.objects.count() > 300)
 
 
-class Execute_multidb(TransactionTestCase):
+class execute_multidb(TransactionTestCase):
 
   fixtures = ['demo']
-
-  serialized_rollback = True
-
-  reset_sequences = True
 
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
@@ -152,9 +139,6 @@ class Execute_multidb(TransactionTestCase):
 
 
 class FixtureTest(TransactionTestCase):
-  serialized_rollback = True
-
-  reset_sequences = True
 
   def test_fixture_demo(self):
     self.assertEqual(common.models.Bucket.objects.count(), 0)
@@ -172,7 +156,7 @@ class FixtureTest(TransactionTestCase):
     self.assertGreater(common.models.Bucket.objects.count(), 0)
 
   def test_fixture_parameter_test(self):
-    self.assertEqual(common.models.Parameter.objects.count(), 8)
+    self.assertEqual(common.models.Parameter.objects.count(), 0)
     management.call_command('loaddata', "parameters.json", verbosity=0)
     self.assertGreater(common.models.Parameter.objects.count(), 0)
 
@@ -187,11 +171,9 @@ class FixtureTest(TransactionTestCase):
     self.assertGreater(common.models.Bucket.objects.count(), 0)
 
 
-class Execute_simulation(TransactionTestCase):
+class execute_simulation(TransactionTestCase):
 
   fixtures = ["demo"]
-
-  serialized_rollback = True
 
   def setUp(self):
     # Make sure the test database is used
@@ -224,82 +206,77 @@ class Execute_simulation(TransactionTestCase):
     # TODO add comparison with initial_planned_late
 
 
-class Remote_commands(TransactionTestCase):
-    serialized_rollback = True
+class remote_commands(TransactionTestCase):
 
-    fixtures = ["demo"]
+  fixtures = ["demo"]
 
-    def setUp(self):
-        # Make sure the test database is used
-        os.environ['FREPPLE_TEST'] = "YES"
-        param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
-        param.value = 'false'
-        param.save()
-        User.objects.create_superuser('admin', 'your@company.com', 'admin')
+  def setUp(self):
+    # Make sure the test database is used
+    os.environ['FREPPLE_TEST'] = "YES"
+    param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]
+    param.value = 'false'
+    param.save()
+    if not User.objects.filter(username="admin").count():
+      User.objects.create_superuser('admin', 'your@company.com', 'admin')
 
-    def tearDown(self):
-        del os.environ['FREPPLE_TEST']
+  def tearDown(self):
+    del os.environ['FREPPLE_TEST']
 
-    def test_remote_command(self):
-        # Create a header for basic authentication
-        headers = {
-             'HTTP_AUTHORIZATION': 'Basic ' + base64.b64encode('admin:admin'.encode()).decode()
-        }
+  def test_remote_command(self):
+    # Create a header for basic authentication
+    headers = {
+      'HTTP_AUTHORIZATION': 'Basic ' + base64.b64encode('admin:admin'.encode()).decode()
+      }
 
-        # Run a plan
-        response = self.client.post(
-            '/execute/api/runplan/',
-            {'constraint': 1, 'plantype': 1},
-            **headers
+    # Run a plan
+    response = self.client.post(
+      '/execute/api/runplan/',
+      {'constraint': 1, 'plantype': 1},
+      **headers
+      )
+
+    self.assertEqual(response.status_code, 200)
+    taskinfo = json.loads(response.content.decode())
+    taskid0 = taskinfo['taskid']
+    self.assertGreater(taskid0, 0)
+
+    # Wait 10 seconds for the plan the finish
+    cnt = 0
+    while cnt <= 10:
+      response = self.client.get(
+        '/execute/api/status/?id=%s' % taskid0,
+        **headers
         )
+      self.assertEqual(response.status_code, 200)
+      taskinfo = json.loads(response.content.decode())
+      if taskinfo[str(taskid0)]['status'] == "Done":
+        break
+      sleep(1)
+      cnt += 1
+    self.assertLess(cnt, 10, "Running task taking too long")
 
-        self.assertEqual(response.status_code, 200)
-        taskinfo = json.loads(response.content.decode())
-        taskid0 = taskinfo['taskid']
-        self.assertGreater(taskid0, 0)
+    # Copy a plan
+    response = self.client.post(
+      '/execute/api/empty/',
+      {},
+      **headers
+      )
+    self.assertEqual(response.status_code, 200)
+    taskinfo = json.loads(response.content.decode())
+    taskid1 = taskinfo['taskid']
+    self.assertEqual(taskid1, taskid0 + 1)
 
-        # Wait 10 seconds for the plan the finish
-        cnt = 0
-        while cnt <= 10:
-            response = self.client.get(
-                '/execute/api/status/?id=%s' % taskid0,
-                **headers
-            )
-            self.assertEqual(response.status_code, 200)
-            taskinfo = json.loads(response.content.decode())
-            if taskinfo[str(taskid0)]['status'] == "Done":
-                break
-            sleep(1)
-            cnt += 1
-        self.assertLess(cnt, 10, "Running task taking too long")
-
-        # Copy a plan
-        response = self.client.post(
-            '/execute/api/empty/',
-            {},
-            **headers
+    # Wait for the flush the finish
+    cnt = 0
+    while cnt <= 20:
+      response = self.client.get(
+        '/execute/api/status/?id=%s' % taskid1,
+        **headers
         )
-        self.assertEqual(response.status_code, 200)
-        taskinfo = json.loads(response.content.decode())
-        taskid1 = taskinfo['taskid']
-        self.assertEqual(taskid1, taskid0 + 1)
-
-        # Wait for the flush the finish
-        cnt = 0
-        max_count = 50
-        while 1:
-            response = self.client.get(
-                '/execute/api/status/?id=%s' % taskid1,
-                **headers
-            )
-            self.assertEqual(response.status_code, 200)
-            taskinfo = json.loads(response.content.decode())
-            if taskinfo[str(taskid1)]['status'] == "Done":
-                break
-            sleep(1)
-            cnt += 1
-            if cnt > max_count:
-                break
-
-        # logger.info("cnt: %s" % cnt)
-        self.assertLess(cnt, max_count, "Running task taking too long")
+      self.assertEqual(response.status_code, 200)
+      taskinfo = json.loads(response.content.decode())
+      if taskinfo[str(taskid1)]['status'] == "Done":
+        break
+      sleep(1)
+      cnt += 1
+    self.assertLess(cnt, 20, "Running task taking too long")

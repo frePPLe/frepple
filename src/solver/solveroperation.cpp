@@ -289,7 +289,7 @@ bool SolverMRP::checkOperation
       data.state->a_date = Date::infiniteFuture;
       data.state->a_qty = data.state->q_qty;
       opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty, Date::infinitePast, matnext.getEnd()
+        opplan, orig_opplan_qty, Date::infinitePast, matnext.getEnd(), true, true, false
         );
       okay = false;
       // Pop actions from the command "stack" in the command list

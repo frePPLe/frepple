@@ -6,30 +6,41 @@ All operations from the execution screen can also be launched and
 monitored remotely through an web service API.
 
 * `Reference`_
+* `Authentication`_
 * `Example`_
 
 
 Reference
 ---------
 
-Using curl the API endpoints are accessed using the following patterns:
+The API endpoints can be accessed with any modern web tool or programming 
+language using the following URLs. The examples are using the excellent
+`curl command line tool <https://curl.haxx.se/>`_.
 
 * Run a task on the default database:
 
+  ::
+  
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/<command>/
      --data "<argument1>=<value1>&<argument2>=<value2>"
 
 * Run a task on a scenario database:
 
+  ::
+  
    curl -u <user>:<password> http(s)://<server>:<port>/<scenario>/execute/api/<command>/
      --data "<argument1>=<value1>&<argument2>=<value2>"
 
 * Get the status of all running and pending tasks:
 
+  ::
+  
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/status/
 
 * Get the status of a single task:
 
+  ::
+  
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/status/?id=X
 
 The following commands are available.
@@ -53,8 +64,25 @@ don't wait for the actual command to finish. In case you need to wait
 for a task to finish, you will need to use a loop which periodically
 polls the /execute/api/status URL to monitor the status.
 
-For security reasons we strongly recommend the use of a HTTPS
-configuration of the frePPLe server when using this API.
+
+Authentication
+--------------
+
+FrePPLe supports 2 methods for authentication of your user in this API:
+
+* | **Basic authentication**
+  | See https://en.wikipedia.org/wiki/Basic_access_authentication for more 
+    details.
+  | With curl you use the argument ``-u USER:PASSWORD`` on the command line. 
+
+* | **JSON Web Token**
+  | See https://jwt.io/ for more details.
+  | With curl you use the argument ``--header 'Authorization: Bearer TOKEN'``
+    on the command line.
+
+We strongly recommend the use of a HTTPS configuration of the frePPLe
+server when using this API. Without it your data and login credentials
+are sent unencrypted over the internet.
 
 
 Example

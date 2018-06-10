@@ -41,8 +41,8 @@ import json
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
-from openpyxl.cell import WriteOnlyCell
 from openpyxl.utils import get_column_letter
+from openpyxl.writer.write_only import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 
 from django.db.models import Model
@@ -102,49 +102,63 @@ def getHorizon(request, future_only=False):
     current = datetime.now()
     current = current.replace(microsecond=0)
 
-  if request.user.horizontype:
+  horizontype = request.GET.get('horizontype', request.user.horizontype)
+  if horizontype:
     # First type: Horizon relative to the current date
+    horizonunit = request.GET.get('horizonunit', request.user.horizonunit)
+    try:
+      horizonlength = int(request.GET.get('horizonlength'))
+    except:
+      horizonlength = request.user.horizonlength
     start = current.replace(hour=0, minute=0, second=0, microsecond=0)
-    if request.user.horizonunit == 'day':
-      end = start + timedelta(days=request.user.horizonlength or 60)
+    if horizonunit == 'day':
+      end = start + timedelta(days=horizonlength or 60)
       end = end.replace(hour=0, minute=0, second=0)
-    elif request.user.horizonunit == 'week':
-      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=request.user.horizonlength or 8, days=7 - start.weekday())
+    elif horizonunit == 'week':
+      end = start.replace(hour=0, minute=0, second=0) + timedelta(weeks=horizonlength or 8, days=7 - start.weekday())
     else:
       y = start.year
-      m = start.month + (request.user.horizonlength or 2) + (start.day > 1 and 1 or 0)
+      m = start.month + (horizonlength or 2) + (start.day > 1 and 1 or 0)
       while m > 12:
         y += 1
         m -= 12
       end = datetime(y, m, 1)
   else:
     # Second type: Absolute start and end dates given
-    start = request.user.horizonstart
+    try:
+      horizonstart = datetime.strptime(request.GET.get('horizonstart'), "%Y-%m-%d")
+    except:
+      horizonstart = request.user.horizonstart
+    try:
+      horizonend = datetime.strptime(request.GET.get('horizonend'), "%Y-%m-%d")
+    except:
+      horizonend = request.user.horizonend
+    start = horizonstart
     if not start or (future_only and start < current):
       start = current.replace(hour=0, minute=0, second=0, microsecond=0)
-    end = request.user.horizonend
+    end = horizonend
     if end:
       if end < start:
         if future_only and end < current:
           # Special case to assure a minimum number of future buckets
-          if request.user.horizonunit == 'day':
-            end = start + timedelta(days=request.user.horizonlength or 60)
-          elif request.user.horizonunit == 'week':
-            end = start + timedelta(weeks=request.user.horizonlength or 8)
+          if horizonunit == 'day':
+            end = start + timedelta(days=horizonlength or 60)
+          elif horizonunit == 'week':
+            end = start + timedelta(weeks=horizonlength or 8)
           else:
-            end = start + timedelta(weeks=request.user.horizonlength or 8)
+            end = start + timedelta(weeks=horizonlength or 8)
         else:
           # Swap start and end to assure the start is before the end
           tmp = start
           start = end
           end = tmp
     else:
-      if request.user.horizonunit == 'day':
-        end = start + timedelta(days=request.user.horizonlength or 60)
+      if horizonunit == 'day':
+        end = start + timedelta(days=horizonlength or 60)
       elif request.user.horizonunit == 'week':
-        end = start + timedelta(weeks=request.user.horizonlength or 8)
+        end = start + timedelta(weeks=horizonlength or 8)
       else:
-        end = start + timedelta(weeks=request.user.horizonlength or 8)
+        end = start + timedelta(weeks=horizonlength or 8)
   return (current, start, end)
 
 
@@ -185,7 +199,7 @@ class GridField(object):
     if self.searchrules:
       o.append(',"searchrules":{%s}' % self.searchrules)
     if self.hidden:
-      o.append(',"hidden":true')
+      o.append(',"alwayshidden":true, "hidden":true')
     if self.extra:
       if isinstance(self.extra, collections.Callable):
         o.append(",%s" % force_text(self.extra()))
@@ -489,9 +503,6 @@ class GridReport(View):
       - maxBucketLevel: respect the lowest supported level in the time bucket hierarchy
       - minBucketLevel: respect the highest supported level in the time bucket hierarchy
     '''
-    # Pick up the user preferences
-    pref = request.user
-
     # Select the bucket size
     if not reportclass.maxBucketLevel:
       maxlvl = 999
@@ -505,16 +516,21 @@ class GridReport(View):
       minlvl = reportclass.minBucketLevel(request)
     else:
       minlvl = reportclass.minBucketLevel
+    arg_buckets = request.GET.get("buckets", None)
     try:
-      bucket = Bucket.objects.using(request.database).get(name=pref.horizonbuckets, level__lte=maxlvl, level__gte=minlvl).name
+      bucket = Bucket.objects.using(request.database).get(
+        name=arg_buckets or request.user.horizonbuckets,
+        level__lte=maxlvl,
+        level__gte=minlvl
+        ).name
     except Exception:
       try:
         bucket = Bucket.objects.using(request.database).filter(level__lte=maxlvl, level__gte=minlvl).order_by('-level')[0].name
       except:
         bucket = None
-    if not pref.horizonbuckets and bucket:
-      pref.horizonbuckets = bucket
-      pref.save()
+    if not arg_buckets and not request.user.horizonbuckets and bucket:
+      request.user.horizonbuckets = bucket
+      request.user.save()
 
     # Get the report horizon
     current, start, end = getHorizon(request, future_only=reportclass.showOnlyFutureTimeBuckets)
@@ -602,7 +618,7 @@ class GridReport(View):
 
 
   @classmethod
-  def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
+  def _generate_spreadsheet_data(reportclass, request, output, *args, **kwargs):
     # Create a workbook
     wb = Workbook(write_only=True)
     title = force_text(reportclass.model and reportclass.model._meta.verbose_name or reportclass.title)
@@ -614,14 +630,13 @@ class GridReport(View):
     wb.add_named_style(headerstyle)
 
     # Choose fields to export and write the title row
-    request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
-    if prefs:
-      prefs = prefs.get('rows', None)
-    if prefs:
+    if not hasattr(request, 'prefs'):
+      request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
+    if request.prefs and request.prefs.get('rows', None):
       # Customized settings
       fields = [
         reportclass.rows[f[0]]
-        for f in prefs
+        for f in request.prefs['rows']
         if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
         ]
     else:
@@ -653,17 +668,8 @@ class GridReport(View):
       else:
         ws.append([ _getCellValue(getattr(row, f)) for f in field_names ])
 
-    # Write the spreadsheet from memory to a string and then to a HTTP response
-    output = BytesIO()
+    # Write the spreadsheet
     wb.save(output)
-    response = HttpResponse(
-      content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      content=output.getvalue()
-      )
-    # Filename parameter is encoded as specified in rfc5987
-    response['Content-Disposition'] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(force_str(title))
-    response['Cache-Control'] = "no-cache, no-store"
-    return response
 
 
   @classmethod
@@ -682,19 +688,18 @@ class GridReport(View):
     yield getBOM(encoding)
 
     # Choose fields to export
-    request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
-    if prefs:
-      prefs = prefs.get('rows', None)
-    if prefs:
+    if not hasattr(request, 'prefs'):
+      request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
+    if request.prefs and request.prefs.get('rows', None):
       # Customized settings
       writer.writerow([
         force_text(reportclass.rows[f[0]].title, encoding=encoding, errors="ignore").title()
-        for f in prefs
+        for f in request.prefs['rows']
         if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
         ])
       fields = [
         reportclass.rows[f[0]].field_name
-        for f in prefs
+        for f in request.prefs['rows']
         if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
         ]
     else:
@@ -715,9 +720,9 @@ class GridReport(View):
 
     # Write the report content
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database), prefs)
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
     else:
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database), prefs)
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*fields):
       # Clear the return string buffer
       sf.seek(0)
@@ -738,7 +743,7 @@ class GridReport(View):
 
 
   @classmethod
-  def getSortName(reportclass, request, prefs=None):
+  def getSortName(reportclass, request):
     '''
     Build a jqgrid sort configuration pair sidx and sord:
     For instance:
@@ -747,9 +752,9 @@ class GridReport(View):
     if request.GET.get('sidx', ''):
       # 1) Sorting order specified on the request
       return (request.GET['sidx'], request.GET.get('sord', 'asc'))
-    elif prefs:
+    elif request.prefs:
       # 2) Sorting order from the preferences
-      sortname = (prefs.get('sidx', None), prefs.get('sord', 'asc'))
+      sortname = (request.prefs.get('sidx', None), request.prefs.get('sord', 'asc'))
       if sortname[0] and sortname[1]:
         return sortname
     # 3) Default sort order
@@ -781,7 +786,7 @@ class GridReport(View):
 
 
   @classmethod
-  def _apply_sort(reportclass, request, query, prefs=None):
+  def _apply_sort(reportclass, request, query):
     '''
     Applies a sort to the query.
     '''
@@ -789,9 +794,9 @@ class GridReport(View):
     if request.GET.get('sidx', ''):
       # 1) Sorting order specified on the request
       sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
-    elif prefs:
+    elif request.prefs:
       # 2) Sorting order from the preferences
-      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
+      sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
     if not sortname or sortname == " asc":
       # 3) Default sort order
       if not reportclass.default_sort:
@@ -857,7 +862,7 @@ class GridReport(View):
 
 
   @classmethod
-  def _apply_sort_index(reportclass, request, prefs=None):
+  def _apply_sort_index(reportclass, request):
     '''
     Build an SQL fragment to sort on: Eg "1 asc, 2 desc"
     '''
@@ -865,9 +870,9 @@ class GridReport(View):
     if request.GET.get('sidx', ''):
       # 1) Sorting order specified on the request
       sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
-    elif prefs:
+    elif request.prefs:
       # 2) Sorting order from the preferences
-      sortname = "%s %s" % (prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
+      sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
     if not sortname or sortname == " asc":
       # 3) Default sort order
       if not reportclass.default_sort:
@@ -911,15 +916,13 @@ class GridReport(View):
       else:
         return "1 asc"
 
-
-
     sortname = None
     if request.GET.get('sidx', None):
       # 1
       sort = request.GET['sidx']
-    elif prefs and 'sidx' in prefs:
+    elif request.prefs and 'sidx' in request.prefs:
       # 2
-      sort = prefs['sidx']
+      sort = request.prefs['sidx']
     else:
       # 3
       sort = reportclass.rows[0].name
@@ -928,18 +931,13 @@ class GridReport(View):
       if i.name == sort:
         if 'sord' in request.GET and request.GET['sord'] == 'desc':
           return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
-        elif prefs and 'sord' in prefs and prefs['sord'] == 'desc':
+        elif request.prefs and request.prefs.get('sord', 'asc') == 'desc':
           return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
         else:
           return idx > 1 and "%d asc, 1 asc" % idx or "1 asc"
       else:
         idx += 1
     return "1 asc"
-
-
-
-
-
 
 
   @classmethod
@@ -985,7 +983,7 @@ class GridReport(View):
       page = total_pages
     if page < 1:
       page = 1
-    query = reportclass._apply_sort(request, query, request.prefs)
+    query = reportclass._apply_sort(request, query)
 
     yield '{"total":%d,\n' % total_pages
     yield '"page":%d,\n' % page
@@ -1015,8 +1013,10 @@ class GridReport(View):
           s = json.dumps(i[f.field_name])
         elif isinstance(i[f.field_name], timedelta):
           s = i[f.field_name].total_seconds()
-        else:
+        elif i[f.field_name] is not None:
           s = '"%s"' % i[f.field_name]
+        else:
+          s = '""'
         if first2:
           # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
           r.append('"%s":%s' % (f.name, s))
@@ -1084,20 +1084,20 @@ class GridReport(View):
       bucketnames = None
     fmt = request.GET.get('format', None)
     reportkey = reportclass.getKey()
-    prefs = request.user.getPreference(reportkey, database=request.database)
-    if prefs:
-      kwargs['preferences'] = prefs
+    request.prefs = request.user.getPreference(reportkey, database=request.database)
+    if request.prefs:
+      kwargs['preferences'] = request.prefs
     if not fmt:
       # Return HTML page
       if not hasattr(reportclass, 'crosses'):
         cross_idx = None
         cross_list = None
-      elif prefs and 'crosses' in prefs:
-        cross_idx = ','.join([str(i) for i in prefs['crosses']])
-        cross_list = reportclass._render_cross()
+      elif request.prefs and 'crosses' in request.prefs:
+        cross_idx = ','.join([str(i) for i in request.prefs['crosses']])
+        cross_list = reportclass._render_cross(request)
       else:
         cross_idx = ','.join([str(i) for i in range(len(reportclass.crosses)) if reportclass.crosses[i][1].get('visible', True)])
-        cross_list = reportclass._render_cross()
+        cross_list = reportclass._render_cross(request)
       if args:
         mode = "table"
       else:
@@ -1109,23 +1109,23 @@ class GridReport(View):
           # Pick up the mode from the session
           mode = request.session.get('mode', 'graph')
       is_popup = '_popup' in request.GET
-      sidx, sord = reportclass.getSortName(request, prefs)
+      sidx, sord = reportclass.getSortName(request)
 
       context = {
         'reportclass': reportclass,
         'title': (args and args[0] and _('%(title)s for %(entity)s') % {'title': force_text(reportclass.title), 'entity': force_text(args[0])}) or reportclass.title,
         'post_title': reportclass.post_title,
-        'preferences': prefs,
+        'preferences': request.prefs,
         'reportkey': reportkey,
-        'colmodel': reportclass._render_colmodel(is_popup, prefs, mode),
+        'colmodel': reportclass._render_colmodel(is_popup, request.prefs, mode),
         'cross_idx': cross_idx,
         'cross_list': cross_list,
         'object_id': args and quote(args[0]) or None,
-        'page': prefs and prefs.get('page', 1) or 1,
+        'page': request.prefs.get('page', 1) if request.prefs else 1,
         'sord': sord,
         'sidx': sidx,
         'is_popup': is_popup,
-        'filters': reportclass.getQueryString(request) or (prefs and prefs.get('filter', None)),
+        'filters': reportclass.getQueryString(request) or (request.prefs and request.prefs.get('filter', None)),
         'args': args,
         'bucketnames': bucketnames,
         'model': reportclass.model,
@@ -1149,7 +1149,17 @@ class GridReport(View):
       return response
     elif fmt in ('spreadsheetlist', 'spreadsheettable', 'spreadsheet'):
       # Return an excel spreadsheet
-      return reportclass._generate_spreadsheet_data(request, *args, **kwargs)
+      output = BytesIO()
+      reportclass._generate_spreadsheet_data(request, output, *args, **kwargs)
+      response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        content=output.getvalue()
+        )
+      # Filename parameter is encoded as specified in rfc5987
+      title = force_text(reportclass.model._meta.verbose_name if reportclass.model else reportclass.title)
+      response['Content-Disposition'] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(force_str(title))
+      response['Cache-Control'] = "no-cache, no-store"
+      return response
     elif fmt in ('csvlist', 'csvtable', 'csv'):
       # Return CSV data to export the data
       response = StreamingHttpResponse(
@@ -1729,12 +1739,19 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _render_cross(cls):
+  def _render_cross(cls, request):
     result = []
     for i in cls.crosses:
+      if 'title' in i[1]:
+        t = i[1]['title'](request) if callable(i[1]['title']) else i[1]['title']
+      else:
+        t = ''
+      if 'editable' in i[1]:
+        e = i[1]['editable'](request) if callable(i[1]['editable']) else i[1]['editable']
+      else:
+        e = False
       result.append(
-        "{name:'%s',editable:%s}"
-        % (title('title' in i[1] and i[1]['title'] or ''), i[1].get('editable', False) and 'true' or 'false')
+        "{name:'%s',editable:%s}" % (title(t), 'true' if e else 'false')
         )
     return ',\n'.join(result)
 
@@ -1774,7 +1791,7 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _apply_sort(reportclass, request, query, prefs=None):
+  def _apply_sort(reportclass, request, query):
     '''
     Applies a sort to the query.
     '''
@@ -1785,9 +1802,9 @@ class GridPivot(GridReport):
       if 'sord' in request.GET and request.GET['sord'] == 'desc':
         asc = False
     if not sort:
-      if prefs and 'sidx' in prefs:
-        sort = prefs['sidx']
-        if 'sord' in prefs and prefs['sord'] == 'desc':
+      if request.prefs and 'sidx' in request.prefs:
+        sort = request.prefs['sidx']
+        if 'sord' in request.prefs and request.prefs['sord'] == 'desc':
           asc = False
       if not sort and reportclass.default_sort:
         sort = reportclass.rows[reportclass.default_sort[0]].name
@@ -1808,7 +1825,7 @@ class GridPivot(GridReport):
   @classmethod
   def _generate_json_data(reportclass, request, *args, **kwargs):
     # Prepare the query
-    request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
+    request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if args and args[0]:
       page = 1
       recs = 1
@@ -1840,14 +1857,14 @@ class GridPivot(GridReport):
       if isinstance(reportclass.basequeryset, collections.Callable):
         query = reportclass.query(
           request,
-          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False), prefs).using(request.database)[cnt - 1:cnt + request.pagesize],
-          sortsql=reportclass._apply_sort_index(request, prefs)
+          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False)).using(request.database)[cnt - 1:cnt + request.pagesize],
+          sortsql=reportclass._apply_sort_index(request)
           )
       else:
         query = reportclass.query(
           request,
-          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset), prefs).using(request.database)[cnt - 1:cnt + request.pagesize],
-          sortsql=reportclass._apply_sort_index(request, prefs)
+          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset)).using(request.database)[cnt - 1:cnt + request.pagesize],
+          sortsql=reportclass._apply_sort_index(request)
           )
 
     # Generate header of the output
@@ -1914,7 +1931,8 @@ class GridPivot(GridReport):
     listformat = (request.GET.get('format', 'csvlist') == 'csvlist')
 
     # Prepare the query
-    request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
+    if not hasattr(request, 'prefs'):
+      request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if args and args[0]:
       query = reportclass.query(
         request,
@@ -1924,13 +1942,13 @@ class GridPivot(GridReport):
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
         request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
-        sortsql=reportclass._apply_sort_index(request, prefs)
+        sortsql=reportclass._apply_sort_index(request)
         )
     else:
       query = reportclass.query(
         request,
         reportclass.filter_items(request, reportclass.basequeryset).using(request.database),
-        sortsql=reportclass._apply_sort_index(request, prefs)
+        sortsql=reportclass._apply_sort_index(request)
         )
 
     # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
@@ -1938,16 +1956,20 @@ class GridPivot(GridReport):
     yield getBOM(encoding)
 
     # Pick up the preferences
-    if prefs and 'rows' in prefs:
+    if request.prefs and 'rows' in request.prefs:
       myrows = [
         reportclass.rows[f[0]]
-        for f in prefs['rows']
+        for f in request.prefs['rows']
         if not f[1] and f[0] < len(reportclass.rows)
         ]
     else:
       myrows = [ f for f in reportclass.rows if f.name and not f.hidden and not f.initially_hidden ]
-    if prefs and 'crosses' in prefs:
-      mycrosses = [ reportclass.crosses[f] for f in prefs['crosses'] if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True) ]
+    if request.prefs and 'crosses' in request.prefs:
+      mycrosses = [
+        reportclass.crosses[f]
+        for f in request.prefs['crosses']
+        if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True)
+        ]
     else:
       mycrosses = [ f for f in reportclass.crosses if f[1].get('visible', True) ]
 
@@ -1958,7 +1980,14 @@ class GridPivot(GridReport):
       ]
     if listformat:
       fields.extend([ capfirst(force_text(_('bucket'), encoding=encoding, errors='ignore')) ])
-      fields.extend([ capfirst(force_text(_(f[1].get('title', _(f[0]))), encoding=encoding, errors='ignore')) for f in mycrosses ])
+      fields.extend([
+        capfirst(force_text(_(
+          (f[1]['title'](request) if callable(f[1]['title']) else f[1]['title'])
+          if 'title' in f[1]
+          else f[0]
+        ), encoding=encoding, errors='ignore'))
+        for f in mycrosses
+        ])
     else:
       fields.extend([ capfirst(force_text(_('data field'), encoding=encoding, errors='ignore')) ])
       fields.extend([ force_text(b['name'], encoding=encoding, errors='ignore') for b in request.report_bucketlist])
@@ -2014,11 +2043,16 @@ class GridPivot(GridReport):
               force_text(row_of_buckets[0][s.name], encoding=encoding, errors='ignore')
               for s in myrows if s.name
               ]
+            fields.extend([force_text(
+              capfirst(_(
+                (cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title'])
+                if 'title' in cross[1]
+                else cross[0]
+                )),
+              encoding=encoding, errors='ignore'
+              )])
             fields.extend([
-              force_text('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])), encoding=encoding, errors='ignore')
-              ])
-            fields.extend([
-              force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore')
+              force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore') if bucket[cross[0]] is not None else ''
               for bucket in row_of_buckets
               ])
             # Return string
@@ -2035,7 +2069,14 @@ class GridPivot(GridReport):
           force_text(row_of_buckets[0][s.name], encoding=encoding, errors='ignore')
           for s in myrows if s.name
           ]
-        fields.extend([ force_text('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])), encoding=encoding, errors='ignore') ])
+        fields.extend([force_text(
+          capfirst(_(
+            (cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title'])
+            if 'title' in cross[1]
+            else cross[0]
+            )),
+          encoding=encoding, errors='ignore'
+          )])
         fields.extend([
           force_text(_localize(bucket[cross[0]], decimal_separator), encoding=encoding, errors='ignore')
           for bucket in row_of_buckets
@@ -2046,7 +2087,7 @@ class GridPivot(GridReport):
 
 
   @classmethod
-  def _generate_spreadsheet_data(reportclass, request, *args, **kwargs):
+  def _generate_spreadsheet_data(reportclass, request, output, *args, **kwargs):
     # Create a workbook
     wb = Workbook(write_only=True)
     ws = wb.create_sheet(title=force_text(reportclass.model._meta.verbose_name))
@@ -2057,7 +2098,8 @@ class GridPivot(GridReport):
     wb.add_named_style(headerstyle)
 
     # Prepare the query
-    request.prefs = prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
+    if not hasattr(request, 'prefs'):
+      request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     listformat = (request.GET.get('format', 'spreadsheetlist') == 'spreadsheetlist')
     if args and args[0]:
       query = reportclass.query(
@@ -2069,26 +2111,30 @@ class GridPivot(GridReport):
       query = reportclass.query(
         request,
         reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
-        sortsql=reportclass._apply_sort_index(request, prefs)
+        sortsql=reportclass._apply_sort_index(request)
         )
     else:
       query = reportclass.query(
         request,
         reportclass.filter_items(request, reportclass.basequeryset).using(request.database),
-        sortsql=reportclass._apply_sort_index(request, prefs)
+        sortsql=reportclass._apply_sort_index(request)
         )
 
     # Pick up the preferences
-    if prefs and 'rows' in prefs:
+    if request.prefs and 'rows' in request.prefs:
       myrows = [
         reportclass.rows[f[0]]
-        for f in prefs['rows']
+        for f in request.prefs['rows']
         if not f[1] and f[0] < len(reportclass.rows)
         ]
     else:
       myrows = [ f for f in reportclass.rows if f.name and not f.initially_hidden and not f.hidden ]
-    if prefs and 'crosses' in prefs:
-      mycrosses = [ reportclass.crosses[f] for f in prefs['crosses'] if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True) ]
+    if request.prefs and 'crosses' in request.prefs:
+      mycrosses = [
+        reportclass.crosses[f]
+        for f in request.prefs['crosses']
+        if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True)
+        ]
     else:
       mycrosses = [ f for f in reportclass.crosses if f[1].get('visible', True) ]
 
@@ -2104,7 +2150,11 @@ class GridPivot(GridReport):
       cell.style = 'headerstyle'
       fields.append(cell)
       for f in mycrosses:
-        cell = WriteOnlyCell(ws, value=capfirst(_(f[1].get('title', _(f[0])))))
+        cell = WriteOnlyCell(ws, value=capfirst(force_text(_(
+          (f[1]['title'](request) if callable(f[1]['title']) else f[1]['title'])
+          if 'title' in f[1]
+          else f[0]
+          ))))
         cell.style = 'headerstyle'
         fields.append(cell)
     else:
@@ -2146,10 +2196,14 @@ class GridPivot(GridReport):
         else:
           # Write a row
           for cross in mycrosses:
-            if 'visible' in cross[1] and not cross[1]['visible']:
+            if cross[1].get('visible', False):
               continue
             fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in myrows if s.name ]
-            fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+            fields.extend([ _getCellValue(
+              (capfirst(cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title']))
+              if 'title' in cross[1]
+              else capfirst(cross[0])
+              )])
             fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
             ws.append(fields)
           currentkey = row[reportclass.rows[0].name]
@@ -2157,24 +2211,19 @@ class GridPivot(GridReport):
       # Write the last row
       if row_of_buckets:
         for cross in mycrosses:
-          if 'visible' in cross[1] and not cross[1]['visible']:
+          if cross[1].get('visible', True):
             continue
           fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in myrows if s.name ]
-          fields.extend([ _getCellValue(('title' in cross[1] and capfirst(_(cross[1]['title'])) or capfirst(_(cross[0])))) ])
+          fields.extend([ _getCellValue(
+            (capfirst(cross[1]['title'](request) if callable(cross[1]['title']) else cross[1]['title']))
+            if 'title' in cross[1]
+            else capfirst(cross[0])
+            )])
           fields.extend([ _getCellValue(bucket[cross[0]]) for bucket in row_of_buckets ])
           ws.append(fields)
 
-    # Write the spreadsheet from memory to a string and then to a HTTP response
-    output = BytesIO()
+    # Write the spreadsheet
     wb.save(output)
-    response = HttpResponse(
-      content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      content=output.getvalue()
-      )
-    # Filename parameter is encoded as specified in rfc5987
-    response['Content-Disposition'] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(force_str(reportclass.model._meta.model_name))
-    response['Cache-Control'] = "no-cache, no-store"
-    return response
 
 
 numericTypes = (Decimal, float) + six.integer_types
@@ -2241,46 +2290,45 @@ def exportWorkbook(request):
       ok = True
       ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
 
-      # Build a list of fields
+      # Build a list of fields and properties
       fields = []
       header = []
       source = False
       lastmodified = False
-
-      if hasattr(model, "export_fields"):
-        for i in model.export_fields():
-          fields.append(i[0])
-          cell = WriteOnlyCell(ws, value=force_text(i[1]).title())
+      try:
+        # The admin model of the class can define some fields to exclude from the export
+        exclude = data_site._registry[model].exclude
+      except:
+        exclude = None
+      for i in model._meta.fields:
+        if i.name in ['lft', 'rght', 'lvl']:
+          continue  # Skip some fields of HierarchyModel
+        elif i.name == 'source':
+          source = True  # Put the source field at the end
+        elif i.name == 'lastmodified':
+          lastmodified = True  # Put the last-modified field at the very end
+        elif not (exclude and i.name in exclude):
+          fields.append(i.column)
+          cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
           cell.style = 'headerstyle'
           header.append(cell)
-      else:
-        try:
-          # The admin model of the class can define some fields to exclude from the export
-          exclude = data_site._registry[model].exclude
-        except:
-          exclude = None
-        for i in model._meta.fields:
-          if i.name in ['lft', 'rght', 'lvl']:
-            continue  # Skip some fields of HierarchyModel
-          elif i.name == 'source':
-            source = True  # Put the source field at the end
-          elif i.name == 'lastmodified':
-            lastmodified = True  # Put the last-modified field at the very end
-          elif not (exclude and i.name in exclude):
-            fields.append(i.column)
+      if hasattr(model, 'propertyFields'):
+        for i in model.propertyFields:
+          if i.export:
+            fields.append(i.name)
             cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
             cell.style = 'headerstyle'
             header.append(cell)
-        if source:
-          fields.append("source")
-          cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
-          cell.style = 'headerstyle'
-          header.append(cell)
-        if lastmodified:
-          fields.append("lastmodified")
-          cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-          cell.style = 'headerstyle'
-          header.append(cell)
+      if source:
+        fields.append("source")
+        cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+        cell.style = 'headerstyle'
+        header.append(cell)
+      if lastmodified:
+        fields.append("lastmodified")
+        cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+        cell.style = 'headerstyle'
+        header.append(cell)
 
       # Write a formatted header row
       ws.append(header)

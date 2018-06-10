@@ -73,6 +73,7 @@ class Command(BaseCommand):
   # accordion template
   title = _('Import data from %(erp)s') % {'erp': 'odoo'}
   index = 1400
+  help_url = 'integration-guide/odoo-connector.html'
 
   @ staticmethod
   def getHTML(request):

@@ -19,21 +19,21 @@ from datetime import datetime
 from django.db import migrations, models
 import freppledb.common.fields
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 
 def createAdminUser(apps, schema_editor):
   if not schema_editor.connection.alias == 'default':
     return
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
-  usr.first_name = 'admin'
-  usr.last_name = 'admin'
-  usr.date_joined = datetime(2000, 1, 1)
-  usr.horizontype = True
-  usr.horizonlength = 6
-  usr.horizonunit = "month"
-  usr.language = "auto"
+  User = apps.get_model("common", "User")
+  usr = User(
+    username='admin', email='your@company.com', first_name='admin',
+    last_name='admin', date_joined=datetime(2000, 1, 1),
+    horizontype=True, horizonlength=6, horizonunit="month",
+    language="auto", is_superuser=True, is_staff=True, is_active=True
+    )
+  usr._password = "admin"
+  usr.password = make_password('admin')
   usr.save()
 
 
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('url_doc', models.URLField(blank=True, max_length=500, verbose_name='documentation URL', null=True)),
                 ('url_internaldoc', models.URLField(blank=True, max_length=500, verbose_name='wizard URL', null=True)),
                 ('status', models.BooleanField(default=True)),
-                ('owner', models.ForeignKey(blank=True, related_name='xchildren', verbose_name='owner', to='common.Wizard', help_text='Hierarchical parent', null=True, on_delete = None)),
+                ('owner', models.ForeignKey(blank=True, related_name='xchildren', verbose_name='owner', to='common.Wizard', help_text='Hierarchical parent', null=True)),
             ],
             options={
                 'db_table': 'common_wizard',
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(serialize=False, verbose_name='identifier', primary_key=True)),
                 ('property', models.CharField(max_length=100)),
                 ('value', freppledb.common.fields.JSONField(max_length=1000)),
-                ('user', models.ForeignKey(related_name='preferences', verbose_name='user', to=settings.AUTH_USER_MODEL, null=True, editable=False, on_delete = None)),
+                ('user', models.ForeignKey(related_name='preferences', verbose_name='user', to=settings.AUTH_USER_MODEL, null=True, editable=False)),
             ],
             options={
                 'verbose_name_plural': 'preferences',

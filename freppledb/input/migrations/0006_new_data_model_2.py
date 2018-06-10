@@ -158,7 +158,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operation',
       name='item',
-      field=models.ForeignKey(related_name='operations', verbose_name='item', to='input.Item', blank=True, null=True, on_delete = None),
+      field=models.ForeignKey(related_name='operations', verbose_name='item', to='input.Item', blank=True, null=True),
     ),
     migrations.AddField(
       model_name='operation',

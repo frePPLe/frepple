@@ -109,7 +109,7 @@ void Calendar::setValue(Date start, Date end, const double v)
     x->setCalendar(this);
   }
   x->setValue(v);
-  x->setPriority(lowestPriority()-1);
+  x->setPriority(lowestPriority() - 1);
 }
 
 
@@ -152,7 +152,8 @@ void Calendar::removeBucket(CalendarBucket* bkt, bool del)
 {
   // Verify the bucket is on this calendar indeed
   CalendarBucket *b = firstBucket;
-  while (b && b != bkt) b = b->nextBucket;
+  while (b && b != bkt)
+    b = b->nextBucket;
 
   // Error
   if (!b)
@@ -194,6 +195,7 @@ CalendarBucket::~CalendarBucket()
   if (nextBucket)
     // Update the reference prevBucket of the next bucket
     nextBucket->prevBucket = prevBucket;
+  cal->eventlist.clear();
 }
 
 
@@ -268,6 +270,33 @@ void CalendarBucket::updateSort()
     }
   }
   while (!ok); // Repeat till in place
+}
+
+
+double Calendar::getValue(const Date d, bool forward) const
+{
+  if (eventlist.empty())
+  {
+    CalendarBucket* x = findBucket(d, forward);
+    return x ? x->getValue() : defaultValue;
+  }
+  else
+  {
+    auto event = forward ? eventlist.upper_bound(d) : eventlist.lower_bound(d);
+    if (event != eventlist.begin())
+    {
+      --event;      
+      if (event != eventlist.end())
+        return event->second;
+      else
+        return getDefault();
+      return event->second;
+    }
+    else if (eventlist.empty())
+      return getDefault();
+    else
+      return eventlist.rbegin()->second;
+  }
 }
 
 
@@ -442,7 +471,10 @@ void CalendarBucket::setCalendar(Calendar* c)
 
   // Unlink from the previous calendar
   if (cal)
+  {
     cal->removeBucket(this, false);
+    cal->eventlist.clear();
+  }
   cal = c;
 
   // Link in the list of buckets of the new calendar
@@ -455,285 +487,273 @@ void CalendarBucket::setCalendar(Calendar* c)
     }
     cal->firstBucket = this;
     updateSort();
+    cal->eventlist.clear();
   }
 }
 
 
 Calendar::EventIterator::EventIterator
-  (const Calendar* c, Date d, bool forward)
-  : theCalendar(c), curDate(d)
+  (Calendar* c, Date d, bool forward)
+  : theCalendar(c)
 {
-  curBucket = lastBucket = c ? c->findBucket(d, forward) : nullptr;
-  curPriority = lastPriority = curBucket ? curBucket->priority : INT_MAX;
+  if (!theCalendar)
+    return;
+
+  if (
+    theCalendar->eventlist.empty() 
+    || d < theCalendar->eventlist.begin()->first 
+    || d > theCalendar->eventlist.rbegin()->first
+    )
+      theCalendar->buildEventList(d);
+  
+  curDate = d;
+  if (forward)
+  {
+    cacheiter = theCalendar->eventlist.lower_bound(d);
+    if (cacheiter != theCalendar->eventlist.end() && cacheiter->first > d)
+      --cacheiter;
+    if (cacheiter == theCalendar->eventlist.end())
+      curValue = theCalendar->getDefault();
+    else
+      curValue = cacheiter->second;
+  }
+  else
+  {
+    cacheiter = theCalendar->eventlist.lower_bound(d);
+    if (cacheiter != theCalendar->eventlist.end() && cacheiter->first > d)
+      --cacheiter;
+    if (cacheiter == theCalendar->eventlist.end())
+      curValue = theCalendar->getDefault();
+    else
+      curValue = cacheiter->second;
+  }
 }
 
 
 Calendar::EventIterator& Calendar::EventIterator::operator++()
 {
-  if (!theCalendar)
-    throw LogicException("Can't walk forward on event iterator of nullptr calendar.");
-
-  // Go over all entries and ask them to update the iterator
-  Date d = curDate;
-  curDate = Date::infiniteFuture;
-  for (const CalendarBucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
-    nextEvent(b, d);
-
-  // Remember the bucket that won the evaluation
-  lastBucket = curBucket;
-  lastPriority = curPriority;
+  if (cacheiter != theCalendar->eventlist.end())
+  {
+    ++cacheiter;    
+    if (cacheiter == theCalendar->eventlist.end())
+    {
+      // Extend the event list if possible
+      auto lastDate = theCalendar->eventlist.rbegin()->first;
+      if (!theCalendar->eventlist.empty() && lastDate != Date::infiniteFuture)
+      {            
+        theCalendar->buildEventList(lastDate);
+        cacheiter = theCalendar->eventlist.find(lastDate);
+        ++cacheiter;
+      }
+    }
+  }
+  if (cacheiter == theCalendar->eventlist.end())
+  {
+    curDate = Date::infiniteFuture;
+    curValue = theCalendar->getDefault();
+  }
+  else
+  {
+    curDate = cacheiter->first;
+    curValue = cacheiter->second;
+  }
   return *this;
 }
 
 
 Calendar::EventIterator& Calendar::EventIterator::operator--()
 {
-  if (!theCalendar)
-    throw LogicException("Can't walk backward on event iterator of nullptr calendar.");
-
-  // Go over all entries and ask them to update the iterator
-  Date d = curDate;
-  curDate = Date::infinitePast;
-  for (const CalendarBucket *b = theCalendar->firstBucket; b; b = b->nextBucket)
-    prevEvent(b, d);
-
-  // Remember the bucket that won the evaluation
-  lastBucket = curBucket;
-  lastPriority = curPriority;
+  if (cacheiter == theCalendar->eventlist.end())
+  {
+    curValue = theCalendar->getDefault();
+    curDate = Date::infinitePast;
+  }
+  else
+  {
+    curDate = cacheiter->first;
+    --cacheiter;    
+    if (cacheiter == theCalendar->eventlist.end())
+    {
+      auto firstDate = theCalendar->eventlist.begin()->first;
+      if (!theCalendar->eventlist.empty() && firstDate != Date::infinitePast)
+      {
+        // Extend the event list     
+        theCalendar->buildEventList(firstDate);
+        cacheiter = theCalendar->eventlist.find(firstDate);
+      }
+    }
+    if (cacheiter == theCalendar->eventlist.end())
+      curValue = theCalendar->getDefault();
+    else
+      curValue = cacheiter->second;
+  }
   return *this;
 }
 
 
-void Calendar::EventIterator::nextEvent(const CalendarBucket* b, Date refDate)
+void Calendar::buildEventList(Date includedate)
 {
-  // FIRST CASE: Bucket that is continuously effective
-  if (b->isContinuouslyEffective())
+  // Default start and end
+  Date curDate;
+  if (eventlist.empty())
+    curDate = Plan::instance().getCurrent() - Duration(86400 * 365);
+  else
+    curDate = eventlist.begin()->first;
+  Date maxDate;
+  if (eventlist.empty())
+    maxDate = Plan::instance().getCurrent() + Duration(86400 * 365);
+  else
+    maxDate = eventlist.rbegin()->first;
+
+  // Assure the argument date is included
+  if (includedate == Date::infinitePast)
+    curDate = Date::infinitePast;
+  else if (includedate <= curDate)
+    curDate = includedate - Duration(86400 * 365);
+  if (includedate == Date::infiniteFuture)
+    maxDate = Date::infiniteFuture;
+  else if (includedate >= maxDate)
+    maxDate = includedate + Duration(86400 * 365);
+  
+  // Collect all event dates
+  const CalendarBucket* curBucket = findBucket(curDate, true);
+  const CalendarBucket* lastBucket = curBucket;
+  int curPriority = curBucket ? curBucket->priority : INT_MAX;
+  int lastPriority = curPriority;
+  bool first = true;
+  while (true)
   {
-    // Evaluate the start date of the bucket
-    if (refDate < b->startdate && b->priority <= lastPriority && (
-      b->startdate < curDate ||
-      (b->startdate == curDate && b->priority <= curPriority)
-      ))
+    if (first)
     {
-      curDate = b->startdate;
-      curBucket = b;
-      curPriority = b->priority;
-      return;
+      eventlist[Date::infinitePast] = curBucket ? curBucket->getValue() : getDefault();
+      first = false;
+    }
+    else       
+    {
+      eventlist[curDate] = curBucket ? curBucket->getValue() : getDefault();
+      if (curDate > maxDate || curDate == Date::infiniteFuture)
+        break;
     }
 
-    // Next evaluate the end date of the bucket
-    if (refDate < b->enddate && b->enddate <= curDate && lastBucket == b)
+    // Go over all entries and ask them to update the iterator
+    Date refDate = curDate;
+    curDate = Date::infiniteFuture;
+    for (const CalendarBucket *b = firstBucket; b; b = b->nextBucket)
     {
-      curDate = b->enddate;
-      curBucket = theCalendar->findBucket(b->enddate);
-      curPriority = curBucket ? curBucket->priority : INT_MAX;
-      return;
-    }
-
-    // End function: this bucket won't create next event
-    return;
-  }
-
-  // SECOND CASE: Interruptions in effectivity.
-
-  // Find details on the reference date
-  bool effectiveAtStart = false;
-  Date tmp = refDate;
-  struct tm datedetail;
-  if (refDate < b->startdate)
-    tmp = b->startdate;
-  tmp.getInfo(&datedetail);
-  int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-  Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
-  if (
-    refDate < b->startdate && ref_time >= b->starttime
-    && ref_time < b->endtime && (b->days & (1 << ref_weekday))
-    )
-      effectiveAtStart = true;
-
-  if (ref_time >= b->starttime && !effectiveAtStart
-    && ref_time < b->endtime && (b->days & (1 << ref_weekday)))
-  {
-    // Entry is currently effective.
-    if (!b->starttime && b->endtime == Duration(86400L))
-    {
-      // The next event is the start of the next ineffective day
-      tmp -= ref_time;
-      while (b->days & (1 << ref_weekday)  && tmp != Date::infiniteFuture)
+      // FIRST CASE: Bucket that is continuously effective
+      if (b->isContinuouslyEffective())
       {
-        if (++ref_weekday > 6)
-          ref_weekday = 0;
-        tmp += Duration(86400L);
+        // Evaluate the start date of the bucket
+        if (refDate < b->startdate && b->priority <= lastPriority && (
+          b->startdate < curDate ||
+          (b->startdate == curDate && b->priority <= curPriority)
+          ))
+        {
+          curDate = b->startdate;
+          curBucket = b;
+          curPriority = b->priority;
+          continue;
+        }
+
+        // Next evaluate the end date of the bucket
+        if (refDate < b->enddate && b->enddate <= curDate && lastBucket == b)
+        {
+          curDate = b->enddate;
+          curBucket = findBucket(b->enddate);
+          curPriority = curBucket ? curBucket->priority : INT_MAX;
+          continue;
+        }
+
+        // This bucket won't create next event
+        continue;
+      }
+
+      // SECOND CASE: Interruptions in effectivity.
+
+      // Find details on the reference date
+      bool effectiveAtStart = false;
+      Date tmp = refDate;
+      struct tm datedetail;
+      if (refDate < b->startdate)
+        tmp = b->startdate;
+      tmp.getInfo(&datedetail);
+      int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
+      Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+      if (
+        refDate < b->startdate && ref_time >= b->starttime
+        && ref_time < b->endtime && (b->days & (1 << ref_weekday))
+        )
+        effectiveAtStart = true;
+
+      if (ref_time >= b->starttime && !effectiveAtStart
+        && ref_time < b->endtime && (b->days & (1 << ref_weekday)))
+      {
+        // Entry is currently effective.
+        if (!b->starttime && b->endtime == Duration(86400L))
+        {
+          // The next event is the start of the next ineffective day
+          tmp -= ref_time;
+          while (b->days & (1 << ref_weekday) && tmp != Date::infiniteFuture)
+          {
+            if (++ref_weekday > 6)
+              ref_weekday = 0;
+            tmp += Duration(86400L);
+          }
+        }
+        else
+          // The next event is the end date on the current day
+          tmp += b->endtime - ref_time;
+        if (tmp > b->enddate)
+          tmp = b->enddate;
+
+        // Evaluate the result
+        if (refDate < tmp && tmp <= curDate && lastBucket == b)
+        {
+          curDate = tmp;
+          curBucket = findBucket(tmp);
+          curPriority = curBucket ? curBucket->priority : INT_MAX;
+        }
+      }
+      else
+      {
+        // Reference date is before the start time on an effective date
+        // or it is after the end time of an effective date
+        // or it is on an ineffective day.
+
+        // The next event is the start date, either today or on the next
+        // effective day.
+        tmp += b->starttime - ref_time;
+        if (ref_time >= b->endtime && (b->days & (1 << ref_weekday)))
+        {
+          if (++ref_weekday > 6)
+            ref_weekday = 0;
+          tmp += Duration(86400L);
+        }
+        while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
+        {
+          if (++ref_weekday > 6)
+            ref_weekday = 0;
+          tmp += Duration(86400L);
+        }
+        if (tmp >= b->enddate)
+          continue;
+
+        // Evaluate the result
+        if (refDate < tmp && b->priority <= lastPriority && (
+          tmp < curDate ||
+          (tmp == curDate && b->priority <= curPriority)
+          ))
+        {
+          curDate = tmp;
+          curBucket = b;
+          curPriority = b->priority;
+        }
       }
     }
-    else
-      // The next event is the end date on the current day
-      tmp += b->endtime - ref_time;
-    if (tmp > b->enddate)
-      tmp = b->enddate;
 
-    // Evaluate the result
-    if (refDate < tmp && tmp <= curDate && lastBucket == b)
-    {
-      curDate = tmp;
-      curBucket = theCalendar->findBucket(tmp);
-      curPriority = curBucket ? curBucket->priority : INT_MAX;
-    }
-  }
-  else
-  {
-    // Reference date is before the start time on an effective date
-    // or it is after the end time of an effective date
-    // or it is on an ineffective day.
-
-    // The next event is the start date, either today or on the next
-    // effective day.
-    tmp += b->starttime - ref_time;
-    if (ref_time >= b->endtime && (b->days & (1 << ref_weekday)))
-    {
-      if (++ref_weekday > 6)
-        ref_weekday = 0;
-      tmp += Duration(86400L);
-    }
-    while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
-    {
-      if (++ref_weekday > 6)
-        ref_weekday = 0;
-      tmp += Duration(86400L);
-    }
-    if (tmp >= b->enddate)
-      return;
-
-    // Evaluate the result
-    if (refDate < tmp && b->priority <= lastPriority && (
-      tmp < curDate ||
-      (tmp == curDate && b->priority <= curPriority)
-      ))
-    {
-      curDate = tmp;
-      curBucket = b;
-      curPriority = b->priority;
-    }
-  }
-}
-
-
-void Calendar::EventIterator::prevEvent(const CalendarBucket* b, Date refDate)
-{
-  // FIRST CASE: Bucket that is continuously effective
-  if (b->isContinuouslyEffective())
-  {
-    // First evaluate the end date of the bucket
-    if (refDate > b->enddate && b->priority <= lastPriority && (
-       b->enddate > curDate ||
-       (b->enddate == curDate && b->priority < curPriority)
-      ))
-    {
-      curDate = b->enddate;
-	    curBucket = b;
-      curPriority = b->priority;
-      return;
-    }
-
-    // Next evaluate the start date of the bucket
-    if (refDate > b->startdate && b->startdate > curDate && lastBucket == b)
-    {
-      curDate = b->startdate;
-      curBucket = theCalendar->findBucket(b->startdate, false);
-      curPriority = curBucket ? curBucket->priority : INT_MAX;
-      return;
-    }
-
-    // End function: this bucket won't create the previous event
-    return;
-  }
-
-  // SECOND CASE: Interruptions in effectivity.
-
-  // Find details on the reference date
-  bool effectiveAtEnd = false;
-  Date tmp = refDate;
-  struct tm datedetail;
-  if (refDate > b->enddate)
-    tmp = b->enddate;
-  tmp.getInfo(&datedetail);
-  int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-  Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
-  if (!ref_time)
-  {
-    ref_time = Duration(86400L);
-    if (--ref_weekday < 0)
-      ref_weekday = 6;
-  }
-  if (
-    refDate > b->enddate && ref_time > b->starttime
-    && ref_time <= b->endtime && (b->days & (1 << ref_weekday))
-    )
-    effectiveAtEnd = true;
-
-  if (ref_time > b->starttime && !effectiveAtEnd
-    && ref_time <= b->endtime && (b->days & (1 << ref_weekday)))
-  {
-    // Entry is currently effective.
-    if (!b->starttime && b->endtime == Duration(86400L))
-    {
-      // The previous event is the end of the previous infective day
-      tmp += Duration(86400L) - ref_time;
-      while (b->days & (1 << ref_weekday) && tmp != Date::infinitePast)
-      {
-        if (--ref_weekday < 0)
-          ref_weekday = 6;
-        tmp -= Duration(86400L);
-      }
-    }
-    else
-      // The previous event is the start date on the current day
-      tmp += b->starttime - ref_time;
-    if (tmp < b->startdate)
-      tmp = b->startdate;
-
-    // Evaluate the result
-    if (refDate > tmp && tmp > curDate && lastBucket == b)
-    {
-      curDate = tmp;
-      curBucket = theCalendar->findBucket(tmp, false);
-      curPriority = curBucket ? curBucket->priority : INT_MAX;
-    }
-  }
-  else
-  {
-    // Reference date is before the start time on an effective date
-    // or it is after the end time of an effective date
-    // or it is on an ineffective day.
-
-    // The previous event is the end time, either today or on the previous
-    // effective day.
-    tmp += b->endtime - ref_time;
-    if (ref_time <= b->starttime && (b->days & (1 << ref_weekday)))
-    {
-      if (--ref_weekday < 0)
-        ref_weekday = 6;
-      tmp -= Duration(86400L);
-    }
-    while (!(b->days & (1 << ref_weekday)) && tmp != Date::infinitePast)
-    {
-      if (--ref_weekday < 0)
-        ref_weekday = 6;
-      tmp -= Duration(86400L);
-    }
-    if (tmp < b->startdate)
-      return;
-
-    // Evaluate the result
-    if (refDate > tmp && b->priority <= lastPriority && (
-      tmp > curDate ||
-      (tmp == curDate && b->priority < curPriority)
-      ))
-    {
-      curDate = tmp;
-      curBucket = b;
-      curPriority = b->priority;
-    }
+    // Remember the bucket that won the evaluation
+    lastBucket = curBucket;
+    lastPriority = curPriority;
   }
 }
 
@@ -813,20 +833,9 @@ PyObject* CalendarEventIterator::iternext()
   if ((forward && eventiter.getDate() == Date::infiniteFuture)
       || (!forward && eventiter.getDate() == Date::infinitePast))
     return nullptr;
-  PythonData x;
-  if (dynamic_cast<CalendarDefault*>(cal))
-  {
-    if (eventiter.getBucket())
-      x = PythonData(dynamic_cast<const CalendarBucket*>(eventiter.getBucket())->getValue());
-    else
-      x = PythonData(dynamic_cast<CalendarDefault*>(cal)->getDefault());
-  }
-  else
-    // Unknown calendar type we can't iterate
-    return nullptr;
   PyObject* result = Py_BuildValue("(O,O)",
       static_cast<PyObject*>(PythonData(eventiter.getDate())),
-      static_cast<PyObject*>(x)
+      static_cast<PyObject*>(PythonData(eventiter.getValue()))
       );
   if (forward)
     ++eventiter;

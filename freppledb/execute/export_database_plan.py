@@ -80,7 +80,7 @@ class export:
   def getPegging(self, opplan):
     unavail = opplan.unavailable
     pln = {
-      "pegging": { j.demand.name: round(j.quantity, 6) for j in opplan.pegging_demand },
+      "pegging": { j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand },
       "unavailable": unavail,
       "interruptions": [
         (i.start.strftime("%Y-%m-%d %H:%M:%S"), i.end.strftime("%Y-%m-%d %H:%M:%S"))
@@ -149,7 +149,12 @@ class export:
         where operationplan_id in (
           select id from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
+          union
+          select id from operationplan where owner_id in (
+            select id from operationplan parent_opplan
+            inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
           )
+        )
         ''')
       cursor.execute('''
         delete from out_problem
@@ -167,7 +172,22 @@ class export:
         where operationplan_id in (
           select id from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
+          union
+          select id from operationplan where owner_id in (
+            select id from operationplan parent_opplan
+            inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
+          )
         )
+        ''')
+      cursor.execute('''
+        delete from operationplan
+        using cluster_keys
+        where owner_id in (
+          select oplan_parent.id
+          from operationplan as oplan_parent
+          where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
+          and oplan_parent.item_id = cluster_keys.name
+          )
         ''')
       cursor.execute('''
         delete from operationplan
@@ -213,7 +233,7 @@ class export:
         print(("%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
            i.entity, i.name, owner.name,
            i.description, str(i.start), str(i.end),
-           round(i.weight, 6)
+           round(i.weight, 8)
         )),file=tmp)
       tmp.seek(0)
       cursor.copy_from(
@@ -240,7 +260,7 @@ class export:
              d.name, i.entity, i.name,
              isinstance(i.owner, frepple.operationplan) and i.owner.operation.name or i.owner.name,
              i.description, str(i.start), str(i.end),
-             round(i.weight, 6)
+             round(i.weight, 8)
            )),file=tmp)
       tmp.seek(0)
       cursor.copy_from(
@@ -266,8 +286,8 @@ class export:
           if isinstance(i, frepple.operation_inventory):
             # Export inventory
             yield (
-              i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 6),
-              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
+              i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 8),
+              str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
@@ -278,8 +298,8 @@ class export:
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
-              i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 6),
-              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
+              i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.destination.item.name, j.operation.destination.location.name,
@@ -292,8 +312,8 @@ class export:
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
             yield (
-              i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 6),
-              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
+              i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N',
@@ -305,8 +325,8 @@ class export:
           elif not i.hidden:
             # Export MO
             yield (
-              i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 6),
-              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
+              i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               i.item.name if i.item else '\\N', '\\N', '\\N',
@@ -318,8 +338,8 @@ class export:
           elif j.demand or (j.owner and j.owner.demand):
             # Export shipments (with automatically created delivery operations)
             yield (
-              i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 6),
-              str(j.start), str(j.end), round(j.criticality, 6), j.delay,
+              i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 8),
+              str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N', j.operation.buffer.location.name, '\\N',
@@ -340,10 +360,10 @@ class export:
         type character varying(5) NOT NULL,
         status character varying(20),
         reference character varying(300),
-        quantity numeric(15,6) NOT NULL,
+        quantity numeric(20,8) NOT NULL,
         startdate timestamp with time zone,
         enddate timestamp with time zone,
-        criticality numeric(15,6),
+        criticality numeric(20,8),
         delay numeric,
         plan json,
         source character varying(300),
@@ -357,7 +377,7 @@ class export:
         supplier_id character varying(300),
         demand_id character varying(300),
         due timestamp with time zone,
-        color numeric(15,6),
+        color numeric(20,8),
         id integer NOT NULL
       );
       ''')
@@ -478,13 +498,13 @@ class export:
             set onhand=%s, flowdate='%s'
             where status = 'confirmed' and item_id = %s
               and location_id = %s and operationplan_id = %s;
-            ''' % (round(j.onhand, 6), str(j.date), adapt(j.buffer.item.name),
+            ''' % (round(j.onhand, 8), str(j.date), adapt(j.buffer.item.name),
                    adapt(j.buffer.location.name), j.operationplan.id ))
           else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
                j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
-               round(j.quantity, 6),
-               str(j.date), round(j.onhand, 6), j.status, currentTime
+               round(j.quantity, 8),
+               str(j.date), round(j.onhand, 8), j.status, currentTime
                )), file=tmp)
 
       tmp.seek(0)
@@ -521,7 +541,7 @@ class export:
           else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
               j.operationplan.id, j.resource.name,
-              round(-j.quantity, 6),
+              round(-j.quantity, 8),
               str(j.startdate), str(j.enddate),
               j.setup and j.setup or "\\N", j.status, currentTime
               )), file=tmp)
@@ -578,11 +598,11 @@ class export:
         for j in i.plan(buckets):
           print(("%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
            i.name, str(j['start']),
-           round(j['available'], 6),
-           round(j['unavailable'], 6),
-           round(j['setup'], 6),
-           round(j['load'], 6),
-           round(j['free'], 6)
+           round(j['available'], 8),
+           round(j['unavailable'], 8),
+           round(j['setup'], 8),
+           round(j['load'], 8),
+           round(j['free'], 8)
            )),file=tmp)
       tmp.seek(0)
       cursor.copy_from(

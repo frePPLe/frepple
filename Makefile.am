@@ -7,7 +7,7 @@ pkgsysconf_DATA = djangosettings.py
 
 SUBDIRS = src include test contrib bin doc
 
-EXTRA_DIST = freppledb AUTHORS COPYING CONTRIBUTING.md CHANGELOG.rst README.md Makefile.am Makefile.dist freppledb frepplectl.py setup.py djangosettings.py requirements.txt package.json Gruntfile.js
+EXTRA_DIST = freppledb AUTHORS COPYING CONTRIBUTING.md README.md Makefile.am Makefile.dist freppledb frepplectl.py setup.py djangosettings.py requirements.txt package.json Gruntfile.js
 
 AUTOMAKE_OPTIONS = foreign
 
@@ -44,10 +44,10 @@ migrate:
 	./frepplectl.py migrate
 
 check:
-	./frepplectl.py test freppledb -v2
+	./frepplectl.py test
 
 runserver:
-	./frepplectl.py runserver 0:8000
+	./frepplectl.py runserver
 
 international:
 	cd freppledb; django-admin.py makemessages -a -d django

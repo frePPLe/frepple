@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
         model_name='calendarbucket',
         name='calendar',
-        field=models.ForeignKey(verbose_name='calendar', to='input.Calendar', related_name='buckets', on_delete = None),
+        field=models.ForeignKey(verbose_name='calendar', to='input.Calendar', related_name='buckets'),
     ),
     migrations.AlterField(
       model_name='calendarbucket',

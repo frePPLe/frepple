@@ -1,0 +1,296 @@
+{% extends "admin/base_site_gridpivot.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+{% if mode == "graph" %}<script type="text/javascript">
+$(function(){ graph.header(); })
+</script>{% endif %}
+{% endblock %}
+
+{% block crosses %}
+{% if mode == "graph" %}
+function drawGraphs(jsondata)
+{
+  var margin = {top: 0, right: 0, bottom: 0, left: 50};
+  var width = $("#grid_graph").width() - margin.left - margin.right;
+  var height = 80 - margin.top - margin.bottom;
+
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
+  // Define X-axis
+  var domain_x = [];
+  var bucketnamelength = 0;  
+  for (var i in timebuckets)
+  {
+    domain_x.push(timebuckets[i]['name']);
+    bucketnamelength = Math.max(timebuckets[i]['name'].length, bucketnamelength);
+  }
+  var x = d3.scale.ordinal()
+    .domain(domain_x)
+    .rangeRoundBands([0, width], .1);
+  var x_width = x.rangeBand();
+
+  // Define Y-axis
+  var y = d3.scale.linear().rangeRound([height, 0]);
+
+  // Draw all graphs
+  $("#grid").find(".graph").each(function(index)
+  {
+    // Create a new SVG element
+    $(this).html("");
+    var svg = d3.select(this)
+      .append("svg")
+      .attr("class","graphcell")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Build the data for d3
+    var max_y = 0;
+    var data = [];
+    for (var bckt in timebuckets)
+    {
+      var tmp = jsondata['rows'][index][timebuckets[bckt]['name']];
+      data.push({
+        'item': jsondata['rows'][index]['item'],
+        'location': jsondata['rows'][index]['location'],
+        'supplier': jsondata['rows'][index]['supplier'],
+        'bucket': bckt,
+        'proposed_start': tmp[0],
+        'total_start': tmp[1],
+        'proposed_end': tmp[2],
+        'total_end': tmp[3],
+        });
+      if (tmp[1] > max_y && 1 in fields)
+        max_y = tmp[1];
+      else if (tmp[0] > max_y && 0 in fields)
+        max_y = tmp[0];
+      if (tmp[3] > max_y && 3 in fields)
+        max_y = tmp[3];
+      else if (tmp[2] > max_y && 2 in fields)
+        max_y = tmp[2]; 
+    }
+
+    // Update the scale of the Y-axis by looking for the max value
+    y.domain([0,max_y]);
+
+    // Number of bars to display
+    var numbars = 0;
+    var barnum = [0, 1];
+    if (0 in fields || 1 in fields)
+      numbars++;
+    else
+      barnum[1]--;
+    if (2 in fields || 3 in fields)
+      numbars++;
+
+    // D3 visualization
+    svg.selectAll("g")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
+      .on("click", function(d) {
+          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+          d3.select("#tooltip").style('display', 'none');
+          window.location = "{{ request.prefix }}"
+            +"/data/input/purchaseorder/"
+            +"?item__name="+admin_escape(d['item'])
+            +"&supplier__name="+admin_escape(d['supplier'])
+            +"&location__name="+admin_escape(d['location'])
+            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+          var coord = d3.mouse(document.body);
+          d3.event.stopPropagation();
+        })
+      .on("mouseenter", function(d) {
+        graph.showTooltip(
+          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+          + timebuckets[d['bucket']]['name'] + '</div>'
+          + '<table><tr><td>{{_('proposed ordering')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['proposed_start']*10)/10)
+          + '</td></tr><tr><td>{{_('total ordering')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['total_start']*10)/10)
+          + '</td></tr><tr><td>{{_('proposed receipt')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['proposed_end']*10)/10)
+          + '</td></tr><tr><td>{{_('total receipt')|capfirst}}</td><td style="text-align:center">'
+          + (Math.round(d['total_end']*10)/10)
+          + '</td></tr></table>'
+          );
+        })
+      .on("mouseleave", graph.hideTooltip)
+      .on("mousemove", graph.moveTooltip)
+      .each(function(d) {
+        var bucket = d3.select(this);
+        var top = y(0);
+        if (d['total_start'] > d['proposed_start'] && 1 in fields)
+        {
+          top = y(d['total_start'] - d['proposed_start']);
+          bucket.append("rect")
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[0] * x_width / numbars)
+            .attr("y", top)
+            .attr("height", y(0) - top)
+            .style("fill","#113C5E")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                window.location ="{{ request.prefix }}"
+		           + "/data/input/purchaseorder/"
+		           + "?item__name="+admin_escape(d['item'])
+		           + "&supplier__name="+admin_escape(d['supplier'])
+		           + "&location__name="+admin_escape(d['location'])
+		           + "&startdate__lt="+timebuckets[d['bucket']]['enddate']
+		           + "&startdate__gte="+timebuckets[d['bucket']]['startdate'];
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }
+        if (d['proposed_start'] > 0 && (0 in fields || 1 in fields))
+        {
+          var newtop = y(d['total_start']);
+          bucket.append("rect")
+            .attr("width", x_width/numbars) 
+            .attr("x", barnum[0] * x_width / numbars)          
+            .attr("y", newtop)
+            .attr("height", top - newtop)
+            .style("fill","#2B95EC")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                window.location = "{{ request.prefix }}"
+                  + "/data/input/purchaseorder/"
+                  + "?item__name="+admin_escape(d['item'])
+                  + "&supplier__name="+admin_escape(d['supplier'])
+                  + "&location__name="+admin_escape(d['location'])
+                  + "&startdate__lt="+timebuckets[d['bucket']]['enddate']
+                  + "&startdate__gte="+timebuckets[d['bucket']]['startdate'];
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }
+        top = y(0);
+        if (d['total_end'] > d['proposed_end'] && 3 in fields)
+        {
+          top = y(d['total_end'] - d['proposed_end']);
+          bucket.append("rect")
+            .attr("width", x_width / numbars)
+            .attr("x", barnum[1] * x_width / numbars)
+            .attr("y", top)
+            .attr("height", y(0) - top)
+            .style("fill","#7B5E08")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_end'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                window.location = "{{ request.prefix }}"
+                  + "/data/input/purchaseorder/"
+                  + "?item__name="+admin_escape(d['item'])
+                  + "&supplier__name="+admin_escape(d['supplier'])
+                  + "&location__name="+admin_escape(d['location'])
+                  + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
+                  + "&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }
+        if (d['proposed_end'] > 0 && (2 in fields || 3 in fields))
+        {
+          var newtop = y(d['total_end']);
+          bucket.append("rect")
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[1] * x_width / numbars)
+            .attr("y", newtop)
+            .attr("height", top - newtop)
+            .style("fill","#F6BD0F")
+            .on("click", function(d) {
+                if (d3.event.defaultPrevented || d['total_end'] == 0) return;
+                d3.select("#tooltip").style('display', 'none');
+                window.location = "{{ request.prefix }}"
+                  + "/data/input/purchaseorder/"
+                  + "?item__name="+admin_escape(d['item'])
+                  + "&supplier__name="+admin_escape(d['supplier'])
+                  + "&location__name="+admin_escape(d['location'])
+                  + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
+                  + "&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+                var coord = d3.mouse(document.body);
+                d3.event.stopPropagation();
+              });
+        }        
+      });
+
+    // Display Y-Axis
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+    svg.append("g")
+      .attr("class", "miniaxis")
+      .call(graph.miniAxis.bind(yAxis));
+    });
+}
+{% endif %}
+{% if mode == "table" %}
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 0:
+        if (cellvalue[0] != 0.0)
+          result += (Math.round(cellvalue[0]*10)/10) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])
+            + '&amp;startdate__gte=' + options['colModel']['startdate']
+            + '&amp;startdate__lt=' + options['colModel']['enddate'] 
+            + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+      case 1:
+        if (cellvalue[1] != 0.0)
+          result += (Math.round(cellvalue[1]*10)/10)
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])
+            + '&startdate__gte=' + options['colModel']['startdate']
+            + '&amp;startdate__lt=' + options['colModel']['enddate'] 
+            + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+      case 2:
+        if (cellvalue[2] != 0.0)
+          result += (Math.round(cellvalue[2]*10)/10)
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
+            + '&enddate__gte=' + options['colModel']['startdate']
+            + '&amp;enddate__lt=' + options['colModel']['enddate'] 
+            + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+      case 3:
+        if (cellvalue[3] != 0.0)
+          result += (Math.round(cellvalue[3]*10)/10) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
+            + '&enddate__gte=' + options['colModel']['startdate']
+            + '&amp;enddate__lt=' + options['colModel']['enddate']
+            + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+    }
+  return result;
+};
+{% endif %}{% endblock %}
+
+{% block extra_grid %}{% if mode == "graph" %}loadComplete: drawGraphs,
+{% endif %}{% endblock %}

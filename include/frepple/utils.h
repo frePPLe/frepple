@@ -139,7 +139,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "4.3.3"
+#define PACKAGE_VERSION "4.4.0"
 #endif
 
 // Header for multithreading
@@ -330,7 +330,7 @@ struct indent
 /** Print a number of spaces to the output stream. */
 inline ostream& operator <<(ostream &os, const indent& i)
 {
-  for (short c = i.level; c>0; --c)
+  for (short c = (i.level > 30 ? 30 : i.level); c>0; --c)
     os << ' ';
   return os;
 }

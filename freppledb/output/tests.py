@@ -14,15 +14,13 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#  ./frepplectl.py test freppledb.output.tests -v 2
+
 from django.test import TestCase
 
 
 class OutputTest(TestCase):
 
   fixtures = ["demo"]
-
-  serialized_rollback = True
 
   def setUp(self):
     # Login

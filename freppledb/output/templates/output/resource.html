@@ -99,43 +99,12 @@ function drawGraphs(jsondata)
     // Update the scale of the Y-axis by looking for the max value
     y.domain([0,max_y]);
 
-    // D3 visualization
+    // Draw load bar and invisible hover rectangle
     svg.selectAll("g")
       .data(data)
       .enter()
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
-      .on("click", function(d) {
-          if (d3.event.defaultPrevented || d['load'] + d['setup'] == 0) return;
-          d3.select("#tooltip").style('display', 'none');
-
-          window.location = url_prefix
-            +"/loadplan/"
-            +admin_escape(d['resource'])
-            +"/?operationplan__startdate__lt="+timebuckets[d['bucket']]['enddate']
-            +"&operationplan__enddate__gt="+timebuckets[d['bucket']]['startdate'];
-
-          var coord = d3.mouse(document.body);
-          d3.event.stopPropagation();
-        })
-      .on("mouseenter", function(d) {
-         graph.showTooltip(
-           '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-           + timebuckets[d['bucket']]['name'] + "&nbsp;"
-           + (Math.round(d['perc']*10)/10) + '%</div>'
-           + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'
-           + (Math.round(d['available']*10)/10)
-           + '</td></tr><tr><td>{{_('unavailable')|capfirst}}</td><td style="text-align:center">'
-           + (Math.round(d['unavailable']*10)/10)
-           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
-           + (Math.round(d['setup']*10)/10)
-           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
-           + (Math.round(d['load']*10)/10)
-           + '</td></tr></table>'
-           );
-        })
-      .on("mouseleave", graph.hideTooltip)
-      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         var newtop = 0;
@@ -179,16 +148,7 @@ function drawGraphs(jsondata)
             .style("fill","#AFD8F8");
           top = newtop;
         }
-        if (free > 0)
-        {
-          newtop = top + free;
-          bucket.append("rect")
-            .attr("width", x_width)
-            .attr("y", y(newtop))
-            .attr("height", y(top) - y(newtop))
-            .style("fill","#8BBA00");
-        }
-        else if (overload > 0)
+        if (overload > 0)
         {
           newtop = top + overload;
           bucket.append("rect")
@@ -197,8 +157,60 @@ function drawGraphs(jsondata)
             .attr("height", y(top) - y(newtop))
             .style("fill","#FF0000");
         }
+      	bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+	      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || d['load'] + d['setup'] == 0) return;
+	          d3.select("#tooltip").style('display', 'none');
+	
+	          window.location = url_prefix
+	            +"/loadplan/"
+	            +admin_escape(d['resource'])
+	            +"/?operationplan__startdate__lt="+timebuckets[d['bucket']]['enddate']
+	            +"&operationplan__enddate__gt="+timebuckets[d['bucket']]['startdate'];
+	
+	          var coord = d3.mouse(document.body);
+	          d3.event.stopPropagation();
+	        })
+	      .on("mouseenter", function(d) {
+	         graph.showTooltip(
+	           '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	           + timebuckets[d['bucket']]['name'] + "&nbsp;"
+	           + (Math.round(d['perc']*10)/10) + '%</div>'
+	           + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'
+	           + (Math.round(d['available']*10)/10)
+	           + '</td></tr><tr><td>{{_('unavailable')|capfirst}}</td><td style="text-align:center">'
+	           + (Math.round(d['unavailable']*10)/10)
+	           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
+	           + (Math.round(d['setup']*10)/10)
+	           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
+	           + (Math.round(d['load']*10)/10)
+	           + '</td></tr></table>'
+	           );
+	        })
+	      .on("mouseleave", graph.hideTooltip)
+	      .on("mousemove", graph.moveTooltip);
       });
-
+            
+    // Draw line for the available capacity
+    if (0 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { 
+          if (1 in fields)
+            return y(d['available'] + d['unavailable']);
+          else
+            return y(d['available']);
+          });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
+    
     // Display Y-Axis
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -229,11 +241,11 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      ["{{_('available')|capfirst}}", "#000000", -1],
+      ["{{_('available')|capfirst}}", "#8BBA00", 0],
       ["{{_('unavailable')|capfirst}}", "#F6BD0F", 1],
       ["{{_('setup')|capfirst}}", "#2B95EC", 2],
       ["{{_('load')|capfirst}}", "#AFD8F8", 3],
-      ["{{_('free')|capfirst}}", "#8BBA00", -2],
+      ["{{_('free')|capfirst}}", "#000000", -1],
       ["{{_('overload')|capfirst}}", "#FF0000", -2]
       ];
     var visible = 0;

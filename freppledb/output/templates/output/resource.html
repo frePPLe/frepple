@@ -286,18 +286,18 @@ function crosses (cellvalue, options, rowdata)
                                              admin_escape(rowdata['resource']) +
                                              '/?operationplan__startdate__lt=' + options['colModel']['enddate'] +
                                              '&amp;operationplan__enddate__gt=' + options['colModel']['startdate'] +
-                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0</br>';
+          result += '0.0<br>';
         break;
       case 4:
         if (cellvalue[4] > 95)
-          result += '<span class="highutil">' + cellvalue[4] + '%</span></br>';
+          result += '<span class="highutil">' + cellvalue[4] + '%</span><br>';
         else
-          result += cellvalue[4] + '%</br>';
+          result += cellvalue[4] + '%<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '</br>';
+        result += cellvalue[cross_idx[i]] + '<br>';
     }
   return result;
 };

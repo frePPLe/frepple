@@ -97,35 +97,6 @@ function drawGraphs(jsondata)
       .enter()
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
-      .on("click", function(d) {
-          if (d3.event.defaultPrevented || d['demand'] == 0)
-            return;
-          d3.select("#tooltip").style('display', 'none');
-
-          window.location = "{{ request.prefix }}"
-            +"/demandplan/"
-            +admin_escape(d['item'])
-            +"/?o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
-            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
-
-          var coord = d3.mouse(document.body);
-          d3.event.stopPropagation();
-        })
-      .on("mouseenter", function(d) {
-        graph.showTooltip(
-          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-          + timebuckets[d['bucket']]['name'] + '</div>'
-          + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['demand']*10)/10)
-          + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['supply']*10)/10)
-          + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round((d['backlog'])*10)/10)
-          + '</td></tr></table>'
-          );
-        })
-      .on("mouseleave", graph.hideTooltip)
-      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         if (d['demand'] > 0 && 0 in fields)
@@ -147,6 +118,40 @@ function drawGraphs(jsondata)
             .attr("y", my_y)
             .style("fill","#F6BD0F");
         }
+        // Invisible rectangle for the tooltip
+      	bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+	      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || d['demand'] == 0)
+	            return;
+	          d3.select("#tooltip").style('display', 'none');
+	
+	          window.location = "{{ request.prefix }}"
+	            +"/demandplan/"
+	            +admin_escape(d['item'])
+	            +"/?o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
+	            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
+	
+	          var coord = d3.mouse(document.body);
+	          d3.event.stopPropagation();
+	        })
+	      .on("mouseenter", function(d) {
+	        graph.showTooltip(
+	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	          + timebuckets[d['bucket']]['name'] + '</div>'
+	          + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['demand']*10)/10)
+	          + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['supply']*10)/10)
+	          + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round((d['backlog'])*10)/10)
+	          + '</td></tr></table>'
+	          );
+	        })
+	      .on("mouseleave", graph.hideTooltip)
+	      .on("mousemove", graph.moveTooltip);	      
       });
 
     // Create D3 line

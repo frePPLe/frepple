@@ -94,36 +94,6 @@ function drawGraphs(jsondata)
       .enter()
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
-      .on("click", function(d) {
-          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
-          d3.select("#tooltip").style('display', 'none');
-          window.location = "{{ request.prefix }}"
-            +"/data/input/distributionorder/"
-            +"?item__name="+admin_escape(d['item'])
-            +"&origin__name="+admin_escape(d['origin'])
-            +"&destination__name="+admin_escape(d['destination'])
-            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
-          var coord = d3.mouse(document.body);
-          d3.event.stopPropagation();
-        })
-      .on("mouseenter", function(d) {
-        graph.showTooltip(
-          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-          + timebuckets[d['bucket']]['name'] + '</div>'
-          + '<table><tr><td>{{_('proposed shipping')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['proposed_start']*10)/10)
-          + '</td></tr><tr><td>{{_('total shipping')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['total_start']*10)/10)
-          + '</td></tr><tr><td>{{_('proposed receiving')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['proposed_end']*10)/10)
-          + '</td></tr><tr><td>{{_('total receiving')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['total_end']*10)/10)
-          + '</td></tr></table>'
-          );
-        })
-      .on("mouseleave", graph.hideTooltip)
-      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
@@ -220,6 +190,41 @@ function drawGraphs(jsondata)
                 d3.event.stopPropagation();
               });
         }        
+        // Invisible rectangle for the tooltip
+      	bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+	      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+	          d3.select("#tooltip").style('display', 'none');
+	          window.location = "{{ request.prefix }}"
+	            +"/data/input/distributionorder/"
+	            +"?item__name="+admin_escape(d['item'])
+	            +"&origin__name="+admin_escape(d['origin'])
+	            +"&destination__name="+admin_escape(d['destination'])
+	            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+	            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+	          var coord = d3.mouse(document.body);
+	          d3.event.stopPropagation();
+	        })
+	      .on("mouseenter", function(d) {
+	        graph.showTooltip(
+	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	          + timebuckets[d['bucket']]['name'] + '</div>'
+	          + '<table><tr><td>{{_('proposed shipping')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_start']*10)/10)
+	          + '</td></tr><tr><td>{{_('total shipping')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_start']*10)/10)
+	          + '</td></tr><tr><td>{{_('proposed receiving')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_end']*10)/10)
+	          + '</td></tr><tr><td>{{_('total receiving')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_end']*10)/10)
+	          + '</td></tr></table>'
+	          );
+	        })
+	      .on("mouseleave", graph.hideTooltip)
+	      .on("mousemove", graph.moveTooltip);	      
       });
 
     // Display Y-Axis

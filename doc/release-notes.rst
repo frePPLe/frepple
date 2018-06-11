@@ -11,6 +11,10 @@ Release notes
   
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
+- New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
+  and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
+  reports to show the quantity on order or in transit.
+
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

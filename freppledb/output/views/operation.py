@@ -441,6 +441,8 @@ class PurchaseReport(GridPivot):
     ('total_start', {'title': _('total ordering')}),
     ('proposed_end', {'title': _('proposed receiving')}),
     ('total_end', {'title': _('total receiving')}),
+    ('proposed_on_order', {'title': _('proposed on order')}),
+    ('total_on_order', {'title': _('total on order')}),
     )
 
 
@@ -495,7 +497,9 @@ class PurchaseReport(GridPivot):
         res.proposed_start as proposed_start,
         res.total_start as total_start,
         res.proposed_end as proposed_end,
-        res.total_end as total_end
+        res.total_end as total_end,
+        res.proposed_on_order as proposed_on_order,
+        res.total_on_order as total_on_order
       from combinations
       inner join item on combinations.item_id = item.name
       left outer join location on combinations.location_id = location.name
@@ -522,7 +526,16 @@ class PurchaseReport(GridPivot):
           coalesce(sum(
             case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
             then operationplan.quantity else 0 end
-            ), 0) total_end
+            ), 0) total_end,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.enddate > operationplan.startdate and d.enddate <= operationplan.enddate
+             then operationplan.quantity else 0 end
+            ), 0) proposed_on_order,
+          coalesce(sum(
+            case when d.enddate > operationplan.startdate and d.enddate <= operationplan.enddate
+            then operationplan.quantity else 0 end
+            ), 0) total_on_order
         from operationplan
         inner join  combinations
         on operationplan.item_id = combinations.item_id
@@ -657,6 +670,8 @@ class DistributionReport(GridPivot):
     ('total_start', {'title': _('total shipping')}),
     ('proposed_end', {'title': _('proposed receiving')}),
     ('total_end', {'title': _('total receiving')}),
+    ('proposed_in_transit', {'title': _('proposed in transit')}),
+    ('total_in_transit', {'title': _('total in transit')}),
     )
 
 
@@ -710,7 +725,9 @@ class DistributionReport(GridPivot):
         res.proposed_start as proposed_start,
         res.total_start as total_start,
         res.proposed_end as proposed_end,
-        res.total_end as total_end
+        res.total_end as total_end,
+        res.proposed_in_transit as proposed_in_transit,
+        res.total_in_transit as total_in_transit
       from combinations
       inner join item on combinations.item_id = item.name
       left outer join location origin on combinations.origin_id = origin.name
@@ -737,7 +754,16 @@ class DistributionReport(GridPivot):
           coalesce(sum(
             case when d.startdate <= operationplan.enddate and d.enddate > operationplan.enddate
             then operationplan.quantity else 0 end
-            ), 0) total_end
+            ), 0) total_end,
+          coalesce(sum(
+            case when operationplan.status = 'proposed'
+              and d.enddate > operationplan.startdate and d.enddate <= operationplan.enddate
+             then operationplan.quantity else 0 end
+            ), 0) proposed_in_transit,
+          coalesce(sum(
+            case when d.enddate > operationplan.startdate and d.enddate <= operationplan.enddate
+            then operationplan.quantity else 0 end
+            ), 0) total_in_transit
         from operationplan
         inner join combinations
         on operationplan.item_id = combinations.item_id

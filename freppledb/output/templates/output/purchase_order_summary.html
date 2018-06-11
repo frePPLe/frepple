@@ -64,6 +64,8 @@ function drawGraphs(jsondata)
         'total_start': tmp[1],
         'proposed_end': tmp[2],
         'total_end': tmp[3],
+        'proposed_on_order': tmp[4],
+        'total_on_order': tmp[5]
         });
       if (tmp[1] > max_y && 1 in fields)
         max_y = tmp[1];
@@ -72,7 +74,9 @@ function drawGraphs(jsondata)
       if (tmp[3] > max_y && 3 in fields)
         max_y = tmp[3];
       else if (tmp[2] > max_y && 2 in fields)
-        max_y = tmp[2]; 
+        max_y = tmp[2];
+      if (tmp[5] > max_y && 5 in fields)
+        max_y = tmp[5];         
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -94,36 +98,6 @@ function drawGraphs(jsondata)
       .enter()
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
-      .on("click", function(d) {
-          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
-          d3.select("#tooltip").style('display', 'none');
-          window.location = "{{ request.prefix }}"
-            +"/data/input/purchaseorder/"
-            +"?item__name="+admin_escape(d['item'])
-            +"&supplier__name="+admin_escape(d['supplier'])
-            +"&location__name="+admin_escape(d['location'])
-            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
-            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
-          var coord = d3.mouse(document.body);
-          d3.event.stopPropagation();
-        })
-      .on("mouseenter", function(d) {
-        graph.showTooltip(
-          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-          + timebuckets[d['bucket']]['name'] + '</div>'
-          + '<table><tr><td>{{_('proposed ordering')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['proposed_start']*10)/10)
-          + '</td></tr><tr><td>{{_('total ordering')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['total_start']*10)/10)
-          + '</td></tr><tr><td>{{_('proposed receipt')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['proposed_end']*10)/10)
-          + '</td></tr><tr><td>{{_('total receipt')|capfirst}}</td><td style="text-align:center">'
-          + (Math.round(d['total_end']*10)/10)
-          + '</td></tr></table>'
-          );
-        })
-      .on("mouseleave", graph.hideTooltip)
-      .on("mousemove", graph.moveTooltip)
       .each(function(d) {
         var bucket = d3.select(this);
         var top = y(0);
@@ -219,9 +193,60 @@ function drawGraphs(jsondata)
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
-        }        
+        }
+        // Invisible rectangle for the tooltip
+      	bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+          .on("click", function(d) {
+	          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
+	          d3.select("#tooltip").style('display', 'none');
+	          window.location = "{{ request.prefix }}"
+	            +"/data/input/purchaseorder/"
+	            +"?item__name="+admin_escape(d['item'])
+	            +"&supplier__name="+admin_escape(d['supplier'])
+	            +"&location__name="+admin_escape(d['location'])
+	            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
+	            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
+	          var coord = d3.mouse(document.body);
+	          d3.event.stopPropagation();
+	        })
+	      .on("mouseenter", function(d) {
+	        graph.showTooltip(
+	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	          + timebuckets[d['bucket']]['name'] + '</div>'
+	          + '<table><tr><td>{{_('proposed ordering')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_start']*10)/10)
+	          + '</td></tr><tr><td>{{_('total ordering')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_start']*10)/10)
+	          + '</td></tr><tr><td>{{_('proposed receipt')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_end']*10)/10)
+	          + '</td></tr><tr><td>{{_('total receipt')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_end']*10)/10)
+	          + '</td></tr><tr><td>{{_('proposed on order')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_on_order']*10)/10)
+	          + '</td></tr><tr><td>{{_('total on order')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_on_order']*10)/10)          
+	          + '</td></tr></table>'
+	          );
+	        })
+	      .on("mouseleave", graph.hideTooltip)
+	      .on("mousemove", graph.moveTooltip);                
       });
 
+    // Create D3 line
+    if (5 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['total_on_order']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
+    
     // Display Y-Axis
     var yAxis = d3.svg.axis()
       .scale(y)
@@ -287,6 +312,30 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0.0<br>';
         break;
+      case 4:
+        if (cellvalue[4] != 0.0)
+          result += (Math.round(cellvalue[4]*10)/10)
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
+            + '&startdate__lt=' + options['colModel']['enddate']
+            + '&amp;enddate__gte=' + options['colModel']['enddate'] 
+            + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+      case 5:
+        if (cellvalue[5] != 0.0)
+          result += (Math.round(cellvalue[5]*10)/10) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;location__name=' + admin_escape(rowdata['location']) 
+            + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
+            + '&startdate__lt=' + options['colModel']['enddate']
+            + '&amp;startdate__gte=' + options['colModel']['enddate']
+            + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;        
     }
   return result;
 };

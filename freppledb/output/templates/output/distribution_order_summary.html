@@ -64,6 +64,8 @@ function drawGraphs(jsondata)
         'total_start': tmp[1],
         'proposed_end': tmp[2],
         'total_end': tmp[3],
+        'proposed_in_transit': tmp[4],
+        'total_in_transit': tmp[5]
         });
       if (tmp[1] > max_y && 1 in fields)
         max_y = tmp[1];
@@ -73,6 +75,8 @@ function drawGraphs(jsondata)
         max_y = tmp[3];
       else if (tmp[2] > max_y && 2 in fields)
         max_y = tmp[2]; 
+      if (tmp[5] > max_y && 5 in fields)
+        max_y = tmp[5];   
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -220,12 +224,28 @@ function drawGraphs(jsondata)
 	          + (Math.round(d['proposed_end']*10)/10)
 	          + '</td></tr><tr><td>{{_('total receiving')|capfirst}}</td><td style="text-align:center">'
 	          + (Math.round(d['total_end']*10)/10)
+	          + '</td></tr><tr><td>{{_('proposed in transit')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['proposed_in_transit']*10)/10)
+	          + '</td></tr><tr><td>{{_('total in transit')|capfirst}}</td><td style="text-align:center">'
+	          + (Math.round(d['total_in_transit']*10)/10)
 	          + '</td></tr></table>'
 	          );
 	        })
 	      .on("mouseleave", graph.hideTooltip)
 	      .on("mousemove", graph.moveTooltip);	      
       });
+
+    // Create D3 line
+    if (5 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['total_in_transit']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
 
     // Display Y-Axis
     var yAxis = d3.svg.axis()
@@ -292,6 +312,30 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0.0<br>';
         break;
+      case 4:
+        if (cellvalue[4] != 0.0)
+          result += (Math.round(cellvalue[4]*10)/10)
+            + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&startdate__lt=' + options['colModel']['enddate']
+            + '&amp;enddate__gte=' + options['colModel']['enddate'] 
+            + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;
+      case 5:
+        if (cellvalue[5] != 0.0)
+          result += (Math.round(cellvalue[5]*10)/10) 
+            + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&startdate__lt=' + options['colModel']['enddate']
+            + '&amp;startdate__gte=' + options['colModel']['enddate']
+            + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0.0<br>';
+        break;        
     }
   return result;
 };

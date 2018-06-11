@@ -19,6 +19,10 @@ Total ordering     Sum of the quantity of all purchase orders to be ordered in t
 Proposed receiving Sum of the quantity of all proposed purchase orders being received in this
                    time bucket.
 Total receiving    Sum of the quantity of all purchase orders being received in this time bucket.
+Proposed on order  Sum of the quantity of all proposed purchase orders that are open at the end
+                   of the time bucket.
+Total on order     Sum of the quantity of all purchase orders that are open at the end of the
+                   time bucket.
 ================== ==============================================================================
 
 .. image:: ../_images/purchase-order-summary-graph.png

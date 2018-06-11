@@ -362,7 +362,7 @@ void SolverMRP::solve(const Resource* res, void* v)
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is hardcoded
     if (currentOpplan.end > data->state->q_operationplan->getEnd())
       data->state->a_penalty +=
-        (currentOpplan.end - data->state->q_operationplan->getEnd()) * res->getCost() * 0.05 / 3600.0;
+        (currentOpplan.end - data->state->q_operationplan->getEnd()) * 0.05 / 3600.0 * (res->getCost() >= 0 ? res->getCost() : 1.0);
   }
 
   // Maintain the constraint list

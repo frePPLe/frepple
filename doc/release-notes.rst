@@ -2,7 +2,14 @@ Release notes
 -------------
 
 4.4 (Upcoming release)
-========================
+======================
+
+.. rubric:: Production planning
+
+- The `resource report <user-guide/user-interface/plan-analysis/resource-report.html>`_ now displays the 
+  available capacity as a line, replacing the green bar in previous releases to show the free capacity.
+  
+- Resource build-ahead penalty calculation now also working for 0-cost resources.
 
 .. rubric:: Inventory planning
 

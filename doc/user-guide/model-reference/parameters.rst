@@ -100,9 +100,9 @@ forecast.Net_CustomerThenItemHierarchy               This flag allows us to cont
                                                      hierarchy and then the item hierarchy, or the other way around.
 forecast.Net_MatchUsingDeliveryOperation             Specifies whether or not a demand and a forecast require to have the same
                                                      delivery operation to be a match.
-forecast.Net_NetEarly                                Defines how much time (expressed in seconds) before the due date of an order
+forecast.Net_NetEarly                                Defines how much time (expressed in days) before the due date of an order
                                                      we are allowed to search for a forecast bucket to net from.
-forecast.Net_NetLate                                 Defines how much time (expressed in seconds) after the due date of an order
+forecast.Net_NetLate                                 Defines how much time (expressed in days) after the due date of an order
                                                      we are allowed to search for a forecast bucket to net from.
 forecast.Outlier_maxDeviation                        Multiple of the standard deviation used to detect outliers
 forecast.populateForecastTable                       Populates automatically the forecast table based on the item/location

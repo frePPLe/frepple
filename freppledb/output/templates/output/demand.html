@@ -231,9 +231,9 @@ function crosses (cellvalue, options, rowdata)
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
             '&amp;demand__due__lt=' + options['colModel']['enddate'] +
-            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0</br>';
+          result += '0.0<br>';
         break;
       case 1:
         if (cellvalue[cross_idx[i]] != 0.0)
@@ -241,12 +241,12 @@ function crosses (cellvalue, options, rowdata)
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +
-            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0</br>';
+          result += '0.0<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '</br>';
+        result += cellvalue[cross_idx[i]] + '<br>';
     }
   return result;
 };

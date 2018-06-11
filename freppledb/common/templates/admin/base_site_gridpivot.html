@@ -11,7 +11,7 @@ var editcol;
 {% block crosses %}function crosses (cellvalue, options, rowdata) {
   for (i in cellvalue)
     if (i == 0) res = cellvalue[i];
-    else res += '<br/>' + cellvalue[i];
+    else res += '<br>' + cellvalue[i];
   return res;
 };{% endblock %}
 

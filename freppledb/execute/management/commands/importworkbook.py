@@ -162,7 +162,7 @@ class Command(BaseCommand):
             # Process all rows in each worksheet
             for ws_name, model, contenttype_id, dependencies in models:
               print(force_text(_("Processing data in worksheet: %s") % ws_name))
-              # yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+              # yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong><br>'
               # yield ('<div class="table-responsive">'
                      # '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
               numerrors = 0

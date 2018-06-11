@@ -65,8 +65,8 @@ in your model.
        {% load i18n %}
        {% block content %}
        <div id="content-main">
-       {% trans 'Number of operations:' %} {{numOperations}}<br/>
-       {% trans 'Number of buffers:' %} {{numBuffers}}<br/>
+       {% trans 'Number of operations:' %} {{numOperations}}<br>
+       {% trans 'Number of buffers:' %} {{numBuffers}}<br>
        </div>
        {% endblock %}
 

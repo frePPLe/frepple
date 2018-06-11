@@ -248,9 +248,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0</br>';
+          result += '0.0<br>';
         break;
       case 2:
         if (cellvalue[2] != 0.0)
@@ -258,9 +258,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br/>';
+          result += '0.0<br>';
         break;
       case 3:
         if (cellvalue[2] != 0.0 || cellvalue[1] != 0.0)
@@ -268,12 +268,12 @@ function crosses (cellvalue, options, rowdata)
              admin_escape(rowdata['buffer']) +
              "/?flowdate__gte=" + options['colModel']['startdate'] +
              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a></br>";
+             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += cellvalue[3] + '<br/>';
+          result += cellvalue[3] + '<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '</br>';
+        result += cellvalue[cross_idx[i]] + '<br>';
     }
   return result;
 };

@@ -39,7 +39,7 @@ class WelcomeWidget(Widget):
 
   def render(self, request=None):
     versionnumber = VERSION.split('.', 2)
-    return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br/><br/>
+    return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br><br>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
 <li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
@@ -118,9 +118,9 @@ class RecentActionsWidget(Widget):
       else:
         raise "Unexpected log entry type"
       if entry.content_type:
-        result.append('<span class="small">%s</span><br/>' % capfirst(force_text(_(entry.content_type.name))) )
+        result.append('<span class="small">%s</span><br>' % capfirst(force_text(_(entry.content_type.name))) )
       else:
-        result.append('<span class="small">%s</span><br/>' % force_text(_('Unknown content')))
+        result.append('<span class="small">%s</span><br>' % force_text(_('Unknown content')))
     #. Translators: Translation included with Django
     return result and '\n'.join(result) or force_text(_('None available'))
 
@@ -145,7 +145,7 @@ class RecentCommentsWidget(Widget):
     result = []
     result.append('<div class="table-responsive"><table class="table table-condensed table-hover"><tbody>');
     for c in cmts:
-      result.append('<tr><td><a href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div></br><p style="padding-left: 10px; display: inline-block;">%s</p>' % (
+      result.append('<tr><td><a href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div><br><p style="padding-left: 10px; display: inline-block;">%s</p>' % (
         _thread_locals.request.prefix, c.get_admin_url(), escape(c.object_pk),
         escape(capfirst(force_text(_(c.content_type.name))) if c.content_type else force_text(_('Unknown content'))),
         escape(c.user.username if c.user else ''),

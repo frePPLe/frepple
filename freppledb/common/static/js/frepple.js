@@ -525,7 +525,7 @@ var grid = {
     var result = '';
     for (i in cross_idx)
     {
-      if (result != '') result += '<br/>';
+      if (result != '') result += '<br>';
       if (cross[cross_idx[i]]['editable'])
         result += '<span class="editablepivotcol">' + cross[cross_idx[i]]['name'] + '</span>';
       else
@@ -949,8 +949,8 @@ var grid = {
             '<div class="modal-body">'+
               '<label class="control-label">' + gettext("Export format") +
                 '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label></br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                 '</div>' +
               '</label>' +
             '</div>'+
@@ -970,10 +970,10 @@ var grid = {
             '<div class="modal-body">'+
               '<label class="control-label">' + gettext("Export format") +
                 '<div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label></br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label></br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label></br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label></br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
+                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                 '</div>' +
               '</label>' +
             '</div>'+
@@ -2379,9 +2379,9 @@ function about_show()
            '</div>'+
            '<div class="modal-body">'+
              '<div class="row">';
-      content += '<div class="col-sm-5"><br/><br/>' +
-         '<p><a target="_blank" href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
-         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br/>' +
+      content += '<div class="col-sm-5"><br><br>' +
+         '<p><a target="_blank" href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
+         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
          '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
          '</div>' +
          '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
@@ -2434,10 +2434,10 @@ function import_show(title,paragraph,multiple,fxhr)
         '</div>'+
         '<div class="modal-body">'+
           '<form id="uploadform">' +
-            '<p id="extra_text">'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br/>' +
-              gettext('The first row should contain the field names.') + '<br/><br/>' +
+            '<p id="extra_text">'+gettext('Load an Excel file or a CSV-formatted text file.') + '<br>' +
+              gettext('The first row should contain the field names.') + '<br><br>' +
               '<input type="checkbox" autocomplete="off" name="erase" value="yes"/>&nbsp;&nbsp;'+
-              gettext('First delete all existing records AND ALL RELATED TABLES') + '<br/><br/>' +
+              gettext('First delete all existing records AND ALL RELATED TABLES') + '<br><br>' +
             '</p>';
     if (isDragnDropUploadCapable()) {
       modalcontent += ''+
@@ -2462,7 +2462,7 @@ function import_show(title,paragraph,multiple,fxhr)
       modalcontent += gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>';
     }
     modalcontent += ''+
-          '</form><br/>' +
+          '</form><br>' +
           '<div style="margin: 5px 0">'+
             '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>'+
           '</div>'+
@@ -3153,7 +3153,7 @@ var tour = {
     })
     .modal('show');
     $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
-         tourdata[tour.chapter]['description']  + '<br/><br/><br/></div>');
+         tourdata[tour.chapter]['description']  + '<br><br><br></div>');
     $('#tourprevious').on('click', function() {
       tour.prev();
     });

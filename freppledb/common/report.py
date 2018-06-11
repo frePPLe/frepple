@@ -1208,12 +1208,12 @@ class GridReport(View):
               transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
-              resp.write('<br/>')
+              resp.write('<br>')
             except Exception as e:
               transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(e))
-              resp.write('<br/>')
+              resp.write('<br>')
         elif 'copy' in rec:
           # Copying records
           for key in rec['copy']:
@@ -1242,12 +1242,12 @@ class GridReport(View):
               transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(_("Can't find %s" % key)))
-              resp.write('<br/>')
+              resp.write('<br>')
             except Exception as e:
               transaction.savepoint_rollback(sid)
               ok = False
               resp.write(escape(e))
-              resp.write('<br/>')
+              resp.write('<br>')
         else:
           # Editing records
           sid = transaction.savepoint(using=request.database)
@@ -1280,22 +1280,22 @@ class GridReport(View):
             transaction.savepoint_rollback(sid)
             ok = False
             resp.write(escape(_("Can't find %s" % rec['id'])))
-            resp.write('<br/>')
+            resp.write('<br>')
           except (ValidationError, ValueError):
             transaction.savepoint_rollback(sid)
             ok = False
             for error in form.non_field_errors():
               resp.write(escape('%s: %s' % (rec['id'], error)))
-              resp.write('<br/>')
+              resp.write('<br>')
             for field in form:
               for error in field.errors:
                 resp.write(escape('%s %s: %s: %s' % (obj.pk, field.name, rec[field.name], error)))
-                resp.write('<br/>')
+                resp.write('<br>')
           except Exception as e:
             transaction.savepoint_rollback(sid)
             ok = False
             resp.write(escape(e))
-            resp.write('<br/>')
+            resp.write('<br>')
     if ok:
       resp.write("OK")
     resp.status_code = ok and 200 or 500
@@ -1500,7 +1500,7 @@ class GridReport(View):
         if 'erase' in request.POST:
           returnvalue = reportclass.erase(request)
           if returnvalue:
-            yield '</br><samp style="padding-left: 15px;">%s</samp></br>' % returnvalue
+            yield '<br><samp style="padding-left: 15px;">%s</samp><br>' % returnvalue
             raise StopIteration
 
         # Header in output
@@ -2416,7 +2416,7 @@ def importWorkbook(request):
 
         # Process all rows in each worksheet
         for ws_name, model, contenttype_id, dependencies in models:
-          yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong></br>'
+          yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong><br>'
           yield ('<div class="table-responsive">'
                  '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
           numerrors = 0

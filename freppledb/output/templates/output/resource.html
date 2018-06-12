@@ -72,6 +72,7 @@ function drawGraphs(jsondata)
     // Build the data for d3
     var max_y = 0;
     var data = [];
+    var linedata = [];
     for (var bckt in timebuckets)
     {
       var tmp = jsondata['rows'][index][timebuckets[bckt]['name']];
@@ -157,6 +158,32 @@ function drawGraphs(jsondata)
             .attr("height", y(top) - y(newtop))
             .style("fill","#FF0000");
         }
+        
+        // Build line points
+        if (0 in fields) {
+		    if (1 in fields) {
+		      linedata.push([
+		        x(timebuckets[d['bucket']]['name']),
+		        y(d['available'] + d['unavailable'])
+		        ]);
+		      linedata.push([
+		        x(timebuckets[d['bucket']]['name']) + x_width,
+		        y(d['available'] + d['unavailable'])
+		        ]);
+		    } 
+		    else {
+		      linedata.push([
+		        x(timebuckets[d['bucket']]['name']),
+		        y(d['available'])
+		        ]);
+		      linedata.push([
+		        x(timebuckets[d['bucket']]['name']) + x_width,
+		        y(d['available'])
+		        ]);    
+		    };
+		};
+		
+		// Draw hoover tooltip
       	bucket.append("rect")
 	      .attr("height", height)
 	      .attr("width", x_width)
@@ -198,17 +225,12 @@ function drawGraphs(jsondata)
     if (0 in fields)
     {
       var line = d3.svg.line()
-        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
-        .y(function(d) { 
-          if (1 in fields)
-            return y(d['available'] + d['unavailable']);
-          else
-            return y(d['available']);
-          });
+        .x(function(d) { return d[0]; })
+        .y(function(d) { return d[1]; });
       svg.append("svg:path")
         .attr('class', 'graphline')
         .attr("stroke","#8BBA00")
-        .attr("d", line(data));
+        .attr("d", line(linedata));
     }
     
     // Display Y-Axis

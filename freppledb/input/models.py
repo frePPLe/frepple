@@ -21,7 +21,7 @@ from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.fields import JSONBField
+from freppledb.common.fields import JSONBField, AliasField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
 
 
@@ -1290,6 +1290,9 @@ class OperationPlanMaterial(AuditModel):
 
 class DistributionOrder(OperationPlan):
 
+  shipping_date = AliasField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True)
+  receipt_date = AliasField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+
   class DistributionOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
@@ -1311,6 +1314,9 @@ class DistributionOrder(OperationPlan):
 
 
 class PurchaseOrder(OperationPlan):
+
+  ordering_date = AliasField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True)
+  receipt_date = AliasField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
 
   class PurchaseOrderManager(OperationPlan.Manager):
 

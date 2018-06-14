@@ -58,8 +58,8 @@ class Command(BaseCommand):
         'folder': "export",
         'sql': '''COPY
           (select source, lastmodified, id, status , reference, quantity,
-          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
-          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
+          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as "ordering date",
+          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as "receipt date",
           criticality, EXTRACT(EPOCH FROM delay) as delay,
           owner_id, item_id, location_id, supplier_id from operationplan
           where status <> 'confirmed' and type='PO')
@@ -70,8 +70,8 @@ class Command(BaseCommand):
         'folder': "export",
         'sql': '''COPY
           (select source, lastmodified, id, status, reference, quantity,
-          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
-          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
+          to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as "ordering date",
+          to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as "receipt date",
           criticality, EXTRACT(EPOCH FROM delay) as delay,
           plan, destination_id, item_id, origin_id from operationplan
           where status <> 'confirmed' and type='DO')

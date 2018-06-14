@@ -396,7 +396,10 @@ class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
   raw_id_fields = ('item',)
   save_on_top = True
-  exclude = ('type', 'source', 'criticality', 'delay', 'operation', 'owner', 'supplier', 'location', 'demand', 'name', 'due')
+  exclude = (
+    'type', 'source', 'criticality', 'delay', 'operation', 'owner',
+    'supplier', 'location', 'demand', 'name', 'due', 'startdate', 'enddate'
+    )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_distributionorder_change", "permissions": "input.change_distributionorder"},
     ]
@@ -407,7 +410,10 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
   model = PurchaseOrder
   raw_id_fields = ('item', 'supplier',)
   save_on_top = True
-  exclude = ('type', 'source', 'criticality', 'delay', 'operation', 'owner', 'origin', 'destination', 'demand', 'name', 'due')
+  exclude = (
+    'type', 'source', 'criticality', 'delay', 'operation', 'owner',
+    'origin', 'destination', 'demand', 'name', 'due', 'startdate', 'enddate'
+    )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_purchaseorder_change", "permissions": "input.change_purchaseorder"},
     ]

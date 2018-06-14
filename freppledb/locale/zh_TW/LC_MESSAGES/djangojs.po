@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 21:44+0100\n"
+"POT-Creation-Date: 2018-06-14 15:16+0200\n"
 "PO-Revision-Date: 2017-12-26 22:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: frepple <jdetaeye@users.sourceforge.net>\n"
@@ -38,7 +38,7 @@ msgstr "保存資料出錯。"
 
 #: common/static/js/frepple.js:233 common/static/js/frepple.js:647
 #: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
-#: common/static/js/frepple.js:2481 common/static/js/frepple.js:2593
+#: common/static/js/frepple.js:2482 common/static/js/frepple.js:2594
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "關閉"
@@ -276,88 +276,88 @@ msgstr "添加新在下面"
 msgid "Add new above"
 msgstr "添加新在上面"
 
-#: common/static/js/frepple.js:2395 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2396 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "已安裝的應用程序"
 
-#: common/static/js/frepple.js:2415 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2416 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "讀取版本信息的錯誤"
 
-#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2440 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "導入CSV或Excel文件"
 
-#: common/static/js/frepple.js:2445 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "載入一個Excel檔或CSV-formatted文字檔。"
 
-#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2447 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "第一行包含了欄位名。"
 
-#: common/static/js/frepple.js:2448 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "首先刪除所有存在的記錄和所有相關的表。"
 
-#: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr ""
 
-#: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr ""
 
-#: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr ""
 
-#: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "數據文件"
 
-#: common/static/js/frepple.js:2479 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "導入"
 
-#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr "取消導入"
 
-#: common/static/js/frepple.js:2482 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr "複製到剪貼板"
 
-#: common/static/js/frepple.js:2539 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2540 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr "導入中..."
 
-#: common/static/js/frepple.js:2558 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr "已取消"
 
-#: common/static/js/frepple.js:3050 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3051 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "顯示提示"
 
-#: common/static/js/frepple.js:3140 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3141 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "導遊服務"
 
-#: common/static/js/frepple.js:3147 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3148 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "前一個"
 
-#: common/static/js/frepple.js:3148 common/static/js/frepple.js:3289
+#: common/static/js/frepple.js:3149 common/static/js/frepple.js:3290
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "播放"
 
-#: common/static/js/frepple.js:3149 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3150 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "下一個"
 
-#: common/static/js/frepple.js:3296 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3297 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "暫停"
 

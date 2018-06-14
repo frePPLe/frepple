@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 4.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 21:44+0100\n"
+"POT-Creation-Date: 2018-06-14 15:16+0200\n"
 "PO-Revision-Date: 2017-12-26 13:54+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -34,7 +34,7 @@ msgstr "Foutmelding tijdens wegschrijven gegevens"
 
 #: common/static/js/frepple.js:233 common/static/js/frepple.js:647
 #: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
-#: common/static/js/frepple.js:2481 common/static/js/frepple.js:2593
+#: common/static/js/frepple.js:2482 common/static/js/frepple.js:2594
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "Sluit"
@@ -273,88 +273,88 @@ msgstr "Voeg onderaan toe"
 msgid "Add new above"
 msgstr "Voeg bovenaan toe"
 
-#: common/static/js/frepple.js:2395 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2396 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "Geïnstalleerde apps"
 
-#: common/static/js/frepple.js:2415 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2416 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "Fout tijdens lezen versie informatie"
 
-#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2440 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "Importeer CSV of Excel bestand"
 
-#: common/static/js/frepple.js:2445 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Laad een Excel bestand of een tekst bestand in CSV-formaat."
 
-#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2447 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "De eerste rij moet de veldnamen bevatten."
 
-#: common/static/js/frepple.js:2448 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Verwijder eerst alle huidige records EN ALLE GERELATEERDE TABELLEN"
 
-#: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr "bestanden geselecteerd"
 
-#: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr "Selecteer bestanden"
 
-#: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr "of drop ze hier"
 
-#: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "Gegevensbestand"
 
-#: common/static/js/frepple.js:2479 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "Importeer gegevens"
 
-#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr "Annuleer import"
 
-#: common/static/js/frepple.js:2482 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr "Kopieer naar klembord"
 
-#: common/static/js/frepple.js:2539 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2540 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr "Importeren..."
 
-#: common/static/js/frepple.js:2558 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr "Geannuleerd"
 
-#: common/static/js/frepple.js:3050 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3051 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "Toon hints"
 
-#: common/static/js/frepple.js:3140 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3141 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "Rondleiding"
 
-#: common/static/js/frepple.js:3147 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3148 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "Vorige"
 
-#: common/static/js/frepple.js:3148 common/static/js/frepple.js:3289
+#: common/static/js/frepple.js:3149 common/static/js/frepple.js:3290
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "Play"
 
-#: common/static/js/frepple.js:3149 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3150 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "Volgende"
 
-#: common/static/js/frepple.js:3296 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3297 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "Pauze"
 

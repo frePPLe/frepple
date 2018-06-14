@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 4.4.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 21:44+0100\n"
+"POT-Creation-Date: 2018-06-14 15:16+0200\n"
 "PO-Revision-Date: 2017-12-26 22:18+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -35,7 +35,7 @@ msgstr "Errore nel salvataggio dei dati"
 
 #: common/static/js/frepple.js:233 common/static/js/frepple.js:647
 #: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
-#: common/static/js/frepple.js:2481 common/static/js/frepple.js:2593
+#: common/static/js/frepple.js:2482 common/static/js/frepple.js:2594
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "Chiuso"
@@ -110,13 +110,11 @@ msgid "Reset"
 msgstr "Ripristinare"
 
 #: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
-#| msgid "Error getting data"
 msgid "Error retrieving data"
 msgstr ""
 
 #: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
 #: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
-#| msgid "Error during export"
 msgid "Error saving report settings"
 msgstr ""
 
@@ -200,13 +198,11 @@ msgid "export"
 msgstr "esporta"
 
 #: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
-#| msgid "export selected records to "
 msgid "export selected records"
 msgstr ""
 
 #: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
 #: common/static/js/frepple.min.js:12
-#| msgid "connecting to "
 msgid "connecting"
 msgstr ""
 
@@ -277,92 +273,88 @@ msgstr "Aggiungi nuovo sotto"
 msgid "Add new above"
 msgstr "Aggiungi nuovo sopra"
 
-#: common/static/js/frepple.js:2395 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2396 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "Apps installate"
 
-#: common/static/js/frepple.js:2415 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2416 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "Errore nel leggere le informazioni della versione"
 
-#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2440 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "Importa file Excel o CSV"
 
-#: common/static/js/frepple.js:2445 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Carica un file Excel o di testo formattato CSV"
 
-#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2447 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "La prima riga dovrebbe contenere i nomi dei campi."
 
-#: common/static/js/frepple.js:2448 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Cancella prima tutti gli esistenti inserimenti E LE TABELLE AFFERENTI"
 
-#: common/static/js/frepple.js:2455 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr ""
 
-#: common/static/js/frepple.js:2458 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
+#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr ""
 
-#: common/static/js/frepple.js:2461 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr ""
 
-#: common/static/js/frepple.js:2470 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "file di dati"
 
-#: common/static/js/frepple.js:2479 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "Importa "
 
-#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
-#| msgid "Cancel"
+#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr ""
 
-#: common/static/js/frepple.js:2482 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr ""
 
-#: common/static/js/frepple.js:2539 common/static/js/frepple.min.js:11
-#| msgid "Import"
+#: common/static/js/frepple.js:2540 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr ""
 
-#: common/static/js/frepple.js:2558 common/static/js/frepple.min.js:11
-#| msgid "Cancel"
+#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr ""
 
-#: common/static/js/frepple.js:3050 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3051 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "Mostra suggerimenti"
 
-#: common/static/js/frepple.js:3140 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3141 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "Tour guidato"
 
-#: common/static/js/frepple.js:3147 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3148 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "Precedente"
 
-#: common/static/js/frepple.js:3148 common/static/js/frepple.js:3289
+#: common/static/js/frepple.js:3149 common/static/js/frepple.js:3290
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "Play"
 
-#: common/static/js/frepple.js:3149 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3150 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "Successivo"
 
-#: common/static/js/frepple.js:3296 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3297 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "Pausa"
 
@@ -378,12 +370,12 @@ msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:67
-#| msgid "onhand"
 msgid "current onhand"
 msgstr ""
 
 #~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Importazione .... premendo il pulsante close non fermerai l'elaborazione"
+#~ msgstr ""
+#~ "Importazione .... premendo il pulsante close non fermerai l'elaborazione"
 
 #~ msgid "problems"
 #~ msgstr "problemi"
@@ -443,7 +435,8 @@ msgstr ""
 #~ msgstr "rimuovi questa domanda dalla pianificazione"
 
 #~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "Pianifica le domande selezionate a ritroso dalla loro data di scadenza"
+#~ msgstr ""
+#~ "Pianifica le domande selezionate a ritroso dalla loro data di scadenza"
 
 #~ msgid "Plan selected demands forward from the current date"
 #~ msgstr "Pianifica le domande selezionate in avanti dalla data corrente"

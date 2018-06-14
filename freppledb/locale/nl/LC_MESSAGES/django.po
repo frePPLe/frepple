@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-14 15:16+0200\n"
-"PO-Revision-Date: 2018-06-14 15:35+0200\n"
+"PO-Revision-Date: 2018-06-14 16:57+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-Basepath: /home/johan/workspace/frepple-enterprise/contrib/django/"
 "freppledb\n"
 
@@ -2071,7 +2071,7 @@ msgstr "uitgaande distributieorders"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1657
 #: output/widget.py:157
 msgid "manufacturing orders"
-msgstr "productnaam van de leverancier"
+msgstr "productieorders"
 
 #: input/admin.py:74 input/admin.py:111 input/models.py:1331
 #: input/views.py:1719 input/views.py:1742 input/views.py:1749
@@ -4008,7 +4008,7 @@ msgstr "Performantie-indicatoren"
 
 #: output/views/operation.py:27
 msgid "Manufacturing order summary"
-msgstr "Overzicht produktieorders"
+msgstr "Overzicht productieorders"
 
 #: output/views/operation.py:335
 msgid "Purchase order summary"

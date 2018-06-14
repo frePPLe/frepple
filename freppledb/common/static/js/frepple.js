@@ -1519,13 +1519,13 @@ var wizard = {
         document.getElementById(wizard.wizdict[key].docanchor).style.display = 'none';
       }
       if (wizard.wizdict[key].anchor !== "" && wizard.wizdict[key].url_internaldoc !== null) {
-        document.getElementById(wizard.wizdict[key].anchor).setAttribute('href', wizard.wizdict[key].url_internaldoc);
+        document.getElementById(wizard.wizdict[key].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
       }
       if (wizard.wizdict[key].docanchor !== "" && wizard.wizdict[key].url_doc !== null) {
         document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
       }
       if (key === 'Sales orders') {
-        document.getElementById(wizard.wizdict['Sales orders history'].anchor).setAttribute('href', wizard.wizdict[key].url_internaldoc);
+        document.getElementById(wizard.wizdict['Sales orders history'].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
         document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
       }
     }

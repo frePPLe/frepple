@@ -8,7 +8,12 @@ Release notes
 
 - The `resource report <user-guide/user-interface/plan-analysis/resource-report.html>`_ now displays the 
   available capacity as a line, replacing the green bar in previous releases to show the free capacity.
-  
+
+- | Performance optimization of the solver algorithm. The solver now passes down the minimum shipment 
+    information from the demand to all upstream entities, which allows the algorithm to perform a more
+    efficient search.
+  | In complex models, the resulting plan may be slightly different - for the better.
+
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
 - New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 

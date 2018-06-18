@@ -918,6 +918,9 @@ class SolverMRP : public Solver
         * inventory carrying costs, ...
         */
       double a_penalty;
+
+      /** Defines a minimum quantity that we expect the answer to cover. */
+      double q_qty_min;
     };
 
     /** @brief This class is a helper class of the SolverMRP class.

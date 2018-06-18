@@ -382,6 +382,7 @@
   </locations>
   <operations>
     <operation name="5. Make item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
       <flows>
         <flow xsi:type="flow_end">
           <buffer name="5. buffer">

@@ -71,8 +71,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
     Date min_next_date(Date::infiniteFuture);
     double ask_qty;
     FlowPlan *flplan = data->state->q_flowplan;
-    for (list<const Flow*>::iterator i = thealternates.begin();
-        i != thealternates.end();)
+    for (auto i = thealternates.begin(); i != thealternates.end();)
     {
       const Flow *curflow = *i;
       data->state->q_flowplan = flplan; // because q_flowplan can change
@@ -117,6 +116,11 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
         data->logConstraints = originalLogConstraints;
 
       // 4c) Ask the buffer
+      double orig_q_qty_min = data->state->q_qty_min;
+      if (curflow->getType() == *FlowFixedEnd::metadata || curflow->getType() == *FlowFixedStart::metadata)
+        data->state->q_qty_min = curflow->getQuantity();
+      else
+        data->state->q_qty_min = orig_q_qty_min * curflow->getQuantity();
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
@@ -136,6 +140,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
         {
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
+          data->state->q_qty_min = orig_q_qty_min;
           return;
         }
       }
@@ -191,7 +196,12 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
   {
     // CASE II: Not an alternate flow.
     // In this case, this method is passing control on to the buffer.
+    double orig_q_qty_min = data->state->q_qty_min;
     data->state->q_qty = - data->state->q_flowplan->getQuantity();
+    if (fl->getType() == *FlowFixedEnd::metadata || fl->getType() == *FlowFixedStart::metadata)
+      data->state->q_qty_min = - fl->getQuantity();
+    else
+      data->state->q_qty_min *= - fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
     if (data->state->q_qty != 0.0)
     {
@@ -216,6 +226,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
       data->state->a_date = data->state->q_date;
       data->state->a_qty = 0.0;
     }
+    data->state->q_qty_min = orig_q_qty_min;
   }
 }
 

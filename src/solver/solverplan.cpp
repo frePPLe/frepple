@@ -173,6 +173,7 @@ void SolverMRP::SolverMRPdata::push(double q, Date d, bool full)
     state->curOwnerOpplan = prevstate->curOwnerOpplan;
     state->curDemand = prevstate->curDemand;
     state->curBuffer = prevstate->curBuffer;
+    state->q_qty_min = prevstate->q_qty_min;
   }
   else
   {
@@ -182,6 +183,7 @@ void SolverMRP::SolverMRPdata::push(double q, Date d, bool full)
     state->curOwnerOpplan = nullptr;
     state->curDemand = nullptr;
     state->curBuffer = nullptr;
+    state->q_qty_min = 1.0;
   }
   state->forceLate = false;
   state->a_cost = 0.0;

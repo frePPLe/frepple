@@ -132,7 +132,7 @@ bool SolverMRP::checkOperation
     // Eg. A fixed time operation needs 10 days on jan 20 on an operation
     //     that is only available only 2 days since the start of the horizon.
     // Resize to the minimum quantity
-    opplan->setQuantity(0.0001,false);
+    opplan->setQuantity(data.state->q_qty_min, false);
     // Move to the earliest start date
     opplan->setStart(Plan::instance().getCurrent());
     // No availability found anywhere in the horizon - data error
@@ -465,8 +465,11 @@ bool SolverMRP::checkOperationLeadTime
     // This operation doesn't fit at all within the constrained window.
     data.state->a_qty = 0.0;
     // Resize to the minimum quantity
-    if (opplan->getQuantity() + ROUNDING_ERROR < opplan->getOperation()->getSizeMinimum())
-      opplan->setQuantity(0.0001,false);
+    double min_q = data.state->q_qty_min;
+    if (min_q < opplan->getOperation()->getSizeMinimum())
+      min_q = opplan->getOperation()->getSizeMinimum();
+    if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
+      opplan->setQuantity(min_q, false);
     // Move to the earliest start date
     opplan->setStart(threshold);
     // Pick up the earliest date we can reply back
@@ -508,7 +511,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
-  Date orig_q_date = data->state->q_date;
+  Date orig_q_date = data->state->q_date;  
   double flow_qty_per = 1.0;
   double flow_qty_fixed = 0.0;
   bool fixed_flow = false;
@@ -702,9 +705,17 @@ void SolverMRP::solve(const Operation* oper, void* v)
   assert(z);
   double orig_q_qty = z->getQuantity();
 
+  // Adjust the min quantity we expect the reply to cover
+  double orig_q_qty_min = data->state->q_qty_min;
+  if (fixed_flow)
+    data->state->q_qty_min = flow_qty_fixed;
+  else
+    data->state->q_qty_min /= flow_qty_per;
+
   // Check the constraints
   data->getSolver()->checkOperation(z,*data);
   data->state->q_date_max = prev_q_date_max;
+  data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
   if (data->state->curBuffer)

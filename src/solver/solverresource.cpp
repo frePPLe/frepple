@@ -305,12 +305,11 @@ void SolverMRP::solve(const Resource* res, void* v)
       if (HasOverload && newDate)
       {
         // Multiple operations could be executed in parallel
-        int parallelOps = static_cast<int>((curMax - curOnhand) / data->state->q_loadplan->getQuantity());
-        if (parallelOps <= 0) parallelOps = 1;
+        double parallelOps = ceil(curMax / data->state->q_loadplan->getQuantity() - ROUNDING_ERROR);
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
             data->state->q_operationplan,
-            (currentOpplan.quantity ? currentOpplan.quantity : 0.001) / parallelOps, // 0.001  @todo this calculation doesn't give minimization of the lateness
+            data->state->q_qty_min / parallelOps,
             newDate,
             Date::infinitePast,
             true,

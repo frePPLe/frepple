@@ -502,7 +502,7 @@ void SolverMRP::solve(const ResourceBuckets* res, void* v)
             // If that's the case, we move it to start right at the end of the bucket.
             if (
               cur != res->getLoadPlans().end() 
-              && data->state->q_loadplan->getDate() > cur->getDate()
+              && data->state->q_loadplan->getDate() >= cur->getDate()
               )
             {
               Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(

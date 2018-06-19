@@ -250,13 +250,7 @@ class freppleTest (unittest.TestCase):
               print("\nOutput:")
             else:
               o = PIPE
-            proc = Popen(cmd,
-                bufsize = 0,
-                stdout = o,
-                stderr = STDOUT,
-                universal_newlines = True,
-                shell = True,
-                )
+            proc = Popen(cmd, bufsize=0, stdout=o, stderr=STDOUT, shell=True)
             if not debug:
               # Because the process doesn't stop until we've read the pipe.
               proc.communicate()

@@ -17,36 +17,43 @@
 #
 
 import cx_Freeze
-import os
 import os.path
 import sys
-
-sys.path.append(os.path.join(os.path.split(__file__)[0],'..','..'))
-
-# Define what is to be included and excluded
-packages = [# Required for django standalone deployment
-            'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
-            # Added for PostgreSQL
-            'psycopg2',
-            # Added to be able to connect to SQL Server
-            'adodbapi',
-            # Required for reading and writing spreadsheets
-            'openpyxl',
-            # Required for REST API
-            'rest_framework_bulk', 'rest_framework_filters', 'markdown',
-            # Added to package a more complete python library with frePPLe
-            'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
-            'poplib', 'imaplib', 'telnetlib',
-            # Added for unicode and internationalization
-            'encodings',
-            # Added for cx_freeze binaries
-            'cx_Logging', 'jwt', 'idna'
-           ]
-excludes = ['django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb', 'rest_framework', 'tkinter', 'certifi']
 
 from distutils.command.install import INSTALL_SCHEMES
 for scheme in INSTALL_SCHEMES.values():
   scheme['data'] = scheme['purelib']
+
+sys.path.append(os.path.join(os.path.split(__file__)[0], '..', '..'))
+
+# Define what is to be included and excluded
+packages = [
+  # Required for django standalone deployment
+  'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
+  # Added for PostgreSQL
+  'psycopg2',
+  # Added to be able to connect to SQL Server
+  'adodbapi',
+  # Required for reading and writing spreadsheets
+  'openpyxl',
+  # Required for REST API
+  'rest_framework_bulk', 'rest_framework_filters', 'markdown',
+  # Added to package a more complete python library with frePPLe
+  'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
+  'poplib', 'imaplib', 'telnetlib',
+  # Added for unicode and internationalization
+  'encodings',
+  # Added for cx_freeze binaries
+  'cx_Logging',
+  # Request for json web tokents
+  'jwt',
+  # Required for requests package
+  'idna', 'urllib3', 'chardet'
+  ]
+excludes = [
+  'django', 'freppledb', 'pydoc', 'cx_Oracle', 'MySQLdb',
+  'rest_framework', 'tkinter', 'certifi'
+  ]
 
 # Add all modules that need to be added in uncompiled format
 import bootstrap3
@@ -84,12 +91,12 @@ for mod in [bootstrap3, certifi, django, django_admin_bootstrapped, freppledb, r
 
 # Run the cx_Freeze program
 cx_Freeze.setup(
-  version = freppledb.VERSION.replace(".beta", ".0"),
-  description = "frePPLe web application",
-  name = "frePPLe",
-  author = "frepple.com",
-  url = "https://frepple.com",
-  options = {
+  version=freppledb.VERSION.replace(".beta", ".0"),
+  description="frePPLe web application",
+  name="frePPLe",
+  author="frepple.com",
+  url="https://frepple.com",
+  options={
     "install_exe": {
       "install_dir": 'dist'
       },
@@ -102,24 +109,24 @@ cx_Freeze.setup(
       "include_msvcr": True
       },
     },
-  executables = [
+  executables=[
     # A console application
     cx_Freeze.Executable(
        'frepplectl.py',
        base='Console',
-       icon=os.path.join("..","..","src","frepple.ico")
+       icon=os.path.join("..", "..", "src", "frepple.ico")
        ),
     # A Windows service
     cx_Freeze.Executable(
       'freppleservice.py',
       base='Win32Service',
-      icon=os.path.join("..","..","src","frepple.ico")
+      icon=os.path.join("..", "..", "src", "frepple.ico")
       ),
     # A system tray application
     cx_Freeze.Executable(
       'freppleserver.py',
       base='Win32GUI',
-      icon=os.path.join("..","..","src","frepple.ico")
+      icon=os.path.join("..", "..", "src", "frepple.ico")
       )
     ]
   )

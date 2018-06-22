@@ -2211,7 +2211,7 @@ class GridPivot(GridReport):
       # Write the last row
       if row_of_buckets:
         for cross in mycrosses:
-          if cross[1].get('visible', True):
+          if cross[1].get('visible', False):
             continue
           fields = [ _getCellValue(row_of_buckets[0][s.name]) for s in myrows if s.name ]
           fields.extend([ _getCellValue(

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-14 15:16+0200\n"
-"PO-Revision-Date: 2018-06-14 15:40+0200\n"
+"PO-Revision-Date: 2018-06-25 15:32+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.4\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -67,7 +67,7 @@ msgstr "Omission du champ inconnu %(column)s"
 #: common/dataload.py:319 forecast/models.py:1297
 #, python-format
 msgid "Some keys were missing: %(keys)s"
-msgstr ""
+msgstr "Des clés sont manquantes: %(keys)s"
 
 #: common/dataload.py:383
 msgid "Key fields not unique"
@@ -431,7 +431,7 @@ msgstr "avertissement"
 #: common/report.py:1984 common/report.py:2047 common/report.py:2073
 #: common/report.py:2153
 msgid "title"
-msgstr ""
+msgstr "titre"
 
 #: common/report.py:1990 common/report.py:2159 forecast/models.py:963
 msgid "data field"
@@ -860,20 +860,22 @@ msgstr "modèle"
 #: common/widget.py:29
 #| msgid "About frePPLe"
 msgid "Happy about frePPLe?"
-msgstr ""
+msgstr "Content de frePPLe?"
 
 #: common/widget.py:30
 msgid "Help us improve frePPle"
-msgstr ""
+msgstr "Aidez-nous à améliorer frePPLe"
 
 #: common/widget.py:114
 msgid "Click on a smiley and write your comments to help us improve frePPLe!"
 msgstr ""
+"Cliquez sur un smiley et écrivez vos commentaires pour nous aider à "
+"améliorer frePPLe!"
 
 #: common/widget.py:115
 #| msgid "comments"
 msgid "Send comments"
-msgstr ""
+msgstr "Envoyez vos commentaires"
 
 #: common/widget.py:123
 msgid "Welcome"
@@ -1020,7 +1022,7 @@ msgstr "Import des données de %(erp)s"
 #, python-format
 #| msgid "Export data to %(erp)"
 msgid "Export data to %(erp)s"
-msgstr ""
+msgstr "Exporter les données vers %(erp)s"
 
 #: execute/commands.py:77
 msgid "Generate supply plan"
@@ -1176,36 +1178,36 @@ msgstr ""
 #: execute/management/commands/importfromfolder.py:583
 #, python-format
 msgid "File %s was not deleted"
-msgstr ""
+msgstr "Le fichier %s n'a pas été supprimé"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:583
 #| msgid "Closed"
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:583
 #, python-format
 msgid "File %s was deleted"
-msgstr ""
+msgstr "Le fichier %s a été supprimé"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:583
 msgid "All data files were deleted"
-msgstr ""
+msgstr "Tous les fichiers ont été supprimés"
 
 #: execute/management/commands/exporttofolder.py:533
 #: execute/management/commands/importfromfolder.py:584
 #| msgid "Delete all files"
 msgid "You are about to delete all files"
-msgstr ""
+msgstr "Vous êtes sur le point de supprimer tous les fichiers"
 
 #: execute/management/commands/exporttofolder.py:533
 #: execute/management/commands/importfromfolder.py:584
 #, python-format
 msgid "You are about to delete file %s"
-msgstr ""
+msgstr "Vous êtes sur le point de supprimer le fichier %s"
 
 #: execute/management/commands/exporttofolder.py:534
 #: execute/management/commands/importfromfolder.py:581
@@ -1217,7 +1219,7 @@ msgstr "Supprimer un fichier"
 #: execute/management/commands/importfromfolder.py:585
 #| msgid "confirm"
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmer"
 
 #: execute/management/commands/exportworkbook.py:128
 msgid "Export a spreadsheet"
@@ -1977,27 +1979,27 @@ msgstr "méthode de prévisoin sélectionnée"
 #: forecast/views.py:142
 #| msgid "planned forecast value"
 msgid "planned net forecast value"
-msgstr ""
+msgstr "valeur des prévisions nettes planifiées"
 
 #: forecast/views.py:148
 #| msgid "backlog"
 msgid "order backlog"
-msgstr ""
+msgstr "ordres accumulés"
 
 #: forecast/views.py:148
 #| msgid "reorder quantity value"
 msgid "order backlog value"
-msgstr ""
+msgstr "valeur des ordres accumulés"
 
 #: forecast/views.py:151
 #| msgid "forecast total"
 msgid "forecast backlog"
-msgstr ""
+msgstr "prévisions accumulées"
 
 #: forecast/views.py:151
 #| msgid "forecast total value"
 msgid "forecast backlog value"
-msgstr ""
+msgstr "valeur des prévisions accumulées"
 
 #: forecast/views.py:154 output/templates/output/demand.html:122
 #: output/templates/output/demand.html:196
@@ -2010,7 +2012,7 @@ msgstr "backlog"
 #: forecast/views.py:154
 #| msgid "backlog"
 msgid "backlog value"
-msgstr ""
+msgstr "valeur des accumultations"
 
 #: forecast/views.py:490 forecast/views.py:497 input/models.py:1041
 #: input/views.py:987
@@ -2650,7 +2652,7 @@ msgstr "Fin fixée"
 #: input/models.py:617
 #| msgid "open transfers"
 msgid "Batch transfer"
-msgstr ""
+msgstr "transfert batch"
 
 #: input/models.py:635
 msgid "Quantity to consume or produce per operationplan unit"
@@ -2671,11 +2673,11 @@ msgstr "Priorité de ce matériel opération dans un groupe d'alternatives"
 #: input/models.py:664 input/views.py:978
 #| msgid "Safety stock quantity"
 msgid "transfer batch quantity"
-msgstr ""
+msgstr "quantité de transfert batch"
 
 #: input/models.py:666
 msgid "Batch size by in which material is produced or consumed"
-msgstr ""
+msgstr "Taille de batch utilisée pour produire ou consommer un matériel"
 
 #: input/models.py:694
 msgid "operation material"
@@ -3091,7 +3093,7 @@ msgstr "Date de fin de configuration"
 #: input/views.py:1420 input/views.py:1660 input/views.py:1897
 #| msgid "items"
 msgid "end items"
-msgstr ""
+msgstr "produits finaux"
 
 #: input/views.py:1563 input/views.py:1805
 msgid "total cost"
@@ -3267,12 +3269,12 @@ msgstr "Quantité Maximale de Point de Réapprovisionnement"
 #: inventoryplanning/models.py:235
 #| msgid "ROQ Minimum Period of Cover"
 msgid "ROQ Minimum Period of Cover (days)"
-msgstr ""
+msgstr "QdR Période minimum de couverture (jours)"
 
 #: inventoryplanning/models.py:236
 #| msgid "ROQ Maximum Period of Cover"
 msgid "ROQ Maximum Period of Cover (days)"
-msgstr ""
+msgstr "QdR Période maximum de couverture (jours)"
 
 #: inventoryplanning/models.py:237
 msgid "Service Level"
@@ -3289,12 +3291,12 @@ msgstr "Quantité Maximale de Stock de Sécurité"
 #: inventoryplanning/models.py:240
 #| msgid "Safety Stock Minimum Period of Cover"
 msgid "Safety Stock Minimum Period of Cover (days)"
-msgstr ""
+msgstr "Stock de sécurité période minimum de couverture (jours)"
 
 #: inventoryplanning/models.py:241
 #| msgid "Safety Stock Maximum Period of Cover"
 msgid "Safety Stock Maximum Period of Cover (days)"
-msgstr ""
+msgstr "Stock de sécurité période maximum de couverture (jours)"
 
 #: inventoryplanning/models.py:248
 msgid "Business Rule"
@@ -3838,27 +3840,27 @@ msgstr "approvisionnement"
 #: output/views/operation.py:649
 #| msgid "proposed supply"
 msgid "proposed shipping"
-msgstr ""
+msgstr "Expéditions proposées"
 
 #: output/templates/output/distribution_order_summary.html:116
 #: output/views/operation.py:650
 #| msgid "total supply"
 msgid "total shipping"
-msgstr ""
+msgstr "total expédié"
 
 #: output/templates/output/distribution_order_summary.html:118
 #: output/templates/output/purchase_order_summary.html:118
 #: output/views/operation.py:435 output/views/operation.py:651
 #| msgid "proposed ends"
 msgid "proposed receiving"
-msgstr ""
+msgstr "réceptions proposées"
 
 #: output/templates/output/distribution_order_summary.html:120
 #: output/templates/output/purchase_order_summary.html:120
 #: output/views/operation.py:436 output/views/operation.py:652
 #| msgid "total production"
 msgid "total receiving"
-msgstr ""
+msgstr "total réceptionné"
 
 #: output/templates/output/operation.html:137
 #: output/templates/output/operation.html:331 output/views/operation.py:152
@@ -3926,13 +3928,13 @@ msgstr "réinitialiser"
 #: output/views/operation.py:433
 #| msgid "proposed ends"
 msgid "proposed ordering"
-msgstr ""
+msgstr "commandes proposées"
 
 #: output/templates/output/purchase_order_summary.html:116
 #: output/views/operation.py:434
 #| msgid "total orders"
 msgid "total ordering"
-msgstr ""
+msgstr "commandes totales"
 
 #: output/templates/output/resource.html:237 output/views/constraint.py:29
 msgid "overload"
@@ -4041,17 +4043,17 @@ msgstr "Indicateurs de performance"
 #: output/views/operation.py:27
 #| msgid "manufacturing orders"
 msgid "Manufacturing order summary"
-msgstr ""
+msgstr "Résumé des ordres de fabrication"
 
 #: output/views/operation.py:335
 #| msgid "Purchase orders"
 msgid "Purchase order summary"
-msgstr ""
+msgstr "Résumé des ordres d'achat"
 
 #: output/views/operation.py:554
 #| msgid "Distribution orders"
 msgid "Distribution order summary"
-msgstr ""
+msgstr "Résumé des ordres de distribution"
 
 #: output/views/pegging.py:27
 msgid "Demand plan"

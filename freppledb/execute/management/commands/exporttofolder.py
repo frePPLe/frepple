@@ -128,7 +128,7 @@ class Command(BaseCommand):
         'report': resource.OverviewReport,
         'data': {
           'format': 'csvlist',
-          'buckets': "month",
+          'buckets': "week",
           'horizontype': True,
           'horizonunit': "month",
           'horizonlength': 6
@@ -140,7 +140,7 @@ class Command(BaseCommand):
         'report': buffer.OverviewReport,
         'data': {
           'format': 'csvlist',
-          'buckets': "month",
+          'buckets': "week",
           'horizontype': True,
           'horizonunit': "month",
           'horizonlength': 6

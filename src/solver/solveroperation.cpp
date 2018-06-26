@@ -99,8 +99,7 @@ void SolverMRP::checkOperationCapacity
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
   while (constrainedLoads > 1 && opplan->getDates() != orig
-    && ((data.state->a_qty == 0.0 && data.state->a_date > minimumEndDate)
-        || recheck));
+    && (data.state->a_qty == 0.0 || recheck));
   // TODO doesn't this loop increment a_penalty incorrectly???
 
   // Restore original flags

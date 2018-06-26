@@ -42,7 +42,7 @@ $(function() {
     else
       $("#showHints").addClass("toggle-off");
     {% endif %}
-    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
+    $('[data-toggle="tooltip"],#database').tooltip({delay: { "show": 500, "hide": 100 }});
   });
 </script>
 {% endblock %}

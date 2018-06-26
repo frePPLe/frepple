@@ -6834,6 +6834,19 @@ class Resource : public HasHierarchy<Resource>,
       available = b;
     }
 
+    double getEfficiency() const
+    {
+      return efficiency;
+    }
+
+    void setEfficiency(const double c)
+    {
+      if (c > 0)
+        efficiency = c;
+      else
+        throw DataException("Resource efficiency must be positive");
+    }
+
     /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
       * The default value is 0.0.
       */
@@ -7020,6 +7033,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addPointerField<Cls, Calendar>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
       m->addDurationField<Cls>(Tags::maxearly, &Cls::getMaxEarly, &Cls::setMaxEarly, defaultMaxEarly);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
+      m->addDoubleField<Cls>(Tags::efficiency, &Cls::getEfficiency, &Cls::setEfficiency, 100.0);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
@@ -7058,6 +7072,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** The cost of using 1 unit of this resource for 1 hour. */
     double cost = 0.0;
+
+    /** The efficiency percentage of this resource. */
+    double efficiency = 100.0;
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
     Duration maxearly = defaultMaxEarly;

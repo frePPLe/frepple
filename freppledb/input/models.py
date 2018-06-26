@@ -537,6 +537,10 @@ class Resource(AuditModel, HierarchyModel):
     _('setup'), max_length=300, null=True, blank=True,
     help_text=_('Setup of the resource at the start of the plan')
     )
+  efficiency = models.DecimalField(
+    _('efficiency %'), null=True, blank=True, max_digits=20, decimal_places=8,
+    help_text=_("Efficiency percentage of the resource")
+    )
 
   # Methods
   def __str__(self):

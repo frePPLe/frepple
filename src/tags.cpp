@@ -75,6 +75,7 @@ const Keyword Tags::doubleproperty("doubleproperty");
 const Keyword Tags::due("due");
 const Keyword Tags::duration("duration");
 const Keyword Tags::duration_per("duration_per");
+const Keyword Tags::efficiency("efficiency");
 const Keyword Tags::effective_start("effective_start");
 const Keyword Tags::effective_end("effective_end");
 const Keyword Tags::end("end");

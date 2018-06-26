@@ -998,7 +998,7 @@ class loadResources(LoadTask):
         SELECT
           name, description, maximum, maximum_calendar_id, location_id, type,
           cost, maxearly, setup, setupmatrix_id, category, subcategory,
-          owner_id, source, available_id
+          owner_id, source, available_id, efficiency
         FROM %s %s
         ORDER BY lvl ASC, name
         ''' % (connections[cursor.db.alias].ops.quote_name('resource'), filter_where) )
@@ -1041,6 +1041,8 @@ class loadResources(LoadTask):
             x.owner = frepple.resource(name=i[12])
           if i[14]:
             x.available = frepple.calendar(name=i[14])
+          if i[15] is not None:
+            x.efficiency = i[15]
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))

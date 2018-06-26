@@ -72,7 +72,13 @@ available        calendar          A calendar specifying the working hours for t
                                        loaded by the operation.
                                    
                                    Default is null.
-                                                                            
+                                   
+efficiency       double            The efficiency of this resource, expressed as a percentage. The
+                                   operationplan duration will be extended or shrunk when this field
+                                   is different from 100.
+
+                                   The default value is 100.            
+                                                                          
 cost             double            The cost of using 1 unit of this resource for 1 hour.
                                    
                                    The default value is 0.

@@ -451,8 +451,11 @@ class ResourceFilter(filters.FilterSet):
 class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Resource
-      fields = ('name', 'description', 'category', 'subcategory', 'type', 'maximum', 'maximum_calendar',
-                'location',  'cost', 'maxearly', 'setupmatrix', 'setup', 'source', 'lastmodified')
+      fields = (
+        'name', 'description', 'category', 'subcategory', 'type', 'maximum',
+        'maximum_calendar', 'location', 'cost', 'maxearly', 'setupmatrix',
+        'setup', 'efficiency', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial = True

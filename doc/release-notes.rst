@@ -19,6 +19,9 @@ Release notes
 - New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
+  
+- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
+  the resource to perform an operation faster or slower than the standard operation time.
 
 .. rubric:: Inventory planning
 

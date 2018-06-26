@@ -745,15 +745,19 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into resource \
         (name,description,maximum,maximum_calendar_id,location_id,type,cost, \
-         maxearly,setup,setupmatrix_id,category,subcategory,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s)",
+         maxearly,setup,setupmatrix_id,category,subcategory,efficiency, \
+         available_id,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
-            i.name, i.description, i.maximum, i.maximum_calendar and i.maximum_calendar.name or None,
+            i.name, i.description, i.maximum,
+            i.maximum_calendar.name if i.maximum_calendar else None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
             round(i.cost, 8), i.maxearly,
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
-            i.category, i.subcategory, i.source, self.timestamp
+            i.category, i.subcategory, i.efficiency,
+            i.available.name if i.available else None,
+            i.source, self.timestamp
           )
           for i in frepple.resources()
           if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
@@ -762,17 +766,19 @@ class exportStaticModel(object):
         "update resource \
         set description=%s, maximum=%s, maximum_calendar_id=%s, location_id=%s, \
         type=%s, cost=%s, maxearly=%s * interval '1 second', setup=%s, setupmatrix_id=%s, \
-        category=%s, subcategory=%s, source=%s, lastmodified=%s \
+        category=%s, subcategory=%s, efficiency=%s, available_id=%s, \
+        source=%s, lastmodified=%s \
         where name=%s",
         [
           (
             i.description, i.maximum,
             i.maximum_calendar and i.maximum_calendar.name or None,
             i.location and i.location.name or None, i.__class__.__name__[9:],
-            round(i.cost, 8),
-            round(i.maxearly, 8),
+            round(i.cost, 8), round(i.maxearly, 8),
             i.setup, i.setupmatrix and i.setupmatrix.name or None,
-            i.category, i.subcategory, i.source, self.timestamp, i.name
+            i.category, i.subcategory, round(i.efficiency, 8),
+            i.available.name if i.available else None,
+            i.source, self.timestamp, i.name
           )
           for i in frepple.resources()
           if i.name in primary_keys and not i.hidden and (not self.source or self.source == i.source)

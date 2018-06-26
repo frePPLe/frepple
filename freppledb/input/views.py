@@ -692,6 +692,7 @@ class ResourceList(GridReport):
     GridFieldText('setup', title=_('setup'), initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    GridFieldNumber('efficiency', title=_('efficiency %'), initially_hidden=True, formatter='currency', extra='"formatoptions":{"suffix":" %","defaultValue":"100.00"}'),
     )
 
 

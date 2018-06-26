@@ -76,6 +76,7 @@ class Tags
     static const Keyword due;
     static const Keyword duration;
     static const Keyword duration_per;
+    static const Keyword efficiency;
     static const Keyword effective_start;
     static const Keyword effective_end;
     static const Keyword end;

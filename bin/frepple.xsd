@@ -543,6 +543,7 @@
       <xsd:element name="available" type="calendar" />
       <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
+      <xsd:element name="efficiency" type="positiveDouble" />
       <xsd:element name="owner" type="resource" />
       <xsd:element name="members">
         <xsd:complexType>
@@ -563,6 +564,7 @@
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="maximum" type="positiveDouble" />
     <xsd:attribute name="cost" type="positiveDouble" />
+    <xsd:attribute name="efficiency" type="positiveDouble" />
     <xsd:attribute name="setup" type="non-empty-string" />
     <xsd:attribute name="setupmatrix" type="non-empty-string" />
   </xsd:complexType>

@@ -76,10 +76,7 @@ available        calendar          A calendar specifying the working hours for t
 cost             double            The cost of using 1 unit of this resource for 1 hour.
                                    
                                    The default value is 0.
-detectproblems   boolean           Set this field to false to suppress problem detection on
-                                   this resource.
-                                   
-                                   Default is true.
+
 maxearly         duration          Time window before the ask date where we look for available
                                    capacity.
                                    

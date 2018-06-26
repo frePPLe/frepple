@@ -41,9 +41,6 @@ customer       customer          Customer placing the demand.
 status         string            Status of the demand.
                                  Possible values are "open" (default), "closed", "canceled"
                                  and "quote".
-detectproblems boolean           | Set this field to false to supress problem detection on
-                                   this demand.
-                                 | Default is true.
 maxlateness    duration          | The maximum delay that can be accepted to satisfy this
                                    demand.
                                  | The default value allows an infinite delay.

@@ -83,9 +83,6 @@ producing        operation         | This operation will be instantiated by the 
                                      left only for backwards compatibility. New implementations
                                      and upgraded installs should use the easier modeling
                                      constructs itemsupplier, itemdistribution and operation.
-detectproblems   boolean           | Set this field to false to supress problem detection on this
-                                     buffer.
-                                   | Default is true.
 flows            list of flow      Defines material flows consuming from or producing into this
                                    buffer.
 flowplans        list of flowplan  | This field is populated during an export with the plan results

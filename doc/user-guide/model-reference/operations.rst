@@ -150,9 +150,6 @@ posttime               duration          | A post-operation time, used as a buff
                                            producing operation of a certain buffer.
                                          | If you want to model a safety stock quantity, you can use
                                            the minimum or minimum_calendar fields on the buffer.
-detectproblems         boolean           | Set this field to false to skip problem detection on
-                                           this operation.
-                                         | The default value is true.
 loads                  list of load      A list of all resources loaded by this operation.
 flows                  list of flow      A list of all buffers where material is consumed from or
                                          produced into.

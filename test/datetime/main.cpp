@@ -40,7 +40,7 @@ int main (int argc, char *argv[])
   d3.parse("2009-06-01T00:00:00", "%Y-%m-%dT%H:%M:%S");
   DateDetail d3_detail(d3);
 
-  Duration t1 = 10;
+  Duration t1 = 10L;
 
   logger << "d1 \"2009-02-01T01:02:03\" => " << d1 << " " << d1_detail.getSecondsDay()
      << " " << d1_detail.getSecondsWeek() << " " << d1_detail.getSecondsMonth()

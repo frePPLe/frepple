@@ -233,28 +233,6 @@ class SolverMRP : public Solver
     void solveSafetyStock(const Buffer*, void* = nullptr);
 
     /** Behavior of this solver method:
-      *  - When the inventory drops below the minimum inventory level, a new
-      *    replenishment is triggered.
-      *    The replenishment brings the inventory to the maximum level again.
-      *  - The minimum and maximum inventory are soft-constraints. The actual
-      *    inventory can go lower than the minimum or exceed the maximum.
-      *  - The minimum, maximum and multiple size of the replenishment are
-      *    hard constraints, and will always be respected.
-      *  - A minimum and maximum interval between replenishment is also
-      *    respected as a hard constraint.
-      *  - No propagation to upstream buffers at all, even if a producing
-      *    operation has been specified.
-      *  - The minimum calendar isn't used by the solver.
-      *
-      * @todo Optimize the solver method as follows for the common case of infinite
-      * buying capability (ie no max quantity + min time):
-      *  - beyond lead time: always reply OK, without rearranging the operation plans
-      *  - at the end of the solver loop, we revisit the procurement buffers to establish
-      *    the final purchasing profile
-      */
-    void solve(const BufferProcure*, void* = nullptr);
-
-    /** Behavior of this solver method:
       *  - This method simply passes on the request to the referenced buffer.
       *    It is called from a solve(Operation*) method and passes on the
       *    control to a solve(Buffer*) method.

@@ -232,7 +232,6 @@
     <ClCompile Include="..\..\src\solver\solverload.cpp" />
     <ClCompile Include="..\..\src\solver\solveroperation.cpp" />
     <ClCompile Include="..\..\src\solver\solverplan.cpp" />
-    <ClCompile Include="..\..\src\solver\solverprocure.cpp" />
     <ClCompile Include="..\..\src\solver\solverresource.cpp" />
   </ItemGroup>
   <ItemGroup>

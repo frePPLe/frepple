@@ -673,28 +673,6 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="buffer_procure">
-    <xsd:complexContent>
-      <xsd:extension base="buffer">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="size_maximum" type="positiveDouble" />
-          <xsd:element name="size_minimum" type="positiveDouble" />
-          <xsd:element name="size_multiple" type="positiveDouble" />
-          <xsd:element name="mininventory" type="positiveDouble" />
-          <xsd:element name="maxinventory" type="positiveDouble" />
-          <xsd:element name="leadtime" type="xsd:duration" />
-          <xsd:element name="fence" type="xsd:duration" />
-        </xsd:choice>
-        <xsd:attribute name="size_maximum" type="positiveDouble" />
-        <xsd:attribute name="size_miniimum" type="positiveDouble" />
-        <xsd:attribute name="size_multiple" type="positiveDouble" />
-        <xsd:attribute name="mininventory" type="positiveDouble" />
-        <xsd:attribute name="maxinventory" type="positiveDouble" />
-        <xsd:attribute name="fence" type="xsd:duration" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <!-- FLOW -->
   <xsd:complexType name="flow">
     <xsd:annotation>

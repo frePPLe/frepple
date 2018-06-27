@@ -6,12 +6,13 @@ A buffer is in (logical of physical) inventory point for a item at a certain loc
 
 Different types of buffers exist:
 
-* | `Buffer_default`_:
+* | Default:
   | The default buffer uses an "producing" operation to replenish it with
     additional material.
 
-* | `Buffer_infinite`_:
-  | An infinite buffer has an infinite supply of the material is available.
+* | Infinite:
+  | An infinite buffer is unconstrained and has an infinite supply of the material.
+  | Propagation through a bill of material will be stopped at an infinite buffer.
 
 **Fields**
 
@@ -108,17 +109,3 @@ hidden           boolean           Marks entities that are considered hidden and
                                    shown to the end user.
 ================ ================= ===========================================================
 
-Buffer_default
---------------
-
-The default buffer uses an "producing" operation to replenish it.
-No fields are defined in addition to the ones listed above.
-
-Buffer_infinite
----------------
-
-An infinite buffer has an infinite supply of the material is available.
-
-The PRODUCING field is unused for this buffer type.
-
-Propagation through a bill of material will be stopped at an infinite buffer.

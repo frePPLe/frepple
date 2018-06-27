@@ -15,63 +15,100 @@
   </description>
   <current>2009-01-01T00:00:00</current>
   <buffers>
-    <buffer name="component A @ factory" xsi:type="buffer_procure">
+    <buffer name="component A @ factory">
       <item name="component A"/>
       <location name="factory"/>
-	    <onhand>1</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>1</onhand>
     </buffer>
-    <buffer name="component B @ factory" xsi:type="buffer_procure">
+    <buffer name="component B @ factory">
       <item name="component B"/>
       <location name="factory"/>
-	    <onhand>4</onhand>
-	    <leadtime>P5D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>4</onhand>
     </buffer>
-    <buffer name="component C @ factory" xsi:type="buffer_procure">
+    <buffer name="component C @ factory">
       <item name="component C"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>5</onhand>
     </buffer>
-    <buffer name="component D @ factory" xsi:type="buffer_procure">
+    <buffer name="component D @ factory">
       <item name="component D"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>0</onhand>
     </buffer>
-    <buffer name="component E @ factory" xsi:type="buffer_procure">
+    <buffer name="component E @ factory">
       <item name="component E"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>0</onhand>
     </buffer>
-    <buffer name="component F @ factory" xsi:type="buffer_procure">
+    <buffer name="component F @ factory">
       <item name="component F"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>5</onhand>
     </buffer>
-    <buffer name="component G @ factory" xsi:type="buffer_procure">
+    <buffer name="component G @ factory">
       <item name="component G"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P5D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>5</onhand>
     </buffer>
   </buffers>
+  <items>
+    <item name="component A">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component B">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>   
+    <item name="component C">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component D">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component E">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item> 
+    <item name="component F">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>  
+    <item name="component G">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>    
+  </items>    
   <operations>
     <operation name="assembly" xsi:type="operation_time_per"
       duration_per="P1D" duration="P1D">
@@ -156,6 +193,7 @@
   </demands>
 
 <?python
+frepple.saveXMLfile("output.0.xml")
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

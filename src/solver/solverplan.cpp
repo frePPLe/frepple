@@ -363,8 +363,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
       && buf->getType() != *BufferInfinite::metadata
-      && ( buf->getMinimum() || buf->getMinimumCalendar()
-        || buf->getType() == *BufferProcure::metadata )
+      && (buf->getMinimum() || buf->getMinimumCalendar())
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
@@ -384,8 +383,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
         iteration_count = 0;
         (*b)->solve(*solver, this);
         // Check for excess
-        if ((*b)->getType() != *BufferProcure::metadata)
-          (*b)->solve(cleanup, this);
+        (*b)->solve(cleanup, this);
         getCommandManager()->commit();
       }
       catch(...)

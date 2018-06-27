@@ -23,6 +23,9 @@ Release notes
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
 
+- Remove buffers of type procurement from the planning engine code. This buffer type was already long
+  reprecated and hasn't been accessible to users for quite some time now. 
+
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

@@ -5166,8 +5166,6 @@ template<> inline bool Tree<unsigned long>::isnull(const unsigned long& a)
   *   - undo():
   *     Temporarily reverts the change.
   *     Redoing the change is still possible.
-  *   - redo():
-  *     Reactivates the change that was previously undone.
   */
 class Command
 {
@@ -5206,14 +5204,6 @@ class Command
       *     same state change as calling it only once.
       */
     virtual void undo() {};
-
-    /** This method reproduces a previously undone change.<br>
-      * A couple of notes on how this method should be implemented by the
-      * subclasses:
-      *   - Calling the method multiple times is harmless and results in the
-      *     same state change as calling it only once.
-      */
-    virtual void redo() {};
 
     /** Virtual destructor. */
     virtual ~Command() {};
@@ -5256,12 +5246,11 @@ class CommandSetField : public Command
     Object* obj;
     const MetaFieldBase *fld;
     XMLData olddata;
-    XMLData newdata;
 
   public:
     /** Constructor. */
     CommandSetField(Object *o, const MetaFieldBase *f, const DataValue& d)
-      : obj(o), fld(f), newdata(d)
+      : obj(o), fld(f)
     {
       if (!obj || !fld)
         return;
@@ -5296,17 +5285,8 @@ class CommandSetField : public Command
     /** Undoes the field change. */
     virtual void undo()
     {
-      if (!obj || !fld)
-        return;
-      fld->setField(obj, olddata);
-    }
-
-    /** Redo the field change. */
-    virtual void redo()
-    {
-      if (!obj || !fld)
-        return;
-      fld->setField(obj, newdata);
+      if (obj && fld)
+        fld->setField(obj, olddata);
     }
 
     void clearObject()
@@ -5370,11 +5350,6 @@ class CommandSetProperty : public Command
 
     /** Undoes the property change. */
     virtual void undo();
-
-    /** Redo the property change.
-      * We assume the change was undone before.
-      */
-    virtual void redo();
 
     void clearObject()
     {
@@ -5460,12 +5435,6 @@ class CommandCreateObject : public Command
       // Actual deletion
       delete obj;
       obj = nullptr;
-    }
-
-    /** Redoing the creation isn't possible and throws an exception. */
-    virtual void redo()
-    {
-      throw DataException("Can't redo a create command");
     }
 
     virtual short getType() const
@@ -5580,11 +5549,6 @@ class CommandList : public Command
       * The list of actions is left intact, so the changes can still be redone.
       */
     virtual void undo();
-
-    /** Redoes all actions on its list.<br>
-      * The list of actions is left intact, so the changes can still be undone.
-      */
-    void redo();
 
     /** Returns true if no commands have been added yet to the list. */
     bool empty() const
@@ -5840,12 +5804,6 @@ class CommandManager
       * argument bookmark.
       */
     void undoBookmark(Bookmark*);
-
-    /** Redo all commands in a bookmark (and its children).<br>
-      * It can later still be undone.<br>
-      * The active bookmark in the manager is set to the argument bookmark.
-      */
-    void redoBookmark(Bookmark*);
 
     /** Undo all commands in a bookmark (and its children).<br>
       * It can no longer be redone. The bookmark does however still exist.

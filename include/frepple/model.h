@@ -9936,11 +9936,6 @@ class CommandCreateOperationPlan : public Command
       if (opplan) opplan->deleteFlowLoads();
     }
 
-    virtual void redo()
-    {
-      if (opplan) opplan->createFlowLoads();
-    }
-
     virtual ~CommandCreateOperationPlan()
     {
       if (opplan) delete opplan;
@@ -9987,24 +9982,13 @@ class CommandDeleteOperationPlan : public Command
       OperationPlan::iterator x(opplan);
       while (OperationPlan* i = x.next())
       {
+        // TODO the recreation of the flows and loads can recreate them on a different 
+        // resource from the pool. This results in a different resource loading, setup time
+        // and duration.
         i->createFlowLoads();
         i->insertInOperationplanList();
       }
-    }
-
-    virtual void redo()
-    {
-      if (!opplan) return;
-      opplan->deleteFlowLoads();
-      opplan->removeFromOperationplanList();
-      if (opplan->getDemand())
-        opplan->getDemand()->removeDelivery(opplan);
-      OperationPlan::iterator x(opplan);
-      while (OperationPlan* i = x.next())
-      {
-        i->deleteFlowLoads();
-        i->removeFromOperationplanList();
-      }
+      throw LogicException("Not implemented fully");
     }
 
     virtual void rollback()
@@ -10071,8 +10055,6 @@ class CommandMoveOperationPlan : public Command
     {
       restore(false);
     }
-
-    virtual void redo();
 
     /** Undo the changes.<br>
       * When the argument is true, subcommands for suboperationplans are deleted. */

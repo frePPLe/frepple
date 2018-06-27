@@ -332,7 +332,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
           struct tm datedetail;
           d.getInfo(&datedetail);
           date_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-          date_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+          date_time = long(datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600);
           if (!date_time && !fwd)
           {
             date_time = Duration(86400L);
@@ -596,12 +596,12 @@ void Calendar::buildEventList(Date includedate)
   // Default start and end
   Date curDate;
   if (eventlist.empty())
-    curDate = Plan::instance().getCurrent() - Duration(86400 * 365);
+    curDate = Plan::instance().getCurrent() - Duration(86400L * 365L);
   else
     curDate = eventlist.begin()->first;
   Date maxDate;
   if (eventlist.empty())
-    maxDate = Plan::instance().getCurrent() + Duration(86400 * 365);
+    maxDate = Plan::instance().getCurrent() + Duration(86400L * 365L);
   else
     maxDate = eventlist.rbegin()->first;
 
@@ -609,11 +609,11 @@ void Calendar::buildEventList(Date includedate)
   if (includedate == Date::infinitePast)
     curDate = Date::infinitePast;
   else if (includedate <= curDate)
-    curDate = includedate - Duration(86400 * 365);
+    curDate = includedate - Duration(86400L * 365L);
   if (includedate == Date::infiniteFuture)
     maxDate = Date::infiniteFuture;
   else if (includedate >= maxDate)
-    maxDate = includedate + Duration(86400 * 365);
+    maxDate = includedate + Duration(86400L * 365L);
   
   // Collect all event dates
   const CalendarBucket* curBucket = findBucket(curDate, true);
@@ -678,7 +678,7 @@ void Calendar::buildEventList(Date includedate)
         tmp = b->startdate;
       tmp.getInfo(&datedetail);
       int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-      Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+      Duration ref_time = long(datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600);
       if (
         refDate < b->startdate && ref_time >= b->starttime
         && ref_time < b->endtime && (b->days & (1 << ref_weekday))

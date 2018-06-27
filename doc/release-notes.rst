@@ -5,6 +5,9 @@ Release notes
 ======================
 
 .. rubric:: Production planning
+  
+- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
+  the resource to perform an operation faster or slower than the standard operation time.
 
 - The `resource report <user-guide/user-interface/plan-analysis/resource-report.html>`_ now displays the 
   available capacity as a line, replacing the green bar in previous releases to show the free capacity.
@@ -19,9 +22,6 @@ Release notes
 - New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
-  
-- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
-  the resource to perform an operation faster or slower than the standard operation time.
 
 .. rubric:: Inventory planning
 

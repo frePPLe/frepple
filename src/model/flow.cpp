@@ -378,8 +378,8 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
 
   // Count the index of this batch
   bool found = false;
-  unsigned int count = 0;
-  unsigned int totalcount = 0;
+  long count = 0;
+  long totalcount = 0;
   FlowPlan* cur_flpln = fl->getOperationPlan()->firstflowplan;
   FlowPlan* prev_flpln = nullptr;
   while (cur_flpln)

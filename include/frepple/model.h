@@ -2365,11 +2365,15 @@ class OperationPlan
       setStart(d, false, true);
     }
 
-
     void setStartForce(Date d)
     {
       setStart(d, true, true);
     }
+
+    /** Return the efficiency factor of the operationplan.
+      * It's computed as the most inefficient of all resources loaded by the operationplan.
+      */
+    double getEfficiency() const;
 
     static int initialize();
 
@@ -5282,7 +5286,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addPointerField<Cls, Calendar>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, default_max);
       m->addPointerField<Cls, Calendar>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
-      m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
+      m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1L);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
@@ -5350,7 +5354,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     Calendar *max_cal = nullptr;
 
     /** Minimum time interval between purchasing operations. */
-    Duration min_interval = -1;
+    Duration min_interval = -1L;
 
     /** Maximum time interval between purchasing operations. */
     Duration max_interval;

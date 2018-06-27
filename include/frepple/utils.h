@@ -637,6 +637,11 @@ class Duration
     /** Default constructor and constructor with Duration passed. */
     Duration(const long l = 0) : lval(l) {}
 
+    /** Constructor using a double value. 
+      * The double is rounded to the closest integer/second. 
+      */
+    Duration(const double d) : lval(static_cast<long>(d + 0.499)) {}
+
     /** Constructor from a character string.<br>
       * See the parse() method for details on the format of the argument.
       */

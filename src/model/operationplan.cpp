@@ -1960,6 +1960,33 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
 }
 
 
+double OperationPlan::getEfficiency() const
+{
+  double tmp = DBL_MAX;
+  LoadPlanIterator e = beginLoadPlans();
+  if (e == endLoadPlans())
+  {
+    // Use the operation loads
+    for (auto h = getOperation()->getLoads().begin(); h != getOperation()->getLoads().end(); ++h)
+    {
+      if (h->getResource()->getEfficiency() < tmp)
+        tmp = h->getResource()->getEfficiency();
+    }
+  }
+  else
+  {
+    // Use the operationplan loadplans
+    while (e != endLoadPlans())
+    {
+      if (e->getResource()->getEfficiency() < tmp)
+        tmp = e->getResource()->getEfficiency();
+      ++e;
+    }
+  }  
+  return tmp == DBL_MAX ? 1.0 : tmp / 100.0;
+}
+
+
 Duration OperationPlan::getSetup() const
 {
   if (setupevent)

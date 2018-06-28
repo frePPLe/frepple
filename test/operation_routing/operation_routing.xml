@@ -10,11 +10,17 @@
       <item name="subassembly" />
       <location name="factory"/>
     </buffer>
-    <buffer name="component A @ factory" xsi:type="buffer_procure">
-      <item name="component A" />
+    <buffer name="component A @ factory">
       <location name="factory"/>
-      <onhand>20</onhand>
-      <leadtime>P150D</leadtime>
+      <item name="component A">
+        <itemsuppliers>
+          <itemsupplier>
+            <supplier name="Component supplier"/>
+            <leadtime>P150D</leadtime>
+          </itemsupplier>
+        </itemsuppliers>
+      </item>
+      <onhand>20</onhand>      
     </buffer>
     <buffer name="component B1 @ factory" xsi:type="buffer_infinite">
       <item name="component B1" />

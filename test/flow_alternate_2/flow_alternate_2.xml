@@ -23,95 +23,153 @@
   configuration rules imposed by the customer, etc...
   </description>
   <current>2009-01-01T00:00:00</current>
+  <items>
+    <item name="A1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="A2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="A3">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="B1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="B2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="B3">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="B4">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="C1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="C2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="C3">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="C4">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P10D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+  </items>  
   <buffers>
-    <buffer name="A1 @ factory" xsi:type="buffer_procure">
+    <buffer name="A1 @ factory">
       <item name="A1"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
+      <onhand>0</onhand>
+      <minimum>20</minimum>
     </buffer>
-    <buffer name="A2 @ factory" xsi:type="buffer_procure">
+    <buffer name="A2 @ factory">
       <item name="A2"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P5D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="A3 @ factory" xsi:type="buffer_procure">
+      <onhand>0</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="A3 @ factory">
       <item name="A3"/>
       <location name="factory"/>
-	    <onhand>10</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="B1 @ factory" xsi:type="buffer_procure">
+      <onhand>10</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="B1 @ factory">
       <item name="B1"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="B2 @ factory" xsi:type="buffer_procure">
+      <onhand>0</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="B2 @ factory">
       <item name="B2"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="B3 @ factory" xsi:type="buffer_procure">
+      <onhand>0</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="B3 @ factory">
       <item name="B3"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="B4 @ factory" xsi:type="buffer_procure">
+      <onhand>5</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="B4 @ factory">
       <item name="B4"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P5D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="C1 @ factory" xsi:type="buffer_procure">
+      <onhand>5</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="C1 @ factory">
       <item name="C1"/>
       <location name="factory"/>
-	    <onhand>0</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="C2 @ factory" xsi:type="buffer_procure">
+      <onhand>0</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="C2 @ factory">
       <item name="C2"/>
       <location name="factory"/>
-	    <onhand>10</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="C3 @ factory" xsi:type="buffer_procure">
+      <onhand>10</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="C3 @ factory">
       <item name="C3"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P7D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
-    <buffer name="C4 @ factory" xsi:type="buffer_procure">
+      <onhand>5</onhand>
+      <minimum>20</minimum>    </buffer>
+    <buffer name="C4 @ factory">
       <item name="C4"/>
       <location name="factory"/>
-	    <onhand>5</onhand>
-	    <leadtime>P10D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-    </buffer>
+      <onhand>5</onhand>
+      <minimum>20</minimum>    </buffer>
   </buffers>
   <operations>
     <operation name="assembly" xsi:type="operation_fixed_time" duration="P1D">

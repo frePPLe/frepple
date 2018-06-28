@@ -1962,15 +1962,16 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
 
 double OperationPlan::getEfficiency() const
 {
-  double tmp = DBL_MAX;
+  double best = DBL_MAX;
   LoadPlanIterator e = beginLoadPlans();
   if (e == endLoadPlans())
   {
     // Use the operation loads
     for (auto h = getOperation()->getLoads().begin(); h != getOperation()->getLoads().end(); ++h)
     {
-      if (h->getResource()->getEfficiency() < tmp)
-        tmp = h->getResource()->getEfficiency();
+      auto tmp = h->findPreferredResource(this)->getEfficiency();
+      if (tmp < best)
+        best = tmp;
     }
   }
   else
@@ -1978,12 +1979,13 @@ double OperationPlan::getEfficiency() const
     // Use the operationplan loadplans
     while (e != endLoadPlans())
     {
-      if (e->getResource()->getEfficiency() < tmp)
-        tmp = e->getResource()->getEfficiency();
+      auto tmp = e->getResource()->getEfficiency();
+      if (tmp < best)
+        best = tmp;
       ++e;
     }
   }  
-  return tmp == DBL_MAX ? 1.0 : tmp / 100.0;
+  return best == DBL_MAX ? 1.0 : best / 100.0;
 }
 
 

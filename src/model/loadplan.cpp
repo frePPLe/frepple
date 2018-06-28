@@ -46,13 +46,16 @@ int LoadPlan::initialize()
 
 LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 {
+  // Initialize the Python type
+  initType(metadata);
+
   assert(o);
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = START;
 
   // Update the resource field
-  res = r->getResource();
+  res = r->findPreferredResource(o);
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -73,9 +76,6 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
   );
-
-  // Initialize the Python type
-  initType(metadata);
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.

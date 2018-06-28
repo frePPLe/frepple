@@ -471,4 +471,25 @@ Date LoadBucketizedPercentage::getOperationPlanDate(const LoadPlan* lp, Date ldp
   }
 }
 
+
+Resource* Load::findPreferredResource(const OperationPlan* opplan) const
+{
+  if (!getResource()->isGroup())
+    return getResource();
+
+  // Choose the most efficient resource from the group, regardless of its cost.
+  // TODO We ignore date effectivity.
+  Resource* tmp = nullptr;
+  for (Resource::memberRecursiveIterator mmbr(getResource()); !mmbr.empty(); ++mmbr)
+  {
+    if (
+      !mmbr->isGroup()
+      && (!getSkill() || mmbr->hasSkill(getSkill()))
+      && (!tmp || mmbr->getEfficiency() > tmp->getEfficiency())
+      )
+        tmp = &*mmbr;
+  }
+  return tmp ? tmp : getResource();
+}
+
 } // end namespace

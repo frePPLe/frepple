@@ -7170,6 +7170,11 @@ class Load
       return skill;
     }
 
+    /** Find the preferred resource in a resource pool to assign a load to. 
+      * This method is only useful when the loadplan is not created yet.
+      */
+    Resource* findPreferredResource(const OperationPlan*) const;
+
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
 

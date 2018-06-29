@@ -1,5 +1,5 @@
 =======================
-operationplan resources
+Operationplan resources
 =======================
 
 This table models the resource consumption associated with an operationplan.

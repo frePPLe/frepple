@@ -1,5 +1,5 @@
 ===================
-Operation Materials
+Operation materials
 ===================
 
 Operation materials are used to model the consumption and production of 

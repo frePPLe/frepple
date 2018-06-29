@@ -1,5 +1,5 @@
 ===================
-Distribution Orders
+Distribution orders
 ===================
 
 This table contains the distribution orders of your supply chain, either proposed by frePPLe or confirmed.

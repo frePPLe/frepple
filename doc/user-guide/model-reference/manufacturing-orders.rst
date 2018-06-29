@@ -1,5 +1,5 @@
 ====================
-Manufacturing Orders
+Manufacturing orders
 ====================
 
 This table contains the manufacturing orders of your supply chain, either proposed by frePPLe or confirmed.

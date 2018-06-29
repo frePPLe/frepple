@@ -1,5 +1,5 @@
 =============================
-Inventory Planning Parameters
+Inventory planning parameters
 =============================
 
 A record should be entered in this table if you wish frepple to calculate 

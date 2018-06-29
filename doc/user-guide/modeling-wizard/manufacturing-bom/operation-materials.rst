@@ -1,5 +1,5 @@
 ===================
-Operation Materials
+Operation materials
 ===================
 
 The Operation Materials table defines what item(s) an operation is consuming and producing.

@@ -1,5 +1,5 @@
 =======================
-operationplan materials
+Operationplan materials
 =======================
 
 This table models the material consumption or production associated with an operationplan.

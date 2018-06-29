@@ -1,5 +1,5 @@
 ===============
-Purchase Orders
+Purchase orders
 ===============
 
 This table contains the purchase orders of your supply chain (replenishment you are purchasing from your suppliers), either proposed by frePPLe or confirmed.

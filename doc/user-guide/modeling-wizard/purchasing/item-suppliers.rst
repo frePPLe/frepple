@@ -1,5 +1,5 @@
 ==============
-Item Suppliers
+Item suppliers
 ==============
 
 This table defines which items can be procured from which supplier.

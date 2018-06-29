@@ -1,6 +1,6 @@
-=============
-Business Rule
-=============
+==============
+Business rules
+==============
 
 This table allows to declare business rules. 
 

@@ -25,8 +25,8 @@ The parameters driving the stock rebalancing requests generation are the followi
 Field            Type              Description
 ================ ================= =================================================================================================================================
 status           non-empty string  | This field should have one of the following keywords :
-                                   | proposed : The distribition order is proposed by frePPLe to meet the plan (optimization output).
-                                   | approved : The distribution order has been reviewed by the user and is ready to be exported to your ERP system.
+                                   | proposed : The distribution order is proposed by frePPLe to meet the plan (optimization output).
+                                   | approved : The distribution order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
                                    | confirmed : The distribution order is confirmed, it has been populated in your ERP system (optimization input).
                                    | closed : The distribution order has been delivered and the stock quantity increased.
 item             item              The item being transfered.

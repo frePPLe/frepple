@@ -11,7 +11,7 @@ Field            Type              Description
 ================ ================= =================================================================================================================================
 status           non-empty string  | This field should have one of the following keywords :
                                    | proposed : The purchase order is proposed by frePPLe to meet the plan (optimization output).
-                                   | approved : The purchase order has been reviewed by the user and is ready to be exported to your ERP system.
+                                   | approved : The purchase order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
                                    | confirmed : The purchase order is confirmed, it has been populated in your ERP system (optimization input).
                                    | closed : The purchase order has been delivered and the stock quantity increased.
 item             item              The item being purchased.

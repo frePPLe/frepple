@@ -15,7 +15,7 @@ end date         DateTime          The date when the operation is ending.
 quantity         number            The manufactured quantity.
 status           non-empty string  | This field should have one of the following keywords :
                                    | proposed : The manufacturing order is proposed by frePPLe to meet the plan (optimization output).
-                                   | approved : The manufacturing order has been reviewed by the user and is ready to be exported to your ERP system.
+                                   | approved : The manufacturing order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
                                    | confirmed : The manufacturing order is confirmed, it has been populated in your ERP system (optimization input).
                                    | closed : The manufacturing order has been completed.
 Demands          demand            The demand(s) (and quantity) pegged to the manufacturing order. This is a generated field.

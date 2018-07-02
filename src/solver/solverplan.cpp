@@ -363,7 +363,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
       && buf->getType() != *BufferInfinite::metadata      
-      && buf->getProducingOperation()
+      && (buf->getProducingOperation() || !solver->isMaterialConstrained())
       && (
         buf->getMinimum() 
         || buf->getMinimumCalendar() 

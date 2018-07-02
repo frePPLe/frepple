@@ -21,6 +21,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 from django.template import Template, RequestContext
 
@@ -155,7 +156,7 @@ class Command(BaseCommand):
         test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
         )
 
-      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL , stderr=subprocess.STDOUT)
+      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
       if ret:
         raise Exception('Exit code of the database copy command is %d' % ret)
@@ -183,12 +184,12 @@ class Command(BaseCommand):
       task.message = "Scenario copied from %s" % source
       task.save(using=destination)
       task.message = "Scenario copied to %s" % destination
-      
+
       # Delete any waiting tasks in the new copy.
       # This is needed for situations where the same source is copied to
       # multiple destinations at the same moment.
       Task.objects.all().using(destination).filter(id__gt=task.id).delete()
-      
+
     except Exception as e:
       if task:
         task.status = 'Failed'
@@ -215,7 +216,7 @@ class Command(BaseCommand):
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
 
-    scenarios = Scenario.objects.all()
+    scenarios = Scenario.objects.all().using(DEFAULT_DB_ALIAS)
     if scenarios.count() > 1:
       javascript = '''
         $("#sourceul li a").click(function(){

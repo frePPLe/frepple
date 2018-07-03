@@ -1009,15 +1009,18 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
     return quantity >= a.quantity;
 
-  
   if ((getRawIdentifier() && !a.getRawIdentifier())
     || (!getRawIdentifier() && a.getRawIdentifier()))
     // Keep uninitialized operationplans (whose id = 0) seperate
     return getRawIdentifier() > a.getRawIdentifier();
-  else
-    // Using a pointer comparison as tie breaker. This can give
-    // results that are not reproducible across platforms and runs.
-    return this < &a;
+  
+  if (getEnd() != a.getEnd())
+    // Use the end date
+    return getEnd() < a.getEnd();
+  
+  // Using a pointer comparison as tie breaker. This can give
+  // results that are not reproducible across platforms and runs.
+  return this < &a;
 }
 
 

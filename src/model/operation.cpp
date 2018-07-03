@@ -1077,14 +1077,14 @@ OperationTimePer::setOperationPlanParameters(
       // Calculate the quantity, respecting minimum, maximum and multiple size.
       if (duration_per)
       {
-        if (q * duration_per / efficiency < static_cast<double>(production_duration - duration) + 1)
+        if (q * duration_per / efficiency < (double(production_duration) - double(duration) / efficiency) + 0.5)
           // Provided quantity is acceptable.
-          // Note that we allow a margin of 1 second to accept.
+          // Note that we allow a margin of 0.5 second to accept.
           q = opplan->setQuantity(q, roundDown, false, execute);
         else
           // Calculate the maximum operationplan that will fit in the window
           q = opplan->setQuantity(
-            static_cast<double>(production_duration - duration) / duration_per * efficiency,
+            (double(production_duration) - double(duration) / efficiency) / duration_per * efficiency,
             roundDown, false, execute
             );
       }

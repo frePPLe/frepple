@@ -56,7 +56,8 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
   Date min_next_date(Date::infiniteFuture);
   LoadPlan *lplan = data->state->q_loadplan;
   Resource *bestAlternateSelection = nullptr;
-  OperationPlanState bestAlternateState;
+  OperationPlanState bestAlternateState, firstAlternateState;
+  Resource *firstAlternate = nullptr;
   bool qualified_resource_exists = false;
   double bestAlternateValue = DBL_MAX;
   double bestAlternateQuantity = DBL_MIN;
@@ -106,6 +107,13 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     lplan->setResource(res, false, false);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
+
+    // Remember the first alternate
+    if (!firstAlternate)
+    {
+      firstAlternate = res;
+      firstAlternateState = lplan->getOperationPlan();
+    }
 
     // Plan the resource
     CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
@@ -200,8 +208,9 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
 
     if (lplan->getResource() != bestAlternateSelection)
     {
+      lplan->getOperationPlan()->clearSetupEvent();
+      lplan->getOperationPlan()->setStartEndAndQuantity(bestAlternateState.start, bestAlternateState.end, bestAlternateState.quantity);
       lplan->setResource(bestAlternateSelection, false, false);
-      lplan->getOperationPlan()->setEnd(bestAlternateState.end);
     }
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
@@ -213,25 +222,48 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
     return;
   }
 
-  // 7) No alternate gave a good result
-  data->state->a_date = min_next_date;
-  data->state->a_qty = 0;
+  if (!originalPlanningMode)
+  {
+    // No alternate gave a good result in an unconstrained plan
+    if (lplan->getResource() != firstAlternate)
+    {
+      lplan->getOperationPlan()->clearSetupEvent();
+      lplan->getOperationPlan()->setStartEndAndQuantity(firstAlternateState.start, firstAlternateState.end, firstAlternateState.quantity);
+      lplan->setResource(firstAlternate, false, false);
+    }
+    data->state->a_qty = lplan->getQuantity();
+    data->state->a_date = lplan->getDate();
 
-  // Restore the planning mode
-  data->constrainedPlanning = originalPlanningMode;
+    // Restore the planning mode
+    data->constrainedPlanning = originalPlanningMode;
+    data->logConstraints = originalLogConstraints;
 
-  // Maintain the constraint list
-  if (originalLogConstraints && data->planningDemand)
-    data->planningDemand->getConstraints().push(
-      ProblemCapacityOverload::metadata,
-      l->getResource(), originalOpplan.start, originalOpplan.end,
-      -originalLoadplanQuantity);
-  data->logConstraints = originalLogConstraints;
+    if (loglevel > 1)
+      logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) 
+        << "   Alternate load overloads alternate " << firstAlternate << endl;
+  }
+  else
+  {
+    // No alternate gave a good result in an constrained plan
+    data->state->a_date = min_next_date;
+    data->state->a_qty = 0;
 
-  if (loglevel>1)
-    logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) <<
-        "   Alternate load doesn't find supply on any alternate : "
-        << data->state->a_qty << "  " << data->state->a_date << endl;
+    // Maintain the constraint list
+    if (originalLogConstraints && data->planningDemand)
+      data->planningDemand->getConstraints().push(
+        ProblemCapacityOverload::metadata,
+        l->getResource(), originalOpplan.start, originalOpplan.end,
+        -originalLoadplanQuantity);
+
+    // Restore the planning mode
+    data->constrainedPlanning = originalPlanningMode;
+    data->logConstraints = originalLogConstraints;
+
+    if (loglevel > 1)
+      logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) <<
+      "   Alternate load doesn't find supply on any alternate: "
+      << data->state->a_qty << "  " << data->state->a_date << endl;
+  }
 }
 
 
@@ -457,7 +489,7 @@ void SolverMRP::solve(const Load* l, void* v)
 
   if (loglevel>1)
     logger << indent(lplan->getOperationPlan()->getOperation()->getLevel()) <<
-        "   Alternate load doesn't find supply on any alternate : "
+        "   Alternate load doesn't find supply on any alternate: "
         << data->state->a_qty << "  " << data->state->a_date << endl;
 }
 

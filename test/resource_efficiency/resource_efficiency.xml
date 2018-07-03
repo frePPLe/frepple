@@ -61,7 +61,7 @@
     <operation name="make item 3" xsi:type="operation_time_per">
       <item name="item 3"/>
       <location name="factory"/>
-      <size_minimum>10</size_minimum>
+      <size_multiple>5</size_multiple>
       <loads>
         <load>
           <resource name="Resource 3"/>
@@ -95,28 +95,24 @@
     </demand>
     <demand name="order 3">
       <quantity>10</quantity>
-      <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
       <item name="item 3" />
       <location name="factory"/>
     </demand>
     <demand name="order 4">
       <quantity>10</quantity>
-      <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
       <item name="item 3" />
       <location name="factory"/>
     </demand>
     <demand name="order 5">
       <quantity>10</quantity>
-      <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
       <item name="item 3" />
       <location name="factory"/>
     </demand>
     <demand name="order 6">
       <quantity>10</quantity>
-      <minshipment>10</minshipment>
       <due>2018-01-01T00:00:00</due>
       <item name="item 3" />
       <location name="factory"/>

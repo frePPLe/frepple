@@ -103,13 +103,13 @@ def getHorizon(request, future_only=False):
     current = current.replace(microsecond=0)
 
   horizontype = request.GET.get('horizontype', request.user.horizontype)
+  horizonunit = request.GET.get('horizonunit', request.user.horizonunit)
+  try:
+    horizonlength = int(request.GET.get('horizonlength'))
+  except:
+    horizonlength = request.user.horizonlength
   if horizontype:
     # First type: Horizon relative to the current date
-    horizonunit = request.GET.get('horizonunit', request.user.horizonunit)
-    try:
-      horizonlength = int(request.GET.get('horizonlength'))
-    except:
-      horizonlength = request.user.horizonlength
     start = current.replace(hour=0, minute=0, second=0, microsecond=0)
     if horizonunit == 'day':
       end = start + timedelta(days=horizonlength or 60)
@@ -155,7 +155,7 @@ def getHorizon(request, future_only=False):
     else:
       if horizonunit == 'day':
         end = start + timedelta(days=horizonlength or 60)
-      elif request.user.horizonunit == 'week':
+      elif horizonunit == 'week':
         end = start + timedelta(weeks=horizonlength or 8)
       else:
         end = start + timedelta(weeks=horizonlength or 8)

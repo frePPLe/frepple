@@ -31,6 +31,10 @@ Release notes
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered
   as the number of period buckets, the period bucket being the value of the inventoryplanning.calendar parameter.
 
+.. rubric:: User interface
+
+- Bug fix when copying a what-if scenario into another what-if scenario. 
+
 
 4.3.4 (2018/06/08)
 ==================

@@ -96,7 +96,7 @@ class Command(BaseCommand):
     # Initialize the task
     source = options['source']
     try:
-      sourcescenario = Scenario.objects.get(pk=source)
+      sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
     except:
       raise CommandError("No source database defined with name '%s'" % source)
     now = datetime.now()
@@ -125,7 +125,7 @@ class Command(BaseCommand):
         task.arguments += " --force"
       task.save(using=source)
       try:
-        destinationscenario = Scenario.objects.get(pk=destination)
+        destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=destination)
       except:
         raise CommandError("No destination database defined with name '%s'" % destination)
       if source == destination:
@@ -139,7 +139,7 @@ class Command(BaseCommand):
 
       # Logging message - always logging in the default database
       destinationscenario.status = 'Busy'
-      destinationscenario.save()
+      destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
       # Copying the data
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
@@ -166,7 +166,7 @@ class Command(BaseCommand):
       destinationscenario.lastrefresh = datetime.today()
       if 'description' in options:
         destinationscenario.description = options['description']
-      destinationscenario.save()
+      destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
       # Give access to the destination scenario to:
       #  a) the user doing the copy
@@ -197,7 +197,7 @@ class Command(BaseCommand):
         task.finished = datetime.now()
       if destinationscenario and destinationscenario.status == 'Busy':
         destinationscenario.status = 'Free'
-        destinationscenario.save()
+        destinationscenario.save(using=DEFAULT_DB_ALIAS)
       raise e
 
     finally:
@@ -244,7 +244,7 @@ class Command(BaseCommand):
                 </label>
               </td>
               <td  style="padding: 0px 15px;">{{j.status}}</td>
-              <td>{{j.description}}</td>
+              <td>{% if j.description %}{{j.description}}{% endif %}</td>
               <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
             </tr>
             {% endifnotequal %}{% endfor %}

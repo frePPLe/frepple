@@ -183,7 +183,7 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
     def __getitem__(self, key):
       try:
         idx = self.headers.get(key)
-        if idx is None or idx[0] > len(self.data):
+        if idx is None or idx[0] >= len(self.data):
           return None
         val = self.data[idx[0]]
         if isinstance(idx[1], BooleanField) and val == '0':

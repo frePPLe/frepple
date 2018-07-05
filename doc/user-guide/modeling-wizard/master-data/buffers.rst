@@ -9,8 +9,8 @@ A buffer is in (logical of physical) inventory point for a item at a certain loc
 ============ ================= ============================================================
 Field        Type              Description
 ============ ================= ============================================================
-name         non-empty string  Name of the buffer, we recommend that you use the format                                
-                               "item @ location". E.g : keyboard @ factory1
+name         non-empty string  The name of the buffer must follow the pattern                                
+                               "item @ location", ie a concatenation of the next 2 columns.
 location     location          Location of the buffer.         
 item         item              Item being stored in the buffer.                                   
 onhand       number            | Inventory level at the start of the time horizon.

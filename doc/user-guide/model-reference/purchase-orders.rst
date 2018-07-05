@@ -18,8 +18,10 @@ item             item              The item being purchased.
 location         location          The location receiving the purchase order.
 supplier         supplier          The supplier shipping the purchase order.
 quantity         number            The quantity delivered.
-start date       DateTime          The date when the purchase order is leaving the supplier location.
-end date         DateTime          The date of the purchase order delivery.
+ordering date    DateTime          The date when the purchase order is leaving the supplier location.
+receipt date     DateTime          The date of the purchase order delivery.
+start date       DateTime          Deprecated alias for the ordering date.
+end date         Datetime          Deprecated alias for the receipt date.
 Demands          demand            The demand(s) (and quantity) pegged to the purchase order. This is a generated field.
 Inventory Status Number            | The Inventory Status is a calculated field that highlights the urgency of the purchase order.
                                    | The cells have a background color that can be green, orange or red. Sorting 

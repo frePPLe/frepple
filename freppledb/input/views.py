@@ -1948,7 +1948,7 @@ class OperationPlanDetail(View):
             res['flowplans'].append({
               "date": m['flowdate'].strftime("%Y-%m-%dT%H:%M:%S"),
               "quantity": float(m['quantity']),
-              "onhand": float(m['onhand']),
+              "onhand": float(m['onhand'] or 0),
               "buffer": {
                 "name": "%s @ %s" % (m['item_id'], m['location_id'])
                 }

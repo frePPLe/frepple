@@ -1264,7 +1264,7 @@ class OperationPlanMaterial(AuditModel):
     )
   quantity = models.DecimalField(_('quantity'), max_digits=20, decimal_places=8)
   flowdate = models.DateTimeField(_('date'), db_index=True)
-  onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8)
+  onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8, null=True, blank=True)
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
     help_text=_('Status of the OperationPlanMaterial')

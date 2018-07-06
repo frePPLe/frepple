@@ -149,7 +149,7 @@ class OverviewReport(GridPivot):
       ''' % (basesql, request.report_startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall():
-      startohdict[ "%s @ %s" % (row[0], row[1]) ] = float(row[2])
+      startohdict[ "%s @ %s" % (row[0], row[1]) ] = float(row[2] or 0.0)
 
     # Execute the actual query
     query = '''

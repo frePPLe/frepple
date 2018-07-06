@@ -6757,7 +6757,10 @@ class Resource : public HasHierarchy<Resource>,
         // Updated existing event
         setup->setSetup(s);
       else
+      {
         setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
+        getLoadPlans().insert(setup);
+      }
     }
 
     /** Return the setup of the resource on a specific date. 

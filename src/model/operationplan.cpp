@@ -1170,7 +1170,7 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
     {
       if (i->getStart() < d)
       {
-        i->setStart(d);
+        i->setStart(d, force, preferEnd);
         d = i->getEnd();
       }
       else
@@ -1206,7 +1206,7 @@ void OperationPlan::setEnd(Date d, bool force)
     {
       if (!i->getEnd() || i->getEnd() > d)
       {
-        i->setEnd(d);
+        i->setEnd(d, force);
         d = i->getStart();
       }
       else

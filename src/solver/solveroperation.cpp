@@ -469,11 +469,82 @@ bool SolverMRP::checkOperationLeadTime
       min_q = opplan->getOperation()->getSizeMinimum();
     if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
       opplan->setQuantity(min_q, false);
-    // Move to the earliest start date
-    opplan->setStart(threshold);
-    // Pick up the earliest date we can reply back
-    data.state->a_date = opplan->getEnd();
-    // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
+
+    // The earliest date may not be achieved on the current resource if the 
+    // operation loads a pool:
+    // - There can be more efficient resources in the pool
+    // - Other resources in the pool can have a lower setup time
+    LoadPlan* setuploadplan = nullptr;
+    if (extra)
+    {
+      // First, switch all pools to their most efficient resource
+      for (auto ldplan = opplan->beginLoadPlans(); ldplan != opplan->endLoadPlans(); ++ldplan)
+      {
+        if (ldplan->getQuantity() < 0.0 && ldplan->getLoad()->getResource()->isGroup())
+        {
+          auto most_efficient = ldplan->getLoad()->findPreferredResource(opplan);
+          if (!ldplan->getLoad()->getSetup().empty())
+            setuploadplan = &*ldplan;
+          else if (ldplan->getResource() != most_efficient)
+          {
+            logger << "switching to the most efficient resource " << most_efficient << endl;
+            ldplan->setResource(most_efficient, false, false);
+          }
+        }
+      }
+    }
+    if (setuploadplan)
+    {
+      // Try out resources in the pool if setups are involved
+      Date earliest_date = Date::infiniteFuture;
+
+      // Loop over all qualified possible resources
+      stack<Resource*> res_stack;
+      res_stack.push(setuploadplan->getLoad()->getResource());
+      while (!res_stack.empty())
+      {
+        // Pick next resource
+        Resource* res = res_stack.top();
+        res_stack.pop();
+
+        // If it's an aggregate, push it's members on the stack
+        if (res->isGroup())
+        {
+          for (Resource::memberIterator x = res->getMembers(); x != Resource::end(); ++x)
+            res_stack.push(&*x);
+          continue;
+        }
+
+        // Check if the resource has the right skill
+        if (
+          setuploadplan->getLoad()->getSkill()
+          && !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold, threshold)
+          )
+          continue;
+
+        // Try this resource
+        if (setuploadplan->getResource() != res)
+        {
+          opplan->clearSetupEvent();
+          opplan->setStartEndAndQuantity(original.start, original.end, original.quantity);
+          setuploadplan->setResource(res, false, false);
+        }
+        opplan->setStart(threshold, false, false);
+        if (opplan->getEnd() < earliest_date)
+          earliest_date = opplan->getEnd();
+      }
+
+      // Pick up the earliest date of all qualified resources
+      data.state->a_date = earliest_date;
+    }
+    else
+    {
+      // No setup is involved
+      opplan->setStart(threshold);
+      data.state->a_date = opplan->getEnd();
+    }
+
+    // Set the quantity to 0 to make sure the buffer doesn't see any supply
     opplan->setQuantity(0.0);
 
     // Log the constraint

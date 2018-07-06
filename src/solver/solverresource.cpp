@@ -251,7 +251,11 @@ void SolverMRP::solve(const Resource* res, void* v)
       // in the supply path and we need to include these in our estimate of the
       // next date.
       double ignored = 0.0;
-      for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
+      for (
+        cur = res->getLoadPlans().begin();
+        cur != res->getLoadPlans().end() && cur != res->getLoadPlans().begin(data->state->q_loadplan);
+        ++cur
+        )
       {
         const LoadPlan* ldplan = nullptr;
         if (cur->getEventType() == 1)

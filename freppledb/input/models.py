@@ -507,12 +507,12 @@ class Resource(AuditModel, HierarchyModel):
     help_text=_('Size of the resource')
     )
   maximum_calendar = models.ForeignKey(
-    Calendar, verbose_name=_('maximum calendar'),
+    Calendar, verbose_name=_('maximum calendar'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the resource size varying over time')
     )
   available = models.ForeignKey(
-    Calendar, verbose_name=_('available'),  related_name='+',
+    Calendar, verbose_name=_('available'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the working hours and holidays')
     )
@@ -540,6 +540,11 @@ class Resource(AuditModel, HierarchyModel):
   efficiency = models.DecimalField(
     _('efficiency %'), null=True, blank=True, max_digits=20, decimal_places=8,
     help_text=_("Efficiency percentage of the resource")
+    )
+  efficiency_calendar = models.ForeignKey(
+    Calendar, verbose_name=_('efficiency % calendar'), related_name='+',
+    null=True, blank=True, on_delete=models.CASCADE,
+    help_text=_('Calendar defining the efficiency of the resource varying over time')
     )
 
   # Methods

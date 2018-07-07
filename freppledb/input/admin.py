@@ -327,14 +327,14 @@ data_site.register(ResourceSkill, ResourceSkill_admin)
 
 class Resource_admin(MultiDBModelAdmin):
   model = Resource
-  raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner', 'available')
+  raw_id_fields = ('maximum_calendar', 'location', 'setupmatrix', 'owner', 'available', 'efficiency_calendar')
   save_on_top = True
   inlines = [ OperationResource_inline, ResourceSkill_inline, ]
   exclude = ('source',)
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_resource_change", "permissions": "input.change_resource"},
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_resource"},
-    {"name": 'whereused', "label": _("where used"),"view": "whereused_resource"},
+    {"name": 'whereused', "label": _("where used"), "view": "whereused_resource"},
     {"name": 'plan', "label": _("plan"), "view": "output_resource_plandetail"},
     {"name": 'plandetail', "label": _("plan detail"), "view": "output_loadplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_resource"},

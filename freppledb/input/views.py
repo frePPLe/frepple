@@ -693,6 +693,10 @@ class ResourceList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldNumber('efficiency', title=_('efficiency %'), initially_hidden=True, formatter='currency', extra='"formatoptions":{"suffix":" %","defaultValue":"100.00"}'),
+    GridFieldText(
+      'efficiency_calendar', title=_('efficiency % calendar'), initially_hidden=True,
+      field_name='efficiency_calendar__name', formatter='detail', extra='"role":"input/calendar"'
+      ),
     )
 
 

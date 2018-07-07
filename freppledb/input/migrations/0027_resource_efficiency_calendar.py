@@ -29,6 +29,6 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='resource',
       name='efficiency_calendar',
-      field=models.ForeignKey(blank=True, help_text='Calendar defining the efficiency of the resource varying over time', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='input.Calendar', verbose_name='efficiency % calendar'),
+      field=models.ForeignKey(blank=True, help_text='Calendar defining the efficiency percentage of the resource varying over time', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='input.Calendar', verbose_name='efficiency % calendar'),
     ),
     ]

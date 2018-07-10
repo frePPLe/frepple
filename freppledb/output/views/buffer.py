@@ -89,8 +89,15 @@ class OverviewReport(GridPivot):
 
   crosses = (
     ('startoh', {'title': _('start inventory')}),
-    ('produced', {'title': _('produced')}),
+    ('safetystock', {'title': _('safety stock')}),    
     ('consumed', {'title': _('consumed')}),
+    ('consumedMO', {'title': _('consumed by MO')}),
+    ('consumedDO', {'title': _('consumed by DO')}),
+    ('consumedSO', {'title': _('consumed by SO')}),
+    ('produced', {'title': _('produced')}),
+    ('producedMO', {'title': _('produced by MO')}),
+    ('producedDO', {'title': _('produced by DO')}),
+    ('producedPO', {'title': _('produced by PO')}),
     ('endoh', {'title': _('end inventory')}),
     )
 
@@ -127,7 +134,7 @@ class OverviewReport(GridPivot):
     # Execute a query  to get the onhand value at the start of our horizon
     startohdict = {}
     query = '''
-      select opplanmat.item_id, opplanmat.location_id, sum(oh.onhand)
+      select opplanmat.item_id, opplanmat.location_id, sum(oh.onhand) onhand
       from (%s) opplanmat
       inner join (
         select operationplanmaterial.item_id,
@@ -144,8 +151,8 @@ class OverviewReport(GridPivot):
         and maxid.id = operationplanmaterial.id
       ) oh
       on oh.item_id = opplanmat.item_id
-      and oh.location_id = opplanmat.location_id
-      group by opplanmat.item_id, opplanmat.location_id
+      and oh.location_id = opplanmat.location_id 
+      group by opplanmat.item_id, opplanmat.location_id      
       ''' % (basesql, request.report_startdate)
     cursor.execute(query, baseparams)
     for row in cursor.fetchall():
@@ -160,14 +167,31 @@ class OverviewReport(GridPivot):
         item.source, item.lastmodified, location.description, location.category,
         location.subcategory, location.available_id, location.owner_id, 
         location.source, location.lastmodified, %s
-        invplan.bucket, invplan.startdate, invplan.enddate,
-        invplan.consumed, invplan.produced
+        invplan.bucket, 
+        invplan.startdate, 
+        invplan.enddate, 
+        invplan.safetystock,
+        invplan.consumed,
+        invplan.consumedMO,
+        invplan.consumedDO,
+        invplan.consumedSO, 
+        invplan.produced,
+        invplan.producedMO,
+        invplan.producedDO,
+        invplan.producedPO
       from (
         select
           opplanmat.item_id, opplanmat.location_id,
           d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-          coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
-          coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
+          coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
+          coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
+          coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
+          coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO,
+          coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
+          coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
+          coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
+          coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
+          coalesce(min(calendarbucket.value), 0) safetystock
         from (%s) opplanmat
         -- Multiply with buckets
         cross join (
@@ -183,6 +207,10 @@ class OverviewReport(GridPivot):
         and d.enddate > operationplanmaterial.flowdate
         and operationplanmaterial.flowdate >= %%s
         and operationplanmaterial.flowdate < %%s
+        left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
+        left outer join buffer on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
+        left outer join calendarbucket on calendarbucket.calendar_id = buffer.minimum_calendar_id 
+                                       and calendarbucket.startdate <= d.startdate and calendarbucket.enddate > d.startdate
         -- Grouping and sorting
         group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate
         ) invplan
@@ -208,10 +236,10 @@ class OverviewReport(GridPivot):
       if row[0] != prevbuf:
         prevbuf = row[0]
         startoh = startohdict.get(prevbuf, 0)
-        endoh = startoh + float(row[numfields - 2] - row[numfields - 1])
+        endoh = startoh + float(row[numfields - 4] - row[numfields - 8])
       else:
         startoh = endoh
-        endoh += float(row[numfields - 2] - row[numfields - 1])
+        endoh += float(row[numfields - 4] - row[numfields - 8])
       res = {
         'buffer': row[0],
         'item': row[1],
@@ -229,12 +257,19 @@ class OverviewReport(GridPivot):
         'location__owner_id': row[13],
         'location__source': row[14],
         'location__lastmodified': row[15],
-        'bucket': row[numfields - 5],
-        'startdate': row[numfields - 4].date(),
-        'enddate': row[numfields - 3].date(),
+        'bucket': row[numfields - 12],
+        'startdate': row[numfields - 11].date(),
+        'enddate': row[numfields - 10].date(),
         'startoh': round(startoh, 1),
-        'produced': round(row[numfields - 2], 1),
-        'consumed': round(row[numfields - 1], 1),
+        'safetystock': round(row[numfields - 9], 1),
+        'consumed': round(row[numfields - 8], 1),
+        'consumedMO': round(row[numfields - 7], 1),
+        'consumedDO': round(row[numfields - 6], 1),
+        'consumedSO': round(row[numfields - 5], 1),
+        'produced': round(row[numfields - 4], 1),
+        'producedMO': round(row[numfields - 3], 1),
+        'producedDO': round(row[numfields - 2], 1),
+        'producedPO': round(row[numfields - 1], 1),        
         'endoh': round(endoh, 1),
         }
       # Add attribute fields

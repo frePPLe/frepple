@@ -1963,7 +1963,7 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
 }
 
 
-double OperationPlan::getEfficiency() const
+double OperationPlan::getEfficiency(Date d) const
 {
   double best = DBL_MAX;
   LoadPlanIterator e = beginLoadPlans();
@@ -1972,9 +1972,23 @@ double OperationPlan::getEfficiency() const
     // Use the operation loads
     for (auto h = getOperation()->getLoads().begin(); h != getOperation()->getLoads().end(); ++h)
     {
-      auto tmp = h->findPreferredResource(this)->getEfficiency();
-      if (tmp < best)
-        best = tmp;
+      double best_eff = 0.0;
+      for (Resource::memberRecursiveIterator mmbr(h->getResource()); !mmbr.empty(); ++mmbr)
+      {
+        if (
+          !mmbr->isGroup()
+          && (!h->getSkill() || mmbr->hasSkill(h->getSkill()))
+          )
+        {
+          auto my_eff = mmbr->getEfficiencyCalendar()
+            ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())
+            : mmbr->getEfficiency();
+          if (my_eff > best_eff)
+            best_eff = my_eff;
+        }
+      }
+      if (best_eff < best)
+        best = best_eff;
     }
   }
   else
@@ -1982,12 +1996,17 @@ double OperationPlan::getEfficiency() const
     // Use the operationplan loadplans
     while (e != endLoadPlans())
     {
-      auto tmp = e->getResource()->getEfficiency();
-      if (tmp < best)
-        best = tmp;
+      if (e->getQuantity() <= 0)
+      {
+        auto tmp = e->getResource()->getEfficiencyCalendar()
+          ? e->getResource()->getEfficiencyCalendar()->getValue(d ? d : getStart())
+          : e->getResource()->getEfficiency();
+        if (tmp < best)
+          best = tmp;
+      }
       ++e;
     }
-  }  
+  }
   return best == DBL_MAX ? 1.0 : best / 100.0;
 }
 

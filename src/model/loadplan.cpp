@@ -55,7 +55,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   start_or_end = START;
 
   // Update the resource field
-  res = r->findPreferredResource(o);
+  res = r->findPreferredResource(o->getStart());
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -387,13 +387,19 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
 {
   if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup())
   {
-    for (auto i = ldplan->getLoad()->getResource()->getMembers(); i != Resource::end(); ++i)
+    for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource()); !i.empty(); ++i)
     {
       if (ldplan->getResource() == &*i)
         continue;
-     Skill* sk = ldplan->getLoad()->getSkill();
-     if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
-       resources.push_back(&*i);
+      Skill* sk = ldplan->getLoad()->getSkill();
+      if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
+      {
+        auto my_eff = i->getEfficiencyCalendar()
+          ? i->getEfficiencyCalendar()->getValue(ldplan->getOperationPlan()->getStart())
+          : i->getEfficiency();
+        if (my_eff > 0)
+          resources.push_back(&*i);
+      }
     }
   }
   resIter = resources.begin();

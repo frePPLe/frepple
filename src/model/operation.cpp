@@ -717,7 +717,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   DateRange production_dates;
   DateRange setup_dates;
   Operation::SetupInfo setuptime_required(nullptr, nullptr, PooledString());
-  double efficiency = opplan->getEfficiency();
+  double efficiency = opplan->getEfficiency(s ? s : e);
   bool forward;
   if (e && s)
   {
@@ -1029,7 +1029,7 @@ OperationTimePer::setOperationPlanParameters(
   DateRange production_dates;
   DateRange setup_dates;
   Operation::SetupInfo setuptime_required;
-  double efficiency = opplan->getEfficiency();
+  double efficiency = opplan->getEfficiency(s ? s : e);
   if (s && e)
   {
     // Case 1: Both the start and end date are specified: Compute the quantity.

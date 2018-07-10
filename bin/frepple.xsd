@@ -544,6 +544,7 @@
       <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="efficiency" type="positiveDouble" />
+      <xsd:element name="efficiency_calendar" type="calendar" />
       <xsd:element name="owner" type="resource" />
       <xsd:element name="members">
         <xsd:complexType>

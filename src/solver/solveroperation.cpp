@@ -482,7 +482,7 @@ bool SolverMRP::checkOperationLeadTime
       {
         if (ldplan->getQuantity() < 0.0 && ldplan->getLoad()->getResource()->isGroup())
         {
-          auto most_efficient = ldplan->getLoad()->findPreferredResource(opplan);
+          auto most_efficient = ldplan->getLoad()->findPreferredResource(opplan->getStart());
           if (!ldplan->getLoad()->getSetup().empty())
             setuploadplan = &*ldplan;
           else if (ldplan->getResource() != most_efficient)
@@ -520,6 +520,13 @@ bool SolverMRP::checkOperationLeadTime
           setuploadplan->getLoad()->getSkill()
           && !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold, threshold)
           )
+          continue;
+
+        // Efficiency must be higher than 0
+        auto my_eff = res->getEfficiencyCalendar()
+          ? res->getEfficiencyCalendar()->getValue(original.start)
+          : res->getEfficiency();
+        if (my_eff <= 0.0)
           continue;
 
         // Try this resource

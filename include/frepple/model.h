@@ -2367,7 +2367,7 @@ class OperationPlan
     /** Return the efficiency factor of the operationplan.
       * It's computed as the most inefficient of all resources loaded by the operationplan.
       */
-    double getEfficiency() const;
+    double getEfficiency(Date = Date::infinitePast) const;
 
     static int initialize();
 
@@ -6590,6 +6590,16 @@ class Resource : public HasHierarchy<Resource>,
         throw DataException("Resource efficiency must be positive");
     }
 
+    Calendar* getEfficiencyCalendar() const
+    {
+      return efficiency_calendar;
+    }
+
+    void setEfficiencyCalendar(Calendar* c)
+    {
+      efficiency_calendar = c;
+    }
+
     /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
       * The default value is 0.0.
       */
@@ -6780,6 +6790,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addDurationField<Cls>(Tags::maxearly, &Cls::getMaxEarly, &Cls::setMaxEarly, defaultMaxEarly);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addDoubleField<Cls>(Tags::efficiency, &Cls::getEfficiency, &Cls::setEfficiency, 100.0);
+      m->addPointerField<Cls, Calendar>(Tags::efficiency_calendar, &Cls::getEfficiencyCalendar, &Cls::setEfficiencyCalendar);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
@@ -6821,6 +6832,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** The efficiency percentage of this resource. */
     double efficiency = 100.0;
+
+    /** Time phased efficiency percentage. */
+    Calendar* efficiency_calendar = nullptr;
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
     Duration maxearly = defaultMaxEarly;
@@ -7176,7 +7190,7 @@ class Load
     /** Find the preferred resource in a resource pool to assign a load to. 
       * This method is only useful when the loadplan is not created yet.
       */
-    Resource* findPreferredResource(const OperationPlan*) const;
+    Resource* findPreferredResource(Date d) const;
 
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;

@@ -149,6 +149,29 @@ class OverviewReport(GridPivot):
       where start_opm.quantity < 0
       group by start_opm.item_id, start_opm.location_id, start_opm.flowdate, end_opm.flowdate
       order by start_opm.flowdate, end_opm.flowdate
+      ),
+      sscal as (
+      select item.name item_id, 
+                        location.name location_id, 
+                        sscal.priority, 
+                        sscal.startdate, 
+                        sscal.enddate, 
+                        sscal.value
+                        from item
+                        cross join location
+                        inner join calendarbucket sscal on sscal.calendar_id = 'SS for '||item.name||' @ '||location.name
+      ),
+      mincal as (
+      select item.name item_id, 
+      location.name location_id, 
+      mincal.priority, 
+      mincal.startdate, 
+      mincal.enddate, 
+      mincal.value
+      from item
+      cross join location
+      inner join buffer on buffer.item_id = item.name and buffer.location_id = location.name
+      inner join calendarbucket mincal on mincal.calendar_id = buffer.minimum_calendar_id
       )
       select
         invplan.item_id || ' @ ' || invplan.location_id,
@@ -184,7 +207,7 @@ class OverviewReport(GridPivot):
           coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
           coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
           coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
-          coalesce(min(calendarbucket.value), 0) safetystock,
+          coalesce(sscal.value, mincal.value, buffer.minimum, 0) safetystock,
           coalesce(initial_on_hand.onhand,0) startoh,
           case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else 
             coalesce(EXTRACT(epoch FROM min(cte.enddate)-d.startdate)/(3600*24),999) end startohdoc
@@ -222,10 +245,33 @@ class OverviewReport(GridPivot):
         and operationplanmaterial.flowdate >= %%s
         and operationplanmaterial.flowdate < %%s
         left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
-        left outer join calendarbucket on calendarbucket.calendar_id = 'SS for '|| opplanmat.item_id|| ' @ ' ||opplanmat.location_id
-                                       and calendarbucket.startdate <= d.startdate and calendarbucket.enddate > d.startdate
+        -- safety stock
+        left outer join sscal on sscal.item_id = opplanmat.item_id 
+                              and sscal.location_id = opplanmat.location_id
+                              and d.startdate between sscal.startdate and sscal.enddate
+          and not exists (select 1 from sscal sscal2 
+                          where sscal2.item_id = opplanmat.item_id 
+                          and sscal2.location_id = opplanmat.location_id
+                          and d.startdate >=  sscal2.startdate and d.startdate < sscal2.enddate
+                          and sscal2.priority < sscal.priority)
+        left outer join mincal on mincal.item_id = opplanmat.item_id 
+                              and mincal.location_id = opplanmat.location_id
+                              and d.startdate between mincal.startdate and mincal.enddate
+          and not exists (select 1 from mincal mincal2 
+                          where mincal2.item_id = opplanmat.item_id 
+                          and mincal2.location_id = opplanmat.location_id
+                          and d.startdate >= mincal2.startdate and d.startdate < mincal2.enddate
+                          and mincal2.priority < mincal.priority)
+        left outer join buffer on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
         -- Grouping and sorting
-        group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate, coalesce(initial_on_hand.onhand,0), cte.quantity
+        group by opplanmat.item_id, 
+        opplanmat.location_id, 
+        d.bucket, 
+        d.startdate, 
+        d.enddate, 
+        coalesce(initial_on_hand.onhand,0), 
+        cte.quantity,
+        coalesce(sscal.value, mincal.value, buffer.minimum, 0) 
         ) invplan
       left outer join item on
         invplan.item_id = item.name

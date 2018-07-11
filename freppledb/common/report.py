@@ -1751,7 +1751,7 @@ class GridPivot(GridReport):
       else:
         e = False
       result.append(
-        "{name:'%s',editable:%s}" % (title(t), 'true' if e else 'false')
+        "{name:'%s',editable:%s}" % (capfirst(t), 'true' if e else 'false')
         )
     return ',\n'.join(result)
 

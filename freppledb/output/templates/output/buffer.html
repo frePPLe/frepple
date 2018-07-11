@@ -247,23 +247,12 @@ function crosses (cellvalue, options, rowdata)
   for (var i in cross_idx)
     switch(cross_idx[i])
     {
-      case 2:
-        if (cellvalue[2] != 0.0)
-           result += cellvalue[2] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
-        else
-          result += '0.0<br>';
-        break;
       case 3:
         if (cellvalue[3] != 0.0)
            result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=MO" + 
               "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -274,7 +263,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DO" + 
+              "&amp;operationplan__type=MO" + 
               "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -285,7 +274,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DLVR" + 
+              "&amp;operationplan__type=DO" + 
               "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -296,7 +285,8 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;operationplan__type=DLVR" + 
+              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
@@ -306,7 +296,6 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=MO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -317,7 +306,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DO" + 
+              "&amp;operationplan__type=MO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -328,20 +317,31 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DLVR" + 
+              "&amp;operationplan__type=DO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 10:
-        if (cellvalue[2] != 0.0 || cellvalue[6] != 0.0)
+        if (cellvalue[10] != 0.0)
            result += cellvalue[10] + "<a href='{{request.prefix}}/flowplan/" +
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;operationplan__type=PO" + 
+              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0.0<br>';
+        break;
+      case 11:
+        if (cellvalue[3] != 0.0 || cellvalue[7] != 0.0)
+           result += cellvalue[11] + "<a href='{{request.prefix}}/flowplan/" +
              admin_escape(rowdata['buffer']) +
              "/?flowdate__gte=" + options['colModel']['startdate'] +
              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += cellvalue[10] + '<br>';
+          result += cellvalue[11] + '<br>';
         break;
       default:
         result += cellvalue[cross_idx[i]] + '<br>';

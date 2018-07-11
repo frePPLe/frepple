@@ -89,12 +89,13 @@ class OverviewReport(GridPivot):
 
   crosses = (
     ('startoh', {'title': _('start inventory')}),
+    ('startohdoc', {'title': _('start inventory days of cover')}),
     ('safetystock', {'title': _('safety stock')}),    
-    ('consumed', {'title': _('consumed')}),
+    ('consumed', {'title': _('total consumed')}),
     ('consumedMO', {'title': _('consumed by MO')}),
     ('consumedDO', {'title': _('consumed by DO')}),
     ('consumedSO', {'title': _('consumed by SO')}),
-    ('produced', {'title': _('produced')}),
+    ('produced', {'title': _('total produced')}),
     ('producedMO', {'title': _('produced by MO')}),
     ('producedDO', {'title': _('produced by DO')}),
     ('producedPO', {'title': _('produced by PO')}),
@@ -131,35 +132,24 @@ class OverviewReport(GridPivot):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 
-    # Execute a query  to get the onhand value at the start of our horizon
-    startohdict = {}
-    query = '''
-      select opplanmat.item_id, opplanmat.location_id, sum(oh.onhand) onhand
-      from (%s) opplanmat
-      inner join (
-        select operationplanmaterial.item_id,
-          operationplanmaterial.location_id,
-          operationplanmaterial.onhand as onhand
-        from operationplanmaterial,
-          (select item_id, location_id, max(id) as id
-           from operationplanmaterial
-           where flowdate < '%s'
-           group by item_id, location_id
-          ) maxid
-        where maxid.item_id = operationplanmaterial.item_id
-          and maxid.location_id = operationplanmaterial.location_id
-        and maxid.id = operationplanmaterial.id
-      ) oh
-      on oh.item_id = opplanmat.item_id
-      and oh.location_id = opplanmat.location_id 
-      group by opplanmat.item_id, opplanmat.location_id      
-      ''' % (basesql, request.report_startdate)
-    cursor.execute(query, baseparams)
-    for row in cursor.fetchall():
-      startohdict[ "%s @ %s" % (row[0], row[1]) ] = float(row[2] or 0.0)
-
     # Execute the actual query
     query = '''
+      with cte as
+      (
+      select start_opm.item_id, start_opm.location_id, start_opm.flowdate startdate, end_opm.flowdate enddate, sum(opm.quantity) quantity
+      from operationplanmaterial start_opm
+      inner join operationplanmaterial end_opm on end_opm.item_id = start_opm.item_id 
+                         and end_opm.location_id = start_opm.location_id 
+                 and end_opm.flowdate >= start_opm.flowdate
+                         and end_opm.quantity < 0        
+      inner join operationplanmaterial opm on opm.item_id = start_opm.item_id 
+                                           and opm.location_id = start_opm.location_id
+                                           and opm.quantity < 0 
+                                           and opm.flowdate between start_opm.flowdate and end_opm.flowdate
+      where start_opm.quantity < 0
+      group by start_opm.item_id, start_opm.location_id, start_opm.flowdate, end_opm.flowdate
+      order by start_opm.flowdate, end_opm.flowdate
+      )
       select
         invplan.item_id || ' @ ' || invplan.location_id,
         invplan.item_id, invplan.location_id, 
@@ -167,6 +157,9 @@ class OverviewReport(GridPivot):
         item.source, item.lastmodified, location.description, location.category,
         location.subcategory, location.available_id, location.owner_id, 
         location.source, location.lastmodified, %s
+        invplan.startoh,
+        invplan.startoh + invplan.produced - invplan.consumed as endoh,
+        invplan.startohdoc,
         invplan.bucket, 
         invplan.startdate, 
         invplan.enddate, 
@@ -191,7 +184,10 @@ class OverviewReport(GridPivot):
           coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
           coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
           coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
-          coalesce(min(calendarbucket.value), 0) safetystock
+          coalesce(min(calendarbucket.value), 0) safetystock,
+          coalesce(initial_on_hand.onhand,0) startoh,
+          case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else 
+            coalesce(EXTRACT(epoch FROM min(cte.enddate)-d.startdate)/(3600*24),999) end startohdoc
         from (%s) opplanmat
         -- Multiply with buckets
         cross join (
@@ -199,6 +195,24 @@ class OverviewReport(GridPivot):
              from common_bucketdetail
              where bucket_id = %%s and enddate > %%s and startdate < %%s
              ) d
+        -- Initial on hand
+        left join operationplanmaterial initial_on_hand 
+            on initial_on_hand.item_id = opplanmat.item_id 
+            and initial_on_hand.location_id = opplanmat.location_id
+            and initial_on_hand.flowdate < d.startdate
+            and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
+            and opm.location_id = initial_on_hand.location_id and opm.flowdate < d.startdate 
+            and opm.id > initial_on_hand.id)
+        -- days of cover
+        left join cte on cte.item_id = opplanmat.item_id and cte.location_id = opplanmat.location_id          
+          and cte.startdate = (select min(startdate) from cte cte2 where cte2.item_id = cte.item_id
+                                               and cte2.location_id = cte.location_id and cte2.startdate >= d.startdate)
+          and abs(cte.quantity) >= coalesce(initial_on_hand.onhand,0)
+          and not exists (select 1 from cte cte3 where cte3.item_id = cte.item_id
+                                                       and cte3.location_id = cte.location_id
+                                                       and abs(cte3.quantity) >= coalesce(initial_on_hand.onhand,0)
+                                                       and cte3.startdate = cte.startdate
+                                                       and cte3.enddate < cte.enddate)
         -- Consumed and produced quantities
         left join operationplanmaterial
         on opplanmat.item_id = operationplanmaterial.item_id
@@ -208,11 +222,10 @@ class OverviewReport(GridPivot):
         and operationplanmaterial.flowdate >= %%s
         and operationplanmaterial.flowdate < %%s
         left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
-        left outer join buffer on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
-        left outer join calendarbucket on calendarbucket.calendar_id = buffer.minimum_calendar_id 
+        left outer join calendarbucket on calendarbucket.calendar_id = 'SS for '|| opplanmat.item_id|| ' @ ' ||opplanmat.location_id
                                        and calendarbucket.startdate <= d.startdate and calendarbucket.enddate > d.startdate
         -- Grouping and sorting
-        group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate
+        group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate, coalesce(initial_on_hand.onhand,0), cte.quantity
         ) invplan
       left outer join item on
         invplan.item_id = item.name
@@ -233,13 +246,7 @@ class OverviewReport(GridPivot):
     prevbuf = None
     for row in cursor.fetchall():
       numfields = len(row)
-      if row[0] != prevbuf:
-        prevbuf = row[0]
-        startoh = startohdict.get(prevbuf, 0)
-        endoh = startoh + float(row[numfields - 4] - row[numfields - 8])
-      else:
-        startoh = endoh
-        endoh += float(row[numfields - 4] - row[numfields - 8])
+      
       res = {
         'buffer': row[0],
         'item': row[1],
@@ -257,10 +264,12 @@ class OverviewReport(GridPivot):
         'location__owner_id': row[13],
         'location__source': row[14],
         'location__lastmodified': row[15],
+        'startoh': round(row[numfields - 15], 1),
+        'endoh': round(row[numfields - 14], 1),
+        'startohdoc': round(row[numfields - 13], 1),
         'bucket': row[numfields - 12],
         'startdate': row[numfields - 11].date(),
-        'enddate': row[numfields - 10].date(),
-        'startoh': round(startoh, 1),
+        'enddate': row[numfields - 10].date(),        
         'safetystock': round(row[numfields - 9], 1),
         'consumed': round(row[numfields - 8], 1),
         'consumedMO': round(row[numfields - 7], 1),
@@ -269,8 +278,7 @@ class OverviewReport(GridPivot):
         'produced': round(row[numfields - 4], 1),
         'producedMO': round(row[numfields - 3], 1),
         'producedDO': round(row[numfields - 2], 1),
-        'producedPO': round(row[numfields - 1], 1),        
-        'endoh': round(endoh, 1),
+        'producedPO': round(row[numfields - 1], 1),                
         }
       # Add attribute fields
       idx = 16

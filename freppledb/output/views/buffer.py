@@ -312,7 +312,7 @@ class OverviewReport(GridPivot):
         'location__lastmodified': row[15],
         'startoh': round(row[numfields - 15], 1),
         'endoh': round(row[numfields - 14], 1),
-        'startohdoc': round(row[numfields - 13], 1),
+        'startohdoc': int(row[numfields - 13]),
         'bucket': row[numfields - 12],
         'startdate': row[numfields - 11].date(),
         'enddate': row[numfields - 10].date(),        

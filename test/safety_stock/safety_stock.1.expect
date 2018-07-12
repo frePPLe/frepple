@@ -38,10 +38,10 @@ OPERATION	make end item 2	2009-03-05T00:00:00	2009-03-05T00:00:00	10
 PROBLEM	material excess	Buffer 'end item 1 @ factory' has material excess of 15	2009-03-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'end item 2 @ factory' has material excess of 10	2009-02-05T00:00:00 / 2009-02-12T00:00:00
 PROBLEM	material excess	Buffer 'end item 2 @ factory' has material excess of 10	2009-03-05T00:00:00 / 2009-03-12T00:00:00
-PROBLEM	material shortage	Buffer 'end item 3 A @ factory' has material shortage of 10	1971-01-01T00:00:00 / 2009-01-05T00:00:00
-PROBLEM	material shortage	Buffer 'end item 3 B @ factory' has material shortage of 20	1971-01-01T00:00:00 / 2009-01-09T00:00:00
+PROBLEM	material shortage	Buffer 'end item 3 A @ factory' has material shortage of 10	2009-01-01T00:00:00 / 2009-01-05T00:00:00
+PROBLEM	material shortage	Buffer 'end item 3 B @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-09T00:00:00
 PROBLEM	material excess	Buffer 'end item 3 C @ factory' has material excess of 31	2009-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'end item 3 C @ factory' has material shortage of 20	1971-01-01T00:00:00 / 2009-01-05T00:00:00
+PROBLEM	material shortage	Buffer 'end item 3 C @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	10 units of demand 'order 1 - item 1' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
 PROBLEM	late	10 units of demand 'order 1 - item 2' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
 DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-02T00:00:00	

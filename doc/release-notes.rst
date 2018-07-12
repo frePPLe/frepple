@@ -23,9 +23,15 @@ Release notes
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
 
+- | The minimum field on the buffer defines a safety stock. In previous releases this safety stock was
+    effective from the horizon start in 1971. Now this safety stock is effective from the current
+    date of the plan onwards.
+  | This change will give a different result for safety stock replenishments in an unconstrained plan.
+    In a lead time constrained plan the results will be identical.  
+
 - Remove buffers of type procurement from the planning engine code. This buffer type was already long
   reprecated and hasn't been accessible to users for quite some time now. 
-
+  
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

@@ -434,9 +434,10 @@ void Buffer::setMinimum(double m)
       static_cast<flowplanlist::EventMinQuantity *>(&*oo)->setMin(min_val);
       return;
     }
+
   // Create new event
   flowplanlist::EventMinQuantity *newEvent =
-    new flowplanlist::EventMinQuantity(Date::infinitePast, &flowplans, min_val);
+    new flowplanlist::EventMinQuantity(Plan::instance().getCurrent(), &flowplans, min_val);
   flowplans.insert(newEvent);
 }
 

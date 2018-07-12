@@ -73,14 +73,24 @@ function drawGraphs(jsondata)
         'buffer': jsondata['rows'][index]['buffer'],
         'bucket': bckt,
         'startinv': tmp[0],
-        'consumed': tmp[2],
-        'produced': tmp[1],
-        'endinv': tmp[3]
+        'startohdoc': tmp[1],
+        'safetystock': tmp[2],    
+        'consumed': tmp[3],
+        'consumedMO': tmp[4],
+        'consumedDO': tmp[5],
+        'consumedSO': tmp[6],
+        'produced': tmp[7],
+        'producedMO': tmp[8],
+        'producedDO': tmp[9],
+        'producedPO': tmp[10],
+        'endinv': tmp[11]
         });
       for (var i in cross_idx)
       {
-        if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
-        if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
+        if (cross_idx[i] == 0 || cross_idx[i] == 2 || cross_idx[i] == 3 || cross_idx[i] == 7 || cross_idx[i] == 11) {
+          if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
+          if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
+          }
       }
     }
 
@@ -135,19 +145,34 @@ function drawGraphs(jsondata)
 	          d3.event.stopPropagation();
 	        })
 	      .on("mouseenter", function(d) {
-	        graph.showTooltip(
-	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	        tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
-	          + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
-	          + (Math.round(d['startinv']*10)/10)
-	          + '</td></tr><tr><td>{{_('produced')|capfirst}}</td><td style="text-align:right">+ '
-	          + (Math.round(d['produced']*10)/10)
-	          + '</td></tr><tr><td>{{_('consumed')|capfirst}}</td><td style="text-align:right">- '
-	          + (Math.round(d['consumed']*10)/10)
-	          + '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
-	          + (Math.round((d['startinv']+d['produced']-d['consumed'])*10)/10)
-	          + '</td></tr></table>'
-	          )
+	          + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
+	          + (Math.round(d['startohdoc']*10)/10) + " {{_('days')}}"
+	          + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+	          + (Math.round(d['startinv']*10)/10);
+	        if (d['producedMO'])
+	          tiptext += '</td></tr><tr><td>{{_('produced by MO')|capfirst}}</td><td style="text-align:right">+ '
+	            + (Math.round(d['producedMO']*10)/10);
+	        if (d['producedDO'])
+	          tiptext += '</td></tr><tr><td>{{_('produced by DO')|capfirst}}</td><td style="text-align:right">+ '
+	            + (Math.round(d['producedDO']*10)/10);
+	        if (d['consumedMO'])
+	          tiptext += '</td></tr><tr><td>{{_('consumed by MO')|capfirst}}</td><td style="text-align:right">- '
+	            + (Math.round(d['consumedMO']*10)/10);
+	        if (d['consumedSO'])
+	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
+	            + (Math.round(d['consumedSO']*10)/10);
+	        if (d['consumedDO'])
+	          tiptext += '</td></tr><tr><td>{{_('consumed by DO')|capfirst}}</td><td style="text-align:right">- '
+	            + (Math.round(d['consumedDO']*10)/10);
+	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
+	          + (Math.round((d['startinv']+d['produced']-d['consumed'])*10)/10);
+	        if (d['safetystock'])
+	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
+	            + (Math.round(d['safetystock']*10)/10);
+	        tiptext += '</td></tr></table>'          
+	        graph.showTooltip(tiptext);
 	        })
 	      .on("mouseleave", graph.hideTooltip)
 	      .on("mousemove", graph.moveTooltip);        
@@ -172,6 +197,16 @@ function drawGraphs(jsondata)
       svg.append("svg:path")
         .attr('class', 'graphline')
         .attr("stroke","#7B5E08")
+        .attr("d", line(data));
+    }
+    if (2 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['safetystock']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#FF0000")
         .attr("d", line(data));
     }
 
@@ -217,25 +252,37 @@ function drawGraphs(jsondata)
     var legend = svg.append("g");
     var codes = [
       ["{{_('start inventory')|capfirst}}", "#8BBA00"],
-      ["{{_('produced')|capfirst}}", "#2B95EC"],
+      [],
+      ["{{_('safety stock')|capfirst}}", "#FF0000"],
       ["{{_('consumed')|capfirst}}", "#F6BD0F"],
+      [],
+      [],
+      [],
+      ["{{_('produced')|capfirst}}", "#2B95EC"],
+      [],
+      [],
+      [],
       ["{{_('end inventory')|capfirst}}", "#7B5E08"]
       ];
+    var cnt = 0;
     for (var i in cross_idx)
     {
-      legend.append("rect")
-        .attr("x", width + 82)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", codes[cross_idx[i]][1])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
-      legend.append("text")
-        .attr("x", width + 76)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(codes[cross_idx[i]][0])
-        .attr("transform", "translate(0," + (i*20+10) + ")");
+      if (cross_idx[i] == 0 || cross_idx[i] == 2|| cross_idx[i] == 3 || cross_idx[i] == 7 || cross_idx[i] == 11) {
+        legend.append("rect")
+          .attr("x", width + 82)
+          .attr("width", 18)
+          .attr("height", 18)
+          .style("fill", codes[cross_idx[i]][1])
+          .attr("transform", "translate(0," + (cnt*20+10) + ")");
+        legend.append("text")
+          .attr("x", width + 76)
+          .attr("y", 9)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text(codes[cross_idx[i]][0])
+          .attr("transform", "translate(0," + (cnt*20+10) + ")");
+        ++cnt;
+        }
     }{% endif %}
     });
 }

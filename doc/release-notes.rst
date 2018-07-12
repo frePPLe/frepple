@@ -19,9 +19,13 @@ Release notes
 
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
-- New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
+- New rows to the `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
+
+- New rows to the `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+  to show 1) days of cover of the starting inventory, 2) the safety stock and 3) more details
+  on the supply and consumption type.
 
 - | The minimum field on the buffer defines a safety stock. In previous releases this safety stock was
     effective from the horizon start in 1971. Now this safety stock is effective from the current

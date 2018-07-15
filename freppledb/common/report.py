@@ -1250,6 +1250,7 @@ class GridReport(View):
               resp.write('<br>')
         else:
           # Editing records
+          pk = rec['id']
           sid = transaction.savepoint(using=request.database)
           try:
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
@@ -1279,13 +1280,13 @@ class GridReport(View):
           except reportclass.model.DoesNotExist:
             transaction.savepoint_rollback(sid)
             ok = False
-            resp.write(escape(_("Can't find %s" % rec['id'])))
+            resp.write(escape(_("Can't find %s" % pk)))
             resp.write('<br>')
           except (ValidationError, ValueError):
             transaction.savepoint_rollback(sid)
             ok = False
             for error in form.non_field_errors():
-              resp.write(escape('%s: %s' % (rec['id'], error)))
+              resp.write(escape('%s: %s' % (pk, error)))
               resp.write('<br>')
             for field in form:
               for error in field.errors:

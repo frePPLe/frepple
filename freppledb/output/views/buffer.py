@@ -136,19 +136,18 @@ class OverviewReport(GridPivot):
     query = '''
       with cte as
       (
-      select start_opm.item_id, start_opm.location_id, start_opm.flowdate startdate, end_opm.flowdate enddate, sum(opm.quantity) quantity
-      from operationplanmaterial start_opm
-      inner join operationplanmaterial end_opm on end_opm.item_id = start_opm.item_id 
-                         and end_opm.location_id = start_opm.location_id 
-                 and end_opm.flowdate >= start_opm.flowdate
-                         and end_opm.quantity < 0        
-      inner join operationplanmaterial opm on opm.item_id = start_opm.item_id 
-                                           and opm.location_id = start_opm.location_id
-                                           and opm.quantity < 0 
-                                           and opm.flowdate between start_opm.flowdate and end_opm.flowdate
-      where start_opm.quantity < 0
-      group by start_opm.item_id, start_opm.location_id, start_opm.flowdate, end_opm.flowdate
-      order by start_opm.flowdate, end_opm.flowdate
+      with agg_opm as (
+        select item_id, location_id, flowdate, sum(quantity) quantity from operationplanmaterial
+        where quantity < 0
+        group by item_id, location_id, flowdate
+      )
+      select opm1.item_id, opm1.location_id, opm1.flowdate startdate, opm2.flowdate enddate, opm2.quantity, 
+      sum(opm2.quantity) 
+      over(partition by opm1.item_id, opm1.location_id, opm1.flowdate order by opm1.item_id, opm1.location_id, opm1.flowdate, opm2.flowdate)
+      from agg_opm opm1
+      inner join agg_opm opm2 on opm1.item_id = opm2.item_id and opm1.location_id = opm2.location_id and opm2.quantity < 0
+      and opm2.flowdate >= opm1.flowdate
+      where opm1.quantity < 0
       ),
       sscal as (
       select item.name item_id, 

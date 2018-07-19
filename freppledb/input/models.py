@@ -639,7 +639,7 @@ class OperationMaterial(AuditModel):
     blank=False, null=False, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
-    _('quantity'), default='1.00',
+    _('quantity'), default='1.00', blank=True, null=True,
     max_digits=20, decimal_places=8,
     help_text=_('Quantity to consume or produce per operationplan unit')
     )

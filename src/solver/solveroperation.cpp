@@ -598,14 +598,18 @@ void SolverMRP::solve(const Operation* oper, void* v)
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
     if (f && f->isProducer())
     {
-      if (f->getQuantityFixed())
+      if (f->getQuantityFixed() != 0.0)
       {
         fixed_flow = true;
         flow_qty_fixed = (oper->getSizeMinimum() <= 0 ? 0.001 : oper->getSizeMinimum());
+        flow_qty_per = f->getQuantityFixed();
       }
-      else if (&f->getType() == FlowTransferBatch::metadata)
-        transferbatch_flow = true;
-      flow_qty_per = f->getQuantity();
+      else
+      {
+        if (&f->getType() == FlowTransferBatch::metadata)
+          transferbatch_flow = true;
+        flow_qty_per = f->getQuantity();
+      }
     }
     else
     {
@@ -1122,7 +1126,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
     if (f && f->isProducer())
     {
       if (f->getQuantityFixed() != 0.0)
+      {
         fixed_flow = true;
+        top_flow_qty_per = f->getQuantityFixed();
+      }
       else
         top_flow_qty_per = f->getQuantity();
       top_flow_exists = true;
@@ -1152,7 +1159,6 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
   double firstFlowPer;
   while (a_qty > 0)
   {
-    logger << " koko " << a_qty << endl;
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
@@ -1163,7 +1169,6 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         = oper->getSubOperations().begin();
         altIter != oper->getSubOperations().end(); )
     {
-      logger << "banana" << endl;
       // Set a bookmark in the command list.
       CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
       bool nextalternate = true;
@@ -1200,9 +1205,12 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
         if (f && f->isProducer())
-        {
-          sub_flow_qty_per = f->getQuantity();
+        {          
           bool f_is_fixed = f->getQuantityFixed() != 0.0;
+          if (f_is_fixed)
+            sub_flow_qty_per = f->getQuantityFixed();
+          else
+            sub_flow_qty_per = f->getQuantity();
           if (top_flow_exists && fixed_flow != f_is_fixed)
               throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                 + "' for buffer '" + data->state->curBuffer->getName() + "'");
@@ -1216,10 +1224,13 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           while (SubOperation *o = subiter.next())
           {
             Flow *g = o->getOperation()->findFlow(buf, ask_date);
-            if (g && g->isConsumer())
-            {
-              sub_flow_qty_per += g->getQuantity();
+            if (g && g->isProducer())
+            {              
               bool g_is_fixed = (g->getQuantityFixed() != 0.0);
+              if (g_is_fixed)
+                sub_flow_qty_per += g->getQuantityFixed();
+              else
+                sub_flow_qty_per += g->getQuantity();
               if ((top_flow_exists || f) && fixed_flow != g_is_fixed)
                 throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                   + "' for buffer '" + data->state->curBuffer->getName() + "'");
@@ -1282,7 +1293,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       if (fixed_flow)
         data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
       else
-        data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+        data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);    // TODO revise
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -1346,7 +1357,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
-        if (fixed_flow)
+        if (fixed_flow)         // TODO revise this code for constant material consumption!
           data->state->a_qty = (sub_flow_qty_per + top_flow_qty_per);
         else
           data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);

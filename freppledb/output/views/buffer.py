@@ -134,22 +134,7 @@ class OverviewReport(GridPivot):
 
     # Execute the actual query
     query = '''
-      with cte as
-      (
-      with agg_opm as (
-        select item_id, location_id, flowdate, sum(quantity) quantity from operationplanmaterial
-        where quantity < 0
-        group by item_id, location_id, flowdate
-      )
-      select opm1.item_id, opm1.location_id, opm1.flowdate startdate, opm2.flowdate enddate, opm2.quantity, 
-      sum(opm2.quantity) 
-      over(partition by opm1.item_id, opm1.location_id, opm1.flowdate order by opm1.item_id, opm1.location_id, opm1.flowdate, opm2.flowdate)
-      from agg_opm opm1
-      inner join agg_opm opm2 on opm1.item_id = opm2.item_id and opm1.location_id = opm2.location_id and opm2.quantity < 0
-      and opm2.flowdate >= opm1.flowdate
-      where opm1.quantity < 0
-      ),
-      sscal as (
+      with sscal as (
       select item.name item_id, 
                         location.name location_id, 
                         sscal.priority, 
@@ -181,7 +166,26 @@ class OverviewReport(GridPivot):
         location.source, location.lastmodified, %s
         invplan.startoh,
         invplan.startoh + invplan.produced - invplan.consumed as endoh,
-        invplan.startohdoc,
+        coalesce((
+        select  
+        extract (epoch from case when initial_onhand = 0 then interval '0 day' else min(flowdate) - invplan.startdate end)/(3600*24) days_of_cover
+        from
+        (
+        select 
+        item_id, 
+        location_id, 
+        flowdate, 
+        onhand - quantity onhand_before,
+        onhand onhand_after,
+        first_value(onhand - quantity) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) initial_onhand,
+        sum(case when quantity < 0 then -quantity else 0 end) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) total_consumed
+        from operationplanmaterial
+        where flowdate >= invplan.startdate 
+        ) t
+        where total_consumed >= initial_onhand and item_id = invplan.item_id and location_id = invplan.location_id
+        group by item_id, location_id, initial_onhand
+        ), case when invplan.startoh = 0 then 0 else 999 end)
+        startohdoc,
         invplan.bucket, 
         invplan.startdate, 
         invplan.enddate, 
@@ -207,9 +211,7 @@ class OverviewReport(GridPivot):
           coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
           coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
           coalesce(sscal.value, mincal.value, buffer.minimum, 0) safetystock,
-          coalesce(initial_on_hand.onhand,0) startoh,
-          case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else 
-            coalesce(EXTRACT(epoch FROM min(cte.enddate)-d.startdate)/(3600*24),999) end startohdoc
+          coalesce(initial_on_hand.onhand,0) startoh
         from (%s) opplanmat
         -- Multiply with buckets
         cross join (
@@ -225,23 +227,13 @@ class OverviewReport(GridPivot):
             and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
             and opm.location_id = initial_on_hand.location_id and opm.flowdate < d.startdate 
             and opm.id > initial_on_hand.id)
-        -- days of cover
-        left join cte on cte.item_id = opplanmat.item_id and cte.location_id = opplanmat.location_id          
-          and cte.startdate = (select min(startdate) from cte cte2 where cte2.item_id = cte.item_id
-                                               and cte2.location_id = cte.location_id and cte2.startdate >= d.startdate)
-          and abs(cte.quantity) >= coalesce(initial_on_hand.onhand,0)
-          and not exists (select 1 from cte cte3 where cte3.item_id = cte.item_id
-                                                       and cte3.location_id = cte.location_id
-                                                       and abs(cte3.quantity) >= coalesce(initial_on_hand.onhand,0)
-                                                       and cte3.startdate = cte.startdate
-                                                       and cte3.enddate < cte.enddate)
-        -- Consumed and produced quantities
+         -- Consumed and produced quantities
         left join operationplanmaterial
         on opplanmat.item_id = operationplanmaterial.item_id
         and opplanmat.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= %%s
+        and operationplanmaterial.flowdate >= d.startdate
         and operationplanmaterial.flowdate < %%s
         left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
         -- safety stock
@@ -269,7 +261,6 @@ class OverviewReport(GridPivot):
         d.startdate, 
         d.enddate, 
         coalesce(initial_on_hand.onhand,0), 
-        cte.quantity,
         coalesce(sscal.value, mincal.value, buffer.minimum, 0) 
         ) invplan
       left outer join item on
@@ -283,7 +274,7 @@ class OverviewReport(GridPivot):
     cursor.execute(
       query, baseparams + (
         request.report_bucket, request.report_startdate,
-        request.report_enddate, request.report_startdate, request.report_enddate
+        request.report_enddate, request.report_enddate
         )
       )
 

@@ -687,6 +687,7 @@
       <xsd:element name="buffer" type="buffer" />
       <xsd:element name="item" type="item" />
       <xsd:element name="quantity" type="xsd:double" />      
+      <xsd:element name="quantity_fixed" type="xsd:double" />      
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
@@ -699,6 +700,7 @@
       <xsd:element name="source" type="xsd:normalizedString" />  
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
+    <xsd:attribute name="quantity_fixed" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
@@ -721,18 +723,6 @@
   </xsd:complexType>
 
   <xsd:complexType name="flow_start">
-    <xsd:complexContent>
-      <xsd:extension base="flow" />
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="flow_fixed_end">
-    <xsd:complexContent>
-      <xsd:extension base="flow" />
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="flow_fixed_start">
     <xsd:complexContent>
       <xsd:extension base="flow" />
     </xsd:complexContent>

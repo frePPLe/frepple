@@ -36,6 +36,10 @@ Release notes
 - Remove buffers of type procurement from the planning engine code. This buffer type was already long
   reprecated and hasn't been accessible to users for quite some time now. 
   
+- Simpler and more generic modeling of fixed material consumption and production by operations. 
+  The types 'fixed_end' and 'fixed_start' on `operation material <user-guide/model-reference/operation-materials.html>`_
+  records are replaced with a field 'fixed_quantity'.
+
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

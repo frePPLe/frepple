@@ -266,10 +266,10 @@ bool SolverMRP::checkOperation
               break;
             }
           }
-          else if (data.state->a_qty >+ q_qty_Flow + ROUNDING_ERROR)
+          else if (data.state->a_qty > q_qty_Flow + ROUNDING_ERROR)
             // Never answer more than asked.
             // The actual operationplan could be bigger because of lot sizing.
-            a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
+            a_qty = - q_qty_Flow / g->getFlow()->getQuantity();   // TODO include fixed quantity here
         }
       }
     }
@@ -596,9 +596,9 @@ void SolverMRP::solve(const Operation* oper, void* v)
   if (data->state->curBuffer)
   {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
-    if (f && f->getQuantity() > 0.0)
+    if (f && f->isProducer())
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+      if (f->getQuantityFixed())
       {
         fixed_flow = true;
         flow_qty_fixed = (oper->getSizeMinimum() <= 0 ? 0.001 : oper->getSizeMinimum());
@@ -913,10 +913,10 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
     if (f)
     {
       // Flow on routing operation
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+      if (f->getQuantityFixed())
       {
         fixed_flow = 1;
-        flow_qty_fixed = f->getQuantity();
+        flow_qty_fixed = f->getQuantityFixed();
       }
       else
       {
@@ -933,13 +933,13 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
       if (f)
       {
         // Flow on routing steps
-        if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+        if (f->getQuantityFixed())
         {
           if (fixed_flow == 0)
             throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                 + "' for buffer '" + data->state->curBuffer->getName() + "'");
           fixed_flow = 1;
-          flow_qty_fixed += f->getQuantity();
+          flow_qty_fixed += f->getQuantityFixed();
         }
         else
         {
@@ -1119,11 +1119,12 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
   if (buf)
   {
     Flow* f = oper->findFlow(buf, data->state->q_date);
-    if (f && f->getQuantity() > 0.0)
+    if (f && f->isProducer())
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+      if (f->getQuantityFixed() != 0.0)
         fixed_flow = true;
-      top_flow_qty_per = f->getQuantity();
+      else
+        top_flow_qty_per = f->getQuantity();
       top_flow_exists = true;
     }
   }
@@ -1151,6 +1152,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
   double firstFlowPer;
   while (a_qty > 0)
   {
+    logger << " koko " << a_qty << endl;
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
@@ -1161,6 +1163,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         = oper->getSubOperations().begin();
         altIter != oper->getSubOperations().end(); )
     {
+      logger << "banana" << endl;
       // Set a bookmark in the command list.
       CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
       bool nextalternate = true;
@@ -1196,10 +1199,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       {
         // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
-        if (f && f->getQuantity() > 0.0)
+        if (f && f->isProducer())
         {
           sub_flow_qty_per = f->getQuantity();
-          bool f_is_fixed = f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata;
+          bool f_is_fixed = f->getQuantityFixed() != 0.0;
           if (top_flow_exists && fixed_flow != f_is_fixed)
               throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                 + "' for buffer '" + data->state->curBuffer->getName() + "'");
@@ -1213,10 +1216,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           while (SubOperation *o = subiter.next())
           {
             Flow *g = o->getOperation()->findFlow(buf, ask_date);
-            if (g && g->getQuantity() > 0.0)
+            if (g && g->isConsumer())
             {
               sub_flow_qty_per += g->getQuantity();
-              bool g_is_fixed = g->getType() == *FlowFixedEnd::metadata || g->getType() == *FlowFixedStart::metadata;
+              bool g_is_fixed = (g->getQuantityFixed() != 0.0);
               if ((top_flow_exists || f) && fixed_flow != g_is_fixed)
                 throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
                   + "' for buffer '" + data->state->curBuffer->getName() + "'");
@@ -1608,7 +1611,7 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
     Flow* f = oper->findFlow(buf, data->state->q_date);
     if (f && f->getQuantity() > 0.0)
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
+      if (f->getQuantityFixed())
         throw DataException("Fixed flows on a split operation are not supported");
       top_flow_qty_per = f->getQuantity();
     }
@@ -1671,8 +1674,8 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
       {
         if (top_flow_qty_per)
           throw DataException("Split operation must have producing flow on the parent opration OR the child operations");
-        if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-          throw DataException("Fixed flows on a split operation are not supported");
+        if (f->getQuantityFixed())
+          throw DataException("Flows with a constant factor on a split operation are not supported");
         flow_qty_per = f->getQuantity();
       }
       else if (!top_flow_qty_per)

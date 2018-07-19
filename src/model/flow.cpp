@@ -26,8 +26,6 @@ namespace frepple
 const MetaCategory* Flow::metadata;
 const MetaClass* FlowStart::metadata;
 const MetaClass* FlowEnd::metadata;
-const MetaClass* FlowFixedStart::metadata;
-const MetaClass* FlowFixedEnd::metadata;
 const MetaClass* FlowTransferBatch::metadata;
 
 
@@ -45,12 +43,6 @@ int Flow::initialize()
     );
   FlowEnd::metadata = MetaClass::registerClass<FlowEnd>(
     "flow", "flow_end", Object::create<FlowEnd>
-    );
-  FlowFixedStart::metadata = MetaClass::registerClass<FlowFixedStart>(
-    "flow", "flow_fixed_start", Object::create<FlowFixedStart>
-    );
-  FlowFixedEnd::metadata = MetaClass::registerClass<FlowFixedEnd>(
-    "flow", "flow_fixed_end", Object::create<FlowFixedEnd>
     );
   FlowTransferBatch::metadata = MetaClass::registerClass<FlowTransferBatch>(
     "flow", "flow_transfer_batch", Object::create<FlowTransferBatch>
@@ -164,18 +156,6 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       PythonData d(t);
       if (d.getString() == "flow_end")
         l = new FlowEnd(
-          static_cast<Operation*>(oper),
-          static_cast<Buffer*>(buf),
-          q2
-        );
-      else if (d.getString() == "flow_fixed_end")
-        l = new FlowFixedEnd(
-          static_cast<Operation*>(oper),
-          static_cast<Buffer*>(buf),
-          q2
-        );
-      else if (d.getString() == "flow_fixed_start")
-        l = new FlowFixedStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2
@@ -303,23 +283,8 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
     return make_pair(
       fl->getOperationPlan()->getSetupEnd(),
       getEffective().within(fl->getDate()) ?
-      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+      getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
-}
-
-
-pair<Date, double> FlowFixedStart::getFlowplanDateQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return make_pair(
-      fl->getOperationPlan()->getSetupEnd(),
-      fl->getQuantity()
-    );
-  else
-    return make_pair(
-      fl->getOperationPlan()->getSetupEnd(),
-      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
-      );
 }
 
 
@@ -334,23 +299,8 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
     return make_pair(
       fl->getOperationPlan()->getEnd(),
       getEffective().within(fl->getDate()) ?
-      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+      getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
-}
-
-
-pair<Date, double> FlowFixedEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return make_pair(
-      fl->getOperationPlan()->getEnd(),
-      fl->getQuantity()
-      );
-  else
-    return make_pair(
-      fl->getOperationPlan()->getEnd(),
-      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
-      );
 }
 
 

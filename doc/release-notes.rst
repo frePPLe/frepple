@@ -49,6 +49,7 @@ Release notes
 
 - Bug fix when copying a what-if scenario into another what-if scenario. 
 
+- Bug fix when uploading data files using the Microsoft Edge browser.
 
 4.3.4 (2018/06/08)
 ==================

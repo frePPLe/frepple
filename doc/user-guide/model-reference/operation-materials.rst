@@ -17,17 +17,6 @@ Different types are available:
   | Produce (or consume) material at the end of an operationplan.
   | The quantity consumed or produced is proportional to the quantity of the
     operationplan.
-
-* | **fixed_start**:
-  | Consume (or produce) material at the start of an operationplan, right
-    after any setup time on the loaded resource has been completed.
-  | The quantity consumed or produced is constant and independent of the
-    quantity of the operationplan.
-
-* | **fixed_end**:
-  | Produce (or consume) material at the end of an operationplan.
-  | The quantity consumed or produced is constant and independent of the
-    quantity of the operationplan.
     
 * | **transfer_batch**:
   | Consume (or produce) material in a number of batches of fixed size
@@ -45,7 +34,13 @@ buffer          buffer            | Buffer from which material will be moved or 
 operation       operation         | Operation to which the material flow is associated.
                                   | This is a required field.
 quantity        double            | Material quantity being consumed or produced per unit of
-                                    the operationplan.
+                                    the manufacturing order.
+                                  | Default value is 1.0.
+quantity_fixed  double            | Fixed material consumption or production per manufacturing
+                                    order, independent of the size of the manufacturing order.
+                                  | This is useful to model a constant scrap rate for calibration
+                                    or testing, modeling a throw-away prodcution tool, etc...
+                                  | Default value is 0.0.
 transferbatch   double            | Batch size by in which material is produced or consumed.
                                   | Only relevant for flows of type batch_transfer.
                                   | The default value is null, in which case we default to 

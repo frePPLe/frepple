@@ -927,10 +927,8 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
       while (fp1 != o->endFlowPlans())
       {
         if (fp1->getBuffer() != fp2->getBuffer()
-          || fp1->getFlow()->getType() == *FlowFixedEnd::metadata
-          || fp1->getFlow()->getType() == *FlowFixedStart::metadata
-          || fp2->getFlow()->getType() == *FlowFixedEnd::metadata
-          || fp2->getFlow()->getType() == *FlowFixedStart::metadata)
+          || fp1->getFlow()->getQuantityFixed()
+          || fp2->getFlow()->getQuantityFixed())
           // No merge possible
           return true;
         ++fp1;

@@ -219,7 +219,7 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
-double FlowPlan::setQuantity(
+double FlowPlan::setQuantity(  // TODO Method to be updated
   double quantity, bool rounddown, bool update, bool execute, short mode
   )
 {
@@ -252,7 +252,6 @@ double FlowPlan::setQuantity(
       if (
         mode == 2 
         || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata)
-        || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata)
         )
       {
         oper->getOperation()->setOperationPlanParameters(
@@ -264,7 +263,6 @@ double FlowPlan::setQuantity(
       else if (
         mode == 1 
         || (mode == 0 && getFlow()->getType() == *FlowStart::metadata)
-        || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata)
         )
       {
         oper->getOperation()->setOperationPlanParameters(
@@ -276,43 +274,42 @@ double FlowPlan::setQuantity(
     }
     return 0.0;
   }
-  if (getFlow()->getType() == *FlowFixedEnd::metadata
-    || getFlow()->getType() == *FlowFixedStart::metadata)
+  if (getFlow()->getQuantityFixed() != 0.0)
   {
     // Fixed quantity flows only allow resizing to 0
     if (quantity == 0.0 && oper->getQuantity() != 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
         return oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
           Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
+          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
         return oper->getOperation()->setOperationPlanParameters(
           oper, 0.0,
           oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
     }
     else if (quantity != 0.0 && oper->getQuantity() == 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
         return oper->getOperation()->setOperationPlanParameters(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
             : oper->getOperation()->getSizeMinimum(),
           Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
+          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
         return oper->getOperation()->setOperationPlanParameters(
           oper,
           (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
           : oper->getOperation()->getSizeMinimum(),
           oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
     }
   }
   else

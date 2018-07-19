@@ -943,7 +943,8 @@ class OperationMaterialList(GridReport):
     GridFieldChoice('search', title=_('search mode'), choices=searchmode, initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
-    GridFieldNumber('transferbatch', title=_('transfer batch quantity'), initially_hidden=True)
+    GridFieldNumber('transferbatch', title=_('transfer batch quantity'), initially_hidden=True),
+    GridFieldNumber('quantity_fixed', title=_('quantity fixed')),
     )
 
 

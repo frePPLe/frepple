@@ -623,8 +623,6 @@ class OperationMaterial(AuditModel):
   types = (
     ('start', _('Start')),
     ('end', _('End')),
-    ('fixed_start', _('Fixed start')),
-    ('fixed_end', _('Fixed end')),
     ('transfer_batch', _('Batch transfer'))
   )
 
@@ -644,6 +642,11 @@ class OperationMaterial(AuditModel):
     _('quantity'), default='1.00',
     max_digits=20, decimal_places=8,
     help_text=_('Quantity to consume or produce per operationplan unit')
+    )
+  quantity_fixed = models.DecimalField(
+    _('fixed quantity'), blank=True, null=True,
+    max_digits=20, decimal_places=8,
+    help_text=_('Fixed quantity to consume or produce')
     )
   type = models.CharField(
     _('type'), max_length=20, null=True, blank=True, choices=types, default='start',

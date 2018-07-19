@@ -41,8 +41,6 @@ namespace frepple
 class Flow;
 class FlowStart;
 class FlowEnd;
-class FlowFixedStart;
-class FlowFixedEnd;
 class FlowTransferBatch;
 class FlowPlan;
 class LoadPlan;
@@ -1045,16 +1043,6 @@ class Solver : public Object
     }
 
     virtual void solve(const FlowEnd* b, void* v = nullptr)
-    {
-      solve(reinterpret_cast<const Flow*>(b),v);
-    }
-
-    virtual void solve(const FlowFixedStart* b, void* v = nullptr)
-    {
-      solve(reinterpret_cast<const Flow*>(b),v);
-    }
-
-    virtual void solve(const FlowFixedEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
@@ -5623,13 +5611,13 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Returns true if this flow consumes material from the buffer. */
     bool isConsumer() const
     {
-      return quantity < 0;
+      return quantity < 0 || quantity_fixed < 0;
     }
 
     /** Returns true if this flow produces material into the buffer. */
     bool isProducer() const
     {
-      return quantity >= 0;
+      return quantity > 0 || quantity_fixed > 0 || (quantity == 0 && quantity_fixed == 0);
     }
 
     /** Returns the material flow PER UNIT of the operationplan. */
@@ -5646,6 +5634,28 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     void setQuantity(double f)
     {
       quantity = f;
+      if ((quantity > 0.0 && quantity_fixed < 0)
+        || (quantity < 0.0 && quantity_fixed > 0))
+        throw DataException("Quantity and quantity_fixed must have equal sign");
+    }
+
+    /** Returns the CONSTANT material flow PER UNIT of the operationplan. */
+    double getQuantityFixed() const
+    {
+      return quantity_fixed;
+    }
+
+    /** Updates the CONSTANT material flow of the operationplan. Existing
+      * flowplans are NOT updated to take the new quantity in effect. Only new
+      * operationplans and updates to existing ones will use the new quantity
+      * value.
+      */
+    void setQuantityFixed(double f)
+    {
+      quantity_fixed = f;
+      if ((quantity > 0.0 && quantity_fixed < 0)
+        || (quantity < 0.0 && quantity_fixed > 0))
+        throw DataException("Quantity and quantity_fixed must have equal sign");
     }
 
     /** Returns the buffer. */
@@ -5755,6 +5765,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, DONT_SERIALIZE + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
+      m->addDoubleField<Cls>(Tags::quantity_fixed, &Cls::getQuantityFixed, &Cls::setQuantityFixed);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
@@ -5781,8 +5792,11 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     Item *item = nullptr;
 
-    /** Quantity of the flow. */
+    /** Variable quantity of the material consumption/production. */
     double quantity = 0.0;
+
+    /** Constant quantity of the material consumption/production. */
+    double quantity_fixed = 0.0;
 
     /** Mode to select the preferred alternates. */
     SearchMode search = PRIORITY;
@@ -5822,48 +5836,6 @@ class FlowEnd : public Flow
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
-
-    /** This method holds the logic the compute the date and quantity of a flowplan. */
-    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
-
-    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
-
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
-};
-
-
-/** @brief This class represents a flow at end date of the
-  * operation and with a fiwed quantity.
-  */
-class FlowFixedEnd : public FlowEnd
-{
-  public:
-    /** Constructor. */
-    explicit FlowFixedEnd(Operation* o, Buffer* b, double q) : FlowEnd(o,b,q) {}
-
-    /** This constructor is called from the plan begin_element function. */
-    explicit FlowFixedEnd() {}
-
-    /** This method holds the logic the compute the date and quantity of a flowplan. */
-    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
-
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
-};
-
-
-/** @brief This class represents a flow at start date of the operation
-  * (after the setup time has been completed) and with a fixed quantity.
-  */
-class FlowFixedStart : public FlowStart
-{
-  public:
-    /** Constructor. */
-    explicit FlowFixedStart(Operation* o, Buffer* b, double q) : FlowStart(o,b,q) {}
-
-    /** This constructor is called from the plan begin_element function. */
-    explicit FlowFixedStart() {}
 
     /** This method holds the logic the compute the date and quantity of a flowplan. */
     virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;

@@ -25,6 +25,11 @@ class Migration(migrations.Migration):
   ]
 
   operations = [
+    migrations.AlterField(
+      model_name='operationmaterial',
+      name='quantity',
+      field=models.DecimalField(blank=True, decimal_places=8, default='1.00', help_text='Quantity to consume or produce per operationplan unit', max_digits=20, null=True, verbose_name='quantity'),
+    ),
     migrations.AddField(
       model_name='operationmaterial',
       name='quantity_fixed',

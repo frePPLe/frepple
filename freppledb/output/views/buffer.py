@@ -168,7 +168,8 @@ class OverviewReport(GridPivot):
         invplan.startoh + invplan.produced - invplan.consumed as endoh,
         coalesce((
         select  
-        extract (epoch from case when initial_onhand = 0 then interval '0 day' else min(flowdate) - invplan.startdate end)/(3600*24) days_of_cover
+        extract (epoch from case when initial_onhand = 0 then interval '0 day' else min(flowdate) - 
+                 greatest(invplan.startdate, %%s) end)/(3600*24) days_of_cover
         from
         (
         select 
@@ -179,10 +180,10 @@ class OverviewReport(GridPivot):
         onhand onhand_after,
         first_value(onhand - quantity) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) initial_onhand,
         sum(case when quantity < 0 then -quantity else 0 end) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) total_consumed
-        from operationplanmaterial
-        where flowdate >= invplan.startdate 
+        from operationplanmaterial 
+        where flowdate >= greatest(invplan.startdate, %%s) and item_id = invplan.item_id and location_id = invplan.location_id 
         ) t
-        where total_consumed >= initial_onhand and item_id = invplan.item_id and location_id = invplan.location_id
+        where total_consumed >= initial_onhand
         group by item_id, location_id, initial_onhand
         ), case when invplan.startoh = 0 then 0 else 999 end)
         startohdoc,
@@ -223,9 +224,9 @@ class OverviewReport(GridPivot):
         left join operationplanmaterial initial_on_hand 
             on initial_on_hand.item_id = opplanmat.item_id 
             and initial_on_hand.location_id = opplanmat.location_id
-            and initial_on_hand.flowdate < d.startdate
+            and initial_on_hand.flowdate < greatest(d.startdate,%%s)
             and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
-            and opm.location_id = initial_on_hand.location_id and opm.flowdate < d.startdate 
+            and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s) 
             and opm.id > initial_on_hand.id)
          -- Consumed and produced quantities
         left join operationplanmaterial
@@ -233,7 +234,7 @@ class OverviewReport(GridPivot):
         and opplanmat.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= d.startdate
+        and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
         and operationplanmaterial.flowdate < %%s
         left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
         -- safety stock
@@ -272,9 +273,9 @@ class OverviewReport(GridPivot):
         reportclass.attr_sql, basesql, sortsql
       )
     cursor.execute(
-      query, baseparams + (
-        request.report_bucket, request.report_startdate,
-        request.report_enddate, request.report_enddate
+      query, (request.report_startdate, request.report_startdate) + baseparams + (
+        request.report_bucket, request.report_startdate, request.report_enddate,
+        request.report_startdate, request.report_startdate, request.report_startdate, request.report_enddate
         )
       )
 

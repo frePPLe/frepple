@@ -746,12 +746,14 @@ void Calendar::buildEventList(Date includedate)
             ref_weekday = 0;
           tmp += Duration(86400L);
         }
-        while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
+        while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture && tmp <= b->enddate)
         {
           if (++ref_weekday > 6)
             ref_weekday = 0;
           tmp += Duration(86400L);
         }
+        if (tmp < b->startdate)
+          tmp = b->startdate;
         if (tmp >= b->enddate)
           continue;
 

@@ -987,22 +987,20 @@ class loadResources(LoadTask):
             x = frepple.resource_buckets(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[3]:
-              x.maximum_calendar = frepple.calendar(name=i[3])
             if i[7] is not None:
               x.maxearly = i[7]
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[3]:
-              x.maximum_calendar = frepple.calendar(name=i[3])
             if i[7] is not None:
               x.maxearly = i[7].total_seconds()
             if i[2] is not None:
               x.maximum = i[2]
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
+          if i[3]:
+            x.maximum_calendar = frepple.calendar(name=i[3])
           if i[4]:
             x.location = frepple.location(name=i[4])
           if i[6]:

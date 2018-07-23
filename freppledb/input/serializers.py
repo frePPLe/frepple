@@ -550,18 +550,24 @@ class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ResourceSkillFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.ResourceSkill
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'skill': ['exact', 'in', ],
-              'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'resource': ['exact', 'in', ],
+      'skill': ['exact', 'in', ],
+      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ]
+      }
 
-    filter_fields = ('id', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
+    filter_fields = ('id', 'resource', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
 
 
 class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
   class Meta:
     model = freppledb.input.models.ResourceSkill
-    fields = ('id', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
+    fields = ('id', 'resource', 'skill', 'effective_start', 'effective_end', 'priority', 'source', 'lastmodified')
     list_serializer_class = BulkListSerializer
     update_lookup_field = 'id'
     partial = True
